@@ -27,11 +27,9 @@ void ETSPrimitiveType::TransformChildren([[maybe_unused]] const NodeTransformer 
     TransformAnnotations(cb, transformationName);
 }
 
-void ETSPrimitiveType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void ETSPrimitiveType::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSPrimitiveType::Dump(ir::AstDumper *dumper) const
@@ -41,9 +39,8 @@ void ETSPrimitiveType::Dump(ir::AstDumper *dumper) const
 
 void ETSPrimitiveType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
+
     switch (GetPrimitiveType()) {
         case PrimitiveType::BYTE:
             dumper->Add("byte");
@@ -160,14 +157,8 @@ ETSPrimitiveType *ETSPrimitiveType::Clone(ArenaAllocator *const allocator, AstNo
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

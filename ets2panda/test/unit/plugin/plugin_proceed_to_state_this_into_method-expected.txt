@@ -4,7 +4,6 @@ PROGRAM NODE:
 
 class A {
   public x: int = 1;
-  
   public foo() {
     if (true) {
       this.x = 2;

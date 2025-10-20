@@ -24,11 +24,9 @@ void ETSStringLiteralType::TransformChildren([[maybe_unused]] const NodeTransfor
     TransformAnnotations(cb, transformationName);
 }
 
-void ETSStringLiteralType::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void ETSStringLiteralType::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSStringLiteralType::Dump(ir::AstDumper *dumper) const
@@ -39,9 +37,7 @@ void ETSStringLiteralType::Dump(ir::AstDumper *dumper) const
 
 void ETSStringLiteralType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("\"" + value_.Mutf8() + "\"");
 }
 
@@ -74,13 +70,8 @@ ETSStringLiteralType *ETSStringLiteralType::Clone(ArenaAllocator *allocator, Ast
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            ES2PANDA_ASSERT(annotationUsage->Clone(allocator, clone));
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

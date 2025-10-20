@@ -22,9 +22,7 @@
 namespace ark::es2panda::ir {
 ObjectExpression::ObjectExpression([[maybe_unused]] Tag const tag, ObjectExpression const &other,
                                    ArenaAllocator *const allocator)
-    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator),
-      decorators_(allocator->Adapter()),
-      properties_(allocator->Adapter())
+    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator), properties_(allocator->Adapter())
 {
     SetPreferredType(other.PreferredType());
     isDeclaration_ = other.isDeclaration_;
@@ -33,10 +31,6 @@ ObjectExpression::ObjectExpression([[maybe_unused]] Tag const tag, ObjectExpress
 
     for (auto *property : other.properties_) {
         properties_.emplace_back(property->Clone(allocator, this)->AsExpression());
-    }
-
-    for (auto *decorator : other.decorators_) {
-        decorators_.emplace_back(decorator->Clone(allocator, this));
     }
 }
 
@@ -176,13 +170,6 @@ void ObjectExpression::SetOptional(bool optional)
 
 void ObjectExpression::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
-        }
-    }
-
     for (auto *&it : VectorIterationGuard(properties_)) {
         if (auto *transformedNode = cb(it); it != transformedNode) {
             it->SetTransformedNode(transformationName, transformedNode);
@@ -200,10 +187,6 @@ void ObjectExpression::TransformChildren(const NodeTransformer &cb, std::string_
 
 void ObjectExpression::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
-        cb(it);
-    }
-
     for (auto *it : VectorIterationGuard(properties_)) {
         cb(it);
     }
@@ -216,7 +199,6 @@ void ObjectExpression::Iterate(const NodeTraverser &cb) const
 void ObjectExpression::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", (type_ == AstNodeType::OBJECT_EXPRESSION) ? "ObjectExpression" : "ObjectPattern"},
-                 {"decorators", AstDumper::Optional(decorators_)},
                  {"properties", properties_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});

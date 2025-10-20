@@ -59,7 +59,8 @@ public:
     using OverloadsT = ArenaVector<MethodDefinition *>;
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit MethodDefinition(MethodDefinitionKind const kind, Expression *const key, Expression *const value,
-                              ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed)
+                              ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
+                              bool const isComputed)
         : ClassElement(AstNodeType::METHOD_DEFINITION, key, value, modifiers, allocator, isComputed),
           kind_(kind),
           overloads_(allocator->Adapter()),
@@ -71,8 +72,8 @@ public:
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit MethodDefinition(MethodDefinitionKind const kind, Expression *const key, Expression *const value,
-                              ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed,
-                              AstNodeHistory *history)
+                              ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
+                              bool const isComputed, AstNodeHistory *history)
         : ClassElement(AstNodeType::METHOD_DEFINITION, key, value, modifiers, allocator, isComputed),
           kind_(kind),
           overloads_(allocator->Adapter()),
@@ -247,9 +248,10 @@ private:
     void DumpPrefix(ir::SrcDumper *dumper) const;
     void ResetOverloads();
     void DumpModifierPrefix(ir::SrcDumper *dumper) const;
+    void DumpAccessorPrefix(ir::SrcDumper *dumper) const;
     bool DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const;
     void DumpPrefixForDeclGen(ir::SrcDumper *dumper) const;
-    bool FilterForDeclGen(ir::SrcDumper *dumper) const;
+    bool FilterForDeclGen() const;
 
     friend class SizeOfNodeTest;
     bool isDefault_ = false;

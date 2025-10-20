@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "num_str_str",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -30,7 +29,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "number",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 16,
@@ -77,7 +75,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "string",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 16,
@@ -124,7 +121,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "string",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 16,
@@ -197,7 +193,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -219,7 +214,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -245,7 +239,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -306,7 +299,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -325,7 +317,6 @@
             "key": {
               "type": "Identifier",
               "name": "tup_2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -434,7 +425,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Array",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -458,7 +448,6 @@
                         "name": {
                           "type": "Identifier",
                           "name": "num_str_str",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 1,
@@ -539,7 +528,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

@@ -40,6 +40,7 @@ enum class NextTokenFlags : uint32_t {
     NUMERIC_SEPARATOR_ALLOWED = 1U << 1U,
     BIGINT_ALLOWED = 1U << 2U,
     UNARY_MINUS = 1U << 3U,
+    CHAR_PERCENT_ALLOWED = 1U << 4U,
 };
 
 class LexerPosition {
@@ -263,6 +264,16 @@ public:
         return GetToken().Start();
     }
 
+    NextTokenFlags DefaultNextTokenFlags() const
+    {
+        return defaultNextTokenFlags;
+    }
+
+    void SetDefaultNextTokenFlags(NextTokenFlags flags)
+    {
+        defaultNextTokenFlags = flags;
+    }
+
 protected:
     void NextToken(Keywords *kws);
     ArenaAllocator *Allocator();
@@ -371,11 +382,11 @@ protected:
 private:
     TemplateLiteralParserContext *tlCtx_ {};
     ArenaAllocator *allocator_;
-    Keywords *kws_ {};
     const parser::ParserContext *parserContext_;
     util::StringView source_;
     LexerPosition pos_;
     util::DiagnosticEngine &diagnosticEngine_;
+    NextTokenFlags defaultNextTokenFlags = NextTokenFlags::NONE;
 };
 
 class TemplateLiteralParserContext {

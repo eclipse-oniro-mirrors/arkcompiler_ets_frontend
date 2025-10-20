@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "foo",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -26,7 +25,6 @@
           "id": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -58,7 +56,6 @@
           "id": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

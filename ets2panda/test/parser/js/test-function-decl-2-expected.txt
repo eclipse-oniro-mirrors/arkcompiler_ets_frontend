@@ -8,7 +8,6 @@
         "id": {
           "type": "Identifier",
           "name": "await",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,

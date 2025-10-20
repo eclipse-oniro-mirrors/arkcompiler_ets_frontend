@@ -52,3 +52,13 @@ ark_tests/parser/js/classes/test-class-private-field.js
 parser/ets/constructor_with_optional_parameter.ets
 parser/ets/default_parameter8.ets
 parser/js/test-private-field.js
+
+# remove decorator
+parser/as/test_decorators1.ts
+parser/as/test_interface.ts
+parser/as/test_object_literal.ts
+parser/as/test_type_annotation.ts
+parser/ts/test-keyword-declare.ts
+parser/ts/test-keyword-declare7.ts
+parser/ts/test_decorator.ts
+parser/ts/test_decorator3.ts

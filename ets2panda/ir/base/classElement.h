@@ -31,25 +31,18 @@ public:
     NO_MOVE_SEMANTIC(ClassElement);
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit ClassElement(AstNodeType const elementType, Expression *const key, Expression *const value,
-                          ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed)
-        : TypedStatement(elementType, modifiers),
-          key_(key),
-          value_(value),
-          decorators_(allocator->Adapter()),
-          isComputed_(isComputed)
+                          ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
+                          bool const isComputed)
+        : TypedStatement(elementType, modifiers), key_(key), value_(value), isComputed_(isComputed)
     {
         InitHistory();
     }
 
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
     explicit ClassElement(AstNodeType const elementType, Expression *const key, Expression *const value,
-                          ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed,
-                          AstNodeHistory *history)
-        : TypedStatement(elementType, modifiers),
-          key_(key),
-          value_(value),
-          decorators_(allocator->Adapter()),
-          isComputed_(isComputed)
+                          ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
+                          bool const isComputed, AstNodeHistory *history)
+        : TypedStatement(elementType, modifiers), key_(key), value_(value), isComputed_(isComputed)
     {
         if (history != nullptr) {
             history_ = history;
@@ -93,44 +86,14 @@ public:
 
     [[nodiscard]] bool IsPrivateElement() const noexcept;
 
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
-    {
-        return GetHistoryNodeAs<ClassElement>()->decorators_;
-    }
-
     [[nodiscard]] bool IsComputed() const noexcept
     {
         return GetHistoryNodeAs<ClassElement>()->isComputed_;
     }
 
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = reinterpret_cast<ClassElement *>(GetOrCreateHistoryNode());
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    void AddDecorator(ir::Decorator *const decorator)
-    {
-        if (decorator != nullptr) {
-            auto newNode = reinterpret_cast<ClassElement *>(GetOrCreateHistoryNode());
-            newNode->decorators_.emplace_back(decorator);
-        }
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
-    }
-
     [[nodiscard]] virtual PrivateFieldKind ToPrivateFieldKind(bool isStatic) const = 0;
 
     void CopyTo(AstNode *other) const override;
-
-    void EmplaceDecorators(Decorator *decorators);
-    void ClearDecorators();
-    void SetValueDecorators(Decorator *decorators, size_t index);
-    const ArenaVector<Decorator *> &Decorators();
-    ArenaVector<Decorator *> &DecoratorsForUpdate();
 
 protected:
     friend class SizeOfNodeTest;
@@ -141,7 +104,6 @@ protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     Expression *key_;
     Expression *value_;
-    ArenaVector<Decorator *> decorators_;
     bool isComputed_;
     TSEnumMember *enumMember_ {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)

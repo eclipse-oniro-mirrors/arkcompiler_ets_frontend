@@ -23,7 +23,7 @@ class Expression;
 
 class ClassStaticBlock : public ClassElement {
 public:
-    explicit ClassStaticBlock(Expression *value, ArenaAllocator *allocator)
+    explicit ClassStaticBlock(Expression *value, [[maybe_unused]] ArenaAllocator *allocator)
         : ClassElement(AstNodeType::CLASS_STATIC_BLOCK, nullptr, value, ModifierFlags::NONE, allocator, false)
     {
         InitHistory();

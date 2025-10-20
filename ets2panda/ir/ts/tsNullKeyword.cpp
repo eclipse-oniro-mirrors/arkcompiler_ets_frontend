@@ -28,11 +28,9 @@ void TSNullKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &cb
     TransformAnnotations(cb, transformationName);
 }
 
-void TSNullKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSNullKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSNullKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSNullKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSNullKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSNullKeyword");
 }
 

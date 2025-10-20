@@ -44,9 +44,8 @@ void TSTupleType::Iterate(const NodeTraverser &cb) const
     for (auto *it : VectorIterationGuard(elementTypes_)) {
         cb(it);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void TSTupleType::Dump(ir::AstDumper *dumper) const
@@ -58,9 +57,7 @@ void TSTupleType::Dump(ir::AstDumper *dumper) const
 
 void TSTupleType::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSTupleType");
 }
 
@@ -186,12 +183,8 @@ TSTupleType *TSTupleType::Clone(ArenaAllocator *allocator, AstNode *parent)
     clone->SetRange(Range());
 
     // Clone annotations if any
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

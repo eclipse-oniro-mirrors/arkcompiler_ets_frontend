@@ -22,15 +22,11 @@
 namespace ark::es2panda::ir {
 SpreadElement::SpreadElement([[maybe_unused]] Tag const tag, SpreadElement const &other,
                              ArenaAllocator *const allocator)
-    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator), decorators_(allocator->Adapter())
+    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator)
 {
     optional_ = other.optional_;
 
     argument_ = other.argument_->Clone(allocator, this)->AsExpression();
-
-    for (auto *decorator : other.decorators_) {
-        decorators_.emplace_back(decorator->Clone(allocator, this));
-    }
 }
 
 SpreadElement *SpreadElement::Clone(ArenaAllocator *const allocator, AstNode *const parent)
@@ -98,13 +94,6 @@ bool SpreadElement::ConvertibleToRest(bool isDeclaration, bool allowPattern)
 
 void SpreadElement::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
-        }
-    }
-
     if (auto *transformedNode = cb(argument_); argument_ != transformedNode) {
         argument_->SetTransformedNode(transformationName, transformedNode);
         argument_ = transformedNode->AsExpression();
@@ -120,10 +109,6 @@ void SpreadElement::TransformChildren(const NodeTransformer &cb, std::string_vie
 
 void SpreadElement::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
-        cb(it);
-    }
-
     cb(argument_);
 
     if (TypeAnnotation() != nullptr) {
@@ -134,7 +119,6 @@ void SpreadElement::Iterate(const NodeTraverser &cb) const
 void SpreadElement::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", (type_ == AstNodeType::SPREAD_ELEMENT) ? "SpreadElement" : "RestElement"},
-                 {"decorators", AstDumper::Optional(decorators_)},
                  {"argument", argument_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())}});
 }

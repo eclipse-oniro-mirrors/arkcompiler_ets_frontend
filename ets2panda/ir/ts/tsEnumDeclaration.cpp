@@ -43,14 +43,6 @@ void TSEnumDeclaration::SetKey(Identifier *key)
 
 void TSEnumDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
-
     auto const key = Key();
     if (auto *transformedNode = cb(key); key != transformedNode) {
         key->SetTransformedNode(transformationName, transformedNode);
@@ -61,17 +53,13 @@ void TSEnumDeclaration::TransformChildren(const NodeTransformer &cb, std::string
     for (size_t ix = 0; ix < members.size(); ix++) {
         if (auto *transformedNode = cb(members[ix]); members[ix] != transformedNode) {
             members[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueMembers(transformedNode->AsDecorator(), ix);
+            SetValueMembers(transformedNode, ix);
         }
     }
 }
 
 void TSEnumDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
     auto const key = GetHistoryNode()->AsTSEnumDeclaration()->key_;
     cb(key);
 
@@ -83,7 +71,6 @@ void TSEnumDeclaration::Iterate(const NodeTraverser &cb) const
 void TSEnumDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "TSEnumDeclaration"},
-                 {"decorators", AstDumper::Optional(Decorators())},
                  {"id", Key()},
                  {"members", Members()},
                  {"const", IsConst()},
@@ -121,7 +108,9 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     } else if (key_->Parent()->IsDefaultExported() && dumper->IsDeclgen()) {
         dumper->Add("export default ");
     }
-    if (IsDeclare() || dumper->IsDeclgen()) {
+    if (dumper->IsDeclgen()) {
+        dumper->TryDeclareAmbientContext();
+    } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
     dumper->Add("enum ");
@@ -199,7 +188,6 @@ void TSEnumDeclaration::CopyTo(AstNode *other) const
     auto otherImpl = other->AsTSEnumDeclaration();
 
     otherImpl->scope_ = scope_;
-    otherImpl->decorators_ = decorators_;
     otherImpl->key_ = key_;
     otherImpl->members_ = members_;
     otherImpl->internalName_ = internalName_;
@@ -207,32 +195,6 @@ void TSEnumDeclaration::CopyTo(AstNode *other) const
     otherImpl->isConst_ = isConst_;
 
     TypedStatement::CopyTo(other);
-}
-
-void TSEnumDeclaration::EmplaceDecorators(Decorator *source)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSEnumDeclaration>();
-    newNode->decorators_.emplace_back(source);
-}
-
-void TSEnumDeclaration::ClearDecorators()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSEnumDeclaration>();
-    newNode->decorators_.clear();
-}
-
-void TSEnumDeclaration::SetValueDecorators(Decorator *source, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSEnumDeclaration>();
-    auto &arenaVector = newNode->decorators_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = source;
-}
-
-[[nodiscard]] ArenaVector<Decorator *> &TSEnumDeclaration::DecoratorsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<TSEnumDeclaration>();
-    return newNode->decorators_;
 }
 
 void TSEnumDeclaration::EmplaceMembers(AstNode *source)

@@ -6,57 +6,7 @@
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "decorators": [],
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "instanceof.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "instanceof.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "instanceof.ets"
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": "instanceof.ets"
-        }
-      }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
           "name": "ADeclared",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 20,
@@ -78,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -103,7 +52,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -164,7 +112,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -211,7 +158,6 @@
         "id": {
           "type": "Identifier",
           "name": "BDeclared",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 23,
@@ -233,7 +179,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -258,7 +203,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 23,
@@ -319,7 +263,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -355,6 +298,54 @@
         },
         "end": {
           "line": 25,
+          "column": 1,
+          "program": "instanceof.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "ETSGLOBAL",
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 1,
+              "program": "instanceof.ets"
+            },
+            "end": {
+              "line": 1,
+              "column": 1,
+              "program": "instanceof.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 1,
+            "program": "instanceof.ets"
+          },
+          "end": {
+            "line": 1,
+            "column": 1,
+            "program": "instanceof.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 1,
+          "program": "instanceof.ets"
+        },
+        "end": {
+          "line": 1,
           "column": 1,
           "program": "instanceof.ets"
         }

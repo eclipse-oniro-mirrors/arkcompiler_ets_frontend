@@ -217,13 +217,18 @@ static void ExpandOptionalParameterAnnotationsToUnions(public_lib::Context *ctx,
         auto param = p->AsETSParameterExpression();
         if (param->IsOptional() && param->Initializer() == nullptr) {
             ArenaVector<ir::TypeNode *> typeNodes(allocator->Adapter());
-            if (param->TypeAnnotation() != nullptr) {
-                typeNodes.emplace_back(param->TypeAnnotation());
-            }
+            auto *typeAnnotation = param->TypeAnnotation();
+
+            typeNodes.emplace_back(typeAnnotation);
             typeNodes.emplace_back(allocator->New<ir::ETSUndefinedType>(allocator));
+
             param->SetTypeAnnotation(
                 util::NodeAllocator::ForceSetParent<ir::ETSUnionType>(allocator, std::move(typeNodes), allocator));
             param->TypeAnnotation()->SetParent(param->Ident());
+
+            //  NOTE (DZ): temporary solution until node history starts working properly
+            param->TypeAnnotation()->SetOriginalNode(typeAnnotation);
+            typeAnnotation->SetParent(param->TypeAnnotation());
         }
     }
 }
@@ -247,6 +252,10 @@ static void ClearOptionalParameters(public_lib::Context *ctx, ir::ScriptFunction
                                                                                     allocator);
             ES2PANDA_ASSERT(param);
             param->SetParent(function);
+
+            //  NOTE (DZ): temporary solution until node history starts working properly
+            param->SetOriginalNode(oldParam);
+            oldParam->SetParent(param);
             param->SetOriginalNode(oldParam);
         }
         ES2PANDA_ASSERT(!param->AsETSParameterExpression()->IsOptional());
@@ -309,12 +318,12 @@ bool DefaultParametersInConstructorLowering::PerformForModule(public_lib::Contex
                 // store all nodes (which is function definition with default/optional parameters)
                 // to specific list, to process them later, as for now we can't modify AST in the
                 // middle of walking through it
-                foundNodes.push_back(ast->AsMethodDefinition());
+                foundNodes.emplace_back(ast->AsMethodDefinition());
             }
         }
     });
 
-    for (auto &it : foundNodes) {
+    for (auto *it : foundNodes) {
         ProcessGlobalFunctionDefinition(it, ctx);
     }
     return true;

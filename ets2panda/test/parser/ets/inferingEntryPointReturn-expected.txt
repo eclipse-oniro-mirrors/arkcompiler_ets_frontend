@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -91,7 +88,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Array",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 1,
@@ -163,7 +159,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -234,7 +229,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "a",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 19,
@@ -360,7 +354,6 @@
                           "param": {
                             "type": "Identifier",
                             "name": "e",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -443,7 +436,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

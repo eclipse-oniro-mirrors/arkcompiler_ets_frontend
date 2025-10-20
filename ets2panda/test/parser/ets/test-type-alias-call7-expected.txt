@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "Callback",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -43,7 +42,6 @@
                   }
                 }
               },
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -118,7 +116,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -140,7 +137,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -166,7 +162,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -227,7 +222,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

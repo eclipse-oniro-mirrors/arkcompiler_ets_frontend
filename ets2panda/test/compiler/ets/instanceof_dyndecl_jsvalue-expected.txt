@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "ADeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "ADeclared",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -89,7 +87,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -111,7 +108,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -137,7 +133,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -162,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_dyndecl_jsvalue.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_dyndecl_jsvalue.ets"
                     }
                   }
                 },
@@ -175,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_dyndecl_jsvalue.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_dyndecl_jsvalue.ets"
                   }
                 }
               },
@@ -188,123 +183,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_dyndecl_jsvalue.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_dyndecl_jsvalue.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_dyndecl_jsvalue.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_dyndecl_jsvalue.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -323,7 +211,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn_dyn_decl",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -349,7 +236,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn_dyn_decl",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -379,7 +265,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "ADeclared",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -401,7 +286,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 35,
+                              "column": 34,
                               "program": "instanceof_dyndecl_jsvalue.ets"
                             }
                           }
@@ -414,12 +299,11 @@
                           },
                           "end": {
                             "line": 22,
-                            "column": 35,
+                            "column": 34,
                             "program": "instanceof_dyndecl_jsvalue.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -428,7 +312,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 35,
+                          "column": 34,
                           "program": "instanceof_dyndecl_jsvalue.ets"
                         }
                       }
@@ -441,7 +325,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 35,
+                        "column": 34,
                         "program": "instanceof_dyndecl_jsvalue.ets"
                       }
                     }
@@ -473,7 +357,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -494,7 +377,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "JSValue",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -516,7 +398,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 33,
+                                "column": 32,
                                 "program": "instanceof_dyndecl_jsvalue.ets"
                               }
                             }
@@ -529,7 +411,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 33,
+                              "column": 32,
                               "program": "instanceof_dyndecl_jsvalue.ets"
                             }
                           }
@@ -542,7 +424,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 33,
+                            "column": 32,
                             "program": "instanceof_dyndecl_jsvalue.ets"
                           }
                         }
@@ -601,7 +483,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -641,482 +522,6 @@
           "program": "instanceof_dyndecl_jsvalue.ets"
         }
       }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "$dynmodule",
-          "decorators": [],
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": null
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": null
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [
-          {
-            "type": "ClassProperty",
-            "key": {
-              "type": "Identifier",
-              "name": "dynamic_import_tests_modules_instanceof0",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "accessibility": "public",
-            "static": true,
-            "readonly": true,
-            "declare": false,
-            "optional": false,
-            "computed": false,
-            "typeAnnotation": {
-              "type": "OpaqueType",
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "definite": false,
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          },
-          {
-            "type": "ClassStaticBlock",
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "<cctor>",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": true,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "Identifier",
-                            "name": "$dynmodule",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "dynamic_import_tests_modules_instanceof0",
-                            "decorators": [],
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "JSRuntime",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "loadModule",
-                              "decorators": [],
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              },
-                              "end": {
-                                "line": 1,
-                                "column": 1,
-                                "program": null
-                              }
-                            }
-                          },
-                          "arguments": [
-                            {
-                              "type": "StringLiteral",
-                              "value": "/home/anya/panda_reps/standalone_new/arkcompiler/runtime_core/static_core/tools/es2panda/test/parser/ets/dynamic_import_tests/modules/instanceof.ets",
-                              "loc": {
-                                "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                },
-                                "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
-                                }
-                              }
-                            }
-                          ],
-                          "optional": false,
-                          "loc": {
-                            "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            },
-                            "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          },
-                          "end": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        },
-                        "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "init",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "init",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "returnType": {
-                  "type": "OpaqueType",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": null
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": null
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": null
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": null
-        }
-      }
     }
   ],
   "loc": {
@@ -1132,4 +537,3 @@
     }
   }
 }
-TypeError: Right-hand side of instanceof expression must represent a type. [instanceof_dyndecl_jsvalue.ets:23:12]

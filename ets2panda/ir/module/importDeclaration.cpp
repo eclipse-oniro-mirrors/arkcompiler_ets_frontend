@@ -63,6 +63,9 @@ void ImportDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen()) {
+        return;
+    }
     dumper->Add("import ");
     auto const &specifiers = Specifiers();
     if (specifiers.size() == 1 &&
@@ -80,7 +83,25 @@ void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
     }
 
     dumper->Add(" from ");
-    Source()->Dump(dumper);
+
+    if (dumper->IsDeclgen()) {
+        auto fileName = Source()->Str();
+        auto len = fileName.Length();
+        if (fileName.EndsWith(".ets")) {
+            len -= 4U;
+            fileName = fileName.Substr(0, len);
+        }
+
+        std::string importFile = '\"' + util::Helpers::CreateEscapedString(fileName.Utf8());
+        if (fileName.Utf8().find('.', 1U) == std::string_view::npos) {
+            importFile += ".d";
+        }
+        importFile += '\"';
+
+        dumper->Add(importFile);
+    } else {
+        Source()->Dump(dumper);
+    }
     dumper->Add(";");
     dumper->Endl();
 }

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "field_decl",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -65,7 +63,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -84,7 +81,6 @@
             "key": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -120,7 +116,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -139,7 +134,6 @@
             "key": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -191,7 +185,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -210,7 +203,6 @@
             "key": {
               "type": "Identifier",
               "name": "d",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -262,7 +254,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -281,7 +272,6 @@
             "key": {
               "type": "Identifier",
               "name": "f",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -317,7 +307,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -336,7 +325,6 @@
             "key": {
               "type": "Identifier",
               "name": "g",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -372,7 +360,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -391,7 +378,6 @@
             "key": {
               "type": "Identifier",
               "name": "pi",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -443,7 +429,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -462,7 +447,6 @@
             "key": {
               "type": "Identifier",
               "name": "e",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 24,
@@ -514,7 +498,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 24,
@@ -533,7 +516,6 @@
             "key": {
               "type": "Identifier",
               "name": "h",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -585,7 +567,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -604,7 +585,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -629,7 +609,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -690,7 +669,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -737,7 +715,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -759,7 +736,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -785,7 +761,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -846,7 +821,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "NativeModule",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 21,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "MethodeOfClass",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "MethodeOfClass",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -85,7 +82,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "number",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -125,7 +121,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -211,7 +206,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -230,7 +224,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -255,7 +248,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 21,
@@ -316,7 +308,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -363,7 +354,6 @@
         "id": {
           "type": "Identifier",
           "name": "NativeString",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 29,
@@ -385,7 +375,6 @@
             "key": {
               "type": "Identifier",
               "name": "MethodeOfStatic",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 30,
@@ -411,7 +400,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "MethodeOfStatic",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 30,
@@ -439,7 +427,6 @@
                         "callee": {
                           "type": "Identifier",
                           "name": "globalFunction",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 31,
@@ -475,7 +462,6 @@
                                         "name": {
                                           "type": "Identifier",
                                           "name": "number",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 31,
@@ -515,7 +501,6 @@
                                         }
                                       }
                                     },
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 31,
@@ -572,7 +557,6 @@
                                           "callee": {
                                             "type": "Identifier",
                                             "name": "nativeModule",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 32,
@@ -604,7 +588,6 @@
                                         "property": {
                                           "type": "Identifier",
                                           "name": "MethodeOfClass",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 32,
@@ -637,7 +620,6 @@
                                         {
                                           "type": "Identifier",
                                           "name": "len",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 32,
@@ -788,7 +770,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 30,
@@ -807,7 +788,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 29,
@@ -832,7 +812,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 29,
@@ -893,7 +872,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -940,7 +918,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -962,7 +939,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -988,7 +964,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1049,7 +1024,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -1068,7 +1042,6 @@
             "key": {
               "type": "Identifier",
               "name": "globalFunction",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -1094,7 +1067,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "globalFunction",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -1132,7 +1104,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "number",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 16,
@@ -1172,7 +1143,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 16,
@@ -1228,7 +1198,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 16,
@@ -1274,7 +1243,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "number",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 17,
@@ -1314,7 +1282,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -1379,7 +1346,6 @@
                         "callee": {
                           "type": "Identifier",
                           "name": "exec",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 18,
@@ -1397,7 +1363,6 @@
                           {
                             "type": "Identifier",
                             "name": "length",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -1480,7 +1445,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -1499,7 +1463,6 @@
             "key": {
               "type": "Identifier",
               "name": "nativeModule",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 25,
@@ -1525,7 +1488,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "nativeModule",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -1550,7 +1512,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "NativeModule",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 25,
@@ -1604,7 +1565,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "NativeModule",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -1712,7 +1672,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,

@@ -64,7 +64,6 @@ shared_library("ts_bindings") {
 
   if (ark_standalone_build) {
     deps += [
-      "$ark_root/abc2program:arkts_abc2program_static",
       "$ark_root/bytecode_optimizer:libarktsbytecodeopt_frontend_static",
       "$ark_third_party_root/bounds_checking_function:libsec_shared",
     ]

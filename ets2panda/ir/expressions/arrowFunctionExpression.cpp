@@ -35,9 +35,7 @@ void ArrowFunctionExpression::Iterate(const NodeTraverser &cb) const
 {
     cb(func_);
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ArrowFunctionExpression::Dump(ir::AstDumper *dumper) const
@@ -49,9 +47,7 @@ void ArrowFunctionExpression::Dump(ir::AstDumper *dumper) const
 
 void ArrowFunctionExpression::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("(");
     if (func_->IsScriptFunction() && func_->AsScriptFunction()->IsAsyncFunc()) {
         dumper->Add("async ");
@@ -96,12 +92,8 @@ ArrowFunctionExpression *ArrowFunctionExpression::Clone(ArenaAllocator *const al
         clone->SetParent(parent);
     }
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

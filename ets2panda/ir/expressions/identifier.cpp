@@ -22,14 +22,10 @@
 
 namespace ark::es2panda::ir {
 Identifier::Identifier([[maybe_unused]] Tag const tag, Identifier const &other, ArenaAllocator *const allocator)
-    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator), decorators_(allocator->Adapter())
+    : AnnotatedExpression(static_cast<AnnotatedExpression const &>(other), allocator)
 {
     name_ = other.name_;
     flags_ = other.flags_;
-
-    for (auto *decorator : other.decorators_) {
-        decorators_.emplace_back(decorator->Clone(allocator, this));
-    }
     InitHistory();
 }
 
@@ -39,8 +35,8 @@ Identifier::Identifier(ArenaAllocator *const allocator) : Identifier(ERROR_LITER
     InitHistory();
 }
 
-Identifier::Identifier(util::StringView const name, ArenaAllocator *const allocator)
-    : AnnotatedExpression(AstNodeType::IDENTIFIER), name_(name), decorators_(allocator->Adapter())
+Identifier::Identifier(util::StringView const name, [[maybe_unused]] ArenaAllocator *const allocator)
+    : AnnotatedExpression(AstNodeType::IDENTIFIER), name_(name)
 {
     if (name == ERROR_LITERAL) {
         flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
@@ -48,8 +44,9 @@ Identifier::Identifier(util::StringView const name, ArenaAllocator *const alloca
     InitHistory();
 }
 
-Identifier::Identifier(util::StringView const name, TypeNode *const typeAnnotation, ArenaAllocator *const allocator)
-    : AnnotatedExpression(AstNodeType::IDENTIFIER, typeAnnotation), name_(name), decorators_(allocator->Adapter())
+Identifier::Identifier(util::StringView const name, TypeNode *const typeAnnotation,
+                       [[maybe_unused]] ArenaAllocator *const allocator)
+    : AnnotatedExpression(AstNodeType::IDENTIFIER, typeAnnotation), name_(name)
 {
     if (name == ERROR_LITERAL) {
         flags_ |= IdentifierFlags::ERROR_PLACEHOLDER;
@@ -77,13 +74,6 @@ Identifier *Identifier::Clone(ArenaAllocator *const allocator, AstNode *const pa
     return clone;
 }
 
-void Identifier::SetValueDecorators(Decorator *source, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<Identifier>();
-    auto &arenaVector = newNode->decorators_;
-    arenaVector[index] = source;
-}
-
 Identifier *Identifier::CloneReference(ArenaAllocator *const allocator, AstNode *const parent)
 {
     auto *const clone = Clone(allocator, parent);
@@ -102,24 +92,12 @@ void Identifier::TransformChildren(const NodeTransformer &cb, std::string_view c
             SetTsTypeAnnotation(static_cast<TypeNode *>(transformedNode));
         }
     }
-
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
 }
 
 void Identifier::Iterate(const NodeTraverser &cb) const
 {
     if (TypeAnnotation() != nullptr) {
         cb(TypeAnnotation());
-    }
-
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
     }
 }
 
@@ -142,8 +120,7 @@ void Identifier::Dump(ir::AstDumper *dumper) const
     dumper->Add({{"type", IsPrivateIdent() ? "PrivateIdentifier" : "Identifier"},
                  {"name", Name()},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
-                 {"optional", AstDumper::Optional(IsOptional())},
-                 {"decorators", Decorators()}});
+                 {"optional", AstDumper::Optional(IsOptional())}});
 }
 
 void Identifier::Dump(ir::SrcDumper *dumper) const

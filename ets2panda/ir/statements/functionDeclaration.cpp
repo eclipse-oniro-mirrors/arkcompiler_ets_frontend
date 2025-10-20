@@ -31,14 +31,6 @@ void FunctionDeclaration::SetFunction(ScriptFunction *func)
 
 void FunctionDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
-
     TransformAnnotations(cb, transformationName);
 
     auto const func = Function();
@@ -50,13 +42,7 @@ void FunctionDeclaration::TransformChildren(const NodeTransformer &cb, std::stri
 
 void FunctionDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto func = GetHistoryNode()->AsFunctionDeclaration()->func_;
     cb(func);
@@ -65,16 +51,13 @@ void FunctionDeclaration::Iterate(const NodeTraverser &cb) const
 void FunctionDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", Function()->IsOverload() ? "TSDeclareFunction" : "FunctionDeclaration"},
-                 {"decorators", AstDumper::Optional(Decorators())},
                  {"annotations", AstDumper::Optional(Annotations())},
                  {"function", Function()}});
 }
 
 void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     auto func = Function();
     if (func->IsNative()) {
         dumper->Add("native ");
@@ -125,37 +108,10 @@ void FunctionDeclaration::CopyTo(AstNode *other) const
 {
     auto otherImpl = other->AsFunctionDeclaration();
 
-    otherImpl->decorators_ = decorators_;
     otherImpl->func_ = func_;
     otherImpl->isAnonymous_ = isAnonymous_;
 
     AnnotationAllowed<Statement>::CopyTo(other);
-}
-
-void FunctionDeclaration::EmplaceDecorators(Decorator *decorators)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<FunctionDeclaration>();
-    newNode->decorators_.emplace_back(decorators);
-}
-
-void FunctionDeclaration::ClearDecorators()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<FunctionDeclaration>();
-    newNode->decorators_.clear();
-}
-
-void FunctionDeclaration::SetValueDecorators(Decorator *decorators, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<FunctionDeclaration>();
-    auto &arenaVector = newNode->decorators_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = decorators;
-}
-
-[[nodiscard]] ArenaVector<Decorator *> &FunctionDeclaration::DecoratorsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<FunctionDeclaration>();
-    return newNode->decorators_;
 }
 
 }  // namespace ark::es2panda::ir

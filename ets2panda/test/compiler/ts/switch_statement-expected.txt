@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "arg",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -89,7 +88,6 @@
       "discriminant": {
         "type": "Identifier",
         "name": "arg",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -180,7 +178,6 @@
                 "left": {
                   "type": "Identifier",
                   "name": "arg",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 21,

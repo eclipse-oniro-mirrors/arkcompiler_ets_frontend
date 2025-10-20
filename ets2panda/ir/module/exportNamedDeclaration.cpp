@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,6 @@
 namespace ark::es2panda::ir {
 void ExportNamedDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
-        }
-    }
-
     if (decl_ != nullptr) {
         if (auto *transformedNode = cb(decl_); decl_ != transformedNode) {
             decl_->SetTransformedNode(transformationName, transformedNode);
@@ -55,10 +48,6 @@ void ExportNamedDeclaration::TransformChildren(const NodeTransformer &cb, std::s
 
 void ExportNamedDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
-        cb(it);
-    }
-
     if (decl_ != nullptr) {
         cb(decl_);
     } else {
@@ -75,7 +64,6 @@ void ExportNamedDeclaration::Iterate(const NodeTraverser &cb) const
 void ExportNamedDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "ExportNamedDeclaration"},
-                 {"decorators", AstDumper::Optional(decorators_)},
                  {"declaration", AstDumper::Nullish(decl_)},
                  {"source", AstDumper::Nullish(source_)},
                  {"specifiers", specifiers_}});

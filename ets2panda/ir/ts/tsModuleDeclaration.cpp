@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,18 +20,10 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "ir/base/decorator.h"
 
 namespace ark::es2panda::ir {
 void TSModuleDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    for (auto *&it : VectorIterationGuard(decorators_)) {
-        if (auto *transformedNode = cb(it); it != transformedNode) {
-            it->SetTransformedNode(transformationName, transformedNode);
-            it = transformedNode->AsDecorator();
-        }
-    }
-
     if (auto *transformedNode = cb(name_); name_ != transformedNode) {
         name_->SetTransformedNode(transformationName, transformedNode);
         name_ = transformedNode->AsExpression();
@@ -47,10 +39,6 @@ void TSModuleDeclaration::TransformChildren(const NodeTransformer &cb, std::stri
 
 void TSModuleDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(decorators_)) {
-        cb(it);
-    }
-
     cb(name_);
 
     if (body_ != nullptr) {
@@ -60,11 +48,8 @@ void TSModuleDeclaration::Iterate(const NodeTraverser &cb) const
 
 void TSModuleDeclaration::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", "TSModuleDeclaration"},
-                 {"decorators", AstDumper::Optional(decorators_)},
-                 {"id", name_},
-                 {"body", AstDumper::Optional(body_)},
-                 {"global", global_}});
+    dumper->Add(
+        {{"type", "TSModuleDeclaration"}, {"id", name_}, {"body", AstDumper::Optional(body_)}, {"global", global_}});
 }
 
 void TSModuleDeclaration::Dump(ir::SrcDumper *dumper) const

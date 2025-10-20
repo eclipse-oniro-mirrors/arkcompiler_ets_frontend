@@ -24,29 +24,20 @@ class ExportSpecifier;
 
 class ExportNamedDeclaration : public Statement {
 public:
-    explicit ExportNamedDeclaration(ArenaAllocator *allocator, StringLiteral *source,
+    explicit ExportNamedDeclaration([[maybe_unused]] ArenaAllocator *allocator, StringLiteral *source,
                                     ArenaVector<ExportSpecifier *> &&specifiers)
-        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION),
-          decorators_(allocator->Adapter()),
-          source_(source),
-          specifiers_(std::move(specifiers))
+        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION), source_(source), specifiers_(std::move(specifiers))
     {
     }
 
-    explicit ExportNamedDeclaration(ArenaAllocator *allocator, AstNode *decl,
+    explicit ExportNamedDeclaration([[maybe_unused]] ArenaAllocator *allocator, AstNode *decl,
                                     ArenaVector<ExportSpecifier *> &&specifiers)
-        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION),
-          decorators_(allocator->Adapter()),
-          decl_(decl),
-          specifiers_(std::move(specifiers))
+        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION), decl_(decl), specifiers_(std::move(specifiers))
     {
     }
 
-    explicit ExportNamedDeclaration(ArenaAllocator *allocator, AstNode *decl)
-        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION),
-          decorators_(allocator->Adapter()),
-          decl_(decl),
-          specifiers_(allocator->Adapter())
+    explicit ExportNamedDeclaration([[maybe_unused]] ArenaAllocator *allocator, AstNode *decl)
+        : Statement(AstNodeType::EXPORT_NAMED_DECLARATION), decl_(decl), specifiers_(allocator->Adapter())
     {
     }
 
@@ -70,16 +61,6 @@ public:
         specifiers_ = std::move(specifiers);
     }
 
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return !inTs && (source_ == nullptr);
-    }
-
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -95,7 +76,6 @@ public:
     }
 
 private:
-    ArenaVector<Decorator *> decorators_;
     StringLiteral *source_ {};
     AstNode *decl_ {};
     ArenaVector<ExportSpecifier *> specifiers_;

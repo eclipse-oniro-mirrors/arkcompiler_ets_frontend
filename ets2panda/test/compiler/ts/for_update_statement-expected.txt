@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -92,7 +91,6 @@
                   }
                 }
               },
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -156,7 +154,6 @@
         "left": {
           "type": "Identifier",
           "name": "i",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 18,
@@ -206,7 +203,6 @@
         "argument": {
           "type": "Identifier",
           "name": "i",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 18,
@@ -244,7 +240,6 @@
               "left": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -264,7 +259,6 @@
                 "left": {
                   "type": "Identifier",
                   "name": "b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -281,7 +275,6 @@
                 "right": {
                   "type": "Identifier",
                   "name": "i",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,

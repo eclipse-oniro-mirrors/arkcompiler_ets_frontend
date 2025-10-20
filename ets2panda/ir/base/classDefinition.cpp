@@ -274,9 +274,7 @@ void ClassDefinition::Iterate(const NodeTraverser &cb) const
         cb(implement);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     auto const ctor = GetHistoryNodeAs<ClassDefinition>()->ctor_;
     if (ctor != nullptr) {
@@ -383,7 +381,9 @@ void ClassDefinition::DumpPrefix(ir::SrcDumper *dumper) const
         dumper->Add("export default ");
     }
 
-    if (IsDeclare() || dumper->IsDeclgen()) {
+    if (dumper->IsDeclgen()) {
+        dumper->TryDeclareAmbientContext();
+    } else if (IsDeclare()) {
         dumper->Add("declare ");
     }
 
@@ -425,6 +425,7 @@ bool ClassDefinition::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassDefinition::Dump(ir::SrcDumper *dumper) const
 {
+    auto guard = dumper->BuildAmbientContextGuard();
     // NOTE: plugin API fails
     auto const ident = Ident();
     if ((ident->Name().StartsWith("$dynmodule")) || (ident->Name().StartsWith("$jscall"))) {
@@ -442,9 +443,7 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     DumpPrefix(dumper);
     ident_->Dump(dumper);

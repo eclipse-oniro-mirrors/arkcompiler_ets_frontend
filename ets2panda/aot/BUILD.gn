@@ -68,7 +68,6 @@ ohos_executable("ets2panda") {
   }
 
   external_deps = [
-    "runtime_core:libarktsabc2program_package",
     "runtime_core:libarktsassembler_package",
     "runtime_core:libarktsbase_package",
     "runtime_core:libarktsbytecodeopt_package",

@@ -18,6 +18,6 @@
 }
 
 /* @@? 17:3 Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
-/* @@? 17:13 Error TypeError: Cannot find type 'ring'. */
+/* @@? 17:7 Error TypeError: Cannot find type 'ring'. */
 /* @@? 17:18 Error TypeError: Invalid value for annotation field, expected a constant literal. */
 /* @@? 17:19 Error TypeError: Initializer has 2 elements, but tuple requires 0 */

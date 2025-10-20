@@ -15,7 +15,6 @@
             {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -32,7 +31,6 @@
             {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -50,7 +48,6 @@
           "body": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -111,7 +108,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -128,7 +124,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -154,7 +149,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -172,7 +166,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "c",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -247,7 +240,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -264,7 +256,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -290,7 +281,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 21,
@@ -311,7 +301,6 @@
                 "left": {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 21,
@@ -331,7 +320,6 @@
                   "left": {
                     "type": "Identifier",
                     "name": "b",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 21,
@@ -352,7 +340,6 @@
                     "argument": {
                       "type": "Identifier",
                       "name": "c",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 21,
@@ -466,7 +453,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -483,7 +469,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -509,7 +494,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 23,
@@ -532,7 +516,6 @@
                     "argument": {
                       "type": "Identifier",
                       "name": "c",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 23,
@@ -643,7 +626,6 @@
                 {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -660,7 +642,6 @@
                 {
                   "type": "Identifier",
                   "name": "b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -677,7 +658,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 25,
@@ -695,7 +675,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 25,
@@ -738,7 +717,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -755,7 +733,6 @@
           {
             "type": "Identifier",
             "name": "c",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -813,7 +790,6 @@
                 {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 27,
@@ -830,7 +806,6 @@
                 {
                   "type": "Identifier",
                   "name": "b",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 27,
@@ -847,7 +822,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 27,
@@ -865,7 +839,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 27,
@@ -908,7 +881,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -925,7 +897,6 @@
           {
             "type": "Identifier",
             "name": "c",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -974,7 +945,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -991,7 +961,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -1017,7 +986,6 @@
                 {
                   "type": "Identifier",
                   "name": "c",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 29,
@@ -1035,7 +1003,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "c",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 29,
@@ -1078,7 +1045,6 @@
           {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -1095,7 +1061,6 @@
           {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -1144,7 +1109,6 @@
           "id": {
             "type": "Identifier",
             "name": "f",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 31,
@@ -1170,7 +1134,6 @@
                 {
                   "type": "Identifier",
                   "name": "a",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 31,
@@ -1188,7 +1151,6 @@
               "body": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 31,
@@ -1264,7 +1226,6 @@
         "left": {
           "type": "Identifier",
           "name": "f",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 33,
@@ -1290,7 +1251,6 @@
               {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 33,
@@ -1308,7 +1268,6 @@
             "body": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 33,
@@ -1381,7 +1340,6 @@
         "id": {
           "type": "Identifier",
           "name": "g",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 35,
@@ -1402,7 +1360,6 @@
           {
             "type": "Identifier",
             "name": "func",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 35,
@@ -1427,7 +1384,6 @@
                 "callee": {
                   "type": "Identifier",
                   "name": "func",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 35,
@@ -1533,7 +1489,6 @@
         "callee": {
           "type": "Identifier",
           "name": "g",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 37,
@@ -1560,7 +1515,6 @@
                 {
                   "type": "Identifier",
                   "name": "val",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 37,
@@ -1582,7 +1536,6 @@
                 "argument": {
                   "type": "Identifier",
                   "name": "val",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 37,
@@ -1754,7 +1707,6 @@
           "id": {
             "type": "Identifier",
             "name": "arrowWithParen",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 41,
@@ -1780,7 +1732,6 @@
                 {
                   "type": "Identifier",
                   "name": "val",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 41,
@@ -1806,7 +1757,6 @@
                     "key": {
                       "type": "Identifier",
                       "name": "key",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 41,
@@ -1823,7 +1773,6 @@
                     "value": {
                       "type": "Identifier",
                       "name": "val",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 41,

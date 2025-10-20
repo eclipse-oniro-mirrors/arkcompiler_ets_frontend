@@ -23,38 +23,6 @@
 
 namespace ark::es2panda::ir {
 
-void VariableDeclaration::EmplaceDecorators(Decorator *source)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
-    newNode->decorators_.emplace_back(source);
-}
-
-void VariableDeclaration::ClearDecorators()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
-    newNode->decorators_.clear();
-}
-
-void VariableDeclaration::SetValueDecorators(Decorator *source, size_t index)
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
-    auto &arenaVector = newNode->decorators_;
-    ES2PANDA_ASSERT(arenaVector.size() > index);
-    arenaVector[index] = source;
-}
-
-[[nodiscard]] const ArenaVector<Decorator *> &VariableDeclaration::Decorators()
-{
-    auto newNode = this->GetHistoryNodeAs<VariableDeclaration>();
-    return newNode->decorators_;
-}
-
-[[nodiscard]] ArenaVector<Decorator *> &VariableDeclaration::DecoratorsForUpdate()
-{
-    auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
-    return newNode->decorators_;
-}
-
 void VariableDeclaration::EmplaceDeclarators(VariableDeclarator *source)
 {
     auto newNode = this->GetOrCreateHistoryNodeAs<VariableDeclaration>();
@@ -89,21 +57,7 @@ void VariableDeclaration::SetValueDeclarators(VariableDeclarator *source, size_t
 
 void VariableDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
-    auto const &decorators = Decorators();
-    for (size_t index = 0; index < decorators.size(); ++index) {
-        if (auto *transformedNode = cb(decorators[index]); decorators[index] != transformedNode) {
-            decorators[index]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), index);
-        }
-    }
-
-    auto const &annotations = Annotations();
-    for (size_t index = 0; index < annotations.size(); ++index) {
-        if (auto *transformedNode = cb(annotations[index]); annotations[index] != transformedNode) {
-            annotations[index]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), index);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 
     auto const &declarators = Declarators();
     for (size_t index = 0; index < declarators.size(); ++index) {
@@ -116,13 +70,7 @@ void VariableDeclaration::TransformChildren(const NodeTransformer &cb, std::stri
 
 void VariableDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 
     for (auto *it : VectorIterationGuard(Declarators())) {
         cb(it);
@@ -154,16 +102,13 @@ void VariableDeclaration::Dump(ir::AstDumper *dumper) const
     dumper->Add({{"type", "VariableDeclaration"},
                  {"declarations", Declarators()},
                  {"kind", kind},
-                 {"decorators", AstDumper::Optional(Decorators())},
                  {"annotations", AstDumper::Optional(Annotations())},
                  {"declare", AstDumper::Optional(IsDeclare())}});
 }
 
 void VariableDeclaration::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     if (IsDeclare()) {
         dumper->Add("declare ");
@@ -201,14 +146,8 @@ VariableDeclaration::VariableDeclaration([[maybe_unused]] Tag const tag, Variabl
                                          ArenaAllocator *const allocator)
     : AnnotationAllowed<Statement>(static_cast<AnnotationAllowed<Statement> const &>(other)),
       kind_(other.kind_),
-      decorators_(allocator->Adapter()),
       declarators_(allocator->Adapter())
 {
-    for (auto const &d : other.decorators_) {
-        decorators_.emplace_back(d->Clone(allocator, nullptr));
-        decorators_.back()->SetParent(this);
-    }
-
     for (auto const &d : other.declarators_) {
         auto *dClone = d->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(dClone != nullptr);
@@ -223,14 +162,8 @@ VariableDeclaration::VariableDeclaration([[maybe_unused]] Tag const tag, Variabl
                                          ArenaAllocator *const allocator, AstNodeHistory *history)
     : AnnotationAllowed<Statement>(static_cast<AnnotationAllowed<Statement> const &>(other)),
       kind_(other.kind_),
-      decorators_(allocator->Adapter()),
       declarators_(allocator->Adapter())
 {
-    for (auto const &d : other.decorators_) {
-        decorators_.emplace_back(d->Clone(allocator, nullptr));
-        decorators_.back()->SetParent(this);
-    }
-
     for (auto const &d : other.declarators_) {
         auto *dClone = d->Clone(allocator, nullptr);
         ES2PANDA_ASSERT(dClone != nullptr);
@@ -252,6 +185,12 @@ VariableDeclaration *VariableDeclaration::Clone(ArenaAllocator *const allocator,
     if (parent != nullptr) {
         clone->SetParent(parent);
     }
+
+    // Clone annotations if any
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
+    }
+
     clone->SetRange(Range());
     return clone;
 }
@@ -287,9 +226,7 @@ void VariableDeclaration::CopyTo(AstNode *other) const
     auto otherImpl = other->AsVariableDeclaration();
 
     otherImpl->kind_ = kind_;
-    otherImpl->decorators_ = decorators_;
     otherImpl->declarators_ = declarators_;
-
     AnnotationAllowed<Statement>::CopyTo(other);
 }
 

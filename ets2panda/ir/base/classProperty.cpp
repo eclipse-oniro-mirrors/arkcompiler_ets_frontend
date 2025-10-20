@@ -59,21 +59,7 @@ void ClassProperty::TransformChildren(const NodeTransformer &cb, std::string_vie
         }
     }
 
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
-        }
-    }
-
-    auto const &annotations = Annotations();
-    for (size_t ix = 0; ix < annotations.size(); ix++) {
-        if (auto *transformedNode = cb(annotations[ix]); annotations[ix] != transformedNode) {
-            annotations[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueAnnotations(transformedNode->AsAnnotationUsage(), ix);
-        }
-    }
+    TransformAnnotations(cb, transformationName);
 }
 
 void ClassProperty::Iterate(const NodeTraverser &cb) const
@@ -90,13 +76,7 @@ void ClassProperty::Iterate(const NodeTraverser &cb) const
         cb(TypeAnnotation());
     }
 
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
-
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ClassProperty::Dump(ir::AstDumper *dumper) const
@@ -112,22 +92,20 @@ void ClassProperty::Dump(ir::AstDumper *dumper) const
                  {"computed", IsComputed()},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"definite", IsDefinite()},
-                 {"decorators", Decorators()},
                  {"annotations", AstDumper::Optional(Annotations())}});
 }
 
 void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_);
-    if (dumper->IsDeclgen()) {
-        if (key_->Parent()->IsExported()) {
-            dumper->Add("export declare ");
-        } else if (key_->Parent()->IsDefaultExported()) {
-            dumper->Add("export default declare ");
-        }
-    }
 
     if (compiler::HasGlobalClassParent(this)) {
+        if (IsExported()) {
+            dumper->Add("export ");
+        }
+        if (dumper->IsDeclgen()) {
+            dumper->Add("declare ");
+        }
         if (key_->Parent()->IsConst()) {
             dumper->Add("const ");
         } else {
@@ -141,8 +119,6 @@ void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
             dumper->Add("private ");
         } else if (IsProtected()) {
             dumper->Add("protected ");
-        } else if (IsInternal()) {
-            dumper->Add("internal ");
         } else {
             dumper->Add("public ");
         }
@@ -178,9 +154,7 @@ bool ClassProperty::DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassProperty::DumpPrefix(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     if (DumpNamespaceForDeclGen(dumper)) {
         return;
     }
@@ -238,6 +212,9 @@ bool ClassProperty::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const
 
 void ClassProperty::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen() && IsInternal()) {
+        return;
+    }
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
@@ -262,13 +239,14 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
 
     DumpCheckerTypeForDeclGen(dumper);
 
-    if (value_ != nullptr && !dumper->IsDeclgen()) {
-        dumper->Add(" = ");
-        Value()->Dump(dumper);
+    if (value_ != nullptr) {
+        if (!dumper->IsDeclgen() || Parent()->IsAnnotationDeclaration()) {
+            dumper->Add(" = ");
+            Value()->Dump(dumper);
+        }
     }
 
     dumper->Add(";");
-    dumper->Endl();
 }
 
 void ClassProperty::Compile(compiler::PandaGen *pg) const
@@ -313,16 +291,8 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
         typeAnnotation->SetParent(clone);
     }
 
-    for (auto *const decorator : Decorators()) {
-        clone->AddDecorator(decorator->Clone(allocator, clone));
-    }
-
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            annotationUsages.push_back(annotationUsage->Clone(allocator, clone)->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     clone->SetRange(Range());

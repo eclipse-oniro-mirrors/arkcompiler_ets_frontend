@@ -55,7 +55,6 @@
           "id": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,

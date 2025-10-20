@@ -38,12 +38,9 @@ public:
     NO_COPY_SEMANTIC(ObjectExpression);
     NO_MOVE_SEMANTIC(ObjectExpression);
 
-    explicit ObjectExpression(AstNodeType nodeType, ArenaAllocator *allocator, ArenaVector<Expression *> &&properties,
-                              bool trailingComma)
-        : AnnotatedExpression(nodeType),
-          decorators_(allocator->Adapter()),
-          properties_(std::move(properties)),
-          trailingComma_(trailingComma)
+    explicit ObjectExpression(AstNodeType nodeType, [[maybe_unused]] ArenaAllocator *allocator,
+                              ArenaVector<Expression *> &&properties, bool trailingComma)
+        : AnnotatedExpression(nodeType), properties_(std::move(properties)), trailingComma_(trailingComma)
     {
     }
     explicit ObjectExpression(Tag tag, ObjectExpression const &other, ArenaAllocator *allocator);
@@ -64,21 +61,6 @@ public:
     [[nodiscard]] bool IsOptional() const noexcept
     {
         return optional_;
-    }
-
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
-    {
-        return decorators_;
-    }
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
     }
 
     [[nodiscard]] ObjectExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
@@ -125,7 +107,6 @@ private:
     std::tuple<bool, varbinder::Variable *, checker::Type *, varbinder::LocalVariable *> CheckPatternIsShorthand(
         CheckPatternIsShorthandArgs *args);
 
-    ArenaVector<Decorator *> decorators_;
     ArenaVector<Expression *> properties_;
     bool isDeclaration_ {};
     bool trailingComma_ {};

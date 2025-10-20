@@ -94,6 +94,7 @@ struct SourceFile {
     bool isModule {};
     // NOTE(dkofanov): Should be aligned with 'Program::moduleInfo_'.
     bool isDeclForDynamicStaticInterop {};
+    bool isExternalSourceImport {};
     std::string_view dest {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };

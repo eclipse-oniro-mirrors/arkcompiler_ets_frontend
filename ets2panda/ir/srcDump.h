@@ -52,10 +52,7 @@ public:
     void Add(float f);
     void Add(double d);
 
-    std::string Str() const
-    {
-        return ss_.str();
-    }
+    std::string Str() const;
 
     void IncrIndent();
     void DecrIndent();
@@ -64,6 +61,34 @@ public:
     bool IsDeclgen() const;
     void DumpVariant(NodeVariant &node);
     void DumpNode(const std::string &key);
+
+    class AmbientContextGuard {
+    public:
+        explicit AmbientContextGuard(bool *ambientDeclPtr) : ambientDeclPtr_ {ambientDeclPtr}, prev_ {*ambientDeclPtr}
+        {
+        }
+
+        ~AmbientContextGuard()
+        {
+            *ambientDeclPtr_ = prev_;
+        }
+
+    private:
+        bool *ambientDeclPtr_;
+        bool prev_;
+    };
+    [[nodiscard]] AmbientContextGuard BuildAmbientContextGuard()
+    {
+        return AmbientContextGuard {&ambientWasDeclared_};
+    }
+    void TryDeclareAmbientContext()
+    {
+        ES2PANDA_ASSERT(IsDeclgen());
+        if (!ambientWasDeclared_) {
+            Add("declare ");
+            ambientWasDeclared_ = true;
+        }
+    }
 
     template <typename T>
     void DumpNodeIfPointer(T *value);
@@ -97,6 +122,7 @@ private:
     std::string indent_;
     bool isDeclgen_ = false;
     bool isIndirectDepPhase_ = false;
+    bool ambientWasDeclared_ = false;
     std::unordered_map<std::string, NodeVariant> unExportNode_;
 
     std::queue<std::function<void()>> taskQueue_;

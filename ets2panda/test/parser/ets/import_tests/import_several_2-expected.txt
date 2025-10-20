@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -74,7 +72,6 @@
           "local": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -91,7 +88,6 @@
           "imported": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -138,7 +134,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -160,7 +155,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -186,7 +180,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -247,7 +240,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -266,7 +258,6 @@
             "key": {
               "type": "Identifier",
               "name": "x",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -285,7 +276,6 @@
               "callee": {
                 "type": "Identifier",
                 "name": "foo",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -338,7 +328,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

@@ -172,12 +172,7 @@ ir::AnnotatedExpression *TSParser::ParsePatternElementGetReturnNode(ExpressionPa
             ir::AnnotatedExpression *returnNode = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
             ES2PANDA_ASSERT(returnNode != nullptr);
 
-            if (returnNode->AsIdentifier()->Decorators().empty()) {
-                returnNode->SetRange(Lexer()->GetToken().Loc());
-            } else {
-                returnNode->SetRange(
-                    {returnNode->AsIdentifier()->Decorators().front()->Start(), Lexer()->GetToken().End()});
-            }
+            returnNode->SetRange(Lexer()->GetToken().Loc());
 
             Lexer()->NextToken();
 

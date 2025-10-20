@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "aliased_var",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "aliased_var",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -107,7 +105,6 @@
           "local": {
             "type": "Identifier",
             "name": "aliased_func",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -124,7 +121,6 @@
           "imported": {
             "type": "Identifier",
             "name": "aliased_func",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -156,7 +152,6 @@
           "local": {
             "type": "Identifier",
             "name": "AliasedClass",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -173,7 +168,6 @@
           "imported": {
             "type": "Identifier",
             "name": "AliasedClass",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -220,7 +214,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -242,7 +235,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -268,7 +260,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -313,7 +304,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -330,7 +320,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "print",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -366,7 +355,6 @@
                             "left": {
                               "type": "Identifier",
                               "name": "aliased_var",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -444,7 +432,6 @@
                         "callee": {
                           "type": "Identifier",
                           "name": "aliased_func",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 21,
@@ -501,7 +488,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "AliasedClass",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 23,
@@ -541,7 +527,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -564,7 +549,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "AliasedClass",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 23,
@@ -655,7 +639,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "tmp_var",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -672,7 +655,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "test_method",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -770,7 +752,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "class_instance_creation",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -93,7 +90,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 17,
@@ -169,7 +165,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -195,7 +190,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -256,7 +250,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 20,
@@ -275,7 +268,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -301,7 +293,6 @@
                     "id": {
                       "type": "Identifier",
                       "name": "constructor",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 1,
@@ -331,7 +322,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "String",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 23,
@@ -371,7 +361,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -418,7 +407,6 @@
                               }
                             }
                           },
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -489,7 +477,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 23,
@@ -504,7 +491,6 @@
                 }
               }
             ],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -523,7 +509,6 @@
             "key": {
               "type": "Identifier",
               "name": "inst1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -546,7 +531,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "class_instance_creation",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 26,
@@ -613,7 +597,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "class_instance_creation",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 26,
@@ -654,7 +637,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,
@@ -673,7 +655,6 @@
             "key": {
               "type": "Identifier",
               "name": "inst2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 27,
@@ -696,7 +677,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "class_instance_creation",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 27,
@@ -780,7 +760,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "class_instance_creation",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 27,
@@ -821,7 +800,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -840,7 +818,6 @@
             "key": {
               "type": "Identifier",
               "name": "inst3",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -863,7 +840,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "class_instance_creation",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 28,
@@ -963,7 +939,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "class_instance_creation",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 28,
@@ -1004,7 +979,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 28,
@@ -1051,7 +1025,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -1073,7 +1046,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -1099,7 +1071,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -1160,7 +1131,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

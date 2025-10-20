@@ -27,7 +27,6 @@
             "local": {
               "type": "Identifier",
               "name": "Test1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -44,7 +43,6 @@
             "imported": {
               "type": "Identifier",
               "name": "Test1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -124,7 +122,6 @@
             "local": {
               "type": "Identifier",
               "name": "int32",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -141,7 +138,6 @@
             "imported": {
               "type": "Identifier",
               "name": "int32",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -201,7 +197,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -223,7 +218,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -249,7 +243,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -310,7 +303,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

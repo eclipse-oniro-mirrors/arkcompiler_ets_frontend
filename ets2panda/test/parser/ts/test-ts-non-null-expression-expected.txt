@@ -24,7 +24,6 @@
                 }
               }
             },
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -93,7 +92,6 @@
           "expression": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -157,7 +155,6 @@
           "expression": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -221,7 +218,6 @@
           "expression": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -285,7 +281,6 @@
           "expression": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -346,7 +341,6 @@
         "left": {
           "type": "Identifier",
           "name": "a",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 22,
@@ -368,7 +362,6 @@
             "expression": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -398,7 +391,6 @@
           "right": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

@@ -28,11 +28,9 @@ void TSUnknownKeyword::TransformChildren([[maybe_unused]] const NodeTransformer 
     TransformAnnotations(cb, transformationName);
 }
 
-void TSUnknownKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSUnknownKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSUnknownKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSUnknownKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSUnknownKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSUnknownKeyword");
 }
 

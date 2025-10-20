@@ -28,11 +28,9 @@ void TSObjectKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &
     TransformAnnotations(cb, transformationName);
 }
 
-void TSObjectKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSObjectKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSObjectKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSObjectKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSObjectKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSObjectKeyword");
 }
 

@@ -176,3 +176,7 @@ ast/parser/ets/staticFunctionCallOfObject.ets
 ast/compiler/ets/export_type_class_multiple_times.ets
 ast/compiler/ets/export_type_interface_multiple_times.ets
 ast/compiler/ets/import_tests/export_multi_error.ets
+
+# remove decorator
+ast/parser/ts/test_decorator5.ts
+ast/parser/ts/InvalidStatements.ts

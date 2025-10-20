@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "Bitops3BitBitsInByte",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "fast3bitlookup",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fast3bitlookup",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -93,7 +90,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 17,
@@ -162,7 +158,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -228,7 +223,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -294,7 +288,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "c",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 20,
@@ -333,7 +326,6 @@
                             "left": {
                               "type": "Identifier",
                               "name": "bi3b",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -356,7 +348,6 @@
                                 "left": {
                                   "type": "Identifier",
                                   "name": "b",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 20,
@@ -488,7 +479,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "c",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 21,
@@ -527,7 +517,6 @@
                             "left": {
                               "type": "Identifier",
                               "name": "bi3b",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 21,
@@ -550,7 +539,6 @@
                                 "left": {
                                   "type": "Identifier",
                                   "name": "b",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 21,
@@ -682,7 +670,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "c",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -721,7 +708,6 @@
                             "left": {
                               "type": "Identifier",
                               "name": "bi3b",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 22,
@@ -744,7 +730,6 @@
                                 "left": {
                                   "type": "Identifier",
                                   "name": "b",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 22,
@@ -873,7 +858,6 @@
                       "argument": {
                         "type": "Identifier",
                         "name": "c",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 23,
@@ -941,7 +925,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -960,7 +943,6 @@
             "key": {
               "type": "Identifier",
               "name": "n1",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -1012,7 +994,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,
@@ -1031,7 +1012,6 @@
             "key": {
               "type": "Identifier",
               "name": "n2",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 27,
@@ -1083,7 +1063,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -1102,7 +1081,6 @@
             "key": {
               "type": "Identifier",
               "name": "expected",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 28,
@@ -1154,7 +1132,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 28,
@@ -1173,7 +1150,6 @@
             "key": {
               "type": "Identifier",
               "name": "run",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 30,
@@ -1199,7 +1175,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "run",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 30,
@@ -1258,7 +1233,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 31,
@@ -1341,7 +1315,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 32,
@@ -1405,7 +1378,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 32,
@@ -1439,7 +1411,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "n1",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 32,
@@ -1488,7 +1459,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "x",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 32,
@@ -1543,7 +1513,6 @@
                                         }
                                       }
                                     },
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 33,
@@ -1607,7 +1576,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "y",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 33,
@@ -1641,7 +1609,6 @@
                                 "property": {
                                   "type": "Identifier",
                                   "name": "n2",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 33,
@@ -1690,7 +1657,6 @@
                               "argument": {
                                 "type": "Identifier",
                                 "name": "y",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 33,
@@ -1728,7 +1694,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "sum",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 34,
@@ -1749,7 +1714,6 @@
                                         "object": {
                                           "type": "Identifier",
                                           "name": "Bitops3BitBitsInByte",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 34,
@@ -1766,7 +1730,6 @@
                                         "property": {
                                           "type": "Identifier",
                                           "name": "fast3bitlookup",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 34,
@@ -1799,7 +1762,6 @@
                                         {
                                           "type": "Identifier",
                                           "name": "y",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 34,
@@ -1917,7 +1879,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -1934,7 +1895,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -1967,7 +1927,6 @@
                           {
                             "type": "Identifier",
                             "name": "sum",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 37,
@@ -2082,7 +2041,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 30,
@@ -2101,7 +2059,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -2126,7 +2083,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -2187,7 +2143,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -2234,7 +2189,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -2256,7 +2210,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 41,
@@ -2282,7 +2235,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 41,
@@ -2326,7 +2278,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 42,
@@ -2349,7 +2300,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "Bitops3BitBitsInByte",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 42,
@@ -2440,7 +2390,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 43,
@@ -2457,7 +2406,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "run",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 43,
@@ -2555,7 +2503,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 41,

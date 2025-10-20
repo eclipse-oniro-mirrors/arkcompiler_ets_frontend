@@ -9,7 +9,6 @@
         "left": {
           "type": "Identifier",
           "name": "a",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 17,
@@ -29,7 +28,6 @@
           "left": {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -49,7 +47,6 @@
             "left": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -66,7 +63,6 @@
             "right": {
               "type": "Identifier",
               "name": "d",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -146,7 +142,6 @@
             "left": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -166,7 +161,6 @@
               "left": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 18,
@@ -183,7 +177,6 @@
               "right": {
                 "type": "Identifier",
                 "name": "c",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 18,
@@ -229,7 +222,6 @@
             "left": {
               "type": "Identifier",
               "name": "d",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -246,7 +238,6 @@
             "right": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -345,7 +336,6 @@
               "left": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -362,7 +352,6 @@
               "right": {
                 "type": "Identifier",
                 "name": "b",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -392,7 +381,6 @@
             "right": {
               "type": "Identifier",
               "name": "c",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -422,7 +410,6 @@
           "right": {
             "type": "Identifier",
             "name": "d",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -452,7 +439,6 @@
         "right": {
           "type": "Identifier",
           "name": "e",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -469,7 +455,7 @@
         "loc": {
           "start": {
             "line": 19,
-            "column": 1,
+            "column": 9,
             "program": "test-grouping-level.js"
           },
           "end": {
@@ -506,7 +492,6 @@
             "left": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -523,7 +508,6 @@
             "right": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -553,7 +537,6 @@
           "right": {
             "type": "Identifier",
             "name": "c",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -586,7 +569,6 @@
           "left": {
             "type": "Identifier",
             "name": "e",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -603,7 +585,6 @@
           "right": {
             "type": "Identifier",
             "name": "f",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -666,7 +647,6 @@
           "left": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -683,7 +663,6 @@
           "right": {
             "type": "Identifier",
             "name": "b",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -718,7 +697,6 @@
             "argument": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -782,7 +760,6 @@
         "argument": {
           "type": "Identifier",
           "name": "a",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 24,
@@ -834,7 +811,6 @@
           "argument": {
             "type": "Identifier",
             "name": "a",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 25,
@@ -864,7 +840,6 @@
         "right": {
           "type": "Identifier",
           "name": "b",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 25,
@@ -920,7 +895,6 @@
             "left": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -937,7 +911,6 @@
             "right": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -1021,7 +994,6 @@
               "argument": {
                 "type": "Identifier",
                 "name": "a",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 27,
@@ -1051,7 +1023,6 @@
             "right": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 27,
@@ -1081,7 +1052,6 @@
           "right": {
             "type": "Identifier",
             "name": "d",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -1111,7 +1081,6 @@
         "right": {
           "type": "Identifier",
           "name": "c",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 27,
@@ -1128,7 +1097,7 @@
         "loc": {
           "start": {
             "line": 27,
-            "column": 1,
+            "column": 17,
             "program": "test-grouping-level.js"
           },
           "end": {

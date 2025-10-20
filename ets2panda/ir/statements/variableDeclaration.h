@@ -36,7 +36,6 @@ public:
                                  ArenaVector<VariableDeclarator *> &&declarators)
         : AnnotationAllowed<Statement>(AstNodeType::VARIABLE_DECLARATION, allocator),
           kind_(kind),
-          decorators_(allocator->Adapter()),
           declarators_(std::move(declarators))
     {
         InitHistory();
@@ -46,7 +45,6 @@ public:
                                  ArenaVector<VariableDeclarator *> &&declarators, AstNodeHistory *history)
         : AnnotationAllowed<Statement>(AstNodeType::VARIABLE_DECLARATION, allocator),
           kind_(kind),
-          decorators_(allocator->Adapter()),
           declarators_(std::move(declarators))
     {
         if (history != nullptr) {
@@ -75,15 +73,6 @@ public:
         return GetHistoryNodeAs<VariableDeclaration>()->kind_;
     }
 
-    const ArenaVector<Decorator *> &Decorators() const
-    {
-        return GetHistoryNodeAs<VariableDeclaration>()->decorators_;
-    }
-
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators();
-
-    [[nodiscard]] ArenaVector<Decorator *> &DecoratorsForUpdate();
-
     VariableDeclarator *GetDeclaratorByName(util::StringView name) const
     {
         for (VariableDeclarator *declarator : Declarators()) {
@@ -92,17 +81,6 @@ public:
             }
         }
         return nullptr;
-    }
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        auto newNode = reinterpret_cast<VariableDeclaration *>(this->GetOrCreateHistoryNode());
-        newNode->decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -126,15 +104,11 @@ public:
 
 private:
     friend class SizeOfNodeTest;
-    void SetValueDecorators(Decorator *source, size_t index);
     void SetValueDeclarators(VariableDeclarator *source, size_t index);
-    void EmplaceDecorators(Decorator *source);
-    void ClearDecorators();
     void EmplaceDeclarators(VariableDeclarator *source);
     void ClearDeclarators();
 
     VariableDeclarationKind kind_;
-    ArenaVector<Decorator *> decorators_;
     ArenaVector<VariableDeclarator *> declarators_;
 };
 }  // namespace ark::es2panda::ir

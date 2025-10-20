@@ -95,21 +95,24 @@ void AnnotationDeclaration::Iterate(const NodeTraverser &cb) const
         cb(it);
     }
 
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"Expr", Expr()}, {"properties", Properties()}, {"annotations", AstDumper::Optional(Annotations())}});
 }
+
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
-{  // re-understand
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+{
+    DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Expr() != nullptr);
+    if (IsExported()) {
+        dumper->Add("export ");
+    }
+    if (IsDeclare() || dumper->IsDeclgen()) {
+        dumper->Add("declare ");
+    }
     dumper->Add("@interface ");
     Expr()->Dump(dumper);
     dumper->Add(" {");
@@ -120,13 +123,14 @@ void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Endl();
         for (auto elem : properties) {
             elem->Dump(dumper);
-            if (elem == properties.back()) {
-                dumper->DecrIndent();
+            if (elem != properties.back()) {
+                dumper->Endl();
             }
         }
+        dumper->DecrIndent();
+        dumper->Endl();
     }
     dumper->Add("}");
-    dumper->Endl();
 }
 void AnnotationDeclaration::Compile(compiler::PandaGen *pg) const
 {

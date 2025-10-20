@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -116,7 +113,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -135,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "createPromise",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -161,7 +156,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "createPromise",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -186,7 +180,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Promise",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 16,
@@ -285,7 +278,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -304,7 +296,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -330,7 +321,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -355,7 +345,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Promise",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 18,
@@ -502,7 +491,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -521,7 +509,6 @@
             "key": {
               "type": "Identifier",
               "name": "bar",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -547,7 +534,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "bar",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -585,7 +571,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -620,7 +605,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Promise",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -700,7 +684,6 @@
                       "test": {
                         "type": "Identifier",
                         "name": "flag",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 23,
@@ -772,7 +755,6 @@
                               "callee": {
                                 "type": "Identifier",
                                 "name": "createPromise",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 26,
@@ -882,7 +864,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,

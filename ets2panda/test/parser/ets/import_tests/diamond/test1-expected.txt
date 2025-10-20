@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "goo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "goo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -107,7 +105,6 @@
           "local": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -124,7 +121,6 @@
           "imported": {
             "type": "Identifier",
             "name": "foo",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -171,7 +167,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -193,7 +188,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -219,7 +213,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -249,7 +242,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -266,7 +258,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "println",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -299,7 +290,6 @@
                           {
                             "type": "Identifier",
                             "name": "goo",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -350,7 +340,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -367,7 +356,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "println",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -400,7 +388,6 @@
                           {
                             "type": "Identifier",
                             "name": "foo",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 21,
@@ -483,7 +470,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

@@ -48,8 +48,12 @@ void ClassStaticBlock::Dump(ir::AstDumper *dumper) const
     dumper->Add({{"type", "ClassStaticBlock"}, {"value", Value()}});
 }
 
-void ClassStaticBlock::Dump([[maybe_unused]] ir::SrcDumper *dumper) const
+void ClassStaticBlock::Dump(ir::SrcDumper *dumper) const
 {
+    if (dumper->IsDeclgen()) {
+        return;
+    }
+
     ES2PANDA_ASSERT(value_);
     ES2PANDA_ASSERT(value_->IsFunctionExpression());
     ES2PANDA_ASSERT(value_->AsFunctionExpression()->Function()->IsScriptFunction());

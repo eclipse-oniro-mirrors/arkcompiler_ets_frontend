@@ -192,7 +192,6 @@
       "argument": {
         "type": "Identifier",
         "name": "undefined",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 23,
@@ -224,7 +223,6 @@
       "argument": {
         "type": "Identifier",
         "name": "undefined",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 24,
@@ -318,7 +316,6 @@
       "argument": {
         "type": "Identifier",
         "name": "err",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 27,
@@ -350,7 +347,6 @@
       "argument": {
         "type": "Identifier",
         "name": "err",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 28,

@@ -9,7 +9,6 @@
           "id": {
             "type": "Identifier",
             "name": "C",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -60,7 +59,6 @@
           "id": {
             "type": "Identifier",
             "name": "cls1",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -80,7 +78,6 @@
               "id": {
                 "type": "Identifier",
                 "name": "C",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 19,
@@ -101,7 +98,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -171,7 +167,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 1,
@@ -191,7 +186,6 @@
                   "key": {
                     "type": "Identifier",
                     "name": "method",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -226,7 +220,6 @@
                             "argument": {
                               "type": "Identifier",
                               "name": "C",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 21,
@@ -294,7 +287,6 @@
                     }
                   },
                   "overloads": [],
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -313,7 +305,6 @@
                   "key": {
                     "type": "Identifier",
                     "name": "staticMethod",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 24,
@@ -348,7 +339,6 @@
                             "argument": {
                               "type": "Identifier",
                               "name": "C",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 25,
@@ -416,7 +406,6 @@
                     }
                   },
                   "overloads": [],
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 24,
@@ -493,7 +482,6 @@
           "id": {
             "type": "Identifier",
             "name": "cls2",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,
@@ -518,7 +506,6 @@
                 "key": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 29,
@@ -588,7 +575,6 @@
                   }
                 },
                 "overloads": [],
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 1,
@@ -608,7 +594,6 @@
                   "key": {
                     "type": "Identifier",
                     "name": "method",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 30,
@@ -678,7 +663,6 @@
                     }
                   },
                   "overloads": [],
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 30,
@@ -697,7 +681,6 @@
                   "key": {
                     "type": "Identifier",
                     "name": "staticMethod",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 31,
@@ -767,7 +750,6 @@
                     }
                   },
                   "overloads": [],
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 31,

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -84,7 +81,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "v",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -151,7 +147,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -168,7 +163,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "log",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -250,7 +244,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "expected",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -317,7 +310,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -334,7 +326,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 20,
@@ -465,7 +456,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

@@ -28,11 +28,9 @@ void TSAnyKeyword::TransformChildren([[maybe_unused]] const NodeTransformer &cb,
     TransformAnnotations(cb, transformationName);
 }
 
-void TSAnyKeyword::Iterate([[maybe_unused]] const NodeTraverser &cb) const
+void TSAnyKeyword::Iterate(const NodeTraverser &cb) const
 {
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSAnyKeyword::Dump(ir::AstDumper *dumper) const
@@ -42,9 +40,7 @@ void TSAnyKeyword::Dump(ir::AstDumper *dumper) const
 
 void TSAnyKeyword::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSAnyKeyword");
 }
 

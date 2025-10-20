@@ -187,13 +187,8 @@ ScriptFunction *ScriptFunction::Clone(ArenaAllocator *allocator, AstNode *parent
     for (auto *param : Params()) {
         params.push_back(param->Clone(allocator, nullptr)->AsExpression());
     }
-    AnnotationUsage *clonedAnnotationUsage;
-    for (auto *annotationUsage : Annotations()) {
-        clonedAnnotationUsage = annotationUsage->Clone(allocator, nullptr);
-        ES2PANDA_ASSERT(clonedAnnotationUsage != nullptr);
-        annotationUsages.push_back(clonedAnnotationUsage->AsAnnotationUsage());
-    }
-    auto *res = util::NodeAllocator::ForceSetParent<ScriptFunction>(
+
+    auto *clone = util::NodeAllocator::ForceSetParent<ScriptFunction>(
         allocator, allocator,
         ScriptFunctionData {
             Body() != nullptr ? Body()->Clone(allocator, nullptr) : nullptr,
@@ -205,10 +200,17 @@ ScriptFunction *ScriptFunction::Clone(ArenaAllocator *allocator, AstNode *parent
                                                   : nullptr,
                 HasReceiver()},
             Flags(), Modifiers(), Language()});
-    ES2PANDA_ASSERT(res != nullptr);
-    res->SetParent(parent);
-    res->SetAnnotations(std::move(annotationUsages));
-    return res;
+
+    if (parent != nullptr) {
+        clone->SetParent(parent);
+    }
+
+    // Clone annotations if any
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
+    }
+
+    return clone;
 }
 
 void ScriptFunction::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
@@ -246,9 +248,8 @@ void ScriptFunction::Iterate(const NodeTraverser &cb) const
     if (body != nullptr) {
         cb(body);
     }
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+
+    IterateAnnotations(cb);
 }
 
 void ScriptFunction::SetReturnTypeAnnotation(TypeNode *node) noexcept

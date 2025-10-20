@@ -27,7 +27,6 @@
             "local": {
               "type": "Identifier",
               "name": "aliased_var",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -44,7 +43,6 @@
             "imported": {
               "type": "Identifier",
               "name": "test_var",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -124,7 +122,6 @@
             "local": {
               "type": "Identifier",
               "name": "aliased_func",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -141,7 +138,6 @@
             "imported": {
               "type": "Identifier",
               "name": "test_func",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -173,7 +169,6 @@
             "local": {
               "type": "Identifier",
               "name": "AliasedClass",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -190,7 +185,6 @@
             "imported": {
               "type": "Identifier",
               "name": "TestClass",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -250,7 +244,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -272,7 +265,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -298,7 +290,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -359,7 +350,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

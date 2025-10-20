@@ -80,13 +80,12 @@ public:
     NO_COPY_SEMANTIC(ClassDefinition);
     NO_MOVE_SEMANTIC(ClassDefinition);
     // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    explicit ClassDefinition(Identifier *ident, TSTypeParameterDeclaration *typeParams,
+    explicit ClassDefinition(ArenaAllocator *allocator, Identifier *ident, TSTypeParameterDeclaration *typeParams,
                              TSTypeParameterInstantiation *superTypeParams,
                              ArenaVector<TSClassImplements *> &&implements, MethodDefinition *ctor,
                              Expression *superClass, ArenaVector<AstNode *> &&body, ClassDefinitionModifiers modifiers,
                              ModifierFlags flags, Language lang)
-        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags,
-                                          ArenaVector<AnnotationUsage *>(body.get_allocator())),
+        : AnnotationAllowed<TypedAstNode>(AstNodeType::CLASS_DEFINITION, flags, allocator),
           ident_(ident),
           typeParams_(typeParams),
           superTypeParams_(superTypeParams),

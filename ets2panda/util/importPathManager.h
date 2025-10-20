@@ -77,14 +77,16 @@ struct ModuleInfo {
 class ImportPathManager {
 public:
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
+    static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
+        "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         ImportFlags importFlags {};
         Language::Id lang {Language::Id::COUNT};
         std::string_view resolvedSource {};
         std::string_view declPath {};
-        std::string ohmUrl {};
-        std::string declText {};
+        std::string_view ohmUrl {};
+        std::string_view declText {};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
 
         bool HasSpecifiedDeclPath() const
@@ -158,8 +160,8 @@ public:
     // API version for resolving paths. Kept only for API compatibility. Doesn't support 'dependencies'.
     util::StringView ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const;
 
-    void MarkAsParsed(StringView path);
-    std::string TruncateFileExtension(std::string path, bool &hasExtension);
+    void MarkAsParsed(std::string_view path) noexcept;
+    static std::string TruncateFileExtension(std::string path, bool &hasExtension);
     util::StringView FormRelativePath(const util::Path &path);
     std::shared_ptr<const ArkTsConfig> ArkTSConfig() const
     {
@@ -167,7 +169,7 @@ public:
     }
 
 private:
-    std::string FormRelativeModuleName(std::string relPath);
+    // std::string FormRelativeModuleName(std::string relPath);
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
     util::StringView FormModuleName(const util::Path &path);
 
@@ -187,7 +189,8 @@ private:
     std::string TryMatchDependencies(std::string_view fixedPath) const;
     std::string TryResolvePath(std::string_view fixedPath) const;
     StringView GetRealPath(StringView path) const;
-    void ProcessExternalModuleImport(ImportMetadata &importData);
+    void ProcessExternalLibraryImport(ImportMetadata &importData);
+    std::string_view tryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
 public:
     void AddToParseList(const ImportMetadata &importMetadata);

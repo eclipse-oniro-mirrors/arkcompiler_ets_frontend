@@ -45,11 +45,8 @@ public:
     }
 
     explicit ArrayExpression(AstNodeType nodeType, ArenaVector<Expression *> &&elements,
-                             ArenaAllocator *const allocator, bool const trailingComma)
-        : AnnotatedExpression(nodeType),
-          decorators_(allocator->Adapter()),
-          elements_(std::move(elements)),
-          trailingComma_(trailingComma)
+                             [[maybe_unused]] ArenaAllocator *const allocator, bool const trailingComma)
+        : AnnotatedExpression(nodeType), elements_(std::move(elements)), trailingComma_(trailingComma)
     {
     }
 
@@ -99,21 +96,6 @@ public:
         optional_ = optional;
     }
 
-    [[nodiscard]] const ArenaVector<Decorator *> &Decorators() const noexcept
-    {
-        return decorators_;
-    }
-
-    void AddDecorators([[maybe_unused]] ArenaVector<ir::Decorator *> &&decorators) override
-    {
-        decorators_ = std::move(decorators);
-    }
-
-    bool CanHaveDecorator([[maybe_unused]] bool inTs) const override
-    {
-        return true;
-    }
-
     void CleanUp() override
     {
         AstNode::CleanUp();
@@ -149,7 +131,6 @@ public:
                                           checker::TypeRelationFlag flags);
 
 private:
-    ArenaVector<Decorator *> decorators_;
     ArenaVector<Expression *> elements_;
     bool isDeclaration_ {};
     bool trailingComma_ {};

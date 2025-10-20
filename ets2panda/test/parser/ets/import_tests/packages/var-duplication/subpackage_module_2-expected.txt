@@ -10,7 +10,6 @@
           "left": {
             "type": "Identifier",
             "name": "import_tests",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -27,7 +26,6 @@
           "right": {
             "type": "Identifier",
             "name": "packages",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -57,7 +55,6 @@
         "right": {
           "type": "Identifier",
           "name": "subpackage_b",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -103,7 +100,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -125,7 +121,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -152,7 +147,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "String",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -193,7 +187,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -212,7 +205,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -239,7 +231,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "String",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 19,
@@ -280,7 +271,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,

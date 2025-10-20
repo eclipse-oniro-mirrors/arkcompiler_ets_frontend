@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "InterfaceAlias",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "TestInterface",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -89,7 +87,6 @@
         "id": {
           "type": "Identifier",
           "name": "TestClass",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 18,
@@ -114,7 +111,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "InterfaceAlias",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -174,7 +170,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -199,7 +194,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -260,7 +254,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -307,7 +300,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -329,7 +321,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -355,7 +346,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -416,7 +406,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

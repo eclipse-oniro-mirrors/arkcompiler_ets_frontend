@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ABC",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 19,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "date",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 20,
@@ -56,7 +54,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Date",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 20,
@@ -97,7 +94,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -116,7 +112,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -142,7 +137,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -188,7 +182,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "date",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -226,7 +219,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "Date",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 23,
@@ -347,7 +339,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -366,7 +357,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 26,
@@ -392,7 +382,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 26,
@@ -468,7 +457,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 26,
@@ -515,7 +503,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -537,7 +524,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -563,7 +549,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -624,7 +609,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -643,7 +627,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -695,7 +678,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,
@@ -714,7 +696,6 @@
             "key": {
               "type": "Identifier",
               "name": "dae",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -737,7 +718,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Date",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 17,
@@ -804,7 +784,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Date",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -845,7 +824,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,

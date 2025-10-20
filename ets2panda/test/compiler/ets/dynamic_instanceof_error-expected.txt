@@ -25,7 +25,6 @@
           "local": {
             "type": "Identifier",
             "name": "A",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -42,7 +41,6 @@
           "imported": {
             "type": "Identifier",
             "name": "A",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 20,
@@ -89,7 +87,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -111,7 +108,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -137,7 +133,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -162,12 +157,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "dynamic_instanceof_error.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "dynamic_instanceof_error.ets"
                     }
                   }
                 },
@@ -175,12 +170,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "dynamic_instanceof_error.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "dynamic_instanceof_error.ets"
                   }
                 }
               },
@@ -188,123 +183,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "dynamic_instanceof_error.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "dynamic_instanceof_error.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamic_instanceof_error.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamic_instanceof_error.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -323,7 +211,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -349,7 +236,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -393,7 +279,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -459,7 +344,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "b",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -479,7 +363,6 @@
                             "left": {
                               "type": "Identifier",
                               "name": "a",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 24,
@@ -500,7 +383,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "A",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 24,
@@ -522,7 +404,7 @@
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "dynamic_instanceof_error.ets"
                                   }
                                 }
@@ -535,7 +417,7 @@
                                 },
                                 "end": {
                                   "line": 24,
-                                  "column": 26,
+                                  "column": 25,
                                   "program": "dynamic_instanceof_error.ets"
                                 }
                               }
@@ -548,7 +430,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 26,
+                                "column": 25,
                                 "program": "dynamic_instanceof_error.ets"
                               }
                             }
@@ -561,7 +443,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 26,
+                              "column": 25,
                               "program": "dynamic_instanceof_error.ets"
                             }
                           }
@@ -622,7 +504,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -677,4 +558,5 @@
     }
   }
 }
-TypeError: Right-hand side of instanceof expression must represent a type. [dynamic_instanceof_error.ets:24:11]
+TypeError: Cannot find import: dynamic_import_tests [dynamic_instanceof_error.ets:20:19]
+TypeError: Cannot find type 'A'. [dynamic_instanceof_error.ets:24:24]

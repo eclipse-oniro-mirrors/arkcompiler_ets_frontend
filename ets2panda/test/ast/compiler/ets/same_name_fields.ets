@@ -23,7 +23,6 @@ class SameName {
     "key": {
       "type": "Identifier",
       "name": "a",
-      "decorators": [],
       "loc": {
         "start": {
           "line": 18,
@@ -66,7 +65,6 @@ class SameName {
     "key": {
       "type": "Identifier",
       "name": "a",
-      "decorators": [],
       "loc": {
         "start": {
           "line": 17,
@@ -114,15 +112,14 @@ class DiffTypes {
     "key": {
       "type": "Identifier",
       "name": "a",
-      "decorators": [],
       "loc": {
         "start": {
-          "line": 108,
+          "line": 106,
           "column": 23,
           "program": "same_name_fields.ets"
         },
         "end": {
-          "line": 108,
+          "line": 106,
           "column": 24,
           "program": "same_name_fields.ets"
         }
@@ -133,12 +130,12 @@ class DiffTypes {
       "value": 7,
       "loc": {
         "start": {
-          "line": 108,
+          "line": 106,
           "column": 32,
           "program": "same_name_fields.ets"
         },
         "end": {
-          "line": 108,
+          "line": 106,
           "column": 33,
           "program": "same_name_fields.ets"
         }
@@ -157,15 +154,14 @@ class DiffTypes {
     "key": {
       "type": "Identifier",
       "name": "a",
-      "decorators": [],
       "loc": {
         "start": {
-          "line": 109,
+          "line": 107,
           "column": 30,
           "program": "same_name_fields.ets"
         },
         "end": {
-          "line": 109,
+          "line": 107,
           "column": 31,
           "program": "same_name_fields.ets"
         }
@@ -176,12 +172,12 @@ class DiffTypes {
       "value": "a",
       "loc": {
         "start": {
-          "line": 109,
+          "line": 107,
           "column": 42,
           "program": "same_name_fields.ets"
         },
         "end": {
-          "line": 109,
+          "line": 107,
           "column": 45,
           "program": "same_name_fields.ets"
         }

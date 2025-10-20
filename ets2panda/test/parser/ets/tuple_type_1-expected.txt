@@ -6,7 +6,6 @@
       "id": {
         "type": "Identifier",
         "name": "my_type",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 16,
@@ -30,7 +29,6 @@
               "name": {
                 "type": "Identifier",
                 "name": "Number",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 16,
@@ -52,7 +50,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 24,
+                  "column": 23,
                   "program": "tuple_type_1.ets"
                 }
               }
@@ -65,7 +63,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 24,
+                "column": 23,
                 "program": "tuple_type_1.ets"
               }
             }
@@ -80,7 +78,6 @@
                   "name": {
                     "type": "Identifier",
                     "name": "Number",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 16,
@@ -102,7 +99,7 @@
                     },
                     "end": {
                       "line": 16,
-                      "column": 33,
+                      "column": 32,
                       "program": "tuple_type_1.ets"
                     }
                   }
@@ -115,7 +112,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 33,
+                    "column": 32,
                     "program": "tuple_type_1.ets"
                   }
                 }
@@ -145,7 +142,6 @@
                       "name": {
                         "type": "Identifier",
                         "name": "Object",
-                        "decorators": [],
                         "loc": {
                           "start": {
                             "line": 16,
@@ -167,7 +163,7 @@
                         },
                         "end": {
                           "line": 16,
-                          "column": 47,
+                          "column": 46,
                           "program": "tuple_type_1.ets"
                         }
                       }
@@ -180,7 +176,7 @@
                       },
                       "end": {
                         "line": 16,
-                        "column": 47,
+                        "column": 46,
                         "program": "tuple_type_1.ets"
                       }
                     }
@@ -246,7 +242,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -268,7 +263,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -294,7 +288,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -319,12 +312,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "tuple_type_1.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "tuple_type_1.ets"
                     }
                   }
                 },
@@ -332,12 +325,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "tuple_type_1.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "tuple_type_1.ets"
                   }
                 }
               },
@@ -345,382 +338,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "tuple_type_1.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "tuple_type_1.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "tuple_type_1.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "tuple_type_1.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "a",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 5,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 6,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrayExpression",
-                          "elements": [
-                            {
-                              "type": "NumberLiteral",
-                              "value": 1,
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 28,
-                                  "program": "tuple_type_1.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 29,
-                                  "program": "tuple_type_1.ets"
-                                }
-                              }
-                            },
-                            {
-                              "type": "NumberLiteral",
-                              "value": 2,
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 31,
-                                  "program": "tuple_type_1.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 32,
-                                  "program": "tuple_type_1.ets"
-                                }
-                              }
-                            }
-                          ],
-                          "loc": {
-                            "start": {
-                              "line": 22,
-                              "column": 27,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 22,
-                              "column": 33,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 22,
-                            "column": 5,
-                            "program": "tuple_type_1.ets"
-                          },
-                          "end": {
-                            "line": 22,
-                            "column": 33,
-                            "program": "tuple_type_1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 22,
-                          "column": 5,
-                          "program": "tuple_type_1.ets"
-                        },
-                        "end": {
-                          "line": 22,
-                          "column": 33,
-                          "program": "tuple_type_1.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "b",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 23,
-                              "column": 5,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 23,
-                              "column": 6,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrayExpression",
-                          "elements": [
-                            {
-                              "type": "NumberLiteral",
-                              "value": 1,
-                              "loc": {
-                                "start": {
-                                  "line": 23,
-                                  "column": 28,
-                                  "program": "tuple_type_1.ets"
-                                },
-                                "end": {
-                                  "line": 23,
-                                  "column": 29,
-                                  "program": "tuple_type_1.ets"
-                                }
-                              }
-                            },
-                            {
-                              "type": "NumberLiteral",
-                              "value": 2,
-                              "loc": {
-                                "start": {
-                                  "line": 23,
-                                  "column": 31,
-                                  "program": "tuple_type_1.ets"
-                                },
-                                "end": {
-                                  "line": 23,
-                                  "column": 32,
-                                  "program": "tuple_type_1.ets"
-                                }
-                              }
-                            }
-                          ],
-                          "loc": {
-                            "start": {
-                              "line": 23,
-                              "column": 27,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 23,
-                              "column": 43,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 23,
-                            "column": 5,
-                            "program": "tuple_type_1.ets"
-                          },
-                          "end": {
-                            "line": 23,
-                            "column": 43,
-                            "program": "tuple_type_1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 23,
-                          "column": 5,
-                          "program": "tuple_type_1.ets"
-                        },
-                        "end": {
-                          "line": 23,
-                          "column": 43,
-                          "program": "tuple_type_1.ets"
-                        }
-                      }
-                    },
-                    {
-                      "type": "ExpressionStatement",
-                      "expression": {
-                        "type": "AssignmentExpression",
-                        "operator": "=",
-                        "left": {
-                          "type": "Identifier",
-                          "name": "d",
-                          "decorators": [],
-                          "loc": {
-                            "start": {
-                              "line": 24,
-                              "column": 5,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 24,
-                              "column": 6,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "right": {
-                          "type": "ArrayExpression",
-                          "elements": [],
-                          "loc": {
-                            "start": {
-                              "line": 24,
-                              "column": 13,
-                              "program": "tuple_type_1.ets"
-                            },
-                            "end": {
-                              "line": 24,
-                              "column": 15,
-                              "program": "tuple_type_1.ets"
-                            }
-                          }
-                        },
-                        "loc": {
-                          "start": {
-                            "line": 24,
-                            "column": 5,
-                            "program": "tuple_type_1.ets"
-                          },
-                          "end": {
-                            "line": 24,
-                            "column": 15,
-                            "program": "tuple_type_1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 24,
-                          "column": 5,
-                          "program": "tuple_type_1.ets"
-                        },
-                        "end": {
-                          "line": 24,
-                          "column": 15,
-                          "program": "tuple_type_1.ets"
-                        }
-                      }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -739,7 +366,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -765,7 +391,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 18,
@@ -813,7 +438,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "number",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 18,
@@ -835,7 +459,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "tuple_type_1.ets"
                                 }
                               }
@@ -848,7 +472,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 31,
+                                "column": 30,
                                 "program": "tuple_type_1.ets"
                               }
                             }
@@ -867,7 +491,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 18,
@@ -905,7 +528,6 @@
                         "name": {
                           "type": "Identifier",
                           "name": "number",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 18,
@@ -927,7 +549,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 42,
+                            "column": 41,
                             "program": "tuple_type_1.ets"
                           }
                         }
@@ -940,7 +562,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 42,
+                          "column": 41,
                           "program": "tuple_type_1.ets"
                         }
                       }
@@ -952,7 +574,6 @@
                         "name": {
                           "type": "Identifier",
                           "name": "number",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 18,
@@ -974,7 +595,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 50,
+                            "column": 49,
                             "program": "tuple_type_1.ets"
                           }
                         }
@@ -987,7 +608,7 @@
                         },
                         "end": {
                           "line": 18,
-                          "column": 50,
+                          "column": 49,
                           "program": "tuple_type_1.ets"
                         }
                       }
@@ -1114,7 +735,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -1133,7 +753,6 @@
             "key": {
               "type": "Identifier",
               "name": "a",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -1163,7 +782,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "number",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -1185,7 +803,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 16,
+                        "column": 15,
                         "program": "tuple_type_1.ets"
                       }
                     }
@@ -1198,7 +816,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 16,
+                      "column": 15,
                       "program": "tuple_type_1.ets"
                     }
                   }
@@ -1210,7 +828,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "number",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -1232,7 +849,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 24,
+                        "column": 23,
                         "program": "tuple_type_1.ets"
                       }
                     }
@@ -1245,7 +862,7 @@
                     },
                     "end": {
                       "line": 22,
-                      "column": 24,
+                      "column": 23,
                       "program": "tuple_type_1.ets"
                     }
                   }
@@ -1265,7 +882,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -1274,7 +890,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 33,
+                "column": 27,
                 "program": "tuple_type_1.ets"
               }
             }
@@ -1284,7 +900,6 @@
             "key": {
               "type": "Identifier",
               "name": "b",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 23,
@@ -1314,7 +929,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Object",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 23,
@@ -1336,7 +950,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 16,
+                        "column": 15,
                         "program": "tuple_type_1.ets"
                       }
                     }
@@ -1349,7 +963,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 16,
+                      "column": 15,
                       "program": "tuple_type_1.ets"
                     }
                   }
@@ -1361,7 +975,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "Number",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 23,
@@ -1383,7 +996,7 @@
                       },
                       "end": {
                         "line": 23,
-                        "column": 24,
+                        "column": 23,
                         "program": "tuple_type_1.ets"
                       }
                     }
@@ -1396,7 +1009,7 @@
                     },
                     "end": {
                       "line": 23,
-                      "column": 24,
+                      "column": 23,
                       "program": "tuple_type_1.ets"
                     }
                   }
@@ -1416,7 +1029,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 23,
@@ -1425,7 +1037,7 @@
               },
               "end": {
                 "line": 23,
-                "column": 43,
+                "column": 27,
                 "program": "tuple_type_1.ets"
               }
             }
@@ -1435,7 +1047,6 @@
             "key": {
               "type": "Identifier",
               "name": "d",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 24,
@@ -1471,7 +1082,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 24,
@@ -1480,7 +1090,7 @@
               },
               "end": {
                 "line": 24,
-                "column": 15,
+                "column": 13,
                 "program": "tuple_type_1.ets"
               }
             }

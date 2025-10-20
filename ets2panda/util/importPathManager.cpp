@@ -25,9 +25,12 @@
 #include "parser/program/program.h"
 #include "ir/expressions/literals/stringLiteral.h"
 
-#include "abc2program_driver.h"
-#include "checker/types/signature.h"
 #include "compiler/lowering/ets/declGenPhase.h"
+
+#include "libpandafile/class_data_accessor-inl.h"
+#include "libpandafile/file-inl.h"
+#include "libpandabase/utils/logger.h"
+#include <algorithm>
 
 #ifdef USE_UNIX_SYSCALL
 #include <dirent.h>
@@ -62,7 +65,16 @@ static bool IsAbsolute(const std::string &path)
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 }
 
-void ImportPathManager::ProcessExternalModuleImport(ImportMetadata &importData)
+void RemoveEscapedNewlines(std::string &s)
+{
+    std::string pattern = "\\n";
+    size_t pos = 0;
+    while ((pos = s.find(pattern, pos)) != std::string::npos) {
+        s.erase(pos, pattern.size());
+    }
+}
+
+void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
 {
     ES2PANDA_ASSERT(!IsAbsolute(std::string(importData.resolvedSource)));
     auto it = arktsConfig_->Dependencies().find(std::string(importData.resolvedSource));
@@ -72,9 +84,10 @@ void ImportPathManager::ProcessExternalModuleImport(ImportMetadata &importData)
     importData.declPath = externalModuleImportData.Path();
 
     // process .d.ets "path" in "dependencies"
-    // process emptry "path" in dependencies, since in interop we allow imports without typecheck
-    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ".abc")) {
+    // process empty "path" in dependencies, since in interop we allow imports without typecheck
+    if (!Helpers::EndsWith(externalModuleImportData.Path(), ".abc")) {
         importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
+        importData.ohmUrl = externalModuleImportData.OhmUrl();
         importData.ohmUrl = externalModuleImportData.OhmUrl();
         return;
     }
@@ -82,33 +95,79 @@ void ImportPathManager::ProcessExternalModuleImport(ImportMetadata &importData)
     // process .abc "path" in "dependencies"
     ES2PANDA_ASSERT(Helpers::EndsWith(std::string(externalModuleImportData.Path()), ".abc"));
     importData.importFlags |= ImportFlags::EXTERNAL_BINARY_IMPORT;
-    abc2program::Abc2ProgramDriver driver;
-    driver.Compile(std::string {externalModuleImportData.Path()});
-    pandasm::Program &prog = driver.GetProgram();
-
     // NOTE(itrubachev): support binary file after ark_link #26280
-    auto etsGlobalRecord = std::find_if(prog.recordTable.begin(), prog.recordTable.end(), [](auto &record) {
-        auto annotations = record.second.metadata->GetAnnotations();
-        auto moduleDeclAnno = std::find_if(annotations.begin(), annotations.end(), [](auto &anno) {
-            return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
-        });
-        return moduleDeclAnno != annotations.end();
-    });
-    ES2PANDA_ASSERT(etsGlobalRecord != prog.recordTable.end());
-    // rely on the following mangling: <moduleName>.ETSGLOBAL
-    auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
-    ES2PANDA_ASSERT(Helpers::EndsWith(etsGlobalRecord->second.name, etsGlobalSuffix));
-    auto moduleName =
-        etsGlobalRecord->second.name.substr(0, etsGlobalRecord->second.name.size() - etsGlobalSuffix.size());
-    importData.ohmUrl = moduleName;
+    auto pf = panda_file::OpenPandaFile(std::string {externalModuleImportData.Path()});
+    if (!pf) {
+        LOG(FATAL, ES2PANDA) << "Failed to load a provided abc file: " << externalModuleImportData.Path();
+    }
 
-    auto annotations = etsGlobalRecord->second.metadata->GetAnnotations();
-    auto moduleDeclarationAnno = std::find_if(annotations.begin(), annotations.end(), [](auto &anno) {
-        return anno.GetName() == compiler::DeclGenPhase::MODULE_DECLARATION_ANNOTATION;
-    });
-    ES2PANDA_ASSERT(moduleDeclarationAnno != annotations.end());
-    auto declText = moduleDeclarationAnno->GetElements()[0].GetValue()->GetAsScalar()->GetValue<std::string>();
-    importData.declText = declText;
+    // take the classes that contain ModuleDeclaration annotation onlyy
+    for (auto id : pf->GetExported()) {
+        panda_file::File::EntityId classId(id);
+        panda_file::ClassDataAccessor cda(*pf, classId);
+
+        // processing annotation to extract string with declaration text
+        auto success =
+            cda.EnumerateAnnotation(ANNOTATION_MODULE_DECLARATION.data(),
+                                    [&importData, &pf, this](panda_file::AnnotationDataAccessor &annotationAccessor) {
+                                        auto elem = annotationAccessor.GetElement(0);
+                                        auto value = elem.GetScalarValue();
+                                        const auto idAnno = value.Get<panda_file::File::EntityId>();
+                                        std::stringstream ss;
+                                        ss << StringDataToString(pf->GetStringData(idAnno));
+                                        std::string declText = ss.str();
+                                        if (!declText.empty()) {
+                                            RemoveEscapedNewlines(declText);
+                                            importData.declText = util::UString(declText, allocator_).View().Utf8();
+                                            return true;
+                                        }
+                                        return false;
+                                    });
+        if (!success) {
+            return;
+        }
+        // processing name to get ohmUrl
+        std::string name = utf::Mutf8AsCString(pf->GetStringData(classId).data);
+        auto type = pandasm::Type::FromDescriptor(name);
+        type = pandasm::Type(type.GetNameWithoutRank(), type.GetRank());
+        auto recordName = type.GetPandasmName();
+
+        // rely on the following mangling: <moduleName>.ETSGLOBAL
+        auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
+        ES2PANDA_ASSERT(Helpers::EndsWith(recordName, etsGlobalSuffix));
+        auto moduleName = recordName.substr(0, recordName.size() - etsGlobalSuffix.size());
+        importData.ohmUrl = util::UString(moduleName, allocator_).View().Utf8();
+    }
+}
+
+// If needed, the result of this function can be cached
+std::string_view ImportPathManager::tryImportFromDeclarationCache(std::string_view resolvedImportPath) const
+{
+    // if package or unresolved file, just skip
+    if (ark::os::file::File::IsDirectory(std::string(resolvedImportPath)) ||
+        !ark::os::file::File::IsRegularFile(std::string(resolvedImportPath))) {
+        return resolvedImportPath;
+    }
+    const std::string etsSuffix = ".ets";
+    const std::string dEtsSuffix = ".d.ets";
+    const auto &rootDir = ArkTSConfig().get()->RootDir();
+    const auto &cacheDir = ArkTSConfig().get()->CacheDir();
+    if (cacheDir.empty() || rootDir.empty()) {
+        return resolvedImportPath;
+    }
+    // declaration cache is used only for .ets files, located in the same library as compiling file
+    if (!Helpers::EndsWith(resolvedImportPath, etsSuffix) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
+        return resolvedImportPath;
+    }
+    const auto &relativeFilePath =
+        resolvedImportPath.substr(rootDir.size(), resolvedImportPath.size() - rootDir.size());
+    const auto &declarationCacheFile =
+        cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - etsSuffix.size())) + dEtsSuffix;
+
+    if (!ark::os::file::File::IsRegularFile(declarationCacheFile)) {
+        return resolvedImportPath;
+    }
+    return UString(declarationCacheFile, allocator_).View().Utf8();
 }
 
 ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser::Program *program,
@@ -132,9 +191,8 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
     ImportMetadata importData {importFlags};
     importData.resolvedSource = resolvedImportPath;
     if (resolvedIsExternalModule) {
-        ProcessExternalModuleImport(importData);
+        ProcessExternalLibraryImport(importData);
     } else {
-        ES2PANDA_ASSERT(IsAbsolute(std::string(importData.resolvedSource)));
         importData.lang = ToLanguage(program->Extension()).GetId();
         importData.declPath = util::ImportPathManager::DUMMY_PATH;
         importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
@@ -144,6 +202,8 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         AddToParseList(importData);
     }
 
+    LOG(DEBUG, ES2PANDA) << "[" << curModulePath << "] "
+                         << "Import " << importPath->ToString() << " resolved to " << importData.resolvedSource;
     return importData;
 }
 
@@ -173,6 +233,7 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         diagnosticEngine_.LogDiagnostic(diagnostic::EMPTY_IMPORT_PATH, util::DiagnosticMessageParams {});
         return {*importPath};
     }
+    ResolvedPathRes result {};
     if (IsRelativePath(*importPath)) {
         size_t pos = curModulePath.find_last_of("/\\");
         auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : ".";
@@ -181,10 +242,15 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         resolvedPath.Append(pathDelimiter_);
         resolvedPath.Append(*importPath);
 
-        return AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+        result = AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+    } else {
+        result = ResolveAbsolutePath(*importPath);
     }
 
-    return ResolveAbsolutePath(*importPath);
+    if (!result.resolvedIsExternalModule) {
+        result.resolvedPath = tryImportFromDeclarationCache(result.resolvedPath);
+    }
+    return result;
 }
 
 ImportPathManager::ResolvedPathRes ImportPathManager::ResolveAbsolutePath(const ir::StringLiteral &importPathNode) const
@@ -330,10 +396,10 @@ void ImportPathManager::AddToParseList(const ImportMetadata &importMetadata)
     }
 }
 
-void ImportPathManager::MarkAsParsed(StringView path)
+void ImportPathManager::MarkAsParsed(std::string_view const path) noexcept
 {
     for (auto &parseInfo : parseList_) {
-        if (parseInfo.importData.resolvedSource == path.Utf8()) {
+        if (parseInfo.importData.resolvedSource == path) {
             parseInfo.isParsed = true;
             return;
         }
@@ -451,10 +517,10 @@ std::string ImportPathManager::TruncateFileExtension(std::string path, bool &has
 }
 
 // Transform /a/b/c.ets to a.b.c
-std::string ImportPathManager::FormRelativeModuleName(std::string relPath)
+static std::string FormRelativeModuleName(std::string relPath)
 {
     bool hasExtension = false;
-    relPath = TruncateFileExtension(relPath, hasExtension);
+    relPath = ImportPathManager::TruncateFileExtension(relPath, hasExtension);
     if (relPath.empty()) {
         return "";
     }
@@ -482,8 +548,29 @@ util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const uti
     return util::UString(name, allocator_).View();
 }
 
-template <typename DynamicPaths, typename ModuleNameFormer>
-static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, const ModuleNameFormer &tryFormModuleName)
+// should be implemented with a stable name -> path mapping list
+static std::optional<std::string> TryFormModuleName(std::string filePath, std::string_view unitName,
+                                                    std::string_view unitPath, std::string_view cachePath)
+{
+    if (cachePath.empty() && filePath.rfind(unitPath, 0) != 0) {
+        return std::nullopt;
+    }
+    if (!cachePath.empty() && filePath.rfind(cachePath, 0) != 0 && filePath.rfind(unitPath, 0) != 0) {
+        return std::nullopt;
+    }
+    std::string_view actualUnitPath = unitPath;
+    if (!cachePath.empty() && filePath.rfind(cachePath, 0) == 0) {
+        actualUnitPath = cachePath;
+    }
+    auto relativePath = FormRelativeModuleName(filePath.substr(actualUnitPath.size()));
+    if (relativePath.empty() || FormUnitName(unitName).empty()) {
+        return FormUnitName(unitName) + relativePath;
+    }
+    return FormUnitName(unitName) + "." + relativePath;
+}
+
+template <typename DynamicPaths>
+static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, std::string const filePath)
 {
     for (auto const &[unitName, did] : dynPaths) {
         if (did.Path().empty()) {
@@ -491,7 +578,7 @@ static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, const 
             // source, and, as soon it won't be parsed, no module should be created.
             continue;
         }
-        if (auto res = tryFormModuleName(unitName, did.Path()); res) {
+        if (auto res = TryFormModuleName(filePath, unitName, did.Path(), ""); res) {
             return res.value();
         }
     }
@@ -511,7 +598,7 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     }
 
     if (!parseList_.empty() && parseList_[0].importData.IsExternalBinaryImport()) {
-        return util::UString(parseList_[0].importData.ohmUrl, allocator_).View();
+        return util::StringView(parseList_[0].importData.ohmUrl);
     }
 
     if (arktsConfig_->Package().empty() && !arktsConfig_->UseUrl()) {
@@ -519,38 +606,35 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     }
 
     std::string const filePath(path.GetAbsolutePath());
-
-    // should be implemented with a stable name -> path mapping list
-    auto const tryFormModuleName = [this, filePath](std::string_view unitName,
-                                                    std::string_view unitPath) -> std::optional<std::string> {
-        if (filePath.rfind(unitPath, 0) != 0) {
-            return std::nullopt;
-        }
-        auto relativePath = FormRelativeModuleName(filePath.substr(unitPath.size()));
-        return FormUnitName(unitName) +
-               (relativePath.empty() || FormUnitName(unitName).empty() ? relativePath : ("." + relativePath));
-    };
-    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), tryFormModuleName); !dmn.empty()) {
-        return util::UString(dmn, allocator_).View();
-    }
-    if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data()); res) {
+    if (auto res = TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data(),
+                                     arktsConfig_->CacheDir());
+        res) {
         return util::UString(res.value(), allocator_).View();
     }
     if (!stdLib_.empty()) {
-        if (auto res = tryFormModuleName("std", stdLib_ + pathDelimiter_.at(0) + "std"); res) {
+        if (auto res =
+                TryFormModuleName(filePath, "std", stdLib_ + pathDelimiter_.at(0) + "std", arktsConfig_->CacheDir());
+            res) {
             return util::UString(res.value(), allocator_).View();
         }
-        if (auto res = tryFormModuleName("escompat", stdLib_ + pathDelimiter_.at(0) + "escompat"); res) {
+        if (auto res = TryFormModuleName(filePath, "escompat", stdLib_ + pathDelimiter_.at(0) + "escompat",
+                                         arktsConfig_->CacheDir());
+            res) {
             return util::UString(res.value(), allocator_).View();
         }
     }
     for (auto const &[unitName, unitPath] : arktsConfig_->Paths()) {
-        if (auto res = tryFormModuleName(unitName, unitPath[0]); res) {
+        if (auto res = TryFormModuleName(filePath, unitName, unitPath[0], arktsConfig_->CacheDir()); res) {
             return util::UString(res.value(), allocator_).View();
         }
     }
+    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), filePath); !dmn.empty()) {
+        return util::UString(dmn, allocator_).View();
+    }
     // NOTE (hurton): as a last step, try resolving using the BaseUrl again without a path delimiter at the end
-    if (auto res = tryFormModuleName(arktsConfig_->Package(), arktsConfig_->BaseUrl()); res) {
+    if (auto res =
+            TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl(), arktsConfig_->CacheDir());
+        res) {
         return util::UString(res.value(), allocator_).View();
     }
 

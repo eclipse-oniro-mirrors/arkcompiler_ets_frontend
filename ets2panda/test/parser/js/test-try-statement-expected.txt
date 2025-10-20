@@ -41,7 +41,6 @@
           "param": {
             "type": "Identifier",
             "name": "e",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -267,7 +266,6 @@
           "param": {
             "type": "Identifier",
             "name": "e",
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 29,

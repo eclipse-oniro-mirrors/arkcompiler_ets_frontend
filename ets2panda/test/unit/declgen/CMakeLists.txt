@@ -55,7 +55,7 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
     panda_target_link_libraries(${TEST_NAME} es2panda-public arkassembler arkbase arkfile)
 endforeach()
 
-add_custom_target(es2panda-declgen-plugin-test)
+add_custom_target(declgen-ets2ts-plugin-test)
 
 set(ETS2TS "ets2ts_isolated")
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
@@ -65,23 +65,70 @@ foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS})
     foreach(TEST_ETS_FILE IN ITEMS ${ETS2TS_ISOLATED_TESTS})
         cmake_path(SET PATH_ITEM "${TEST_ETS_FILE}")
         cmake_path(GET PATH_ITEM STEM FILE_NAME)
-        add_custom_target(es2panda-declgen-plugin-test-compile-${FILE_NAME}
+        add_custom_target(declgen-ets2ts-plugin-test-compile-${FILE_NAME}
             COMMAND ${CMAKE_COMMAND} -E env
                 LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
                 ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME} $<TARGET_FILE:es2panda>
                 --extension=ets --ets-unnamed --output="${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.abc"
                 "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_ETS_FILE}" > "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.out" 2>&1
         )
-        add_dependencies(es2panda-declgen-plugin-test-compile-${FILE_NAME} es2panda ${TEST_NAME} es2panda-lib)
-        add_dependencies(es2panda-declgen-plugin-test es2panda-declgen-plugin-test-compile-${FILE_NAME})
+        add_dependencies(declgen-ets2ts-plugin-test-compile-${FILE_NAME} es2panda ${TEST_NAME} es2panda-lib)
+        add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-compile-${FILE_NAME})
 
-        add_custom_target(es2panda-declgen-plugin-test-expected-${FILE_NAME}
+        add_custom_target(declgen-ets2ts-plugin-test-expected-${FILE_NAME}
             COMMAND ${CMAKE_COMMAND} -E compare_files
                 "${CMAKE_CURRENT_BINARY_DIR}/${FILE_NAME}.d.ets" "${CMAKE_CURRENT_SOURCE_DIR}/${ETS2TS}/${FILE_NAME}-expected.txt"
         )
-        add_dependencies(es2panda-declgen-plugin-test-expected-${FILE_NAME} es2panda-declgen-plugin-test-compile-${FILE_NAME} es2panda-lib)
-        add_dependencies(es2panda-declgen-plugin-test es2panda-declgen-plugin-test-expected-${FILE_NAME})
+        add_dependencies(declgen-ets2ts-plugin-test-expected-${FILE_NAME} declgen-ets2ts-plugin-test-compile-${FILE_NAME} es2panda-lib)
+        add_dependencies(declgen-ets2ts-plugin-test declgen-ets2ts-plugin-test-expected-${FILE_NAME})
     endforeach()
 endforeach()
 
-add_dependencies(es2panda_tests es2panda-declgen-plugin-test)
+add_custom_target(declgen-ets-test)
+
+set(ETS_TESTS
+    test
+    pckg/test
+    global
+    overload
+    nested
+)
+
+set(WORKING_DIR ${CMAKE_CURRENT_BINARY_DIR}/ets)
+file(MAKE_DIRECTORY ${WORKING_DIR})
+
+foreach(test_file IN LISTS ETS_TESTS)
+    set(INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ets/${test_file}.ets)
+    set(EXPECTED_FILE ${CMAKE_CURRENT_SOURCE_DIR}/ets/expected/${test_file}.d.ets)
+    set(OUTPUT_FILE ${WORKING_DIR}/${test_file}.d.ets)
+    set(STAMP_FILE ${WORKING_DIR}/${test_file}.stamp)
+    string(REPLACE "/" "_" TARGET_NAME ${test_file})
+
+    add_custom_command(
+        OUTPUT ${OUTPUT_FILE}
+        COMMAND ${CMAKE_COMMAND} -E env
+            LD_LIBRARY_PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${PANDA_RUN_PREFIX}
+            $<TARGET_FILE:es2panda> --generate-decl:enabled --generate-decl:path=${OUTPUT_FILE}
+            --opt-level=0 ${INPUT_FILE}
+        WORKING_DIRECTORY ${WORKING_DIR}
+        DEPENDS ${INPUT_FILE} es2panda
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT ${STAMP_FILE}
+        COMMAND ${CMAKE_COMMAND} -E compare_files ${OUTPUT_FILE} ${EXPECTED_FILE}
+        COMMAND ${CMAKE_COMMAND} -E touch ${STAMP_FILE}
+        WORKING_DIRECTORY ${WORKING_DIR}
+        DEPENDS ${OUTPUT_FILE} ${EXPECTED_FILE}
+        VERBATIM
+    )
+
+    add_custom_target(declgen-ets-test_${TARGET_NAME}
+        DEPENDS ${STAMP_FILE}
+    )
+    add_dependencies(declgen-ets-test_${TARGET_NAME} es2panda)
+    add_dependencies(declgen-ets-test declgen-ets-test_${TARGET_NAME})
+endforeach()
+
+add_dependencies(es2panda_tests declgen-ets2ts-plugin-test)

@@ -4,11 +4,8 @@ PROGRAM NODE:
 
 class A {
   public name: string = "xtyi";
-  
   public age: int = 18;
-  
   public address: string = "china";
-  
   public constructor() {}
   
 }

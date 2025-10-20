@@ -22,7 +22,6 @@
       "id": {
         "type": "Identifier",
         "name": "X",
-        "decorators": [],
         "loc": {
           "start": {
             "line": 17,
@@ -45,7 +44,6 @@
             "name": {
               "type": "Identifier",
               "name": "K",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -66,7 +64,6 @@
                 "name": {
                   "type": "Identifier",
                   "name": "Comparable",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -90,7 +87,6 @@
                         "name": {
                           "type": "Identifier",
                           "name": "K",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 17,
@@ -216,7 +212,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -238,7 +233,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -264,7 +258,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -325,7 +318,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,

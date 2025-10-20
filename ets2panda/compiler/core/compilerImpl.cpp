@@ -35,6 +35,7 @@
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/checkerPhase.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
+#include "parser/program/DeclarationCache.h"
 #include "parser/parserImpl.h"
 #include "parser/JSparser.h"
 #include "parser/ASparser.h"
@@ -111,18 +112,27 @@ static bool CheckOptionsBeforePhase(const util::Options &options, const parser::
 void HandleGenerateDecl(const parser::Program &program, util::DiagnosticEngine &diagnosticEngine,
                         const std::string &outputPath)
 {
+    //  Don't generate declarations for source code with errors!
+    if (diagnosticEngine.IsAnyError()) {
+        return;
+    }
+
     std::ofstream outFile(outputPath);
     if (!outFile.is_open()) {
         diagnosticEngine.LogFatalError(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {outputPath},
                                        lexer::SourcePosition());
         return;
     }
+
     std::string result = program.Ast()->DumpDecl();
-    result.erase(0, result.find_first_not_of('\n'));
     result = "'use static'\n" + result;
 
     outFile << result;
     outFile.close();
+
+    // Add generated declaration to the cache
+    auto &declarationCache = parser::DeclarationCache::Instance();
+    declarationCache.AddDeclaration(outputPath, std::make_shared<std::string>(std::move(result)));
 }
 
 static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,
@@ -175,6 +185,16 @@ static bool RunVerifierAndPhases(public_lib::Context &context, parser::Program &
         // Stop lowerings processing after Checker phase if any error happened.
         if (afterCheckerPhase && context.diagnosticEngine->IsAnyError()) {
             return false;
+        }
+
+        if (options.IsGenerateDeclEnabled() && name == compiler::CheckerPhase::NAME) {
+            std::string path;
+            if (!options.WasSetGenerateDeclPath()) {
+                path = ark::os::RemoveExtension(util::BaseName(options.SourceFileName())).append(".d.ets");
+            } else {
+                path = options.GetGenerateDeclPath();
+            }
+            HandleGenerateDecl(program, *context.diagnosticEngine, path);
         }
     }
 

@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "C",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "foo",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "foo",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 17,
@@ -116,7 +113,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -135,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -160,7 +155,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -221,7 +215,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -268,7 +261,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -290,7 +282,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -316,7 +307,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -377,7 +367,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -396,7 +385,6 @@
             "key": {
               "type": "Identifier",
               "name": "res",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 21,
@@ -415,7 +403,6 @@
               "callee": {
                 "type": "Identifier",
                 "name": "launch",
-                "decorators": [],
                 "loc": {
                   "start": {
                     "line": 21,
@@ -435,7 +422,6 @@
                   "object": {
                     "type": "Identifier",
                     "name": "C",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 21,
@@ -452,7 +438,6 @@
                   "property": {
                     "type": "Identifier",
                     "name": "foo",
-                    "decorators": [],
                     "loc": {
                       "start": {
                         "line": 21,
@@ -566,7 +551,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,

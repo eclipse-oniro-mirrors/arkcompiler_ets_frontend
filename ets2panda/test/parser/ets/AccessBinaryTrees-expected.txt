@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "TreeNode",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 16,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "left",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -59,7 +57,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "TreeNode",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 17,
@@ -129,7 +126,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -148,7 +144,6 @@
             "key": {
               "type": "Identifier",
               "name": "right",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -178,7 +173,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "TreeNode",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 18,
@@ -248,7 +242,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -267,7 +260,6 @@
             "key": {
               "type": "Identifier",
               "name": "item",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -303,7 +295,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
@@ -322,7 +313,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -348,7 +338,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -381,7 +370,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "TreeNode",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 21,
@@ -450,7 +438,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 21,
@@ -492,7 +479,6 @@
                               "name": {
                                 "type": "Identifier",
                                 "name": "TreeNode",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 21,
@@ -561,7 +547,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 21,
@@ -608,7 +593,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 21,
@@ -664,7 +648,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "left",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -696,7 +679,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "left",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 22,
@@ -761,7 +743,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "right",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 23,
@@ -793,7 +774,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "right",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -858,7 +838,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "item",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -890,7 +869,6 @@
                         "right": {
                           "type": "Identifier",
                           "name": "item",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 24,
@@ -971,7 +949,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 21,
@@ -990,7 +967,6 @@
             "key": {
               "type": "Identifier",
               "name": "itemCheck",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 27,
@@ -1016,7 +992,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "itemCheck",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 27,
@@ -1077,7 +1052,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "left",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 28,
@@ -1157,7 +1131,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "item",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -1227,7 +1200,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "item",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 31,
@@ -1282,7 +1254,6 @@
                                     "property": {
                                       "type": "Identifier",
                                       "name": "left",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 31,
@@ -1327,7 +1298,6 @@
                                 "property": {
                                   "type": "Identifier",
                                   "name": "itemCheck",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 31,
@@ -1410,7 +1380,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "right",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 31,
@@ -1455,7 +1424,6 @@
                               "property": {
                                 "type": "Identifier",
                                 "name": "itemCheck",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 31,
@@ -1579,7 +1547,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 27,
@@ -1626,7 +1593,6 @@
         "id": {
           "type": "Identifier",
           "name": "AccessBinaryTrees",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 35,
@@ -1648,7 +1614,6 @@
             "key": {
               "type": "Identifier",
               "name": "startDepth",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 36,
@@ -1685,7 +1650,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 36,
@@ -1704,7 +1668,6 @@
             "key": {
               "type": "Identifier",
               "name": "endDepth",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 37,
@@ -1741,7 +1704,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 37,
@@ -1760,7 +1722,6 @@
             "key": {
               "type": "Identifier",
               "name": "expected",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 38,
@@ -1797,7 +1758,6 @@
             "optional": false,
             "computed": false,
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 38,
@@ -1816,7 +1776,6 @@
             "key": {
               "type": "Identifier",
               "name": "bottomUpTree",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 40,
@@ -1842,7 +1801,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "bottomUpTree",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 40,
@@ -1880,7 +1838,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 40,
@@ -1927,7 +1884,6 @@
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 40,
@@ -1962,7 +1918,6 @@
                     "name": {
                       "type": "Identifier",
                       "name": "TreeNode",
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 40,
@@ -2013,7 +1968,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "depth",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 41,
@@ -2070,7 +2024,6 @@
                                   "name": {
                                     "type": "Identifier",
                                     "name": "TreeNode",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 42,
@@ -2118,7 +2071,6 @@
                                     "object": {
                                       "type": "Identifier",
                                       "name": "AccessBinaryTrees",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 43,
@@ -2135,7 +2087,6 @@
                                     "property": {
                                       "type": "Identifier",
                                       "name": "bottomUpTree",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 43,
@@ -2190,7 +2141,6 @@
                                         "right": {
                                           "type": "Identifier",
                                           "name": "item",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 43,
@@ -2252,7 +2202,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "depth",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 43,
@@ -2317,7 +2266,6 @@
                                     "object": {
                                       "type": "Identifier",
                                       "name": "AccessBinaryTrees",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 44,
@@ -2334,7 +2282,6 @@
                                     "property": {
                                       "type": "Identifier",
                                       "name": "bottomUpTree",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 44,
@@ -2386,7 +2333,6 @@
                                       "right": {
                                         "type": "Identifier",
                                         "name": "item",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 44,
@@ -2419,7 +2365,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "depth",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 44,
@@ -2480,7 +2425,6 @@
                                 {
                                   "type": "Identifier",
                                   "name": "item",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 45,
@@ -2560,7 +2504,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "TreeNode",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 48,
@@ -2636,7 +2579,6 @@
                           {
                             "type": "Identifier",
                             "name": "item",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 48,
@@ -2718,7 +2660,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 40,
@@ -2737,7 +2678,6 @@
             "key": {
               "type": "Identifier",
               "name": "run",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 51,
@@ -2763,7 +2703,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "run",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 51,
@@ -2822,7 +2761,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 52,
@@ -2905,7 +2843,6 @@
                                   }
                                 }
                               },
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 54,
@@ -2969,7 +2906,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "n",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 54,
@@ -3019,7 +2955,6 @@
                         "argument": {
                           "type": "Identifier",
                           "name": "n",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 54,
@@ -3072,7 +3007,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 55,
@@ -3153,7 +3087,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 56,
@@ -3172,7 +3105,6 @@
                                   "callee": {
                                     "type": "Identifier",
                                     "name": "max",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 56,
@@ -3193,7 +3125,6 @@
                                       "left": {
                                         "type": "Identifier",
                                         "name": "minDepth",
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 56,
@@ -3239,7 +3170,6 @@
                                     {
                                       "type": "Identifier",
                                       "name": "n",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 56,
@@ -3319,7 +3249,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 57,
@@ -3339,7 +3268,6 @@
                                   "left": {
                                     "type": "Identifier",
                                     "name": "maxDepth",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 57,
@@ -3433,7 +3361,6 @@
                                       }
                                     }
                                   },
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 58,
@@ -3458,7 +3385,6 @@
                                         "object": {
                                           "type": "Identifier",
                                           "name": "AccessBinaryTrees",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 58,
@@ -3475,7 +3401,6 @@
                                         "property": {
                                           "type": "Identifier",
                                           "name": "bottomUpTree",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 58,
@@ -3524,7 +3449,6 @@
                                         {
                                           "type": "Identifier",
                                           "name": "stretchDepth",
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 58,
@@ -3556,7 +3480,6 @@
                                     "property": {
                                       "type": "Identifier",
                                       "name": "itemCheck",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 58,
@@ -3636,7 +3559,6 @@
                                 "id": {
                                   "type": "Identifier",
                                   "name": "longLivedTree",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 60,
@@ -3657,7 +3579,6 @@
                                     "object": {
                                       "type": "Identifier",
                                       "name": "AccessBinaryTrees",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 60,
@@ -3674,7 +3595,6 @@
                                     "property": {
                                       "type": "Identifier",
                                       "name": "bottomUpTree",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 60,
@@ -3723,7 +3643,6 @@
                                     {
                                       "type": "Identifier",
                                       "name": "maxDepth",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 60,
@@ -3790,7 +3709,6 @@
                                   "id": {
                                     "type": "Identifier",
                                     "name": "depth",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 62,
@@ -3807,7 +3725,6 @@
                                   "init": {
                                     "type": "Identifier",
                                     "name": "minDepth",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 62,
@@ -3855,7 +3772,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "depth",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 62,
@@ -3872,7 +3788,6 @@
                               "right": {
                                 "type": "Identifier",
                                 "name": "maxDepth",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 62,
@@ -3905,7 +3820,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "depth",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 62,
@@ -3974,7 +3888,6 @@
                                             }
                                           }
                                         },
-                                        "decorators": [],
                                         "loc": {
                                           "start": {
                                             "line": 63,
@@ -4016,7 +3929,6 @@
                                             "left": {
                                               "type": "Identifier",
                                               "name": "maxDepth",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 63,
@@ -4033,7 +3945,6 @@
                                             "right": {
                                               "type": "Identifier",
                                               "name": "depth",
-                                              "decorators": [],
                                               "loc": {
                                                 "start": {
                                                   "line": 63,
@@ -4063,7 +3974,6 @@
                                           "right": {
                                             "type": "Identifier",
                                             "name": "minDepth",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 63,
@@ -4139,7 +4049,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "check",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 65,
@@ -4220,7 +4129,6 @@
                                               }
                                             }
                                           },
-                                          "decorators": [],
                                           "loc": {
                                             "start": {
                                               "line": 66,
@@ -4284,7 +4192,6 @@
                                     "left": {
                                       "type": "Identifier",
                                       "name": "i",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 66,
@@ -4301,7 +4208,6 @@
                                     "right": {
                                       "type": "Identifier",
                                       "name": "iterations",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 66,
@@ -4335,7 +4241,6 @@
                                     "argument": {
                                       "type": "Identifier",
                                       "name": "i",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 66,
@@ -4373,7 +4278,6 @@
                                           "left": {
                                             "type": "Identifier",
                                             "name": "check",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 67,
@@ -4398,7 +4302,6 @@
                                                   "object": {
                                                     "type": "Identifier",
                                                     "name": "AccessBinaryTrees",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 67,
@@ -4415,7 +4318,6 @@
                                                   "property": {
                                                     "type": "Identifier",
                                                     "name": "bottomUpTree",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 67,
@@ -4448,7 +4350,6 @@
                                                   {
                                                     "type": "Identifier",
                                                     "name": "i",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 67,
@@ -4465,7 +4366,6 @@
                                                   {
                                                     "type": "Identifier",
                                                     "name": "depth",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 67,
@@ -4497,7 +4397,6 @@
                                               "property": {
                                                 "type": "Identifier",
                                                 "name": "itemCheck",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 67,
@@ -4575,7 +4474,6 @@
                                           "left": {
                                             "type": "Identifier",
                                             "name": "check",
-                                            "decorators": [],
                                             "loc": {
                                               "start": {
                                                 "line": 68,
@@ -4600,7 +4498,6 @@
                                                   "object": {
                                                     "type": "Identifier",
                                                     "name": "AccessBinaryTrees",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 68,
@@ -4617,7 +4514,6 @@
                                                   "property": {
                                                     "type": "Identifier",
                                                     "name": "bottomUpTree",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 68,
@@ -4654,7 +4550,6 @@
                                                     "argument": {
                                                       "type": "Identifier",
                                                       "name": "i",
-                                                      "decorators": [],
                                                       "loc": {
                                                         "start": {
                                                           "line": 68,
@@ -4684,7 +4579,6 @@
                                                   {
                                                     "type": "Identifier",
                                                     "name": "depth",
-                                                    "decorators": [],
                                                     "loc": {
                                                       "start": {
                                                         "line": 68,
@@ -4716,7 +4610,6 @@
                                               "property": {
                                                 "type": "Identifier",
                                                 "name": "itemCheck",
-                                                "decorators": [],
                                                 "loc": {
                                                   "start": {
                                                     "line": 68,
@@ -4848,7 +4741,6 @@
                               "left": {
                                 "type": "Identifier",
                                 "name": "ret",
-                                "decorators": [],
                                 "loc": {
                                   "start": {
                                     "line": 72,
@@ -4869,7 +4761,6 @@
                                   "object": {
                                     "type": "Identifier",
                                     "name": "longLivedTree",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 72,
@@ -4886,7 +4777,6 @@
                                   "property": {
                                     "type": "Identifier",
                                     "name": "itemCheck",
-                                    "decorators": [],
                                     "loc": {
                                       "start": {
                                         "line": 72,
@@ -4992,7 +4882,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "arktest",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 75,
@@ -5009,7 +4898,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "assertEQ",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 75,
@@ -5042,7 +4930,6 @@
                           {
                             "type": "Identifier",
                             "name": "ret",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 75,
@@ -5157,7 +5044,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 51,
@@ -5176,7 +5062,6 @@
             "key": {
               "type": "Identifier",
               "name": "constructor",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 35,
@@ -5201,7 +5086,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "constructor",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 35,
@@ -5262,7 +5146,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -5309,7 +5192,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -5331,7 +5213,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 79,
@@ -5357,7 +5238,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 79,
@@ -5401,7 +5281,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 80,
@@ -5424,7 +5303,6 @@
                                 "name": {
                                   "type": "Identifier",
                                   "name": "AccessBinaryTrees",
-                                  "decorators": [],
                                   "loc": {
                                     "start": {
                                       "line": 80,
@@ -5515,7 +5393,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "a",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 81,
@@ -5532,7 +5409,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "run",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 81,
@@ -5630,7 +5506,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 79,

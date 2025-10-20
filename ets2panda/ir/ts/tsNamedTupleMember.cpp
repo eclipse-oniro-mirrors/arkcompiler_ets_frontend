@@ -42,9 +42,7 @@ void TSNamedTupleMember::Iterate(const NodeTraverser &cb) const
 {
     cb(label_);
     cb(elementType_);
-    for (auto *it : VectorIterationGuard(Annotations())) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void TSNamedTupleMember::Dump(ir::AstDumper *dumper) const
@@ -58,9 +56,7 @@ void TSNamedTupleMember::Dump(ir::AstDumper *dumper) const
 
 void TSNamedTupleMember::Dump(ir::SrcDumper *dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
     dumper->Add("TSNamedTupleMember");
 }
 

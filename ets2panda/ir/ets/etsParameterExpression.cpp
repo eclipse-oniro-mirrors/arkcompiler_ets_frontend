@@ -200,9 +200,7 @@ void ETSParameterExpression::Iterate(const NodeTraverser &cb) const
         cb(initializer);
     }
 
-    for (auto *it : Annotations()) {
-        cb(it);
-    }
+    IterateAnnotations(cb);
 }
 
 void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
@@ -221,27 +219,35 @@ void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
 
 void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
 {
-    for (auto *anno : Annotations()) {
-        anno->Dump(dumper);
-    }
+    DumpAnnotations(dumper);
 
     if (IsRestParameter()) {
         Spread()->Dump(dumper);
     } else {
-        auto const ident = Ident();
-        auto const initializer = Initializer();
-        if (ident != nullptr) {
-            ES2PANDA_ASSERT(ident_->IsAnnotatedExpression());
-            ident->Dump(dumper);
-            if (IsOptional() && initializer == nullptr) {
-                dumper->Add("?");
-            }
-            auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
-            if (typeAnnotation != nullptr) {
-                dumper->Add(": ");
-                typeAnnotation->Dump(dumper);
-            }
+        ETSParameterExpression const *node = this;
+        //  NOTE (DZ): temporary solution until node history starts working properly
+        if (dumper->IsDeclgen() && OriginalNode() != nullptr) {
+            node = OriginalNode()->AsETSParameterExpression();
         }
+
+        auto const ident = node->Ident();
+        ES2PANDA_ASSERT(ident != nullptr);
+        auto const initializer = node->Initializer();
+
+        ident->Dump(dumper);
+        if (node->IsOptional() && initializer == nullptr) {
+            dumper->Add("?");
+        }
+
+        auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
+        if (typeAnnotation != nullptr) {
+            if (dumper->IsDeclgen() && typeAnnotation->OriginalNode() != nullptr) {
+                typeAnnotation = typeAnnotation->OriginalNode()->AsExpression()->AsTypeNode();
+            }
+            dumper->Add(": ");
+            typeAnnotation->Dump(dumper);
+        }
+
         if (initializer != nullptr) {
             dumper->Add(" = ");
             initializer->Dump(dumper);
@@ -302,14 +308,8 @@ ETSParameterExpression *ETSParameterExpression::Clone(ArenaAllocator *const allo
 
     clone->SetRequiredParams(GetRequiredParams());
 
-    if (!Annotations().empty()) {
-        ArenaVector<AnnotationUsage *> annotationUsages {allocator->Adapter()};
-        for (auto *annotationUsage : Annotations()) {
-            auto *const annotationClone = annotationUsage->Clone(allocator, nullptr);
-            ES2PANDA_ASSERT(annotationClone != nullptr);
-            annotationUsages.push_back(annotationClone->AsAnnotationUsage());
-        }
-        clone->SetAnnotations(std::move(annotationUsages));
+    if (HasAnnotations()) {
+        clone->SetAnnotations(Annotations());
     }
 
     return clone;

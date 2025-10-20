@@ -79,10 +79,6 @@ void MethodDefinition::ResolveReferences(const NodeTraverser &cb) const
     for (auto *it : VectorIterationGuard(Overloads())) {
         cb(it);
     }
-
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
-    }
 }
 
 void MethodDefinition::Iterate(const NodeTraverser &cb) const
@@ -96,10 +92,6 @@ void MethodDefinition::Iterate(const NodeTraverser &cb) const
         if (it->Parent() == this) {
             cb(it);
         }
-    }
-
-    for (auto *it : VectorIterationGuard(Decorators())) {
-        cb(it);
     }
 }
 
@@ -122,14 +114,6 @@ void MethodDefinition::TransformChildren(const NodeTransformer &cb, std::string_
         if (auto *transformedNode = cb(overloads[ix]); overloads[ix] != transformedNode) {
             overloads[ix]->SetTransformedNode(transformationName, transformedNode);
             SetValueOverloads(transformedNode->AsMethodDefinition(), ix);
-        }
-    }
-
-    auto const &decorators = Decorators();
-    for (size_t ix = 0; ix < decorators.size(); ix++) {
-        if (auto *transformedNode = cb(decorators[ix]); decorators[ix] != transformedNode) {
-            decorators[ix]->SetTransformedNode(transformationName, transformedNode);
-            SetValueDecorators(transformedNode->AsDecorator(), ix);
         }
     }
 }
@@ -180,8 +164,39 @@ void MethodDefinition::Dump(ir::AstDumper *dumper) const
                  {"optional", IsOptionalDeclaration()},
                  {"computed", IsComputed()},
                  {"value", Value()},
-                 {"overloads", Overloads()},
-                 {"decorators", Decorators()}});
+                 {"overloads", Overloads()}});
+}
+
+void MethodDefinition::DumpAccessorPrefix(ir::SrcDumper *dumper) const
+{
+    //  special processing for overloads
+    auto const *parent = Parent();
+    if (parent != nullptr && parent->IsMethodDefinition()) {
+        parent = parent->Parent();
+    }
+
+    if (parent == nullptr) {
+        return;
+    }
+
+    if (parent->IsClassDefinition() && !parent->AsClassDefinition()->IsLocal()) {
+        if (IsPrivate()) {
+            dumper->Add("private ");
+        } else if (IsProtected()) {
+            dumper->Add("protected ");
+        } else {
+            dumper->Add("public ");
+        }
+        return;
+    }
+
+    if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
+        if (Value() != nullptr && Value()->IsFunctionExpression() &&
+            Value()->AsFunctionExpression()->Function() != nullptr &&
+            Value()->AsFunctionExpression()->Function()->HasBody()) {
+            dumper->Add("default ");
+        }
+    }
 }
 
 void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
@@ -217,80 +232,47 @@ void MethodDefinition::DumpModifierPrefix(ir::SrcDumper *dumper) const
     }
 }
 
-bool MethodDefinition::DumpNamespaceForDeclGen(ir::SrcDumper *dumper) const
+static bool IsNamespaceTransformed(const MethodDefinition *method)
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
+    auto *parent = method->Parent();
+    if (parent->IsMethodDefinition()) {
+        // handle overloads
+        parent = parent->Parent();
     }
-
-    if (Parent() == nullptr) {
-        return false;
-    }
-
-    bool isNamespaceTransformed =
-        Parent()->IsClassDefinition() && Parent()->AsClassDefinition()->IsNamespaceTransformed();
-    if (isNamespaceTransformed) {
-        dumper->Add("function ");
+    if (parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed()) {
         return true;
     }
-
     return false;
-}
-
-void MethodDefinition::DumpPrefixForDeclGen(ir::SrcDumper *dumper) const
-{
-    if (!dumper->IsDeclgen()) {
-        return;
-    }
-
-    if (key_ == nullptr) {
-        return;
-    }
-
-    if (key_->Parent()->IsExported()) {
-        dumper->Add("export declare function ");
-    } else if (key_->Parent()->IsDefaultExported()) {
-        dumper->Add("export default declare function ");
-    }
 }
 
 void MethodDefinition::DumpPrefix(ir::SrcDumper *dumper) const
 {
-    if (DumpNamespaceForDeclGen(dumper)) {
-        return;
-    }
-
-    if (compiler::HasGlobalClassParent(this) && !dumper->IsDeclgen()) {
+    bool global = compiler::HasGlobalClassParent(this);
+    if (global || IsNamespaceTransformed(this)) {
         if (IsExported()) {
             dumper->Add("export ");
+        }
+        if (IsDefaultExported()) {
+            dumper->Add("export default ");
+        }
+        if (dumper->IsDeclgen()) {
+            if (global) {
+                dumper->Add("declare ");
+            } else {
+                dumper->TryDeclareAmbientContext();
+            }
         }
         dumper->Add("function ");
         return;
     }
 
-    DumpPrefixForDeclGen(dumper);
+    DumpAccessorPrefix(dumper);
 
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal() &&
-        !compiler::HasGlobalClassParent(this)) {
-        if (IsPrivate()) {
-            dumper->Add("private ");
-        } else if (IsProtected()) {
-            dumper->Add("protected ");
-        } else if (IsInternal()) {
-            dumper->Add("internal ");
-        } else {
-            dumper->Add("public ");
-        }
-    }
     DumpModifierPrefix(dumper);
 }
 
-bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
+bool MethodDefinition::FilterForDeclGen() const
 {
-    if (!dumper->IsDeclgen()) {
-        return false;
-    }
-
     if (key_ == nullptr) {
         return false;
     }
@@ -318,7 +300,7 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
         return true;
     }
 
-    if (IsPrivate()) {
+    if (IsPrivate() || IsInternal()) {
         return true;
     }
 
@@ -327,7 +309,7 @@ bool MethodDefinition::FilterForDeclGen(ir::SrcDumper *dumper) const
 
 void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 {
-    if (FilterForDeclGen(dumper)) {
+    if (dumper->IsDeclgen() && FilterForDeclGen()) {
         return;
     }
 
@@ -336,18 +318,16 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
-    for (auto method : Overloads()) {
-        method->Dump(dumper);
-        dumper->Endl();
-    }
-
     auto value = Value();
-    for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
-        // NOTE(zhelyapov): workaround, see #26031
-        if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
-            anno->Dump(dumper);
+    if (value->AsFunctionExpression()->Function()->HasAnnotations()) {
+        for (auto *anno : value->AsFunctionExpression()->Function()->Annotations()) {
+            // NOTE(zhelyapov): workaround, see #26031
+            if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
+                anno->Dump(dumper);
+            }
         }
     }
+
     DumpPrefix(dumper);
 
     if (IsConstructor() &&
@@ -362,6 +342,10 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 
     if (value != nullptr) {
         value->Dump(dumper);
+    }
+
+    for (auto method : Overloads()) {
+        method->Dump(dumper);
     }
 }
 
@@ -397,10 +381,6 @@ MethodDefinition *MethodDefinition::Clone(ArenaAllocator *const allocator, AstNo
 
     key->SetParent(clone);
     value->SetParent(clone);
-
-    for (auto *const decorator : Decorators()) {
-        clone->AddDecorator(decorator->Clone(allocator, clone));
-    }
 
     clone->SetBaseOverloadMethod(BaseOverloadMethod());
 

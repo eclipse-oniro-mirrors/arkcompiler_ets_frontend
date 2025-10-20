@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 16,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 16,
@@ -114,7 +111,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 17,
@@ -211,7 +207,6 @@
                                 }
                               }
                             },
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 18,
@@ -257,7 +252,6 @@
                                     "argument": {
                                       "type": "Identifier",
                                       "name": "x",
-                                      "decorators": [],
                                       "loc": {
                                         "start": {
                                           "line": 18,
@@ -361,7 +355,6 @@
                           "object": {
                             "type": "Identifier",
                             "name": "console",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -378,7 +371,6 @@
                           "property": {
                             "type": "Identifier",
                             "name": "println",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -413,7 +405,6 @@
                             "callee": {
                               "type": "Identifier",
                               "name": "y",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 19,
@@ -511,7 +502,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 16,

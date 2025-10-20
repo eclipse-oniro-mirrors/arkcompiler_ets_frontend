@@ -6,8 +6,158 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "A",
+          "loc": {
+            "start": {
+              "line": 20,
+              "column": 7,
+              "program": "instanceof_etsobject_jsvalue.ets"
+            },
+            "end": {
+              "line": 20,
+              "column": 8,
+              "program": "instanceof_etsobject_jsvalue.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 10,
+                    "program": "instanceof_etsobject_jsvalue.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 10,
+                    "program": "instanceof_etsobject_jsvalue.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 20,
+            "column": 9,
+            "program": "instanceof_etsobject_jsvalue.ets"
+          },
+          "end": {
+            "line": 22,
+            "column": 9,
+            "program": "instanceof_etsobject_jsvalue.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 20,
+          "column": 1,
+          "program": "instanceof_etsobject_jsvalue.ets"
+        },
+        "end": {
+          "line": 22,
+          "column": 9,
+          "program": "instanceof_etsobject_jsvalue.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +179,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +204,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -80,12 +228,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_etsobject_jsvalue.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "instanceof_etsobject_jsvalue.ets"
                     }
                   }
                 },
@@ -93,12 +241,12 @@
                   "start": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_etsobject_jsvalue.ets"
                   },
                   "end": {
                     "line": 1,
                     "column": 1,
-                    "program": null
+                    "program": "instanceof_etsobject_jsvalue.ets"
                   }
                 }
               },
@@ -106,123 +254,16 @@
                 "start": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_etsobject_jsvalue.ets"
                 },
                 "end": {
                   "line": 1,
                   "column": 1,
-                  "program": null
+                  "program": "instanceof_etsobject_jsvalue.ets"
                 }
               }
             },
             "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_etsobject_jsvalue.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "instanceof_etsobject_jsvalue.ets"
-              }
-            }
-          },
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "_$init$_",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "_$init$_",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -241,7 +282,6 @@
             "key": {
               "type": "Identifier",
               "name": "fn",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 22,
@@ -267,7 +307,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "fn",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 22,
@@ -297,7 +336,6 @@
                           "name": {
                             "type": "Identifier",
                             "name": "A",
-                            "decorators": [],
                             "loc": {
                               "start": {
                                 "line": 22,
@@ -319,7 +357,7 @@
                             },
                             "end": {
                               "line": 22,
-                              "column": 18,
+                              "column": 17,
                               "program": "instanceof_etsobject_jsvalue.ets"
                             }
                           }
@@ -332,12 +370,11 @@
                           },
                           "end": {
                             "line": 22,
-                            "column": 18,
+                            "column": 17,
                             "program": "instanceof_etsobject_jsvalue.ets"
                           }
                         }
                       },
-                      "decorators": [],
                       "loc": {
                         "start": {
                           "line": 22,
@@ -346,7 +383,7 @@
                         },
                         "end": {
                           "line": 22,
-                          "column": 18,
+                          "column": 17,
                           "program": "instanceof_etsobject_jsvalue.ets"
                         }
                       }
@@ -359,7 +396,7 @@
                       },
                       "end": {
                         "line": 22,
-                        "column": 18,
+                        "column": 17,
                         "program": "instanceof_etsobject_jsvalue.ets"
                       }
                     }
@@ -391,7 +428,6 @@
                         "left": {
                           "type": "Identifier",
                           "name": "o",
-                          "decorators": [],
                           "loc": {
                             "start": {
                               "line": 23,
@@ -412,7 +448,6 @@
                             "name": {
                               "type": "Identifier",
                               "name": "JSValue",
-                              "decorators": [],
                               "loc": {
                                 "start": {
                                   "line": 23,
@@ -434,7 +469,7 @@
                               },
                               "end": {
                                 "line": 23,
-                                "column": 33,
+                                "column": 32,
                                 "program": "instanceof_etsobject_jsvalue.ets"
                               }
                             }
@@ -447,7 +482,7 @@
                             },
                             "end": {
                               "line": 23,
-                              "column": 33,
+                              "column": 32,
                               "program": "instanceof_etsobject_jsvalue.ets"
                             }
                           }
@@ -460,7 +495,7 @@
                           },
                           "end": {
                             "line": 23,
-                            "column": 33,
+                            "column": 32,
                             "program": "instanceof_etsobject_jsvalue.ets"
                           }
                         }
@@ -519,7 +554,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 22,
@@ -559,161 +593,6 @@
           "program": "instanceof_etsobject_jsvalue.ets"
         }
       }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "A",
-          "decorators": [],
-          "loc": {
-            "start": {
-              "line": 20,
-              "column": 7,
-              "program": "instanceof_etsobject_jsvalue.ets"
-            },
-            "end": {
-              "line": 20,
-              "column": 8,
-              "program": "instanceof_etsobject_jsvalue.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "constructor",
-              "decorators": [],
-              "loc": {
-                "start": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "instanceof_etsobject_jsvalue.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "instanceof_etsobject_jsvalue.ets"
-                }
-              }
-            },
-            "kind": "constructor",
-            "static": false,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "constructor",
-                  "decorators": [],
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "instanceof_etsobject_jsvalue.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "instanceof_etsobject_jsvalue.ets"
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "instanceof_etsobject_jsvalue.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 10,
-                      "program": "instanceof_etsobject_jsvalue.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 20,
-                    "column": 10,
-                    "program": "instanceof_etsobject_jsvalue.ets"
-                  },
-                  "end": {
-                    "line": 20,
-                    "column": 10,
-                    "program": "instanceof_etsobject_jsvalue.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "instanceof_etsobject_jsvalue.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 10,
-                  "program": "instanceof_etsobject_jsvalue.ets"
-                }
-              }
-            },
-            "overloads": [],
-            "decorators": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
-              }
-            }
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 20,
-            "column": 9,
-            "program": "instanceof_etsobject_jsvalue.ets"
-          },
-          "end": {
-            "line": 22,
-            "column": 9,
-            "program": "instanceof_etsobject_jsvalue.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 20,
-          "column": 1,
-          "program": "instanceof_etsobject_jsvalue.ets"
-        },
-        "end": {
-          "line": 22,
-          "column": 9,
-          "program": "instanceof_etsobject_jsvalue.ets"
-        }
-      }
     }
   ],
   "loc": {
@@ -729,4 +608,3 @@
     }
   }
 }
-TypeError: Right-hand side of instanceof expression must represent a type. [instanceof_etsobject_jsvalue.ets:23:12]

@@ -113,7 +113,8 @@ public:
     static util::StringView ToStringView(ArenaAllocator *allocator, double number);
     static util::StringView ToStringView(ArenaAllocator *allocator, int32_t number);
     static util::StringView ToStringView(ArenaAllocator *allocator, uint32_t number);
-    static bool EndsWith(const std::string &str, const std::string &suffix);
+    static bool StartsWith(const std::string_view str, const std::string_view prefix);
+    static bool EndsWith(const std::string_view str, const std::string_view suffix);
 
     static const ir::ScriptFunction *GetContainingConstructor(const ir::AstNode *node);
     static const ir::ScriptFunction *GetContainingConstructor(const ir::ClassProperty *node);
@@ -193,7 +194,7 @@ public:
 
     static const uint32_t INVALID_INDEX = 4294967295L;
 
-    static std::string CreateEscapedString(const std::string &str);
+    static std::string CreateEscapedString(std::string_view str);
     static std::string UTF16toUTF8(const char16_t c);
 
     template <typename... Elements>

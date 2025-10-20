@@ -7,7 +7,6 @@
         "id": {
           "type": "Identifier",
           "name": "ETSGLOBAL",
-          "decorators": [],
           "loc": {
             "start": {
               "line": 1,
@@ -29,7 +28,6 @@
             "key": {
               "type": "Identifier",
               "name": "main",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 1,
@@ -55,7 +53,6 @@
                 "id": {
                   "type": "Identifier",
                   "name": "main",
-                  "decorators": [],
                   "loc": {
                     "start": {
                       "line": 1,
@@ -116,7 +113,6 @@
               }
             },
             "overloads": [],
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 1,
@@ -135,7 +131,6 @@
             "key": {
               "type": "Identifier",
               "name": "simple_ident",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 17,
@@ -171,7 +166,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 17,
@@ -190,7 +184,6 @@
             "key": {
               "type": "Identifier",
               "name": "_underscore_ident",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 18,
@@ -226,7 +219,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 18,
@@ -245,7 +237,6 @@
             "key": {
               "type": "Identifier",
               "name": "$dollar_ident",
-              "decorators": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -281,7 +272,6 @@
               }
             },
             "definite": false,
-            "decorators": [],
             "loc": {
               "start": {
                 "line": 19,
