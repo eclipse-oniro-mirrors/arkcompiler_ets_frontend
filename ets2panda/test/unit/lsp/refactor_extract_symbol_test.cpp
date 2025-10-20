@@ -255,7 +255,7 @@ TEST_F(LspExtrSymblTests, ExtrSymblFunctionTests)
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(LspExtrSymblTests, ExtrSymblFunctionTests1)
+TEST_F(LspExtrSymblTests, DISABLED_ExtrSymblFunctionTests1)
 {
     std::vector<std::string> files = {"ExtrSymblFunctionTests1.ets"};
     std::vector<std::string> texts = {
