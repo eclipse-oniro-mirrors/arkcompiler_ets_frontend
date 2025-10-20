@@ -551,7 +551,6 @@ RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &contex
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
     TextChangesContext changeText {{}, formatContext, {}};
-    auto tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto funcCallText = ReplaceWithFunctionCall(candidate, functionText);
 
     TextChangesContext textChangesContext = *context.textChangesContext;
