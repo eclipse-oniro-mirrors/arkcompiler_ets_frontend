@@ -504,6 +504,10 @@ syntax:
   message: "Import declarations can only be used on the top level and before any other declaration, top level statement or
     directive."
 
+- name: IMPORT_TYPE_NOT_ALLOWED
+  id: 7095
+  message: "Import type notation to import annotations is forbidden"
+
 - name: IMPROPER_NESTING_CLASS
   id: 233
   message: "Unexpected token. A constructor, method, accessor, or property was expected."
