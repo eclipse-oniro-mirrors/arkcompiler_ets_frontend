@@ -54,6 +54,7 @@ void TSEnumMember::Dump(ir::AstDumper *dumper) const
 void TSEnumMember::Dump(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_ != nullptr);
+    dumper->DumpJsdocBeforeTargetNode(this);
     key_->Dump(dumper);
     if (init_ != nullptr) {
         dumper->Add(" = ");

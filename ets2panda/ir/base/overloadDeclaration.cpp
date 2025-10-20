@@ -98,6 +98,7 @@ void OverloadDeclaration::DumpModifier(ir::SrcDumper *dumper) const
 
 void OverloadDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpModifier(dumper);
     dumper->Add("overload ");
     dumper->Add(IsConstructor() ? "constructor " : key_->AsIdentifier()->Name().Mutf8());

@@ -761,6 +761,7 @@ public:
     std::string DumpJSON() const;
     std::string DumpEtsSrc() const;
     std::string DumpDecl(public_lib::Context *context) const;
+    std::string DumpEtsSrcWithJsdoc() const;
 
     virtual void Dump(ir::AstDumper *dumper) const = 0;
     virtual void Dump(ir::SrcDumper *dumper) const = 0;

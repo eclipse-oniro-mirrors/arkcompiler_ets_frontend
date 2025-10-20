@@ -150,7 +150,7 @@
 /**
 this is jsdoc of tool
 */
-Empty Jsdoc
+
 /**
     * ==== ambient indexer jsdoc ====
     * @param1 {} behindStr

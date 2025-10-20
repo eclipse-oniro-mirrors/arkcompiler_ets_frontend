@@ -17,6 +17,7 @@
 #define ES2PANDA_IR_SRCDUMP_H
 
 #include "ir/astNode.h"
+#include "parser/JsdocHelper.h"
 
 namespace ark::es2panda::ir {
 
@@ -179,6 +180,7 @@ public:
     }
 
     explicit SrcDumper(Declgen *dg = nullptr);
+    explicit SrcDumper(const ir::AstNode *node, bool enableJsdocDump, Declgen *dg);
 
     void Add(std::string_view str);
     void Add(char ch);
@@ -206,6 +208,8 @@ public:
         return Declgen::Lock::BuildEmptyReleaser();
     }
 
+    void DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode);
+
     void DumpExports();
 
     void SetDefaultExport() noexcept;
@@ -217,6 +221,7 @@ private:
 
     /* declgen-specific: */
     Declgen *dg_;
+    std::unique_ptr<parser::JsdocHelper> jsdocGetter_ {};
     // Flag to avoid duplicate default export declarations
     bool hasDefaultExport_ = false;
 };

@@ -108,6 +108,7 @@ void VariableDeclaration::Dump(ir::AstDumper *dumper) const
 
 void VariableDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
 
     if (IsDeclare()) {

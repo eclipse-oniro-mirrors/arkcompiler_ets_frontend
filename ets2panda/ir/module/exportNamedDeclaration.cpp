@@ -85,6 +85,7 @@ bool ExportNamedDeclaration::HasDumpData(bool const hasDefaultExport) const noex
 
 void ExportNamedDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     if (!HasDumpData(dumper->HasDefaultExport())) {
         return;
     }

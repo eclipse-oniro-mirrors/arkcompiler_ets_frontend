@@ -21,7 +21,6 @@
 
 namespace ark::es2panda::parser {
 static constexpr std::string_view JSDOC_END = "*/";
-static constexpr std::string_view EMPTY_JSDOC = "Empty Jsdoc";
 
 static constexpr size_t START_POS = 0;
 static constexpr size_t COLLECT_CURRENT_POS = 1;
@@ -108,6 +107,23 @@ static void HandlePotentialPrefixOrAnnotationUsage(parser::JsdocHelper *jsdocHel
     }
 }
 
+void JsdocHelper::InitNode(const ir::AstNode *input)
+{
+    auto root = input;
+    while (root->Parent() != nullptr) {
+        root = root->Parent();
+    }
+    root_ = root;
+    program_ = root_->AsETSModule()->Program();
+    sourceCode_ = program_->SourceCode();
+    iter_ = util::StringView::Iterator(sourceCode_);
+    if (input->IsClassDefinition()) {
+        node_ = input->Parent();
+    } else {
+        node_ = input;
+    }
+}
+
 bool JsdocHelper::BackWardUntilJsdocStart()
 {
     while (true) {
@@ -162,7 +178,7 @@ util::StringView JsdocHelper::GetJsdocBackward()
     }
 
     if (backwardPos == jsdocEndPos) {
-        return EMPTY_JSDOC;
+        return "";
     }
     return SourceView(backwardPos, jsdocEndPos);
 }
