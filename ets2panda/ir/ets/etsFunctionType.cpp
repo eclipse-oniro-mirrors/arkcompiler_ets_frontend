@@ -21,6 +21,16 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
+void ETSFunctionType::SetParams(ArenaVector<Expression *> &&paramsList)
+{
+    auto &params = GetOrCreateHistoryNodeAs<ETSFunctionType>()->signature_.Params();
+    params = std::move(paramsList);
+
+    for (auto *param : params) {
+        param->SetParent(this);
+    }
+}
+
 void ETSFunctionType::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     GetHistoryNodeAs<ETSFunctionType>()->signature_.TransformChildren(cb, transformationName);
