@@ -19,9 +19,6 @@
 #include "parserImpl.h"
 #include "parser/program/program.h"
 #include "lexer/token/letters.h"
-#include "ir/astNode.h"
-#include "ir/base/classDefinition.h"
-#include "ir/ets/etsModule.h"
 
 namespace ark::es2panda::parser {
 using UStringView = util::StringView;
@@ -29,14 +26,6 @@ class JsdocHelper {
 public:
     explicit JsdocHelper(const ir::AstNode *inputNode)
     {
-        auto root = inputNode;
-        while (root->Parent() != nullptr) {
-            root = root->Parent();
-        }
-        root_ = root;
-        program_ = root_->AsETSModule()->Program();
-        sourceCode_ = program_->SourceCode();
-        iter_ = util::StringView::Iterator(sourceCode_);
         InitNode(inputNode);
     }
 
@@ -84,16 +73,9 @@ public:
         return iter_.Peek();
     }
 
-private:
-    void InitNode(const ir::AstNode *input)
-    {
-        if (input->IsClassDefinition()) {
-            node_ = input->Parent();
-        } else {
-            node_ = input;
-        }
-    }
+    void InitNode(const ir::AstNode *input);
 
+private:
     bool SkipWhiteSpacesBackwardHelper(const char32_t &cp)
     {
         if (cp < lexer::LEX_ASCII_MAX_BITS) {

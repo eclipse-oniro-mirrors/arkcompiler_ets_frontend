@@ -153,6 +153,13 @@ std::string AstNode::DumpEtsSrc() const
     return dumper.Str();
 }
 
+std::string AstNode::DumpEtsSrcWithJsdoc() const
+{
+    ir::SrcDumper dumper {this, true, nullptr};
+    Dump(&dumper);
+    return dumper.Str();
+}
+
 std::string AstNode::DumpDecl(public_lib::Context *context) const
 {
     Declgen dg {context};

@@ -72,6 +72,7 @@ void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->GetDeclgen()->CollectImport(this);
         return;
     }
+    dumper->DumpJsdocBeforeTargetNode(this);
     dumper->Add("import ");
     auto const &specifiers = Specifiers();
     if (specifiers.size() == 1 &&

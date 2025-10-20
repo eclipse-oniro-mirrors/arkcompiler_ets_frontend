@@ -106,6 +106,7 @@ void AnnotationDeclaration::Dump(ir::AstDumper *dumper) const
 void AnnotationDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     auto guard = dumper->BuildAmbientContextGuard();
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
     ES2PANDA_ASSERT(Expr() != nullptr);
     if (IsExported()) {

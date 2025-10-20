@@ -201,6 +201,8 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
+    dumper->DumpJsdocBeforeTargetNode(this);
+
     DumpAnnotations(dumper);
 
     if (id_->Parent()->IsExported()) {

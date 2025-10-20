@@ -22,6 +22,12 @@
 namespace ark::es2panda::ir {
 
 SrcDumper::SrcDumper(Declgen *dg) : dg_(dg) {}
+SrcDumper::SrcDumper(const ir::AstNode *node, bool enableJsdocDump, Declgen *dg) : dg_(dg)
+{
+    if (enableJsdocDump) {
+        jsdocGetter_ = std::make_unique<parser::JsdocHelper>(node);
+    }
+}
 
 void SrcDumper::IncrIndent()
 {
@@ -131,6 +137,31 @@ bool SrcDumper::IsDeclgen() const
 Declgen *SrcDumper::GetDeclgen() const
 {
     return dg_;
+}
+
+void SrcDumper::DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode)
+{
+    if (!jsdocGetter_) {
+        return;
+    }
+    jsdocGetter_->InitNode(inputNode);
+    auto resJsdoc = jsdocGetter_->GetJsdocBackward();
+    if (!resJsdoc.Empty()) {
+        ss_ << resJsdoc.Mutf8();
+        ss_ << std::endl;
+        auto parent = inputNode->Parent();
+        if (inputNode->IsClassDefinition() || parent->IsClassDefinition() || parent->IsTSInterfaceBody() ||
+            parent->IsScriptFunction()) {
+            parent = parent->Parent();
+        }
+        while (!parent->IsETSModule() || (parent->IsETSModule() && parent->AsETSModule()->IsNamespace())) {
+            ss_ << "  ";
+            parent = parent->Parent();
+            if (parent == nullptr) {
+                break;
+            }
+        }
+    }
 }
 
 void SrcDumper::SetDefaultExport() noexcept

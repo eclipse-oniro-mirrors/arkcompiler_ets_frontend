@@ -62,6 +62,7 @@ void ETSReExportDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ETSReExportDeclaration::Dump([[maybe_unused]] ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     auto importDeclaration = GetETSImportDeclarations();
     const auto &specifiers = importDeclaration->Specifiers();
     dumper->Add("export ");

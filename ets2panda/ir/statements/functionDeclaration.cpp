@@ -62,6 +62,7 @@ void FunctionDeclaration::Dump(ir::AstDumper *dumper) const
 
 void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
     auto func = Function();
     if (func->IsNative()) {

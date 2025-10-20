@@ -123,6 +123,7 @@ void TSTypeAliasDeclaration::Dump(ir::SrcDumper *dumper) const
     if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
     if (id_->Parent()->IsExported()) {
         dumper->Add("export ");

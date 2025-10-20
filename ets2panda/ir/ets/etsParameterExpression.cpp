@@ -219,6 +219,7 @@ void ETSParameterExpression::Dump(ir::AstDumper *const dumper) const
 
 void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
 
     if (IsRestParameter()) {

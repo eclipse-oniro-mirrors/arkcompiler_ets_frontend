@@ -345,6 +345,8 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         }
     }
 
+    dumper->DumpJsdocBeforeTargetNode(this);
+
     if (!dumper->IsDeclgen() || !IsPrivate()) {
         DumpSingleOverload(this, dumper);
     }

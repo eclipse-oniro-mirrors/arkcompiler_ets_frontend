@@ -236,6 +236,8 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
 // Dump the node without any precondition in declgen
 void ClassProperty::ForceDump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
+
     DumpPrefix(dumper);
 
     if (Key() != nullptr) {
