@@ -815,6 +815,25 @@ bool ETSChecker::CheckInit(ir::Identifier *ident, ir::TypeNode *typeAnnotation, 
         } else if (init->IsObjectExpression()) {
             LogError(diagnostic::CANNOT_INFER_OBJ_LIT, {ident->Name()}, ident->Start());
             return false;
+        } else if (init->IsArrowFunctionExpression()) {
+            // NOTE: when there is lambda expression which is not fully annotated, there should be no CTE
+            // Please refer the issue: 30772
+            auto *lambda = init->AsArrowFunctionExpression()->Function();
+            const bool allParamsAnnotated =
+                std::all_of(lambda->Params().begin(), lambda->Params().end(), [](ir::Expression *p) {
+                    return p->IsETSParameterExpression() && p->AsETSParameterExpression()->TypeAnnotation() != nullptr;
+                });
+            const bool hasAnnotatedReturn = (lambda->ReturnTypeAnnotation() != nullptr);
+            if (allParamsAnnotated && hasAnnotatedReturn) {
+                auto *sigInfo = ComposeSignatureInfo(lambda->TypeParams(), lambda->Params());
+                ES2PANDA_ASSERT(sigInfo != nullptr);
+
+                checker::Type *returnType = ComposeReturnType(lambda->ReturnTypeAnnotation(), lambda->IsAsync());
+                checker::Signature *sig = ComposeSignature(lambda, sigInfo, returnType, bindingVar);
+                ES2PANDA_ASSERT(sig != nullptr);
+
+                annotationType = CreateETSArrowType(sig);
+            }
         }
         if (bindingVar != nullptr) {
             bindingVar->SetTsType(annotationType);
