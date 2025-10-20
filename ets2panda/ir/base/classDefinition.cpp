@@ -443,6 +443,8 @@ void ClassDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
+    dumper->DumpJsdocBeforeTargetNode(this);
+
     DumpAnnotations(dumper);
 
     DumpPrefix(dumper);

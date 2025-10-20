@@ -218,6 +218,7 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+    dumper->DumpJsdocBeforeTargetNode(this);
     DumpPrefix(dumper);
 
     if (Key() != nullptr) {

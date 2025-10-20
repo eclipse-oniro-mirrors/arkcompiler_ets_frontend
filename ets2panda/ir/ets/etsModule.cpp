@@ -21,6 +21,7 @@ namespace ark::es2panda::ir {
 void ETSModule::Dump(ir::SrcDumper *dumper) const
 {
     if (IsNamespace()) {
+        dumper->DumpJsdocBeforeTargetNode(this);
         if (IsExported()) {
             dumper->Add("export ");
         }

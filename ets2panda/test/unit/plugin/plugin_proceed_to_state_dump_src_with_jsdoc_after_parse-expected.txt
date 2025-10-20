@@ -1,0 +1,314 @@
+PROCEED TO PARSE SUCCESS
+
+"use static"
+/**
+ * ==== import specifier jsdoc1 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+import { PI as PI, E as E } from "std/math/consts";
+
+/**
+ * ==== import specifier jsdoc2 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+import E from "std/math/consts";
+
+/**
+ * ==== export specifier jsdoc1 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+export { JsDocClassOutside as JsDocClassOutside, jsdocVal1 as jsdocVal1, jsDocFunc as jsDocFunc }
+/**
+ * ==== export specifier jsdoc2 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+export { PI as PI, E as E } from "std/math/consts";
+
+/**
+ * ==== export specifier jsdoc3 ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+export { jsdocVal2 as jsdocVal2 }
+/**
+ * ==== export Annotation jsdoc ====
+ * @param1 preStr { p } behindStr
+ * @param2 preStr {} behindStr
+*/
+@interface exportAnno {}
+
+/**
+ * ==== export declare class A ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+export declare class A {
+  /**
+    * ==== classFoo ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  public classFoo(): void
+  
+  /**
+    * ==== private optional classProp ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  private classProp?: (number | undefined);
+  
+  /**
+    * ==== test class getter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  public get testGet(): number
+  
+  /**
+    * ==== test class setter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  public set testSet(n: number)
+  
+  ambient_indexer
+  public constructor() {}
+  
+}
+
+/**
+ * ==== export declare struct myStruct ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+export declare struct myStruct {
+  /**
+  * ==== private optional Prop ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  public Prop?: (number | undefined);
+  
+  public constructor() {}
+  
+}
+
+/**
+ * ==== export declare interface I ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+ */
+export declare interface I {
+  /**
+    * ==== interfaceFoo jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  interfaceFoo(): void
+  /**
+    * ==== interfaceProp jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  interfaceProp: [a, b];
+  /**
+    * ==== arrowFunc jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  interfaceArrowFunc: (()=> void);
+  /**
+    * ==== interface getter jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  get intefaceGet(): number
+  /**
+    * ==== interface setter jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  set intefaceSet(n: number)
+  
+}
+
+/**
+* ==== JsdocNS ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+declare namespace JsdocNS {
+  /**
+  * ==== JsdocInterface ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  export interface JsdocInterface {
+    /**
+    * ==== interfaceFoo ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    interfaceFoo(): void
+    /**
+    * ==== private interfaceProp1 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    interfaceProp1: number;
+    /**
+    * ==== interfaceProp2 ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    interfaceProp2: (number | string[]);
+    
+  }
+  
+  /**
+  * ==== JsDocClass ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  declare class JsDocClass {
+    /**
+    * ==== classFoo ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    public classFoo(): void
+    
+    /**
+    * ==== private classProp ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    private classProp: number;
+    
+    /**
+    * ==== test class getter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    public get testGet(): number
+    
+    /**
+    * ==== test class setter ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    public set testSet(n: number)
+    
+    public constructor() {}
+    
+  }
+  
+  /**
+  * ==== JsDocStruct ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  declare struct JsDocStruct {
+    /**
+    * ==== private Prop ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+    private Prop: number;
+    
+    public constructor() {}
+    
+  }
+  
+  /**
+  * ==== JsDocEnum1 ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  declare enum E1 {
+    A1 = 0,
+    B1 = 1,
+    C1 = 2,
+    D1 = 65535
+  }
+  
+  /**
+  * ==== JsDocEnum2 ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  declare enum E2 {
+    A2 = 1,
+    B2 = 2,
+    C2 = 3,
+    D2 = ((3) + (1))
+  }
+  
+  /**
+  * ==== JsDocEnum3 ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  declare enum E3 {
+    A3 = ((1) << (0)),
+    B3 = ((1) << (1)),
+    C3 = ((1) << (2)),
+    D3 = ((1) << (3))
+  }
+  
+  /**
+  * ==== function jsdoc ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  */
+  function foo(): void
+  
+  /**
+  * ==== JsdocInnerNS ====
+  * @param1 {} behindStr
+  * @param2 preStr { p }
+  * @param3 preStr { p } behindStr
+  */
+  namespace JsdocInnerNS {}
+  }
+  /**
+* ==== function decl jsdoc ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+function jsDocFunc(/**
+    * ==== function param p1 jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  fooP1: number, /**
+    * ==== function param p2 jsdoc ====
+    * @param1 {} behindStr
+    * @param2 preStr { p }
+    */
+  fooP2: string): void {}
+  
+  /**
+* ==== typeAlas with generic jsdoc ====
+* @param1 {} behindStr
+* @param2 preStr { p }
+*/
+export type typeAlias<T = BusinessError extends Error> = ((err: T)=> void);
+  
+  /**
+ * ==== variable decl ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+ */
+const jsdocVal1: string = "ssss"
+  /**
+ * ==== function overload declaration jsdoc ====
+ * @param1 {} behindStr
+ * @param2 preStr { p }
+*/
+overload jsDocFunc{jsDocFunc1, jsDocFunc2, jsDocFunc3};
+

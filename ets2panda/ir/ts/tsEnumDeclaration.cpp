@@ -103,6 +103,7 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     if (RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+    dumper->DumpJsdocBeforeTargetNode(this);
     if (key_->Parent()->IsExported() && dumper->IsDeclgen()) {
         dumper->Add("export ");
     } else if (key_->Parent()->IsDefaultExported() && dumper->IsDeclgen()) {

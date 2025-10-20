@@ -71,6 +71,7 @@ void ExportNamedDeclaration::Dump(ir::AstDumper *dumper) const
 
 void ExportNamedDeclaration::Dump(ir::SrcDumper *dumper) const
 {
+    dumper->DumpJsdocBeforeTargetNode(this);
     dumper->Add("export { ");
     for (const auto *spec : specifiers_) {
         spec->Dump(dumper);

@@ -145,6 +145,12 @@ std::string AstNode::DumpEtsSrc() const
     return dumper.Str();
 }
 
+std::string AstNode::DumpEtsSrcWithJsdoc() const
+{
+    ir::SrcDumper dumper {this, false, true};
+    return dumper.Str();
+}
+
 std::string AstNode::DumpDecl() const
 {
     ir::SrcDumper dumper {this, true};

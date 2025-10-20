@@ -14,6 +14,7 @@
  */
 
 #include "srcDump.h"
+#include "public/public.h"
 
 #include <ir/astNode.h>
 #include <ir/base/classDefinition.h>
@@ -33,6 +34,14 @@ SrcDumper::SrcDumper(const ir::AstNode *node)
 
 SrcDumper::SrcDumper(const ir::AstNode *node, bool isDeclgen) : isDeclgen_(isDeclgen)
 {
+    node->Dump(this);
+}
+
+SrcDumper::SrcDumper(const ir::AstNode *node, bool isDeclgen, bool enableJsdocDump) : isDeclgen_(isDeclgen)
+{
+    if (enableJsdocDump) {
+        jsdocGetter_ = std::make_unique<parser::JsdocHelper>(node);
+    }
     node->Dump(this);
 }
 
@@ -134,6 +143,31 @@ void SrcDumper::Add(double d)
 bool SrcDumper::IsDeclgen() const
 {
     return isDeclgen_;
+}
+
+void SrcDumper::DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode)
+{
+    if (!jsdocGetter_) {
+        return;
+    }
+    jsdocGetter_->InitNode(inputNode);
+    auto resJsdoc = jsdocGetter_->GetJsdocBackward();
+    if (!resJsdoc.Empty()) {
+        ss_ << resJsdoc.Mutf8();
+        ss_ << std::endl;
+        auto parent = inputNode->Parent();
+        if (inputNode->IsClassDefinition() || parent->IsClassDefinition() || parent->IsTSInterfaceBody() ||
+            parent->IsScriptFunction()) {
+            parent = parent->Parent();
+        }
+        while (!parent->IsETSModule() || (parent->IsETSModule() && parent->AsETSModule()->IsNamespace())) {
+            ss_ << "  ";
+            parent = parent->Parent();
+            if (parent == nullptr) {
+                break;
+            }
+        }
+    }
 }
 
 void SrcDumper::DumpVariant(NodeVariant &node)
