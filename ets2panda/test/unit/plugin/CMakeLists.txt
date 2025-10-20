@@ -251,3 +251,13 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
 endforeach()
 
 add_dependencies(es2panda_tests es2panda-plugin-test)
+
+set(ES2PANDA_PUBLIC ${ES2PANDA_ROOT}/public)
+add_custom_target(compare_manual_capi_and_idl
+    COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/compare_manual_capi_and_idl.py
+        --header ${ES2PANDA_PUBLIC}/es2panda_lib.h
+        --idl ${ES2PANDA_PUBLIC}/es2panda_lib.idl.erb
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/compare_manual_capi_and_idl.py ${ES2PANDA_PUBLIC}/es2panda_lib.h
+        ${ES2PANDA_PUBLIC}/es2panda_lib.idl.erb
+)
+add_dependencies(es2panda_tests compare_manual_capi_and_idl)
