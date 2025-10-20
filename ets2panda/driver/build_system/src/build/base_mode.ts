@@ -650,7 +650,7 @@ export abstract class BaseMode {
         let module = this.fileToModule.get(job.fileInfo.input)!;
         let declgenV1OutPath: string = module.declgenV1OutPath!;
         let declgenBridgeCodePath: string = module.declgenBridgeCodePath!;
-        let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { otuput: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
+        let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
 
         let result = true;
         const ets2panda = Ets2panda.getInstance();
@@ -737,7 +737,7 @@ export abstract class BaseMode {
                 data: {
                     ...node.data,
                     declgenConfig: {
-                        otuput: declgenV1OutPath,
+                        output: declgenV1OutPath,
                         bridgeCode: declgenBridgeCodePath
                     },
                     buildConfig: this.buildConfig

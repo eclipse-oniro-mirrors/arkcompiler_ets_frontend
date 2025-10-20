@@ -32,6 +32,8 @@ shared_library("ts_bindings") {
     "./native/src/common-interop.cpp",
     "./native/src/convertors-napi.cpp",
     "./native/src/lsp.cpp",
+    "./native/src/common.cpp",
+    "./native/src/bridges.cpp",
   ]
   if ((defined(ark_standalone_build) && ark_standalone_build) ||
       (defined(ark_static_standalone_build) && ark_static_standalone_build)) {

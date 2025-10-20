@@ -2559,7 +2559,7 @@ void TSDeclGen::AddDependency(const checker::Type *tsType)
     if (tsType->IsETSObjectType()) {
         const auto objectType = tsType->AsETSObjectType();
         const auto typeName = objectType->AssemblerName().Mutf8();
-        if (typeName.empty()) {
+        if (typeName.empty() || typeName.find("std.core.") != std::string::npos) {
             return;
         }
         AddDependency(typeName);

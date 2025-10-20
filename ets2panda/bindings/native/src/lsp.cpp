@@ -31,11 +31,6 @@ using ark::es2panda::lsp::ClassMethodItem;
 using ark::es2panda::lsp::ClassPropertyItem;
 }  // namespace
 
-char *GetStringCopy(KStringPtr &ptr)
-{
-    return strdup(ptr.CStr());
-}
-
 KNativePointer impl_getCurrentTokenValue(KNativePointer context, KInt position)
 {
     LSPAPI const *ctx = GetImpl();

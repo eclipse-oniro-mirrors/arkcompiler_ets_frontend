@@ -23,6 +23,10 @@ let koalaModule: any;
 
 export function initKoalaModules(buildConfig: BuildConfig) {
     if (!koalaModule) {
+        if (buildConfig.plugins === undefined) {
+            koalaModule = require('../util/koala_wrapper');
+            return koalaModule;
+        }
         const koalaWrapperPath =
             process.env.KOALA_WRAPPER_PATH ??
             path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
