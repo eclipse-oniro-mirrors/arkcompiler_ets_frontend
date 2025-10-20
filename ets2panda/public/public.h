@@ -37,6 +37,8 @@ void SetPhaseManager(PhaseManager *phaseManager);
 PhaseManager *GetPhaseManager();
 }  // namespace ark::es2panda::compiler
 
+class DepAnalyzer;
+
 namespace ark::es2panda::public_lib {
 
 struct ConfigImpl {
@@ -128,6 +130,7 @@ struct Context {
     parser::ParserImpl *parser = nullptr;
     compiler::Emitter *emitter = nullptr;
     pandasm::Program *program = nullptr;
+    DepAnalyzer *depAnalyzer = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
 
     es2panda_ContextState state = ES2PANDA_STATE_NEW;

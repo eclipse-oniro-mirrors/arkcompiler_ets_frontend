@@ -18,6 +18,7 @@
 #include "program/program.h"
 #include "program/DeclarationCache.h"
 #include "public/public.h"
+#include "driver/dependency_analyzer/dep_analyzer.h"
 
 #include "parser/parserStatusContext.h"
 #include "util/helpers.h"
@@ -304,6 +305,14 @@ void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &
                                       std::vector<Program *> *programs)
 {
     const auto &importData = parseListElem.importData;
+
+    // Returns if already visited in dep_analyzer
+    if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) != 0U &&
+        Context()->depAnalyzer != nullptr &&
+        Context()->depAnalyzer->GetFileDirectDependencies().count(std::string {importData.resolvedSource}) > 0) {
+        return;
+    }
+
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
     ES2PANDA_ASSERT(!extSrc.empty());
 
@@ -486,10 +495,11 @@ parser::Program *ETSParser::ParseSource(const SourceFile &sourceFile)
             importPathManager_->MarkAsParsed(program->AbsoluteName().Utf8());
         }
         SavedParserContext contextAfterParseDecl(this, GetContext().Status() |= ParserStatus::IN_PACKAGE);
-
+    }
+    if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) == 0) {
         script = ParseETSGlobalScript(startLoc, statements);
     } else {
-        script = ParseETSGlobalScript(startLoc, statements);
+        script = ParseImportsAndReExportOnly(startLoc, statements);
     }
     program->SetAst(script);
     return program;
