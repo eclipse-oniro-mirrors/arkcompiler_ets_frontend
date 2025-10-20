@@ -114,6 +114,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_check_recheck_opaque_type_node compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_recheck_create_opaque_type compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_recheck_trailinglambda compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_check_recheck_create_getter_setter compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_test_global_func_call_dump compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_test_interface_duplicate_setter compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_test_case_block_dump compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"

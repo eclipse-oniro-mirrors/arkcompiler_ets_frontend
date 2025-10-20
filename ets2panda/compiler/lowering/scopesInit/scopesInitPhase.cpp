@@ -1346,6 +1346,11 @@ void InitScopesPhaseETS::HandleETSModule(ir::BlockStatement *script)
     }
 }
 
+void InitScopesPhaseETS::VisitFunctionExpression(ir::FunctionExpression *funcExpr)
+{
+    Iterate(funcExpr);
+}
+
 void InitScopesPhaseETS::VisitClassDefinition(ir::ClassDefinition *classDef)
 {
     if (classDef->IsGlobal()) {

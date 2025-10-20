@@ -366,6 +366,7 @@ private:
     void VisitTSInterfaceDeclaration(ir::TSInterfaceDeclaration *interfaceDecl) override;
     void VisitTSEnumDeclaration(ir::TSEnumDeclaration *enumDecl) override;
     void VisitTSTypeAliasDeclaration(ir::TSTypeAliasDeclaration *typeAlias) override;
+    void VisitFunctionExpression(ir::FunctionExpression *funcExpr) override;
     void VisitClassDefinition(ir::ClassDefinition *classDef) override;
     void VisitTSInterfaceBody(ir::TSInterfaceBody *interfBody) override;
     void VisitClassProperty(ir::ClassProperty *classProp) override;
