@@ -405,7 +405,7 @@ export class Lsp {
     }
     let result: LspReferenceData[] = [];
     let compileFiles = this.getMergedCompileFiles(filename);
-    const declFilesJson = this.moduleInfos[filename.valueOf()].declFilesPath;
+    const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
     if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
       this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
     }
@@ -454,7 +454,7 @@ export class Lsp {
 
   private getNodeInfos(paramFileName: String, fileName: String, start: number): LspNodeInfo[] {
     let nodeInfos: LspNodeInfo[] = [];
-    const moduleName = this.moduleInfos[paramFileName.valueOf()].packageName;
+    const moduleName = this.moduleInfos[path.resolve(paramFileName.valueOf())].packageName;
     const declgenOutDir = this.buildConfigs[moduleName].declgenOutDir;
     if (
       (fileName.endsWith(DECL_ETS_SUFFIX) && fileName.startsWith(declgenOutDir)) ||
@@ -849,7 +849,7 @@ export class Lsp {
       return Array.from(new Set(result));
     } else {
       let compileFiles = this.getMergedCompileFiles(filename);
-      const declFilesJson = this.moduleInfos[filename.valueOf()].declFilesPath;
+      const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
       if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
         this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
       }
