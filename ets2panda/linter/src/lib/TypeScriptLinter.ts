@@ -13188,7 +13188,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     if (ts.isIdentifier(tsCallExpr.expression)) {
       const funcName = tsCallExpr.expression.text;
-      if (funcName === 'setTimeout') {
+      if (funcName === 'setTimeout' || funcName === 'clearTimeout') {
         return;
       }
     }
@@ -13235,7 +13235,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return;
       }
-      if (actualTypeName !== expectedType && expectedType !== 'any') {
+      if (actualTypeName !== expectedType && expectedType !== 'any' && expectedType !== 'any[]') {
         this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
       }
     }
@@ -13477,9 +13477,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return;
       }
     }
-    const propType = propsMap.get(propName);
 
-    if (propType && this.isExactlySameType(propType, methodReturnType)) {
+    const propType = propsMap.get(propName);
+    if (!propType) {
+      return;
+    }
+
+    if (this.isExactlySameType(propType, methodReturnType)) {
       return;
     }
 
@@ -13505,6 +13509,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return returnType ? this.isExactlySameType(type1, returnType) : false;
     }
 
+    if (type2.isUnion() && this.isTypeAssignable(type1, type2)) {
+      return true;
+    }
     const type1String = this.tsTypeChecker.typeToString(type1);
     const type2String = this.tsTypeChecker.typeToString(type2);
     if (type1String === type2String) {
@@ -13514,7 +13521,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (this.checkBaseTypes(type1, type2) || this.checkBaseTypes(type2, type1)) {
       return true;
     }
-    return type1String === type2String;
+    return false;
   }
 
   private checkBaseTypes(type1: ts.Type, type2: ts.Type): boolean {

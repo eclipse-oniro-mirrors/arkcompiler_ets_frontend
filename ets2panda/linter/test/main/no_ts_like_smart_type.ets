@@ -394,3 +394,59 @@ class Temp {
     }
   }
 }
+
+// 1 - union return type
+declare type ResourceColor = number | string;
+
+class buttonBgTestParent {
+  public buttonBgColor: ResourceColor = '#FF000000'
+}
+
+class buttonBgTest extends buttonBgTestParent {
+  getBgColor(test: string): ResourceColor | undefined {
+    if (test) {
+      return this.buttonBgColor; //legal
+    }
+    return undefined;
+  }
+}
+
+// 2 - clearTimeout (stdlib func)
+
+class Common {
+  static isInvalid(obj: unknown): boolean {
+    return obj == null;
+  }
+
+  private checkRunnable(run: number | undefined): number | undefined {
+    if (Common.isInvalid(run)) {
+      return undefined
+    }
+    clearTimeout(run); // legal
+    return undefined
+  }
+
+}
+
+// 3 - method decl return
+
+class CardUtil {
+  public static isValid(card: string): boolean {
+    return card?.length >= 6
+  }
+
+  public static isValidNew(newCard: string): boolean {
+    return CardUtil.isValid(newCard); //legal
+  }
+}
+
+// 4 - array any type parameter
+function $r(value: string, ...params: any[]): string {
+  if (params) {
+    return value
+  }
+  return ''
+}
+const anyArrayasString = 'any type'
+let msg: string = $r('test');
+msg = $r('test', anyArrayasString) //legal

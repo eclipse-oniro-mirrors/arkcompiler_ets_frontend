@@ -355,6 +355,26 @@
             "severity": "ERROR"
         },
         {
+            "line": 417,
+            "column": 25,
+            "endLine": 417,
+            "endColumn": 32,
+            "problem": "UnknownType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 444,
+            "column": 39,
+            "endLine": 444,
+            "endColumn": 42,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
             "line": 381,
             "column": 38,
             "endLine": 381,
