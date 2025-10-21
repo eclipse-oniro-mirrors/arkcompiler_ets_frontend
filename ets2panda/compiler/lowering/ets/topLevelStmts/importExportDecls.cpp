@@ -53,6 +53,17 @@ void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
                                                  const ArenaVector<ir::Statement *> &statements,
                                                  GlobalClassHandler::ModuleDependencies &moduleDependencies)
 {
+    auto processReExportDefaultSpecifier = [&](const auto &stmt) -> void {
+        for (auto spec : stmt->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers()) {
+            if (spec->IsImportSpecifier() &&
+                !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(),
+                                                     spec->AsImportSpecifier()->Imported()->Name(),
+                                                     spec->AsImportSpecifier()->Local()->Name(),
+                                                     stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+                return;
+            }
+        }
+    };
     for (auto stmt : statements) {
         if (stmt->IsETSModule()) {
             SavedImportExportDeclsContext savedContext(this, program);
@@ -63,6 +74,9 @@ void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
         stmt->Accept(this);
         if (stmt->IsExportNamedDeclaration()) {
             PopulateAliasMap(stmt->AsExportNamedDeclaration(), program->SourceFilePath());
+        }
+        if (stmt->IsETSReExportDeclaration()) {
+            processReExportDefaultSpecifier(stmt);
         }
         if (stmt->IsTSTypeAliasDeclaration() && (stmt->IsExported() || stmt->IsDefaultExported())) {
             PopulateAliasMap(stmt->AsTSTypeAliasDeclaration(), program->SourceFilePath());

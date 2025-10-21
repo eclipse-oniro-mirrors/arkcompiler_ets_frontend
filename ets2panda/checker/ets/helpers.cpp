@@ -1837,7 +1837,11 @@ void ETSChecker::BindingsModuleObjectAddProperty(checker::ETSObjectType *moduleO
         }
         auto isFromDynamicDefaultImport =
             (node->IsDefaultExported() && var->HasFlag(varbinder::VariableFlags::DYNAMIC));
-        if ((node->IsExported() || isFromDynamicDefaultImport || node->HasExportAlias()) && found) {
+        auto isReExportDefault = node->IsDefaultExported() && importDecl != nullptr &&
+                                 !importDecl->Specifiers().empty() &&
+                                 !importDecl->Specifiers()[0]->IsImportNamespaceSpecifier();
+        if ((node->IsExported() || isFromDynamicDefaultImport || node->HasExportAlias() || isReExportDefault) &&
+            found) {
             if (node->IsMethodDefinition()) {
                 BuildExportedFunctionSignature(this, var);
             }
@@ -3225,8 +3229,10 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     rootVar->SetTsType(moduleObjectType);
 
     ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);
-    SetPropertiesForModuleObject(moduleObjectType, importPath,
-                                 importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr : importDecl);
+    SetPropertiesForModuleObject(
+        moduleObjectType, importPath,
+        importDecl->Specifiers().size() != 0 && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr
+                                                                                                          : importDecl);
     SetrModuleObjectTsType(ident, moduleObjectType);
 
     return moduleObjectType;

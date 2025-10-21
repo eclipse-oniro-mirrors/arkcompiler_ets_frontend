@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-export /* @@ label */{foo} from "./export"
+export {foo} from "./export"
 export {foo} from "./export_2"
 
-/* @@@ label Error TypeError: Ambiguous export 'foo' */
+/* @@? 17:8 Error Warning: Duplicated export aliases for 'foo'. */
+/* @@? 16:8 Error TypeError: Ambiguous export 'foo' */

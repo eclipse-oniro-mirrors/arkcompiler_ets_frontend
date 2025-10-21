@@ -931,9 +931,11 @@ std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclIn
 void ETSBinder::ValidateImportVariable(const ir::AstNode *node, const ir::AstNode *declNode,
                                        const util::StringView &imported, const ir::StringLiteral *const importPath)
 {
-    if (node->IsDefaultExported() && !declNode->IsExported()) {
+    if (node->IsDefaultExported() && !declNode->IsExported() &&
+        imported != compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) {
         ThrowError(importPath->Start(), diagnostic::DEFAULT_EXPORT_DIRECT_IMPORTED);
-    } else if (!node->IsExported() && !node->IsDefaultExported() && !node->HasExportAlias()) {
+    } else if (!node->IsExported() && !node->IsDefaultExported() && !node->HasExportAlias() &&
+               !node->IsImportSpecifier()) {
         ThrowError(importPath->Start(), diagnostic::IMPORTED_NOT_EXPORTED, {imported});
     }
 }
@@ -1005,6 +1007,20 @@ Variable *ETSBinder::AddImportSpecifierFromReExport(ir::AstNode *importSpecifier
     return nullptr;
 }
 
+util::StringView ETSBinder::GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
+                                                    const ir::ETSImportDeclaration *const import)
+{
+    auto imported = importSpecifier->Imported()->Name();
+    for (auto const item : import->Specifiers()) {
+        if (item->IsImportSpecifier() && item->AsImportSpecifier()->Local()->Name().Is(imported.Mutf8()) &&
+            !item->AsImportSpecifier()->Local()->Name().Is(item->AsImportSpecifier()->Imported()->Name().Mutf8())) {
+            imported = item->AsImportSpecifier()->Imported()->Name();
+        }
+    }
+
+    return imported;
+}
+
 // CC-OFFNXT(huge_method, G.FUN.01-CPP) solid logic
 bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> records,
                                                  ir::ImportSpecifier *const importSpecifier,
@@ -1017,14 +1033,7 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
         return true;
     }
 
-    auto imported = importSpecifier->Imported()->Name();
-
-    for (auto const item : import->Specifiers()) {
-        if (item->IsImportSpecifier() && item->AsImportSpecifier()->Local()->Name().Is(imported.Mutf8()) &&
-            !item->AsImportSpecifier()->Local()->Name().Is(item->AsImportSpecifier()->Imported()->Name().Mutf8())) {
-            imported = item->AsImportSpecifier()->Imported()->Name();
-        }
-    }
+    auto imported = GetAdjustedImportedName(importSpecifier, import);
 
     auto sourcePath = import->ImportMetadata().HasSpecifiedDeclPath() ? import->DeclPath() : import->ResolvedSource();
     auto [nameToSearchFor, exportNode] = FindNameAndNodeInAliasMap(sourcePath, imported);
@@ -1033,8 +1042,6 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
     }
 
     auto *var = FindImportSpecifiersVariable(nameToSearchFor, globalBindings, records);
-    importSpecifier->Imported()->SetVariable(var);
-    importSpecifier->Local()->SetVariable(var);
 
     bool varFoundThroughReExport = false;
     if (var == nullptr) {
@@ -1043,6 +1050,12 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
     }
     if (var == nullptr) {
         return false;
+    }
+    importSpecifier->Imported()->SetVariable(var);
+    importSpecifier->Local()->SetVariable(var);
+    auto [implDecl, localSpecifier] = FindImportDeclInReExports(import, imported, importPath);
+    if (localSpecifier != nullptr) {
+        exportNode = localSpecifier;
     }
 
     ValidateImportVariable(exportNode != nullptr ? exportNode : var->Declaration()->Node(), var->Declaration()->Node(),
@@ -1079,11 +1092,17 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *co
 {
     auto importProgram = records[0];
     const auto &globalBindings = importProgram->GlobalScope()->Bindings();
-    auto isDefaultExpored = [](const auto &item) { return item.second.second->IsDefaultExported(); };
+    auto isDefaultExported = [](const auto &item) {
+        return item.second.second != nullptr &&
+               (item.second.second->IsDefaultExported() ||
+                (item.second.second->IsETSImportDeclaration() &&
+                 item.second.second->AsETSImportDeclaration()->Specifiers()[0]->AsImportSpecifier()->Local()->Name() ==
+                     compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY));
+    };
     auto selectMap = importProgram->VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto selectMap2 = selectMap.find(import->ResolvedSource());
     if (selectMap2 != selectMap.end()) {
-        auto item1 = std::find_if(selectMap2->second.begin(), selectMap2->second.end(), isDefaultExpored);
+        auto item1 = std::find_if(selectMap2->second.begin(), selectMap2->second.end(), isDefaultExported);
         if (item1 != selectMap2->second.end()) {
             auto var = FindImportSpecifiersVariable(item1->first, globalBindings, records);
             if (var == nullptr) {
@@ -1096,6 +1115,14 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *co
             InsertOrAssignForeignBinding(importDefaultSpecifier->Local()->Name(), var);
             return;
         }
+    }
+
+    if (auto var =
+            FindImportSpecifiersVariable(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY, globalBindings, records);
+        var != nullptr) {
+        importDefaultSpecifier->Local()->SetVariable(var);
+        InsertForeignBinding(importDefaultSpecifier->Local()->Name(), var);
+        return;
     }
 
     if (auto var = FindStaticBinding(records, import->Source()); var != nullptr) {
@@ -1488,7 +1515,7 @@ Variable *ETSBinder::ValidateImportSpecifier(const ir::ImportSpecifier *const sp
         }
     }
 
-    auto *const var = FindImportSpecifiersVariable(imported, globalBindings, Span {records});
+    auto *var = FindImportSpecifiersVariable(imported, globalBindings, Span {records});
     if (var != nullptr) {
         return var;
     }
@@ -1497,6 +1524,11 @@ Variable *ETSBinder::ValidateImportSpecifier(const ir::ImportSpecifier *const sp
     auto [implDecl, localSpecifier] = FindImportDeclInExports(import, imported, import->Source());
     if (implDecl != nullptr) {
         return ValidateImportSpecifier(specifier, implDecl);
+    }
+
+    if (var = FindStaticBinding(Span<parser::Program *const> {records}, import->Source()); var != nullptr) {
+        InsertForeignBinding(specifier->Local()->Name(), var);
+        return var;
     }
 
     return nullptr;

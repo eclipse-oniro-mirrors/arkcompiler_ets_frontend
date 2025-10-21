@@ -1234,7 +1234,7 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
     } else if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
         ir::ExportKinds exportKind =
             (modifiers & ir::ModifierFlags::EXPORT_TYPE) != 0U ? ir::ExportKinds::TYPES : ir::ExportKinds::ALL;
-        auto specs = ParseNamedSpecifiers(exportKind);
+        auto specs = ParseExportNamedSpecifiers(exportKind);
 
         if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
             specifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.result);
@@ -1385,7 +1385,7 @@ ir::ExportNamedDeclaration *ETSParser::ParseSingleExportForAnonymousConst(ir::Mo
 {
     ir::Expression *constantExpression = ParseExpression();
 
-    auto *exported = AllocNode<ir::Identifier>(compiler::Signatures::EXPORT_DEFAULT_CONSTANT_ANONYMOUSLY, Allocator());
+    auto *exported = AllocNode<ir::Identifier>(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY, Allocator());
     ES2PANDA_ASSERT(exported != nullptr);
     exported->SetRange(Lexer()->GetToken().Loc());
 
@@ -1451,6 +1451,15 @@ bool ETSParser::IsDefaultImport()
     return false;
 }
 
+bool ETSParser::IsDefaultExport()
+{
+    if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_DEFAULT)) {
+        Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_AS);
+        return true;
+    }
+    return false;
+}
+
 bool TypedParser::IsPrimitiveType(const lexer::TokenType &tokenType)
 {
     switch (tokenType) {
@@ -1487,14 +1496,40 @@ void ETSParser::ParseNamedSpecifiesDefaultImport(ArenaVector<ir::ImportDefaultSp
     resultDefault->emplace_back(specifier);
 }
 
+void ETSParser::ParseNamedSpecifiersDefaultExport(ArenaVector<ir::ImportSpecifier *> *result,
+                                                  ArenaVector<ir::ImportDefaultSpecifier *> *resultDefault,
+                                                  const std::string &fileName)
+{
+    auto *local = AllocNode<ir::Identifier>(Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_RIGHT_BRACE
+                                                ? compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY
+                                                : Lexer()->GetToken().Ident(),
+                                            Allocator());
+    ES2PANDA_ASSERT(local != nullptr);
+    local->SetRange(Lexer()->GetToken().Loc());
+    if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
+        Lexer()->NextToken();
+    }
+    auto *specifier = AllocNode<ir::ImportDefaultSpecifier>(local);
+    ES2PANDA_ASSERT(specifier != nullptr);
+    specifier->SetRange({local->Start(), local->End()});
+
+    util::Helpers::CheckDefaultImportedName(*resultDefault, specifier, fileName);
+
+    resultDefault->emplace_back(specifier);
+
+    auto *imported = AllocNode<ir::Identifier>(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY, Allocator());
+    auto *specifierResult = AllocNode<ir::ImportSpecifier>(imported, local);
+    specifierResult->SetRange({local->Start(), local->End()});
+    result->emplace_back(specifierResult);
+}
+
 bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
                                           ArenaVector<ir::ExportSpecifier *> *resultExportDefault,
                                           const std::string &fileName)
 {
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
         ir::Expression *constantExpression = ParseUnaryOrPrefixUpdateExpression();
-        auto *exported =
-            AllocNode<ir::Identifier>(compiler::Signatures::EXPORT_DEFAULT_CONSTANT_ANONYMOUSLY, Allocator());
+        auto *exported = AllocNode<ir::Identifier>(compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY, Allocator());
         ES2PANDA_ASSERT(exported != nullptr);
         exported->SetRange(Lexer()->GetToken().Loc());
         auto *exportedAnonyConst = AllocNode<ir::ExportSpecifier>(exported, exported->Clone(Allocator(), nullptr));
@@ -1572,6 +1607,41 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers(const ir::ImportKinds importKind)
                 return ParseNamedSpecifiesImport(&result, &resultExportDefault, fileName);
             }
             ParseNamedSpecifiesDefaultImport(&resultDefault, fileName);
+            typeKeywordOnSpecifier = false;
+            return true;
+        },
+        nullptr, ParseListOptions::ALLOW_TRAILING_SEP | ParseListOptions::ALLOW_TYPE_KEYWORD);
+    return {result, resultDefault, resultExportDefault};
+}
+
+SpecifiersInfo ETSParser::ParseExportNamedSpecifiers(const ir::ExportKinds exportKind)
+{
+    if (!Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_LEFT_BRACE)) {
+        LogExpectedToken(lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+        Lexer()->NextToken();
+    }
+
+    auto fileName = GetProgram()->SourceFilePath().Mutf8();
+
+    ArenaVector<ir::ImportSpecifier *> result(Allocator()->Adapter());
+    ArenaVector<ir::ImportDefaultSpecifier *> resultDefault(Allocator()->Adapter());
+    ArenaVector<ir::ExportSpecifier *> resultExportDefault(Allocator()->Adapter());
+
+    ParseList(
+        lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
+        [this, &result, &resultDefault, &resultExportDefault, &fileName, &exportKind](bool &typeKeywordOnSpecifier) {
+            if (typeKeywordOnSpecifier && exportKind == ir::ExportKinds::TYPES) {
+                LogError(diagnostic::REPEATED_TYPE_KEYWORD);
+            }
+            if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_MULTIPLY) {
+                LogError(diagnostic::ASTERIKS_NOT_ALLOWED_IN_SELECTIVE_BINDING);
+            }
+
+            if (!IsDefaultExport()) {
+                typeKeywordOnSpecifier = false;
+                return ParseNamedSpecifiesImport(&result, &resultExportDefault, fileName);
+            }
+            ParseNamedSpecifiersDefaultExport(&result, &resultDefault, fileName);
             typeKeywordOnSpecifier = false;
             return true;
         },

@@ -228,6 +228,8 @@ defines:
     ref: MIN_ARGSCOUNT_OF_FUNC
   - name: 'gensym%%_anonymous_const'
     ref: EXPORT_DEFAULT_CONSTANT_ANONYMOUSLY
+  - name: 'gensym%%_default_anonymous'
+    ref: REEXPORT_DEFAULT_ANONYMOUSLY
   - name: 'toBoolean'
     ref: BOOLEAN_CAST
   - name: 'toByte'

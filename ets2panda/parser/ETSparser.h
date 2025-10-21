@@ -198,12 +198,17 @@ private:
                                const std::vector<util::StringView> &directImportsFromMainSource,
                                std::vector<Program *> *programs);
     bool IsDefaultImport();
+    bool IsDefaultExport();
     void ParseNamedSpecifiesDefaultImport(ArenaVector<ir::ImportDefaultSpecifier *> *resultDefault,
                                           const std::string &fileName);
+    void ParseNamedSpecifiersDefaultExport(ArenaVector<ir::ImportSpecifier *> *result,
+                                           ArenaVector<ir::ImportDefaultSpecifier *> *resultDefault,
+                                           const std::string &fileName);
     bool ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
                                    ArenaVector<ir::ExportSpecifier *> *resultExportDefault,
                                    const std::string &fileName);
     SpecifiersInfo ParseNamedSpecifiers(const ir::ImportKinds importKind);
+    SpecifiersInfo ParseExportNamedSpecifiers(const ir::ImportKinds importKind);
     ir::ExportNamedDeclaration *ParseSingleExport(ir::ModifierFlags modifiers);
     ir::ExportNamedDeclaration *ParseSingleExportForAnonymousConst(ir::ModifierFlags modifiers);
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
