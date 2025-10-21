@@ -751,14 +751,7 @@ ir::Identifier *EnumLoweringPhase::CreateEnumStringValuesArray(const ir::TSEnumD
                         if (init->IsStringLiteral()) {
                             stringValue = init->AsStringLiteral()->Str();
                         } else {
-                            std::string str {};
-                            if (init->AsNumberLiteral()->Number().IsInteger()) {
-                                std::int64_t res = init->AsNumberLiteral()->Number().GetValue<std::int64_t>();
-                                str = std::to_string(res);
-                            } else {
-                                double res = init->AsNumberLiteral()->Number().GetValue<double>();
-                                str = std::to_string(res);
-                            }
+                            std::string str = init->AsNumberLiteral()->ToString();
                             stringValue = util::UString(str, Allocator()).View();
                         }
                         auto *const enumValueStringLiteral = AllocNode<ir::StringLiteral>(stringValue);
