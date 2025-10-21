@@ -23,9 +23,9 @@ import {
     DEP_ANALYZER_DIR,
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
-    DECL_ETS_SUFFIX,
     MERGED_CLUSTER_FILE,
     FILE_HASH_CACHE,
+    ETSCACHE_SUFFIX,
     ABC_SUFFIX,
     CLUSTER_FILES_TRESHOLD
 } from './pre_define';
@@ -442,7 +442,7 @@ export class DependencyAnalyzer {
 
             const input = node.data.fileInfo.input;
             const outputAbc = node.data.fileInfo.output;
-            const outputDecl = changeFileExtension(outputAbc, DECL_ETS_SUFFIX);
+            const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
 
             const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
             const genDecl: boolean = hashChanged || shouldBeUpdated(input, outputDecl);

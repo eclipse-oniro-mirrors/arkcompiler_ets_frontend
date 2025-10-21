@@ -469,10 +469,14 @@ std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_vi
     }
     const auto &rootDir = ArkTSConfig()->RootDir();
     const auto &cacheDir = ArkTSConfig()->CacheDir();
+    // if already in cache, return
+    if (Helpers::StartsWith(resolvedImportPath, cacheDir)) {
+        return resolvedImportPath;
+    }
     if (cacheDir.empty() || rootDir.empty()) {
         return resolvedImportPath;
     }
-    // declaration cache is used only for .ets files, located in the same library as compiling file
+    // declaration cache is used only for .ets files, located in the same application as compiling file
     if (!Helpers::EndsWith(resolvedImportPath, etsSuffix) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
         return resolvedImportPath;
     }
@@ -516,6 +520,10 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
     }
 
+    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE)) {
+        importData.resolvedSource = TryImportFromDeclarationCache(importData.resolvedSource);
+    }
+
     if (globalProgram_->AbsoluteName() != resolvedImportPath) {
         AddToParseList(importData);
     }
@@ -541,7 +549,10 @@ util::StringView ImportPathManager::ResolvePathAPI(StringView curModulePath, ir:
     srcPos_ = importPath->Start();
     // NOTE(dkofanov): #23698 related. In case of 'dynamicPaths', resolved path is "virtual" module-path, may be not
     // what the plugin expecting.
-    return ResolvePath(curModulePath.Utf8(), importPath).resolvedPath;
+    // NOTE(itrubachev) import path manager should be refactored
+    auto resolvedPath = ResolvePath(curModulePath.Utf8(), importPath).resolvedPath;
+    auto cachedResolvedPath = TryImportFromDeclarationCache(resolvedPath);
+    return cachedResolvedPath;
 }
 
 void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPathRes &result) const
@@ -588,9 +599,6 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
         result = ResolveAbsolutePath(*importPath);
     }
 
-    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) && !result.resolvedIsExternalModule) {
-        result.resolvedPath = TryImportFromDeclarationCache(result.resolvedPath);
-    }
     return result;
 }
 

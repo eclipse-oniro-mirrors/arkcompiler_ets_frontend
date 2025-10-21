@@ -29,6 +29,7 @@ export const DECL_TS_SUFFIX: string = '.d.ts';
 export const ETS_SUFFIX: string = '.ets';
 export const TS_SUFFIX: string = '.ts';
 export const ABC_SUFFIX: string = '.abc';
+export const ETSCACHE_SUFFIX: string = '.etscache';
 
 export enum LANGUAGE_VERSION {
     ARKTS_1_2 = '1.2',
