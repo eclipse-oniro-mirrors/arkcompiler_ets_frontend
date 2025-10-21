@@ -16,26 +16,14 @@
 import {ClassAuthor, Color} from "./annotation_src"
 
 @interface ClassAuthor {
-    authorName: string = "Jim"
-    /* @@ label */authorAge: /* @@ label1 */int = /* @@ label2 */32
-    /* @@ label3 */testBool: /* @@ label4 */string = "false"
-    /* @@ label5 */favorColor: Color
-    /* @@ label6 */color: Color[]
-    reviewers: string[] = ["Bob", "Jim", "Tom"]
-    reviewersAge: int/* @@ label7 */[] = [18, 21, 32]
-    testBools: boolean[] = [false, true, false]
-    mutiArray: number[][] = [
-        [1, 2, 3],
-        [4, +5, 6],
-        [7, 8, -9]
-    ]
 }
 
-/* @@@ label1 Error TypeError: Field 'authorAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
-/* @@@ label2 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label Error TypeError: Initializer for field 'authorAge' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label4 Error TypeError: Field 'testBool' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
-/* @@@ label3 Error TypeError: Initializer for field 'testBool' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label5 Error TypeError: Initializer for field 'favorColor' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label6 Error TypeError: Initializer for field 'color' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label7 Error TypeError: Field 'reviewersAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
+/* @@? 18:2 Error TypeError: Field 'mutiArray' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'color' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'testBools' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'reviewers' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'favorColor' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'testBool' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'reviewersAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'authorAge' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */
+/* @@? 18:2 Error TypeError: Field 'authorName' in annotation 'ClassAuthor' is declared in the ambient declaration but missing in the implementation.  */

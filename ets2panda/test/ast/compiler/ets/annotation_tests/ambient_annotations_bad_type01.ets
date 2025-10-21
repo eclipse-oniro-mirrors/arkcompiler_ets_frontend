@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 
-import * as Src from "./annotation_src"
+import {ClassAuthor, Color} from "./annotation_src"
 
-@interface Src.ClassAuthor {
-    /* @@ label */authorName: string = /* @@ label1 */"Jima"
-    /* @@ label2 */authorAge: number = /* @@ label3 */-35.1
-    /* @@ label4 */testBool: boolean = /* @@ label5 */true
-    /* @@ label6 */favorColor: Src.Color = /* @@ label7 */Src.Color.RED
-    /* @@ label8 */color: Src.Color[] = /* @@ label9 */[/* @@ label10 */Src.Color.GREEN, Src.Color.BLUE]
-    /* @@ label11 */reviewers: string[] = /* @@ label12 */["Bob", "Jim", /* @@ label13 */"Tome"]
-    /* @@ label14 */reviewersAge: double[] = /* @@ label15 */[/* @@ label16 */11, 12, 32]
-    /* @@ label17 */testBools: boolean[] = /* @@ label18 */[/* @@ label19 */true, true, false]
+@interface ClassAuthor {
+    authorName: string = "Jim"
+    /* @@ label */authorAge: /* @@ label1 */int = /* @@ label2 */32
+    /* @@ label3 */testBool: /* @@ label4 */string = "false"
+    /* @@ label5 */favorColor: Color
+    /* @@ label6 */color: Color[]
+    reviewers: string[] = ["Bob", "Jim", "Tom"]
+    reviewersAge: int/* @@ label7 */[] = [18, 21, 32]
+    testBools: boolean[] = [false, true, false]
     mutiArray: number[][] = [
         [1, 2, 3],
         [4, +5, 6],
@@ -31,23 +31,11 @@ import * as Src from "./annotation_src"
     ]
 }
 
-/* @@@ label1 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label Error TypeError: Initializer for field 'authorName' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label3 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label2 Error TypeError: Initializer for field 'authorAge' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label5 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label4 Error TypeError: Initializer for field 'testBool' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label7 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label6 Error TypeError: Initializer for field 'favorColor' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label10 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label9 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label8 Error TypeError: Initializer for field 'color' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label13 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label12 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label11 Error TypeError: Initializer for field 'reviewers' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label16 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label15 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label14 Error TypeError: Initializer for field 'reviewersAge' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
-/* @@@ label19 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label18 Error TypeError: The initial value does not match the expected value.  */
-/* @@@ label17 Error TypeError: Initializer for field 'testBools' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@@ label1 Error TypeError: Field 'authorAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
+/* @@@ label2 Error TypeError: The initial value does not match the expected value.  */
+/* @@@ label Error TypeError: Initializer for field 'authorAge' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@@ label4 Error TypeError: Field 'testBool' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
+/* @@@ label3 Error TypeError: Initializer for field 'testBool' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@@ label5 Error TypeError: Initializer for field 'favorColor' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@@ label6 Error TypeError: Initializer for field 'color' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@@ label7 Error TypeError: Field 'reviewersAge' has a type mismatch with the ambient annotation 'ClassAuthor'.  */
