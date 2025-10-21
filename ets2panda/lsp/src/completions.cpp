@@ -653,6 +653,8 @@ std::string GetDeclName(const ir::AstNode *decl)
             return decl->AsClassProperty()->Key()->AsIdentifier()->ToString();
         case ir::AstNodeType::CLASS_DEFINITION:
             return std::string(decl->AsClassDefinition()->Ident()->Name());
+        case ir::AstNodeType::TS_INTERFACE_DECLARATION:
+            return std::string(decl->AsTSInterfaceDeclaration()->Id()->Name());
         default:
             return "";
     }
@@ -700,7 +702,7 @@ bool IsValidDecl(const ir::AstNode *decl)
 {
     return decl != nullptr && NodeHasTokens(decl) &&
            (decl->IsMethodDefinition() || IsLetVar(decl) || IsConstVar(decl) || IsGlobalVar(decl) ||
-            decl->IsClassDefinition());
+            decl->IsClassDefinition() || decl->IsTSInterfaceDeclaration());
 }
 
 CompletionEntry InitEntry(const ir::AstNode *decl)
@@ -793,13 +795,27 @@ std::vector<CompletionEntry> GetAnnotationCompletions(es2panda_Context *context,
     return completions;
 }
 
+varbinder::Scope *NearestScope(const ir::AstNode *ast)
+{
+    // A same function in ets2panda/compiler/lowering/util.cpp is not suitable here
+    // We modify it to let it find the right scope of class and interface
+    while (ast != nullptr && !ast->IsScopeBearer()) {
+        ast = ast->Parent();
+        if (ast->IsClassDefinition() || ast->IsTSInterfaceDeclaration()) {
+            ast = ast->Parent();
+        }
+    }
+
+    return ast == nullptr ? nullptr : ast->Scope();
+}
+
 void GetIdentifiersInScope(const varbinder::Scope *scope, size_t position, ArenaVector<ir::AstNode *> &results)
 {
     if (scope->Node() == nullptr) {
         return;
     }
     auto checkFunc = [scope, position](ir::AstNode *child) -> bool {
-        return child->End().index < position && NodeHasTokens(child) && compiler::NearestScope(child) == scope &&
+        return child->End().index < position && NodeHasTokens(child) && NearestScope(child) == scope &&
                child->IsIdentifier();
     };
     FindAllChild(scope->Node(), checkFunc, results);
