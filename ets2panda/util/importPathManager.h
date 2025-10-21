@@ -172,6 +172,16 @@ public:
     }
 
 private:
+    void SetCacheUpdateIsNeeded(bool flag)
+    {
+        cacheUpdateIsNeeded_ = flag;
+    }
+
+    bool GetCacheUpdateIsNeeded()
+    {
+        return cacheUpdateIsNeeded_;
+    }
+
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
     util::StringView FormModuleName(const util::Path &path);
 
@@ -218,6 +228,7 @@ private:
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
+    bool cacheUpdateIsNeeded_ = false;
 };
 
 }  // namespace ark::es2panda::util
