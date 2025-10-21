@@ -37,9 +37,9 @@ static ir::Statement *TransformInitializer(ArenaAllocator *allocator, parser::ET
     param->SetInitializer(nullptr);
     ES2PANDA_ASSERT(param->IsOptional());
 
-    return parser->CreateFormattedStatement("let @@I1: @@T2 = (@@I3 !== undefined) ? @@I4 : (@@E5 as @@T6)", ident,
+    return parser->CreateFormattedStatement("let @@I1: @@T2 = (@@I3 !== undefined) ? @@I4 : @@E5", ident,
                                             typeAnnotation->Clone(allocator, nullptr), param->Ident()->Name(),
-                                            param->Ident()->Name(), init, typeAnnotation->Clone(allocator, nullptr));
+                                            param->Ident()->Name(), init);
 }
 
 static void TransformDefaultParameters(public_lib::Context *ctx, ir::ScriptFunction *function,
