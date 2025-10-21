@@ -58,19 +58,19 @@ struct RefactorContext {
     std::string kind;
 };
 
-using RefactorActionView = struct RefactorActionView {
+struct RefactorActionView {
     std::string_view name;
     std::string_view description;
     std::string_view kind;
 };
 
-using RefactorAction = struct RefactorAction {
+struct RefactorAction {
     std::string name;
     std::string description;
     std::string kind;
 };
 
-using ApplicableRefactorInfo = struct ApplicableRefactorInfo {
+struct ApplicableRefactorInfo {
     std::string name;
     std::string description;
     RefactorAction action;

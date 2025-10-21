@@ -761,7 +761,7 @@ std::vector<ir::AstNode *> ChangeTracker::GetContainingList(ir::AstNode *node)
 {
     std::vector<ir::AstNode *> containingList;
     node->Parent()->FindChild([&containingList](ir::AstNode *child) {
-        if (child->IsObjectExpression() || child->IsObjectExpression()) {
+        if (child->IsObjectExpression()) {
             for (auto *property : child->AsObjectExpression()->Properties()) {
                 containingList.push_back(property);
             }

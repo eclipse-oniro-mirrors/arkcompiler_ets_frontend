@@ -39,6 +39,9 @@ DeclInfoType GetDeclInfoImpl(ir::AstNode *astNode)
         return {};
     }
     auto declNode = compiler::DeclarationFromIdentifier(astNode->AsIdentifier());
+    if (declNode == nullptr) {
+        return {};
+    }
     auto node = declNode;
     while (node != nullptr) {
         if (node->Range().start.Program() != nullptr) {
