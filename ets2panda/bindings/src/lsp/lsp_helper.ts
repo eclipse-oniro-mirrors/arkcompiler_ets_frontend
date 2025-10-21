@@ -137,7 +137,6 @@ export class Lsp {
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
     this.defaultBuildConfig = Object.values(this.buildConfigs)[0];
     PluginDriver.getInstance().initPlugins(this.defaultBuildConfig);
-    this.initDeclFile();
   }
 
   // Partially update for new file
