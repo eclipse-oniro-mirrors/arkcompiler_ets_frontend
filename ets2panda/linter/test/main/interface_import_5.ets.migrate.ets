@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-import { UIContext } from '@kit.ArkUI';
-
 import {
   Entry,
   Component,
@@ -24,6 +22,7 @@ import {
   Text,
   FontWeight,
   Context,
+  UIContext,
 } from '@kit.ArkUI';
 
 import * from './ui_modules/common';

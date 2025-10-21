@@ -989,9 +989,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';\n",
+                    "start": 604,
+                    "end": 650,
+                    "replacementText": "import {\n  AttributeUpdater,\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 94,
                     "endLine": 86,
@@ -1010,9 +1010,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';\n",
+                    "start": 604,
+                    "end": 650,
+                    "replacementText": "import {\n  AttributeUpdater,\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 94,
                     "endLine": 86,
@@ -1031,9 +1031,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';\n",
+                    "start": 604,
+                    "end": 650,
+                    "replacementText": "import {\n  AttributeUpdater,\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 94,
                     "endLine": 86,
@@ -1052,9 +1052,9 @@
             "problem": "UIInterfaceImport",
             "autofix": [
                 {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';\n",
+                    "start": 604,
+                    "end": 650,
+                    "replacementText": "import {\n  AttributeUpdater,\n  Observed,\n  Track,\n  CommonAttribute,\n} from '@kit.ArkUI';",
                     "line": 86,
                     "column": 94,
                     "endLine": 86,

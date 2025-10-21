@@ -12,14 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import {
+  AttributeUpdater,
   Observed,
   Track,
   CommonAttribute,
 } from '@kit.ArkUI';
-
-import { AttributeUpdater } from '@kit.ArkUI';
 
 const irreparableArr = new Array();
 let repairableArr: Array<number> = new Array<number>();

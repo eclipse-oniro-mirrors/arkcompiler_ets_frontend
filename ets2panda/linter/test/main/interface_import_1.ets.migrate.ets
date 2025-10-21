@@ -14,6 +14,7 @@
  */
 
 import {
+  Slider,
   Entry,
   Component,
   State,
@@ -27,8 +28,6 @@ import {
   $$,
   ImageFit,
 } from '@kit.ArkUI';
-
-import { Slider } from '@kit.ArkUI';
 
 @Entry
 @Component

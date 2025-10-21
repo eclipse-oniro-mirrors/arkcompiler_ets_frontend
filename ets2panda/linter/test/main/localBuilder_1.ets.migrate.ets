@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-import { Builder } from '@kit.ArkUI';
-
 import {
   Entry,
   Component,
@@ -22,6 +20,7 @@ import {
   Row,
   Text,
   Column,
+  Builder,
 } from '@kit.ArkUI';
 
 @Entry
