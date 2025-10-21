@@ -445,16 +445,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 219,
-            "column": 16,
-            "endLine": 219,
-            "endColumn": 21,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 220,
             "column": 16,
             "endLine": 220,
@@ -632,16 +622,6 @@
             "problem": "RuntimeArrayCheck",
             "suggest": "",
             "rule": "Array bound not checked. (arkts-runtime-array-check)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 313,
-            "column": 36,
-            "endLine": 313,
-            "endColumn": 41,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

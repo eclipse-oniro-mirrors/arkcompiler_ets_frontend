@@ -406,6 +406,16 @@
         },
         {
             "line": 120,
+            "column": 11,
+            "endLine": 120,
+            "endColumn": 14,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 120,
             "column": 27,
             "endLine": 120,
             "endColumn": 42,
@@ -862,6 +872,56 @@
             "problem": "BuiltinDisableApi",
             "suggest": "",
             "rule": "API has been disabled (arkts-builtin-disable-api)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 245,
+            "column": 21,
+            "endLine": 245,
+            "endColumn": 24,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 246,
+            "column": 21,
+            "endLine": 246,
+            "endColumn": 24,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 248,
+            "column": 13,
+            "endLine": 248,
+            "endColumn": 18,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 248,
+            "column": 9,
+            "endLine": 248,
+            "endColumn": 25,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 249,
+            "column": 9,
+            "endLine": 249,
+            "endColumn": 12,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         }
     ]

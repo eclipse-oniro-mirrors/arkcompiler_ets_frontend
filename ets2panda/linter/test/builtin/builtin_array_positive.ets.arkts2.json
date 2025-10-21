@@ -103,6 +103,66 @@
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 9,
+            "endLine": 33,
+            "endColumn": 12,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 9,
+            "endLine": 37,
+            "endColumn": 27,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 9,
+            "endLine": 38,
+            "endColumn": 22,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 9,
+            "endLine": 39,
+            "endColumn": 23,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 9,
+            "endLine": 40,
+            "endColumn": 21,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 19,
+            "endLine": 44,
+            "endColumn": 30,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
         }
     ]
 }

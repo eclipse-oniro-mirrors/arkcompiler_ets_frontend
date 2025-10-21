@@ -16,6 +16,16 @@
     "result": [
         {
             "line": 17,
+            "column": 31,
+            "endLine": 17,
+            "endColumn": 34,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
             "column": 40,
             "endLine": 17,
             "endColumn": 55,

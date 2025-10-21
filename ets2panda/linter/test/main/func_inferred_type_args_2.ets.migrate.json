@@ -26,42 +26,12 @@
         },
         {
             "line": 22,
-            "column": 28,
-            "endLine": 22,
-            "endColumn": 33,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
             "column": 24,
             "endLine": 22,
             "endColumn": 35,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 40,
-            "endLine": 23,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 21,
-            "endLine": 24,
-            "endColumn": 26,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -265,26 +235,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 86,
-            "column": 29,
-            "endLine": 86,
-            "endColumn": 34,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 88,
-            "column": 9,
-            "endLine": 88,
-            "endColumn": 14,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 91,
             "column": 77,
             "endLine": 91,
@@ -295,36 +245,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 102,
-            "column": 40,
-            "endLine": 102,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 103,
-            "column": 55,
-            "endLine": 103,
-            "endColumn": 60,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 104,
-            "column": 56,
-            "endLine": 104,
-            "endColumn": 61,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 104,
             "column": 52,
             "endLine": 104,
@@ -332,16 +252,6 @@
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 105,
-            "column": 26,
-            "endLine": 105,
-            "endColumn": 31,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
