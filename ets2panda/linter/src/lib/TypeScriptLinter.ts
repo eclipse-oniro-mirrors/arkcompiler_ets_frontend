@@ -146,7 +146,8 @@ import {
   serializationTypeName,
   COMPONENTV2_DECORATOR_NAME,
   ENTRY_STORAGE,
-  ENTRY_USE_SHARED_STORAGE
+  ENTRY_USE_SHARED_STORAGE,
+  globalDepreApis
 } from './utils/consts/ArkuiConstants';
 import { arkuiImportList } from './utils/consts/ArkuiImportList';
 import type { IdentifierAndArguments, ForbiddenAPICheckResult } from './utils/consts/InteropAPI';
@@ -4088,6 +4089,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkVoidLifecycleReturn(tsMethodDecl);
     this.handleNoDeprecatedApi(tsMethodDecl);
     this.checkAbstractOverrideReturnType(tsMethodDecl);
+    this.handleGlobalDepreApis(tsMethodDecl);
   }
 
   private checkObjectPublicApiMethods(node: ts.ClassDeclaration | ts.InterfaceDeclaration): void {
@@ -15101,33 +15103,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!ts.isIdentifier(expression)) {
       return;
     }
-    if (
-      (expression.getText() === 'onLayout' || expression.getText() === 'onMeasure') &&
-      node.type?.getText() === 'void' &&
-      node.parent &&
-      ts.isStructDeclaration(node.parent)
-    ) {
-      const argsType = ['LayoutChild[]', 'ConstraintSizeOptions'];
-      const parameters = node.parameters;
-      if (parameters && parameters.length === 2) {
-        let paramMatch = true;
-        for (let i = 0; i < parameters.length; i++) {
-          if (this.tsTypeChecker.typeToString(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !== argsType[i]) {
-            paramMatch = false;
-            break;
-          }
-        }
-        if (paramMatch) {
-          this.incrementCounters(
-            expression,
-            FaultID.NoDeprecatedApi,
-            undefined,
-            TypeScriptLinter.getErrorMsgForSdkCommonApi(expression.getText(), FaultID.NoDeprecatedApi)
-          );
-          return;
-        }
-      }
-    }
+
     this.processApiNodeDeprecatedApi(expression.text, expression);
   }
 
@@ -16183,7 +16159,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (TypeScriptLinter.checkEntryDecoratorHasInvalidParams(entryDecorator)) {
       const autofix = this.autofixer?.fixEntryDecoratorHasInvalidParams(entryDecorator);
       this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidParamsWithV2, autofix);
-    } else if (TypeScriptLinter.checkEntryDecoratorHasInvaildLocalStorage(entryDecorator)) {
+    } else if (TypeScriptLinter.checkEntryDecoratorHasInvalidLocalStorage(entryDecorator)) {
       const autofix = this.autofixer?.fixEntryDecoratorHasInvaildLocalStorage(entryDecorator);
       this.incrementCounters(entryDecorator, FaultID.EntryHasInvalidLocalStorageWithV2, autofix);
     }
@@ -16208,7 +16184,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return hasInvalidParams;
   }
 
-  private static checkEntryDecoratorHasInvaildLocalStorage(entryDecorator: ts.Decorator): boolean {
+  private static checkEntryDecoratorHasInvalidLocalStorage(entryDecorator: ts.Decorator): boolean {
     const callExpr = entryDecorator.expression;
     if (!ts.isCallExpression(callExpr)) {
       return false;
@@ -16216,5 +16192,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const arg = callExpr.arguments?.[0];
     return arg && !ts.isObjectLiteralExpression(arg);
+  }
+
+  private handleGlobalDepreApis(method: ts.MethodDeclaration): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    if (!ts.isStructDeclaration(method.parent) || !globalDepreApis.has(method.name.getText())) {
+      return;
+    }
+
+    const apiName = method.name.getText();
+    const errorMsg: string = `The ArkUI interface "${apiName}" is deprecated (arkui-deprecated-interface)`;
+    this.incrementCounters(method.name, FaultID.NoDeprecatedApi, undefined, errorMsg);
   }
 }
