@@ -62,3 +62,29 @@ interface Person9<T> {
 interface Person9_1<T> extends Person9<T> {
   fun():void
 }
+
+interface MyFunction {
+  get1: Function
+  set1: Function
+  foo() : string
+}
+
+class F implements MyFunction{
+  get1(){}
+  set1(){}
+  foo() : string{
+    return '2332';
+  }
+}
+
+const handler : MyFunction = {
+  get1 () {
+    return 37;
+  },
+  set1 () {
+    return true;
+  },
+  foo() : string{
+    return '2332';
+  },
+};
