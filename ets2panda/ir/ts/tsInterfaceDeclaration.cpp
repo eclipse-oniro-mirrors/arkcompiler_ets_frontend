@@ -176,6 +176,7 @@ bool TSInterfaceDeclaration::RegisterUnexportedForDeclGen(ir::SrcDumper *dumper)
 void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(id_);
+    dumper->DumpJsdocBeforeTargetNode(this);
     if (!id_->Parent()->IsDefaultExported() && !id_->Parent()->IsExported() && dumper->IsDeclgen() &&
         !dumper->IsIndirectDepPhase()) {
         auto name = id_->Name().Mutf8();

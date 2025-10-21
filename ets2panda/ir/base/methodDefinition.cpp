@@ -313,6 +313,8 @@ void MethodDefinition::Dump(ir::SrcDumper *dumper) const
         return;
     }
 
+    dumper->DumpJsdocBeforeTargetNode(this);
+
     if (compiler::HasGlobalClassParent(this) && Id() != nullptr && Id()->Name().Is(compiler::Signatures::INIT_METHOD)) {
         Function()->Body()->Dump(dumper);
         return;

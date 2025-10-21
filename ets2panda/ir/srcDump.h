@@ -17,8 +17,7 @@
 #define ES2PANDA_IR_SRCDUMP_H
 
 #include <ir/astNode.h>
-#include <lexer/token/sourceLocation.h>
-#include "generated/tokenType.h"
+#include "parser/JsdocHelper.h"
 #include <util/ustring.h>
 
 #include <sstream>
@@ -43,6 +42,7 @@ class SrcDumper {
 public:
     explicit SrcDumper(const ir::AstNode *node);
     explicit SrcDumper(const ir::AstNode *node, bool isDeclgen);
+    explicit SrcDumper(const ir::AstNode *node, bool isDeclgen, bool enableJsdocDump);
 
     void Add(const std::string &str);
     void Add(int8_t i);
@@ -117,6 +117,8 @@ public:
 
     void Run();
 
+    void DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode);
+
 private:
     std::stringstream ss_;
     std::string indent_;
@@ -124,7 +126,7 @@ private:
     bool isIndirectDepPhase_ = false;
     bool ambientWasDeclared_ = false;
     std::unordered_map<std::string, NodeVariant> unExportNode_;
-
+    std::unique_ptr<parser::JsdocHelper> jsdocGetter_ {};
     std::queue<std::function<void()>> taskQueue_;
 };
 }  // namespace ark::es2panda::ir
