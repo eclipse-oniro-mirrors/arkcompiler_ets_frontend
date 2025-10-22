@@ -6473,7 +6473,7 @@
         "api_type": "InterfaceDeclaration",
         "parent_api": [
           {
-            "api_name": "ShowDialogOptions",
+            "api_name": "prompt.ShowDialogOptions",
             "api_type": ""
           }
         ],
@@ -6604,7 +6604,7 @@
         "api_type": "PropertySignature",
         "parent_api": [
           {
-            "api_name": "ActionMenuSuccessResponse",
+            "api_name": "prompt.ActionMenuSuccessResponse",
             "api_type": ""
           }
         ],
@@ -7113,15 +7113,10 @@
       "file_path": "api/@ohos.prompt.d.ts",
       "api_info": {
         "line": 1,
-        "problem": "",
+        "problem": "ImportClauseApi",
         "api_name": "prompt",
         "api_type": "NamespaceDeclaration",
-        "parent_api": [
-          {
-            "api_name": "prompt",
-            "api_type": "NamespaceDeclaration"
-          }
-        ],
+        "parent_api": [],
         "code_kind": 237,
         "api_optional": false,
         "method_return_type": ""
@@ -7293,7 +7288,7 @@
         "api_type": "InterfaceDeclaration",
         "parent_api": [
           {
-            "api_name": "ShowDialogSuccessResponse",
+            "api_name": "prompt.ShowDialogSuccessResponse",
             "api_type": ""
           }
         ],
@@ -8463,15 +8458,10 @@
       "file_path": "api/@system.router.d.ts",
       "api_info": {
         "line": 1,
-        "problem": "",
+        "problem": "ImportClauseApi",
         "api_name": "Router",
         "api_type": "ClassDeclaration",
-        "parent_api": [
-          {
-            "api_name": "Router",
-            "api_type": "ClassDeclaration"
-          }
-        ],
+        "parent_api": [],
         "code_kind": 239,
         "api_optional": false,
         "method_return_type": ""
