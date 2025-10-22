@@ -405,6 +405,12 @@ builtins:
   - name: Promise
     package: PKG_STD_CORE
     ref: BUILTIN_PROMISE
+  - name: Record
+    package: PKG_STD_CORE
+    ref: BUILTIN_RECORD
+  - name: Map
+    package: PKG_STD_CORE
+    ref: BUILTIN_MAP
   - name: Error
     package: PKG_ESCOMPAT
     ref: BUILTIN_ERROR
@@ -417,12 +423,6 @@ builtins:
   - name: Array
     package: PKG_ESCOMPAT
     ref: BUILTIN_ARRAY
-  - name: Record
-    package: PKG_ESCOMPAT
-    ref: BUILTIN_RECORD
-  - name: Map
-    package: PKG_ESCOMPAT
-    ref: BUILTIN_MAP
   - name: AssertionError
     package: PKG_STD_CORE
     ref: BUILTIN_ASSERTION_ERROR
