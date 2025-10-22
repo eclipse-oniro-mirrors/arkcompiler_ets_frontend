@@ -64,7 +64,7 @@ static void CheckExport(ETSChecker *checker, checker::Type const *type)
     };
 
     type->IterateRecursively(checkExported);
-};
+}
 
 //  from base folder
 checker::Type *ETSAnalyzer::Check(ir::CatchClause *st) const
@@ -122,8 +122,71 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
     return node->TsType();
 }
 
-static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
+static void CheckOverridenField(ir::ClassProperty *st, ETSChecker *checker, ir::ClassDefinition *classDef)
 {
+    auto *superType = classDef->Super()->TsType()->AsETSObjectType();
+
+    ES2PANDA_ASSERT(classDef->Super() != nullptr && superType != nullptr && !superType->IsGradual());
+
+    varbinder::LocalVariable *propVar = nullptr;
+    while (superType != nullptr) {
+        propVar = superType->GetProperty(st->Id()->Name(), PropertySearchFlags::SEARCH_INSTANCE_FIELD);
+        if (propVar != nullptr) {
+            break;
+        }
+        superType = superType->SuperType();
+    }
+
+    if (superType == nullptr) {
+        if (st->IsOverride()) {
+            checker->LogError(diagnostic::OVERRIDE_NOT_IN_BASE,
+                              {classDef->Super()->TsType()->AsETSObjectType()->Name()}, st->Start());
+        }
+        ES2PANDA_ASSERT(st->BasePropertyVar() == nullptr);
+        return;
+    }
+    ES2PANDA_ASSERT(propVar != nullptr);
+    auto *propNode = propVar->Declaration()->Node();
+    propNode->Check(checker);
+
+    if (propNode->IsPrivate()) {
+        if (st->IsOverride()) {
+            checker->LogError(diagnostic::OVERRIDE_NOT_PRIVATE, {propVar->Declaration()->Name(), superType->Name()},
+                              st->Start());
+        }
+        return;
+    }
+    if (st->HasAnnotations()) {
+        checker->LogError(diagnostic::CANNOT_ANNOTATE, {propVar->Declaration()->Name(), superType->Name()},
+                          st->Start());
+    }
+    if ((st->IsProtected() && propNode->IsPublic()) || st->IsPrivate()) {
+        checker->LogError(diagnostic::ACCESS_MODIFIER_NARROWING, {st->Id()->Name()}, st->Start());
+    }
+    if (!checker->Relation()->IsIdenticalTo(propVar->TsType(), st->TsType())) {
+        checker->LogError(diagnostic::INCOMPATIBLE_TYPE_FOR_OVERRIDE,
+                          {st->Id()->Name(), "", classDef->Ident()->Name(), propVar->Name(), "",
+                           superType->AsETSObjectType()->Name()},
+                          st->Start());
+    }
+    st->SetOverride();
+    st->SetBasePropertyVar(propVar);
+    if (propNode->IsDefinite()) {
+        st->AddModifier(ir::ModifierFlags::DEFINITE);
+    } else {
+        st->ClearModifier(ir::ModifierFlags::DEFINITE);
+    }
+}
+
+static void CheckFieldOverride(ir::ClassProperty *st, ETSChecker *checker)
+{
+    if (st->IsStatic()) {
+        if (st->IsOverride()) {
+            checker->LogError(diagnostic::STATIC_OVERRIDE, {st->Id()->Name()}, st->Start());
+        }
+        return;
+    }
+
     auto *parent = st->Parent();
     if (parent == nullptr || !parent->IsClassDefinition()) {
         return;
@@ -137,31 +200,9 @@ static void CheckOverride(ir::ClassProperty *st, ETSChecker *checker)
         }
         return;
     }
-
-    util::StringView superName = classDef->Super()->IsETSTypeReference()
-                                     ? classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name()
-                                     : "";  // #30543: Excessive use of AST and wrong assumptions
-    while (classDef->Super() != nullptr) {
-        auto *superType = classDef->Super()->TsType();
-        if (superType == nullptr || !superType->IsETSObjectType()) {
-            break;
-        }
-
-        auto searchFlags =
-            st->IsStatic() ? PropertySearchFlags::SEARCH_STATIC_FIELD : PropertySearchFlags::SEARCH_INSTANCE_FIELD;
-        auto *propVar = superType->AsETSObjectType()->GetProperty(st->Id()->Name(), searchFlags);
-        classDef = superType->AsETSObjectType()->GetDeclNode()->AsClassDefinition();
-        if (propVar != nullptr) {
-            if ((propVar->Declaration()->Node()->Modifiers() & ir::ModifierFlags::PRIVATE) != 0 &&
-                (st->Modifiers() & ir::ModifierFlags::OVERRIDE) != 0) {
-                checker->LogError(diagnostic::OVERRIDE_NOT_PRIVATE, {propVar->Declaration()->Name(), superName},
-                                  st->Start());
-            }
-            return;
-        }
-    }
-    if (st->IsOverride()) {
-        checker->LogError(diagnostic::OVERRIDE_NOT_IN_BASE, {superName}, st->Start());
+    if (classDef->Super() != nullptr && classDef->Super()->TsType() != nullptr &&
+        classDef->Super()->TsType()->IsETSObjectType()) {
+        CheckOverridenField(st, checker, classDef);
     }
 }
 
@@ -214,7 +255,7 @@ checker::Type *ETSAnalyzer::Check(ir::ClassProperty *st) const
     if (st->IsDefinite() && propertyType->PossiblyETSNullish()) {
         checker->LogError(diagnostic::LATE_INITIALIZATION_FIELD_HAS_INVALID_TYPE, st->TypeAnnotation()->Start());
     }
-    CheckOverride(st, checker);
+    CheckFieldOverride(st, checker);
 
     if (!st->IsPrivate() && util::Helpers::IsExported(st)) {
         CheckExport(checker, propertyType);

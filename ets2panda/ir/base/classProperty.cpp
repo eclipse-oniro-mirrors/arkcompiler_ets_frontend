@@ -315,6 +315,7 @@ ClassProperty *ClassProperty::Clone(ArenaAllocator *const allocator, AstNode *co
         clone->SetAnnotations(Annotations());
     }
 
+    clone->SetBasePropertyVar(BasePropertyVar());
     clone->SetRange(Range());
 
     return clone;
@@ -330,6 +331,7 @@ void ClassProperty::CopyTo(AstNode *other) const
     auto otherImpl = other->AsClassProperty();
 
     otherImpl->typeAnnotation_ = typeAnnotation_;
+    otherImpl->basePropertyVar_ = basePropertyVar_;
     otherImpl->isDefault_ = isDefault_;
     otherImpl->initMode_ = initMode_;
 

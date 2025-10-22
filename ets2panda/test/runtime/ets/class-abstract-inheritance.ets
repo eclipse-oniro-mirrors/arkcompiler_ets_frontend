@@ -29,10 +29,6 @@ abstract class B extends A {
     public get_str(): string {
         return this.str;
     }
-
-    public get_super_str(): string {
-        return super.getA();
-    }
 }
 
 class BB extends B {}
@@ -42,10 +38,6 @@ abstract class C extends B {
 
     public override get_str(): string {
         return this.str;
-    }
-
-    public override get_super_str(): string {
-        return super.getB();
     }
 }
 
@@ -57,22 +49,6 @@ function main(): void {
 
   arktest.assertEQ(b.str, "A")
   arktest.assertEQ(b.get_str(), "A")
-  arktest.assertEQ(b.get_super_str(), "A")
   arktest.assertEQ(c.str, "C")
   arktest.assertEQ(c.get_str(), "C")
-  arktest.assertEQ(c.get_super_str(), "A")
-
-  arktest.assertEQ((b as B).str, "A")
-  arktest.assertEQ((b as A).str, "A")
-  arktest.assertEQ((b as B).get_str(), "A")
-  arktest.assertEQ((b as B).get_super_str(), "A")
-
-  arktest.assertEQ((c as C).str, "C")
-  arktest.assertEQ((c as B).str, "A")
-  arktest.assertEQ((c as A).str, "A")
-
-  arktest.assertEQ((c as C).get_str(), "C")
-  arktest.assertEQ((c as C).get_super_str(), "A")
-  arktest.assertEQ((c as B).get_str(), "C")
-  arktest.assertEQ((c as B).get_super_str(), "A")
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -355,6 +355,12 @@ util::StringView ETSGen::FormClassOwnPropReference(const checker::ETSObjectType 
 
 util::StringView ETSGen::FormClassPropReference(varbinder::Variable const *const var)
 {
+    auto *node = var->Declaration()->Node();
+    ES2PANDA_ASSERT(node->IsClassProperty());
+    if (node->IsOverride()) {
+        ES2PANDA_ASSERT(node->AsClassProperty()->BasePropertyVar() != nullptr);
+        return FormClassPropReference(node->AsClassProperty()->BasePropertyVar());
+    }
     auto containingObjectType = util::Helpers::GetContainingObjectType(var->Declaration()->Node());
     return FormClassOwnPropReference(containingObjectType, var->Name());
 }

@@ -25,9 +25,9 @@ class A extends Base {
     static override field2 : number = 1;
 }
 
-/* @@? 22:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 22:21 Error Semantic error ESE225047: Static field field cannot override base field. */
 /* @@? 22:27 Error Syntax error ESY69198: Not allowed to contain the modifier 'static' along with the modifier 'override'. */
 /* @@? 23:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
 /* @@? 24:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
-/* @@? 25:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 25:21 Error Semantic error ESE225047: Static field field2 cannot override base field. */
 /* @@? 25:28 Error Syntax error ESY69198: Not allowed to contain the modifier 'static' along with the modifier 'override'. */

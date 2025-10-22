@@ -49,7 +49,8 @@ public:
     explicit ClassProperty(Expression *const key, Expression *const value, TypeNode *const typeAnnotation,
                            ModifierFlags const modifiers, ArenaAllocator *const allocator, bool const isComputed)
         : AnnotationAllowed<ClassElement>(AstNodeType::CLASS_PROPERTY, key, value, modifiers, allocator, isComputed),
-          typeAnnotation_(typeAnnotation)
+          typeAnnotation_(typeAnnotation),
+          basePropertyVar_(nullptr)
     {
     }
 
@@ -66,6 +67,17 @@ public:
     }
 
     void SetTypeAnnotation(TypeNode *typeAnnotation);
+
+    [[nodiscard]] varbinder::Variable *BasePropertyVar() const noexcept
+    {
+        return GetHistoryNodeAs<ClassProperty>()->basePropertyVar_;
+    }
+
+    void SetBasePropertyVar(varbinder::Variable *baseProperty)
+    {
+        ES2PANDA_ASSERT((baseProperty != nullptr) == IsOverride());
+        this->GetOrCreateHistoryNodeAs<ClassProperty>()->basePropertyVar_ = baseProperty;
+    }
 
     [[nodiscard]] PrivateFieldKind ToPrivateFieldKind(bool const isStatic) const override
     {
@@ -123,6 +135,7 @@ private:
 
     friend class SizeOfNodeTest;
     TypeNode *typeAnnotation_;
+    varbinder::Variable *basePropertyVar_;
     bool isDefault_ = false;
     InitMode initMode_ = InitMode::NONE;
 };

@@ -21,7 +21,6 @@ warning:
   id: 16
   message: "Cannot assign to '{}' because it is a read-only property."
 
-
 - name: AWAIT_IN_NON_ASYNC_DEPRECATED
   id: 173979
   message: "Await in non-aysnc function is deprecated, please move it to async function."
@@ -29,6 +28,10 @@ warning:
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."
+
+- name: CANNOT_ANNOTATE
+  id: 122948
+  message: "Cannot annotate this overriden field {} in {}"
 
 - name: CLASS_COMPOSITE_KEY_USE_STRING
   id: 98268
@@ -94,6 +97,10 @@ warning:
 - name: IMPROPER_NUMERIC_CAST
   id: 29
   message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
+
+- name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
+  id: 52491
+  message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
 
 - name: INSTANCEOF_ERASED
   id: 15

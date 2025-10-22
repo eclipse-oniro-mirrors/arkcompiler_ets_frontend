@@ -17,10 +17,6 @@ class A {
   static static_name: char = c'A';
   name: char = c'A';
 
-  final get_name_a(): char {
-    return this.name;
-  }
-
   get_name(): char {
     return this.name;
   }
@@ -38,12 +34,8 @@ class B extends A {
     return B.static_name;
   }
 
-  override get_name(): char {
-    return this.name;
-  }
-
   super_name(): char {
-    return super.get_name();
+    return A.static_name;
   }
 }
 
@@ -55,12 +47,8 @@ final class C extends B {
     return C.static_name;
   }
 
-  override get_name(): char {
-    return this.name;
-  }
-
   override super_name(): char {
-    return super.get_name();
+    return B.static_name;
   }
 }
 
@@ -71,7 +59,6 @@ function main() : void {
     arktest.assertEQ(A.get_static_name(), c'A')
     arktest.assertEQ(a.name, c'A')
     arktest.assertEQ(a.get_name(), c'A')
-    arktest.assertEQ(a.get_name_a(), c'A')
   }
 
   {
@@ -81,14 +68,12 @@ function main() : void {
     arktest.assertEQ(b.name, c'B')
     arktest.assertEQ(b.get_name(), c'B')
     arktest.assertEQ(b.super_name(), c'A')
-    arktest.assertEQ(b.get_name_a(), c'A')
   }
 
   {
     let b_as_a: A = new B();
     arktest.assertEQ(b_as_a.name, c'B')
     arktest.assertEQ(b_as_a.get_name(), c'B')
-    arktest.assertEQ(b_as_a.get_name_a(), c'A')
   }
 
   {
@@ -98,14 +83,12 @@ function main() : void {
     arktest.assertEQ(c.name, c'C')
     arktest.assertEQ(c.get_name(), c'C')
     arktest.assertEQ(c.super_name(), c'B')
-    arktest.assertEQ(c.get_name_a(), c'A')
   }
 
   {
     let c_as_a: A = new C();
     arktest.assertEQ(c_as_a.name, c'C')
     arktest.assertEQ(c_as_a.get_name(), c'C')
-    arktest.assertEQ(c_as_a.get_name_a(), c'A')
   }
 
   {
@@ -113,20 +96,6 @@ function main() : void {
     arktest.assertEQ(c_as_b.name, c'C')
     arktest.assertEQ(c_as_b.get_name(), c'C')
     arktest.assertEQ(c_as_b.super_name(), c'B')
-    arktest.assertEQ(c_as_b.get_name_a(), c'A')
   }
 
-  {
-    let c = new C();
-    arktest.assertEQ((c as A).name, c'A')
-    arktest.assertEQ((c as A).get_name(), c'C')
-    arktest.assertEQ((c as A).get_name_a(), c'A')
-  }
-
-  {
-    arktest.assertEQ((new C() as B).name, c'B')
-    arktest.assertTrue((new C() as B).get_name() ==c'C')
-    arktest.assertEQ((new C() as B).super_name(), c'B')
-    arktest.assertEQ((new C() as B).get_name_a(), c'A')
-  }
 }

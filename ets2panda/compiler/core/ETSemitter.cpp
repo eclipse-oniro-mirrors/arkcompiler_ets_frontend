@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -573,7 +573,8 @@ static checker::Type const *GetPropTypeWorkaround(public_lib::Context const *ctx
 
 void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external)
 {
-    if (dependencies_->IsNotRequired(classRecord.name + '.' + prop->Id()->Name().Mutf8(), external)) {
+    if (dependencies_->IsNotRequired(classRecord.name + '.' + prop->Id()->Name().Mutf8(), external) ||
+        prop->IsOverride()) {
         return;
     }
 

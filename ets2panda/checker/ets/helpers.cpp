@@ -3022,6 +3022,7 @@ void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *origin
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *interfaceProp = originalProp->Clone(ProgramAllocator(), originalProp->Parent());
     interfaceProp->ClearModifier(ir::ModifierFlags::GETTER_SETTER);
+    interfaceProp->ClearModifier(ir::ModifierFlags::OVERRIDE);
 
     auto *const scope = Scope()->AsClassScope();
     scope->InstanceFieldScope()->EraseBinding(interfaceProp->Key()->AsIdentifier()->Name());

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1387,7 +1387,6 @@ void AssignAnalyzer::LetInit(const ir::AstNode *node)
 void AssignAnalyzer::CheckInit(const ir::AstNode *node)
 {
     const ir::AstNode *declNode = GetDeclaringNode(node);
-
     if (declNode == nullptr || declNode->IsDeclare()) {
         return;
     }
@@ -1402,8 +1401,7 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         return;
     }
 
-    auto ownerDef = OwnerDef(node);
-    if (ownerDef != classDef_) {
+    if (OwnerDef(declNode) != classDef_) {
         return;
     }
 
@@ -1413,12 +1411,7 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
             return;
         }
 
-        if (declNode->Parent() != classDef_) {
-            // property of another class
-            return;
-        }
-
-        if (node->IsDefinite()) {
+        if (node->IsDefinite() || node->IsOverride()) {
             return;
         }
 
@@ -1427,22 +1420,20 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         }
     }
 
-    if (classDef_ == globalClass_ || (adr < classFirstAdr_ || adr >= firstAdr_)) {
-        if (!inits_.IsMember(adr)) {
-            if (WARN_NO_INIT_ONCE_PER_VARIABLE && !foundErrors_.insert(declNode).second) {
-                return;
-            }
+    if ((classDef_ == globalClass_ || (adr < classFirstAdr_ || adr >= firstAdr_)) && !inits_.IsMember(adr)) {
+        if (WARN_NO_INIT_ONCE_PER_VARIABLE && !foundErrors_.insert(declNode).second) {
+            return;
+        }
 
-            util::StringView type = GetVariableType(declNode);
-            util::StringView name = GetVariableName(declNode);
-            const lexer::SourcePosition pos = GetVariablePosition(node);
+        util::StringView type = GetVariableType(declNode);
+        util::StringView name = GetVariableName(declNode);
+        const lexer::SourcePosition pos = GetVariablePosition(node);
 
-            std::stringstream ss;
-            if (node->IsClassProperty()) {
-                checker_->LogError(diagnostic::PROPERTY_MAYBE_MISSING_INIT, {name}, pos);
-            } else {
-                checker_->LogError(diagnostic::USE_BEFORE_INIT, {Capitalize(type), name}, pos);
-            }
+        std::stringstream ss;
+        if (node->IsClassProperty()) {
+            checker_->LogError(diagnostic::PROPERTY_MAYBE_MISSING_INIT, {name}, pos);
+        } else {
+            checker_->LogError(diagnostic::USE_BEFORE_INIT, {Capitalize(type), name}, pos);
         }
     }
 }
