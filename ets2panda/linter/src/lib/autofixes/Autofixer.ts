@@ -5584,7 +5584,7 @@ export class Autofixer {
     return undefined;
   }
 
-  fixSdkOverloadApi(callke: ts.CallExpression): Autofix[] | undefined {
+  fixSdkOverloadApi(callke: ts.CallExpression, ident: ts.Identifier): Autofix[] | undefined {
     const fn = Autofixer.getCallbackBody(callke);
     if (!fn?.body || !ts.isBlock(fn.body)) {
       return undefined;
@@ -5621,7 +5621,9 @@ export class Autofixer {
       newStatements.push(ts.factory.createReturnStatement(ts.factory.createTrue()));
     }
     const newBlock = ts.factory.createBlock(newStatements, true);
-    const text = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newBlock, fn.getSourceFile());
+    let text = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newBlock, fn.getSourceFile());
+    const startPos = this.sourceFile.getLineAndCharacterOfPosition(ident.getStart()).character;
+    text = this.adjustIndentation(text, startPos);
     return [
       {
         start: fn.body.getStart(),
