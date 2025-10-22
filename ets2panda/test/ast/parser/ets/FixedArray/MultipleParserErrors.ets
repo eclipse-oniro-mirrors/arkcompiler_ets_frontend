@@ -200,10 +200,8 @@ function main(): void {
 /* @@? 51:40 Error SyntaxError: Unexpected token 'p'. */
 /* @@? 51:43 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 51:43 Error TypeError: Unresolved reference FixedArray */
-/* @@? 51:58 Error SyntaxError: Unexpected token, expected '('. */
+/* @@? 51:58 Error SyntaxError: Unexpected token ')'. */
 /* @@? 51:59 Error SyntaxError: Unexpected token ':'. */
-/* @@? 51:61 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 51:61 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 51:61 Error SyntaxError: Unexpected token 'int'. */
 /* @@? 51:65 Error SyntaxError: Unexpected token '{'. */
 /* @@? 52:5 Error SyntaxError: return keyword should be used in function body. */
@@ -292,4 +290,4 @@ function main(): void {
 /* @@? 165:5 Error TypeError: This expression is not callable. */
 /* @@? 166:5 Error TypeError: No matching call signature */
 /* @@? 166:5 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 296:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 294:1 Error SyntaxError: Expected '}', got 'end of stream'. */

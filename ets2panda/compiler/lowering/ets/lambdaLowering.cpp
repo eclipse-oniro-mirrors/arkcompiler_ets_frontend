@@ -47,6 +47,7 @@ struct LambdaInfo {
     ir::Expression *callReceiver = nullptr;
     bool isFunctionReference = false;
     checker::ETSObjectType *objType = nullptr;
+    ir::TSTypeParameterInstantiation *funcRefTypeParams = nullptr;
 };
 
 struct CalleeMethodInfo {
@@ -195,13 +196,14 @@ static void SetConstraintTypeAndDefaultTypeForTypeParams(public_lib::Context *ct
 }
 
 static ir::TSTypeParameterDeclaration *CloneTypeParamsForSignature(public_lib::Context *ctx,
-                                                                   LambdaClassInvokeInfo *lciInfo)
+                                                                   LambdaClassInvokeInfo *lciInfo,
+                                                                   bool isGenericFunctionInstantiated)
 {
     ir::TSTypeParameterDeclaration *oldIrTypeParams = lciInfo->callee->Function()->TypeParams();
     checker::Signature *lambdaSig = lciInfo->lambdaSignature;
     // NOTE (smartin): the first condition can be deleted, once the generic lambdas generate correct invoke function
     // into the global scope (currently we don't generate type params for them)
-    if (oldIrTypeParams == nullptr || lambdaSig->TypeParams().empty()) {
+    if (oldIrTypeParams == nullptr || lambdaSig->TypeParams().empty() || isGenericFunctionInstantiated) {
         return nullptr;
     }
 
@@ -892,6 +894,23 @@ static ArenaVector<ir::Expression *> CreateCallArgumentsForLambdaClassInvokeN(pu
     return callArguments;
 }
 
+static void SetTypeParamsForInvokeSignature(public_lib::Context *ctx, LambdaInfo const *info,
+                                            LambdaClassInvokeInfo const *lciInfo, ir::CallExpression *call)
+{
+    auto *allocator = ctx->allocator;
+
+    const auto &origCallTypeParams = info->funcRefTypeParams->Params();
+    auto typeArgs = ArenaVector<ir::TypeNode *>(allocator->Adapter());
+    for (auto *tp : origCallTypeParams) {
+        typeArgs.push_back(allocator->New<ir::OpaqueTypeNode>(
+            tp->TsType()->Substitute(ctx->GetChecker()->Relation(), lciInfo->substitution), allocator));
+    }
+    auto *typeArg =
+        util::NodeAllocator::ForceSetParent<ir::TSTypeParameterInstantiation>(allocator, std::move(typeArgs));
+    call->SetTypeParams(typeArg);
+    typeArg->SetParent(call);
+}
+
 static ir::CallExpression *CreateCallForLambdaClassInvoke(public_lib::Context *ctx, LambdaInfo const *info,
                                                           LambdaClassInvokeInfo const *lciInfo, bool wrapToObject)
 {
@@ -925,7 +944,7 @@ static ir::CallExpression *CreateCallForLambdaClassInvoke(public_lib::Context *c
     // NOTE (smartin): the condition would be better to check the size of the signature's type parameters. But currently
     // generic lambdas don't allocate type parameters for they global invoke function, so fix this when the generation
     // will be corrected
-    if (lciInfo->callee->Function()->TypeParams() != nullptr) {
+    if (lciInfo->callee->Function()->TypeParams() != nullptr && info->funcRefTypeParams == nullptr) {
         auto origCallTypeParams = lciInfo->lambdaSignature->TypeParams();
         auto typeArgs = ArenaVector<ir::TypeNode *>(allocator->Adapter());
         for (auto *tp : origCallTypeParams) {
@@ -936,6 +955,8 @@ static ir::CallExpression *CreateCallForLambdaClassInvoke(public_lib::Context *c
             util::NodeAllocator::ForceSetParent<ir::TSTypeParameterInstantiation>(allocator, std::move(typeArgs));
         call->SetTypeParams(typeArg);
         typeArg->SetParent(call);
+    } else if (info->funcRefTypeParams != nullptr) {
+        SetTypeParamsForInvokeSignature(ctx, info, lciInfo, call);
     }
 
     if (lciInfo->classDefinition->TypeParams() != nullptr) {
@@ -1036,7 +1057,7 @@ static void CreateLambdaClassInvokeMethod(public_lib::Context *ctx, LambdaInfo c
     const auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *anyType = checker->GlobalETSAnyType();
 
-    auto *invokeSigTypeParams = CloneTypeParamsForSignature(ctx, lciInfo);
+    auto *invokeSigTypeParams = CloneTypeParamsForSignature(ctx, lciInfo, info->funcRefTypeParams != nullptr);
 
     auto params = ArenaVector<ir::Expression *>(allocator->Adapter());
     for (size_t idx = 0; idx < lciInfo->arity; ++idx) {
@@ -1320,7 +1341,7 @@ static void GenerateInvokesForDefinedArityLambda(public_lib::Context *ctx, Lambd
 }
 
 static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker::ETSFunctionType *fntype,
-                                               ir::MethodDefinition *callee, LambdaInfo const *info)
+                                               ir::MethodDefinition *callee, const LambdaInfo *info)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
@@ -1371,7 +1392,7 @@ static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker
 static ir::ETSNewClassInstanceExpression *CreateConstructorCall(public_lib::Context *ctx,
                                                                 ir::TypedAstNode *lambdaOrFuncRef,
                                                                 ir::ClassDeclaration *lambdaClass,
-                                                                LambdaInfo const *info)
+                                                                const LambdaInfo *info)
 {
     auto *allocator = ctx->allocator;
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
@@ -1544,6 +1565,7 @@ static LambdaInfo GenerateLambdaInfoForFunctionReference(public_lib::Context *ct
 {
     auto *allocator = ctx->allocator;
     LambdaInfo info;
+
     if (method->Parent()->Parent()->IsClassDeclaration()) {
         info.calleeClass = method->Parent()->Parent()->AsClassDeclaration();
     } else if (method->Parent()->Parent()->IsTSInterfaceDeclaration()) {
@@ -1551,20 +1573,28 @@ static LambdaInfo GenerateLambdaInfoForFunctionReference(public_lib::Context *ct
     } else {
         ES2PANDA_UNREACHABLE();
     }
+
     info.enclosingFunction = nullptr;
     info.name = CreateCalleeName(allocator);
     info.originalFuncName = method->Id()->Name();
     info.capturedVars = allocator->New<ArenaSet<varbinder::Variable *>>(allocator->Adapter());
     info.isFunctionReference = true;
+
     if (method->IsStatic()) {
         info.callReceiver = nullptr;
     } else {
         ES2PANDA_ASSERT(funcRef->IsMemberExpression());
         info.callReceiver = funcRef->AsMemberExpression()->Object();
     }
+
     if (funcRef->IsMemberExpression()) {
         info.objType = funcRef->AsMemberExpression()->ObjType();
     }
+
+    if (funcRef->Parent()->IsETSGenericInstantiatedNode()) {
+        info.funcRefTypeParams = funcRef->Parent()->AsETSGenericInstantiatedNode()->TypeParams();
+    }
+
     return info;
 }
 
@@ -1604,10 +1634,18 @@ static ir::AstNode *ConvertFunctionReference(public_lib::Context *ctx, ir::Expre
         return lam == nullptr ? funcRef : ConvertLambda(ctx, lam);
     }
 
-    LambdaInfo info = GenerateLambdaInfoForFunctionReference(ctx, funcRef, method);
+    const LambdaInfo info = GenerateLambdaInfoForFunctionReference(ctx, funcRef, method);
 
-    ES2PANDA_ASSERT(funcRef->TsType()->IsETSArrowType());
-    auto *lambdaClass = CreateLambdaClass(ctx, funcRef->TsType()->AsETSFunctionType(), method, &info);
+    auto *funcRefType = funcRef->TsType();
+    if (funcRef->Parent()->IsETSGenericInstantiatedNode()) {
+        // The lambda classes are generated postorder, so the function reference will be seen before the instantiation
+        // node. To generate correct code, we need to check if there exist a corresponding instantiation node (which is
+        // always it's parent) for this function ref
+        funcRefType = funcRef->Parent()->AsTyped()->TsType();
+    }
+
+    ES2PANDA_ASSERT(funcRefType->IsETSArrowType());
+    auto *lambdaClass = CreateLambdaClass(ctx, funcRefType->AsETSFunctionType(), method, &info);
     auto *constructorCall = CreateConstructorCall(ctx, funcRef, lambdaClass, &info);
     ES2PANDA_ASSERT(constructorCall);
     if (constructorCall->TsType()->IsETSObjectType()) {
@@ -1764,7 +1802,7 @@ static bool IsRedirectingConstructorCall(ir::CallExpression *expr)
     return expr->Callee()->IsThisExpression() || expr->Callee()->IsSuperExpression();
 }
 
-static bool IsInCalleePosition(ir::Expression *expr)
+static bool IsInCalleePosition(const ir::Expression *expr)
 {
     return expr->Parent()->IsCallExpression() && expr->Parent()->AsCallExpression()->Callee() == expr;
 }
@@ -1788,7 +1826,7 @@ static bool IsValidFunctionDeclVar(const varbinder::Variable *const var)
            !var->TsType()->HasTypeFlag(checker::TypeFlag::GETTER_SETTER);
 }
 
-static bool IsOverloadedName(ir::Expression *const expr)
+static bool IsOverloadedName(const ir::Expression *const expr)
 {
     if ((!expr->IsIdentifier() && !expr->IsMemberExpression()) || !expr->Parent()->IsOverloadDeclaration()) {
         return false;
@@ -1799,34 +1837,50 @@ static bool IsOverloadedName(ir::Expression *const expr)
                        [&expr](const ir::Expression *overloadedName) { return overloadedName == expr; });
 }
 
-static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::AstNode *node)
+static bool IsConvertibleFunctionReference(const ir::AstNode *node)
 {
-    if (node->IsArrowFunctionExpression()) {
-        return ConvertLambda(ctx, node->AsArrowFunctionExpression());
-    }
-
     if (node->IsIdentifier()) {
         auto *id = node->AsIdentifier();
         auto *var = id->Variable();
         // We are running this lowering only for ETS files
         // so it is correct to pass ETS extension here to isReference()
-        if (id->IsReference(ScriptExtension::ETS) && id->TsType() != nullptr && id->TsType()->IsETSFunctionType() &&
-            !IsInCalleePosition(id) && !IsEnumFunctionCall(id) && IsValidFunctionDeclVar(var) &&
-            !IsOverloadedName(id)) {
-            return ConvertFunctionReference(ctx, id);
-        }
+        return (id->IsReference(ScriptExtension::ETS) && id->TsType() != nullptr && id->TsType()->IsETSFunctionType() &&
+                !IsInCalleePosition(id) && !IsEnumFunctionCall(id) && IsValidFunctionDeclVar(var) &&
+                !IsOverloadedName(id));
     }
+
     if (node->IsMemberExpression()) {
         auto *mexpr = node->AsMemberExpression();
         if (mexpr->Kind() == ir::MemberExpressionKind::PROPERTY_ACCESS && mexpr->TsType() != nullptr &&
             mexpr->TsType()->IsETSFunctionType() && mexpr->Object()->TsType()->IsETSObjectType() &&
             mexpr->PropVar() != nullptr && !mexpr->PropVar()->HasFlag(varbinder::VariableFlags::DYNAMIC)) {
             ES2PANDA_ASSERT(mexpr->Property()->IsIdentifier());
-            if (IsValidFunctionDeclVar(mexpr->PropVar()) && !IsInCalleePosition(mexpr) && !IsOverloadedName(mexpr)) {
-                return ConvertFunctionReference(ctx, mexpr);
-            }
+            return IsValidFunctionDeclVar(mexpr->PropVar()) && !IsInCalleePosition(mexpr) && !IsOverloadedName(mexpr);
         }
     }
+
+    return false;
+}
+
+static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::AstNode *node)
+{
+    if (node->IsArrowFunctionExpression()) {
+        return ConvertLambda(ctx, node->AsArrowFunctionExpression());
+    }
+
+    if (node->IsETSGenericInstantiatedNode()) {
+        // Because of postorder iteration, the explicitly instantiated function reference was handled, we can replace
+        // the instantiation node with the already instantiated one
+        auto *nodeParent = node->Parent();
+        node = node->AsETSGenericInstantiatedNode()->GetExpression();
+        node->SetParent(nodeParent);
+    }
+
+    if (IsConvertibleFunctionReference(node)) {
+        ES2PANDA_ASSERT(node->IsExpression());
+        return ConvertFunctionReference(ctx, node->AsExpression());
+    }
+
     return node;
 }
 

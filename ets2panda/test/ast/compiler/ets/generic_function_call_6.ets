@@ -22,4 +22,5 @@ function main() {
     /* @@ label */fn<B>()
 }
 
-/* @@@ label Error TypeError: No matching call signature  */
+/* @@@ label Error TypeError: Type argument 'B' should be a subtype of 'A' constraint */
+/* @@@ label Error TypeError: No matching call signature */

@@ -19,4 +19,4 @@ function main(){
         "key2": 2
     }
 }
-/* @@@ label Error TypeError: Type argument 'Char|String' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */
+/* @@@ label Error TypeError: Type argument 'Char|String' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

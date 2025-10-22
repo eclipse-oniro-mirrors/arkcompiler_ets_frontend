@@ -182,7 +182,7 @@ static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChec
         checker->EmplaceSubstituted(&constraintsSubstitution, typeParam, instArgs[ix]);
     }
     if (sigParams.size() != instArgs.size()) {
-        if ((flags & TypeRelationFlag::NO_THROW) == static_cast<std::underlying_type_t<TypeRelationFlag>>(0U)) {
+        if ((flags & TypeRelationFlag::NO_THROW) == 0U) {
             checker->LogError(diagnostic::RTYPE_PARAM_COUNT_MISMATCH, {sigParams.size(), instArgs.size()}, pos);
         }
         return std::nullopt;
@@ -191,6 +191,12 @@ static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChec
     for (size_t ix = 0; ix < sigParams.size(); ix++) {
         if (!checker->IsCompatibleTypeArgument(sigParams[ix]->AsETSTypeParameter(), instArgs[ix],
                                                &constraintsSubstitution)) {
+            if ((flags & TypeRelationFlag::NO_THROW) == 0U) {
+                auto *constraintType = sigParams[ix]->AsETSTypeParameter()->GetConstraintType()->Substitute(
+                    checker->Relation(), &constraintsSubstitution);
+                checker->LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING, {instArgs[ix], constraintType}, pos);
+            }
+
             return std::nullopt;
         }
         checker->EmplaceSubstituted(&substitution, sigParams[ix]->AsETSTypeParameter(), instArgs[ix]);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-class A{}
+function foo<T extends String, U = Int>(a0: T, a1: U): U { return a1; }
 
-function main(){
-    let a: Record/* @@ label */<A | double, number> = {
-        1: 1,
-        2: 2
-    }
+function main() {
+    let foo1 = foo<Double>
+    let foo2 = foo<Int, String>
 }
-/* @@@ label Error TypeError: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */
+
+/* @@? 19:19 Error TypeError: Type argument 'Double' should be a subtype of 'String' constraint */
+/* @@? 20:19 Error TypeError: Type argument 'Int' should be a subtype of 'String' constraint */

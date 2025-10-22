@@ -3110,6 +3110,12 @@ Signature *ETSChecker::ResolvePotentialTrailingLambda(ir::CallExpression *callEx
                                 TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
 }
 
+std::optional<Substitution> ETSChecker::CheckTypeParamsAndBuildSubstitutionIfValid(
+    Signature *signature, const ArenaVector<ir::TypeNode *> &params, const lexer::SourcePosition &pos)
+{
+    return BuildExplicitSubstitutionForArguments(this, signature, params, pos, TypeRelationFlag::NONE);
+}
+
 void ETSChecker::ThrowOverloadMismatch(util::StringView callName, const ArenaVector<ir::Expression *> &arguments,
                                        const lexer::SourcePosition &pos, std::string_view signatureKind)
 {

@@ -472,6 +472,8 @@ public:
                                                             Substitution *substitution);
     std::pair<ArenaVector<Type *>, bool> CreateUnconstrainedTypeParameters(
         ir::TSTypeParameterDeclaration const *typeParams);
+    [[nodiscard]] std::optional<Substitution> CheckTypeParamsAndBuildSubstitutionIfValid(
+        Signature *signature, const ArenaVector<ir::TypeNode *> &params, const lexer::SourcePosition &pos);
     void AssignTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams);
     Signature *ValidateParameterlessConstructor(Signature *signature, const lexer::SourcePosition &pos,
                                                 bool throwError);

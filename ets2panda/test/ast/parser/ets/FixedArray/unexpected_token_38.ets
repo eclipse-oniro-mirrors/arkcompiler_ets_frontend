@@ -27,6 +27,5 @@ let func3: (f: (a: number, b: string) => FixedArray<number>): FixedArray<number>
 /* @@? 22:61 Error SyntaxError: Unexpected token, expected '=>'. */
 /* @@? 22:61 Error SyntaxError: Unexpected token '=>'. */
 /* @@? 22:63 Error SyntaxError: Unexpected token 'FixedArray'. */
-/* @@? 22:63 Error TypeError: Unresolved reference FixedArray */
-/* @@? 22:82 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:116 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+/* @@? 22:82 Error SyntaxError: Unexpected token '=>'. */
+/* @@? 22:82 Error SyntaxError: Unexpected token. */

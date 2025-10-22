@@ -91,6 +91,7 @@
     _(ETS_INTRINSIC_NODE_TYPE, ETSIntrinsicNode)                                          \
     _(ETS_FUNCTION_TYPE, ETSFunctionType)                                                 \
     _(ETS_WILDCARD_TYPE, ETSWildcardType)                                                 \
+    _(ETS_GENERIC_INSTANTIATED_NODE, ETSGenericInstantiatedNode)                          \
     _(ETS_PRIMITIVE_TYPE, ETSPrimitiveType)                                               \
     _(ETS_PACKAGE_DECLARATION, ETSPackageDeclaration)                                     \
     _(ETS_CLASS_LITERAL, ETSClassLiteral)                                                 \

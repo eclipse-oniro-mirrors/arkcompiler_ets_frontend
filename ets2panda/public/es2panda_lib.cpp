@@ -45,6 +45,7 @@
 #include "ir/ets/etsFunctionType.h"
 #include "ir/statements/ifStatement.h"
 #include "ir/base/methodDefinition.h"
+#include "ir/ets/etsGenericInstantiatedNode.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
 #include "ir/ets/etsNewArrayInstanceExpression.h"
 #include "ir/ets/etsNewMultiDimArrayInstanceExpression.h"
