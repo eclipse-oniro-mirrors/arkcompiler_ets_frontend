@@ -53,7 +53,7 @@ checker::Type *ETSAnalyzer::Check(ir::CatchClause *st) const
                 checker::Type *catchParamAnnotationType = paramIdent->TypeAnnotation()->GetType(checker);
                 exceptionType = checker->CheckExceptionOrErrorType(catchParamAnnotationType, st->Param()->Start());
             } else {
-                exceptionType = checker->GlobalETSObjectType();
+                exceptionType = checker->GlobalBuiltinErrorType();
             }
             paramIdent->Variable()->SetTsType(exceptionType);
         }

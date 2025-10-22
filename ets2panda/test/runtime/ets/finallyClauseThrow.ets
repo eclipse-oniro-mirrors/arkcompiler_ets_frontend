@@ -17,14 +17,16 @@ function main() : int {
     try {
         try {
             throw new Error();
-        } catch (e:Error) {
+        } catch (e) {
           arktest.assertTrue(false)
         } finally {
             throw new Error();
         }
-    } catch (e:Error) {
     } catch (e) {
-      arktest.assertTrue(false)
+      if (e instanceof Error ) {
+      }else{
+        arktest.assertTrue(false)
+      }
     }
     return 0;
 }

@@ -17,7 +17,7 @@ async function foo() {
     try {
         await import("hello")
             .then((m: JSValue): null => null)
-            .catch((a: object | null | undefined): never => {
+            .catch((a): never => {
                 throw a as Error
             })
     } catch (e) {

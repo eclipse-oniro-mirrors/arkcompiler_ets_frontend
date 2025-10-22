@@ -14,6 +14,6 @@
  */
 
 
-try {} catch (e: Error) {} finally /* @@ label */}
+try {} catch (e) {} finally /* @@ label */}
 
 /* @@@ label Error SyntaxError: Expected '{', got '}'. */

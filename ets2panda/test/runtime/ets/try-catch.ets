@@ -20,49 +20,47 @@ let catchCode = 0;
 function main(): void {
   try {
     throw new NullPointerError();
-  } catch (e: NullPointerError) {
-    catchCode = 1;
-  } catch (e: Error) {
-    arktest.assertTrue(false)
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof NullPointerError) {
+      catchCode = 1;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 1)
 
   try {
     throw new NullPointerError();
-  } catch (e: Error) {
-    catchCode = 2;
-  } catch (e: NullPointerError) {
-    arktest.assertTrue(false)
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof Error) {
+      catchCode = 2;
+    } else if (e instanceof NullPointerError) {
+      arktest.assertTrue(false)
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 2)
 
   try {
     throw new TestError();
-  } catch(e: TestError) {
-    catchCode = 3;
-  } catch (e: Error) {
-    arktest.assertTrue(false)
-  } catch (e) {
-    arktest.assertTrue(false)
+  } catch(e) {
+    if (e instanceof TestError) {
+      catchCode = 3;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 3)
 
   try {
     throw new TestError();
-  } catch (e: Error) {
-    catchCode = 4;
-  } catch (e: TestError) {
-    arktest.assertTrue(false)
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof Error) {
+      catchCode = 4;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 4)
 }
