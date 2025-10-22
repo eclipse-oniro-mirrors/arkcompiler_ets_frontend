@@ -383,6 +383,8 @@ private:
                                 bool isDefault);
     bool CheckAccessorDeclaration(ir::ModifierFlags memberModifiers);
     ir::AstNode *ParseAmbientSignature(const lexer::SourcePosition &startPosAmbient);
+    util::StringView ParseIndexName();
+    std::pair<ir::TypeNode *, ir::TypeNode *> ParseIndexTypeAndReturnType();
     void ParseArgumentsNewExpression(ArenaVector<ir::Expression *> &arguments, ir::TypeNode *typeReference);
     ir::Identifier *CreateInvokeIdentifier();
     ir::Expression *ParseNewExpression() override;
