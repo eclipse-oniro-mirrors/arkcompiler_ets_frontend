@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-
 function foo (x: Readonly<int[]>) {
     let x1 : int[]
-    x1 = /* @@ label */x
+    x1 = x
 }
-/* @@@ label Error TypeError: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */
+
+/* @@? 18:10 Error TypeError: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */

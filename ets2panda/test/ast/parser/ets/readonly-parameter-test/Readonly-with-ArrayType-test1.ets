@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
+function foo (p: int[]) {}
 
-function foo (p: int[]) {
-}
-let x: Readonly<int[]> = []
-/* @@ label */foo(/* @@ label1 */x)
+let x: Readonly<int[]> = [1,2,3]
+foo(x)
 
-/* @@@ label Error TypeError: No matching call signature for foo(readonly Array<Int>) */
-/* @@@ label1 Error TypeError: Type 'readonly Array<Int>' is not compatible with type 'Array<Int>' at index 1 */
+/* @@? 19:1 Error TypeError: No matching call signature for foo(readonly Array<Int>) */
+/* @@? 19:5 Error TypeError: Type 'readonly Array<Int>' is not compatible with type 'Array<Int>' at index 1 */

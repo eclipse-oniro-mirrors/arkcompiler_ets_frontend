@@ -19,7 +19,7 @@ function foo1(x : readonly int[], y : readonly [int, string]) {
     /* @@ label2 */y[1] = 'a'
 }
 
-function foo2(x : Readonly<int[]>, y : Readonly<[int, string]>) {
+function foo2(x : Readonly<int[]>, y : readonly [int, string]) {
     /* @@ label3 */x[1] = 0
     /* @@ label4 */y[0] = 10
     /* @@ label5 */y[1] = 'a'
@@ -32,7 +32,7 @@ let y1 : readonly [int, string] = [1, "a"]
 
 let x2 : Readonly<int[]> = [0]
 /* @@ label8 */x2[0] = 1
-let y2 : Readonly<[int, string]>
+let y2 : readonly [int, string]
 /* @@ label9 */y2[1] = "b"
 
 /* @@@ label Error TypeError: Object type doesn't have proper index access method. */

@@ -13,13 +13,11 @@
  * limitations under the License.
  */
 
-
 function foo1 (tuple1: [number, string, boolean], arr1: number[]) {
     let arr2 = arr1 as readonly number[]
     let arr3 = arr1 as Readonly<number[]>
     
     let tuple2 = tuple1 as readonly [number, string, boolean]
-    let tuple3 = tuple1 as Readonly<[number, string, boolean]>
 }
 
 function main() : void {
@@ -29,6 +27,4 @@ function main() : void {
     
     let tuple1 : [boolean, int] = [true, 2]
     let tuple2 = tuple1 as readonly [boolean, int]
-    let tuple3 = tuple1 as Readonly<[boolean, int]>
-
 }

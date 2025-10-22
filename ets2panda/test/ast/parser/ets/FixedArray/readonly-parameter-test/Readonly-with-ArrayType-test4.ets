@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-
 function foo (x: Readonly<FixedArray<int>>) {
     let x1 : FixedArray<int>
-    x1 = /* @@ label */x
+    x1 = x
 }
-/* @@? 19:24 Error TypeError: Type 'readonly FixedArray<Int>' cannot be assigned to type 'FixedArray<Int>' */
+/* @@? 16:26 Error TypeError: T in Readonly<T> must be a class or an interface type. */

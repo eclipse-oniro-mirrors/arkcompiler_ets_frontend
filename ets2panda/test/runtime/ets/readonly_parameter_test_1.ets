@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-
-function foo1 (tuple: Readonly<[number, string, boolean]>, arr: ReadonlyArray<int>) {
+function foo1 (tuple: readonly [number, string, boolean], arr: ReadonlyArray<int>) {
     foo2(tuple, arr)
     let x: readonly [number, string, boolean] = tuple
     let y: readonly int[] = arr
@@ -22,11 +21,11 @@ function foo1 (tuple: Readonly<[number, string, boolean]>, arr: ReadonlyArray<in
 
 function foo2 (tuple: readonly [number, string, boolean], arr: readonly int[]) {
     foo3(tuple, arr)
-    let x: Readonly<[number, string, boolean]> = tuple
+    let x: readonly [number, string, boolean] = tuple
     let y: ReadonlyArray<int> = arr
 }
 
-function foo3 (tuple: Readonly<[number, string, boolean]>, arr: ReadonlyArray<int>) {
+function foo3 (tuple: readonly [number, string, boolean], arr: ReadonlyArray<int>) {
     let x: readonly [number, string, boolean] = tuple
     let y: readonly int[] = arr
 }
@@ -35,7 +34,7 @@ function main() : void {
     foo1([1, "ab", true], [1, 2])
     foo2([1, "ab", true], [1, 2])
 
-    let tuple1: Readonly<[int, boolean]> = [1, true] 
+    let tuple1: readonly [int, boolean] = [1, true]
     let arr1: ReadonlyArray<int> = []
     let tuple2: readonly [int, boolean] = tuple1
     let arr2: readonly int[] = arr1
@@ -43,4 +42,3 @@ function main() : void {
     arr1 = arr2
     tuple1 = tuple2
 }
-

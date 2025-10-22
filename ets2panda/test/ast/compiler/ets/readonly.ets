@@ -20,3 +20,6 @@ async function ff<T>(x:T) {
 }
 
 function a<T>(x:T) : Readonly<T> { return x }
+
+/* @@? 16:26 Error TypeError: T in Readonly<T> must be a class or an interface type. */
+/* @@? 22:30 Error TypeError: T in Readonly<T> must be a class or an interface type. */

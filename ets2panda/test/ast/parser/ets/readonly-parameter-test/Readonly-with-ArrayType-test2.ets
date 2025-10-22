@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 
+function foo (p: [int, string]) {}
 
-function foo (p: [int, string]) {
-}
-let x: Readonly<[int, string]> = /* @@ label2 */[]
+let x: readonly [int, string] = /* @@ label2 */[]
 /* @@ label */foo(/* @@ label1 */x)
 
 /* @@@ label1 Error TypeError: Type 'readonly [Int, String]' is not compatible with type '[Int, String]' at index 1 */

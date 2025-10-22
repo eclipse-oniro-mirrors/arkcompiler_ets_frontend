@@ -15,6 +15,7 @@
 
 #include "checker/ETSchecker.h"
 
+#include "generated/signatures.h"
 #include "ir/expressions/identifier.h"
 #include "ir/ets/etsNullishTypes.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
@@ -38,10 +39,15 @@ std::optional<ir::TypeNode *> ETSChecker::GetUtilityTypeTypeParamNode(
     return typeParams->Params().front();
 }
 
-static bool ValidBaseTypeOfRequiredAndPartial(Type *type)
+static bool InvalidBaseTypeOfRequiredPartialAndReadonly(Type *type, const std::string_view &utilityType)
 {
-    return type->IsETSObjectType() &&
-           type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::CLASS);
+    if (utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
+        utilityType == compiler::Signatures::REQUIRED_TYPE_NAME ||
+        utilityType == compiler::Signatures::READONLY_TYPE_NAME) {
+        return !(type->IsETSObjectType() &&
+                 type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::CLASS));
+    }
+    return false;
 }
 
 Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstantiation *const typeParams,
@@ -72,9 +78,7 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
         return baseType;
     }
 
-    if ((utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
-         utilityType == compiler::Signatures::REQUIRED_TYPE_NAME) &&
-        !ValidBaseTypeOfRequiredAndPartial(baseType)) {
+    if (InvalidBaseTypeOfRequiredPartialAndReadonly(baseType, utilityType)) {
         LogError(diagnostic::MUST_BE_CLASS_INTERFACE_TYPE, {utilityType}, typeParams->Start());
         return GlobalTypeError();
     }
