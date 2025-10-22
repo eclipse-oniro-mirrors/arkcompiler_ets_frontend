@@ -2183,6 +2183,23 @@ ir::ModifierFlags ETSParser::ParseTypeVarianceModifier(TypeAnnotationParsingOpti
 
 ir::AstNode *ETSParser::ParseAmbientSignature(const lexer::SourcePosition &startPos)
 {
+    auto const indexName = ParseIndexName();
+    auto [typeAnno, returnType] = ParseIndexTypeAndReturnType();
+
+    if (returnType->IsBrokenTypeNode()) {
+        LogError(diagnostic::INDEX_MISSING_IDENTIFIER);
+        return AllocBrokenStatement({startPos, Lexer()->GetToken().End()});
+    }
+
+    auto dummyNode = AllocNode<ir::DummyNode>(compiler::Signatures::AMBIENT_INDEXER, indexName, returnType,
+                                              ir::DummyNodeFlag::INDEXER, typeAnno);
+    ES2PANDA_ASSERT(dummyNode != nullptr);
+    dummyNode->SetRange({startPos, Lexer()->GetToken().End()});
+    return dummyNode;
+}
+
+util::StringView ETSParser::ParseIndexName()
+{
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
         // ambient_indexer_9.ets
         LogUnexpectedToken(Lexer()->GetToken());
@@ -2206,16 +2223,20 @@ ir::AstNode *ETSParser::ParseAmbientSignature(const lexer::SourcePosition &start
     if (Lexer()->NextToken(); Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
         // ambient_indexer_8.ets
         LogError(diagnostic::INDEX_TYPE_EXPECTED);
-
         Lexer()->GetToken().SetTokenType(lexer::TokenType::PUNCTUATOR_COLON);
     }
 
+    return indexName;
+}
+
+std::pair<ir::TypeNode *, ir::TypeNode *> ETSParser::ParseIndexTypeAndReturnType()
+{
     // eat ":"
     if (Lexer()->NextToken(); Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_NUMBER &&
+                              Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_STRING &&
                               Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_INT) {
         // ambient_indexer_3.ets
-        LogError(diagnostic::INDEX_TYPE_NOT_NUMBER);
-
+        LogError(diagnostic::INDEX_TYPE_NOT_NUMBER, {TokenToString(Lexer()->GetToken().Type())});
         Lexer()->GetToken().SetTokenType(lexer::TokenType::KEYW_NUMBER);
     }
 
@@ -2243,16 +2264,8 @@ ir::AstNode *ETSParser::ParseAmbientSignature(const lexer::SourcePosition &start
     TypeAnnotationParsingOptions options =
         TypeAnnotationParsingOptions::RETURN_TYPE | TypeAnnotationParsingOptions::REPORT_ERROR;
     auto *returnType = ParseTypeAnnotation(&options);
-    if (returnType->IsBrokenTypeNode()) {
-        LogError(diagnostic::INDEX_MISSING_IDENTIFIER);
-        return AllocBrokenStatement({startPos, Lexer()->GetToken().End()});
-    }
 
-    auto dummyNode = AllocNode<ir::DummyNode>(compiler::Signatures::AMBIENT_INDEXER, indexName, returnType,
-                                              ir::DummyNodeFlag::INDEXER, typeAnno);
-    ES2PANDA_ASSERT(dummyNode != nullptr);
-    dummyNode->SetRange({startPos, Lexer()->GetToken().End()});
-    return dummyNode;
+    return {typeAnno, returnType};
 }
 
 ir::TSTypeParameter *ETSParser::ParseTypeParameter([[maybe_unused]] TypeAnnotationParsingOptions *options)

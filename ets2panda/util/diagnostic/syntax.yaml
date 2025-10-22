@@ -526,7 +526,7 @@ syntax:
 
 - name: INDEX_TYPE_NOT_NUMBER
   id: 18
-  message: "Index type must be number in index signature."
+  message: "Invalid index type '{}' in index signature."
 
 - name: INITIALIZERS_IN_AMBIENT_CONTEXTS
   id: 125
