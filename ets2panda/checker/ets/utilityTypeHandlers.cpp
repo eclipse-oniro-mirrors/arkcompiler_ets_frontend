@@ -858,6 +858,9 @@ Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *con
     for (auto *extend : interfaceDecl->Extends()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         auto *t = extend->Expr()->AsETSTypeReference()->Part()->GetType(this);
+        if (t->IsTypeError()) {
+            continue;
+        }
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         if (auto *superPartialType = CreatePartialType(t); superPartialType != nullptr) {
             ir::TSTypeParameterInstantiation *superPartialRefTypeParams =
