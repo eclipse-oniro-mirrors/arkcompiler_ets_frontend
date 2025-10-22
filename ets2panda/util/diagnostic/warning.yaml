@@ -30,6 +30,10 @@ warning:
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."
 
+- name: CLASS_COMPOSITE_KEY_USE_STRING
+  id: 98268
+  message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
+
 - name: DUPLICATE_EXPORT_ALIASES
   id: 73
   message: "Duplicated export aliases for '{}'."

@@ -39,7 +39,7 @@ function test(c: C = {}, x: int = 0, ivv: int = 0) {
 }
 
 function main(): int {
-    let c: C = {"x": 7, iv: {v: 8}}; // variable definition
+    let c: C = {x: 7, iv: {v: 8}}; // variable definition
     test(c, 7, 8)
 
     test() // optional parameter

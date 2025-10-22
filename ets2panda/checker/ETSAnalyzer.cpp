@@ -2745,6 +2745,7 @@ static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, c
                                                           ir::Expression *propExpr, const ir::Expression *key)
 {
     if (key->IsStringLiteral()) {
+        checker->LogDiagnostic(diagnostic::CLASS_COMPOSITE_KEY_USE_STRING, {}, expr->Start());
         return std::make_optional(key->AsStringLiteral()->Str());
     }
 

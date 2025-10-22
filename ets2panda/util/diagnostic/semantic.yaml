@@ -270,7 +270,7 @@ semantic:
 
 - name: CLASS_COMPOSITE_INVALID_KEY
   id: 73
-  message: "key in class composite should be either identifier or string literal"
+  message: "Key in class composite should be identifier only"
 
 - name: CLASS_COMPOSITE_INVALID_TARGET
   id: 63
