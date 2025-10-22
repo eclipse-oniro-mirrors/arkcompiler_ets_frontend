@@ -244,7 +244,8 @@ import {
 } from './utils/consts/OverloadCommon';
 import { initOverloadApiFixMap } from './utils/consts/OverloadCommon';
 import type { OverloadApiFixMap, OverloadInfo } from './utils/consts/OverloadCommon';
-import { OverloadBlacklistMap, TYPE_LITERAL, SINGLEQUOTE } from './utils/consts/OverloadBlacklist';
+import type { OverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
+import { TYPE_LITERAL, SINGLEQUOTE } from './utils/consts/OverloadBlacklist';
 import { createOverloadMapKey, initializeOverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
 
 export class TypeScriptLinter extends BaseTypeScriptLinter {
@@ -272,6 +273,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   static builtinNewCtorSet: Set<ApiListItem>;
   static builtinFinalClassSet: Set<ApiListItem>;
   static deprecatedApiInfo: Set<ApiListItem>;
+  static importClauseApiInfo: Set<ApiListItem>;
   static sdkCommonApiInfo: Set<ApiListItem>;
   static sdkCommonSymbotIterSet: Set<ApiListItem>;
   static sdkCommonAllDeprecatedTypeNameSet: Set<ApiListItem>;
@@ -294,6 +296,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     TypeScriptLinter.builtinNewCtorSet = new Set<ApiListItem>();
     TypeScriptLinter.builtinFinalClassSet = new Set<ApiListItem>();
     TypeScriptLinter.deprecatedApiInfo = new Set<ApiListItem>();
+    TypeScriptLinter.importClauseApiInfo = new Set<ApiListItem>();
     TypeScriptLinter.sdkCommonApiInfo = new Set<ApiListItem>();
     TypeScriptLinter.funcMap = new Map<string, Map<string, Set<ApiInfo>>>();
     TypeScriptLinter.sdkCommonFuncMap = new Map<string, Map<string, Set<ApiInfo>>>();
@@ -487,7 +490,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const list: ApiList = new ApiList(deprecatedApiList);
     if (list?.api_list?.length > 0) {
       for (const item of list.api_list) {
-        this.deprecatedApiInfo.add(item);
+        switch (item.api_info.problem) {
+          case DeprecateProblem.ImportClauseApi:
+            TypeScriptLinter.importClauseApiInfo.add(item);
+            break;
+          default:
+            this.deprecatedApiInfo.add(item);
+        }
       }
     }
   }
@@ -3997,37 +4006,53 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (tsImportClause.name) {
       this.countDeclarationsWithDuplicateName(tsImportClause.name, tsImportClause);
     }
-    this.checkPromptNameSpace(tsImportClause.name, tsImportClause);
+    if (TypeScriptLinter.importClauseApiInfo.size > 0) {
+      this.checkImportForDeprecatedApi(tsImportClause.name, tsImportClause, TypeScriptLinter.importClauseApiInfo);
+    }
   }
 
-  private checkPromptNameSpace(
+  private checkImportForDeprecatedApi(
     node: ts.Identifier | undefined,
-    tsDeclNode: ts.ImportClause | ts.ImportSpecifier
+    tsDeclNode: ts.ImportClause | ts.ImportSpecifier,
+    importClauseApiInfo: Set<ApiListItem>
   ): void {
     if (!this.options.arkts2 || !node) {
       return;
     }
 
     const symbol = this.tsUtils.trueSymbolAtLocation(node);
-    if (symbol?.name !== 'prompt') {
+    if (!symbol?.name) {
       return;
     }
 
-    const fileName = path.basename(symbol?.declarations?.[0]?.getSourceFile()?.fileName || '');
-    if (fileName === '@ohos.prompt.d.ts') {
-      this.incrementCounters(
-        tsDeclNode,
-        FaultID.NoDeprecatedApi,
-        undefined,
-        TypeScriptLinter.getErrorMsgForSdkCommonApi(symbol?.name, FaultID.NoDeprecatedApi)
-      );
+    const fileName = path.basename(symbol.declarations?.[0]?.getSourceFile()?.fileName || '');
+    if (!fileName) {
+      return;
+    }
+
+    const symbolName = this.tsUtils.getActualDefaultExportName(symbol);
+    for (const apiInfoItem of importClauseApiInfo) {
+      if (apiInfoItem.api_info.api_name !== symbolName) {
+        continue;
+      }
+
+      const apiFileName = path.basename(apiInfoItem.file_path);
+      if (fileName === apiFileName) {
+        this.incrementCounters(
+          tsDeclNode,
+          FaultID.NoDeprecatedApi,
+          undefined,
+          TypeScriptLinter.getErrorMsgForSdkCommonApi(symbolName, FaultID.NoDeprecatedApi)
+        );
+        return;
+      }
     }
   }
 
   private handleImportSpecifier(node: ts.Node): void {
     const importSpec = node as ts.ImportSpecifier;
     this.countDeclarationsWithDuplicateName(importSpec.name, importSpec);
-    this.checkPromptNameSpace(importSpec.name, importSpec);
+    this.checkImportForDeprecatedApi(importSpec.name, importSpec, TypeScriptLinter.importClauseApiInfo);
   }
 
   private handleNamespaceImport(node: ts.Node): void {

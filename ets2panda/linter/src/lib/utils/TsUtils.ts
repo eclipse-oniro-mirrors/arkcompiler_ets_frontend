@@ -55,6 +55,7 @@ export const PROMISE_METHODS_WITH_NO_TUPLE_SUPPORT = new Set(['all', 'race', 'an
 export const SYMBOL = 'Symbol';
 export const SYMBOL_CONSTRUCTOR = 'SymbolConstructor';
 const ITERATOR = 'iterator';
+const DEFAULT_SYMBOL_NAME = 'default';
 
 export type CheckType = (this: TsUtils, t: ts.Type) => boolean;
 
@@ -3968,5 +3969,41 @@ export class TsUtils {
       return expr.kind === ts.SyntaxKind.SuperKeyword;
     }
     return false;
+  }
+
+  getActualDefaultExportName(symbol: ts.Symbol): string {
+    if (symbol.name !== DEFAULT_SYMBOL_NAME) {
+      return symbol.name;
+    }
+
+    const declaration = symbol.declarations?.[0];
+    if (!declaration) {
+      return symbol.name;
+    }
+
+    if (ts.isFunctionDeclaration(declaration) || ts.isClassDeclaration(declaration)) {
+      return declaration.name?.text ?? symbol.name;
+    }
+
+    if (ts.isVariableDeclaration(declaration) && ts.isIdentifier(declaration.name)) {
+      return declaration.name.text;
+    }
+
+    if (ts.isExportAssignment(declaration)) {
+      return this.getDefaultNameFromExportAssignment(declaration.expression, symbol.name);
+    }
+    return symbol.name;
+  }
+
+  getDefaultNameFromExportAssignment(expr: ts.Expression, defaultName: string): string {
+    if (ts.isIdentifier(expr)) {
+      const targetSymbol = this.trueSymbolAtLocation(expr);
+      return targetSymbol?.name ?? defaultName;
+    }
+
+    if (ts.isFunctionExpression(expr) || ts.isClassExpression(expr)) {
+      return expr.name?.text ?? defaultName;
+    }
+    return defaultName;
   }
 }
