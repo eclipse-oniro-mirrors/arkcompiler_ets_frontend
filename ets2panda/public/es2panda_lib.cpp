@@ -342,7 +342,7 @@ static void InitializeContext(Context *res)
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
-    auto *varbinder = res->allocator->New<varbinder::ETSBinder>(res->allocator);
+    auto *varbinder = new varbinder::ETSBinder(res->allocator);
     res->parserProgram = res->allocator->New<parser::Program>(res->allocator, varbinder);
     res->parser = new parser::ETSParser(res->parserProgram, *res->config->options, *res->diagnosticEngine,
                                         parser::ParserStatus::NO_OPTS);
@@ -628,6 +628,32 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     }
 }
 
+extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
+{
+    auto *ctx = reinterpret_cast<Context *>(context);
+    delete ctx->emitter;
+    ctx->emitter = nullptr;
+    delete ctx->parser;
+    ctx->parser = nullptr;
+    delete ctx->queue;
+    ctx->queue = nullptr;
+    delete ctx->sourceFile;
+    ctx->sourceFile = nullptr;
+    delete ctx->phaseManager;
+    if (!ctx->isExternal) {
+        for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
+            delete varbinder;
+        }
+        delete ctx->allocator;
+        ctx->allocator = nullptr;
+    } else {
+        ES2PANDA_ASSERT(ctx->globalContext != nullptr);
+        for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
+            ctx->globalContext->allocatedVarbinders.insert(varbinder->AsETSBinder());
+        }
+    }
+}
+
 __attribute__((unused)) static Context *Lower(Context *ctx)
 {
     if (ctx->state < ES2PANDA_STATE_CHECKED) {
@@ -750,13 +776,8 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
 {
     auto *ctx = reinterpret_cast<Context *>(context);
     delete ctx->program;
-    delete ctx->emitter;
-    delete ctx->parser;
-    delete ctx->queue;
-    delete ctx->sourceFile;
-    delete ctx->phaseManager;
-    if (!ctx->isExternal) {
-        delete ctx->allocator;
+    if (ctx->emitter != nullptr) {
+        FreeCompilerPartMemory(context);
     }
     delete ctx;
 }
@@ -764,6 +785,9 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
 extern "C" __attribute__((unused)) void DestroyGlobalContext(es2panda_GlobalContext *globalContext)
 {
     auto *globalCtx = reinterpret_cast<GlobalContext *>(globalContext);
+    for (auto varbinder : globalCtx->allocatedVarbinders) {
+        delete varbinder;
+    }
     for (auto [_, alloctor] : globalCtx->externalProgramAllocators) {
         delete alloctor;
     }
@@ -1471,6 +1495,7 @@ es2panda_Impl g_impl = {
     InvalidateFileCache,
     RemoveFileCache,
     AddFileCache,
+    FreeCompilerPartMemory,
 
 #include "generated/es2panda_lib/es2panda_lib_list.inc"
 

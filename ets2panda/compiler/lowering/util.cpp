@@ -266,7 +266,7 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
         phaseManager->SetCurrentPhaseId(0);
         auto program = node->AsETSModule()->Program();
 
-        auto newVarbinder = ctx->allocator->New<varbinder::ETSBinder>(ctx->allocator);
+        auto newVarbinder = new varbinder::ETSBinder(ctx->allocator);
         newVarbinder->SetProgram(program);
         newVarbinder->SetContext(ctx);
         program->PushVarBinder(newVarbinder);

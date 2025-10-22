@@ -283,6 +283,7 @@ struct CAPI_EXPORT es2panda_Impl {
     void (*InvalidateFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*RemoveFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*AddFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
+    void (*FreeCompilerPartMemory)(es2panda_Context *context);
 // COMPARE_MANUAL_CAPI_AND_IDL_END
 // CC-OFFNXT(G.INC.08) project code style
 #include "generated/es2panda_lib/es2panda_lib_decl.inc"

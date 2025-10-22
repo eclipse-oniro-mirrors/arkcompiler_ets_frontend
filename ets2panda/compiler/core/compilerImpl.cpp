@@ -368,7 +368,8 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     context->sourceFile = &unit.input;
     context->queue = compilerImpl->Queue();
     context->plugins = &compilerImpl->Plugins();
-    auto program = parser::Program::NewProgram<VarBinder>(context->allocator, nullptr);
+    auto varBinder = VarBinder(context->allocator);
+    auto program = parser::Program::NewProgram<VarBinder>(context->allocator, &varBinder);
     auto parser =
         Parser(&program, unit.options, unit.diagnosticEngine, static_cast<parser::ParserStatus>(unit.rawParserStatus));
     context->parser = &parser;

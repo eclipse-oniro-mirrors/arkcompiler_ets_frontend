@@ -32,10 +32,11 @@ namespace ark::es2panda::testing {
 
 class DynamicCall : public Es2pandaUnitGtest {
 public:
+    DynamicCall() : varbinder_(Allocator()) {}
+
     std::pair<parser::Program *, ir::Expression *> ParseExpr(const std::string &strExpr)
     {
-        auto program =
-            Allocator()->New<parser::Program>(Allocator(), Allocator()->New<varbinder::ETSBinder>(Allocator()));
+        auto program = Allocator()->New<parser::Program>(Allocator(), &varbinder_);
         program->VarBinder()->SetProgram(program);
         program->VarBinder()->InitTopScope();
         auto diagnosticEngine = util::DiagnosticEngine();
@@ -105,6 +106,9 @@ public:
             it1++, it2++;
         }
     }
+
+private:
+    varbinder::ETSBinder varbinder_;
 };
 
 TEST_F(DynamicCall, JoinDynMemberChain)

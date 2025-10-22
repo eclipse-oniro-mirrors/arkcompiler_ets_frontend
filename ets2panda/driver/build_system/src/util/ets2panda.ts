@@ -338,6 +338,11 @@ export class Ets2panda {
 
                 statsRecorder.record(formEvent(Ets2pandaEvent.EMIT));
                 arkts.proceedToState(
+                    arkts.Es2pandaContextState.ES2PANDA_STATE_ASM_GENERATED,
+                    arktsGlobal.compilerContext.peer
+                );
+                arktsGlobal.es2panda._FreeCompilerPartMemory(arktsGlobal.compilerContext.peer);
+                arkts.proceedToState(
                     arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED,
                     arktsGlobal.compilerContext.peer
                 );

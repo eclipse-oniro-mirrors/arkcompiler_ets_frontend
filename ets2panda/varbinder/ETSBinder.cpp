@@ -225,7 +225,7 @@ bool ETSBinder::AddSelectiveExportAlias(parser::ETSParser *parser, util::StringV
         return inserted;
     }
 
-    ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>> map(Allocator()->Adapter());
+    std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> map;
     bool insertResult = map.insert({key, std::make_pair(value, decl)}).second;
     selectiveExportAliasMultimap_.insert({path, map});
     return insertResult;

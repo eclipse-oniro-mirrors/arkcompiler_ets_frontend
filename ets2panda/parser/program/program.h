@@ -60,12 +60,9 @@ public:
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
     template <typename T>
-    static Program NewProgram(ArenaAllocator *allocator, varbinder::VarBinder *varBinder = nullptr)
+    static Program NewProgram(ArenaAllocator *allocator, varbinder::VarBinder *varBinder)
     {
-        if (varBinder == nullptr) {
-            auto *vb = allocator->New<T>(allocator);
-            return Program(allocator, vb);
-        }
+        ES2PANDA_ASSERT(varBinder != nullptr);
         return Program(allocator, varBinder);
     }
 
@@ -342,6 +339,11 @@ public:
             fileDependencies_[file] = std::unordered_set<std::string>();
         }
         fileDependencies_[file].insert(depFile);
+    }
+
+    ArenaMap<int32_t, varbinder::VarBinder *> &VarBinders()
+    {
+        return varbinders_;
     }
 
 private:

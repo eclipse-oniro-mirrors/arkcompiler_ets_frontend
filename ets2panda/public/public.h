@@ -58,6 +58,7 @@ struct GlobalContext {
     std::unordered_map<std::string, ExternalSource *> cachedExternalPrograms;
     ThreadSafeArenaAllocator *stdLibAllocator = nullptr;
     ExternalSource *stdLibAstCache = nullptr;
+    std::unordered_set<varbinder::ETSBinder *> allocatedVarbinders;
 };
 
 struct Context {
