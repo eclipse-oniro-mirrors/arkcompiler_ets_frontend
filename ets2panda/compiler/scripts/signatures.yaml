@@ -271,6 +271,8 @@ defines:
     ref: ESVALUE
   - name: 'load'
     ref: LOAD
+  - name: 'InvalidStoreAccessError'
+    ref: INVALID_STOREACCESS_ERROR
 
 packages:
   - name: 'std.core'

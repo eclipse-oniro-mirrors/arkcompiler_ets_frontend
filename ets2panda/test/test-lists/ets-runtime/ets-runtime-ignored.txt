@@ -114,6 +114,3 @@ first_match/namespace3.ets
 
 # Issue #28914
 non_null_number_as_index.ets
-
-#30085 Disable this feature temporary after UI-plugin adapted this change.
-default_interface_prop.ets

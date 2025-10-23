@@ -304,7 +304,7 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
 
     auto *const partialInterDecl =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        CreateInterfaceProto(partialName, partialProgram, interfaceDecl->IsStatic(), interfaceDecl->Modifiers());
+        CreateInterfaceProto(partialName, partialProgram, interfaceDecl);
     partialInterDecl->SetInternalName(partialQualifiedName);
 
     if (const auto found = NamedTypeStack().find(partialInterDecl->TsType()); found != NamedTypeStack().end()) {
@@ -312,7 +312,7 @@ Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDe
     }
 
     const varbinder::BoundContext boundCtx(recordTable, partialInterDecl);
-
+    varbinder::RecordTableContext recordTableCtx {VarBinder()->AsETSBinder(), partialProgram};
     // If class is external, put partial of it in global scope for the varbinder
     if (partialProgram != VarBinder()->Program()) {
         VarBinder()->Program()->GlobalScope()->InsertBinding(partialInterDecl->Id()->Name(),
@@ -634,8 +634,7 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
     newClassDefinition->Variable()->SetTsType(nullptr);
 }
 
-static void SetupFunctionParams(ir::ScriptFunction *function, varbinder::FunctionParamScope *paramScope,
-                                checker::ETSChecker *checker)
+static void SetupFunctionParams(ir::ScriptFunction *function, checker::ETSChecker *checker)
 {
     for (auto *params : function->Params()) {
         auto *paramExpr = params->AsETSParameterExpression();
@@ -655,12 +654,6 @@ static void SetupFunctionParams(ir::ScriptFunction *function, varbinder::Functio
             paramExpr->Ident()->SetTsTypeAnnotation(unionType);
             unionType->SetParent(paramExpr->Ident());
         }
-        auto [paramVar, node] = paramScope->AddParamDecl(checker->ProgramAllocator(), checker->VarBinder(), paramExpr);
-        if (node != nullptr) {
-            checker->VarBinder()->ThrowRedeclaration(node->Start(), paramVar->Name(), paramVar->Declaration()->Type());
-        }
-
-        paramExpr->SetVariable(paramVar);
     }
 }
 
@@ -669,21 +662,24 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
                                                         ir::TSInterfaceDeclaration *interface)
 {
     const auto interfaceCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(VarBinder(), interface->Scope());
-    auto *paramScope = ProgramAllocator()->New<varbinder::FunctionParamScope>(ProgramAllocator(), interface->Scope());
-    auto *functionScope = ProgramAllocator()->New<varbinder::FunctionScope>(ProgramAllocator(), paramScope);
-    ES2PANDA_ASSERT(functionScope != nullptr);
-    functionScope->BindParamScope(paramScope);
-    paramScope->BindFunctionScope(functionScope);
-
-    {
-        auto paramScopeCtx = varbinder::LexicalScope<varbinder::FunctionParamScope>::Enter(VarBinder(), paramScope);
-        VarBinder()->AddMandatoryParam(varbinder::TypedBinder::MANDATORY_PARAM_THIS);
-    }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ir::MethodDefinition *nullishAccessor = accessor->Clone(ProgramAllocator(), interface->Body());
+    auto *function = nullishAccessor->Function();
     nullishAccessor->SetRange(accessor->Range());
-    nullishAccessor->Function()->SetRange(accessor->Function()->Range());
+    function->SetRange(accessor->Function()->Range());
+
+    if (!accessor->IsDeclare()) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        ir::AstNode *newBody = CreateGetterOrSetterBodyForOptional(function->IsSetter(), true);
+        function->ClearModifier(ir::ModifierFlags::ABSTRACT);
+        nullishAccessor->ClearModifier(ir::ModifierFlags::ABSTRACT);
+        function->SetBody(newBody);
+        newBody->SetParent(function);
+    } else {
+        function->AddModifier(ir::ModifierFlags::DEFAULT);
+        nullishAccessor->AddModifier(ir::ModifierFlags::DEFAULT);
+    }
 
     auto *decl = ProgramAllocator()->New<varbinder::FunctionDecl>(ProgramAllocator(), nullishAccessor->Id()->Name(),
                                                                   nullishAccessor);
@@ -692,19 +688,10 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
     nullishAccessor->Id()->SetVariable(var);
     nullishAccessor->SetVariable(var);
 
-    functionScope->BindName(interface->InternalName());
-
-    auto *function = nullishAccessor->Function();
     function->SetVariable(var);
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     function->SetIdent(nullishAccessor->Id()->Clone(ProgramAllocator(), function));
-    function->SetScope(functionScope);
-    paramScope->BindNode(function);
-    functionScope->BindNode(function);
-    if (!function->IsAbstract()) {
-        VarBinder()->AsETSBinder()->AddCompilableFunction(function);
-    }
 
     if (function->IsGetter()) {
         auto *propTypeAnn = function->ReturnTypeAnnotation();
@@ -717,19 +704,26 @@ ir::MethodDefinition *ETSChecker::CreateNullishAccessor(ir::MethodDefinition *co
             ProgramAllocator()));
     } else {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        SetupFunctionParams(function, paramScope, this);
+        SetupFunctionParams(function, this);
     }
-
     nullishAccessor->SetOverloads(ArenaVector<ir::MethodDefinition *>(ProgramAllocator()->Adapter()));
     nullishAccessor->AddModifier(ir::ModifierFlags::OPTIONAL);
 
+    compiler::InitScopesPhaseETS::RunExternalNode(nullishAccessor, VarBinder());
+    VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(nullishAccessor,
+                                                                     compiler::NearestScope(nullishAccessor));
+    if (!function->IsAbstract()) {
+        VarBinder()->AsETSBinder()->AddCompilableFunction(function);
+    }
     return nullishAccessor;
 }
 
 ir::TSInterfaceDeclaration *ETSChecker::CreateInterfaceProto(util::StringView name,
                                                              parser::Program *const interfaceDeclProgram,
-                                                             const bool isStatic, const ir::ModifierFlags flags)
+                                                             const ir::TSInterfaceDeclaration *interfaceDecl)
 {
+    const bool isStatic = interfaceDecl->IsStatic();
+    const ir::ModifierFlags flags = interfaceDecl->Modifiers();
     const auto globalCtx =
         varbinder::LexicalScope<varbinder::GlobalScope>::Enter(VarBinder(), interfaceDeclProgram->GlobalScope());
 
@@ -757,6 +751,7 @@ ir::TSInterfaceDeclaration *ETSChecker::CreateInterfaceProto(util::StringView na
     const auto classCtx = varbinder::LexicalScope<varbinder::ClassScope>(VarBinder());
     ES2PANDA_ASSERT(partialInterface != nullptr);
     partialInterface->TypeParams()->SetParent(partialInterface);
+    classCtx.GetScope()->SetParent(interfaceDecl->Scope()->Parent());
     partialInterface->SetScope(classCtx.GetScope());
     partialInterface->SetVariable(var);
     decl->BindNode(partialInterface);
@@ -794,6 +789,7 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
             accessor->AddOverload(setter);
             setter->SetParent(accessor);
             setter->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
+            accessor->Function()->ClearFlag(ir::ScriptFunctionFlags::OVERLOAD);
             partialInterfaceMethods.erase(it);
             partialInterfaceMethods.emplace_back(accessor);
         }
@@ -822,6 +818,34 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
             }
         }
     }
+}
+
+ir::AstNode *ETSChecker::CreateGetterOrSetterBodyForOptional(bool isSetter, bool isOptional)
+{
+    if (!isOptional) {
+        return nullptr;
+    }
+
+    ArenaVector<ir::Statement *> returnStatement(ProgramAllocator()->Adapter());
+    if (isSetter) {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto errorIdent =
+            ProgramAllocNode<ir::Identifier>(compiler::Signatures::INVALID_STOREACCESS_ERROR, ProgramAllocator());
+        ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto newExpr = ProgramAllocNode<ir::ETSNewClassInstanceExpression>(errorIdent, std::move(arguments));
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto throwStmt = ProgramAllocNode<ir::ThrowStatement>(newExpr);
+        returnStatement.emplace_back(throwStmt);
+    } else {
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto *undef = ProgramAllocNode<ir::UndefinedLiteral>();
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        auto *rtStmt = ProgramAllocNode<ir::ReturnStatement>(undef);
+        returnStatement.emplace_back(rtStmt);
+    }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    return ProgramAllocNode<ir::BlockStatement>(ProgramAllocator(), std::move(returnStatement));
 }
 
 Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *const interfaceDecl,

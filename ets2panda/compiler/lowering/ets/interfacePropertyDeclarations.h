@@ -125,9 +125,9 @@ private:
 
     ir::FunctionSignature GenerateGetterOrSetterSignature(public_lib::Context *ctx, ir::ClassProperty *const field,
                                                           bool isSetter, varbinder::FunctionParamScope *paramScope);
-
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
     ir::MethodDefinition *GenerateGetterOrSetter(public_lib::Context *ctx, ir::ClassProperty *const field,
-                                                 bool isSetter, bool isOptional, bool genBody);
+                                                 bool isSetter, bool isOptional, bool isDeclare);
 
     void CollectPropertiesAndSuperInterfaces(ir::TSInterfaceBody *const interface);
 
@@ -138,8 +138,6 @@ private:
     void CollectSuperInterfaceProperties(InterfacePropertyType &implInterfaceProperties, const std::string &interId);
 
     void UpdateClassProperties(public_lib::Context *ctx, ir::ClassDefinition *const klass);
-
-    ir::AstNode *GenerateGetterOrSetterBodyForOptional(public_lib::Context *ctx, bool isSetter, bool isOptional);
 
 private:
     OptionalInterfacePropertyCollector propCollector_ {};

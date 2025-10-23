@@ -163,7 +163,3 @@ ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
 
 #29727
 ast/compiler/ets/first_match/override.ets
-
-#30085 Disable this feature temporary after UI-plugin adapted this change.
-ast/compiler/ets/default_interface_prop_bad.ets
-ast/compiler/ets/non_optional_override.ets
