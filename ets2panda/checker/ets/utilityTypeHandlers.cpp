@@ -623,6 +623,10 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
         newClassDefinition->AddModifier(ir::ModifierFlags::DECLARE);
     }
 
+    // The logic of IsExport() and IsDefaultExported() ASTNode methods binds them to the ClassDeclaration
+    newClassDefinition->Parent()->AddModifier(static_cast<ir::ModifierFlags>(
+        classDef->Parent()->Modifiers() & (ir::ModifierFlags::EXPORT | ir::ModifierFlags::DEFAULT_EXPORT)));
+
     // Run varbinder for new partial class to set scopes
     compiler::InitScopesPhaseETS::RunExternalNode(newClassDefinition, VarBinder());
 
@@ -763,9 +767,6 @@ ir::TSInterfaceDeclaration *ETSChecker::CreateInterfaceProto(util::StringView na
     interfaceDeclProgram->GlobalScope()->InsertBinding(name, var);
 
     partialInterface->AddModifier(flags);
-    partialInterface->ClearModifier(ir::ModifierFlags::EXPORTED);
-    partialInterface->ClearModifier(ir::ModifierFlags::DEFAULT_EXPORT);
-
     return partialInterface;
 }
 

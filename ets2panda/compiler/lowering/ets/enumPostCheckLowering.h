@@ -30,7 +30,7 @@ enum class EnumCastType {
     CAST_TO_DOUBLE_ENUM
 };
 
-class EnumPostCheckLoweringPhase : public PhaseForDeclarations {
+class EnumPostCheckLoweringPhase : public PhaseForBodies {
 public:
     EnumPostCheckLoweringPhase() noexcept = default;
     std::string_view Name() const override

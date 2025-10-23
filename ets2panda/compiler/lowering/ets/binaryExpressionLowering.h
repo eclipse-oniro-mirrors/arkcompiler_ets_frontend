@@ -20,7 +20,7 @@
 
 namespace ark::es2panda::compiler {
 
-class BinaryExpressionLowering : public PhaseForDeclarations {
+class BinaryExpressionLowering : public PhaseForBodies {
 public:
     std::string_view Name() const override
     {

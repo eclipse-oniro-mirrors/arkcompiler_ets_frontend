@@ -24,14 +24,22 @@ static void GeneratePartialDeclForExported(const public_lib::Context *const ctx,
 {
     // NOTE (mmartin): handle interfaces
     if (node->IsClassDeclaration() && !node->AsClassDeclaration()->Definition()->IsModule()) {
-        ctx->GetChecker()->AsETSChecker()->CreatePartialType(node->AsClassDeclaration()->Definition()->TsType());
+        auto type = node->AsClassDeclaration()->Definition()->TsType()->AsETSObjectType();
+        if (type->IsPartial()) {
+            return;
+        }
+        ctx->GetChecker()->AsETSChecker()->CreatePartialType(type);
     }
     if (node->IsTSInterfaceDeclaration()) {
-        ctx->GetChecker()->AsETSChecker()->CreatePartialType(node->AsTSInterfaceDeclaration()->TsType());
+        auto type = node->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType();
+        if (type->IsPartial()) {
+            return;
+        }
+        ctx->GetChecker()->AsETSChecker()->CreatePartialType(type);
     }
 }
 
-bool PartialExportClassGen::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
+static void CreatePartialDecls(public_lib::Context *ctx, parser::Program *program, std::string_view phaseName)
 {
     program->Ast()->TransformChildrenRecursively(
         [ctx, program](ir::AstNode *const ast) {
@@ -45,7 +53,14 @@ bool PartialExportClassGen::PerformForModule(public_lib::Context *const ctx, par
 
             return ast;
         },
-        Name());
+        phaseName);
+}
+
+bool PartialExportClassGen::Perform(public_lib::Context *const ctx, parser::Program *const program)
+{
+    (void)program;
+
+    ForEachCompiledProgram(ctx, [this, ctx](parser::Program *prog) { CreatePartialDecls(ctx, prog, Name()); });
 
     return true;
 }
