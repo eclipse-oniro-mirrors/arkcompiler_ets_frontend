@@ -206,7 +206,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 31,
+                                      "column": 30,
                                       "program": "class_instance_import_alias.ets"
                                     }
                                   }
@@ -219,7 +219,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 31,
+                                    "column": 30,
                                     "program": "class_instance_import_alias.ets"
                                   }
                                 }
@@ -232,7 +232,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 31,
+                                  "column": 30,
                                   "program": "class_instance_import_alias.ets"
                                 }
                               }

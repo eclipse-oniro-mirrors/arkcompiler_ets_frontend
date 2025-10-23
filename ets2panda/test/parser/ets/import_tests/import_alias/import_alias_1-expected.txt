@@ -221,7 +221,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 26,
+                                      "column": 25,
                                       "program": "import_alias_1.ets"
                                     }
                                   }
@@ -234,7 +234,7 @@
                                   },
                                   "end": {
                                     "line": 19,
-                                    "column": 26,
+                                    "column": 25,
                                     "program": "import_alias_1.ets"
                                   }
                                 }
@@ -247,7 +247,7 @@
                                 },
                                 "end": {
                                   "line": 19,
-                                  "column": 26,
+                                  "column": 25,
                                   "program": "import_alias_1.ets"
                                 }
                               }
