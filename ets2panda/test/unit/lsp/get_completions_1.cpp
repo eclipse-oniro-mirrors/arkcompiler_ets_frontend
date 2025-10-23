@@ -92,6 +92,62 @@ AA.
     ASSERT_EQ(entry1, entries[0]);
     ASSERT_EQ(entry2, entries[1]);
 }
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation2200)
+{
+    std::vector<std::string> files = {"defaultExport2200.ets"};
+    std::vector<std::string> texts = {R"(
+interface MyI {
+  get(value :number): this
+}
+My
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 48;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string packetName = "MyI";
+    auto expectedEntries = CompletionEntry(packetName, CompletionEntryKind::KEYWORD,
+                                           std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "MyI");
+    ASSERT_EQ(expectedEntries, entries[0]);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation4396)
+{
+    std::vector<std::string> files = {"defaultExport4396.ets"};
+    std::vector<std::string> texts = {R"(
+class MyC {
+  value: number;
+}
+
+My
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 35;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    std::string packetName = "MyC";
+    auto expectedEntries = CompletionEntry(packetName, CompletionEntryKind::MODULE,
+                                           std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "MyC");
+    ASSERT_EQ(expectedEntries, entries[0]);
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionAnnotation4598)
 {
     std::vector<std::string> files = {"defaultExport4598.ets", "importCompletion4598.ets"};
@@ -120,6 +176,7 @@ exp
     ASSERT_EQ(expectedEntries, entries[0]);
     initializer.DestroyContext(ctx);
 }
+
 TEST_F(LSPCompletionsTests, MemberCompletionsForClassTest9)
 {
     std::vector<std::string> files = {"getCompletionsAtPositionMember9.ets"};
