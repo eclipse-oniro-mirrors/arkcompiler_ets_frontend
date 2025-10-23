@@ -2282,8 +2282,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Enum",
+                                    "loc": {
+                                      "start": {
+                                        "line": 20,
+                                        "column": 6,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 20,
+                                        "column": 10,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#NamesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 20,
+                                        "column": 1,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 20,
+                                        "column": 1,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    },
+                                    "end": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    },
+                                    "end": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -2327,7 +2425,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -2345,74 +2443,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Enum",
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 6,
-                                  "program": "switch_enum_string_case.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 10,
-                                  "program": "switch_enum_string_case.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#NamesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 1,
-                                  "program": "switch_enum_string_case.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 1,
-                                  "program": "switch_enum_string_case.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -2441,7 +2473,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",
@@ -3090,8 +3122,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Enum",
+                                    "loc": {
+                                      "start": {
+                                        "line": 20,
+                                        "column": 6,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 20,
+                                        "column": 10,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#StringValuesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 20,
+                                        "column": 1,
+                                        "program": "switch_enum_string_case.ets"
+                                      },
+                                      "end": {
+                                        "line": 20,
+                                        "column": 1,
+                                        "program": "switch_enum_string_case.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    },
+                                    "end": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    },
+                                    "end": {
+                                      "line": 20,
+                                      "column": 1,
+                                      "program": "switch_enum_string_case.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  },
+                                  "end": {
+                                    "line": 20,
+                                    "column": 1,
+                                    "program": "switch_enum_string_case.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 20,
@@ -3135,7 +3265,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -3153,74 +3283,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Enum",
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 6,
-                                  "program": "switch_enum_string_case.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 10,
-                                  "program": "switch_enum_string_case.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#StringValuesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 20,
-                                  "column": 1,
-                                  "program": "switch_enum_string_case.ets"
-                                },
-                                "end": {
-                                  "line": 20,
-                                  "column": 1,
-                                  "program": "switch_enum_string_case.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 1,
-                                "program": "switch_enum_string_case.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -3249,7 +3313,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",
