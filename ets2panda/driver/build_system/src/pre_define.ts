@@ -69,4 +69,10 @@ export const KOALA_WRAPPER_PATH_FROM_SDK: string = process.env.USE_KOALA_LIBARKT
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'
 export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plugin/lib/entry.js'
 
+// Optimal number for each application should be selected manually right now
 export const CLUSTER_FILES_TRESHOLD: number = 100;
+// Currently there are bugs in cache generation on applications
+export const ENABLE_DECL_CACHE: boolean = true;
+// Synchronize execution on declaration generation.
+// Current scheduling algorithm is not optimal, therefore disabled by default
+export const ENABLE_DECLARATION_BARRIER: boolean = true;

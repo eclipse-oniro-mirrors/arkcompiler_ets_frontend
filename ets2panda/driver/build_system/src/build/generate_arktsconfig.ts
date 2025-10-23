@@ -49,6 +49,7 @@ import {
     LANGUAGE_VERSION,
     SYSTEM_SDK_PATH_FROM_SDK,
     sdkConfigPrefix,
+    ENABLE_DECL_CACHE
 } from '../pre_define';
 
 export class ArkTSConfig {
@@ -61,7 +62,7 @@ export class ArkTSConfig {
                 baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
                 paths: {},
                 dependencies: {},
-                cacheDir: cacheDir,
+                cacheDir: ENABLE_DECL_CACHE ? cacheDir : "",
                 projectRootPath: projectRootPath,
             }
         };
