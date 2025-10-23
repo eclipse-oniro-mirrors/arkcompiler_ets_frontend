@@ -580,7 +580,9 @@ export class NumericSemanticCheck implements BaseChecker {
                 return;
             }
             const declaringStmt = local.getDeclaringStmt();
-            if (declaringStmt !== null) {
+            if (declaringStmt instanceof ArkAssignStmt && declaringStmt.getRightOp() instanceof ArkParameterRef && !Utils.isNearlyNumberType(local.getType())) {
+                this.addIssueReport(RuleCategory.ArrayIndex, issueInfo.numberCategory, issueInfo.issueReason, false, declaringStmt, local);
+            } else if (declaringStmt !== null) {
                 this.addIssueReport(RuleCategory.ArrayIndex, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local);
             }
         });
