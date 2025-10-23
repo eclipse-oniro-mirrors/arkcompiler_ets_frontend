@@ -20,6 +20,6 @@
 function main() {
   let a = (68).toByte();
 
-  arktest.assertEQ(typeof a, "number");
+  arktest.assertEQ(typeof a, "byte");
   arktest.assertEQ(a, 68);
 }
