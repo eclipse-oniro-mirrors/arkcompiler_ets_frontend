@@ -935,7 +935,7 @@ void ETSBinder::ValidateImportVariable(const ir::AstNode *node, const ir::AstNod
         imported != compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY) {
         ThrowError(importPath->Start(), diagnostic::DEFAULT_EXPORT_DIRECT_IMPORTED);
     } else if (!node->IsExported() && !node->IsDefaultExported() && !node->HasExportAlias() &&
-               !node->IsImportSpecifier()) {
+               !node->IsImportSpecifier() && !node->IsETSImportDeclaration()) {
         ThrowError(importPath->Start(), diagnostic::IMPORTED_NOT_EXPORTED, {imported});
     }
 }

@@ -49,19 +49,31 @@ void ImportExportDecls::ParseDefaultSources()
     varbinder_->SetDefaultImports(std::move(imports));
 }
 
+void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec)
+{
+    if (spec->IsImportSpecifier() &&
+        !varbinder_->AddSelectiveExportAlias(
+            parser_, program->SourceFilePath(), spec->AsImportSpecifier()->Imported()->Name(),
+            spec->AsImportSpecifier()->Local()->Name(), stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+        return;
+    }
+    if (spec->IsImportNamespaceSpecifier()) {
+        auto localName = spec->AsImportNamespaceSpecifier()->Local()->Name();
+        if (!localName.Empty() &&
+            !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(), localName, localName,
+                                                 stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+            return;
+        }
+    }
+}
+
 void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
                                                  const ArenaVector<ir::Statement *> &statements,
                                                  GlobalClassHandler::ModuleDependencies &moduleDependencies)
 {
     auto processReExportDefaultSpecifier = [&](const auto &stmt) -> void {
         for (auto spec : stmt->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers()) {
-            if (spec->IsImportSpecifier() &&
-                !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(),
-                                                     spec->AsImportSpecifier()->Imported()->Name(),
-                                                     spec->AsImportSpecifier()->Local()->Name(),
-                                                     stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
-                return;
-            }
+            AddSelectiveExportAlias(program, stmt, spec);
         }
     };
     for (auto stmt : statements) {

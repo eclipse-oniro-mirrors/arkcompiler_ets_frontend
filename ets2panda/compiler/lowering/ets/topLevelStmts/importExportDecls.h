@@ -45,6 +45,7 @@ public:
      * @param global_stmts program global statements
      */
     GlobalClassHandler::ModuleDependencies HandleGlobalStmts(ArenaVector<parser::Program *> &programs);
+    void AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec);
     void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements,
                                   GlobalClassHandler::ModuleDependencies &moduleDependencies);
     void VerifyTypeExports(const ArenaVector<parser::Program *> &programs);
