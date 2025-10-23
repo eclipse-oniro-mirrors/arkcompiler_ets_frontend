@@ -3934,11 +3934,7 @@ export class Autofixer {
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
-  private addAutofixFromCalls(
-    calls: ts.Identifier[],
-    autofix: Autofix[],
-    argument: ts.Expression
-  ): void {
+  private addAutofixFromCalls(calls: ts.Identifier[], autofix: Autofix[], argument: ts.Expression): void {
     calls.forEach((call) => {
       const callExpr = ts.factory.createCallExpression(
         ts.factory.createIdentifier(APPLY_STYLES_IDENTIFIER),
