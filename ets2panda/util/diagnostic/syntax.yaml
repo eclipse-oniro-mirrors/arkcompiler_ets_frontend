@@ -1095,6 +1095,10 @@ syntax:
   id: 241
   message: "Setter must not have return type even if it is void."
 
+- name: SETTER_OPTIONAL_PARAM
+  id: 13534
+  message: "Setter's parameter cannot be optional."
+
 - name: SPECIAL_METHOD_CONSTRUCTOR
   id: 149
   message: "Constructor can not be special method."

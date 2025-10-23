@@ -418,14 +418,17 @@ void ParserImpl::ValidateClassMethodStart(ClassElementDescriptor *desc, [[maybe_
     }
 }
 
-void ParserImpl::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, size_t number)
+void ParserImpl::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition,
+                                      const ArenaVector<ir::Expression *> &params)
 {
     if (methodDefinition == ir::MethodDefinitionKind::SET) {
-        if (number != 1) {
+        if (params.size() != 1) {
             LogError(diagnostic::SETTER_FORMAL_PARAMS);
+        } else if (params[0]->IsETSParameterExpression() && params[0]->AsETSParameterExpression()->IsOptional()) {
+            LogError(diagnostic::SETTER_OPTIONAL_PARAM, {}, params[0]->Start());
         }
     } else if (methodDefinition == ir::MethodDefinitionKind::GET) {
-        if (number != 0) {
+        if (params.size() != 0) {
             LogError(diagnostic::GETTER_FORMAL_PARAMS);
         }
     }
@@ -435,7 +438,7 @@ void ParserImpl::ValidateClassSetter([[maybe_unused]] ClassElementDescriptor *de
                                      [[maybe_unused]] const ArenaVector<ir::AstNode *> &properties,
                                      [[maybe_unused]] ir::Expression *propName, ir::ScriptFunction *func)
 {
-    ValidateGetterSetter(ir::MethodDefinitionKind::SET, func->Params().size());
+    ValidateGetterSetter(ir::MethodDefinitionKind::SET, func->Params());
     if (func->ReturnTypeAnnotation() != nullptr) {
         LogError(diagnostic::SETTER_NO_RETURN_TYPE);
     }
@@ -445,7 +448,7 @@ void ParserImpl::ValidateClassGetter([[maybe_unused]] ClassElementDescriptor *de
                                      [[maybe_unused]] const ArenaVector<ir::AstNode *> &properties,
                                      [[maybe_unused]] ir::Expression *propName, ir::ScriptFunction *func)
 {
-    ValidateGetterSetter(ir::MethodDefinitionKind::GET, func->Params().size());
+    ValidateGetterSetter(ir::MethodDefinitionKind::GET, func->Params());
 }
 
 ir::MethodDefinition *ParserImpl::ParseClassMethod(ClassElementDescriptor *desc,
