@@ -24,6 +24,7 @@ import {
   LANGUAGE_VERSION
 } from '../common/preDefine';
 import { getFileLanguageVersion } from '../common/utils';
+import { logger } from './logger';
 
 export interface ModuleDescriptor {
   name: string;
@@ -53,43 +54,9 @@ function parseJson5(filePath: string): Json5Object {
     const rawContent = fs.readFileSync(filePath, 'utf8');
     return JSON5.parse(rawContent) as Json5Object;
   } catch (error) {
-    console.error(`Error parsing ${filePath}:`, error);
+    logger.error(`Error parsing ${filePath}:`, error)
     return {} as Json5Object;
   }
-}
-
-function getModuleTypeFromConfig(modulePath: string): string {
-  const moduleConfigPath = path.join(modulePath, 'src/main/module.json5');
-  if (fs.existsSync(moduleConfigPath)) {
-    try {
-      const moduleData = parseJson5(moduleConfigPath);
-      return moduleData.module?.type || 'har';
-    } catch (error) {
-      console.error(`Error parsing ${moduleConfigPath}:`, error);
-    }
-  }
-  return 'har';
-}
-
-function getModulesFromBuildProfile(buildProfilePath: string): ModuleDescriptor[] {
-  if (!fs.existsSync(buildProfilePath)) {
-    console.error('Error: build-profile.json5 not found');
-    process.exit(1);
-  }
-
-  const buildProfile = parseJson5(buildProfilePath);
-  const modules = buildProfile.modules || [];
-
-  return modules.map((module: { name: string; srcPath: string; arktsversion?: string }) => {
-    const moduleSrcPath = path.resolve(path.dirname(buildProfilePath), module.srcPath);
-    const arktsversion = module.arktsversion || '1.1';
-    return {
-      name: module.name,
-      moduleType: getModuleTypeFromConfig(moduleSrcPath),
-      srcPath: moduleSrcPath,
-      arktsversion
-    };
-  });
 }
 
 function getEtsFiles(modulePath: string): string[] {
@@ -149,7 +116,7 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
         .filter(([_, depPath]) => depPath.startsWith('file:'))
         .map(([_, depPath]) => path.resolve(modulePath, depPath.replace('file:', '')));
     } catch (error) {
-      console.error(`Error parsing ${packageFilePath}:`, error);
+      logger.error(`Error parsing ${packageFilePath}:`, error)
       return [];
     }
   };
@@ -199,17 +166,10 @@ function getModuleLanguageVersion(compileFiles: Set<string>): string {
 
 export function generateBuildConfigs(
   pathConfig: PathConfig,
-  modules?: ModuleDescriptor[]
+  modules: ModuleDescriptor[]
 ): Record<string, BuildConfig> {
   const allBuildConfigs: Record<string, BuildConfig> = {};
-
-  if (!modules) {
-    const buildProfilePath = path.join(pathConfig.projectPath, 'build-profile.json5');
-    modules = getModulesFromBuildProfile(buildProfilePath);
-  }
-
   const definedModules = modules;
-
   for (const module of definedModules) {
     const modulePath = module.srcPath;
     const compileFiles = new Set(getEtsFiles(modulePath));
