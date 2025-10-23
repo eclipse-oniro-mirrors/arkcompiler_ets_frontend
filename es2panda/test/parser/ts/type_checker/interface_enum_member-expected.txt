@@ -36,12 +36,12 @@
           },
           "loc": {
             "start": {
-              "line": 19,
-              "column": 1
+              "line": 18,
+              "column": 5
             },
             "end": {
-              "line": 19,
-              "column": 2
+              "line": 18,
+              "column": 6
             }
           }
         }
