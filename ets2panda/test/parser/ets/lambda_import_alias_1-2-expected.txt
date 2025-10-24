@@ -128,8 +128,8 @@
                 "program": "lambda_import_alias_1-2.ets"
               },
               "end": {
-                "line": 18,
-                "column": 7,
+                "line": 17,
+                "column": 22,
                 "program": "lambda_import_alias_1-2.ets"
               }
             }
@@ -141,8 +141,8 @@
               "program": "lambda_import_alias_1-2.ets"
             },
             "end": {
-              "line": 18,
-              "column": 7,
+              "line": 17,
+              "column": 22,
               "program": "lambda_import_alias_1-2.ets"
             }
           }
@@ -154,8 +154,8 @@
             "program": "lambda_import_alias_1-2.ets"
           },
           "end": {
-            "line": 18,
-            "column": 7,
+            "line": 17,
+            "column": 22,
             "program": "lambda_import_alias_1-2.ets"
           }
         }
@@ -167,8 +167,8 @@
           "program": "lambda_import_alias_1-2.ets"
         },
         "end": {
-          "line": 18,
-          "column": 7,
+          "line": 17,
+          "column": 22,
           "program": "lambda_import_alias_1-2.ets"
         }
       }

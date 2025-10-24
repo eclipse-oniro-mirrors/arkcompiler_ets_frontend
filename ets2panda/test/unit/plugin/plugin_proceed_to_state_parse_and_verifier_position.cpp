@@ -110,6 +110,8 @@ export declare interface InterfaceTest {
 }
 
 declare type tpAlise1 = () => int
+
+declare type tpAlise2 = NS.innerClass
 )";
 
 constexpr size_t NS_START_LINE = 11;
@@ -143,6 +145,7 @@ constexpr size_t FUNCTION_PARAM2_START_LINE = 56;
 constexpr size_t FUNCTION_PARAM3_START_LINE = 43;
 constexpr size_t FUNCTION_DECL_START_LINE = 66;
 constexpr size_t TPALIAS_START_LINE = 89;
+constexpr size_t TPALIAS2_START_LINE = 91;
 
 constexpr size_t NS_END_LINE = 30;
 constexpr size_t INNERNS_END_LINE = 29;
@@ -175,6 +178,7 @@ constexpr size_t FUNCTION_PARAM2_END_LINE = 56;
 constexpr size_t FUNCTION_PARAM3_END_LINE = 43;
 constexpr size_t FUNCTION_DECL_END_LINE = 69;
 constexpr size_t TPALIAS_END_LINE = 89;
+constexpr size_t TPALIAS2_END_LINE = 91;
 
 constexpr size_t NS_START_COL = 1;
 constexpr size_t INNERNS_START_COL = 3;
@@ -207,6 +211,7 @@ constexpr size_t FUNCTION_PARAM2_START_COL = 3;
 constexpr size_t FUNCTION_PARAM3_START_COL = 11;
 constexpr size_t FUNCTION_DECL_START_COL = 8;
 constexpr size_t TPALIAS_START_COL = 9;
+constexpr size_t TPALIAS2_START_COL = 9;
 
 constexpr size_t NS_END_COL = 2;
 constexpr size_t INNERNS_END_COL = 23;
@@ -239,6 +244,7 @@ constexpr size_t FUNCTION_PARAM2_END_COL = 16;
 constexpr size_t FUNCTION_PARAM3_END_COL = 21;
 constexpr size_t FUNCTION_DECL_END_COL = 8;
 constexpr size_t TPALIAS_END_COL = 34;
+constexpr size_t TPALIAS2_END_COL = 38;
 
 static std::map<std::string, size_t> startLineMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_START_LINE},
                                                      {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_START_LINE},
@@ -270,7 +276,8 @@ static std::map<std::string, size_t> startLineMap = {{"exportNamedDecl", EXPORT_
                                                      {"p3", FUNCTION_PARAM3_START_LINE},
                                                      {"fooDecl", FUNCTION_DECL_START_LINE},
                                                      {"$_instantiate", CLASS_INSTANTIATE_START_LINE},
-                                                     {"tpAlise1", TPALIAS_START_LINE}};
+                                                     {"tpAlise1", TPALIAS_START_LINE},
+                                                     {"tpAlise2", TPALIAS2_START_LINE}};
 
 static std::map<std::string, size_t> startColMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_START_COL},
                                                     {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_START_COL},
@@ -302,7 +309,8 @@ static std::map<std::string, size_t> startColMap = {{"exportNamedDecl", EXPORT_N
                                                     {"p3", FUNCTION_PARAM3_START_COL},
                                                     {"fooDecl", FUNCTION_DECL_START_COL},
                                                     {"$_instantiate", CLASS_INSTANTIATE_START_COL},
-                                                    {"tpAlise1", TPALIAS_START_COL}};
+                                                    {"tpAlise1", TPALIAS_START_COL},
+                                                    {"tpAlise2", TPALIAS2_START_COL}};
 
 static std::map<std::string, size_t> endLineMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_END_LINE},
                                                    {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_END_LINE},
@@ -334,7 +342,8 @@ static std::map<std::string, size_t> endLineMap = {{"exportNamedDecl", EXPORT_NA
                                                    {"p3", FUNCTION_PARAM3_END_LINE},
                                                    {"fooDecl", FUNCTION_DECL_END_LINE},
                                                    {"$_instantiate", CLASS_INSTANTIATE_END_LINE},
-                                                   {"tpAlise1", TPALIAS_END_LINE}};
+                                                   {"tpAlise1", TPALIAS_END_LINE},
+                                                   {"tpAlise2", TPALIAS2_END_LINE}};
 
 static std::map<std::string, size_t> endColMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_END_COL},
                                                   {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_END_COL},
@@ -366,7 +375,8 @@ static std::map<std::string, size_t> endColMap = {{"exportNamedDecl", EXPORT_NAM
                                                   {"p3", FUNCTION_PARAM3_END_COL},
                                                   {"fooDecl", FUNCTION_DECL_END_COL},
                                                   {"$_instantiate", CLASS_INSTANTIATE_END_COL},
-                                                  {"tpAlise1", TPALIAS_END_COL}};
+                                                  {"tpAlise1", TPALIAS_END_COL},
+                                                  {"tpAlise2", TPALIAS2_END_COL}};
 
 static es2panda_Impl *impl = nullptr;
 es2panda_Context *context = nullptr;
@@ -540,7 +550,7 @@ static void FindETSParamDecl(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
     }
 }
 
-static std::map<std::string, es2panda_AstNode *> etsTypeAliasMap = {{"tpAlise1", nullptr}};
+static std::map<std::string, es2panda_AstNode *> etsTypeAliasMap = {{"tpAlise1", nullptr}, {"tpAlise2", nullptr}};
 static void FindTypeAlias(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
 {
     if (!impl->IsTSTypeAliasDeclaration(ast)) {

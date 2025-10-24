@@ -1242,6 +1242,7 @@ ir::Expression *TypedParser::ParseLiteralIndent(ir::Expression *typeName, Expres
 ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, ExpressionParseFlags flags)
 {
     lexer::SourcePosition startLoc = typeName->Start();
+    lexer::SourcePosition endLoc = typeName->End();
 
     do {
         Lexer()->NextToken();  // eat '.'
@@ -1271,14 +1272,15 @@ ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, E
 
         typeName = AllocNode<ir::TSQualifiedName>(typeName, propName, Allocator());
         ES2PANDA_ASSERT(typeName != nullptr);
-        typeName->SetRange({typeName->AsTSQualifiedName()->Left()->Start(), Lexer()->GetToken().End()});
+        endLoc = propName->End();
+        typeName->SetRange({typeName->AsTSQualifiedName()->Left()->Start(), endLoc});
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
             Lexer()->NextToken();
         }
     } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD);
 
-    typeName->SetRange({startLoc, Lexer()->GetToken().End()});
+    typeName->SetRange({startLoc, endLoc});
 
     return typeName;
 }

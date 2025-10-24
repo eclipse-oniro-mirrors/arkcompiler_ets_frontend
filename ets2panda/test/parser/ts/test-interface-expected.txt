@@ -841,7 +841,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 28,
+                  "column": 26,
                   "program": "test-interface.ts"
                 }
               }
