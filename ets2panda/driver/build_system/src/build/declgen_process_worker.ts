@@ -56,8 +56,8 @@ process.on('message', (message: {
     }
 }) => {
     const { type, data } = message;
-    logger.printDebug(`Got message from parent. Type: ${type}`)
-    logger.printDebug(`Got message from parent. payload: ${JSON.stringify(data, null, 1)}`)
+    logger.printDebug(`Got message from parent. Type: ${type}`);
+    logger.printDebug(`Got message from parent. payload: ${JSON.stringify(data, null, 1)}`);
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:

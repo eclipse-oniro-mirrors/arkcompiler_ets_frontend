@@ -143,3 +143,11 @@ KNativePointer impl_ProgramAst(KNativePointer contextPtr, KNativePointer program
     return GetPublicImpl()->ProgramAst(context, program);
 }
 TS_INTEROP_2(ProgramAst, KNativePointer, KNativePointer, KNativePointer)
+
+KNativePointer impl_FreeCompilerPartMemory(KNativePointer contextPtr)
+{
+    auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    GetPublicImpl()->FreeCompilerPartMemory(context);
+    return nullptr;
+}
+TS_INTEROP_1(FreeCompilerPartMemory, KNativePointer, KNativePointer)
