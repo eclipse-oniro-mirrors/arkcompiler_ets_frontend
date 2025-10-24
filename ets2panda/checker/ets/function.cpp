@@ -1192,23 +1192,6 @@ static void InitMostSpecificType(TypeRelation *relation, const ArenaVector<Signa
     }
 }
 
-void ETSChecker::CheckAmbiguousCall(Type *&mostSpecificType, Type *sigType, Signature *prevSig, Signature *sig,
-                                    const lexer::SourcePosition &pos)
-{
-    if (((sigType->IsETSObjectType() && mostSpecificType->IsETSObjectType()) ||
-         (sigType->IsETSUnionType() && mostSpecificType->IsETSUnionType() &&
-          ((Relation()->IsSupertypeOf(sigType->AsETSUnionType(), GlobalETSNullType()) &&
-            Relation()->IsSupertypeOf(mostSpecificType->AsETSUnionType(), GlobalETSNullType())) ||
-           // CC-OFFNXT(G.FMT.02-CPP) project code style
-           (Relation()->IsSupertypeOf(sigType->AsETSUnionType(), GlobalETSUndefinedType()) &&
-            Relation()->IsSupertypeOf(mostSpecificType->AsETSUnionType(), GlobalETSUndefinedType()))))) &&
-        !Relation()->IsAssignableTo(mostSpecificType, sigType) &&
-        !Relation()->IsLegalBoxedPrimitiveConversion(sigType, mostSpecificType)) {
-        auto funcName = sig->Function()->Id()->Name();
-        LogError(diagnostic::AMBIGUOUS_CALL, {funcName, funcName, funcName, prevSig, funcName, sig}, pos);
-    }
-}
-
 void ETSChecker::SearchAmongMostSpecificTypes(Type *&mostSpecificType, Signature *&prevSig,
                                               std::tuple<const lexer::SourcePosition &, size_t, Signature *> info,
                                               bool lookForClassType)
@@ -1256,8 +1239,11 @@ void ETSChecker::SearchAmongMostSpecificTypes(Type *&mostSpecificType, Signature
         if (Relation()->IsAssignableTo(sigType, mostSpecificType)) {
             mostSpecificType = sigType;
             prevSig = sig;
-        } else {
-            CheckAmbiguousCall(mostSpecificType, sigType, prevSig, sig, pos);
+        } else if (sigType->IsETSObjectType() && mostSpecificType->IsETSObjectType() &&
+                   !Relation()->IsAssignableTo(mostSpecificType, sigType) &&
+                   !Relation()->IsLegalBoxedPrimitiveConversion(sigType, mostSpecificType)) {
+            auto funcName = sig->Function()->Id()->Name();
+            LogError(diagnostic::AMBIGUOUS_CALL, {funcName, funcName, funcName, prevSig, funcName, sig}, pos);
         }
     }
 }

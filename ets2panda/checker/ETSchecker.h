@@ -533,8 +533,6 @@ public:
     void SearchAmongMostSpecificTypes(Type *&mostSpecificType, Signature *&prevSig,
                                       std::tuple<const lexer::SourcePosition &, size_t, Signature *> info,
                                       bool lookForClassType);
-    void CheckAmbiguousCall(Type *&mostSpecificType, Type *sigType, Signature *prevSig, Signature *sig,
-                            const lexer::SourcePosition &pos);
     void CollectSuitableSignaturesForTypeInference(size_t paramIdx, ArenaVector<Signature *> &signatures,
                                                    ArenaMultiMap<size_t, Signature *> &bestSignaturesForParameter,
                                                    const ArenaVector<ir::Expression *> &arguments);
