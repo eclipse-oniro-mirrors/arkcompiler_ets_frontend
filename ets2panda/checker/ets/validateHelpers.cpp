@@ -279,7 +279,14 @@ void ETSChecker::ValidateUnaryOperatorOperand(varbinder::Variable *variable, ir:
                                     variable->Declaration()->Node()->Start());
             return;
         }
-        if (!HasStatus(CheckerStatus::IN_CONSTRUCTOR | CheckerStatus::IN_STATIC_BLOCK)) {
+
+        if (HasStatus(CheckerStatus::IN_CONSTRUCTOR)) {
+            if (variable->HasFlag(varbinder::VariableFlags::STATIC) &&
+                variable->HasFlag(varbinder::VariableFlags::READONLY)) {
+                std::ignore =
+                    TypeError(variable, diagnostic::FIELD_ASSIGN_TO_READONLY, {variable->Name()}, expr->Start());
+            }
+        } else if (!HasStatus(CheckerStatus::IN_STATIC_BLOCK)) {
             const auto &diagKind = variable->Declaration()->IsConstDecl() ? diagnostic::FIELD_ASSIGN_TO_CONST
                                                                           : diagnostic::FIELD_ASSIGN_TO_READONLY;
             std::ignore = TypeError(variable, diagKind, {variable->Name()}, expr->Start());
