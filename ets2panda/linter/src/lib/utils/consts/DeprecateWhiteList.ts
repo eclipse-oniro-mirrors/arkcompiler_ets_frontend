@@ -15,7 +15,8 @@
 
 export const DEPRECATE_TYPE = 'DeprecatedApi';
 export enum DeprecateProblem {
-  NoDeprecatedApi = 'NoDeprecatedApi'
+  NoDeprecatedApi = 'NoDeprecatedApi',
+  ImportClauseApi = 'ImportClauseApi'
 }
 
 export enum DEPRECATE_CHECK_KEY {
