@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-
-function foo (p: FixedArray<int>) {
-}
+function foo (p: FixedArray<int>) {}
 let x: Readonly<FixedArray<int>> = []
-/* @@ label */foo(/* @@ label1 */x)
+foo(x)
 
-/* @@? 20:15 Error TypeError: No matching call signature for foo(readonly FixedArray<Int>) */
-/* @@? 20:34 Error TypeError: Type 'readonly FixedArray<Int>' is not compatible with type 'FixedArray<Int>' at index 1 */
+/* @@? 17:16 Error TypeError: T in Readonly<T> must be a class or an interface type. */
+/* @@? 17:36 Error TypeError: Can't resolve array type */

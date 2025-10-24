@@ -1913,7 +1913,9 @@ static void CheckCallee(ETSChecker *checker, ir::CallExpression *expr)
         return;
     }
     auto baseType = memberExpr->Object()->TsType();
-    if (baseType->IsETSObjectType() && baseType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::READONLY)) {
+    auto *baseTypeObj = baseType->IsETSObjectType() ? baseType->AsETSObjectType() : nullptr;
+    if (baseTypeObj && (baseTypeObj->HasObjectFlag(ETSObjectFlags::READONLY) ||
+                        (baseTypeObj->HasTypeFlag(TypeFlag::READONLY) && !baseType->IsAnyETSArrayOrTupleType()))) {
         checker->LogError(diagnostic::READONLY_CALL, {}, expr->Start());
         expr->SetTsType(checker->GlobalTypeError());
     }
