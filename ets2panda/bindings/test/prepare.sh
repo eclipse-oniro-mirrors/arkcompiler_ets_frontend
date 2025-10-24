@@ -35,7 +35,7 @@ if [ $RESTORE_MODE -eq 1 ]; then
     rm "${SCRIPT_DIR}/../ets2panda"
     echo 'Remove the symbolic link to ets2panda'
 else
-    ln -s "${SCRIPT_DIR}/ets/ets1.2/build-tools/ets2panda" "${SCRIPT_DIR}/../ets2panda"
+    ln -s "${SCRIPT_DIR}/ets/static/build-tools/ets2panda" "${SCRIPT_DIR}/../ets2panda"
     echo 'Create a symbolic link to ets2panda'
 fi
 

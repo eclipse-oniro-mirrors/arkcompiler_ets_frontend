@@ -420,7 +420,7 @@ function runSingleTests(testDir: string, failedList: string[]): string[] {
   for (const [testName, testConfig] of Object.entries(singleModuleCases)) {
     const testBuildPath = path.join(testSrcPath, '.idea', '.deveco', testName);
     let pathConfig: PathConfig = {
-      buildSdkPath: path.join(testDir, 'ets', 'ets1.2'),
+      buildSdkPath: path.join(testDir, 'ets', 'static'),
       projectPath: testBuildPath,
       declgenOutDir: testBuildPath
     };
@@ -550,7 +550,7 @@ if (require.main === module) {
 
   const testDir = path.resolve(process.argv[2]);
   const pathConfig: PathConfig = {
-    buildSdkPath: path.join(testDir, 'ets', 'ets1.2'),
+    buildSdkPath: path.join(testDir, 'ets', 'static'),
     projectPath: path.join(testDir, 'testcases'),
     declgenOutDir: ''
   };
