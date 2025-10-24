@@ -2040,6 +2040,7 @@ ir::UpdateNodes Transformer::VisitTsEnumDeclaration(ir::TSEnumDeclaration *node,
 
     auto *callExpr = CreateCallExpressionForTsEnum(node, name, isExport && IsTsModule());
     auto *exprStatementNode = AllocNode<ir::ExpressionStatement>(callExpr);
+    SetRangeRecursively(exprStatementNode, node);
     res.push_back(exprStatementNode);
 
     return res;
@@ -2050,6 +2051,9 @@ ir::AstNode *Transformer::CreateVariableDeclarationForTSEnumOrTSModule(util::Str
 {
     auto flag = Scope()->Parent() == nullptr ? VariableParsingFlags::VAR : VariableParsingFlags::LET;
     auto *variableDeclaration = CreateVariableDeclarationWithIdentify(name, flag, node, isExport);
+    if (node->IsTSEnumDeclaration()) {
+        SetRangeRecursively(variableDeclaration, node);
+    }
     bool doExport = isExport && !IsTsModule();
     if (doExport) {  // export var
         ArenaVector<ir::ExportSpecifier *> specifiers(Allocator()->Adapter());
@@ -2096,6 +2100,7 @@ ir::CallExpression *Transformer::CreateCallExpressionForTsEnum(ir::TSEnumDeclara
                 auto *currTsEnumMember = member->AsTSEnumMember();
                 auto statement = CreateTsEnumMember(currTsEnumMember, preTsEnumMember, paramName);
                 preTsEnumMember = currTsEnumMember;
+                SetRangeRecursively(statement, currTsEnumMember);
                 statements.push_back(statement);
             }
 
@@ -2116,6 +2121,23 @@ ir::CallExpression *Transformer::CreateCallExpressionForTsEnum(ir::TSEnumDeclara
 
     return callExpr;
 }
+
+void Transformer::SetRangeRecursively(ir::AstNode *node, const ir::AstNode *originalNode, bool replaceAll)
+{
+    if (node == nullptr || originalNode == nullptr) {
+        return;
+    }
+    bool isEmptyRange = (node->Range().start.line == 0 && node->Range().end.line == 0 &&
+                         node->Range().start.index == 0 && node->Range().end.index == 0);
+    if (!replaceAll && !isEmptyRange) {
+        return;
+    }
+    node->SetRange(originalNode->Range());
+    node->Iterate([this, originalNode, replaceAll](auto *child) {
+        SetRangeRecursively(child, originalNode, replaceAll);
+    });
+}
+
 
 ArenaVector<ir::Expression *> Transformer::CreateCallExpressionArguments(util::StringView name, bool isExport)
 {
@@ -2175,6 +2197,7 @@ ir::ExpressionStatement *Transformer::CreateTsEnumMemberWithStringInit(ir::TSEnu
                                                  ir::MemberExpression::MemberExpressionKind::ELEMENT_ACCESS,
                                                  true, false);
     auto *right = std::get<ir::AstNode *>(VisitTSNode(node->Init()))->AsExpression();
+    SetRangeRecursively(right, node, true);
 
     auto *assignExpr = AllocNode<ir::AssignmentExpression>(left, right, lexer::TokenType::PUNCTUATOR_SUBSTITUTION);
     auto *exprStatementNode = AllocNode<ir::ExpressionStatement>(assignExpr);
@@ -2193,6 +2216,7 @@ ir::ExpressionStatement *Transformer::CreateTsEnumMemberWithNumberInit(ir::TSEnu
                                                       ir::MemberExpression::MemberExpressionKind::ELEMENT_ACCESS,
                                                       true, false);
     auto *innerRight = std::get<ir::AstNode *>(VisitTSNode(node->Init()))->AsExpression();
+    SetRangeRecursively(innerRight, node, true);
 
     auto *object = CreateReferenceIdentifier(enumLiteralName);
     auto *property = AllocNode<ir::AssignmentExpression>(innerLeft, innerRight,
