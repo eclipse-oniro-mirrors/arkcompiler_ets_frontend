@@ -3934,11 +3934,7 @@ export class Autofixer {
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
-  private addAutofixFromCalls(
-    calls: ts.Identifier[],
-    autofix: Autofix[],
-    argument: ts.Expression
-  ): void {
+  private addAutofixFromCalls(calls: ts.Identifier[], autofix: Autofix[], argument: ts.Expression): void {
     calls.forEach((call) => {
       const callExpr = ts.factory.createCallExpression(
         ts.factory.createIdentifier(APPLY_STYLES_IDENTIFIER),
@@ -5079,8 +5075,19 @@ export class Autofixer {
     return `<${this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, typeArg as ts.TypeNode, sourceFile)}>`;
   }
 
+  private getTypeOfTypeNode(typeNode: ts.TypeNode): ts.Type {
+    const type = this.typeChecker.getTypeFromTypeNode(typeNode);
+    if (!ts.isTypeReferenceNode(typeNode)) {
+      return type;
+    }
+    if (!ts.isQualifiedName(typeNode.typeName)) {
+      return type;
+    }
+    return this.typeChecker.getTypeAtLocation(typeNode.typeName.left);
+  }
+
   private isTypeArgumentAccessible(sourceFile: ts.SourceFile, arg: ts.TypeNode): boolean {
-    const type = this.typeChecker.getTypeFromTypeNode(arg);
+    const type = this.getTypeOfTypeNode(arg);
     const symbol = type.symbol || type.aliasSymbol;
     const decl = TsUtils.getDeclaration(symbol);
     const fileName = decl?.getSourceFile().fileName;
@@ -5108,7 +5115,14 @@ export class Autofixer {
   }
 
   private isTypeArgImport(arg: ts.Node, importName: ts.Identifier, typeArgSym: ts.Symbol): boolean {
-    if (arg.getText() !== importName.text) {
+    let argText = arg.getText();
+    const importText = importName.text;
+
+    if (ts.isTypeReferenceNode(arg) && ts.isQualifiedName(arg.typeName)) {
+      argText = arg.typeName.left.getText();
+    }
+
+    if (argText !== importText) {
       return false;
     }
     const importSym = this.utils.trueSymbolAtLocation(importName);
