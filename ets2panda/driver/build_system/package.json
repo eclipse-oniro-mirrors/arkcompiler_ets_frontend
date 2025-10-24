@@ -40,6 +40,7 @@
     "mixed_hap:run": "npm run mixed_hap:gen_decl && npm run mixed_hap:gen_abc",
     "demo_hap:gen_abc": "npm run build && node ./dist/entry.js test/demo_hap/build_config.json",
     "interop_sdk": "npm run build && node ./dist/entry.js test/e2e/demo_interop_sdk/build_config.json",
+    "gen_abc_multi": "node ./dist/entry.js test/multi_file/build_config.json",
     "ut_test": "jest test/ut",
     "plugin_test": "jest --testMatch='<rootDir>/test/plugin/**/*.test.ts'",
     "build_system_Utest": "jest --testMatch='**/test/ut/**/*.test.ts' --testPathIgnorePatterns='test/e2e/'",
