@@ -146,6 +146,16 @@
         },
         {
             "line": 75,
+            "column": 7,
+            "endLine": 75,
+            "endColumn": 30,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
             "column": 31,
             "endLine": 75,
             "endColumn": 63,
@@ -162,6 +172,16 @@
             "problem": "BuilderNodeNoNestingBuilderSupported",
             "suggest": "",
             "rule": "Property \"nestingBuilderSupported\" is not supported (arkui-buildernode-no-nestingbuildersupported)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 77,
+            "column": 7,
+            "endLine": 77,
+            "endColumn": 30,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -185,6 +205,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 95,
+            "column": 9,
+            "endLine": 95,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 96,
             "column": 9,
             "endLine": 96,
@@ -192,6 +222,16 @@
             "problem": "BuilderNodeUpdateNoLiteral",
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 96,
+            "column": 9,
+            "endLine": 96,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -205,6 +245,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 97,
+            "column": 9,
+            "endLine": 97,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 98,
             "column": 9,
             "endLine": 98,
@@ -212,6 +262,16 @@
             "problem": "BuilderNodeUpdateNoLiteral",
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 9,
+            "endLine": 98,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -225,6 +285,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 99,
+            "column": 9,
+            "endLine": 99,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 100,
             "column": 9,
             "endLine": 100,
@@ -232,6 +302,26 @@
             "problem": "BuilderNodeUpdateNoLiteral",
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 9,
+            "endLine": 100,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 9,
+            "endLine": 101,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -245,6 +335,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 102,
+            "column": 9,
+            "endLine": 102,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 103,
             "column": 9,
             "endLine": 103,
@@ -252,6 +352,16 @@
             "problem": "BuilderNodeUpdateNoLiteral",
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 103,
+            "column": 9,
+            "endLine": 103,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -265,6 +375,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 104,
+            "column": 9,
+            "endLine": 104,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
+            "severity": "ERROR"
+        },
+        {
             "line": 105,
             "column": 9,
             "endLine": 105,
@@ -272,6 +392,16 @@
             "problem": "BuilderNodeUpdateNoLiteral",
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 105,
+            "column": 9,
+            "endLine": 105,
+            "endColumn": 33,
+            "problem": "NoTsLikeSmartType",
+            "suggest": "",
+            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
