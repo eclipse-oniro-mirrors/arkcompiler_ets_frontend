@@ -14,11 +14,10 @@
  */
 
 class Base {
-    field : number = 0;
-    static field1 : number = 0;
+    static field: int = 0;
+}
+class A extends Base {
+    static override field: int = 1;
 }
 
-class A extends Base {
-    override field : number = 1;
-    static field1 : number = 1;
-}
+/* @@? 20:26 Error Syntax error ESY69198: Not allowed to contain the modifier 'static' along with the modifier 'override'. */

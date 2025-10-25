@@ -443,6 +443,12 @@ void ETSParser::ValidateFieldModifiers(ir::ModifierFlags modifiers, bool optiona
     const bool isDeclare = (modifiers & ir::ModifierFlags::DECLARE) != 0;
     const bool isDefinite = (modifiers & ir::ModifierFlags::DEFINITE) != 0;
     const bool isStatic = (modifiers & ir::ModifierFlags::STATIC) != 0;
+    const bool isOverride = (modifiers & ir::ModifierFlags::OVERRIDE) != 0;
+
+    if (isStatic && isOverride) {
+        LogError(diagnostic::OVERRIDE_NOT_STATIC, {}, pos);
+        return;
+    }
 
     if (isDeclare && initializer != nullptr) {
         LogError(diagnostic::INITIALIZERS_IN_AMBIENT_CONTEXTS);
