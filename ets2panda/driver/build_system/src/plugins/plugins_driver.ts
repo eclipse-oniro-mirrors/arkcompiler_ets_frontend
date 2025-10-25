@@ -21,7 +21,8 @@ import {
 import { BuildConfig } from '../types';
 import { ErrorCode } from '../error_code';
 import { FileManager } from './FileManager';
-import { initKoalaPlugins } from '../init/init_koala_modules';
+import path from 'path'
+import { MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
 
 export enum PluginHook {
   NEW = 'afterNew',
@@ -150,12 +151,27 @@ export class PluginDriver {
     PluginDriver.instance = undefined;
   }
 
+  private initKoalaPlugins(projectConfig: BuildConfig): void {
+
+    const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
+    const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
+
+    // TODO: need change in hvigor
+    if (process.env.USE_KOALA_UI_PLUGIN) {
+      projectConfig.plugins['ArkUI'] = uiPluginPath
+    }
+
+    if (process.env.USE_KOALA_MEMO_PLUGIN) {
+      projectConfig.plugins['ArkUI-Memo'] = memoPluginPath
+    }
+  }
+
   public initPlugins(projectConfig: BuildConfig): void {
     if (!projectConfig || !projectConfig.plugins) {
       return;
     }
 
-    initKoalaPlugins(projectConfig)
+    this.initKoalaPlugins(projectConfig)
 
     const pluginResults: RawPlugins[] = Object.entries(projectConfig.plugins).map(([key, value]) => {
       try {
