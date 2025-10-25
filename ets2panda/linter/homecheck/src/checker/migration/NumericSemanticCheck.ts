@@ -89,6 +89,7 @@ import { WarnInfo } from '../../utils/common/Utils';
 import { SdkUtils } from '../../utils/common/SDKUtils';
 import { ClassCategory } from 'arkanalyzer/lib/core/model/ArkClass';
 import { ArkAwaitExpr } from 'arkanalyzer/lib/core/base/Expr';
+import { COLON, QUESTION_MARK, ENDS_WITH_EQUALS, UNDEFINED_PART } from '../../utils/common/ArrayIndexConstants';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'NumericSemanticCheck');
 const gMetaData: BaseMetaData = {
@@ -2499,7 +2500,7 @@ export class NumericSemanticCheck implements BaseChecker {
         }
 
         // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'，同时考虑可选参数即'?:'
-        if (!restString.trimStart().startsWith(':') && !restString.trimStart().startsWith('?')) {
+        if (!restString.trimStart().startsWith(COLON) && !restString.trimStart().startsWith(QUESTION_MARK)) {
             let ruleFix = new RuleFix();
             ruleFix.range = localRange;
             const localString = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
@@ -2507,7 +2508,10 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting text of the fix range info when generating auto fix info.');
                 return null;
             }
-            ruleFix.text = isOptional ? `${localString}: ${numberCategory} | undefined` : `${localString}: ${numberCategory}`;
+            ruleFix.text = isOptional ? `${localString}: ${numberCategory}${UNDEFINED_PART}` : `${localString}: ${numberCategory}`;
+            if (restString.trimStart().startsWith(ENDS_WITH_EQUALS)) {
+                ruleFix.text = `(${ruleFix.text})`;
+            }
             return ruleFix;
         }
         // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型，同时考虑可选参数即'?:'
