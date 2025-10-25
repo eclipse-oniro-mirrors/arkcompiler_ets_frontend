@@ -20,6 +20,8 @@
 #include "panda_types.h"
 #include "public/es2panda_lib.h"
 #include "lsp/include/refactors/refactor_types.h"
+#include "lsp/include/cancellation_token.h"
+#include "lsp/include/user_preferences.h"
 #include <cstddef>
 #include <string>
 
@@ -1052,14 +1054,70 @@ KNativePointer impl_getClassHierarchies(KNativePointer context, KStringPtr &file
 }
 TS_INTEROP_3(getClassHierarchies, KNativePointer, KNativePointer, KStringPtr, KInt)
 
-KNativePointer impl_getApplicableRefactors(KNativePointer context, KStringPtr &kindPtr, KInt position)
+KNativePointer impl_getApplicableRefactors(KNativePointer context, KStringPtr &kindPtr, KInt startPos, KInt endPos)
 {
     LSPAPI const *ctx = GetImpl();
-    auto *result = new std::vector<ark::es2panda::lsp::ApplicableRefactorInfo>(ctx->getApplicableRefactors(
-        reinterpret_cast<es2panda_Context *>(context), GetStringCopy(kindPtr), static_cast<std::size_t>(position)));
+    auto *result = new std::vector<ark::es2panda::lsp::ApplicableRefactorInfo>(
+        ctx->getApplicableRefactors(reinterpret_cast<es2panda_Context *>(context), GetStringCopy(kindPtr),
+                                    static_cast<std::size_t>(startPos), static_cast<std::size_t>(endPos)));
     return result;
 }
-TS_INTEROP_3(getApplicableRefactors, KNativePointer, KNativePointer, KStringPtr, KInt)
+TS_INTEROP_4(getApplicableRefactors, KNativePointer, KNativePointer, KStringPtr, KInt, KInt)
+
+static TextChangesContext *ResolveTextChangesContext(KNativePointer userPrefsPtr, KNativePointer formattingSettingsPtr)
+{
+    if (userPrefsPtr != nullptr) {
+        return reinterpret_cast<TextChangesContext *>(userPrefsPtr);
+    }
+
+    static auto prefs = ark::es2panda::lsp::UserPreferences::GetDefaultUserPreferences();
+    auto settings = (formattingSettingsPtr != nullptr)
+                        ? *reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(formattingSettingsPtr)
+                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings("\n");
+    auto fmt = ark::es2panda::lsp::GetFormatContext(settings);
+
+    static LanguageServiceHost host;
+    static TextChangesContext defaultTextChangesContext {host, fmt, prefs};
+    return &defaultTextChangesContext;
+}
+
+KNativePointer impl_getEditsForRefactor(KNativePointer context, KStringPtr &refactorNamePtr, KStringPtr &actionNamePtr,
+                                        KInt startPos, KInt endPos, KNativePointer userPrefsPtr,
+                                        KNativePointer formattingSettingsPtr)
+{
+    LSPAPI const *ctx = GetImpl();
+    if (ctx == nullptr) {
+        return nullptr;
+    }
+
+    // Initialize RefactorContext
+    ark::es2panda::lsp::RefactorContext refactorContext;
+    refactorContext.context = reinterpret_cast<es2panda_Context *>(context);
+    refactorContext.span.pos = static_cast<size_t>(startPos);
+    refactorContext.span.end = static_cast<size_t>(endPos);
+
+    // Resolve TextChangesContext
+    refactorContext.textChangesContext = ResolveTextChangesContext(userPrefsPtr, formattingSettingsPtr);
+
+    // Prepare refactor and action names as std::string
+    std::string refactorName(refactorNamePtr.Data());
+    std::string actionName(actionNamePtr.Data());
+
+    // Execute the refactor
+    auto edits = ctx->getEditsForRefactor(refactorContext, refactorName, actionName);
+
+    // Return the resulting edits
+    return edits.release();
+}
+TS_INTEROP_7(getEditsForRefactor,
+             KNativePointer,  // Return type
+             KNativePointer,  // context
+             KStringPtr,      // refactorName
+             KStringPtr,      // actionName
+             KInt,            // start
+             KInt,            // end
+             KNativePointer,  // userPrefsPtr
+             KNativePointer)  // formattingSettingsPtr
 
 KNativePointer impl_getApplicableRefactorInfoList(KNativePointer infosPtr)
 {

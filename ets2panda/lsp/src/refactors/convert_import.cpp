@@ -186,9 +186,10 @@ static void CollectNsMemberReplaceTargets(ir::AstNode *root, const util::StringV
                     [&](ir::MemberExpression *me, const std::string &propName) { out.emplace_back(me, propName); });
 }
 
-ApplicableRefactorInfo ConvertImportRefactor::GetAvailableActions(const RefactorContext &refContext) const
+std::vector<ApplicableRefactorInfo> ConvertImportRefactor::GetAvailableActions(const RefactorContext &refContext) const
 {
-    ApplicableRefactorInfo res;
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
     if (!IsKind(refContext.kind)) {
         return res;
     }
@@ -230,11 +231,12 @@ ApplicableRefactorInfo ConvertImportRefactor::GetAvailableActions(const Refactor
     if (!(isPureNamespace || isPureDefault)) {
         return res;
     }
-    res.name = refactor_name::CONVERT_IMPORT_REFACTOR_NAME;
-    res.description = refactor_description::CONVERT_IMPORT_REFACTOR_DESC;
-    res.action.kind = std::string(TO_NAMED_IMPORT_ACTION.kind);
-    res.action.name = std::string(TO_NAMED_IMPORT_ACTION.name);
-    res.action.description = std::string(TO_NAMED_IMPORT_ACTION.description);
+    applicableRef.name = refactor_name::CONVERT_IMPORT_REFACTOR_NAME;
+    applicableRef.description = refactor_description::CONVERT_IMPORT_REFACTOR_DESC;
+    applicableRef.action.kind = std::string(TO_NAMED_IMPORT_ACTION.kind);
+    applicableRef.action.name = std::string(TO_NAMED_IMPORT_ACTION.name);
+    applicableRef.action.description = std::string(TO_NAMED_IMPORT_ACTION.description);
+    res.push_back(applicableRef);
     return res;
 }
 

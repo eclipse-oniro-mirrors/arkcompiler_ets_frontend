@@ -323,9 +323,11 @@ static void ApplyChanges(ChangeTracker &tracker, const RefactorContext &context,
     }
 }
 
-ApplicableRefactorInfo ConvertParamsToObjectRefactor::GetAvailableActions(const RefactorContext &context) const
+std::vector<ApplicableRefactorInfo> ConvertParamsToObjectRefactor::GetAvailableActions(
+    const RefactorContext &context) const
 {
-    ApplicableRefactorInfo res;
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
 
     if (!context.kind.empty() && !IsKind(context.kind)) {
         return res;
@@ -336,12 +338,12 @@ ApplicableRefactorInfo ConvertParamsToObjectRefactor::GetAvailableActions(const 
         return res;
     }
 
-    res.name = refactor_name::CONVERT_PARAMS_TO_OBJECT;
-    res.description = refactor_description::CONVERT_PARAMS_TO_OBJECT_DESC;
-    res.action.name = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.name);
-    res.action.description = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.description);
-    res.action.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
-
+    applicableRef.name = refactor_name::CONVERT_PARAMS_TO_OBJECT;
+    applicableRef.description = refactor_description::CONVERT_PARAMS_TO_OBJECT_DESC;
+    applicableRef.action.name = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.name);
+    applicableRef.action.description = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.description);
+    applicableRef.action.kind = std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.kind);
+    res.push_back(applicableRef);
     return res;
 }
 

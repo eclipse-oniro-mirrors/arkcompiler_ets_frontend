@@ -13,22 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef CONVERT_FUNCTION_TO_CLASS_H
-#define CONVERT_FUNCTION_TO_CLASS_H
+#ifndef EXTRACT_TYPES_H
+#define EXTRACT_TYPES_H
 
+#include <vector>
 #include "refactor_types.h"
 
 namespace ark::es2panda::lsp {
-constexpr RefactorActionView CONVERT_TO_CLASS_ACTION {"convert_to_class", "Convert function to class",
-                                                      "refactor.rewrite.function.to.class"};
 
-class ConvertFunctionToClassRefactor : public Refactor {
+constexpr RefactorActionView EXTRACT_TYPE_ACTION {"extract_type", "Extract selected type to a type alias",
+                                                  "refactor.extract.type"};
+constexpr RefactorActionView EXTRACT_INTERFACE_ACTION {"extract_interface", "Extract selected type to an interface",
+                                                       "refactor.extract.interface"};
+
+class ExtractTypeRefactor : public Refactor {
 public:
-    ConvertFunctionToClassRefactor();
+    ExtractTypeRefactor();
     std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;
 };
 
 }  // namespace ark::es2panda::lsp
-#endif  // CONVERT_FUNCTION_TO_CLASS_H
+
+#endif  // EXTRACT_TYPES_H

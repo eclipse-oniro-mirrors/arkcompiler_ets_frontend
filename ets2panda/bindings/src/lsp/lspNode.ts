@@ -806,6 +806,17 @@ export class LspApplicableRefactorInfo extends LspNode {
   readonly applicableRefactorInfo: ApplicableRefactorItemInfo[];
 }
 
+export class LspRefactorEditInfo extends LspNode {
+  readonly fileTextChanges: FileTextChanges[];
+
+  constructor(peer: KNativePointer) {
+    super(peer);
+    this.fileTextChanges = new NativePtrDecoder()
+      .decode(global.es2panda._getFileTextChanges(peer))
+      .map((elPeer: KNativePointer) => new FileTextChanges(elPeer));
+  }
+}
+
 export class LspTypeHierarchies extends LspNode {
   constructor(peer: KNativePointer) {
     super(peer);

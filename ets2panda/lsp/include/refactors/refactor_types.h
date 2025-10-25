@@ -16,6 +16,8 @@
 #ifndef REFACTOR_TYPES_H
 #define REFACTOR_TYPES_H
 
+#include "../formatting/formatting_settings.h"
+#include "../formatting/formatting.h"
 #include "public/es2panda_lib.h"
 #include "../cancellation_token.h"
 #include "../user_preferences.h"
@@ -37,10 +39,17 @@ public:
         : fileTextChanges_(std::move(fileTextChanges))
     {
     }
-
-    std::vector<FileTextChanges> &GetFileTextChanges()
+    const std::vector<FileTextChanges> &GetFileTextChanges() const
     {
         return fileTextChanges_;
+    }
+    void SetFileTextChanges(const std::vector<FileTextChanges> &fileTextChanges)
+    {
+        fileTextChanges_ = fileTextChanges;
+    }
+    void AddFileTextChange(const FileTextChanges &change)
+    {
+        fileTextChanges_.emplace_back(change);
     }
 };
 
@@ -52,7 +61,6 @@ struct TextRange {
 struct RefactorContext {
     TextChangesContext *textChangesContext = nullptr;
     CancellationToken *cancellationToken = nullptr;
-    UserPreferences *userPreferences = nullptr;
     TextRange span = {0, 0};
     es2panda_Context *context = nullptr;
     std::string kind;
@@ -78,21 +86,23 @@ struct ApplicableRefactorInfo {
 
 namespace refactor_name {
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_NAME = "Convert arrow function or function expression";
-constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "Convert export";
+constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "ConvertExportRefactor";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_NAME = "Convert import";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_NAME = "Convert to template string";
-constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional chain expression";
+constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "ConvertToOptionalChainExpressionRefactor";
 constexpr std::string_view GENERATE_OVERRIDE_METHODS_NAME = "Generate override methods";
-constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "Convert to Class";
+constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "ConvertFunctionToClassRefactor";
+constexpr std::string_view EXTRACT_TYPE_NAME = "ExtractTypeRefactor";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE = "Infer function return type";
 
-constexpr std::string_view EXTRACT_CONSTANT_ACTION_NAME = "Extract Constant";
-constexpr std::string_view EXTRACT_FUNCTION_ACTION_NAME = "Extract Function";
-constexpr std::string_view EXTRACT_VARIABLE_ACTION_NAME = "Extract Variable";
+constexpr std::string_view EXTRACT_CONSTANT_ACTION_NAME = "ExtractSymbolRefactor";
+constexpr std::string_view EXTRACT_FUNCTION_ACTION_NAME = "ExtractSymbolRefactor";
+constexpr std::string_view EXTRACT_VARIABLE_ACTION_NAME = "ExtractSymbolRefactor";
 
 constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overload list to single signature";
 constexpr std::string_view CONVERT_PARAMS_TO_OBJECT = "Convert parameters to object and introduce interface";
 constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_NAME = "Generate Constructor";
+
 }  // namespace refactor_name
 
 namespace refactor_description {
@@ -103,6 +113,7 @@ constexpr std::string_view GENERATE_OVERRIDE_METHODS_DESC = "Generate override m
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_DESC = "Convert to named import";
 constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
     "Convert a standalone function, arrow function, or function expression into a class declaration";
+constexpr std::string_view EXTRACT_TYPE_DESC = "Extract selected type";
 constexpr std::string_view INFER_FUNCTION_RETURN_TYPE_DESC = "Infer function return type";
 
 constexpr std::string_view EXTRACT_CONSTANT_ACTION_DESC = "Extract Constant";
@@ -123,7 +134,7 @@ private:
 public:
     bool IsKind(const std::string &kind) const;
     void AddKind(const std::string &kind);
-    virtual ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const = 0;
+    virtual std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const = 0;
 
     virtual std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                                 const std::string &actionName) const = 0;

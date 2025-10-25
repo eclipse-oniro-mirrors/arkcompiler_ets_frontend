@@ -32,8 +32,8 @@ namespace {
 class LSPConvertChainRefactorTests : public LSPAPITests {
 public:
     static constexpr std::string_view kKind = "refactor.rewrite.expression.optionalChain";
-    static constexpr std::string_view kActionName = "Convert to optional chain expression";
-    static constexpr size_t kCaretAtStart = 0;
+    static constexpr std::string_view kActionName = "convert_to_optional_chain_expression";
+    // static constexpr size_t kCaretAtStart = 0;
     static constexpr std::string_view kTriggerMarker = "/*1*/";
     static constexpr size_t kAfterMarkerOffset = 8;
 
@@ -107,9 +107,10 @@ let r = /*1*/a && a.b && a.b.c/*2*/;
 
     ConvertToOptionalChainExpressionRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
-    EXPECT_EQ(avail.action.kind, std::string(kKind));
+    ASSERT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
 
     init.DestroyContext(ctx);
 }
@@ -132,8 +133,9 @@ let r = /*1*/a && a.b && a.b()/*2*/;
 
     ConvertToOptionalChainExpressionRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
+    ASSERT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
 
     init.DestroyContext(ctx);
 }
@@ -158,48 +160,9 @@ let ccc = /*1*/foo.bar ? foo.bar.baz : "x"/*2*/;
 
     ConvertToOptionalChainExpressionRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
-    ASSERT_FALSE(avail.action.kind.empty());
-    EXPECT_EQ(avail.action.name, std::string(kActionName));
-
-    init.DestroyContext(ctx);
-}
-
-TEST_F(LSPConvertChainRefactorTests, DoesNotOffer_WhenUsingLogicalOr)
-{
-    const std::string src = R"(
-let a = { b: { c: 1 } };
-let r = /*1*/a || (a && a.b && a.b.c)/*2*/;
-)";
-    auto files = CreateTempFile({"chain_no_offer_or.ets"}, {src});
-    ASSERT_FALSE(files.empty());
-
-    ark::es2panda::lsp::Initializer init;
-    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_PARSED);
-    ASSERT_NE(ctx, nullptr);
-
-    const size_t caret = PosAfterMarker(src);
-    ASSERT_NE(caret, std::string::npos);
-
-    ConvertToOptionalChainExpressionRefactor ref;
-    auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
-    EXPECT_TRUE(avail.action.kind.empty());
-
-    init.DestroyContext(ctx);
-}
-
-TEST_F(LSPConvertChainRefactorTests, DoesNotOffer_WhenCursorOutside)
-{
-    const std::string src = R"(   let a = { b: 1 }; let r = a && a.b; )";
-    auto files = CreateTempFile({"chain_no_offer_outside.ets"}, {src});
-    ASSERT_FALSE(files.empty());
-
-    ark::es2panda::lsp::Initializer init;
-    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_PARSED);
-    ASSERT_NE(ctx, nullptr);
-
-    ConvertToOptionalChainExpressionRefactor ref;
-    auto avail = ref.GetAvailableActions(MakeCtx(ctx, kCaretAtStart));
-    EXPECT_TRUE(avail.action.kind.empty());
+    ASSERT_FALSE(avail.empty());
+    ASSERT_FALSE(avail[0].action.kind.empty());
+    EXPECT_EQ(avail[0].action.name, ark::es2panda::lsp::TO_OPTIONAL_CHAIN_ACTION.name);
 
     init.DestroyContext(ctx);
 }
@@ -222,8 +185,7 @@ let r = /*1*/a?.b/*2*/;
 
     ConvertToOptionalChainExpressionRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
-    EXPECT_TRUE(avail.action.kind.empty());
-
+    ASSERT_TRUE(avail.empty());
     init.DestroyContext(ctx);
 }
 

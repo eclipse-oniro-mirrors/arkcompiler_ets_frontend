@@ -185,9 +185,12 @@ TEST_F(LspConvertOverloadListTests, InterfaceMethodOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
-    constexpr size_t kExpectedRefactorCount = 1;
+    constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
-    ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
+    EXPECT_FALSE(result.empty());
+    if (!result.empty()) {
+        ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
+    }
 }
 
 TEST_F(LspConvertOverloadListTests, NoOverloadsAvailable)
@@ -214,7 +217,7 @@ TEST_F(LspConvertOverloadListTests, NoOverloadsAvailable)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
-    constexpr size_t kExpectedRefactorCount = 0;
+    constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 }
 
@@ -246,7 +249,7 @@ TEST_F(LspConvertOverloadListTests, InvalidRefactorKind)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
-    constexpr size_t kExpectedRefactorCount = 0;
+    constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 }
 

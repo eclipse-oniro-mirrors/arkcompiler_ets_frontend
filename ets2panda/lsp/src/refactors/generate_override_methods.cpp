@@ -62,8 +62,9 @@ GenerateOverrideMethods::GenerateOverrideMethods()
     AddKind(std::string(TO_GENERATE_OVERRIDE_METHODS_ACTION.kind));
 }
 
-ApplicableRefactorInfo GenerateOverrideMethods::GetAvailableActions([[maybe_unused]] const RefactorContext &ctx) const
+std::vector<ApplicableRefactorInfo> GenerateOverrideMethods::GetAvailableActions(const RefactorContext &ctx) const
 {
+    (void)ctx;
     return {};
 }
 

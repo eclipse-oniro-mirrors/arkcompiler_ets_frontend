@@ -16,6 +16,7 @@
 #ifndef GENERATE_OVERRIDE_METHODS_H
 #define GENERATE_OVERRIDE_METHODS_H
 
+#include <vector>
 #include "refactor_types.h"
 namespace ark::es2panda::lsp {
 constexpr RefactorActionView TO_GENERATE_OVERRIDE_METHODS_ACTION {
@@ -25,7 +26,7 @@ class GenerateOverrideMethods : public Refactor {
 public:
     GenerateOverrideMethods();
 
-    ApplicableRefactorInfo GetAvailableActions(const RefactorContext &ctx) const override;
+    std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &ctx) const override;
 
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;

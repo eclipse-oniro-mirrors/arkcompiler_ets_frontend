@@ -32,6 +32,7 @@ import {
   LspClassConstructorInfo,
   ApplicableRefactorItemInfo,
   LspApplicableRefactorInfo,
+  LspRefactorEditInfo,
   CompletionEntryDetails,
   LspFileTextChanges,
   LspSafeDeleteLocationInfo,
@@ -698,12 +699,12 @@ export class Lsp {
     return new CompletionEntryDetails(ptr);
   }
 
-  getApplicableRefactors(filename: String, kind: String, offset: number): ApplicableRefactorItemInfo[] {
+  getApplicableRefactors(filename: String, kind: String, startPos: number, endPos: number): ApplicableRefactorItemInfo[] {
     let ptr: KPointer;
     let result: ApplicableRefactorItemInfo[] = [];
     const [cfg, ctx] = this.createContext(filename);
     try {
-      ptr = global.es2panda._getApplicableRefactors(ctx, kind, offset);
+      ptr = global.es2panda._getApplicableRefactors(ctx, kind, startPos, endPos);
     } catch (error) {
       console.error(error);
       throw error;
@@ -713,6 +714,33 @@ export class Lsp {
     let refs = new LspApplicableRefactorInfo(ptr);
     result.push(...refs.applicableRefactorInfo);
     return Array.from(new Set(result));
+  }
+
+  getEditsForRefactor(
+    filename: string,
+    refactorName: string,
+    actionName: string,
+    start: number,
+    end: number,
+    opts?: {
+      userPrefsPtr?: KNativePointer | null;
+      FormattingSettings?: KNativePointer | null;
+    }
+  ): LspRefactorEditInfo {
+    const [cfg, ctx] = this.createContext(filename);
+    let up = opts?.userPrefsPtr ?? BigInt(0);
+    let fmt = opts?.FormattingSettings ?? BigInt(0);
+    let ptr = global.es2panda._getEditsForRefactor(
+      ctx,
+      refactorName,
+      actionName,
+      start,
+      end,
+      up,
+      fmt
+    );
+    this.destroyContext(cfg, ctx);
+    return new LspRefactorEditInfo(ptr);
   }
 
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo {

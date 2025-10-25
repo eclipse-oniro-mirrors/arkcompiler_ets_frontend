@@ -30,6 +30,7 @@
 #include "lsp/include/refactors/refactor_types.h"
 #include "lsp/include/services/text_change/change_tracker.h"
 #include "lsp/include/refactors/convert_function_to_class.h"
+#include "refactor_provider.h"
 
 /**
  * @file convert_function_to_class.cpp
@@ -55,7 +56,6 @@
  */
 namespace ark::es2panda::lsp {
 namespace {
-constexpr const char *K_ACTIONKIND_CSTR = "refactor.rewrite.function.to.class";
 
 struct TargetInfo {
     ir::AstNode *node {nullptr};
@@ -533,7 +533,7 @@ static std::vector<FileTextChanges> DoConvertToClassInternal(const RefactorConte
 
 ConvertFunctionToClassRefactor::ConvertFunctionToClassRefactor()
 {
-    AddKind(std::string(K_ACTIONKIND_CSTR));
+    AddKind(std::string(CONVERT_TO_CLASS_ACTION.kind));
 }
 
 /**
@@ -558,23 +558,21 @@ ConvertFunctionToClassRefactor::ConvertFunctionToClassRefactor()
  *
  * @see ConvertFunctionToClassRefactor::GetEditsForAction
  */
-ApplicableRefactorInfo ConvertFunctionToClassRefactor::GetAvailableActions(const RefactorContext &refContext) const
+std::vector<ApplicableRefactorInfo> ConvertFunctionToClassRefactor::GetAvailableActions(
+    const RefactorContext &refContext) const
 {
-    ApplicableRefactorInfo res;
-    if (!refContext.kind.empty() && !IsKind(refContext.kind)) {
-        return res;
-    }
-
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
     const auto target = ResolveTarget(refContext.context, refContext.span);
     if (target.node == nullptr || target.name == nullptr) {
         return res;
     }
-
-    res.name = std::string(refactor_name::CONVERT_FUNCTION_TO_CLASS_NAME);
-    res.description = std::string(refactor_description::CONVERT_FUNCTION_TO_CLASS_DESC);
-    res.action.name = std::string(refactor_name::CONVERT_FUNCTION_TO_CLASS_NAME);
-    res.action.description = std::string(refactor_description::CONVERT_FUNCTION_TO_CLASS_DESC);
-    res.action.kind = std::string(K_ACTIONKIND_CSTR);
+    applicableRef.name = std::string(refactor_name::CONVERT_FUNCTION_TO_CLASS_NAME);
+    applicableRef.description = std::string(refactor_description::CONVERT_FUNCTION_TO_CLASS_DESC);
+    applicableRef.action.name = std::string(CONVERT_TO_CLASS_ACTION.name);
+    applicableRef.action.description = std::string(CONVERT_TO_CLASS_ACTION.description);
+    applicableRef.action.kind = std::string(CONVERT_TO_CLASS_ACTION.kind);
+    res.push_back(applicableRef);
     return res;
 }
 
@@ -599,7 +597,7 @@ ApplicableRefactorInfo ConvertFunctionToClassRefactor::GetAvailableActions(const
 std::unique_ptr<RefactorEditInfo> ConvertFunctionToClassRefactor::GetEditsForAction(const RefactorContext &context,
                                                                                     const std::string &actionName) const
 {
-    if (!actionName.empty() && actionName != std::string(refactor_name::CONVERT_FUNCTION_TO_CLASS_NAME)) {
+    if (!actionName.empty() && actionName != std::string(CONVERT_TO_CLASS_ACTION.name)) {
         return nullptr;
     }
 
@@ -611,4 +609,7 @@ std::unique_ptr<RefactorEditInfo> ConvertFunctionToClassRefactor::GetEditsForAct
     auto edits = DoConvertToClassInternal(context, target.node, target.name);
     return std::make_unique<RefactorEditInfo>(std::move(edits));
 }
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+AutoRefactorRegister<ConvertFunctionToClassRefactor> g_ConvertToClassRefactorRegister("ConvertFunctionToClassRefactor");
+
 }  // namespace ark::es2panda::lsp

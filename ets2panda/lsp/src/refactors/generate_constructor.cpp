@@ -326,8 +326,12 @@ void GenerateCtors(const RefactorContext &context, ChangeTracker &tracker)
     tracker.InsertText(ctx->sourceFile, cur->Start().index + 1, "\n    " + insertText.str());
 }
 
-ApplicableRefactorInfo GenerateConstructorRefactor::GetAvailableActions(const RefactorContext &context) const
+std::vector<ApplicableRefactorInfo> GenerateConstructorRefactor::GetAvailableActions(
+    const RefactorContext &context) const
 {
+    ApplicableRefactorInfo applicableRef;
+    std::vector<ApplicableRefactorInfo> res;
+
     if (context.context == nullptr) {
         return {};
     }
@@ -346,12 +350,12 @@ ApplicableRefactorInfo GenerateConstructorRefactor::GetAvailableActions(const Re
     const auto *ctx = reinterpret_cast<const public_lib::Context *>(context.context);
     if (!CollectClassProperties(cls).empty() ||
         (cls->Super() != nullptr && !CollectSuperClassConstructorParameters(cls, ctx).empty())) {
-        ApplicableRefactorInfo res;
-        res.name = refactor_name::GENERATE_CONSTRUCTOR_REFACTOR_NAME;
-        res.description = refactor_description::GENERATE_CONSTRUCTOR_REFACTOR_DESC;
-        res.action.kind = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.kind);
-        res.action.name = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.name);
-        res.action.description = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.description);
+        applicableRef.name = refactor_name::GENERATE_CONSTRUCTOR_REFACTOR_NAME;
+        applicableRef.description = refactor_description::GENERATE_CONSTRUCTOR_REFACTOR_DESC;
+        applicableRef.action.kind = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.kind);
+        applicableRef.action.name = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.name);
+        applicableRef.action.description = std::string(TO_GENERATE_CONSTRUCTOR_ACTION.description);
+        res.push_back(applicableRef);
         return res;
     }
 

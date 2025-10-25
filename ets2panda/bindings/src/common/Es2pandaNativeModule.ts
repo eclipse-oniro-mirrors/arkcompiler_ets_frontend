@@ -381,7 +381,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getApplicableRefactors(context: KNativePointer, kind: String, position: KInt): KPtr {
+  _getApplicableRefactors(context: KNativePointer, kind: String, startPos: KInt, endPos: KInt): KPtr {
     throw new Error('Not implemented');
   }
 
@@ -967,6 +967,10 @@ export class Es2pandaNativeModule {
   }
 
   _getArgumentCount(ptr: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _getEditsForRefactor(ctx: KPtr, refactorName: string, actionName: string, start: number, end: number, userPrefsPtr?: KPtr | 0, formattingSettings?: KPtr | 0): KPtr {
     throw new Error('Not implemented');
   }
 

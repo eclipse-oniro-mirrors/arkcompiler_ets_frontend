@@ -78,6 +78,7 @@ set(ES2PANDA_LSP_SRC
   ./src/find_references.cpp
   ./src/refactors/refactor_types.cpp
   ./src/applicable_refactors.cpp
+  ./src/get_edits_for_refactor.cpp
   ./src/refactor_provider.cpp
   ./src/refactors/convert_chain.cpp
   ./src/refactors/convert_export.cpp
@@ -88,6 +89,7 @@ set(ES2PANDA_LSP_SRC
   ./src/refactors/convert_overload_list.cpp
   ./src/refactors/convert_params_to_object.cpp
   ./src/refactors/convert_template.cpp
+  ./src/refactors/extract_type.cpp
   ./src/refactors/generate_constructor.cpp
   ./src/refactors/infer_function_return_type.cpp
   ./src/refactors/extract_symbol.cpp
