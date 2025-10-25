@@ -832,8 +832,8 @@ ir::AstNode *ETSChecker::CreateGetterOrSetterBodyForOptional(bool isSetter, bool
 
     ArenaVector<ir::Statement *> returnStatement(ProgramAllocator()->Adapter());
     if (isSetter) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         auto errorIdent =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             ProgramAllocNode<ir::Identifier>(compiler::Signatures::INVALID_STOREACCESS_ERROR, ProgramAllocator());
         ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
