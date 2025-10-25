@@ -39,8 +39,7 @@ export { jsdocVal2 as jsdocVal2 }
  * @param1 preStr { p } behindStr
  * @param2 preStr {} behindStr
 */
-@interface exportAnno {}
-
+export @interface exportAnno {}
 /**
  * ==== export declare class A ====
  * @param1 {} behindStr
@@ -60,7 +59,6 @@ export declare class A {
     * @param2 preStr { p }
     */
   private classProp?: (number | undefined);
-  
   /**
     * ==== test class getter ====
     * @param1 {} behindStr
@@ -92,7 +90,6 @@ export declare struct myStruct {
   * @param2 preStr { p }
   */
   public Prop?: (number | undefined);
-  
   public constructor() {}
   
 }
@@ -114,14 +111,12 @@ export declare interface I {
     * @param1 {} behindStr
     * @param2 preStr { p }
     */
-  interfaceProp: [a, b];
-  /**
+  interfaceProp: [a, b];/**
     * ==== arrowFunc jsdoc ====
     * @param1 {} behindStr
     * @param2 preStr { p }
     */
-  interfaceArrowFunc: (()=> void);
-  /**
+  interfaceArrowFunc: (()=> void);/**
     * ==== interface getter jsdoc ====
     * @param1 {} behindStr
     * @param2 preStr { p }
@@ -159,14 +154,12 @@ declare namespace JsdocNS {
     * @param1 {} behindStr
     * @param2 preStr { p }
     */
-    interfaceProp1: number;
-    /**
+    interfaceProp1: number;/**
     * ==== interfaceProp2 ====
     * @param1 {} behindStr
     * @param2 preStr { p }
     */
     interfaceProp2: (number | string[]);
-    
   }
   
   /**
@@ -188,7 +181,6 @@ declare namespace JsdocNS {
     * @param2 preStr { p }
     */
     private classProp: number;
-    
     /**
     * ==== test class getter ====
     * @param1 {} behindStr
@@ -219,7 +211,6 @@ declare namespace JsdocNS {
     * @param2 preStr { p }
     */
     private Prop: number;
-    
     public constructor() {}
     
   }
@@ -273,9 +264,10 @@ declare namespace JsdocNS {
   * @param2 preStr { p }
   * @param3 preStr { p } behindStr
   */
-  namespace JsdocInnerNS {}
+  namespace JsdocInnerNS {
   }
-  /**
+}
+/**
 * ==== function decl jsdoc ====
 * @param1 {} behindStr
 * @param2 preStr { p }
@@ -291,21 +283,21 @@ function jsDocFunc(/**
     * @param2 preStr { p }
     */
   fooP2: string): void {}
-  
-  /**
+
+/**
 * ==== typeAlas with generic jsdoc ====
 * @param1 {} behindStr
 * @param2 preStr { p }
 */
 export type typeAlias<T = BusinessError extends Error> = ((err: T)=> void);
-  
-  /**
+
+/**
  * ==== variable decl ====
  * @param1 {} behindStr
  * @param2 preStr { p }
  */
 const jsdocVal1: string = "ssss"
-  /**
+/**
  * ==== function overload declaration jsdoc ====
  * @param1 {} behindStr
  * @param2 preStr { p }
