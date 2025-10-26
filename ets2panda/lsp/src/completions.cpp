@@ -493,6 +493,42 @@ std::vector<CompletionEntry> GetCompletionFromTSInterfaceDeclaration(ir::TSInter
     return res;
 }
 
+ir::AstNode *GetDefinitionOfThisExpression(ir::AstNode *preNode)
+{
+    if (preNode == nullptr || (!preNode->IsThisExpression() && !preNode->IsTSThisType())) {
+        return nullptr;
+    }
+    while (preNode->Parent() != nullptr) {
+        preNode = preNode->Parent();
+        // class and namespace
+        if (preNode->IsClassDeclaration() && IsDefinedClassOrStruct(preNode)) {
+            return preNode->AsClassDeclaration()->Definition();
+        }
+        if (preNode->IsETSStructDeclaration() && IsDefinedClassOrStruct(preNode)) {
+            return preNode->AsETSStructDeclaration()->Definition();
+        }
+        if (preNode->IsTSInterfaceDeclaration()) {
+            return preNode;
+        }
+    }
+    return nullptr;
+}
+
+ir::AstNode *GetIdentifierOfThisExpression(ir::AstNode *preNode)
+{
+    if (preNode == nullptr || (!preNode->IsThisExpression() && !preNode->IsTSThisType())) {
+        return nullptr;
+    }
+    auto def = GetDefinitionOfThisExpression(preNode);
+    if (def->IsClassDefinition()) {
+        return def->AsClassDefinition()->Ident();
+    }
+    if (def->IsTSInterfaceDeclaration()) {
+        return def->AsTSInterfaceDeclaration()->Id();
+    }
+    return nullptr;
+}
+
 std::vector<CompletionEntry> GetCompletionFromMethodDefinition(ir::MethodDefinition *decl,
                                                                const std::string &triggerWord)
 {
@@ -505,14 +541,20 @@ std::vector<CompletionEntry> GetCompletionFromMethodDefinition(ir::MethodDefinit
         return {};
     }
     auto returnType = func->ReturnTypeAnnotation();
-    if (returnType == nullptr || !returnType->IsETSTypeReference()) {
-        return {};
+    if (returnType->IsTSThisType()) {
+        auto ident = GetIdentifierOfThisExpression(returnType);
+        if (ident == nullptr || !ident->IsIdentifier()) {
+            return {};
+        }
+        return GetPropertyCompletions(reinterpret_cast<ir::AstNode *>(ident), triggerWord);
+    } else if (returnType->IsETSTypeReference()) {
+        auto expr = returnType->AsETSTypeReference()->Part()->Name();
+        if (expr == nullptr || !expr->IsIdentifier()) {
+            return {};
+        }
+        return GetPropertyCompletions(reinterpret_cast<ir::AstNode *>(expr), triggerWord);
     }
-    auto ident = returnType->AsETSTypeReference()->Part()->Name();
-    if (ident == nullptr || !ident->IsIdentifier()) {
-        return {};
-    }
-    return GetPropertyCompletions(reinterpret_cast<ir::AstNode *>(ident), triggerWord);
+    return {};
 }
 
 ir::AstNode *GetIndentifierFromCallExpression(ir::AstNode *node)
@@ -571,33 +613,22 @@ bool IsDefinedClassOrStruct(ir::AstNode *preNode)
     return false;
 }
 
-ir::AstNode *GetDefinitionOfThisExpression(ir::AstNode *preNode)
-{
-    if (preNode == nullptr || !preNode->IsThisExpression()) {
-        return nullptr;
-    }
-    while (preNode->Parent() != nullptr) {
-        preNode = preNode->Parent();
-        if (preNode->IsClassDeclaration() && IsDefinedClassOrStruct(preNode)) {
-            return preNode->AsClassDeclaration()->Definition();
-        }
-        if (preNode->IsETSStructDeclaration() && IsDefinedClassOrStruct(preNode)) {
-            return preNode->AsETSStructDeclaration()->Definition();
-        }
-    }
-    return nullptr;
-}
-
 std::vector<CompletionEntry> GetCompletionFromThisExpression(ir::AstNode *preNode, const std::string &triggerWord)
 {
     if (preNode == nullptr || !preNode->IsThisExpression()) {
         return {};
     }
     auto def = GetDefinitionOfThisExpression(preNode);
-    if (def == nullptr || !def->IsClassDefinition()) {
+    if (def == nullptr) {
         return {};
     }
-    return GetCompletionFromClassDefinition(def->AsClassDefinition(), triggerWord);
+    if (def->IsClassDefinition()) {
+        return GetCompletionFromClassDefinition(def->AsClassDefinition(), triggerWord);
+    }
+    if (def->IsTSInterfaceDeclaration()) {
+        return GetCompletionFromTSInterfaceDeclaration(def->AsTSInterfaceDeclaration(), triggerWord);
+    }
+    return {};
 }
 
 std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const std::string &triggerWord)

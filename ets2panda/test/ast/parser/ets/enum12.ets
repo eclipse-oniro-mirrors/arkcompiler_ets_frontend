@@ -17,7 +17,7 @@ enum Color { Red }
 
 function test(c: Color): void {
   let name: String = c.toString();
-  let nameFail: String = Color./* @@ label */toString();
+  let nameFail: String = Color.toString();
 }
 
 function main(): void {
@@ -25,4 +25,4 @@ function main(): void {
 }
 
 
-/* @@@ label Error Semantic error ESE0208: 'toString' is an instance property of 'Color' */
+/* @@? 20:32 Error Semantic error ESE0208: 'toString' is an instance property of 'Color' */

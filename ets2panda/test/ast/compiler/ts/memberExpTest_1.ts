@@ -20,6 +20,6 @@ bar: string
 var b: a;
 b.foo = 2;
 b.bar = "bar";
-b./* @@ label */foobar = 2;
+b.foobar = 2;
 
-/* @@@ label Error Semantic error ESE0000: Property foobar does not exist on this type. */
+/* @@? 23:3 Error Semantic error ESE0000: Property foobar does not exist on this type. */

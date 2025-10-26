@@ -26,9 +26,9 @@ function foo(this: A): boolean {
 let a = new A();
 let f1: F2 = foo;
 let f2: F2 = (this: A): boolean => { return this.value }
-a./* @@ label1 */f1();
-a./* @@ label2 */f2();
+a.f1();
+a.f2();
 
 
-/* @@@ label1 Error Semantic error ESE0087: Property 'f1' does not exist on type 'A' */
-/* @@@ label2 Error Semantic error ESE0087: Property 'f2' does not exist on type 'A' */
+/* @@? 29:3 Error Semantic error ESE0087: Property 'f1' does not exist on type 'A' */
+/* @@? 30:3 Error Semantic error ESE0087: Property 'f2' does not exist on type 'A' */

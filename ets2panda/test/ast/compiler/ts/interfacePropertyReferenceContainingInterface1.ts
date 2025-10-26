@@ -25,7 +25,7 @@ interface B extends A {
 
 var foo: B;
 
-foo.a.b.b.a.c./* @@ label */r
+foo.a.b.b.a.c.r
 
 
-/* @@@ label Error Semantic error ESE0000: Property r does not exist on this type. */
+/* @@? 28:15 Error Semantic error ESE0000: Property r does not exist on this type. */

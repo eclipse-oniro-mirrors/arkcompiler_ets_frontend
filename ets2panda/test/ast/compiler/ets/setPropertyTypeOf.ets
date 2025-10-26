@@ -19,11 +19,11 @@ class CustomError extends Error {
     // 'Error' breaks prototype chain here:
     super(message)
     // Restore prototype chain:
-    Object./* @@ label1 */setPrototypeOf(this, new/* @@ label2 */.target.prototype/* @@ label3 */)
+    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
 
-/* @@@ label1 Error Syntax error ESY167923: Runtime prototype inheritance is not supported because of static typing. */
-/* @@@ label2 Error Syntax error ESY0138: Invalid Type. */
-/* @@@ label3 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */
+/* @@? 22:12 Error Syntax error ESY167923: Runtime prototype inheritance is not supported because of static typing. */
+/* @@? 22:36 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 22:53 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */

@@ -22,8 +22,8 @@ enum Color {
 function main(): void {
   let i: Color = Color.Red;
   i = Color.Green;
-  i = i./* @@ label */Blue;
+  i = i.Blue;
 }
 
 
-/* @@@ label Error Semantic error ESE0207: 'Blue' is a static property of 'Color' */
+/* @@? 25:9 Error Semantic error ESE0207: 'Blue' is a static property of 'Color' */

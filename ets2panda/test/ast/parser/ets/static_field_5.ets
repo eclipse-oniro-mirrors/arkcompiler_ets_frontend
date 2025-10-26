@@ -44,8 +44,8 @@ function main() {
     let c : C = new C(b)
     let d : D = new D(c)
 
-    d.c.b.a./* @@ label */boo
+    d.c.b.a.boo
 }
 
 
-/* @@@ label Error Semantic error ESE0207: 'boo' is a static property of 'A' */
+/* @@? 47:13 Error Semantic error ESE0207: 'boo' is a static property of 'A' */

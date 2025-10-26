@@ -1796,9 +1796,15 @@ ir::MemberExpression *ParserImpl::ParsePrivatePropertyAccess(ir::Expression *pri
     return memberExpr;
 }
 
-ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExpr, bool isOptional)
+ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExpr, lexer::SourcePosition periodPos,
+                                                      bool isOptional)
 {
     ir::Identifier *ident = ExpectIdentifier(true);
+    if (ident->IsBrokenExpression()) {
+        // set the end of '.' as broken token
+        ident->SetRange({periodPos, periodPos});
+    }
+    ident->SetRange({periodPos, ident->Range().end});
     if (program_->Extension() == util::gen::extension::ETS && ident->Name().Is("prototype")) {
         LogError(diagnostic::PROTOTYPE_ACCESS);
     }
@@ -1887,13 +1893,14 @@ ir::Expression *ParserImpl::ParsePostPrimaryExpressionDot(ir::Expression *return
             return ParseOptionalChain(returnExpression);
         }
         case lexer::TokenType::PUNCTUATOR_PERIOD: {
+            auto periodPos = Lexer()->GetToken().End();
             lexer_->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);  // eat period
 
             if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_HASH_MARK) {
                 return ParsePrivatePropertyAccess(returnExpression);
             }
 
-            return ParsePropertyAccess(returnExpression);
+            return ParsePropertyAccess(returnExpression, periodPos);
         }
         default: {
             return nullptr;

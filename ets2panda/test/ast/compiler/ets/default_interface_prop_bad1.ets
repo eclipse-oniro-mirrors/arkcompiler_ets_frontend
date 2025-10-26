@@ -31,7 +31,7 @@ class MixedClass implements MixedProperties {
 
 function testMixedProperties() {
     let obj = new MixedClass(true);
-    obj./* @@ label */readOnlyOptional = false;
+    obj.readOnlyOptional = false;
 }
 
-/* @@@ label Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 34:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

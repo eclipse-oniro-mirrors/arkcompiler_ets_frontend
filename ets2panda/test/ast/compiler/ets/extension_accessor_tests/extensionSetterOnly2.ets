@@ -29,14 +29,14 @@ get field(this: B): int {
     return this.field_;
 }
 
-new A()./* @@ label1 */field++;
-new A()./* @@ label2 */field += 1;
-++new A()./* @@ label3 */field;
+new A().field++;
+new A().field += 1;
+++new A().field;
 new A().field = 1;
-/* @@ label4 */new A().field = 1.23
+new A().field = 1.23
 
 
-/* @@@ label1 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
-/* @@@ label2 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
-/* @@@ label3 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
-/* @@@ label4 Error Semantic error ESE0246: Can't find the extension accessor. */
+/* @@? 32:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 33:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 34:11 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 36:1 Error Semantic error ESE0246: Can't find the extension accessor. */

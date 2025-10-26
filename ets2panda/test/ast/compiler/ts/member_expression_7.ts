@@ -16,7 +16,7 @@
 
 var a = {foo : {bar : {baz : 5}}};
 var b: number;
-b = a.foo.bar./* @@ label */bad;
+b = a.foo.bar.bad;
 
 
-/* @@@ label Error Semantic error ESE0000: Property bad does not exist on this type. */
+/* @@? 19:15 Error Semantic error ESE0000: Property bad does not exist on this type. */

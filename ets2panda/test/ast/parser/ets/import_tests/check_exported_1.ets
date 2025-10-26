@@ -17,8 +17,8 @@ import * as all from "import_tests/check_exported_2";
 
 function main(): void {
     all.foo();
-    all./* @@ label */bar();
+    all.bar();
 }
 
 
-/* @@@ label Error Semantic error ESE0087: Property 'bar' does not exist on type 'check_exported_2' */
+/* @@? 20:9 Error Semantic error ESE0087: Property 'bar' does not exist on type 'check_exported_2' */

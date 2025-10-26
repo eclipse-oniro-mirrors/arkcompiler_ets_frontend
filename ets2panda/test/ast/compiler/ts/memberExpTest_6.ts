@@ -26,6 +26,6 @@ interface B extends A {
 var a: A | B;
 a.a;
 a.b;
-a./* @@ label */d;
+a.d;
 
-/* @@@ label Error Semantic error ESE0000: Property d does not exist on this type. */
+/* @@? 29:3 Error Semantic error ESE0000: Property d does not exist on this type. */

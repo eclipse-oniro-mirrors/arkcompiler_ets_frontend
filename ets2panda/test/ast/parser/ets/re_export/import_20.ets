@@ -17,8 +17,8 @@ import { name } from './re_export_16.ets'
 
 function main() {
     name.foo();
-    name./* @@ label */bar();
+    name.bar();
 }
 
 
-/* @@@ label Error Semantic error ESE0087: Property 'bar' does not exist on type 'export' */
+/* @@? 20:10 Error Semantic error ESE0087: Property 'bar' does not exist on type 'export' */

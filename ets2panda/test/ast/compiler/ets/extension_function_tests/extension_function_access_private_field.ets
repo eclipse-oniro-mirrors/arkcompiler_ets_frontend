@@ -18,7 +18,7 @@ class Banana {
 }
 
 function name(this: Banana): int {
-    return 1 + this./* @@ label */id;
+    return 1 + this.id;
 }
 
 function main() {
@@ -27,4 +27,4 @@ function main() {
 }
 
 
-/* @@@ label Error Semantic error ESE0293: Property id is not visible here. */
+/* @@? 21:21 Error Semantic error ESE0293: Property id is not visible here. */

@@ -19,10 +19,10 @@ class A {
 
 class B extends A {
     constructor() {
-        super./* @@ label */a = 2;
+        super.a = 2;
     }
 }
 
 
-/* @@@ label Error Semantic error ESE0377: Class field 'a' defined by the parent class is not accessible in the child class via super. */
-/* @@@ label Error Semantic error ESE0293: Property a is not visible here. */
+/* @@? 22:15 Error Semantic error ESE0377: Class field 'a' defined by the parent class is not accessible in the child class via super. */
+/* @@? 22:15 Error Semantic error ESE0293: Property a is not visible here. */

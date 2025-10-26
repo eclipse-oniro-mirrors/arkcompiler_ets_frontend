@@ -22,10 +22,10 @@ function f(): A {
 }
 
 function main() {
-  f()./* @@ label1 */foo()
-  f()!./* @@ label2 */foo()
+  f().foo()
+  f()!.foo()
 }
 
 
-/* @@@ label1 Error Semantic error ESE0207: 'foo' is a static property of 'A' */
-/* @@@ label2 Error Semantic error ESE0207: 'foo' is a static property of 'A' */
+/* @@? 25:7 Error Semantic error ESE0207: 'foo' is a static property of 'A' */
+/* @@? 26:8 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

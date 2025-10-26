@@ -19,8 +19,8 @@ class A{
         return "foo";
     }
     static getfoo(){
-        return A./* @@ label */foo;
+        return A.foo;
     }
 };
 
-/* @@@ label Error Semantic error ESE0306: Protected method is used as value */
+/* @@? 22:18 Error Semantic error ESE0306: Protected method is used as value */
