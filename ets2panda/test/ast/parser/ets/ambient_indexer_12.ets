@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,26 +13,8 @@
  * limitations under the License.
  */
 
-declare class A  {
-  [index: number]: string  // indexer declaration
+declare class A {
+    [index: boolean]: string
 }
 
-declare class B {
-    [index: int] : number
-}
-
-declare interface C {
-     [index :int]: string
- }
-
-declare class D {
-  [index: string]: string
-}
-
-declare interface E {
-  [index: string]: Object
-}
-
-function main () {
-
-}
+/* @@? 17:13 Error SyntaxError: Invalid index type 'boolean' in index signature. */
