@@ -22,21 +22,21 @@ export class StringBase64  {
         let length : int = data.length.toInt();
         let i : int ;
         for (i = 0; i < (length - 2); i += 3) {
-            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i) >> 2));
-            result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i) & 0x03) << 4) + (data.charAt(i + 1) >> 4)));
-            result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i + 1) & 0x0f) << 2) + (data.charAt(i + 2) >> 6)));
-            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i + 2) & 0x3f));
+            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i).toInt() >> 2));
+            result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i).toInt() & 0x03) << 4) + (data.charAt(i + 1).toInt() >> 4)));
+            result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i + 1).toInt() & 0x0f) << 2) + (data.charAt(i + 2).toInt() >> 6)));
+            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i + 2).toInt() & 0x3f));
         }
         if (length % 3 != 0) {
             i = length - (length % 3);
-            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i) >> 2));
+            result.append(StringBase64.TO_BASE64_TABLE.charAt(data.charAt(i).toInt() >> 2));
             if ((length % 3) == 2) {
-                result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i) & 0x03) << 4) + (data.charAt(i + 1) >> 4)));
-                result.append(StringBase64.TO_BASE64_TABLE.charAt((data.charAt(i + 1) & 0x0f) << 2));
+                result.append(StringBase64.TO_BASE64_TABLE.charAt(((data.charAt(i).toInt() & 0x03) << 4) + (data.charAt(i + 1).toInt() >> 4)));
+                result.append(StringBase64.TO_BASE64_TABLE.charAt((data.charAt(i + 1).toInt() & 0x0f) << 2));
                 result.append(StringBase64.BASE64PAD);
             }
             else {
-                result.append(StringBase64.TO_BASE64_TABLE.charAt((data.charAt(i) & 0x03) << 4));
+                result.append(StringBase64.TO_BASE64_TABLE.charAt((data.charAt(i).toInt() & 0x03) << 4));
                 result.append(StringBase64.BASE64PAD);
                 result.append(StringBase64.BASE64PAD);
             }
@@ -48,7 +48,7 @@ export class StringBase64  {
         let leftbits : int = 0;
         let leftdata : int = 0;
         for (let i : int = 0; i < data.length; i++) {
-            let c : int = StringBase64.TO_BINARY_TABLE[data.charAt(i) & 0x7f];
+            let c : int = StringBase64.TO_BINARY_TABLE[data.charAt(i).toInt() & 0x7f];
             let padding : boolean = data.charAt(i) == StringBase64.BASE64PAD;
             if (c == -1) {
                 continue;

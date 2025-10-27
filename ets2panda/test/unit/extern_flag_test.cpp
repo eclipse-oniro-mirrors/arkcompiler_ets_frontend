@@ -13,17 +13,77 @@
  * limitations under the License.
  */
 
-#include <gtest/gtest.h>
+#include <memory>
+#include <ostream>
+#include <string_view>
+
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 #include "assembler/assembly-program.h"
 #include "generated/signatures.h"
 #include "mem/mem.h"
 #include "macros.h"
+#include "assembly-function.h"
+#include "assembly-record.h"
 #include "mem/pool_manager.h"
+#include "util/diagnosticEngine.h"
 #include "util/options.h"
-#include "test/utils/asm_test.h"
+
+namespace {
+
+inline bool FunctionExternalFlag(ark::pandasm::Function const &fn)
+{
+    return fn.metadata->GetAttribute("external");
+}
+
+inline bool RecordExternalFlag(ark::pandasm::Record const &record)
+{
+    return record.metadata->GetAttribute("external");
+}
+
+struct SaveFmtFlags final {
+    explicit SaveFmtFlags(std::ostream &s) : os {s}, oldFlags {s.flags()} {}
+    ~SaveFmtFlags()
+    {
+        os.setf(oldFlags);
+    }
+
+private:
+    std::ostream &os;
+    std::ios_base::fmtflags oldFlags;
+};
+
+}  // namespace
+
+namespace ark::pandasm {
+
+// The value printer for expects.
+std::ostream &operator<<(std::ostream &s, const Function &arg)
+{
+    SaveFmtFlags const flags {s};
+    return s << std::boolalpha << "Function{" << std::quoted(arg.name) << ", external=" << FunctionExternalFlag(arg)
+             << "}";
+}
+
+// The value printer for expects.
+std::ostream &operator<<(std::ostream &s, const Record &arg)
+{
+    SaveFmtFlags const flags {s};
+    return s << std::boolalpha << "Function{" << std::quoted(arg.name) << ", external=" << RecordExternalFlag(arg)
+             << "}";
+}
+
+}  // namespace ark::pandasm
 
 namespace ark::es2panda::compiler::test {
+
+MATCHER_P(ExternAttribute, flag, "")
+{
+    bool value = arg.metadata->GetAttribute("external");
+    *result_listener << "'external' attribute is " << value;
+    return value == flag;
+}
 
 class DeclareTest : public testing::Test {
 public:
@@ -38,6 +98,12 @@ public:
         mem::MemConfig::Finalize();
     }
 
+protected:
+    pandasm::Program const &Program() const
+    {
+        return *program_;
+    }
+
     void SetCurrentProgram(std::string_view src)
     {
         static constexpr std::string_view FILE_NAME = "ets_decl_test.ets";
@@ -45,43 +111,36 @@ public:
                                             "--ets-unnamed"};  // NOLINT(modernize-avoid-c-arrays)
 
         program_ = GetProgram({args.data(), args.size()}, FILE_NAME, src);
-        ASSERT_NE(program_.get(), nullptr);
     }
 
-    void CheckRecordExternalFlag(std::string_view recordName)
+    void CheckRecordExternalFlag(std::string recordName, bool externFlag = true)
     {
-        pandasm::Record *record = GetRecord(recordName, program_);
-        ASSERT_TRUE(record != nullptr) << "Record '" << recordName << "' not found";
-        ASSERT_TRUE(HasExternalFlag(record)) << "Record '" << record->name << "' doesn't have External flag";
+        ASSERT_NE(program_, nullptr);
+        using namespace ::testing;
+        auto const matcher = Contains(Pair(recordName, ExternAttribute(externFlag)));
+        EXPECT_THAT(program_->recordTable, matcher);
     }
 
-    void CheckFunctionExternalFlag(std::string_view functionName, bool isStatic = false)
+    void CheckFunctionExternalFlag(std::string functionName, bool isStatic = false, bool externFlag = true)
     {
-        pandasm::Function *fn =
-            GetFunction(functionName, isStatic ? program_->functionStaticTable : program_->functionInstanceTable);
-        ASSERT_TRUE(fn != nullptr) << "Function '" << functionName << "' not found";
-        ASSERT_TRUE(HasExternalFlag(fn)) << "Function '" << fn->name << "' doesn't have External flag";
+        ASSERT_NE(program_, nullptr);
+        using namespace ::testing;
+        auto const matcher = Contains(Pair(functionName, ExternAttribute(externFlag)));
+        if (isStatic) {
+            EXPECT_THAT(program_->functionStaticTable, matcher);
+        } else {
+            EXPECT_THAT(program_->functionInstanceTable, matcher);
+        }
     }
 
-    void CheckFunctionNoExternalFlag(std::string_view functionName, bool isStatic = false)
+    void CheckRecordNotExists(std::string name)
     {
-        pandasm::Function *fn =
-            GetFunction(functionName, isStatic ? program_->functionStaticTable : program_->functionInstanceTable);
-        ASSERT_TRUE(fn != nullptr) << "Function '" << functionName << "' not found";
-        ASSERT_FALSE(HasExternalFlag(fn)) << "Function '" << fn->name << "' has External flag";
+        ASSERT_NE(program_, nullptr);
+        using namespace ::testing;
+        EXPECT_THAT(program_->recordTable, Not(Contains(Key(name))));
     }
 
 private:
-    bool HasExternalFlag(pandasm::Function *fn)
-    {
-        return (fn->metadata->GetAttribute("external"));
-    }
-
-    bool HasExternalFlag(pandasm::Record *record)
-    {
-        return (record->metadata->GetAttribute("external"));
-    }
-
     NO_COPY_SEMANTIC(DeclareTest);
     NO_MOVE_SEMANTIC(DeclareTest);
 
@@ -104,16 +163,17 @@ private:
         return std::unique_ptr<pandasm::Program>(compiler.Compile(input, *options, de));
     }
 
-    pandasm::Function *GetFunction(std::string_view functionName, const std::map<std::string, pandasm::Function> &table)
+    pandasm::Function const *GetFunction(std::string_view functionName,
+                                         const std::map<std::string, pandasm::Function> &table)
     {
         auto it = table.find(functionName.data());
         if (it == table.end()) {
             return nullptr;
         }
-        return const_cast<pandasm::Function *>(&it->second);
+        return &it->second;
     }
 
-    pandasm::Record *GetRecord(std::string_view recordName, const std::unique_ptr<ark::pandasm::Program> &program)
+    pandasm::Record const *GetRecord(std::string_view recordName, const std::unique_ptr<ark::pandasm::Program> &program)
     {
         auto it = program->recordTable.find(recordName.data());
         if (it == program->recordTable.end()) {
@@ -150,6 +210,7 @@ TEST_F(DeclareTest, noImplclass_def_with_overload_0)
         declare class my_class {
             public foo(arg?: int): string
         }
+        function foo(my: my_class){ return my.foo() }
     )");
     CheckFunctionExternalFlag("my_class.foo:std.core.Int;std.core.String;");
 }
@@ -161,6 +222,7 @@ TEST_F(DeclareTest, class_constructor_without_parameters_0)
         declare class A_class {
             static x: double
         }
+        let a = new A_class()
     )");
     CheckFunctionExternalFlag("A_class.<ctor>:void;");
 }
@@ -171,6 +233,7 @@ TEST_F(DeclareTest, class_constructor_without_parameters_1)
         declare class A {
             constructor();
         }
+        let a = new A();
     )");
     CheckFunctionExternalFlag("A.<ctor>:void;");
 }
@@ -180,8 +243,9 @@ TEST_F(DeclareTest, class_implicit_constructor_0)
     SetCurrentProgram(R"(
         declare class A {
         }
+        let a = new A();
     )");
-    CheckFunctionExternalFlag("A.<ctor>:void;");
+    CheckFunctionExternalFlag("A.<ctor>:void;", false);
 }
 
 // === Method of interface ===
@@ -191,6 +255,7 @@ TEST_F(DeclareTest, noImplinterface_def_with_overload_0)
         declare interface my_inter {
             foo(arg?: int): void
         }
+        function foo(my: my_inter){ return my.foo() }
     )");
     CheckFunctionExternalFlag("my_inter.foo:std.core.Int;void;");
 }
@@ -201,7 +266,7 @@ TEST_F(DeclareTest, namespace_0)
         declare namespace A {
         }
     )");
-    CheckRecordExternalFlag("A");
+    CheckRecordNotExists("A");
 }
 
 }  // namespace ark::es2panda::compiler::test

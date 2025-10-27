@@ -24,6 +24,7 @@ console.log(notExist)
 
 /* @@? distant_package.ets:22:22 Error SyntaxError: Variable must be initialized or it's type must be declared. */
 
+/* @@? package_with_errors_1.ets:19:32 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
 /* @@? package_with_errors_1.ets:19:32 Error TypeError: Cannot cast type 'String' to 'double' */
 
 /* @@? package_with_errors_2.ets:19:16 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */

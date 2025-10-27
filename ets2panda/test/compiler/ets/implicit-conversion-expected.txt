@@ -1185,52 +1185,6 @@
                           "id": {
                             "type": "Identifier",
                             "name": "indian_fig",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Char",
-                                  "loc": {
-                                    "start": {
-                                      "line": 25,
-                                      "column": 22,
-                                      "program": "implicit-conversion.ets"
-                                    },
-                                    "end": {
-                                      "line": 25,
-                                      "column": 26,
-                                      "program": "implicit-conversion.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 25,
-                                    "column": 22,
-                                    "program": "implicit-conversion.ets"
-                                  },
-                                  "end": {
-                                    "line": 25,
-                                    "column": 26,
-                                    "program": "implicit-conversion.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 25,
-                                  "column": 22,
-                                  "program": "implicit-conversion.ets"
-                                },
-                                "end": {
-                                  "line": 25,
-                                  "column": 26,
-                                  "program": "implicit-conversion.ets"
-                                }
-                              }
-                            },
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -1245,17 +1199,84 @@
                             }
                           },
                           "init": {
-                            "type": "NumberLiteral",
-                            "value": 65,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Int",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 22,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 25,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toChar",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 26,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 32,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
+                              "loc": {
+                                "start": {
+                                  "line": 25,
+                                  "column": 22,
+                                  "program": "implicit-conversion.ets"
+                                },
+                                "end": {
+                                  "line": 25,
+                                  "column": 32,
+                                  "program": "implicit-conversion.ets"
+                                }
+                              }
+                            },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 65,
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 33,
+                                    "program": "implicit-conversion.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 35,
+                                    "program": "implicit-conversion.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 25,
-                                "column": 29,
+                                "column": 22,
                                 "program": "implicit-conversion.ets"
                               },
                               "end": {
                                 "line": 25,
-                                "column": 31,
+                                "column": 36,
                                 "program": "implicit-conversion.ets"
                               }
                             }
@@ -1268,7 +1289,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 31,
+                              "column": 36,
                               "program": "implicit-conversion.ets"
                             }
                           }
@@ -1283,7 +1304,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 32,
+                          "column": 37,
                           "program": "implicit-conversion.ets"
                         }
                       }

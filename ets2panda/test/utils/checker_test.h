@@ -238,7 +238,11 @@ public:
 
         publicContext_->codeGenCb = MakeCompileJob<CodeGen, RegSpiller, FunctionEmitter, Emitter, AstCompiler>();
         ark::es2panda::compiler::CompilerImpl compilerImpl(options->GetThread(), {});
-        return compilerImpl.Emit(publicContext_.get());
+
+        compilerImpl.Emit(publicContext_.get());
+        publicContext_->emitter->GenAnnotation();
+        return publicContext_->emitter->Finalize(publicContext_->config->options->IsDumpDebugInfo(),
+                                                 ark::es2panda::compiler::Signatures::ETS_GLOBAL);
     }
     NO_COPY_SEMANTIC(CheckerTest);
     NO_MOVE_SEMANTIC(CheckerTest);

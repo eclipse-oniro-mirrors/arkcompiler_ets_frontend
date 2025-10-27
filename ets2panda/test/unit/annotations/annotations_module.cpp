@@ -14,7 +14,6 @@
  */
 #include <gtest/gtest.h>
 #include <string>
-#include <utility>
 #include <vector>
 #include "assembly-program.h"
 #include "test/unit/annotations/annotations_emit_test.h"

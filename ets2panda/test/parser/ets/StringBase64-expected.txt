@@ -3172,8 +3172,41 @@
                                   "callee": {
                                     "type": "MemberExpression",
                                     "object": {
-                                      "type": "StringLiteral",
-                                      "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "StringBase64",
+                                        "loc": {
+                                          "start": {
+                                            "line": 25,
+                                            "column": 27,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 25,
+                                            "column": 39,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "TO_BASE64_TABLE",
+                                        "loc": {
+                                          "start": {
+                                            "line": 25,
+                                            "column": 40,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 25,
+                                            "column": 55,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": false,
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 25,
@@ -3227,8 +3260,75 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "Identifier",
-                                            "name": "data",
+                                            "type": "CallExpression",
+                                            "callee": {
+                                              "type": "MemberExpression",
+                                              "object": {
+                                                "type": "Identifier",
+                                                "name": "data",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 25,
+                                                    "column": 63,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 25,
+                                                    "column": 67,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "charAt",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 25,
+                                                    "column": 68,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 25,
+                                                    "column": 74,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "computed": false,
+                                              "optional": false,
+                                              "loc": {
+                                                "start": {
+                                                  "line": 25,
+                                                  "column": 63,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 25,
+                                                  "column": 74,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "Identifier",
+                                                "name": "i",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 25,
+                                                    "column": 75,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 25,
+                                                    "column": 76,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              }
+                                            ],
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 25,
@@ -3237,23 +3337,23 @@
                                               },
                                               "end": {
                                                 "line": 25,
-                                                "column": 67,
+                                                "column": 77,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
                                           },
                                           "property": {
                                             "type": "Identifier",
-                                            "name": "charAt",
+                                            "name": "toInt",
                                             "loc": {
                                               "start": {
                                                 "line": 25,
-                                                "column": 68,
+                                                "column": 78,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 25,
-                                                "column": 74,
+                                                "column": 83,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -3268,29 +3368,12 @@
                                             },
                                             "end": {
                                               "line": 25,
-                                              "column": 74,
+                                              "column": 83,
                                               "program": "StringBase64.ets"
                                             }
                                           }
                                         },
-                                        "arguments": [
-                                          {
-                                            "type": "Identifier",
-                                            "name": "i",
-                                            "loc": {
-                                              "start": {
-                                                "line": 25,
-                                                "column": 75,
-                                                "program": "StringBase64.ets"
-                                              },
-                                              "end": {
-                                                "line": 25,
-                                                "column": 76,
-                                                "program": "StringBase64.ets"
-                                              }
-                                            }
-                                          }
-                                        ],
+                                        "arguments": [],
                                         "optional": false,
                                         "loc": {
                                           "start": {
@@ -3300,7 +3383,7 @@
                                           },
                                           "end": {
                                             "line": 25,
-                                            "column": 77,
+                                            "column": 85,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -3311,12 +3394,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 25,
-                                            "column": 81,
+                                            "column": 89,
                                             "program": "StringBase64.ets"
                                           },
                                           "end": {
                                             "line": 25,
-                                            "column": 82,
+                                            "column": 90,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -3329,7 +3412,7 @@
                                         },
                                         "end": {
                                           "line": 25,
-                                          "column": 82,
+                                          "column": 90,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -3344,7 +3427,7 @@
                                     },
                                     "end": {
                                       "line": 25,
-                                      "column": 83,
+                                      "column": 91,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -3359,7 +3442,7 @@
                                 },
                                 "end": {
                                   "line": 25,
-                                  "column": 84,
+                                  "column": 92,
                                   "program": "StringBase64.ets"
                                 }
                               }
@@ -3372,7 +3455,7 @@
                               },
                               "end": {
                                 "line": 25,
-                                "column": 85,
+                                "column": 93,
                                 "program": "StringBase64.ets"
                               }
                             }
@@ -3436,8 +3519,41 @@
                                   "callee": {
                                     "type": "MemberExpression",
                                     "object": {
-                                      "type": "StringLiteral",
-                                      "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "StringBase64",
+                                        "loc": {
+                                          "start": {
+                                            "line": 26,
+                                            "column": 27,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 26,
+                                            "column": 39,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "TO_BASE64_TABLE",
+                                        "loc": {
+                                          "start": {
+                                            "line": 26,
+                                            "column": 40,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 26,
+                                            "column": 55,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": false,
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 26,
@@ -3497,8 +3613,75 @@
                                             "callee": {
                                               "type": "MemberExpression",
                                               "object": {
-                                                "type": "Identifier",
-                                                "name": "data",
+                                                "type": "CallExpression",
+                                                "callee": {
+                                                  "type": "MemberExpression",
+                                                  "object": {
+                                                    "type": "Identifier",
+                                                    "name": "data",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 26,
+                                                        "column": 65,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 26,
+                                                        "column": 69,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "property": {
+                                                    "type": "Identifier",
+                                                    "name": "charAt",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 26,
+                                                        "column": 70,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 26,
+                                                        "column": 76,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "computed": false,
+                                                  "optional": false,
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 26,
+                                                      "column": 65,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 26,
+                                                      "column": 76,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "arguments": [
+                                                  {
+                                                    "type": "Identifier",
+                                                    "name": "i",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 26,
+                                                        "column": 77,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 26,
+                                                        "column": 78,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                "optional": false,
                                                 "loc": {
                                                   "start": {
                                                     "line": 26,
@@ -3507,23 +3690,23 @@
                                                   },
                                                   "end": {
                                                     "line": 26,
-                                                    "column": 69,
+                                                    "column": 79,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
                                               },
                                               "property": {
                                                 "type": "Identifier",
-                                                "name": "charAt",
+                                                "name": "toInt",
                                                 "loc": {
                                                   "start": {
                                                     "line": 26,
-                                                    "column": 70,
+                                                    "column": 80,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 26,
-                                                    "column": 76,
+                                                    "column": 85,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -3538,29 +3721,12 @@
                                                 },
                                                 "end": {
                                                   "line": 26,
-                                                  "column": 76,
+                                                  "column": 85,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
                                             },
-                                            "arguments": [
-                                              {
-                                                "type": "Identifier",
-                                                "name": "i",
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 26,
-                                                    "column": 77,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 26,
-                                                    "column": 78,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              }
-                                            ],
+                                            "arguments": [],
                                             "optional": false,
                                             "loc": {
                                               "start": {
@@ -3570,7 +3736,7 @@
                                               },
                                               "end": {
                                                 "line": 26,
-                                                "column": 79,
+                                                "column": 87,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -3581,12 +3747,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 26,
-                                                "column": 82,
+                                                "column": 90,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 26,
-                                                "column": 86,
+                                                "column": 94,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -3599,7 +3765,7 @@
                                             },
                                             "end": {
                                               "line": 26,
-                                              "column": 87,
+                                              "column": 95,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -3610,12 +3776,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 26,
-                                              "column": 91,
+                                              "column": 99,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 26,
-                                              "column": 92,
+                                              "column": 100,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -3628,7 +3794,7 @@
                                           },
                                           "end": {
                                             "line": 26,
-                                            "column": 93,
+                                            "column": 101,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -3641,33 +3807,132 @@
                                           "callee": {
                                             "type": "MemberExpression",
                                             "object": {
-                                              "type": "Identifier",
-                                              "name": "data",
+                                              "type": "CallExpression",
+                                              "callee": {
+                                                "type": "MemberExpression",
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "data",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 26,
+                                                      "column": 105,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 26,
+                                                      "column": 109,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "charAt",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 26,
+                                                      "column": 110,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 26,
+                                                      "column": 116,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "computed": false,
+                                                "optional": false,
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 26,
+                                                    "column": 105,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 26,
+                                                    "column": 116,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "arguments": [
+                                                {
+                                                  "type": "BinaryExpression",
+                                                  "operator": "+",
+                                                  "left": {
+                                                    "type": "Identifier",
+                                                    "name": "i",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 26,
+                                                        "column": 117,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 26,
+                                                        "column": 118,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "right": {
+                                                    "type": "NumberLiteral",
+                                                    "value": 1,
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 26,
+                                                        "column": 121,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 26,
+                                                        "column": 122,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 26,
+                                                      "column": 117,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 26,
+                                                      "column": 122,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                }
+                                              ],
+                                              "optional": false,
                                               "loc": {
                                                 "start": {
                                                   "line": 26,
-                                                  "column": 97,
+                                                  "column": 105,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 26,
-                                                  "column": 101,
+                                                  "column": 123,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
                                             },
                                             "property": {
                                               "type": "Identifier",
-                                              "name": "charAt",
+                                              "name": "toInt",
                                               "loc": {
                                                 "start": {
                                                   "line": 26,
-                                                  "column": 102,
+                                                  "column": 124,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 26,
-                                                  "column": 108,
+                                                  "column": 129,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -3677,76 +3942,27 @@
                                             "loc": {
                                               "start": {
                                                 "line": 26,
-                                                "column": 97,
+                                                "column": 105,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 26,
-                                                "column": 108,
+                                                "column": 129,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
                                           },
-                                          "arguments": [
-                                            {
-                                              "type": "BinaryExpression",
-                                              "operator": "+",
-                                              "left": {
-                                                "type": "Identifier",
-                                                "name": "i",
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 26,
-                                                    "column": 109,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 26,
-                                                    "column": 110,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              },
-                                              "right": {
-                                                "type": "NumberLiteral",
-                                                "value": 1,
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 26,
-                                                    "column": 113,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 26,
-                                                    "column": 114,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 26,
-                                                  "column": 109,
-                                                  "program": "StringBase64.ets"
-                                                },
-                                                "end": {
-                                                  "line": 26,
-                                                  "column": 114,
-                                                  "program": "StringBase64.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
+                                          "arguments": [],
                                           "optional": false,
                                           "loc": {
                                             "start": {
                                               "line": 26,
-                                              "column": 97,
+                                              "column": 105,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 26,
-                                              "column": 115,
+                                              "column": 131,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -3757,12 +3973,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 26,
-                                              "column": 119,
+                                              "column": 135,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 26,
-                                              "column": 120,
+                                              "column": 136,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -3770,12 +3986,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 26,
-                                            "column": 96,
+                                            "column": 104,
                                             "program": "StringBase64.ets"
                                           },
                                           "end": {
                                             "line": 26,
-                                            "column": 121,
+                                            "column": 137,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -3788,7 +4004,7 @@
                                         },
                                         "end": {
                                           "line": 26,
-                                          "column": 121,
+                                          "column": 137,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -3803,7 +4019,7 @@
                                     },
                                     "end": {
                                       "line": 26,
-                                      "column": 122,
+                                      "column": 138,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -3818,7 +4034,7 @@
                                 },
                                 "end": {
                                   "line": 26,
-                                  "column": 123,
+                                  "column": 139,
                                   "program": "StringBase64.ets"
                                 }
                               }
@@ -3831,7 +4047,7 @@
                               },
                               "end": {
                                 "line": 26,
-                                "column": 124,
+                                "column": 140,
                                 "program": "StringBase64.ets"
                               }
                             }
@@ -3895,8 +4111,41 @@
                                   "callee": {
                                     "type": "MemberExpression",
                                     "object": {
-                                      "type": "StringLiteral",
-                                      "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "StringBase64",
+                                        "loc": {
+                                          "start": {
+                                            "line": 27,
+                                            "column": 27,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 27,
+                                            "column": 39,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "TO_BASE64_TABLE",
+                                        "loc": {
+                                          "start": {
+                                            "line": 27,
+                                            "column": 40,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 27,
+                                            "column": 55,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": false,
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 27,
@@ -3956,8 +4205,107 @@
                                             "callee": {
                                               "type": "MemberExpression",
                                               "object": {
-                                                "type": "Identifier",
-                                                "name": "data",
+                                                "type": "CallExpression",
+                                                "callee": {
+                                                  "type": "MemberExpression",
+                                                  "object": {
+                                                    "type": "Identifier",
+                                                    "name": "data",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 27,
+                                                        "column": 65,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 27,
+                                                        "column": 69,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "property": {
+                                                    "type": "Identifier",
+                                                    "name": "charAt",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 27,
+                                                        "column": 70,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 27,
+                                                        "column": 76,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "computed": false,
+                                                  "optional": false,
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 27,
+                                                      "column": 65,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 27,
+                                                      "column": 76,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "arguments": [
+                                                  {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "+",
+                                                    "left": {
+                                                      "type": "Identifier",
+                                                      "name": "i",
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 27,
+                                                          "column": 77,
+                                                          "program": "StringBase64.ets"
+                                                        },
+                                                        "end": {
+                                                          "line": 27,
+                                                          "column": 78,
+                                                          "program": "StringBase64.ets"
+                                                        }
+                                                      }
+                                                    },
+                                                    "right": {
+                                                      "type": "NumberLiteral",
+                                                      "value": 1,
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 27,
+                                                          "column": 81,
+                                                          "program": "StringBase64.ets"
+                                                        },
+                                                        "end": {
+                                                          "line": 27,
+                                                          "column": 82,
+                                                          "program": "StringBase64.ets"
+                                                        }
+                                                      }
+                                                    },
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 27,
+                                                        "column": 77,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 27,
+                                                        "column": 82,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  }
+                                                ],
+                                                "optional": false,
                                                 "loc": {
                                                   "start": {
                                                     "line": 27,
@@ -3966,23 +4314,23 @@
                                                   },
                                                   "end": {
                                                     "line": 27,
-                                                    "column": 69,
+                                                    "column": 83,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
                                               },
                                               "property": {
                                                 "type": "Identifier",
-                                                "name": "charAt",
+                                                "name": "toInt",
                                                 "loc": {
                                                   "start": {
                                                     "line": 27,
-                                                    "column": 70,
+                                                    "column": 84,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 27,
-                                                    "column": 76,
+                                                    "column": 89,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -3997,61 +4345,12 @@
                                                 },
                                                 "end": {
                                                   "line": 27,
-                                                  "column": 76,
+                                                  "column": 89,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
                                             },
-                                            "arguments": [
-                                              {
-                                                "type": "BinaryExpression",
-                                                "operator": "+",
-                                                "left": {
-                                                  "type": "Identifier",
-                                                  "name": "i",
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 27,
-                                                      "column": 77,
-                                                      "program": "StringBase64.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 27,
-                                                      "column": 78,
-                                                      "program": "StringBase64.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "right": {
-                                                  "type": "NumberLiteral",
-                                                  "value": 1,
-                                                  "loc": {
-                                                    "start": {
-                                                      "line": 27,
-                                                      "column": 81,
-                                                      "program": "StringBase64.ets"
-                                                    },
-                                                    "end": {
-                                                      "line": 27,
-                                                      "column": 82,
-                                                      "program": "StringBase64.ets"
-                                                    }
-                                                  }
-                                                },
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 27,
-                                                    "column": 77,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 27,
-                                                    "column": 82,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              }
-                                            ],
+                                            "arguments": [],
                                             "optional": false,
                                             "loc": {
                                               "start": {
@@ -4061,7 +4360,7 @@
                                               },
                                               "end": {
                                                 "line": 27,
-                                                "column": 83,
+                                                "column": 91,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -4072,12 +4371,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 27,
-                                                "column": 86,
+                                                "column": 94,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 27,
-                                                "column": 90,
+                                                "column": 98,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -4090,7 +4389,7 @@
                                             },
                                             "end": {
                                               "line": 27,
-                                              "column": 91,
+                                              "column": 99,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -4101,12 +4400,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 27,
-                                              "column": 95,
+                                              "column": 103,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 27,
-                                              "column": 96,
+                                              "column": 104,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -4119,7 +4418,7 @@
                                           },
                                           "end": {
                                             "line": 27,
-                                            "column": 97,
+                                            "column": 105,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -4132,33 +4431,132 @@
                                           "callee": {
                                             "type": "MemberExpression",
                                             "object": {
-                                              "type": "Identifier",
-                                              "name": "data",
+                                              "type": "CallExpression",
+                                              "callee": {
+                                                "type": "MemberExpression",
+                                                "object": {
+                                                  "type": "Identifier",
+                                                  "name": "data",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 27,
+                                                      "column": 109,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 27,
+                                                      "column": 113,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "property": {
+                                                  "type": "Identifier",
+                                                  "name": "charAt",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 27,
+                                                      "column": 114,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 27,
+                                                      "column": 120,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "computed": false,
+                                                "optional": false,
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 27,
+                                                    "column": 109,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 27,
+                                                    "column": 120,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "arguments": [
+                                                {
+                                                  "type": "BinaryExpression",
+                                                  "operator": "+",
+                                                  "left": {
+                                                    "type": "Identifier",
+                                                    "name": "i",
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 27,
+                                                        "column": 121,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 27,
+                                                        "column": 122,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "right": {
+                                                    "type": "NumberLiteral",
+                                                    "value": 2,
+                                                    "loc": {
+                                                      "start": {
+                                                        "line": 27,
+                                                        "column": 125,
+                                                        "program": "StringBase64.ets"
+                                                      },
+                                                      "end": {
+                                                        "line": 27,
+                                                        "column": 126,
+                                                        "program": "StringBase64.ets"
+                                                      }
+                                                    }
+                                                  },
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 27,
+                                                      "column": 121,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 27,
+                                                      "column": 126,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                }
+                                              ],
+                                              "optional": false,
                                               "loc": {
                                                 "start": {
                                                   "line": 27,
-                                                  "column": 101,
+                                                  "column": 109,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 27,
-                                                  "column": 105,
+                                                  "column": 127,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
                                             },
                                             "property": {
                                               "type": "Identifier",
-                                              "name": "charAt",
+                                              "name": "toInt",
                                               "loc": {
                                                 "start": {
                                                   "line": 27,
-                                                  "column": 106,
+                                                  "column": 128,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 27,
-                                                  "column": 112,
+                                                  "column": 133,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -4168,76 +4566,27 @@
                                             "loc": {
                                               "start": {
                                                 "line": 27,
-                                                "column": 101,
+                                                "column": 109,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 27,
-                                                "column": 112,
+                                                "column": 133,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
                                           },
-                                          "arguments": [
-                                            {
-                                              "type": "BinaryExpression",
-                                              "operator": "+",
-                                              "left": {
-                                                "type": "Identifier",
-                                                "name": "i",
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 27,
-                                                    "column": 113,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 27,
-                                                    "column": 114,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              },
-                                              "right": {
-                                                "type": "NumberLiteral",
-                                                "value": 2,
-                                                "loc": {
-                                                  "start": {
-                                                    "line": 27,
-                                                    "column": 117,
-                                                    "program": "StringBase64.ets"
-                                                  },
-                                                  "end": {
-                                                    "line": 27,
-                                                    "column": 118,
-                                                    "program": "StringBase64.ets"
-                                                  }
-                                                }
-                                              },
-                                              "loc": {
-                                                "start": {
-                                                  "line": 27,
-                                                  "column": 113,
-                                                  "program": "StringBase64.ets"
-                                                },
-                                                "end": {
-                                                  "line": 27,
-                                                  "column": 118,
-                                                  "program": "StringBase64.ets"
-                                                }
-                                              }
-                                            }
-                                          ],
+                                          "arguments": [],
                                           "optional": false,
                                           "loc": {
                                             "start": {
                                               "line": 27,
-                                              "column": 101,
+                                              "column": 109,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 27,
-                                              "column": 119,
+                                              "column": 135,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -4248,12 +4597,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 27,
-                                              "column": 123,
+                                              "column": 139,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 27,
-                                              "column": 124,
+                                              "column": 140,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -4261,12 +4610,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 27,
-                                            "column": 100,
+                                            "column": 108,
                                             "program": "StringBase64.ets"
                                           },
                                           "end": {
                                             "line": 27,
-                                            "column": 125,
+                                            "column": 141,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -4279,7 +4628,7 @@
                                         },
                                         "end": {
                                           "line": 27,
-                                          "column": 125,
+                                          "column": 141,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -4294,7 +4643,7 @@
                                     },
                                     "end": {
                                       "line": 27,
-                                      "column": 126,
+                                      "column": 142,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -4309,7 +4658,7 @@
                                 },
                                 "end": {
                                   "line": 27,
-                                  "column": 127,
+                                  "column": 143,
                                   "program": "StringBase64.ets"
                                 }
                               }
@@ -4322,7 +4671,7 @@
                               },
                               "end": {
                                 "line": 27,
-                                "column": 128,
+                                "column": 144,
                                 "program": "StringBase64.ets"
                               }
                             }
@@ -4386,8 +4735,41 @@
                                   "callee": {
                                     "type": "MemberExpression",
                                     "object": {
-                                      "type": "StringLiteral",
-                                      "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "StringBase64",
+                                        "loc": {
+                                          "start": {
+                                            "line": 28,
+                                            "column": 27,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 28,
+                                            "column": 39,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "TO_BASE64_TABLE",
+                                        "loc": {
+                                          "start": {
+                                            "line": 28,
+                                            "column": 40,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 28,
+                                            "column": 55,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": false,
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 28,
@@ -4441,8 +4823,107 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "Identifier",
-                                            "name": "data",
+                                            "type": "CallExpression",
+                                            "callee": {
+                                              "type": "MemberExpression",
+                                              "object": {
+                                                "type": "Identifier",
+                                                "name": "data",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 28,
+                                                    "column": 63,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 28,
+                                                    "column": 67,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "charAt",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 28,
+                                                    "column": 68,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 28,
+                                                    "column": 74,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "computed": false,
+                                              "optional": false,
+                                              "loc": {
+                                                "start": {
+                                                  "line": 28,
+                                                  "column": 63,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 28,
+                                                  "column": 74,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "BinaryExpression",
+                                                "operator": "+",
+                                                "left": {
+                                                  "type": "Identifier",
+                                                  "name": "i",
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 28,
+                                                      "column": 75,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 28,
+                                                      "column": 76,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "right": {
+                                                  "type": "NumberLiteral",
+                                                  "value": 2,
+                                                  "loc": {
+                                                    "start": {
+                                                      "line": 28,
+                                                      "column": 79,
+                                                      "program": "StringBase64.ets"
+                                                    },
+                                                    "end": {
+                                                      "line": 28,
+                                                      "column": 80,
+                                                      "program": "StringBase64.ets"
+                                                    }
+                                                  }
+                                                },
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 28,
+                                                    "column": 75,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 28,
+                                                    "column": 80,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              }
+                                            ],
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 28,
@@ -4451,23 +4932,23 @@
                                               },
                                               "end": {
                                                 "line": 28,
-                                                "column": 67,
+                                                "column": 81,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
                                           },
                                           "property": {
                                             "type": "Identifier",
-                                            "name": "charAt",
+                                            "name": "toInt",
                                             "loc": {
                                               "start": {
                                                 "line": 28,
-                                                "column": 68,
+                                                "column": 82,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 28,
-                                                "column": 74,
+                                                "column": 87,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -4482,61 +4963,12 @@
                                             },
                                             "end": {
                                               "line": 28,
-                                              "column": 74,
+                                              "column": 87,
                                               "program": "StringBase64.ets"
                                             }
                                           }
                                         },
-                                        "arguments": [
-                                          {
-                                            "type": "BinaryExpression",
-                                            "operator": "+",
-                                            "left": {
-                                              "type": "Identifier",
-                                              "name": "i",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 28,
-                                                  "column": 75,
-                                                  "program": "StringBase64.ets"
-                                                },
-                                                "end": {
-                                                  "line": 28,
-                                                  "column": 76,
-                                                  "program": "StringBase64.ets"
-                                                }
-                                              }
-                                            },
-                                            "right": {
-                                              "type": "NumberLiteral",
-                                              "value": 2,
-                                              "loc": {
-                                                "start": {
-                                                  "line": 28,
-                                                  "column": 79,
-                                                  "program": "StringBase64.ets"
-                                                },
-                                                "end": {
-                                                  "line": 28,
-                                                  "column": 80,
-                                                  "program": "StringBase64.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 28,
-                                                "column": 75,
-                                                "program": "StringBase64.ets"
-                                              },
-                                              "end": {
-                                                "line": 28,
-                                                "column": 80,
-                                                "program": "StringBase64.ets"
-                                              }
-                                            }
-                                          }
-                                        ],
+                                        "arguments": [],
                                         "optional": false,
                                         "loc": {
                                           "start": {
@@ -4546,7 +4978,7 @@
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 81,
+                                            "column": 89,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -4557,12 +4989,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 28,
-                                            "column": 84,
+                                            "column": 92,
                                             "program": "StringBase64.ets"
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 88,
+                                            "column": 96,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -4575,7 +5007,7 @@
                                         },
                                         "end": {
                                           "line": 28,
-                                          "column": 88,
+                                          "column": 96,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -4590,7 +5022,7 @@
                                     },
                                     "end": {
                                       "line": 28,
-                                      "column": 89,
+                                      "column": 97,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -4605,7 +5037,7 @@
                                 },
                                 "end": {
                                   "line": 28,
-                                  "column": 90,
+                                  "column": 98,
                                   "program": "StringBase64.ets"
                                 }
                               }
@@ -4618,7 +5050,7 @@
                               },
                               "end": {
                                 "line": 28,
-                                "column": 91,
+                                "column": 99,
                                 "program": "StringBase64.ets"
                               }
                             }
@@ -4921,8 +5353,41 @@
                                   "callee": {
                                     "type": "MemberExpression",
                                     "object": {
-                                      "type": "StringLiteral",
-                                      "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                      "type": "MemberExpression",
+                                      "object": {
+                                        "type": "Identifier",
+                                        "name": "StringBase64",
+                                        "loc": {
+                                          "start": {
+                                            "line": 32,
+                                            "column": 27,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 32,
+                                            "column": 39,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "property": {
+                                        "type": "Identifier",
+                                        "name": "TO_BASE64_TABLE",
+                                        "loc": {
+                                          "start": {
+                                            "line": 32,
+                                            "column": 40,
+                                            "program": "StringBase64.ets"
+                                          },
+                                          "end": {
+                                            "line": 32,
+                                            "column": 55,
+                                            "program": "StringBase64.ets"
+                                          }
+                                        }
+                                      },
+                                      "computed": false,
+                                      "optional": false,
                                       "loc": {
                                         "start": {
                                           "line": 32,
@@ -4976,8 +5441,75 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "Identifier",
-                                            "name": "data",
+                                            "type": "CallExpression",
+                                            "callee": {
+                                              "type": "MemberExpression",
+                                              "object": {
+                                                "type": "Identifier",
+                                                "name": "data",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 32,
+                                                    "column": 63,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 32,
+                                                    "column": 67,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "property": {
+                                                "type": "Identifier",
+                                                "name": "charAt",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 32,
+                                                    "column": 68,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 32,
+                                                    "column": 74,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              },
+                                              "computed": false,
+                                              "optional": false,
+                                              "loc": {
+                                                "start": {
+                                                  "line": 32,
+                                                  "column": 63,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 32,
+                                                  "column": 74,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "arguments": [
+                                              {
+                                                "type": "Identifier",
+                                                "name": "i",
+                                                "loc": {
+                                                  "start": {
+                                                    "line": 32,
+                                                    "column": 75,
+                                                    "program": "StringBase64.ets"
+                                                  },
+                                                  "end": {
+                                                    "line": 32,
+                                                    "column": 76,
+                                                    "program": "StringBase64.ets"
+                                                  }
+                                                }
+                                              }
+                                            ],
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 32,
@@ -4986,23 +5518,23 @@
                                               },
                                               "end": {
                                                 "line": 32,
-                                                "column": 67,
+                                                "column": 77,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
                                           },
                                           "property": {
                                             "type": "Identifier",
-                                            "name": "charAt",
+                                            "name": "toInt",
                                             "loc": {
                                               "start": {
                                                 "line": 32,
-                                                "column": 68,
+                                                "column": 78,
                                                 "program": "StringBase64.ets"
                                               },
                                               "end": {
                                                 "line": 32,
-                                                "column": 74,
+                                                "column": 83,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -5017,29 +5549,12 @@
                                             },
                                             "end": {
                                               "line": 32,
-                                              "column": 74,
+                                              "column": 83,
                                               "program": "StringBase64.ets"
                                             }
                                           }
                                         },
-                                        "arguments": [
-                                          {
-                                            "type": "Identifier",
-                                            "name": "i",
-                                            "loc": {
-                                              "start": {
-                                                "line": 32,
-                                                "column": 75,
-                                                "program": "StringBase64.ets"
-                                              },
-                                              "end": {
-                                                "line": 32,
-                                                "column": 76,
-                                                "program": "StringBase64.ets"
-                                              }
-                                            }
-                                          }
-                                        ],
+                                        "arguments": [],
                                         "optional": false,
                                         "loc": {
                                           "start": {
@@ -5049,7 +5564,7 @@
                                           },
                                           "end": {
                                             "line": 32,
-                                            "column": 77,
+                                            "column": 85,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -5060,12 +5575,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 32,
-                                            "column": 81,
+                                            "column": 89,
                                             "program": "StringBase64.ets"
                                           },
                                           "end": {
                                             "line": 32,
-                                            "column": 82,
+                                            "column": 90,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -5078,7 +5593,7 @@
                                         },
                                         "end": {
                                           "line": 32,
-                                          "column": 82,
+                                          "column": 90,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -5093,7 +5608,7 @@
                                     },
                                     "end": {
                                       "line": 32,
-                                      "column": 83,
+                                      "column": 91,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -5108,7 +5623,7 @@
                                 },
                                 "end": {
                                   "line": 32,
-                                  "column": 84,
+                                  "column": 92,
                                   "program": "StringBase64.ets"
                                 }
                               }
@@ -5121,7 +5636,7 @@
                               },
                               "end": {
                                 "line": 32,
-                                "column": 85,
+                                "column": 93,
                                 "program": "StringBase64.ets"
                               }
                             }
@@ -5270,8 +5785,41 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "StringLiteral",
-                                            "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                            "type": "MemberExpression",
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "StringBase64",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 34,
+                                                  "column": 31,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 34,
+                                                  "column": 43,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "TO_BASE64_TABLE",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 34,
+                                                  "column": 44,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 34,
+                                                  "column": 59,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "computed": false,
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 34,
@@ -5331,8 +5879,75 @@
                                                   "callee": {
                                                     "type": "MemberExpression",
                                                     "object": {
-                                                      "type": "Identifier",
-                                                      "name": "data",
+                                                      "type": "CallExpression",
+                                                      "callee": {
+                                                        "type": "MemberExpression",
+                                                        "object": {
+                                                          "type": "Identifier",
+                                                          "name": "data",
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 34,
+                                                              "column": 69,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 34,
+                                                              "column": 73,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "property": {
+                                                          "type": "Identifier",
+                                                          "name": "charAt",
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 34,
+                                                              "column": 74,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 34,
+                                                              "column": 80,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "computed": false,
+                                                        "optional": false,
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 34,
+                                                            "column": 69,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 34,
+                                                            "column": 80,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "arguments": [
+                                                        {
+                                                          "type": "Identifier",
+                                                          "name": "i",
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 34,
+                                                              "column": 81,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 34,
+                                                              "column": 82,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        }
+                                                      ],
+                                                      "optional": false,
                                                       "loc": {
                                                         "start": {
                                                           "line": 34,
@@ -5341,23 +5956,23 @@
                                                         },
                                                         "end": {
                                                           "line": 34,
-                                                          "column": 73,
+                                                          "column": 83,
                                                           "program": "StringBase64.ets"
                                                         }
                                                       }
                                                     },
                                                     "property": {
                                                       "type": "Identifier",
-                                                      "name": "charAt",
+                                                      "name": "toInt",
                                                       "loc": {
                                                         "start": {
                                                           "line": 34,
-                                                          "column": 74,
+                                                          "column": 84,
                                                           "program": "StringBase64.ets"
                                                         },
                                                         "end": {
                                                           "line": 34,
-                                                          "column": 80,
+                                                          "column": 89,
                                                           "program": "StringBase64.ets"
                                                         }
                                                       }
@@ -5372,29 +5987,12 @@
                                                       },
                                                       "end": {
                                                         "line": 34,
-                                                        "column": 80,
+                                                        "column": 89,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
                                                   },
-                                                  "arguments": [
-                                                    {
-                                                      "type": "Identifier",
-                                                      "name": "i",
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 81,
-                                                          "program": "StringBase64.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 82,
-                                                          "program": "StringBase64.ets"
-                                                        }
-                                                      }
-                                                    }
-                                                  ],
+                                                  "arguments": [],
                                                   "optional": false,
                                                   "loc": {
                                                     "start": {
@@ -5404,7 +6002,7 @@
                                                     },
                                                     "end": {
                                                       "line": 34,
-                                                      "column": 83,
+                                                      "column": 91,
                                                       "program": "StringBase64.ets"
                                                     }
                                                   }
@@ -5415,12 +6013,12 @@
                                                   "loc": {
                                                     "start": {
                                                       "line": 34,
-                                                      "column": 86,
+                                                      "column": 94,
                                                       "program": "StringBase64.ets"
                                                     },
                                                     "end": {
                                                       "line": 34,
-                                                      "column": 90,
+                                                      "column": 98,
                                                       "program": "StringBase64.ets"
                                                     }
                                                   }
@@ -5433,7 +6031,7 @@
                                                   },
                                                   "end": {
                                                     "line": 34,
-                                                    "column": 91,
+                                                    "column": 99,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5444,12 +6042,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 34,
-                                                    "column": 95,
+                                                    "column": 103,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 34,
-                                                    "column": 96,
+                                                    "column": 104,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5462,7 +6060,7 @@
                                                 },
                                                 "end": {
                                                   "line": 34,
-                                                  "column": 97,
+                                                  "column": 105,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -5475,33 +6073,132 @@
                                                 "callee": {
                                                   "type": "MemberExpression",
                                                   "object": {
-                                                    "type": "Identifier",
-                                                    "name": "data",
+                                                    "type": "CallExpression",
+                                                    "callee": {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                        "type": "Identifier",
+                                                        "name": "data",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 34,
+                                                            "column": 109,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 34,
+                                                            "column": 113,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "property": {
+                                                        "type": "Identifier",
+                                                        "name": "charAt",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 34,
+                                                            "column": 114,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 34,
+                                                            "column": 120,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false,
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 34,
+                                                          "column": 109,
+                                                          "program": "StringBase64.ets"
+                                                        },
+                                                        "end": {
+                                                          "line": 34,
+                                                          "column": 120,
+                                                          "program": "StringBase64.ets"
+                                                        }
+                                                      }
+                                                    },
+                                                    "arguments": [
+                                                      {
+                                                        "type": "BinaryExpression",
+                                                        "operator": "+",
+                                                        "left": {
+                                                          "type": "Identifier",
+                                                          "name": "i",
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 34,
+                                                              "column": 121,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 34,
+                                                              "column": 122,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "right": {
+                                                          "type": "NumberLiteral",
+                                                          "value": 1,
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 34,
+                                                              "column": 125,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 34,
+                                                              "column": 126,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 34,
+                                                            "column": 121,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 34,
+                                                            "column": 126,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      }
+                                                    ],
+                                                    "optional": false,
                                                     "loc": {
                                                       "start": {
                                                         "line": 34,
-                                                        "column": 101,
+                                                        "column": 109,
                                                         "program": "StringBase64.ets"
                                                       },
                                                       "end": {
                                                         "line": 34,
-                                                        "column": 105,
+                                                        "column": 127,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
                                                   },
                                                   "property": {
                                                     "type": "Identifier",
-                                                    "name": "charAt",
+                                                    "name": "toInt",
                                                     "loc": {
                                                       "start": {
                                                         "line": 34,
-                                                        "column": 106,
+                                                        "column": 128,
                                                         "program": "StringBase64.ets"
                                                       },
                                                       "end": {
                                                         "line": 34,
-                                                        "column": 112,
+                                                        "column": 133,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
@@ -5511,76 +6208,27 @@
                                                   "loc": {
                                                     "start": {
                                                       "line": 34,
-                                                      "column": 101,
+                                                      "column": 109,
                                                       "program": "StringBase64.ets"
                                                     },
                                                     "end": {
                                                       "line": 34,
-                                                      "column": 112,
+                                                      "column": 133,
                                                       "program": "StringBase64.ets"
                                                     }
                                                   }
                                                 },
-                                                "arguments": [
-                                                  {
-                                                    "type": "BinaryExpression",
-                                                    "operator": "+",
-                                                    "left": {
-                                                      "type": "Identifier",
-                                                      "name": "i",
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 113,
-                                                          "program": "StringBase64.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 114,
-                                                          "program": "StringBase64.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "right": {
-                                                      "type": "NumberLiteral",
-                                                      "value": 1,
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 34,
-                                                          "column": 117,
-                                                          "program": "StringBase64.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 34,
-                                                          "column": 118,
-                                                          "program": "StringBase64.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 34,
-                                                        "column": 113,
-                                                        "program": "StringBase64.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 34,
-                                                        "column": 118,
-                                                        "program": "StringBase64.ets"
-                                                      }
-                                                    }
-                                                  }
-                                                ],
+                                                "arguments": [],
                                                 "optional": false,
                                                 "loc": {
                                                   "start": {
                                                     "line": 34,
-                                                    "column": 101,
+                                                    "column": 109,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 34,
-                                                    "column": 119,
+                                                    "column": 135,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5591,12 +6239,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 34,
-                                                    "column": 123,
+                                                    "column": 139,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 34,
-                                                    "column": 124,
+                                                    "column": 140,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5604,12 +6252,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 34,
-                                                  "column": 100,
+                                                  "column": 108,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 34,
-                                                  "column": 125,
+                                                  "column": 141,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -5622,7 +6270,7 @@
                                               },
                                               "end": {
                                                 "line": 34,
-                                                "column": 125,
+                                                "column": 141,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -5637,7 +6285,7 @@
                                           },
                                           "end": {
                                             "line": 34,
-                                            "column": 126,
+                                            "column": 142,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -5652,7 +6300,7 @@
                                       },
                                       "end": {
                                         "line": 34,
-                                        "column": 127,
+                                        "column": 143,
                                         "program": "StringBase64.ets"
                                       }
                                     }
@@ -5665,7 +6313,7 @@
                                     },
                                     "end": {
                                       "line": 34,
-                                      "column": 128,
+                                      "column": 144,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -5729,8 +6377,41 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "StringLiteral",
-                                            "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                            "type": "MemberExpression",
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "StringBase64",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 35,
+                                                  "column": 31,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 35,
+                                                  "column": 43,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "TO_BASE64_TABLE",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 35,
+                                                  "column": 44,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 35,
+                                                  "column": 59,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "computed": false,
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 35,
@@ -5787,8 +6468,107 @@
                                                 "callee": {
                                                   "type": "MemberExpression",
                                                   "object": {
-                                                    "type": "Identifier",
-                                                    "name": "data",
+                                                    "type": "CallExpression",
+                                                    "callee": {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                        "type": "Identifier",
+                                                        "name": "data",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 35,
+                                                            "column": 68,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 35,
+                                                            "column": 72,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "property": {
+                                                        "type": "Identifier",
+                                                        "name": "charAt",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 35,
+                                                            "column": 73,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 35,
+                                                            "column": 79,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false,
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 35,
+                                                          "column": 68,
+                                                          "program": "StringBase64.ets"
+                                                        },
+                                                        "end": {
+                                                          "line": 35,
+                                                          "column": 79,
+                                                          "program": "StringBase64.ets"
+                                                        }
+                                                      }
+                                                    },
+                                                    "arguments": [
+                                                      {
+                                                        "type": "BinaryExpression",
+                                                        "operator": "+",
+                                                        "left": {
+                                                          "type": "Identifier",
+                                                          "name": "i",
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 35,
+                                                              "column": 80,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 35,
+                                                              "column": 81,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "right": {
+                                                          "type": "NumberLiteral",
+                                                          "value": 1,
+                                                          "loc": {
+                                                            "start": {
+                                                              "line": 35,
+                                                              "column": 84,
+                                                              "program": "StringBase64.ets"
+                                                            },
+                                                            "end": {
+                                                              "line": 35,
+                                                              "column": 85,
+                                                              "program": "StringBase64.ets"
+                                                            }
+                                                          }
+                                                        },
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 35,
+                                                            "column": 80,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 35,
+                                                            "column": 85,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      }
+                                                    ],
+                                                    "optional": false,
                                                     "loc": {
                                                       "start": {
                                                         "line": 35,
@@ -5797,23 +6577,23 @@
                                                       },
                                                       "end": {
                                                         "line": 35,
-                                                        "column": 72,
+                                                        "column": 86,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
                                                   },
                                                   "property": {
                                                     "type": "Identifier",
-                                                    "name": "charAt",
+                                                    "name": "toInt",
                                                     "loc": {
                                                       "start": {
                                                         "line": 35,
-                                                        "column": 73,
+                                                        "column": 87,
                                                         "program": "StringBase64.ets"
                                                       },
                                                       "end": {
                                                         "line": 35,
-                                                        "column": 79,
+                                                        "column": 92,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
@@ -5828,61 +6608,12 @@
                                                     },
                                                     "end": {
                                                       "line": 35,
-                                                      "column": 79,
+                                                      "column": 92,
                                                       "program": "StringBase64.ets"
                                                     }
                                                   }
                                                 },
-                                                "arguments": [
-                                                  {
-                                                    "type": "BinaryExpression",
-                                                    "operator": "+",
-                                                    "left": {
-                                                      "type": "Identifier",
-                                                      "name": "i",
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 35,
-                                                          "column": 80,
-                                                          "program": "StringBase64.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 35,
-                                                          "column": 81,
-                                                          "program": "StringBase64.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "right": {
-                                                      "type": "NumberLiteral",
-                                                      "value": 1,
-                                                      "loc": {
-                                                        "start": {
-                                                          "line": 35,
-                                                          "column": 84,
-                                                          "program": "StringBase64.ets"
-                                                        },
-                                                        "end": {
-                                                          "line": 35,
-                                                          "column": 85,
-                                                          "program": "StringBase64.ets"
-                                                        }
-                                                      }
-                                                    },
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 35,
-                                                        "column": 80,
-                                                        "program": "StringBase64.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 35,
-                                                        "column": 85,
-                                                        "program": "StringBase64.ets"
-                                                      }
-                                                    }
-                                                  }
-                                                ],
+                                                "arguments": [],
                                                 "optional": false,
                                                 "loc": {
                                                   "start": {
@@ -5892,7 +6623,7 @@
                                                   },
                                                   "end": {
                                                     "line": 35,
-                                                    "column": 86,
+                                                    "column": 94,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5903,12 +6634,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 35,
-                                                    "column": 89,
+                                                    "column": 97,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 35,
-                                                    "column": 93,
+                                                    "column": 101,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -5921,7 +6652,7 @@
                                                 },
                                                 "end": {
                                                   "line": 35,
-                                                  "column": 94,
+                                                  "column": 102,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -5932,12 +6663,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 35,
-                                                  "column": 98,
+                                                  "column": 106,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 35,
-                                                  "column": 99,
+                                                  "column": 107,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -5950,7 +6681,7 @@
                                               },
                                               "end": {
                                                 "line": 35,
-                                                "column": 99,
+                                                "column": 107,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -5965,7 +6696,7 @@
                                           },
                                           "end": {
                                             "line": 35,
-                                            "column": 100,
+                                            "column": 108,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -5980,7 +6711,7 @@
                                       },
                                       "end": {
                                         "line": 35,
-                                        "column": 101,
+                                        "column": 109,
                                         "program": "StringBase64.ets"
                                       }
                                     }
@@ -5993,7 +6724,7 @@
                                     },
                                     "end": {
                                       "line": 35,
-                                      "column": 102,
+                                      "column": 110,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -6172,8 +6903,41 @@
                                         "callee": {
                                           "type": "MemberExpression",
                                           "object": {
-                                            "type": "StringLiteral",
-                                            "value": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+                                            "type": "MemberExpression",
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "StringBase64",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 39,
+                                                  "column": 31,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 39,
+                                                  "column": 43,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "TO_BASE64_TABLE",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 39,
+                                                  "column": 44,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 39,
+                                                  "column": 59,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "computed": false,
+                                            "optional": false,
                                             "loc": {
                                               "start": {
                                                 "line": 39,
@@ -6230,8 +6994,75 @@
                                                 "callee": {
                                                   "type": "MemberExpression",
                                                   "object": {
-                                                    "type": "Identifier",
-                                                    "name": "data",
+                                                    "type": "CallExpression",
+                                                    "callee": {
+                                                      "type": "MemberExpression",
+                                                      "object": {
+                                                        "type": "Identifier",
+                                                        "name": "data",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 39,
+                                                            "column": 68,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 39,
+                                                            "column": 72,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "property": {
+                                                        "type": "Identifier",
+                                                        "name": "charAt",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 39,
+                                                            "column": 73,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 39,
+                                                            "column": 79,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      },
+                                                      "computed": false,
+                                                      "optional": false,
+                                                      "loc": {
+                                                        "start": {
+                                                          "line": 39,
+                                                          "column": 68,
+                                                          "program": "StringBase64.ets"
+                                                        },
+                                                        "end": {
+                                                          "line": 39,
+                                                          "column": 79,
+                                                          "program": "StringBase64.ets"
+                                                        }
+                                                      }
+                                                    },
+                                                    "arguments": [
+                                                      {
+                                                        "type": "Identifier",
+                                                        "name": "i",
+                                                        "loc": {
+                                                          "start": {
+                                                            "line": 39,
+                                                            "column": 80,
+                                                            "program": "StringBase64.ets"
+                                                          },
+                                                          "end": {
+                                                            "line": 39,
+                                                            "column": 81,
+                                                            "program": "StringBase64.ets"
+                                                          }
+                                                        }
+                                                      }
+                                                    ],
+                                                    "optional": false,
                                                     "loc": {
                                                       "start": {
                                                         "line": 39,
@@ -6240,23 +7071,23 @@
                                                       },
                                                       "end": {
                                                         "line": 39,
-                                                        "column": 72,
+                                                        "column": 82,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
                                                   },
                                                   "property": {
                                                     "type": "Identifier",
-                                                    "name": "charAt",
+                                                    "name": "toInt",
                                                     "loc": {
                                                       "start": {
                                                         "line": 39,
-                                                        "column": 73,
+                                                        "column": 83,
                                                         "program": "StringBase64.ets"
                                                       },
                                                       "end": {
                                                         "line": 39,
-                                                        "column": 79,
+                                                        "column": 88,
                                                         "program": "StringBase64.ets"
                                                       }
                                                     }
@@ -6271,29 +7102,12 @@
                                                     },
                                                     "end": {
                                                       "line": 39,
-                                                      "column": 79,
+                                                      "column": 88,
                                                       "program": "StringBase64.ets"
                                                     }
                                                   }
                                                 },
-                                                "arguments": [
-                                                  {
-                                                    "type": "Identifier",
-                                                    "name": "i",
-                                                    "loc": {
-                                                      "start": {
-                                                        "line": 39,
-                                                        "column": 80,
-                                                        "program": "StringBase64.ets"
-                                                      },
-                                                      "end": {
-                                                        "line": 39,
-                                                        "column": 81,
-                                                        "program": "StringBase64.ets"
-                                                      }
-                                                    }
-                                                  }
-                                                ],
+                                                "arguments": [],
                                                 "optional": false,
                                                 "loc": {
                                                   "start": {
@@ -6303,7 +7117,7 @@
                                                   },
                                                   "end": {
                                                     "line": 39,
-                                                    "column": 82,
+                                                    "column": 90,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -6314,12 +7128,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 39,
-                                                    "column": 85,
+                                                    "column": 93,
                                                     "program": "StringBase64.ets"
                                                   },
                                                   "end": {
                                                     "line": 39,
-                                                    "column": 89,
+                                                    "column": 97,
                                                     "program": "StringBase64.ets"
                                                   }
                                                 }
@@ -6332,7 +7146,7 @@
                                                 },
                                                 "end": {
                                                   "line": 39,
-                                                  "column": 90,
+                                                  "column": 98,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -6343,12 +7157,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 39,
-                                                  "column": 94,
+                                                  "column": 102,
                                                   "program": "StringBase64.ets"
                                                 },
                                                 "end": {
                                                   "line": 39,
-                                                  "column": 95,
+                                                  "column": 103,
                                                   "program": "StringBase64.ets"
                                                 }
                                               }
@@ -6361,7 +7175,7 @@
                                               },
                                               "end": {
                                                 "line": 39,
-                                                "column": 95,
+                                                "column": 103,
                                                 "program": "StringBase64.ets"
                                               }
                                             }
@@ -6376,7 +7190,7 @@
                                           },
                                           "end": {
                                             "line": 39,
-                                            "column": 96,
+                                            "column": 104,
                                             "program": "StringBase64.ets"
                                           }
                                         }
@@ -6391,7 +7205,7 @@
                                       },
                                       "end": {
                                         "line": 39,
-                                        "column": 97,
+                                        "column": 105,
                                         "program": "StringBase64.ets"
                                       }
                                     }
@@ -6404,7 +7218,7 @@
                                     },
                                     "end": {
                                       "line": 39,
-                                      "column": 98,
+                                      "column": 106,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -7580,8 +8394,75 @@
                                       "callee": {
                                         "type": "MemberExpression",
                                         "object": {
-                                          "type": "Identifier",
-                                          "name": "data",
+                                          "type": "CallExpression",
+                                          "callee": {
+                                            "type": "MemberExpression",
+                                            "object": {
+                                              "type": "Identifier",
+                                              "name": "data",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 51,
+                                                  "column": 56,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 51,
+                                                  "column": 60,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "property": {
+                                              "type": "Identifier",
+                                              "name": "charAt",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 51,
+                                                  "column": 61,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 51,
+                                                  "column": 67,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            },
+                                            "computed": false,
+                                            "optional": false,
+                                            "loc": {
+                                              "start": {
+                                                "line": 51,
+                                                "column": 56,
+                                                "program": "StringBase64.ets"
+                                              },
+                                              "end": {
+                                                "line": 51,
+                                                "column": 67,
+                                                "program": "StringBase64.ets"
+                                              }
+                                            }
+                                          },
+                                          "arguments": [
+                                            {
+                                              "type": "Identifier",
+                                              "name": "i",
+                                              "loc": {
+                                                "start": {
+                                                  "line": 51,
+                                                  "column": 68,
+                                                  "program": "StringBase64.ets"
+                                                },
+                                                "end": {
+                                                  "line": 51,
+                                                  "column": 69,
+                                                  "program": "StringBase64.ets"
+                                                }
+                                              }
+                                            }
+                                          ],
+                                          "optional": false,
                                           "loc": {
                                             "start": {
                                               "line": 51,
@@ -7590,23 +8471,23 @@
                                             },
                                             "end": {
                                               "line": 51,
-                                              "column": 60,
+                                              "column": 70,
                                               "program": "StringBase64.ets"
                                             }
                                           }
                                         },
                                         "property": {
                                           "type": "Identifier",
-                                          "name": "charAt",
+                                          "name": "toInt",
                                           "loc": {
                                             "start": {
                                               "line": 51,
-                                              "column": 61,
+                                              "column": 71,
                                               "program": "StringBase64.ets"
                                             },
                                             "end": {
                                               "line": 51,
-                                              "column": 67,
+                                              "column": 76,
                                               "program": "StringBase64.ets"
                                             }
                                           }
@@ -7621,29 +8502,12 @@
                                           },
                                           "end": {
                                             "line": 51,
-                                            "column": 67,
+                                            "column": 76,
                                             "program": "StringBase64.ets"
                                           }
                                         }
                                       },
-                                      "arguments": [
-                                        {
-                                          "type": "Identifier",
-                                          "name": "i",
-                                          "loc": {
-                                            "start": {
-                                              "line": 51,
-                                              "column": 68,
-                                              "program": "StringBase64.ets"
-                                            },
-                                            "end": {
-                                              "line": 51,
-                                              "column": 69,
-                                              "program": "StringBase64.ets"
-                                            }
-                                          }
-                                        }
-                                      ],
+                                      "arguments": [],
                                       "optional": false,
                                       "loc": {
                                         "start": {
@@ -7653,7 +8517,7 @@
                                         },
                                         "end": {
                                           "line": 51,
-                                          "column": 70,
+                                          "column": 78,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -7664,12 +8528,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 51,
-                                          "column": 73,
+                                          "column": 81,
                                           "program": "StringBase64.ets"
                                         },
                                         "end": {
                                           "line": 51,
-                                          "column": 77,
+                                          "column": 85,
                                           "program": "StringBase64.ets"
                                         }
                                       }
@@ -7682,7 +8546,7 @@
                                       },
                                       "end": {
                                         "line": 51,
-                                        "column": 77,
+                                        "column": 85,
                                         "program": "StringBase64.ets"
                                       }
                                     }
@@ -7697,7 +8561,7 @@
                                     },
                                     "end": {
                                       "line": 51,
-                                      "column": 78,
+                                      "column": 86,
                                       "program": "StringBase64.ets"
                                     }
                                   }
@@ -7710,7 +8574,7 @@
                                   },
                                   "end": {
                                     "line": 51,
-                                    "column": 78,
+                                    "column": 86,
                                     "program": "StringBase64.ets"
                                   }
                                 }
@@ -7725,7 +8589,7 @@
                               },
                               "end": {
                                 "line": 51,
-                                "column": 79,
+                                "column": 87,
                                 "program": "StringBase64.ets"
                               }
                             }

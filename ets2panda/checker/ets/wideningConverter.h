@@ -34,6 +34,7 @@ public:
     }
 
 private:
+    // NOTE(dkofanov): Deprecated operations on 'char' #28006
     static constexpr TypeFlag WIDENABLE_TO_SHORT = TypeFlag::BYTE;
     static constexpr TypeFlag WIDENABLE_TO_CHAR = TypeFlag::BYTE;
     static constexpr TypeFlag WIDENABLE_TO_INT = TypeFlag::CHAR | TypeFlag::SHORT | WIDENABLE_TO_SHORT;
@@ -44,6 +45,7 @@ private:
     void ApplyGlobalWidening()
     {
         switch (ETSChecker::ETSChecker::ETSType(Target())) {
+            // NOTE(dkofanov): Deprecated operations on 'char' #28006
             case TypeFlag::CHAR: {
                 ApplyGlobalWidening(WIDENABLE_TO_CHAR);
                 break;
@@ -91,12 +93,13 @@ private:
                     Relation()->GetNode()->SetTsType(Checker()->GlobalShortBuiltinType());
                     break;
                 }
-                case TypeFlag::CHAR: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalCharBuiltinType());
-                    break;
-                }
                 case TypeFlag::INT: {
                     Relation()->GetNode()->SetTsType(Checker()->GlobalIntBuiltinType());
+                    break;
+                }
+                // NOTE(dkofanov): Deprecated operations on 'char' #28006
+                case TypeFlag::CHAR: {
+                    Relation()->GetNode()->SetTsType(Checker()->GlobalCharBuiltinType());
                     break;
                 }
                 case TypeFlag::LONG: {

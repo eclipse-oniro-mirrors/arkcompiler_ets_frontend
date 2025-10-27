@@ -22,5 +22,5 @@ function foo(a0: A) {
     /* @@ label */a.fld = 5
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly variable fld  */
+/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
 /* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned. */

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,17 +17,7 @@
 #define PANDA_ANNOTATIONS_EMIT_TEST_H
 
 #include <gtest/gtest.h>
-#include "annotation.h"
-#include "macros.h"
-#include "util/options.h"
-#include <cstddef>
-#include <iostream>
-#include <ostream>
-#include <string>
-#include <utility>
-#include <variant>
-#include <vector>
-#include "assembly-program.h"
+
 #include "test/utils/asm_test.h"
 
 namespace ark::es2panda::compiler::test {

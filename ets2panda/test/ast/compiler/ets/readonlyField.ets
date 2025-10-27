@@ -24,4 +24,4 @@ function main(): void {
     /* @@ label */myData.value = "new data";
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly variable value  */
+/* @@@ label Error TypeError: Cannot assign to a readonly field value  */

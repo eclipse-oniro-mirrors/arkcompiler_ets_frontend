@@ -53,6 +53,10 @@ parser/ets/constructor_with_optional_parameter.ets
 parser/ets/default_parameter8.ets
 parser/js/test-private-field.js
 
+# 28073 Package's static blocks may present only in a single module.
+compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
+compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
+
 # remove decorator
 parser/as/test_decorators1.ts
 parser/as/test_interface.ts

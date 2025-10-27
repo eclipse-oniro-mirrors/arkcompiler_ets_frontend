@@ -315,6 +315,7 @@ void Lexer::ConvertNumber([[maybe_unused]] NumberFlags flags)
         GetToken().number_ = Number(GetToken().src_, static_cast<double>(temp));
     } else if (res == ConversionResult::INVALID_ARGUMENT) {
         LogError(diagnostic::INVALID_NUM);
+        GetToken().number_ = Number();
     } else if (res == ConversionResult::OUT_OF_RANGE) {
         GetToken().number_ = Number(GetToken().src_, std::numeric_limits<double>::infinity());
     }

@@ -31,7 +31,7 @@ enum ColorE {
     G = Color.Red | 1
 }
 enum ColorF {
-    H = Color.Red ? ColorE.G : (ColorD.E | 1) as int,
+    H = Color.Red ? ColorE.G : (ColorD.E | 1),
     I = (ColorE.G / 25)
 }
 

@@ -16,7 +16,7 @@
 function main(): void {
   let mystring : String = "";
 
-  for (let a: char = c'a'; a <= c'd'; a++) {
+  for (let a: char = c'a'; a.compareTo(c'd') <= 0; a = (a.toInt() + 1).toChar()) {
     mystring += a;
   }
 

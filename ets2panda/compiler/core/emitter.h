@@ -18,14 +18,10 @@
 
 #include "compiler/base/literals.h"
 
-#include "util/ustring.h"
-
-#include <list>
-#include <mutex>
-#include <string>
+#include <string_view>
 #include <unordered_map>
-#include <unordered_set>
-#include <vector>
+
+#include "util/ustring.h"
 
 namespace ark::pandasm {
 struct Program;

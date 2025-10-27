@@ -14,7 +14,7 @@
  */
 
 let c: char = c'a'
-let i: Int = c
-let l: Long = c
-let f: Float = c
-let d: Double = c
+let i: Int = c.toInt()
+let l: Long = c.toLong()
+let f: Float = c.toFloat()
+let d: Double = c.toDouble()

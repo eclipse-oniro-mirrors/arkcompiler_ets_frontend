@@ -1254,29 +1254,47 @@
                             }
                           },
                           "init": {
-                            "type": "TSAsExpression",
-                            "expression": {
-                              "type": "NumberLiteral",
-                              "value": 65,
+                            "type": "CallExpression",
+                            "callee": {
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "Int",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 29,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 32,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "toChar",
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 33,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 39,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 25,
                                   "column": 29,
-                                  "program": "conversion-w-ASExpr.ets"
-                                },
-                                "end": {
-                                  "line": 25,
-                                  "column": 31,
-                                  "program": "conversion-w-ASExpr.ets"
-                                }
-                              }
-                            },
-                            "typeAnnotation": {
-                              "type": "ETSPrimitiveType",
-                              "loc": {
-                                "start": {
-                                  "line": 25,
-                                  "column": 35,
                                   "program": "conversion-w-ASExpr.ets"
                                 },
                                 "end": {
@@ -1286,6 +1304,25 @@
                                 }
                               }
                             },
+                            "arguments": [
+                              {
+                                "type": "NumberLiteral",
+                                "value": 65,
+                                "loc": {
+                                  "start": {
+                                    "line": 25,
+                                    "column": 40,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  },
+                                  "end": {
+                                    "line": 25,
+                                    "column": 42,
+                                    "program": "conversion-w-ASExpr.ets"
+                                  }
+                                }
+                              }
+                            ],
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 25,
@@ -1294,7 +1331,7 @@
                               },
                               "end": {
                                 "line": 25,
-                                "column": 39,
+                                "column": 43,
                                 "program": "conversion-w-ASExpr.ets"
                               }
                             }
@@ -1307,7 +1344,7 @@
                             },
                             "end": {
                               "line": 25,
-                              "column": 39,
+                              "column": 43,
                               "program": "conversion-w-ASExpr.ets"
                             }
                           }
@@ -1322,7 +1359,7 @@
                         },
                         "end": {
                           "line": 25,
-                          "column": 40,
+                          "column": 44,
                           "program": "conversion-w-ASExpr.ets"
                         }
                       }

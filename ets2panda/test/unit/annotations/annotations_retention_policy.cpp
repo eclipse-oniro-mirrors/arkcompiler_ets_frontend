@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <gtest/gtest.h>
+
 #include <string>
-#include <utility>
-#include <vector>
+
+#include <gtest/gtest.h>
+
 #include "assembly-program.h"
 #include "test/unit/annotations/annotations_emit_test.h"
 

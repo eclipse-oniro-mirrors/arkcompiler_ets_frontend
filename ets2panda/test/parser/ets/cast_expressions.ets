@@ -73,8 +73,8 @@ function short_test(): void {
 }
 
 function char_test(): void {
-  let char_: char = 42;
-  let Char_: Char = new Char(42 as char);
+  let char_: char = Int.toChar(42);
+  let Char_: Char = new Char(Int.toChar(42));
 
   {
     // Casting to primitive types

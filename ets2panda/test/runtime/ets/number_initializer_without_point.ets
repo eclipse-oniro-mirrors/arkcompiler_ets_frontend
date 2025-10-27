@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,23 +11,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ *
+ * Based on https://gitee.com/openharmony/arkcompiler_ets_frontend/issues/I8EZ44
  */
- 
-class A {
-    fld: Number = 2
-    foo (a0: A) {
-        a0.fld = 5
-    }
+
+function main() {
+    let n: float = 5f
+
+    arktest.assertEQ(n, 5)
 }
-
-class B extends A {}
-
-class C extends B {
-    fld: Number = 2
-    foo (a0: Readonly<A>) {
-        /* @@ label */a0.fld = 6
-    }
-}
-
-/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,22 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-class A {
-    fld: Number = 2
-    foo (a0: A) {
-        a0.fld = 5
-    }
-}
 
-class B extends A {}
+let decimalPointMissing  =  0f
+let decimalPointMissing2 = -100f
+let floatMAX             =  3.4028235e+38f
+let moreThanFloatMAX     =  /*@@ label1 */3.4028236e+38f
 
-class C extends B {
-    fld: Number = 2
-    foo (a0: Readonly<A>) {
-        /* @@ label */a0.fld = 6
-    }
-}
-
-/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */
+/* @@@ label1 Error SyntaxError: Invalid number. */

@@ -64,7 +64,7 @@ void CompilerImpl::HandleContextLiterals(public_lib::Context *context)
     emitter->LiteralBufferIndex() += context->contextLiterals.size();
 }
 
-ark::pandasm::Program *CompilerImpl::Emit(public_lib::Context *context)
+void CompilerImpl::Emit(public_lib::Context *context)
 {
     HandleContextLiterals(context);
 
@@ -74,8 +74,6 @@ ark::pandasm::Program *CompilerImpl::Emit(public_lib::Context *context)
     queue_.Consume();
     auto *emitter = context->emitter;
     queue_.Wait([emitter](CompileJob *job) { emitter->AddProgramElement(job->GetProgramElement()); });
-
-    return emitter->Finalize(context->config->options->IsDumpDebugInfo(), Signatures::ETS_GLOBAL);
 }
 
 template <typename CodeGen, typename RegSpiller, typename FunctionEmitter, typename Emitter, typename AstCompiler>
@@ -364,8 +362,9 @@ static pandasm::Program *EmitProgram(CompilerImpl *compilerImpl, public_lib::Con
                                      const CompilationUnit &unit)
 {
     ES2PANDA_PERF_SCOPE("@EmitProgram");
+    compilerImpl->Emit(context);
     context->emitter->GenAnnotation();
-    auto result = compilerImpl->Emit(context);
+    auto result = context->emitter->Finalize(context->config->options->IsDumpDebugInfo(), Signatures::ETS_GLOBAL);
     if (unit.ext == ScriptExtension::ETS && context->compilingState != public_lib::CompilingState::SINGLE_COMPILING) {
         SavePermanents(context, context->parserProgram);
     }
