@@ -9741,7 +9741,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const autofix = this.autofixer?.fixInterfaceImport(
       this.interfacesNeedToImport,
-      this.interfacesAlreadyImported,
       this.firstImportDeclOfUIKit,
       sourceFile
     );
@@ -9784,17 +9783,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         continue;
       }
 
+      namedBindings.elements.forEach((specifier) => {
+        this.interfacesAlreadyImported.add(specifier.name.getText());
+      });
+
       if (this.firstImportDeclOfUIKit && isFirstImportDeclOfUIKit) {
-        for (const specifier of namedBindings.elements) {
-          const importedName = specifier.name.getText(sourceFile);
-          this.interfacesNeedToImport.add(importedName);
-          isFirstImportDeclOfUIKit = false;
-        }
-      } else {
-        for (const specifier of namedBindings.elements) {
-          const importedName = specifier.name.getText(sourceFile);
-          this.interfacesAlreadyImported.add(importedName);
-        }
+        namedBindings.elements.forEach((specifier) => {
+          this.interfacesNeedToImport.add(specifier.name.getText());
+        });
+        isFirstImportDeclOfUIKit = false;
       }
     }
   }
@@ -13364,12 +13361,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
     }
 
-    const autofix = this.autofixer?.fixCustomLayout(node);
     const name = node.name.getText();
     const errorMsg =
       `The Custom component "${name}" with custom layout capability needs to add the "@CustomLayout" decorator ` +
       '(arkui-custom-layout-need-add-decorator)';
-    this.incrementCounters(node.name, FaultID.CustomLayoutNeedAddDecorator, autofix, errorMsg);
+    this.incrementCounters(node.name, FaultID.CustomLayoutNeedAddDecorator, undefined, errorMsg);
   }
 
   private handleArkTSPropertyAccess(expr: ts.BinaryExpression): void {
