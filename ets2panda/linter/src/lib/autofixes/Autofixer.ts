@@ -72,6 +72,12 @@ import path from 'node:path';
 import { isStdLibrarySymbol } from '../utils/functions/IsStdLibrary';
 import { propertyAccessReplacements, identifierReplacements } from '../utils/consts/DeprecatedApi';
 import { ARKTS_COLLECTIONS_MODULE, BIT_VECTOR } from '../utils/consts/CollectionsAPI';
+import type { GenericPassingType } from '../utils/consts/GenericAutofixAPI';
+import {
+  GenericPassingCheck,
+  GENERIC_PASSING_FIXED,
+  GENERIC_PASSING_NON_RESOLVED
+} from '../utils/consts/GenericAutofixAPI';
 
 const UNDEFINED_NAME = 'undefined';
 
@@ -4844,6 +4850,10 @@ export class Autofixer {
   fixGenericCallNoTypeArgs(node: ts.NewExpression | ts.CallExpression): Autofix[] | undefined {
     const typeNode = this.getTypeNodeForNewExpression(node);
     if (!typeNode) {
+      const isFixed = this.fixTypeArgsPassingFromEnclosingClass(node);
+      if (isFixed.kind === GenericPassingCheck.FIXED) {
+        return isFixed.autofix;
+      }
       return this.fixGenericCallNoTypeArgsWithContextualType(node);
     }
     let nodeExpressionText = node.expression.getText();
@@ -4871,6 +4881,61 @@ export class Autofixer {
     }
     const insertPos = node.expression.getEnd();
     return [{ start: insertPos, end: insertPos, replacementText: typeArgsText }];
+  }
+
+  /*
+   * we are inside of a class creating a new class,
+   * we need to check if our ancestor has a generic type param
+   * and also need to check if the class we are initializing has generic parameters
+   * there are some cases that we can't provide fixes for (if there is multiple generics)
+   *
+   * We will handle the only one we can safely provide autofix for,
+   * Ancestor Class has a single Generic Type Parameter and the class we are initializing
+   * has only one generic type param.
+   */
+  private fixTypeArgsPassingFromEnclosingClass(node: ts.NewExpression | ts.CallExpression): GenericPassingType {
+    if (ts.isCallExpression(node)) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+    const ancestor = ts.findAncestor(node, ts.isClassDeclaration);
+
+    if (!ancestor) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    const classDecl = this.utils.getDeclarationNode(node.expression);
+    if (!classDecl || !ts.isClassDeclaration(classDecl)) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    if (!classDecl.typeParameters) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    if (!ancestor.typeParameters) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    if (classDecl.typeParameters.length > 1 || classDecl.typeParameters.length === 0) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    if (ancestor.typeParameters.length > 1 || ancestor.typeParameters.length === 0) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    const genericParam = classDecl.typeParameters[0];
+    if (this.utils.getDeclarationNode(genericParam)) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+
+    const ancestorParam = ancestor.typeParameters[0];
+    if (this.utils.getDeclarationNode(ancestorParam)) {
+      return GENERIC_PASSING_NON_RESOLVED();
+    }
+    const fix = this.printer.printNode(ts.EmitHint.Unspecified, ancestorParam, ancestor.getSourceFile());
+    const replacementText = `<${fix}>`;
+    return GENERIC_PASSING_FIXED([{ start: node.expression.end, end: node.expression.end, replacementText }]);
   }
 
   fixGenericCallNoTypeArgsForUnknown(node: ts.CallExpression): Autofix[] | undefined {

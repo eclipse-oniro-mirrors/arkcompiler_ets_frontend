@@ -63,3 +63,24 @@ let refToPropA1: AbstractProperty<number> | undefined = storage.ref('PropA');
 let propA: number | undefined = AppStorage.get('PropA');
 let link1: SubscribedAbstractProperty<number> = AppStorage.link('PropA');
 let refToPropA1: AbstractProperty<number> | undefined = AppStorage.ref('PropA');
+
+interface StoreManager<Decode, Encode> {}
+class StoreCache<Decode, Encode> {
+    constructor(storeManager: StoreManager<Decode, Encode>)
+}
+
+
+class MemoryStorageManger<T> implements StoreManager<T, T> {
+    private _name: string;
+
+    constructor(name: string) {
+        this._name = name;
+    }
+}
+
+
+class MemoryCache<T> extends StoreCache<T,T> {
+     constructor(name: string) {
+            super(new MemoryStorageManger(name))
+     }
+}
