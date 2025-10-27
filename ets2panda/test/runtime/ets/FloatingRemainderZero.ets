@@ -13,14 +13,9 @@
  * limitations under the License.
  */
 
-function main() : void {
-    let div_int : int  = /* @@ label1 */1 / 0;
-    let div_long: long = /* @@ label2 */1 / 0;
-    let mod_int : int  = /* @@ label3 */1 % 0;
-    let mod_long: long = /* @@ label4 */1 % 0;
-}
-
-/* @@@ label1 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
-/* @@@ label2 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
-/* @@@ label3 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
-/* @@@ label4 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
+let nan = 1 % 0.0
+let nan2 = 1.0 % 0
+arktest.assertTrue(Number.isNaN(1 % 0.0))
+arktest.assertTrue(Number.isNaN(1.0 % 0))
+arktest.assertTrue(Number.isNaN(nan))
+arktest.assertTrue(Number.isNaN(nan2))

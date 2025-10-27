@@ -199,7 +199,7 @@ syntax:
 
 - name: DIVISION_BY_ZERO
   id: 273
-  message: "Division by zero is not allowed."
+  message: "Division by zero is not allowed in integer arithmetic."
 
 - name: DUPLICATED_IDENTIFIER
   id: 215

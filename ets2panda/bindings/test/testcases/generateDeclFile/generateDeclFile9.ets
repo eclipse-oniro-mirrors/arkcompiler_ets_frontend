@@ -40,7 +40,7 @@ class OperationFactory {
         return a * b;
       case 'divide':
         if (b === 0) {
-          throw new Error("Division by zero is not allowed.");
+          throw new Error("Division by zero is not allowed in integer arithmetic.");
         }
         return a / b;
       default:

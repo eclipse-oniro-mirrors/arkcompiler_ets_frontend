@@ -405,7 +405,6 @@ private:
             }
         } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
             if (rhs == 0) {
-                LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
                 *res = std::numeric_limits<OperandType>::quiet_NaN();
             } else {
                 *res = std::fmod(lhs, rhs);

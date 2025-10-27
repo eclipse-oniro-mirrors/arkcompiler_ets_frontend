@@ -13,17 +13,6 @@
  * limitations under the License.
  */
 
-@interface MyAnno {
-    a : int
-}
+let a = /* @@ label */1 % 0;
 
-@MyAnno({a = 1 / 0})
-function foo() {}
-
-enum Color {
-    Red = 1/0
-}
-
-
-/* @@? 20:14 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
-/* @@? 24:11 Error SyntaxError: Division by zero is not allowed in integer arithmetic. */
+/* @@@ label Error SyntaxError: Division by zero is not allowed in integer arithmetic.  */
