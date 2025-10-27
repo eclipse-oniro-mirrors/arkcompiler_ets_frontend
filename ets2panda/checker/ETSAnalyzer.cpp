@@ -4380,6 +4380,18 @@ checker::Type *ETSAnalyzer::Check(ir::TSNonNullExpression *expr) const
     return expr->TsType();
 }
 
+static varbinder::Variable *FindInReExports(ETSObjectType *baseType, util::StringView &searchName)
+{
+    for (auto *reExport : baseType->ReExports()) {
+        PropertySearchFlags flags = PropertySearchFlags::SEARCH_STATIC_FIELD | PropertySearchFlags::SEARCH_STATIC_DECL;
+        if (auto *var = reExport->GetProperty(searchName, flags); var != nullptr) {
+            return var;
+        }
+        return FindInReExports(reExport, searchName);
+    }
+    return nullptr;
+}
+
 static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util::StringView &searchName,
                                                        ETSObjectType *baseType)
 {
@@ -4429,7 +4441,7 @@ static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util
             return result->second;
         }
     }
-    return nullptr;
+    return FindInReExports(baseType, searchName);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::TSQualifiedName *expr) const
