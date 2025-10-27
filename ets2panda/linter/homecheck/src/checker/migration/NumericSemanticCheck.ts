@@ -2382,6 +2382,10 @@ export class NumericSemanticCheck implements BaseChecker {
             return;
         }
 
+        if (field && field.getDecorators().length > 0) {
+            return;
+        }
+
         const shouldSkip = this.shouldSkipDuplicatedIssue(numberCategory, field, value, issueStmt);
         if (shouldSkip) {
             return;
