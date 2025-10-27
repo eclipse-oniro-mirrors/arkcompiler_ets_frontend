@@ -1022,10 +1022,24 @@ void ETSChecker::GetInterfacesOfClass(ETSObjectType *type, ArenaVector<ETSObject
     }
 }
 
+static bool AreOverrideCompatible(ETSChecker *checker, Signature *const s1, Signature *const s2)
+{
+    // Two functions, methods or constructors M and N have the same signature if
+    // their names and type parameters (if any) are the same, and their formal parameter
+    // types are also the same (after the formal parameter types of N are adapted to the type parameters of M).
+    // Signatures s1 and s2 are override-equivalent only if s1 and s2 are the same.
+    if (s1->Function()->Id()->Name() != s2->Function()->Id()->Name()) {
+        return false;
+    }
+
+    SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(), TypeRelationFlag::OVERRIDING_CONTEXT);
+    return checker->Relation()->SignatureIsSupertypeOf(s1, s2);
+}
+
 void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Signature *sig, Signature *sigFunc)
 {
     bool throwError = false;
-    if (AreOverrideCompatible(sigFunc, sig) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
+    if (AreOverrideCompatible(this, sigFunc, sig) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
         SavedTypeRelationFlagsContext const savedFlags(Relation(), Relation()->GetTypeRelationFlags() |
                                                                        TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
         if (CheckIfInterfaceCanBeFoundOnDifferentPaths(classType, sigFunc->Owner(), this) &&
@@ -1165,7 +1179,7 @@ void ETSChecker::ValidateAbstractSignature(ArenaVector<ETSFunctionType *>::itera
                 continue;
             }
 
-            if (!AreOverrideCompatible(*abstractSignature, substImplemented) ||
+            if (!AreOverrideCompatible(this, *abstractSignature, substImplemented) ||
                 !IsReturnTypeSubstitutable(substImplemented, *abstractSignature)) {
                 continue;
             }

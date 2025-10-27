@@ -574,6 +574,33 @@ checker::Type *ETSAnalyzer::Check(ir::ETSFunctionType *node) const
     return node->SetTsType(checker->CreateETSArrowType(signature));
 }
 
+static Signature *ValidateParameterlessConstructor(ETSChecker *checker, Signature *signature,
+                                                   const lexer::SourcePosition &pos, bool throwError)
+{
+    if (signature->MinArgCount() != 0) {
+        if (throwError) {
+            checker->LogError(diagnostic::NO_SUCH_PARAMLESS_CTOR_2, {signature->MinArgCount()}, pos);
+        }
+        return nullptr;
+    }
+    return signature;
+}
+
+static Signature *CollectParameterlessConstructor(ETSChecker *checker, ArenaVector<Signature *> &signatures,
+                                                  const lexer::SourcePosition &pos)
+{
+    // We are able to provide more specific error messages.
+    bool throwError = signatures.size() == 1;
+    for (auto *sig : signatures) {
+        if (auto *concreteSig = ValidateParameterlessConstructor(checker, sig, pos, throwError);
+            concreteSig != nullptr) {
+            return concreteSig;
+        }
+    }
+    checker->LogError(diagnostic::NO_SUCH_PARAMLESS_CTOR, {}, pos);
+    return nullptr;
+}
+
 template <typename T, typename = typename std::enable_if_t<std::is_base_of_v<ir::Expression, T>>>
 static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr)
 {
@@ -591,8 +618,8 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr)
         const auto flags = checker::ETSObjectFlags::ABSTRACT | checker::ETSObjectFlags::INTERFACE;
         if (!calleeObj->HasObjectFlag(flags)) {
             // A workaround check for new Interface[...] in test cases
-            newArrayInstanceExpr->SetSignature(checker->CollectParameterlessConstructor(
-                calleeObj->ConstructSignatures(), newArrayInstanceExpr->Start()));
+            newArrayInstanceExpr->SetSignature(CollectParameterlessConstructor(
+                checker, calleeObj->ConstructSignatures(), newArrayInstanceExpr->Start()));
             checker->ValidateSignatureAccessibility(calleeObj, newArrayInstanceExpr->Signature(),
                                                     newArrayInstanceExpr->Start());
         } else {
@@ -683,6 +710,33 @@ static checker::Type *CheckInstantiatedNewType(ETSChecker *checker, ir::ETSNewCl
     return calleeType;
 }
 
+/*
+ * Object literals do not get checked in the process of call resolution; we need to check them separately
+ * afterwards.
+ */
+static void CheckObjectLiteralArguments(ETSChecker *checker, Signature *signature,
+                                        ArenaVector<ir::Expression *> const &arguments)
+{
+    for (uint32_t index = 0; index < arguments.size(); index++) {
+        if (!arguments[index]->IsObjectExpression()) {
+            continue;
+        }
+
+        Type *tp;
+        if (index >= signature->Params().size()) {
+            ES2PANDA_ASSERT(signature->RestVar());
+            // Use element type as rest object literal type
+            tp = checker->GetElementTypeOfArray(signature->RestVar()->TsType());
+        } else {
+            // #22952: infer optional parameter heuristics
+            tp = checker->GetNonNullishType(signature->Params()[index]->TsType());
+        }
+
+        arguments[index]->SetPreferredType(tp);
+        arguments[index]->Check(checker);
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -702,7 +756,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
         return checker->InvalidateType(expr);
     }
 
-    checker->CheckObjectLiteralArguments(signature, expr->GetArguments());
+    CheckObjectLiteralArguments(checker, signature, expr->GetArguments());
 
     checker->ValidateSignatureAccessibility(calleeObj, signature, expr->Start());
 
@@ -1187,7 +1241,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     return expr->TsType();
 }
 
-void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Type *preferredType, ETSChecker *checker)
+static void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Type *preferredType, ETSChecker *checker)
 {
     if (!preferredType->IsETSUnionType()) {
         if (preferredType->IsETSArrowType() &&
@@ -1811,7 +1865,6 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
     if (calleeType->IsETSExtensionFuncHelperType()) {
         auto *signature =
             ResolveCallForETSExtensionFuncHelperType(calleeType->AsETSExtensionFuncHelperType(), checker, expr);
-        checker->AsETSChecker()->UpdateDeclarationFromSignature(expr, signature);
         return signature;
     }
 
@@ -1871,7 +1924,7 @@ static Type *GetReturnType(ETSChecker *checker, ir::CallExpression *expr, Type *
         return checker->GlobalTypeError();
     }
 
-    checker->CheckObjectLiteralArguments(signature, expr->Arguments());
+    CheckObjectLiteralArguments(checker, signature, expr->Arguments());
 
     if (calleeType->IsETSMethodType()) {
         ETSObjectType *calleeObj = GetCallExpressionCalleeObject(checker, expr, calleeType);

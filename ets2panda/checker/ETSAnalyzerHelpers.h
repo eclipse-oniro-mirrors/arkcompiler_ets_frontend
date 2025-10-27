@@ -64,8 +64,8 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
 
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
-
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
+void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature);
 }  // namespace ark::es2panda::checker
 
 #endif  // ES2PANDA_CHECKER_ETSANALYZERHELPERS_H
