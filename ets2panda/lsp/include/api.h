@@ -42,7 +42,6 @@
 #include "todo_comments.h"
 #include "types.h"
 #include "formatting/formatting_settings.h"
-#include "user_preferences.h"
 
 #ifdef __cplusplus
 extern "C" {

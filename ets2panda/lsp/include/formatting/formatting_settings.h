@@ -17,6 +17,7 @@
 #define FORMATTING_SETTINGS_H
 
 #include <string>
+#include "public/es2panda_lib.h"
 
 namespace ark::es2panda::lsp {
 
@@ -313,7 +314,7 @@ private:
     SemicolonPreference semicolons_ = SemicolonPreference::IGNORE;
 };
 
-FormatCodeSettings GetDefaultFormatCodeSettings(const std::string &newLineCharacter);
+CAPI_EXPORT FormatCodeSettings GetDefaultFormatCodeSettings(const std::string &newLineCharacter);
 
 }  // namespace ark::es2panda::lsp
 
