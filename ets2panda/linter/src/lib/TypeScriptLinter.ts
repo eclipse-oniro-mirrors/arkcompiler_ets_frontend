@@ -3857,7 +3857,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (this.options.arkts2) {
       this.handleInvalidIdentifier(tsModuleDecl);
     }
-
     const tsModuleBody = tsModuleDecl.body;
     const tsModifiers = ts.getModifiers(tsModuleDecl);
     if (tsModuleBody) {
@@ -3865,16 +3864,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         this.handleModuleBlock(tsModuleBody);
       }
     }
-
     if (
       this.options.arkts2 &&
       tsModuleBody &&
       ts.isModuleBlock(tsModuleBody) &&
       tsModuleDecl.flags & ts.NodeFlags.Namespace
     ) {
-      this.handleNameSpaceModuleBlock(tsModuleBody, (tsModuleDecl.name as ts.Identifier).escapedText.toString());
+      this.handleNameSpaceModuleBlock(tsModuleBody, TypeScriptLinter.getNameSpaceChainString(tsModuleDecl, node)); 
     }
-
     if (
       !(tsModuleDecl.flags & ts.NodeFlags.Namespace) &&
       TsUtils.hasModifier(tsModifiers, ts.SyntaxKind.DeclareKeyword)
@@ -3885,6 +3882,26 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isStringLiteral(tsModuleDecl.name) && tsModuleDecl.name.text.includes('*')) {
       this.incrementCounters(tsModuleDecl, FaultID.WildcardsInModuleName);
     }
+  }
+
+   private static getNameSpaceChainString(tsModuleDecl: ts.ModuleDeclaration, node: ts.Node): string {
+    let nameSpaceChain: string = (tsModuleDecl.name as ts.Identifier).escapedText.toString(); 
+    let temptNode = node.parent;
+
+    while (temptNode && ts.isModuleBlock(temptNode)) {
+      temptNode = temptNode.parent;
+      const parentModuleDeclaration = temptNode as ts.ModuleDeclaration;
+
+      if (!parentModuleDeclaration.name || !ts.isIdentifier(parentModuleDeclaration.name)) {
+        break;
+      }
+
+      const parentNameSpaceName = (parentModuleDeclaration.name as ts.Identifier).escapedText.toString();
+      nameSpaceChain = parentNameSpaceName + nameSpaceChain;
+      temptNode = temptNode.parent;
+    }
+
+    return nameSpaceChain;
   }
 
   private handleNameSpaceModuleBlock(moduleBlock: ts.ModuleBlock, nameSpace: string): void {

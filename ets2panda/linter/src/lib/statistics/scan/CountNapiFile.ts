@@ -112,8 +112,10 @@ async function processFile(filePath: string): Promise<NapiFileStatisticInfo> {
     const content = await runWithIOLimit(() => {
       return fs.promises.readFile(filePath, 'utf-8');
     });
-    const [lines, napiCount] = await Promise.all([countLinesFromContent(content), countNapiLinesFromContent(content)]);
-
+    const [lines, napiCount] = await Promise.all([
+      Promise.resolve(countLinesFromContent(content)),
+      Promise.resolve(countNapiLinesFromContent(content))
+    ]);
     result.totalLines = lines;
     if (napiCount > 0) {
       result.napiFiles = 1;
