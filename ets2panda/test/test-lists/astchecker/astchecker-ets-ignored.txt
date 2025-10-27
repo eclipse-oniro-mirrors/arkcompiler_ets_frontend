@@ -113,6 +113,9 @@ ast/parser/ets/annotations_tests/annotationDecl_bad_initializer04.ets
 ast/parser/ets/annotations_tests/annotationDecl_bad_initializer05.ets
 ast/compiler/ets/annotation_tests/annotation_as_negative_case.ets
 
+# Expected CTE Variable used before being assigned
+ast/parser/ets/never_assigned6.ets
+
 # Invalid position (0:0) not printed
 ast/compiler/ets/union_string_literals_4.ets
 ast/compiler/ets/MultiPropertyWithSameName.ets
