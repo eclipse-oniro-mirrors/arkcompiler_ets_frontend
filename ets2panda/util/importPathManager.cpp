@@ -201,7 +201,8 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
         if (fs::file_size(fileNameToCheck) == 0) {
             return false;
         }
-        // means that the decl file exists longer than the etsstdlib.abc file
+        // means that etsstdlib.abc file was NOT updated, so we DO NOT need to update declarations, and can cache
+        // existed files
         if (GetFileCreationTime(fileNameToCheck) > GetFileCreationTime(std::string(externalModuleImportData.Path()))) {
             importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
             importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
@@ -213,6 +214,8 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
                                                       std::make_shared<std::string>(ss.str()));
             return true;
         }
+        // means that etsstdlib.abc file was updated, so we need to update declarations
+        SetCacheUpdateIsNeeded(true);
     }
     return false;
 #endif
@@ -277,23 +280,31 @@ std::wstring s2ws(const std::string &str)
     return wstrTo;
 }
 
-static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl)
+static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl,
+                                         const bool cacheUpdateIsNeeded)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     std::wstring semNameWide = s2ws(semName);
     LPCWSTR lpwcstr = semNameWide.c_str();
     HANDLE sem = CreateSemaphoreExW(nullptr, 1, 1, lpwcstr, 0, SEMAPHORE_MODIFY_STATE | SYNCHRONIZE);
     if (!sem) {
+        LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         return;
     }
 
     DWORD waitRes = WaitForSingleObject(sem, INFINITE);
     if (waitRes != WAIT_OBJECT_0) {
+        LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         CloseHandle(sem);
         return;
     }
-
-    int fd = _open(absDecl.c_str(), _O_CREAT | _O_EXCL | _O_WRONLY, 0644);
+    auto flags = _O_CREAT | _O_WRONLY;
+    if (cacheUpdateIsNeeded) {
+        flags |= _O_TRUNC;
+    } else {
+        flags |= _O_EXCL;
+    }
+    int fd = _open(absDecl.c_str(), flags, 0644);
     if (fd == -1) {
         ReleaseSemaphore(sem, 1, nullptr);
         CloseHandle(sem);
@@ -312,8 +323,8 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
 }
 #else
 #ifndef USE_UNIX_SYSCALL
-static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &processed,
-                                       [[maybe_unused]] const std::string &absDecl)
+static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl,
+                                       const bool cacheUpdateIsNeeded)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
@@ -321,8 +332,14 @@ static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &proce
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         return;
     }
+    auto flags = O_CREAT | O_WRONLY;
+    if (cacheUpdateIsNeeded) {
+        flags |= O_TRUNC | O_CLOEXEC;
+    } else {
+        flags |= O_EXCL;
+    }
     sem_wait(sem);
-    int fd = open(absDecl.c_str(), O_CREAT | O_EXCL | O_WRONLY, 0644);
+    int fd = open(absDecl.c_str(), flags, 0644);
     if (fd == -1) {
         sem_post(sem);
         sem_close(sem);
@@ -344,7 +361,8 @@ static void CreateDeclarationFileLinux([[maybe_unused]] const std::string &proce
 #endif
 
 void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
-                           [[maybe_unused]] const std::string &processed)
+                           [[maybe_unused]] const std::string &processed,
+                           [[maybe_unused]] const bool cacheUpdateIsNeeded)
 {
 #ifdef USE_UNIX_SYSCALL
     return;
@@ -352,9 +370,9 @@ void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
     const std::string absDecl = fs::absolute(declFileName).string();
     fs::create_directories(fs::path(absDecl).parent_path());
 #ifdef PANDA_TARGET_WINDOWS
-    CreateDeclarationFileWindows(processed, absDecl);
+    CreateDeclarationFileWindows(processed, absDecl, cacheUpdateIsNeeded);
 #else
-    CreateDeclarationFileLinux(processed, absDecl);
+    CreateDeclarationFileLinux(processed, absDecl, cacheUpdateIsNeeded);
 #endif
 #endif
 }
@@ -408,7 +426,8 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
             importData.ohmUrl = util::UString(ohmUrl, allocator_).View().Utf8();
 
             const std::string processed = DeleteEscapeSymbols(ss.str());
-            CreateDeclarationFile(declFileName, processed);
+            const bool cacheUpdateFlag = GetCacheUpdateIsNeeded();
+            CreateDeclarationFile(declFileName, processed, cacheUpdateFlag);
         }
         return;  // if we reach this line, we already took that one class and created that one d.ets, no need to
                  // continue
