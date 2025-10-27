@@ -82,7 +82,9 @@ private:
                 return;
             }
         }
-        bool acceptVoid = parent->IsExpressionStatement() || parent->IsReturnStatement();
+        bool acceptVoid =
+            parent->IsExpressionStatement() || parent->IsReturnStatement() ||
+            (parent->IsSequenceExpression() && parent->Parent() != nullptr && parent->Parent()->IsForUpdateStatement());
         if (!acceptVoid) {
             checker->LogError(diagnostic::VOID_VALUE, {}, expr->Start());
         }
