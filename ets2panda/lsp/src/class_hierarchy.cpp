@@ -326,7 +326,7 @@ std::vector<ir::AstNode *> GetImplements(ir::AstNode *node)
             continue;
         }
         auto interfaceDecl = compiler::DeclarationFromIdentifier(partNode->AsIdentifier());
-        if (interfaceDecl->IsTSInterfaceDeclaration()) {
+        if (interfaceDecl && interfaceDecl->IsTSInterfaceDeclaration()) {
             result.push_back(interfaceDecl->AsTSInterfaceDeclaration());
         }
     }
@@ -481,7 +481,7 @@ ir::AstNode *GetClassDirectSuperClass(ir::AstNode *node)
         return nullptr;
     }
     auto superClass = compiler::DeclarationFromIdentifier(partNode->AsIdentifier());
-    if (superClass->IsClassDefinition()) {
+    if (superClass && superClass->IsClassDefinition()) {
         return superClass->Parent();
     }
     return nullptr;
@@ -546,7 +546,7 @@ std::unordered_set<ir::AstNode *> GetClassDirectImplementedInterfaces(ir::AstNod
             continue;
         }
         auto interfaceDecl = compiler::DeclarationFromIdentifier(partNode->AsIdentifier());
-        if (interfaceDecl->IsTSInterfaceDeclaration()) {
+        if (interfaceDecl && interfaceDecl->IsTSInterfaceDeclaration()) {
             res.insert(interfaceDecl);
         }
     }
@@ -575,7 +575,7 @@ std::unordered_set<ir::AstNode *> GetInterfaceDirectExtendedInterfaces(ir::AstNo
             continue;
         }
         auto interfaceDecl = compiler::DeclarationFromIdentifier(partNode->AsIdentifier());
-        if (interfaceDecl->IsTSInterfaceDeclaration()) {
+        if (interfaceDecl && interfaceDecl->IsTSInterfaceDeclaration()) {
             res.insert(interfaceDecl);
         }
     }
@@ -660,7 +660,7 @@ std::vector<ir::AstNode *> GetInterfaceSuperInterfaces([[maybe_unused]] std::vec
                 continue;
             }
             auto interfaceDecl = compiler::DeclarationFromIdentifier(partNode->AsIdentifier());
-            if (interfaceDecl->IsTSInterfaceDeclaration()) {
+            if (interfaceDecl && interfaceDecl->IsTSInterfaceDeclaration()) {
                 ir::AstNode *superInterface = interfaceDecl->AsTSInterfaceDeclaration();
                 superInterfaces.push_back(superInterface);
                 findSuperInterfaces(superInterface);

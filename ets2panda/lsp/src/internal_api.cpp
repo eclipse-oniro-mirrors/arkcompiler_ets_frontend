@@ -318,6 +318,7 @@ checker::VerifiedType GetTypeOfSymbolAtLocation(checker::ETSChecker *checker, ir
 {
     ES2PANDA_ASSERT(astNode);
     auto originalNode = GetOriginalNode(astNode);
+    ES2PANDA_ASSERT(originalNode != nullptr);
     return originalNode->Check(checker);
 }
 
@@ -710,6 +711,9 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
     auto ast = ctx->parserProgram->Ast();
     std::string fileName(ctx->sourceFile->filePath);
     auto touchingToken = GetTouchingToken(context, position, false);
+    if (!touchingToken) {
+        return DocumentHighlights(fileName, {});
+    }
     if (!touchingToken->IsIdentifier()) {
         return DocumentHighlights(fileName, {});
     }

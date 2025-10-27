@@ -83,33 +83,50 @@ MatchKind DetermineMatchKind(const std::string &candidate, const PatternMatcher 
     return MatchKind::NONE;
 }
 
+std::optional<NavigateToItem> TryMakeItemFromNode(ir::AstNode *node, const PatternMatcher &matcher,
+                                                  const std::string &filePath)
+{
+    if (!node || !node->IsIdentifier()) {
+        return std::nullopt;
+    }
+
+    const auto name = node->AsIdentifier()->Name();
+    const auto matchKind = DetermineMatchKind(std::string(name), matcher);
+    if (matchKind == MatchKind::NONE) {
+        return std::nullopt;
+    }
+
+    auto *container = GetContainerNode(node);
+    if (!container) {
+        return std::nullopt;
+    }
+
+    const auto containerName = GetIdentifierName(container);
+    const auto nodeType = node->Type();
+    const auto containerType = container->Type();
+
+    return NavigateToItem {std::string(name), ToString(nodeType),     matchKind, true, filePath,
+                           containerName,     ToString(containerType)};
+}
+
 // improve get declarations correct and better
 std::vector<NavigateToItem> GetItemsFromNamedDeclaration(es2panda_Context *context, const SourceFile &file,
                                                          const PatternMatcher &matcher)
 {
     std::vector<NavigateToItem> items;
-    auto filePath = std::string {file.filePath};
-    auto fileContent = std::string {file.source};
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
 
+    const std::string filePath = std::string {file.filePath};
+    const std::string fileContent = std::string {file.source};
+
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto *ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     auto children = GetChildren(ast, ctx->allocator);
-
-    for (const auto child : children) {
-        if (child->IsIdentifier()) {
-            auto name = child->AsIdentifier()->Name();
-            auto matchKind = DetermineMatchKind(std::string(name), matcher);
-            if (matchKind != MatchKind::NONE) {
-                auto nodeType = child->Type();
-                auto containerId = GetContainerNode(child);
-                auto containerName = GetIdentifierName(containerId);
-                auto containerType = containerId->Type();
-                items.push_back({std::string(name), ToString(nodeType), matchKind, true, filePath, containerName,
-                                 ToString(containerType)});
-            }
+    items.reserve(children.size());
+    for (auto *child : children) {
+        if (auto item = TryMakeItemFromNode(child, matcher, filePath)) {
+            items.push_back(std::move(*item));
         }
     }
-
     return items;
 }
 
