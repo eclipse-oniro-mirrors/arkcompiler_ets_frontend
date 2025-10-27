@@ -5117,9 +5117,16 @@ export class Autofixer {
   private isTypeArgImport(arg: ts.Node, importName: ts.Identifier, typeArgSym: ts.Symbol): boolean {
     let argText = arg.getText();
     const importText = importName.text;
-
     if (ts.isTypeReferenceNode(arg) && ts.isQualifiedName(arg.typeName)) {
       argText = arg.typeName.left.getText();
+    }
+
+    if (ts.isTypeReferenceNode(arg) && arg.typeArguments && ts.isIdentifier(arg.typeName)) {
+      argText = arg.typeName.text;
+      const typeArgTypeNameSym = this.utils.trueSymbolAtLocation(arg.typeName);
+      if (typeArgTypeNameSym) {
+        typeArgSym = typeArgTypeNameSym;
+      }
     }
 
     if (argText !== importText) {

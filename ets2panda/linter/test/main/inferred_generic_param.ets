@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 import  Session from './sdk/import';
+import {Event,EventListener} from './sdk/import2';
 
 let session: Map<string,Session.A> = new Map();
 
 let bb : Map<string,Array<Session.A>> = new Map();
+
+let eventListener : Map<EventListener<Object>,Event.EventEmitter<Object>> = new Map();
