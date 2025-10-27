@@ -93,6 +93,7 @@ set(ES2PANDA_LSP_SRC
   ./src/refactors/convert_template.cpp
   ./src/refactors/extract_type.cpp
   ./src/refactors/generate_constructor.cpp
+  ./src/refactors/generate_getters_and_setters.cpp
   ./src/refactors/infer_function_return_type.cpp
   ./src/refactors/extract_symbol.cpp
   ./src/formatting/formatting_context.cpp

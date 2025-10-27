@@ -95,6 +95,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/refactors/extract_symbol.cpp",
     "src/refactors/extract_type.cpp",
     "src/refactors/generate_constructor.cpp",
+    "src/refactors/generate_getters_and_setters.cpp",
     "src/refactors/generate_override_methods.cpp",
     "src/refactors/infer_function_return_type.cpp",
     "src/refactors/move_to_new_file.cpp",

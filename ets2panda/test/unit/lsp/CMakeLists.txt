@@ -149,6 +149,10 @@ ets2panda_add_gtest(lsp_api_test_refactors_extract_type CPP_SOURCES
 ets2panda_add_gtest(lsp_api_test_refactors_convert_template CPP_SOURCES
     refactors_convert_template_test.cpp
 )
+ets2panda_add_gtest(lsp_api_test_generate_getters_and_setters CPP_SOURCES
+    refactor_generate_getters_and_setters_test.cpp
+)
+
 
 ets2panda_add_gtest(lsp_api_test_refactors_move_to_new_file CPP_SOURCES
     refactors_move_to_new_file_test.cpp
