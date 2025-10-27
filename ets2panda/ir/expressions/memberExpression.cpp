@@ -446,6 +446,12 @@ checker::Type *MemberExpression::CheckIndexAccessMethod(checker::ETSChecker *che
     std::string_view const methodName =
         isSetter ? compiler::Signatures::SET_INDEX_METHOD : compiler::Signatures::GET_INDEX_METHOD;
     auto *const method = objType_->GetProperty(methodName, searchFlag);
+    if (isSetter && objType_->IsETSReadonlyArrayType()) {
+        checker->LogError(diagnostic::READONLY_ARRAYLIKE_MODIFICATION, {},
+                          Parent()->AsAssignmentExpression()->Left()->Start());
+        return nullptr;
+    }
+
     if (method == nullptr || !method->HasFlag(varbinder::VariableFlags::METHOD)) {
         checker->LogError(diagnostic::NO_INDEX_ACCESS_METHOD, {}, Start());
         return nullptr;
