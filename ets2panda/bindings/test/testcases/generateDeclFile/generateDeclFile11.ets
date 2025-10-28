@@ -39,7 +39,7 @@ class ChainCalculator {
   divide(value: number): ChainCalculator {
     EtsStepArkTest();
     if (value === 0) {
-      throw new Error("Division by zero is not allowed.");
+      throw new Error("Division by zero is not allowed in integer arithmetic.");
     }
     this.result /= value;
     return this;
