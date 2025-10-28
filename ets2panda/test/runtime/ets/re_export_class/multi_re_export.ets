@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 /*---
+files: ['./export_class.ets', './export_class_1.ets']
 tags: [not-a-test, compile-only]
 ---*/
 
-export class A {
-    a : int = 1;
-}
+export * from './export_class'
+export * from './export_class_1'

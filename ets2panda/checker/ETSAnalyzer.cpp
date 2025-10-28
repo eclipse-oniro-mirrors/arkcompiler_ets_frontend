@@ -4440,7 +4440,10 @@ static varbinder::Variable *FindInReExports(ETSObjectType *baseType, util::Strin
         if (auto *var = reExport->GetProperty(searchName, flags); var != nullptr) {
             return var;
         }
-        return FindInReExports(reExport, searchName);
+        auto *result = FindInReExports(reExport, searchName);
+        if (result != nullptr) {
+            return result;
+        }
     }
     return nullptr;
 }

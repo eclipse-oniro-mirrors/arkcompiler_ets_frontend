@@ -13,9 +13,14 @@
  * limitations under the License.
  */
 /*---
-tags: [not-a-test, compile-only]
+files: ['./multi_re_export.ets']
 ---*/
 
-export class A {
-    a : int = 1;
+import * as ns from './multi_re_export'
+
+function main() {
+    let temp = new ns.A();
+    let temp1 = new ns.B();
+    arktest.assertEQ(temp.a, 1);
+    arktest.assertEQ(temp1.b, 2);
 }
