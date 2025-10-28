@@ -332,6 +332,13 @@ std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
             return std::string(node->AsClassProperty()->Id()->Name().Utf8());
         case ir::AstNodeType::TS_INTERFACE_DECLARATION:
             return std::string(node->AsTSInterfaceDeclaration()->Id()->Name().Utf8());
+        case ir::AstNodeType::VARIABLE_DECLARATION:
+            if (node->AsVariableDeclaration()->Declarators()[0]->Id()->IsIdentifier()) {
+                ir::Identifier *ident = node->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
+                return std::string(ident->Name().Utf8());
+            } else {
+                return std::nullopt;
+            }
         default:
             return std::nullopt;
     }

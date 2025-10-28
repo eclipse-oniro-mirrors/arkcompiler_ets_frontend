@@ -88,6 +88,7 @@ set(ES2PANDA_LSP_SRC
   ./src/refactors/generate_override_methods.cpp
   ./src/refactors/convert_overload_list.cpp
   ./src/refactors/convert_params_to_object.cpp
+  ./src/refactors/move_to_new_file.cpp
   ./src/refactors/convert_template.cpp
   ./src/refactors/extract_type.cpp
   ./src/refactors/generate_constructor.cpp

@@ -899,7 +899,7 @@ std::vector<FileTextChanges> ChangeTracker::GetChanges()  // should add Validate
     return textChangesList;
 }
 
-void ChangeTracker::CreateNewFile(SourceFile *oldFile, const std::string &fileName,
+void ChangeTracker::CreateNewFile(const SourceFile *oldFile, const std::string &fileName,
                                   std::vector<const ir::Statement *> &statements)
 {
     NewFile newFile;

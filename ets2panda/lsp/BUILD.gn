@@ -96,6 +96,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/refactors/generate_constructor.cpp",
     "src/refactors/generate_override_methods.cpp",
     "src/refactors/infer_function_return_type.cpp",
+    "src/refactors/move_to_new_file.cpp",
     "src/refactors/refactor_types.cpp",
     "src/references.cpp",
     "src/register_code_fix/add_local_variable.cpp",
