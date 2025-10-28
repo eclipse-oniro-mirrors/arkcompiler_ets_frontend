@@ -45,6 +45,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 89,
+            "column": 1,
+            "endLine": 93,
+            "endColumn": 2,
+            "problem": "MissingSuperCall",
+            "suggest": "",
+            "rule": "The subclass constructor must call the parent class's parametered constructor (arkts-subclass-must-call-super-constructor-with-args)",
+            "severity": "ERROR"
+        },
+        {
             "line": 58,
             "column": 9,
             "endLine": 58,
