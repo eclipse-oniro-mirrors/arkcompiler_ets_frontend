@@ -1255,6 +1255,10 @@ semantic:
   id: 31
   message: "Only extension function or a class method can return 'this'"
 
+- name: RETURN_TYPE_UTILITY_INCORRECT_PARAM
+  id: 36530
+  message: "Type '{}' cannot be used as type parameter for ReturnType utilty type"
+
 - name: RETURN_WITHOUT_VALUE
   id: 32
   message: "Missing return value."

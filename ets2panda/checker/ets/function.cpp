@@ -15,20 +15,20 @@
 
 #include <cstddef>
 
-#include "checker/types/ets/etsResizableArrayType.h"
-#include "checker/types/ets/etsTupleType.h"
-#include "generated/signatures.h"
-#include "checker/ets/wideningConverter.h"
-#include "ir/astNodeFlags.h"
-#include "varbinder/ETSBinder.h"
 #include "checker/ETSAnalyzerHelpers.h"
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
+#include "checker/ets/wideningConverter.h"
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
+#include "checker/types/ets/etsResizableArrayType.h"
+#include "checker/types/ets/etsReturnTypeUtilityType.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
+#include "generated/signatures.h"
+#include "ir/astNodeFlags.h"
 #include "ir/base/catchClause.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
@@ -59,6 +59,7 @@
 #include "parser/program/program.h"
 #include "util/helpers.h"
 #include "util/nameMangler.h"
+#include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::checker {
 
@@ -609,6 +610,48 @@ static bool EnhanceSubstitutionForResizableArray(ETSChecker *checker, const Aren
     return EnhanceSubstitutionForType(checker, typeParams, paramType->ElementType(), elementType, substitution);
 }
 
+static bool EnhanceSubstitutionForReturnTypeUtilityType(ETSChecker *checker, const ArenaVector<Type *> &typeParams,
+                                                        const ETSReturnTypeUtilityType *paramType, Type *argumentType,
+                                                        Substitution *substitution)
+{
+    // If the argument is not a ReturnType<T> type, then the best infer about T, is that it is a function type.
+    // (It can be a union of them, never type etc..., but these can be achieved with explicit instantiation)
+    auto *argumentReturnTypeType = argumentType->IsETSReturnTypeUtilityType()
+                                       ? argumentType->AsETSReturnTypeUtilityType()->GetUnderlying()
+                                       : static_cast<Type *>(checker->GlobalBuiltinFunctionType());
+    Type *paramReturnTypeType = paramType->IsETSReturnTypeUtilityType()
+                                    ? paramType->GetUnderlying()
+                                    : static_cast<Type *>(checker->GlobalBuiltinFunctionType());
+    return EnhanceSubstitutionForType(checker, typeParams, paramReturnTypeType, argumentReturnTypeType, substitution);
+}
+
+static bool EnhanceSubstitutionForUtilityType(ETSChecker *checker, const ArenaVector<Type *> &typeParams,
+                                              Type *paramType, Type *argumentType, Substitution *substitution)
+{
+    if (paramType->IsETSReadonlyType()) {
+        return EnhanceSubstitutionForReadonly(checker, typeParams, paramType->AsETSReadonlyType(), argumentType,
+                                              substitution);
+    }
+    if (paramType->IsETSPartialTypeParameter()) {
+        return EnhanceSubstitutionForPartialTypeParam(checker, typeParams, paramType->AsETSPartialTypeParameter(),
+                                                      argumentType, substitution);
+    }
+    if (paramType->IsETSAwaitedType()) {
+        return EnhanceSubstitutionForAwaited(checker, typeParams, paramType->AsETSAwaitedType(), argumentType,
+                                             substitution);
+    }
+    if (paramType->IsETSReturnTypeUtilityType()) {
+        return EnhanceSubstitutionForReturnTypeUtilityType(checker, typeParams, paramType->AsETSReturnTypeUtilityType(),
+                                                           argumentType, substitution);
+    }
+    if (paramType->IsETSNonNullishType()) {
+        return EnhanceSubstitutionForNonNullish(checker, typeParams, paramType->AsETSNonNullishType(), argumentType,
+                                                substitution);
+    }
+
+    return true;
+}
+
 /* A very rough and imprecise partial type inference */
 // CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Type *> &typeParams, Type *paramType,
@@ -626,21 +669,9 @@ static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Ty
                                                     substitution);
         }
     }
-    if (paramType->IsETSNonNullishType()) {
-        return EnhanceSubstitutionForNonNullish(checker, typeParams, paramType->AsETSNonNullishType(), argumentType,
-                                                substitution);
-    }
     if (paramType->IsETSFunctionType()) {
         return EnhanceSubstitutionForFunction(checker, typeParams, paramType->AsETSFunctionType(), argumentType,
                                               substitution);
-    }
-    if (paramType->IsETSReadonlyType()) {
-        return EnhanceSubstitutionForReadonly(checker, typeParams, paramType->AsETSReadonlyType(), argumentType,
-                                              substitution);
-    }
-    if (paramType->IsETSPartialTypeParameter()) {
-        return EnhanceSubstitutionForPartialTypeParam(checker, typeParams, paramType->AsETSPartialTypeParameter(),
-                                                      argumentType, substitution);
     }
     if (paramType->IsETSUnionType()) {
         return EnhanceSubstitutionForUnion(checker, typeParams, paramType->AsETSUnionType(), argumentType,
@@ -658,12 +689,8 @@ static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Ty
         return EnhanceSubstitutionForArray(checker, typeParams, paramType->AsETSArrayType(), argumentType,
                                            substitution);
     }
-    if (paramType->IsETSAwaitedType()) {
-        return EnhanceSubstitutionForAwaited(checker, typeParams, paramType->AsETSAwaitedType(), argumentType,
-                                             substitution);
-    }
 
-    return true;
+    return EnhanceSubstitutionForUtilityType(checker, typeParams, paramType, argumentType, substitution);
 }
 
 bool ETSChecker::EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParams, Type *paramType, Type *argumentType,

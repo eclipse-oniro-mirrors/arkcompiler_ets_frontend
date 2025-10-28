@@ -24,6 +24,7 @@
 #include "varbinder/ETSBinder.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "checker/types/ets/etsAwaitedType.h"
+#include "checker/types/ets/etsReturnTypeUtilityType.h"
 #include "compiler/lowering/util.h"
 #include "util/nameMangler.h"
 
@@ -74,10 +75,6 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
         return GlobalTypeError();
     }
 
-    if (baseType->IsETSAnyType()) {
-        return baseType;
-    }
-
     if (InvalidBaseTypeOfRequiredPartialAndReadonly(baseType, utilityType)) {
         LogError(diagnostic::MUST_BE_CLASS_INTERFACE_TYPE, {utilityType}, typeParams->Start());
         return GlobalTypeError();
@@ -98,6 +95,12 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
 
     if (utilityType == compiler::Signatures::AWAITED_TYPE_NAME) {
         return HandleAwaitedUtilityType(baseType);
+    }
+
+    if (utilityType == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
+        auto *returnType = HandleReturnTypeUtilityType(baseType);
+        ValidateReturnTypeUtilityType(returnType, typeParams);
+        return returnType;
     }
 
     LogError(diagnostic::UTILITY_TYPE_UNIMPLEMENTED, {}, typeParams->Start());
@@ -186,6 +189,61 @@ Type *ETSChecker::HandleAwaitExpression(Type *typeToBeAwaited, ir::AwaitExpressi
     Relation()->RemoveFlags(TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
 
     return HandleAwaitedUtilityType(typeToBeAwaited);
+}
+
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// ReturnType utility type
+// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Type *ETSChecker::HandleReturnTypeUtilityType(Type *baseType)
+{
+    if (baseType->IsETSTypeParameter()) {
+        if (!Relation()->IsSupertypeOf(GlobalBuiltinFunctionType(),
+                                       baseType->AsETSTypeParameter()->GetConstraintType())) {
+            return GlobalTypeError();
+        }
+
+        return ProgramAllocator()->New<ETSReturnTypeUtilityType>(baseType->AsETSTypeParameter());
+    }
+
+    if (baseType->IsETSFunctionType()) {
+        auto *const funcTypeSig = baseType->AsETSFunctionType()->ArrowSignature();
+        return funcTypeSig->ReturnType();
+    }
+
+    if (baseType->IsETSUnionType()) {
+        ArenaVector<Type *> returnTypes(ProgramAllocator()->Adapter());
+        for (Type *type : baseType->AsETSUnionType()->ConstituentTypes()) {
+            auto *constituentRetType = HandleReturnTypeUtilityType(type);
+            if (constituentRetType->IsTypeError()) {
+                return constituentRetType;
+            }
+            returnTypes.push_back(constituentRetType);
+        }
+        return CreateETSUnionType(std::move(returnTypes));
+    }
+
+    if (Relation()->IsIdenticalTo(baseType, GlobalBuiltinFunctionType())) {
+        return GlobalETSAnyType();
+    }
+
+    if (baseType->IsETSNeverType()) {
+        return baseType;
+    }
+
+    return GlobalTypeError();
+}
+
+void ETSChecker::ValidateReturnTypeUtilityType(const Type *typeToValidate,
+                                               const ir::TSTypeParameterInstantiation *const typeParams)
+{
+    if (typeToValidate->IsTypeError()) {
+        LogError(diagnostic::RETURN_TYPE_UTILITY_INCORRECT_PARAM, {typeParams->DumpEtsSrc()}, typeParams->Start());
+    }
+
+    if (typeToValidate->IsETSVoidType()) {
+        LogError(diagnostic::ANNOT_IS_VOID, {}, typeParams->Start());
+    }
 }
 
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

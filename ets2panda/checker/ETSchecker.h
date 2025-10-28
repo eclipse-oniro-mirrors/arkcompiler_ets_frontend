@@ -427,7 +427,6 @@ public:
 
     [[nodiscard]] bool EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParams, Type *paramType,
                                                   Type *argumentType, Substitution *substitution);
-
     std::pair<ArenaVector<Type *>, bool> CreateUnconstrainedTypeParameters(
         ir::TSTypeParameterDeclaration const *typeParams);
     [[nodiscard]] std::optional<Substitution> CheckTypeParamsAndBuildSubstitutionIfValid(
@@ -719,6 +718,10 @@ public:
     void MakePropertyNonNullish(ETSObjectType *classType, varbinder::LocalVariable *prop);
     void ValidateObjectLiteralForRequiredType(const ETSObjectType *requiredType,
                                               const ir::ObjectExpression *initObjExpr);
+    // ReturnType
+    Type *HandleReturnTypeUtilityType(Type *baseType);
+    void ValidateReturnTypeUtilityType(const Type *baseType, const ir::TSTypeParameterInstantiation *typeParams);
+
     bool IsStaticInvoke(ir::MemberExpression *const expr);
     void ValidateCallExpressionIdentifier(ir::Identifier *const ident, Type *const type);
 
