@@ -13,28 +13,15 @@
  * limitations under the License.
  */
 
-class Foo {
-    async foo(i: int): Promise<Object | null> {
-        return null;
-    }
-
-    async foo(o: Object | null, i: int): Promise<Object | null> {
-        return null;
-    }
+async function foo1(): Promise<number> {
 }
 
-async function bar(i: int): Promise<Object | null> {
-    return null;
+async function foo2(): Promise<boolean> {
 }
 
-async function bar(o: Object | null, i: int): Promise<Object | null>{
-    return null;
+async function foo3(): Promise<String> {
 }
 
-function main(): void {
-    bar(0);
-    bar(null, 0);
-    let foo = new Foo();
-    foo.foo(0);
-    foo.foo(null, 0);
-}
+/* @@? 16:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@? 19:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@? 22:16 Error Semantic error ESE0103: Function with a non void return type must return a value. */
