@@ -356,50 +356,6 @@ function compareResults(
   return [compareResultsHelper(caseName, actualData, expected), actualData];
 }
 
-function findDeclFileFolders(projectPath: string, declFileInfoJson: string): string[] {
-  const result: string[] = [];
-  try {
-    const entries = fs.readdirSync(projectPath, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        const subDirPath = path.join(projectPath, entry.name);
-        const declFilePath = path.join(subDirPath, declFileInfoJson);
-        if (fs.existsSync(declFilePath)) {
-          result.push(entry.name);
-        }
-      }
-    }
-  } catch (error) {
-    console.error(`Error searching directory ${projectPath}:`, error);
-  }
-  return result;
-}
-
-function setDeclFileAndJson(testDir: string, pathConfig: PathConfig): void {
-  const declFileInfoJson: string = 'decl-fileInfo.json';
-  const declFileFolders = findDeclFileFolders(pathConfig.projectPath, declFileInfoJson);
-  declFileFolders.forEach((item: string) => {
-    const dynamicPath = path.join(pathConfig.declgenOutDir, item, 'declgen', 'dynamic');
-    if (!fs.existsSync(dynamicPath)) {
-      fs.mkdirSync(dynamicPath, { recursive: true });
-    }
-    const declTestFile = item + 'Test.d.ets';
-    const declFilePath = path.join(pathConfig.projectPath, item, declTestFile);
-    const declJsonPath = path.join(pathConfig.projectPath, item, declFileInfoJson);
-    fs.copyFileSync(declFilePath, path.join(dynamicPath, declTestFile));
-    if (fs.existsSync(declJsonPath)) {
-      try {
-        const fileContent = fs.readFileSync(declJsonPath, 'utf8');
-        const updatedContent = fileContent.replace(/\$\{absolute_path_to_build_system\}/g, testDir);
-        const targetPath = path.join(dynamicPath, declFileInfoJson);
-        fs.writeFileSync(targetPath, updatedContent, 'utf8');
-      } catch (error) {
-        console.error(`Error processing file ${declJsonPath}:`, error);
-      }
-    }
-  });
-}
-
 function runTests(lsp: Lsp, cases: TestCases, failedList: string[], pathConfig: PathConfig): string[] {
   console.log('Running tests...');
   if (!cases) {
@@ -452,7 +408,6 @@ function run(testDir: string, pathConfig: PathConfig): void {
   let failedList: string[] = [];
 
   const basicModules = getModules(pathConfig.projectPath, basicCases);
-  setDeclFileAndJson(testDir, pathConfig);
   const basicLsp = new Lsp(pathConfig, undefined, basicModules);
   failedList = runTests(basicLsp, basicCases, failedList, pathConfig);
 
@@ -477,31 +432,10 @@ async function runWithAstCache(testDir: string, pathConfig: PathConfig): Promise
       name: 'entry',
       moduleType: 'har',
       srcPath: path.join(pathConfig.projectPath, 'entry')
-    },
-    {
-      name: 'getDefinitionAtPosition',
-      moduleType: 'har',
-      srcPath: path.join(pathConfig.projectPath, 'getDefinitionAtPosition')
-    },
-    {
-      name: 'getReferencesAtPosition',
-      moduleType: 'har',
-      srcPath: path.join(pathConfig.projectPath, 'getReferencesAtPosition')
-    },
-    {
-      name: 'findRenameLocations',
-      moduleType: 'har',
-      srcPath: path.join(pathConfig.projectPath, 'findRenameLocations')
-    },
-    {
-      name: '1.1',
-      moduleType: 'entry',
-      srcPath: path.join(pathConfig.projectPath, '1.1')
     }
   ];
 
   const basicModules = getModules(pathConfig.projectPath, basicCases);
-  setDeclFileAndJson(testDir, pathConfig);
   const basicLsp = new Lsp(pathConfig, undefined, entry_module);
   await basicLsp.initAstCache();
   basicLsp.update(basicModules);
@@ -541,6 +475,5 @@ if (require.main === module) {
   process.env.PANDA_LIB_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'lib');
   process.env.PANDA_BIN_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'bin');
   run(testDir, pathConfig);
-  runWithAstCache(testDir, pathConfig).then(() => {});
-  fs.writeFileSync('./finished.txt', 'success', 'utf8');
+  runWithAstCache(testDir, pathConfig).then(() => { });
 }

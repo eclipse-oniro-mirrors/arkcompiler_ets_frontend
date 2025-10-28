@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +13,10 @@
  * limitations under the License.
  */
 
-const { spawn } = require('child_process');
-
-const child = spawn(process.argv[2], process.argv.slice(3), {
-    stdio: 'inherit',
-    detached: true,
-    windowsHide: true
-});
-
-child.on('exit', (code, signal) => {
-    if (signal === 'SIGSEGV' || signal === 'SIGABRT') {
-        console.error(`process crashe: ${signal}`);
-        process.exit(128 + signal);
-    } else {
-        process.exit(code ?? 0);
-    }
-});
-
-child.on('error', (err) => {
-    console.error(`Promoter process failure: ${err.message}`);
-    process.exit(127);
-});
-
-child.unref();
+{
+    "name": "entry",
+    "description": "",
+    "main": "",
+    "version": "1.0.0",
+    "dependencies": {"har": "file:../har"}
+}

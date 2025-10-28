@@ -30,7 +30,7 @@
             "kind": "space"
           },
           {
-            "text": "Double",
+            "text": "number",
             "kind": "keyword"
           }
         ],
@@ -62,7 +62,7 @@
                 "kind": "space"
               },
               {
-                "text": "Double",
+                "text": "number",
                 "kind": "keyword"
               }
             ]
@@ -84,7 +84,7 @@
                 "kind": "space"
               },
               {
-                "text": "Double",
+                "text": "number",
                 "kind": "keyword"
               }
             ]

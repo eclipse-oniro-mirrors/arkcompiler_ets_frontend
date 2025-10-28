@@ -253,13 +253,21 @@ export function generateBuildConfigs(
         languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
           ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static', 'declgenBridgeCode')
           : undefined,
-      dependencies: dependencies.map((dep) => {
-        const depModule = definedModules.find((m) => m.srcPath === dep);
-        return depModule ? depModule.name : '';
-      }),
+      dependencies: processDependencies(module.name, dependencies, definedModules),
       sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined
     };
     addPluginPathConfigs(allBuildConfigs[module.name], module);
   }
   return allBuildConfigs;
+}
+
+function processDependencies(currentModule: string, dependencies: string[], definedModules: ModuleDescriptor[]) {
+  let result: string[] = [];
+  dependencies.forEach((dep) => {
+    const depModule = definedModules.find((m) => m.srcPath === dep)
+    if (depModule && depModule.name !== currentModule) {
+      result.push(depModule.name);
+    }
+  })
+  return result;
 }
