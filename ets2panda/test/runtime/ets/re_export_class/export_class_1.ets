@@ -16,6 +16,6 @@
 tags: [not-a-test, compile-only]
 ---*/
 
-export class A {
-    a : int = 1;
-}
+export class B {
+    b : int  = 2;
+};
