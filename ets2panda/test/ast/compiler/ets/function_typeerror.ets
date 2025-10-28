@@ -36,7 +36,6 @@ function main(): void {
 }
 
 
-/* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 17:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:19 Error Syntax error ESY0227: Unexpected token '.'. */
 /* @@? 17:19 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
@@ -52,5 +51,3 @@ function main(): void {
 /* @@? 18:9 Error Syntax error ESY0227: Unexpected token 'return'. */
 /* @@? 18:17 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 20:1 Error Syntax error ESY0227: Unexpected token '}'. */
-/* @@? 23:23 Error Semantic error ESE0136: Method methodOne(p: Derived): Base in Derived not overriding any method */
-/* @@? 32:21 Error Semantic error ESE0087: Property 'methodOne' does not exist on type 'Base' */

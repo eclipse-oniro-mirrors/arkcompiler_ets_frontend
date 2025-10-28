@@ -275,8 +275,7 @@ public:
                                                           ir::MemberExpression *const memberExpr,
                                                           varbinder::Variable *const globalFunctionVar,
                                                           PropertySearchFlags searchFlag);
-    std::vector<ResolveResult *> ResolveMemberReference(const ir::MemberExpression *memberExpr,
-                                                        const ETSObjectType *target);
+    std::vector<ResolveResult *> ResolveMemberReference(const ir::MemberExpression *memberExpr, ETSObjectType *target);
     varbinder::LocalVariable *ResolveOverloadReference(const ir::Identifier *ident, ETSObjectType *objType,
                                                        PropertySearchFlags searchFlags);
     void WarnForEndlessLoopInGetterSetter(const ir::MemberExpression *const memberExpr);

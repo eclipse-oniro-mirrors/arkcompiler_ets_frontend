@@ -17,12 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "checker/types/globalTypesHolder.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
-#include "checker/types/ets/etsEnumType.h"
 #include "compiler/lowering/phase.h"
-#include "util/nameMangler.h"
-#include "ir/statements/annotationDeclaration.h"
 
 namespace ark::es2panda::checker {
 
@@ -36,7 +31,7 @@ void ETSObjectType::AddInterface(ETSObjectType *interfaceType)
 {
     EnsureInterfacesInitialized();
     if (std::find(interfaces_->begin(), interfaces_->end(), interfaceType) == interfaces_->end()) {
-        interfaces_->push_back(interfaceType);
+        interfaces_->emplace_back(interfaceType);
         CacheSupertypeTransitive(interfaceType);
     }
 }
@@ -1133,10 +1128,11 @@ varbinder::LocalVariable *ETSObjectType::CopyProperty(varbinder::LocalVariable *
     return copiedProp;
 }
 
-Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *relation,
+Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *const relation,
                                  GlobalTypesHolder *const globalTypes)
 {
-    relation = relation_;
+    EnsurePropertiesInstantiated();
+
     auto *const checker = relation->GetChecker()->AsETSChecker();
     std::lock_guard guard {*checker->Mutex()};
     auto *const base = GetOriginalBaseType();
@@ -1144,31 +1140,48 @@ Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *
     if (!relation->IsAtTypeDepthLimit(base)) {
         return this;
     }
+
     relation->IncreaseTypeRecursionCount(base);
 
     auto *const copiedType = checker->CreateETSObjectType(declNode_, flags_);
+    copiedType->SetRelation(relation);
+
     ES2PANDA_ASSERT(copiedType->internalName_ == internalName_);
     ES2PANDA_ASSERT(copiedType->name_ == name_);
     ES2PANDA_ASSERT(copiedType != nullptr);
+
     copiedType->typeFlags_ = typeFlags_;
     copiedType->RemoveObjectFlag(ETSObjectFlags::INCOMPLETE_INSTANTIATION | ETSObjectFlags::CHECKED_INVOKE_LEGITIMACY);
+
     copiedType->SetVariable(variable_);
     copiedType->SetSuperType(superType_);
-
-    EnsureInterfacesInitialized();
-    for (auto *const it : *interfaces_) {
-        copiedType->AddInterface(it);
-    }
-
-    ArenaVector<Type *> typeArgs(allocator->Adapter());
-    for (auto *const typeArgument : TypeArguments()) {
-        typeArgs.emplace_back(typeArgument->Instantiate(allocator, relation, globalTypes));
-    }
-    copiedType->SetTypeArguments(std::move(typeArgs));
     copiedType->SetBaseType(this);
-    copiedType->propertiesInstantiated_ = false;
-    copiedType->relation_ = relation;
-    copiedType->effectiveSubstitution_ = nullptr;
+    copiedType->SetEnclosingType(enclosingType_);
+
+    if (interfaces_ != nullptr && !interfaces_->empty()) {
+        for (auto *const it : *interfaces_) {
+            copiedType->AddInterface(it);
+        }
+    }
+
+    if (reExports_ != nullptr && !reExports_->empty()) {
+        for (auto *const it : *reExports_) {
+            copiedType->AddReExports(it);
+        }
+    }
+
+    if (reExportAlias_ != nullptr && !reExportAlias_->empty()) {
+        for (auto const &item : *reExportAlias_) {
+            copiedType->AddReExportAlias(item.first, item.second);
+        }
+    }
+
+    if (!typeArguments_.empty()) {
+        for (auto *const typeArgument : typeArguments_) {
+            copiedType->typeArguments_.emplace_back(typeArgument->Instantiate(allocator, relation, globalTypes));
+        }
+    }
+    copiedType->effectiveSubstitution_ = effectiveSubstitution_;
 
     relation->DecreaseTypeRecursionCount(base);
 

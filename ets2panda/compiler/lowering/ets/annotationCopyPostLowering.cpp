@@ -31,6 +31,7 @@ void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *s
         return;
     }
 
+    ES2PANDA_ASSERT(st->GetBaseName()->Variable() != nullptr);
     auto *annoDecl = st->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
 
     auto propertyExist = [&st](util::StringView name) {

@@ -1563,8 +1563,10 @@ static LambdaInfo GenerateLambdaInfoForFunctionReference(public_lib::Context *ct
 
     if (method->Parent()->Parent()->IsClassDeclaration()) {
         info.calleeClass = method->Parent()->Parent()->AsClassDeclaration();
+        info.calleeClass->Check(ctx->GetChecker()->AsETSChecker());
     } else if (method->Parent()->Parent()->IsTSInterfaceDeclaration()) {
         info.calleeInterface = method->Parent()->Parent()->AsTSInterfaceDeclaration();
+        info.calleeInterface->Check(ctx->GetChecker()->AsETSChecker());
     } else {
         ES2PANDA_UNREACHABLE();
     }

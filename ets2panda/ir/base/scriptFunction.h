@@ -234,9 +234,11 @@ public:
         return Body() != nullptr;
     }
 
+    // Do not use anywhere except the ETSEmitter, should be removed
     [[nodiscard]] bool HasRestParameter() const noexcept
     {
-        return Signature()->RestVar() != nullptr;
+        auto const &params = GetHistoryNodeAs<ScriptFunction>()->irSignature_.Params();
+        return !params.empty() && params.back()->AsETSParameterExpression()->IsRestParameter();
     }
 
     [[nodiscard]] bool HasReturnStatement() const noexcept

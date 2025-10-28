@@ -26,4 +26,3 @@ function main() {
 
 
 /* @@? 21:1 Error Semantic error ESE0399: Method declaration `capset` must all ambient or non-ambient */
-/* @@? 24:3 Error Semantic error ESE0289: This expression is not callable. */

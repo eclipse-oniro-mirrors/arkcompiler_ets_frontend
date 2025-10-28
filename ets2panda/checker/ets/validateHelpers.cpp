@@ -28,8 +28,9 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
     }
 
     if (var->HasFlag(varbinder::VariableFlags::PRIVATE) || var->HasFlag(varbinder::VariableFlags::PROTECTED)) {
-        if ((Context().ContainingClass() == obj ||
-             Context().ContainingClass()->GetOriginalBaseType() == obj->GetOriginalBaseType()) &&
+        if ((Relation()->IsIdenticalTo(Context().ContainingClass(), obj) ||
+             Relation()->IsIdenticalTo(Context().ContainingClass()->GetOriginalBaseType(),
+                                       obj->GetOriginalBaseType())) &&
             obj->IsPropertyInherited(var)) {
             return;
         }
@@ -42,8 +43,8 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
         auto *currentOutermost = Context().ContainingClass()->OutermostClass();
         auto *objOutermost = obj->OutermostClass();
 
-        if (currentOutermost != nullptr && objOutermost != nullptr && currentOutermost == objOutermost &&
-            obj->IsPropertyInherited(var)) {
+        if (currentOutermost != nullptr && objOutermost != nullptr &&
+            Relation()->IsIdenticalTo(currentOutermost, objOutermost) && obj->IsPropertyInherited(var)) {
             return;
         }
 

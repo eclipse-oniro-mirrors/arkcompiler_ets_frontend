@@ -115,6 +115,9 @@ CheckResult EnumHasCorrectType::operator()(const ir::AstNode *ast)
 
     const checker::Type *enumType =
         (enumObject->EnumAnnotedType() != nullptr) ? enumObject->EnumAnnotedType() : enumObject->Underlying();
+    if (enumType == nullptr) {
+        return {CheckDecision::CORRECT, CheckAction::CONTINUE};
+    }
 
     if (enumType->IsETSObjectType()) {
         const auto &asObject = enumType->AsETSObjectType();

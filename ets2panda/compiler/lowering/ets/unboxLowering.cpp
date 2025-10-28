@@ -294,11 +294,7 @@ static void HandleScriptFunctionHeader(UnboxContext *uctx, ir::ScriptFunction *f
 
 static void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop, bool forceUnbox = false)
 {
-    auto *propType = prop->TsType();
-    if (propType == nullptr) {
-        propType = prop->Key()->Variable()->TsType();
-    }
-    // Primitive Types from JS should be Boxed, but in case of annotation, it should be unboxed.
+    //  Primitive Types from JS should be Boxed, but in case of annotation, it should be unboxed.
     ir::AstNode *node = prop;
     while (node != nullptr && !node->IsETSModule()) {
         node = node->Parent();
@@ -306,7 +302,13 @@ static void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop, boo
     if (node != nullptr && node->AsETSModule()->Program()->IsDeclForDynamicStaticInterop() && !forceUnbox) {
         return;
     }
+
+    checker::Type *propType = prop->TsType();
+    if (propType == nullptr) {
+        propType = prop->Key()->Variable()->TsType();
+    }
     ES2PANDA_ASSERT(propType != nullptr);
+
     if (IsUnboxingApplicable(propType) && prop->Key()->IsIdentifier()) {
         auto *unboxedType = MaybeRecursivelyUnboxType(uctx, propType);
         prop->SetTsType(unboxedType);
@@ -695,6 +697,8 @@ static ir::Expression *AdjustType(UnboxContext *uctx, ir::Expression *expr, chec
     if (expr == nullptr) {
         return nullptr;
     }
+
+    ES2PANDA_ASSERT(expectedType != nullptr);
     expectedType = uctx->checker->GetApparentType(expectedType);
     checker::Type *actualType = expr->Check(uctx->checker);
 
@@ -1470,40 +1474,6 @@ void SetUpBuiltinConstructorsAndMethods(UnboxContext *uctx)
     }
 }
 
-template <bool PROG_IS_EXTERNAL = false>
-static void VisitExternalPrograms(UnboxVisitor *visitor, parser::Program *program)
-{
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            VisitExternalPrograms<true>(visitor, extProg);
-        }
-    }
-
-    if constexpr (!PROG_IS_EXTERNAL) {
-        return;
-    }
-
-    auto annotationIterator = [visitor](auto *child) {
-        if (child->IsClassProperty()) {
-            auto prop = child->AsClassProperty();
-            HandleClassProperty(visitor->uctx_, prop, true);
-            if (prop->Value() != nullptr) {
-                ES2PANDA_ASSERT(prop->Value()->IsLiteral() || prop->Value()->IsArrayExpression() ||
-                                (prop->Value()->IsTyped() && prop->Value()->AsTyped()->TsType()->IsETSEnumType()));
-                prop->Value()->Accept(visitor);
-            }
-            visitor->VisitClassProperty(child->AsClassProperty());
-        };
-    };
-
-    program->Ast()->IterateRecursivelyPostorder([&annotationIterator](ir::AstNode *ast) {
-        if (ast->IsAnnotationDeclaration() || ast->IsAnnotationUsage()) {
-            ast->Iterate(annotationIterator);
-        }
-    });
-}
-
 bool UnboxPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     auto uctx = UnboxContext(ctx);
@@ -1522,7 +1492,6 @@ bool UnboxPhase::PerformForModule(public_lib::Context *ctx, parser::Program *pro
 
     UnboxVisitor visitor(&uctx);
     program->Ast()->IterateRecursivelyPostorder([&visitor](ir::AstNode *ast) { ast->Accept(&visitor); });
-    VisitExternalPrograms(&visitor, program);
 
     for (auto *stmt : program->Ast()->Statements()) {
         RefineSourceRanges(stmt);

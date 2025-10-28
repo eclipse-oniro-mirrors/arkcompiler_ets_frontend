@@ -356,6 +356,11 @@ public:
         return *this;
     }
 
+    [[nodiscard]] bool Empty() const noexcept
+    {
+        return str_ == nullptr || str_->empty();
+    }
+
 private:
     void Alloc()
     {

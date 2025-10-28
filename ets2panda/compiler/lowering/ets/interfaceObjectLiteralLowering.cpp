@@ -215,8 +215,9 @@ static void FillAnonClassBody(public_lib::Context *ctx, ArenaVector<ir::AstNode 
 {
     FillClassBody(ctx, classBody, ifaceNode->Body()->Body(), readonlyFields, interfaceType);
     for (auto *extendedIface : ifaceNode->TsType()->AsETSObjectType()->Interfaces()) {
-        FillAnonClassBody(ctx, classBody, extendedIface->GetDeclNode()->AsTSInterfaceDeclaration(), readonlyFields,
-                          extendedIface);
+        auto *const subInterfaceNode = extendedIface->GetDeclNode()->AsTSInterfaceDeclaration();
+        subInterfaceNode->Check(ctx->GetChecker()->AsETSChecker());
+        FillAnonClassBody(ctx, classBody, subInterfaceNode, readonlyFields, extendedIface);
     }
 }
 
@@ -304,10 +305,10 @@ ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringVi
     return classDecl;
 }
 
-static void GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
+static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInterfaceDeclaration *ifaceNode)
 {
     if (ifaceNode->GetAnonClass() != nullptr) {
-        return;
+        return ifaceNode->GetAnonClass()->Definition()->TsType();
     }
 
     auto const classBodyBuilder = [ctx, ifaceNode](ArenaVector<ir::AstNode *> &classBody) -> void {
@@ -325,6 +326,8 @@ static void GenerateAnonClassFromInterface(public_lib::Context *ctx, ir::TSInter
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         ifaceNode->SetAnonClass(classDecl);
     }
+
+    return classDecl->Definition()->TsType();
 }
 
 static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode)
@@ -353,6 +356,35 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         abstractClassNode->SetAnonClass(classDecl);
     }
+}
+
+static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    if (auto const *const type = interfaceDecl->TsType();
+        type != nullptr && (type->AsETSObjectType()->IsGradual() || type->IsTypeError())) {
+        return false;
+    }
+    for (auto it : interfaceDecl->Body()->Body()) {
+        if (it->IsOverloadDeclaration()) {
+            continue;
+        }
+        ES2PANDA_ASSERT(it->IsMethodDefinition());
+        auto methodDef = it->AsMethodDefinition();
+        ES2PANDA_ASSERT(methodDef->Function());
+        if (!methodDef->Function()->HasBody() && !methodDef->Function()->IsGetter() &&
+            !methodDef->Function()->IsSetter()) {
+            return false;
+        }
+        for (auto const *const overload : methodDef->Overloads()) {
+            ES2PANDA_ASSERT(overload->Function());
+            if (!overload->Function()->HasBody() && !overload->Function()->IsGetter() &&
+                !overload->Function()->IsSetter()) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 //==========[ Processing of object interface literals with re-defined methods => begin ]==========//
@@ -522,7 +554,8 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
 static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
                                                ir::ObjectExpression *objectExpr)
 {
-    if (interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
+    // NOTE(vpukhov): 31391: some interface types still have no type set in the BuildBasicInterfaceProperties
+    if (interfaceDecl->TsType() != nullptr && interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
         return false;
     }
 
@@ -579,19 +612,23 @@ static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::
                                                   ir::ObjectExpression *objectExpr)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *const helperClass = interfaceDecl->GetAnonClass();
 
-    if (auto *const helperClass = interfaceDecl->GetAnonClass(); helperClass != nullptr) {
-        if (!objectExpr->HasMethodDefinition()) {
-            return helperClass->Definition()->TsType();
+    if (objectExpr->HasMethodDefinition()) {
+        //  If object literal has method [re-]definition(s) create unique auxilary class for it.
+        if (helperClass != nullptr || CheckInterfaceCanGenerateAnonClass(checker, interfaceDecl, objectExpr)) {
+            return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
         }
-        //  If interface has default implementation for all its methods create helper class with overridden method(s)
-        return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
-    }
-
-    //  If interface has method declarations with empty bodies, check if all of them are defined
-    //  in the object literal and create the corresponding helper class with method implementations.
-    if (CheckInterfaceCanGenerateAnonClass(checker, interfaceDecl, objectExpr)) {
-        return GenerateAnonClassFromInterfaceWithMethods(ctx, interfaceDecl, objectExpr);
+    } else {
+        if (helperClass != nullptr) {
+            return helperClass->Definition()->TsType();
+        } else {
+            // because of lazy checker auxilary classes can be no created here
+            interfaceDecl->Check(checker);
+            if (CheckInterfaceShouldGenerateAnonClass(interfaceDecl)) {
+                return GenerateAnonClassFromInterface(ctx, interfaceDecl);
+            }
+        }
     }
 
     checker->LogError(diagnostic::INTERFACE_WITH_METHOD, {}, interfaceDecl->Start());
@@ -660,34 +697,6 @@ static void HandleInterfaceLowering(public_lib::Context *ctx, ir::ObjectExpressi
     objExpr->SetTsType(resultType);
 }
 
-static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *interfaceDecl)
-{
-    if (interfaceDecl->TsType() != nullptr && interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
-        return false;
-    }
-    for (auto it : interfaceDecl->Body()->Body()) {
-        if (it->IsOverloadDeclaration()) {
-            continue;
-        }
-        ES2PANDA_ASSERT(it->IsMethodDefinition());
-        auto methodDef = it->AsMethodDefinition();
-        ES2PANDA_ASSERT(methodDef->Function());
-        if (!methodDef->Function()->HasBody() && !methodDef->Function()->IsGetter() &&
-            !methodDef->Function()->IsSetter()) {
-            return false;
-        }
-        for (auto const *const overload : methodDef->Overloads()) {
-            ES2PANDA_ASSERT(overload->Function());
-            if (!overload->Function()->HasBody() && !overload->Function()->IsGetter() &&
-                !overload->Function()->IsSetter()) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
 static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *classDef)
 {
     auto constructorSigs = classDef->TsType()->AsETSObjectType()->ConstructSignatures();
@@ -720,6 +729,9 @@ static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *pr
     };
 
     program->Ast()->IterateRecursivelyPostorder([ctx, program, isRequired](ir::AstNode *ast) -> void {
+        if (!ast->IsTyped() || ast->AsTyped()->TsType() == nullptr) {
+            return;
+        }
         if (ast->IsTSInterfaceDeclaration() &&
             isRequired(ast->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType()) &&
             CheckInterfaceShouldGenerateAnonClass(ast->AsTSInterfaceDeclaration())) {

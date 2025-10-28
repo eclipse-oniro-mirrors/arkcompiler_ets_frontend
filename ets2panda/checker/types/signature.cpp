@@ -217,17 +217,25 @@ static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIden
         return false;
     }
 
-    auto const areCompatible = [relation, checkIdentical](Type *superT, Type *subT) {
+    auto *checker = relation->GetChecker()->IsETSChecker() ? relation->GetChecker()->AsETSChecker() : nullptr;
+
+    auto const areCompatible = [relation, checker, checkIdentical](Type *superT, Type *subT) -> bool {
+        if (checker != nullptr) {
+            superT = checker->MaybeBoxType(superT);
+            subT = checker->MaybeBoxType(subT);
+        }
         return checkIdentical ? relation->IsIdenticalTo(superT, subT) : relation->IsSupertypeOf(superT, subT);
     };
     if (!relation->NoReturnTypeCheck() && !areCompatible(super->ReturnType(), sub->ReturnType())) {
         return false;
     }
+
     for (size_t idx = 0; idx < sub->ArgCount(); ++idx) {
         if (!areCompatible(sub->Params()[idx]->TsType(), super->Params()[idx]->TsType())) {
             return false;
         }
     }
+
     return !sub->HasRestParameter() || relation->IsIdenticalTo(sub->RestVar()->TsType(), super->RestVar()->TsType());
 }
 

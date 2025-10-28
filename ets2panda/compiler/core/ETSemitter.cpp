@@ -184,7 +184,9 @@ static pandasm::Type PandasmTypeWithRank(ETSEmitter *emitter, checker::Type cons
 
 static std::string ToAssemblerSignature(ir::ScriptFunction const *func)
 {
-    return func->Scope()->InternalName().Mutf8();
+    auto name = func->Scope()->InternalName().Mutf8();
+    // NOTE(vpukhov): lazy property checks may result in synthethic functions with no signature set
+    return !name.empty() ? name : "##### poison #####";
 }
 
 static std::string ToAssemblerType(ir::AstNode const *node)
@@ -551,6 +553,19 @@ void ETSEmitter::EmitDefaultFieldValue(pandasm::Field &classField, const ir::Exp
     classField.metadata->SetValue(CreateScalarValue(init->AsLiteral(), typeKind));
 }
 
+// NOTE(vpukhov): #31392
+static checker::Type const *GetPropTypeWorkaround(public_lib::Context const *ctx, const ir::ClassProperty *prop,
+                                                  pandasm::Record &classRecord)
+{
+    auto type = prop->TsType();
+    if (type != nullptr) {
+        return type;
+    }
+    (void)classRecord;
+    ES2PANDA_ASSERT(classRecord.name.find("std.core.Tuple") != std::string::npos);
+    return ctx->GetChecker()->GetGlobalTypesHolder()->GlobalETSAnyType();
+}
+
 void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &classRecord, bool external)
 {
     if (dependencies_->IsNotRequired(classRecord.name + '.' + prop->Id()->Name().Mutf8(), external)) {
@@ -559,8 +574,9 @@ void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &c
 
     auto field = pandasm::Field(Program()->lang);
     ES2PANDA_ASSERT(prop->Id() != nullptr);
+    auto type = GetPropTypeWorkaround(Context(), prop, classRecord);
     field.name = prop->Id()->Name().Mutf8();
-    field.type = PandasmTypeWithRank(this, prop->TsType());
+    field.type = PandasmTypeWithRank(this, type);
     field.metadata->SetAccessFlags(TranslateModifierFlags(prop->Modifiers()));
 
     if (!external && prop->HasAnnotations()) {
@@ -569,7 +585,7 @@ void ETSEmitter::GenClassField(const ir::ClassProperty *prop, pandasm::Record &c
 
     if (external || prop->IsDeclare()) {  // #28197
         field.metadata->SetAttribute(Signatures::EXTERNAL);
-    } else if (prop->TsType()->IsETSPrimitiveType() || prop->TsType()->IsETSStringType()) {
+    } else if (type->IsETSPrimitiveType() || type->IsETSStringType()) {
         EmitDefaultFieldValue(field, prop->Value());
     }
 
@@ -726,6 +742,10 @@ static uint32_t GetAccessFlags(const ir::ClassDefinition *classDef)
 void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool external)
 {
     if (dependencies_->IsNotRequired(ToAssemblerType(classDef), external)) {
+        return;
+    }
+    // NOTE(vpukhov): #28197: some records are emitted twice, remove the workaround
+    if (Program()->recordTable.find(ToAssemblerType(classDef)) != Program()->recordTable.end()) {
         return;
     }
     auto classRecord = pandasm::Record(ToAssemblerType(classDef), Program()->lang);

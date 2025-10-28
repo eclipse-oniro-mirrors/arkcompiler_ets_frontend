@@ -141,6 +141,7 @@ checker::Type *ETSAnalyzer::Check(ir::ClassDefinition *node) const
         checker->BuildBasicClassProperties(node);
     }
 
+    // NOTE(vpukhov): #31391
     if (!node->IsClassDefinitionChecked()) {
         checker->CheckClassDefinition(node);
     }
@@ -1498,7 +1499,7 @@ static checker::Type const *ResolveMethodDefinition(const ir::Expression *const 
 
     auto const *variable = memberExpression->Property()->Variable();
     if (variable == nullptr) {
-        if (auto const *objectType = memberExpression->Object()->TsType();
+        if (auto *objectType = const_cast<checker::Type *>(memberExpression->Object()->TsType());
             objectType != nullptr && objectType->IsETSObjectType()) {
             // Process possible case of the same name method with receiver defined
             auto resolved = checker->ResolveMemberReference(memberExpression, objectType->AsETSObjectType());
@@ -3608,7 +3609,7 @@ checker::Type *ETSAnalyzer::Check(ir::NumberLiteral *expr) const
             GetAppropriatePreferredType(expr->PreferredType(), [&](Type *tp) { return checker->CheckIfNumeric(tp); });
         preferredType != nullptr && !expr->IsFolded() &&
         CheckIfLiteralValueIsAppropriate(checker, preferredType, expr)) {
-        type = preferredType;
+        type = checker->MaybeBoxType(preferredType);
     } else if (expr->Number().IsDouble()) {
         type = checker->GlobalDoubleBuiltinType();
     } else if (expr->Number().IsFloat()) {
@@ -4595,7 +4596,7 @@ checker::Type *ETSAnalyzer::Check(ir::TSInterfaceDeclaration *st) const
     }
     checker->CheckInvokeMethodsLegitimacy(interfaceType);
 
-    st->SetTsType(stmtType);
+    st->SetTsType(stmtType);  // NOTE(vpukhov): #31391
     checker->CheckDynamicInheritanceAndImplement(interfaceType->AsETSObjectType());
     checker::ScopeContext scopeCtx(checker, st->Scope());
     auto savedContext = checker::SavedCheckerContext(checker, checker::CheckerStatus::IN_INTERFACE, interfaceType);

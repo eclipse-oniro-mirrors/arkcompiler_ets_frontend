@@ -16,17 +16,12 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_ETS_OBJECT_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_ETS_OBJECT_TYPE_H
 
-#include <memory>
-#include <mutex>
-#include <shared_mutex>
-
 #include "checker/checker.h"
 #include "checker/types/type.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
 #include "checker/types/signature.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsTypeParameterDeclaration.h"
-#include "ir/ts/tsEnumDeclaration.h"
 #include "varbinder/scope.h"
 #include "ir/base/classDefinition.h"
 
@@ -505,6 +500,7 @@ private:
             transitiveSupertypes_ = allocator_->New<ArenaSet<ETSObjectType *>>(allocator_->Adapter());
         }
     }
+
     bool CastWidening(TypeRelation *relation, Type *target, TypeFlag unboxFlags, TypeFlag wideningFlags);
     void IdenticalUptoTypeArguments(TypeRelation *relation, Type *other);
     void SubstitutePartialTypes(TypeRelation *relation, Type *other);
@@ -548,7 +544,7 @@ private:
     const ArenaSubstitution *effectiveSubstitution_ = nullptr;
     mutable bool propertiesInstantiated_ = false;
     mutable ArenaVector<Signature *> constructSignatures_;
-    mutable PropertyHolder properties_;
+    mutable PropertyHolder properties_ {};
 };
 }  // namespace ark::es2panda::checker
 
