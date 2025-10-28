@@ -818,7 +818,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return (
       ts.isPropertyAssignment(prop) ||
       ts.isShorthandPropertyAssignment(prop) &&
-        (ts.isCallExpression(objLitExpr.parent) || ts.isNewExpression(objLitExpr.parent))
+      (ts.isCallExpression(objLitExpr.parent) || ts.isNewExpression(objLitExpr.parent))
     );
   }
 
@@ -2550,6 +2550,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (unaryExpr.operator === ts.SyntaxKind.PlusPlusToken || unaryExpr.operator === ts.SyntaxKind.MinusMinusToken) {
       this.checkAutoIncrementDecrement(unaryExpr);
     }
+    this.handleUnsafeUnaryExpression(unaryExpr);
   }
 
   private handlePrefixUnaryExpression(node: ts.Node): void {
@@ -2580,6 +2581,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     ) {
       this.checkAutoIncrementDecrement(tsUnaryArithm);
     }
+    this.handleUnsafeUnaryExpression(tsUnaryArithm);
   }
 
   private handleInfinityIdentifier(node: ts.PrefixUnaryExpression): void {
@@ -5597,7 +5599,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdRecordType) ||
       this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStringType) ||
       !this.options.arkts2 &&
-        (this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdMapType) || TsUtils.isIntrinsicObjectType(type)) ||
+      (this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdMapType) || TsUtils.isIntrinsicObjectType(type)) ||
       TsUtils.isEnumType(type) ||
       // we allow EsObject here beacuse it is reported later using FaultId.EsObjectType
       TsUtils.isEsValueType(typeNode)
@@ -8364,7 +8366,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (
       this.compatibleSdkVersion > SENDBALE_FUNCTION_START_VERSION ||
       this.compatibleSdkVersion === SENDBALE_FUNCTION_START_VERSION &&
-        !SENDABLE_FUNCTION_UNSUPPORTED_STAGES_IN_API12.includes(this.compatibleSdkVersionStage)
+      !SENDABLE_FUNCTION_UNSUPPORTED_STAGES_IN_API12.includes(this.compatibleSdkVersionStage)
     ) {
       return true;
     }
@@ -8595,11 +8597,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const typeText = this.tsTypeChecker.typeToString(t);
       return Boolean(
         t.flags & ts.TypeFlags.StringLike ||
-          typeText === 'String' ||
-          typeText.toLowerCase() === 'number' ||
-          t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
-          isLiteralInitialized && !hasExplicitTypeAnnotation ||
-          t.flags & ts.TypeFlags.EnumLike
+        typeText === 'String' ||
+        typeText.toLowerCase() === 'number' ||
+        t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
+        isLiteralInitialized && !hasExplicitTypeAnnotation ||
+        t.flags & ts.TypeFlags.EnumLike
       );
     };
 
@@ -8860,9 +8862,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     if (
       this.tsUtils.isOrDerivedFrom(lhsType, this.tsUtils.isArray) &&
-        this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple) ||
+      this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple) ||
       this.tsUtils.isOrDerivedFrom(rhsType, this.tsUtils.isArray) &&
-        this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple)
+      this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple)
     ) {
       this.incrementCounters(node, FaultID.NoTuplesArrays);
     }
@@ -13230,7 +13232,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const parameterTypes = declaration.parameters?.map((param) => {
       const paramType = this.tsTypeChecker.getTypeAtLocation(param);
-      return this.tsTypeChecker.typeToString(paramType);
+      const typeName = this.tsTypeChecker.typeToString(paramType);
+      if (param.dotDotDotToken && this.tsUtils.isArray(paramType) && typeName.endsWith('[]')) {
+        return typeName.slice(0, -2);
+      }
+
+      return typeName;
     });
     tsCallExpr.arguments.forEach((arg, index) => {
       if (index >= parameterTypes.length) {
@@ -13369,22 +13376,112 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!symbol) {
       return;
     }
-    const declaredType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, expr.expression);
-    const usageType = this.tsTypeChecker.getTypeAtLocation(expr.expression);
 
+    const lastType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, expr.expression);
     const declaration = this.tsUtils.getDeclarationNode(expr.expression);
     if (!declaration) {
       return;
     }
+    const declaredType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, declaration);
+    const checkingType: ts.Type | undefined =
+      lastType !== declaredType && TypeScriptLinter.useNarrowedOrDeclaredType(expr.expression) ?
+        declaredType :
+        lastType;
 
     if (
       (ts.isParameter(declaration) || ts.isPropertyDeclaration(declaration) || ts.isVariableDeclaration(declaration)) &&
-      TsUtils.isNullableUnionType(declaredType) &&
-      TsUtils.isNullableUnionType(usageType) &&
+      TsUtils.isNullableUnionType(checkingType) &&
       !ts.isPropertyAccessChain(expr) &&
       !this.isWriteAccess(expr.expression)
     ) {
       this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
+    }
+  }
+
+  private static useNarrowedOrDeclaredType(expr: ts.Node): boolean {
+    let useDeclared = false;
+
+    const ifStatement = ts.findAncestor(expr, ts.isIfStatement);
+    if (!ifStatement) {
+      return false;
+    }
+    const visit = (node: ts.Node): void => {
+      if (useDeclared) {
+        return;
+      }
+
+      if (ts.isBinaryExpression(node)) {
+        const { left, right, operatorToken } = node;
+
+        if (
+          operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken ||
+          operatorToken.kind === ts.SyntaxKind.EqualsEqualsToken
+        ) {
+          let typeExpr: ts.TypeOfExpression | undefined;
+          if (ts.isTypeOfExpression(left)) {
+            typeExpr = left;
+          } else if (ts.isTypeOfExpression(right)) {
+            typeExpr = right;
+          }
+
+          if (
+            typeExpr &&
+            ts.isIdentifier(typeExpr.expression) &&
+            ts.isIdentifier(expr) &&
+            typeExpr.expression.text === expr.text
+          ) {
+            useDeclared = true;
+          }
+        }
+      }
+
+      ts.forEachChild(node, visit);
+    };
+    visit(ifStatement);
+    return useDeclared;
+  }
+
+  private handleUnsafeUnaryExpression(expr: ts.PostfixUnaryExpression | ts.PrefixUnaryExpression): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+    if (!(expr.operator === ts.SyntaxKind.PlusPlusToken || expr.operator === ts.SyntaxKind.MinusMinusToken)) {
+      return;
+    }
+
+    const operandValue = expr.operand;
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(operandValue);
+    if (!symbol) {
+      return;
+    }
+
+    const declaration = this.tsUtils.getDeclarationNode(operandValue);
+    if (!declaration) {
+      return;
+    }
+    const declaredType = this.tsTypeChecker.getTypeAtLocation(declaration);
+
+    const hasNonNumberType = declaredType.isUnion() ?
+      declaredType.types.some((t) => {
+        return (t.getFlags() & ts.TypeFlags.NumberLike) === 0;
+      }) :
+      (declaredType.getFlags() & ts.TypeFlags.NumberLike) === 0;
+
+    if (!hasNonNumberType || this.tsTypeChecker.typeToString(declaredType) === 'int') {
+      return;
+    }
+
+    if (TsUtils.isGlobalVariable(symbol)) {
+      this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
+    }
+
+    if (ts.isPropertyAccessExpression(operandValue)) {
+      const propertySym = this.tsTypeChecker.getSymbolAtLocation(operandValue.name);
+      const ownerType = this.tsTypeChecker.getTypeAtLocation(operandValue.expression);
+      const ownerSym = ownerType.getSymbol();
+      if (ownerSym && propertySym) {
+        this.incrementCounters(expr, FaultID.NoTsLikeSmartType);
+      }
     }
   }
 
@@ -14176,9 +14273,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return (
       (argType.flags & ts.TypeFlags.NumberLike) !== 0 ||
       argType.isUnionOrIntersection() &&
-        argType.types.some((t) => {
-          return t.flags & ts.TypeFlags.NumberLike;
-        })
+      argType.types.some((t) => {
+        return t.flags & ts.TypeFlags.NumberLike;
+      })
     );
   }
 
