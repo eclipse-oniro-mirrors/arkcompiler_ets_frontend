@@ -196,6 +196,27 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
     return false;
 }
 
+static bool CheckUtilityTypeInheritance(ir::ClassDefinition *classDef, ETSChecker *checker)
+{
+    if (!classDef->Super()->IsETSTypeReference()) {
+        return true;
+    }
+
+    auto typeAnnotation = util::Helpers::DerefETSTypeReference(classDef->Super());
+    if (typeAnnotation->IsETSTypeReference()) {
+        const std::string_view &utilityType = typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Name().Utf8();
+        if (utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
+            utilityType == compiler::Signatures::READONLY_TYPE_NAME ||
+            utilityType == compiler::Signatures::REQUIRED_TYPE_NAME ||
+            utilityType == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
+            checker->LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()},
+                              classDef->Super()->Start());
+            return false;
+        }
+    }
+    return true;
+}
+
 static bool ComputeSuperType(ETSChecker *checker, ETSObjectType *type)
 {
     if (CheckObjectTypeAndSuperType(checker, type)) {
@@ -209,24 +230,16 @@ static bool ComputeSuperType(ETSChecker *checker, ETSObjectType *type)
         return false;
     }
 
-    if (classDef->Super()->IsETSTypeReference()) {
-        auto superName = classDef->Super()->AsETSTypeReference()->Part()->GetIdent()->Name();
-        if (superName == compiler::Signatures::PARTIAL_TYPE_NAME ||
-            superName == compiler::Signatures::READONLY_TYPE_NAME ||
-            superName == compiler::Signatures::REQUIRED_TYPE_NAME ||
-            superName == compiler::Signatures::RETURN_TYPE_TYPE_NAME ||
-            superName == compiler::Signatures::AWAITED_TYPE_NAME) {
-            checker->LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()},
-                              classDef->Super()->Start());
-            return false;
-        }
+    if (!CheckUtilityTypeInheritance(classDef, checker)) {
+        return false;
     }
 
     auto *superType = classDef->Super()->AsTypeNode()->GetType(checker);
     if (superType == nullptr) {
         return true;
     }
-    if (!superType->IsETSObjectType() || !superType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS)) {
+    if (!superType->IsETSObjectType() || !superType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS) ||
+        superType->AsETSObjectType()->HasTypeFlag(TypeFlag::ETS_ENUM)) {
         checker->LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
         type->SetSuperType(checker->GlobalETSObjectType());
         return true;
