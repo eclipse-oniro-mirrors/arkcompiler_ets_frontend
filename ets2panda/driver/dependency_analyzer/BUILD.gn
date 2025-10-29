@@ -82,7 +82,7 @@ ohos_copy("ohos_ets_dependency_analyzer") {
   } else {
     sources = [ "$root_out_dir/arkcompiler/ets_frontend/dependency_analyzer" ]
   }
-  if (is_linux) {
+  if (is_linux || is_mac) {
     outputs = [ ohos_ets_dependency_analyzer_path ]
   } else {
     outputs = [ "$target_out_dir/$target_name/dependency_analyzer" ]
