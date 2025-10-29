@@ -283,6 +283,16 @@ public:
         return isASTlowered_;
     }
 
+    void SetProgramModified(bool isModified)
+    {
+        isModified_ = isModified;
+    }
+
+    bool IsProgramModified() const
+    {
+        return isModified_;
+    }
+
     bool IsStdLib() const
     {
         // NOTE (hurton): temporary solution, needs rework when std sources are renamed
@@ -361,6 +371,7 @@ private:
     DirectExternalSource directExternalSources_;
     ScriptKind kind_ {};
     bool isASTlowered_ {};
+    bool isModified_ {true};
     bool genAbcForExternalSource_ {false};
     ScriptExtension extension_ {};
     ETSNolintsCollectionMap etsnolintCollection_;

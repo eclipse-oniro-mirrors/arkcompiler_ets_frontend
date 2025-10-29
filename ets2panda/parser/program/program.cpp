@@ -44,7 +44,7 @@ Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
 
 void Program::PushVarBinder(varbinder::VarBinder *varbinder)
 {
-    varbinders_.insert({compiler::GetPhaseManager()->GetCurrentMajor(), varbinder});
+    varbinders_.insert_or_assign(compiler::GetPhaseManager()->GetCurrentMajor(), varbinder);
 }
 
 const varbinder::VarBinder *Program::VarBinder() const
@@ -64,6 +64,10 @@ checker::Checker *Program::Checker()
 
 void Program::PushChecker(checker::Checker *checker)
 {
+    if (checkers_.size() > static_cast<size_t>(compiler::GetPhaseManager()->GetCurrentMajor())) {
+        checkers_.at(compiler::GetPhaseManager()->GetCurrentMajor()) = checker;
+        return;
+    }
     checkers_.push_back(checker);
 }
 

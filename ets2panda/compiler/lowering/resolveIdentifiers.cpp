@@ -43,7 +43,7 @@ void ResolveIdentifiers::FetchCache([[maybe_unused]] public_lib::Context *ctx,
     auto pVarBinder = program->VarBinder()->AsETSBinder();
     for (auto &[package, extPrograms] : program->ExternalSources()) {
         auto *extProgram = extPrograms.front();
-        if (!extProgram->IsStdLib() && extProgram->IsASTLowered()) {
+        if (extProgram->IsASTLowered() || !extProgram->IsProgramModified()) {
             InsertReExported(program, pVarBinder, extProgram);
         }
     }

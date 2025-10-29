@@ -250,11 +250,17 @@ es2panda_AstNode *classInstance/*return_args:*/)
 TEST_F(PluginConversionRuleUnitTest, VariablePtrInputParameter)
 {
     std::string targetCAPI {R"(
-    extern "C" void AstNodeSetVariable([[maybe_unused]] es2panda_Context *context, es2panda_AstNode *classInstance,
-[[maybe_unused]] es2panda_Variable *variable/*return_args:*/)
+    extern "C" void AstNodeSetVariable([[maybe_unused]] es2panda_Context *context,
+    es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_Variable *variable/*return_args:*/)
     {
+    {
+        auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(classInstance)->Program());
+        if (prog != nullptr) {
+            prog->SetProgramModified(true);
+        }
+    }
         auto *variableE2p = reinterpret_cast<varbinder::Variable *>(variable);
-        ((reinterpret_cast<ir::AstNode *>(classInstance))->SetVariable(variableE2p));
+        ((reinterpret_cast< ir::AstNode *>(classInstance))->SetVariable(variableE2p));
     }
     )"};
 
