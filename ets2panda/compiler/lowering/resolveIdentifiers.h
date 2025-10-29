@@ -33,6 +33,9 @@ public:
     bool Perform(public_lib::Context *ctx, parser::Program *program) override;
 
     void InsertReExported(parser::Program *program, varbinder::ETSBinder *pVarBinder, parser::Program *extProgram);
+
+private:
+    void DumpAstOutput(parser::Program *program, const std::string &dumpAstFile);
 };
 }  // namespace ark::es2panda::compiler
 
