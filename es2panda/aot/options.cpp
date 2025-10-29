@@ -339,43 +339,58 @@ bool Options::ReadFileToJsonString(const std::string &path, std::string &outJson
     return true;
 }
 
+bool Options::GetRequiredString(const nlohmann::json &jsonObj, const std::string &key, std::string &out)
+{
+    if (!jsonObj.contains(key)) {
+        std::cerr << "[ERROR] Missing required field: '" << key << "'." << std::endl;
+        return false;
+    }
+
+    return ExtractString(jsonObj[key], key, out);
+}
+
+bool Options::ExtractString(const nlohmann::json &value, const std::string &fieldName, std::string &out)
+{
+    if (!value.is_string()) {
+        std::cerr << "[ERROR] Invalid type for field '" << fieldName << "'. Expected string." << std::endl;
+        return false;
+    }
+
+    out = value.get<std::string>();
+    if (out.empty()) {
+        std::cerr << "[ERROR] Field '" << fieldName << "' cannot be empty." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 bool Options::ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVersionConfigPath)
 {
-    std::stringstream ss;
     std::string buffer;
     if (!ReadFileToJsonString(compileOhmurlVersionConfigPath, buffer)) {
         return false;
     }
     // Parser compile context info base on the input json file.
     nlohmann::json compileContextInfoJson = nlohmann::json::parse(buffer);
-    if (!compileContextInfoJson.contains("packageName") ||
-        !compileContextInfoJson["packageName"].is_string()) {
-        std::cerr << "[ERROR] Missing or invalid field: 'packageName'." << std::endl;
+    auto &config = compilerOptions_.compileOhmurlVersionConfig;
+    if (!GetRequiredString(compileContextInfoJson, "packageName", config.packageName) ||
+        !GetRequiredString(compileContextInfoJson, "originVersion", config.originVersion) ||
+        !GetRequiredString(compileContextInfoJson, "targetVersion", config.targetVersion)) {
         return false;
     }
-    compilerOptions_.compileOhmurlVersionConfig.packageName = compileContextInfoJson["packageName"];
-    if (!compileContextInfoJson.contains("originVersion") ||
-        !compileContextInfoJson["originVersion"].is_string()) {
-        std::cerr << "[ERROR] Missing or invalid field: 'originVersion'." << std::endl;
-        return false;
-    }
-    compilerOptions_.compileOhmurlVersionConfig.originVersion = compileContextInfoJson["originVersion"];
-    if (!compileContextInfoJson.contains("targetVersion") ||
-        !compileContextInfoJson["targetVersion"].is_string()) {
-        std::cerr << "[ERROR] Missing or invalid field: 'targetVersion'." << std::endl;
-        return false;
-    }
-    compilerOptions_.compileOhmurlVersionConfig.targetVersion = compileContextInfoJson["targetVersion"];
+
     if (!compileContextInfoJson.contains("updateVersionInfo") ||
         !compileContextInfoJson["updateVersionInfo"].is_object()) {
         std::cerr << "[ERROR] Missing or invalid field: 'updateVersionInfo'." << std::endl;
         return false;
     }
 
+    const auto &updateInfoJson = compileContextInfoJson["updateVersionInfo"];
     std::unordered_map<std::string, PkgInfo> pkgContextMap {};
-    for (const auto& [pkgName, version] : compileContextInfoJson["updateVersionInfo"].items()) {
-        if (!version.is_string()) {
-            std::cerr << "[ERROR] Invalid version value for package '" << pkgName << "'." << std::endl;
+    for (const auto &[pkgName, pkgValue] : updateInfoJson.items()) {
+        std::string version;
+        if (!ExtractString(pkgValue, pkgName, version)) {
             return false;
         }
         PkgInfo pkgInfo;

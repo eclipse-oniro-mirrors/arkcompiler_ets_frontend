@@ -149,6 +149,8 @@ public:
     bool CollectInputFilesFromFileDirectory(const std::string &input, const std::string &extension);
     void ParseCacheFileOption(const std::string &cacheInput);
     bool ReadFileToJsonString(const std::string &path, std::string &outJsonStr);
+    bool GetRequiredString(const nlohmann::json &jsonObj, const std::string &key, std::string &out);
+    bool ExtractString(const nlohmann::json &value, const std::string &fieldName, std::string &out);
     bool ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVersionConfigPath);
     bool NeedCollectDepsRelation();
     bool NeedRemoveRedundantRecord();

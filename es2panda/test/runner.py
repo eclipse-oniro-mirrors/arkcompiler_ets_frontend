@@ -3109,22 +3109,36 @@ def add_directory_for_compiler(runners, args):
 
     for info in compiler_test_infos:
         runner.add_directory(info.directory, info.extension, info.flags)
-    
-    filesinfo_compiler_infos  = []
-    filesinfo_runner = FilesInfoRunner(args)
-    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/sourceLang", "txt",
-                                                ["--module", "--merge-abc", "--dump-assembly"]))
-    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/long_path_filesinfo", "txt",
-                                                ["--module", "--merge-abc"]))
-    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/replace_records", "ts",
-                                                ["--module", "--merge-abc", "--dump-assembly"]))
-    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/abc_version_adjust", "txt",
-                                                ["--module", "--merge-abc"]))
 
-    for info in filesinfo_compiler_infos:
-        filesinfo_runner.add_directory(info.directory, info.extension, info.flags)
-    
     runners.append(runner)
+    
+    add_directory_for_filesinfo(runners, args)
+
+
+def add_directory_for_filesinfo(runners, args):
+    filesinfo_runner = FilesInfoRunner(args)
+    base_dir = path.join(path.dirname(path.abspath(__file__)), "compiler/filesInfoTest")
+
+    def infer_ext(dir_name: str):
+        return "ts" if "replace_records" in dir_name else "txt"
+
+    def infer_flags(dir_name: str):
+        flags = ["--module", "--merge-abc"]
+        if any(key in dir_name for key in ["sourceLang", "replace_records"]):
+            flags.append("--dump-assembly")
+        return flags
+
+    if not os.path.exists(base_dir):
+        return
+
+    for entry in os.listdir(base_dir):
+        dir_path = os.path.join(base_dir, entry)
+        if not os.path.isdir(dir_path):
+            continue
+        ext = infer_ext(entry)
+        flags = infer_flags(entry)
+        filesinfo_runner.add_directory(dir_path, ext, flags)
+
     runners.append(filesinfo_runner)
 
 
