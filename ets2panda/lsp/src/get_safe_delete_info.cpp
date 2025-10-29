@@ -122,7 +122,7 @@ bool GetSafeDeleteInfoImpl(es2panda_Context *context, size_t position)
     auto declInfo = GetDeclInfoImpl(astNode);
     auto fileName = std::get<0>(declInfo);
     std::string normFileName = NormalizeFilePath(fileName);
-    if (!normFileName.empty() && normFileName.find("ets1.2/build-tools/ets2panda/lib/stdlib") != std::string::npos) {
+    if (!normFileName.empty() && normFileName.find("static/build-tools/ets2panda/lib/stdlib") != std::string::npos) {
         return false;
     }
     if (!normFileName.empty() && normFileName.find("/sdk/") != std::string::npos) {
