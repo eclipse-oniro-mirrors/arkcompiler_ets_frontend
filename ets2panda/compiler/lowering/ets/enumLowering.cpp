@@ -913,11 +913,20 @@ void EnumLoweringPhase::CreateEnumGetNameMethod(const ir::TSEnumDeclaration *con
 namespace {
 
 ir::VariableDeclaration *CreateForLoopInitVariableDeclaration(public_lib::Context *ctx,
+                                                              ir::Identifier *const enumClassIdentifier,
+                                                              ir::Identifier *const namesArrayIdentifier,
                                                               ir::Identifier *const loopIdentifier)
 {
     static_assert(EnumLoweringPhase::ORDINAL_TYPE == ir::PrimitiveType::INT);
-    auto *const init = ctx->AllocNode<ir::NumberLiteral>(lexer::Number((int32_t)0));
+    auto *const lengthIdent = ctx->AllocNode<ir::Identifier>("length", ctx->Allocator());
+    auto *const propertyAccessExpr = CreateStaticAccessMemberExpression(ctx, enumClassIdentifier, namesArrayIdentifier);
+    auto *const arrayLengthExpr = ctx->AllocNode<ir::MemberExpression>(
+        propertyAccessExpr, lengthIdent, ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
+    auto *const oneLiteral = ctx->AllocNode<ir::NumberLiteral>(lexer::Number((int32_t)1));
+    auto *const init =
+        ctx->AllocNode<ir::BinaryExpression>(arrayLengthExpr, oneLiteral, lexer::TokenType::PUNCTUATOR_MINUS);
     auto *const decl = ctx->AllocNode<ir::VariableDeclarator>(ir::VariableDeclaratorFlag::LET, loopIdentifier, init);
+
     ES2PANDA_ASSERT(loopIdentifier);
     loopIdentifier->SetParent(decl);
     ArenaVector<ir::VariableDeclarator *> decls(ctx->Allocator()->Adapter());
@@ -929,17 +938,14 @@ ir::VariableDeclaration *CreateForLoopInitVariableDeclaration(public_lib::Contex
     return declaration;
 }
 
-ir::BinaryExpression *CreateForLoopTest(public_lib::Context *ctx, ir::Identifier *const enumClassIdentifier,
-                                        ir::Identifier *const namesArrayIdentifier,
-                                        ir::Identifier *const loopIdentifier)
+ir::BinaryExpression *CreateForLoopTest(public_lib::Context *ctx, ir::Identifier *const loopIdentifier)
 {
-    auto *const lengthIdent = ctx->AllocNode<ir::Identifier>("length", ctx->Allocator());
-    auto *const propertyAccessExpr = CreateStaticAccessMemberExpression(ctx, enumClassIdentifier, namesArrayIdentifier);
-    auto *const arrayLengthExpr = ctx->AllocNode<ir::MemberExpression>(
-        propertyAccessExpr, lengthIdent, ir::MemberExpressionKind::PROPERTY_ACCESS, false, false);
+    auto *const zeroLiteral = ctx->AllocNode<ir::NumberLiteral>(lexer::Number((int32_t)0));
+
     auto *const forLoopIdentClone = loopIdentifier->Clone(ctx->Allocator(), nullptr);
-    auto *const binaryExpr = ctx->AllocNode<ir::BinaryExpression>(forLoopIdentClone, arrayLengthExpr,
-                                                                  lexer::TokenType::PUNCTUATOR_LESS_THAN);
+    auto *const binaryExpr = ctx->AllocNode<ir::BinaryExpression>(forLoopIdentClone, zeroLiteral,
+                                                                  lexer::TokenType::PUNCTUATOR_GREATER_THAN_EQUAL);
+
     return binaryExpr;
 }
 
@@ -947,7 +953,7 @@ ir::UpdateExpression *CreateForLoopUpdate(public_lib::Context *ctx, ir::Identifi
 {
     auto *const forLoopIdentClone = loopIdentifier->Clone(ctx->Allocator(), nullptr);
     auto *const incrementExpr =
-        ctx->AllocNode<ir::UpdateExpression>(forLoopIdentClone, lexer::TokenType::PUNCTUATOR_PLUS_PLUS, true);
+        ctx->AllocNode<ir::UpdateExpression>(forLoopIdentClone, lexer::TokenType::PUNCTUATOR_MINUS_MINUS, true);
     return incrementExpr;
 }
 
@@ -981,8 +987,9 @@ void EnumLoweringPhase::CreateEnumGetValueOfMethod(const ir::TSEnumDeclaration *
                                                    ir::Identifier *const itemsArrayIdent)
 {
     auto *const forLoopIIdent = AllocNode<ir::Identifier>(IDENTIFIER_I, Allocator());
-    auto *const forLoopInitVarDecl = CreateForLoopInitVariableDeclaration(context_, forLoopIIdent);
-    auto *const forLoopTest = CreateForLoopTest(context_, enumClass->Ident(), namesArrayIdent, forLoopIIdent);
+    auto *const forLoopInitVarDecl =
+        CreateForLoopInitVariableDeclaration(context_, enumClass->Ident(), namesArrayIdent, forLoopIIdent);
+    auto *const forLoopTest = CreateForLoopTest(context_, forLoopIIdent);
     auto *const forLoopUpdate = CreateForLoopUpdate(context_, forLoopIIdent);
     auto *const stringTypeAnnotation = MakeTypeReference(context_, STRING_REFERENCE_TYPE);  // NOTE String -> Builtin?
     auto *const inputNameIdent = MakeFunctionParam(context_, PARAM_NAME, stringTypeAnnotation);
@@ -1022,8 +1029,9 @@ void EnumLoweringPhase::CreateEnumFromValueMethod(ir::TSEnumDeclaration const *c
                                                   std::optional<ir::PrimitiveType> primitiveType)
 {
     auto *const forLoopIIdent = AllocNode<ir::Identifier>(IDENTIFIER_I, Allocator());
-    auto *const forLoopInitVarDecl = CreateForLoopInitVariableDeclaration(context_, forLoopIIdent);
-    auto *const forLoopTest = CreateForLoopTest(context_, enumClass->Ident(), valuesArrayIdent, forLoopIIdent);
+    auto *const forLoopInitVarDecl =
+        CreateForLoopInitVariableDeclaration(context_, enumClass->Ident(), valuesArrayIdent, forLoopIIdent);
+    auto *const forLoopTest = CreateForLoopTest(context_, forLoopIIdent);
     auto *const forLoopUpdate = CreateForLoopUpdate(context_, forLoopIIdent);
     auto *const typeAnnotation = primitiveType.has_value()
                                      ? AllocNode<ir::ETSPrimitiveType>(primitiveType.value(), Allocator())->AsTypeNode()
