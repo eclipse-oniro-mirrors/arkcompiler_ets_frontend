@@ -3804,15 +3804,11 @@ export class Autofixer {
 
   fixInterfaceImport(
     interfacesNeedToImport: Set<string>,
-    interfacesAlreadyImported: Set<string>,
     importDecl: ts.ImportDeclaration | undefined,
     file: ts.SourceFile
   ): Autofix[] {
     const importSpecifiers: ts.ImportSpecifier[] = [];
     interfacesNeedToImport.forEach((interfaceName) => {
-      if (interfacesAlreadyImported.has(interfaceName)) {
-        return;
-      }
       const identifier = ts.factory.createIdentifier(interfaceName);
       importSpecifiers.push(ts.factory.createImportSpecifier(false, undefined, identifier));
     });
