@@ -16,19 +16,19 @@
 #include "ETSAnalyzer.h"
 
 #include "checker/ETSchecker.h"
+#include "checker/types/ets/etsAsyncFuncReturnType.h"
+#include "checker/types/ets/etsTupleType.h"
+#include "checker/types/globalTypesHolder.h"
+#include "checker/types/typeError.h"
 #include "checker/types/typeFlag.h"
 #include "checker/types/typeRelation.h"
-#include "compiler/lowering/util.h"
-#include "checker/types/ets/etsTupleType.h"
-#include "evaluate/scopedDebugInfoPlugin.h"
 #include "compiler/lowering/ets/setJumpTarget.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
-#include "checker/types/typeError.h"
+#include "compiler/lowering/util.h"
+#include "evaluate/scopedDebugInfoPlugin.h"
 
 namespace ark::es2panda::checker {
 
 static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(Type *)> const &predicate);
-
 ETSChecker *ETSAnalyzer::GetETSChecker() const
 {
     return static_cast<ETSChecker *>(GetChecker());
@@ -3774,6 +3774,10 @@ checker::Type *ETSAnalyzer::Check(ir::AnnotationUsage *st) const
         return ReturnTypeForStatement(st);
     }
 
+    if (baseName->Name().Is(compiler::Signatures::ANNO_UNSAFE_VARIANCE) && !util::Helpers::IsStdLib(st->Program())) {
+        checker->LogError(diagnostic::UNSAFE_VARIANCE_ONLY_IN_STDLIB, {}, st->Start());
+    }
+
     auto *annoDecl = baseName->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
     annoDecl->Check(checker);
 
@@ -4497,6 +4501,9 @@ checker::Type *ETSAnalyzer::Check(ir::TSInterfaceDeclaration *st) const
     for (auto *it : st->Body()->Body()) {
         it->Check(checker);
     }
+
+    checker->CheckTypeParameterVariance(st);
+
     return st->TsType();
 }
 
@@ -4526,6 +4533,12 @@ checker::Type *ETSAnalyzer::Check(ir::TSNonNullExpression *expr) const
     }
     expr->SetOriginalType(expr->TsType());
     return expr->TsType();
+}
+
+checker::Type *ETSAnalyzer::Check(ir::TSThisType *node) const
+{
+    ETSChecker *checker = GetETSChecker();
+    return node->GetType(checker);
 }
 
 static varbinder::Variable *FindInReExports(ETSObjectType *baseType, util::StringView &searchName)

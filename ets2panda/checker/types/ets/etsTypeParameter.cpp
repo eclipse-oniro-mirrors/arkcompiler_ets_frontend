@@ -93,6 +93,11 @@ void ETSTypeParameter::CheckVarianceRecursively([[maybe_unused]] TypeRelation *r
     if (!declNode_->IsIn() && !declNode_->IsOut()) {
         return;
     }
+
+    if (DoAllowUnsafeVariance()) {
+        return;
+    }
+
     auto classTypeParameters = relation->GetChecker()->Context().ContainingClass()->TypeArguments();
     if (std::all_of(classTypeParameters.begin(), classTypeParameters.end(), [this](Type *param) {
             return this->GetDeclNode()->Name()->Name() != param->AsETSTypeParameter()->Name();
@@ -133,6 +138,7 @@ Type *ETSTypeParameter::Instantiate([[maybe_unused]] ArenaAllocator *allocator, 
     copiedType->SetDefaultType(GetDefaultType());
     copiedType->SetConstraintType(GetConstraintType());
     copiedType->SetVariable(Variable());
+    copiedType->SetAllowUnsafeVariance(DoAllowUnsafeVariance());
     return copiedType;
 }
 

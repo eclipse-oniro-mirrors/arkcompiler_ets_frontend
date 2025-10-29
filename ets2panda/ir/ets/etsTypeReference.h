@@ -61,6 +61,7 @@ public:
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
     checker::Type *GetType([[maybe_unused]] checker::ETSChecker *checker) override;
+    checker::Type *HandleTypeRefAnnotations(checker::ETSChecker *checker, checker::Type *originalType);
 
     void Accept(ASTVisitorT *v) override
     {

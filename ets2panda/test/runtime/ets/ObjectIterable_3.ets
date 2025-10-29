@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-interface MyIterator1<T> extends Iterator<T> {}
+interface MyIterator1<out T> extends Iterator<T> {}
 
-interface MyIterator2<T> extends MyIterator1<T> {}
+interface MyIterator2<out T> extends MyIterator1<T> {}
 
 interface MyIter<out T> {
   $_iterator(): Iterator<T>;

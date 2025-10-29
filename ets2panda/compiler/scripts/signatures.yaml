@@ -226,6 +226,8 @@ defines:
     ref: DEFAULT_ANNO_QUALIFIED_LEFT
   - name: 'OptionalParametersAnnotation'
     ref: DEFAULT_ANNO_FOR_FUNC
+  - name: 'SkipVarianceCheckDontUseItWillBeRemoved'
+    ref: ANNO_UNSAFE_VARIANCE
   - name: 'minArgCount'
     ref: MIN_ARGSCOUNT_OF_FUNC
   - name: 'gensym%%_anonymous_const'

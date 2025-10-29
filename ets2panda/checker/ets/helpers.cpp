@@ -3307,6 +3307,37 @@ void ETSChecker::CheckTypeParameterVariance(ir::ClassDefinition *classDef)
     }
 }
 
+void ETSChecker::CheckTypeParameterVariance(ir::TSInterfaceDeclaration *ifaceDecl)
+{
+    if (ifaceDecl->TypeParams() == nullptr) {
+        return;
+    }
+
+    Context().SetContainingClass(ifaceDecl->TsType()->AsETSObjectType());
+    auto checkVariance = [this](ir::Expression *expression, Type *type) {
+        Relation()->Result(RelationResult::TRUE);
+        Relation()->SetNode(expression);
+        Relation()->CheckVarianceRecursively(type, VarianceFlag::COVARIANT);
+        Relation()->SetNode(nullptr);
+    };
+
+    for (auto *it : ifaceDecl->Body()->Body()) {
+        // All interface properties should have been lowered into getters and setters there
+        if ((it->IsIdentifier() && it->AsIdentifier()->IsErrorPlaceHolder()) || it->IsOverloadDeclaration()) {
+            continue;
+        }
+
+        ES2PANDA_ASSERT(it->IsMethodDefinition());
+
+        // Methods may have out type parameters as return types, and in type parameters as parameter types，(in)=>out
+        checkVariance(it->AsMethodDefinition()->Id(), it->Check(this));
+    }
+
+    for (auto *implement : ifaceDecl->Extends()) {
+        checkVariance(implement, implement->Expr()->AsTypeNode()->Check(this));
+    }
+}
+
 checker::ETSFunctionType *ETSChecker::IntersectSignatureSets(const checker::ETSFunctionType *left,
                                                              const checker::ETSFunctionType *right)
 {
