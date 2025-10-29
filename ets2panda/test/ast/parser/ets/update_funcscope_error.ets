@@ -36,7 +36,7 @@ export const updateIfChanged = (t: Record<string, Object>) => {
 
 /* @@? 21:19 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 21:19 Error TypeError: Unresolved reference u */
-/* @@? 24:7 Error TypeError: Type '(p1: Record<String,Object>) => Boolean' is not compatible with type '(p1: Boolean, p2: Boolean, p3: Int, p4: FixedArray<Boolean>) => Boolean' at index 2 */
+/* @@? 24:7 Error TypeError: Type '(p1: Record<String,Object>) => Boolean' is not compatible with type '(p1: Boolean, p2: Boolean, p3: Double, p4: FixedArray<Boolean>) => Boolean' at index 2 */
 /* @@? 27:11 Error TypeError: Invalid record property */
 /* @@? 28:11 Error SyntaxError: Unexpected token. */
 /* @@? 28:12 Error SyntaxError: Unexpected token. */
