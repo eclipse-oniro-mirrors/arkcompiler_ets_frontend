@@ -1,4 +1,4 @@
-/* @@ label2 */
+/* @@ label */
 /*
  * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  */
 
 enum Color {
-    Red = /* @@ label */4 / 3.0
+    Red = 4 / 3.0
 }
 
 enum Date {
@@ -24,5 +24,5 @@ enum Date {
 
 
 
-/* @@@ label2 Error Semantic error ESE0350: Class 'Date' is already defined with different type. */
+/* @@@ label Error Semantic error ESE0350: Class 'Date' is already defined with different type. */
 /* @@@ label1 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
