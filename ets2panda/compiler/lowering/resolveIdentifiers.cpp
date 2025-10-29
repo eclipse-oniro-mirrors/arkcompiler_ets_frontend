@@ -49,7 +49,7 @@ void ResolveIdentifiers::FetchCache([[maybe_unused]] public_lib::Context *ctx,
     }
 }
 
-void ResolveIdentifiers::DumpAstOutput(parser::Program *program, const std::string &dumpAstFile)
+void ResolveIdentifiers::DumpAstOutput(parser::Program *program, [[maybe_unused]] const std::string &dumpAstFile)
 {
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     auto dumpAstFilePath = fs::path(dumpAstFile);
@@ -60,7 +60,7 @@ void ResolveIdentifiers::DumpAstOutput(parser::Program *program, const std::stri
         outputFile.close();
     }
 #else
-    std::cout << varbinder->Program()->Dump() << std::endl;
+    std::cout << program->Dump() << std::endl;
 #endif
 }
 
