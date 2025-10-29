@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-class TreeNode {
+export class TreeNode {
   private left: TreeNode | null;
   private right: TreeNode | null;
   private item: int;

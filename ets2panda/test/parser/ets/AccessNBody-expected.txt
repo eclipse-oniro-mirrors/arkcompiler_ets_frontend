@@ -90,12 +90,12 @@
           "loc": {
             "start": {
               "line": 19,
-              "column": 7,
+              "column": 14,
               "program": "AccessNBody.ets"
             },
             "end": {
               "line": 19,
-              "column": 11,
+              "column": 18,
               "program": "AccessNBody.ets"
             }
           }
@@ -2550,7 +2550,7 @@
         "loc": {
           "start": {
             "line": 19,
-            "column": 13,
+            "column": 20,
             "program": "AccessNBody.ets"
           },
           "end": {
@@ -2563,7 +2563,7 @@
       "loc": {
         "start": {
           "line": 19,
-          "column": 1,
+          "column": 8,
           "program": "AccessNBody.ets"
         },
         "end": {

@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_CHECKER_ETSANALYZER_H
 #define ES2PANDA_CHECKER_ETSANALYZER_H
 
-#include "checker/SemanticAnalyzer.h"
 #include "checker/ETSchecker.h"
 #include "ETSAnalyzerHelpers.h"
 
