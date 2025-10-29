@@ -399,10 +399,31 @@ void ETSFunctionType::ToDebugInfoType([[maybe_unused]] std::stringstream &ss) co
     ss << FunctionAssemblyTypeFromArity(ArrowSignature()->MinArgCount());
 }
 
+static bool IsGeneratedSetterForReadonlyProperty(const checker::Signature *const sig)
+{
+    if (!sig->HasSignatureFlag(SignatureFlags::SETTER)) {
+        return false;
+    }
+
+    ES2PANDA_ASSERT(sig->HasFunction());
+
+    const ir::ScriptFunction *func = sig->Function();
+    return (func->OriginalNode() != nullptr) && func->OriginalNode()->IsClassProperty() &&
+           func->OriginalNode()->AsClassProperty()->IsReadonly();
+}
+
 void ETSFunctionType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag)
 {
     // For function, param is `in` and returntype is `out`，(in)=>out
     for (auto *sig : callSignatures_) {
+        // Compiler generates setters in some cases for readonly propertiesin interfaces. For some of these in generic
+        // classes we should omit the variance check. The generated setters are private, and user can't access them
+        // outside of the constructor.
+        // Can be solved in other ways after the getter/setter generating is moved outside of the checker.
+        if (IsGeneratedSetterForReadonlyProperty(sig)) {
+            continue;
+        }
+
         if (sig->HasFunction() && sig->Function()->ReturnTypeAnnotation() != nullptr) {
             relation->SetNode(sig->Function()->ReturnTypeAnnotation());
         }

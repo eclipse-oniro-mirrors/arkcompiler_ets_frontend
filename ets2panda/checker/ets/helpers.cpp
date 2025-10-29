@@ -2845,6 +2845,7 @@ static std::tuple<ir::ScriptFunction *, varbinder::FunctionScope *, ir::Modifier
                                                 ir::FunctionSignature(nullptr, std::move(params), returnTypeAnn),
                                                 funcFlags, modifierFlag});
     paramScope->BindNode(func);
+    func->SetOriginalNode(field);
     return {func, functionScope, modifierFlag};
 }
 
@@ -2983,18 +2984,21 @@ void ETSChecker::GenerateGetterSetterPropertyAndMethod(ir::ClassProperty *origin
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ir::MethodDefinition *getter = GenerateDefaultGetterSetter(interfaceProp, classProp, scope, false, this);
-    getter->SetOriginalNode(interfaceProp);
+    getter->SetOriginalNode(classProp);
     classDef->EmplaceBody(getter);
 
     const auto &name = getter->Key()->AsIdentifier()->Name();
 
     ir::MethodDefinition *setter =
-        !classProp->IsConst()
-            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            ? GenerateDefaultGetterSetter(interfaceProp, classProp, Scope()->AsClassScope(), true, this)
-            : nullptr;
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        GenerateDefaultGetterSetter(interfaceProp, classProp, Scope()->AsClassScope(), true, this);
+    setter->SetOriginalNode(classProp);
 
-    setter->SetOriginalNode(interfaceProp);
+    if (classProp->IsReadonly()) {
+        setter->ClearModifier(ir::ModifierFlags::PUBLIC | ir::ModifierFlags::PROTECTED);
+        setter->AddModifier(ir::ModifierFlags::PRIVATE);
+    }
+
     auto *const methodScope = scope->InstanceMethodScope();
     auto *const decl = ProgramAllocator()->New<varbinder::FunctionDecl>(ProgramAllocator(), name, getter);
 
