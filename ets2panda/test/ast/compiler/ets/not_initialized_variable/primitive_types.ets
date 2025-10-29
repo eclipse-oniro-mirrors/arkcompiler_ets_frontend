@@ -19,4 +19,5 @@ let c: number
 
 console.log(a, b, c)
 
-/* @@? 20:16 Error TypeError: Variable 'b' is used before being assigned.  */
+
+/* @@? 20:16 Error Semantic error ESE0375: Variable 'b' is used before being assigned. */

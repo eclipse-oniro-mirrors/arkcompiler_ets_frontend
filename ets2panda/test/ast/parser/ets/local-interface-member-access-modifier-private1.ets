@@ -21,6 +21,7 @@ function foo()
     }
 }
 
-/* @@@ label1 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label2 Error SyntaxError: Local class or interface declaration members can not have access modifies. */
-/* @@@ label2 Error SyntaxError: Identifier expected, got 'private'. */
+
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label2 Error Syntax error ESY0030: Local class or interface declaration members can not have access modifies. */
+/* @@@ label2 Error Syntax error ESY0224: Identifier expected, got 'private'. */

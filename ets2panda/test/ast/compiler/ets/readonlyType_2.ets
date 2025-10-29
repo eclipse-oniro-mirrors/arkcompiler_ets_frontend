@@ -22,5 +22,6 @@ function foo(a0: A) {
     /* @@ label */a.fld = 5
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned. */
+
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */
+/* @@@ label Error Semantic error ESE4002: Cannot assign to a readonly field fld */

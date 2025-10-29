@@ -18,5 +18,5 @@ function foo(): void {}
 
 export default /* @@ label */{myFunc as default, foo as default}
 
-/* @@@ label Error SyntaxError: export default is not allowed to export multiple specifiers. */
-/* @@@ label Error TypeError: Only one default export is allowed in a module */
+/* @@@ label Error Syntax error ESY0005: export default is not allowed to export multiple specifiers. */
+/* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */

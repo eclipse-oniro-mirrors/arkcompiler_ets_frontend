@@ -26,4 +26,4 @@ class B {
 
 export default /* @@ label */{A, B}
 
-/* @@@ label Error SyntaxError: export default is not allowed to export multiple specifiers.  */
+/* @@@ label Error Syntax error ESY0005: export default is not allowed to export multiple specifiers. */

@@ -17,4 +17,5 @@ class C {
   set</* @@ label */in T2>(t: T2): void { }
 }
 
-/* @@@ label Error SyntaxError: Variance modifier is not allowed here.  */
+
+/* @@@ label Error Syntax error ESY0098: Variance modifier is not allowed here. */

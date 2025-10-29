@@ -20,4 +20,5 @@ function main(): void {
     all./* @@ label */bar();
 }
 
-/* @@@ label Error TypeError: Property 'bar' does not exist on type 'check_exported_2'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'bar' does not exist on type 'check_exported_2' */

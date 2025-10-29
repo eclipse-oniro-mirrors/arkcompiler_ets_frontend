@@ -19,5 +19,6 @@ class A<in T1,out T2,T3>{
     paramsFunc1(a:T1, b:/* @@ label2 */T2, c:T3){}   //CTE
 }
 
-/* @@@ label1 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
-/* @@@ label2 Error TypeError: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position.  */
+
+/* @@@ label1 Error Semantic error ESE0333: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position. */
+/* @@@ label2 Error Semantic error ESE0333: Type Parameter 'T2' is declared as 'out' but occurs in 'in' position. */

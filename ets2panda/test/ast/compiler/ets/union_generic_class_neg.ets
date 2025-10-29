@@ -42,7 +42,8 @@ function main() {
     arktest.assertEQ(u4.fld, 'a')
 }
 
-/* @@? 38:22 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 39:22 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 41:22 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 42:22 Error TypeError: Member type must be the same for all union objects. */
+
+/* @@? 38:22 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 39:22 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 41:22 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 42:22 Error Semantic error ESE0244: Member type must be the same for all union objects. */

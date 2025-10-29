@@ -17,4 +17,5 @@ const date: Date/* @@ label */;
 
 function main(): void {}
 
-/* @@? 16:10 Error TypeError: Missing initializer in const declaration  */
+
+/* @@? 16:10 Error Semantic error ESE0363: Missing initializer in const declaration */

@@ -21,5 +21,6 @@ class Klass {
     static a: int = 12;
 }
 
-/* @@@ label Error TypeError: 'this' cannot be referenced from a static context  */
-/* @@@ label1 Error TypeError: 'a' is a static property of 'Klass'  */
+
+/* @@@ label Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@@ label1 Error Semantic error ESE0207: 'a' is a static property of 'Klass' */

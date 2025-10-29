@@ -17,11 +17,12 @@ interface I {
 J* @@?
 }
 
-/* @@? 17:2 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 17:4 Error SyntaxError: Unexpected token '@@'. */
-/* @@? 17:4 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:4 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 17:6 Error SyntaxError: Identifier expected. */
-/* @@? 17:6 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:6 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 18:1 Error SyntaxError: Identifier expected. */
+
+/* @@? 17:2 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 17:4 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@? 17:4 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:4 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 17:6 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 17:6 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:6 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 18:1 Error Syntax error ESY0122: Identifier expected. */

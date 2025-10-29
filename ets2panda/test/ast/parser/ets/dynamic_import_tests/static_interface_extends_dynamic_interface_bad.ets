@@ -22,4 +22,5 @@ import { I } from "dynamic_import_tests/modules/module"
 /* @@ label */interface A extends I {
 }
 
-/* @@@ label Error TypeError: interface A can not extends interface I which is from dynamic declaration file.  */
+
+/* @@@ label Error Semantic error ESE24143: interface A can not extends interface I which is from dynamic declaration file. */

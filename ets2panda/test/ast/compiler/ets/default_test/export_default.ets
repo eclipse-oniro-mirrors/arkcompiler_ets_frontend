@@ -18,4 +18,4 @@ export { val as default };
 
 export { default } from '../default_export/export_default1';
 
-/* @@? 19:8 Error TypeError: Only one default export is allowed in a module  */
+/* @@? 19:8 Error Semantic error ESE0374: Only one default export is allowed in a module */

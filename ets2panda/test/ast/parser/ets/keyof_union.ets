@@ -33,9 +33,10 @@ function main():void{
   getProperty</* @@ label6 */keyofA>("other field")
 }
 
-/* @@@ label1 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@@ label2 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@@ label3 Error TypeError: Cannot find type 'keyofUnion'. */
-/* @@@ label4 Error TypeError: Cannot find type 'keyofUnion'. */
-/* @@@ label5 Error TypeError: Cannot find type 'keyofA'. */
-/* @@@ label6 Error TypeError: Cannot find type 'keyofA'. */
+
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label2 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@@ label3 Error Semantic error ESE0371: Cannot find type 'keyofUnion'. */
+/* @@@ label4 Error Semantic error ESE0371: Cannot find type 'keyofUnion'. */
+/* @@@ label5 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@@ label6 Error Semantic error ESE0371: Cannot find type 'keyofA'. */

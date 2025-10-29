@@ -19,4 +19,5 @@ enum Foo {
     B = "foo",
 }
 
-/* @@@ label Error SyntaxError: Unexpected token in enum member.  */
+
+/* @@@ label Error Syntax error ESY0178: Unexpected token in enum member. */

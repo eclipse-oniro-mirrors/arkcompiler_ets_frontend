@@ -16,4 +16,5 @@
 
 package usestaticpackage2;
 
-/* @@? flag_package.ets:18:1 Error SyntaxError: Invalid package toplevel statement */
+
+/* @@? flag_package.ets:18:1 Error Syntax error ESY0291: Invalid package toplevel statement */

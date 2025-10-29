@@ -23,6 +23,7 @@ function main(): void {
   let ordinalFail: int = /* @@ label */Color as int;
 }
 
-/* @@@ label Error TypeError: Enum name 'Color' used in the wrong context  */
-/* @@? 21:22 Warning Warning: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
-/* @@? 22:13 Warning Warning: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */
+
+/* @@? 21:22 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
+/* @@? 22:13 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */
+/* @@@ label Error Semantic error ESE0144: Enum name 'Color' used in the wrong context */

@@ -20,4 +20,5 @@ function bar(): void {
   }
 }
 
-/* @@? 18:3 Error SyntaxError: Illegal start of CLASS expression. */
+
+/* @@? 18:3 Error Syntax error ESY0040: Illegal start of CLASS expression. */

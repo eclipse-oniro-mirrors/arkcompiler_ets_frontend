@@ -30,4 +30,5 @@ function main() {
     banana./* @@ label */price();
 }
 
-/* @@@ label Error TypeError: Property 'price' does not exist on type 'Banana'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'price' does not exist on type 'Banana' */

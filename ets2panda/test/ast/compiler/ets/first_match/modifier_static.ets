@@ -25,7 +25,8 @@ class Base2 {
     static overload foo {fooNumber, /* @@ label2 */fooString }
 }
 
-/* @@@ label1 Error TypeError: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
-/* @@@ label1 Error TypeError: Static property 'fooNumber' must be accessed through it's class 'Base1' */
-/* @@@ label2 Error TypeError: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
-/* @@@ label2 Error TypeError: Property 'fooString' must be accessed through 'this' */
+
+/* @@@ label1 Error Semantic error ESE0387: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
+/* @@@ label1 Error Semantic error ESE0173: Static property 'fooNumber' must be accessed through it's class 'Base1' */
+/* @@@ label2 Error Semantic error ESE0387: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
+/* @@@ label2 Error Semantic error ESE0145: Property 'fooString' must be accessed through 'this' */

@@ -15,4 +15,4 @@
 
 const regex = /abc)/; 
 
-/* @@? 16:16 Error SyntaxError: Invalid closing parenthesis. */
+/* @@? 16:16 Error Syntax error ESY0075: Invalid closing parenthesis. */

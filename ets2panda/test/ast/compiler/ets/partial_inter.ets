@@ -24,4 +24,4 @@ function main() {
     /* @@ label */gu.id = 10;
 }
 
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */

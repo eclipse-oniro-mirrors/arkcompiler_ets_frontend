@@ -18,5 +18,6 @@ class B {
     f!: A = undefined;
 };
 
-/* @@? 18:6 Error SyntaxError: Late-initialized field cannot have default value. */
-/* @@? 18:9 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+
+/* @@? 18:6 Error Syntax error ESY0304: Late-initialized field cannot have default value. */
+/* @@? 18:9 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

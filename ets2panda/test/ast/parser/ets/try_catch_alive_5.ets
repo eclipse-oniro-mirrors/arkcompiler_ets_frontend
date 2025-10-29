@@ -26,4 +26,5 @@ function foo(): int {
     }
 }
 
-/* @@@ label Warning Warning: Unreachable statement.  */
+
+/* @@@ label Warning Warning W0026: Unreachable statement. */

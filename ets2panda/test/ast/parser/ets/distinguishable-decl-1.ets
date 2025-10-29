@@ -17,4 +17,5 @@
 const PI314 = 3.14
 function /* @@ label */PI314(): double { return 3.14 }
 
-/* @@@ label Error TypeError: Variable 'PI314' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'PI314' has already been declared. */

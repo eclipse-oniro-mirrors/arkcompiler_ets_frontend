@@ -28,4 +28,5 @@ class Derived implements Interface /* @@ label */{
   
 }
 
-/* @@@ label Error TypeError: Derived is not abstract and does not implement getter for instance_field property in Interface  */
+
+/* @@@ label Error Semantic error ESE0188: Derived is not abstract and does not implement getter for instance_field property in Interface */

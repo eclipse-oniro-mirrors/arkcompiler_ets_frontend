@@ -15,5 +15,6 @@
 
 
 interface /* @@ label */5 { }
-/* @@@ label Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@@ label Error SyntaxError: Number, string or computed value property name '5' is not allowed, use classes to access data by property names that are identifiers */
+
+/* @@@ label Error Syntax error ESY0315: Number, string or computed value property name '5' is not allowed, use classes to access data by property names that are identifiers */
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'number literal'. */

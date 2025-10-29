@@ -50,14 +50,14 @@ class C{}
 OuterSpace.InnerSpace.privateVariable = 456; // CTE
 
 
-/* @@? 45:16 Error TypeError: 'InnerSpace' is not exported in 'OuterSpace'  */
-/* @@? 45:27 Error TypeError: 'innerClass' is not exported in 'InnerSpace'  */
-/* @@? 40:27 Error TypeError: 'privateVariable' is not exported in 'InnerSpace'  */
-/* @@? 50:12 Error TypeError: 'InnerSpace' is not exported in 'OuterSpace'  */
-/* @@? 50:23 Error TypeError: 'privateVariable' is not exported in 'InnerSpace'  */
-/* @@? 43:31 Error TypeError: 'InnerSpace' is not exported in 'OuterSpace'  */
-/* @@? 43:42 Error TypeError: 'myInterface' is not exported in 'InnerSpace'  */
-/* @@? 47:13 Error TypeError: 'InnerSpace' is not exported in 'OuterSpace'  */
-/* @@? 47:24 Error TypeError: 'Anno' is not exported in 'InnerSpace'  */
-/* @@? 47:40 Error TypeError: 'InnerSpace' is not exported in 'OuterSpace'  */
-/* @@? 47:51 Error TypeError: 'Color' is not exported in 'InnerSpace'  */
+/* @@? 40:27 Error Semantic error ESE0206: 'privateVariable' is not exported in 'InnerSpace' */
+/* @@? 43:31 Error Semantic error ESE0206: 'InnerSpace' is not exported in 'OuterSpace' */
+/* @@? 43:42 Error Semantic error ESE0206: 'myInterface' is not exported in 'InnerSpace' */
+/* @@? 45:16 Error Semantic error ESE0206: 'InnerSpace' is not exported in 'OuterSpace' */
+/* @@? 45:27 Error Semantic error ESE0206: 'innerClass' is not exported in 'InnerSpace' */
+/* @@? 47:13 Error Semantic error ESE0206: 'InnerSpace' is not exported in 'OuterSpace' */
+/* @@? 47:24 Error Semantic error ESE0206: 'Anno' is not exported in 'InnerSpace' */
+/* @@? 47:40 Error Semantic error ESE0206: 'InnerSpace' is not exported in 'OuterSpace' */
+/* @@? 47:51 Error Semantic error ESE0206: 'Color' is not exported in 'InnerSpace' */
+/* @@? 50:12 Error Semantic error ESE0206: 'InnerSpace' is not exported in 'OuterSpace' */
+/* @@? 50:23 Error Semantic error ESE0206: 'privateVariable' is not exported in 'InnerSpace' */

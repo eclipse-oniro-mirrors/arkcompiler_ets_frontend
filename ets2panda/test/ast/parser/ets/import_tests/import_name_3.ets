@@ -15,4 +15,5 @@
 
 import {DefaultExportedFunc} from /* @@ label */"import_tests/modules/default_export";
 
-/* @@@ label Error TypeError: Use the default import syntax to import a default exported element  */
+
+/* @@@ label Error Semantic error ESE0353: Use the default import syntax to import a default exported element */

@@ -18,4 +18,4 @@ type ValueAlias<V extends string> = Record<"val", V>;
 declare function value<U>(): ValueAlias</* @@ label */U>;
 
 
-/* @@@ label Error TypeError: Type argument 'U' should be a subtype of 'String' constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'U' should be a subtype of 'String' constraint */

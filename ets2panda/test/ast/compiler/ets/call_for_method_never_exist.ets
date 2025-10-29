@@ -21,4 +21,5 @@ function main(){
     let a = new A<number>./* @@ label */foo<number>(123)
 }
 
-/* @@@ label Error TypeError: Invalid type reference.  */
+
+/* @@@ label Error Semantic error ESE0299: Invalid type reference. */

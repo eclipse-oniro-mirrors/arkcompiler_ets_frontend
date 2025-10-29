@@ -23,8 +23,9 @@ type Container<T> = T | { [i: string]: Container<T> };
 declare namespace Test1 {
 }
 
-/* @@? 21:25 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 21:28 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 21:49 Error SyntaxError: Unexpected token '<'. */
-/* @@? 21:51 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:51 Error SyntaxError: Unexpected token '>'. */
+
+/* @@? 21:25 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 21:28 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 21:49 Error Syntax error ESY0227: Unexpected token '<'. */
+/* @@? 21:51 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:51 Error Syntax error ESY0227: Unexpected token '>'. */

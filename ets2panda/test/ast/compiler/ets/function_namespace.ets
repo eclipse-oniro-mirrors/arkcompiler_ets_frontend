@@ -17,8 +17,9 @@ function main () {
 export namespace taskpool {
     function taskfinished(task:Task) : boolean {}
 
-/* @@? 17:1 Error SyntaxError: Unexpected token 'export'. */
-/* @@? 17:8 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 18:32 Error TypeError: Cannot find type 'Task'. */
-/* @@? 25:1 Error SyntaxError: Unexpected token. */
-/* @@? 25:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 17:1 Error Syntax error ESY0227: Unexpected token 'export'. */
+/* @@? 17:8 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 18:32 Error Semantic error ESE0371: Cannot find type 'Task'. */
+/* @@? 25:79 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 25:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

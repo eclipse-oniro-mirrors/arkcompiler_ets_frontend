@@ -15,5 +15,6 @@
 
 console.log(Object)
 
-/* @@? 16:13 Error TypeError: Class 'Object' cannot be used as object  */
-/* @@? 16:13 Error TypeError: Class name can't be the argument of function or method.  */
+/* @@? 16:13 Error Semantic error ESE0122: Class name can't be the argument of function or method. */
+/* @@? 16:13 Error Semantic error ESE132307: Class 'Object' cannot be used as object */
+/* @@? 16:13 Error Semantic error ESE0122: Class name can't be the argument of function or method. */

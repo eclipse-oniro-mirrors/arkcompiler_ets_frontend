@@ -17,6 +17,7 @@ class Test {
     public async native /* @@ label */bar(): Promise;
 }
 
-/* @@@ label Error SyntaxError: Native method cannot be async.  */
-/* @@? 17:46 Error TypeError: Type 'Promise<T>' is generic but type argument were not provided. */
-/* @@? 17:42 Error TypeError: Return type of async function must be 'Promise'. */
+
+/* @@@ label Error Syntax error ESY0116: Native method cannot be async. */
+/* @@? 17:42 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
+/* @@? 17:46 Error Semantic error ESE0170: Type 'Promise<T>' is generic but type argument were not provided. */

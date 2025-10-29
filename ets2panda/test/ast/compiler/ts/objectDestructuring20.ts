@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@
 var c: void;
 var { a, ...b }: { a: number } | { a: number, b: string, c: { a: number, b: boolean } } | { a: number, r: boolean } = { a: 12 };
 /* @@ label */b = c;
-/* @@@ label Error TypeError: Type 'void' is not assignable to type '{ } | { b: string; c: { a: number; b: boolean; }; } | { r: boolean; }'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type 'void' is not assignable to type '{ } | { b: string; c: { a: number; b: boolean; }; } | { r: boolean; }'. */

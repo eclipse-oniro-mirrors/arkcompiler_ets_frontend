@@ -19,15 +19,16 @@ class Test {
     overload: foo{ foo1, foo2 }
 }
 
-/* @@? 19:13 Error SyntaxError: Identifier expected, got ':'. */
-/* @@? 19:15 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 19:15 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:15 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 19:18 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 19:18 Error SyntaxError: Unexpected token '{'. */
-/* @@? 19:20 Error TypeError: Variable 'foo1' has already been declared. */
-/* @@? 19:24 Error SyntaxError: Field type annotation expected. */
-/* @@? 19:24 Error SyntaxError: Unexpected token ','. */
-/* @@? 19:26 Error TypeError: Variable 'foo2' has already been declared. */
-/* @@? 19:30 Error SyntaxError: Field type annotation expected. */
-/* @@? 20:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 19:13 Error Syntax error ESY0224: Identifier expected, got ':'. */
+/* @@? 19:15 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 19:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:15 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 19:18 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 19:18 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 19:20 Error Semantic error ESE0351: Variable 'foo1' has already been declared. */
+/* @@? 19:24 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 19:24 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 19:26 Error Semantic error ESE0351: Variable 'foo2' has already been declared. */
+/* @@? 19:30 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 20:1 Error Syntax error ESY0227: Unexpected token '}'. */

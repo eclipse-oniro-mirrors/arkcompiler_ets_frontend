@@ -20,8 +20,5 @@ flags: [module]
 import(import.mta)
 import.meta
 
-/* @@? 20:15 Error SyntaxError: The only valid meta property for import is import.Meta.  */
-/* @@? 1:1 Node {
-    "type": "Program"
-}  *//* @@? 20:15 Error SyntaxError: The only valid meta property for import is import.Meta.  */
-/* @@? 20:15 Error SyntaxError: The only valid meta property for import is import.Meta.  */
+
+/* @@? 20:15 Error Syntax error ESY0068: The only valid meta property for import is import.Meta. */

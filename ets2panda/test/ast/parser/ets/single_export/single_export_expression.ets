@@ -15,4 +15,5 @@
 
 export /* @@ label */(5442 + 41 * 39 - 10)
 
-/* @@@ label Error SyntaxError: Export is allowed only for declarations. */
+
+/* @@@ label Error Syntax error ESY0043: Export is allowed only for declarations. */

@@ -19,4 +19,4 @@ function main(){
     let v1 = () => {return RF}
 }
 
-/* @@? 19:28 Error TypeError: Type name 'RF' used in the wrong context */
+/* @@? 19:28 Error Semantic error ESE0144: Type name 'RF' used in the wrong context */

@@ -17,4 +17,5 @@ abstract class A {
     final abstract /* @@ label */foo() : void;
 }
 
-/* @@@ label Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier.  */
+
+/* @@@ label Error Semantic error ESE0047: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */

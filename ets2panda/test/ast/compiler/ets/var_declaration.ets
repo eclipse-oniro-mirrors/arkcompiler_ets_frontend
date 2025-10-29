@@ -16,4 +16,4 @@
 // (arkts-no-var)
  var x = 42;
 
- /* @@? 17:6 Error SyntaxError: 'var' keyword is not supported. Use 'let' instead. */
+ /* @@? 17:6 Error Syntax error ESY0297: 'var' keyword is not supported. Use 'let' instead. */

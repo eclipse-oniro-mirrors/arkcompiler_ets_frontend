@@ -14,4 +14,5 @@
  */
 
 class C<T1=/* @@ label */T3, T2=T1, T3=T2> {}
-/* @@@ label Error TypeError: Type Parameter T3 should be defined before use.  */
+
+/* @@@ label Error Semantic error ESE0183: Type Parameter T3 should be defined before use. */

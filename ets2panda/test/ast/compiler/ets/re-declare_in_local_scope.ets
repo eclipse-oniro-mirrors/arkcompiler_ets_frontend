@@ -18,5 +18,5 @@
     let ten = 10;
 }
 
-/* @@? 17:9 Error SyntaxError: 'var' keyword is not supported. Use 'let' instead. */
-/* @@? 18:9 Error TypeError: Variable 'ten' has already been declared. */
+/* @@? 17:9 Error Syntax error ESY0297: 'var' keyword is not supported. Use 'let' instead. */
+/* @@? 18:9 Error Semantic error ESE0351: Variable 'ten' has already been declared. */

@@ -22,4 +22,5 @@ function main(): void {
 }
 
 // This test should be negative because of the return type mismatch
-/* @@@ label Error TypeError: placeholder */
+
+/* @@? 21:30 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int' */

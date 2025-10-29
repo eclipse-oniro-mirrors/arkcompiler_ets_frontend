@@ -15,4 +15,5 @@
 
 function f({ ...{ x } /* @@ label */}) {}
 
-/* @@@ label Error SyntaxError: RestParameter must be followed by an identifier in declaration contexts */
+
+/* @@@ label Error Syntax error ESY0156: RestParameter must be followed by an identifier in declaration contexts */

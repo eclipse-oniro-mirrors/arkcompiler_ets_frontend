@@ -28,5 +28,5 @@ let a:A = {
 };
 console.log(a.foo())
 
-/* @@@ label Error TypeError: The extension function 'foo' has the same name with public method in class A */
-/* @@@ label1 Error TypeError: Type '((p1: A) => String)' is not compatible with type '(() => String)' at property 'foo' */
+/* @@@ label Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class A */
+/* @@@ label1 Error Semantic error ESE0319: Type '((p1: A) => String)' is not compatible with type '(() => String)' at property 'foo' */

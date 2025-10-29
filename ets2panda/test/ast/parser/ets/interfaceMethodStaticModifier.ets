@@ -17,4 +17,5 @@ interface I {
     /* @@ label */static foo()
 }
 
-/* @@@ label Error SyntaxError: Identifier expected, got 'static'. */
+
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'static'. */

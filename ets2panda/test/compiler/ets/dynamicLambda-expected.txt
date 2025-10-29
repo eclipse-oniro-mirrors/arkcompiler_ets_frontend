@@ -957,6 +957,6 @@
     }
   }
 }
-TypeError: Cannot find import: dynamic_import_tests [dynamicLambda.ets:20:19]
-TypeError: Cannot find type 'A'. [dynamicLambda.ets:23:17]
-TypeError: This expression is not callable. [dynamicLambda.ets:25:15]
+[dynamicLambda.ets:20:19] Semantic error ESE0360: Cannot find import: dynamic_import_tests
+[dynamicLambda.ets:23:17] Semantic error ESE0371: Cannot find type 'A'.
+[dynamicLambda.ets:25:15] Semantic error ESE0289: This expression is not callable.

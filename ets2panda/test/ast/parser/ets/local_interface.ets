@@ -69,13 +69,13 @@ class C {
   }
 }
 
-/* @@@ label1 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label2 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@@ label3 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label4 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@@ label5 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label6 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@@ label7 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@@ label8 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@@ label9 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@@ label10 Error SyntaxError: Illegal start of CLASS expression. */
+/* @@@ label1 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label2 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@@ label3 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label4 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@@ label5 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label6 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@@ label7 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@@ label8 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@@ label9 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@@ label10 Error Syntax error ESY0040: Illegal start of CLASS expression. */

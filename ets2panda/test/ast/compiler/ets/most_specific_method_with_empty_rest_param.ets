@@ -27,4 +27,5 @@ function main() {
     c.met()
 }
 
-/* @@? 20:12 Error TypeError: Function met with this assembly signature already declared.   */
+
+/* @@? 20:12 Error Semantic error ESE0131: Function met with this assembly signature already declared. */

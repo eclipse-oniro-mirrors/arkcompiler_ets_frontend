@@ -18,4 +18,5 @@ let decimalPointMissing2 = -100f
 let floatMAX             =  3.4028235e+38f
 let moreThanFloatMAX     =  /*@@ label1 */3.4028236e+38f
 
-/* @@@ label1 Error SyntaxError: Invalid number. */
+
+/* @@@ label1 Error Syntax error ESY0249: Invalid number. */

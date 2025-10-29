@@ -20,5 +20,6 @@ switch (alma) {
     alma +=10;
 }
 
-/* @@@ label Error SyntaxError: Unexpected token 'identification literal', expected 'case' or 'default'. */
-/* @@@ label Error SyntaxError: Expected ':', got 'identification literal'. */
+
+/* @@@ label Error Syntax error ESY0231: Unexpected token 'identification literal', expected 'case' or 'default'. */
+/* @@@ label Error Syntax error ESY0230: Expected ':', got 'identification literal'. */

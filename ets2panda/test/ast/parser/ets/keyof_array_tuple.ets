@@ -33,11 +33,12 @@ function main(): void {
   let x6: Array<"abcd" | keyofA | number | A> = new Array<"abcd" | keyofA | number | A>("abcd", "other field", "foo", 123, a);
 }
 
-/* @@? 1:3 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 24:3 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 29:20 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 30:20 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 32:26 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 32:68 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 33:26 Error TypeError: Cannot find type 'keyofA'. */
-/* @@? 33:68 Error TypeError: Cannot find type 'keyofA'. */
+
+/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 24:3 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 29:20 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 30:20 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 32:26 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 32:68 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 33:26 Error Semantic error ESE0371: Cannot find type 'keyofA'. */
+/* @@? 33:68 Error Semantic error ESE0371: Cannot find type 'keyofA'. */

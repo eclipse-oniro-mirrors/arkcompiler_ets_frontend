@@ -23,5 +23,6 @@ function main() : void {
     let a1 = /* @@ label */new A<number>(/* @@ label1 */"hello")
 }
 
-/* @@@ label1 Error TypeError: Type '"hello"' is not compatible with type 'Double' at index 1  */
-/* @@@ label Error TypeError: No matching construct signature for genericDefaultParam_4.A("hello")  */
+
+/* @@@ label Error Semantic error ESE0127: No matching construct signature for genericDefaultParam_4.A("hello") */
+/* @@@ label1 Error Semantic error ESE0046: Type '"hello"' is not compatible with type 'Double' at index 1 */

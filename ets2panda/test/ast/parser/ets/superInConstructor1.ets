@@ -34,4 +34,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: Using super is not allowed in constructor  */
+
+/* @@@ label Error Semantic error ESE0235: Using super is not allowed in constructor */

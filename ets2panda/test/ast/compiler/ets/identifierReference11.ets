@@ -23,4 +23,5 @@ class A {
   }
 }
 
-/* @@@ label Error TypeError: Unresolved reference foo  */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference foo */

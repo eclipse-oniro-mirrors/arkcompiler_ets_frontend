@@ -22,5 +22,5 @@ function main() {
     /* @@ label */fn<B>()
 }
 
-/* @@@ label Error TypeError: Type argument 'B' should be a subtype of 'A' constraint */
-/* @@@ label Error TypeError: No matching call signature */
+/* @@@ label Error Semantic error ESE0228: Type argument 'B' should be a subtype of 'A' constraint */
+/* @@@ label Error Semantic error ESE0128: No matching call signature */

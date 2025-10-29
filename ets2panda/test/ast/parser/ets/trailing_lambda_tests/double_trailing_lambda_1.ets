@@ -17,4 +17,4 @@ function foo(a?:number, b?:()=>void, c?:()=>void){}
 
 foo(){}{}
 
-/* @@? 18:8 Error SyntaxError: Unexpected token '{'. */
+/* @@? 18:8 Error Syntax error ESY0227: Unexpected token '{'. */

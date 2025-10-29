@@ -23,4 +23,5 @@ function foo(): void {
     let a_class: A = /* @@ label */partial_A;
 }
 
-/* @@@ label Error TypeError: Type 'Partial<A>' cannot be assigned to type 'A'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Partial<A>' cannot be assigned to type 'A' */

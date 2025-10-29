@@ -20,4 +20,4 @@ namespace DuplicateSpace {
 }
 
 
-/* @@? 19:16 Error TypeError: Variable 'shared' has already been declared.  */
+/* @@? 19:16 Error Semantic error ESE0351: Variable 'shared' has already been declared. */

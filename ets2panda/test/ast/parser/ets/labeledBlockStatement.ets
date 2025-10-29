@@ -17,4 +17,5 @@ function labeledBlockTest01():void{
 label1:/* @@ label */{}
 }
 
-/* @@@ label Error SyntaxError: Label must be followed by a loop statement.  */
+
+/* @@@ label Error Syntax error ESY0038: Label must be followed by a loop statement. */

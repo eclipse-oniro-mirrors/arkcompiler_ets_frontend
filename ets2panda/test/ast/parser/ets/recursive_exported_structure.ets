@@ -88,14 +88,15 @@ const _exported: ExportedType = _exportedStructure;
 
 export default _exported;
 
-/* @@? 26:26 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 41:12 Error TypeError: No matching call signature for (...) */
-/* @@? 41:23 Error TypeError: need to specify target type for class composite */
-/* @@? 54:20 Error TypeError: No matching call signature for (...) */
-/* @@? 54:31 Error TypeError: need to specify target type for class composite */
-/* @@? 61:66 Error SyntaxError: Intersection types are not supported, use inheritance instead! */
-/* @@? 62:12 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 62:12 Error TypeError: Type name 'IndexableType' used in the wrong context */
-/* @@? 66:36 Error TypeError: Interface expected here. */
-/* @@? 73:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 85:1 Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@? 26:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 41:12 Error Semantic error ESE0127: No matching call signature for (...) */
+/* @@? 41:23 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 54:20 Error Semantic error ESE0127: No matching call signature for (...) */
+/* @@? 54:31 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 61:66 Error Syntax error ESY145527: Intersection types are not supported, use inheritance instead! */
+/* @@? 62:12 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 62:12 Error Semantic error ESE0144: Type name 'IndexableType' used in the wrong context */
+/* @@? 66:36 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 73:6 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 85:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

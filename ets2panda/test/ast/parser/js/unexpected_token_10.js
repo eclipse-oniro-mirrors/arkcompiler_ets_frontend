@@ -22,8 +22,5 @@ function foobar(
 ){}
 
 
-/* @@? 21:9 Error SyntaxError: Unexpected token, expected ')'.  */
-/* @@? 1:1 Node {
-    "type": "Program"
-}  *//* @@? 21:9 Error SyntaxError: Unexpected token, expected ')'.  */
-/* @@? 21:9 Error SyntaxError: Unexpected token, expected ')'.  */
+
+/* @@? 21:9 Error Syntax error ESY0228: Unexpected token, expected ')'. */

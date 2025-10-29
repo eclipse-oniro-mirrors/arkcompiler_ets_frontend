@@ -17,4 +17,5 @@ class A{
     /* @@ label */(a:number) :number
 }
 
-/* @@@ label Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */
+
+/* @@@ label Error Syntax error ESY103145: Call signatures in object types are not supported. Use '$_invoke' method instead. */

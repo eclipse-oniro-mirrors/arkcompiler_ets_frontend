@@ -40,7 +40,8 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Switch case type 'A' is not comparable to discriminant type 'E'  */
-/* @@@ label Error TypeError: Enum switch case must be unqualified name of an enum constant  */
-/* @@@ label1 Error TypeError: Switch case type 'A' is not comparable to discriminant type 'E'  */
-/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant  */
+
+/* @@@ label Error Semantic error ESE0262: Switch case type 'A' is not comparable to discriminant type 'E' */
+/* @@@ label Error Semantic error ESE0334: Enum switch case must be unqualified name of an enum constant */
+/* @@@ label1 Error Semantic error ESE0262: Switch case type 'A' is not comparable to discriminant type 'E' */
+/* @@@ label1 Error Semantic error ESE0334: Enum switch case must be unqualified name of an enum constant */

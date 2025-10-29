@@ -22,5 +22,6 @@ function main() {
     arktest.assertEQ(Foo.Baz, 1)
 }
 
- /* @@? 19:5 Error SyntaxError: Illegal start of ENUM expression.  */
- /* @@? 20:22 Error TypeError: Unresolved reference Foo  */
+ 
+/* @@? 19:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 20:22 Error Semantic error ESE0143: Unresolved reference Foo */

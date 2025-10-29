@@ -18,4 +18,5 @@ class Person {
 }
 type PersonCtor = new (name: string, age: number) => Person
 
-/* @@? 19:1 Error SyntaxError: Constructor function types are not supported. */
+
+/* @@? 19:1 Error Syntax error ESY93489: Constructor function types are not supported. */

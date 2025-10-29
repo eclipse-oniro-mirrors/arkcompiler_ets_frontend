@@ -1600,5 +1600,5 @@
     }
   }
 }
-TypeError: T in Required<T> must be a class or an interface type. [requiredType_9.ets:22:19]
-TypeError: T in Required<T> must be a class or an interface type. [requiredType_9.ets:23:19]
+[requiredType_9.ets:22:19] Semantic error ESE124644: T in Required<T> must be a class or an interface type.
+[requiredType_9.ets:23:19] Semantic error ESE124644: T in Required<T> must be a class or an interface type.

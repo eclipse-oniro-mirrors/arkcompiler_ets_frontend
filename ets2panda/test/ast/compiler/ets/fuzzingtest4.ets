@@ -17,6 +17,7 @@ function foo() {
     new CC<Int>.
 }
 
-/* @@? 17:9 Error TypeError: Cannot find type 'CC'. */
-/* @@? 18:1 Error SyntaxError: Identifier expected. */
-/* @@? 18:1 Error TypeError: Invalid type reference. */
+
+/* @@? 17:9 Error Semantic error ESE0371: Cannot find type 'CC'. */
+/* @@? 18:1 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 18:1 Error Semantic error ESE0299: Invalid type reference. */

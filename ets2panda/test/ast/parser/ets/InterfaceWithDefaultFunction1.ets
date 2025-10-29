@@ -23,4 +23,5 @@ function main() {
     c.foo();
 }
 
-/* @@@ label Error TypeError: Method 'foo' is declared in I1 and IBase interfaces.  */
+
+/* @@@ label Error Semantic error ESE0187: Method 'foo' is declared in I1 and IBase interfaces. */

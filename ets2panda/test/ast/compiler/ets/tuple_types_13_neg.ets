@@ -26,5 +26,6 @@ class A {
     }
 }
 
-/* @@? 24:32 Error TypeError: Element accessor value is out of tuple size bounds. */
-/* @@? 25:32 Error TypeError: Element accessor value is out of tuple size bounds. */
+
+/* @@? 24:32 Error Semantic error ESE0198: Element accessor value is out of tuple size bounds. */
+/* @@? 25:32 Error Semantic error ESE0198: Element accessor value is out of tuple size bounds. */

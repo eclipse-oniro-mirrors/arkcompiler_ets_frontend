@@ -16,5 +16,5 @@
 enum Color { Red, Green
 
 // Printed two errors about eos, because there are two attempts to read identifiers: name enum and name property
-/* @@@ label Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@ label */
+
+/* @@ label *//* @@? 20:97 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */

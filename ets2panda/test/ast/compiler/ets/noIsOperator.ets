@@ -17,4 +17,5 @@ function isString(test: string): test /* @@ label */is string {
     return typeof test === "string";
 }
 
-/* @@@ label Error SyntaxError: 'is' operator is not supported. Use 'instanceof' instead to check whether a variable is instance of a given type and use 'as' operator to cast to the appropriate type! */
+
+/* @@@ label Error Syntax error ESY169587: 'is' operator is not supported. Use 'instanceof' instead to check whether a variable is instance of a given type and use 'as' operator to cast to the appropriate type! */

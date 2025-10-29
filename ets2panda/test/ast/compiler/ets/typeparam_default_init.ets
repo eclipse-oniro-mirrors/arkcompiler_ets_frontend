@@ -21,6 +21,6 @@ function foo1<T>(b: T | undefined = a) {}
 const a1 = 4;
 function foo2<T>(b: T | undefined = a1) {}
 
-/* @@? 16:17 Error TypeError: Type 'T|Int' cannot be assigned to type 'T|undefined' */
-/* @@? 19:18 Error TypeError: Type 'T|Int' cannot be assigned to type 'T|undefined' */
-/* @@? 22:18 Error TypeError: Type 'T|Int' cannot be assigned to type 'T|undefined' */
+/* @@? 16:17 Error Semantic error ESE0318: Type 'T|Int' cannot be assigned to type 'T|undefined' */
+/* @@? 19:18 Error Semantic error ESE0318: Type 'T|Int' cannot be assigned to type 'T|undefined' */
+/* @@? 22:18 Error Semantic error ESE0318: Type 'T|Int' cannot be assigned to type 'T|undefined' */

@@ -23,4 +23,5 @@ class A {
     }
 }
 
-/* @@? 22:28 Error TypeError: Unresolved reference $$this */
+
+/* @@? 22:28 Error Semantic error ESE0143: Unresolved reference $$this */

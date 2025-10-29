@@ -23,6 +23,7 @@ get field(a: A): int /* @@ label1 */{
 
 /* @@ label2 */set field() /* @@ label3 */{}
 
-/* @@@ label1 Error SyntaxError: Extension Accessor must have a receiver.  */
-/* @@@ label2 Error SyntaxError: Extension Setter can only have 2 parameters.  */
-/* @@@ label3 Error SyntaxError: Extension Accessor must have a receiver.  */
+
+/* @@@ label1 Error Syntax error ESY0146: Extension Accessor must have a receiver. */
+/* @@@ label2 Error Syntax error ESY0023: Extension Setter can only have 2 parameters. */
+/* @@@ label3 Error Syntax error ESY0146: Extension Accessor must have a receiver. */

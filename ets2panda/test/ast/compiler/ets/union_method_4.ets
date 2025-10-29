@@ -31,7 +31,8 @@ function bar(x: A|B) {
     /* @@ label2 */x.bar("123")
 }
 
-/* @@@ label Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label Error TypeError: No matching call signature */
-/* @@@ label2 Error TypeError: Signature bar(v: String): void is not visible here. */
-/* @@@ label2 Error TypeError: No matching call signature for bar("123") */
+
+/* @@@ label Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@@ label Error Semantic error ESE0128: No matching call signature */
+/* @@@ label2 Error Semantic error ESE0139: Signature bar(v: String): void is not visible here. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for bar("123") */

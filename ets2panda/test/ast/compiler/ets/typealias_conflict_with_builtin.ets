@@ -15,4 +15,5 @@
 
 type Type  = int;
 
-/* @@? 1:3 Error TypeError: Class 'Type' is already defined with different type. */
+
+/* @@? 1:3 Error Semantic error ESE0350: Class 'Type' is already defined with different type. */

@@ -30,4 +30,5 @@ function main() : void {
     /* @@ label */obj.Foo(a, a);
 }
 
-/* @@@ label Error TypeError: Reference to Foo is ambiguous  */
+
+/* @@@ label Error Semantic error ESE0126: Reference to Foo is ambiguous */

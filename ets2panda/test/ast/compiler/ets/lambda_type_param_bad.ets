@@ -28,4 +28,4 @@ class A {
     }
 }
 
-/* @@? 19:40 Error TypeError: Type '((p1: String) => void)' is not compatible with type '((p1: Double) => void)' at index 1 */
+/* @@? 19:40 Error Semantic error ESE0046: Type '((p1: String) => void)' is not compatible with type '((p1: Double) => void)' at index 1 */

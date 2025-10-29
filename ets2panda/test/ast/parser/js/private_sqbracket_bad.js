@@ -16,8 +16,9 @@
 class WeAre {
     #[
 }
-/* @@? 17:6 Error SyntaxError: Unexpected token in private field. */
-/* @@? 17:6 Error SyntaxError: Unexpected character in private identifier. */
-/* @@? 18:1 Error SyntaxError: Unexpected token '}'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 24:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 17:6 Error Syntax error ESY0160: Unexpected token in private field. */
+/* @@? 17:6 Error Syntax error ESY0270: Unexpected character in private identifier. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 18:1 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 24:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

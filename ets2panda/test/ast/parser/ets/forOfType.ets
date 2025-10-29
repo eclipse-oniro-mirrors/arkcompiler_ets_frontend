@@ -17,4 +17,5 @@ function k() : long { return 0; }
 for ( Fi of /* @@ label */ k as ()  => bigint  | long )
 await this instanceof int
 
-/* @@@ label Error TypeError: 'For-of' statement source expression is not of iterable type.  */
+
+/* @@? 17:28 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

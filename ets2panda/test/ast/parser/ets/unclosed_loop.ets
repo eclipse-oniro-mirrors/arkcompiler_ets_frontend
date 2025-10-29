@@ -24,7 +24,7 @@ function main(): int {
     /* @@ label3 */continue
     return 0;
 }
-/* @@@ label Error TypeError: Control flow redirection statement can not be used out of loop or switch statement.  */
-/* @@@ label1 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement.  */
-/* @@@ label2 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement.  */
-/* @@@ label3 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement.  */
+/* @@@ label Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@@ label1 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@@ label2 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@@ label3 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */

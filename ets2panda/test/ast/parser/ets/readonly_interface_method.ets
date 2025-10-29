@@ -17,5 +17,6 @@ interface A {
     readonly(): void {}
 }
 
-/* @@? 17:5 Error SyntaxError: Modifier 'readonly' cannot be applied to an interface method. */
-/* @@? 17:13 Error SyntaxError: Expected 'method name', got '('. */
+
+/* @@? 17:5 Error Syntax error ESY0033: Modifier 'readonly' cannot be applied to an interface method. */
+/* @@? 17:13 Error Syntax error ESY0230: Expected 'method name', got '('. */

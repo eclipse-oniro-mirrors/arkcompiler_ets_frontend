@@ -17,4 +17,5 @@ import {A as A} from "./export1.ets"
 "use static"
 import {B as B} from "./export2.ets"
 
-/* @@? 18:1 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@? 18:1 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

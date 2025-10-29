@@ -16,12 +16,12 @@
 
 func: readonly  (Y : object | long [] )  => [  ]
 
-/* @@? 17:7 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 17:7 Error TypeError: Unresolved reference readonly */
-/* @@? 17:20 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:20 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:22 Error SyntaxError: Unexpected token 'object'. */
-/* @@? 17:22 Error TypeError: Type name 'object' used in the wrong context */
-/* @@? 17:31 Error SyntaxError: Unexpected token 'long'. */
-/* @@? 17:39 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:42 Error SyntaxError: Unexpected token '=>'. */
+/* @@? 17:7 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 17:7 Error Semantic error ESE0143: Unresolved reference readonly */
+/* @@? 17:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:20 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:22 Error Syntax error ESY0227: Unexpected token 'object'. */
+/* @@? 17:22 Error Semantic error ESE0144: Type name 'object' used in the wrong context */
+/* @@? 17:31 Error Syntax error ESY0227: Unexpected token 'long'. */
+/* @@? 17:39 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:42 Error Syntax error ESY0227: Unexpected token '=>'. */

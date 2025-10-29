@@ -16,4 +16,4 @@ class A<T extends A<T>>{}
 class B{}
 class C extends A/* @@ label */<B>{}
 
-/* @@@ label Error TypeError: Type argument 'B' should be a subtype of 'A<B>' constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'B' should be a subtype of 'A<B>' constraint */

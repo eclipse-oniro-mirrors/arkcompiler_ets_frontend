@@ -29,6 +29,7 @@ function main() : void {
     type t2<T> = Array<T>
 }
 
-/* @@? 23:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element.  */
-/* @@? 29:5 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@? 29:5 Error SyntaxError: Annotations are not allowed on this type of declaration.  */
+
+/* @@? 23:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element. */
+/* @@? 29:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 29:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

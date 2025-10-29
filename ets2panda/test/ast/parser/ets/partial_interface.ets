@@ -32,6 +32,7 @@ function main(){
     partial4.i = 100;
 }
 
-/* @@? 28:32 Error TypeError: type I$partial has no property named a */
-/* @@? 29:34 Error TypeError: Type '"abcd"' is not compatible with type 'Int|undefined' at property 'i' */
-/* @@? 32:14 Error TypeError: Cannot assign to this property because it is readonly. */
+
+/* @@? 28:32 Error Semantic error ESE0065: type I$partial has no property named a */
+/* @@? 29:34 Error Semantic error ESE0319: Type '"abcd"' is not compatible with type 'Int|undefined' at property 'i' */
+/* @@? 32:14 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

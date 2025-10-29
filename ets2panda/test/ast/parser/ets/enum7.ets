@@ -21,4 +21,5 @@ function main(): void {
   arktest.assertTrue(/* @@ label */Color.Red != Color2.Red);
 }
 
-/* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+
+/* @@@ label Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */

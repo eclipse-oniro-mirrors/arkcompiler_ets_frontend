@@ -18,4 +18,5 @@ import {foo_1} from /* @@ label */"./imported_module_1.ets"
 
 function main() : void {}
 
-/* @@@ label Error TypeError: Function 'foo_1' is already defined with different type.  */
+
+/* @@@ label Error Semantic error ESE0350: Function 'foo_1' is already defined with different type. */

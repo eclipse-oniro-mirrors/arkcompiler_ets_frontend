@@ -18,4 +18,5 @@ function main(): void {
     /* @@ label */++c;
 }
 
-/* @@@ label Error TypeError: Cannot assign to a constant variable c */
+
+/* @@@ label Error Semantic error ESE4001: Cannot assign to a constant variable c */

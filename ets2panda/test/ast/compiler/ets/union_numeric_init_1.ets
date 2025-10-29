@@ -25,4 +25,4 @@ const a = 127;
 let b: Byte | Short | Int = /* @@ label */ a;
 
 
-/* @@@ label Error TypeError: Ambiguous value 127, fits into multiple types */
+/* @@? 25:44 Error Semantic error ESE101680: Ambiguous value 127, fits into multiple types */

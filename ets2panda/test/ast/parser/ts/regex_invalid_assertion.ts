@@ -15,4 +15,4 @@
 
 const regex = /(?!/ 
 
-/* @@? 16:16 Error SyntaxError: Invalid assertion. */
+/* @@? 16:16 Error Syntax error ESY0093: Invalid assertion. */

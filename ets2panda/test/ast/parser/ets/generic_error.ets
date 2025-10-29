@@ -23,4 +23,4 @@ function main(): void {
    let m = new OldMap/* @@ label */<C, string>();
 }
 
-/* @@@ label Error TypeError: Type argument 'C' should be a subtype of 'Comparable<Object>' constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'C' should be a subtype of 'Comparable<Object>' constraint */

@@ -38,6 +38,7 @@ class D {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@@ label1 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 37:11 Error TypeError: Property c is not visible here. */
+
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@@ label1 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 37:11 Error Semantic error ESE0293: Property c is not visible here. */

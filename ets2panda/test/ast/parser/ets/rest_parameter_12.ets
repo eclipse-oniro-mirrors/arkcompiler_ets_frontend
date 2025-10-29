@@ -24,9 +24,10 @@ class C {
 /* @@ label2 */C.foo(new A<Long>)
 /* @@ label3 */C.foo(new A<Long>, new B<Error>, new B<Error>)
 
-/* @@@ label1 Error TypeError: Expected 2 arguments, got 0. */
-/* @@@ label1 Error TypeError: No matching call signature */
-/* @@@ label2 Error TypeError: Expected 2 arguments, got 1. */
-/* @@@ label2 Error TypeError: No matching call signature for foo(A<Long>) */
-/* @@@ label3 Error TypeError: Expected 2 arguments, got 3. */
-/* @@@ label3 Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */
+
+/* @@@ label1 Error Semantic error ESE0124: Expected 2 arguments, got 0. */
+/* @@@ label1 Error Semantic error ESE0128: No matching call signature */
+/* @@@ label2 Error Semantic error ESE0124: Expected 2 arguments, got 1. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(A<Long>) */
+/* @@@ label3 Error Semantic error ESE0124: Expected 2 arguments, got 3. */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */

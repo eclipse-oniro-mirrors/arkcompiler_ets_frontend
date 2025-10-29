@@ -17,5 +17,5 @@ interface A{
     static f!:string
 }
 
-/* @@? 17:5 Error SyntaxError: Identifier expected, got 'static'. */
-/* @@? 17:13 Error SyntaxError: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 17:5 Error Syntax error ESY0224: Identifier expected, got 'static'. */
+/* @@? 17:13 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */

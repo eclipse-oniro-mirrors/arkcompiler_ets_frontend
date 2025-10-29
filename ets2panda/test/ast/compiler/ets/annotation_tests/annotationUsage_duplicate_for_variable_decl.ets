@@ -29,5 +29,6 @@ function main() : void {
     let x2 = 1, y2 = "abc"
 }
 
-/* @@? 23:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element.  */
-/* @@? 28:6 Error TypeError: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element.  */
+
+/* @@? 23:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element. */
+/* @@? 28:6 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element. */

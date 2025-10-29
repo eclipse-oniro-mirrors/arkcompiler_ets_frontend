@@ -16,4 +16,4 @@
 /* @@ label */"a\bcde\fg"
 
 
-/* @@@ label Error SyntaxError: Unexpected token 'string literal'.  */
+

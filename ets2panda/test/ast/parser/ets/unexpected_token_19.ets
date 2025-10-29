@@ -15,5 +15,6 @@
 
 interface A /* @@ label */}
 
-/* @@@ label Error SyntaxError: Unexpected token, expected '{'.  */
-/* @@? 20:1 Error SyntaxError: Unexpected token, expected '}'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 20:76 Error Syntax error ESY0228: Unexpected token, expected '}'. */

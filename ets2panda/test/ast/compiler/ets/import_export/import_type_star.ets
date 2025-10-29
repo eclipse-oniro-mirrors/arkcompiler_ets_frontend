@@ -20,6 +20,7 @@ let bad1 : TEST.CallBack = () => {
 }
 let bad2 : TEST.A = new TEST.A()
 
-/* @@? 19:12 Error TypeError: Type '"A"' is not compatible with the enclosing method's return type 'Int' */
-/* @@? 21:21 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 21:21 Error TypeError: No matching construct signature */
+
+/* @@? 19:12 Error Semantic error ESE0091: Type '"A"' is not compatible with the enclosing method's return type 'Int' */
+/* @@? 21:21 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 21:21 Error Semantic error ESE0128: No matching construct signature */

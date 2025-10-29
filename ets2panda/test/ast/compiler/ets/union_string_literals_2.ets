@@ -23,5 +23,6 @@ function main(): void {
     /* @@ label */foo<"abc">(/* @@ label1 */"ff");
 }
 
-/* @@@ label1 Error TypeError: Type '"ff"' is not compatible with type '"abc"' at index 1  */
-/* @@@ label Error TypeError: No matching call signature for foo("ff")  */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo("ff") */
+/* @@@ label1 Error Semantic error ESE0046: Type '"ff"' is not compatible with type '"abc"' at index 1 */

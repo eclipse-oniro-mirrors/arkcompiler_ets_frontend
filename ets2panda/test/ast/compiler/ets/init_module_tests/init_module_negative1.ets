@@ -15,4 +15,4 @@
 
 /* @@ label */initModule(1)
 
-/* @@@ label Error SyntaxError: initModule() only accept string literal as argument.  */
+/* @@@ label Error Syntax error ESY0321: initModule() only accept string literal as argument. */

@@ -18,4 +18,5 @@ import type {CType as A} from /* @@ label */"./imported_module_2.ets"
 
 function main() : void {}
 
-/* @@@ label Error TypeError: Class 'A' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Class 'A' is already defined. */

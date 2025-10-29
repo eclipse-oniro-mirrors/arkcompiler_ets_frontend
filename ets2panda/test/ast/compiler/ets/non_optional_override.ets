@@ -22,4 +22,4 @@ class A implements Inter {
     /* @@ label */n : number
 }
 
-/* @@@ label Error TypeError: Property 'n' must be optional in 'A', which is originally declared in 'Inter'. */
+/* @@@ label Error Semantic error ESE79074: Property 'n' must be optional in 'A', which is originally declared in 'Inter'. */

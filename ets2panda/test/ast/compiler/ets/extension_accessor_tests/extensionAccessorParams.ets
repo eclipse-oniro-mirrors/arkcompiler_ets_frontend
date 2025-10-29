@@ -25,5 +25,6 @@ class A{
 
 }
 
-/* @@@ label1 Error SyntaxError: Extension Getter can only have 1 parameter.  */
-/* @@@ label2 Error SyntaxError: Extension Setter can only have 2 parameters.  */
+
+/* @@@ label1 Error Syntax error ESY0022: Extension Getter can only have 1 parameter. */
+/* @@@ label2 Error Syntax error ESY0023: Extension Setter can only have 2 parameters. */

@@ -16,5 +16,5 @@
      let a = this.photo
  })
 
- /* @@? 15:11 Error TypeError: Unresolved reference ca  */
- /* @@? 1:1 Error TypeError: Cannot reference 'this' in this context.  */
+ /* @@? 15:11 Error Semantic error ESE0143: Unresolved reference ca */
+/* @@? 15:11 Error Semantic error ESE0289: This expression is not callable. */

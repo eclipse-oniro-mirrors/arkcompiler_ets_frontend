@@ -17,4 +17,5 @@
 // after generic global function parsing is implemented.
 function fn</* @@ label */in T>(t: T): void {}
 
-/* @@@ label Error SyntaxError: Variance modifier is not allowed here.  */
+
+/* @@@ label Error Syntax error ESY0098: Variance modifier is not allowed here. */

@@ -19,4 +19,4 @@ enum InvalidInitTypeEnum {
   Blue
 }
 
-/* @@? 19:7 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type.  */
+/* @@? 19:7 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

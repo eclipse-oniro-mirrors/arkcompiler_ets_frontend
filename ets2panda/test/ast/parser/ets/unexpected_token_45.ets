@@ -19,5 +19,5 @@ do {
     )
 } while (true
 
-/* @@@ label Error SyntaxError: Expected ')', got 'end of stream'. */
-/* @@ label */
+
+/* @@ label *//* @@? 23:93 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */

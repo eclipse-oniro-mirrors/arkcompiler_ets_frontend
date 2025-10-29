@@ -43,13 +43,14 @@ function main() {
     let maind = mainc;
 }
 
-/* @@? 17:16 Warning Warning: The instance field initializer expression cannot use the this. */
-/* @@? 18:12 Error TypeError: Circular dependency detected for identifier: b */
-/* @@? 18:16 Warning Warning: The instance field initializer expression cannot use the this. */
-/* @@? 23:19 Error TypeError: Circular dependency detected for identifier: b */
-/* @@? 31:15 Error TypeError: Unresolved reference globalb */
-/* @@? 34:5 Error TypeError: Circular dependency detected for identifier: globald */
-/* @@? 37:7 Error TypeError: Circular dependency detected for identifier: constb */
-/* @@? 40:17 Error TypeError: Unresolved reference mainb */
-/* @@? 42:17 Error TypeError: Variable 'maind' is accessed before it's initialization. */
-/* @@? 43:9 Error TypeError: Circular dependency detected for identifier: maind */
+
+/* @@? 17:16 Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@? 18:12 Error Semantic error ESE0308: Circular dependency detected for identifier: b */
+/* @@? 18:16 Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@? 23:19 Error Semantic error ESE0308: Circular dependency detected for identifier: b */
+/* @@? 31:15 Error Semantic error ESE0143: Unresolved reference globalb */
+/* @@? 34:5 Error Semantic error ESE0308: Circular dependency detected for identifier: globald */
+/* @@? 37:7 Error Semantic error ESE0308: Circular dependency detected for identifier: constb */
+/* @@? 40:17 Error Semantic error ESE0143: Unresolved reference mainb */
+/* @@? 42:17 Error Semantic error ESE0365: Variable 'maind' is accessed before it's initialization. */
+/* @@? 43:9 Error Semantic error ESE0308: Circular dependency detected for identifier: maind */

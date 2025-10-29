@@ -18,4 +18,5 @@ import /* @@ label */* as b from "./imported_module_2.ets"
 
 function main() : void {}
 
-/* @@@ label Error TypeError: Variable 'b' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'b' has already been declared. */

@@ -24,4 +24,5 @@ function main() : void {
     /* @@ label */foo(a, a);
 }
 
-/* @@@ label Error TypeError: Reference to foo is ambiguous  */
+
+/* @@@ label Error Semantic error ESE0126: Reference to foo is ambiguous */

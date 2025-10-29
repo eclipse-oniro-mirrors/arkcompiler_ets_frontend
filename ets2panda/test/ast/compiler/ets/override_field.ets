@@ -25,7 +25,7 @@ class A extends Base {
     static override field2 : number = 1;
 }
 
-/* @@? 22:21 Error TypeError: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
-/* @@? 23:14 Error TypeError: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
-/* @@? 24:14 Error TypeError: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
-/* @@? 25:21 Error TypeError: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 22:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 23:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 24:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 25:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */

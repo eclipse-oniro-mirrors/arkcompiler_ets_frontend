@@ -22,4 +22,5 @@ import { A } from "dynamic_import_tests/modules/module"
 function foo(p: A): void {
     p.f1 = /* @@ label */10
 }
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type 'String'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

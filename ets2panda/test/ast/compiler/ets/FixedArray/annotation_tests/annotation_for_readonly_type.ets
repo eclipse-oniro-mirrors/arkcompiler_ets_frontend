@@ -18,4 +18,5 @@
 // annotations for readonly Type
 let readonlyTuple: readonly @Anno @Anno() [Int, String, Float, FixedArray<Object>]
 
-/* @@? 19:36 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+
+/* @@? 19:36 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

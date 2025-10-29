@@ -21,4 +21,5 @@ function main(): void {
     /* @@ label */new A().x();
 }
 
-/* @@@ label Error TypeError: Type 'Int' has no call signatures.  */
+
+/* @@@ label Error Semantic error ESE0002: Type 'Int' has no call signatures. */

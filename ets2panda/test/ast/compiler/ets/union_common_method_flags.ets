@@ -51,10 +51,10 @@ function f3(x: B | D) {
     x.name();
 }
 
-/* @@? 43:5 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 43:5 Error TypeError: No matching call signature */
-/* @@? 47:12 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 47:12 Error TypeError: No matching call signature */
-/* @@? 51:5 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 51:5 Error TypeError: No matching call signature */
-/* @@? 51:7 Error TypeError: 'name' is a static property of 'D' */
+/* @@? 43:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 43:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 47:12 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 47:12 Error Semantic error ESE0128: No matching call signature */
+/* @@? 51:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 51:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 51:7 Error Semantic error ESE0207: 'name' is a static property of 'D' */

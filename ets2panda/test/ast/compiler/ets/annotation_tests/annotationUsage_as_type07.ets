@@ -23,7 +23,7 @@ class A{
 let tuple:[int, string, /* @@ label1 */MyAnno] = [1, "1", new /* @@ label2 */MyAnno()]
 let union:int|string|/* @@ label3 */MyAnno = 1
 
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label3 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label2 Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label2 Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label3 Error Semantic error ESE0159: Annotations cannot be used as a type. */

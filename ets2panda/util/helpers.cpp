@@ -479,7 +479,7 @@ std::vector<ir::Identifier *> Helpers::CollectBindingNames(varbinder::VarBinder 
 }
 
 void Helpers::CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specifiers,
-                                const ir::ImportSpecifier *specifier, const std::string &fileName)
+                                const ir::ImportSpecifier *specifier, DiagnosticEngine &diagnosticEngine)
 {
     auto newIdentName = specifier->Imported()->Name();
     auto newAliasName = specifier->Local()->Name();
@@ -489,18 +489,15 @@ void Helpers::CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specif
         auto savedIdentName = it->Imported()->Name();
         auto savedAliasName = it->Local()->Name();
         if (savedIdentName == savedAliasName && savedAliasName == newIdentName) {
-            message << "Warning: '" << newIdentName << "' has already imported ";
+            diagnosticEngine.LogDiagnostic(diagnostic::DUPLICATE_IMPORT, DiagnosticMessageParams {newIdentName},
+                                           specifier->Start());
             break;
         }
         if (savedIdentName == newIdentName && newAliasName != savedAliasName) {
-            message << "Warning: '" << newIdentName << "' is explicitly used with alias several times ";
+            diagnosticEngine.LogDiagnostic(diagnostic::DUPLICATE_ALIAS, DiagnosticMessageParams {newIdentName},
+                                           specifier->Start());
             break;
         }
-    }
-
-    if (message.rdbuf()->in_avail() > 0) {
-        std::cerr << message.str() << "[" << fileName.c_str() << ":" << specifier->Start().line << ":"
-                  << specifier->Start().index << "]" << std::endl;
     }
 }
 

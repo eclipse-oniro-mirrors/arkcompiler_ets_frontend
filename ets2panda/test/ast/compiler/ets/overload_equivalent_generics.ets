@@ -20,4 +20,4 @@ class Base<T> {
 }
 class Derived<T> extends Base<T> {}
 
-/* @@@ label Error TypeError: Function foo with this assembly signature already declared. */
+/* @@@ label Error Semantic error ESE0131: Function foo with this assembly signature already declared. */

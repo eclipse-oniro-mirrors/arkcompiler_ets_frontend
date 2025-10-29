@@ -27,4 +27,5 @@ function main(): void {
     }
 }
 
-/* @@@ label Error TypeError: Constant expression required  */
+
+/* @@@ label Error Semantic error ESE0163: Constant expression required */

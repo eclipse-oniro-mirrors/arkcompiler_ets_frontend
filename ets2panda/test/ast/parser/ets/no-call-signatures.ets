@@ -23,6 +23,6 @@ function doSomething(fn: DescribableFunction) {
     fn(6)
 }
 
-/* @@@ label Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */
-/* @@? 23:5 Error TypeError: No static $_invoke method and static $_instantiate method in fn. fn() is not allowed. */
-/* @@? 23:5 Error TypeError: Type 'DescribableFunction' has no call signatures. */
+/* @@@ label Error Syntax error ESY103145: Call signatures in object types are not supported. Use '$_invoke' method instead. */
+/* @@? 23:5 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in fn. fn() is not allowed. */
+/* @@? 23:5 Error Semantic error ESE0002: Type 'DescribableFunction' has no call signatures. */

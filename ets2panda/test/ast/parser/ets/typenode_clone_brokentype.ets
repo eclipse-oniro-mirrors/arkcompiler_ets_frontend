@@ -39,17 +39,18 @@ type BrokenFunc<T extends UndefinedInterface> = (param: T) => void;
 declare const broken1: BrokenType<xny>;
 declare const broken2: AnotherBroken<xny>;
 
-/* @@? 21:33 Error TypeError: Cannot find type 'UndefinedMap'. */
-/* @@? 21:45 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 21:49 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 26:36 Error TypeError: Cannot find type 'NonExistent'. */
-/* @@? 26:47 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 27:27 Error TypeError: Cannot find type 'InvalidInterface'. */
-/* @@? 30:52 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 31:14 Error SyntaxError: Unexpected token ','. */
-/* @@? 32:26 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 32:26 Error SyntaxError: Unexpected token ']'. */
-/* @@? 32:27 Error SyntaxError: Unexpected token ']'. */
-/* @@? 36:27 Error TypeError: Cannot find type 'UndefinedInterface'. */
-/* @@? 39:35 Error TypeError: Cannot find type 'xny'. */
-/* @@? 40:38 Error TypeError: Cannot find type 'xny'. */
+
+/* @@? 21:33 Error Semantic error ESE0371: Cannot find type 'UndefinedMap'. */
+/* @@? 21:45 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 21:49 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 26:36 Error Semantic error ESE0371: Cannot find type 'NonExistent'. */
+/* @@? 26:47 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 27:27 Error Semantic error ESE0371: Cannot find type 'InvalidInterface'. */
+/* @@? 30:52 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 31:14 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 32:26 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 32:26 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 32:27 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 36:27 Error Semantic error ESE0371: Cannot find type 'UndefinedInterface'. */
+/* @@? 39:35 Error Semantic error ESE0371: Cannot find type 'xny'. */
+/* @@? 40:38 Error Semantic error ESE0371: Cannot find type 'xny'. */

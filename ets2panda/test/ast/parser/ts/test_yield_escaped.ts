@@ -18,8 +18,9 @@ function* gen() {
     var /* @@ label */yi\u0065ld /* @@ label1 */= 123;
 }
 
-/* @@@ label Error SyntaxError: Escape sequences are not allowed in keyword. */
-/* @@@ label Error SyntaxError: Unexpected token. */
-/* @@@ label Error SyntaxError: Unexpected token 'yield'. */
-/* @@@ label Error SyntaxError: Unexpected identifier. */
-/* @@@ label1 Error SyntaxError: Unexpected token '='. */
+
+/* @@@ label Error Syntax error ESY0271: Escape sequences are not allowed in keyword. */
+/* @@@ label Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'yield'. */
+/* @@@ label Error Syntax error ESY0045: Unexpected identifier. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '='. */

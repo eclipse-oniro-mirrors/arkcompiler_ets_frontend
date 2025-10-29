@@ -16,6 +16,7 @@
 do {}
    while()
 
-/* @@? 17:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 22:1 Error SyntaxError: Missing condition in do while statement */
-/* @@? 22:1 Error SyntaxError: Expected ')', got 'end of stream'. */
+
+/* @@? 17:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 22:79 Error Syntax error ESY0301: Missing condition in do while statement */
+/* @@? 22:79 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */

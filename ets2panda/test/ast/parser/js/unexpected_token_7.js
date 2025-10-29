@@ -18,8 +18,9 @@ class Foo {
     a: int {
       this.#bar = 0
 
-/* @@? 18:6 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 18:12 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 19:11 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 26:1 Error SyntaxError: Private field has already been declared. */
-/* @@? 26:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 18:6 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 18:12 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 19:11 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 26:79 Error Syntax error ESY0154: Private field has already been declared. */
+/* @@? 26:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

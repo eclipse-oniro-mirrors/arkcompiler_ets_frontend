@@ -19,4 +19,5 @@ function main(): void {
     foo();
 }
 
-/* @@? 16:17 Error TypeError: Native and Declare methods should have explicit return type.  */
+
+/* @@? 16:17 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */

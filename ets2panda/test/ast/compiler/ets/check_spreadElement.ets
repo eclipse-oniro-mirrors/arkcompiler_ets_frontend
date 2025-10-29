@@ -15,7 +15,8 @@
 
 [a, b, ...rest] = [1, 2, 3, 4, 5];
 
-/* @@? 16:1 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 16:2 Error TypeError: Unresolved reference a */
-/* @@? 16:5 Error TypeError: Unresolved reference b */
-/* @@? 16:11 Error TypeError: Unresolved reference rest */
+
+/* @@? 16:1 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
+/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
+/* @@? 16:11 Error Semantic error ESE0143: Unresolved reference rest */

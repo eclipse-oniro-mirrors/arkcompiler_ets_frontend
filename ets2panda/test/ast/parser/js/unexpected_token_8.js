@@ -18,7 +18,8 @@ class B {
 }
 
 
-/* @@? 17:17 Error SyntaxError: Unexpected token, expected ';'.  */
+
 /* @@? 1:1 Node {
     "type": "Program"
 }  */
+/* @@? 17:17 Error Syntax error ESY0228: Unexpected token, expected ']'. */

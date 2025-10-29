@@ -17,5 +17,6 @@ declare namespace this {
 
 }
 
-/* @@? 16:19 Error SyntaxError: Hard keyword 'this' cannot be used as identifier */
-/* @@? 16:19 Error SyntaxError: Identifier expected, got 'this'. */
+
+/* @@? 16:19 Error Syntax error ESY0316: Hard keyword 'this' cannot be used as identifier */
+/* @@? 16:19 Error Syntax error ESY0224: Identifier expected, got 'this'. */

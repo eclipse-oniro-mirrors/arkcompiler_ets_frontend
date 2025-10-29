@@ -20,5 +20,6 @@ class A {
     };
 }
 
-/* @@? 17:35 Error SyntaxError: Unexpected token '{'. */
-/* @@? 21:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:35 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 21:1 Error Syntax error ESY0227: Unexpected token '}'. */

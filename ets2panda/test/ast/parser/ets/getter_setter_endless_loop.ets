@@ -26,5 +26,6 @@ function main() {
     a.i = 2
 }
 
-/* @@? 20:58 Warning Warning: Reading the value of the property inside its getter may lead to an endless loop.  */
-/* @@? 21:52 Warning Warning: Assigning new value to the property inside its setter may lead to an endless loop.  */
+
+/* @@? 20:58 Warning Warning W0023: Reading the value of the property inside its getter may lead to an endless loop. */
+/* @@? 21:52 Warning Warning W0024: Assigning new value to the property inside its setter may lead to an endless loop. */

@@ -17,4 +17,4 @@ function foo<U, T = U>(func: (arg1:T, args2:U)=>U){}
 foo((arg1, args2:number)=>{return new Object()})
 
 
-/* @@? 17:35 Error TypeError: Type 'Object' is not compatible with the enclosing method's return type 'Double' */
+/* @@? 17:35 Error Semantic error ESE0091: Type 'Object' is not compatible with the enclosing method's return type 'Double' */

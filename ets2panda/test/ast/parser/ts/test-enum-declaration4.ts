@@ -19,4 +19,5 @@ const enum Foo {
 
 enum Foo {}
 
-/* @@? 20:6 Error SyntaxError: Variable 'Foo' has already been declared.  */
+
+/* @@? 20:6 Error Syntax error ESY0000: Variable 'Foo' has already been declared. */

@@ -17,6 +17,7 @@ class Function extends Intl.DateTimeFormat{
 let RegExp = Intl.PluralRules
 }
 
-/* @@? 1:3 Error TypeError: Variable 'Function' is already defined with different type. */
-/* @@? 17:1 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 17:19 Error TypeError: Property 'PluralRules' does not exist on type 'Intl' */
+
+/* @@? 1:3 Error Semantic error ESE0350: Variable 'Function' is already defined with different type. */
+/* @@? 17:1 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 17:19 Error Semantic error ESE0087: Property 'PluralRules' does not exist on type 'Intl' */

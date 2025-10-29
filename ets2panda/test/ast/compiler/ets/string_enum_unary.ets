@@ -24,6 +24,7 @@ function main() {
     arktest.assertEQ(!Color.Red, !10)
 }
 
-/* @@@ label Error TypeError: Bad operand type, the type of the operand must be numeric type.  */
-/* @@@ label1 Error TypeError: Bad operand type, the type of the operand must be numeric type.  */
-/* @@@ label2 Error TypeError: Bad operand type, the type of the operand must be numeric type.  */
+
+/* @@@ label Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
+/* @@@ label1 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */
+/* @@@ label2 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */

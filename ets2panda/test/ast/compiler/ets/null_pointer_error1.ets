@@ -23,4 +23,4 @@ function mustCallArgSize() {
     });
 }
 
-/* @@? 20:9 Error TypeError: Unresolved reference xf */
+/* @@? 20:9 Error Semantic error ESE0143: Unresolved reference xf */

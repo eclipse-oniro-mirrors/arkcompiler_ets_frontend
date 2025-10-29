@@ -15,4 +15,5 @@
 
 const a = a + 1;
 
-/* @@? 16:7 Error TypeError: Circular dependency detected for identifier: a */
+
+/* @@? 16:7 Error Semantic error ESE0308: Circular dependency detected for identifier: a */

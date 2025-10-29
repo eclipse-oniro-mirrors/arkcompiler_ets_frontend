@@ -15,10 +15,11 @@
 
 overload * you thMMMMMMMMdSTICKER,
 
-/* @@? 16:10 Error SyntaxError: Identifier expected, got '*'. */
-/* @@? 16:12 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 16:12 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:12 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 16:16 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 16:16 Error TypeError: Unresolved reference thMMMMMMMMdSTICKER */
-/* @@? 16:34 Error SyntaxError: Unexpected token ','. */
+
+/* @@? 16:10 Error Syntax error ESY0224: Identifier expected, got '*'. */
+/* @@? 16:12 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 16:12 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:12 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 16:16 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 16:16 Error Semantic error ESE0143: Unresolved reference thMMMMMMMMdSTICKER */
+/* @@? 16:34 Error Syntax error ESY0227: Unexpected token ','. */

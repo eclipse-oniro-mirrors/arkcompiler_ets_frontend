@@ -20,5 +20,6 @@ function foo<T>(a:T){}
 
 let array:Array<MySpace> = new Array<MySpace>()
 
-/* @@? 21:17 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 21:38 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+
+/* @@? 21:17 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 21:38 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

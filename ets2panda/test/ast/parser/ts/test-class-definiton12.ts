@@ -18,6 +18,7 @@ class Foo {
     var a = 3;
 }
 
-/* @@? 18:9 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 18:11 Error SyntaxError: Unexpected token. */
-/* @@? 18:13 Error SyntaxError: Unexpected token, expected ';'. */
+
+/* @@? 18:9 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 18:11 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:13 Error Syntax error ESY0228: Unexpected token, expected ';'. */

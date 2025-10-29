@@ -38,9 +38,9 @@ d = 5
 d = 5.0
 d = 5.f
 
-/* @@@ label_i1 Error TypeError: Type 'Double' cannot be assigned to type 'Int' */
-/* @@@ label_i2 Error TypeError: Type 'Float' cannot be assigned to type 'Int' */
-/* @@@ label_i3 Error TypeError: Type 'Double' cannot be assigned to type 'Int' */
-/* @@@ label_i4 Error TypeError: Type 'Float' cannot be assigned to type 'Int' */
-/* @@@ label_i5 Error TypeError: Type 'Double' cannot be assigned to type 'Int' */
-/* @@@ label_i6 Error TypeError: Type 'Float' cannot be assigned to type 'Int' */
+/* @@@ label_i1 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */
+/* @@@ label_i2 Error Semantic error ESE0318: Type 'Float' cannot be assigned to type 'Int' */
+/* @@@ label_i3 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */
+/* @@@ label_i4 Error Semantic error ESE0318: Type 'Float' cannot be assigned to type 'Int' */
+/* @@@ label_i5 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */
+/* @@@ label_i6 Error Semantic error ESE0318: Type 'Float' cannot be assigned to type 'Int' */

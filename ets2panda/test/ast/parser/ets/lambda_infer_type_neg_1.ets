@@ -16,5 +16,6 @@
 let lam :(x:string, y:int) => void = (a,b) =>{}
 lam(2, 3)
 
-/* @@? 17:1 Error TypeError: No matching call signature for (Int, Int) */
-/* @@? 17:5 Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */
+
+/* @@? 17:1 Error Semantic error ESE0127: No matching call signature for (Int, Int) */
+/* @@? 17:5 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'String' at index 1 */

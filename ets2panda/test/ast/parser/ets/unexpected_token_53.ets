@@ -25,17 +25,18 @@ export class MathSpectralNorm {
   }
 }
 
-/* @@? 19:10 Error TypeError: Unresolved reference i */
-/* @@? 19:22 Error SyntaxError: Expected ';', got ':'. */
-/* @@? 19:22 Error SyntaxError: Unexpected token ':'. */
-/* @@? 19:24 Error SyntaxError: Expected ')', got 'identification literal'. */
-/* @@? 19:27 Error SyntaxError: Unexpected token ')'. */
-/* @@? 19:29 Error SyntaxError: Unexpected token '{'. */
-/* @@? 20:7 Error TypeError: Unresolved reference vbv */
-/* @@? 20:14 Error TypeError: Unresolved reference u */
-/* @@? 20:14 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 20:21 Error TypeError: Unresolved reference v */
-/* @@? 20:21 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 21:7 Error TypeError: Unresolved reference vv */
-/* @@? 21:14 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 21:21 Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@? 19:10 Error Semantic error ESE0143: Unresolved reference i */
+/* @@? 19:22 Error Syntax error ESY0230: Expected ';', got ':'. */
+/* @@? 19:22 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 19:24 Error Syntax error ESY0230: Expected ')', got 'identification literal'. */
+/* @@? 19:27 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 19:29 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 20:7 Error Semantic error ESE0143: Unresolved reference vbv */
+/* @@? 20:14 Error Semantic error ESE0143: Unresolved reference u */
+/* @@? 20:14 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 20:21 Error Semantic error ESE0143: Unresolved reference v */
+/* @@? 20:21 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 21:7 Error Semantic error ESE0143: Unresolved reference vv */
+/* @@? 21:14 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 21:21 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

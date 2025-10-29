@@ -17,5 +17,5 @@ function foo(a: int) {}
 
 foo(1
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@ label */
+
+/* @@ label *//* @@? 21:97 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

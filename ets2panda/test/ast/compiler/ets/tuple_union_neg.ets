@@ -14,5 +14,6 @@
  */
 let v: [number]|null = ["A"]
 
-/* @@? 15:25 Error TypeError: Array initializer's type is not assignable to tuple type at index: 0 */
 
+
+/* @@? 15:25 Error Semantic error ESE0057: Array initializer's type is not assignable to tuple type at index: 0 */

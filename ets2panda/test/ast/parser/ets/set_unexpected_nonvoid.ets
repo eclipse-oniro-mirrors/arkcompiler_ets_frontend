@@ -17,5 +17,6 @@ class SomeClass {
     $_set (index: string): SomeClass { return this }
 }
 
-/* @@? 17:5 Error SyntaxError: The special predefined method '$_set' should have exactly two required parameter. */
-/* @@? 17:11 Error TypeError: 'The special predefined method '$_set' should have void return type. */
+
+/* @@? 17:5 Error Syntax error ESY0222: The special predefined method '$_set' should have exactly two required parameter. */
+/* @@? 17:11 Error Semantic error ESE0094: 'The special predefined method '$_set' should have void return type. */

@@ -20,4 +20,4 @@ export default {
     },
 };
 
-/* @@? 16:16 Error TypeError: Cannot infer type for gensym%%_default_anonymous because class composite needs an explicit target type */
+/* @@? 16:16 Error Semantic error ESE0174: Cannot infer type for gensym%%_default_anonymous because class composite needs an explicit target type */

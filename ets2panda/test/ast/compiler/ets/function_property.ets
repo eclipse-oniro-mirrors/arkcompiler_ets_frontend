@@ -19,4 +19,5 @@ function readImage(path: string) { }
     return contents;
 }
 
-/* @@@ label Error TypeError: Property 'sync' does not exist on type 'Function'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'sync' does not exist on type 'Function' */

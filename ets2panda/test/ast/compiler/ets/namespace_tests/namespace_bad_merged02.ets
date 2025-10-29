@@ -29,5 +29,6 @@ namespace P {
   namespace R {}  // OK
 }
 
-/* @@? 20:10 Error SyntaxError: Unable to merge namespaces 'Y', because their modifiers are different.  */
 
+
+/* @@? 20:10 Error Syntax error ESY0006: Unable to merge namespaces 'Y', because their modifiers are different. */

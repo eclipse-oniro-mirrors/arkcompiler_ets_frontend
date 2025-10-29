@@ -25,8 +25,8 @@ class B<T extends string | number> {
     f3!: T | null // cte
 }
 
-/* @@? 17:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 18:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 19:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 24:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 25:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 17:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 18:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 19:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 24:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 25:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

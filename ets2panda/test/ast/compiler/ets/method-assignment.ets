@@ -47,10 +47,11 @@ c.foo1 = bar;
 C.foo2 = bar;
 c.interfaceFoo = bar;
 
-/* @@? 31:9 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 36:9 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 44:1 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 45:1 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 46:1 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 47:1 Error TypeError: Class methods cannot be overwritten. */
-/* @@? 48:1 Error TypeError: Class methods cannot be overwritten. */
+
+/* @@? 31:9 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 36:9 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 44:1 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 45:1 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 46:1 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 47:1 Error Semantic error ESE0394: Class methods cannot be overwritten. */
+/* @@? 48:1 Error Semantic error ESE0394: Class methods cannot be overwritten. */

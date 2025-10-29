@@ -26,5 +26,6 @@ class cls implements I1 {
     foo2():void {}
 }
 
-/* @@? 16:11 Error TypeError: Cyclic inheritance involving I1.   */
 
+
+/* @@? 16:11 Error Semantic error ESE0310: Cyclic inheritance involving I1. */

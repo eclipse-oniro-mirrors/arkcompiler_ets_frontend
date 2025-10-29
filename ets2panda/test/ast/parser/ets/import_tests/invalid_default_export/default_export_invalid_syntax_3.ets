@@ -15,4 +15,5 @@
 
 export default * /* @@ err */from "./for_re-export"
 
-/* @@@ err Error SyntaxError: Cannot use 'export default' in re-export context  */
+
+/* @@@ err Error Syntax error ESY0244: Cannot use 'export default' in re-export context */

@@ -16,6 +16,7 @@
 let a = [1, 2, 3]
 a[0] = /* @@ label */"1"
 
-/* @@? 17:1 Error TypeError: No matching indexing signature for $_set(Int, "1") */
-/* @@? 17:3 Error TypeError: Cannot find index access method with the required signature. */
-/* @@? 17:22 Error TypeError: Type '"1"' is not compatible with type 'Double' at index 2 */
+
+/* @@? 17:1 Error Semantic error ESE0127: No matching indexing signature for $_set(Int, "1") */
+/* @@? 17:3 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
+/* @@@ label Error Semantic error ESE0046: Type '"1"' is not compatible with type 'Double' at index 2 */

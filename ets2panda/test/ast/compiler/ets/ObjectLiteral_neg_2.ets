@@ -20,4 +20,5 @@ class A {
 let a:A = {back:()=>{}}
 
 
-/* @@? 20:12 Error TypeError: Class or interface methods cannot be initialized within an object literal. */
+
+/* @@? 20:12 Error Semantic error ESE0074: Class or interface methods cannot be initialized within an object literal. */

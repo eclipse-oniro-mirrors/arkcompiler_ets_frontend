@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,4 +15,5 @@
 
 
 var a: { a: number } | { a: string } | { a: boolean } = { /* @@ label */b: "foo" };
-/* @@@ label Error TypeError: Object literal may only specify known properties, and "b" does not exist in type '{ a: number; } | { a: string; } | { a: boolean; }'.  */
+
+/* @@@ label Error Semantic error ESE0000: Object literal may only specify known properties, and "b" does not exist in type '{ a: number; } | { a: string; } | { a: boolean; }'. */

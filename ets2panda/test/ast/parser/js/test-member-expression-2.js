@@ -15,4 +15,5 @@
 
 
 a[b
-/* @@? 19:1 Error SyntaxError: Unexpected token, expected ']'. */
+
+/* @@? 19:76 Error Syntax error ESY0228: Unexpected token, expected ']'. */

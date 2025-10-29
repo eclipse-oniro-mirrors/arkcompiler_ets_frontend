@@ -21,5 +21,6 @@ class B {
   moo(/* @@ label2 */...i: A) {}
 }
 
-/* @@@ label1 Error SyntaxError: Rest parameter should be either array or tuple type. */
-/* @@@ label2 Error SyntaxError: Rest parameter should be either array or tuple type. */
+
+/* @@@ label1 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@@ label2 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */

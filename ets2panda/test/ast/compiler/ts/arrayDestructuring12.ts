@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,4 +16,5 @@
 
 var /* @@ label */[a = 5, ...b]: [number, string, boolean] | string[] | number = ["foo", "bar"];
 
-/* @@@ label Error TypeError: Type [number, string, boolean] | string[] | number must have a '[Symbol.iterator]()' method that returns an iterator.  */
+
+/* @@@ label Error Semantic error ESE0000: Type [number, string, boolean] | string[] | number must have a '[Symbol.iterator]()' method that returns an iterator. */

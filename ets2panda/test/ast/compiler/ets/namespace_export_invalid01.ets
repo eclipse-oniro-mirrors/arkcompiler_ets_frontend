@@ -20,6 +20,7 @@ namespace NS {
 NS.baz();
 
 
-/* @@? 17:12 Error SyntaxError: Export declarations are not permitted in a namespace. */
-/* @@? 17:14 Error SyntaxError: Cannot find name 'baz' to export. */
-/* @@? 20:4 Error TypeError: Property 'baz' does not exist on type 'NS' */
+
+/* @@? 17:12 Error Syntax error ESY0111: Export declarations are not permitted in a namespace. */
+/* @@? 17:14 Error Syntax error ESY0279: Cannot find name 'baz' to export. */
+/* @@? 20:4 Error Semantic error ESE0087: Property 'baz' does not exist on type 'NS' */

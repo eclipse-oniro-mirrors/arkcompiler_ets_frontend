@@ -17,4 +17,5 @@ enum /* @@ label */double {
     A, B, C
 }
 
-/* @@@ label Error SyntaxError:  double is a predefined type, cannot be used as an identifier */
+
+/* @@@ label Error Syntax error ESY0295: double is a predefined type, cannot be used as an identifier */

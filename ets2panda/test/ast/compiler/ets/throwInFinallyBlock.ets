@@ -24,4 +24,5 @@ function main(): void {
     } catch (e) {}
 }
 
-/* @@@ label Warning Warning: Finally clause cannot complete normally  */
+
+/* @@@ label Warning Warning W0021: Finally clause cannot complete normally */

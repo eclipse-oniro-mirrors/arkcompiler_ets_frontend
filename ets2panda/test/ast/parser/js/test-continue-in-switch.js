@@ -25,4 +25,5 @@ switch (a)
     break;
 }
 
-/* @@@ label Error SyntaxError: Illegal continue statement.  */
+
+/* @@@ label Error Syntax error ESY0165: Illegal continue statement. */

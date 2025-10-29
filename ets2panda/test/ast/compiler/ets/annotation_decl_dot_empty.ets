@@ -17,6 +17,6 @@
 {
 }
 
-/* @@? 16:19 Error SyntaxError: Expected '{', got '.'. */
-/* @@? 17:1 Error SyntaxError: Identifier expected, got '{'. */
-/* @@? 18:1 Error SyntaxError: Identifier expected, got '}'. */
+/* @@? 16:19 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 17:1 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 18:1 Error Syntax error ESY0224: Identifier expected, got '}'. */

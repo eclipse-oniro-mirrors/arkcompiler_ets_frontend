@@ -83,18 +83,19 @@ function foo6<T>() {
     new [T|Object][2]
 }
 
-/* @@? 18:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 22:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 23:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 31:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 35:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 40:5 Error SyntaxError: Illegal start of Type Alias expression.  */
-/* @@? 41:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 42:5 Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
-/* @@? 42:9 Error TypeError: Cannot find type 'U'.  */
-/* @@? 64:9 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 70:5 Error TypeError: Cannot use array creation expression with type parameter.  */
-/* @@? 76:9 Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
-/* @@? 77:9 Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
-/* @@? 82:5 Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
-/* @@? 83:5 Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
+
+/* @@? 18:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 22:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 23:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 31:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 35:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 40:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 41:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 42:5 Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */
+/* @@? 42:9 Error Semantic error ESE0371: Cannot find type 'U'. */
+/* @@? 64:9 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 70:5 Error Semantic error ESE0007: Cannot use array creation expression with type parameter. */
+/* @@? 76:9 Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */
+/* @@? 77:9 Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */
+/* @@? 82:5 Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */
+/* @@? 83:5 Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */

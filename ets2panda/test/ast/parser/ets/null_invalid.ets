@@ -16,4 +16,5 @@
 const n = null;
 let o : Object = /* @@ label */n;
 
-/* @@@ label Error TypeError: Type 'null' cannot be assigned to type 'Object'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Object' */

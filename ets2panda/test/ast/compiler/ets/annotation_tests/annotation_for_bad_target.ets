@@ -16,8 +16,8 @@
 @interface
 this.context;
 
-/* @@? 17:1 Error SyntaxError: Hard keyword 'this' cannot be used as identifier */
-/* @@? 17:1 Error SyntaxError: Identifier expected, got 'this'. */
-/* @@? 17:5 Error SyntaxError: Invalid annotation name. */
-/* @@? 17:5 Error SyntaxError: Expected '{', got '.'. */
-/* @@? 17:13 Error SyntaxError: Missing type annotation for property 'context'. */
+/* @@? 17:1 Error Syntax error ESY0316: Hard keyword 'this' cannot be used as identifier */
+/* @@? 17:1 Error Syntax error ESY0224: Identifier expected, got 'this'. */
+/* @@? 17:5 Error Syntax error ESY0329: Invalid annotation name. */
+/* @@? 17:5 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 17:13 Error Syntax error ESY0001: Missing type annotation for property 'context'. */

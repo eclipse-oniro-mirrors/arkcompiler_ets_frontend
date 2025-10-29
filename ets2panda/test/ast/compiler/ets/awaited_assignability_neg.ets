@@ -18,5 +18,5 @@ async function aw<T>(p: Promise<T>, cb: (v: T) => void) {
     cb(x)
 }
 
-/* @@? 18:5 Error TypeError: No matching call signature for (Awaited<T>) */
-/* @@? 18:8 Error TypeError: Type 'Awaited<T>' is not compatible with type 'T' at index 1 */
+/* @@? 18:5 Error Semantic error ESE0127: No matching call signature for (Awaited<T>) */
+/* @@? 18:8 Error Semantic error ESE0046: Type 'Awaited<T>' is not compatible with type 'T' at index 1 */

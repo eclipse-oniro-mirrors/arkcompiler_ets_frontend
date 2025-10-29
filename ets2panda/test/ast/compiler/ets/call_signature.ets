@@ -27,11 +27,12 @@ class Proxy {
     )
 }
 
-/* @@? 17:25 Error TypeError: Cannot find type 'T'. */
-/* @@? 19:22 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 21:28 Error TypeError: Cannot find type 'MethodCreate'. */
-/* @@? 22:13 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 22:32 Error TypeError: Cannot find type 'AbortController'. */
-/* @@? 24:61 Error SyntaxError: Identifier expected, got ')'. */
-/* @@? 26:9 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 27:5 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? 17:25 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 19:22 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 21:28 Error Semantic error ESE0371: Cannot find type 'MethodCreate'. */
+/* @@? 22:13 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 22:32 Error Semantic error ESE0371: Cannot find type 'AbortController'. */
+/* @@? 24:61 Error Syntax error ESY0224: Identifier expected, got ')'. */
+/* @@? 26:9 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 27:5 Error Syntax error ESY0227: Unexpected token ')'. */

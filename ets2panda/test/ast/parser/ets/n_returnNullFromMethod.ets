@@ -19,4 +19,5 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: Type 'null' is not compatible with the enclosing method's return type 'A'  */
+
+/* @@@ label Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'A' */

@@ -19,5 +19,5 @@
 let foo1:(a:/* @@ label */MyAnno)=>int
 let foo2:()=>/* @@ label1 */MyAnno
 
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type.  */
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */

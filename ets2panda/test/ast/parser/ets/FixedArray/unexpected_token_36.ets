@@ -31,12 +31,13 @@ export class AccessNSieve {
     }
   }
 }
-/* @@? 29:10 Error TypeError: Unresolved reference le */
-/* @@? 29:13 Error SyntaxError: Expected ';', got 'identification literal'. */
-/* @@? 29:13 Error TypeError: Unresolved reference i */
-/* @@? 29:14 Error SyntaxError: Expected ';', got ':'. */
-/* @@? 29:14 Error SyntaxError: Unexpected token ':'. */
-/* @@? 29:16 Error SyntaxError: Expected ')', got 'int'. */
-/* @@? 29:16 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 29:36 Error SyntaxError: Unexpected token ')'. */
-/* @@? 29:38 Error SyntaxError: Unexpected token '{'. */
+
+/* @@? 29:10 Error Semantic error ESE0143: Unresolved reference le */
+/* @@? 29:13 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
+/* @@? 29:13 Error Semantic error ESE0143: Unresolved reference i */
+/* @@? 29:14 Error Syntax error ESY0230: Expected ';', got ':'. */
+/* @@? 29:14 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 29:16 Error Syntax error ESY0230: Expected ')', got 'int'. */
+/* @@? 29:16 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 29:36 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 29:38 Error Syntax error ESY0227: Unexpected token '{'. */

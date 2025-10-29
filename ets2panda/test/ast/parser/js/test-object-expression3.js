@@ -17,4 +17,5 @@
 a = {
   a/* @@ label */"foo",
 }
-/* @@@ label Error SyntaxError: Unexpected token.  */
+
+/* @@@ label Error Syntax error ESY0016: Unexpected token. */

@@ -31,6 +31,7 @@ class Test3 {
     abstract overload foo{ foo1, foo2 }
 }
 
-/* @@? 19:21 Error SyntaxError: Overload Declaration only allow use modifier 'static' | 'async'. */
-/* @@? 25:23 Error SyntaxError: Overload Declaration only allow use modifier 'static' | 'async'. */
-/* @@? 31:23 Error SyntaxError: Overload Declaration only allow use modifier 'static' | 'async'. */
+
+/* @@? 19:21 Error Syntax error ESY0323: Overload Declaration only allow use modifier 'static' | 'async'. */
+/* @@? 25:23 Error Syntax error ESY0323: Overload Declaration only allow use modifier 'static' | 'async'. */
+/* @@? 31:23 Error Syntax error ESY0323: Overload Declaration only allow use modifier 'static' | 'async'. */

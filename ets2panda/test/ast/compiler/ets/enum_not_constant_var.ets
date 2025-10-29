@@ -20,5 +20,5 @@ enum Color {
     Red = /* @@ label */b,
 }
 
-/* @@@ label Error SyntaxError: Only constant expression is expected in the field  */
-/* @@@ label Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type.  */
+
+/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

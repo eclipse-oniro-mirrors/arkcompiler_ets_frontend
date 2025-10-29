@@ -40,4 +40,4 @@ const factory = new GenericObjectFactory();
 const obj = g(factory);
 obj.give({});
 
-/* @@? 19:58 Error TypeError: Type argument 'Interface_2' should be a subtype of 'Interface_1' constraint */
+/* @@? 19:58 Error Semantic error ESE0228: Type argument 'Interface_2' should be a subtype of 'Interface_1' constraint */

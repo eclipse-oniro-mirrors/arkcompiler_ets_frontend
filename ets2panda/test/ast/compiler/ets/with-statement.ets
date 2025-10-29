@@ -22,8 +22,7 @@ function main(): void {
   }
 }
 
-/* @@@ label1 Error SyntaxError: 'with' statement is not supported, please use fully qualified names! */
-/* @@@ label1 Error TypeError: Expected 3 arguments, got 1. */
-/* @@@ label1 Error TypeError: No matching call signature for with(Math) */
-/* @@@ label1 Error TypeError: Expected 3 arguments, got 1. */
-/* @@@ label2 Error TypeError: Class 'Math' cannot be used as object */
+/* @@@ label1 Error Syntax error ESY116901: 'with' statement is not supported, please use fully qualified names! */
+/* @@@ label1 Error Semantic error ESE0124: Expected 3 arguments, got 1. */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for with(Math) */
+/* @@@ label2 Error Semantic error ESE132307: Class 'Math' cannot be used as object */

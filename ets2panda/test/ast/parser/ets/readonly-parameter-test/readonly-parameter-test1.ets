@@ -17,4 +17,5 @@
 function foo (x: readonly int/* @@ label */) {
 }
 
-/* @@@ label Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
+
+/* @@@ label Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */

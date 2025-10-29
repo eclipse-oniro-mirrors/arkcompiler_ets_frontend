@@ -16,5 +16,5 @@
 declare function foo(A:number|undefined|null)
 declare function foo(A:number|undefined|null)
 
-/* @@? 16:18 Error TypeError: Native and Declare methods should have explicit return type.  */
-/* @@? 17:1 Error TypeError: Function foo is already declared.  */
+/* @@? 16:18 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */
+/* @@? 17:1 Error Semantic error ESE0130: Function foo is already declared. */

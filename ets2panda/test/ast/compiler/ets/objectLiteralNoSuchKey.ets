@@ -20,4 +20,5 @@ let c: C = {
     /* @@ label */f: 44,
 };
 
-/* @@@ label Error TypeError: type C has no property named f  */
+
+/* @@@ label Error Semantic error ESE0065: type C has no property named f */

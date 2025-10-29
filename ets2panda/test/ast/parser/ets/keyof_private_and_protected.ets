@@ -46,11 +46,12 @@ function main():void{
     let c12:keyof B = /* @@ label8 */"bfoo3"   
 }
 
-/* @@@ label1 Error TypeError: Type '"field2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label2 Error TypeError: Type '"foo2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label3 Error TypeError: Type '"field3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label4 Error TypeError: Type '"foo3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label5 Error TypeError: Type '"bfield2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label6 Error TypeError: Type '"bfoo2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
-/* @@@ label7 Error TypeError: Type '"bfield3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
-/* @@@ label8 Error TypeError: Type '"bfoo3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"'  */
+
+/* @@@ label1 Error Semantic error ESE0318: Type '"field2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label2 Error Semantic error ESE0318: Type '"foo2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label3 Error Semantic error ESE0318: Type '"field3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label4 Error Semantic error ESE0318: Type '"foo3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label5 Error Semantic error ESE0318: Type '"bfield2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label6 Error Semantic error ESE0318: Type '"bfoo2"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label7 Error Semantic error ESE0318: Type '"bfield3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */
+/* @@@ label8 Error Semantic error ESE0318: Type '"bfoo3"' cannot be assigned to type '"bfoo"|"bfield1"|"foo"|"field1"' */

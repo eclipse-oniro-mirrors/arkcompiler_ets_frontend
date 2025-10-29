@@ -21,6 +21,7 @@ function main():void{
     (1.0 as test) == test.a
 }
 
-/* @@? 21:6 Error TypeError: Type 'Double' is not compatible with type 'Int' at index 1 */
-/* @@? 21:6 Error TypeError: No matching call signature for fromValue(Double) */
-/* @@? 21:6 Warning Warning: Enum cast is deprecated. Cast support from 'Double' to 'test' will be removed. */
+
+/* @@? 21:6 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Int' at index 1 */
+/* @@? 21:6 Error Semantic error ESE0127: No matching call signature for fromValue(Double) */
+/* @@? 21:6 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Double' to 'test' will be removed. */

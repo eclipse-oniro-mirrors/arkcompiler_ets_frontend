@@ -15,4 +15,5 @@
 
 
 a?.a?.a?./* @@ label */``
-/* @@@ label Error SyntaxError: Tagged Template Literals are not allowed in optionalChain.  */
+
+/* @@@ label Error Syntax error ESY0056: Tagged Template Literals are not allowed in optionalChain. */

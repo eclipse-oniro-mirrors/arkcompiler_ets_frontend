@@ -22,13 +22,13 @@ async function foo() {
     await byteP;
 }
 
-/* @@? 16:30 Error TypeError: Unresolved reference byteFunc */
-/* @@? 17:41 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 17:41 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:41 Error SyntaxError: Expected '=>', got 'identification literal'. */
-/* @@? 17:41 Error SyntaxError: Class cannot be used as object. */
-/* @@? 17:48 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:50 Error SyntaxError: Unexpected token 'Object'. */
-/* @@? 17:50 Error TypeError: The type of parameter 'Object' cannot be inferred */
-/* @@? 18:12 Error TypeError: Unresolved reference value */
-/* @@? 20:2 Error SyntaxError: Unexpected token ')'. */
+/* @@? 16:30 Error Semantic error ESE0143: Unresolved reference byteFunc */
+/* @@? 17:41 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:41 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:41 Error Syntax error ESY0230: Expected '=>', got 'identification literal'. */
+/* @@? 17:41 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 17:48 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:50 Error Syntax error ESY0227: Unexpected token 'Object'. */
+/* @@? 17:50 Error Semantic error ESE0132: The type of parameter 'Object' cannot be inferred */
+/* @@? 18:12 Error Semantic error ESE0143: Unresolved reference value */
+/* @@? 20:2 Error Syntax error ESY0227: Unexpected token ')'. */

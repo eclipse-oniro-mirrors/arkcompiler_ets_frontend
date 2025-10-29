@@ -15,4 +15,5 @@
 
 import * as all from /* @@ label */"./folderWithoutIndexOrPackage"
 
-/* @@@ label Error TypeError: Cannot find index.[ets|ts] or package module in folder: ./folderWithoutIndexOrPackage  */
+
+/* @@@ label Error Semantic error ESE0359: Cannot find index.[ets|ts] or package module in folder: ./folderWithoutIndexOrPackage */

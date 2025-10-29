@@ -24,6 +24,7 @@ new A()./* @@ label1 */field++;
 new A()./* @@ label2 */field += 1;
 ++new A()./* @@ label3 */field;
 
-/* @@@ label1 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@@ label2 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@@ label3 Error TypeError: Cannot read from this property because it is writeonly. */
+
+/* @@@ label1 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@@ label2 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@@ label3 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */

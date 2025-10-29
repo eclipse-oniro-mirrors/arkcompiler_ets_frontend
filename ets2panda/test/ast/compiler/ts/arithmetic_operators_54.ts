@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,5 @@ var a: boolean;
 a = false;
 /* @@ label */a ** "foo";
 
-/* @@@ label Error TypeError: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.  */
+
+/* @@@ label Error Semantic error ESE0000: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type. */

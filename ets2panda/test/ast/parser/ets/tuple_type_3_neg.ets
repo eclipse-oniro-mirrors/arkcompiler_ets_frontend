@@ -16,7 +16,8 @@
 
 let a: [number, number number] = [1, 2, 3];
 
-/* @@? 17:24 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:24 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:24 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:30 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 17:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 17:24 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:24 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:30 Error Syntax error ESY0227: Unexpected token ']'. */

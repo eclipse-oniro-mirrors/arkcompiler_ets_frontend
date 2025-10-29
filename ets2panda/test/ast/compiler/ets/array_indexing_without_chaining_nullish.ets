@@ -18,4 +18,5 @@ class A {}
 let arr : Object[] | null = [new Object(), new A()];
 let elem : Object | undefined = /* @@ label */arr[0];
 
-/* @@@ label Error TypeError: Value is possibly nullish.  */
+
+/* @@@ label Error Semantic error ESE0010: Value is possibly nullish. */

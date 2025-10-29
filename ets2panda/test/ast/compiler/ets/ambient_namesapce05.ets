@@ -19,7 +19,8 @@ declare namespace MySpace{
     }
 }
 
-/* @@? 18:15 Error SyntaxError: Interface member initialization is prohibited. */
-/* @@? 18:17 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:17 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 19:5 Error SyntaxError: Identifier expected. */
+
+/* @@? 18:15 Error Syntax error ESY0180: Interface member initialization is prohibited. */
+/* @@? 18:17 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:17 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 19:5 Error Syntax error ESY0122: Identifier expected. */

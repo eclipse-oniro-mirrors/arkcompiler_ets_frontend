@@ -22,4 +22,4 @@ function main(): void {
   let c = /* @@ label */a === b;
 }
 
-/* @@@ label Node { "type": "BinaryExpression", "operator": "===" } */
+

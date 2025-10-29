@@ -18,4 +18,5 @@ import {Point} from /* @@ label */"import_tests/relative_import/Point";
 class Point {}
 
 //Throw error: Class already declared. 
-/* @@@ label Error TypeError: Class 'Point' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Class 'Point' is already defined. */

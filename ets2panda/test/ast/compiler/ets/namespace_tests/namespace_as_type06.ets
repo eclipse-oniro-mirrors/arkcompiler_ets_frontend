@@ -21,6 +21,7 @@ function foo2(): MySpace {}
 
 foo1(new MySpace())
 
-/* @@? 20:18 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 19:17 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 22:10 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+
+/* @@? 19:17 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 20:18 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 22:10 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

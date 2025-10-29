@@ -17,4 +17,4 @@ class A {
     override field : number = 1;
 }
 
-/* @@? 17:14 Error TypeError: The 'override' modifier is invalid here because class 'A' does not extends another class. */
+/* @@? 17:14 Error Semantic error ESE46316: The 'override' modifier is invalid here because class 'A' does not extends another class. */

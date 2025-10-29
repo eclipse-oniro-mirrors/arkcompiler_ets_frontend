@@ -15,4 +15,4 @@
 
 let a: readonly int [""];
 
-/* @@? 16:21 Error SyntaxError: Indexed access types are not supported, use type name instead! */
+/* @@? 16:21 Error Syntax error ESY49888: Indexed access types are not supported, use type name instead! */

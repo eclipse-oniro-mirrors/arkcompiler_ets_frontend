@@ -24,6 +24,7 @@ interface X {
 function foo(x: X) {}
 foo(/* @@ label */{})
 
-/* @@@ label Error TypeError: Non-optional property 'a' in type 'X' is missing in object literal. */
-/* @@@ label Error TypeError: Non-optional property 'nm' in type 'X' is missing in object literal. */
-/* @@@ label Error TypeError: Non-optional property 'id' in type 'X' is missing in object literal. */
+
+/* @@@ label Error Semantic error ESE0400: Non-optional property 'a' in type 'X' is missing in object literal. */
+/* @@@ label Error Semantic error ESE0400: Non-optional property 'nm' in type 'X' is missing in object literal. */
+/* @@@ label Error Semantic error ESE0400: Non-optional property 'id' in type 'X' is missing in object literal. */

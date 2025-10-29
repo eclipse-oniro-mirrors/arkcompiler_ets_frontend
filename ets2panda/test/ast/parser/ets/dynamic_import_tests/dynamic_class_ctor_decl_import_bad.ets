@@ -23,6 +23,7 @@ function main(): void {
     let x = new A("abc", 10)
 }
 
-/* @@? 23:13 Error TypeError: Expected 0 arguments, got 2. */
-/* @@? 23:13 Error TypeError: No matching construct signature for module.A("abc", Int) */
-/* @@? 23:19 Error TypeError: Type '"abc"' is not compatible with type 'Double' at index 1 */
+
+/* @@? 23:13 Error Semantic error ESE0124: Expected 0 arguments, got 2. */
+/* @@? 23:13 Error Semantic error ESE0127: No matching construct signature for module.A("abc", Int) */
+/* @@? 23:19 Error Semantic error ESE0046: Type '"abc"' is not compatible with type 'Double' at index 1 */

@@ -17,4 +17,5 @@ function foo<T>(x: T) {}
 
 foo<void>(void) 
 
-/* @@? 18:11 Error SyntaxError: Unexpected token 'void'. */
+
+/* @@? 18:11 Error Syntax error ESY0227: Unexpected token 'void'. */

@@ -17,4 +17,4 @@ function foo<T>(){
   Type.from<T>();
 }
 
- /* @@? 17:3 Error TypeError: Unable to resolve type.*/
+ /* @@? 17:3 Error Semantic error ESE0285: Unable to resolve type. */

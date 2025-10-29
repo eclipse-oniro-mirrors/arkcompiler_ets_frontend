@@ -23,4 +23,5 @@ function f(c: ()=>void) {
 
 }
 
-/* @@@ label Error TypeError: No matching call signature with trailing lambda  */
+
+/* @@@ label Error Semantic error ESE0140: No matching call signature with trailing lambda */

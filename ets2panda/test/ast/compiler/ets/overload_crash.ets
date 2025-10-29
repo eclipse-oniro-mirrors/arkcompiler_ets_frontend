@@ -22,5 +22,6 @@ function f1(thing: string) {
     path(thing, ...['a']);
 }
 
-/* @@? 16:10 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 18:1 Error TypeError: Function path with this assembly signature already declared. */
+
+/* @@? 16:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 18:1 Error Semantic error ESE0131: Function path with this assembly signature already declared. */

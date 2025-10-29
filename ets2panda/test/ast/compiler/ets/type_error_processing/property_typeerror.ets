@@ -19,11 +19,12 @@ class A {
 
 function foo (partial: Partial<A>) {}
 
-/* @@? 17:15 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:16 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:16 Error SyntaxError: Unexpected token 'break'. */
-/* @@? 17:21 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:23 Error SyntaxError: Unexpected token '{'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:15 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:16 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:16 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:16 Error Syntax error ESY0227: Unexpected token 'break'. */
+/* @@? 17:21 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:23 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */

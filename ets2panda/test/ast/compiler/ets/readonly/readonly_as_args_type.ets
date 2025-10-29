@@ -15,5 +15,6 @@
 
 function foo(param1: readonly/* @@ foo_param1 */, param2: readonly /* @@ foo_param2 */true) {}
 
-/* @@@ foo_param1 Error SyntaxError: Invalid Type. */
-/* @@@ foo_param2 Error SyntaxError: Invalid Type. */
+
+/* @@@ foo_param1 Error Syntax error ESY0138: Invalid Type. */
+/* @@@ foo_param2 Error Syntax error ESY0138: Invalid Type. */

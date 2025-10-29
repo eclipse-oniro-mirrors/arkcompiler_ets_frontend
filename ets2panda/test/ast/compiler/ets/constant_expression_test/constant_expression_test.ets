@@ -19,5 +19,6 @@ function main(): int {
     return 0;
 }
 
-/* @@@ label Error TypeError: Unresolved reference MathPartialSums */
-/* @@@ label Error TypeError: Only constant expression allowed for element access on tuples. */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference MathPartialSums */
+/* @@@ label Error Semantic error ESE0199: Only constant expression allowed for element access on tuples. */

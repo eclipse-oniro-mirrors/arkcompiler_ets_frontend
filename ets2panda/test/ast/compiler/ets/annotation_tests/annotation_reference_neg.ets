@@ -24,8 +24,8 @@ declare namespace MySpace {
     AuthorName: number = 1
 }
 
-/* @@? 16:19 Error TypeError: Variable 'MySpace' has already been declared. */
-/* @@? 16:19 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 23:19 Error SyntaxError: Expected '{', got '.'. */
-/* @@? 23:32 Error SyntaxError: Missing type annotation for property 'ClassAuthor'. */
-/* @@? 23:32 Error SyntaxError: Identifier expected, got '{'. */
+/* @@? 16:19 Error Semantic error ESE0351: Variable 'MySpace' has already been declared. */
+/* @@? 16:19 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 23:19 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 23:32 Error Syntax error ESY0001: Missing type annotation for property 'ClassAuthor'. */
+/* @@? 23:32 Error Syntax error ESY0224: Identifier expected, got '{'. */

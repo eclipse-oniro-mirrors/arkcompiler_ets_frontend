@@ -15,5 +15,5 @@
 
 initModule(
 
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
-/* @@? 20:1 Error SyntaxError: Expected ')', got 'end of stream'. */
+/* @@? 16:1 Error Syntax error ESY0321: initModule() only accept string literal as argument. */
+/* @@? 20:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */

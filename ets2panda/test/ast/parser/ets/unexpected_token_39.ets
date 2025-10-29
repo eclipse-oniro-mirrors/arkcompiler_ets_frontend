@@ -15,4 +15,5 @@
 
 let r: ((((number)))[]/* @@ label */;
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ')'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected ')'. */

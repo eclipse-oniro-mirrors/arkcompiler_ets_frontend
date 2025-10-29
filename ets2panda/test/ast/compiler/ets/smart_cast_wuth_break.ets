@@ -32,4 +32,5 @@ function main() {
   console.log(foo("a"));
 }
 
-/* @@@ label Error TypeError: Type 'String|undefined' is not compatible with the enclosing method's return type 'undefined' */
+
+/* @@@ label Error Semantic error ESE0091: Type 'String|undefined' is not compatible with the enclosing method's return type 'undefined' */

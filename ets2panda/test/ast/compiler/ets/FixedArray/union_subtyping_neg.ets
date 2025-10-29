@@ -22,4 +22,5 @@ let b: FixedArray<B> = [new B(), new B()]
 
 let cOnly: FixedArray<C> = b
 
-/* @@? 23:28 Error TypeError: Type 'FixedArray<B>' cannot be assigned to type 'FixedArray<C>' */
+
+/* @@? 23:28 Error Semantic error ESE0318: Type 'FixedArray<B>' cannot be assigned to type 'FixedArray<C>' */

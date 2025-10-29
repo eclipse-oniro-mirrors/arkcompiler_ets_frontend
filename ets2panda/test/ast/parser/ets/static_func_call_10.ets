@@ -47,4 +47,5 @@ function main() {
     d.c.b.a./* @@ label */foo()
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'A' */
+
+/* @@@ label Error Semantic error ESE0207: 'foo' is a static property of 'A' */

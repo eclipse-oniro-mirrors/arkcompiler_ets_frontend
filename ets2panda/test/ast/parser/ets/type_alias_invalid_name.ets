@@ -15,4 +15,5 @@
 
 type var = number[] 
 
-/* @@? 16:6 Error SyntaxError: Type alias name cannot be 'var'. */
+
+/* @@? 16:6 Error Syntax error ESY0225: Type alias name cannot be 'var'. */

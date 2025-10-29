@@ -24,4 +24,5 @@ function main(): void {
     let a = klass./* @@ label */a;
 }
 
-/* @@@ label Error TypeError: Property a is not visible here.  */
+
+/* @@@ label Error Semantic error ESE0293: Property a is not visible here. */

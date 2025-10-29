@@ -22,7 +22,8 @@ function main(): void {
   let white = Color.White./* @@ label3 */ordinal();
 }
 
-/* @@@ label Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label1 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label2 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label3 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@@ label1 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@@ label2 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@@ label3 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */

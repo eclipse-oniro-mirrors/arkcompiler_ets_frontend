@@ -17,4 +17,5 @@ function foo<T, U>() {
     let x = 1 as (T | U);                 
 }
 
-/* @@? 17:13 Error TypeError: Cannot cast type 'Int' to 'T|U'  */
+
+/* @@? 17:13 Error Semantic error ESE0326: Cannot cast type 'Int' to 'T|U' */

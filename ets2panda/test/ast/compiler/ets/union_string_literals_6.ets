@@ -24,4 +24,5 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Operator '==' cannot be applied to types '"a"|"b"|"c"' and '"d"'. */
+
+/* @@@ label Error Semantic error ESE0105: Operator '==' cannot be applied to types '"a"|"b"|"c"' and '"d"'. */

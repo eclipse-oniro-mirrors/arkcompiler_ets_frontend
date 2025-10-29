@@ -28,4 +28,5 @@ function main() {
   arktest.assertEQ(r, 5);
 }
 
-/* @@@ label Error TypeError: Class or interface methods cannot be initialized within an object literal. */
+
+/* @@@ label Error Semantic error ESE0074: Class or interface methods cannot be initialized within an object literal. */

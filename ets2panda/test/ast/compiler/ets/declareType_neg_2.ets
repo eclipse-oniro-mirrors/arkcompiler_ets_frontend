@@ -21,4 +21,5 @@ declare type type_utility = Partial<Issue>;
 
 let a : type_utility = {description : 1234}
 
-/* @@? 22:39 Error TypeError: Type 'Int' is not compatible with type 'String|undefined' at property 'description'  */
+
+/* @@? 22:39 Error Semantic error ESE0319: Type 'Int' is not compatible with type 'String|undefined' at property 'description' */

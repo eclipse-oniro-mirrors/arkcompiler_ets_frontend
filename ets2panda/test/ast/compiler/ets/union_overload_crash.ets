@@ -24,4 +24,5 @@ let a = new A<Boolean>();
 
 (a as AVoidNumber).foo !== undefined
 
-/* @@? 25:1 Error TypeError: Overloaded method is used as value */
+
+/* @@? 25:1 Error Semantic error ESE0307: Overloaded method is used as value */

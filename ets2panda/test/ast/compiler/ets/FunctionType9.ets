@@ -30,4 +30,5 @@ function main(): void {
   instance./* @@ label */cb(1);
 }
 
-/* @@@ label Error TypeError: Property cb is not visible here.  */
+
+/* @@@ label Error Semantic error ESE0293: Property cb is not visible here. */

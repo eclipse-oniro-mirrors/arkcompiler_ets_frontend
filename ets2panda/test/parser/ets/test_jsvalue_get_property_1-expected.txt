@@ -335,4 +335,4 @@
     }
   }
 }
-TypeError: Property 'prop_name' does not exist on type 'JSValue' [test_jsvalue_get_property_1.ets:17:23]
+[test_jsvalue_get_property_1.ets:17:23] Semantic error ESE0087: Property 'prop_name' does not exist on type 'JSValue'

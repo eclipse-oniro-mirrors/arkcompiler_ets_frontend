@@ -21,6 +21,7 @@ while(true)
   a+=10/* @@ label1 */!!
 /* @@ label2 */}
 
-/* @@@ label Error SyntaxError: Undefined label. */
-/* @@@ label1 Error SyntaxError: Unexpected token '!'. */
-/* @@@ label2 Error SyntaxError: Unexpected token '}'. */
+
+/* @@@ label Error Syntax error ESY0162: Undefined label. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '!'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token '}'. */

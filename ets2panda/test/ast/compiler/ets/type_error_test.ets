@@ -21,4 +21,5 @@ export class SHA1Hash{
 }
 const swap32:(num:int)=>int = ((c:int):int =>c)
 
-/* @@? 19:16 Warning Warning: 'As' expression for cast is deprecated for numeric types. Use explicit conversion function Double.toInt(...) instead. */
+
+/* @@? 19:16 Warning Warning W0029: 'As' expression for cast is deprecated for numeric types. Use explicit conversion function Double.toInt(...) instead. */

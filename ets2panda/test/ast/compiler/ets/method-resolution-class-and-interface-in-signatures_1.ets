@@ -39,4 +39,5 @@ function main(): int {
 }
 
 
-/* @@@ label Error TypeError: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(x: I): String` and `foo(x: J): String`  */
+
+/* @@@ label Error Semantic error ESE0142: Call to `foo` is ambiguous as `2` versions of `foo` are available: `foo(x: I): String` and `foo(x: J): String` */

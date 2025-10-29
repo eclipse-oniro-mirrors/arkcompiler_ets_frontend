@@ -15,4 +15,5 @@
 
 while (true) /* @@ label */class a { };
 
-/* @@@ label Error SyntaxError: Lexical declaration is not allowed in single statement context. */
+
+/* @@@ label Error Syntax error ESY0175: Lexical declaration is not allowed in single statement context. */

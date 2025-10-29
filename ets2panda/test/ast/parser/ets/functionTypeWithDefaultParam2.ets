@@ -25,4 +25,5 @@ function main(): void {
     foo(func);
 }
 
-/* @@@ label Error SyntaxError: Default value is allowed only for optional parameters.  */
+
+/* @@@ label Error Syntax error ESY0133: Default value is allowed only for optional parameters. */

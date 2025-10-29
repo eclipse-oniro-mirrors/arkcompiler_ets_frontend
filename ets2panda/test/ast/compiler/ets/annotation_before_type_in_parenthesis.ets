@@ -23,8 +23,8 @@ function main(){
     let x: @MyTypeAnnotation (AA|BB)
 }
 
-/* @@? 23:30 Error SyntaxError: Annotation usage must have parentheses when used in front of a parenthesized type. */
-/* @@? 23:30 Error SyntaxError: Unexpected token '('. */
-/* @@? 23:30 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 23:31 Error SyntaxError: Class cannot be used as object. */
-/* @@? 23:34 Error SyntaxError: Class cannot be used as object. */
+/* @@? 23:30 Error Syntax error ESY150811: Annotation usage must have parentheses when used in front of a parenthesized type. */
+/* @@? 23:30 Error Syntax error ESY0227: Unexpected token '('. */
+/* @@? 23:30 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 23:31 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 23:34 Error Syntax error ESY0318: Class cannot be used as object. */

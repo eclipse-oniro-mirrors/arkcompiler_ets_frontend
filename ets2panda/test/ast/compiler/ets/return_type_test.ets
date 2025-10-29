@@ -26,4 +26,5 @@ function test(): Promise<Int> {
     return thenResult;
 }
 
-/* @@? 23:9 Error TypeError: Missing return value. */
+
+/* @@? 23:9 Error Semantic error ESE0032: Missing return value. */

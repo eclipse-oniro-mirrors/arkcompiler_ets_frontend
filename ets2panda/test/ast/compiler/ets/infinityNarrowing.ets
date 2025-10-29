@@ -18,10 +18,11 @@ export const byteInf:  /* @@ dst_type2 */byte = /* @@ value2 */1.0 / 0.0
 export const shortInf: /* @@ dst_type3 */short = /* @@ value3 */1.0 / 0.0
 
 
-/* @@? 16:42 Error TypeError: Invalid destination type for floating-point constant value  */
-/* @@? 16:65 Error TypeError: Type 'Double' cannot be assigned to type 'Float'  */
-/* @@? 17:42 Error TypeError: Invalid destination type for floating-point constant value  */
-/* @@? 17:64 Error TypeError: Type 'Double' cannot be assigned to type 'Byte'  */
-/* @@? 18:42 Error TypeError: Invalid destination type for floating-point constant value  */
-/* @@? 18:65 Error TypeError: Type 'Double' cannot be assigned to type 'Short'  */
 
+
+/* @@@ dst_type1 Error Semantic error ESE0344: Invalid destination type for floating-point constant value */
+/* @@@ value1 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
+/* @@@ dst_type2 Error Semantic error ESE0344: Invalid destination type for floating-point constant value */
+/* @@@ value2 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Byte' */
+/* @@@ dst_type3 Error Semantic error ESE0344: Invalid destination type for floating-point constant value */
+/* @@@ value3 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Short' */

@@ -19,4 +19,5 @@ function main(): void {
     let b: [number, number] = /* @@ label */a;
 }
 
-/* @@@ label Error TypeError: Type '[Double, Double, Double]' cannot be assigned to type '[Double, Double]'  */
+
+/* @@@ label Error Semantic error ESE0318: Type '[Double, Double, Double]' cannot be assigned to type '[Double, Double]' */

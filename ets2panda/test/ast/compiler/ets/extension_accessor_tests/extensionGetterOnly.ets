@@ -25,7 +25,8 @@ new A()./* @@ label2 */field += 1;
 new A()./* @@ label3 */field++;
 ++new A()./* @@ label4 */field;
 
-/* @@@ label1 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label2 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label3 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label4 Error TypeError: Cannot assign to this property because it is readonly. */
+
+/* @@@ label1 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@@ label2 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@@ label3 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@@ label4 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

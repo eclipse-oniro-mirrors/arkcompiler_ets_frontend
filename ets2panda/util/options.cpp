@@ -336,14 +336,11 @@ bool Options::DetermineExtension()
         return true;
     }
     std::string sourceFileExtension = SourceFileName().substr(SourceFileName().find_last_of('.') + 1);
-#ifdef ENABLE_AFTER_21192
-    // NOTE(mkaskov): Enable after #21192
     if (!SourceFileName().empty() && WasSetExtension() && gen::Options::GetExtension() != sourceFileExtension) {
-        diagnosticEngine_.LogDiagnostic(
-            diagnostic::EXTENSION_MISMATCH,
-            {std::string_view(sourceFileExtension), std::string_view(gen::Options::GetExtension())});
+        diagnosticEngine_.LogDiagnostic(diagnostic::EXTENSION_MISMATCH,
+                                        DiagnosticMessageParams {std::string_view(sourceFileExtension),
+                                                                 std::string_view(gen::Options::GetExtension())});
     }
-#endif  // ENABLE_AFTER_21192
     // Note: the file suffix `.ets` is a valid suffix for compiler, which is equivalent to `.ets`
     sourceFileExtension = sourceFileExtension == "ets" ? "ets" : sourceFileExtension;
     auto tempExtension = WasSetExtension() ? gen::Options::GetExtension() : sourceFileExtension;

@@ -19,4 +19,5 @@ class A {
     }
 }
 
-/* @@@ label Error SyntaxError: return keyword should be used in function body.  */
+
+/* @@@ label Error Syntax error ESY0163: return keyword should be used in function body. */

@@ -17,4 +17,4 @@ export { default } from '../default_export/export_default1';
 class Foo {}
 export default Foo;
 
-/* @@? 18:16 Error TypeError: Only one default export is allowed in a module  */
+/* @@? 18:16 Error Semantic error ESE0374: Only one default export is allowed in a module */

@@ -17,4 +17,5 @@ class A {
     #constructor() { }
 }
 
-/* @@? 17:6 Error SyntaxError: Private identifier can not be constructor. */
+
+/* @@? 17:6 Error Syntax error ESY0267: Private identifier can not be constructor. */

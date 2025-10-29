@@ -31,4 +31,4 @@ class Test1 {
     overload foo{ foo111, foo112, foo113,/* @@ label1 */foo111 }
 }
 
-/* @@@ label1 Error TypeError: Duplicate overloaded method. */
+/* @@@ label1 Error Semantic error ESE0385: Duplicate overloaded method. */

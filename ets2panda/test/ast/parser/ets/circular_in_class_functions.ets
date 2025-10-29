@@ -26,8 +26,9 @@ class Test {
     baz(a: Test, k: keyof Test) {}
 }
 
-/* @@? 20:9 Error TypeError: No matching call signature for baz(Test, "*1*") */
-/* @@? 20:24 Error TypeError: Type '"*1*"' is not compatible with type '"foo"|"bar"|"baz"' at index 2 */
-/* @@? 23:9 Error TypeError: No matching call signature for baz(Test, "*2*") */
-/* @@? 23:21 Error TypeError: Type '"*2*"' is not compatible with type '"foo"|"bar"|"baz"' at index 2 */
-/* @@? 26:31 Error TypeError: Circular type of reference */
+
+/* @@? 20:9 Error Semantic error ESE0127: No matching call signature for baz(Test, "*1*") */
+/* @@? 20:24 Error Semantic error ESE0046: Type '"*1*"' is not compatible with type '"foo"|"bar"|"baz"' at index 2 */
+/* @@? 23:9 Error Semantic error ESE0127: No matching call signature for baz(Test, "*2*") */
+/* @@? 23:21 Error Semantic error ESE0046: Type '"*2*"' is not compatible with type '"foo"|"bar"|"baz"' at index 2 */
+/* @@? 26:31 Error Semantic error ESE0379: Circular type of reference */

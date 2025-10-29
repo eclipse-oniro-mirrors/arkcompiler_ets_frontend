@@ -20,4 +20,5 @@ class G <T> {
 let a = new G<String>();
 a./* @@ label */y++;
 
-/* @@@ label Error TypeError: 'y' is a static property of 'G'  */
+
+/* @@@ label Error Semantic error ESE0207: 'y' is a static property of 'G' */

@@ -21,4 +21,5 @@ function createA(): A{
     return /* @@ label */{};
 }
 
-/* @@@ label Error TypeError: Non-optional property 'name' in type 'A' is missing in object literal. */
+
+/* @@@ label Error Semantic error ESE0400: Non-optional property 'name' in type 'A' is missing in object literal. */

@@ -20,9 +20,10 @@ function main(): void {
   a := b;
 }
 
-/* @@? 16:1 Error TypeError: Unresolved reference dim */
-/* @@? 16:5 Error SyntaxError: Unexpected token 'a'. */
-/* @@? 16:5 Error TypeError: Unresolved reference a */
-/* @@? 20:6 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 20:6 Error SyntaxError: Unexpected token '='. */
-/* @@? 20:8 Error SyntaxError: Unexpected token 'b'. */
+
+/* @@? 16:1 Error Semantic error ESE0143: Unresolved reference dim */
+/* @@? 16:5 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 20:6 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 20:6 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? 20:8 Error Syntax error ESY0227: Unexpected token 'b'. */

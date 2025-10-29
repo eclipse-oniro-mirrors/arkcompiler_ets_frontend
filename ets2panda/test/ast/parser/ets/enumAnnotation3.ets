@@ -19,4 +19,5 @@ enum Fraction: string {
 }
 
 
-/* @@? 16:23 Error SyntaxError: Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal types, not annotations. */
+
+/* @@? 16:23 Error Syntax error ESY0327: Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal types, not annotations. */

@@ -19,7 +19,7 @@ function main() {
     let fooInt1 = foo<Int><Double>
 }
 
-/* @@? 19:19 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
-/* @@? 19:28 Error SyntaxError: Class cannot be used as object. */
-/* @@? 20:1 Error SyntaxError: Unexpected token '}'. */
-/* @@? 26:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 19:19 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 19:28 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 20:1 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 26:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

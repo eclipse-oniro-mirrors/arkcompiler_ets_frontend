@@ -19,4 +19,5 @@ class Klass<T> {
     }
 }
 
-/* @@@ label Error TypeError: Cannot make a static reference to the non-static type T  */
+
+/* @@@ label Error Semantic error ESE0288: Cannot make a static reference to the non-static type T */

@@ -17,4 +17,4 @@
     x = 1;
  }
 
- /* @@? 16:8 Error TypeError: Declaration name conflicts with built-in global identifier 'ETSGLOBAL'. */
+ /* @@? 16:8 Error Semantic error ESE121810: Declaration name conflicts with built-in global identifier 'ETSGLOBAL'. */

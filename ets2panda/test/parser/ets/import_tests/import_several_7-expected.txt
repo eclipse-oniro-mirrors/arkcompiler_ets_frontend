@@ -564,3 +564,4 @@
     }
   }
 }
+[import_several_7.ets:16:21] Warning W32596: 'foo' is explicitly used with alias several times

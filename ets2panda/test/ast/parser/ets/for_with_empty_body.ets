@@ -23,4 +23,5 @@ try {
 
 }
 
-/* @@? 22:1 Error SyntaxError: A try statement should contain either finally clause or at least one catch clause. */
+
+/* @@? 22:1 Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */

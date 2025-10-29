@@ -17,4 +17,5 @@ class A {}
 
 @interface A { }
 
-/* @@? 18:12 Error TypeError: Variable 'A' has already been declared. */
+
+/* @@? 18:12 Error Semantic error ESE0351: Variable 'A' has already been declared. */

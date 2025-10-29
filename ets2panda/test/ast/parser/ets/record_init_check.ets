@@ -20,4 +20,5 @@ function main(){
         2: 2
     } 
 }
-/* @@@ label Error TypeError: Object literal may only specify known properties  */
+
+/* @@@ label Error Semantic error ESE0264: Object literal may only specify known properties */

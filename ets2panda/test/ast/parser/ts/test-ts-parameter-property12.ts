@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@
 class Foo {
     constructor(/* @@ label */private readonly { bar }) { };
 }
-/* @@@ label Error SyntaxError: A parameter property may not be declared using a binding pattern.  */
+
+/* @@@ label Error Syntax error ESY0000: A parameter property may not be declared using a binding pattern. */

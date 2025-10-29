@@ -22,12 +22,12 @@ interface Todo {
         return {...todo, ...fieldToUpdate };
     }
 
-/* @@? 17:17 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 17:19 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:19 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 17:19 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:22 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 18:22 Error TypeError: Type name 'string' used in the wrong context */
-/* @@? 21:5 Error SyntaxError: Identifier expected, got 'function'. */
-/* @@? 22:16 Error TypeError: need to specify target type for class composite */
-/* @@? 34:1 Error SyntaxError: Unexpected token, expected '}'. */
+/* @@? 17:17 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:19 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:19 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:22 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 18:22 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
+/* @@? 21:5 Error Syntax error ESY0224: Identifier expected, got 'function'. */
+/* @@? 22:16 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 34:1 Error Syntax error ESY0228: Unexpected token, expected '}'. */

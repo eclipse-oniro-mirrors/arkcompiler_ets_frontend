@@ -19,6 +19,7 @@ class C{
     constructor(public m:number) {}
     m(public x:number) {}
 }
-/* @@? 16:12 Error SyntaxError: Declaring fields in parameter list is not supported */
-/* @@? 19:17 Error SyntaxError: Declaring fields in parameter list is not supported */
-/* @@? 20:7 Error SyntaxError: Declaring fields in parameter list is not supported */
+
+/* @@? 16:12 Error Syntax error ESY0319: Declaring fields in parameter list is not supported */
+/* @@? 19:17 Error Syntax error ESY0319: Declaring fields in parameter list is not supported */
+/* @@? 20:7 Error Syntax error ESY0319: Declaring fields in parameter list is not supported */

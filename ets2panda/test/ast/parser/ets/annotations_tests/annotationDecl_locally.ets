@@ -17,5 +17,6 @@ class A{
 }
 
 
-/* @@? 16:6 Error SyntaxError: Annotations can only be declared at the top level. */
-/* @@? 16:6 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
+
+/* @@? 16:6 Error Syntax error ESY0114: Annotations can only be declared at the top level. */
+/* @@? 16:6 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

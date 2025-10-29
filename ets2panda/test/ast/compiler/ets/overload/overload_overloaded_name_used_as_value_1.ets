@@ -23,5 +23,6 @@ class E {
     }
 }
 
-/* @@? 22:22 Error TypeError: Overloaded method is used as value */
 
+
+/* @@? 22:22 Error Semantic error ESE0307: Overloaded method is used as value */

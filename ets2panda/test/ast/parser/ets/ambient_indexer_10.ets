@@ -19,4 +19,5 @@ declare class ClassWithSymbols {
 }
 
 
-/* @@@ label1 Error SyntaxError: Only one index signature can exist in a class  */
+
+/* @@@ label1 Error Syntax error ESY0326: Only one index signature can exist in a class */

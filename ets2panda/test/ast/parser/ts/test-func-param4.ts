@@ -17,4 +17,5 @@
 class A {
     get foo(this) { return; }
 /* @@ label */}
-/* @@@ label Error SyntaxError: Getter must not have formal parameters.  */
+
+/* @@@ label Error Syntax error ESY0058: Getter must not have formal parameters. */

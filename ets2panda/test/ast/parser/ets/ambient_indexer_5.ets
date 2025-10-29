@@ -21,6 +21,7 @@ function main() {
     let a : A = new A();
 }
 
-/* @@@ label Error SyntaxError: Invalid Type.  */
-/* @@@ label Error SyntaxError: Return type of index signature from exported class or interface need to be identifier.  */
-/* @@@ label Error SyntaxError: Unexpected token '?'.  */
+
+/* @@@ label Error Syntax error ESY0138: Invalid Type. */
+/* @@@ label Error Syntax error ESY0021: Return type of index signature from exported class or interface need to be identifier. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token '?'. */

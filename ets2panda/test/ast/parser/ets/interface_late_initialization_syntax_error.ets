@@ -17,4 +17,4 @@ interface A {
     f1!:number
 }
 
-/* @@? 17:7 Error SyntaxError: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 17:7 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */

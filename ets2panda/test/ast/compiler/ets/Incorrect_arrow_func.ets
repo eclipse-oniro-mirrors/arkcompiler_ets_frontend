@@ -16,5 +16,5 @@
 let f = ()=>int {}
 f()
 
-/* @@? 16:13 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 16:17 Error SyntaxError: Unexpected token '{'. */
+/* @@? 16:13 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 16:17 Error Syntax error ESY0227: Unexpected token '{'. */

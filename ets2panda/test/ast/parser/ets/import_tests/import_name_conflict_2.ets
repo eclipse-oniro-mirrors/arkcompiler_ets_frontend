@@ -17,4 +17,5 @@ import * as all from "import_tests/packages/var-duplication";
 
 // Throw error: "a" is defined twice in this package.
 
-/* @@? subpackage_module_2.ets:19:12 Error TypeError: Variable 'a' has already been declared.  */
+
+/* @@? subpackage_module_2.ets:19:12 Error Semantic error ESE0351: Variable 'a' has already been declared. */

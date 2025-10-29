@@ -22,12 +22,13 @@ function sum(a: int, ...numbers: [number, number, number]): number {
 /* @@ label3 */sum(11,12,13)
 /* @@ label4 */sum(11,12,13,15,16)
 
-/* @@@ label1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@@ label1 Error TypeError: Expected 4 arguments, got 0. */
-/* @@@ label1 Error TypeError: No matching call signature */
-/* @@@ label2 Error TypeError: Expected 4 arguments, got 1. */
-/* @@@ label2 Error TypeError: No matching call signature for sum(Int) */
-/* @@@ label3 Error TypeError: Expected 4 arguments, got 3. */
-/* @@@ label3 Error TypeError: No matching call signature for sum(Int, Int, Int) */
-/* @@@ label4 Error TypeError: Expected 4 arguments, got 5. */
-/* @@@ label4 Error TypeError: No matching call signature for sum(Int, Int, Int, Int, Int) */
+
+/* @@@ label1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@@ label1 Error Semantic error ESE0124: Expected 4 arguments, got 0. */
+/* @@@ label1 Error Semantic error ESE0128: No matching call signature */
+/* @@@ label2 Error Semantic error ESE0124: Expected 4 arguments, got 1. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for sum(Int) */
+/* @@@ label3 Error Semantic error ESE0124: Expected 4 arguments, got 3. */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int) */
+/* @@@ label4 Error Semantic error ESE0124: Expected 4 arguments, got 5. */
+/* @@@ label4 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int, Int, Int) */

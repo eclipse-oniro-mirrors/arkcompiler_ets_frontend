@@ -64,4 +64,5 @@ function labeledcontinue(): void {
   }
 }
 
-/* @@? 19:15 Error TypeError: Unresolved reference i */
+
+/* @@? 19:15 Error Semantic error ESE0143: Unresolved reference i */

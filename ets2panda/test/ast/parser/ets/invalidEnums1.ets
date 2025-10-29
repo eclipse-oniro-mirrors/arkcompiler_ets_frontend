@@ -26,7 +26,8 @@ enum EStrNotInit {
 }
 
 
-/* @@? 18:15 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 19:12 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 20:12 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 25:9 Error SyntaxError: All items of string-type enumeration should be explicitly initialized. */
+
+/* @@? 18:15 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 19:12 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 20:12 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 25:9 Error Syntax error ESY0276: All items of string-type enumeration should be explicitly initialized. */

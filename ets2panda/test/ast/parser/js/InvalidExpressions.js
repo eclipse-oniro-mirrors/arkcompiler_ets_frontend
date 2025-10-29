@@ -70,86 +70,76 @@ async (x = await 7) /* @@ label56 */=> expression;
 (a, b) => { 7 /* @@ label57 */];
 // This should be the last line to check syntax error about missing '}'
 
-/* @@@ label Error SyntaxError: Illegal expression. Wrap left hand side or entire exponentiation in parentheses.  */
-/* @@@ label1 Error SyntaxError: Unexpected token '<'.  */
-/* @@@ label2 Error SyntaxError: Invalid left-hand side operator.  */
-/* @@@ label3 Error SyntaxError: Assigning to 'eval' in strict mode is invalid.  */
-/* @@@ label4 Error SyntaxError: Assigning to 'arguments' in strict mode is invalid.  */
-/* @@@ label5 Error SyntaxError: Invalid left-hand side in prefix operation.  */
-/* @@@ label6 Error SyntaxError: Assigning to 'arguments' in strict mode is invalid.  */
-/* @@@ label7 Error SyntaxError: Assigning to 'eval' in strict mode is invalid.  */
-/* @@@ label8 Error SyntaxError: Deleting local variable in strict mode.  */
-/* @@@ label9 Error SyntaxError: Private fields can not be deleted.  */
-/* @@@ label10 Error SyntaxError: 'import.Meta' may appear only with 'sourceType: module'.  */
-/* @@@ label11 Error SyntaxError: 'import.Meta' may appear only with 'sourceType: module'.  */
-/* @@@ label12 Error SyntaxError: 'import.Meta' may appear only with 'sourceType: module'.  */
-/* @@@ label13 Error SyntaxError: 'import.Meta' may appear only with 'sourceType: module'.  */
-/* @@@ label14 Error SyntaxError: The only valid meta property for import is import.Meta.  */
-/* @@@ label15 Error SyntaxError: Nullish coalescing operator ?? requires parens when mixing with logical operators.  */
-/* @@@ label16 Error SyntaxError: Nullish coalescing operator ?? requires parens when mixing with logical operators.  */
-/* @@@ label17 Error SyntaxError: Unexpected token, expected ':'.  */
-/* @@@ label18 Error SyntaxError: Unexpected token '}'.  */
-/* @@@ label19 Error SyntaxError: Insufficient formal parameter in arrow function.  */
-/* @@@ label20 Error SyntaxError: Unexpected token '1'.  */
-/* @@@ label20 Error SyntaxError: Unexpected token.  */
-/* @@@ label20 Error SyntaxError: Expected ')', got 'number literal'.  */
-/* @@@ label21 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label21 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label21 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label22 Error SyntaxError: Unexpected token '=>'.  */
-/* @@@ label23 Error SyntaxError: Rest parameter must be the last formal parameter.  */
-/* @@@ label23 Error SyntaxError: Unexpected token, expected '=>'.  */
-/* @@@ label24 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label24 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label24 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label25 Error SyntaxError: Unexpected token, expected '=>'.  */
-/* @@@ label26 Error SyntaxError: Unexpected token, expected ']'.  */
-/* @@@ label27 Error SyntaxError: Tagged Template Literals are not allowed in optionalChain.  */
-/* @@@ label28 Error SyntaxError: Invalid left-hand side in array destructuring pattern.  */
-/* @@@ label29 Error SyntaxError: Async methods cannot have a line terminator between 'async' and the property name.  */
-/* @@@ label30 Error SyntaxError: Unexpected identifier.  */
-/* @@@ label30 Error SyntaxError: Unexpected token, expected ':'.  */
-/* @@@ label31 Error SyntaxError: Getter must not have formal parameters.  */
-/* @@@ label32 Error SyntaxError: Setter must have exactly one formal parameter.  */
-/* @@@ label33 Error SyntaxError: Unexpected token.  */
-/* @@@ label34 Error SyntaxError: Unexpected token, expected ':'.  */
-/* @@@ label34 Error SyntaxError: Unexpected identifier.  */
-/* @@@ label35 Error SyntaxError: Unexpected token.  */
-/* @@@ label36 Error SyntaxError: Unexpected token.  */
-/* @@@ label37 Error SyntaxError: Missing initializer in destructuring declaration.  */
-/* @@@ label38 Error SyntaxError: Invalid left-hand side in array destructuring pattern.  */
-/* @@@ label39 Error SyntaxError: Object pattern can't contain methods.  */
-/* @@@ label40 Error SyntaxError: Unexpected token, expected an identifier.  */
-/* @@@ label41 Error SyntaxError: Invalid left-hand side in array destructuring pattern.  */
-/* @@@ label42 Error SyntaxError: Invalid destructuring assignment target.  */
-/* @@@ label42 Error SyntaxError: Unexpected ArrowParameter element.  */
-/* @@@ label43 Error SyntaxError: Invalid destructuring assignment target.  */
-/* @@@ label43 Error SyntaxError: Unexpected ArrowParameter element.  */
-/* @@@ label44 Error SyntaxError: Unexpected token, expected ',' or ']'.  */
-/* @@@ label44 Error SyntaxError: Expected ')', got 'number literal'.  */
-/* @@@ label44 Error SyntaxError: Unexpected token '7'.  */
-/* @@@ label45 Error SyntaxError: Unexpected token ']'.  */
-/* @@@ label45 Error SyntaxError: Unexpected token ']'.  */
-/* @@@ label45 Error SyntaxError: Unexpected token ']'.  */
-/* @@@ label46 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label46 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label47 Error SyntaxError: Unexpected token '=>'.  */
-/* @@@ label48 Error SyntaxError: Invalid destructuring assignment target.  */
-/* @@@ label48 Error SyntaxError: Unexpected ArrowParameter element.  */
-/* @@@ label49 Error SyntaxError: Unexpected token, expected ')'.  */
-/* @@@ label50 Error SyntaxError: Rest parameter must be the last formal parameter.  */
-/* @@@ label50 Error SyntaxError: Unexpected token, expected '=>'.  */
-/* @@@ label51 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label51 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label51 Error SyntaxError: Unexpected token ')'.  */
-/* @@@ label52 Error SyntaxError: Unexpected token '=>'.  */
-/* @@@ label53 Error SyntaxError: Unexpected token, expected '=>'.  */
-/* @@@ label54 Error SyntaxError: Unexpected token.  */
-/* @@@ label55 Error SyntaxError: Invalid rest element.  */
-/* @@@ label55 Error SyntaxError: Unexpected ArrowParameter element.  */
-/* @@@ label56 Error SyntaxError: await is not allowed in arrow function parameters.  */
-/* @@@ label56 Error SyntaxError: Unexpected ArrowParameter element.  */
-/* @@@ label57 Error SyntaxError: Unexpected token ']'.  */
-/* @@@ label57 Error SyntaxError: Unexpected token ']'.  */
-/* @@@ label57 Error SyntaxError: Unexpected token ']'.  */
-/* @@? 156:1 Error SyntaxError: Expected '}', got 'end of stream'.  */
+
+/* @@@ label Error Syntax error ESY0196: Illegal expression. Wrap left hand side or entire exponentiation in parentheses. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '<'. */
+/* @@@ label2 Error Syntax error ESY0053: Invalid left-hand side operator. */
+/* @@@ label3 Error Syntax error ESY0051: Assigning to 'eval' in strict mode is invalid. */
+/* @@@ label4 Error Syntax error ESY0057: Assigning to 'arguments' in strict mode is invalid. */
+/* @@@ label5 Error Syntax error ESY0071: Invalid left-hand side in prefix operation. */
+/* @@@ label6 Error Syntax error ESY0057: Assigning to 'arguments' in strict mode is invalid. */
+/* @@@ label7 Error Syntax error ESY0051: Assigning to 'eval' in strict mode is invalid. */
+/* @@@ label8 Error Syntax error ESY0050: Deleting local variable in strict mode. */
+/* @@@ label9 Error Syntax error ESY0070: Private fields can not be deleted. */
+/* @@@ label10 Error Syntax error ESY0069: 'import.Meta' may appear only with 'sourceType: module'. */
+/* @@@ label11 Error Syntax error ESY0069: 'import.Meta' may appear only with 'sourceType: module'. */
+/* @@@ label12 Error Syntax error ESY0069: 'import.Meta' may appear only with 'sourceType: module'. */
+/* @@@ label13 Error Syntax error ESY0069: 'import.Meta' may appear only with 'sourceType: module'. */
+/* @@@ label14 Error Syntax error ESY0068: The only valid meta property for import is import.Meta. */
+/* @@@ label15 Error Syntax error ESY0059: Nullish coalescing operator ?? requires parens when mixing with logical operators. */
+/* @@@ label16 Error Syntax error ESY0059: Nullish coalescing operator ?? requires parens when mixing with logical operators. */
+/* @@@ label17 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ label18 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@@ label19 Error Syntax error ESY0064: Insufficient formal parameter in arrow function. */
+/* @@@ label20 Error Syntax error ESY0227: Unexpected token '1'. */
+/* @@@ label20 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label20 Error Syntax error ESY0230: Expected ')', got 'number literal'. */
+/* @@@ label21 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label22 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@@ label23 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@@ label23 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@@ label24 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label25 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@@ label26 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@@ label27 Error Syntax error ESY0056: Tagged Template Literals are not allowed in optionalChain. */
+/* @@@ label28 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */
+/* @@@ label29 Error Syntax error ESY0197: Async methods cannot have a line terminator between 'async' and the property name. */
+/* @@@ label30 Error Syntax error ESY0045: Unexpected identifier. */
+/* @@@ label30 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ label31 Error Syntax error ESY0058: Getter must not have formal parameters. */
+/* @@@ label32 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
+/* @@@ label33 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label34 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ label34 Error Syntax error ESY0045: Unexpected identifier. */
+/* @@@ label35 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label36 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label37 Error Syntax error ESY0186: Missing initializer in destructuring declaration. */
+/* @@@ label38 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */
+/* @@@ label39 Error Syntax error ESY0062: Object pattern can't contain methods. */
+/* @@@ label40 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@@ label41 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */
+/* @@@ label42 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@@ label42 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
+/* @@@ label43 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@@ label43 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
+/* @@@ label44 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@@ label44 Error Syntax error ESY0230: Expected ')', got 'number literal'. */
+/* @@@ label44 Error Syntax error ESY0227: Unexpected token '7'. */
+/* @@@ label45 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@@ label46 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label47 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@@ label48 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@@ label48 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
+/* @@@ label49 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@@ label50 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@@ label50 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@@ label51 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label52 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@@ label53 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@@ label54 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label55 Error Syntax error ESY0055: Invalid rest element. */
+/* @@@ label55 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
+/* @@@ label56 Error Syntax error ESY0046: await is not allowed in arrow function parameters. */
+/* @@@ label56 Error Syntax error ESY0148: Unexpected ArrowParameter element. */
+/* @@@ label57 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 145:80 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

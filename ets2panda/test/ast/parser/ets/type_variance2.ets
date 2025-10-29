@@ -17,5 +17,6 @@ class C {
   constructor</* @@ label */in T2>() {}
 }
 
-/* @@@ label Error SyntaxError: Variance modifier is not allowed here.  */
-/* @@? 17:35 Error SyntaxError: Constructor should not have type parameters. */
+
+/* @@@ label Error Syntax error ESY0098: Variance modifier is not allowed here. */
+/* @@? 17:35 Error Syntax error ESY0330: Constructor should not have type parameters. */

@@ -19,5 +19,5 @@ interface B extends /* @@ label */xxx<A> {}
 
 const b: Partial<B> = {}
 
-/* @@@ label Error TypeError: Cannot find type 'xxx'. */
-/* @@@ label Error TypeError: Interface expected here. */
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'xxx'. */
+/* @@@ label Error Semantic error ESE0179: Interface expected here. */

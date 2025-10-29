@@ -17,6 +17,7 @@ export a as A
 
 let a = 2;
 
-/* @@? 16:10 Error SyntaxError: Unexpected token 'as'. */
-/* @@? 16:13 Error SyntaxError: Unexpected token 'A'. */
-/* @@? 16:13 Error TypeError: Unresolved reference A */
+
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'as'. */
+/* @@? 16:13 Error Syntax error ESY0227: Unexpected token 'A'. */
+/* @@? 16:13 Error Semantic error ESE0143: Unresolved reference A */

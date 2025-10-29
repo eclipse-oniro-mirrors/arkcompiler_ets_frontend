@@ -18,9 +18,10 @@ function main() {
     let r2 = ((a:number, ...args)=> { return args.length; })(1,2,3,4,5)
 }
 
-/* @@? 17:14 Error TypeError: Cannot use type 'void' as value.  */
-/* @@? 17:16 Error SyntaxError: Rest parameter should be either array or tuple type. */
-/* @@? 17:16 Error TypeError: The type of parameter 'args' cannot be inferred */
-/* @@? 18:14 Error TypeError: Cannot use type 'void' as value.  */
-/* @@? 18:26 Error SyntaxError: Rest parameter should be either array or tuple type. */
-/* @@? 18:26 Error TypeError: The type of parameter 'args' cannot be inferred */
+
+/* @@? 17:14 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+/* @@? 17:16 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 17:16 Error Semantic error ESE0132: The type of parameter 'args' cannot be inferred */
+/* @@? 18:14 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+/* @@? 18:26 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 18:26 Error Semantic error ESE0132: The type of parameter 'args' cannot be inferred */

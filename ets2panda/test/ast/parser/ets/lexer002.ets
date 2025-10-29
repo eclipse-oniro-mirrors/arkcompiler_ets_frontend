@@ -16,4 +16,4 @@
 /* @@ label */1
 
 
-/* @@@ label Error SyntaxError: Unexpected token 'number literal'.  */
+

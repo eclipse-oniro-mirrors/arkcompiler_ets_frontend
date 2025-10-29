@@ -20,4 +20,5 @@ function main() {
     name./* @@ label */bar();
 }
 
-/* @@@ label Error TypeError: Property 'bar' does not exist on type 'export'  */
+
+/* @@@ label Error Semantic error ESE0087: Property 'bar' does not exist on type 'export' */

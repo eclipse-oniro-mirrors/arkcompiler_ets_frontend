@@ -23,4 +23,5 @@ function main(): void {
     new A() {}; // It is forbidden to extend a class by an anonymous class
 }
 
-/* @@? 23:13 Error SyntaxError: Unexpected token '{'. */
+
+/* @@? 23:13 Error Syntax error ESY0227: Unexpected token '{'. */

@@ -17,13 +17,14 @@
 
 (a ? delete arguments==({: false, Float64Array: []}) : [ArrayBuffer[false]])
 
-/* @@? 18:1 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 18:2 Error TypeError: Unresolved reference a */
-/* @@? 18:6 Error TypeError: Types cannot be modified at runtime with 'delete'. */
-/* @@? 18:13 Error SyntaxError: Unexpected token. */
-/* @@? 18:13 Error TypeError: Unresolved reference arguments */
-/* @@? 18:24 Error TypeError: need to specify target type for class composite */
-/* @@? 18:26 Error SyntaxError: Unexpected token. */
-/* @@? 18:28 Error SyntaxError: Unexpected token. */
-/* @@? 18:54 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 18:76 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? 18:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 18:2 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 18:6 Error Semantic error ESE55815: Types cannot be modified at runtime with 'delete'. */
+/* @@? 18:13 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:13 Error Semantic error ESE0143: Unresolved reference arguments */
+/* @@? 18:24 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 18:26 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:28 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:54 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 18:76 Error Syntax error ESY0227: Unexpected token ')'. */

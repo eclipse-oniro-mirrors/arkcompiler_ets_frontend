@@ -382,3 +382,4 @@
     }
   }
 }
+[import_several_2.ets:16:14] Warning W125428: 'foo' has already imported

@@ -21,4 +21,5 @@ function foo<T, /* @@ label */T>() {}
 function main(): int {
     return 0
 }
-/* @@@ label Error TypeError: Duplicate type parameter 'T'.  */
+
+/* @@@ label Error Semantic error ESE0182: Duplicate type parameter 'T'. */

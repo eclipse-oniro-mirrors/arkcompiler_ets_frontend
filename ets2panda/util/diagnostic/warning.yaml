@@ -34,9 +34,18 @@ warning:
   id: 98268
   message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
 
+- name: DUPLICATE_ALIAS
+  id: 32596
+  message: "'{}' is explicitly used with alias several times"
+
 - name: DUPLICATE_EXPORT_ALIASES
   id: 73
   message: "Duplicated export aliases for '{}'."
+
+
+- name: DUPLICATE_IMPORT
+  id: 125428
+  message: "'{}' has already imported"
 
 - name: DUPLICATE_SIGS
   id: 12

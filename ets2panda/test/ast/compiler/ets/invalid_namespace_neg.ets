@@ -23,5 +23,6 @@ namespace C{
     }
 }
 
-/* @@@ label1 Error SyntaxError: Unexpected token '}'. */
-/* @@? 28:1 Error SyntaxError: Unexpected token. */
+
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 28:62 Error Syntax error ESY0016: Unexpected token. */

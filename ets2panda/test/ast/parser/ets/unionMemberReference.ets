@@ -25,4 +25,4 @@ declare const x: AType | BType;
 
 (x as AType | BType).f;
 
-/* @@? 26:1 Error TypeError: Union member method reference is not supported now */
+/* @@? 26:1 Error Semantic error ESE186623: Union member method reference is not supported now */

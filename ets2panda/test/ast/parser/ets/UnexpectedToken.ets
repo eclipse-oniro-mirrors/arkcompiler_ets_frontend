@@ -20,14 +20,15 @@ function main(): void {
   }
 }
 
-/* @@? 18:19 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
-/* @@? 18:25 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 18:29 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 18:38 Error TypeError: Cannot find type 'A'. */
-/* @@? 18:68 Error TypeError: Cannot find type 'A'. */
-/* @@? 18:72 Error TypeError: Unresolved reference f */
-/* @@? 18:78 Error TypeError: Cannot find type 'A'. */
-/* @@? 18:82 Error SyntaxError: Expected ')', got ';'. */
-/* @@? 19:4 Error TypeError: Unresolved reference i */
-/* @@? 19:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 19:12 Error SyntaxError: Unexpected token '{'. */
+
+/* @@? 18:19 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 18:25 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 18:29 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 18:38 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 18:68 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 18:72 Error Semantic error ESE0143: Unresolved reference f */
+/* @@? 18:78 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 18:82 Error Syntax error ESY0230: Expected ')', got ';'. */
+/* @@? 19:4 Error Semantic error ESE0143: Unresolved reference i */
+/* @@? 19:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 19:12 Error Syntax error ESY0227: Unexpected token '{'. */

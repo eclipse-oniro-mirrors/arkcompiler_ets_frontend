@@ -20,5 +20,5 @@ declare function value<U extends Integral>(): ValueAlias<U>;
 /* @@ label */value<number>();
 
 
-/* @@@ label Error TypeError: Type argument 'Double' should be a subtype of 'Integral' constraint */
-/* @@@ label Error TypeError: No matching call signature */
+/* @@@ label Error Semantic error ESE0228: Type argument 'Double' should be a subtype of 'Integral' constraint */
+/* @@@ label Error Semantic error ESE0128: No matching call signature */

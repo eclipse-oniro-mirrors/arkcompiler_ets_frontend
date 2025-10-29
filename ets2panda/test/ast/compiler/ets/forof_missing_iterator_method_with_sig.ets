@@ -31,7 +31,7 @@ function main(): int {
   return 0;
 }
 
-/* @@? 17:3 Error SyntaxError: The special predefined method '$_iterator' should not have parameters. */
-/* @@? 17:13 Error TypeError: The return type of '$_iterator' must be a type that implements Iterator interface. */
-/* @@? 26:17 Error TypeError: Cannot find iterator method with the required signature. */
-/* @@? 26:17 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+/* @@? 17:3 Error Syntax error ESY0223: The special predefined method '$_iterator' should not have parameters. */
+/* @@? 17:13 Error Semantic error ESE0096: The return type of '$_iterator' must be a type that implements Iterator interface. */
+/* @@? 26:17 Error Semantic error ESE0259: Cannot find iterator method with the required signature. */
+/* @@? 26:17 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

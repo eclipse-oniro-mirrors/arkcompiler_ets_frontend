@@ -16,6 +16,7 @@
 
 import io
 import os
+from pathlib import Path
 import posixpath
 import shutil
 import subprocess
@@ -114,7 +115,7 @@ def normalize(in_path):
             allocated = np.append(allocated, docs["graveyard"])
             allocated.sort()
             gaps = allocated[1:]-allocated[:-1]-1
-            gaps = np.append(gaps, [min_range-gaps.sum()])
+            gaps = np.append(gaps, [max(0, min_range-gaps.sum())])
             non_unique = gaps<0
             assert len(gaps) == len(allocated)
             if np.any(non_unique):

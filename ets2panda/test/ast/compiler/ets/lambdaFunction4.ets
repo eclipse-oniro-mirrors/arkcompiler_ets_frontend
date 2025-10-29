@@ -25,4 +25,5 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: Bad operand type, the type of the operand must be numeric type. */
+
+/* @@@ label Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */

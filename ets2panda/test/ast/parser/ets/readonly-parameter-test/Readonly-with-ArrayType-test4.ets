@@ -18,4 +18,4 @@ function foo (x: Readonly<int[]>) {
     x1 = x
 }
 
-/* @@? 18:10 Error TypeError: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */
+/* @@? 18:10 Error Semantic error ESE0318: Type 'readonly Array<Int>' cannot be assigned to type 'Array<Int>' */

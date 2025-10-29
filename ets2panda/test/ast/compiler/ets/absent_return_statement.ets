@@ -37,9 +37,10 @@ function main(): void {
   foo2(() => /* @@ label6 */console.println("TEST"));
 }
 
-/* @@@ label1 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
-/* @@@ label2 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
-/* @@@ label3 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label4 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label5 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label6 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+
+/* @@@ label1 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
+/* @@@ label2 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
+/* @@@ label3 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@@ label4 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@@ label5 Error Semantic error ESE0091: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@@ label6 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */

@@ -22,4 +22,5 @@ class A2<out T> {}
 function main(): void {
     let x2: A1<B> = /* @@ label */new A1<A>()
 }
-/* @@@ label Error TypeError: Type 'A1<A>' cannot be assigned to type 'A1<B>'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'A1<A>' cannot be assigned to type 'A1<B>' */

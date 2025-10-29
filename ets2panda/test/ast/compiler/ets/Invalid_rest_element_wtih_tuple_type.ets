@@ -22,5 +22,6 @@ function main() {
     let mc = new TH<number, string, boolean>
 }
 
-/* @@? 17:38 Error TypeError: Cannot make a static reference to the non-static type B */
-/* @@? 17:41 Error TypeError: Cannot make a static reference to the non-static type C */
+
+/* @@? 17:38 Error Semantic error ESE0288: Cannot make a static reference to the non-static type B */
+/* @@? 17:41 Error Semantic error ESE0288: Cannot make a static reference to the non-static type C */

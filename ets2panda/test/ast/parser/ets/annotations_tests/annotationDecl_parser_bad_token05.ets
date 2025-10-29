@@ -19,4 +19,5 @@ import * as Src from "./annotation_export"
 /* @@ label */Src.MyAnno()
 class A{}
 
-/* @@@ label Error TypeError: MyAnno is an annotation therefore cannot be instantiated.  */
+
+/* @@@ label Error Semantic error ESE0396: MyAnno is an annotation therefore cannot be instantiated. */

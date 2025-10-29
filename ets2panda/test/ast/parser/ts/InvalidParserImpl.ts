@@ -29,5 +29,6 @@ declare class A {
     x: number = /* @@ label1 */3;
 }
 
-/* @@@ label Error SyntaxError: A get accessor must be at least as accessible as the setter. */
-/* @@@ label1 Error SyntaxError: Initializers are not allowed in ambient contexts. */
+
+/* @@@ label Error Syntax error ESY0205: A get accessor must be at least as accessible as the setter. */
+/* @@@ label1 Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */

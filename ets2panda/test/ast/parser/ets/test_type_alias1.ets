@@ -15,7 +15,8 @@
 
 type 5 = number;
 
-/* @@? 16:1 Error TypeError: Unresolved reference type */
-/* @@? 16:6 Error SyntaxError: Unexpected token '5'. */
-/* @@? 16:6 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 16:8 Error SyntaxError: Invalid left-hand side in assignment expression. */
+
+/* @@? 16:1 Error Semantic error ESE0143: Unresolved reference type */
+/* @@? 16:6 Error Syntax error ESY0227: Unexpected token '5'. */
+/* @@? 16:6 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
+/* @@? 16:8 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */

@@ -19,4 +19,5 @@ p.then(obj => {
     const result = typeof obj.prop;
 });
 
-/* @@? 19:31 Error TypeError: Property 'prop' does not exist on type 'String' */
+
+/* @@? 19:31 Error Semantic error ESE0087: Property 'prop' does not exist on type 'String' */

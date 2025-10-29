@@ -156,7 +156,7 @@ public:
     static std::vector<ir::Identifier *> CollectBindingNames(varbinder::VarBinder *vb, ir::Expression *node);
     static util::StringView FunctionName(ArenaAllocator *allocator, const ir::ScriptFunction *func);
     static void CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specifiers,
-                                  const ir::ImportSpecifier *specifier, const std::string &fileName);
+                                  const ir::ImportSpecifier *specifier, DiagnosticEngine &diagnosticEngine);
     static void CheckDefaultImportedName(const ArenaVector<ir::ImportDefaultSpecifier *> &specifiers,
                                          const ir::ImportDefaultSpecifier *specifier, const std::string &fileName);
     static void CheckDefaultImport(const ArenaVector<ir::ETSImportDeclaration *> &statements);

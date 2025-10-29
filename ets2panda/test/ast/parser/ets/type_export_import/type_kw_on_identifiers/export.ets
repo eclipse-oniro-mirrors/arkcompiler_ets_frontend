@@ -47,7 +47,8 @@ class R {}
 let a = 0;
 
 
-/* @@@ first Error SyntaxError: Type keyword set on both the specifier list and on the specifier itself. */
-/* @@@ second Error SyntaxError: Type keyword set on both the specifier list and on the specifier itself. */
-/* @@@ third Error SyntaxError: Type keyword set on both the specifier list and on the specifier itself. */
-/* @@@ fourth Error SyntaxError: Type keyword set on both the specifier list and on the specifier itself. */
+
+/* @@@ first Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
+/* @@@ second Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
+/* @@@ third Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */
+/* @@@ fourth Error Syntax error ESY135857: Type keyword set on both the specifier list and on the specifier itself. */

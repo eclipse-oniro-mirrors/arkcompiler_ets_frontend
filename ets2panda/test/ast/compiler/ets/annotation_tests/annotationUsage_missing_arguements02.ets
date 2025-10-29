@@ -26,7 +26,7 @@ class A{
     foo2(){}
 }
 
-/* @@? 20:2 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted.  */
-/* @@? 23:2 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted.  */
-/* @@? 23:2 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted.  */
-/* @@? 25:6 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted.  */
+/* @@? 20:2 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 23:2 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 23:2 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 25:6 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */

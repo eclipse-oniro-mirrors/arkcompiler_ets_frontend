@@ -17,4 +17,5 @@
 a:
 /* @@ label */a: 2;
 
-/* @@@ label Error SyntaxError: Label already declared.  */
+
+/* @@@ label Error Syntax error ESY0214: Label already declared. */

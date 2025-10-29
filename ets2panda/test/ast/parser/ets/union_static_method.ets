@@ -29,4 +29,5 @@ function main() {
     UT.met()
 }
 
-/* @@? 29:5 Error TypeError: Static union member expression cannot be interpreted. */
+
+/* @@? 29:5 Error Semantic error ESE0335: Static union member expression cannot be interpreted. */

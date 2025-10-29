@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,4 +27,5 @@ var foo: B;
 
 foo.a.b.b.a.c./* @@ label */r
 
-/* @@@ label Error TypeError: Property r does not exist on this type.  */
+
+/* @@@ label Error Semantic error ESE0000: Property r does not exist on this type. */

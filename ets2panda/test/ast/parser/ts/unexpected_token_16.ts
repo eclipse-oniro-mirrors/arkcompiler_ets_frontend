@@ -19,4 +19,4 @@ enum foo (
 }
 
 
-/* @@? 16:10 Error SyntaxError: Expected '{', got '('. */
+/* @@? 16:10 Error Syntax error ESY0230: Expected '{', got '('. */

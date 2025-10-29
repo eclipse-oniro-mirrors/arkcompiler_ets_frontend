@@ -17,4 +17,5 @@ export {MyAnno as /* @@ label */NA}
 
 @interface MyAnno{} 
 
-/* @@@ label Error SyntaxError: Can not rename annotation 'MyAnno' in export or import statements.  */
+
+/* @@@ label Error Syntax error ESY0280: Can not rename annotation 'MyAnno' in export or import statements. */

@@ -33,13 +33,13 @@ function main(): void {
     let a: A|undefined = foo2(new A());
 }
 
-/* @@? 16:29 Error TypeError: Type '<string>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 17:29 Error TypeError: Type '<((()=> double) | int)>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 18:30 Error TypeError: Cannot find type 'foo3'. */
-/* @@? 19:29 Error TypeError: 'void' used as type annotation. */
-/* @@? 20:29 Error TypeError: Type '<null>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 21:29 Error TypeError: Type '<Any>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 22:29 Error TypeError: Type '<[(()=> double), (()=> int)]>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 23:29 Error TypeError: Type '<Array<(()=> (double | (()=> int)))>>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 26:32 Error TypeError: Type '<T>' cannot be used as type parameter for ReturnType utilty type */
-/* @@? 33:26 Error TypeError: Type 'Function|undefined' cannot be assigned to type 'A|undefined' */
+/* @@? 16:29 Error Semantic error ESE36530: Type '<string>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 17:29 Error Semantic error ESE36530: Type '<((()=> double) | int)>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 18:30 Error Semantic error ESE0371: Cannot find type 'foo3'. */
+/* @@? 19:29 Error Semantic error ESE0232: 'void' used as type annotation. */
+/* @@? 20:29 Error Semantic error ESE36530: Type '<null>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 21:29 Error Semantic error ESE36530: Type '<Any>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 22:29 Error Semantic error ESE36530: Type '<[(()=> double), (()=> int)]>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 23:29 Error Semantic error ESE36530: Type '<Array<(()=> (double | (()=> int)))>>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 26:32 Error Semantic error ESE36530: Type '<T>' cannot be used as type parameter for ReturnType utilty type */
+/* @@? 33:26 Error Semantic error ESE0318: Type 'Function|undefined' cannot be assigned to type 'A|undefined' */

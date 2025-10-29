@@ -35,10 +35,11 @@ class B{
     foo(){}
 }
 
-/* @@? 29:24 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
-/* @@? 30:24 Error TypeError: Type '"false"' cannot be assigned to type 'Boolean' */
-/* @@? 31:25 Error TypeError: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Int' */
-/* @@? 31:30 Error TypeError: Array element at index 1 with type 'Double' is not compatible with the target array element type 'Int' */
-/* @@? 32:24 Error TypeError: Type 'Size' cannot be assigned to type 'Color' */
-/* @@? 33:25 Error TypeError: Array element at index 0 with type 'Color' is not compatible with the target array element type 'Size' */
-/* @@? 33:38 Error TypeError: Array element at index 1 with type 'Color' is not compatible with the target array element type 'Size' */
+
+/* @@? 29:24 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 30:24 Error Semantic error ESE0318: Type '"false"' cannot be assigned to type 'Boolean' */
+/* @@? 31:25 Error Semantic error ESE0227: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Int' */
+/* @@? 31:30 Error Semantic error ESE0227: Array element at index 1 with type 'Double' is not compatible with the target array element type 'Int' */
+/* @@? 32:24 Error Semantic error ESE0318: Type 'Size' cannot be assigned to type 'Color' */
+/* @@? 33:25 Error Semantic error ESE0227: Array element at index 0 with type 'Color' is not compatible with the target array element type 'Size' */
+/* @@? 33:38 Error Semantic error ESE0227: Array element at index 1 with type 'Color' is not compatible with the target array element type 'Size' */

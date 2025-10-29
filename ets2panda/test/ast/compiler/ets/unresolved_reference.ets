@@ -37,5 +37,6 @@ function main() {
     let a = (new A).b
 }
 
-/* @@? 16:13 Error TypeError: Unresolved reference b */
-/* @@? 37:21 Error TypeError: Property 'b' does not exist on type 'A' */
+
+/* @@? 16:13 Error Semantic error ESE0143: Unresolved reference b */
+/* @@? 37:21 Error Semantic error ESE0087: Property 'b' does not exist on type 'A' */

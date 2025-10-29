@@ -17,4 +17,5 @@ package mypackage;
 
 function foo(): void {}
 
-/* @@? package_module_1_neg.ets:19:1 Error TypeError: Function foo is already declared.  */
+
+/* @@? package_module_1_neg.ets:19:1 Error Semantic error ESE0130: Function foo is already declared. */

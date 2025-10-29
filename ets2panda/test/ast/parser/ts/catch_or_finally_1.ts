@@ -19,17 +19,14 @@ try {} catch (fgf) {} aaaaaaa /* @@ label5 */{}
 
 try /* @@ label6 */[] /* @@ label7 */finally {}
 
-/* @@? 16:22 Error SyntaxError: Missing catch or finally clause. */
-/* @@? 16:46 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:23 Error SyntaxError: Missing catch or finally clause. */
-/* @@? 17:51 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:69 Error SyntaxError: Unexpected token 'finally'. */
-/* @@? 17:69 Error SyntaxError: Unexpected token 'finally'. */
-/* @@? 18:46 Error SyntaxError: Unexpected token '{'. */
-/* @@? 20:20 Error SyntaxError: Expected '{', got '['. */
-/* @@? 20:20 Error SyntaxError: Expected '{', got '['. */
-/* @@? 20:38 Error SyntaxError: Unexpected token 'finally'. */
-/* @@? 20:38 Error SyntaxError: Unexpected token 'finally'. */
-/* @@? 20:38 Error SyntaxError: Unexpected token 'finally'. */
-/* @@? 36:1 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@? 36:1 Error SyntaxError: Missing catch or finally clause. */
+
+/* @@@ label Error Syntax error ESY0169: Missing catch or finally clause. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label2 Error Syntax error ESY0169: Missing catch or finally clause. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label4 Error Syntax error ESY0227: Unexpected token 'finally'. */
+/* @@@ label5 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label6 Error Syntax error ESY0230: Expected '{', got '['. */
+/* @@@ label7 Error Syntax error ESY0227: Unexpected token 'finally'. */
+/* @@? 32:77 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 32:77 Error Syntax error ESY0169: Missing catch or finally clause. */

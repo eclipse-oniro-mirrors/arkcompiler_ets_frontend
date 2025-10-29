@@ -17,5 +17,6 @@ interface I {
   toString(): int;
 }
 
-/* @@? 17:3 Error TypeError: toString(): Int in I cannot override toString(): String in Object because overriding return type is not compatible with the other return type.  */
-/* @@? 17:3 Error TypeError: Method toString(): Int in I not overriding any method  */
+
+/* @@? 17:3 Error Semantic error ESE0141: toString(): Int in I cannot override toString(): String in Object because overriding return type is not compatible with the other return type. */
+/* @@? 17:3 Error Semantic error ESE0136: Method toString(): Int in I not overriding any method */

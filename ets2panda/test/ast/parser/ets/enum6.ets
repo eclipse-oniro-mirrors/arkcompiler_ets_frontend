@@ -25,4 +25,5 @@ function main(): void {
   i = i./* @@ label */Blue;
 }
 
-/* @@@ label Error TypeError: 'Blue' is a static property of 'Color' */
+
+/* @@@ label Error Semantic error ESE0207: 'Blue' is a static property of 'Color' */

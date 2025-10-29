@@ -18,4 +18,5 @@ let map: Record<"aa" | "bb" | int, number> = /* @@ label */{
     42 : 33,
 }
 
-/* @@@ label Error TypeError: All variants of literals listed in the union type must be listed in the object literal  */
+
+/* @@? 16:5 Error Semantic error ESE0265: All variants of literals listed in the union type must be listed in the object literal */

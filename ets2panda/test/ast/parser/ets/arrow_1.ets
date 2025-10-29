@@ -27,4 +27,5 @@ let a: A = {
     }
 }
 
-/* @@? 22:12 Error SyntaxError: Expected '=>', got ','. */
+
+/* @@? 22:12 Error Syntax error ESY0230: Expected '=>', got ','. */

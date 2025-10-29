@@ -25,5 +25,6 @@ throw
 /* @@ label */{
 }
 
-/* @@@ label Error SyntaxError: Illegal newline after throw. */
-/* @@@ label Error TypeError: need to specify target type for class composite */
+
+/* @@@ label Error Syntax error ESY0172: Illegal newline after throw. */
+/* @@@ label Error Semantic error ESE0062: need to specify target type for class composite */

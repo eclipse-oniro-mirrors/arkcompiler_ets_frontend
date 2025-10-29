@@ -18,7 +18,8 @@ interface A{
     gensym%%_4:string;
 }
 
-/* @@? 18:11 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 18:12 Error SyntaxError: Invalid Type. */
-/* @@? 18:12 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:12 Error SyntaxError: Identifier expected, got 'end of stream'. */
+
+/* @@? 18:11 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 18:12 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 18:12 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:12 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */

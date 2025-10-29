@@ -21,4 +21,5 @@ class cls {
   }
 }
 
-/* @@@ label Error TypeError: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined.  */
+
+/* @@@ label Error Semantic error ESE0051: Cannot use array creation expression with non-constructable element type which is non-assignable from undefined. */

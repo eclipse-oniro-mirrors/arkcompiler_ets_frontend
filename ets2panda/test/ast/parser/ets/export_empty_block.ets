@@ -19,4 +19,4 @@ export MyValue;
 export const MyValue2 = 111111;
 
 
-/* @@@ label Warning Warning: Nothing is exported. */
+/* @@@ label Warning Warning W3614: Nothing is exported. */

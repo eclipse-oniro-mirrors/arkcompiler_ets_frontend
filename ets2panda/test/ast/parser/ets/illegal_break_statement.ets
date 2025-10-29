@@ -27,8 +27,9 @@ function foo2() {
     console.log(a + 5)
 }
 
-/* @@@ label1 Error SyntaxError: Illegal break statement. */
-/* @@@ label2 Error SyntaxError: Illegal break statement. */
-/* @@? 18:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 25:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 27:17 Error TypeError: Unresolved reference a */
+
+/* @@@ label1 Error Syntax error ESY0209: Illegal break statement. */
+/* @@@ label1 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@@ label2 Error Syntax error ESY0209: Illegal break statement. */
+/* @@@ label2 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 27:17 Error Semantic error ESE0143: Unresolved reference a */

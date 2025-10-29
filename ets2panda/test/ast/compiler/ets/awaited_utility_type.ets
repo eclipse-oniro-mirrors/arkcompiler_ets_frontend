@@ -25,4 +25,4 @@ let a: A = "a"
 let valueB: B = true
 let valueD: D = 123
 
-/* @@? 23:22 Error TypeError: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Promise<Double>|Promise<Boolean>' */ 
+ /* @@? 23:22 Error Semantic error ESE0227: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Promise<Double>|Promise<Boolean>' */

@@ -10,13 +10,29 @@
             "type": "Identifier",
             "name": "a",
             "typeAnnotation": {
-              "type": "TSUnionType",
-              "types": [
-                {
-                  "type": "TSArrayType",
-                  "elementType": {
-                    "type": "TSTypeReference",
-                    "typeName": {
+              "type": "NamedType",
+              "name": {
+                "type": "Identifier",
+                "name": "Array",
+                "loc": {
+                  "start": {
+                    "line": 17,
+                    "column": 16,
+                    "program": "test_type_annotation.ts"
+                  },
+                  "end": {
+                    "line": 17,
+                    "column": 20,
+                    "program": "test_type_annotation.ts"
+                  }
+                }
+              },
+              "typeParameters": {
+                "type": "TSTypeParameterInstantiation",
+                "params": [
+                  {
+                    "type": "NamedType",
+                    "name": {
                       "type": "Identifier",
                       "name": "i32",
                       "loc": {
@@ -32,6 +48,7 @@
                         }
                       }
                     },
+                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 17,
@@ -44,37 +61,22 @@
                         "program": "test_type_annotation.ts"
                       }
                     }
-                  },
-                  "annotations": [],
-                  "loc": {
-                    "start": {
-                      "line": 17,
-                      "column": 8,
-                      "program": "test_type_annotation.ts"
-                    },
-                    "end": {
-                      "line": 17,
-                      "column": 13,
-                      "program": "test_type_annotation.ts"
-                    }
                   }
-                },
-                {
-                  "type": "TSNullKeyword",
-                  "loc": {
-                    "start": {
-                      "line": 17,
-                      "column": 16,
-                      "program": "test_type_annotation.ts"
-                    },
-                    "end": {
-                      "line": 17,
-                      "column": 20,
-                      "program": "test_type_annotation.ts"
-                    }
+                ],
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 1,
+                    "program": null
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1,
+                    "program": null
                   }
                 }
-              ],
+              },
+              "isNullable": true,
               "loc": {
                 "start": {
                   "line": 17,
@@ -145,8 +147,8 @@
                   "type": "Identifier",
                   "name": "a",
                   "typeAnnotation": {
-                    "type": "TSTypeReference",
-                    "typeName": {
+                    "type": "NamedType",
+                    "name": {
                       "type": "Identifier",
                       "name": "i8",
                       "loc": {
@@ -162,6 +164,7 @@
                         }
                       }
                     },
+                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 18,
@@ -192,10 +195,10 @@
                   "type": "Identifier",
                   "name": "b",
                   "typeAnnotation": {
-                    "type": "TSLiteralType",
-                    "literal": {
-                      "type": "BooleanLiteral",
-                      "value": true,
+                    "type": "NamedType",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "bool",
                       "loc": {
                         "start": {
                           "line": 18,
@@ -209,6 +212,7 @@
                         }
                       }
                     },
+                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 18,
@@ -237,39 +241,73 @@
                 }
               ],
               "returnType": {
-                "type": "TSArrayType",
-                "elementType": {
-                  "type": "TSTypeReference",
-                  "typeName": {
-                    "type": "Identifier",
-                    "name": "i64",
-                    "loc": {
-                      "start": {
-                        "line": 18,
-                        "column": 28,
-                        "program": "test_type_annotation.ts"
-                      },
-                      "end": {
-                        "line": 18,
-                        "column": 31,
-                        "program": "test_type_annotation.ts"
-                      }
-                    }
-                  },
+                "type": "NamedType",
+                "name": {
+                  "type": "Identifier",
+                  "name": "Array",
                   "loc": {
                     "start": {
-                      "line": 18,
-                      "column": 28,
+                      "line": 19,
+                      "column": 1,
                       "program": "test_type_annotation.ts"
                     },
                     "end": {
-                      "line": 18,
-                      "column": 31,
+                      "line": 19,
+                      "column": 4,
                       "program": "test_type_annotation.ts"
                     }
                   }
                 },
-                "annotations": [],
+                "typeParameters": {
+                  "type": "TSTypeParameterInstantiation",
+                  "params": [
+                    {
+                      "type": "NamedType",
+                      "name": {
+                        "type": "Identifier",
+                        "name": "i64",
+                        "loc": {
+                          "start": {
+                            "line": 18,
+                            "column": 28,
+                            "program": "test_type_annotation.ts"
+                          },
+                          "end": {
+                            "line": 18,
+                            "column": 31,
+                            "program": "test_type_annotation.ts"
+                          }
+                        }
+                      },
+                      "isNullable": false,
+                      "loc": {
+                        "start": {
+                          "line": 18,
+                          "column": 28,
+                          "program": "test_type_annotation.ts"
+                        },
+                        "end": {
+                          "line": 18,
+                          "column": 31,
+                          "program": "test_type_annotation.ts"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
+                "isNullable": false,
                 "loc": {
                   "start": {
                     "line": 18,
@@ -277,8 +315,8 @@
                     "program": "test_type_annotation.ts"
                   },
                   "end": {
-                    "line": 18,
-                    "column": 33,
+                    "line": 19,
+                    "column": 4,
                     "program": "test_type_annotation.ts"
                   }
                 }
@@ -290,8 +328,8 @@
                   "program": "test_type_annotation.ts"
                 },
                 "end": {
-                  "line": 18,
-                  "column": 33,
+                  "line": 19,
+                  "column": 4,
                   "program": "test_type_annotation.ts"
                 }
               }
@@ -347,29 +385,143 @@
             "type": "Identifier",
             "name": "c",
             "typeAnnotation": {
-              "type": "TSArrayType",
-              "elementType": {
-                "type": "TSArrayType",
-                "elementType": {
-                  "type": "TSArrayType",
-                  "elementType": {
-                    "type": "TSTypeReference",
-                    "typeName": {
+              "type": "NamedType",
+              "name": {
+                "type": "Identifier",
+                "name": "Array",
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 1,
+                    "program": "test_type_annotation.ts"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 4,
+                    "program": "test_type_annotation.ts"
+                  }
+                }
+              },
+              "typeParameters": {
+                "type": "TSTypeParameterInstantiation",
+                "params": [
+                  {
+                    "type": "NamedType",
+                    "name": {
                       "type": "Identifier",
-                      "name": "u64",
+                      "name": "Array",
                       "loc": {
                         "start": {
                           "line": 19,
-                          "column": 8,
+                          "column": 15,
                           "program": "test_type_annotation.ts"
                         },
                         "end": {
                           "line": 19,
-                          "column": 11,
+                          "column": 16,
                           "program": "test_type_annotation.ts"
                         }
                       }
                     },
+                    "typeParameters": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "NamedType",
+                          "name": {
+                            "type": "Identifier",
+                            "name": "Array",
+                            "loc": {
+                              "start": {
+                                "line": 19,
+                                "column": 13,
+                                "program": "test_type_annotation.ts"
+                              },
+                              "end": {
+                                "line": 19,
+                                "column": 14,
+                                "program": "test_type_annotation.ts"
+                              }
+                            }
+                          },
+                          "typeParameters": {
+                            "type": "TSTypeParameterInstantiation",
+                            "params": [
+                              {
+                                "type": "NamedType",
+                                "name": {
+                                  "type": "Identifier",
+                                  "name": "u64",
+                                  "loc": {
+                                    "start": {
+                                      "line": 19,
+                                      "column": 8,
+                                      "program": "test_type_annotation.ts"
+                                    },
+                                    "end": {
+                                      "line": 19,
+                                      "column": 11,
+                                      "program": "test_type_annotation.ts"
+                                    }
+                                  }
+                                },
+                                "isNullable": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 19,
+                                    "column": 8,
+                                    "program": "test_type_annotation.ts"
+                                  },
+                                  "end": {
+                                    "line": 19,
+                                    "column": 11,
+                                    "program": "test_type_annotation.ts"
+                                  }
+                                }
+                              }
+                            ],
+                            "loc": {
+                              "start": {
+                                "line": 1,
+                                "column": 1,
+                                "program": null
+                              },
+                              "end": {
+                                "line": 1,
+                                "column": 1,
+                                "program": null
+                              }
+                            }
+                          },
+                          "isNullable": false,
+                          "loc": {
+                            "start": {
+                              "line": 19,
+                              "column": 8,
+                              "program": "test_type_annotation.ts"
+                            },
+                            "end": {
+                              "line": 19,
+                              "column": 14,
+                              "program": "test_type_annotation.ts"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        }
+                      }
+                    },
+                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 19,
@@ -378,40 +530,26 @@
                       },
                       "end": {
                         "line": 19,
-                        "column": 11,
+                        "column": 16,
                         "program": "test_type_annotation.ts"
                       }
                     }
-                  },
-                  "annotations": [],
-                  "loc": {
-                    "start": {
-                      "line": 19,
-                      "column": 8,
-                      "program": "test_type_annotation.ts"
-                    },
-                    "end": {
-                      "line": 19,
-                      "column": 13,
-                      "program": "test_type_annotation.ts"
-                    }
                   }
-                },
-                "annotations": [],
+                ],
                 "loc": {
                   "start": {
-                    "line": 19,
-                    "column": 8,
-                    "program": "test_type_annotation.ts"
+                    "line": 1,
+                    "column": 1,
+                    "program": null
                   },
                   "end": {
-                    "line": 19,
-                    "column": 15,
-                    "program": "test_type_annotation.ts"
+                    "line": 1,
+                    "column": 1,
+                    "program": null
                   }
                 }
               },
-              "annotations": [],
+              "isNullable": false,
               "loc": {
                 "start": {
                   "line": 19,
@@ -419,8 +557,8 @@
                   "program": "test_type_annotation.ts"
                 },
                 "end": {
-                  "line": 19,
-                  "column": 17,
+                  "line": 20,
+                  "column": 4,
                   "program": "test_type_annotation.ts"
                 }
               }
@@ -488,7 +626,24 @@
                         "type": "Identifier",
                         "name": "b",
                         "typeAnnotation": {
-                          "type": "TSVoidKeyword",
+                          "type": "NamedType",
+                          "name": {
+                            "type": "Identifier",
+                            "name": "void",
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 16,
+                                "program": "test_type_annotation.ts"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 20,
+                                "program": "test_type_annotation.ts"
+                              }
+                            }
+                          },
+                          "isNullable": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -519,8 +674,8 @@
                         "type": "Identifier",
                         "name": "c",
                         "typeAnnotation": {
-                          "type": "TSTypeReference",
-                          "typeName": {
+                          "type": "NamedType",
+                          "name": {
                             "type": "Identifier",
                             "name": "i32",
                             "loc": {
@@ -536,6 +691,7 @@
                               }
                             }
                           },
+                          "isNullable": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -565,39 +721,73 @@
                       }
                     ],
                     "returnType": {
-                      "type": "TSArrayType",
-                      "elementType": {
-                        "type": "TSTypeReference",
-                        "typeName": {
-                          "type": "Identifier",
-                          "name": "u8",
-                          "loc": {
-                            "start": {
-                              "line": 20,
-                              "column": 34,
-                              "program": "test_type_annotation.ts"
-                            },
-                            "end": {
-                              "line": 20,
-                              "column": 36,
-                              "program": "test_type_annotation.ts"
-                            }
-                          }
-                        },
+                      "type": "NamedType",
+                      "name": {
+                        "type": "Identifier",
+                        "name": "Array",
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 34,
+                            "column": 38,
                             "program": "test_type_annotation.ts"
                           },
                           "end": {
                             "line": 20,
-                            "column": 36,
+                            "column": 39,
                             "program": "test_type_annotation.ts"
                           }
                         }
                       },
-                      "annotations": [],
+                      "typeParameters": {
+                        "type": "TSTypeParameterInstantiation",
+                        "params": [
+                          {
+                            "type": "NamedType",
+                            "name": {
+                              "type": "Identifier",
+                              "name": "u8",
+                              "loc": {
+                                "start": {
+                                  "line": 20,
+                                  "column": 34,
+                                  "program": "test_type_annotation.ts"
+                                },
+                                "end": {
+                                  "line": 20,
+                                  "column": 36,
+                                  "program": "test_type_annotation.ts"
+                                }
+                              }
+                            },
+                            "isNullable": false,
+                            "loc": {
+                              "start": {
+                                "line": 20,
+                                "column": 34,
+                                "program": "test_type_annotation.ts"
+                              },
+                              "end": {
+                                "line": 20,
+                                "column": 36,
+                                "program": "test_type_annotation.ts"
+                              }
+                            }
+                          }
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          },
+                          "end": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          }
+                        }
+                      },
+                      "isNullable": false,
                       "loc": {
                         "start": {
                           "line": 20,
@@ -606,7 +796,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 38,
+                          "column": 39,
                           "program": "test_type_annotation.ts"
                         }
                       }
@@ -619,7 +809,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 38,
+                        "column": 39,
                         "program": "test_type_annotation.ts"
                       }
                     }
@@ -641,13 +831,29 @@
                   "type": "Identifier",
                   "name": "b",
                   "typeAnnotation": {
-                    "type": "TSUnionType",
-                    "types": [
-                      {
-                        "type": "TSArrayType",
-                        "elementType": {
-                          "type": "TSTypeReference",
-                          "typeName": {
+                    "type": "NamedType",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Array",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 51,
+                          "program": "test_type_annotation.ts"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 55,
+                          "program": "test_type_annotation.ts"
+                        }
+                      }
+                    },
+                    "typeParameters": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "NamedType",
+                          "name": {
                             "type": "Identifier",
                             "name": "i64",
                             "loc": {
@@ -663,6 +869,7 @@
                               }
                             }
                           },
+                          "isNullable": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -675,37 +882,22 @@
                               "program": "test_type_annotation.ts"
                             }
                           }
-                        },
-                        "annotations": [],
-                        "loc": {
-                          "start": {
-                            "line": 20,
-                            "column": 43,
-                            "program": "test_type_annotation.ts"
-                          },
-                          "end": {
-                            "line": 20,
-                            "column": 48,
-                            "program": "test_type_annotation.ts"
-                          }
                         }
-                      },
-                      {
-                        "type": "TSNullKeyword",
-                        "loc": {
-                          "start": {
-                            "line": 20,
-                            "column": 51,
-                            "program": "test_type_annotation.ts"
-                          },
-                          "end": {
-                            "line": 20,
-                            "column": 55,
-                            "program": "test_type_annotation.ts"
-                          }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
                         }
                       }
-                    ],
+                    },
+                    "isNullable": true,
                     "loc": {
                       "start": {
                         "line": 20,
@@ -734,13 +926,29 @@
                 }
               ],
               "returnType": {
-                "type": "TSUnionType",
-                "types": [
-                  {
-                    "type": "TSArrayType",
-                    "elementType": {
-                      "type": "TSTypeReference",
-                      "typeName": {
+                "type": "NamedType",
+                "name": {
+                  "type": "Identifier",
+                  "name": "Array",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 67,
+                      "program": "test_type_annotation.ts"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 71,
+                      "program": "test_type_annotation.ts"
+                    }
+                  }
+                },
+                "typeParameters": {
+                  "type": "TSTypeParameterInstantiation",
+                  "params": [
+                    {
+                      "type": "NamedType",
+                      "name": {
                         "type": "Identifier",
                         "name": "u8",
                         "loc": {
@@ -756,6 +964,7 @@
                           }
                         }
                       },
+                      "isNullable": false,
                       "loc": {
                         "start": {
                           "line": 20,
@@ -768,37 +977,22 @@
                           "program": "test_type_annotation.ts"
                         }
                       }
-                    },
-                    "annotations": [],
-                    "loc": {
-                      "start": {
-                        "line": 20,
-                        "column": 60,
-                        "program": "test_type_annotation.ts"
-                      },
-                      "end": {
-                        "line": 20,
-                        "column": 64,
-                        "program": "test_type_annotation.ts"
-                      }
                     }
-                  },
-                  {
-                    "type": "TSNullKeyword",
-                    "loc": {
-                      "start": {
-                        "line": 20,
-                        "column": 67,
-                        "program": "test_type_annotation.ts"
-                      },
-                      "end": {
-                        "line": 20,
-                        "column": 71,
-                        "program": "test_type_annotation.ts"
-                      }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
                     }
                   }
-                ],
+                },
+                "isNullable": true,
                 "loc": {
                   "start": {
                     "line": 20,
@@ -881,4 +1075,4 @@
     }
   }
 }
-TypeError: Cannot find name i32 [test_type_annotation.ts:17:8]
+Warning W0025: Not matching extensions! Sourcefile: ts, Manual(used): as

@@ -15,5 +15,6 @@
 
 `\0#{(new (Reflect)() ? new  () : {f: [], : 2})}${true}`
 
-/* @@? 16:2 Error SyntaxError: Octal escape sequences are not allowed in template strings. */
 
+
+/* @@? 16:2 Error Syntax error ESY0247: Octal escape sequences are not allowed in template strings. */

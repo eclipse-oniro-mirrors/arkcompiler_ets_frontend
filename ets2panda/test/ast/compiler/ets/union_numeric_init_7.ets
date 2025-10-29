@@ -24,4 +24,4 @@ tags:
 let b: Short | Int = /* @@ label */ 32767;
 
 
-/* @@@ label Error TypeError: Ambiguous value 32767, fits into multiple types */
+/* @@? 24:37 Error Semantic error ESE101680: Ambiguous value 32767, fits into multiple types */

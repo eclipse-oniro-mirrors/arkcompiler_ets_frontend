@@ -23,5 +23,6 @@ function main(): void {
     }
 }
 
-/* @@? 21:12 Error TypeError: Member type must be the same for all union objects. */
-/* @@? 21:15 Error TypeError: Property 'test' does not exist on type 'B' */
+
+/* @@? 21:12 Error Semantic error ESE0244: Member type must be the same for all union objects. */
+/* @@? 21:15 Error Semantic error ESE0087: Property 'test' does not exist on type 'B' */

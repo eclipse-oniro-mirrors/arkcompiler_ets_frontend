@@ -21,4 +21,5 @@ class B extends /* @@ label */A {
     name(): int {}
 }
 
-/* @@@ label Error TypeError: Cannot inherit from class A, because method name is inherited with a different declaration type  */
+
+/* @@@ label Error Semantic error ESE0216: Cannot inherit from class A, because method name is inherited with a different declaration type */

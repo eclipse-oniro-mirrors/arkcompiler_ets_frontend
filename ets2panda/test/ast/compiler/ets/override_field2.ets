@@ -21,4 +21,4 @@ class B extends C {
     override num: number = 2
 }
 
-/* @@? 21:14 Error TypeError: The 'override' modifier is invalid here because the property 'num' is private in class 'C'. */
+/* @@? 21:14 Error Semantic error ESE1365480: The 'override' modifier is invalid here because the property 'num' is private in class 'C'. */

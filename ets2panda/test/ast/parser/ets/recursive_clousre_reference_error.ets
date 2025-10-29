@@ -19,5 +19,6 @@ function foo() {
     x();
 }
 
-/* @@? 17:19 Error TypeError: Variable 'y' is accessed before it's initialization. */
-/* @@? 18:9 Error TypeError: Circular dependency detected for identifier: y */
+
+/* @@? 17:19 Error Semantic error ESE0365: Variable 'y' is accessed before it's initialization. */
+/* @@? 18:9 Error Semantic error ESE0308: Circular dependency detected for identifier: y */

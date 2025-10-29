@@ -17,18 +17,25 @@ import { moreImportantInfo, notInit, notExist } from "./package_with_errors"
 
 console.log(notExist)
 
-/* @@? import_in_package_with_error.ets:20:17 Error TypeError: Cannot find type 'notInit'. */
-/* @@? import_in_package_with_error.ets:20:29 Error SyntaxError: Unexpected token '='. */
-/* @@? import_in_package_with_error.ets:20:30 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? import_in_package_with_error.ets:20:32 Error SyntaxError: Unexpected token ')'. */
 
-/* @@? distant_package.ets:22:22 Error SyntaxError: Variable must be initialized or it's type must be declared. */
+/* @@? import_in_package_with_error.ets:20:17 Error Semantic error ESE0371: Cannot find type 'notInit'. */
+/* @@? import_in_package_with_error.ets:20:29 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? import_in_package_with_error.ets:20:30 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? import_in_package_with_error.ets:20:32 Error Syntax error ESY0227: Unexpected token ')'. */
 
-/* @@? package_with_errors_1.ets:19:32 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
-/* @@? package_with_errors_1.ets:19:32 Error TypeError: Cannot cast type 'String' to 'double' */
+/* @@? distant_package.ets:22:22 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
 
-/* @@? package_with_errors_2.ets:19:16 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
-/* @@? package_with_errors_2.ets:19:16 Error TypeError: Unresolved reference foo */
+/* @@? package_with_errors_1.ets:19:32 Error Semantic error ESE0326: Cannot cast type 'String' to 'Double' */
 
-/* @@? master_file.ets:16:54 Error TypeError: Cannot find imported element 'notExist' */
-/* @@? master_file.ets:18:13 Error TypeError: Unresolved reference notExist */
+/* @@? package_with_errors_2.ets:19:16 Error Semantic error ESE0143: Unresolved reference foo */
+
+/* @@? master_file.ets:16:54 Error Semantic error ESE0356: Cannot find imported element 'notExist' */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
+/* @@? master_file.ets:18:1 Error Semantic error ESE0142: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
+/* @@? master_file.ets:18:13 Error Semantic error ESE0143: Unresolved reference notExist */

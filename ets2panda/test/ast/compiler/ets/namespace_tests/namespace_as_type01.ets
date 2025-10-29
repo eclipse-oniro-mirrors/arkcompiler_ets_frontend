@@ -18,4 +18,5 @@ namespace MySpace {
 
 let a = new MySpace()
 
-/* @@? 19:13 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+
+/* @@? 19:13 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

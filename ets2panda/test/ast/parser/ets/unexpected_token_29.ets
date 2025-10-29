@@ -19,11 +19,12 @@ function main(): void {
     }
 /*@@ label4 */}
 
-/* @@@ label1 Error SyntaxError: Expected ';', got 'identification literal'. */
-/* @@? 17:44 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 17:69 Error TypeError: need to specify target type for class composite */
-/* @@? 18:30 Error SyntaxError: Unexpected token, expected ':'. */
-/* @@? 20:15 Error SyntaxError: Expected ')', got '}'. */
-/* @@? 20:15 Error SyntaxError: Unexpected token '}'. */
-/* @@? 30:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@@ label1 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
+/* @@? 17:44 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@@ label2 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 17:69 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@@ label3 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@@ label4 Error Syntax error ESY0230: Expected ')', got '}'. */
+/* @@@ label4 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 30:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

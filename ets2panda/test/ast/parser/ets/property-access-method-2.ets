@@ -22,4 +22,5 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: 'foo' is an instance property of 'A'  */
+
+/* @@@ label Error Semantic error ESE0208: 'foo' is an instance property of 'A' */

@@ -19,5 +19,6 @@ function sum(...numbers: [number, number, number]): number {
 
 /* @@ label */sum()
 
-/* @@@ label Error TypeError: Expected 3 arguments, got 0. */
-/* @@@ label Error TypeError: No matching call signature */
+
+/* @@@ label Error Semantic error ESE0124: Expected 3 arguments, got 0. */
+/* @@@ label Error Semantic error ESE0128: No matching call signature */

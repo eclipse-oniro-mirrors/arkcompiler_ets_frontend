@@ -18,7 +18,8 @@ class A {
     f2!?:number
 }
 
-/* @@? 17:7 Error SyntaxError: Conflicting modifiers '!' and '?' on field. */
-/* @@? 17:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 18:7 Error SyntaxError: Conflicting modifiers '!' and '?' on field. */
-/* @@? 18:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+
+/* @@? 17:7 Error Syntax error ESY0127: Conflicting modifiers '!' and '?' on field. */
+/* @@? 17:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 18:7 Error Syntax error ESY0127: Conflicting modifiers '!' and '?' on field. */
+/* @@? 18:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

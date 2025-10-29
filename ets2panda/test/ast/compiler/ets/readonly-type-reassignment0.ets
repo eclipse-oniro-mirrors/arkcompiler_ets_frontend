@@ -23,4 +23,5 @@ function main() {
   /* @@ label */z.i = 2.9
 }
 
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned. */
+
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */

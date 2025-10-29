@@ -18,4 +18,5 @@ class A {
   get /* @@ label */constructor() {
   }
 }
-/* @@@ label Error SyntaxError: Constructor can not be special method.  */
+
+/* @@@ label Error Syntax error ESY0149: Constructor can not be special method. */

@@ -25,7 +25,7 @@ function main<T>(){
 
 function foo(a:Class){}
 
-/* @@? 20:3 Error TypeError: Type undefined cannot be used in the `from` method */
-/* @@? 21:18 Error TypeError: Type never cannot be used in the `from` method */
-/* @@? 22:18 Error TypeError: Type T cannot be used in the `from` method */
-/* @@? 23:18 Error TypeError: Type void cannot be used in the `from` method */
+/* @@? 20:3 Error Semantic error ESE53205: Type undefined cannot be used in the `from` method */
+/* @@? 21:18 Error Semantic error ESE53205: Type never cannot be used in the `from` method */
+/* @@? 22:18 Error Semantic error ESE53205: Type T cannot be used in the `from` method */
+/* @@? 23:18 Error Semantic error ESE53205: Type void cannot be used in the `from` method */

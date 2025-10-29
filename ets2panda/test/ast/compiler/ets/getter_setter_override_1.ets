@@ -22,4 +22,4 @@ class B extends A {
     set AAA(x:number){} 
 }
 
-/* @@? 21:5 Error TypeError: 'AAA' is defined as a property in class 'A', but is overridden here in 'B' as an accessor. */
+/* @@? 21:5 Error Semantic error ESE45073: 'AAA' is defined as a property in class 'A', but is overridden here in 'B' as an accessor. */

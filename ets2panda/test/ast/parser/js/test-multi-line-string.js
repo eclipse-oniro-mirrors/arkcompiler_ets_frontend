@@ -19,5 +19,6 @@
 /* @@ label1 */
 "
 
-/* @@? 17:1 Error SyntaxError: Newline is not allowed in strings  */
-/* @@@ label1 Error SyntaxError: Newline is not allowed in strings  */
+
+/* @@? 17:1 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@@ label1 Error Syntax error ESY0265: Newline is not allowed in strings */

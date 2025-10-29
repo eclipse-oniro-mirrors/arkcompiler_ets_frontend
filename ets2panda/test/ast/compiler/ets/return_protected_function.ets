@@ -23,4 +23,4 @@ class A{
     }
 };
 
-/* @@@ label Error TypeError: Protected method is used as value  */
+/* @@@ label Error Semantic error ESE0306: Protected method is used as value */

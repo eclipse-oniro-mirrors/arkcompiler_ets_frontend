@@ -22,5 +22,6 @@ import { A } from "dynamic_import_tests/modules/module"
 function foo(p: A): void {
     /* @@ label */p.foo(/* @@ label1 */"abc")
 }
-/* @@@ label1 Error TypeError: Type '"abc"' is not compatible with type 'Double' at index 1  */
-/* @@@ label Error TypeError: No matching call signature for foo("abc")  */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo("abc") */
+/* @@@ label1 Error Semantic error ESE0046: Type '"abc"' is not compatible with type 'Double' at index 1 */

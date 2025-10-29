@@ -17,4 +17,5 @@ class A {
     final native foo() : void /* @@ label */{}
 }
 
-/* @@@ label Error TypeError: Native, Abstract and Declare methods cannot have body.  */
+
+/* @@@ label Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

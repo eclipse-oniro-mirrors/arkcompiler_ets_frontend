@@ -31,6 +31,7 @@ class Outer {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@@ label1 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 20:9 Error TypeError: Static initializer is not allowed in inner class. */
+
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 20:9 Error Semantic error ESE0014: Static initializer is not allowed in inner class. */
+/* @@@ label1 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

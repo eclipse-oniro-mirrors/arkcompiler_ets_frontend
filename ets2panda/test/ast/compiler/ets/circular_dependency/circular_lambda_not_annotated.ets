@@ -22,4 +22,4 @@ let f = (n: number) => {
     f(5) 
 }
 
-/* @@? 21:5 Error TypeError: Circular dependency detected for identifier: f */
+/* @@? 21:5 Error Semantic error ESE0308: Circular dependency detected for identifier: f */

@@ -15,5 +15,5 @@
 
 let foo = [(): void => { return foo[0](); }];
 
-/* @@? 16:5 Error TypeError: Circular dependency detected for identifier: foo */
-/* @@? 16:33 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 16:5 Error Semantic error ESE0308: Circular dependency detected for identifier: foo */
+/* @@? 16:33 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

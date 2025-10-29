@@ -15,4 +15,5 @@
 
 ({ a: 1 } = {})/* @@ label */;
 
-/* @@@ label Error SyntaxError: Invalid left-hand side in assignment expression. */
+
+/* @@@ label Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */

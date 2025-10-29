@@ -26,5 +26,6 @@ class C extends B {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@? 23:17 Error TypeError: Cannot inherit from class B, because class a is inherited with a different declaration type */
+
+/* @@? 23:17 Error Semantic error ESE0216: Cannot inherit from class B, because class a is inherited with a different declaration type */
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

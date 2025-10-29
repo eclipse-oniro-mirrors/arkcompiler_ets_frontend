@@ -17,6 +17,7 @@ interface I {
     private static foo()
 }
 
-/* @@? 17:13 Error SyntaxError: Identifier expected. */
-/* @@? 17:13 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:13 Error SyntaxError: Identifier expected, got 'static'. */
+
+/* @@? 17:13 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 17:13 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:13 Error Syntax error ESY0224: Identifier expected, got 'static'. */

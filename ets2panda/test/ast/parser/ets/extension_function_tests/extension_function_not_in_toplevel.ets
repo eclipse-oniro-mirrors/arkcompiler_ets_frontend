@@ -27,6 +27,7 @@ function main() {
     fruit.price();
 }
 
-/* @@? 20:5 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 20:20 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
-/* @@? 27:11 Error TypeError: Property 'price' does not exist on type 'Fruit' */
+
+/* @@? 20:5 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 20:20 Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */
+/* @@? 27:11 Error Semantic error ESE0087: Property 'price' does not exist on type 'Fruit' */

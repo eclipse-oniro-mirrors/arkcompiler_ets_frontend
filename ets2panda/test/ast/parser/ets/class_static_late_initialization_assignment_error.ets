@@ -17,4 +17,5 @@ class A{
     static f!:string
 }
 
-/* @@? 17:13 Error SyntaxError: Late-initialized field cannot be defined as static. */
+
+/* @@? 17:13 Error Syntax error ESY0303: Late-initialized field cannot be defined as static. */

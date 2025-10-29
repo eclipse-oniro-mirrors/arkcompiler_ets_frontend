@@ -1,4 +1,4 @@
-Warning: Duplicated export aliases for 'foo'. [re_export_4.ets:17:8]
+[re_export_4.ets:17:8] Warning W0000: Duplicated export aliases for 'foo'.
 {
   "type": "Program",
   "statements": [
@@ -263,4 +263,4 @@ Warning: Duplicated export aliases for 'foo'. [re_export_4.ets:17:8]
     }
   }
 }
-TypeError: Ambiguous export 'foo' [re_export_4.ets:16:8]
+[re_export_4.ets:16:8] Semantic error ESE0362: Ambiguous export 'foo'

@@ -30,4 +30,5 @@ function main() : void {
     x.alma();
 }
 
-/* @@@ label Error TypeError: 'korte' is a static property of 'A' */
+
+/* @@@ label Error Semantic error ESE0207: 'korte' is a static property of 'A' */

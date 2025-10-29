@@ -17,9 +17,10 @@
     class A{}
 }
 
-/* @@? 17:5 Error SyntaxError: Hard keyword 'class' cannot be used as identifier */
-/* @@? 17:5 Error SyntaxError: Identifier expected, got 'class'. */
-/* @@? 17:12 Error SyntaxError: Missing type annotation for property 'A'. */
-/* @@? 17:12 Error SyntaxError: Identifier expected, got '{'. */
-/* @@? 17:13 Error SyntaxError: Identifier expected, got '}'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:5 Error Syntax error ESY0316: Hard keyword 'class' cannot be used as identifier */
+/* @@? 17:5 Error Syntax error ESY0224: Identifier expected, got 'class'. */
+/* @@? 17:12 Error Syntax error ESY0001: Missing type annotation for property 'A'. */
+/* @@? 17:12 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 17:13 Error Syntax error ESY0224: Identifier expected, got '}'. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */

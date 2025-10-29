@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,4 +16,5 @@
 
 var { a, ...b } = { a: 5, b: 5n, c: { a: {}, b: true } };
 /* @@ label */b = {};
-/* @@@ label Error TypeError: Type '{ }' is not assignable to type '{ b: bigint; c: { a: { }; b: boolean; }; }'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type '{ }' is not assignable to type '{ b: bigint; c: { a: { }; b: boolean; }; }'. */

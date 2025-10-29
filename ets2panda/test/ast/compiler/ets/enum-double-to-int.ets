@@ -24,5 +24,5 @@ function main(): void {
   let c2: int = /* @@ label2 */Color.Red + Color.Green;
 }
 
-/* @@@ label1 Error TypeError: Type 'Color' cannot be assigned to type 'Int' */
-/* @@@ label2 Error TypeError: Type 'Double' cannot be assigned to type 'Int' */
+/* @@@ label1 Error Semantic error ESE0318: Type 'Color' cannot be assigned to type 'Int' */
+/* @@@ label2 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */

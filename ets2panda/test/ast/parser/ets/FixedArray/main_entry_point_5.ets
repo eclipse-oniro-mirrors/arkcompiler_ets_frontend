@@ -21,4 +21,5 @@ function /* @@ label */main(i : FixedArray<string>): void {
     return;
 }
 
-/* @@@ label Error TypeError: Main overload is not enabled  */
+
+/* @@@ label Error Semantic error ESE0373: Main overload is not enabled */

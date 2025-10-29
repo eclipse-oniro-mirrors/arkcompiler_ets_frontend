@@ -15,7 +15,8 @@
 
 ()a/(d)-e;
 
-/* @@? 16:3 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 16:5 Error SyntaxError: Unterminated RegExp. */
-/* @@? 16:11 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:11 Error SyntaxError: Unexpected token 'end of stream'. */
+
+/* @@? 16:3 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 16:5 Error Syntax error ESY0260: Unterminated RegExp. */
+/* @@? 16:11 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:11 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

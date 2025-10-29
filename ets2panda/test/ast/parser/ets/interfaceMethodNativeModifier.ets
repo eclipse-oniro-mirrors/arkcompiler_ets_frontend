@@ -17,4 +17,5 @@ interface I {
     /* @@ label */native foo()
 }
 
-/* @@@ label Error SyntaxError: Identifier expected, got 'native'. */
+
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'native'. */

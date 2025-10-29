@@ -20,4 +20,5 @@ declare class A {
 }
 
 // #23399 Error almost has not ideal position, problem in generated code
-/* @@? 19:5 Error TypeError: Cannot find type 'stringdd'. */
+
+/* @@? 19:5 Error Semantic error ESE0371: Cannot find type 'stringdd'. */

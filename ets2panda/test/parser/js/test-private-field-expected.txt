@@ -698,7 +698,7 @@
                                   "start": {
                                     "line": 1,
                                     "column": 1,
-                                    "program": null
+                                    "program": "test-private-field.js"
                                   },
                                   "end": {
                                     "line": 24,

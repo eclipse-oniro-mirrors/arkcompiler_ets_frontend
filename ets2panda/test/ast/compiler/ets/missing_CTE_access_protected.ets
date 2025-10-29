@@ -26,5 +26,6 @@ function main(): void {
     A.val = 1
 }
 
-/* @@? 25:23 Error TypeError: Signature val(): Double is not visible here. */
-/* @@? 26:7 Error TypeError: Signature val(i: Double): void is not visible here. */
+
+/* @@? 25:23 Error Semantic error ESE0139: Signature val(): Double is not visible here. */
+/* @@? 26:7 Error Semantic error ESE0139: Signature val(i: Double): void is not visible here. */
