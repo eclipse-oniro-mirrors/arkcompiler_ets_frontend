@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 
+/*---
+    files: [./import_type_error_top_level.ets]
+---*/
+
 import {fooImport} from "./import_type_error_top_level"
 
 export let inExport: string = fooImport()
