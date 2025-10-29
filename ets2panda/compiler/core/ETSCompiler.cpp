@@ -805,6 +805,11 @@ void ETSCompiler::Compile(const ir::ConditionalExpression *expr) const
     etsg->SetAccumulatorType(expr->TsType());
 }
 
+static bool TypeNeedInternalCheckCast(const checker::Type *type)
+{
+    return type->IsETSObjectType() || type->IsETSArrayType() || type->IsETSTupleType() || type->IsETSFunctionType();
+}
+
 void ETSCompiler::Compile(const ir::Identifier *expr) const
 {
     ETSGen *etsg = GetETSGen();
@@ -822,9 +827,15 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
     }
 
     if (smartType->IsETSReferenceType()) {
+        auto *localVar = expr->Variable()->AsLocalVariable();
         //  In case when smart cast type of identifier differs from initial variable type perform cast if required
         if (!etsg->Checker()->AsETSChecker()->Relation()->IsSupertypeOf(smartType, etsg->GetAccumulatorType())) {
             etsg->CastToReftype(expr, smartType, false);
+        } else if (!etsg->Checker()->AsETSChecker()->Relation()->IsIdenticalTo(smartType, localVar->TsType()) &&
+                   TypeNeedInternalCheckCast(smartType)) {
+            //  All the non-union type that can get their properties by memberExpression should add a check cast while
+            //  the `smartType` is not same with the type of its variable.
+            etsg->InternalCheckCast(expr, smartType);
         }
     } else if (smartType->IsETSPrimitiveType()) {
         etsg->ApplyConversionCast(expr, smartType);

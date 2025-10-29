@@ -153,19 +153,26 @@ static OperandType GetOperandRegTypeForNormalCall(const std::string &calleeInter
     return OperandType::REF;
 }
 
-static OperandType GetOperandRegTypeForAccessor(const std::string &calleeInternalName, size_t argIdx)
+static OperandType GetOperandRegTypeForAccessor(const std::string &calleeInternalName, size_t argIdx,
+                                                bool hadCalculatedThis)
 {
+    // the first arg may be the omitted 'this', but it may calculated in `GetOperandRegType`
+    // do not calculate twice.
     ES2PANDA_ASSERT(IsAccessor(calleeInternalName));
-    if (argIdx == 0) {
-        return OperandType::REF;  // the first arg is the omitted 'this'
+    if (argIdx == 0 && !hadCalculatedThis) {
+        return OperandType::REF;
     }
-    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx - 1);
+
+    ES2PANDA_ASSERT(hadCalculatedThis || argIdx > 0);
+    argIdx = hadCalculatedThis ? argIdx : argIdx - 1;
+    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
 }
 
-static OperandType GetOperandRegTypeForCall(const std::string &calleeInternalName, size_t argIdx)
+static OperandType GetOperandRegTypeForCall(const std::string &calleeInternalName, size_t argIdx,
+                                            bool hadCalculatedThis = false)
 {
     if (IsAccessor(calleeInternalName)) {  // in such cases method signatures lacks the first arg 'this'
-        return GetOperandRegTypeForAccessor(calleeInternalName, argIdx);
+        return GetOperandRegTypeForAccessor(calleeInternalName, argIdx, hadCalculatedThis);
     }
     return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
 }
@@ -297,7 +304,7 @@ public:
         if (idx == 0) {
             return OperandType::REF;
         }
-        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx - 1);
+        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx - 1, true);
 
 % elsif insn.mnemonic.start_with?('call.acc')
         {
