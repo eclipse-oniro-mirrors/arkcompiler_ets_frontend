@@ -4138,6 +4138,10 @@ static varbinder::Variable *FindNameForImportNamespace(ETSChecker *checker, util
 
 checker::Type *ETSAnalyzer::Check(ir::TSQualifiedName *expr) const
 {
+    if (expr->TsType() != nullptr) {
+        return expr->TsType();
+    }
+
     ETSChecker *checker = GetETSChecker();
     checker::Type *baseType = expr->Left()->Check(checker)->MaybeBaseTypeOfGradualType();
     if (baseType->IsETSObjectType()) {

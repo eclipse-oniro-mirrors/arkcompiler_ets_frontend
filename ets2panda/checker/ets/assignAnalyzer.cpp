@@ -98,86 +98,7 @@ static std::string Capitalize(const util::StringView &str)
     return ret;
 }
 
-void Set::Reset()
-{
-    reset_ = true;
-}
-
-bool Set::IsReset()
-{
-    return reset_;
-}
-
-void Set::Incl(const int id)
-{
-    nodes_.insert(id);
-}
-
-void Set::InclRange(const int start, const int limit)
-{
-    for (int x = start; x < limit; x++) {
-        nodes_.insert(x);
-    }
-}
-
-void Set::Excl(const int id)
-{
-    nodes_.erase(id);
-}
-
-void Set::ExcludeFrom(const int start)
-{
-    auto it = nodes_.lower_bound(start);
-    nodes_.erase(nodes_.begin(), it);
-}
-
-bool Set::IsMember(const int id) const
-{
-    return nodes_.find(id) != nodes_.end();
-}
-
-Set &Set::AndSet(const Set &xs)
-{
-    std::set<int> res;
-    std::set_intersection(nodes_.begin(), nodes_.end(), xs.nodes_.begin(), xs.nodes_.end(),
-                          std::inserter(res, res.begin()));
-    nodes_ = std::move(res);
-    return *this;
-}
-
-Set &Set::OrSet(const Set &xs)
-{
-    std::set<int> res;
-    std::set_union(nodes_.begin(), nodes_.end(), xs.nodes_.begin(), xs.nodes_.end(), std::inserter(res, res.begin()));
-    nodes_ = std::move(res);
-    return *this;
-}
-
-Set &Set::DiffSet(const Set &xs)
-{
-    std::set<int> res;
-    std::set_difference(nodes_.begin(), nodes_.end(), xs.nodes_.begin(), xs.nodes_.end(),
-                        std::inserter(res, res.begin()));
-    nodes_ = std::move(res);
-    return *this;
-}
-
-int Set::Next(const int id)
-{
-    auto it = nodes_.upper_bound(id);
-    if (it != nodes_.end()) {
-        return *it;
-    }
-    return -1;
-}
-
-AssignAnalyzer::AssignAnalyzer(ETSChecker *checker)
-    : checker_(checker),
-      varDecls_(checker->Allocator()->Adapter()),
-      nodeIdMap_(checker->Allocator()->Adapter()),
-      foundErrors_(checker->Allocator()->Adapter())
-{
-}
+AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker), varDecls_(), nodeIdMap_(), foundErrors_() {}
 
 void AssignAnalyzer::Analyze(const ir::AstNode *node)
 {
@@ -1260,6 +1181,11 @@ bool AssignAnalyzer::IsConstUninitializedStaticField(const ir::AstNode *node) co
     return IsConstUninitializedField(node) && node->IsStatic();
 }
 
+static ir::AstNode const *OwnerDef(const ir::AstNode *node)
+{
+    return util::Helpers::GetContainingClassDefinition(node);
+}
+
 void AssignAnalyzer::NewVar(const ir::AstNode *node)
 {
     if (!Trackable(node)) {
@@ -1267,6 +1193,11 @@ void AssignAnalyzer::NewVar(const ir::AstNode *node)
     }
 
     if (GetNodeId(node) != INVALID_ID) {
+        return;
+    }
+
+    auto ownerDef = OwnerDef(node);
+    if (ownerDef != classDef_ && ownerDef != globalClass_) {
         return;
     }
 
@@ -1402,6 +1333,11 @@ void AssignAnalyzer::LetInit(const ir::AstNode *node)
         return;
     }
 
+    auto ownerDef = OwnerDef(declNode);
+    if (ownerDef != classDef_) {
+        return;
+    }
+
     if (node != declNode && declNode->IsConst()) {
         // check reassignment of readonly properties
         util::StringView type = GetVariableType(declNode);
@@ -1444,6 +1380,11 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
 
     if (VariableHasDefaultValue(declNode)) {
         // no explicit init is required (primitive, nullish)
+        return;
+    }
+
+    auto ownerDef = OwnerDef(node);
+    if (ownerDef != classDef_) {
         return;
     }
 
