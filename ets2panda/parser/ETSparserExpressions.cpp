@@ -583,8 +583,9 @@ std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expressi
                                                                     bool ignoreCallExpression,
                                                                     [[maybe_unused]] bool *isChainExpression)
 {
+    auto periodPos = Lexer()->GetToken().End();
     switch (Lexer()->GetToken().Type()) {
-        case lexer::TokenType::PUNCTUATOR_QUESTION_DOT:
+        case lexer::TokenType::PUNCTUATOR_QUESTION_DOT: {
             if (*isChainExpression) {
                 return std::nullopt;  // terminate current chain
             }
@@ -599,11 +600,13 @@ std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expressi
                 return ParseCallExpression(returnExpression, true, false);
             }
 
-            return ParsePropertyAccess(returnExpression, true);
-        case lexer::TokenType::PUNCTUATOR_PERIOD:
+            return ParsePropertyAccess(returnExpression, periodPos, true);
+        }
+        case lexer::TokenType::PUNCTUATOR_PERIOD: {
             Lexer()->NextToken();  // eat period
 
-            return ParsePropertyAccess(returnExpression);
+            return ParsePropertyAccess(returnExpression, periodPos);
+        }
         case lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET:
             return ParseElementAccess(returnExpression);
         case lexer::TokenType::PUNCTUATOR_LEFT_SHIFT:

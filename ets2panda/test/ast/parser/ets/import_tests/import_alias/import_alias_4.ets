@@ -16,9 +16,9 @@
 import * as all from './export' 
 
 function main():void{ 
-    all./* @@ label */goo1;
+    all.goo1;
 }
 
 
 
-/* @@@ label Error Semantic error ESE0087: Property 'goo1' does not exist on type 'export' */
+/* @@? 19:9 Error Semantic error ESE0087: Property 'goo1' does not exist on type 'export' */

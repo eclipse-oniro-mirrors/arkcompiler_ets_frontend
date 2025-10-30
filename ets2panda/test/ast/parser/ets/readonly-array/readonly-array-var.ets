@@ -15,30 +15,30 @@
 
 let arr: readonly int[] = [1];
 
-arr./* @@ extendTo */extendTo(2, 0);
-arr./* @@ shrinkTo */shrinkTo(2);
-arr./* @@ sort */sort();
-arr./* @@ shift */shift();
-arr./* @@ pop */pop();
-arr./* @@ push */push(2, 3);
-arr./* @@ splice */splice(0,1,2,3);
-arr./* @@ unshift */unshift(-1);
-arr./* @@ copyWithin */copyWithin(0,0,0);
-arr./* @@ fill */fill(3);
-arr./* @@ toSpliced */toSpliced();
-arr./* @@ reverse */reverse();
-arr./* @@ with */with(0, 5);
+arr.extendTo(2, 0);
+arr.shrinkTo(2);
+arr.sort();
+arr.shift();
+arr.pop();
+arr.push(2, 3);
+arr.splice(0,1,2,3);
+arr.unshift(-1);
+arr.copyWithin(0,0,0);
+arr.fill(3);
+arr.toSpliced();
+arr.reverse();
+arr.with(0, 5);
 
-/* @@@ extendTo Error Semantic error ESE0087: Property 'extendTo' does not exist on type 'ReadonlyArray' */
-/* @@@ shrinkTo Error Semantic error ESE0087: Property 'shrinkTo' does not exist on type 'ReadonlyArray' */
-/* @@@ sort Error Semantic error ESE0087: Property 'sort' does not exist on type 'ReadonlyArray' */
-/* @@@ shift Error Semantic error ESE0087: Property 'shift' does not exist on type 'ReadonlyArray' */
-/* @@@ pop Error Semantic error ESE0087: Property 'pop' does not exist on type 'ReadonlyArray' */
-/* @@@ push Error Semantic error ESE0087: Property 'push' does not exist on type 'ReadonlyArray' */
-/* @@@ splice Error Semantic error ESE0087: Property 'splice' does not exist on type 'ReadonlyArray' */
-/* @@@ unshift Error Semantic error ESE0087: Property 'unshift' does not exist on type 'ReadonlyArray' */
-/* @@@ copyWithin Error Semantic error ESE0087: Property 'copyWithin' does not exist on type 'ReadonlyArray' */
-/* @@@ fill Error Semantic error ESE0087: Property 'fill' does not exist on type 'ReadonlyArray' */
-/* @@@ toSpliced Error Semantic error ESE0087: Property 'toSpliced' does not exist on type 'ReadonlyArray' */
-/* @@@ reverse Error Semantic error ESE0087: Property 'reverse' does not exist on type 'ReadonlyArray' */
-/* @@@ with Error Semantic error ESE0087: Property 'with' does not exist on type 'ReadonlyArray' */
+/* @@? 18:5 Error Semantic error ESE0087: Property 'extendTo' does not exist on type 'ReadonlyArray' */
+/* @@? 19:5 Error Semantic error ESE0087: Property 'shrinkTo' does not exist on type 'ReadonlyArray' */
+/* @@? 20:5 Error Semantic error ESE0087: Property 'sort' does not exist on type 'ReadonlyArray' */
+/* @@? 21:5 Error Semantic error ESE0087: Property 'shift' does not exist on type 'ReadonlyArray' */
+/* @@? 22:5 Error Semantic error ESE0087: Property 'pop' does not exist on type 'ReadonlyArray' */
+/* @@? 23:5 Error Semantic error ESE0087: Property 'push' does not exist on type 'ReadonlyArray' */
+/* @@? 24:5 Error Semantic error ESE0087: Property 'splice' does not exist on type 'ReadonlyArray' */
+/* @@? 25:5 Error Semantic error ESE0087: Property 'unshift' does not exist on type 'ReadonlyArray' */
+/* @@? 26:5 Error Semantic error ESE0087: Property 'copyWithin' does not exist on type 'ReadonlyArray' */
+/* @@? 27:5 Error Semantic error ESE0087: Property 'fill' does not exist on type 'ReadonlyArray' */
+/* @@? 28:5 Error Semantic error ESE0087: Property 'toSpliced' does not exist on type 'ReadonlyArray' */
+/* @@? 29:5 Error Semantic error ESE0087: Property 'reverse' does not exist on type 'ReadonlyArray' */
+/* @@? 30:5 Error Semantic error ESE0087: Property 'with' does not exist on type 'ReadonlyArray' */

@@ -17,9 +17,9 @@ class A {
     instanceVal: int = 42;
 
     public getInstanceVal(): int {
-        return A./* @@ label */instanceVal;
+        return A.instanceVal;
     }
 }
 
 
-/* @@@ label Error Semantic error ESE0208: 'instanceVal' is an instance property of 'A' */
+/* @@? 20:18 Error Semantic error ESE0208: 'instanceVal' is an instance property of 'A' */

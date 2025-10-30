@@ -20,11 +20,11 @@ class A {
 set field(this: A, f: int) {
     this.field_ = f;
 }
-new A()./* @@ label1 */field++;
-new A()./* @@ label2 */field += 1;
-++new A()./* @@ label3 */field;
+new A().field++;
+new A().field += 1;
+++new A().field;
 
 
-/* @@@ label1 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
-/* @@@ label2 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
-/* @@@ label3 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 23:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 24:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 25:11 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */

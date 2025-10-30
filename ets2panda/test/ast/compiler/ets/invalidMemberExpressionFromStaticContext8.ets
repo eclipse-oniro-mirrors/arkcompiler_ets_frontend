@@ -20,9 +20,9 @@ class A {
 
 final class B extends A {
     static bar_in_B() : void {
-        B./* @@ label */foo_in_A()
+        B.foo_in_A()
     }
 }
 
 
-/* @@@ label Error Semantic error ESE0208: 'foo_in_A' is an instance property of 'B' */
+/* @@? 23:11 Error Semantic error ESE0208: 'foo_in_A' is an instance property of 'B' */

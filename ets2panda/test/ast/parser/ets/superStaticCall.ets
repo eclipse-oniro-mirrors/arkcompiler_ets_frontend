@@ -21,7 +21,7 @@ class A {
 
 class B extends A {
     alma() {
-        return super./* @@ label */korte();
+        return super.korte();
     }
 }
 
@@ -31,4 +31,4 @@ function main() : void {
 }
 
 
-/* @@@ label Error Semantic error ESE0207: 'korte' is a static property of 'A' */
+/* @@? 24:22 Error Semantic error ESE0207: 'korte' is a static property of 'A' */

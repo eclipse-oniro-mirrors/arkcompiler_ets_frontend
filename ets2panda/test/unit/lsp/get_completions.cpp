@@ -75,7 +75,9 @@ class MyD {
   val: MyC = new MyC()
 }
 let d = new MyD()
-d.val.meth().val.)delimiter"};
+d.val.meth().val.
+d.val   // mock next line
+)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
 
     int const expectedFileCount = 1;
@@ -216,7 +218,8 @@ export declare function Text(
   content?: string,
   value?: string
 ): TextAttribute
-Text("Hello").font().
+Text("Hello").font(1).
+Text("Hello")   // mock next line
 )delimiter"};
     auto filePaths = CreateTempFile(files, texts);
 
@@ -224,7 +227,7 @@ Text("Hello").font().
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 376;  // after '.font().'
+    size_t const offset = 377;  // after '.font().'
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);

@@ -19,9 +19,9 @@ interface I {
 
 class A implements I {
     readonly a: boolean
-    b: boolean = /* @@ warn */this.a = true;
+    b: boolean = this.a = true;
     constructor() {
-        this./* @@ label */a = false
+        this.a = false
     }
 }
 
@@ -31,5 +31,5 @@ function main() {
 }
 
 
-/* @@@ warn Warning Warning W0010: The instance field initializer expression cannot use the this. */
-/* @@@ label Error Semantic error ESE0210: Readonly field already initialized at declaration. */
+/* @@? 22:18 Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@? 24:14 Error Semantic error ESE0210: Readonly field already initialized at declaration. */

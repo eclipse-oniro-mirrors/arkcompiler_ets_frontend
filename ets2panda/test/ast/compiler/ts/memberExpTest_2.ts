@@ -25,6 +25,6 @@ interface b {
 var c: b;
 var d: a;
 c.foobar = d;
-c.foobar./* @@ label */foobar = b;
+c.foobar.foobar = b;
 
-/* @@@ label Error Semantic error ESE0000: Property foobar does not exist on this type. */
+/* @@? 28:10 Error Semantic error ESE0000: Property foobar does not exist on this type. */

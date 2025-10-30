@@ -27,8 +27,8 @@ function price(banana: Banana) {
 
 function main() {
     let banana = new Banana();
-    banana./* @@ label */price();
+    banana.price();
 }
 
 
-/* @@@ label Error Semantic error ESE0087: Property 'price' does not exist on type 'Banana' */
+/* @@? 30:12 Error Semantic error ESE0087: Property 'price' does not exist on type 'Banana' */

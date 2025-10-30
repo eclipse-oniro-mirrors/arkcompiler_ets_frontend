@@ -27,8 +27,8 @@ class A {
 
 function main(): void {
   let instance = new A();
-  instance./* @@ label */cb(1);
+  instance.cb(1);
 }
 
 
-/* @@@ label Error Semantic error ESE0293: Property cb is not visible here. */
+/* @@? 30:12 Error Semantic error ESE0293: Property cb is not visible here. */

@@ -319,7 +319,8 @@ protected:
     ir::SuperExpression *ParseSuperExpression();
     ir::MemberExpression *ParseElementAccess(ir::Expression *primaryExpr, bool isOptional = false);
     ir::MemberExpression *ParsePrivatePropertyAccess(ir::Expression *primaryExpr);
-    ir::MemberExpression *ParsePropertyAccess(ir::Expression *primaryExpr, bool isOptional = false);
+    ir::MemberExpression *ParsePropertyAccess(ir::Expression *primaryExpr, lexer::SourcePosition periodPos,
+                                              bool isOptional = false);
     void CreateAmendedBinaryExpression(ir::Expression *left, ir::Expression *right, lexer::TokenType operatorType);
 
     // StatementParser

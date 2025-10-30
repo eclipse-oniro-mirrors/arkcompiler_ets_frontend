@@ -17,9 +17,9 @@ class A {
     static classVal: int = 42;
 
     public getClassVal(): int {
-        return this./* @@ label */classVal;
+        return this.classVal;
     }
 }
 
 
-/* @@@ label Error Semantic error ESE0207: 'classVal' is a static property of 'A' */
+/* @@? 20:21 Error Semantic error ESE0207: 'classVal' is a static property of 'A' */

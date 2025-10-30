@@ -24,7 +24,7 @@ function price(this: A, id: int): int {
 }
 
 function main() {
-    console.println(A./* @@ label */price(1));
+    console.println(A.price(1));
 }
 
 
@@ -36,4 +36,4 @@ function main() {
 /* @@? 27:5 Error Semantic error ESE0142: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Long): void` */
 /* @@? 27:5 Error Semantic error ESE0142: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Float): void` */
 /* @@? 27:5 Error Semantic error ESE0142: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Double): void` */
-/* @@@ label Error Semantic error ESE0087: Property 'price' does not exist on type 'A' */
+/* @@? 27:23 Error Semantic error ESE0087: Property 'price' does not exist on type 'A' */

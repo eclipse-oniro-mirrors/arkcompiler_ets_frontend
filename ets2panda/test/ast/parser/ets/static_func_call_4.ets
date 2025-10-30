@@ -17,7 +17,7 @@ class A {
   static bar() {}
 }
 
-new A()./* @@ label */bar()
+new A().bar()
 
 
-/* @@@ label Error Semantic error ESE0207: 'bar' is a static property of 'A' */
+/* @@? 20:9 Error Semantic error ESE0207: 'bar' is a static property of 'A' */
