@@ -180,7 +180,8 @@ export class DependencyAnalyzer {
     }
 
     private formExecCmd(input: string, output: string, config: string): string {
-        let cmd = [path.resolve(this.binPath)];
+        let cmd = [];
+        cmd.push('"' + path.resolve(this.binPath) + '"');
         cmd.push('@' + '"' + input + '"');
         cmd.push('--arktsconfig=' + '"' + config + '"');
         cmd.push('--output=' + '"' + output + '"');
