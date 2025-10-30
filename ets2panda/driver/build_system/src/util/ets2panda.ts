@@ -44,7 +44,8 @@ import {
     DECL_TS_SUFFIX,
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
-    TS_SUFFIX
+    TS_SUFFIX,
+    ENABLE_DECLARATION_BARRIER
 } from '../pre_define';
 import {
     PluginDriver,
@@ -175,6 +176,11 @@ export class Ets2panda {
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         const { arkts, arktsGlobal } = this.koalaModule;
+        if (!ENABLE_DECLARATION_BARRIER) {
+            // workaround for disabling synchronization
+            // start next task not waiting emitting the declaration
+            declGenCb?.();
+        }
         try {
             statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
@@ -277,6 +283,11 @@ export class Ets2panda {
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         let { arkts, arktsGlobal } = this.koalaModule;
+        if (!ENABLE_DECLARATION_BARRIER) {
+            // WORKAROUND for disabling synchronization
+            // start next task not waiting emitting the declaration
+            declGenCb?.();
+        }
         try {
             statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;

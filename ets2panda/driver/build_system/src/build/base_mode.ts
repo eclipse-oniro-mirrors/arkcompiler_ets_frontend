@@ -24,6 +24,7 @@ import {
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
+    CLUSTER_FILES_TRESHOLD,
 } from '../pre_define';
 import {
     ensurePathExists,

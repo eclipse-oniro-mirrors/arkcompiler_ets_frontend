@@ -27,7 +27,8 @@ import {
     FILE_HASH_CACHE,
     ETSCACHE_SUFFIX,
     ABC_SUFFIX,
-    CLUSTER_FILES_TRESHOLD
+    CLUSTER_FILES_TRESHOLD,
+    ENABLE_DECL_CACHE
 } from './pre_define';
 
 import {
@@ -311,7 +312,7 @@ export class DependencyAnalyzer {
                 declgenConfig: {
                     output: module.declgenV2OutPath!
                 },
-                type: CompileJobType.DECL_ABC
+                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
             });
 
             for (const dependency of dependencyMap.dependencies[file]) {
@@ -348,7 +349,7 @@ export class DependencyAnalyzer {
                 declgenConfig: {
                     output: lhs.data.declgenConfig.output
                 },
-                type: CompileJobType.DECL_ABC
+                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
             }
         };
         const cycleMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
@@ -370,6 +371,27 @@ export class DependencyAnalyzer {
             fs.writeFileSync(path.resolve(this.cacheDir, 'graph.collapsed.dot'), dotGraphDump(dependencyGraph), 'utf-8');
         }
 
+        if (this.clusteredBuild) {
+            let mainModule = Array.from(moduleInfos.values()).find((module) => module.isMainModule)!
+            this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
+            const nodeIds: string[] = Graph.topologicalSort(dependencyGraph);
+            while(nodeIds.length > 0) {
+                let cluster = dependencyGraph.getNodeById(nodeIds.shift()!);
+                cluster.data.fileInfo.arktsConfig = mainModule.arktsConfigFile;
+                cluster.data.fileInfo.moduleName = mainModule.packageName;
+                cluster.data.fileInfo.moduleRoot = mainModule.moduleRootPath;
+                for (let counter = 0; counter < CLUSTER_FILES_TRESHOLD - 1 && nodeIds.length > 0; counter++) {
+                    let nodeToMerge = dependencyGraph.getNodeById(nodeIds.shift()!);
+                    cluster = dependencyGraph.mergeNodes(cluster, nodeToMerge, dataMerger);
+                }
+            }
+
+            dependencyGraph.verify();
+            if (this.dumpGraph) {
+                fs.writeFileSync(path.resolve(this.cacheDir, 'graph.clustered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
+            }
+        }
+
         // NOTE: some workaround to gather all outputs
         // NOTE: likely to be refactored
         dependencyGraph.nodes.forEach((node: GraphNode<CompileJobInfo>) => {
@@ -384,25 +406,6 @@ export class DependencyAnalyzer {
             fs.writeFileSync(path.resolve(this.cacheDir, 'graph.filtered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
         }
 
-        if (this.clusteredBuild) {
-            this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
-            const nodeIds: string[] = Graph.topologicalSort(dependencyGraph);
-            let currentClusterNode = dependencyGraph.getNodeById(nodeIds.shift()!);
-            for (const nodeId of nodeIds) {
-                const node = dependencyGraph.getNodeById(nodeId);
-                if (currentClusterNode.descendants.has(nodeId) &&
-                    (currentClusterNode.data.fileList.length + node.data.fileList.length) < CLUSTER_FILES_TRESHOLD) {
-                    currentClusterNode = dependencyGraph.mergeNodes(currentClusterNode, node, dataMerger);
-                } else {
-                    currentClusterNode = node;
-                }
-            }
-
-            dependencyGraph.verify();
-            if (this.dumpGraph) {
-                fs.writeFileSync(path.resolve(this.cacheDir, 'graph.clustered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
-            }
-        }
 
         this.statsRecorder.record(formEvent(DepAnalyzerEvent.SAVE_HASH));
         this.saveHashCache();
@@ -419,7 +422,7 @@ export class DependencyAnalyzer {
                 // Still has dependencies, so do not remove the node
                 // Update file hashes
                 node.data.fileList.map((file: string) => updateFileHash(file, this.filesHashCache));
-                node.data.type = CompileJobType.DECL_ABC;
+                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
                 continue;
             }
 
@@ -436,7 +439,7 @@ export class DependencyAnalyzer {
                     graph.removeNode(node);
                 }
 
-                node.data.type = CompileJobType.DECL_ABC;
+                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
                 continue;
             }
 
@@ -454,7 +457,7 @@ export class DependencyAnalyzer {
             }
 
             node.data.type &= CompileJobType.NONE;
-            if (genDecl) {
+            if (genDecl && ENABLE_DECL_CACHE) {
                 node.data.type |= CompileJobType.DECL;
             }
 
