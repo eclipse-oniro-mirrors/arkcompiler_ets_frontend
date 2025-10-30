@@ -103,17 +103,22 @@ function testNPE(): void {
     try {
         (o as Object | null)!;
         arktest.assertTrue(false, "this must not be executed")
-    } catch (ex: NullPointerError) {
-        npe_caught = true;
+    } catch (ex) {
+        if (ex instanceof NullPointerError) {
+            npe_caught = true;
+        }
     }
 
     arktest.assertTrue(npe_caught, "NPE must be caught")
 
+    npe_caught = false;
     try {
         baz()!;
         arktest.assertTrue(false, "this must not be executed")
-    } catch (ex: NullPointerError) {
-        npe_caught = true;
+    } catch (ex) {
+        if (ex instanceof NullPointerError) {
+            npe_caught = true;
+        }
     }
 
     arktest.assertTrue(npe_caught, "NPE must be caught")

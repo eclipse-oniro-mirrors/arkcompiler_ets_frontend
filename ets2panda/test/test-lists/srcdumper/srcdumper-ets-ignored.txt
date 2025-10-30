@@ -121,36 +121,6 @@ ast/compiler/ets/import_export/test2_1.ets
 ast/compiler/ets/import_export/test3_1.ets
 ast/compiler/ets/namespace_import/namespace_export2.ets
 
-#28389 - Remove catch(e: SomeType) from srcdumper tests
-compiler/ets/catch-soft-keyword.ets
-compiler/ets/catchParamScope.ets
-compiler/ets/tryDefaultCatches.ets
-runtime/ets/CastReference3.ets
-runtime/ets/CastReference4.ets
-runtime/ets/Enum3.ets
-runtime/ets/Enum4.ets
-runtime/ets/Enum5.ets
-runtime/ets/OptionalChains.ets
-runtime/ets/SmartCast_08.ets
-runtime/ets/UnboxingCheckcast.ets
-runtime/ets/array-new-catched.ets
-runtime/ets/division-by-zero.ets
-runtime/ets/finallyClauseThrow.ets
-runtime/ets/finallyExecutedAbruptly.ets
-runtime/ets/generic_Error_class.ets
-runtime/ets/generic_exception.ets
-runtime/ets/member-expression-nullptr.ets
-runtime/ets/multi-array-new-catched-1.ets
-runtime/ets/multi-array-new-catched-2.ets
-runtime/ets/notNull.ets
-runtime/ets/nullishTypeCodesamples.ets
-runtime/ets/optional-chaining-function-call.ets
-runtime/ets/overload_declaration/notNull.ets
-runtime/ets/top_level_02.ets
-runtime/ets/try-catch-error.ets
-runtime/ets/try-catch.ets
-runtime/ets/union_type_RTE.ets
-
 #Issue 30577
 runtime/ets/re_export_default/reexport1.ets
 runtime/ets/re_export_default/reexport2.ets
