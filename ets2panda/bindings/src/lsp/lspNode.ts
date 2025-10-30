@@ -182,8 +182,8 @@ export class LspDefinitionData extends LspNode {
     this.length = global.es2panda._getLengthFromDef(peer);
   }
   readonly fileName: String;
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
   nodeInfos?: NodeInfo[];
 }
 
@@ -195,8 +195,8 @@ export class LspReferenceData extends LspNode {
     this.length = global.es2panda._getReferenceLength(peer);
   }
   readonly fileName: String;
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
   nodeInfos?: NodeInfo[];
 }
 
@@ -228,8 +228,8 @@ export class LspTextSpan extends LspNode {
     this.start = global.es2panda._getTextSpanStart(peer);
     this.length = global.es2panda._getTextSpanLength(peer);
   }
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
 }
 
 export class LspSourceLocation extends LspNode {

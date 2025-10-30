@@ -18,6 +18,7 @@ import * as path from 'path';
 import { ARKTSCONFIG_JSON_FILE, LANGUAGE_VERSION } from '../common/preDefine';
 import { BuildConfig, ModuleInfo } from '../common/types';
 import { ArkTSConfigGenerator } from '../common/arkTSConfigGenerator';
+import { logger } from './logger';
 
 function collectDepModuleInfos(moduleInfo: ModuleInfo, allBuildConfig: Record<string, BuildConfig>): void {
   let dynamicDepModules: string[] = [];
@@ -50,9 +51,6 @@ function collectModuleInfos(allBuildConfig: Record<string, BuildConfig>): Record
 }
 
 export function generateModuleInfo(allBuildConfig: Record<string, BuildConfig>, buildConfig: BuildConfig): ModuleInfo {
-  if (!buildConfig.packageName || !buildConfig.moduleRootPath) {
-    console.error('Main buildConfig info from hvigor is not correct.');
-  }
   let moduleInfo: ModuleInfo = {
     packageName: buildConfig.packageName,
     moduleRootPath: buildConfig.moduleRootPath,
