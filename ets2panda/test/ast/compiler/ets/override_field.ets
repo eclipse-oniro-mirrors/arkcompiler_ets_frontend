@@ -26,6 +26,8 @@ class A extends Base {
 }
 
 /* @@? 22:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 22:27 Error Syntax error ESY69198: Not allowed to contain the modifier 'static' along with the modifier 'override'. */
 /* @@? 23:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
 /* @@? 24:14 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
 /* @@? 25:21 Error Semantic error ESE49702: The 'override' modifier is invalid here because the base class 'Base' does not declare this member. */
+/* @@? 25:28 Error Syntax error ESY69198: Not allowed to contain the modifier 'static' along with the modifier 'override'. */
