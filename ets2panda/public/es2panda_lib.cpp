@@ -1314,28 +1314,9 @@ extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2pand
 }
 
 // #28937 Will be removed after binary import support is fully implemented.
-__attribute__((unused)) static std::string GetFileNameByPath(const std::string &path)
-{
-    auto lastSlash = path.find_last_of("/\\");
-    std::string filename = (lastSlash == std::string::npos) ? path : path.substr(lastSlash + 1);
-
-    auto lastDot = filename.find_last_of('.');
-    if (lastDot != std::string::npos) {
-        filename = filename.substr(0, lastDot);
-    }
-
-    lastDot = filename.find_last_of('.');
-    if (lastDot != std::string::npos) {
-        filename = filename.substr(0, lastDot);
-    }
-
-    return filename;
-}
-
-// #28937 Will be removed after binary import support is fully implemented.
 __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const std::string &outputPath)
 {
-    std::string outputStem = GetFileNameByPath(outputPath);
+    std::string outputDir = ark::os::RemoveExtension(outputPath);
     auto &externalSources = ctxImpl->parserProgram->DirectExternalSources();
 
     for (const auto &entry : externalSources) {
@@ -1344,7 +1325,8 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
                 continue;
             }
 
-            if (prog->FileName().Mutf8() == outputStem) {
+            std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath().Mutf8());
+            if (util::StringView(outputDir).EndsWith(inputRelativeDir)) {
                 compiler::HandleGenerateDecl(*prog, ctxImpl, outputPath);
                 return !ctxImpl->diagnosticEngine->IsAnyError();
             }
