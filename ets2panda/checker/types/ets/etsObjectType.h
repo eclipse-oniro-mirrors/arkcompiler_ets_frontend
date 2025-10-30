@@ -212,6 +212,11 @@ public:
         return baseType_;
     }
 
+    const ArenaSet<ETSObjectType *> &TransitiveSupertypes() const noexcept
+    {
+        return transitiveSupertypes_;
+    }
+
     ETSObjectType const *GetConstOriginalBaseType() const noexcept;
 
     ETSObjectType *GetOriginalBaseType() const noexcept

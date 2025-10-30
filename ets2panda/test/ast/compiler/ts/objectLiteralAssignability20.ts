@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,4 @@ var a: { new(a: number, b: string): number, (a: number, b: string): string };
 var b: { new(a: number, b: string): number, (a: string, b: string): string }
 /* @@ label */a = b;
 
-/* @@@ label Error TypeError: Type '{ (a: string, b: string): string; new (a: number, b: string): number; }' is not assignable to type '{ (a: number, b: string): string; new (a: number, b: string): number; }'.  */
+/* @@@ label Error TypeError: Type '{ (p1: string, p2: string): string; new (p1: number, p2: string): number; }' is not assignable to type '{ (p1: number, p2: string): string; new (p1: number, p2: string): number; }'.  */

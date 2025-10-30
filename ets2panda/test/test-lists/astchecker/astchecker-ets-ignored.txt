@@ -183,5 +183,8 @@ ast/parser/ts/InvalidStatements.ts
 
 ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
 
+#29727
+ast/compiler/ets/first_match/override.ets
+
 #30971
 ast/compiler/ets/nagative_trailingLambda_abort.ets

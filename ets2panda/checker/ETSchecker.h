@@ -66,6 +66,7 @@ using ComputedAbstracts =
     ArenaUnorderedMap<ETSObjectType *, std::pair<ArenaVector<ETSFunctionType *>, ArenaUnorderedSet<ETSObjectType *>>>;
 using ArrayMap = ArenaUnorderedMap<std::pair<Type *, bool>, ETSArrayType *, PairHash>;
 using ObjectInstantiationMap = ArenaUnorderedMap<ETSObjectType *, ArenaUnorderedMap<util::StringView, ETSObjectType *>>;
+using FunctionTypeInstantiationMap = std::unordered_map<std::string, ETSFunctionType *>;
 using GlobalArraySignatureMap = ArenaUnorderedMap<const ETSArrayType *, Signature *>;
 using DynamicCallIntrinsicsMap = ArenaUnorderedMap<Language, ArenaUnorderedMap<util::StringView, ir::ScriptFunction *>>;
 using FunctionSignatureMap = ArenaUnorderedMap<ETSFunctionType *, ETSFunctionType *>;
@@ -214,7 +215,7 @@ public:
     Type *MaybeGradualType(ir::AstNode *node, ETSObjectType *type);
     Type *BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl);
     ETSObjectType *GetSuperType(ETSObjectType *type);
-    ArenaVector<ETSObjectType *> GetInterfaces(ETSObjectType *type);
+    ArenaVector<ETSObjectType *> const &GetInterfaces(ETSObjectType *type);
     void GetInterfacesOfClass(ETSObjectType *type);
     void GetInterfacesOfInterface(ETSObjectType *type);
     void ValidateImplementedInterface(ETSObjectType *type, Type *interface, std::unordered_set<Type *> *extendsSet,
@@ -308,6 +309,7 @@ public:
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     ETSObjectType *GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target);
     bool HasETSFunctionType(ir::TypeNode *typeAnnotation);
+    Type *GetConstantBuiltinType(Type *type);
 
     void VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType);
 
@@ -979,6 +981,7 @@ public:
         }
         dynamicLambdaSignatureCache_.clear();
         functionalInterfaceCache_.clear();
+        constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
         for (auto &dynamicCallNamesMap : dynamicCallNames_) {
             dynamicCallNamesMap.clear();
@@ -1124,6 +1127,7 @@ private:
     ArrayMap arrayTypes_;
     std::vector<ConstraintCheckRecord> pendingConstraintCheckRecords_ {};
     ObjectInstantiationMap objectInstantiationMap_;
+    FunctionTypeInstantiationMap functionTypeInstantiationMap_;  // not an arena container
     FunctionSignatureMap invokeToArrowSignatures_;
     FunctionInterfaceMap arrowToFuncInterfaces_;
     size_t constraintCheckScopesCount_ {0};
@@ -1134,6 +1138,7 @@ private:
     std::array<DynamicCallIntrinsicsMap, 2U> dynamicIntrinsics_;
     std::array<DynamicClassIntrinsicsMap, 2U> dynamicClasses_;
     DynamicLambdaObjectSignatureMap dynamicLambdaSignatureCache_;
+    std::unordered_map<Type *, Type *> constantBuiltinTypesCache_;
     FunctionalInterfaceMap functionalInterfaceCache_;
     TypeMapping apparentTypes_;
     std::array<DynamicCallNamesMap, 2U> dynamicCallNames_;

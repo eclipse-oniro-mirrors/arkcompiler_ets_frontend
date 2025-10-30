@@ -2466,7 +2466,7 @@ InnerSourceParser::InnerSourceParser(ETSParser *parser)
     : parser_(parser),
       savedLexer_(parser_->Lexer()),
       savedSourceCode_(parser_->GetProgram()->SourceCode()),
-      savedSourceFile_(parser_->GetProgram()->SourceFilePath()),
+      savedSourceFile_(parser_->GetProgram()->SourceFile()),
       savedSourceFilePath_(parser_->GetProgram()->SourceFileFolder()),
       savedRelativeFilePath_(parser_->GetProgram()->RelativeFilePath())
 {

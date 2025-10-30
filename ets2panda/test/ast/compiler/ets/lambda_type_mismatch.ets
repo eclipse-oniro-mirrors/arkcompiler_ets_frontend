@@ -19,6 +19,6 @@ let fob:(...args:number[])=>number = (...args:number[]) =>{}
 
 let foc:(c:string, ...args:number[])=>string = (c:number, ...args:string[]):string=>{}
 
-/* @@? 16:46 Error TypeError: Type '(c: Double, ...args: Array<Double>) => void' cannot be assigned to type '(c: String, ...args: Array<Double>) => void' */
-/* @@? 18:38 Error TypeError: Type '(...args: Array<Double>) => void' cannot be assigned to type '(...args: Array<Double>) => Double' */
-/* @@? 20:48 Error TypeError: Type '(c: Double, ...args: Array<String>) => String' cannot be assigned to type '(c: String, ...args: Array<Double>) => String' */
+/* @@? 16:46 Error TypeError: Type '(p1: Double, ...p2: Array<Double>) => void' cannot be assigned to type '(p1: String, ...p2: Array<Double>) => void' */
+/* @@? 18:38 Error TypeError: Type '(...p1: Array<Double>) => void' cannot be assigned to type '(...p1: Array<Double>) => Double' */
+/* @@? 20:48 Error TypeError: Type '(p1: Double, ...p2: Array<String>) => String' cannot be assigned to type '(p1: String, ...p2: Array<Double>) => String' */

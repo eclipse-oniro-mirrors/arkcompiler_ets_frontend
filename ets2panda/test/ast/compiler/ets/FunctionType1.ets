@@ -26,4 +26,4 @@ function main(): void {
     func = /* @@ label */klass.a;
 }
 
-/* @@@ label Error TypeError: Type '(a: Int, b: Int) => int' cannot be assigned to type '(a: Int, b: Int) => void'  */
+/* @@@ label Error TypeError: Type '(p1: Int, p2: Int) => int' cannot be assigned to type '(p1: Int, p2: Int) => void'  */
