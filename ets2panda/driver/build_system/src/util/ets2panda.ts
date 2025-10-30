@@ -266,6 +266,7 @@ export class Ets2panda {
         jobId: string,
         job: CompileJobInfo,
         isDebug: boolean = false,
+        dumpPerf: boolean = false,
         declGenCb?: () => void,
         compAbcCb?: () => void
     ): void {
@@ -280,6 +281,9 @@ export class Ets2panda {
         const { output: outputFilePath } = job.fileInfo;
 
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true)
+        if (dumpPerf) {
+            ets2pandaCmd.push('--dump-perf-metrics');
+        }
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         let { arkts, arktsGlobal } = this.koalaModule;

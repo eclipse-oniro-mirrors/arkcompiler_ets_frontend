@@ -55,6 +55,7 @@ export interface BuildBaseConfig {
     recordType?: 'OFF' | 'ON';
     dumpDependencyGraph?: boolean;
     clusteredBuild?: boolean;
+    dumpPerf?: boolean;
 }
 
 export interface ArkTSGlobal {
