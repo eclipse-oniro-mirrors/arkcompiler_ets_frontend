@@ -123,17 +123,17 @@ export class Ets2panda {
         Ets2panda.instance = undefined;
     }
 
-    public initalize() {
+    public initalize(): void {
         const arkts: ArkTS = this.koalaModule.arkts;
         arkts.MemInitialize();
     }
 
-    public finalize() {
+    public finalize(): void {
         const arkts: ArkTS = this.koalaModule.arkts;
         arkts.MemFinalize();
     }
 
-    private transformImportStatementsWithAliasConfig() {
+    private transformImportStatementsWithAliasConfig(): void {
         if (this.plugins === undefined) {
             return;
         }

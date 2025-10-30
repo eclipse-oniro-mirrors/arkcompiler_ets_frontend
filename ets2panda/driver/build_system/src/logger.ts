@@ -181,19 +181,19 @@ class ConsoleLogger implements ILogger {
     private constructor() { }
 
     public printInfo(message: string): void {
-        console.info("[INFO]", message);
+        console.info('[INFO]', message);
     }
 
     public printWarn(message: string): void {
-        console.warn("[WARN]", message);
+        console.warn('[WARN]', message);
     }
 
     public printDebug(message: string): void {
-        console.debug("[DEBUG]", message);
+        console.debug('[DEBUG]', message);
     }
 
     public printError(error: LogData): void {
-        console.error("[ERROR]", error.toString());
+        console.error('[ERROR]', error.toString());
     }
 
     public printErrorAndExit(error: LogData): void {

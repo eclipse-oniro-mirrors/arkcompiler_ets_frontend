@@ -53,7 +53,7 @@ function compile(id: string, task: ProcessCompileTask): void {
             ets2panda.compileSimultaneous(
                 id,
                 task,
-                task.buildConfig.buildMode == BUILD_MODE.DEBUG,
+                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
                 declGeneratedCb,
                 abcCompiledCb
             )
@@ -61,7 +61,7 @@ function compile(id: string, task: ProcessCompileTask): void {
             ets2panda.compile(
                 id,
                 task,
-                task.buildConfig.buildMode == BUILD_MODE.DEBUG,
+                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
                 declGeneratedCb,
                 abcCompiledCb
             )
@@ -83,7 +83,7 @@ function compile(id: string, task: ProcessCompileTask): void {
     Ets2panda.destroyInstance();
 }
 
-process.on("message", (message: {
+process.on('message', (message: {
     type: WorkerMessageType,
     data: {
         taskId: string,
@@ -102,7 +102,7 @@ process.on("message", (message: {
                 break;
         }
     } catch (error) {
-        logger.printDebug("Error occured");
+        logger.printDebug('Error occured');
         if (error instanceof Error) {
             let logData: LogData = LogDataFactory.newInstance(
                 ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
@@ -117,6 +117,6 @@ process.on("message", (message: {
                 }
             });
         }
-        logger.printDebug("Sent the error to the parent");
+        logger.printDebug('Sent the error to the parent');
     }
 });

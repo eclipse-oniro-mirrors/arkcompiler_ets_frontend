@@ -47,6 +47,7 @@ import {
     CompileJobInfo,
     CompileJobType,
     DeclgenV1JobInfo,
+    ES2PANDA_MODE
 } from '../types';
 import {
     ArkTSConfigGenerator
@@ -79,7 +80,7 @@ enum BuildSystemEvent {
     DECLGEN_V1_PARALLEL = 'Generate v1 declaration files (parallel)',
 }
 
-function formEvent(event: BuildSystemEvent) {
+function formEvent(event: BuildSystemEvent): string {
     return '[Build system] ' + event;
 }
 
@@ -111,67 +112,67 @@ export abstract class BaseMode {
         this.backwardCompatibilityWorkaroundStub()
     }
 
-    public get abcLinkerPath() {
+    public get abcLinkerPath(): string | undefined {
         return this.buildConfig.abcLinkerPath
     }
 
-    public get hasMainModule() {
+    public get hasMainModule(): boolean {
         return this.buildConfig.hasMainModule
     }
 
-    public get useEmptyPackage() {
+    public get useEmptyPackage(): boolean {
         return this.buildConfig.useEmptyPackage ?? false
     }
 
-    public get frameworkMode() {
+    public get frameworkMode(): boolean {
         return this.buildConfig.frameworkMode ?? false
     }
 
-    public get genDeclAnnotations() {
+    public get genDeclAnnotations(): boolean {
         return this.buildConfig.genDeclAnnotations ?? true
     }
 
-    public get skipDeclCheck() {
+    public get skipDeclCheck(): boolean {
         return this.buildConfig.skipDeclCheck ?? true;
     }
 
-    public get es2pandaMode() {
+    public get es2pandaMode(): ES2PANDA_MODE {
         return this.buildConfig.es2pandaMode
     }
 
-    public get dumpDependencyGraph() {
+    public get dumpDependencyGraph(): boolean | undefined {
         return this.buildConfig.dumpDependencyGraph
     }
 
-    public get entryFile() {
+    public get entryFile(): string {
         return this.buildConfig.entryFile;
     }
 
-    public get mainPackageName() {
+    public get mainPackageName(): string {
         return this.buildConfig.packageName;
     }
 
-    public get mainModuleRootPath() {
+    public get mainModuleRootPath(): string {
         return this.buildConfig.moduleRootPath;
     }
 
-    public get mainModuleType() {
+    public get mainModuleType(): string {
         return this.buildConfig.moduleType;
     }
 
-    public get outputDir() {
+    public get outputDir(): string {
         return this.buildConfig.loaderOutPath;
     }
 
-    public get cacheDir() {
+    public get cacheDir(): string {
         return this.buildConfig.cachePath;
     }
 
-    public get dependencyModuleList() {
+    public get dependencyModuleList(): DependencyModuleConfig[] {
         return this.buildConfig.dependencyModuleList;
     }
 
-    public get enableDeclgenEts2Ts() {
+    public get enableDeclgenEts2Ts(): boolean {
         return this.buildConfig.enableDeclgenEts2Ts;
     }
 
@@ -183,11 +184,11 @@ export abstract class BaseMode {
         this.buildConfig.isBuildConfigModified = modified;
     }
 
-    public get byteCodeHar() {
+    public get byteCodeHar(): boolean | undefined {
         return this.buildConfig.byteCodeHar;
     }
 
-    public get mainSourceRoots() {
+    public get mainSourceRoots(): string[] {
         return this.buildConfig.sourceRoots;
     }
 
@@ -203,11 +204,11 @@ export abstract class BaseMode {
         return this.buildConfig.declgenBridgeCodePath;
     }
 
-    public get isDebug() {
+    public get isDebug(): boolean {
         return this.buildConfig.buildMode === BUILD_MODE.DEBUG;
     }
 
-    public get recordType() {
+    public get recordType(): 'OFF' | 'ON' | undefined {
         return this.buildConfig.recordType
     }
 
@@ -235,7 +236,7 @@ export abstract class BaseMode {
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
-            this.logger.printWarn("Nothing to compile. Exiting...")
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 
@@ -255,7 +256,7 @@ export abstract class BaseMode {
             const id = task.id;
             if (job.fileList.length > 1) {
                 // Compile cycle simultaneous
-                this.logger.printDebug("Compiling cycle....")
+                this.logger.printDebug('Compiling cycle....')
                 this.logger.printDebug(`file list: \n${job.fileList.join('\n')}`)
                 const res = this.compileSimultaneous(id, job)
                 success = res && success;
@@ -527,7 +528,7 @@ export abstract class BaseMode {
         this.processEntryFiles();
     }
 
-    protected backwardCompatibilityWorkaroundStub() {
+    protected backwardCompatibilityWorkaroundStub(): void {
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!
         // NOTE: workaround (just to add entryFile to mainModule)
         // NOTE: to be refactored
@@ -590,7 +591,7 @@ export abstract class BaseMode {
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
-            this.logger.printWarn("Nothing to compile. Exiting...")
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 
@@ -675,7 +676,7 @@ export abstract class BaseMode {
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
-            this.logger.printWarn("Nothing to compile. Exiting...")
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 
@@ -712,7 +713,7 @@ export abstract class BaseMode {
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
-            this.logger.printWarn("Nothing to compile. Exiting...")
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 

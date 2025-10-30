@@ -970,7 +970,15 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getEditsForRefactor(ctx: KPtr, refactorName: string, actionName: string, start: number, end: number, userPrefsPtr?: KPtr | 0, formattingSettings?: KPtr | 0): KPtr {
+  _getEditsForRefactor(
+      ctx: KPtr,
+      refactorName: string,
+      actionName: string,
+      start: number,
+      end: number,
+      userPrefsPtr?: KPtr | 0,
+      formattingSettings?: KPtr | 0
+  ): KPtr {
     throw new Error('Not implemented');
   }
 

@@ -219,7 +219,7 @@ export function isMixCompileProject(buildConfig: BuildConfig): boolean {
 }
 
 export function checkDependencyModuleInfoCorrectness(module: DependencyModuleConfig): boolean {
-    return (module.packageName && module.modulePath && module.sourceRoots && module.entryFile) != "";
+    return (module.packageName && module.modulePath && module.sourceRoots && module.entryFile) !== '';
 }
 
 export function computeHash(str: string): string {
@@ -264,7 +264,7 @@ export function formEts2pandaCmd(
 export function updateFileHash(file: string, hashCache: Record<string, string>): boolean {
     const fileHash: string = getFileHash(file);
     const currHash: string = hashCache[file];
-    if (fileHash == currHash) {
+    if (fileHash === currHash) {
         return false;
     }
 

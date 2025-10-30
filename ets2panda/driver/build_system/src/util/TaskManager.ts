@@ -172,16 +172,16 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.logger.printInfo(`Available workers: ${this.maxWorkers}`)
     }
 
-    private dispatchNextOrShutdownWorkers() {
-        if (this.taskQueue.length == 0 && this.idleWorkers.length == this.maxWorkers) {
-            this.logger.printInfo("All tasks were completed");
+    private dispatchNextOrShutdownWorkers(): void {
+        if (this.taskQueue.length === 0 && this.idleWorkers.length === this.maxWorkers) {
+            this.logger.printInfo('All tasks were completed');
             this.shutdownWorkers();
             return;
         }
         this.dispatchNext();
     }
 
-    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage) {
+    private handleWorkerMessage(workerInfo: WorkerInfo, message: WorkerMessage): void {
         this.logger.printDebug(`WorkerMessage: ${JSON.stringify(message, null, 1)}`)
         switch (message.type) {
             case WorkerMessageType.ERROR_OCCURED:
@@ -218,7 +218,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         }
     }
 
-    private handleWorkerError(error: Error) {
+    private handleWorkerError(error: Error): void {
         this.logger.printDebug('handleWorkerError')
 
         const logData = LogDataFactory.newInstance(
@@ -228,7 +228,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         this.logger.printError(logData)
     }
 
-    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null) {
+    private handleWorkerExit(workerInfo: WorkerInfo, code: number | null, signal: NodeJS.Signals | null): void {
         this.logger.printDebug('handleWorkerExit')
 
         const taskId: string | undefined = workerInfo.currentTaskId;
@@ -274,9 +274,9 @@ export class TaskManager<PayloadT extends JobInfo> {
         }
     }
 
-    public initTaskQueue() {
+    public initTaskQueue(): void {
         this.buildGraph.nodes.forEach((node: GraphNode<PayloadT>) => {
-            if (node.predecessors.size == 0) {
+            if (node.predecessors.size === 0) {
                 this.taskQueue.push({
                     id: node.id,
                     payload: node.data
@@ -294,8 +294,8 @@ export class TaskManager<PayloadT extends JobInfo> {
             })
         }));
 
-        this.logger.printInfo("All workers were shutdown")
-        this.logger.printDebug("TaskManager.compile exit")
+        this.logger.printInfo('All workers were shutdown')
+        this.logger.printDebug('TaskManager.compile exit')
 
         const failedTask = this.completedTasks.find((task) => !task.success!);
         if (failedTask) {
@@ -339,7 +339,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         }
     }
 
-    private settleTask(completedTaskId: string, failed: boolean = false) {
+    private settleTask(completedTaskId: string, failed: boolean = false): void {
         const task = this.runningTasks.get(completedTaskId);
         if (!task) {
             this.logger.printInfo(`Task [${completedTaskId}] has already been removed`)
@@ -357,7 +357,7 @@ export class TaskManager<PayloadT extends JobInfo> {
         graphNode.descendants.forEach((descendant: string) => {
             const descendantNode = this.buildGraph.getNodeById(descendant);
             descendantNode.predecessors.delete(completedTaskId);
-            if (descendantNode.predecessors.size == 0) {
+            if (descendantNode.predecessors.size === 0) {
                 this.taskQueue.push({
                     id: descendantNode.id,
                     payload: descendantNode.data
@@ -421,7 +421,7 @@ export class TaskManager<PayloadT extends JobInfo> {
     }
 
     public async shutdownWorkers(): Promise<void> {
-        this.logger.printDebug("Shutdown workers...")
+        this.logger.printDebug('Shutdown workers...')
         await Promise.allSettled(this.workers.map((workerInfo) =>
             new Promise<void>(() => {
                 workerInfo.worker.stop();

@@ -58,7 +58,7 @@ export class DriverError extends Error {
         this.logData = logData
     }
 
-    toString() {
+    toString(): string {
         return this.logData.toString()
     }
 }
