@@ -83,6 +83,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/organize_imports.cpp",
     "src/quick_info.cpp",
     "src/refactor_provider.cpp",
+    "src/refactors/convert_arrow_braces.cpp",
     "src/refactors/convert_chain.cpp",
     "src/refactors/convert_export.cpp",
     "src/refactors/convert_function.cpp",
