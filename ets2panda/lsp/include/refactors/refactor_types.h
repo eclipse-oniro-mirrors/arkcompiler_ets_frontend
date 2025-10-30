@@ -85,6 +85,7 @@ struct ApplicableRefactorInfo {
 };
 
 namespace refactor_name {
+constexpr std::string_view CONVERT_ARROW_BRACES_REFACTOR_NAME = "ConvertArrowBracesRefactor";
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_NAME = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "ConvertExportRefactor";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_NAME = "Convert import";
@@ -106,6 +107,7 @@ constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_NAME = "Generate Constr
 }  // namespace refactor_name
 
 namespace refactor_description {
+constexpr std::string_view CONVERT_ARROW_BRACES_REFACTOR_DESC = "Add or remove braces in an arrow function";
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_DESC = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_DESC = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional chain expression";

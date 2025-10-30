@@ -80,6 +80,7 @@ set(ES2PANDA_LSP_SRC
   ./src/applicable_refactors.cpp
   ./src/get_edits_for_refactor.cpp
   ./src/refactor_provider.cpp
+  ./src/refactors/convert_arrow_braces.cpp
   ./src/refactors/convert_chain.cpp
   ./src/refactors/convert_export.cpp
   ./src/refactors/convert_function.cpp
