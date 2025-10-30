@@ -28,7 +28,8 @@ import {
     ETSCACHE_SUFFIX,
     ABC_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
-    ENABLE_DECL_CACHE
+    ENABLE_DECL_CACHE,
+    ENABLE_CLUSTERS,
 } from './pre_define';
 
 import {
@@ -106,7 +107,7 @@ export class DependencyAnalyzer {
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
-    constructor(buildConfig: BuildConfig) {
+    constructor(buildConfig: BuildConfig, clusteredBuild: boolean = ENABLE_CLUSTERS) {
         this.logger = Logger.getInstance();
 
         this.entryFiles = new Set<string>(buildConfig.compileFiles);
@@ -125,8 +126,8 @@ export class DependencyAnalyzer {
             `Dependency analyzer`
         );
 
+        this.clusteredBuild = clusteredBuild;
         this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
-        this.clusteredBuild = buildConfig.clusteredBuild ?? false;
     }
 
     private loadHashCache(): Record<string, string> {
