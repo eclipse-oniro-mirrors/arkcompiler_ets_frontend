@@ -34,9 +34,9 @@ class G<T> {}
 
 function InstanceTesting(){
   arktest.assertEQ(Class.from<C>(), Class.of(new C))
-  
+
   arktest.assertEQ(Class.from<null>(), Class.of(null))
-  arktest.assertEQ(Class.from<int | string>(), Class.from<C>().getInstanceMethodByName('retUnion')!.getReturnType())
+  arktest.assertEQ(Class.from<int | string>(), Class.from<C>().getInstanceMethod('retUnion')!.getReturnType())
   arktest.assertEQ(Class.from<string | int>(), Class.from<int | string>())
   arktest.assertEQ(Class.from<int | undefined>(), Class.from<int>())
   arktest.assertEQ(Class.from<C | undefined>(), Class.from<C>())
