@@ -281,10 +281,10 @@ export enum Es2pandaImportFlags {
 }
 
 export enum ES2PANDA_MODE {
-    RUN_PARALLEL = "parallel",
-    RUN_CONCURRENT = "concurrent",
-    RUN_SIMULTANEOUS = "simultaneous",
-    RUN = "sequential"
+    RUN_PARALLEL = 'parallel',
+    RUN_CONCURRENT = 'concurrent',
+    RUN_SIMULTANEOUS = 'simultaneous',
+    RUN = 'sequential'
 };
 
 export interface DynamicFileContext {
@@ -304,16 +304,18 @@ export interface DependencyItem {
     alias?: string[]
 }
 
+export interface CompilerOptions {
+    package: string;
+    baseUrl: string;
+    paths: Record<string, string[]>;
+    dependencies: Record<string, DependencyItem>;
+    useEmptyPackage?: boolean;
+    projectRootPath?: string;
+    cacheDir?: string;
+}
+
 export interface ArkTSConfigObject {
-    compilerOptions: {
-        package: string,
-        baseUrl: string,
-        paths: Record<string, string[]>;
-        dependencies: Record<string, DependencyItem>;
-        useEmptyPackage?: boolean;
-        projectRootPath?: string,
-        cacheDir?: string,
-    }
+    compilerOptions: CompilerOptions;
 };
 
 export interface JobInfo {

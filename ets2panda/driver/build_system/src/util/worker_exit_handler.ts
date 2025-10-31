@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import { ErrorCode } from "../util/error";
-import { getEs2pandaPath } from "../init/process_build_config";
-import { LogDataFactory, LogData } from "../logger";
-import { ProcessCompileTask, ProcessDeclgenV1Task, JobInfo } from "../types";
-import { Task, WorkerInfo } from "./TaskManager";
+import { ErrorCode } from '../util/error';
+import { getEs2pandaPath } from '../init/process_build_config';
+import { LogDataFactory, LogData } from '../logger';
+import { ProcessCompileTask, ProcessDeclgenV1Task, JobInfo } from '../types';
+import { Task, WorkerInfo } from './TaskManager';
 
 function getErrorMessage<PayloadT extends JobInfo>(
     workerInfo: WorkerInfo,
@@ -27,16 +27,16 @@ function getErrorMessage<PayloadT extends JobInfo>(
 ): string {
     if (signal) {
         switch (signal) {
-            case "SIGSEGV":
+            case 'SIGSEGV':
                 return `Worker [ID:${workerInfo.id}] caught SIGSEGV signal`;
-            case "SIGKILL":
+            case 'SIGKILL':
                 return `Worker [ID:${workerInfo.id}] was killed by signal ${signal}`;
             default:
                 return `Signal ${signal} was sent to the worker [${workerInfo.id}]`;
         }
     }
 
-    if (code && code != 0) {
+    if (code && code !== 0) {
         return `Failed to compile ${task.payload.fileList[0]}. Exit code ${code}`;
     }
 

@@ -27,7 +27,7 @@ import { BuildFrameworkMode } from './build/build_framework_mode';
 import { cleanKoalaModule } from './init/init_koala_modules';
 
 // NOTE: to be refactored
-function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGetter?: LoggerGetter) {
+function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): void {
     if (projectConfig.dependentModuleList) {
         projectConfig.dependencyModuleList = [...projectConfig.dependentModuleList]
     }
@@ -52,10 +52,10 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
         } else {
             let buildMode: BuildMode = new BuildMode(buildConfig);
             if (projectConfig.enableDeclgenEts2Ts === true) {
-                logger.printInfo("generate Declaration")
+                logger.printInfo('generate Declaration')
                 await buildMode.generateDeclarationV1Parallel();
             } else if (projectConfig.buildType === BUILD_TYPE.BUILD) {
-                logger.printInfo("just build")
+                logger.printInfo('just build')
                 await buildMode.run();
             }
         }
@@ -63,8 +63,8 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
         if (error instanceof DriverError) {
             Logger.getInstance().printErrorAndExit((error as DriverError).logData);
         } else {
-            Logger.getInstance().printWarn("Error occured")
-            Logger.getInstance().printWarn("Error is not DriverError")
+            Logger.getInstance().printWarn('Error occured')
+            Logger.getInstance().printWarn('Error is not DriverError')
             throw error;
         }
     } finally {

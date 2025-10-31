@@ -77,7 +77,7 @@ export class StatisticsRecorder {
             return;
         }
 
-        if (this.currentEvent != RecordEvent.END) {
+        if (this.currentEvent !== RecordEvent.END) {
             this.record(RecordEvent.END)
         }
 

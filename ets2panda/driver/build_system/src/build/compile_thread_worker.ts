@@ -173,7 +173,7 @@ function compileDeclaration(jobInfo: CompileJobInfo, globalContextPtr: KPointer,
     }
 }
 
-parentPort!.on('message', (msg: any) => {
+parentPort!.on('message', (msg) => {
     if (msg.type === 'ASSIGN_TASK') {
         const { job, globalContextPtr, buildConfig } = msg.data;
 

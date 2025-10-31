@@ -89,7 +89,7 @@ enum DepAnalyzerEvent {
     SAVE_HASH = 'Save source files\' hashes'
 }
 
-function formEvent(event: DepAnalyzerEvent) {
+function formEvent(event: DepAnalyzerEvent): string {
     return '[Dependency analyzer] ' + event;
 }
 
@@ -224,7 +224,7 @@ export class DependencyAnalyzer {
         return resDependencyMap;
     }
 
-    private get mergedArktsConfigPath() {
+    private get mergedArktsConfigPath(): string {
         return path.join(this.outputDir, ARKTSCONFIG_JSON_FILE);
     }
 
@@ -354,8 +354,8 @@ export class DependencyAnalyzer {
             }
         };
         const cycleMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
-            if ((lhs.data.fileInfo.moduleName != rhs.data.fileInfo.moduleName) ||
-                (lhs.data.fileInfo.moduleRoot != rhs.data.fileInfo.moduleRoot)) {
+            if ((lhs.data.fileInfo.moduleName !== rhs.data.fileInfo.moduleName) ||
+                (lhs.data.fileInfo.moduleRoot !== rhs.data.fileInfo.moduleRoot)) {
                 throw new DriverError(
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
@@ -416,10 +416,10 @@ export class DependencyAnalyzer {
         return dependencyGraph;
     }
 
-    private filterGraph(graph: Graph<CompileJobInfo>) {
+    private filterGraph(graph: Graph<CompileJobInfo>): void {
         for (const nodeId of Graph.topologicalSort(graph)) {
             const node = graph.getNodeById(nodeId);
-            if (node.predecessors.size != 0) {
+            if (node.predecessors.size !== 0) {
                 // Still has dependencies, so do not remove the node
                 // Update file hashes
                 node.data.fileList.map((file: string) => updateFileHash(file, this.filesHashCache));

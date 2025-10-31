@@ -36,6 +36,7 @@ import {
 } from '../util/utils';
 import {
     AliasConfig,
+    CompilerOptions,
     ArkTSConfigObject,
     BuildConfig,
     DependencyItem,
@@ -62,7 +63,7 @@ export class ArkTSConfig {
                 baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
                 paths: {},
                 dependencies: {},
-                cacheDir: ENABLE_DECL_CACHE ? cacheDir : "",
+                cacheDir: ENABLE_DECL_CACHE ? cacheDir : '',
                 projectRootPath: projectRootPath,
             }
         };
@@ -101,7 +102,7 @@ export class ArkTSConfig {
         });
     }
 
-    public get compilerOptions() {
+    public get compilerOptions(): CompilerOptions {
         return this.object.compilerOptions;
     }
 
@@ -160,15 +161,15 @@ export class ArkTSConfigGenerator {
         this.initPathInfo();
     }
 
-    public get aliasConfig() {
+    public get aliasConfig(): Record<string, Record<string, AliasConfig>> {
         return this.buildConfig.aliasConfig
     }
 
-    public get dynamicSDKPaths() {
+    public get dynamicSDKPaths(): Set<string> {
         return this.buildConfig.interopSDKPaths;
     }
 
-    public get externalApiPaths() {
+    public get externalApiPaths(): string[] {
         return this.buildConfig.externalApiPaths;
     }
 
@@ -240,7 +241,7 @@ export class ArkTSConfigGenerator {
         arktsconfig.addPathMappings(this.systemPathSection);
         // NOTE: workaround
         // NOTE: to be refactored
-        if (moduleInfo.language == LANGUAGE_VERSION.ARKTS_1_1) {
+        if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
             return
         }
 
