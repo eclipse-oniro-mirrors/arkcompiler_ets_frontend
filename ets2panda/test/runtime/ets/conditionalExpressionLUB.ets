@@ -13,46 +13,46 @@
  * limitations under the License.
  */
 
-interface I {}
+interface I { }
 
-class A {}
-class B extends A implements I {}
-final class C extends A implements I {}
-final class D extends A {}
-final class F extends B {}
+class A { }
+class B extends A implements I { }
+final class C extends A implements I { }
+final class D extends A { }
+final class F extends B { }
 
-function foo(p: Object): int {
-  return 1;
+function foo(p: B): int {
+    return 3;
 }
 
 function foo(p: A): int {
-  return 2;
-}
-
-function foo(p: B): int {
-  return 3;
+    return 2;
 }
 
 function foo(p: C): int {
-  return 4;
+    return 4;
 }
 
 function foo(p: D): int {
-  return 5;
+    return 5;
 }
 
 function foo(p: F): int {
-  return 6;
+    return 6;
+}
+
+function foo(p: Object): int {
+    return 1;
 }
 
 function getTrue(): boolean {
-  return true
+    return true
 }
 
 // #15276 foo(Object|null) and foo(Object) overloads
 function foo7(p: Object | null): int {
     return 7;
-}  
+}
 
 function main(): void {
     sameTypeLUB();
@@ -61,32 +61,32 @@ function main(): void {
 }
 
 function sameTypeLUB(): void {
-    let a : A = new A();
-    let b : A = new A();
+    let a: A = new A();
+    let b: A = new A();
     let c = getTrue() ? a : b;
     arktest.assertEQ(foo(c), 2)
 }
 
 function objectLUB(): void {
-    let a : A = new A();
-    let b : Int = 2;
+    let a: A = new A();
+    let b: Int = 2;
     let c = getTrue() ? a : b;
     arktest.assertEQ(foo(c), 1)
 
-    let arr : Int[] | null = null;
+    let arr: Int[] | null = null;
     let d = getTrue() ? a : arr;
     arktest.assertEQ(foo7(d), 7)
 }
 
 function forkSubtypeLUB(): void {
-    let a : F = new F();
-    let b : D = new D();
+    let a: F = new F();
+    let b: D = new D();
     let c = getTrue() ? a : b;
     arktest.assertEQ(foo(c), 2)
-    let d : A = new A();
+    let d: A = new A();
     let e = getTrue() ? a : b;
     arktest.assertEQ(foo(e), 2)
-    let f : B = new B();
+    let f: B = new B();
     let g = getTrue() ? a : f;
     arktest.assertEQ(foo(g), 3)
 }

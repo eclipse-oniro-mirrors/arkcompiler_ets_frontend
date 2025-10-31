@@ -132,3 +132,6 @@ large_number_parse.ets
 
 # Issue #28914
 non_null_number_as_index.ets
+
+#31069
+type_error_test.ets

@@ -33,6 +33,6 @@ class A {
   }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
+/* @@? 25:17 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 31:7 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 31:7 Error TypeError: No matching call signature */
+/* @@? 31:7 Error TypeError: No matching call signature for foo() */

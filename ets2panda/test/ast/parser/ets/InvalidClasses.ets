@@ -83,7 +83,6 @@ interface I1 {
 /* @@? 17:20 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 18:12 Error SyntaxError: Duplicated modifier is not allowed. */
 /* @@? 18:30 Error TypeError: Native, Abstract and Declare methods cannot have body. */
-/* @@? 19:21 Error TypeError: Static property 'f' must be accessed through it's class 'A' */
 /* @@? 22:12 Error SyntaxError: Access modifier must precede field and method modifiers. */
 /* @@? 22:36 Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */
 /* @@? 22:46 Error TypeError: Native, Abstract and Declare methods cannot have body. */
@@ -95,8 +94,8 @@ interface I1 {
 /* @@? 41:11 Error SyntaxError: The special predefined method '$_get' should have exactly one required parameter. */
 /* @@? 41:11 Error SyntaxError: The special predefined method '$_get' cannot be asynchronous. */
 /* @@? 41:16 Error TypeError: Return type of async function must be 'Promise'. */
-/* @@? 45:11 Error SyntaxError: The special predefined method '$_set' should have exactly two required parameter. */
 /* @@? 45:11 Error SyntaxError: The special predefined method '$_set' cannot be asynchronous. */
+/* @@? 45:11 Error SyntaxError: The special predefined method '$_set' should have exactly two required parameter. */
 /* @@? 45:16 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 47:11 Error SyntaxError: The special predefined method '$_iterator' cannot be asynchronous. */
 /* @@? 47:11 Error SyntaxError: The special predefined method '$_iterator' should not have parameters. */
@@ -120,8 +119,8 @@ interface I1 {
 /* @@? 66:18 Error SyntaxError: Private interface methods must have body. */
 /* @@? 67:9 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 67:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 67:16 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 67:16 Error SyntaxError: Identifier expected. */
+/* @@? 67:16 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 67:24 Error SyntaxError: Private interface methods must have body. */
 /* @@? 72:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 72:13 Error SyntaxError: Interface fields must have type annotation. */

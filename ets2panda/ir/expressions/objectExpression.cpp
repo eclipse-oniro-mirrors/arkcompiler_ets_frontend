@@ -393,8 +393,17 @@ checker::VerifiedType ObjectExpression::Check(checker::ETSChecker *checker)
 
 void ObjectExpression::CleanCheckInformation()
 {
-    SetPreferredType(nullptr);
-    SetTsType(nullptr);
-    this->Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    std::function<void(ir::AstNode *)> clearType = [&](ir::AstNode *node) {
+        if (node->IsOpaqueTypeNode()) {
+            return;
+        }
+        if (node->IsTyped()) {
+            node->AsTyped()->SetPreferredType(nullptr);
+            node->AsTyped()->SetTsType(nullptr);
+        }
+        node->Iterate([&](ir::AstNode *child) { clearType(child); });
+    };
+
+    clearType(this);
 }
 }  // namespace ark::es2panda::ir

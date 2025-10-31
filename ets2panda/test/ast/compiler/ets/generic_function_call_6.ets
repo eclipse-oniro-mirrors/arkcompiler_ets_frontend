@@ -22,4 +22,4 @@ function main() {
     /* @@ label */fn<B>()
 }
 
-/* @@@ label Error TypeError: No matching call signature  */
+/* @@? 22:19 Error TypeError: No matching call signature for fn() */

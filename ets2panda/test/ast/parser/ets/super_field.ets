@@ -22,5 +22,3 @@ class B extends A {
         console.log(super./* @@ label */value);
     }
 }
-
-/* @@@ label Error TypeError: Class field 'value' defined by the parent class is not accessible in the child class via super.  */

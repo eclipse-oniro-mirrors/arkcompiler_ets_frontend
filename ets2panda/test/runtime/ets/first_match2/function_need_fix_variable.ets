@@ -13,23 +13,25 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo("1"), 3);
+namespace NS {
+    export function foo(a: string): string {
+        return "invoke3"
+    }
 }
 
-class A{}
-class B{}
+class A { }
 
-function foo(x: string, y?: A) {
-    return 1
-}
-function foo(x: string, y?: B) {
-    return 2
-}
-function foo(x: string) {
-    return 3
+function foo(a: A): string {
+    return "invoke1"
 }
 
+function foo(a: number): string {
+    return "invoke2"
+}
 
+function main() {
+    arktest.assertEQ(foo(new A()), "invoke1")
+    arktest.assertEQ(foo(123), "invoke2")
+    arktest.assertEQ(NS.foo("123"), "invoke3")
+}
 

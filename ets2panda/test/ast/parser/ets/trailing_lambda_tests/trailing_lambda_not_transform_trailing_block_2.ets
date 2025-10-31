@@ -23,5 +23,5 @@ function main() {
     }
 }
 
-/* @@? 21:5 Error TypeError: Expected 1 arguments, got 0.  */
-/* @@? 21:5 Error TypeError: No matching call signature  */
+/* @@? 21:5 Error TypeError: Expected 1 arguments, got 0. */
+/* @@? 21:5 Error TypeError: No matching call signature for f() */

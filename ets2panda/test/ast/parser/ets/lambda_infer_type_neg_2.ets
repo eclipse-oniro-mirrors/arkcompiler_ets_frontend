@@ -17,4 +17,5 @@ function foo<U, T = U>(func: (arg1:T, args2:U)=>U){}
 foo((arg1, args2:number)=>{return new Object()})
 
 
+/* @@? 17:1 Error TypeError: No matching call signature for foo(((p1: Double, p2: Double) => Double)) */
 /* @@? 17:35 Error TypeError: Type 'Object' is not compatible with the enclosing method's return type 'Double' */

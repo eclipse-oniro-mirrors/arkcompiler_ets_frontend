@@ -22,4 +22,4 @@ let bad2 : TEST.A = new TEST.A()
 
 /* @@? 19:12 Error TypeError: Type '"A"' is not compatible with the enclosing method's return type 'Int' */
 /* @@? 21:21 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 21:21 Error TypeError: No matching construct signature */
+/* @@? 21:21 Error TypeError: No matching construct signature for export.A() */

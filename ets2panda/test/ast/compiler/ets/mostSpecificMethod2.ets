@@ -29,5 +29,3 @@ function main() : void {
 
     /* @@ label */obj.Foo(a, a);
 }
-
-/* @@@ label Error TypeError: Reference to Foo is ambiguous  */

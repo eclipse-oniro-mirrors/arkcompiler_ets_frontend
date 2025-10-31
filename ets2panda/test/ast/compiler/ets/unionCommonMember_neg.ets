@@ -51,10 +51,12 @@ function main() {
     arktest.assertEQ(/* @@ label8 */u.fld8, new Map<string, string>())
 }
 
-/* @@@ label1 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label3 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label4 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label5 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label6 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label7 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label8 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 44:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 46:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 46:37 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 47:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 47:37 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 48:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 49:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 50:37 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 51:37 Error TypeError: Member type must be the same for all union objects. */

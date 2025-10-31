@@ -45,7 +45,6 @@ function foo4() {
 /* @@? 18:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
 /* @@? 25:5 Error SyntaxError: Illegal continue statement. */
 /* @@? 25:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 27:17 Error TypeError: Unresolved reference a */
 /* @@? 32:5 Error SyntaxError: Illegal break statement. */
 /* @@? 32:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
 /* @@? 39:5 Error SyntaxError: Illegal break statement. */

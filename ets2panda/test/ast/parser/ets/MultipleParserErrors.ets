@@ -224,10 +224,10 @@ function main(): void {
 /* @@? 92:7 Error TypeError: Variable 'A' has already been declared. */
 /* @@? 92:7 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
 /* @@? 93:3 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 115:26 Error SyntaxError: Unexpected token 'case'. */
-/* @@? 115:26 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 115:26 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
 /* @@? 115:26 Error SyntaxError: Unexpected token, expected an identifier. */
+/* @@? 115:26 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
+/* @@? 115:26 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+/* @@? 115:26 Error SyntaxError: Unexpected token 'case'. */
 /* @@? 115:30 Error SyntaxError: Unexpected token ':'. */
 /* @@? 115:32 Error SyntaxError: Unexpected token 'U'. */
 /* @@? 115:32 Error TypeError: Unresolved reference U */
@@ -238,10 +238,10 @@ function main(): void {
 /* @@? 115:38 Error SyntaxError: Unexpected token '{'. */
 /* @@? 116:5 Error SyntaxError: return keyword should be used in function body. */
 /* @@? 116:12 Error TypeError: All return statements in the function should be empty or have a value. */
-/* @@? 119:26 Error SyntaxError: Unexpected token 'case'. */
+/* @@? 119:26 Error SyntaxError: Unexpected token, expected an identifier. */
 /* @@? 119:26 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
 /* @@? 119:26 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 119:26 Error SyntaxError: Unexpected token, expected an identifier. */
+/* @@? 119:26 Error SyntaxError: Unexpected token 'case'. */
 /* @@? 119:30 Error SyntaxError: Unexpected token ':'. */
 /* @@? 119:32 Error SyntaxError: Unexpected token 'U'. */
 /* @@? 119:33 Error SyntaxError: Unexpected token ')'. */
@@ -251,8 +251,8 @@ function main(): void {
 /* @@? 120:5 Error SyntaxError: return keyword should be used in function body. */
 /* @@? 120:12 Error TypeError: All return statements in the function should be empty or have a value. */
 /* @@? 123:5 Error SyntaxError: Identifier expected, got ','. */
-/* @@? 123:6 Error SyntaxError: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error SyntaxError: Unexpected token 'abc'. */
+/* @@? 123:6 Error SyntaxError: Variable must be initialized or it's type must be declared. */
 /* @@? 123:6 Error TypeError: Unresolved reference abc */
 /* @@? 127:1 Error SyntaxError: The modifier async cannot be used in an ambient context. */
 /* @@? 132:14 Error SyntaxError: Unexpected token, expected an identifier. */
@@ -263,23 +263,26 @@ function main(): void {
 /* @@? 137:18 Error SyntaxError: Unexpected token '0'. */
 /* @@? 137:19 Error SyntaxError: Unexpected token ')'. */
 /* @@? 137:21 Error SyntaxError: Unexpected token '{'. */
+/* @@? 141:5 Error TypeError: No matching call signature for assertTrue(..., undefined) */
 /* @@? 141:24 Error TypeError: This expression is not callable. */
 /* @@? 145:18 Error TypeError: A is abstract therefore cannot be instantiated. */
+/* @@? 146:5 Error TypeError: No matching call signature for assertTrue(Boolean) */
 /* @@? 146:28 Error TypeError: Property 'getInner' does not exist on type 'A' */
 /* @@? 148:25 Error TypeError: A is abstract therefore cannot be instantiated. */
 /* @@? 149:24 Error TypeError: A is abstract therefore cannot be instantiated. */
 /* @@? 151:20 Error TypeError: Cannot find type 'D0'. */
 /* @@? 151:29 Error TypeError: Cannot find type 'D0'. */
 /* @@? 157:16 Error TypeError: A is abstract therefore cannot be instantiated. */
+/* @@? 158:5 Error TypeError: No matching call signature for assertTrue(Boolean) */
 /* @@? 158:26 Error TypeError: Property 'getInner' does not exist on type 'A' */
 /* @@? 161:9 Error SyntaxError: Hard keyword 'let' cannot be used as identifier */
 /* @@? 161:9 Error SyntaxError: Identifier expected, got 'let'. */
-/* @@? 162:9 Error SyntaxError: Identifier expected, got 'const'. */
 /* @@? 162:9 Error SyntaxError: Hard keyword 'const' cannot be used as identifier */
-/* @@? 163:9 Error SyntaxError: Identifier expected, got 'new'. */
+/* @@? 162:9 Error SyntaxError: Identifier expected, got 'const'. */
 /* @@? 163:9 Error SyntaxError: Hard keyword 'new' cannot be used as identifier */
+/* @@? 163:9 Error SyntaxError: Identifier expected, got 'new'. */
 /* @@? 164:5 Error TypeError: This expression is not callable. */
 /* @@? 165:5 Error TypeError: This expression is not callable. */
-/* @@? 166:5 Error TypeError: No matching call signature */
+/* @@? 166:5 Error TypeError: No matching call signature for f() */
 /* @@? 166:5 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 286:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 288:71 Error SyntaxError: Expected '}', got 'end of stream'. */

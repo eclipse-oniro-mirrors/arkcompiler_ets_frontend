@@ -24,9 +24,6 @@ class C {
 /* @@ label2 */C.foo(new A<Long>)
 /* @@ label3 */C.foo(new A<Long>, new B<Error>, new B<Error>)
 
-/* @@@ label1 Error TypeError: Expected 2 arguments, got 0. */
-/* @@@ label1 Error TypeError: No matching call signature */
-/* @@@ label2 Error TypeError: Expected 2 arguments, got 1. */
-/* @@@ label2 Error TypeError: No matching call signature for foo(A<Long>) */
-/* @@@ label3 Error TypeError: Expected 2 arguments, got 3. */
-/* @@@ label3 Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */
+/* @@? 23:16 Error TypeError: No matching call signature for foo() */
+/* @@? 24:16 Error TypeError: No matching call signature for foo(A<Long>) */
+/* @@? 25:16 Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */

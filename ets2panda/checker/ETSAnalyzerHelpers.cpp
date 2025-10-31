@@ -353,7 +353,7 @@ static void SwitchMethodCallToFunctionCall(checker::ETSChecker *checker, ir::Cal
 }
 
 checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
-                                                 ir::CallExpression *expr, const TypeRelationFlag reportFlag)
+                                                 ir::CallExpression *expr)
 {
     // We have to ways to call ExtensionFunction `function foo(this: A, ...)`:
     // 1. Make ExtensionFunction as FunctionCall: `foo(a,...);`
@@ -367,7 +367,7 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
         // function call.
         auto *memberExpr = expr->Callee()->AsMemberExpression();
         expr->Arguments().insert(expr->Arguments().begin(), memberExpr->Object());
-        auto *signature = checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start(), reportFlag);
+        auto *signature = checker->FirstMatchSignatures(signatures, expr);
         if (signature == nullptr) {
             expr->Arguments().erase(expr->Arguments().begin());
             return nullptr;
@@ -377,16 +377,15 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
         return signature;
     }
 
-    return checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start());
+    return checker->FirstMatchSignatures(signatures, expr);
 }
 
 checker::Signature *ResolveCallForClassMethod(checker::ETSExtensionFuncHelperType *type, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr, const TypeRelationFlag reportFlag)
+                                              ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
 
-    auto signature = checker->ResolveCallExpressionAndTrailingLambda(type->ClassMethodType()->CallSignatures(), expr,
-                                                                     expr->Start(), reportFlag);
+    auto signature = checker->FirstMatchSignatures(type->ClassMethodType()->CallSignatures(), expr);
     if (signature != nullptr) {
         auto *memberExpr = expr->Callee()->AsMemberExpression();
         auto *var = type->ClassMethodType()->Variable();
@@ -428,8 +427,7 @@ checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::E
         }
     }
 
-    auto *signature = checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start(),
-                                                                      checker::TypeRelationFlag::NO_THROW);
+    auto *signature = checker->FirstMatchSignatures(signatures, expr);
 
     for (auto *methodCallSig : type->ClassMethodType()->CallSignatures()) {
         methodCallSig->GetSignatureInfo()->minArgCount--;
@@ -471,7 +469,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
     Signature *signature = nullptr;
     if (checker->IsTypeIdenticalTo(checker->Context().ContainingClass(), calleeObj->TsType()) || isCalleeObjETSGlobal) {
         // When called `a.foo` in `a.anotherFunc`, we should find signature through private or protected method firstly.
-        signature = ResolveCallForClassMethod(type, checker, expr, checker::TypeRelationFlag::NO_THROW);
+        signature = ResolveCallForClassMethod(type, checker, expr);
         if (signature != nullptr) {
             return signature;
         }

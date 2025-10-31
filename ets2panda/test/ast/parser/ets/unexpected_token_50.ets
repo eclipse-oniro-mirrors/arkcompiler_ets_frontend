@@ -20,6 +20,8 @@ let output = identity<string>
 let output1 = identity<number>/* @@ label */"hehe"
 
 /* @@? 20:15 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 20:15 Error TypeError: No matching call signature */
+/* @@? 20:15 Error TypeError: No matching call signature for identity() */
+/* @@? 20:15 Error TypeError: Expected 1 arguments, got 0. */
+/* @@? 20:15 Error TypeError: No matching call signature for identity() */
 /* @@? 20:45 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 26:1 Error SyntaxError: Expected ')', got 'end of stream'. */
+/* @@? 27:70 Error SyntaxError: Expected ')', got 'end of stream'. */

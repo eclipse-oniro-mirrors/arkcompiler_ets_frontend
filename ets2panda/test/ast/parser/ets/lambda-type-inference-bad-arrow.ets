@@ -20,7 +20,10 @@ function main(): void {
     foo((x(() => {
 }
 
+/* @@? 20:5 Error TypeError: No matching call signature for foo(...) */
 /* @@? 20:10 Error TypeError: Unresolved reference x */
-/* @@? 27:1 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 27:1 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 27:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 20:10 Error TypeError: This expression is not callable. */
+/* @@? 29:70 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+/* @@? 29:70 Error SyntaxError: Unexpected token, expected ')'. */
+/* @@? 29:70 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+/* @@? 29:70 Error SyntaxError: Expected '}', got 'end of stream'. */

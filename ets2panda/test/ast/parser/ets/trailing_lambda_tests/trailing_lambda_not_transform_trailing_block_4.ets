@@ -24,5 +24,5 @@ function main(): void {
 }
 
 /* @@? 23:5 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 23:5 Error TypeError: No matching construct signature */
+/* @@? 23:5 Error TypeError: No matching construct signature for trailing_lambda_not_transform_trailing_block_4.A() */
 /* @@? 23:11 Error SyntaxError: Unexpected token '{'. */

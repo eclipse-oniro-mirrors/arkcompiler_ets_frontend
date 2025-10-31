@@ -20,4 +20,4 @@ function main(){
     /* @@ label */foo<D>() 
 }
 
-/* @@@ label Error TypeError: No matching call signature */
+/* @@? 20:19 Error TypeError: No matching call signature for foo() */

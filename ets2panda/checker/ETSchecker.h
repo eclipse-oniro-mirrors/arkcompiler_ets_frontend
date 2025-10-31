@@ -471,10 +471,6 @@ public:
     Signature *ValidateParameterlessConstructor(Signature *signature, const lexer::SourcePosition &pos,
                                                 bool throwError);
     Signature *CollectParameterlessConstructor(ArenaVector<Signature *> &signatures, const lexer::SourcePosition &pos);
-    Signature *ValidateSignature(
-        std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-        const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-        const std::vector<bool> &argTypeInferenceRequired, const bool unique);
     bool ValidateSignatureRequiredParams(Signature *substitutedSig, const ArenaVector<ir::Expression *> &arguments,
                                          TypeRelationFlag flags, const std::vector<bool> &argTypeInferenceRequired,
                                          bool reportError);
@@ -485,19 +481,20 @@ public:
                              std::size_t index);
     bool SetPreferredTypeForArrayArgument(ir::ArrayExpression *arrayExpr, Signature *substitutedSig);
     bool ValidateSignatureRestParams(Signature *substitutedSig, const ArenaVector<ir::Expression *> &arguments,
-                                     TypeRelationFlag flags, bool reportError, bool unique);
+                                     TypeRelationFlag flags, bool reportError);
     void ThrowSignatureMismatch(ArenaVector<Signature *> &signatures, const ArenaVector<ir::Expression *> &arguments,
                                 const lexer::SourcePosition &pos, std::string_view signatureKind);
-    Signature *FirstMatchSignatures(ir::CallExpression *expr, checker::Type *calleeType);
+    Signature *FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr);
     Signature *MatchOrderSignatures(ArenaVector<Signature *> &signatures,
-                                    const ir::TSTypeParameterInstantiation *typeArguments,
-                                    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                    TypeRelationFlag resolveFlags);
+                                    const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
+                                    TypeRelationFlag resolveFlags, std::string_view signatureKind = "call");
     void CleanArgumentsInformation(const ArenaVector<ir::Expression *> &arguments);
+    bool ValidateRestParameter(Signature *signature, const ArenaVector<ir::Expression *> &arguments,
+                               const lexer::SourcePosition &pos, TypeRelationFlag flags);
     Signature *ValidateOrderSignature(
         std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
         const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-        const std::vector<bool> &argTypeInferenceRequired, const bool unique);
+        const std::vector<bool> &argTypeInferenceRequired);
     bool ValidateOrderSignatureRequiredParams(Signature *substitutedSig, const ArenaVector<ir::Expression *> &arguments,
                                               TypeRelationFlag flags,
                                               const std::vector<bool> &argTypeInferenceRequired);
@@ -505,23 +502,11 @@ public:
                                                  TypeRelationFlag flags);
     void ThrowOverloadMismatch(util::StringView callName, const ArenaVector<ir::Expression *> &arguments,
                                const lexer::SourcePosition &pos, std::string_view signatureKind);
-    Signature *ResolveTrailingLambda(ArenaVector<Signature *> &signatures, ir::CallExpression *callExpr,
-                                     const lexer::SourcePosition &pos,
-                                     TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
+    Signature *ResolveTrailingLambda(ArenaVector<Signature *> &signatures, ir::CallExpression *callExpr);
     Signature *ResolvePotentialTrailingLambda(ir::CallExpression *callExpr, ArenaVector<Signature *> const &signatures,
                                               ArenaVector<ir::Expression *> &arguments);
     bool SetPreferredTypeBeforeValidate(Signature *substitutedSig, ir::Expression *argument, size_t index,
-                                        TypeRelationFlag flags, const std::vector<bool> &argTypeInferenceRequired);
-
-    // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    Signature *ValidateSignatures(ArenaVector<Signature *> &signatures,
-                                  const ir::TSTypeParameterInstantiation *typeArguments,
-                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                  std::string_view signatureKind,
-                                  TypeRelationFlag resolveFlags = TypeRelationFlag::NONE);
-    Signature *FindMostSpecificSignature(const ArenaVector<Signature *> &signatures,
-                                         const ArenaMultiMap<size_t, Signature *> &bestSignaturesForParameter,
-                                         size_t paramCount);
+                                        TypeRelationFlag flags);
     void SearchAmongMostSpecificTypes(Type *&mostSpecificType, Signature *&prevSig,
                                       std::tuple<const lexer::SourcePosition &, size_t, Signature *> info,
                                       bool lookForClassType);
@@ -533,20 +518,13 @@ public:
     ArenaMultiMap<size_t, Signature *> GetSuitableSignaturesForParameter(
         const std::vector<bool> &argTypeInferenceRequired, size_t paramCount, ArenaVector<Signature *> &signatures,
         const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos);
-    Signature *ChooseMostSpecificSignature(ArenaVector<Signature *> &signatures,
-                                           const std::vector<bool> &argTypeInferenceRequired,
-                                           const ArenaVector<ir::Expression *> &arguments,
-                                           const lexer::SourcePosition &pos, size_t argumentsSize = ULONG_MAX);
     Signature *ResolvePotentialTrailingLambdaWithReceiver(ir::CallExpression *callExpr,
                                                           ArenaVector<Signature *> const &signatures,
                                                           ArenaVector<ir::Expression *> &arguments);
     Signature *MakeSignatureInvocable(Signature *sig, ir::CallExpression *callExpr);
-    Signature *ResolveCallExpressionAndTrailingLambda(ArenaVector<Signature *> &signatures,
-                                                      ir::CallExpression *callExpr, const lexer::SourcePosition &pos,
-                                                      TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
     void UpdateDeclarationFromSignature(ir::CallExpression *expr, checker::Signature *signature);
-    Signature *ResolveConstructExpression(ETSObjectType *type, const ArenaVector<ir::Expression *> &arguments,
-                                          const lexer::SourcePosition &pos);
+    Signature *ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr);
+    bool IsOverloadDeclaration(ir::Expression *expr);
     void CheckObjectLiteralArguments(Signature *sig, ArenaVector<ir::Expression *> const &arguments);
 
     Signature *ComposeSignature(ir::ScriptFunction *func, SignatureInfo *signatureInfo, Type *returnType,
@@ -1093,13 +1071,6 @@ private:
 
     template <typename... Args>
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
-    Signature *GetMostSpecificSignature(ArenaVector<Signature *> &compatibleSignatures,
-                                        const ArenaVector<ir::Expression *> &arguments,
-                                        const lexer::SourcePosition &pos, TypeRelationFlag resolveFlags);
-    ArenaVector<Signature *> CollectSignatures(ArenaVector<Signature *> &signatures,
-                                               const ir::TSTypeParameterInstantiation *typeArguments,
-                                               const ArenaVector<ir::Expression *> &arguments,
-                                               const lexer::SourcePosition &pos, TypeRelationFlag resolveFlags);
     // Trailing lambda
     void MoveTrailingBlockToEnclosingBlockStatement(ir::CallExpression *callExpr);
     ir::ScriptFunction *CreateLambdaFunction(ir::BlockStatement *trailingBlock, Signature *sig);

@@ -369,6 +369,7 @@ void CreateNewMethod(public_lib::Context *ctx, ir::AstNode *node)
 
             // Build new methodDefinition
             auto *const methodDef = CreateNewMethodDefinition(ctx, definition->AsMethodDefinition(), function);
+            RefineSourceRanges(methodDef);
 
             node->AsClassDefinition()->EmplaceBody(methodDef);
         }

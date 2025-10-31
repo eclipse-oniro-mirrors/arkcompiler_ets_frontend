@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,32 +13,23 @@
  * limitations under the License.
  */
 
-class A {
-    foo(...n: FixedArray<number>){
-        return "A";
+class C {
+    static foo(a: number) {
+        return "static invoke1"
     }
 }
 
-class B extends A {
-    foo(...n: FixedArray<number>){
-        return "B";
+class D extends C {
+    static foo(a: number) {
+        return "static invoke2"
     }
-}
-
-class C extends B {
-    foo(...n: FixedArray<number>){
-        return "C";
+    static foo(a: string) {
+        return "static invoke3"
     }
 }
 
 function main() {
-    let a: A = new A();
-    let b: B = new B();
-    let c: C = new C();
-    arktest.assertEQ(a.foo(), "A")
-    arktest.assertEQ(a.foo(1), "A")
-    arktest.assertEQ(b.foo(), "B")
-    arktest.assertEQ(b.foo(1,2), "B")
-    arktest.assertEQ(c.foo(), "C")
-    arktest.assertEQ(c.foo(1,2,3), "C")
+    arktest.assertEQ(D.foo(1), "static invoke2");
+    arktest.assertEQ(D.foo("abc"), "static invoke3");
+    arktest.assertEQ(C.foo(1), "static invoke1");
 }

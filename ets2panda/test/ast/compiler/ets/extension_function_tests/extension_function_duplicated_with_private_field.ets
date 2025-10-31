@@ -28,12 +28,7 @@ function main() {
     console.println(/* @@label */banana.name(2));
 }
 
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Boolean): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Byte): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Short): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Char): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Int): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Long): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Float): void` */
-/* @@? 28:5 Error TypeError: Call to `println` is ambiguous as `2` versions of `println` are available: `println(i: String): void` and `println(i: Double): void` */
+/* @@? 28:5 Error TypeError: No matching call signature for println(...) */
+/* @@? 28:34 Error TypeError: Signature name(=t: Banana, id: Int): Int is not visible here. */
+/* @@? 28:34 Error TypeError: No matching call signature for name(Banana, Int) */
 /* @@? 28:34 Error TypeError: No matching call signature for name(Int) */

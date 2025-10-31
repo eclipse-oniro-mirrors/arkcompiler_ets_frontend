@@ -21,5 +21,3 @@ foo({})
 
 /* @@? 16:39 Error TypeError: Cannot find type 'A'. */
 /* @@? 16:73 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 20:1 Error TypeError: No matching call signature for foo(...) */
-/* @@? 20:5 Error TypeError: need to specify target type for class composite */

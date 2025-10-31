@@ -60,9 +60,6 @@ void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
     dumper->DumpJsdocBeforeTargetNode(this);
     DumpAnnotations(dumper);
     auto func = Function();
-    if (func->IsNative()) {
-        dumper->Add("native ");
-    }
     if (IsExported()) {
         dumper->Add("export ");
     } else if (IsDefaultExported()) {
@@ -73,6 +70,9 @@ void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
     }
     if (func->IsAsyncFunc()) {
         dumper->Add("async ");
+    }
+    if (func->IsNative()) {
+        dumper->Add("native ");
     }
     dumper->Add("function ");
 

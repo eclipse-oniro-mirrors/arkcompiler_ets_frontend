@@ -145,7 +145,7 @@ function main(): void {
 /* @@? 37:9 Error TypeError: Unresolved reference HomoSap */
 /* @@? 38:9 Error TypeError: Unresolved reference HomoSap */
 /* @@? 39:9 Error TypeError: Unresolved reference HomoSap */
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 41:26 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 47:13 Error TypeError: Static property 'last' must be accessed through it's class 'Random' */
 /* @@? 47:21 Error TypeError: Static property 'last' must be accessed through it's class 'Random' */
 /* @@? 47:28 Error TypeError: Static property 'A' must be accessed through it's class 'Random' */
@@ -168,11 +168,14 @@ function main(): void {
 /* @@? 95:65 Error TypeError: 'For-of' statement source expression is not of iterable type. */
 /* @@? 103:20 Error TypeError: Type 'Int' has no call signatures. */
 /* @@? 112:16 Error TypeError: Static property 'fastaRepeat' must be accessed through it's class 'StringFasta' */
+/* @@? 112:16 Error TypeError: No matching call signature for fastaRepeat(Int, "GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA") */
 /* @@? 112:32 Error TypeError: Property 'count' must be accessed through 'this' */
 /* @@? 113:16 Error TypeError: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
+/* @@? 113:16 Error TypeError: No matching call signature for fastaRandom(Int, IUB) */
 /* @@? 113:32 Error TypeError: Property 'count' must be accessed through 'this' */
 /* @@? 113:46 Error TypeError: Unresolved reference IUB */
 /* @@? 114:16 Error TypeError: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
+/* @@? 114:16 Error TypeError: No matching call signature for fastaRandom(Int, HomoSap) */
 /* @@? 114:32 Error TypeError: Property 'count' must be accessed through 'this' */
 /* @@? 114:46 Error TypeError: Unresolved reference HomoSap */
 /* @@? 116:36 Error TypeError: 'expected' is a static property of 'StringFasta' */

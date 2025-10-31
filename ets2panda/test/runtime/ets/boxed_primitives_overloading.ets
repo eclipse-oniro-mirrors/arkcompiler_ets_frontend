@@ -14,9 +14,9 @@
  */
 
 class A {
-    func(a: Double): String { return "of Double" }
-    func(a: Float): String { return "of Float" }
     func(a: Int): String { return "of Int" }
+    func(a: Float): String { return "of Float" }
+    func(a: Double): String { return "of Double" }
 }
 
 function main(): int{

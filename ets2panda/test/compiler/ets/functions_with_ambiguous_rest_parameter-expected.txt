@@ -781,5 +781,3 @@
   }
 }
 TypeError: Function foo with this assembly signature already declared. [functions_with_ambiguous_rest_parameter.ets:20:1]
-TypeError: Call to `foo` is ambiguous  [functions_with_ambiguous_rest_parameter.ets:25:5]
-TypeError: Reference to foo is ambiguous [functions_with_ambiguous_rest_parameter.ets:25:5]

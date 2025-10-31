@@ -21,4 +21,5 @@ function main(): void {
   arktest.assertTrue(/* @@ label */Color.Red != Color2.Red);
 }
 
-/* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 21:3 Error TypeError: No matching call signature for assertTrue(Boolean) */
+/* @@? 21:36 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */

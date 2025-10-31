@@ -17,5 +17,7 @@ enum CCCCCCCCC {}
 
 CCCCCCCCC[foo()].foo();
 
+/* @@? 18:1 Error TypeError: No matching indexing signature for $_get(...) */
 /* @@? 18:11 Error TypeError: Unresolved reference foo */
-/* @@? 18:18 Error TypeError: Property 'foo' does not exist on type 'String' */
+/* @@? 18:11 Error TypeError: This expression is not callable. */
+/* @@? 18:11 Error TypeError: Cannot find index access method with the required signature. */

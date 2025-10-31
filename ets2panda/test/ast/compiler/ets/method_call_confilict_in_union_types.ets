@@ -31,6 +31,7 @@ function foo(x: A | B) {
 /* @@? 17:18 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:27 Error SyntaxError: Field type annotation expected. */
 /* @@? 17:28 Error SyntaxError: Unexpected token '{'. */
+/* @@? 18:5 Error TypeError: No matching call signature for foo(v) */
 /* @@? 18:9 Error TypeError: Unresolved reference v */
 /* @@? 18:10 Error SyntaxError: Unexpected token ':'. */
 /* @@? 18:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */

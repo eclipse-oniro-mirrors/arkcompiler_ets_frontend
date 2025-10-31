@@ -91,10 +91,13 @@ bool ETSChecker::CheckIfNumeric(Type *type)
         return false;
     }
     if (type->IsETSPrimitiveType()) {
-        return type->HasTypeFlag(TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC);
+        // NOTE(rsipka): Deprecated operations #28006, char should be removed from ETS_CONVERTIBLE_TO_NUMERIC flags
+        return type->HasTypeFlag(TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC) && !type->HasTypeFlag(TypeFlag::CHAR);
     }
     auto *unboxed = MaybeUnboxInRelation(type);
-    return (unboxed != nullptr) && unboxed->HasTypeFlag(TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC);
+    // NOTE(rsipka): Deprecated operations #28006, char should be removed from ETS_CONVERTIBLE_TO_NUMERIC flags
+    return (unboxed != nullptr) && unboxed->HasTypeFlag(TypeFlag::ETS_CONVERTIBLE_TO_NUMERIC) &&
+           !unboxed->HasTypeFlag(TypeFlag::CHAR);
 }
 
 bool ETSChecker::CheckIfFloatingPoint(Type *type)
@@ -413,6 +416,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorPlus(
             return type;
         }
         LogError(diagnostic::BINOP_NONARITHMETIC_TYPE, {}, pos);
+        return GlobalTypeError();
     }
 
     return promotedType;
@@ -485,7 +489,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorShift(
         return isPrim ? GlobalLongType() : GetGlobalTypesHolder()->GlobalLongBuiltinType();
     }
 
-    if (unboxedProm->IsByteType() || unboxedProm->IsShortType() || unboxedProm->IsCharType()) {
+    if (unboxedProm->IsByteType() || unboxedProm->IsShortType()) {
         return promotedLeftType;
     }
 
@@ -535,7 +539,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorBitwise(
         return isPrim ? GlobalLongType() : GetGlobalTypesHolder()->GlobalLongBuiltinType();
     }
 
-    if (unboxedProm->IsByteType() || unboxedProm->IsShortType() || unboxedProm->IsCharType()) {
+    if (unboxedProm->IsByteType() || unboxedProm->IsShortType()) {
         return promotedType;
     }
     return nullptr;

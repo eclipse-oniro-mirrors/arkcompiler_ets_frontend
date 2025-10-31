@@ -325,11 +325,24 @@ bool AstNode::HistoryInitialized() const
 
 void AstNode::CleanCheckInformation()
 {
-    if (IsTyped()) {
-        this->AsTyped()->SetTsType(nullptr);
-        this->AsTyped()->SetPreferredType(nullptr);
+    if (!IsTyped()) {
+        return;
     }
-    Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    if (IsOpaqueTypeNode()) {
+        return;
+    }
+    RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+    if (AsTyped()->PreferredType() != nullptr) {
+        AsTyped()->SetTsType(nullptr);
+        AsTyped()->SetPreferredType(nullptr);
+        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    }
+    if (AsTyped()->TsType() != nullptr && AsTyped()->TsType()->IsTypeError()) {
+        SetVariable(nullptr);
+        AsTyped()->SetTsType(nullptr);
+        AsTyped()->SetPreferredType(nullptr);
+        Iterate([&](auto *childNode) { childNode->CleanCheckInformation(); });
+    }
 }
 
 }  // namespace ark::es2panda::ir

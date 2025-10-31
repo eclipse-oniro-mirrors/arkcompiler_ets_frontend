@@ -38,11 +38,9 @@ void CheckPredefinedMethodReturnType(ETSChecker *checker, ir::ScriptFunction *sc
 void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc,
                                    const lexer::SourcePosition &position, const std::string &methodName);
 checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
-                                                 ir::CallExpression *expr,
-                                                 TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
+                                                 ir::CallExpression *expr);
 checker::Signature *ResolveCallForClassMethod(checker::ETSFunctionType *functionType, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr,
-                                              TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
+                                              ir::CallExpression *expr);
 checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::ETSExtensionFuncHelperType *type,
                                                                       checker::ETSChecker *checker,
                                                                       ir::CallExpression *expr);

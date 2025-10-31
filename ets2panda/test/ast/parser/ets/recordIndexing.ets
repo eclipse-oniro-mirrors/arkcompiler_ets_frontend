@@ -22,14 +22,7 @@
 
     console.log(x[/* @@ label */0])
  }
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
-/* @@? 23:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
+/* @@? 23:5 Error TypeError: No matching call signature for log(x[0]) */
 /* @@? 23:17 Error TypeError: No matching indexing signature for $_get(Int) */
-/* @@@ label Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */
-/* @@@ label Error TypeError: Cannot find index access method with the required signature. */
+/* @@? 23:33 Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */
+/* @@? 23:33 Error TypeError: Cannot find index access method with the required signature. */

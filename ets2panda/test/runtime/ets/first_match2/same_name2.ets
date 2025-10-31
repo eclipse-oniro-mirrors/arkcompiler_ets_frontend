@@ -13,25 +13,28 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo(5, 2), "aaaa");
+class C {
+    foo(a: number) {
+        return "invoke1"
+    }
 }
 
-function foo(a : int, b: int) : string
-{
-    return "aaaa";
+class D extends C {
+    foo(a: number) {
+        return "invoke2"
+    }
+    foo(a: string) {
+        return "invoke3"
+    }
 }
 
-function foo(a : int, ...b: int[]) : string
-{
-    return "bbbb";
+function main() {
+    let d = new D();
+    let c: C = d;
+    arktest.assertEQ(d.foo(1), "invoke2");
+    arktest.assertEQ(d.foo("abc"), "invoke3");
+    arktest.assertEQ(c.foo(1), "invoke2");
+
+    let c2 = new C();
+    arktest.assertEQ(c2.foo(1), "invoke1");
 }
-
-function foo(a : int, b:int, c?:int) : string
-{
-    return "cccc";
-}
-
-
-

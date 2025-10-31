@@ -20,6 +20,9 @@ function foo<T>(a:T){}
 
 foo<MySpace>(new MySpace())
 
+/* @@? 21:1 Error TypeError: No matching call signature for foo(...) */
 /* @@? 21:5 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 21:18 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 21:18 Error TypeError: Invalid type reference. */
 /* @@? 21:18 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
 /* @@? 21:18 Error TypeError: Invalid type reference. */

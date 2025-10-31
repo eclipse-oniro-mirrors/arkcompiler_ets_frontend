@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,13 +13,20 @@
  * limitations under the License.
  */
 
- function foo(...x: FixedArray<string>) {
-    return 1;
+class A {
+    native foo(x: number): void;
+    foo(x: string) {
+        return "invoke1"
+    }
+    native foo(): void;
+    foo(x: boolean) {
+        return "invoke2"
+    }
 }
 
-function foo(...x: FixedArray<int>) {
-    return 2;
-}
 
-arktest.assertEQ(foo("bar"), 1)
-arktest.assertEQ(foo(1), 2)
+function main() {
+    let a = new A();
+    arktest.assertEQ(a.foo("abc"), "invoke1");
+    arktest.assertEQ(a.foo(true), "invoke2");
+}

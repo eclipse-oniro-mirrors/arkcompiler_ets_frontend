@@ -27,9 +27,9 @@ class Outer {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@@ label1 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 17:19 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 21:20 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 24:13 Error TypeError: Signature a(): void is not visible here. */
-/* @@? 24:13 Error TypeError: No matching call signature */
+/* @@? 24:13 Error TypeError: No matching call signature for a() */
 /* @@? 25:13 Error TypeError: Signature a(): void is not visible here. */
-/* @@? 25:13 Error TypeError: No matching call signature */
+/* @@? 25:13 Error TypeError: No matching call signature for a() */

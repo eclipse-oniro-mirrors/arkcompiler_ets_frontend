@@ -17,5 +17,5 @@
   }
 
 
- /* @@? 16:13 Error TypeError: Expected 1 type arguments, got 0 .*/
- /* @@? 16:13 Error TypeError: No matching call signature */
+/* @@? 16:13 Error TypeError: Expected 1 type arguments, got 0 . */
+/* @@? 16:13 Error TypeError: No matching call signature for from() */

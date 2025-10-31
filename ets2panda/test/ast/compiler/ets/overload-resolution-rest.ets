@@ -26,5 +26,3 @@ function foo(...p: Int[]) {
 function main() {
   /* @@ label */foo(1, 2, 3)
 }
-
-/* @@@ label Error TypeError: Reference to foo is ambiguous */

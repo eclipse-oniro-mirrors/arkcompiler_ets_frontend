@@ -1056,6 +1056,7 @@ void ETSGen::CastToByte([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32toi8>(node);
             break;
         }
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_OBJECT: {
             break;
         }
@@ -1104,6 +1105,7 @@ void ETSGen::CastToChar([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32tou16>(node);
             break;
         }
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_OBJECT: {
             break;
         }
@@ -1149,6 +1151,7 @@ void ETSGen::CastToShort([[maybe_unused]] const ir::AstNode *node)
             Sa().Emit<I32toi16>(node);
             break;
         }
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_OBJECT: {
             break;
         }
@@ -1224,6 +1227,7 @@ void ETSGen::CastToFloat(const ir::AstNode *node)
             Sa().Emit<F64tof32>(node);
             break;
         }
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_OBJECT: {
             break;
         }
@@ -1298,6 +1302,7 @@ void ETSGen::CastToInt(const ir::AstNode *node)
             Sa().Emit<F64toi32>(node);
             break;
         }
+        case checker::TypeFlag::ETS_NEVER:
         case checker::TypeFlag::ETS_OBJECT: {
             break;
         }

@@ -30,11 +30,11 @@ class Test {
 
 function main() {
     let a: Test = new Test();
-    arktest.assertEQ(a.foo(1), "invoke2")
+    arktest.assertEQ(a.foo(1), "invoke1")
     arktest.assertEQ(a.foo(1 as byte), "invoke1")
     arktest.assertEQ(a.foo(1 as int), "invoke2")
     arktest.assertEQ(a.foo(1 as number), "invoke4")
-    arktest.assertEQ(a.foo(1.0), "invoke4")
+    arktest.assertEQ(a.foo(1.0), "invoke3")
     arktest.assertEQ(a.foo(1.0 as float), "invoke3")
     arktest.assertEQ(a.foo('a'), "invoke6")
     arktest.assertEQ(a.foo("abcd"), "invoke6")

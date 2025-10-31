@@ -1423,7 +1423,8 @@ ir::CallExpression *ParserImpl::ParseCallExpression(ir::Expression *callee, bool
         }
         ES2PANDA_ASSERT(callExpr != nullptr);
 
-        callExpr->SetRange({callee->Start(), endLoc});
+        callExpr->SetEnd(endLoc);
+        callExpr->SetStart(callee->Start());
         isOptionalChain = false;
 
         if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {

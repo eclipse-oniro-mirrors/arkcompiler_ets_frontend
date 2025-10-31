@@ -27,8 +27,7 @@ function foo2() {
     console.log(a + 5)
 }
 
-/* @@@ label1 Error SyntaxError: Illegal break statement. */
-/* @@@ label2 Error SyntaxError: Illegal break statement. */
+/* @@? 18:20 Error SyntaxError: Illegal break statement. */
 /* @@? 18:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 25:20 Error SyntaxError: Illegal break statement. */
 /* @@? 25:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 27:17 Error TypeError: Unresolved reference a */

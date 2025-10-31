@@ -28,4 +28,5 @@ function foo(bar: () => int) {
 /* @@? 18:16 Error SyntaxError: Unexpected token '('. */
 /* @@? 18:17 Error SyntaxError: Unexpected token ')'. */
 /* @@? 18:18 Error SyntaxError: Unexpected token, expected ')'. */
+/* @@? 22:4 Error TypeError: No matching call signature for foo((() => Int)) */
 /* @@? 22:14 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int' */
