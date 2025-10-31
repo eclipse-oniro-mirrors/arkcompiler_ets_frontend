@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,23 +28,22 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
     }
 
     if (var->HasFlag(varbinder::VariableFlags::PRIVATE) || var->HasFlag(varbinder::VariableFlags::PROTECTED)) {
-        if ((Relation()->IsIdenticalTo(Context().ContainingClass(), obj) ||
+        ES2PANDA_ASSERT(var->Declaration() != nullptr);
+        ES2PANDA_ASSERT(var->Declaration()->Node()->Parent()->IsClassDefinition());
+        auto *propDeclaringObjType =
+            var->Declaration()->Node()->Parent()->AsClassDefinition()->TsType()->AsETSObjectType();
+        if ((Relation()->IsIdenticalTo(Context().ContainingClass(), propDeclaringObjType) ||
              Relation()->IsIdenticalTo(Context().ContainingClass()->GetOriginalBaseType(),
-                                       obj->GetOriginalBaseType())) &&
-            obj->IsPropertyInherited(var)) {
+                                       propDeclaringObjType->GetOriginalBaseType())) &&
+            (propDeclaringObjType->IsPropertyInherited(var) || obj->IsPropertyInherited(var))) {
             return;
         }
 
-        if (var->HasFlag(varbinder::VariableFlags::PROTECTED) && Context().ContainingClass()->IsDescendantOf(obj) &&
+        SavedTypeRelationFlagsContext savedCtx(Relation(), Relation()->GetTypeRelationFlags() |
+                                                               checker::TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+        if (var->HasFlag(varbinder::VariableFlags::PROTECTED) &&
+            Relation()->IsSupertypeOf(propDeclaringObjType, Context().ContainingClass()) &&
             obj->IsPropertyInherited(var)) {
-            return;
-        }
-
-        auto *currentOutermost = Context().ContainingClass()->OutermostClass();
-        auto *objOutermost = obj->OutermostClass();
-
-        if (currentOutermost != nullptr && objOutermost != nullptr &&
-            Relation()->IsIdenticalTo(currentOutermost, objOutermost) && obj->IsPropertyInherited(var)) {
             return;
         }
 
