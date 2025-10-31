@@ -313,3 +313,4 @@ faultsAttrs[FaultID.LargeNumericLiteral] = new FaultAttributes(410);
 faultsAttrs[FaultID.InstanceOfFunction] = new FaultAttributes(411);
 faultsAttrs[FaultID.unfixedTuple] = new FaultAttributes(412);
 faultsAttrs[FaultID.SuperInStaticContext] = new FaultAttributes(413);
+faultsAttrs[FaultID.SdkApiStaticOverload] = new FaultAttributes(414);

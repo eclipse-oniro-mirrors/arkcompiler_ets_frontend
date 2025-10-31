@@ -246,7 +246,7 @@ import {
 import { initOverloadApiFixMap } from './utils/consts/OverloadCommon';
 import type { OverloadApiFixMap, OverloadInfo } from './utils/consts/OverloadCommon';
 import type { OverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
-import { TYPE_LITERAL } from './utils/consts/OverloadBlacklist';
+import { TYPE_LITERAL, SINGLEQUOTE } from './utils/consts/OverloadBlacklist';
 import { createOverloadMapKey, initializeOverloadBlacklistMap } from './utils/consts/OverloadBlacklist';
 import { IGNORE_NUMBER_CALL_EXPRESSION_LIST } from './utils/consts/NumberCallExpressionIgnored';
 import { PROPERTYKEY, NUMBER, REFLECT, HAS, CONSTRUCTOR, ARRAY, OBJECT } from './utils/consts/Builtins';
@@ -5108,7 +5108,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       valDecl.parameters,
       COMMON_OVERLOAD_METHOD_PARAMETERS
     );
-    this.incrementCounters(ident, FaultID.TsOverload, autofix);
+    this.incrementCounters(ident, FaultID.SdkApiStaticOverload, autofix);
   }
 
   private static getDeclarationTypeLiteral(declaration: ts.Declaration, literal: string): string | undefined {
@@ -5214,7 +5214,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (replacementText === ON_KEY_EVENT) {
         const call = this.getCallbackArgumentBody(callExp);
         if (call) {
-          this.incrementCounters(ident, FaultID.TsOverload, this.autofixer?.fixSdkOverloadApi(callExp));
+          this.incrementCounters(ident, FaultID.SdkApiStaticOverload, this.autofixer?.fixSdkOverloadApi(callExp, ident));
         }
         return;
       }
@@ -5226,7 +5226,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
           LIST_OVERLOAD_METHOD_PARAMETERS
         ) :
         this.autofixer?.replaceNode(ident, replacementText);
-      this.incrementCounters(ident, FaultID.TsOverload, autofix);
+      this.incrementCounters(ident, FaultID.SdkApiStaticOverload, autofix);
       TypeScriptLinter.handledSdkOverload.add(ident);
     }
   }
@@ -5253,15 +5253,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
       const type = declaration.parameters[0].name.getText();
       if (type === TYPE_LITERAL) {
-        if (declaration.parameters[0].type?.getText() !== info.params[0].type) {
+        let declType = declaration.parameters[0].type?.getText();
+        if (declType && declType.startsWith(SINGLEQUOTE) && declType.endsWith(SINGLEQUOTE)) {
+          declType = declType.slice(1, -1);
+        }
+        if (declType !== info.params[0].type) {
           return false;
         }
       }
 
-      for (let i = 0; i <= declaration.parameters.length; i++) {
+      for (let i = 1; i < declaration.parameters.length; i++) {
         const declParam = declaration.parameters[i];
         const infoParam = info.params[i];
-        if (declParam.name.getText() !== infoParam.name) {
+        if (declParam.type?.getText() !== infoParam.type) {
           return false;
         }
       }
@@ -5272,18 +5276,47 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private getCallbackArgumentBody(callExpr: ts.CallExpression): ts.ArrowFunction | ts.FunctionExpression | undefined {
     void this;
     for (const arg of callExpr.arguments) {
-      if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
-        if (arg.body && ts.isBlock(arg.body)) {
-          const lastExpr =
-            arg.body.statements.length > 0 ? arg.body.statements[arg.body.statements.length - 1] : undefined;
-          if (lastExpr && ts.isReturnStatement(lastExpr) && lastExpr.expression) {
-            return undefined;
-          }
-          return arg;
-        }
+      if (!(ts.isArrowFunction(arg) || ts.isFunctionExpression(arg))) {
+        continue;
+      }
+      if (!arg.body || !ts.isBlock(arg.body)) {
+        continue;
+      }
+      const statements = arg.body.statements;
+      const lastExpr = statements.length > 0 ? statements[statements.length - 1] : undefined;
+      
+      const hasEmptyReturn = this.hasEmptyReturnStatement(arg.body);
+      const lastStatementIsReturn = lastExpr ? (ts.isReturnStatement(lastExpr) && lastExpr.expression) : false;
+      
+      if (hasEmptyReturn || !lastStatementIsReturn) {
+        return arg;
       }
     }
     return undefined;
+  }
+
+  private hasEmptyReturnStatement(block: ts.Block): boolean {
+    void this;
+    let hasEmptyReturn = false;
+    
+    const checkVisitor: ts.Visitor = (node): ts.VisitResult<ts.Node> => {
+      if (
+        ts.isArrowFunction(node) ||
+        ts.isFunctionDeclaration(node) ||
+        ts.isMethodDeclaration(node) ||
+        ts.isMethodSignature(node)
+      ) {
+        return node;
+      }
+      
+      if (ts.isReturnStatement(node) && !node.expression) {
+        hasEmptyReturn = true;
+      }
+      return ts.visitEachChild(node, checkVisitor, ts.nullTransformationContext);
+    };
+    
+    ts.visitNode(block, checkVisitor, ts.isBlock);
+    return hasEmptyReturn;
   }
 
   private static getSdkOverloadParentName(decl: ts.Declaration): string | undefined {

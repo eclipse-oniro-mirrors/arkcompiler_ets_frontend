@@ -138,7 +138,7 @@
     "sdk-type-query",
     "sdk-ability-asynchronous-lifecycle",
     "sdk-ability-lifecycle-monitor",
-    "sdk-api-keywords-avoid"
+    "sdk-api-static-overload"
   ],
   "concurrent": [
     "arkts-no-need-stdlib-ason",
