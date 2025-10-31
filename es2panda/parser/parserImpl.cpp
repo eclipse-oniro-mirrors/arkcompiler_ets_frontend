@@ -3061,7 +3061,8 @@ ir::Identifier *ParserImpl::GetKeyByFuncFlag(ir::ScriptFunctionFlags funcFlag)
 }
 
 ir::MethodDefinition *ParserImpl::CreateImplicitMethod(ir::Expression *superClass, bool hasSuperClass,
-                                                       ir::ScriptFunctionFlags funcFlag, bool isDeclare)
+                                                       ir::ScriptFunctionFlags funcFlag, bool isDeclare,
+                                                       lexer::SourceRange range)
 {
     ArenaVector<ir::Expression *> params(Allocator()->Adapter());
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
@@ -3085,13 +3086,16 @@ ir::MethodDefinition *ParserImpl::CreateImplicitMethod(ir::Expression *superClas
                                                             AllocNode<ir::Identifier>(argsStr)));
 
             auto *callExpr = AllocNode<ir::CallExpression>(superExpr, std::move(callArgs), nullptr, false);
+            callExpr->SetRange(range);
             statements.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
         }
     }
 
     auto *body = AllocNode<ir::BlockStatement>(scope, std::move(statements));
+    body->SetRange(range);
     auto *func = AllocNode<ir::ScriptFunction>(scope, std::move(params), nullptr, isDeclare ? nullptr : body, nullptr,
                                                funcFlag, isDeclare, Extension() == ScriptExtension::TS);
+    func->SetRange(range);
     if (isConstructor) {
         func->AddFlag(ir::ScriptFunctionFlags::GENERATED_CONSTRUCTOR);
     }
@@ -3260,6 +3264,7 @@ ir::ClassDefinition *ParserImpl::ParseClassDefinition(bool isDeclaration, bool i
     ArenaVector<ir::TSIndexSignature *> indexSignatures(Allocator()->Adapter());
     bool hasConstructorFuncBody = false;
     bool isCtorContinuousDefined = true;
+    bool hasInstanceProperty = false;
 
     auto *static_scope  = staticInitializer->Function()->Scope();
     auto *instance_scope = instanceInitializer->Function()->Scope();
@@ -3295,13 +3300,26 @@ ir::ClassDefinition *ParserImpl::ParseClassDefinition(bool isDeclaration, bool i
         isCtorContinuousDefined = ctor == nullptr;
         ValidatePrivateProperty(property, usedPrivateNames, unusedGetterSetterPairs);
         properties.push_back(property);
+        if (property->IsClassProperty() && !property->AsClassProperty()->IsStatic()) {
+            hasInstanceProperty = true;
+        }
     }
 
     context_.Status() = savedStatus;
 
     lexer::SourcePosition classBodyEndLoc = lexer_->GetToken().End();
     if (ctor == nullptr) {
-        ctor = CreateImplicitMethod(superClass, hasSuperClass, ir::ScriptFunctionFlags::CONSTRUCTOR, isDeclare);
+        // By default, cover from class start to class body end
+        lexer::SourceRange range = {startLoc, classBodyEndLoc};
+        /*
+        * If no instance property exists, the implicit constructor does not generate actual code.
+        * Its line number would be determined by 'return' instruction, pointing debug info to the class's last line.
+        * To avoid incorrect line mapping, in this scenario, set the start and end positions to the same point.
+        */
+        if (!hasInstanceProperty) {
+            range = {startLoc, startLoc};
+        }
+        ctor = CreateImplicitMethod(superClass, hasSuperClass, ir::ScriptFunctionFlags::CONSTRUCTOR, isDeclare, range);
         ctor->SetRange({startLoc, classBodyEndLoc});
         hasConstructorFuncBody = !isDeclare;
     }
