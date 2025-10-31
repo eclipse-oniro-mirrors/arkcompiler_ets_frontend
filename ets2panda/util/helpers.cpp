@@ -879,4 +879,12 @@ bool Helpers::IsGlobalVar(const ark::es2panda::varbinder::Variable *var)
            var->Declaration()->Node()->AsClassDeclaration()->Definition()->IsGlobal();
 }
 
+void Helpers::CheckValidFileName(const std::string &fileName, util::DiagnosticEngine &diagnosticEngine)
+{
+    if (fileName.find(':') != std::string_view::npos) {
+        util::DiagnosticMessageParams diagParams = {std::move(fileName)};
+        diagnosticEngine.LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
+    }
+}
+
 }  // namespace ark::es2panda::util

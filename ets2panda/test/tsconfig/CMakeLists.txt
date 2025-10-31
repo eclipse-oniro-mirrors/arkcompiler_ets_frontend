@@ -18,6 +18,7 @@ endif()
 add_subdirectory(test-class-from)
 add_subdirectory(test-config)
 add_subdirectory(test-name-conflict)
+add_subdirectory(test-unsupported-file-name)
 # 25872
 # add_subdirectory(test-build)
 # add_subdirectory(test-decl)

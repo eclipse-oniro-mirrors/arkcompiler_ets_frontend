@@ -118,6 +118,10 @@ fatal:
   id: 14
   message: "Unresolved module name {}"
 
+- name: UNSUPPORTED_FILE_NAME
+  id: 44
+  message: "File name '{}' contains invalid characters: ':'"
+
 - name: UNSUPPORTED_PATH
   id: 19
   message: "Not supported path: {}"
