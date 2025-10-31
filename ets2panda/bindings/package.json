@@ -10,7 +10,7 @@
     "jest-diff": "latest",
     "json5": "^2.2.3",
     "prettier": "latest",
-    "rimraf": "^6.0.1",
+    "rimraf": "6.0.1",
     "ts-jest": "^29.4.5",
     "typescript": "4.9.5"
   },
