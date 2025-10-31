@@ -173,7 +173,7 @@ export interface FrameworkConfig {
 export interface DeclgenConfig {
     enableDeclgenEts2Ts: boolean;
     declgenV1OutPath?: string;
-    declgenV2OutPath?: string;
+    declgenV2OutPath: string;
     declgenBridgeCodePath?: string;
     skipDeclCheck?: boolean;
     continueOnError?: boolean;
