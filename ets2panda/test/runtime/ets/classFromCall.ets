@@ -15,13 +15,14 @@
 
 
 function main(){
-  foo(Class.from<Int| String | null>());
+  foo(Class.from<Int| String | null | undefined >());
   foo(Class.from<String>());
   foo(Class.from<int>());
-  foo(Class.from<Any>());
-  foo(Class.from<null>());
+  foo(Class.from<undefined>());
+  foo(Class.from<never>());
+  foo(Class.from<void>());
 
-  InstanceTesting();
+  InstanceTesting<Object>();
   ArrayInstanceTesting();
 }
 
@@ -32,7 +33,7 @@ class C {
 class G<T> {}
 
 
-function InstanceTesting(){
+function InstanceTesting<T>(){
   arktest.assertEQ(Class.from<C>(), Class.of(new C))
 
   arktest.assertEQ(Class.from<null>(), Class.of(null))
@@ -46,6 +47,11 @@ function InstanceTesting(){
   arktest.assertNE(Class.from<int>(), Class.from<FixedArray<int>>().getFixedArrayComponentType())
   arktest.assertEQ(Class.from<G<number>>(), Class.from<G<string>>())
   arktest.assertEQ(Class.from<Array<G<string>>>(), Class.from<Array<int>>())
+  
+  arktest.assertEQ(Class.from<undefined>(), Class.from<Any>())
+  arktest.assertEQ(Class.from<void>(), Class.from<Any>())
+  arktest.assertEQ(Class.from<T>(), Class.from<Any>())
+  arktest.assertEQ(Class.from<never>(), Class.from<Object>())
 }
 
 function ArrayInstanceTesting(){

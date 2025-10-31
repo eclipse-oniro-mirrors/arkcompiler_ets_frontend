@@ -16,5 +16,5 @@
 import {A} from "testjs"
 
 function main(){
-    Class.from<A>() // CTE
+    arktest.assertEQ(Class.from<A>(), Class.from<Any>())
 }

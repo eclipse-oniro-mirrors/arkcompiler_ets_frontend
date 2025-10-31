@@ -34,7 +34,6 @@ ast_nodes_supported = [
     "ClassDefinition",
     "ClassDeclaration",
     "ClassExpression",
-    "ClassFromExpression"
     "ClassProperty",
     "ClassStaticBlock",
     "ConditionalExpression",

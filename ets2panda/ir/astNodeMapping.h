@@ -35,7 +35,6 @@
     _(CHAR_LITERAL, CharLiteral)                                                          \
     _(CLASS_DEFINITION, ClassDefinition)                                                  \
     _(CLASS_DECLARATION, ClassDeclaration)                                                \
-    _(CLASS_FROM_EXPRESSION, ClassFromExpression)                                         \
     _(CLASS_EXPRESSION, ClassExpression)                                                  \
     _(CLASS_PROPERTY, ClassProperty)                                                      \
     _(CLASS_STATIC_BLOCK, ClassStaticBlock)                                               \

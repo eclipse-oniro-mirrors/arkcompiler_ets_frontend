@@ -1380,10 +1380,6 @@ semantic:
   id: 72257
   message: "Signature '{}' is not generic, but type arguments '{}' were passed"
 
-- name: TYPE_CANNOT_BE_USED_IN_FROM
-  id: 53205
-  message: "Type {} cannot be used in the `from` method"
-
 - name: TYPE_FROM_STRING_LITERAL_TYPE_UNSUPPORTED
   id: 287
   message: "Acquiring types for string literal types is not supported."
@@ -1588,5 +1584,6 @@ graveyard:
 - 383
 - 390
 - 4101
+- 53205
 
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

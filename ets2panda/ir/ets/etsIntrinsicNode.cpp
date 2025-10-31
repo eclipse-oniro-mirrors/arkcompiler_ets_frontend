@@ -203,7 +203,8 @@ public:
     checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
     {
         CheckParams(checker, intrin);
-        if (intrin->Arguments().size() != 1 || !intrin->Arguments()[0]->IsStringLiteral()) {
+        if (intrin->Arguments().size() != 1 ||
+            (!intrin->Arguments()[0]->IsStringLiteral() && !intrin->Arguments()[0]->IsTypeNode())) {
             return InvalidateIntrinsic(checker, intrin);
         }
         return intrin->SetTsType(checker->GlobalBuiltinClassType());
@@ -211,7 +212,11 @@ public:
 
     void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
     {
-        etsg->EmitLdaType(intrin, intrin->Arguments()[0]->AsStringLiteral()->Str());
+        if (intrin->Arguments()[0]->IsStringLiteral()) {
+            etsg->EmitLdaType(intrin, intrin->Arguments()[0]->AsStringLiteral()->Str());
+            return;
+        }
+        etsg->EmitLdaType(intrin, intrin->Arguments()[0]->TsType()->ToAssemblerTypeWithRankView(etsg->Allocator()));
     }
 };
 
