@@ -6,7 +6,7 @@
     "@tsconfig/recommended": "^1.0.2",
     "@types/node": "^18.0.0",
     "prettier": "latest",
-    "rimraf": "^6.0.1",
+    "rimraf": "6.0.1",
     "typescript": "4.9.5",
     "jest-diff": "latest",
     "node-api-headers": "0.0.5"
