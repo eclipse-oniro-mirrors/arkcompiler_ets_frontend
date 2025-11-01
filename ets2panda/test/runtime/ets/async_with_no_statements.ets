@@ -13,28 +13,10 @@
  * limitations under the License.
  */
 
-class Foo {
-    async foo(i: int): Promise<Object | null> {
-        return null;
-    }
-
-    async foo(o: Object | null, i: int): Promise<Object | null> {
-        return null;
-    }
+async function foo(): Promise<void> {
 }
 
-async function bar(i: int): Promise<Object | null> {
-    return null;
-}
-
-async function bar(o: Object | null, i: int): Promise<Object | null>{
-    return null;
-}
-
-function main(): void {
-    bar(0);
-    bar(null, 0);
-    let foo = new Foo();
-    foo.foo(0);
-    foo.foo(null, 0);
+function main() {
+    let res = foo();
+    arktest.assertTrue(res instanceof Promise);
 }
