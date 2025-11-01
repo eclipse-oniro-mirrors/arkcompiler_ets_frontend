@@ -166,7 +166,7 @@ public:
 
     static bool IsGlobalVar(const ark::es2panda::varbinder::Variable *var);
 
-    static void CheckValidFileName(const std::string &fileName, util::DiagnosticEngine &diagnosticEngine);
+    static void CheckValidFileName(const util::StringView &fileName, util::DiagnosticEngine &diagnosticEngine);
 
     static varbinder::Scope *NearestScope(const ir::AstNode *ast);
     static checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast);
