@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -68,4 +68,14 @@ export const STANDARD_LIBRARIES = [
   'lib.decorators.legacy.d.ts',
   'lib.decorators.d.ts',
   'lib.scripthost.d.ts'
+];
+
+export const SDK_MODULES = [
+  'common.d.ts',
+  'web.d.ts',
+  'units.d.ts',
+  'list.d.ts',
+  'enums.d.ts',
+  'canvas.d.ts',
+  'navigation.d.ts'
 ];

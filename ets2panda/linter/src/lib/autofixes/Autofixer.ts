@@ -5152,7 +5152,7 @@ export class Autofixer {
     const symbol = type.symbol || type.aliasSymbol;
     const decl = TsUtils.getDeclaration(symbol);
     const fileName = decl?.getSourceFile().fileName;
-    const isStdLib = isStdLibrarySymbol(symbol);
+    const isStdLib = isStdLibrarySymbol(symbol, true);
     const isMatchPathOnSourceAndDecl = decl && path.normalize(sourceFile.fileName) === path.normalize(fileName!);
     if (!decl || isMatchPathOnSourceAndDecl || isStdLib) {
       return true;
