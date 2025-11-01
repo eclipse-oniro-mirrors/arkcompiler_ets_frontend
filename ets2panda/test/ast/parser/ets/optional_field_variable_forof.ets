@@ -15,7 +15,7 @@
 
 function foo(param? : Object)
 {
-   for (let i/* @@ label */? of "blablabla") { }
+   for (let i? of "blablabla") { }
 }
 
-/* @@@ label Error SyntaxError: Optional variable is not allowed in for of statements.  */
+/* @@? 18:16 Error SyntaxError: Optional variable is not allowed in for of statements. */

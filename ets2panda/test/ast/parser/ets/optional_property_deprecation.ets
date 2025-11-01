@@ -13,9 +13,17 @@
  * limitations under the License.
  */
 
-let b1 = true
-let b2 = false
-let /* @@ label */b2? /* @@ label1 */= b1 || b2
+class Menu{}
 
-/* @@@ label Error TypeError: Variable 'b2' has already been declared.  */
-/* @@@ label1 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+class MenuProvider{
+   menuList?: Menu[];
+}
+
+class View {
+   menu: Menu[]
+   constructor(mp: MenuProvider) {
+      let tm: Menu[] = mp.menuList == undefined ? [] : mp.menuList!;
+      this.menu = mp.menuList == undefined ? [] : mp.menuList!;
+   }
+}
+

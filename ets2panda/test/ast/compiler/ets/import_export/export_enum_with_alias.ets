@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-let b1 = true
-let b2 = false
-let /* @@ label */b2? /* @@ label1 */= b1 || b2
+enum Enum2 {
+    A,
+    B,
+    C,
+}
 
-/* @@@ label Error TypeError: Variable 'b2' has already been declared.  */
-/* @@@ label1 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+export { Enum2 as Enum }

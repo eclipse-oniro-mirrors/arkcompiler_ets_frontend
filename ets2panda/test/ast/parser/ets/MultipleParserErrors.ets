@@ -166,7 +166,7 @@ function main(): void {
     f();
 }
 
-/* @@? 18:14 Error SyntaxError: Optional variable is not allowed in for of statements. */
+/* @@? 18:16 Error SyntaxError: Optional variable is not allowed in for of statements. */
 /* @@? 28:29 Error TypeError: Native, Abstract and Declare methods cannot have body. */
 /* @@? 34:14 Error SyntaxError: The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers. */
 /* @@? 37:33 Error SyntaxError: Unexpected token 'rethrows'. */

@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-let b1 = true
-let b2 = false
-let /* @@ label */b2? /* @@ label1 */= b1 || b2
+import {Enum} from "./export_enum_with_alias"
 
-/* @@@ label Error TypeError: Variable 'b2' has already been declared.  */
-/* @@@ label1 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+function main() {
+    Enum.A
+}

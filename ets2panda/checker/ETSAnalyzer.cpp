@@ -1414,7 +1414,7 @@ static checker::Type *HandleSubstitution(ETSChecker *checker, ir::AssignmentExpr
         }
         expr->Right()->AsObjectExpression()->SetPreferredType(leftType);
     } else {
-        expr->Right()->SetPreferredType(leftType);
+        checker->SetPreferredTypeForExpression(expr->Left(), nullptr, expr->Right(), leftType);
     }
 
     return expr->Right()->Check(checker);
