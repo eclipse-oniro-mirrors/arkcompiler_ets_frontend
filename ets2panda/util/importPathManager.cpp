@@ -1006,7 +1006,7 @@ bool ImportPathManager::ImportMetadata::IsValid() const
 util::StringView ImportPathManager::FormRelativePath(const util::Path &path)
 {
     std::string filePath(path.GetAbsolutePath());
-    util::Helpers::CheckValidFileName(filePath, diagnosticEngine_);
+    util::Helpers::CheckValidFileName(path.GetFileNameWithExtension(), diagnosticEngine_);
     auto const tryFormRelativePath = [&filePath](std::string const &basePath,
                                                  std::string const &prefix) -> std::optional<std::string> {
         if (filePath.rfind(basePath, 0) != 0) {
