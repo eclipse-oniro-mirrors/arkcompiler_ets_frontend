@@ -8876,6 +8876,146 @@
             },
             "import_path": [],
             "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBySpecialRule",
+                "api_name": "on",
+                "api_fixed_name": "onWillTap",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "'willClick'",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "GestureEventListenerCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "void"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBySpecialRule",
+                "api_name": "on",
+                "api_fixed_name": "onDidTap",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "'didClick'",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "GestureEventListenerCallback",
+                        "is_optional": false,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "void"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBySpecialRule",
+                "api_name": "off",
+                "api_fixed_name": "offWillTap",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "'willClick'",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "GestureEventListenerCallback",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "void"
+            },
+            "import_path": [],
+            "is_global": true
+        },
+        {
+            "file_path": "@ohos.arkui.UIContext.d.ts",
+            "api_info": {
+                "line": 0,
+                "problem": "OverloadBySpecialRule",
+                "api_name": "off",
+                "api_fixed_name": "offDidTap",
+                "api_type": "MethodSignature",
+                "api_optional": false,
+                "api_func_args": [
+                    {
+                        "name": "type",
+                        "type": "'didClick'",
+                        "is_optional": false,
+                        "has_default": false
+                    },
+                    {
+                        "name": "callback",
+                        "type": "GestureEventListenerCallback",
+                        "is_optional": true,
+                        "has_default": false
+                    }
+                ],
+                "parent_api": [
+                    {
+                        "api_name": "UIObserver",
+                        "api_type": "InterfaceDeclaration"
+                    }
+                ],
+                "code_kind": "173",
+                "method_return_type": "void"
+            },
+            "import_path": [],
+            "is_global": true
         }
     ]
 }
