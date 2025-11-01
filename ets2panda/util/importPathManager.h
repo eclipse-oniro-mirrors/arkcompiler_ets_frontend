@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 #define ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 
+#include <shared_mutex>
+
 #include "language.h"
 #if defined PANDA_TARGET_MOBILE
 #define USE_UNIX_SYSCALL
@@ -172,14 +174,16 @@ public:
     }
 
 private:
-    void SetCacheUpdateIsNeeded(bool flag)
+    void SetCacheCannotBeUpdated()
     {
-        cacheUpdateIsNeeded_ = flag;
+        // Atomic with release order reason: other threads should see correct value
+        cacheCanBeUpdated_.store(false, std::memory_order_release);
     }
 
-    bool GetCacheUpdateIsNeeded()
+    bool GetCacheCanBeUpdated()
     {
-        return cacheUpdateIsNeeded_;
+        // Atomic with relaxed order reason: read of field
+        return cacheCanBeUpdated_.load(std::memory_order_relaxed);
     }
 
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
@@ -203,7 +207,7 @@ private:
     void TryMatchStaticResolvedPath(ResolvedPathRes &result) const;
     void TryMatchDynamicResolvedPath(ResolvedPathRes &result) const;
     StringView GetRealPath(StringView path) const;
-    bool DeclarationIsInCache(ImportMetadata &importData);
+    bool DeclarationIsInCache(ImportMetadata &importData, bool isStdlib);
     void ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata &importData,
                                                    const std::string_view &externalModuleImportData);
     void ProcessExternalLibraryImportSimple(ImportMetadata &importData);
@@ -228,7 +232,8 @@ private:
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
-    bool cacheUpdateIsNeeded_ = false;
+    std::atomic<bool> cacheCanBeUpdated_ {true};
+    std::shared_mutex m_ {};
 };
 
 }  // namespace ark::es2panda::util
