@@ -17,4 +17,4 @@ declare function testRest<T>(a: (t: T, t1: T, ...ts: T[]) => void): T
     
 testRest((t1:number, t2:boolean, t3) => {})
 
-/* @@? 18:10 Error TypeError: Type '(p1: Double, p2: Boolean, p3: never) => void' is not compatible with type '(p1: never, p2: never, ...p3: Array<never>) => void' at index 1 */
+/* @@? 18:10 Error TypeError: Type '((p1: Double, p2: Boolean, p3: never) => void)' is not compatible with type '((p1: never, p2: never, ...p3: Array<never>) => void)' at index 1 */

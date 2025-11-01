@@ -57,7 +57,7 @@ es2panda_AstNode *parNode;
 es2panda_Context *newCtx;
 
 static std::string originalSourceCode = R"(
-import { PI as PI } from "std/math"
+import { PI as PI } from "std/math/consts"
 )";
 
 void UpdateImportSpecifier(es2panda_Context *context)
@@ -108,7 +108,7 @@ int main(int argc, char **argv)
     UpdateImportSpecifier(context);
 
     const char *src = impl->AstNodeDumpEtsSrcConst(context, program);
-    const char *expected = "import { E as E } from \"std/math\"";
+    const char *expected = "import { E as E } from \"std/math/consts\"";
     if (strstr(src, expected) == nullptr) {
         return 1;
     }

@@ -53,7 +53,18 @@ def run_stdlib_benchmark(args: argparse.Namespace, work_dir: Path) -> None:
 
     new_perf_path = work_dir / "etsstdlib-current-perf.txt"
     output = work_dir / "etsstdlib-current.abc"
-    es2panda_args = ["--dump-perf-metrics", "--extension=ets", "--gen-stdlib=true", f"--output={output}", "etsstdlib"]
+
+    parts = Path(args.test_dir).parts
+    arktsconfig = Path(*parts[: parts.index("static_core") + 1]) / "plugins" / "ets" / "stdlib" / "stdconfig.json"
+
+    es2panda_args = [
+        "--dump-perf-metrics",
+        "--extension=ets",
+        "--gen-stdlib=true",
+        f"--output={output}",
+        "etsstdlib",
+        f"--arktsconfig={arktsconfig}",
+    ]
 
     benchmark_runner.run_benchmark_for_file([f"{args.es2panda}"] + es2panda_args, args.runs, new_perf_path)
 

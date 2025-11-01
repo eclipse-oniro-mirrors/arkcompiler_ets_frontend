@@ -19,6 +19,7 @@ x = true ? x:():long=>32
 let y:()=>int = ()=>16 as int
 y = true ? y:():int=>32
 y = true ? ():int=>32:y
+
 x = /* @@ forbid_aggresive_constf */true ? x:"apple"
 
-/* @@@ forbid_aggresive_constf Error TypeError: Type '() => Long|"apple"' cannot be assigned to type '() => Long'  */
+/* @@@ forbid_aggresive_constf Error TypeError: Type '((() => Long))|"apple"' cannot be assigned to type '(() => Long)' */

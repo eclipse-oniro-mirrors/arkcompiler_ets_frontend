@@ -21,7 +21,7 @@
 
 // NOLINTBEGIN
 static std::string source = R"(
-import { PI, E } from "std/math"
+import { PI, E } from "std/math/consts"
 
 export declare @interface exportAnno {}
 
@@ -82,7 +82,7 @@ let val:string = "ssss"
 
 export { ClassOutside, val, foo }
 
-export { PI, E } from "std/math"
+export { PI, E } from "std/math/consts"
 
 export NS
 

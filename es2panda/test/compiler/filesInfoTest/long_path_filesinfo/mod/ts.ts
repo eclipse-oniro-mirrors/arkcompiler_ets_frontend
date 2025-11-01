@@ -17,4 +17,4 @@ function TS() {
     print("mod")
 }
 
-TS()
+export { PI } from "std/math/consts";

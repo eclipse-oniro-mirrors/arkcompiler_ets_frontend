@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { PI } from "std/math";
+import { PI } from "std/math/consts";
 
 // readonly expected : double = -1.3524862408537381;
 class Body  {

@@ -73,6 +73,8 @@ function(ets2panda_add_gtest TARGET)
                 ${ES2PANDA_BINARY_ROOT}
             SANITIZERS
                 ${PANDA_SANITIZERS_LIST}
+            DEPS_TARGETS
+                es2panda
             ${ARG_UNPARSED_ARGUMENTS}
     )
 endfunction(ets2panda_add_gtest)

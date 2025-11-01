@@ -64,6 +64,7 @@ void ImportDeclaration::Dump(ir::AstDumper *dumper) const
 void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 {
     if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->CollectImport(this);
         return;
     }
     dumper->DumpJsdocBeforeTargetNode(this);

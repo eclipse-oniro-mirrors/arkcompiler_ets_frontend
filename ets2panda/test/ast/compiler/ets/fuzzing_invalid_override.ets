@@ -26,7 +26,7 @@ export default class HashMap<K, V> implements ReadonlyHashMap<K, V> {
 }
 
 
-/* @@? 20:69 Error TypeError: HashMap is not abstract and does not override abstract method forEach(callbackFn: (p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => void): void in ReadonlyHashMap */
+/* @@? 20:69 Error TypeError: HashMap is not abstract and does not override abstract method forEach(callbackFn: ((p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => void)): void in ReadonlyHashMap */
 /* @@? 21:12 Error TypeError: Only abstract or native methods can't have body. */
 /* @@? 21:17 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 21:17 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */

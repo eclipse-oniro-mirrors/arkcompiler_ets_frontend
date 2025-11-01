@@ -176,7 +176,9 @@ void ETSFunctionType::AddCallSignature(Signature *signature)
 
 void ETSFunctionType::ToString(std::stringstream &ss, bool precise) const
 {
+    ss << "(";
     callSignatures_[0]->ToString(ss, nullptr, false, precise);
+    ss << ")";
 }
 
 // Method types do not participate in most type relations

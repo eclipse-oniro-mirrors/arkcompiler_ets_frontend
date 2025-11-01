@@ -5,7 +5,7 @@
       "type": "ImportDeclaration",
       "source": {
         "type": "StringLiteral",
-        "value": "std/math",
+        "value": "std/math/consts",
         "loc": {
           "start": {
             "line": 16,
@@ -14,7 +14,7 @@
           },
           "end": {
             "line": 16,
-            "column": 30,
+            "column": 37,
             "program": "AccessNBody.ets"
           }
         }
@@ -76,7 +76,7 @@
         },
         "end": {
           "line": 16,
-          "column": 31,
+          "column": 38,
           "program": "AccessNBody.ets"
         }
       }

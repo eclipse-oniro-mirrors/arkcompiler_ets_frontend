@@ -45,6 +45,8 @@ panda_add_gtest(
             ${GEN_INCLUDE_DIR}
         SANITIZERS
             ${PANDA_SANITIZERS_LIST}
+        DEPS_TARGETS
+            etsstdlib
 )
 
 add_dependencies(es2panda_depanalyz_tests path_getter)

@@ -20,6 +20,6 @@
 @MyAnno(/* @@ label */(a: int) => {})
 class B{}
 
-/* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
-/* @@? 20:23 Error TypeError: Type '(p1: Int) => void' cannot be assigned to type 'String' */
-/* @@? 20:23 Error TypeError: Invalid value for annotation field, expected a constant literal. */
+/* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal. */
+/* @@@ label Error TypeError: Type '((p1: Int) => void)' cannot be assigned to type 'String' */
+/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal. */
