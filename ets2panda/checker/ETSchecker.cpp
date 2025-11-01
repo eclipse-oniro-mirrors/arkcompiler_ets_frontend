@@ -114,7 +114,8 @@ static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signat
 
 void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties)
 {
-    std::set<util::StringView> names;
+    std::set<util::StringView> fieldNames {};
+    std::set<util::StringView> methodNames {};
 
     for (auto property : properties) {
         if (!property->IsProperty()) {
@@ -128,10 +129,19 @@ void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &pro
 
         // number kind only used here
         auto propName = propKey->IsIdentifier() ? propKey->AsIdentifier()->Name() : propKey->AsStringLiteral()->Str();
-        if (names.find(propName) != names.end()) {
+        if (fieldNames.find(propName) != fieldNames.end()) {
             LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
         }
-        names.insert(propName);
+
+        // Method names can duplicate because of possible overloading
+        if (!propertyDecl->Value()->IsArrowFunctionExpression()) {
+            if (methodNames.find(propName) != methodNames.end()) {
+                LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
+            }
+            fieldNames.insert(propName);
+        } else {
+            methodNames.insert(propName);
+        }
     }
 }
 

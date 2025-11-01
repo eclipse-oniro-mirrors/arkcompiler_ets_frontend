@@ -20,11 +20,13 @@ class C {
   foo<T, U>(...p: [A<T>, B<U>]) {}
 }
 
-(new C()).foo({v.r2}
+(new C()).foo({v.r2/* @@ label */}
 )
 
 
-/* @@? 23:1 Error Semantic error ESE0124: Expected 2 arguments, got 1. */
 /* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo(...) */
 /* @@? 23:15 Error Semantic error ESE0062: need to specify target type for class composite */
-/* @@? 23:17 Error Syntax error ESY0228: Unexpected token, expected ':'. */
+/* @@? 23:17 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@@ label Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@@ label Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@@ label Error Syntax error ESY0230: Expected '{', got '}'. */

@@ -15,11 +15,3 @@
 
 interface A { foo(): void}
 const x: A = {foo() {}}
-
-
-/* @@? 17:15 Error Semantic error ESE0074: Class or interface methods cannot be initialized within an object literal. */
-/* @@? 17:18 Error Syntax error ESY0228: Unexpected token, expected ':'. */
-/* @@? 17:19 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 17:21 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 17:22 Error Syntax error ESY0227: Unexpected token '}'. */
-/* @@? 17:23 Error Syntax error ESY0227: Unexpected token '}'. */

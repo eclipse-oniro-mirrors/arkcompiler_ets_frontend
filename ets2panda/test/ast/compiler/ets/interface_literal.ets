@@ -21,7 +21,7 @@ let f = (this: I, x: int): int => x;
 
 function main() {
   let obj: I = {
-    /* @@ label */f: f
+        f: /* @@ label */f
   }
 
   let r: int = obj.f(5);
@@ -29,4 +29,4 @@ function main() {
 }
 
 
-/* @@@ label Error Semantic error ESE0074: Class or interface methods cannot be initialized within an object literal. */
+/* @@@ label Error Semantic error ESE0319: Type '(p1: I, p2: Int) => Int' is not compatible with type '(x: Int) => Int' at property 'f' */

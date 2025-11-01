@@ -15,14 +15,9 @@
 
 #include "lambdaLowering.h"
 
-#include <sstream>
-
 #include "checker/types/ets/etsTupleType.h"
-#include "checker/ets/typeRelationContext.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
-#include "ir/astNode.h"
-#include "util/options.h"
 #include "util/nameMangler.h"
 
 namespace ark::es2panda::compiler {
@@ -1819,10 +1814,11 @@ static bool IsEnumFunctionCall(const ir::Identifier *const id)
     return false;
 }
 
-static bool IsValidFunctionDeclVar(const varbinder::Variable *const var)
+[[nodiscard]] static bool IsValidFunctionDeclVar(const varbinder::Variable *const var) noexcept
 {
-    // Note: If a function is accessor, then no need to build lambda class.
+    // If a function is accessor or defined in object literal, then no need to build lambda class.
     return var != nullptr && var->Declaration() != nullptr && var->Declaration()->IsFunctionDecl() &&
+           var->Declaration()->Node()->IsMethodDefinition() &&
            !var->TsType()->HasTypeFlag(checker::TypeFlag::GETTER_SETTER);
 }
 
@@ -1835,6 +1831,11 @@ static bool IsOverloadedName(const ir::Expression *const expr)
     auto overloadedList = expr->Parent()->AsOverloadDeclaration()->OverloadedList();
     return std::any_of(overloadedList.begin(), overloadedList.end(),
                        [&expr](const ir::Expression *overloadedName) { return overloadedName == expr; });
+}
+
+[[nodiscard]] static bool IsMethodInLiteral(ir::ArrowFunctionExpression const *const expr) noexcept
+{
+    return expr->Parent()->IsProperty() && expr->Parent()->AsProperty()->TsType()->IsETSMethodType();
 }
 
 static bool IsConvertibleFunctionReference(const ir::AstNode *node)
@@ -1864,7 +1865,7 @@ static bool IsConvertibleFunctionReference(const ir::AstNode *node)
 
 static ir::AstNode *BuildLambdaClassWhenNeeded(public_lib::Context *ctx, ir::AstNode *node)
 {
-    if (node->IsArrowFunctionExpression()) {
+    if (node->IsArrowFunctionExpression() && !IsMethodInLiteral(node->AsArrowFunctionExpression())) {
         return ConvertLambda(ctx, node->AsArrowFunctionExpression());
     }
 
@@ -1941,7 +1942,9 @@ bool LambdaConversionPhase::PerformForModule(public_lib::Context *ctx, parser::P
 bool LambdaConversionPhase::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
                                                    parser::Program const *program)
 {
-    return !program->Ast()->IsAnyChild([](ir::AstNode const *node) { return node->IsArrowFunctionExpression(); });
+    return !program->Ast()->IsAnyChild([](ir::AstNode const *node) {
+        return node->IsArrowFunctionExpression() && !IsMethodInLiteral(node->AsArrowFunctionExpression());
+    });
 }
 
 }  // namespace ark::es2panda::compiler

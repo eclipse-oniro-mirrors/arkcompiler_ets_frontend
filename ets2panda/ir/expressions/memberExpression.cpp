@@ -162,7 +162,7 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
         case 1U: {
             if (resolveRes[0]->Kind() == checker::ResolvedKind::PROPERTY) {
                 auto var = resolveRes[0]->Variable()->AsLocalVariable();
-                checker->ValidatePropertyAccess(var, objType_, property_->Start());
+                checker->ValidatePropertyAccess(var, objType_, property_);
                 return {checker->GetTypeOfVariable(var), var};
             }
 

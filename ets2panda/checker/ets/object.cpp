@@ -2062,6 +2062,13 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
     }
 
     if (HasStatus(CheckerStatus::IN_STATIC_CONTEXT)) {
+        if (ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::OBJECT_EXPRESSION);
+            ancestor != nullptr) {
+            ES2PANDA_ASSERT(ancestor->AsObjectExpression()->PreferredType() != nullptr &&
+                            ancestor->AsObjectExpression()->PreferredType()->IsETSObjectType());
+            return ancestor->AsObjectExpression()->PreferredType()->AsETSObjectType();
+        }
+
         LogError(diagnostic::CTOR_REF_IN_STATIC_CTX, {msg}, node->Start());
         return classType;
     }
@@ -2070,8 +2077,14 @@ ETSObjectType *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjec
         LogDiagnostic(diagnostic::THIS_IN_FIELD_INITIALIZER, {}, node->Start());
     }
 
-    if (classType == nullptr ||
-        (classType->GetDeclNode()->IsClassDefinition() && classType->GetDeclNode()->AsClassDefinition()->IsGlobal())) {
+    if (classType == nullptr || util::Helpers::IsGlobalClass(classType->GetDeclNode())) {
+        if (ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::OBJECT_EXPRESSION);
+            ancestor != nullptr) {
+            ES2PANDA_ASSERT(ancestor->AsObjectExpression()->PreferredType() != nullptr &&
+                            ancestor->AsObjectExpression()->PreferredType()->IsETSObjectType());
+            return ancestor->AsObjectExpression()->PreferredType()->AsETSObjectType();
+        }
+
         LogError(diagnostic::CTOR_REF_INVALID_CTX_GLOBAL, {msg}, node->Start());
         return GlobalBuiltinErrorType();
     }
@@ -2672,7 +2685,7 @@ varbinder::LocalVariable *ETSChecker::ResolveOverloadReference(const ir::Identif
     if (var == nullptr) {
         return nullptr;
     }
-    ValidatePropertyAccess(var, objType, ident->Start());
+    ValidatePropertyAccess(var, objType, ident);
     return var;
 }
 

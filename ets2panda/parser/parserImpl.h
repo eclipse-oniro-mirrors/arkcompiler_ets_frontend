@@ -153,7 +153,7 @@ protected:
     ir::Property *ParseShorthandProperty(const lexer::LexerPosition *startPos);
     void ParseGeneratorPropertyModifier(ExpressionParseFlags flags, ParserStatus *methodStatus);
     bool ParsePropertyModifiers(ExpressionParseFlags flags, ir::PropertyKind *propertyKind, ParserStatus *methodStatus);
-    ir::Expression *ParsePropertyValue(const ir::PropertyKind *propertyKind, const ParserStatus *methodStatus,
+    ir::Expression *ParsePropertyValue(ir::PropertyKind propertyKind, ParserStatus methodStatus,
                                        ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS);
     void ParsePropertyEndErrorHendler();
     bool ParsePropertyEnd();

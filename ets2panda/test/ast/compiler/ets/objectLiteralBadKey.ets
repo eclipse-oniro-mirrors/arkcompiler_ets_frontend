@@ -16,8 +16,8 @@
 class C {
 }
 
-let c: C = /* @@ label */{
-    33: 44,
+let c: C = {
+    /* @@ label */33: 44,
 };
 
 

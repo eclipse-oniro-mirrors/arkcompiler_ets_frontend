@@ -15,15 +15,22 @@
 
 
 let obj: Record<string, number> = {
-    [this.viewModel.ads] : 123
+    [this.viewModel.ads]: 123
 }
 
 
 /* @@? 18:5 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 18:6 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 18:6 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
-/* @@? 18:11 Error Semantic error ESE0087: Property 'viewModel' does not exist on type 'ETSGLOBAL' */
+/* @@? 18:6 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 18:10 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 18:10 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 18:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:10 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 18:10 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:20 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 18:24 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 18:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:24 Error Syntax error ESY0230: Expected '{', got ']'. */
 /* @@? 18:24 Error Syntax error ESY0016: Unexpected token. */
-/* @@? 18:26 Error Syntax error ESY0227: Unexpected token ':'. */
-/* @@? 18:28 Error Syntax error ESY0227: Unexpected token '123'. */
+/* @@? 18:25 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:27 Error Syntax error ESY0227: Unexpected token '123'. */
 /* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */

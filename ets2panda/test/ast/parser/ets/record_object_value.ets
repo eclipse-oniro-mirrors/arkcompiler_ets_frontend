@@ -59,7 +59,6 @@ function main(){
 }
 /* @@@ label Error Semantic error ESE0319: Type '"10"' is not compatible with type 'Double' at property 'age' */
 /* @@@ label1 Error Semantic error ESE0319: Type '"100"' is not compatible with type 'Double' at property 'salary' */
-/* @@@ label2 Error Semantic error ESE0400: Non-optional property 'salary' in type 'PersonInfoInterface' is missing in object literal. */
 /* @@@ label2 Error Semantic error ESE0400: Non-optional property 'age' in type 'PersonInfoInterface' is missing in object literal. */
 /* @@@ label3 Error Semantic error ESE0065: type PersonInfoInterface has no property named agee */
 /* @@@ label4 Error Semantic error ESE0065: type PersonInfoInterface has no property named other */

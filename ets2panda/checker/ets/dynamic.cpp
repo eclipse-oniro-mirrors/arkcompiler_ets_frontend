@@ -45,44 +45,6 @@
 
 namespace ark::es2panda::checker {
 
-void ProcessCheckerNode(ETSChecker *checker, ir::AstNode *node)
-{
-    auto scope = compiler::NearestScope(node);
-    ES2PANDA_ASSERT(scope != nullptr);
-    if (scope->IsGlobalScope()) {
-        // NOTE(aleksisch): All classes are contained in ETSGlobal class scope (not just Global scope),
-        // however it's parent is ETSModule. It should be fixed
-        scope = checker->VarBinder()->Program()->GlobalClassScope();
-    }
-
-    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
-    checker->VarBinder()->AsETSBinder()->ResolveReference(node);
-
-    if (node->IsMethodDefinition()) {
-        // NOTE(aleksisch): This should be done in varbinder,
-        // however right now checker do it when called on ClassDefinition
-        auto method = node->AsMethodDefinition();
-        auto func = method->Value()->AsFunctionExpression()->Function();
-        ES2PANDA_ASSERT(method->Id() != nullptr);
-        func->Id()->SetVariable(method->Id()->Variable());
-    }
-    ScopeContext checkerScope(checker, scope);
-    node->Check(checker);
-}
-
-void ProcessScopesNode(ETSChecker *checker, ir::AstNode *node)
-{
-    auto *scope = compiler::NearestScope(node);
-    ES2PANDA_ASSERT(scope != nullptr);
-    if (scope->IsGlobalScope()) {
-        // NOTE(aleksisch): All classes are contained in ETSGlobal scope,
-        // however it's parent is ETSModule (not ETSGlobal). It should be fixed
-        scope = checker->VarBinder()->Program()->GlobalClassScope();
-    }
-    auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
-    compiler::InitScopesPhaseETS::RunExternalNode(node, checker->VarBinder());
-}
-
 ir::ETSParameterExpression *ETSChecker::AddParam(util::StringView name, ir::TypeNode *type)
 {
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -201,23 +163,27 @@ ir::ClassDeclaration *ETSChecker::BuildClass(util::StringView name, const ClassB
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *classDecl = ProgramAllocNode<ir::ClassDeclaration>(classDef, ProgramAllocator());
 
-    VarBinder()->Program()->Ast()->AddStatement(classDecl);
-    classDecl->SetParent(VarBinder()->Program()->Ast());
+    auto *const varBinder = VarBinder()->AsETSBinder();
+    auto *const program = varBinder->Program();
 
-    auto varBinder = VarBinder()->AsETSBinder();
-    bool isExternal = VarBinder()->Program() != varBinder->GetGlobalRecordTable()->Program();
-    auto recordTable = isExternal ? varBinder->GetExternalRecordTable().at(varBinder->Program())
-                                  : VarBinder()->AsETSBinder()->GetGlobalRecordTable();
+    program->Ast()->AddStatement(classDecl);
+    classDecl->SetParent(program->Ast());
+
+    bool isExternal = program != varBinder->GetGlobalRecordTable()->Program();
+    auto recordTable = isExternal ? varBinder->GetExternalRecordTable().at(program) : varBinder->GetGlobalRecordTable();
     varbinder::BoundContext boundCtx(recordTable, classDef);
 
     ArenaVector<ir::AstNode *> classBody(ProgramAllocator()->Adapter());
 
-    builder(&classBody);
+    builder(classBody);
 
     classDef->AddProperties(std::move(classBody));
 
-    ProcessScopesNode(this, classDecl);
-    ProcessCheckerNode(this, classDecl);
+    compiler::InitScopesPhaseETS::RunExternalNode(classDecl, varBinder);
+    varBinder->ResolveReference(classDecl);
+
+    classDecl->Check(this);
+
     return classDecl;
 }
 

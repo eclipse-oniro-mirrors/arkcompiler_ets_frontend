@@ -2378,8 +2378,9 @@ void ETSChecker::BuildFunctionSignature(ir::ScriptFunction *func, bool isConstru
     }
 
     if ((func->IsConstructor() || !func->IsStatic()) && !func->IsArrow()) {
-        auto thisVar = func->Scope()->ParamScope()->Params().front();
-        thisVar->SetTsType(Context().ContainingClass());
+        if (!func->Scope()->ParamScope()->Params().empty()) {
+            func->Scope()->ParamScope()->Params().front()->SetTsType(Context().ContainingClass());
+        }
     }
     auto *signatureInfo = ComposeSignatureInfo(func->TypeParams(), func->Params());
     auto *returnType = func->GetPreferredReturnType() != nullptr
@@ -2414,10 +2415,10 @@ checker::ETSFunctionType *ETSChecker::BuildMethodType(ir::ScriptFunction *func)
 {
     ES2PANDA_ASSERT(!func->IsArrow());
     ES2PANDA_ASSERT(func != nullptr);
-    auto *nameVar = func->Id()->Variable();
+    auto *ident = func->Id();
     ETSFunctionType *funcType =
-        CreateETSMethodType(nameVar->Name(), {{func->Signature()}, ProgramAllocator()->Adapter()});
-    funcType->SetVariable(nameVar);
+        CreateETSMethodType(ident->Name(), {{func->Signature()}, ProgramAllocator()->Adapter()});
+    funcType->SetVariable(ident->Variable());
     return funcType;
 }
 
@@ -2583,24 +2584,6 @@ static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signa
                       signature->Function()->Start());
 }
 
-bool CheckTypeParameterConstraints(ArenaVector<Type *> typeParamList1, ArenaVector<Type *> typeParamList2,
-                                   TypeRelation *relation)
-{
-    if (!typeParamList1.empty() || !typeParamList2.empty()) {
-        if (typeParamList1.size() != typeParamList2.size()) {
-            return false;
-        }
-        for (size_t i = 0; i < typeParamList1.size(); i++) {
-            auto c1 = typeParamList1[i]->AsETSTypeParameter()->GetConstraintType();
-            auto c2 = typeParamList2[i]->AsETSTypeParameter()->GetConstraintType();
-            if (!relation->IsSupertypeOf(c1, c2)) {  // contravariance check
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectType *site)
 {
     PropertySearchFlags flags =
@@ -2614,7 +2597,7 @@ static bool CheckOverride(ETSChecker *checker, Signature *signature, ETSObjectTy
 
     for (auto *it : target->TsType()->AsETSFunctionType()->CallSignatures()) {
         bool typeParamError = false;
-        if (!CheckTypeParameterConstraints(signature->TypeParams(), it->TypeParams(), checker->Relation())) {
+        if (!checker->Relation()->CheckTypeParameterConstraints(signature->TypeParams(), it->TypeParams())) {
             typeParamError = true;
         }
 

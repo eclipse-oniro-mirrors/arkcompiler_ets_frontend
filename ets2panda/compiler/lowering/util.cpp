@@ -76,7 +76,7 @@ ir::Identifier *Gensym(ArenaAllocator *const allocator)
     return allocator->New<ir::Identifier>(s.View(), allocator);
 }
 
-util::UString GenName(ArenaAllocator *const allocator)
+std::string GenName()
 {
     static std::size_t gensymCounter = 0U;
     static std::mutex gensymCounterMutex {};
@@ -85,7 +85,12 @@ util::UString GenName(ArenaAllocator *const allocator)
         std::lock_guard lock(gensymCounterMutex);
         individualGensym = ++gensymCounter;
     }
-    return util::UString {std::string(GENSYM_CORE) + std::to_string(individualGensym), allocator};
+    return std::string(GENSYM_CORE) + std::to_string(individualGensym);
+}
+
+util::UString GenName(ArenaAllocator *const allocator)
+{
+    return util::UString {GenName(), allocator};
 }
 
 void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &range)

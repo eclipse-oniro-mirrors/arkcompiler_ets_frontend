@@ -16,14 +16,7 @@
 #ifndef ES2PANDA_UTIL_HELPERS_H
 #define ES2PANDA_UTIL_HELPERS_H
 
-#include "varbinder/variableFlags.h"
-#include "libarkbase/mem/pool_manager.h"
-#include "util/ustring.h"
-#include "util/perfMetrics.h"
 #include "ir/module/importSpecifier.h"
-
-#include <cmath>
-#include <string>
 
 namespace ark::es2panda::parser {
 class Program;
@@ -150,6 +143,9 @@ public:
     static const ir::ClassDefinition *GetClassDefinition(const ir::ScriptFunction *node);
     static bool IsSpecialPropertyKey(const ir::Expression *expr);
     static bool IsConstantPropertyKey(const ir::Expression *expr, bool isComputed);
+    [[nodiscard]] static bool IsErrorPlaceHolder(ir::Identifier const *ident, bool isNull = false) noexcept;
+    [[nodiscard]] static bool IsGlobalClass(ir::AstNode const *node) noexcept;
+    [[nodiscard]] static bool IsETSMethodType(checker::Type const *type) noexcept;
     static compiler::Literal ToConstantLiteral(const ir::Expression *expr);
     static bool IsBindingPattern(const ir::AstNode *node);
     static bool IsPattern(const ir::AstNode *node);

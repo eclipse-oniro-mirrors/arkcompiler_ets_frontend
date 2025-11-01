@@ -109,6 +109,13 @@ void ObjectExpression::SetOptional(bool optional)
     optional_ = optional;
 }
 
+bool ObjectExpression::HasMethodDefinition() const noexcept
+{
+    return std::any_of(properties_.cbegin(), properties_.cend(), [](Expression *expr) -> bool {
+        return expr->IsProperty() && util::Helpers::IsETSMethodType(expr->TsType());
+    });
+}
+
 void ObjectExpression::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     for (auto *&it : VectorIterationGuard(properties_)) {

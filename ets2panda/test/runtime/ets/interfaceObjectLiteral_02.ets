@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,24 +13,38 @@
  * limitations under the License.
  */
 
+interface I {
+  foo (i: int): string {
+    let s = i.toString();
+    return s;
+  };
 
-interface RouterOptions {
-    url : string
-    params?: Object
-}
-enum RouterMode {
-    standard,
-    single
-}
+  foo (name: string): string;
 
-interface RouterT {
-    back (options?: RouterOptions, mode?: RouterMode): void
-    getParams():Object
+  foo (): int;
 }
 
-const router:RouterT = {
-    back: (options?: RouterOptions, mode?: RouterMode): void => {},
-    getParams: (): Object => {
-        throw new Error(`Test`)
-    }
+let header = "x = ";
+
+function main() {
+
+  let x: int = 0;
+
+  let p: I = {
+    foo (header: string): string {
+      return header + this.foo(this.foo());
+    },
+    foo (): int {
+      return ++x;
+    },
+
+  };
+
+  arktest.assertEQ(p.foo(header), "x = 1");
+  arktest.assertEQ(p.foo(header), "x = 2");
+
+  arktest.assertEQ(x, 2);
+  ++x;
+
+  arktest.assertEQ(p.foo(header), "x = 4");
 }

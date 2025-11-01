@@ -1371,7 +1371,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
         checker->BuildFunctionSignature(expr->Function(), false);
     }
 
-    if (expr->Function()->Signature() == nullptr) {
+    if (expr->Function()->Signature() == nullptr || util::Helpers::IsErrorPlaceHolder(expr->Function()->Id())) {
         return checker->InvalidateType(expr);
     }
 
@@ -1382,7 +1382,11 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
     auto *signature = expr->Function()->Signature();
 
     checker->Context().SetContainingSignature(signature);
-    expr->Function()->Body()->Check(checker);
+
+    if (expr->Function()->HasBody()) {
+        expr->Function()->Body()->Check(checker);
+    }
+
     if (expr->Function()->ReturnTypeAnnotation() == nullptr) {
         if (expr->Function()->IsAsyncFunc()) {
             auto *retType = signature->ReturnType();
@@ -1401,8 +1405,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
 
     auto *funcType = checker->CreateETSArrowType(signature);
     checker->Context().SetContainingSignature(nullptr);
-    expr->SetTsType(funcType);
-    return expr->TsType();
+    return expr->SetTsType(funcType);
 }
 
 static bool IsInvalidArrayMemberAssignment(const ir::AssignmentExpression *const expr, ETSChecker *checker)
@@ -2958,11 +2961,11 @@ void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,
     }
 }
 
-static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, const ir::ObjectExpression *expr,
-                                                          ir::Expression *propExpr, const ir::Expression *key)
+static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, ir::Expression *const propExpr) noexcept
 {
+    ir::Expression const *const key = propExpr->AsProperty()->Key();
     if (key->IsStringLiteral()) {
-        checker->LogDiagnostic(diagnostic::CLASS_COMPOSITE_KEY_USE_STRING, {}, expr->Start());
+        checker->LogDiagnostic(diagnostic::CLASS_COMPOSITE_KEY_USE_STRING, {}, propExpr->Start());
         return std::make_optional(key->AsStringLiteral()->Str());
     }
 
@@ -2970,42 +2973,95 @@ static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, c
         return std::make_optional(key->AsIdentifier()->Name());
     }
 
-    checker->PossiblyLogError(propExpr, diagnostic::CLASS_COMPOSITE_INVALID_KEY, {}, expr->Start());
+    checker->PossiblyLogError(propExpr, diagnostic::CLASS_COMPOSITE_INVALID_KEY, {}, propExpr->Start());
     propExpr->SetTsType(checker->GlobalTypeError());
+
     return std::nullopt;
 }
 
-bool ETSAnalyzer::IsPropertyAssignable(ir::Expression *propExpr, ir::Expression *key, ir::Expression *value,
-                                       varbinder::LocalVariable *lv, const util::StringView &pname) const
+//  Helper function extracted from 'ETSAnalyzer::IsPropertyAssignable(...)' to reduce its size
+static bool IsMethodPropertyAssignable(ETSChecker *const checker, std::string_view const propertyName,
+                                       Type const *const propertyType, ir::Expression *const value,
+                                       TypeRelationFlag const flags)
 {
-    ETSChecker *checker = GetETSChecker();
+    ES2PANDA_ASSERT(propertyType->IsETSMethodType() && !propertyType->AsETSFunctionType()->CallSignatures().empty());
 
-    auto *propType = checker->GetTypeOfVariable(lv);
-    if (propType->IsETSMethodType()) {
-        checker->PossiblyLogError(propExpr, diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
-        propExpr->SetTsType(checker->GlobalTypeError());
+    Type *const valueType = value->TsType();
+    if (!valueType->IsETSArrowType()) {
+        checker->LogError(diagnostic::PROP_INCOMPAT, {valueType, propertyType, propertyName}, value->Start());
         return false;
     }
+
+    auto *const relation = checker->Relation();
+    auto *const sourceSignature = valueType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()[0U];
+    std::string methodType {};
+
+    for (auto *const targetSignature : propertyType->AsETSFunctionType()->CallSignatures()) {
+        if (propertyName != targetSignature->Function()->Id()->Name().Utf8()) {
+            continue;
+        }
+
+        if (relation->CheckTypeParameterConstraints(sourceSignature->TypeParams(), targetSignature->TypeParams())) {
+            auto *const substSignature = checker->AdjustForTypeParameters(sourceSignature, targetSignature);
+
+            SavedTypeRelationFlagsContext savedFlagsCtx(relation, TypeRelationFlag::OVERRIDING_CONTEXT);
+            if (relation->SignatureIsSupertypeOf(substSignature, sourceSignature)) {
+                return true;
+            }
+        }
+        methodType += targetSignature->ToString() + " | ";
+    }
+
+    if ((flags & TypeRelationFlag::NO_THROW) == std::underlying_type_t<TypeRelationFlag>(0U)) {
+        methodType.resize(methodType.size() - 3U);
+        checker->LogError(diagnostic::PROP_INCOMPAT, {sourceSignature->ToString(), methodType, propertyName},
+                          value->Start());
+    }
+
+    return false;
+}
+
+static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *const propExpr,
+                                 varbinder::LocalVariable *const lv, const util::StringView &pname,
+                                 ETSObjectType const *const objectType)
+{
+    auto *propType = checker->GetTypeOfVariable(lv);
 
     if (auto *setterType = GetSetterType(lv, checker); setterType != nullptr) {
         propType = setterType;
     }
 
-    value->SetPreferredType(propType);
     propExpr->SetTsType(propType);
-    key->SetTsType(propType);
-    value->SetTsType(value->Check(checker));
 
-    const auto assignmentCtxFlags =
-        propExpr->HasAstNodeFlags(ir::AstNodeFlags::NO_THROW) ? TypeRelationFlag::NO_THROW : TypeRelationFlag::NONE;
-    const bool isPropAssignable =
-        // CC-OFFNXT(G.FMT.06-CPP) project code style
-        checker::AssignmentContext(checker->Relation(), value, value->TsType(), propType, value->Start(),
-                                   // CC-OFFNXT(G.FMT.06-CPP) project code style
-                                   {{diagnostic::PROP_INCOMPAT, {value->TsType(), propType, pname}}},
-                                   assignmentCtxFlags)
-            .IsAssignable();
-    if (!isPropAssignable && propExpr->HasAstNodeFlags(ir::AstNodeFlags::NO_THROW)) {
+    ir::Expression *key = propExpr->AsProperty()->Key();
+    key->SetTsType(propType);
+
+    ir::Expression *value = propExpr->AsProperty()->Value();
+    value->SetPreferredType(propType);
+
+    // NOTE (DZ): now method re-definition is allowed only in interface object literals!
+    if (propType->IsETSMethodType() && !objectType->HasObjectFlag(checker::ETSObjectFlags::INTERFACE)) {
+        checker->PossiblyLogError(propExpr, diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
+        propExpr->SetTsType(checker->GlobalTypeError());
+        return false;
+    }
+
+    Type *const valueType = value->Check(checker);
+
+    auto const skipError = propExpr->HasAstNodeFlags(ir::AstNodeFlags::NO_THROW);
+    TypeRelationFlag const flags = skipError ? TypeRelationFlag::NO_THROW : TypeRelationFlag::NONE;
+
+    bool assignable;
+    if (!propType->IsETSMethodType()) {
+        assignable = checker::AssignmentContext(checker->Relation(), value, valueType, propType, value->Start(),
+                                                {{diagnostic::PROP_INCOMPAT, {valueType, propType, pname}}}, flags)
+                         // CC-OFFNXT(G.FMT.06-CPP) project code style
+                         .IsAssignable();
+    } else {
+        assignable = IsMethodPropertyAssignable(checker, pname.Utf8(), propType, value, flags);
+    }
+
+    if (!assignable && skipError) {
         propExpr->SetTsType(checker->GlobalTypeError());
         return false;
     }
@@ -3013,49 +3069,45 @@ bool ETSAnalyzer::IsPropertyAssignable(ir::Expression *propExpr, ir::Expression 
     return true;
 }
 
-void ETSAnalyzer::CheckObjectExprPropsHelper(const ir::ObjectExpression *expr, checker::ETSObjectType *objType,
-                                             checker::PropertySearchFlags searchFlags,
-                                             std::unordered_map<util::StringView, ETSObjectType *> &properties) const
+static void CheckObjectExprPropsHelper(ETSChecker *const checker, const ir::ObjectExpression *expr,
+                                       checker::ETSObjectType *objType, checker::PropertySearchFlags const searchFlags,
+                                       std::unordered_map<util::StringView, ETSObjectType *> &properties)
 {
-    ETSChecker *checker = GetETSChecker();
     for (ir::Expression *propExpr : expr->Properties()) {
         if (!propExpr->IsProperty()) {
             checker->PossiblyLogError(propExpr, diagnostic::OBJECT_LITERAL_NOT_KV, {}, expr->Start());
             propExpr->SetTsType(checker->GlobalTypeError());
-            return;
-        }
-
-        ir::Expression *key = propExpr->AsProperty()->Key();
-        ir::Expression *value = propExpr->AsProperty()->Value();
-
-        std::optional<util::StringView> possibleKey = GetNameForProperty(checker, expr, propExpr, key);
-        if (!possibleKey.has_value()) {
-            return;
-        }
-
-        const util::StringView pname = possibleKey.value();
-
-        varbinder::LocalVariable *lv = objType->GetProperty(pname, searchFlags);
-        if (lv == nullptr) {
-            checker->PossiblyLogError(propExpr, diagnostic::UNDEFINED_PROPERTY, {objType->Name(), pname},
-                                      propExpr->Start());
-            propExpr->SetTsType(checker->GlobalTypeError());
-            return;
-        }
-
-        checker->ValidatePropertyAccess(lv, objType, propExpr->Start());
-
-        if (key->IsIdentifier()) {
-            key->AsIdentifier()->SetVariable(lv);
-        }
-
-        if (!IsPropertyAssignable(propExpr, key, value, lv, pname)) {
             continue;
         }
 
-        if (properties.find(pname) != properties.end()) {
-            properties.erase(pname);
+        std::optional<util::StringView> propertyName = GetNameForProperty(checker, propExpr);
+        if (!propertyName.has_value()) {
+            continue;
         }
+
+        varbinder::LocalVariable *lv = objType->GetProperty(*propertyName, searchFlags);
+        if (lv == nullptr) {
+            checker->PossiblyLogError(propExpr, diagnostic::UNDEFINED_PROPERTY, {objType->Name(), *propertyName},
+                                      propExpr->Start());
+            propExpr->SetTsType(checker->GlobalTypeError());
+            continue;
+        }
+
+        if (ir::Expression *key = propExpr->AsProperty()->Key(); key->IsIdentifier()) {
+            key->AsIdentifier()->SetVariable(lv);
+        }
+
+        checker->ValidatePropertyAccess(lv, objType, propExpr);
+        if (IsTypeError(lv->TsType())) {
+            propExpr->SetTsType(checker->GlobalTypeError());
+            continue;
+        }
+
+        if (!IsPropertyAssignable(checker, propExpr, lv, *propertyName, objType)) {
+            continue;
+        }
+
+        properties.erase(*propertyName);
     }
 }
 
@@ -3074,7 +3126,7 @@ void ETSAnalyzer::CheckObjectExprProps(const ir::ObjectExpression *expr,
         CollectNonOptionalProperty(objType, propertyWithNonOptionalType);
     }
 
-    CheckObjectExprPropsHelper(expr, objType, searchFlags, propertyWithNonOptionalType);
+    CheckObjectExprPropsHelper(checker, expr, objType, searchFlags, propertyWithNonOptionalType);
 
     for (const auto &[propName, ownerType] : propertyWithNonOptionalType) {
         if (objType == ownerType) {
@@ -3112,8 +3164,7 @@ checker::Type *ETSAnalyzer::Check(ir::SequenceExpression *expr) const
         it->Check(checker);
     }
     ES2PANDA_ASSERT(!expr->Sequence().empty());
-    expr->SetTsType(expr->Sequence().back()->TsType());
-    return expr->TsType();
+    return expr->SetTsType(expr->Sequence().back()->TsType());
 }
 
 checker::Type *ETSAnalyzer::Check(ir::SuperExpression *expr) const
@@ -3123,8 +3174,8 @@ checker::Type *ETSAnalyzer::Check(ir::SuperExpression *expr) const
         return expr->TsType();
     }
 
-    expr->SetTsType(checker->CheckThisOrSuperAccess(expr, checker->Context().ContainingClass()->SuperType(), "super"));
-    return expr->TsType();
+    return expr->SetTsType(
+        checker->CheckThisOrSuperAccess(expr, checker->Context().ContainingClass()->SuperType(), "super"));
 }
 
 checker::Type *ETSAnalyzer::Check(ir::TemplateLiteral *expr) const
@@ -3141,16 +3192,14 @@ checker::Type *ETSAnalyzer::Check(ir::TemplateLiteral *expr) const
 
     if (expr->Quasis().size() != expr->Expressions().size() + 1U) {
         checker->LogError(diagnostic::TEMPLATE_COUNT_MISMATCH, {}, expr->Start());
-        expr->SetTsType(checker->GlobalTypeError());
-        return expr->TsType();
+        return expr->SetTsType(checker->GlobalTypeError());
     }
 
     for (auto *it : expr->Quasis()) {
         it->Check(checker);
     }
 
-    expr->SetTsType(checker->CreateETSStringLiteralType(expr->GetMultilineString()));
-    return expr->TsType();
+    return expr->SetTsType(checker->CreateETSStringLiteralType(expr->GetMultilineString()));
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ThisExpression *expr) const

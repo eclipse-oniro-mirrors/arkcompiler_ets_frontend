@@ -18,7 +18,7 @@
 #include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
-void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, const lexer::SourcePosition &pos)
+void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, ir::Expression const *expr)
 {
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
         return;
@@ -47,7 +47,7 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
             return;
         }
 
-        std::ignore = TypeError(var, diagnostic::PROP_INVISIBLE, {var->Name()}, pos);
+        std::ignore = TypeError(var, diagnostic::PROP_INVISIBLE, {var->Name()}, expr->Start());
     }
 }
 
