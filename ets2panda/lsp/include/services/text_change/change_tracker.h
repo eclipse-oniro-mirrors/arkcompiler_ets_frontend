@@ -94,7 +94,7 @@ struct RemoveNode {
 };
 
 struct NewFile {
-    std::optional<SourceFile *> oldFile;
+    std::optional<const SourceFile *> oldFile;
     std::string fileName;
     std::vector<const ir::Statement *> statements;
 };
@@ -237,7 +237,7 @@ public:
                                std::vector<ir::AstNode *> &containingList);
     void InsertImportSpecifierAtIndex(es2panda_Context *context, ir::AstNode *importSpecifier,
                                       std::vector<ir::AstNode *> &namedImports, size_t index);
-    void CreateNewFile(SourceFile *oldFile, const std::string &fileName,
+    void CreateNewFile(const SourceFile *oldFile, const std::string &fileName,
                        std::vector<const ir::Statement *> &statements);
     void RfindNearestKeyWordTextRange(const es2panda_Context *context, const size_t pos,
                                       const std::string_view &keywordStr, TextRange &range);
