@@ -17,6 +17,8 @@
 #define ES2PANDA_COMPILER_CHECKER_ETS_TYPE_RELATION_CONTEXT_H
 
 #include "checker/ETSchecker.h"
+#include "checker/types/typeRelation.h"
+#include "ir/expression.h"
 
 namespace ark::es2panda::checker {
 class ETSChecker;
@@ -216,6 +218,24 @@ private:
 
     ETSChecker *checker_;
     Type *result_ {};
+};
+
+class TypeRelationContext {
+public:
+    TypeRelationContext(ETSChecker *checker, ir::Expression *node, TypeRelationFlag flags) : checker_(checker)
+    {
+        checker_->Relation()->SetNode(node);
+        checker_->Relation()->SetFlags(flags);
+    }
+
+    ~TypeRelationContext()
+    {
+        checker_->Relation()->SetNode(nullptr);
+        checker_->Relation()->SetFlags(TypeRelationFlag::NONE);
+    }
+
+private:
+    ETSChecker *checker_;
 };
 
 }  // namespace ark::es2panda::checker
