@@ -20,6 +20,7 @@ import { Es2pandaContextState } from '../generated/Es2pandaEnums';
 import { withStringResult } from './Platform';
 import { KBoolean, KInt, KNativePointer, KPointer } from './InteropTypes';
 import { passString, passStringArray } from './private';
+import { Es2pandaNativeModule } from './Es2pandaNativeModule';
 
 export class DriverHelper {
     private _ctx: Context | undefined;
@@ -27,26 +28,26 @@ export class DriverHelper {
 
     private _filePath: string | undefined;
 
-    get Context() {
+    get Context(): typeof Context {
         return Context;
     }
 
-    get Config() {
+    get Config(): typeof Config {
         return Config;
     }
 
-    get Es2pandaContextState() {
+    get Es2pandaContextState(): typeof Es2pandaContextState {
         return Es2pandaContextState;
     }
 
-    get EtsScript() {
+    get EtsScript(): typeof EtsScript {
         return EtsScript;
     }
-    public getGlobalEs2panda() {
+    public getGlobalEs2panda(): Es2pandaNativeModule {
         return global.es2panda;
     }
 
-    public setContext(ctx: KPointer) {
+    public setContext(ctx: KPointer): void {
         this._ctx = new Context(ctx);
     }
     public createCtx(source: string): Context {
@@ -70,7 +71,7 @@ export class DriverHelper {
         return `DriverHelper (filepath = ${this._filePath!}, config = ${this._cfg!}, context = ${this._ctx})`;
     }
 
-    public proceedToState(state: Es2pandaContextState, globalContextPtr: KNativePointer, forceDtsEmit: boolean = false) {
+    public proceedToState(state: Es2pandaContextState, globalContextPtr: KNativePointer, forceDtsEmit: boolean = false): void {
         if (global.es2panda._ContextState(globalContextPtr) === Es2pandaContextState.ES2PANDA_STATE_ERROR) {
             this.processErrorState(globalContextPtr, state, forceDtsEmit);
         }
@@ -170,12 +171,12 @@ export class DriverHelper {
         return ctx;
     }
 
-    public MemInitialize() {
+    public MemInitialize(): void {
         global.es2panda._MemInitialize();
     }
 
-    public MemFinalize() {
-         global.es2panda._MemFinalize();
+    public MemFinalize(): void {
+        global.es2panda._MemFinalize();
     }
 }
 
