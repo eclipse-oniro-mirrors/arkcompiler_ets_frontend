@@ -139,7 +139,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.end.character_, expectedThirdEndCharacter);
     ASSERT_EQ(result.diagnostic[thirdIndex].severity_, DiagnosticSeverity::Error);
     ASSERT_NE(std::get<int>(result.diagnostic[thirdIndex].code_), 0);
-    ASSERT_EQ(result.diagnostic[thirdIndex].message_, R"(Unexpected token ':'.)");
+    ASSERT_EQ(result.diagnostic[thirdIndex].message_, R"(Unexpected token, expected ',' or ')'.)");
 }
 
 TEST_F(LspDiagnosticsTests, GetSyntacticDiagnostics3)

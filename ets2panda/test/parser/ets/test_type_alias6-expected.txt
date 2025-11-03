@@ -267,5 +267,5 @@
     }
   }
 }
-[test_type_alias6.ets:17:5] Semantic error ESE0351: Variable 'x' has already been declared.
 [test_type_alias6.ets:17:5] Semantic error ESE0144: Type name 'x' used in the wrong context
+[test_type_alias6.ets:17:5] Semantic error ESE0351: Variable 'x' has already been declared.

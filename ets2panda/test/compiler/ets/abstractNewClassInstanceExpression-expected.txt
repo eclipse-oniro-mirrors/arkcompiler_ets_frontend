@@ -1004,7 +1004,7 @@
 [abstractNewClassInstanceExpression.ets:26:14] Semantic error ESE0052: A is abstract therefore cannot be instantiated.
 [abstractNewClassInstanceExpression.ets:26:22] Syntax error ESY0227: Unexpected token '{'.
 [abstractNewClassInstanceExpression.ets:27:21] Semantic error ESE0136: Method foo(): void in B not overriding any method
-[abstractNewClassInstanceExpression.ets:32:11] Syntax error ESY0038: Label must be followed by a loop statement.
 [abstractNewClassInstanceExpression.ets:32:11] Syntax error ESY0318: Class cannot be used as object.
+[abstractNewClassInstanceExpression.ets:32:11] Syntax error ESY0038: Label must be followed by a loop statement.
 [abstractNewClassInstanceExpression.ets:32:23] Syntax error ESY0227: Unexpected token '{'.
 [abstractNewClassInstanceExpression.ets:35:1] Syntax error ESY0227: Unexpected token '}'.
