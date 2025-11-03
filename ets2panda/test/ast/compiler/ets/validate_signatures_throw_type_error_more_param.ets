@@ -17,6 +17,4 @@ function main() : void {
     let e: Float = /* @@ label */new Float(6,"3");
 }
 
-/* @@@ label Error TypeError: Expected 0 arguments, got 2. */
-/* @@@ label Error TypeError: Expected 1 arguments, got 2. */
-/* @@@ label Error TypeError: No matching construct signature for std.core.Float(Int, "3")  */
+/* @@? 17:34 Error TypeError: No matching construct signature for std.core.Float(Int, "3") */

@@ -22,5 +22,4 @@ function main() {
     let mc = new TH<number, string, boolean>
 }
 
-/* @@? 17:38 Error TypeError: Cannot make a static reference to the non-static type B */
-/* @@? 17:41 Error TypeError: Cannot make a static reference to the non-static type C */
+/* @@? 16:19 Error TypeError: No matching call signature for restMethod(...) */

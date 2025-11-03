@@ -30,10 +30,10 @@ foo5(){}
 /* @@? 19:17 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
 /* @@? 20:17 Error TypeError: FixedArray<T> must have only one type parameter. */
 /* @@? 23:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 23:1 Error TypeError: No matching call signature */
+/* @@? 23:1 Error TypeError: No matching call signature for foo2() */
 /* @@? 24:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 24:1 Error TypeError: No matching call signature */
+/* @@? 24:1 Error TypeError: No matching call signature for foo3() */
 /* @@? 25:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 25:1 Error TypeError: No matching call signature */
+/* @@? 25:1 Error TypeError: No matching call signature for foo4() */
 /* @@? 26:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 26:1 Error TypeError: No matching call signature */
+/* @@? 26:1 Error TypeError: No matching call signature for foo5() */

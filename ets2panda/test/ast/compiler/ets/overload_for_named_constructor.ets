@@ -23,4 +23,4 @@ function main(){
     new A()
 }
 
-/* @@? 23:5 Error TypeError: No matching construct signature for A() */
+/* @@? 23:5 Error TypeError: No matching construct signature for overload_for_named_constructor.A() */

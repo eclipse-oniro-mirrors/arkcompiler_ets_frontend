@@ -23,5 +23,8 @@ foo1(new MySpace())
 
 /* @@? 19:17 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
 /* @@? 20:18 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 22:1 Error TypeError: No matching call signature for foo1(...) */
+/* @@? 22:10 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 22:10 Error TypeError: Invalid type reference. */
 /* @@? 22:10 Error TypeError: Namespace 'MySpace' cannot be used as a type. */
 /* @@? 22:10 Error TypeError: Invalid type reference. */

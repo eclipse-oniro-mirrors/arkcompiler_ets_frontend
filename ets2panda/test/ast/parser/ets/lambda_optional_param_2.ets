@@ -21,4 +21,5 @@ function main(): void {
    gf("abc" as String, /* @@ label */(x: String): Int => { return x=="TEST"?0:1})
 }
 
-/* @@@ label Error TypeError: Type '((p1: String) => Int)' is not compatible with type '((p1: String|undefined) => Int)' at index 2 */
+/* @@? 21:4 Error TypeError: No matching call signature for gf(String, ((p1: String) => Int)) */
+/* @@? 21:38 Error TypeError: Type '((p1: String) => Int)' is not compatible with type '((p1: String|undefined) => Int)' at index 2 */

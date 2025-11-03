@@ -18,11 +18,10 @@ const object1: Obj = {};
 
 console.log(Objct.keys(object1));
 
-/* @@? 19:13 Error TypeError: Class name can't be the argument of function or method. */
+/* @@? 19:1 Error TypeError: No matching call signature for log(Obj) */
 /* @@? 19:13 Error TypeError: Class or interface or enum 'Obj' cannot be used as object */
 /* @@? 19:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:16 Error SyntaxError: Unexpected token 'ct'. */
 /* @@? 19:16 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected an identifier. */
+/* @@? 19:16 Error SyntaxError: Unexpected token 'ct'. */
 /* @@? 19:16 Error TypeError: Unresolved reference ct */
 /* @@? 19:33 Error SyntaxError: Unexpected token ')'. */

@@ -43,17 +43,20 @@ foo(,)
 /* @@? 28:14 Error SyntaxError: Unexpected token '2'. */
 /* @@? 28:15 Error SyntaxError: Unexpected token ','. */
 /* @@? 28:16 Error SyntaxError: Unexpected token ']'. */
+/* @@? 30:1 Error TypeError: No matching call signature for foo(a[0]) */
 /* @@? 30:5 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 31:1 Error TypeError: No matching call signature for foo(a[0], a[1], ...a) */
 /* @@? 31:5 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 31:11 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 31:17 Error TypeError: Spread argument for the rest parameter can be only one. */
+/* @@? 32:1 Error TypeError: No matching call signature for foo(a[0], ...) */
 /* @@? 32:5 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 32:10 Error SyntaxError: Unexpected token ','. */
-/* @@? 32:11 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 32:11 Error SyntaxError: Unexpected token 'a'. */
+/* @@? 32:11 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 32:11 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 32:15 Error SyntaxError: Unexpected token ')'. */
+/* @@? 33:1 Error TypeError: No matching call signature for foo(a[0], ...) */
 /* @@? 33:5 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 33:10 Error SyntaxError: Unexpected token ','. */
 /* @@? 34:5 Error SyntaxError: Unexpected token ','. */
@@ -61,6 +64,7 @@ foo(,)
 /* @@? 34:6 Error SyntaxError: Unexpected token, expected ',' or ')'. */
 /* @@? 34:6 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 34:10 Error SyntaxError: Unexpected token ')'. */
+/* @@? 35:1 Error TypeError: No matching call signature for foo(a[0]) */
 /* @@? 35:5 Error TypeError: Indexed access is not supported for such expression type. */
 /* @@? 35:10 Error SyntaxError: Unexpected token 'a'. */
 /* @@? 35:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */

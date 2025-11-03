@@ -25,4 +25,5 @@ class C {
    }
 }
 
-/* @@@ label Error TypeError: Private method is used as value  */
+/* @@? 24:8 Error TypeError: No matching call signature for apply(...) */
+/* @@? 24:33 Error TypeError: Private method is used as value */

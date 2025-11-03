@@ -34,6 +34,7 @@ function main() {
 /* @@? 21:13 Error TypeError: Property 'var_one' does not exist on type 'I$partial' */
 /* @@? 22:13 Error TypeError: Property 'var_one' does not exist on type 'I$partial' */
 /* @@? 27:18 Error TypeError: type I has no property named var_one */
+/* @@? 28:5 Error TypeError: No matching call signature for foo(a.var_one) */
 /* @@? 28:11 Error TypeError: Property 'var_one' does not exist on type 'I' */
 /* @@? 29:9 Error TypeError: Variable 'a' has already been declared. */
 /* @@? 29:18 Error TypeError: type I has no property named var_two */

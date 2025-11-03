@@ -20,6 +20,9 @@ function foo<T>(a:T){}
 
 foo</* @@ label */MyAnno>(new /* @@ label1 */MyAnno())
 
+/* @@? 21:1 Error TypeError: No matching call signature for foo(...) */
 /* @@? 21:19 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:46 Error TypeError: Annotations cannot be used as a type. */
+/* @@? 21:46 Error TypeError: Invalid type reference. */
 /* @@? 21:46 Error TypeError: Annotations cannot be used as a type. */
 /* @@? 21:46 Error TypeError: Invalid type reference. */

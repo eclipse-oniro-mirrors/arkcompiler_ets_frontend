@@ -23,5 +23,4 @@ export function atomicTask() {
     return Atomics.load(shareArray, 0);
 }
 
-/* @@? 21:17 Error TypeError: Unresolved reference shareArray */
-/* @@? 23:12 Error TypeError: Call to `load` is ambiguous as `2` versions of `load` are available: `load(typedArray: BigInt64Array, index: Double): BigInt` and `load(typedArray: BigUint64Array, index: Double): BigInt` */
+/* @@? 21:5 Error TypeError: No matching call signature for add(shareArray, Int, Int) */

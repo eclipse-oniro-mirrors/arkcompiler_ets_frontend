@@ -23,5 +23,3 @@ function main() : void {
 
     /* @@ label */foo(a, a);
 }
-
-/* @@@ label Error TypeError: Reference to foo is ambiguous  */

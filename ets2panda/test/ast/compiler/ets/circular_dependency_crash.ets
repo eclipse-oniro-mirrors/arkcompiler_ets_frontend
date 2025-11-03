@@ -18,4 +18,5 @@ function foo() {
 }
 
 /* @@? 17:13 Error TypeError: Circular call function */
+/* @@? 17:13 Error TypeError: No matching call signature for concat(s) */
 /* @@? 17:24 Error TypeError: Variable 's' is accessed before it's initialization. */

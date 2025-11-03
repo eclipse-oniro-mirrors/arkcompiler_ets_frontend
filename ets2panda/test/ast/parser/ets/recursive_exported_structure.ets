@@ -89,10 +89,6 @@ const _exported: ExportedType = _exportedStructure;
 export default _exported;
 
 /* @@? 26:26 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 41:12 Error TypeError: No matching call signature for (...) */
-/* @@? 41:23 Error TypeError: need to specify target type for class composite */
-/* @@? 54:20 Error TypeError: No matching call signature for (...) */
-/* @@? 54:31 Error TypeError: need to specify target type for class composite */
 /* @@? 61:64 Error SyntaxError: Unexpected token '&'. */
 /* @@? 61:66 Error SyntaxError: Unexpected token '{'. */
 /* @@? 62:12 Error SyntaxError: Label must be followed by a loop statement. */

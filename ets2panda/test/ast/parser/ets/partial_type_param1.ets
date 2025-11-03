@@ -36,6 +36,6 @@ function generic<T extends I>(t: Partial<T>): boolean {
 function main() {
     // Test that {i: 1} is accepted as Partial<CI>
     generic<CI>({i: 1});
-}/* @@? 32:41 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 38:5 Error TypeError: No matching call signature for generic(...) */
-/* @@? 38:17 Error TypeError: need to specify target type for class composite */
+
+/* @@? 32:41 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 41:70 Error SyntaxError: Expected '}', got 'end of stream'. */

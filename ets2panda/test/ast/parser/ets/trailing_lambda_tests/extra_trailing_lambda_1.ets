@@ -40,5 +40,5 @@ function testExtraTrailing() {
 }
 
 /* @@? 32:5 Error TypeError: No matching call signature with trailing lambda */
-/* @@? 37:5 Error TypeError: No matching call signature for process(Double, "ok") */
+/* @@? 37:5 Error TypeError: No matching call signature for process(Int, "ok") */
 /* @@? 37:18 Error TypeError: Type '"ok"' is not compatible with type '((() => void))|undefined' at index 2 */

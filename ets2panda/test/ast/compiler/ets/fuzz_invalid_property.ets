@@ -17,13 +17,5 @@ class D{
     strB = (new StringBuilder).append('{ ').append(strB.toString()).append(' }')       
 }
 
-/* @@? 17:12 Error TypeError: Circular call function */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Boolean): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Byte): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Short): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Char): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Int): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Long): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Float): StringBuilder` */
-/* @@? 17:12 Error TypeError: Call to `append` is ambiguous as `2` versions of `append` are available: `append(s: String): StringBuilder` and `append(i: Double): StringBuilder` */
-/* @@? 17:52 Error TypeError: Property 'strB' must be accessed through 'this' */
+/* @@? 17:12 Error TypeError: No matching call signature for append(...) */
+/* @@? 17:52 Error TypeError: Unresolved reference strB */

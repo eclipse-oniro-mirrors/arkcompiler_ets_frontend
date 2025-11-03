@@ -18,5 +18,6 @@ function testInfo() {
 }
 
 /* @@? 17:5 Error TypeError: The type of parameter 'DataView' cannot be inferred */
-/* @@? 17:17 Error TypeError: Type 'String' has no call signatures. */
+/* @@? 17:17 Error TypeError: No matching indexing signature for $_get(main) */
 /* @@? 17:20 Error TypeError: Function name 'main' used in the wrong context */
+/* @@? 17:20 Error TypeError: Cannot find index access method with the required signature. */

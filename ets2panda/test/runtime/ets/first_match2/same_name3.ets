@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,20 @@
  * limitations under the License.
  */
 
-type B = Object | null;
-function foo(...b : B[]) { return 1; }
-function foo(str: String) { return 2; }
+class C {
+    foo(n: number) {
+        return "invoke1"
+    }
+}
 
-arktest.assertEQ(foo(new String()), 2)
+class D extends C {
+    foo(n: string) {
+        return "invoke2"
+    }
+}
+
+function main() {
+    let d = new D();
+    arktest.assertEQ(d.foo(1), "invoke1")
+    arktest.assertEQ(d.foo("abc"), "invoke2")
+}

@@ -22,5 +22,4 @@ class C {
 
 /* @@ label */(new C()).foo(new A<Long>, new B<Error>, new B<Error>)
 
-/* @@@ label Error TypeError: Expected 2 arguments, got 3. */
-/* @@@ label Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */
+/* @@? 23:15 Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */

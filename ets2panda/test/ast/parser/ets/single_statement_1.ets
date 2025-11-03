@@ -20,14 +20,5 @@ function main(): int {
     let hehe: int = 10
 }
 
-/* @@@ label1 Error SyntaxError: Lexical declaration is not allowed in single statement context. */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Boolean): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Byte): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Short): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Char): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Int): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Long): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Float): void` */
-/* @@? 18:5 Error TypeError: Call to `log` is ambiguous as `2` versions of `log` are available: `log(i: String): void` and `log(i: Double): void` */
-/* @@? 18:17 Error TypeError: Unresolved reference aaaa */
-/* @@@ label2 Error SyntaxError: Unexpected token ')'. */
+/* @@? 16:28 Error SyntaxError: Lexical declaration is not allowed in single statement context. */
+/* @@? 19:20 Error SyntaxError: Unexpected token ')'. */

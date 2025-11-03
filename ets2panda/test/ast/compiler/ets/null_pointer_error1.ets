@@ -23,4 +23,4 @@ function mustCallArgSize() {
     });
 }
 
-/* @@? 20:9 Error TypeError: Variable 'xf' is accessed before it's initialization. */
+/* @@? 19:5 Error TypeError: No matching call signature for push((() => void)) */

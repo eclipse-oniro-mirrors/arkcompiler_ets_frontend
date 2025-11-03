@@ -31,7 +31,7 @@ function bar(x: A|B) {
     /* @@ label2 */x.bar("123")
 }
 
-/* @@@ label Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label Error TypeError: No matching call signature */
-/* @@@ label2 Error TypeError: Signature bar(v: String): void is not visible here. */
-/* @@@ label2 Error TypeError: No matching call signature for bar("123") */
+/* @@? 27:19 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 27:19 Error TypeError: No matching call signature for foo("123") */
+/* @@? 31:20 Error TypeError: Signature bar(v: String): void is not visible here. */
+/* @@? 31:20 Error TypeError: No matching call signature for bar("123") */

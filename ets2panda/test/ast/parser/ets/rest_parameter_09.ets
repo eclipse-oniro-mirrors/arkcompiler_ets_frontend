@@ -22,5 +22,4 @@ class C {
 
 /* @@ label */(new C()).foo()
 
-/* @@@ label Error TypeError: Expected 2 arguments, got 0. */
-/* @@@ label Error TypeError: No matching call signature */
+/* @@? 23:15 Error TypeError: No matching call signature for foo() */

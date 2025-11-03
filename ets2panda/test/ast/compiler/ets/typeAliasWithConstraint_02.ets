@@ -20,4 +20,4 @@ declare function value<U extends Integral>(): ValueAlias<U>;
 /* @@ label */value<number>();
 
 
-/* @@@ label Error TypeError: No matching call signature */
+/* @@? 20:15 Error TypeError: No matching call signature for value() */

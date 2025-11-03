@@ -28,5 +28,4 @@ function foo(a : int) : int
     return a;
 }
 
-/* @@@ label Error TypeError: Expected 1 arguments, got 0. */              
-/* @@@ label Error TypeError: No matching call signature  */
+/* @@? 18:19 Error TypeError: No matching call signature for foo() */

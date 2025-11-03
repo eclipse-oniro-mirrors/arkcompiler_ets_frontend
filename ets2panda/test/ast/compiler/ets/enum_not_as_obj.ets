@@ -16,11 +16,6 @@ enum Colorset {Red, Green,Blue};
 const result = JSON.stringify(Colorset);
 console.log("Hello",result);
 
-/* @@? 15:1 Error TypeError: Indexed access is not supported for such expression type.  */
-/* @@? 16:16 Error TypeError: Expected 2 arguments, got 1.  */
-/* @@? 16:16 Error TypeError: No matching call signature for stringify(Colorset)  */
-/* @@? 16:31 Error TypeError: Class name can't be the argument of function or method.  */
-/* @@? 16:31 Error TypeError: Class or interface or enum 'Colorset' cannot be used as object  */
-/* @@? 16:31 Error TypeError: Class name can't be the argument of function or method.  */
-/* @@? 16:31 Error TypeError: Class or interface or enum 'Colorset' cannot be used as object  */
-/* @@? 16:31 Error TypeError: Class name can't be the argument of function or method.  */
+/* @@? 15:1 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 16:16 Error TypeError: No matching call signature for stringify(Colorset) */
+/* @@? 16:31 Error TypeError: Class or interface or enum 'Colorset' cannot be used as object */

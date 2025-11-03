@@ -163,8 +163,9 @@ checker::Type *ForOfStatement::CheckIteratorMethodForObject(checker::ETSChecker 
 
     ArenaVector<Expression *> arguments {checker->Allocator()->Adapter()};
     auto &signatures = checker->GetTypeOfVariable(method)->AsETSFunctionType()->CallSignatures();
-    checker::Signature *signature = checker->ValidateSignatures(signatures, nullptr, arguments, position, "iterator",
-                                                                checker::TypeRelationFlag::NO_THROW);
+    checker::Signature *signature =
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        checker->MatchOrderSignatures(signatures, arguments, right_, checker::TypeRelationFlag::NO_THROW, "iterator");
     if (signature == nullptr) {
         checker->LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
         return checker->GlobalTypeError();
@@ -191,8 +192,9 @@ checker::Type *ForOfStatement::CheckIteratorMethodForObject(checker::ETSChecker 
     }
 
     auto &nextSignatures = checker->GetTypeOfVariable(nextMethod)->AsETSFunctionType()->CallSignatures();
-    auto const *const nextSignature = checker->ValidateSignatures(nextSignatures, nullptr, arguments, position,
-                                                                  "iterator", checker::TypeRelationFlag::NO_THROW);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto const *const nextSignature = checker->MatchOrderSignatures(nextSignatures, arguments, right_,
+                                                                    checker::TypeRelationFlag::NO_THROW, "iterator");
     if (nextSignature != nullptr && nextSignature->ReturnType()->IsETSObjectType()) {
         if (auto const *const resultType = nextSignature->ReturnType()->AsETSObjectType();
             resultType->Name().Is(ITERATOR_RESULT_NAME)) {

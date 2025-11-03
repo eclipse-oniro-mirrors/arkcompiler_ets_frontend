@@ -52,3 +52,10 @@ namespace_class_decl.ets
 
 #30971
 non_null_number_as_index.ets
+
+#31069
+first_match2/same_name.ets
+first_match2/same_name3.ets
+first_match2/same_name4.ets
+first_match2/static_same_name.ets
+first_match2/static_same_name3.ets

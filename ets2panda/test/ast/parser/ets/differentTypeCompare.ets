@@ -23,4 +23,5 @@ function main(): void {
     foo(/* @@ label */a == b);
 }
 
-/* @@@ label Error TypeError: Operator '==' cannot be applied to types '"alma"' and 'Int'. */
+/* @@? 23:5 Error TypeError: No matching call signature for foo(Boolean) */
+/* @@? 23:23 Error TypeError: Operator '==' cannot be applied to types '"alma"' and 'Int'. */

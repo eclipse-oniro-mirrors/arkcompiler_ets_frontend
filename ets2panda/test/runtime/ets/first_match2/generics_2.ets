@@ -13,18 +13,27 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo(5), 5);
+class A {
+    field: string = "A"
 }
 
-function foo(a : int, b ?: int) : int
-{
-    return a + 2;
+class Test {
+    foo(a: string): string {
+        return "invoke1"
+    }
+    foo<T1>(a: T1): string {
+        return "invoke2"
+    }
+    foo<T1, T2>(a: T1, b: T2): string {
+        return "invoke3"
+    }
 }
 
-function foo(a : int) : int
-{
-    return a;
+function main() {
+    let a: Test= new Test();
+    arktest.assertEQ(a.foo(new A()), "invoke2");
+    arktest.assertEQ(a.foo<number>(10), "invoke2");
+    arktest.assertEQ(a.foo<number, string>(10, "abc"), "invoke3");
+    arktest.assertEQ(a.foo(10), "invoke2");
+    arktest.assertEQ(a.foo(10, "abc"), "invoke3");
 }
-

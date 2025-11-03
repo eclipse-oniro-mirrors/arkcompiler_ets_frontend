@@ -23,5 +23,5 @@ function main() {
     A()
 }
 
-/* @@? 23:5 Error TypeError: Expected 1 arguments, got 0.  */
-/* @@? 23:5 Error TypeError: No matching call signature  */
+/* @@? 23:5 Error TypeError: Expected 1 arguments, got 0. */
+/* @@? 23:5 Error TypeError: No matching call signature for $_invoke() */

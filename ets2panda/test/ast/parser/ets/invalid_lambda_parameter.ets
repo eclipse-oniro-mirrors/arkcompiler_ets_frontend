@@ -23,5 +23,6 @@ function foo(entry: I) {
     });
 }
 
-/* @@@ label1 Error TypeError: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
-/* @@@ label2 Error SyntaxError: Unexpected token '=>'. */
+/* @@? 22:15 Error TypeError: No matching construct signature for invalid_lambda_parameter.A(...) */
+/* @@? 22:36 Error TypeError: Invalid lambda parameter. Expected: 'identifier(: type)?', 'identifier?(: type)?' or '...identifier(: type)?'. */
+/* @@? 22:61 Error SyntaxError: Unexpected token '=>'. */

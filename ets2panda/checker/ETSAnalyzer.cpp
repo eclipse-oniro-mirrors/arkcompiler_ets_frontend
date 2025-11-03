@@ -622,7 +622,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
     auto *calleeObj = calleeType->MaybeBaseTypeOfGradualType()->AsETSObjectType();
     expr->SetTsType(calleeType);
 
-    auto *signature = checker->ResolveConstructExpression(calleeObj, expr->GetArguments(), expr->Start());
+    auto *signature = checker->ResolveConstructExpression(calleeObj, expr);
 
     if (signature == nullptr) {
         return checker->InvalidateType(expr);
@@ -1595,18 +1595,6 @@ static bool LambdaIsField(ir::CallExpression *expr)
     return me->PropVar() != nullptr;
 }
 
-static bool OverloadDeclaration(ir::Expression *expr)
-{
-    while (expr->IsMemberExpression()) {
-        expr = expr->AsMemberExpression()->Property();
-    }
-
-    if (expr->IsIdentifier() && expr->AsIdentifier()->Variable() != nullptr) {
-        return expr->AsIdentifier()->Variable()->HasFlag(varbinder::VariableFlags::OVERLOAD);
-    }
-    return false;
-}
-
 checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallExpression *expr,
                                                   checker::Type *calleeType) const
 {
@@ -1617,11 +1605,7 @@ checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallE
         checker->LogDiagnostic(diagnostic::DUPLICATE_SIGS, {helperSignature->Function()->Id()->Name(), helperSignature},
                                expr->Start());
         checker->CreateOverloadSigContainer(helperSignature);
-        return checker->ResolveCallExpressionAndTrailingLambda(checker->GetOverloadSigContainer(), expr, expr->Start());
-    }
-
-    if (calleeType->IsETSFunctionType() && OverloadDeclaration(expr->Callee())) {
-        return checker->FirstMatchSignatures(expr, calleeType);
+        return checker->FirstMatchSignatures(checker->GetOverloadSigContainer(), expr);
     }
 
     if (calleeType->IsETSExtensionFuncHelperType()) {
@@ -1645,7 +1629,7 @@ checker::Signature *ETSAnalyzer::ResolveSignature(ETSChecker *checker, ir::CallE
     auto &signatures = expr->IsETSConstructorCall() ? calleeType->AsETSObjectType()->ConstructSignatures()
                                                     : calleeType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow();
 
-    return checker->ResolveCallExpressionAndTrailingLambda(signatures, expr, expr->Start());
+    return checker->FirstMatchSignatures(signatures, expr);
 }
 
 static ETSObjectType *GetCallExpressionCalleeObject(ETSChecker *checker, ir::CallExpression *expr, Type *calleeType)
@@ -1799,7 +1783,7 @@ checker::Type *ETSAnalyzer::GetCallExpressionReturnType(ir::CallExpression *expr
 
 static void CheckOverloadCall(ETSChecker *checker, ir::CallExpression *expr)
 {
-    if (!expr->Callee()->IsMemberExpression() || !OverloadDeclaration(expr->Callee())) {
+    if (!expr->Callee()->IsMemberExpression() || !checker->IsOverloadDeclaration(expr->Callee())) {
         return;
     }
 
@@ -3864,6 +3848,9 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
         ident->Check(checker);
     }
     auto *const variableType = checker->CheckVariableDeclaration(ident, ident->TypeAnnotation(), st->Init(), flags);
+    if (variableType != nullptr && variableType->IsTypeError()) {
+        return st->SetTsType(variableType);
+    }
 
     //  Now try to define the actual type of Identifier so that smart cast can be used in further checker processing
     //  NOTE: T_S and K_o_t_l_i_n don't act in such way, but we can try - why not? :)

@@ -19,5 +19,4 @@ function sum(...numbers: [number, number, number]): number {
 
 /* @@ label */sum()
 
-/* @@@ label Error TypeError: Expected 3 arguments, got 0. */
-/* @@@ label Error TypeError: No matching call signature */
+/* @@? 20:15 Error TypeError: No matching call signature for sum() */

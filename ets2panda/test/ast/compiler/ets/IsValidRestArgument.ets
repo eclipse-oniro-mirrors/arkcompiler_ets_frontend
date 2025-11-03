@@ -23,7 +23,6 @@ class C {
 (new C()).foo({v.r2}
 )
 
-/* @@? 23:1 Error TypeError: Expected 2 arguments, got 1.  */
-/* @@? 23:1 Error TypeError: No matching call signature for foo(...)  */
-/* @@? 23:15 Error TypeError: need to specify target type for class composite  */
-/* @@? 23:17 Error SyntaxError: Unexpected token, expected ':'.  */
+/* @@? 23:1 Error TypeError: No matching call signature for foo(...) */
+/* @@? 23:15 Error TypeError: need to specify target type for class composite */
+/* @@? 23:17 Error SyntaxError: Unexpected token, expected ':'. */

@@ -37,9 +37,15 @@ function main(): void {
   foo2(() => /* @@ label6 */console.println("TEST"));
 }
 
-/* @@@ label1 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
-/* @@@ label2 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
-/* @@@ label3 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label4 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label5 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
-/* @@@ label6 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@? 29:3 Error TypeError: No matching call signature for foo1((() => Int|String|undefined)) */
+/* @@? 29:38 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
+/* @@? 31:3 Error TypeError: No matching call signature for foo1((() => Int|String|undefined)) */
+/* @@? 31:29 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String|undefined' */
+/* @@? 34:3 Error TypeError: No matching call signature for foo2((() => Int|String)) */
+/* @@? 34:38 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@? 35:3 Error TypeError: No matching call signature for foo2((() => Int|String)) */
+/* @@? 35:29 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@? 36:3 Error TypeError: No matching call signature for foo2((() => Int|String)) */
+/* @@? 36:29 Error TypeError: Type 'C' is not compatible with the enclosing method's return type 'Int|String' */
+/* @@? 37:3 Error TypeError: No matching call signature for foo2((() => Int|String)) */
+/* @@? 37:29 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int|String' */

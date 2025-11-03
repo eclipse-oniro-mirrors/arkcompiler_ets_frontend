@@ -21,5 +21,6 @@ function main(): void {
    gf("abc" as String, (x: String): Int => { return x=="TEST"?0:1})
 }
 
-/* @@@ label Error SyntaxError: Default value is allowed only for optional parameters. */
+/* @@? 16:55 Error SyntaxError: Default value is allowed only for optional parameters. */
+/* @@? 21:4 Error TypeError: No matching call signature for gf(String, ((p1: String) => Int)) */
 /* @@? 21:24 Error TypeError: Type '((p1: String) => Int)' is not compatible with type '((p1: String|undefined) => Int)' at index 2 */

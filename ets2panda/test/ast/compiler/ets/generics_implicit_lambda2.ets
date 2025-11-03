@@ -19,4 +19,5 @@ function main() {
     foo(/* @@ label */(a: int, b: String, c: String): String => { return "XXX" });
 }
 
-/* @@@ label Error TypeError: Type '((p1: Int, p2: String, p3: String) => String)' is not compatible with type '((p1: Int, p2: String, p3: Int) => String)' at index 1  */
+/* @@? 19:5 Error TypeError: No matching call signature for foo(((p1: Int, p2: String, p3: String) => String)) */
+/* @@? 19:23 Error TypeError: Type '((p1: Int, p2: String, p3: String) => String)' is not compatible with type '((p1: Int, p2: String, p3: Int) => String)' at index 1 */

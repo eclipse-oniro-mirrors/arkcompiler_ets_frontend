@@ -24,5 +24,5 @@ function main(): void {
     foo(void_function());
 }
 
+/* @@? 24:5 Error TypeError: No matching call signature for foo(void) */
 /* @@? 24:9 Error TypeError: Cannot use type 'void' as value.  */
-

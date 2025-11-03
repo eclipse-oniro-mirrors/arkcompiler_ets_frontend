@@ -31,5 +31,5 @@ function foo<T extends AAA>(a: T) {
     return /* @@ label1 */a.foo()
 }
 
-/* @@@ label1 Error TypeError: Member type must be the same for all union objects. */
-/* @@@ label1 Error TypeError: No matching call signature */
+/* @@? 31:27 Error TypeError: Member type must be the same for all union objects. */
+/* @@? 31:27 Error TypeError: No matching call signature for foo() */
