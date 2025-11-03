@@ -231,8 +231,7 @@ private:
             if (i < inputs_.size()) {
                 if (inputs_[i]->IsCharLiteral()) {
                     LogError(diagnostic::CHAR_TO_STR_CONVERSION, {}, expr->Start());
-                }
-                if (inputs_[i]->IsNumberLiteral() || inputs_[i]->IsBooleanLiteral()) {
+                } else if (inputs_[i]->IsNumberLiteral() || inputs_[i]->IsBooleanLiteral()) {
                     tmpStr += inputs_[i]->ToString();
                 } else if (inputs_[i]->IsStringLiteral()) {
                     tmpStr += inputs_[i]->AsStringLiteral()->Str().Utf8();
