@@ -208,7 +208,7 @@ import { BaseTypeScriptLinter } from './BaseTypeScriptLinter';
 import type { ArrayAccess, UncheckedIdentifier } from './utils/consts/RuntimeCheckAPI';
 import { NUMBER_LITERAL, LENGTH_IDENTIFIER } from './utils/consts/RuntimeCheckAPI';
 import { globalApiAssociatedInfo } from './utils/consts/AssociatedInfo';
-import { ArrayAsCastResult, ARRAY_API_LIST, NEVER_ARRAY } from './utils/consts/ArraysAPI';
+import { ArrayAsCastResult, ARRAY_API_LIST } from './utils/consts/ArraysAPI';
 import {
   ABILITY_KIT,
   ASYNC_LIFECYCLE_SDK_LIST,
@@ -826,61 +826,23 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     objectLiteralType: ts.Type | undefined,
     objectLiteralExpr: ts.ObjectLiteralExpression
   ): void {
-    let objLiteralAutofix: Autofix[] | undefined;
     const invalidProps = objectLiteralExpr.properties.filter((prop) => {
       return !TypeScriptLinter.ifValidObjectLiteralProperty(prop, objectLiteralExpr);
     });
 
-    if (
-      invalidProps.some((prop) => {
-        return ts.isMethodDeclaration(prop) || ts.isAccessor(prop);
-      })
-    ) {
-      objLiteralAutofix = this.autofixer?.fixTypedObjectLiteral(objectLiteralExpr, objectLiteralType);
-    }
-
     for (const prop of invalidProps) {
       if (objectLiteralType) {
         const typeDecl = TsUtils.getDeclaration(objectLiteralType.getSymbol());
-        if (typeDecl && ts.isInterfaceDeclaration(typeDecl) && ts.isMethodDeclaration(prop)) {
-          continue;
+        if (typeDecl && ts.isClassDeclaration(typeDecl) && ts.isMethodDeclaration(prop)) {
+          this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
+        }
+        if (typeDecl &&
+          (ts.isClassDeclaration(typeDecl) || ts.isInterfaceDeclaration(typeDecl)) &&
+          (ts.isGetAccessor(prop) || ts.isSetAccessor(prop))) {
+          this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
         }
       }
-      if (ts.isShorthandPropertyAssignment(prop)) {
-        if (this.checkShorthandInObjectLiteral(prop, objectLiteralType)) {
-          const autofix = this.autofixer?.fixShorthandPropertyAssignment(prop);
-          this.incrementCounters(prop, FaultID.ObjectLiteralProperty, autofix);
-        }
-      } else {
-        this.incrementCounters(prop, FaultID.ObjectLiteralProperty, objLiteralAutofix);
-      }
     }
-  }
-
-  private checkShorthandInObjectLiteral(prop: ts.ShorthandPropertyAssignment, type: ts.Type | undefined): boolean {
-    if (!type) {
-      return true;
-    }
-    const propName = prop.name.text;
-    const expectedProp = type.getProperty(propName);
-    if (!expectedProp) {
-      return false;
-    }
-    const expectedPropType = this.tsTypeChecker.getTypeOfSymbolAtLocation(expectedProp, prop.name);
-    const symbol = this.tsTypeChecker.getSymbolAtLocation(prop.name);
-    const varDecl = symbol?.valueDeclaration;
-    if (!varDecl) {
-      return false;
-    }
-    const actualType = this.tsTypeChecker.getTypeAtLocation(varDecl);
-    if (this.tsUtils.isArray(actualType) && this.tsTypeChecker.typeToString(actualType) === NEVER_ARRAY) {
-      return false;
-    }
-
-    if (!this.isTypeAssignable(actualType, expectedPropType)) {
-      return true;
-    }
-    return false;
   }
 
   private handleArrayLiteralExpression(node: ts.Node): void {
