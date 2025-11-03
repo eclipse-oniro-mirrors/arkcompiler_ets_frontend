@@ -1,0 +1,78 @@
+{
+    "buildType": "build",
+    "buildMode": "Debug",
+    "packageName": "entry_import_har",
+    "moduleType": "entry",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/entry_import_har/",
+    "sourceRoots": [
+        "./"
+    ],
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/entry_import_har/src/main.ets",
+        "${absolute_path_to_build_system}/test/entry_import_har/har1/src/MainPage.d.ets"
+    ],
+    "loaderOutPath": "./build",
+    "cachePath": "./build/cache",
+    "buildSdkPath": ".",
+    "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "dependentModuleList": [
+        {
+            "language": "1.2",
+            "packageName": "entry_import_har",
+            "moduleType": "feature",
+            "moduleName": "entry_import_har",
+            "modulePath": "${absolute_path_to_build_system}/test/entry_import_har/",
+            "entryFile": "${absolute_path_to_build_system}/test/entry_import_har/src/main.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [
+                "har1"
+            ]
+        },
+        {
+            "language": "1.2",
+            "packageName": "har1",
+            "moduleType": "har",
+            "moduleName": "har1",
+            "modulePath": "${absolute_path_to_build_system}/test/entry_import_har/har1/",
+            "entryFile": "${absolute_path_to_build_system}/test/entry_import_har/har1/index.d.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [],
+            "byteCodeHar": true,
+            "abcPath": "./build/cache/modules_static.abc"
+        }
+    ],
+    "dependencyModuleList": [
+        {
+            "language": "1.2",
+            "packageName": "entry_import_har",
+            "moduleType": "feature",
+            "moduleName": "entry_import_har",
+            "modulePath": "${absolute_path_to_build_system}/test/entry_import_har/",
+            "entryFile": "${absolute_path_to_build_system}/test/entry_import_har/src/main.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [
+                "har1"
+            ]
+        },
+        {
+            "language": "1.2",
+            "packageName": "har1",
+            "moduleType": "har",
+            "moduleName": "har1",
+            "modulePath": "${absolute_path_to_build_system}/test/entry_import_har/har1/",
+            "entryFile": "${absolute_path_to_build_system}/test/entry_import_har/har1/index.d.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [],
+            "byteCodeHar": true,
+            "abcPath": "./build/cache/modules_static.abc"
+        }
+    ]
+}

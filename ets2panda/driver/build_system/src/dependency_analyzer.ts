@@ -29,7 +29,7 @@ import {
     ABC_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
     ENABLE_DECL_CACHE,
-    ENABLE_CLUSTERS,
+    ENABLE_CLUSTERS
 } from './pre_define';
 
 import {
@@ -328,7 +328,6 @@ export class DependencyAnalyzer {
                 },
                 type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
             });
-
             for (const dependency of dependencyMap.dependencies[file]) {
                 node.predecessors.add(computeHash(dependency));
             }
