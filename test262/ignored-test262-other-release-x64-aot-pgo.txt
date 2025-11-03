@@ -1,1 +1,13 @@
 # Known failures list for test262-other - release-x64-aot-pgo
+
+# Issue 11781
+# After shielding and fixing the daylight saving time issue, the test262 test case with incorrect expected results 
+# for the use case mistakenly assumes that China's time zone from 1900 to 1927 was UTC+08:05. But in reality,
+# during that period, China's time zone was UTC+08:05:43.
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T1.js
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T2.js
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T3.js
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T4.js
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T5.js
+test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T6.js
+# --- end of Issue 11781
