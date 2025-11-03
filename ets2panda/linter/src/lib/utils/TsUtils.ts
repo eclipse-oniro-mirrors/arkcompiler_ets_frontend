@@ -63,7 +63,7 @@ export class TsUtils {
   constructor(
     private readonly tsTypeChecker: ts.TypeChecker,
     private readonly options: LinterOptions
-  ) { }
+  ) {}
 
   entityNameToString(name: ts.EntityName): string {
     if (ts.isIdentifier(name)) {
@@ -241,11 +241,11 @@ export class TsUtils {
       (f & ts.TypeFlags.Number) !== 0 ||
       (f & ts.TypeFlags.NumberLiteral) !== 0
 
-      /*
-       *  In ArkTS 'string' is not a primitive type. So for the common subset 'string'
-       *  should be considered as a reference type. That is why next line is commented out.
-       * (f & ts.TypeFlags.String) != 0 || (f & ts.TypeFlags.StringLiteral) != 0
-       */
+    /*
+     *  In ArkTS 'string' is not a primitive type. So for the common subset 'string'
+     *  should be considered as a reference type. That is why next line is commented out.
+     * (f & ts.TypeFlags.String) != 0 || (f & ts.TypeFlags.StringLiteral) != 0
+     */
     );
   }
 
@@ -2238,8 +2238,8 @@ export class TsUtils {
         TsUtils.hasModifier(modifiers, ts.SyntaxKind.ProtectedKeyword) ||
         TsUtils.hasModifier(modifiers, ts.SyntaxKind.PrivateKeyword) ||
         !!this.options.arkts2 &&
-        (TsUtils.hasModifier(modifiers, ts.SyntaxKind.ReadonlyKeyword) ||
-          TsUtils.hasModifier(modifiers, ts.SyntaxKind.OverrideKeyword)))
+          (TsUtils.hasModifier(modifiers, ts.SyntaxKind.ReadonlyKeyword) ||
+            TsUtils.hasModifier(modifiers, ts.SyntaxKind.OverrideKeyword)))
     );
   }
 
@@ -3200,7 +3200,7 @@ export class TsUtils {
     if (
       !resolvedModule.resolvedFileName ||
       path.basename(resolvedModule.resolvedFileName).toLowerCase() !== ARKTS_LANG_D_ETS &&
-      path.basename(resolvedModule.resolvedFileName).toLowerCase() !== ARKTS_COLLECTIONS_D_ETS
+        path.basename(resolvedModule.resolvedFileName).toLowerCase() !== ARKTS_COLLECTIONS_D_ETS
     ) {
       return false;
     }
