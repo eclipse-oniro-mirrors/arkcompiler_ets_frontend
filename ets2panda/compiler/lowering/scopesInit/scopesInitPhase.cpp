@@ -847,8 +847,7 @@ void InitScopesPhaseTs::VisitTSMethodSignature(ir::TSMethodSignature *methodSign
 
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, varbinder::VarBinder *varbinder)
 {
-    auto program = parser::Program(varbinder->Allocator(), varbinder);
-    RunExternalNode(node, &program);
+    RunExternalNode(node, varbinder->Program());
 }
 
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, parser::Program *ctx)
