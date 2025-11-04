@@ -732,12 +732,12 @@ void ETSGen::InternalIsInstance(const ir::AstNode *node, const es2panda::checker
     }
 }
 
-// checkcast can only be used for Object and [] types, ensure source is not nullish!
+// checkcast can be used for Object, ETSFunction and [] types, ensure source is not nullish!
 void ETSGen::InternalCheckCast(const ir::AstNode *node, const es2panda::checker::Type *target)
 {
     ES2PANDA_ASSERT(target->IsETSObjectType() || target->IsETSArrayType() || target->IsETSTupleType() ||
-                    target->IsETSUnionType());
-    if (!IsNullUnsafeObjectType(target) || (target->IsETSUnionType() && !IsNullUnsafeObjectType(target))) {
+                    target->IsETSUnionType() || target->IsETSFunctionType());
+    if (!IsNullUnsafeObjectType(target)) {
         EmitCheckCast(node, ToAssemblerType(target));
     }
     SetAccumulatorType(target);
