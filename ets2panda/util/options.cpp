@@ -293,6 +293,9 @@ void Options::InitCompilerOptions()
 
 void Options::InitializeWarnings()
 {
+    if (WasSetEtsWarningsBasePath()) {
+        diagnosticEngine_.SetBasePath(GetEtsWarningsBasePath());
+    }
     std::array<bool, ETSWarnings::COUNT> warningSet {};
     ES2PANDA_ASSERT(ETSWarnings::LAST < ETSWarnings::COUNT);
 
