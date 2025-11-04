@@ -26,6 +26,7 @@
 #include "checker/ets/typeConverter.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
+#include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
 #include "util/es2pandaMacros.h"
@@ -507,7 +508,7 @@ Type *ETSChecker::HandleBooleanLogicalOperators(Type *leftType, Type *rightType,
     return nullptr;
 }
 
-void ETSChecker::ResolveReturnStatement(checker::Type *funcReturnType, checker::Type *argumentType,
+void ETSChecker::ResolveReturnStatement(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                                         ir::ScriptFunction *containingFunc, ir::ReturnStatement *st)
 {
     if (funcReturnType->IsETSPrimitiveOrEnumType() && argumentType->IsETSPrimitiveOrEnumType()) {
@@ -542,7 +543,12 @@ void ETSChecker::ResolveReturnStatement(checker::Type *funcReturnType, checker::
         }
         if (argumentType != nullptr && funcReturnType != nullptr) {
             funcReturnType = CreateETSUnionType({funcReturnType, argumentType});
-            containingFunc->Signature()->SetReturnType(funcReturnType);
+            if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal()) {
+                auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType);
+                containingFunc->Signature()->SetReturnType(returnType->PromiseType());
+            } else {
+                containingFunc->Signature()->SetReturnType(funcReturnType);
+            }
             containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
         }
     } else {

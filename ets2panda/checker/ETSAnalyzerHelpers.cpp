@@ -633,6 +633,18 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
     return true;
 }
 
+bool HasSingleReturnStatement(const ir::AstNode *node)
+{
+    auto count = 0;
+    node->Iterate([&count](const ir::AstNode *child) {
+        if (child->IsReturnStatement()) {
+            count++;
+        }
+        count += HasSingleReturnStatement(child) ? 1 : 0;
+    });
+    return count == 1;
+}
+
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument)
 {
     //  First (or single) return statement in the function:
@@ -652,7 +664,13 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
     ```
     */
 
-    containingFunc->Signature()->SetReturnType(funcReturnType);
+    if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal() &&
+        HasSingleReturnStatement(containingFunc->Body())) {
+        auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType);
+        containingFunc->Signature()->SetReturnType(returnType->PromiseType());
+    } else {
+        containingFunc->Signature()->SetReturnType(funcReturnType);
+    }
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
     containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
     checker->VarBinder()->AsETSBinder()->BuildFunctionName(containingFunc);
@@ -726,7 +744,7 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
         relation->SetNode(stArgument);
 
         if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
-            checker->ResolveReturnStatement(funcReturnType, argumentType, containingFunc, st);
+            checker->ResolveReturnStatement(checker, funcReturnType, argumentType, containingFunc, st);
         }
 
         relation->SetNode(nullptr);
