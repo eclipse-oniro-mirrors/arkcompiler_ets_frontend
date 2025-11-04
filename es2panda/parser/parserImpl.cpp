@@ -3625,7 +3625,7 @@ ir::TSEnumDeclaration *ParserImpl::ParseEnumMembers(ir::Identifier *key, const l
 
     while (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
         ir::Expression *memberKey = nullptr;
-        const auto &keyStartLoc = lexer_->GetToken().Start();
+        const auto keyStartLoc = lexer_->GetToken().Start();
         binder::EnumDecl *decl {};
 
         if (lexer_->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
@@ -3655,7 +3655,9 @@ ir::TSEnumDeclaration *ParserImpl::ParseEnumMembers(ir::Identifier *key, const l
 
         auto *member = AllocNode<ir::TSEnumMember>(memberKey, memberInit);
         decl->BindNode(member);
-        member->SetRange({initStart, lexer_->GetToken().End()});
+        lexer::SourcePosition memberEnd =
+            memberInit ? memberInit->Range().end : memberKey->Range().end;
+        member->SetRange({keyStartLoc, memberEnd});
         members.push_back(member);
 
         if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA) {

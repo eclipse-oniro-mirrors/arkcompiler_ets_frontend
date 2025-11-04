@@ -205,6 +205,7 @@ private:
     util::StringView GetNameFromTsEnumDeclaration(const ir::TSEnumDeclaration *node) const;
     ir::CallExpression *CreateCallExpressionForTsEnum(ir::TSEnumDeclaration *node, util::StringView name,
                                                       bool isExport);
+    void SetRangeRecursively(ir::AstNode *node, const ir::AstNode *originalNode, bool replaceAll = false);
     ir::ExpressionStatement *CreateTsEnumMember(ir::TSEnumMember *node, ir::TSEnumMember *preNode,
                                                 util::StringView enumLiteralName);
     ir::ExpressionStatement *CreateTsEnumMemberWithStringInit(ir::TSEnumMember *node,
