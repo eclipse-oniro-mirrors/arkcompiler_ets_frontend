@@ -4672,6 +4672,9 @@ checker::Type *ETSAnalyzer::Check(ir::ETSGenericInstantiatedNode *expr) const
     ETSChecker *checker = GetETSChecker();
 
     auto exprType = expr->GetExpression()->Check(checker);
+    if (exprType->IsTypeError()) {
+        expr->SetTsType(exprType);
+    }
     if (!exprType->IsETSFunctionType()) {
         return exprType;
     }
