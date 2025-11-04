@@ -23,7 +23,7 @@ import crypto from 'crypto';
 function getAllModules(config: any) {
   return [
     { packageName: config.packageName, modulePath: config.moduleRootPath, sourceRoots: config.sourceRoots || ['./'] },
-    ...(config.dependentModuleList || [])
+    ...(config.dependencyModuleList || [])
   ];
 }
 

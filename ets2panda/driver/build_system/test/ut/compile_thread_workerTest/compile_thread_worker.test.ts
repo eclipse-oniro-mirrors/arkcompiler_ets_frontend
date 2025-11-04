@@ -15,8 +15,6 @@
 
 // This file has to mock a lot because compile_thread_worker.ts only runs a `process.on`.
 
-import { EventEmitter } from 'events';
-
 jest.mock('fs');
 jest.mock('path');
 jest.mock('../../../src/util/utils', () => ({
@@ -217,6 +215,6 @@ describe('compile_thread_worker', () => {
         }).toThrow('exit');
         spy.mockRestore();
     });
-   
+
 });
  */

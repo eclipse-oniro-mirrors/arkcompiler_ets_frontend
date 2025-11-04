@@ -14,33 +14,44 @@
  */
 
 import { BaseMode } from './base_mode';
-import { 
-  BuildConfig,
-  ES2PANDA_MODE
+import {
+    BuildConfig,
+    ES2PANDA_MODE
 } from '../types';
 
 export class BuildMode extends BaseMode {
-  constructor(buildConfig: BuildConfig) {
-    super(buildConfig);
-  }
-
-  public async generateDeclaration(): Promise<void> {
-    await super.generateDeclarationParallell();
-  }
-
-  public async run(): Promise<void> {
-    if (this.es2pandaMode === ES2PANDA_MODE.RUN_PARALLEL) {
-      // RUN_PARALLEL: Executes tasks using multiple processes
-      await super.runParallel();
-    } else if (this.es2pandaMode === ES2PANDA_MODE.RUN_CONCURRENT) {
-      // RUN_CONCURRENT: Executes tasks using multiple threads with astcache
-      await super.runConcurrent();
-    } else if (this.es2pandaMode === ES2PANDA_MODE.RUN) {
-      // RUN: Executes tasks sequentially in a single process and single thread
-      await super.run();
-    } else {
-      // Default fallback: Uses parallel execution (same as RUN_PARALLEL)
-      await super.run();
+    constructor(buildConfig: BuildConfig) {
+        super(buildConfig);
     }
-  }
+
+    public async run(): Promise<void> {
+        if (this.entryFiles.size === 0) {
+            // Nothing to compile
+            this.logger.printWarn("Nothing to compile. Exiting...")
+            return;
+        }
+
+        let buildMode = this.es2pandaMode
+        if (buildMode === ES2PANDA_MODE.RUN_PARALLEL) {
+            this.logger.printInfo("Run parallel")
+            // RUN_PARALLEL: Executes tasks using multiple processes
+            await super.runParallel();
+        } else if (buildMode === ES2PANDA_MODE.RUN_CONCURRENT) {
+            this.logger.printInfo("Run concurrent")
+            // RUN_CONCURRENT: Executes tasks using multiple threads with ast-cache
+            await super.runConcurrent();
+        } else if (buildMode === ES2PANDA_MODE.RUN_SIMULTANEOUS) {
+            this.logger.printInfo("Run simultaneous")
+            // RUN_SIMULTANEOUS: Build with specific es2panda mode 'simultaneous'
+            await super.runSimultaneous();
+        } else if (buildMode === ES2PANDA_MODE.RUN) {
+            this.logger.printInfo("Run ordinary")
+            // RUN: Executes tasks sequentially in a single process and single thread
+            await super.run();
+        } else {
+            this.logger.printInfo("Run simultaneous (default)")
+            // Default fallback: same as RUN_SIMULTANEOUS
+            await super.runSimultaneous();
+        }
+    }
 }

@@ -17,49 +17,49 @@ import { initKoalaModules, cleanKoalaModule } from '../../../src/init/init_koala
 import type { BuildConfig } from '../../../src/types';
 
 const fakeKoalaModule = {
-  arkts: {},
-  arktsGlobal: {
-    es2panda: { _SetUpSoPath: jest.fn() },
-  },
+    arkts: {},
+    arktsGlobal: {
+        es2panda: { _SetUpSoPath: jest.fn() },
+    },
 };
 
 jest.mock('/mock/build/path/build-tools/koala-wrapper/build/lib/es2panda', () => fakeKoalaModule, { virtual: true });
 
 describe('initKoalaModules', () => {
-  let buildConfig: BuildConfig;
+    let buildConfig: BuildConfig;
 
-  beforeEach(() => {
-    buildConfig = {
-      buildSdkPath: '/mock/build/path',
-      pandaSdkPath: '/mock/panda/path',
-    } as any;
+    beforeEach(() => {
+        buildConfig = {
+            buildSdkPath: '/mock/build/path',
+            pandaSdkPath: '/mock/panda/path',
+        } as any;
 
-    cleanKoalaModule();
-    fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath.mockClear();
-  });
+        cleanKoalaModule();
+        fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath.mockClear();
+    });
 
-  it('should load koalaModule and inject into buildConfig', () => {
-    const koala = initKoalaModules(buildConfig);
+    it('should load koalaModule and inject into buildConfig', () => {
+        const koala = initKoalaModules(buildConfig);
 
-    expect(koala).toBe(fakeKoalaModule);
-    expect(buildConfig.arkts).toBe(fakeKoalaModule.arkts);
-    expect(buildConfig.arktsGlobal).toBe(fakeKoalaModule.arktsGlobal);
-    expect(fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath).toHaveBeenCalledWith(buildConfig.pandaSdkPath);
-  });
+        expect(koala).toBe(fakeKoalaModule);
+        expect(buildConfig.arkts).toBe(fakeKoalaModule.arkts);
+        expect(buildConfig.arktsGlobal).toBe(fakeKoalaModule.arktsGlobal);
+        expect(fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath).toHaveBeenCalledWith(buildConfig.pandaSdkPath);
+    });
 
-  it('should reuse koalaModule on subsequent calls', () => {
-    const first = initKoalaModules(buildConfig);
-    const second = initKoalaModules(buildConfig);
+    it('should reuse koalaModule on subsequent calls', () => {
+        const first = initKoalaModules(buildConfig);
+        const second = initKoalaModules(buildConfig);
 
-    expect(first).toBe(second);
-    expect(fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath).toHaveBeenCalledTimes(1);
-  });
+        expect(first).toBe(second);
+        expect(fakeKoalaModule.arktsGlobal.es2panda._SetUpSoPath).toHaveBeenCalledTimes(1);
+    });
 
-  it('should clean koalaModule', () => {
-    initKoalaModules(buildConfig);
-    cleanKoalaModule();
+    it('should clean koalaModule', () => {
+        initKoalaModules(buildConfig);
+        cleanKoalaModule();
 
-    const koala = initKoalaModules(buildConfig);
-    expect(koala).toBe(fakeKoalaModule);
-  });
+        const koala = initKoalaModules(buildConfig);
+        expect(koala).toBe(fakeKoalaModule);
+    });
 });

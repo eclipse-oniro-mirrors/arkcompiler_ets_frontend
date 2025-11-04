@@ -20,7 +20,7 @@
     "hasMainModule": true,
     "declgenBridgeCodePath": "./dist/declgen/ets",
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
-    "dependentModuleList": [
+    "dependencyModuleList": [
         {
             "packageName": "entry",
             "moduleName": "entry",

@@ -20,7 +20,7 @@ import * as utils from '../../../src/util/utils';
 // This test suite is for the FileManager class, which manages file paths and language versions in the build system.
 describe('class FileManager', () => {
     const mockBuildConfig = {
-        dependentModuleList: [
+        dependencyModuleList: [
             {
                 packageName: 'modA',
                 modulePath: '/mock/path/modA',
@@ -82,7 +82,7 @@ describe('class FileManager', () => {
         expect(fm.getLanguageVersionByFilePath('/other/path/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
         FileManager.init({
             ...mockBuildConfig,
-            dependentModuleList: [
+            dependencyModuleList: [
                 {
                     packageName: 'modH',
                     modulePath: '/mock/hybrid',
@@ -96,7 +96,7 @@ describe('class FileManager', () => {
         jest.spyOn(FileManager as any, 'isFirstLineUseStatic').mockReturnValue(true);
         expect(fm.getLanguageVersionByFilePath('/mock/hybrid/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
         FileManager.init({
-            dependentModuleList: [
+            dependencyModuleList: [
                 {
                     packageName: 'modH',
                     modulePath: '/mock/hybrid',
@@ -123,7 +123,7 @@ describe('class FileManager', () => {
         fm = FileManager.getInstance();
         expect(fm.getLanguageVersionByFilePath('/any/path/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
         FileManager.init({
-            dependentModuleList: [
+            dependencyModuleList: [
                 {
                     packageName: 'modB',
                     modulePath: '/mock/path/modB',
@@ -138,7 +138,7 @@ describe('class FileManager', () => {
         expect(fm.getLanguageVersionByFilePath('/mock/path/modB/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
     });
 
-    test('empty dependentModuleList', () => {
+    test('empty dependencyModuleList', () => {
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
         FileManager['initLanguageVersionFromDependentModuleMap']([]);
@@ -152,7 +152,7 @@ describe('class FileManager', () => {
         // @ts-ignore
         expect(FileManager.instance).toBeUndefined();
         FileManager.init({
-            dependentModuleList: [],
+            dependencyModuleList: [],
             externalApiPaths: [],
             buildSdkPath: '/mock/sdk',
             compileFiles: []

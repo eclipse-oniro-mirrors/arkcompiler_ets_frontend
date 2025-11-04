@@ -73,7 +73,7 @@ export const moduleInfo: ModuleInfo = {
     declFilesPath: '/path/to/moduleA/declFiles',
     dependencies: [],
     byteCodeHar: true,
-    abcPath: '/path/to/moduleA/abc/file.abc' 
+    abcPath: '/path/to/moduleA/abc/file.abc'
 };
 
 export const mockModuleInfos: Map<string, ModuleInfo> = new Map([
@@ -95,8 +95,8 @@ interface mockLogger {
 }
 
 describe('mockData', () => {
-  it('should load correctly', () => {
-    const mock = require('./mockData');
-    expect(mock).toBeDefined();
-  });
+    it('should load correctly', () => {
+        const mock = require('./mockData');
+        expect(mock).toBeDefined();
+    });
 });
