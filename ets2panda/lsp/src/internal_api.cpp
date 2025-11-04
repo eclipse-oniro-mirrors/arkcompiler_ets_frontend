@@ -584,6 +584,20 @@ Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::Diagn
     return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, source);
 }
 
+void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
+                              DiagnosticReferences &result)
+{
+    if (context == nullptr) {
+        return;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    for (const auto &diagnostic : diagnostics) {
+        if (ctx->sourceFileName == diagnostic->File()) {
+            result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
+        }
+    }
+}
+
 Diagnostic CreateDiagnosticWithoutFile(const util::DiagnosticBase &error)
 {
     auto range = Range(Position(), Position());

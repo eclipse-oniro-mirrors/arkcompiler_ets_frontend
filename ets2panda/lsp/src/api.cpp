@@ -220,9 +220,7 @@ DiagnosticReferences GetSemanticDiagnostics(es2panda_Context *context)
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SEMANTIC);
     SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
-    for (const auto &diagnostic : diagnostics) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
+    MakeDiagnosticReferences(context, diagnostics, result);
     return result;
 }
 
@@ -237,15 +235,9 @@ DiagnosticReferences GetSyntacticDiagnostics(es2panda_Context *context)
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_ERROR);
     const auto &diagnosticsPluginWarning =
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_WARNING);
-    for (const auto &diagnostic : diagnostics) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
-    for (const auto &diagnostic : diagnosticsPluginError) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
-    for (const auto &diagnostic : diagnosticsPluginWarning) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
+    MakeDiagnosticReferences(context, diagnostics, result);
+    MakeDiagnosticReferences(context, diagnosticsPluginError, result);
+    MakeDiagnosticReferences(context, diagnosticsPluginWarning, result);
     return result;
 }
 
