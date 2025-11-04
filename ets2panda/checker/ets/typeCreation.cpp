@@ -73,7 +73,18 @@ ETSBigIntType *ETSChecker::CreateETSBigIntLiteralType(util::StringView value)
 
 ETSStringType *ETSChecker::CreateETSStringLiteralType(util::StringView value)
 {
-    return ProgramAllocator()->New<ETSStringType>(ProgramAllocator(), GlobalBuiltinETSStringType(), Relation(), value);
+    auto valueString = std::string(value);
+    auto it = stringLiteralTypes_.find(valueString);
+    if (it != stringLiteralTypes_.end()) {
+        // Key found
+        return it->second;
+    } else {
+        // Key not found
+        ETSStringType *newValue =
+            ProgramAllocator()->New<ETSStringType>(ProgramAllocator(), GlobalBuiltinETSStringType(), Relation(), value);
+        stringLiteralTypes_.emplace(std::move(valueString), newValue);
+        return newValue;
+    }
 }
 
 ETSResizableArrayType *ETSChecker::CreateETSMultiDimResizableArrayType(Type *element, size_t dimSize)
