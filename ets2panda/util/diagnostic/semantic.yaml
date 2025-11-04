@@ -1381,6 +1381,10 @@ semantic:
   id: 14
   message: "Static initializer is not allowed in inner class."
 
+- name: STATIC_METHOD_CANNOT_REFERENCE_CLASS_TYPE
+  id: 170021
+  message: "Static members cannot reference class type parameters '{}'"
+
 - name: STATIC_METHOD_INVALID_MODIFIER
   id: 77
   message: "Invalid method modifier(s): a static method can't have abstract, final or override modifier."

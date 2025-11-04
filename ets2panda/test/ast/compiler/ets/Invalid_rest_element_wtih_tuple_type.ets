@@ -22,4 +22,8 @@ function main() {
     let mc = new TH<number, string, boolean>
 }
 
-/* @@? 16:19 Error TypeError: No matching call signature for restMethod(...) */
+/* @@? 17:23 Error SyntaxError: Rest parameter should be either array or tuple type. */
+/* @@? 17:38 Error TypeError: Static members cannot reference class type parameters 'B' */
+/* @@? 17:38 Error TypeError: Cannot find type 'B'. */
+/* @@? 17:41 Error TypeError: Static members cannot reference class type parameters 'C' */
+/* @@? 17:41 Error TypeError: Cannot find type 'C'. */

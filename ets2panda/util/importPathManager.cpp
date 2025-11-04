@@ -141,7 +141,7 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
 }
 
 // If needed, the result of this function can be cached
-std::string_view ImportPathManager::tryImportFromDeclarationCache(std::string_view resolvedImportPath) const
+std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_view resolvedImportPath) const
 {
     // if package or unresolved file, just skip
     if (ark::os::file::File::IsDirectory(std::string(resolvedImportPath)) ||
@@ -248,7 +248,7 @@ ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_vi
     }
 
     if (!result.resolvedIsExternalModule) {
-        result.resolvedPath = tryImportFromDeclarationCache(result.resolvedPath);
+        result.resolvedPath = TryImportFromDeclarationCache(result.resolvedPath);
     }
     return result;
 }

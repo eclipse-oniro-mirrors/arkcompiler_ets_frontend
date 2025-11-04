@@ -204,7 +204,7 @@ class ArrayAsListt<T> implements Listt<T> {
 
     }
 
-    private static partition(arr: T[], l: int, r: int, comparator: (lhs: T, rhs: T) => boolean): int {
+    private static partition<T>(arr: T[], l: int, r: int, comparator: (lhs: T, rhs: T) => boolean): int {
         let last = r - 1;
         let pivot = arr[last];
         let lessInd = l - 1;
@@ -222,7 +222,7 @@ class ArrayAsListt<T> implements Listt<T> {
         return lessInd + 1;
     }
 
-    private static bubbleSort(arr: T[], l: int, r: int, comparator: (lhs: T, rhs: T) => boolean): void {
+    private static bubbleSort<T>(arr: T[], l: int, r: int, comparator: (lhs: T, rhs: T) => boolean): void {
         for (let i = l; i < r; ++i) {
             for (let j = i; j < r - i; ++j) {
                 if (comparator(arr[j + 1], arr[j])) {

@@ -20972,12 +20972,12 @@
                         "loc": {
                           "start": {
                             "line": 207,
-                            "column": 36,
+                            "column": 39,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 207,
-                            "column": 38,
+                            "column": 41,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -20985,12 +20985,12 @@
                       "loc": {
                         "start": {
                           "line": 207,
-                          "column": 30,
+                          "column": 33,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 207,
-                          "column": 38,
+                          "column": 41,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -20998,12 +20998,12 @@
                     "loc": {
                       "start": {
                         "line": 207,
-                        "column": 30,
+                        "column": 33,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 207,
-                        "column": 38,
+                        "column": 41,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -21018,12 +21018,12 @@
                         "loc": {
                           "start": {
                             "line": 207,
-                            "column": 43,
+                            "column": 46,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 207,
-                            "column": 46,
+                            "column": 49,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -21031,12 +21031,12 @@
                       "loc": {
                         "start": {
                           "line": 207,
-                          "column": 40,
+                          "column": 43,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 207,
-                          "column": 46,
+                          "column": 49,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -21044,12 +21044,12 @@
                     "loc": {
                       "start": {
                         "line": 207,
-                        "column": 40,
+                        "column": 43,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 207,
-                        "column": 46,
+                        "column": 49,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -21064,12 +21064,12 @@
                         "loc": {
                           "start": {
                             "line": 207,
-                            "column": 51,
+                            "column": 54,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 207,
-                            "column": 54,
+                            "column": 57,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -21077,12 +21077,12 @@
                       "loc": {
                         "start": {
                           "line": 207,
-                          "column": 48,
+                          "column": 51,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 207,
-                          "column": 54,
+                          "column": 57,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -21090,12 +21090,12 @@
                     "loc": {
                       "start": {
                         "line": 207,
-                        "column": 48,
+                        "column": 51,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 207,
-                        "column": 54,
+                        "column": 57,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -21123,12 +21123,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 207,
-                                        "column": 74,
+                                        "column": 77,
                                         "program": "generic_arrayaslist.ets"
                                       },
                                       "end": {
                                         "line": 207,
-                                        "column": 75,
+                                        "column": 78,
                                         "program": "generic_arrayaslist.ets"
                                       }
                                     }
@@ -21136,12 +21136,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 207,
-                                      "column": 74,
+                                      "column": 77,
                                       "program": "generic_arrayaslist.ets"
                                     },
                                     "end": {
                                       "line": 207,
-                                      "column": 75,
+                                      "column": 78,
                                       "program": "generic_arrayaslist.ets"
                                     }
                                   }
@@ -21149,12 +21149,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 207,
-                                    "column": 74,
+                                    "column": 77,
                                     "program": "generic_arrayaslist.ets"
                                   },
                                   "end": {
                                     "line": 207,
-                                    "column": 75,
+                                    "column": 78,
                                     "program": "generic_arrayaslist.ets"
                                   }
                                 }
@@ -21162,12 +21162,12 @@
                               "loc": {
                                 "start": {
                                   "line": 207,
-                                  "column": 69,
+                                  "column": 72,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 207,
-                                  "column": 75,
+                                  "column": 78,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -21175,12 +21175,12 @@
                             "loc": {
                               "start": {
                                 "line": 207,
-                                "column": 69,
+                                "column": 72,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 207,
-                                "column": 75,
+                                "column": 78,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -21200,12 +21200,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 207,
-                                        "column": 82,
+                                        "column": 85,
                                         "program": "generic_arrayaslist.ets"
                                       },
                                       "end": {
                                         "line": 207,
-                                        "column": 83,
+                                        "column": 86,
                                         "program": "generic_arrayaslist.ets"
                                       }
                                     }
@@ -21213,12 +21213,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 207,
-                                      "column": 82,
+                                      "column": 85,
                                       "program": "generic_arrayaslist.ets"
                                     },
                                     "end": {
                                       "line": 207,
-                                      "column": 83,
+                                      "column": 86,
                                       "program": "generic_arrayaslist.ets"
                                     }
                                   }
@@ -21226,12 +21226,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 207,
-                                    "column": 82,
+                                    "column": 85,
                                     "program": "generic_arrayaslist.ets"
                                   },
                                   "end": {
                                     "line": 207,
-                                    "column": 83,
+                                    "column": 86,
                                     "program": "generic_arrayaslist.ets"
                                   }
                                 }
@@ -21239,12 +21239,12 @@
                               "loc": {
                                 "start": {
                                   "line": 207,
-                                  "column": 77,
+                                  "column": 80,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 207,
-                                  "column": 83,
+                                  "column": 86,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -21252,12 +21252,12 @@
                             "loc": {
                               "start": {
                                 "line": 207,
-                                "column": 77,
+                                "column": 80,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 207,
-                                "column": 83,
+                                "column": 86,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -21268,12 +21268,12 @@
                           "loc": {
                             "start": {
                               "line": 207,
-                              "column": 88,
+                              "column": 91,
                               "program": "generic_arrayaslist.ets"
                             },
                             "end": {
                               "line": 207,
-                              "column": 95,
+                              "column": 98,
                               "program": "generic_arrayaslist.ets"
                             }
                           }
@@ -21281,12 +21281,12 @@
                         "loc": {
                           "start": {
                             "line": 207,
-                            "column": 68,
+                            "column": 71,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 207,
-                            "column": 95,
+                            "column": 98,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -21294,12 +21294,12 @@
                       "loc": {
                         "start": {
                           "line": 207,
-                          "column": 56,
+                          "column": 59,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 207,
-                          "column": 95,
+                          "column": 98,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -21307,12 +21307,12 @@
                     "loc": {
                       "start": {
                         "line": 207,
-                        "column": 56,
+                        "column": 59,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 207,
-                        "column": 95,
+                        "column": 98,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -21323,12 +21323,60 @@
                   "loc": {
                     "start": {
                       "line": 207,
-                      "column": 98,
+                      "column": 101,
                       "program": "generic_arrayaslist.ets"
                     },
                     "end": {
                       "line": 207,
-                      "column": 101,
+                      "column": 104,
+                      "program": "generic_arrayaslist.ets"
+                    }
+                  }
+                },
+                "typeParameters": {
+                  "type": "TSTypeParameterDeclaration",
+                  "params": [
+                    {
+                      "type": "TSTypeParameter",
+                      "name": {
+                        "type": "Identifier",
+                        "name": "T",
+                        "loc": {
+                          "start": {
+                            "line": 207,
+                            "column": 30,
+                            "program": "generic_arrayaslist.ets"
+                          },
+                          "end": {
+                            "line": 207,
+                            "column": 31,
+                            "program": "generic_arrayaslist.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 207,
+                          "column": 30,
+                          "program": "generic_arrayaslist.ets"
+                        },
+                        "end": {
+                          "line": 207,
+                          "column": 32,
+                          "program": "generic_arrayaslist.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 207,
+                      "column": 29,
+                      "program": "generic_arrayaslist.ets"
+                    },
+                    "end": {
+                      "line": 207,
+                      "column": 32,
                       "program": "generic_arrayaslist.ets"
                     }
                   }
@@ -22763,7 +22811,7 @@
                   "loc": {
                     "start": {
                       "line": 207,
-                      "column": 102,
+                      "column": 105,
                       "program": "generic_arrayaslist.ets"
                     },
                     "end": {
@@ -22964,12 +23012,12 @@
                         "loc": {
                           "start": {
                             "line": 225,
-                            "column": 37,
+                            "column": 40,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 225,
-                            "column": 39,
+                            "column": 42,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -22977,12 +23025,12 @@
                       "loc": {
                         "start": {
                           "line": 225,
-                          "column": 31,
+                          "column": 34,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 225,
-                          "column": 39,
+                          "column": 42,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -22990,12 +23038,12 @@
                     "loc": {
                       "start": {
                         "line": 225,
-                        "column": 31,
+                        "column": 34,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 225,
-                        "column": 39,
+                        "column": 42,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -23010,12 +23058,12 @@
                         "loc": {
                           "start": {
                             "line": 225,
-                            "column": 44,
+                            "column": 47,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 225,
-                            "column": 47,
+                            "column": 50,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -23023,12 +23071,12 @@
                       "loc": {
                         "start": {
                           "line": 225,
-                          "column": 41,
+                          "column": 44,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 225,
-                          "column": 47,
+                          "column": 50,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -23036,12 +23084,12 @@
                     "loc": {
                       "start": {
                         "line": 225,
-                        "column": 41,
+                        "column": 44,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 225,
-                        "column": 47,
+                        "column": 50,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -23056,12 +23104,12 @@
                         "loc": {
                           "start": {
                             "line": 225,
-                            "column": 52,
+                            "column": 55,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 225,
-                            "column": 55,
+                            "column": 58,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -23069,12 +23117,12 @@
                       "loc": {
                         "start": {
                           "line": 225,
-                          "column": 49,
+                          "column": 52,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 225,
-                          "column": 55,
+                          "column": 58,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -23082,12 +23130,12 @@
                     "loc": {
                       "start": {
                         "line": 225,
-                        "column": 49,
+                        "column": 52,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 225,
-                        "column": 55,
+                        "column": 58,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -23115,12 +23163,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 225,
-                                        "column": 75,
+                                        "column": 78,
                                         "program": "generic_arrayaslist.ets"
                                       },
                                       "end": {
                                         "line": 225,
-                                        "column": 76,
+                                        "column": 79,
                                         "program": "generic_arrayaslist.ets"
                                       }
                                     }
@@ -23128,12 +23176,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 225,
-                                      "column": 75,
+                                      "column": 78,
                                       "program": "generic_arrayaslist.ets"
                                     },
                                     "end": {
                                       "line": 225,
-                                      "column": 76,
+                                      "column": 79,
                                       "program": "generic_arrayaslist.ets"
                                     }
                                   }
@@ -23141,12 +23189,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 225,
-                                    "column": 75,
+                                    "column": 78,
                                     "program": "generic_arrayaslist.ets"
                                   },
                                   "end": {
                                     "line": 225,
-                                    "column": 76,
+                                    "column": 79,
                                     "program": "generic_arrayaslist.ets"
                                   }
                                 }
@@ -23154,12 +23202,12 @@
                               "loc": {
                                 "start": {
                                   "line": 225,
-                                  "column": 70,
+                                  "column": 73,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 225,
-                                  "column": 76,
+                                  "column": 79,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -23167,12 +23215,12 @@
                             "loc": {
                               "start": {
                                 "line": 225,
-                                "column": 70,
+                                "column": 73,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 225,
-                                "column": 76,
+                                "column": 79,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -23192,12 +23240,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 225,
-                                        "column": 83,
+                                        "column": 86,
                                         "program": "generic_arrayaslist.ets"
                                       },
                                       "end": {
                                         "line": 225,
-                                        "column": 84,
+                                        "column": 87,
                                         "program": "generic_arrayaslist.ets"
                                       }
                                     }
@@ -23205,12 +23253,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 225,
-                                      "column": 83,
+                                      "column": 86,
                                       "program": "generic_arrayaslist.ets"
                                     },
                                     "end": {
                                       "line": 225,
-                                      "column": 84,
+                                      "column": 87,
                                       "program": "generic_arrayaslist.ets"
                                     }
                                   }
@@ -23218,12 +23266,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 225,
-                                    "column": 83,
+                                    "column": 86,
                                     "program": "generic_arrayaslist.ets"
                                   },
                                   "end": {
                                     "line": 225,
-                                    "column": 84,
+                                    "column": 87,
                                     "program": "generic_arrayaslist.ets"
                                   }
                                 }
@@ -23231,12 +23279,12 @@
                               "loc": {
                                 "start": {
                                   "line": 225,
-                                  "column": 78,
+                                  "column": 81,
                                   "program": "generic_arrayaslist.ets"
                                 },
                                 "end": {
                                   "line": 225,
-                                  "column": 84,
+                                  "column": 87,
                                   "program": "generic_arrayaslist.ets"
                                 }
                               }
@@ -23244,12 +23292,12 @@
                             "loc": {
                               "start": {
                                 "line": 225,
-                                "column": 78,
+                                "column": 81,
                                 "program": "generic_arrayaslist.ets"
                               },
                               "end": {
                                 "line": 225,
-                                "column": 84,
+                                "column": 87,
                                 "program": "generic_arrayaslist.ets"
                               }
                             }
@@ -23260,12 +23308,12 @@
                           "loc": {
                             "start": {
                               "line": 225,
-                              "column": 89,
+                              "column": 92,
                               "program": "generic_arrayaslist.ets"
                             },
                             "end": {
                               "line": 225,
-                              "column": 96,
+                              "column": 99,
                               "program": "generic_arrayaslist.ets"
                             }
                           }
@@ -23273,12 +23321,12 @@
                         "loc": {
                           "start": {
                             "line": 225,
-                            "column": 69,
+                            "column": 72,
                             "program": "generic_arrayaslist.ets"
                           },
                           "end": {
                             "line": 225,
-                            "column": 96,
+                            "column": 99,
                             "program": "generic_arrayaslist.ets"
                           }
                         }
@@ -23286,12 +23334,12 @@
                       "loc": {
                         "start": {
                           "line": 225,
-                          "column": 57,
+                          "column": 60,
                           "program": "generic_arrayaslist.ets"
                         },
                         "end": {
                           "line": 225,
-                          "column": 96,
+                          "column": 99,
                           "program": "generic_arrayaslist.ets"
                         }
                       }
@@ -23299,12 +23347,12 @@
                     "loc": {
                       "start": {
                         "line": 225,
-                        "column": 57,
+                        "column": 60,
                         "program": "generic_arrayaslist.ets"
                       },
                       "end": {
                         "line": 225,
-                        "column": 96,
+                        "column": 99,
                         "program": "generic_arrayaslist.ets"
                       }
                     }
@@ -23315,12 +23363,60 @@
                   "loc": {
                     "start": {
                       "line": 225,
-                      "column": 99,
+                      "column": 102,
                       "program": "generic_arrayaslist.ets"
                     },
                     "end": {
                       "line": 225,
-                      "column": 103,
+                      "column": 106,
+                      "program": "generic_arrayaslist.ets"
+                    }
+                  }
+                },
+                "typeParameters": {
+                  "type": "TSTypeParameterDeclaration",
+                  "params": [
+                    {
+                      "type": "TSTypeParameter",
+                      "name": {
+                        "type": "Identifier",
+                        "name": "T",
+                        "loc": {
+                          "start": {
+                            "line": 225,
+                            "column": 31,
+                            "program": "generic_arrayaslist.ets"
+                          },
+                          "end": {
+                            "line": 225,
+                            "column": 32,
+                            "program": "generic_arrayaslist.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 225,
+                          "column": 31,
+                          "program": "generic_arrayaslist.ets"
+                        },
+                        "end": {
+                          "line": 225,
+                          "column": 33,
+                          "program": "generic_arrayaslist.ets"
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 225,
+                      "column": 30,
+                      "program": "generic_arrayaslist.ets"
+                    },
+                    "end": {
+                      "line": 225,
+                      "column": 33,
                       "program": "generic_arrayaslist.ets"
                     }
                   }
@@ -24304,7 +24400,7 @@
                   "loc": {
                     "start": {
                       "line": 225,
-                      "column": 104,
+                      "column": 107,
                       "program": "generic_arrayaslist.ets"
                     },
                     "end": {
