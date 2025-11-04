@@ -356,9 +356,10 @@ checker::Type *MemberExpression::SetAndAdjustType(checker::ETSChecker *checker, 
     return AdjustType(checker, resType);
 }
 
-std::optional<std::size_t> MemberExpression::GetTupleIndexValue() const
+std::optional<std::size_t> MemberExpression::GetTupleIndexValue(const checker::ETSChecker *checker) const
 {
-    if (object_->TsType() == nullptr || !object_->TsType()->IsETSTupleType() || !property_->IsNumberLiteral()) {
+    if (object_->TsType() == nullptr || !checker->GetApparentType(object_->TsType())->IsETSTupleType() ||
+        !property_->IsNumberLiteral()) {
         return std::nullopt;
     }
     return property_->AsNumberLiteral()->Number().GetValueAndCastTo<std::size_t>();

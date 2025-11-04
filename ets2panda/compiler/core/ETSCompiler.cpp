@@ -802,7 +802,8 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
 
     auto const *smartType = expr->TsType();
     ES2PANDA_ASSERT(smartType != nullptr);
-    if (smartType->IsETSTypeParameter() || smartType->IsETSPartialTypeParameter() || smartType->IsETSNonNullishType()) {
+    if (smartType->IsETSTypeParameter() || smartType->IsETSPartialTypeParameter() || smartType->IsETSNonNullishType() ||
+        smartType->IsETSTypeAliasType()) {
         smartType = etsg->Checker()->GetApparentType(smartType);
     }
     auto ttctx = compiler::TargetTypeContext(etsg, smartType);
@@ -828,7 +829,7 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
     if (!expr->IsComputed()) {
         return false;
     }
-    auto *const objectType = expr->Object()->TsType();
+    auto *const objectType = etsg->Checker()->GetApparentType(expr->Object()->TsType());
 
     auto ottctx = compiler::TargetTypeContext(etsg, objectType);
     etsg->CompileAndCheck(expr->Object());
@@ -844,8 +845,8 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
 
     if (objectType->IsETSTupleType()) {
-        ES2PANDA_ASSERT(expr->GetTupleIndexValue().has_value());
-        auto indexValue = *expr->GetTupleIndexValue();
+        ES2PANDA_ASSERT(expr->GetTupleIndexValue(etsg->Checker()).has_value());
+        auto indexValue = *expr->GetTupleIndexValue(etsg->Checker());
         auto *tupleElementType = objectType->AsETSTupleType()->GetTypeAtIndex(indexValue);
         etsg->LoadTupleElement(expr, objReg, tupleElementType, indexValue);
     } else {
