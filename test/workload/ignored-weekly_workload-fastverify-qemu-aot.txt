@@ -18,12 +18,6 @@ mandreel
 OfflineAssembler
 regexp
 
-##27785
-stanford-crypto-aes
-
-##27784
-Method_Call
-
 #29011
 wsl
 
