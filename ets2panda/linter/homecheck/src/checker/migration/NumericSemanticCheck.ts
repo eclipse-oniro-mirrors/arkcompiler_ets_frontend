@@ -571,6 +571,12 @@ export class NumericSemanticCheck implements BaseChecker {
             this.addIssueReport(RuleCategory.ArrayIndex, NumberCategory.number, IssueReason.ActuallyIntConstant, true, stmt, index);
             return;
         }
+        if (index instanceof Local){
+            const isParameter = (index as Local).getDeclaringStmt();
+            if (isParameter instanceof ArkAssignStmt && this.isFromParameter(isParameter)){
+                return;
+            }
+        }
         const issueReason = this.checkValueOnlyUsedAsIntLong(stmt, index, res, NumberCategory.int);
         if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
             // 若index原先非int，则获取的数组元素应该是undefined，不可以对其进行强转int，否则对原始代码的语义有修改
