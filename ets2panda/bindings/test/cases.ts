@@ -191,6 +191,10 @@ export const basicCases: TestCases = {
     expectedFilePath: resolveTestPath('test/expected/getColAndLineByOffset.json'),
     '1': [resolveTestPath('test/testcases/getColAndLineByOffset/getColAndLineByOffset1.ets'), 1035]
   },
+  getTokenNative: {
+    expectedFilePath: resolveTestPath('test/expected/getTokenNative.json'),
+    '1': [resolveTestPath('test/testcases/getTokenNative/getTokenNative.ets'), 636]
+  },
   entry: {
     expectedFilePath: '',
     '1': [resolveTestPath('test/testcases/entry/Index.ets'), 615]

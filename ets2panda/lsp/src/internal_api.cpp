@@ -32,7 +32,7 @@
 #include "code_fix_provider.h"
 #include "get_class_property_info.h"
 #include "generated/code_fix_register.h"
-
+#include "quick_info.h"
 namespace ark::es2panda::lsp {
 
 Initializer::Initializer()
@@ -905,4 +905,8 @@ varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util
     return FindDeclInGlobalScope(scope, name);
 }
 
+std::string GetTokenTypes(ir::ModifierFlags flags)
+{
+    return ModifiersToString(flags);
+}
 }  // namespace ark::es2panda::lsp
