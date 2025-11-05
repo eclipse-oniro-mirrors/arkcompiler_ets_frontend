@@ -614,3 +614,17 @@ class er {
         }
     }
 }
+
+export enum TestType {
+    Image = 'Image',
+    Edit = 'Edit',
+}
+export type EditorTestType = TestType | 'default';
+
+function EnterEditor(tip: TestType | 'default') {
+    console.log('test function');
+}
+
+function beforeTask(tip: EditorTestType) {
+    EnterEditor(tip); //legal
+}
