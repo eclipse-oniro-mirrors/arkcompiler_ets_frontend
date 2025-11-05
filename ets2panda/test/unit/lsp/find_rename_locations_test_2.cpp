@@ -98,7 +98,7 @@ export enum Color {
 }
 )";
     auto context =
-        initializer.CreateContext("find_rename_locations_cross_test.ets", ES2PANDA_STATE_CHECKED, fileContent.c_str());
+        initializer.CreateContext("find_rename_locations_cross_test1.ets", ES2PANDA_STATE_CHECKED, fileContent.c_str());
     ASSERT_TRUE(NeedsCrossFileRename(context, fileContent.find("Foo {")));         // Foo
     ASSERT_TRUE(NeedsCrossFileRename(context, fileContent.find("name: string")));  // Foo name
     ASSERT_FALSE(NeedsCrossFileRename(context, fileContent.find("age: number")));  // Foo age
@@ -117,9 +117,9 @@ export enum Color {
 
 TEST_F(LspFindRenameLocationsTests, ClassAlias)
 {
-    std::vector<std::string> files = {"rename_cross_check_export.ets", "rename_cross_check_import.ets"};
+    std::vector<std::string> files = {"rename_cross_check_export1.ets", "rename_cross_check_import1.ets"};
     std::vector<std::string> texts = {R"(export class Foo {name: string = "john"})",
-                                      R"(import { Foo as Fooo } from './rename_cross_check_export.ets';
+                                      R"(import { Foo as Fooo } from './rename_cross_check_export1.ets';
 let foo: Fooo = new Fooo();
 console.log(foo.name);
 )"};
@@ -133,8 +133,8 @@ console.log(foo.name);
     auto res = FindRenameLocationsInCurrentFile(context, texts[1].find("Fooo()"));
     const auto expected = std::vector<RenameLocation> {
         {filePaths[1], 16, 20, 0},
-        {filePaths[1], 72, 76, 1},
-        {filePaths[1], 83, 87, 1},
+        {filePaths[1], 73, 77, 1},
+        {filePaths[1], 84, 88, 1},
     };
     const auto actual = std::vector<RenameLocation>(res.begin(), res.end());
     ASSERT_EQ(actual.size(), expected.size());
