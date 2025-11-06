@@ -18,6 +18,21 @@ enum Fraction: int {
     B = "B"
 }
 
+enum Fraction1: double { 
+    A = "A",
+    B = "B"
+}
+
+enum Fraction2: int { 
+    A = 1.2,
+    B = 2.2
+}
+
 
 /* @@? 17:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
 /* @@? 18:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 22:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 23:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 27:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 28:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+

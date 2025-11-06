@@ -21,6 +21,15 @@
 
 namespace ark::es2panda::checker {
 
+void ETSEnumType::SetEnumType(ir::TypeNode *typeNode, ETSChecker *checker) noexcept
+{
+    ES2PANDA_ASSERT(typeNode != nullptr);
+    ES2PANDA_ASSERT(checker != nullptr);
+
+    typeNode->Check(checker);
+    enumType_ = typeNode->GetType(checker);
+}
+
 Type *ETSEnumType::GetBaseEnumElementType(ETSChecker *checker)
 {
     return checker->MaybeUnboxType(SuperType()->TypeArguments()[0]);
@@ -78,13 +87,63 @@ void ETSStringEnumType::CastTarget(TypeRelation *relation, Type *source)
     conversion::Forbidden(relation);
 }
 
-bool ETSIntEnumType::AssignmentSource(TypeRelation *relation, Type *target)
+[[nodiscard]] bool ETSStringEnumType::CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept
+{
+    if (enumType_ != nullptr) {
+        return enumType_->AsETSObjectType()->HasObjectFlag(flag);
+    }
+
+    return checker->GlobalBuiltinETSStringType();
+}
+
+bool ETSNumericEnumType::CheckAssignableNumericTypes(Type *let)
+{
+    auto letObj = let->AsETSObjectType();
+    auto enumObj = EnumAnnotedType()->AsETSObjectType();
+    ES2PANDA_ASSERT(enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_NUMERIC));
+    if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
+        return true;
+    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
+        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
+            return true;
+        }
+    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
+        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE) &&
+            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
+            return true;
+        }
+    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_INT)) {
+        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE) &&
+            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT) &&
+            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
+            return true;
+        }
+    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
+        if (enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE) ||
+            enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
+            return true;
+        }
+    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
+        if (enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
 {
     bool result = false;
     if (target->IsETSObjectType()) {
         if (target->AsETSObjectType()->IsGlobalETSObjectType() ||
             target->AsETSObjectType()->Name() == compiler::Signatures::NUMERIC) {
             result = true;
+        } else if (EnumAnnotedType() != nullptr) {
+            if (CheckAssignableNumericTypes(target)) {
+                result = true;
+                relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+            }
         } else if (target->IsBuiltinNumeric()) {
             result = true;
             relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
@@ -105,12 +164,12 @@ bool ETSIntEnumType::AssignmentSource(TypeRelation *relation, Type *target)
     return relation->IsTrue();
 }
 
-void ETSIntEnumType::AssignmentTarget(TypeRelation *relation, Type *source)
+void ETSNumericEnumType::AssignmentTarget(TypeRelation *relation, Type *source)
 {
     relation->IsIdenticalTo(this, source) ? relation->Result(true) : relation->Result(false);
 }
 
-void ETSIntEnumType::Cast(TypeRelation *const relation, Type *const target)
+void ETSNumericEnumType::Cast(TypeRelation *const relation, Type *const target)
 {
     if (relation->IsIdenticalTo(this, target)) {
         relation->Result(true);
@@ -124,7 +183,7 @@ void ETSIntEnumType::Cast(TypeRelation *const relation, Type *const target)
     conversion::Forbidden(relation);
 }
 
-void ETSIntEnumType::CastTarget(TypeRelation *relation, Type *source)
+void ETSNumericEnumType::CastTarget(TypeRelation *relation, Type *source)
 {
     if (source->IsIntType() || source->IsBuiltinNumeric()) {
         relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {source, this}, relation->GetNode()->Start());
@@ -134,56 +193,13 @@ void ETSIntEnumType::CastTarget(TypeRelation *relation, Type *source)
     conversion::Forbidden(relation);
 }
 
-bool ETSDoubleEnumType::AssignmentSource(TypeRelation *relation, Type *target)
+[[nodiscard]] bool ETSNumericEnumType::CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept
 {
-    bool result = false;
-    if ((target->IsETSObjectType() && (target->AsETSObjectType()->IsGlobalETSObjectType() ||
-                                       target->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE))) ||
-        target->HasTypeFlag(TypeFlag::DOUBLE)) {
-        result = true;
-        relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
-    } else if (target->IsETSUnionType()) {
-        auto &unionConstituentTypes = target->AsETSUnionType()->ConstituentTypes();
-
-        // clang-format off
-        if (std::any_of(
-            unionConstituentTypes.begin(), unionConstituentTypes.end(),
-                [relation, this](auto *constituentType) { return relation->IsIdenticalTo(this, constituentType); })) {
-            result = true;
-        }
-        // clang-format on
+    if (enumType_ != nullptr) {
+        return enumType_->AsETSObjectType()->HasObjectFlag(flag);
     }
 
-    return relation->Result(result);
-}
-
-void ETSDoubleEnumType::AssignmentTarget(TypeRelation *relation, Type *source)
-{
-    relation->Result(relation->IsIdenticalTo(this, source));
-}
-
-void ETSDoubleEnumType::Cast(TypeRelation *const relation, Type *const target)
-{
-    if (relation->IsIdenticalTo(this, target)) {
-        relation->Result(true);
-        return;
-    }
-    if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC) || target->IsBuiltinNumeric()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {this, target}, relation->GetNode()->Start());
-        relation->Result(true);
-        return;
-    }
-    conversion::Forbidden(relation);
-}
-
-void ETSDoubleEnumType::CastTarget(TypeRelation *relation, Type *source)
-{
-    if (source->IsFloatType() || source->IsBuiltinNumeric()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {source, this}, relation->GetNode()->Start());
-        relation->Result(true);
-        return;
-    }
-    conversion::Forbidden(relation);
+    return checker->GlobalIntBuiltinType();
 }
 
 }  // namespace ark::es2panda::checker

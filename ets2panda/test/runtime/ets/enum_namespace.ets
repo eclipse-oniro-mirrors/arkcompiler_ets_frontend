@@ -26,7 +26,7 @@ class B {}
 
 type XXXType = A | B
 
-function foo(a : boolean) : NSOuter.NSInner.XXXType | number | string {
+function foo(a : boolean) : NSOuter.NSInner.XXXType | int | string {
     if (a) {
         return NSOuter.NSInner.XXXType.TAP
     }

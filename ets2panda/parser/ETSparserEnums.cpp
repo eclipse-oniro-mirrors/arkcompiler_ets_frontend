@@ -160,22 +160,7 @@ ir::TSEnumDeclaration *ETSParser::ParseEnumMembers(ir::Identifier *const key, co
         Lexer()->NextToken();  // eat ':'
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
         typeAnnotation = ParseTypeAnnotation(&options);
-
-        // According to a comment on ETSparser.cpp:1598, compiler can't process ": string" correctly.
-        // ParseTypeAnnotation reads ": string" as literal so it's not supported here for now.
-        auto startPos = Lexer()->GetToken().Start();
-        if (!typeAnnotation->IsETSPrimitiveType()) {
-            LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
-            typeAnnotation = nullptr;
-        } else {
-            ir::PrimitiveType primitiveType = typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType();
-            if (primitiveType != ir::PrimitiveType::INT && primitiveType != ir::PrimitiveType::LONG &&
-                primitiveType != ir::PrimitiveType::DOUBLE) {
-                // Issue: #26024 Numeric support for enum
-                LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
-                typeAnnotation = nullptr;
-            }
-        }
+        typeAnnotation->SetRange({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
     }
 
     Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);  // eat '{'

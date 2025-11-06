@@ -25,9 +25,13 @@ enum class EnumCastType {
     NONE,
     CAST_TO_STRING,
     CAST_TO_INT,
-    CAST_TO_INT_ENUM,
+    CAST_TO_LONG,
+    CAST_TO_DOUBLE,
+    CAST_TO_FLOAT,
+    CAST_TO_BYTE,
+    CAST_TO_SHORT,
+    CAST_TO_NUMERIC_ENUM,
     CAST_TO_STRING_ENUM,
-    CAST_TO_DOUBLE_ENUM
 };
 
 class EnumPostCheckLoweringPhase : public PhaseForBodies {

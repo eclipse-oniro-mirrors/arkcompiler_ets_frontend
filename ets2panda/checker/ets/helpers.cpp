@@ -422,7 +422,7 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
 {
     Type *unboxedType = isCondExpr ? MaybeUnboxConditionalInRelation(type) : MaybeUnboxInRelation(type);
 
-    if (type != nullptr && type->IsETSIntEnumType()) {
+    if (type != nullptr && type->IsETSNumericEnumType()) {
         expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         unboxedType = type->AsETSEnumType()->GetBaseEnumElementType(this);
     }

@@ -374,8 +374,8 @@ public:
         std::tuple<ir::Expression *, ir::Expression *, lexer::TokenType, lexer::SourcePosition> op, bool isEqualOp,
         std::tuple<checker::Type *, checker::Type *, Type *, Type *> types);
 
-    checker::Type *CheckBinaryBitwiseOperatorForIntEnums(const checker::Type *const leftType,
-                                                         const checker::Type *const rightType);
+    checker::Type *CheckBinaryBitwiseOperatorForNumericEnums(checker::Type *const leftType,
+                                                             checker::Type *const rightType);
     checker::Type *CheckBinaryOperatorPlus(
         std::tuple<ir::Expression *, ir::Expression *, lexer::TokenType, lexer::SourcePosition> op, bool isEqualOp,
         std::tuple<checker::Type *, checker::Type *, Type *, Type *> types);

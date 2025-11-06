@@ -13,11 +13,10 @@
  * limitations under the License.
  */
  
-enum Test1: int {
-    A = 0x32
+type customInt = int;
+
+enum Enum: customInt{
+	A = 1
 }
 
-enum Test2: short {
-    A = 0x01
-}
-
+/* @@? 19:6 Error Syntax error ESY0327: Unsupported enum type annotation. Supported enum types are: integral types, floating point types and string. */

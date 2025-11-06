@@ -43,7 +43,7 @@ public:
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang)
         : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(nullptr),
+          typeAnnotation_(nullptr),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -62,7 +62,7 @@ public:
                                Language lang)
         : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(typeNode),
+          typeAnnotation_(typeNode),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -82,7 +82,7 @@ public:
                                AstNodeHistory *history)
         : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(nullptr),
+          typeAnnotation_(nullptr),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -126,11 +126,6 @@ public:
         return GetHistoryNodeAs<TSEnumDeclaration>()->key_;
     }
 
-    TypeNode *TypeNodes()
-    {
-        return typeNode_;
-    }
-
     Identifier *Key()
     {
         return GetHistoryNodeAs<TSEnumDeclaration>()->key_;
@@ -165,6 +160,16 @@ public:
         return GetHistoryNodeAs<TSEnumDeclaration>()->lang_;
     }
 
+    [[nodiscard]] TypeNode *TypeAnnotation() noexcept
+    {
+        return GetHistoryNodeAs<TSEnumDeclaration>()->typeAnnotation_;
+    }
+
+    [[nodiscard]] const TypeNode *TypeAnnotation() const noexcept
+    {
+        return GetHistoryNodeAs<TSEnumDeclaration>()->typeAnnotation_;
+    }
+
     static varbinder::EnumMemberResult EvaluateEnumMember(checker::TSChecker *checker, varbinder::EnumVariable *enumVar,
                                                           const ir::AstNode *expr);
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -195,7 +200,7 @@ private:
 
     varbinder::LocalScope *scope_ {nullptr};
     Identifier *key_;
-    ir::TypeNode *typeNode_;
+    ir::TypeNode *typeAnnotation_;
     ArenaVector<AstNode *> members_;
     util::StringView internalName_;
     ir::ClassDefinition *boxedClass_ {nullptr};

@@ -246,6 +246,7 @@ options:
     AfterCheckerPhase:
     - NodeHasType
     - NoPrimitiveTypes
+    - EnumHasCorrectType
     - IdentifierHasVariable
     - ReferenceTypeAnnotationIsNull
     - ArithmeticOperationValid
@@ -285,6 +286,7 @@ options:
     # - NodeHasSourceRange
     - NodeHasType
     - NoPrimitiveTypes
+    - EnumHasCorrectType
     - ReferenceTypeAnnotationIsNull
     - SequenceExpressionHasLastType
     - VariableHasEnclosingScope

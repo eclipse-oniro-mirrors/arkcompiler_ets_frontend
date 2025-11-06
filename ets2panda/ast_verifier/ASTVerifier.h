@@ -68,7 +68,7 @@ namespace ark::es2panda::compiler::ast_verifier {
 // NOTE(dkofanov) Fix and enable ImportExportAccessValid:
 using InvariantsRegistry =
     InvariantsRegistryImpl<NodeHasParent, NodeHasSourceRange, EveryChildHasValidParent, EveryChildInParentRange,
-                           CheckStructDeclaration, VariableHasScope, NodeHasType, NoPrimitiveTypes,
+                           CheckStructDeclaration, VariableHasScope, NodeHasType, NoPrimitiveTypes, EnumHasCorrectType,
                            IdentifierHasVariable, ReferenceTypeAnnotationIsNull, ArithmeticOperationValid,
                            SequenceExpressionHasLastType, ForLoopCorrectlyInitialized, VariableHasEnclosingScope,
                            ModifierAccessValid, VariableNameIdentifierNameSame, CheckAbstractMethod,

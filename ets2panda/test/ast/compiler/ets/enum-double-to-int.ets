@@ -19,10 +19,17 @@ enum Color: double {
   Blue = 3.3
 }
 
-function main(): void {
-  let c1: int = /* @@ label1 */Color.Blue;
-  let c2: int = /* @@ label2 */Color.Red + Color.Green;
+function foo(a: int) {
+	console.log(a);
 }
 
-/* @@@ label1 Error Semantic error ESE0318: Type 'Color' cannot be assigned to type 'Int' */
-/* @@@ label2 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */
+function main(): void {
+  let c1: int = Color.Blue;
+  foo(Color.Blue);
+  let c2: int = Color.Red + Color.Green;
+}
+
+/* @@? 27:17 Error Semantic error ESE0318: Type 'Color' cannot be assigned to type 'Int' */
+/* @@? 28:3 Error Semantic error ESE0127: No matching call signature for foo(Color) */
+/* @@? 28:7 Error Semantic error ESE0046: Type 'Color' is not compatible with type 'Int' at index 1 */
+/* @@? 29:17 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */

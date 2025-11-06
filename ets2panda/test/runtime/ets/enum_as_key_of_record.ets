@@ -18,11 +18,11 @@
      up = "1"
  }
 
- enum IntEnum {
+ enum NumericEnum {
      up = 1
  }
 
 
-function foo(val1:Record<StringEnum,string>, val2:Record<IntEnum,string>){
+function foo(val1:Record<StringEnum,string>, val2:Record<NumericEnum,string>){
 
 }

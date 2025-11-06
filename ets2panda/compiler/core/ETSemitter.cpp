@@ -970,6 +970,41 @@ pandasm::AnnotationElement ETSEmitter::ProcessArrayType(const ir::ClassProperty 
         std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::STRING>(value))};
 }
 
+static pandasm::AnnotationElement ChooseETSEnumType(const ir::Expression *initValue, const checker::Type *type,
+                                                    std::string propName)
+{
+    auto *enumRef = type->AsETSNumericEnumType();
+    auto *checker = public_lib::Context().GetChecker()->AsETSChecker();
+    std::unique_ptr<pandasm::ScalarValue> numericEnumValue;
+    if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_BYTE)) {
+        auto enumValue = static_cast<uint8_t>(initValue->AsNumberLiteral()->Number().GetByte());
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::I8>(enumValue));
+    } else if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_SHORT)) {
+        auto enumValue = static_cast<uint16_t>(initValue->AsNumberLiteral()->Number().GetShort());
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::I16>(enumValue));
+    } else if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_INT)) {
+        auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue));
+    } else if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_FLOAT)) {
+        auto enumValue = initValue->AsNumberLiteral()->Number().GetFloat();
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::F32>(enumValue));
+    } else if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_LONG)) {
+        auto enumValue = static_cast<uint64_t>(initValue->AsNumberLiteral()->Number().GetLong());
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::I64>(enumValue));
+    } else if (enumRef->CheckBuiltInType(checker, checker::ETSObjectFlags::BUILTIN_DOUBLE)) {
+        auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
+        numericEnumValue =
+            std::make_unique<pandasm::ScalarValue>(pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue));
+    }
+
+    return pandasm::AnnotationElement {propName, std::move(numericEnumValue)};
+}
+
 static pandasm::AnnotationElement ProcessETSEnumType(const ir::ClassProperty *prop, const ir::Expression *init,
                                                      const checker::Type *type)
 {
@@ -977,15 +1012,19 @@ static pandasm::AnnotationElement ProcessETSEnumType(const ir::ClassProperty *pr
     auto propName = prop->Id()->Name().Mutf8();
     auto declNode = init->AsMemberExpression()->PropVar()->Declaration()->Node();
     auto *initValue = declNode->AsClassProperty()->OriginEnumMember()->Init();
-    if (type->IsETSIntEnumType()) {
-        auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
-        auto intEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue);
-        return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
-    }
-    if (type->IsETSDoubleEnumType()) {
-        auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
-        auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
-        return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
+    if (type->IsETSNumericEnumType()) {
+        if (type->AsETSNumericEnumType()->EnumAnnotedType() != nullptr) {
+            return ChooseETSEnumType(initValue, type, propName);
+        }
+        if (type->AsETSNumericEnumType()->NonAnnotedHasDouble()) {
+            auto enumValue = initValue->AsNumberLiteral()->Number().GetDouble();
+            auto doubleEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::F64>(enumValue);
+            return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(doubleEnumValue)};
+        } else {
+            auto enumValue = static_cast<uint32_t>(initValue->AsNumberLiteral()->Number().GetInt());
+            auto intEnumValue = pandasm::ScalarValue::Create<pandasm::Value::Type::I32>(enumValue);
+            return pandasm::AnnotationElement {propName, std::make_unique<pandasm::ScalarValue>(intEnumValue)};
+        }
     }
     ES2PANDA_ASSERT(type->IsETSStringEnumType());
     auto enumValue = initValue->AsStringLiteral()->Str().Mutf8();

@@ -13,11 +13,12 @@
  * limitations under the License.
  */
  
-enum Fraction: string { 
-    A = "A",
-    B = "B"
-}
+class MyType{ }
 
+const a = new MyType();
 
+enum Test: MyType{
+    A = a
+};
 
-/* @@? 16:23 Error Syntax error ESY0327: Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal types, not annotations. */
+/* @@? 21:9 Error Syntax error ESY0327: Unsupported enum type annotation. Supported enum types are: integral types, floating point types and string. */

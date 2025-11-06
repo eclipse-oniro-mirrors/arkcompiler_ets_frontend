@@ -3286,14 +3286,11 @@ static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *ch
     if (argType->IsETSFunctionType()) {
         return checker->CreateETSStringLiteralType("function");
     }
-    if (argType->IsETSIntEnumType()) {
+    if (argType->IsETSNumericEnumType()) {
         return checker->CreateETSStringLiteralType("number");
     }
     if (argType->IsETSStringEnumType()) {
         return checker->CreateETSStringLiteralType("string");
-    }
-    if (argType->IsETSDoubleEnumType()) {
-        return checker->CreateETSStringLiteralType("double");
     }
     return checker->GlobalBuiltinETSStringType();
 }
