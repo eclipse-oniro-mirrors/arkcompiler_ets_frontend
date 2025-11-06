@@ -4568,14 +4568,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     derivedMethod: ts.MethodDeclaration,
     baseMethod: ts.MethodDeclaration | ts.MethodSignature
   ): void {
-    if (this.shouldSkipTypeParameterCheck(derivedMethod, baseMethod)) {
-      return;
-    }
     const baseMethodType = this.getActualReturnType(baseMethod);
     const derivedMethodType = this.getActualReturnType(derivedMethod);
+    if (!baseMethodType || !derivedMethodType || this.shouldSkipTypeParameterCheck(derivedMethod, baseMethod)) {
+      return;
+    }
     const baseMethodTypeIsVoid = TypeScriptLinter.checkMethodTypeIsVoidOrAny(baseMethodType, true);
     const baseMethodTypeisAny = TypeScriptLinter.checkMethodTypeIsVoidOrAny(baseMethodType, false);
     const derivedMethodTypeIsVoid = TypeScriptLinter.checkMethodTypeIsVoidOrAny(derivedMethodType, true, true);
+    const anyMethodTypeIsAnyKeyword = TypeScriptLinter.checkMethodTypeIsAnyKeyword(derivedMethod, baseMethod);
+
     const baseMethodTypeisAnyWithVoid = TypeScriptLinter.getRelationBaseMethodAndDerivedMethod(
       baseMethodTypeisAny,
       derivedMethodTypeIsVoid
@@ -4596,13 +4598,12 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       baseMethodTypeIsVoid,
       derivedMethodTypeIsVoid
     );
-    if (baseMethodTypeisAnyWithVoid || baseMethodTypeIsVoidWithoutVoid || baseMethodTypeisAnyWithPromiseVoid) {
+
+    if (anyMethodTypeIsAnyKeyword || baseMethodTypeIsVoidWithoutVoid || baseMethodTypeisAnyWithPromiseVoid) {
       this.incrementCounters(derivedMethod.type ? derivedMethod.type : derivedMethod.name, FaultID.MethodInheritRule);
       return;
     }
-    const isNoNeedCheck =
-      !baseMethodType || !derivedMethodType || baseMethodTypeisAnyWithoutVoid || baseMethodTypeIsVoidWithVoid;
-    if (isNoNeedCheck) {
+    if (baseMethodTypeisAnyWithoutVoid || baseMethodTypeIsVoidWithVoid || baseMethodTypeisAnyWithVoid) {
       return;
     }
     if (this.isDerivedTypeAssignable(derivedMethodType, baseMethodType)) {
@@ -4646,6 +4647,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     derivedMethodCheckFlag: boolean | ts.TypeNode | undefined
   ): boolean | ts.TypeNode | undefined {
     return baseMethodTypeIsVoidOrAny && derivedMethodCheckFlag;
+  }
+
+  private static checkMethodTypeIsAnyKeyword(
+    derivedMethod: ts.MethodDeclaration,
+    baseMethod: ts.MethodDeclaration | ts.MethodSignature
+  ): boolean | undefined {
+    return derivedMethod.type?.kind === ts.SyntaxKind.AnyKeyword || baseMethod.type?.kind === ts.SyntaxKind.AnyKeyword;
   }
 
   private getActualReturnType(method: ts.MethodDeclaration | ts.MethodSignature): ts.Type | undefined {
