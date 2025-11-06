@@ -211,7 +211,6 @@ export enum FaultID {
   ConstructorTypesDeprecated,
   QuotedHyphenPropsDeprecated,
   DuplicateDeclNameFromSdk,
-  SdkTypeQuery,
   IsConcurrentDeprecated,
   InteropStaticObjectLiterals,
   InteropJsObjectInheritance,

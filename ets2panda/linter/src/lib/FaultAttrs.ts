@@ -234,7 +234,6 @@ faultsAttrs[FaultID.PropertyAccessByIndexFromSdk] = new FaultAttributes(312);
 faultsAttrs[FaultID.ConstructorTypesDeprecated] = new FaultAttributes(313);
 faultsAttrs[FaultID.QuotedHyphenPropsDeprecated] = new FaultAttributes(314);
 faultsAttrs[FaultID.DuplicateDeclNameFromSdk] = new FaultAttributes(315);
-faultsAttrs[FaultID.SdkTypeQuery] = new FaultAttributes(316);
 faultsAttrs[FaultID.UseSharedDeprecated] = new FaultAttributes(317);
 faultsAttrs[FaultID.UseConcurrentDeprecated] = new FaultAttributes(318);
 faultsAttrs[FaultID.MethodInheritRule] = new FaultAttributes(319);
