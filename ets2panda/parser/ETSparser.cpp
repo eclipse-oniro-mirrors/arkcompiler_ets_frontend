@@ -1237,6 +1237,10 @@ ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::Modifi
         auto specs = ParseExportNamedSpecifiers(exportKind);
 
         if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
+            if (!specs.resultExportDefault.empty()) {
+                LogError(diagnostic::EXPECTED_PARAM_GOT_PARAM, {"identifier", "default"},
+                         specs.resultExportDefault[0]->Start());
+            }
             specifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.result);
         } else {
             return CreateExportNamedDeclaration(specs, modifiers, startLoc);
@@ -1546,9 +1550,11 @@ bool ETSParser::ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *re
     ir::Identifier *local = nullptr;
     CheckModuleAsModifier();
     if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_AS)) {
-        if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_DEFAULT)) {
+        if (Lexer()->GetToken().Type() == lexer::TokenType::KEYW_DEFAULT) {
             auto *exportedAnonyConst = AllocNode<ir::ExportSpecifier>(imported, imported->Clone(Allocator(), nullptr));
             exportedAnonyConst->SetDefault();
+            exportedAnonyConst->SetRange({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
+            Lexer()->NextToken();
             resultExportDefault->emplace_back(exportedAnonyConst);
             return true;
         }
