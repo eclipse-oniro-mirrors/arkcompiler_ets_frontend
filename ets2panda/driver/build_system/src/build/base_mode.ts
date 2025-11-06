@@ -360,6 +360,7 @@ export abstract class BaseMode {
     }
 
     private compile(job: CompileJobInfo) {
+        let errorStatus = false;
         this.logger.printDebug("compile START")
         this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
 
@@ -418,6 +419,7 @@ export abstract class BaseMode {
                 this.logger.printDebug("compile FINISH [ABC]")
             }
         } catch (error) {
+            errorStatus = true;
             if (error instanceof Error) {
                 throw new DriverError(
                     LogDataFactory.newInstance(
@@ -430,7 +432,9 @@ export abstract class BaseMode {
             }
         } finally {
             PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            if (!errorStatus) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
             arkts.destroyConfig(arktsGlobal.config);
         }
     }
@@ -462,6 +466,7 @@ export abstract class BaseMode {
     }
 
     public compileSimultaneous(job: CompileJobInfo): void {
+        let errorStatus = false;
         let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
         compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
 
@@ -535,6 +540,7 @@ export abstract class BaseMode {
                 compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
             }
         } catch (error) {
+            errorStatus = true;
             if (error instanceof Error) {
                 throw new DriverError(
                     LogDataFactory.newInstance(
@@ -546,7 +552,9 @@ export abstract class BaseMode {
                 );
             }
         } finally {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            if (!errorStatus) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
             PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
             arkts.destroyConfig(arktsGlobal.config);
             compileSingleData.record(RECORDE_COMPILE_NODE.END, RECORDE_COMPILE_NODE.CFG_DESTROY);
@@ -943,6 +951,7 @@ export abstract class BaseMode {
     }
 
     private declgen(jobInfo: CompileJobInfo): void {
+        let errorStatus = false;
         const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
         const source = fs.readFileSync(inputFilePath, 'utf8');
         const moduleInfo: ModuleInfo = this.fileToModule.get(inputFilePath)!;
@@ -1003,6 +1012,7 @@ export abstract class BaseMode {
             ); // Generate 1.0 declaration files & 1.0 glue code
             this.logger.printInfo('declaration files generated');
         } catch (error) {
+            errorStatus = true;
             if (error instanceof Error) {
                 throw new DriverError(
                     LogDataFactory.newInstance(
@@ -1014,7 +1024,9 @@ export abstract class BaseMode {
                 );
             }
         } finally {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            if (!errorStatus) {
+                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            }
             arkts.destroyConfig(arktsGlobal.config);
         }
     }
