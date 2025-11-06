@@ -288,4 +288,27 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    lock_file_path = "./rule-config.json"
+    lock_file = open(lock_file_path, "w")
+    acquired = False
+
+    try:
+        if os.name == "posix":
+            import fcntl
+            fcntl.flock(lock_file, fcntl.LOCK_EX)
+            acquired = True
+        elif os.name == "nt":
+            import msvcrt
+            while True:
+                try:
+                    msvcrt.locking(lock_file.fileno(), 0, 1)
+                    acquired = True
+                    break
+                except IOError:
+                    time.sleep(0.1)
+        if acquired:
+            main()
+    finally:
+        if acquired and os.name == "nt":
+            msvcrt.locking(lock_file.fileno(), 1, 1)
+        lock_file.close()
