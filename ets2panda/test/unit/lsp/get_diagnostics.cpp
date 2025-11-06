@@ -221,3 +221,21 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[sevenIndex].message_, R"(return keyword should be used in function body.)");
     ASSERT_EQ(result.diagnostic[sevenIndex].codeDescription_.href_, "test code description");
 }
+
+TEST_F(LspDiagnosticsTests, GetSemanticDiagnostics3)
+{
+    std::vector<std::string> files = {"getSemanticDiagnostics1.ets", "getSemanticDiagnostics2.ets"};
+    std::vector<std::string> texts = {R"(import {foo2} from './getSemanticDiagnostics2')",
+                                      R"(import {foo1} from './getSemanticDiagnostics1';
+export function foo2(){})"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    DiagnosticReferences result = lspApi->getSemanticDiagnostics(ctx);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(result.diagnostic.size(), 0);
+}
