@@ -16,7 +16,7 @@
 import overloadBlacklist from '../../data/OverloadAPIBlacklist.json';
 
 export const TYPE_LITERAL = 'type';
-export const SINGLEQUOTE = "'";
+export const SINGLEQUOTE = '\'';
 
 export type Parameter = {
   name: string;

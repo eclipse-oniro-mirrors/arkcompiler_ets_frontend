@@ -122,3 +122,22 @@ class C3 extends A3 {
 
 class C4 extends A3 {
 }
+
+
+class BaseWithGeneric<T> {
+    item: T;
+    constructor(param: T) {
+        this.item = param;
+    }
+}
+
+class Test {
+    public a: string = "";
+}
+
+class X extends BaseWithGeneric<Test> {
+    constructor() {
+        super(new Test());
+    };
+}
+

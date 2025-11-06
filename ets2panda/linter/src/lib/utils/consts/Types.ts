@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { ClassDeclaration } from 'typescript';
+import type { Type, ClassDeclaration } from 'typescript';
 
 export enum ExtendedIdentifierType {
   UNKNOWN,
@@ -29,7 +29,8 @@ export type ExtendedIdentifierInfo =
 export type ConstructorParameter = {
   name: string;
   isOptional: boolean;
-  type: string;
+  typeString: string;
+  type: Type;
 };
 
 export type ParameterName = string;

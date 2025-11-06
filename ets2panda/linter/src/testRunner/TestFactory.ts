@@ -126,6 +126,7 @@ function getDefaultTestOptions(): LinterOptions {
   return {
     useRtLogic: true,
     checkTsAsSource: true,
+
     /*
      * By default, treat any test file with '.ts' extension as a source file
      * (as opposed to library)

@@ -818,7 +818,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return (
       ts.isPropertyAssignment(prop) ||
       ts.isShorthandPropertyAssignment(prop) &&
-      (ts.isCallExpression(objLitExpr.parent) || ts.isNewExpression(objLitExpr.parent))
+        (ts.isCallExpression(objLitExpr.parent) || ts.isNewExpression(objLitExpr.parent))
     );
   }
 
@@ -3872,7 +3872,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       ts.isModuleBlock(tsModuleBody) &&
       tsModuleDecl.flags & ts.NodeFlags.Namespace
     ) {
-      this.handleNameSpaceModuleBlock(tsModuleBody, TypeScriptLinter.getNameSpaceChainString(tsModuleDecl, node)); 
+      this.handleNameSpaceModuleBlock(tsModuleBody, TypeScriptLinter.getNameSpaceChainString(tsModuleDecl, node));
     }
     if (
       !(tsModuleDecl.flags & ts.NodeFlags.Namespace) &&
@@ -3886,8 +3886,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-   private static getNameSpaceChainString(tsModuleDecl: ts.ModuleDeclaration, node: ts.Node): string {
-    let nameSpaceChain: string = (tsModuleDecl.name as ts.Identifier).escapedText.toString(); 
+  private static getNameSpaceChainString(tsModuleDecl: ts.ModuleDeclaration, node: ts.Node): string {
+    let nameSpaceChain: string = (tsModuleDecl.name as ts.Identifier).escapedText.toString();
     let temptNode = node.parent;
 
     while (temptNode && ts.isModuleBlock(temptNode)) {
@@ -3898,7 +3898,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         break;
       }
 
-      const parentNameSpaceName = (parentModuleDeclaration.name as ts.Identifier).escapedText.toString();
+      const parentNameSpaceName = parentModuleDeclaration.name.escapedText.toString();
       nameSpaceChain = parentNameSpaceName + nameSpaceChain;
       temptNode = temptNode.parent;
     }
@@ -5222,7 +5222,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (replacementText === ON_KEY_EVENT) {
         const call = this.getCallbackArgumentBody(callExp);
         if (call) {
-          this.incrementCounters(ident, FaultID.SdkApiStaticOverload, this.autofixer?.fixSdkOverloadApi(callExp, ident));
+          this.incrementCounters(
+            ident,
+            FaultID.SdkApiStaticOverload,
+            this.autofixer?.fixSdkOverloadApi(callExp, ident)
+          );
         }
         return;
       }
@@ -5292,10 +5296,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       const statements = arg.body.statements;
       const lastExpr = statements.length > 0 ? statements[statements.length - 1] : undefined;
-      
+
       const hasEmptyReturn = this.hasEmptyReturnStatement(arg.body);
-      const lastStatementIsReturn = lastExpr ? (ts.isReturnStatement(lastExpr) && lastExpr.expression) : false;
-      
+      const lastStatementIsReturn = lastExpr ? ts.isReturnStatement(lastExpr) && lastExpr.expression : false;
+
       if (hasEmptyReturn || !lastStatementIsReturn) {
         return arg;
       }
@@ -5306,7 +5310,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private hasEmptyReturnStatement(block: ts.Block): boolean {
     void this;
     let hasEmptyReturn = false;
-    
+
     const checkVisitor: ts.Visitor = (node): ts.VisitResult<ts.Node> => {
       if (
         ts.isArrowFunction(node) ||
@@ -5316,13 +5320,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       ) {
         return node;
       }
-      
+
       if (ts.isReturnStatement(node) && !node.expression) {
         hasEmptyReturn = true;
       }
       return ts.visitEachChild(node, checkVisitor, ts.nullTransformationContext);
     };
-    
+
     ts.visitNode(block, checkVisitor, ts.isBlock);
     return hasEmptyReturn;
   }
@@ -5657,7 +5661,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdRecordType) ||
       this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStringType) ||
       !this.options.arkts2 &&
-      (this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdMapType) || TsUtils.isIntrinsicObjectType(type)) ||
+        (this.tsUtils.isOrDerivedFrom(type, this.tsUtils.isStdMapType) || TsUtils.isIntrinsicObjectType(type)) ||
       TsUtils.isEnumType(type) ||
       // we allow EsObject here beacuse it is reported later using FaultId.EsObjectType
       TsUtils.isEsValueType(typeNode)
@@ -8424,7 +8428,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (
       this.compatibleSdkVersion > SENDBALE_FUNCTION_START_VERSION ||
       this.compatibleSdkVersion === SENDBALE_FUNCTION_START_VERSION &&
-      !SENDABLE_FUNCTION_UNSUPPORTED_STAGES_IN_API12.includes(this.compatibleSdkVersionStage)
+        !SENDABLE_FUNCTION_UNSUPPORTED_STAGES_IN_API12.includes(this.compatibleSdkVersionStage)
     ) {
       return true;
     }
@@ -8655,11 +8659,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const typeText = this.tsTypeChecker.typeToString(t);
       return Boolean(
         t.flags & ts.TypeFlags.StringLike ||
-        typeText === 'String' ||
-        typeText.toLowerCase() === 'number' ||
-        t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
-        isLiteralInitialized && !hasExplicitTypeAnnotation ||
-        t.flags & ts.TypeFlags.EnumLike
+          typeText === 'String' ||
+          typeText.toLowerCase() === 'number' ||
+          t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
+          isLiteralInitialized && !hasExplicitTypeAnnotation ||
+          t.flags & ts.TypeFlags.EnumLike
       );
     };
 
@@ -8920,9 +8924,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     if (
       this.tsUtils.isOrDerivedFrom(lhsType, this.tsUtils.isArray) &&
-      this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple) ||
+        this.tsUtils.isOrDerivedFrom(rhsType, TsUtils.isTuple) ||
       this.tsUtils.isOrDerivedFrom(rhsType, this.tsUtils.isArray) &&
-      this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple)
+        this.tsUtils.isOrDerivedFrom(lhsType, TsUtils.isTuple)
     ) {
       this.incrementCounters(node, FaultID.NoTuplesArrays);
     }
@@ -12204,28 +12208,45 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkIfArgumentAndParamMatches(param: ConstructorParameter, argument: ts.Expression): boolean {
-    const typeNode = this.tsTypeChecker.getTypeAtLocation(argument);
-    const typeString = this.tsTypeChecker.typeToString(typeNode);
-
-    if (param.type.includes(STRINGLITERAL_STRING) && argument.kind === ts.SyntaxKind.StringLiteral) {
+    if (this.isParamGeneric(param.type)) {
       return true;
     }
-    if (param.type.includes(NUMBER_LITERAL) && argument.kind === ts.SyntaxKind.NumericLiteral) {
+
+    const typeNode = this.tsTypeChecker.getTypeAtLocation(argument);
+
+    if (param.typeString.includes(STRINGLITERAL_STRING) && argument.kind === ts.SyntaxKind.StringLiteral) {
+      return true;
+    }
+    if (param.typeString.includes(NUMBER_LITERAL) && argument.kind === ts.SyntaxKind.NumericLiteral) {
       return true;
     }
 
     if (
-      param.type.includes('boolean') &&
+      param.typeString.includes('boolean') &&
       (argument.kind === ts.SyntaxKind.FalseKeyword || argument.kind === ts.SyntaxKind.TrueKeyword)
     ) {
       return true;
     }
 
-    if (param.type === typeString) {
-      return true;
+    return this.isTypeAssignable(typeNode, param.type);
+  }
+
+  private isParamGeneric(type: ts.Type): boolean {
+    void this;
+    const symbol = type.getSymbol();
+    if (!symbol) {
+      return false;
+    }
+    const decls = symbol?.getDeclarations();
+    if (!decls) {
+      return false;
     }
 
-    return false;
+    if (decls.length === 0) {
+      return false;
+    }
+
+    return ts.isTypeParameterDeclaration(decls[0]);
   }
 
   private handleErrorClassExtend(classDecl: ts.ClassDeclaration): void {
@@ -12323,7 +12344,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         const type = this.tsTypeChecker.getTypeAtLocation(ident);
         const typeString = this.tsTypeChecker.typeToString(type);
         const isOptional = !!param.questionToken;
-        const info = { name, type: typeString, isOptional };
+        const info = { name, typeString, type, isOptional };
 
         allParams.push(info);
       }
@@ -14327,9 +14348,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return (
       (argType.flags & ts.TypeFlags.NumberLike) !== 0 ||
       argType.isUnionOrIntersection() &&
-      argType.types.some((t) => {
-        return t.flags & ts.TypeFlags.NumberLike;
-      })
+        argType.types.some((t) => {
+          return t.flags & ts.TypeFlags.NumberLike;
+        })
     );
   }
 

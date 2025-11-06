@@ -5718,7 +5718,11 @@ export class Autofixer {
     );
 
     const newCall = ts.factory.createCallExpression(newPropAccess, callExpr.typeArguments, newArgs);
-    const replacementText = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newCall, callExpr.getSourceFile());
+    const replacementText = this.nonCommentPrinter.printNode(
+      ts.EmitHint.Unspecified,
+      newCall,
+      callExpr.getSourceFile()
+    );
     return [{ start: callExpr.getStart(), end: callExpr.getEnd(), replacementText: replacementText }];
   }
 }
