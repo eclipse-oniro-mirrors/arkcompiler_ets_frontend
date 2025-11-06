@@ -97,7 +97,7 @@ function getTypescript(detectedOS) {
         const iterations = 4
         if (!fs.existsSync(typescript_dir)) {
             for (let i = 0; i <= iterations; i++) {
-                shell.exec(`git clone --depth=1 https://gitee.com/openharmony/third_party_typescript.git -b ${branch} ${typescript_dir}`, { stdio: 'ignore', fatal: true } )
+                shell.exec(`git clone --depth=1 https://gitcode.com/openharmony/third_party_typescript.git -b ${branch} ${typescript_dir}`, { stdio: 'ignore', fatal: true } )
                 if (fs.existsSync(typescript_dir) || i === iterations) {
                     break;
                 }
@@ -119,7 +119,7 @@ function getTypescript(detectedOS) {
             fs.rmSync(typescript_dir, {recursive: true, force: true})
         }
         for (let i = 0; i < 5; i++) {
-            shell.exec(`git clone --depth=1 --branch=${branch} https://gitee.com/openharmony/third_party_typescript.git ${typescript_dir}`)
+            shell.exec(`git clone --depth=1 --branch=${branch} https://gitcode.com/openharmony/third_party_typescript.git ${typescript_dir}`)
             if (fs.existsSync(typescript_dir)) {
                 break;
             }
