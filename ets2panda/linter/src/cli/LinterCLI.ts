@@ -29,7 +29,7 @@ import type { ScanTaskRelatedInfo } from '../lib/statistics/scan/ScanTaskRelated
 import { StatisticsReportInPutInfo } from '../lib/statistics/scan/StatisticsReportInPutInfo';
 import { TimeRecorder } from '../lib/statistics/scan/TimeRecorder';
 import { logStatistics } from '../lib/statistics/StatisticsLogger';
-import { compileLintOptions, getEtsLoaderPath } from '../lib/ts-compiler/Compiler';
+import { compileLintOptions } from '../lib/ts-compiler/Compiler';
 import { processSyncErr, processSyncOut } from '../lib/utils/functions/ProcessWrite';
 import { parseCommandLine } from './CommandLineParser';
 import { getAllLinterRules } from '../lib/utils/functions/ConfiguredRulesProcess';
@@ -157,12 +157,7 @@ function executeLintTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
   if (!scanTaskRelatedInfo.timeRecorder.getHomeCheckCountStatus()) {
     scanTaskRelatedInfo.timeRecorder.startScan();
   }
-  const result = lint(
-    compileOptions,
-    scanTaskRelatedInfo.timeRecorder,
-    getEtsLoaderPath(compileOptions),
-    homeCheckResult
-  );
+  const result = lint(compileOptions, scanTaskRelatedInfo.timeRecorder, homeCheckResult);
   for (const [filePath, problems] of result.problemsInfos) {
     statistic.accumulateRuleNumbers(
       problems,

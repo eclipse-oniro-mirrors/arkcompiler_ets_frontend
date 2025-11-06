@@ -128,7 +128,7 @@ async function processFiles(
   const files = entries.filter((entry) => {
     return entry.isFile();
   });
-  const fileResults = await mapWithLimit(files, FILES_PER_DIR_CONCURRENCY, async(entry) => {
+  const fileResults = await mapWithLimit(files, FILES_PER_DIR_CONCURRENCY, async (entry) => {
     return processFileEntry(dir, entry);
   });
   return mergeAllResults(fileResults);
@@ -171,7 +171,7 @@ async function processDirs(
   const dirEntries = entries.filter((entry) => {
     return entry.isDirectory();
   });
-  const dirResults = await mapWithLimit(dirEntries, DIRS_PER_DIR_CONCURRENCY, async(entry) => {
+  const dirResults = await mapWithLimit(dirEntries, DIRS_PER_DIR_CONCURRENCY, async (entry) => {
     return walkDir(path.join(dir, entry.name));
   });
   return mergeAllResults(dirResults);

@@ -3028,7 +3028,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     for (const element of node.elements) {
-      if (ts.isNumericLiteral(element) && !element.text.includes('.')) {
+      if (ts.isNumericLiteral(element) && !element.getText().includes('.')) {
         const autofix = this.autofixer?.fixNumericLiteralToFloat(element);
         this.incrementCounters(element, FaultID.NumericSemantics, autofix);
       } else if (ts.isBinaryExpression(element) && element.operatorToken.kind === ts.SyntaxKind.SlashToken) {

@@ -15,7 +15,6 @@
 
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type * as ts from 'typescript';
 import { Logger } from '../Logger';
 import type { ProblemInfo } from '../ProblemInfo';
 import type { Autofix } from './Autofixer';
@@ -31,7 +30,6 @@ export class QuasiEditor {
     readonly srcFileName: string,
     readonly sourceText: string,
     readonly linterOpts: LinterOptions,
-    readonly cancellationToken?: ts.CancellationToken,
     readonly reportPath?: string
   ) {}
 
