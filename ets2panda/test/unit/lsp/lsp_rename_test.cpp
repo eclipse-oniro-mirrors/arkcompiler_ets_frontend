@@ -572,6 +572,6 @@ console.log(p1.age);
     std::string pandaLibPath = GetPandalibPath(consoleDecl);
     LSPAPI const *lspApi = GetImpl();
     auto result = lspApi->getRenameInfo(ctx, fileContent.find("name)"), const_cast<char *>(pandaLibPath.c_str()));
-    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoFailure>(result));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result));
     initializer.DestroyContext(ctx);
 }
