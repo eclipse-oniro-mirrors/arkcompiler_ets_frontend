@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -258,6 +258,7 @@ protected:
     void InstantiatePrivateContext(const ir::Identifier *ident) const;
     void BuildVarDeclarator(ir::VariableDeclarator *varDecl);
     void BuildVarDeclaratorId(ir::AstNode *childNode);
+    void BuildVarDeclaratorIdFromIdentifier(ir::Identifier *ident);
     void BuildForUpdateLoop(ir::ForUpdateStatement *forUpdateStmt);
     void BuildForInOfLoop(varbinder::LoopScope *loopScope, ir::AstNode *left, ir::Expression *right,
                           ir::Statement *body);

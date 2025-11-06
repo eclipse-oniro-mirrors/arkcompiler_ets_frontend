@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -319,7 +319,7 @@ private:
     ir::Statement *ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers);
     ir::Statement *ParseImportDeclaration(StatementParsingFlags flags) override;
     ir::Statement *ParseExportDeclaration(StatementParsingFlags flags) override;
-    ir::AnnotatedExpression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
+    ir::Expression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
     ir::Statement *ParseAnnotationsInStatement(StatementParsingFlags flags) override;
     ir::Statement *ParseInitModuleStatement() override;
     ir::VariableDeclarator *ParseVariableDeclarator(ir::Expression *init, lexer::SourcePosition startLoc,

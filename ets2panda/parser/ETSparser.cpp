@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1930,8 +1930,7 @@ ir::Expression *ETSParser::ParseFunctionParameter()
             // and resolve "{key: string}" as function body, so skip invalid types
             SkipInvalidType();
         }
-        typeAnnotation->SetParent(paramIdent);
-        paramIdent->SetTsTypeAnnotation(typeAnnotation);
+        paramIdent->SetTypeAnnotation(typeAnnotation);
         paramIdent->SetEnd(typeAnnotation->End());
     }
 
@@ -1949,8 +1948,7 @@ ir::Expression *ETSParser::CreateParameterThis(ir::TypeNode *typeAnnotation)
     ES2PANDA_ASSERT(paramIdent != nullptr);
     paramIdent->SetRange(Lexer()->GetToken().Loc());
 
-    typeAnnotation->SetParent(paramIdent);
-    paramIdent->SetTsTypeAnnotation(typeAnnotation);
+    paramIdent->SetTypeAnnotation(typeAnnotation);
 
     auto *paramExpression = AllocNode<ir::ETSParameterExpression>(paramIdent, false, Allocator());
     ES2PANDA_ASSERT(paramExpression != nullptr);
@@ -1959,9 +1957,14 @@ ir::Expression *ETSParser::CreateParameterThis(ir::TypeNode *typeAnnotation)
     return paramExpression;
 }
 
-ir::AnnotatedExpression *ETSParser::ParseVariableDeclaratorKey([[maybe_unused]] VariableParsingFlags flags)
+ir::Expression *ETSParser::ParseVariableDeclaratorKey(VariableParsingFlags flags)
 {
-    ir::Identifier *init = ExpectIdentifier();
+    ir::Expression *init = nullptr;
+    if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET) {
+        init = ParseArrayOrDestructuringExpression(ExpressionParseFlags::MUST_BE_PATTERN);
+    } else {
+        init = ExpectIdentifier();
+    }
     ES2PANDA_ASSERT(init != nullptr);
     ir::TypeNode *typeAnnotation = nullptr;
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_QUESTION_MARK) {
@@ -1978,12 +1981,10 @@ ir::AnnotatedExpression *ETSParser::ParseVariableDeclaratorKey([[maybe_unused]] 
         Lexer()->NextToken();  // eat ':'
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
         typeAnnotation = ParseTypeAnnotation(&options);
-    } else if (tokenType != lexer::TokenType::PUNCTUATOR_SUBSTITUTION && (flags & VariableParsingFlags::FOR_OF) == 0U) {
-        LogError(diagnostic::MISSING_INIT_OR_TYPE);
     }
-    if (typeAnnotation != nullptr) {
-        init->SetTsTypeAnnotation(typeAnnotation);
-        typeAnnotation->SetParent(init);
+
+    if (init->IsAnnotatedExpression() && typeAnnotation != nullptr) {
+        init->AsAnnotatedExpression()->SetTypeAnnotation(typeAnnotation);
     }
     return init;
 }
@@ -2013,7 +2014,9 @@ ir::VariableDeclarator *ETSParser::ParseVariableDeclarator(ir::Expression *init,
         return ParseVariableDeclaratorInitializer(init, flags, startLoc);
     }
 
-    if (init->AsIdentifier()->TypeAnnotation() == nullptr && (flags & VariableParsingFlags::FOR_OF) == 0U) {
+    if (init->IsETSDestructuring()) {
+        LogError(diagnostic::MISSING_INIT_IN_DEST_DEC);
+    } else if (init->AsIdentifier()->TypeAnnotation() == nullptr && (flags & VariableParsingFlags::FOR_OF) == 0U) {
         LogError(diagnostic::MISSING_INIT_OR_TYPE);
     }
 
@@ -2061,8 +2064,7 @@ void ETSParser::ParseCatchParamTypeAnnotation([[maybe_unused]] ir::AnnotatedExpr
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
         if (auto *typeAnnotation = ParseTypeAnnotation(&options); typeAnnotation != nullptr) {
             ES2PANDA_ASSERT(param != nullptr);
-            typeAnnotation->SetParent(param);
-            param->SetTsTypeAnnotation(typeAnnotation);
+            param->SetTypeAnnotation(typeAnnotation);
         }
     }
 

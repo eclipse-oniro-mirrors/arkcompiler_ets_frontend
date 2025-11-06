@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "varbinder.h"
 #include "public/public.h"
+#include "ir/ets/etsDestructuring.h"
 
 namespace ark::es2panda::varbinder {
 void VarBinder::InitTopScope()
@@ -254,22 +255,26 @@ bool VarBinder::BuildInternalName(ir::ScriptFunction *scriptFunc)
     return !scriptFunc->IsOverload();
 }
 
+void VarBinder::BuildVarDeclaratorIdFromIdentifier(ir::Identifier *ident)
+{
+    const auto &name = ident->Name();
+
+    if (IsGlobalIdentifier(name) || name.Is(ERROR_LITERAL)) {
+        return;
+    }
+
+    auto *variable = scope_->FindLocal(name, varbinder::ResolveBindingOptions::BINDINGS);
+    ES2PANDA_ASSERT(variable);
+    ident->SetVariable(variable);
+    BuildSignatureDeclarationBaseParams(ident->TypeAnnotation());
+    variable->AddFlag(VariableFlags::INITIALIZED);
+}
+
 void VarBinder::BuildVarDeclaratorId(ir::AstNode *childNode)
 {
     switch (childNode->Type()) {
         case ir::AstNodeType::IDENTIFIER: {
-            auto *ident = childNode->AsIdentifier();
-            const auto &name = ident->Name();
-
-            if (IsGlobalIdentifier(name) || name.Is(ERROR_LITERAL)) {
-                break;
-            }
-
-            auto *variable = scope_->FindLocal(name, varbinder::ResolveBindingOptions::BINDINGS);
-            ES2PANDA_ASSERT(variable);
-            ident->SetVariable(variable);
-            BuildSignatureDeclarationBaseParams(ident->TypeAnnotation());
-            variable->AddFlag(VariableFlags::INITIALIZED);
+            BuildVarDeclaratorIdFromIdentifier(childNode->AsIdentifier());
             break;
         }
         case ir::AstNodeType::OBJECT_PATTERN: {
@@ -290,6 +295,13 @@ void VarBinder::BuildVarDeclaratorId(ir::AstNode *childNode)
             }
 
             BuildSignatureDeclarationBaseParams(arrayPattern->TypeAnnotation());
+            break;
+        }
+        case ir::AstNodeType::ETS_DESTRUCTURING: {
+            auto dstr = childNode->AsETSDestructuring();
+            for (auto *element : dstr->Elements()) {
+                BuildVarDeclaratorId(element);
+            }
             break;
         }
         case ir::AstNodeType::ASSIGNMENT_PATTERN: {

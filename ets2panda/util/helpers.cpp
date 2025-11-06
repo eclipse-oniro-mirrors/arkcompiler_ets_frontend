@@ -46,6 +46,7 @@
 #include "ir/module/importSpecifier.h"
 #include "ir/module/importDefaultSpecifier.h"
 
+#include "ir/ets/etsDestructuring.h"
 #include "ir/ets/etsImportDeclaration.h"
 #include "ir/ets/etsParameterExpression.h"
 
@@ -484,6 +485,12 @@ static void CollectBindingName(varbinder::VarBinder *vb, ir::AstNode *node, std:
         }
         case ir::AstNodeType::ARRAY_PATTERN: {
             for (auto *element : node->AsArrayPattern()->Elements()) {
+                CollectBindingName(vb, element, bindings);
+            }
+            break;
+        }
+        case ir::AstNodeType::ETS_DESTRUCTURING: {
+            for (auto *element : node->AsETSDestructuring()->Elements()) {
                 CollectBindingName(vb, element, bindings);
             }
             break;

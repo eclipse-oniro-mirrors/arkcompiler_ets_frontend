@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -502,14 +502,16 @@ ir::ArrowFunctionExpression *TSParser::ParsePotentialArrowExpression(ir::Express
     return nullptr;
 }
 
-ir::AnnotatedExpression *TSParser::ParseVariableDeclaratorKey(VariableParsingFlags flags)
+ir::Expression *TSParser::ParseVariableDeclaratorKey(VariableParsingFlags flags)
 {
-    ir::AnnotatedExpression *init = ParserImpl::ParseVariableDeclaratorKey(flags);
+    ir::Expression *init = ParserImpl::ParseVariableDeclaratorKey(flags);
 
     if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COLON) {
         Lexer()->NextToken();  // eat ':'
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
-        init->SetTsTypeAnnotation(ParseTypeAnnotation(&options));
+        if (init->IsAnnotatedExpression()) {
+            init->AsAnnotatedExpression()->SetTsTypeAnnotation(ParseTypeAnnotation(&options));
+        }
     }
 
     return init;

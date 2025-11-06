@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,8 +31,7 @@ void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, siz
         for (size_t idx = 0; idx < maxArg; ++idx) {
             auto *id = Gensym(allocator);
             auto *typeAnnotation = ctx->AllocNode<ir::OpaqueTypeNode>(checker->GlobalETSAnyType(), allocator);
-            id->SetTsTypeAnnotation(typeAnnotation);
-            typeAnnotation->SetParent(id);
+            id->SetTypeAnnotation(typeAnnotation);
             auto *param = ctx->AllocNode<ir::ETSParameterExpression>(id, false, allocator);
             ES2PANDA_ASSERT(param);
             param->SetOptional(idx >= minArg);
@@ -46,14 +45,13 @@ void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, siz
     auto *arr = checker->CreateETSArrayType(checker->GlobalETSAnyType(), false);
     auto *typeAnnotation = ctx->AllocNode<ir::OpaqueTypeNode>(arr, allocator);
 
-    spread->SetTsTypeAnnotation(typeAnnotation);
+    spread->SetTypeAnnotation(typeAnnotation);
     spread->SetTsType(arr);
     restIdent->SetTsType(arr);
     auto *param = ctx->AllocNode<ir::ETSParameterExpression>(spread, nullptr, allocator);
     ES2PANDA_ASSERT(param);
 
     restIdent->SetParent(spread);
-    typeAnnotation->SetParent(spread);
     spread->SetParent(param);
     params.push_back(param);
 }

@@ -744,8 +744,7 @@ static void SetupFunctionParams(ir::ScriptFunction *function, checker::ETSChecke
                         checker->ProgramAllocator()->Adapter()),
                     checker->ProgramAllocator());
             ES2PANDA_ASSERT(unionType != nullptr);
-            paramExpr->Ident()->SetTsTypeAnnotation(unionType);
-            unionType->SetParent(paramExpr->Ident());
+            paramExpr->Ident()->SetTypeAnnotation(unionType);
         }
     }
 }
