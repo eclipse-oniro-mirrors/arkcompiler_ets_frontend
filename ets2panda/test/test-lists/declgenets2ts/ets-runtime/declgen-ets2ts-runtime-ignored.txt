@@ -44,6 +44,7 @@ fuzz/repeated_del.ets
 fuzz/class_body_interface.ets
 return_type_utility_1.ets
 return_type_utility_2.ets
+abstract_method_override.ets
 
 #30364 TSC Fail
 array_const_anno.ets

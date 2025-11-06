@@ -2473,7 +2473,6 @@ enum class OverrideErrorCode {
     INCOMPATIBLE_TYPEPARAM,
     OVERRIDDEN_WEAKER,
     OVERRIDDEN_INTERNAL,
-    ABSTRACT_OVERRIDES_CONCRETE,
 };
 
 static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature, Signature *other)
@@ -2485,16 +2484,6 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
 
     if (other->IsFinal()) {
         return OverrideErrorCode::OVERRIDDEN_FINAL;
-    }
-
-    auto *ownerNode = signature->Owner()->GetDeclNode();
-    auto *superNode = other->Owner()->GetDeclNode();
-    bool bothRealClasses = (ownerNode != nullptr) && ownerNode->IsClassDefinition() && (superNode != nullptr) &&
-                           superNode->IsClassDefinition() && signature->Owner()->HasObjectFlag(ETSObjectFlags::CLASS) &&
-                           other->Owner()->HasObjectFlag(ETSObjectFlags::CLASS);
-    if (bothRealClasses && signature->HasSignatureFlag(SignatureFlags::ABSTRACT) &&
-        !other->HasSignatureFlag(SignatureFlags::ABSTRACT)) {
-        return OverrideErrorCode::ABSTRACT_OVERRIDES_CONCRETE;
     }
 
     if (!other->ReturnType()->IsETSTypeParameter()) {
@@ -2566,10 +2555,6 @@ static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signa
             reason =
                 "overriding type parameter's conatraints are not compatible with type parameter constraints of the "
                 "overridden method.";
-            break;
-        }
-        case OverrideErrorCode::ABSTRACT_OVERRIDES_CONCRETE: {
-            reason = "an abstract method cannot override a non-abstract instance method.";
             break;
         }
         default: {
