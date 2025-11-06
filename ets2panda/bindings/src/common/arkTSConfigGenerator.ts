@@ -20,6 +20,7 @@ import * as JSON5 from 'json5';
 import { changeFileExtension, ensurePathExists, getFileLanguageVersion } from './utils';
 import { AliasConfig, BuildConfig, ModuleInfo } from './types';
 import { LANGUAGE_VERSION, PANDA_SDK_PATH_FROM_SDK, SYSTEM_SDK_PATH_FROM_SDK } from './preDefine';
+import { logger } from '../lsp/logger';
 
 interface DependencyItem {
   language: string;
@@ -105,11 +106,11 @@ export class ArkTSConfigGenerator {
         const key = isExcludedDir ? basename : relativePath ? `${relativePath}${separator}${basename}` : basename;
         pathSection[prefix + key] = isInteropSdk
           ? {
-              language: 'js',
-              path: itemPath,
-              ohmUrl: '',
-              alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
-            }
+            language: 'js',
+            path: itemPath,
+            ohmUrl: '',
+            alias: aliasConfigObj ? this.processAlias(basename, aliasConfigObj) : undefined
+          }
           : [changeFileExtension(itemPath, '', '.d.ets')];
       }
       if (stat.isDirectory()) {
@@ -139,10 +140,10 @@ export class ArkTSConfigGenerator {
       let externalApiPath = path.resolve(this.externalApiPath, dir);
       fs.existsSync(systemSdkPath)
         ? this.traverse(pathSection, systemSdkPath, undefined)
-        : console.warn(`sdk path ${systemSdkPath} not exist.`);
+        : logger.debug(`sdk path ${systemSdkPath} not exist.`);
       fs.existsSync(externalApiPath)
         ? this.traverse(pathSection, externalApiPath, undefined)
-        : console.warn(`sdk path ${externalApiPath} not exist.`);
+        : logger.debug(`sdk path ${externalApiPath} not exist.`);
     });
   }
 
@@ -207,7 +208,7 @@ export class ArkTSConfigGenerator {
 
   private parseDeclFile(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
     if (!moduleInfo.declFilesPath || !fs.existsSync(moduleInfo.declFilesPath)) {
-      console.error(`Module ${moduleInfo.packageName} depends on dynamic module ${moduleInfo.packageName}, but
+      logger.error(`Module ${moduleInfo.packageName} depends on dynamic module ${moduleInfo.packageName}, but
           decl file not found on path ${moduleInfo.declFilesPath}`);
       return;
     }
@@ -266,7 +267,7 @@ export class ArkTSConfigGenerator {
     directoryNames.forEach((dirName) => {
       const basePath = path.resolve(this.interopApiPath, dirName);
       if (!fs.existsSync(basePath)) {
-        console.warn(`interop sdk path ${basePath} not exist.`);
+        logger.debug(`interop sdk path ${basePath} not exist.`);
         return;
       }
       if (dirName === 'component') {

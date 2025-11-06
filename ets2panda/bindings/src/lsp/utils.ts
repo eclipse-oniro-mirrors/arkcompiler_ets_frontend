@@ -13,29 +13,32 @@
  * limitations under the License.
  */
 
-import { logger } from "./logger";
+import { logger } from './logger';
+
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder('utf-8', { fatal: false });
 
 export const TextPositionUtils = {
-    // char offset -> byte offset
-    charOffsetToByteOffset(content: string, charOffset: number): number {
-        if (charOffset < 0 || charOffset > content.length) {
-            logger.error('Character offset out of bounds')
-        }
-
-        const encoder = new TextEncoder();
-        return encoder.encode(content.substring(0, charOffset)).length;
-    },
-
-    // byte offset -> char offset
-    byteOffsetToCharOffset(content: string, byteOffset: number): number {
-        const encoder = new TextEncoder();
-        const totalBytes = encoder.encode(content).length;
-
-        if (byteOffset < 0 || byteOffset > totalBytes) {
-            logger.error('Byte offset out of bounds')
-        }
-
-        const buffer = encoder.encode(content).subarray(0, byteOffset);
-        return new TextDecoder('utf-8', { fatal: false }).decode(buffer).length;
+  // char offset -> byte offset
+  charOffsetToByteOffset(content: string, charOffset: number): number | undefined {
+    if (charOffset < 0 || charOffset > content.length) {
+      logger.error('Character offset out of bounds');
+      return;
     }
+
+    return textEncoder.encode(content.substring(0, charOffset)).length;
+  },
+
+  // byte offset -> char offset
+  byteOffsetToCharOffset(content: string, byteOffset: number): number | undefined {
+    const encoderResult = textEncoder.encode(content);
+
+    if (byteOffset < 0 || byteOffset > encoderResult.length) {
+      logger.error('Byte offset out of bounds');
+      return;
+    }
+
+    const buffer = encoderResult.subarray(0, byteOffset);
+    return textDecoder.decode(buffer).length;
+  }
 };

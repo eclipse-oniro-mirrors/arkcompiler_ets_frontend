@@ -13,36 +13,16 @@
  * limitations under the License.
  */
 
-'use static';
+import { getLsp, getRealPath } from '../utils';
 
-const PD = 1;
-export interface State {
-    id: number;
-    name: string;
-    isActive: boolean;
-}
-export enum A {
-e,
-f
-}
-
-class MyHilog {
-    debug(message: string) {
-        console.debug(message);
-    }
-    
-    info(message: string) {
-        console.info(message);
-    }
-    
-    warn(message: string) {
-        console.warn(message);
-    }
-    
-    error(message: string) {
-        console.error(message);
-    }
-}
-
-const myhilog = new MyHilog();
-export default myhilog;
+describe('getColAndLineByOffsetTest', () => {
+  const moduleName: string = 'getColAndLineByOffset';
+  const lsp = getLsp(moduleName);
+  test('getColAndLineByOffset_000', () => {
+    const res = lsp.getColAndLineByOffset(getRealPath(moduleName, 'getColAndLineByOffset1.ets'), 1035);
+    expect(res).toMatchObject({
+      line: 35,
+      column: 8
+    });
+  });
+});

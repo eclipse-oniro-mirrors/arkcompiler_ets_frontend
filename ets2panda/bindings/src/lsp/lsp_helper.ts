@@ -66,7 +66,7 @@ import {
   ModuleInfo,
   PathConfig,
   TextDocumentChangeInfo,
-  NodeInfo,
+  NodeInfo
 } from '../common/types';
 import { PluginDriver, PluginHook } from '../common/ui_plugins_driver';
 import { ModuleDescriptor, generateBuildConfigs } from './generateBuildConfig';
@@ -121,7 +121,12 @@ export class Lsp {
   private lspDriverHelper = new LspDriverHelper();
   private declFileMap: Record<string, string> = {}; // Map<declFilePath, sourceFilePath>
 
-  constructor(pathConfig: PathConfig, getContentCallback?: (filePath: string) => string, modules?: ModuleDescriptor[]) {
+  constructor(
+    pathConfig: PathConfig,
+    getContentCallback?: (filePath: string) => string,
+    modules?: ModuleDescriptor[],
+    plugins?: string[]
+  ) {
     initBuildEnv();
     this.cacheDir =
       pathConfig.cacheDir !== undefined ? pathConfig.cacheDir : path.join(pathConfig.projectPath, DEFAULT_CACHE_DIR);
@@ -134,7 +139,7 @@ export class Lsp {
       : path.resolve(__dirname, '../../../ets2panda/bin');
     this.filesMap = new Map<string, mainFileCache>();
     this.getFileContent = getContentCallback || ((path: string): string => fs.readFileSync(path, 'utf8'));
-    this.buildConfigs = generateBuildConfigs(pathConfig, modules ? modules : []);
+    this.buildConfigs = generateBuildConfigs(pathConfig, modules ? modules : [], plugins);
     this.moduleInfos = generateArkTsConfigs(this.buildConfigs);
     this.pathConfig = pathConfig;
     this.defaultArkTsConfig = Object.values(this.moduleInfos)[0].arktsConfigFile;
@@ -164,7 +169,9 @@ export class Lsp {
       this.deleteFromFilesMap(fileName);
     }
     const [cfg, ctx] = this.createContext(fileName, true, fileContent.newDoc) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx });
   }
 
@@ -191,9 +198,11 @@ export class Lsp {
     fileSource?: string
   ): [Config, KNativePointer] | undefined {
     const filePath = path.resolve(filename.valueOf());
-    const arktsconfig = Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
-      ? this.moduleInfos[filePath].arktsConfigFile
-      : this.defaultArkTsConfig;
+    const arktsconfig =
+      process.env.ARKTSCONFIG ||
+      (Object.prototype.hasOwnProperty.call(this.moduleInfos, filePath)
+        ? this.moduleInfos[filePath].arktsConfigFile
+        : this.defaultArkTsConfig);
     if (!arktsconfig) {
       logger.error('Missing arktsconfig for ', filePath);
     }
@@ -240,7 +249,9 @@ export class Lsp {
     const fileSource = this.getFileSource(filePath);
     if (getFileLanguageVersion(fileSource) === LANGUAGE_VERSION.ARKTS_1_2) {
       const [cfg, ctx] = this.createContext(filePath) ?? [];
-      if (!cfg || !ctx) { return; }
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
         let moduleInfo = this.moduleInfos[filePath];
         let modulePath: string = path.relative(moduleInfo.moduleRootPath, filePath);
@@ -280,7 +291,8 @@ export class Lsp {
       return offset;
     }
     const fileSource = this.getFileSource(filePath);
-    return TextPositionUtils.charOffsetToByteOffset(fileSource, offset);
+    const result = TextPositionUtils.charOffsetToByteOffset(fileSource, offset);
+    return result ? result : offset;
   }
 
   private byteOffsetToCharOffset(filePath: string, offset: number): number {
@@ -288,7 +300,8 @@ export class Lsp {
       return offset;
     }
     const fileSource = this.getFileSource(filePath);
-    return TextPositionUtils.byteOffsetToCharOffset(fileSource, offset);
+    const result = TextPositionUtils.byteOffsetToCharOffset(fileSource, offset);
+    return result ? result : offset;
   }
 
   getOffsetByColAndLine(filename: String, line: number, column: number): number {
@@ -312,7 +325,9 @@ export class Lsp {
       ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, byteOffset);
     } else {
       const [cfg, ctx] = this.createContext(filename) ?? [];
-      if (!cfg || !ctx) { return; }
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
         ptr = global.es2panda._getDefinitionAtPosition(ctx, byteOffset);
       } catch (error) {
@@ -340,7 +355,9 @@ export class Lsp {
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       ptr = global.es2panda._getSemanticDiagnostics(ctx);
     } catch (error) {
@@ -355,7 +372,9 @@ export class Lsp {
   getCurrentTokenValue(filename: String, offset: number): string | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getCurrentTokenValue(ctx, byteOffset);
@@ -371,7 +390,9 @@ export class Lsp {
   getImplementationAtPosition(filename: String, offset: number): LspDefinitionData | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getImplementationAtPosition(ctx, byteOffset);
@@ -390,7 +411,9 @@ export class Lsp {
   getFileReferences(filename: String): LspReferenceData[] | undefined {
     let isPackageModule: boolean;
     const [cfg, searchCtx] = this.createContext(filename) ?? [];
-    if (!cfg || !searchCtx) { return; }
+    if (!cfg || !searchCtx) {
+      return;
+    }
     try {
       isPackageModule = global.es2panda._isPackageModule(searchCtx);
     } catch (error) {
@@ -404,7 +427,9 @@ export class Lsp {
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       const [cfg, ctx] = this.createContext(compileFiles[i]) ?? [];
-      if (!cfg || !ctx) { return; }
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
         ptr = global.es2panda._getFileReferences(path.resolve(filename.valueOf()), ctx, isPackageModule);
       } catch (error) {
@@ -429,7 +454,9 @@ export class Lsp {
     }
     let declInfo: KPointer;
     const [cfg, searchCtx] = this.createContext(filename) ?? [];
-    if (!cfg || !searchCtx) { return; }
+    if (!cfg || !searchCtx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       declInfo = global.es2panda._getDeclInfo(searchCtx, byteOffset);
@@ -448,7 +475,9 @@ export class Lsp {
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       const [cfg, ctx] = this.createContext(compileFiles[i]) ?? [];
-      if (!cfg || !ctx) { return; }
+      if (!cfg || !ctx) {
+        return;
+      }
       try {
         ptr = global.es2panda._getReferencesAtPosition(ctx, declInfo);
       } catch (error) {
@@ -502,7 +531,9 @@ export class Lsp {
     ) {
       let ptr: KPointer;
       const [declFileCfg, declFileCtx] = this.createContext(fileName) ?? [];
-      if (!declFileCfg || !declFileCtx) { return; }
+      if (!declFileCfg || !declFileCtx) {
+        return;
+      }
       try {
         ptr = global.es2panda._getNodeInfosByDefinitionData(declFileCtx, start);
         nodeInfos = new NativePtrDecoder().decode(ptr).map((elPeer: KNativePointer) => {
@@ -535,7 +566,9 @@ export class Lsp {
       }
     }
     const [cfg, ctx] = this.createContext(sourceFilePath) ?? [];
-    if (!cfg || !ctx) { return };
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       nodeInfos.forEach((nodeInfo) => {
         nodeInfoPtrs.push(global.es2panda._CreateNodeInfoPtr(nodeInfo.name, nodeInfo.kind));
@@ -566,7 +599,9 @@ export class Lsp {
   getTypeHierarchies(filename: String, offset: number): LspTypeHierarchiesInfo | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     ptr = global.es2panda._getTypeHierarchies(ctx, ctx, byteOffset);
     let ref = new LspTypeHierarchiesInfo(ptr);
@@ -579,7 +614,9 @@ export class Lsp {
     for (let i = 0; i < compileFiles.length; i++) {
       let searchPtr: KPointer;
       const [cfg, searchCtx] = this.createContext(compileFiles[i]) ?? [];
-      if (!cfg || !searchCtx) { return; }
+      if (!cfg || !searchCtx) {
+        return;
+      }
       try {
         searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctx, byteOffset);
       } catch (error) {
@@ -617,7 +654,9 @@ export class Lsp {
   getClassHierarchyInfo(filename: String, offset: number): LspClassHierarchy | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getClassHierarchyInfo(ctx, byteOffset);
@@ -633,7 +672,9 @@ export class Lsp {
   getAliasScriptElementKind(filename: String, offset: number): LspCompletionEntryKind | undefined {
     let kind: KInt;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       kind = global.es2panda._getAliasScriptElementKind(ctx, byteOffset);
@@ -649,7 +690,9 @@ export class Lsp {
   getClassHierarchies(filename: String, offset: number): LspClassHierarchies | undefined {
     let contextList = [];
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     contextList.push({ ctx: ctx, cfg: cfg });
     let nativeContextList = global.es2panda._pushBackToNativeContextVector(ctx, ctx, 1);
     let compileFiles = this.getMergedCompileFiles(filename);
@@ -659,7 +702,9 @@ export class Lsp {
         continue;
       }
       const [searchCfg, searchCtx] = this.createContext(filePath) ?? [];
-      if (!searchCfg || !searchCtx) { return; }
+      if (!searchCfg || !searchCtx) {
+        return;
+      }
       contextList.push({ ctx: searchCtx, cfg: searchCfg });
       global.es2panda._pushBackToNativeContextVector(searchCtx, nativeContextList, 0);
     }
@@ -679,7 +724,9 @@ export class Lsp {
   ): LspClassPropertyInfo | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getClassPropertyInfo(ctx, byteOffset, shouldCollectInherited);
@@ -695,7 +742,9 @@ export class Lsp {
   getOrganizeImports(filename: String): LspFileTextChanges | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       ptr = global.es2panda._organizeImports(ctx, filename);
       PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
@@ -711,7 +760,9 @@ export class Lsp {
   findSafeDeleteLocation(filename: String, offset: number): LspSafeDeleteLocationInfo[] | undefined {
     let declInfo: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       declInfo = global.es2panda._getDeclInfo(ctx, byteOffset);
@@ -726,7 +777,9 @@ export class Lsp {
     for (let i = 0; i < compileFiles.length; i++) {
       let ptr: KPointer;
       const [searchCfg, searchCtx] = this.createContext(compileFiles[i]) ?? [];
-      if (!searchCfg || !searchCtx) { return; }
+      if (!searchCfg || !searchCtx) {
+        return;
+      }
       try {
         ptr = global.es2panda._findSafeDeleteLocation(searchCtx, declInfo);
       } catch (error) {
@@ -744,7 +797,9 @@ export class Lsp {
   getCompletionEntryDetails(filename: String, offset: number, entryName: String): CompletionEntryDetails | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, ctx, byteOffset);
@@ -757,11 +812,18 @@ export class Lsp {
     return new CompletionEntryDetails(ptr);
   }
 
-  getApplicableRefactors(filename: String, kind: String, startPos: number, endPos: number): ApplicableRefactorItemInfo[] | undefined {
+  getApplicableRefactors(
+    filename: String,
+    kind: String,
+    startPos: number,
+    endPos: number
+  ): ApplicableRefactorItemInfo[] | undefined {
     let ptr: KPointer;
     let result: ApplicableRefactorItemInfo[] = [];
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), startPos);
       const endByteOffset = this.charOffsetToByteOffset(filename.valueOf(), endPos);
@@ -789,7 +851,9 @@ export class Lsp {
     }
   ): LspRefactorEditInfo | undefined {
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     let up = opts?.userPrefsPtr ?? BigInt(0);
     let fmt = opts?.FormattingSettings ?? BigInt(0);
     const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), start);
@@ -810,7 +874,9 @@ export class Lsp {
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getClassConstructorInfo(ctx, byteOffset, passStringArray(properties));
@@ -826,7 +892,9 @@ export class Lsp {
   getSyntacticDiagnostics(filename: String): LspDiagsNode | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename, false) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       ptr = global.es2panda._getSyntacticDiagnostics(ctx);
     } catch (error) {
@@ -841,7 +909,9 @@ export class Lsp {
   getSuggestionDiagnostics(filename: String): LspDiagsNode | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       ptr = global.es2panda._getSuggestionDiagnostics(ctx);
     } catch (error) {
@@ -856,7 +926,9 @@ export class Lsp {
   getQuickInfoAtPosition(filename: String, offset: number): LspQuickInfo | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, byteOffset);
@@ -890,15 +962,17 @@ export class Lsp {
       doc.highlightSpans.forEach((item) => {
         item.textSpan.start = this.byteOffsetToCharOffset(item.fileName.valueOf(), item.textSpan.start);
         item.textSpan.start = this.byteOffsetToCharOffset(item.fileName.valueOf(), item.textSpan.start);
-      })
-    })
+      });
+    });
     return result;
   }
 
   getCompletionAtPosition(filename: String, offset: number): LspCompletionInfo | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getCompletionAtPosition(ctx, byteOffset);
@@ -930,7 +1004,9 @@ export class Lsp {
   getSafeDeleteInfo(filename: String, position: number): boolean | undefined {
     let result: boolean;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), position);
       result = global.es2panda._getSafeDeleteInfo(ctx, byteOffset);
@@ -970,7 +1046,9 @@ export class Lsp {
       return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
     }
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, byteOffset);
     if (!needsCrossFileRename) {
@@ -997,7 +1075,9 @@ export class Lsp {
       const fileConfigs: Config[] = [];
       for (let i = 0; i < compileFiles.length; i++) {
         const [compileFileCfg, compileFileCtx] = this.createContext(compileFiles[i]) ?? [];
-        if (!compileFileCfg || !compileFileCtx) { return; }
+        if (!compileFileCfg || !compileFileCtx) {
+          return;
+        }
         fileContexts.push(compileFileCtx);
         fileConfigs.push(compileFileCfg);
       }
@@ -1028,7 +1108,9 @@ export class Lsp {
     let ptr: KPointer;
     let res: LspRenameInfoType;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getRenameInfo(ctx, byteOffset, this.pandaLibPath);
@@ -1050,7 +1132,9 @@ export class Lsp {
   getSpanOfEnclosingComment(filename: String, offset: number, onlyMultiLine: boolean): LspTextSpan | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getSpanOfEnclosingComment(ctx, byteOffset, onlyMultiLine);
@@ -1066,14 +1150,27 @@ export class Lsp {
     return result;
   }
 
-  getCodeFixesAtPosition(filename: String, start: number, end: number, errorCodes: number[]): CodeFixActionInfo[] | undefined {
+  getCodeFixesAtPosition(
+    filename: String,
+    start: number,
+    end: number,
+    errorCodes: number[]
+  ): CodeFixActionInfo[] | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), start);
       const endByteOffset = this.charOffsetToByteOffset(filename.valueOf(), end);
-      ptr = global.es2panda._getCodeFixesAtPosition(ctx, startByteOffset, endByteOffset, new Int32Array(errorCodes), errorCodes.length);
+      ptr = global.es2panda._getCodeFixesAtPosition(
+        ctx,
+        startByteOffset,
+        endByteOffset,
+        new Int32Array(errorCodes),
+        errorCodes.length
+      );
     } catch (error) {
       logger.error('failed to getCodeFixesAtPosition', error);
       return;
@@ -1089,7 +1186,9 @@ export class Lsp {
   provideInlayHints(filename: String, span: TextSpan): LspInlayHint[] | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const nativeSpan = global.es2panda._createTextSpan(span.start, span.length);
       ptr = global.es2panda._getInlayHintList(ctx, nativeSpan);
@@ -1108,7 +1207,9 @@ export class Lsp {
   getSignatureHelpItems(filename: String, offset: number): LspSignatureHelpItems | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) { return; }
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getSignatureHelpItems(ctx, byteOffset);

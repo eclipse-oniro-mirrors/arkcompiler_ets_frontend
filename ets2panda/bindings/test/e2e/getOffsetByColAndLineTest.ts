@@ -1,4 +1,3 @@
-'use static';
 /*
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,5 +13,13 @@
  * limitations under the License.
  */
 
-import {A} from './getDefinitionAtPosition1';
-A(1, 2);
+import { getLsp, getRealPath } from '../utils';
+
+describe('getOffsetByColAndLineTest', () => {
+  const moduleName: string = 'getOffsetByColAndLine';
+  const lsp = getLsp(moduleName);
+  test('getOffsetByColAndLine_000', () => {
+    const res = lsp.getOffsetByColAndLine(getRealPath(moduleName, 'getOffsetByColAndLine1.ets'), 51, 14);
+    expect(res).toBe(1373);
+  });
+});

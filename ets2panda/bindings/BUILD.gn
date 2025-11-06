@@ -221,6 +221,7 @@ shared_library("public") {
 
   if (ark_standalone_build) {
     deps += [ "$ark_third_party_root/bounds_checking_function:libsec_shared" ]
+    include_dirs += [ "//third_party/node/src" ]
   } else {
     external_deps = [ sdk_libc_secshared_dep ]
   }
