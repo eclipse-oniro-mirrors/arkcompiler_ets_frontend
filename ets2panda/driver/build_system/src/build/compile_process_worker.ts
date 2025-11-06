@@ -40,6 +40,7 @@ process.on('message', (message: {
     job: CompileJobInfo;
     buildConfig: BuildConfig;
 }) => {
+    let errorStatus = false;
     const { job, buildConfig } = message;
 
     Logger.getInstance(getConsoleLogger);
@@ -89,6 +90,7 @@ process.on('message', (message: {
 
         process.send!(job);
     } catch (error) {
+        errorStatus = true;
         if (error instanceof Error) {
             throw new DriverError(
                 LogDataFactory.newInstance(
@@ -100,7 +102,9 @@ process.on('message', (message: {
             );
         }
     } finally {
-        arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+        if (!errorStatus) {
+            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+        }
         PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         arkts.destroyConfig(arktsGlobal.config);
     }
