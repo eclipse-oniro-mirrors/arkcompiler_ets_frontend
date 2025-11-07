@@ -36,15 +36,10 @@ let setMethod = new GeneratedObjectLiteralClass_3();
 
 let x = 1, y = '2', z = true;
 
-interface GeneratedObjectLiteralInterface_1 {
-    x: number;
-    y: string;
-    z: boolean;
-}
-let shorthand: GeneratedObjectLiteralInterface_1 = {
-  x: x, // Error, fixable
-  y: y, // Error, fixable
-  z: z // Error, fixable
+let shorthand = {
+  x, // Error, fixable
+  y, // Error, fixable
+  z // Error, fixable
 };
 
 let spread = {
@@ -97,9 +92,9 @@ let x2 = 1, y2 = 2, z2 = 3;
 let mixedBad = { // Not fixable
   a: 1,
   b: 2,
-  x2: x2, // Error, fixable
-  y2: y2, // Error, fixable
-  z2: z2, // Error, fixable
+  x2, // Error, fixable
+  y2, // Error, fixable
+  z2, // Error, fixable
   m() {},
   ...shorthand // Error, not fixable
 }
@@ -119,20 +114,16 @@ class C {
     console.log(200);
   }
 }
-class GeneratedObjectLiteralClass_6 extends C {
-    m(): void {
-        console.log(300);
-    }
-}
-
-let c: C = new GeneratedObjectLiteralClass_6();
+let c: C = {
+  m(): void { // Fixable
+    console.log(300);
+  }
+};
 
 function foo(c: C) {}
-class GeneratedObjectLiteralClass_7 extends C {
-    m() { console.log(300); } // Fixable
-}
-
-foo(new GeneratedObjectLiteralClass_7());
+foo({
+  m() { console.log(300); } // Fixable
+});
 
 class C2 {
   x2 = 10;
@@ -141,30 +132,12 @@ class C2 {
 
   m() {}
 }
-class GeneratedObjectLiteralClass_8 extends C2 {
-    x2: number;
-    y2: number;
-    z2: number;
-    constructor(init: GeneratedObjectLiteralInitInterface_8) {
-        super();
-        this.x2 = init.x2;
-        this.y2 = init.y2;
-        this.z2 = init.z2;
-    }
-    m() { console.log(1); } // Fixable
-}
-
-interface GeneratedObjectLiteralInitInterface_8 {
-    x2: number;
-    y2: number;
-    z2: number;
-}
-
-let c2: C2 = new GeneratedObjectLiteralClass_8({
-    x2: x2,
-    y2: y2,
-    z2: z2
-});
+let c2: C2 = {
+  x2, // Fixable
+  y2, // Fixable
+  z2, // Fixable
+  m() { console.log(1); } // Fixable
+};
 
 let c22: C2 = {
   x2, // Fixable
@@ -272,11 +245,9 @@ class Base {
 class Derived extends Base {
   m() {}
 }
-class GeneratedObjectLiteralClass_9 extends Derived {
-    m() { console.log(2); }
-}
-
-let b: Derived = new GeneratedObjectLiteralClass_9();
+let b: Derived = { // Fixable
+  m() { console.log(2); }
+};
 
 class Base2 {
   constructor(a: number) {}
@@ -298,11 +269,9 @@ class Derived3 extends Base3 {
     super(1);
   }
 }
-class GeneratedObjectLiteralClass_10 extends Derived3 {
-    m() { console.log(2); }
-}
-
-let b3: Derived3 = new GeneratedObjectLiteralClass_10();
+let b3: Derived3 = { // Fixable
+  m() { console.log(2); }
+};
 
 interface I4 {
   map: Map<string, string>;
@@ -330,14 +299,12 @@ namespace X {
   }
 }
 
-class GeneratedObjectLiteralClass_11 extends X.C {
-    m() {
-        console.log("C - 2");
-    }
-}
-
 function test() {
-  let c: X.C = new GeneratedObjectLiteralClass_11()
+  let c: X.C = {
+    m() {
+      console.log("C - 2");
+    }
+  }
 
   let i: X.I = {
     m(): void {
@@ -371,7 +338,7 @@ class DD {
     gg?: string
 }
 const tt: Map<string,Object> = new Map<string, Object>();
-let gg: DD = {tt: tt} // error
+let gg: DD = {tt} // error
 
 interface Q {
     a:number;
