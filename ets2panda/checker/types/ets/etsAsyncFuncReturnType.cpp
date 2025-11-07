@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-#include "checker/ETSchecker.h"
-#include "checker/types/globalTypesHolder.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
+#include "etsAsyncFuncReturnType.h"
 
 namespace ark::es2panda::checker {
 void ETSAsyncFuncReturnType::ToString(std::stringstream &ss, bool precise) const
@@ -61,6 +59,11 @@ void ETSAsyncFuncReturnType::AssignmentTarget(TypeRelation *relation, Type *sour
 void ETSAsyncFuncReturnType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag)
 {
     relation->CheckVarianceRecursively(PromiseType(), relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
+}
+
+void ETSAsyncFuncReturnType::Iterate(const TypeTraverser &func) const
+{
+    func(promiseType_);
 }
 
 }  // namespace ark::es2panda::checker

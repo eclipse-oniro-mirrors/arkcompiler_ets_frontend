@@ -38,6 +38,7 @@ public:
         element_ = element;
     }
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
 
     void ToAssemblerType(std::stringstream &ss) const override;

@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 
-#include <mutex>
 #include "generated/signatures.h"
 #include "checker/types/typeMapping.h"
 #include "checker/types/typeRelation.h"
@@ -45,6 +44,7 @@ class ETSResizableArrayType;
 
 using Substitution = std::map<ETSTypeParameter *, Type *>;
 using ArenaSubstitution = ArenaMap<ETSTypeParameter *, Type *>;
+using TypeTraverser = std::function<void(Type const *)>;
 
 extern void TypeStatsHook(Type *t);
 
@@ -274,6 +274,46 @@ public:
     virtual uint32_t Rank() const
     {
         return 0;
+    }
+
+    virtual void Iterate([[maybe_unused]] const TypeTraverser &func) const {};
+
+    void IterateRecursively(TypeTraverser const &func) const
+    {
+        IterateRecursivelyPreorder(func);
+    }
+
+    void IterateRecursivelyPreorder(TypeTraverser const &func) const
+    {
+        std::set<Type const *> types {this};
+        TypeTraverser hcb = [&](Type const *child) {
+            if (child != nullptr && types.find(child) == types.end()) {
+                types.emplace(child);
+                func(child);
+                child->Iterate(hcb);
+            }
+        };
+
+        func(this);
+        Iterate(hcb);
+    }
+
+    void IterateRecursivelyPostorder(TypeTraverser const &func) const
+    {
+        std::set<Type const *> types {};
+        TypeTraverser hcb = [&](Type const *child) {
+            if (child != nullptr && types.find(child) == types.end()) {
+                types.emplace(child);
+                child->Iterate(hcb);
+                func(child);
+            }
+        };
+
+        Iterate(hcb);
+
+        if (types.find(this) == types.end()) {
+            func(this);
+        }
     }
 
     virtual void Identical(TypeRelation *relation, Type *other);

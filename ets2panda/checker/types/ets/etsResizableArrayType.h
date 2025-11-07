@@ -76,6 +76,7 @@ public:
 
     ETSResizableArrayType *Substitute(TypeRelation *relation, const Substitution *substitution) override;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, [[maybe_unused]] bool precise) const override;
 
 private:

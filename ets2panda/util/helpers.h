@@ -161,6 +161,7 @@ public:
     static std::tuple<util::StringView, bool> ParamName(ArenaAllocator *allocator, const ir::Expression *param,
                                                         std::uint32_t index);
     static bool IsAsyncMethod(ir::AstNode const *node);
+    static bool IsExported(ir::AstNode const *) noexcept;
 
     static bool IsGlobalVar(const ark::es2panda::varbinder::Variable *var);
 

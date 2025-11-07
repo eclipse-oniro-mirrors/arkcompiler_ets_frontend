@@ -905,6 +905,22 @@ void Helpers::CheckValidFileName(const util::StringView &fileName, util::Diagnos
     }
 }
 
+//  Helper: checks that node or any of its parents was declared exported
+bool Helpers::IsExported(ir::AstNode const *node) noexcept
+{
+    if (node == nullptr) {
+        return true;
+    }
+
+    bool exported;
+    do {
+        exported = node->IsExported() || node->IsDefaultExported();
+        node = node->Parent();
+    } while (!exported && node != nullptr);
+
+    return exported;
+}
+
 std::vector<std::string> Helpers::Split(const std::string &str, const char delimiter)
 {
     std::vector<std::string> items;

@@ -14,13 +14,9 @@
  */
 
 #include "etsArrayType.h"
-#include <cstddef>
 
-#include "varbinder/variable.h"
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "checker/types/typeRelation.h"
-#include "checker/types/ets/etsTupleType.h"
 
 namespace ark::es2panda::checker {
 void ETSArrayType::ToString(std::stringstream &ss, bool precise) const
@@ -173,6 +169,11 @@ void ETSArrayType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag
 {
     // The type of array should be Invariant
     relation->CheckVarianceRecursively(element_, relation->TransferVariant(varianceFlag, VarianceFlag::INVARIANT));
+}
+
+void ETSArrayType::Iterate(const TypeTraverser &func) const
+{
+    func(element_);
 }
 
 }  // namespace ark::es2panda::checker
