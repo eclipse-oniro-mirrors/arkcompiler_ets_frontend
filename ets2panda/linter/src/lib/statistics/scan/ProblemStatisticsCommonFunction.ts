@@ -231,7 +231,7 @@ export function generateMigrationStatisicsReport(
 
 export async function getWorkLoadInfo(projectPathList: string[]): Promise<WorkLoadInfo> {
   const workloadInfo = new WorkLoadInfo();
-  const projectResults = await mapWithLimit(projectPathList, PROJECTS_PER_DIR_CONCURRENCY, async(projectPath) => {
+  const projectResults = await mapWithLimit(projectPathList, PROJECTS_PER_DIR_CONCURRENCY, async (projectPath) => {
     const normalizedPath = path.normalize(projectPath);
     const countFilesResults = await countFiles(normalizedPath);
     const countNapiFileResults = await countNapiFiles(normalizedPath);

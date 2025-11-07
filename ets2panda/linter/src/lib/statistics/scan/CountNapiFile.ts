@@ -78,7 +78,7 @@ async function analyzeDirectoryAsync(directory: string): Promise<NapiFileStatist
       }
     }
 
-    const fileResults = await mapWithLimit(filesToProcess, MAX_CONCURRENT_FILES, async(filePath) => {
+    const fileResults = await mapWithLimit(filesToProcess, MAX_CONCURRENT_FILES, async (filePath) => {
       return processFile(filePath);
     });
     allResults.push(...fileResults);
