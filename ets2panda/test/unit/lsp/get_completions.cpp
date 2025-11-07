@@ -62,6 +62,74 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 }
 
 namespace {
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition21)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition22.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+export interface CommonMethod {
+  width(value: number): this;
+  height(value: number): this;
+}
+export interface ColumnAttribute extends CommonMethod {
+  alignItems(value: string): this;
+  justifyContent(value: string): this;
+}
+export declare function Column(content?: string): ColumnAttribute
+export class Test {}
+
+Column(new Te) {}
+.width(100)
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 329;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "Test", ark::es2panda::lsp::CompletionEntryKind::MODULE, std::string(GLOBALS_OR_KEYWORDS), "Test")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition20)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition21.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+export interface CommonMethod {
+  width(value: number): this;
+  height(value: number): this;
+}
+export interface ColumnAttribute extends CommonMethod {
+  alignItems(value: string): this;
+  justifyContent(value: string): this;
+}
+export declare function Column(content?: string): ColumnAttribute
+
+Column() {
+  Col
+}
+.width(100)
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 311;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "Column", ark::es2panda::lsp::CompletionEntryKind::FUNCTION, std::string(GLOBALS_OR_KEYWORDS), "Column()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionMultiMember)
 {

@@ -954,9 +954,14 @@ bool IsTokenAfterPoint(ir::AstNode *precedingToken)
     return precedingToken->IsMemberExpression() || precedingToken->IsTSQualifiedName();
 }
 
+bool IsStandaloneNode(ir::AstNode *node)
+{
+    return node->IsBlockStatement() || node->IsCallExpression();
+}
+
 ir::AstNode *GetMemberExprOfIdentifier(ir::AstNode *memberExp)
 {
-    while (memberExp->Parent() != nullptr && !IsTokenAfterPoint(memberExp)) {
+    while (memberExp->Parent() != nullptr && !IsTokenAfterPoint(memberExp) && !IsStandaloneNode(memberExp)) {
         memberExp = memberExp->Parent();
     }
     return memberExp;
