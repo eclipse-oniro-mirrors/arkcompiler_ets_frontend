@@ -15,7 +15,7 @@
 import Logger, { LOG_LEVEL, LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 import { Command, OptionValues } from 'commander';
 import { SceneConfig, Sdk } from 'arkanalyzer/lib/Config';
-import { NullType, NumberType, Scene, Type, UndefinedType } from 'arkanalyzer';
+import { AliasType, NullType, NumberType, Scene, Type, UndefinedType } from 'arkanalyzer';
 import { PrimitiveType, UnionType } from 'arkanalyzer/lib';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'Utils');
@@ -111,6 +111,9 @@ export class Utils {
      * 检查给出的类型是否是NumberType，或numberType与null、undefined的联合类型
      */
     static isNearlyNumberType(checkType: Type): boolean {
+        if (checkType instanceof AliasType) {
+            checkType = checkType.getOriginalType();
+        }
         if (checkType instanceof NumberType) {
             return true;
         }
