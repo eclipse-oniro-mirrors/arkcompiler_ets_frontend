@@ -20,7 +20,8 @@
 #include "panda_types.h"
 #include "public/es2panda_lib.h"
 #include "lsp/include/refactors/refactor_types.h"
-#include "lsp/include/cancellation_token.h"
+#include "lsp/include/formatting/formatting_settings.h"
+#include "lsp/include/formatting/formatting.h"
 #include "lsp/include/user_preferences.h"
 #include <cstddef>
 #include <string>
@@ -1071,9 +1072,17 @@ static TextChangesContext *ResolveTextChangesContext(KNativePointer userPrefsPtr
     }
 
     static auto prefs = ark::es2panda::lsp::UserPreferences::GetDefaultUserPreferences();
-    auto settings = (formattingSettingsPtr != nullptr)
+    const char *newline =
+#ifdef _WIN32
+        "\r\n";
+#else
+        "\n";
+#endif
+
+    auto settings = formattingSettingsPtr != nullptr
                         ? *reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(formattingSettingsPtr)
-                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings("\n");
+                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings(newline);
+
     auto fmt = ark::es2panda::lsp::GetFormatContext(settings);
 
     static LanguageServiceHost host;

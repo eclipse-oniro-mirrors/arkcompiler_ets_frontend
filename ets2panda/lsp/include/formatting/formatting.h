@@ -18,6 +18,7 @@
 
 #include <vector>
 #include "formatting_settings.h"
+#include "public/es2panda_lib.h"
 #include "rules_map.h"
 #include "lsp/include/types.h"
 
@@ -45,7 +46,7 @@ private:
     RulesMap getRules_;
 };
 
-FormatContext GetFormatContext(FormatCodeSettings &options);
+CAPI_EXPORT FormatContext GetFormatContext(FormatCodeSettings &options);
 std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext formatContext);
 
 }  // namespace ark::es2panda::lsp
