@@ -1,4 +1,7 @@
 main_hap:&src_hap_to/main_hap&
 main_hap_import_file:&src_hap_to/main_hap_import_file&
+main_resource_table:&src_hap_to/build/generated/ResourceTable&
 sdk_hap:&src_hap/sdk_hap&
 sdk_hap_import_file:&src_hap/sdk_hap_import_file&
+sdk_resource_table:&src_hap/build/generated/ResourceTable&
+sdk_resource_table1:&src_hap/test/build/generated/ResourceTable&

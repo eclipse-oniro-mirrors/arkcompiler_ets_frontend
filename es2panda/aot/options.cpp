@@ -873,6 +873,7 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.patchFixOptions.symbolTable = opInputSymbolTable.GetValue();
 
     if (!srcPkgName.GetValue().empty() && !dstPkgName.GetValue().empty()) {
+        compilerOptions_.dstPkgName = dstPkgName.GetValue();
         compilerOptions_.modifiedPkgName = srcPkgName.GetValue() + util::COLON_SEPARATOR + dstPkgName.GetValue();
     }
 

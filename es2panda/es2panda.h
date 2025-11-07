@@ -129,6 +129,8 @@ struct CompilerOptions {
     bool enableEtsImplements {false};
     // Ability to modify package names using bytecode
     std::string modifiedPkgName {};
+    // Ability to delete redundant resource table
+    std::string dstPkgName {};
     /**
      * Column number recording switch for bytecode instructions.
      * In debug mode: adds column numbers to all bytecode instructions.

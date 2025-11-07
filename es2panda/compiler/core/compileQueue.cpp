@@ -15,6 +15,8 @@
 
 #include "compileQueue.h"
 
+#include <regex>
+
 #include "utils/timers.h"
 
 #include <compiler/core/compilerContext.h>
@@ -198,6 +200,32 @@ void CompileFileJob::EraseDuplicateRecordsForAbcFile(
     }
 }
 
+static void FilterAbcProgramsForModifiedPkgName(
+    std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo,
+    const std::string &modifiedPkgName, const std::string &srcPkgName,
+    const std::string &dstPkgName)
+{
+    if (modifiedPkgName.empty()) {
+        return;
+    }
+    std::string curPkgName = srcPkgName;
+    if (curPkgName.empty() || curPkgName == dstPkgName) {
+        return;
+    }
+    // While merging abc, if package names are the same but the recourcetables are inconsistent,
+    // error occurrs,only one recourcetable is needed
+    std::regex pattern(util::BUILD_RESOURCE_TABLE_REGEX);
+    for (auto it = abcProgramsInfo.begin(); it != abcProgramsInfo.end();) {
+        const std::string &key = it->first;
+        if (std::regex_match(key, pattern)) {
+            it = abcProgramsInfo.erase(it);
+            return;
+        } else {
+            ++it;
+        }
+    }
+}
+
 void CompileFileJob::CompileAbcFileJobInParallel(es2panda::Compiler &compiler)
 {
     std::map<std::string, panda::es2panda::util::ProgramCache *> abcProgramsInfo {};
@@ -212,6 +240,8 @@ void CompileFileJob::CompileAbcFileJobInParallel(es2panda::Compiler &compiler)
         options_->compileContextInfo.replaceRecords.end()) {
         EraseDuplicateRecordsForAbcFile(abcProgramsInfo);
     }
+    FilterAbcProgramsForModifiedPkgName(
+        abcProgramsInfo, options_->modifiedPkgName, src_->pkgName, options_->dstPkgName);
     panda::Timer::timerEnd(panda::EVENT_REPLACE_ABC_FILE_RECORD, src_->fileName);
 
     panda::Timer::timerStart(panda::EVENT_UPDATE_ABC_PROG_CACHE, src_->fileName);
