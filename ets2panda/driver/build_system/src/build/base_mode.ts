@@ -208,6 +208,10 @@ export abstract class BaseMode {
         return this.buildConfig.buildMode === BUILD_MODE.DEBUG;
     }
 
+    public get dumpPerf(): boolean | undefined {
+        return this.buildConfig.dumpPerf;
+    }
+
     public get recordType(): 'OFF' | 'ON' | undefined {
         return this.buildConfig.recordType
     }
@@ -286,7 +290,7 @@ export abstract class BaseMode {
         ets2panda.initalize();
         let errOccurred = false;
         try {
-            ets2panda.compileSimultaneous(id, job, this.isDebug)
+            ets2panda.compileSimultaneous(id, job, this.isDebug, this.dumpPerf)
         } catch (error) {
             if (error instanceof DriverError) {
                 this.logger.printError(error.logData);

@@ -53,6 +53,7 @@ function compile(id: string, task: ProcessCompileTask): void {
             ets2panda.compileSimultaneous(
                 id,
                 task,
+                task.buildConfig.dumpPerf,
                 task.buildConfig.buildMode === BUILD_MODE.DEBUG,
                 declGeneratedCb,
                 abcCompiledCb

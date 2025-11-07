@@ -19,6 +19,7 @@
 #include <cstdint>
 
 #include "util/diagnostic.h"
+#include "util/perfMetrics.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/scope.h"
 #include "public/public.h"
@@ -254,6 +255,9 @@ extern "C" void DestroyConfig(es2panda_Config *config)
         return;
     }
 
+    if (cfg->options->IsDumpPerfMetrics()) {
+        util::DumpPerfMetrics();
+    }
     delete cfg->options;
     cfg->diagnosticEngine->FlushDiagnostic();
     delete cfg->diagnosticEngine;
@@ -532,6 +536,7 @@ __attribute__((unused)) static Context *Parse(Context *ctx)
     }
 
     ctx->phaseManager->Reset();
+    ES2PANDA_PERF_SCOPE("@Parser");
 
     if (ctx->isExternal && ctx->allocator != ctx->globalContext->stdLibAllocator) {
         ctx->sourceFileNames.emplace_back(ctx->sourceFileName);
@@ -600,6 +605,7 @@ __attribute__((unused)) static Context *Check(Context *ctx)
         if (phase->Name() == "plugins-after-check") {
             break;
         }
+        ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
         phase->Apply(ctx, ctx->parserProgram);
     }
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
@@ -666,6 +672,7 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_CHECKED);
     while (auto phase = ctx->phaseManager->NextPhase()) {
+        ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
         phase->Apply(ctx, ctx->parserProgram);
     }
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_LOWERED : ES2PANDA_STATE_ERROR;
@@ -696,6 +703,7 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_LOWERED);
 
+    ES2PANDA_PERF_SCOPE("@EmitProgram");
     auto *emitter = ctx->emitter;
 
     // Handle context literals.
@@ -1097,6 +1105,7 @@ extern "C" es2panda_Scope *AstNodeRebind(es2panda_Context *ctx, es2panda_AstNode
 
 extern "C" void AstNodeRecheck(es2panda_Context *ctx, es2panda_AstNode *node)
 {
+    ES2PANDA_PERF_SCOPE("@Recheck");
     auto E2pNode = reinterpret_cast<ir::AstNode *>(node);
     auto context = reinterpret_cast<Context *>(ctx);
     auto varbinder = context->parserProgram->VarBinder()->AsETSBinder();
