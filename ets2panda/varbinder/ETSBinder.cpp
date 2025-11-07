@@ -895,6 +895,9 @@ std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclIn
         }
 
         auto specifiers = item->GetETSImportDeclarations()->Specifiers();
+        if (specifiers.empty()) {
+            continue;
+        }
         if (specifiers[0]->IsImportSpecifier()) {
             if (!std::any_of(specifiers.begin(), specifiers.end(), [&imported](auto it) {
                     return it->AsImportSpecifier()->Local()->Name().Is(imported.Mutf8());
