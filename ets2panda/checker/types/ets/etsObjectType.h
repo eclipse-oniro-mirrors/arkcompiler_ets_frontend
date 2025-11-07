@@ -384,7 +384,7 @@ public:
     bool ReplaceArgumentInSignature(std::vector<Signature *> &signatures, Signature *sigToInsert,
                                     TypeRelation *relation) const;
     bool CheckIdenticalFlags(ETSObjectType *other) const;
-    void Iterate(const PropertyTraverser &cb) const;
+    void IterateProperties(const PropertyTraverser &cb) const;
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     bool AssignmentSource(TypeRelation *relation, Type *target) override;
@@ -414,6 +414,8 @@ public:
     bool IsReExportHaveAliasValue(util::StringView const &key) const;
     const ArenaVector<ETSObjectType *> &ReExports() const;
     bool IsSameBasedGeneric(TypeRelation *relation, Type const *other) const;
+
+    void Iterate(const TypeTraverser &func) const override;
 
     ArenaAllocator *Allocator() const
     {

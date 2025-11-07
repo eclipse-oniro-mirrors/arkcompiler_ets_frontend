@@ -13,12 +13,9 @@
  * limitations under the License.
  */
 
-#include "etsTypeParameter.h"
-#include "etsNullishTypes.h"
-#include "ir/expressions/identifier.h"
-#include "ir/ts/tsTypeParameter.h"
+#include "etsNonNullishType.h"
+
 #include "checker/ETSchecker.h"
-#include "checker/ets/conversion.h"
 
 namespace ark::es2panda::checker {
 
@@ -118,6 +115,11 @@ void ETSNonNullishType::CheckVarianceRecursively(TypeRelation *relation, Varianc
 {
     relation->CheckVarianceRecursively(GetUnderlying(),
                                        relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
+}
+
+void ETSNonNullishType::Iterate(const TypeTraverser &func) const
+{
+    func(tparam_);
 }
 
 }  // namespace ark::es2panda::checker

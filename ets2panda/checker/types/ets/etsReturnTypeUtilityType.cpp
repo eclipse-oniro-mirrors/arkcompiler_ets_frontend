@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "checker/ETSchecker.h"
 #include "etsReturnTypeUtilityType.h"
+
+#include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
 void ETSReturnTypeUtilityType::ToString(std::stringstream &ss, bool precise) const
@@ -103,4 +104,10 @@ void ETSReturnTypeUtilityType::CheckVarianceRecursively(TypeRelation *relation, 
     relation->CheckVarianceRecursively(GetUnderlying(),
                                        relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
 }
+
+void ETSReturnTypeUtilityType::Iterate(const TypeTraverser &func) const
+{
+    func(tparam_);
+}
+
 }  // namespace ark::es2panda::checker

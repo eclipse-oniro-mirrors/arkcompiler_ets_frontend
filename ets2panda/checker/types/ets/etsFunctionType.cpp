@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
+#include "etsFunctionType.h"
+
 #include "checker/ETSchecker.h"
-#include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/phase.h"
 #include "util/perfMetrics.h"
@@ -440,6 +441,17 @@ void ETSFunctionType::CheckVarianceRecursively(TypeRelation *relation, VarianceF
             relation->CheckVarianceRecursively(typeParam->TsType(),
                                                relation->TransferVariant(varianceFlag, VarianceFlag::CONTRAVARIANT));
         }
+    }
+}
+
+void ETSFunctionType::Iterate(const TypeTraverser &func) const
+{
+    if (!callSignatures_.empty()) {
+        auto const *const signature = callSignatures_[0U];
+        for (auto const *const var : signature->Params()) {
+            func(var->TsType());
+        }
+        func(signature->ReturnType());
     }
 }
 

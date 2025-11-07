@@ -46,6 +46,7 @@ public:
     Type *Substitute(TypeRelation *relation, const Substitution *substitution) override;
     void CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag) override;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void ToAssemblerType(std::stringstream &ss) const override;
     void ToDebugInfoType(std::stringstream &ss) const override;

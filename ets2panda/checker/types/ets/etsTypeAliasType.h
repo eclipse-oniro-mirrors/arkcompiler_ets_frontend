@@ -16,8 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_ETS_ETS_TYPE_ALIAS_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_ETS_ETS_TYPE_ALIAS_TYPE_H
 
-#include "checker/types/ets/etsObjectType.h"
-#include "checker/types/typeMapping.h"
+#include "checker/types/type.h"
 
 namespace ark::es2panda::checker {
 class ETSTypeAliasType : public Type {
@@ -83,6 +82,7 @@ public:
     Type *Substitute(TypeRelation *relation, const Substitution *substitution) override;
 
     void SetTypeArguments(ArenaVector<Type *> typeArguments);
+    void Iterate(const TypeTraverser &func) const override;
 
 private:
     ETSTypeAliasType *GetInstantiatedType(util::StringView hash);

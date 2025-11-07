@@ -22,7 +22,7 @@
 
 namespace ark::es2panda::checker {
 
-void ETSObjectType::Iterate(const PropertyTraverser &cb) const
+void ETSObjectType::IterateProperties(const PropertyTraverser &cb) const
 {
     ForEachAllOwnProperties(cb);
     ForEachAllNonOwnProperties(cb);
@@ -443,12 +443,12 @@ void ETSObjectType::ForEachAllOwnProperties(const PropertyTraverser &cb) const
 void ETSObjectType::ForEachAllNonOwnProperties(const PropertyTraverser &cb) const
 {
     if (superType_ != nullptr) {
-        superType_->Iterate(cb);
+        superType_->IterateProperties(cb);
     }
 
     EnsureInterfacesInitialized();
     for (const auto *interface : *interfaces_) {
-        interface->Iterate(cb);
+        interface->IterateProperties(cb);
     }
 }
 
@@ -1697,4 +1697,18 @@ void ETSObjectType::InsertTypeInstantiation(ETSChecker *checker, std::string con
     typeMap->emplace(hash, value);
 }
 
+void ETSObjectType::Iterate(const TypeTraverser &func) const
+{
+    for (auto const *const type : typeArguments_) {
+        func(type);
+    }
+
+    if (interfaces_ != nullptr) {
+        for (auto const *const interface : *interfaces_) {
+            func(interface);
+        }
+    }
+
+    func(superType_);
+}
 }  // namespace ark::es2panda::checker

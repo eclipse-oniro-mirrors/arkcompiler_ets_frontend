@@ -53,6 +53,7 @@ public:
 
     [[nodiscard]] Type *GetTypeAtIndex(TupleSizeType index) const;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
 
     void Identical(TypeRelation *relation, Type *other) override;
