@@ -181,8 +181,8 @@ export class DriverHelper {
 }
 
 export class LspDriverHelper {
-    public memInitialize(): void {
-        global.es2pandaPublic._MemInitialize();
+    public memInitialize(pandaLibPath: string): void {
+        global.es2pandaPublic._MemInitializeWithPath(pandaLibPath);
     }
 
     public memFinalize(): void {

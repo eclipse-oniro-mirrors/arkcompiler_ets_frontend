@@ -998,6 +998,10 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _MemInitializeWithPath(pandaLibPath: KStringPtr): void {
+    throw new Error('Not implemented');
+  }
+
   _MemFinalize(): void {
     throw new Error('Not implemented');
   }
