@@ -274,6 +274,18 @@ export class DependencyAnalyzer {
             }
         });
 
+        // Remove dependencies on itself
+        const removeItemIfNecessary = (item: [filePath: string, filePathes: string[]]) => {
+            const filePath: string = item[0]
+            const filePathes: string[] = item[1]
+            const index = filePathes.indexOf(filePath)
+            if (index > -1) {
+                filePathes.splice(index, 1)
+            }
+        }
+        Object.entries(fullDependencyMap.dependants).forEach(removeItemIfNecessary)
+        Object.entries(fullDependencyMap.dependencies).forEach(removeItemIfNecessary)
+
         this.logger.printDebug(`full dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
         return this.filterDependencyMap(fullDependencyMap, entryFiles);
     }
