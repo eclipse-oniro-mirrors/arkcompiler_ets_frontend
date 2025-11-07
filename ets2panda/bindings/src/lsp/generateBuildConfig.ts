@@ -17,13 +17,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as JSON5 from 'json5';
 import { BuildConfig, PathConfig } from '../common/types';
-import { DEFAULT_CACHE_DIR, EXTERNAL_API_PATH_FROM_SDK } from '../common/preDefine';
+import { DEFAULT_CACHE_DIR, EXTERNAL_API_PATH_FROM_SDK, LANGUAGE_VERSION } from '../common/preDefine';
+import { getFileLanguageVersion } from '../common/utils';
 
 export interface ModuleDescriptor {
-  arktsversion: string;
   name: string;
   moduleType: string;
   srcPath: string;
+  arktsversion?: string;
   aceModuleJsonPath?: string;
 }
 
@@ -172,6 +173,28 @@ function addPluginPathConfigs(buildConfig: BuildConfig, module: ModuleDescriptor
   buildConfig.aceModuleJsonPath = module.aceModuleJsonPath;
 }
 
+function getModuleLanguageVersion(compileFiles: Set<string>): string {
+  let found1_1 = false;
+  let found1_2 = false;
+
+  for (const file of compileFiles) {
+    const sourceFile = fs.readFileSync(file, 'utf8');
+    const languageVersion = getFileLanguageVersion(sourceFile);
+
+    if (languageVersion === LANGUAGE_VERSION.ARKTS_1_2) {
+      found1_2 = true;
+    } else if (languageVersion === LANGUAGE_VERSION.ARKTS_1_1) {
+      found1_1 = true;
+    }
+
+    if (found1_1 && found1_2) {
+      return LANGUAGE_VERSION.ARKTS_HYBRID;
+    }
+  }
+
+  return found1_2 ? LANGUAGE_VERSION.ARKTS_1_2 : found1_1 ? LANGUAGE_VERSION.ARKTS_1_1 : '';
+}
+
 export function generateBuildConfigs(
   pathConfig: PathConfig,
   modules?: ModuleDescriptor[]
@@ -201,14 +224,14 @@ export function generateBuildConfigs(
         enableDeclgen.set(depModule.name, true);
       }
     }
-
+    let languageVersion = getModuleLanguageVersion(compileFiles);
     allBuildConfigs[module.name] = {
       plugins: pluginMap,
       compileFiles: Array.from(compileFiles),
       packageName: module.name,
       moduleType: module.moduleType,
       moduleRootPath: modulePath,
-      language: module.arktsversion,
+      language: languageVersion,
       buildSdkPath: pathConfig.buildSdkPath,
       projectPath: pathConfig.projectPath,
       declgenOutDir: pathConfig.declgenOutDir,
@@ -219,7 +242,7 @@ export function generateBuildConfigs(
         pathConfig.cacheDir !== undefined ? pathConfig.cacheDir : path.join(pathConfig.projectPath, DEFAULT_CACHE_DIR),
       enableDeclgenEts2Ts: false,
       declFilesPath:
-        module.arktsversion === '1.1'
+        languageVersion === LANGUAGE_VERSION.ARKTS_1_1
           ? path.join(pathConfig.declgenOutDir, 'static', module.name, 'decl-fileInfo.json')
           : undefined,
       dependencies: dependencies.map((dep) => {
