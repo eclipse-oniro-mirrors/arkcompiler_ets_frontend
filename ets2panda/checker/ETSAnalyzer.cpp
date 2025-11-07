@@ -17,6 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/types/typeFlag.h"
+#include "checker/types/typeRelation.h"
 #include "compiler/lowering/util.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
@@ -1074,6 +1075,7 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
 {
     ArenaVector<Type *> arrayExpressionElementTypes(checker->ProgramAllocator()->Adapter());
     for (auto *const element : arrayExpr->Elements()) {
+        element->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         auto *elementType = *element->Check(checker);
         if (element->IsSpreadElement() && elementType->IsETSTupleType()) {
             for (auto *typeFromTuple : elementType->AsETSTupleType()->GetTupleTypesList()) {
@@ -1166,11 +1168,11 @@ static bool CheckCandidateCompatibility(ETSChecker *checker, ir::ArrayExpression
 {
     for (auto *el : arrayLiteral->Elements()) {
         Type *elTy = CheckElemUnder(checker, el, candElem);
+        TypeRelationContext ctx(checker, el, TypeRelationFlag::NO_THROW);
         if (elTy == nullptr || !checker->Relation()->IsAssignableTo(elTy, candElem)) {
             return false;
         }
     }
-
     return true;
 }
 
