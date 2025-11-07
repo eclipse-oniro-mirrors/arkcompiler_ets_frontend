@@ -13268,43 +13268,43 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!declaration || !ts.isFunctionDeclaration(declaration)) {
       return;
     }
-    const parameterTypes = declaration.parameters?.map((param) => {
-      const paramType = this.tsTypeChecker.getTypeAtLocation(param);
-      const typeName = this.tsTypeChecker.typeToString(paramType);
-      if (param.dotDotDotToken && this.tsUtils.isArray(paramType) && typeName.endsWith('[]')) {
-        return typeName.slice(0, -2);
-      }
+    const parameterTypes = declaration.parameters?.
+      map((param) => {
+        const sym = this.tsTypeChecker.getSymbolAtLocation(param.name);
+        if (!sym) {
+          return undefined;
+        }
 
-      return typeName;
-    });
+        const paramType = this.tsTypeChecker.getTypeOfSymbolAtLocation(sym, tsCallExpr);
+        if (param.dotDotDotToken && this.tsUtils.isArray(paramType)) {
+          return this.tsTypeChecker.getTypeArguments(paramType as ts.TypeReference)?.[0];
+        }
+        return paramType;
+      }).
+      filter((param): param is ts.Type => { return param !== undefined; });
+
     tsCallExpr.arguments.forEach((arg, index) => {
       if (index >= parameterTypes.length) {
         return;
       }
       const expectedType = parameterTypes[index];
-      let expectedUnionType: string[] = [];
-      if (expectedType.includes('|')) {
-        expectedUnionType = expectedType.split('|').map((item) => {
-          return item.trim();
-        });
-      }
-      this.checkParameterTypeCompatibility(arg, expectedUnionType, expectedType);
+      this.checkParameterTypeCompatibility(arg, expectedType);
     });
   }
 
-  private checkParameterTypeCompatibility(arg: ts.Expression, expectedUnionType: string[], expectedType: string): void {
+  private checkParameterTypeCompatibility(arg: ts.Expression, expectedType: ts.Type): void {
     const actualSym = this.tsTypeChecker.getSymbolAtLocation(arg);
+    if (!actualSym) {
+      return;
+    }
     const decl = TsUtils.getDeclaration(actualSym);
     if (decl && ts.isParameter(decl) && decl.type) {
       const actualType = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
-      const actualTypeName = this.tsTypeChecker.typeToString(actualType);
-      if (expectedUnionType.length > 0) {
-        if (!expectedUnionType.includes(actualTypeName)) {
-          this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
-        }
+      if (TsUtils.isAnyType(actualType) || TsUtils.isAnyType(expectedType)) {
         return;
       }
-      if (actualTypeName !== expectedType && expectedType !== 'any' && expectedType !== 'any[]') {
+
+      if (!this.isTypeAssignable(actualType, expectedType) && TypeScriptLinter.isNarrowedByTypeOf(arg)) {
         this.incrementCounters(arg, FaultID.NoTsLikeSmartType);
       }
     }
@@ -13422,9 +13422,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const declaredType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, declaration);
     const checkingType: ts.Type | undefined =
-      lastType !== declaredType && TypeScriptLinter.useNarrowedOrDeclaredType(expr.expression) ?
-        declaredType :
-        lastType;
+      lastType !== declaredType && TypeScriptLinter.isNarrowedByTypeOf(expr.expression) ? declaredType : lastType;
 
     if (
       (ts.isParameter(declaration) || ts.isPropertyDeclaration(declaration) || ts.isVariableDeclaration(declaration)) &&
@@ -13436,7 +13434,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-  private static useNarrowedOrDeclaredType(expr: ts.Node): boolean {
+  private static isNarrowedByTypeOf(expr: ts.Node): boolean {
     let useDeclared = false;
 
     const ifStatement = ts.findAncestor(expr, ts.isIfStatement);

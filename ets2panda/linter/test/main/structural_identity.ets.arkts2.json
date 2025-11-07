@@ -975,16 +975,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 574,
-            "column": 44,
-            "endLine": 574,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 575,
             "column": 44,
             "endLine": 575,
@@ -992,36 +982,6 @@
             "problem": "StructuralIdentity",
             "suggest": "",
             "rule": "Structural typing is not supported (arkts-no-structural-typing)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 575,
-            "column": 44,
-            "endLine": 575,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 576,
-            "column": 38,
-            "endLine": 576,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 577,
-            "column": 38,
-            "endLine": 577,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -1035,26 +995,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 578,
-            "column": 38,
-            "endLine": 578,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 579,
-            "column": 44,
-            "endLine": 579,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 580,
             "column": 44,
             "endLine": 580,
@@ -1062,16 +1002,6 @@
             "problem": "StructuralIdentity",
             "suggest": "",
             "rule": "Structural typing is not supported (arkts-no-structural-typing)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 580,
-            "column": 44,
-            "endLine": 580,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
