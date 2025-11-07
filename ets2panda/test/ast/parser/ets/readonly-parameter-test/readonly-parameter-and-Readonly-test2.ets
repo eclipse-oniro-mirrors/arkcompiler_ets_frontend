@@ -35,13 +35,13 @@ let x2 : Readonly<int[]> = [0]
 let y2 : readonly [int, string]
 /* @@ label9 */y2[1] = "b"
 
-/* @@@ label Error Semantic error ESE0250: Object type doesn't have proper index access method. */
+/* @@@ label Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label1 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label2 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label3 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label4 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label5 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label6 Error Semantic error ESE0250: Object type doesn't have proper index access method. */
+/* @@@ label6 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label7 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label8 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
 /* @@@ label9 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */

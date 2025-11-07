@@ -13,11 +13,7 @@
  * limitations under the License.
  */
 
-function main() {
-    let v = [[1.0,2.0]] as readonly number[][] // smart cast workaround
-    v[0][0] = 3.0  // ok
-    v[0] = []  // CTE
-}
+let arr: readonly number[] = [1, -0.923]
+arr[0] = 2
 
-/* @@? 19:5 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter  */
-/* @@? 19:12 Error Semantic error ESE0301: Can't resolve array type  */
+/* @@? 17:1 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
