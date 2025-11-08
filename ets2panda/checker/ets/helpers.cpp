@@ -2620,6 +2620,38 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunction
     }
 }
 
+bool ETSChecker::ContainsTypeParameter(checker::Type *paramType)
+{
+    if (paramType->IsETSTypeParameter()) {
+        return true;
+    }
+    if (paramType->IsETSObjectType() && paramType->HasTypeFlag(TypeFlag::GENERIC)) {
+        for (auto typeParam : paramType->AsETSObjectType()->TypeArguments()) {
+            if (ContainsTypeParameter(typeParam)) {
+                return true;
+            }
+        }
+    }
+    if (paramType->IsETSUnionType()) {
+        for (auto constituentType : paramType->AsETSUnionType()->ConstituentTypes()) {
+            if (ContainsTypeParameter(constituentType)) {
+                return true;
+            }
+        }
+    }
+    if (paramType->IsETSArrayType()) {
+        return ContainsTypeParameter(paramType->AsETSArrayType()->ElementType());
+    }
+    if (paramType->IsETSArrowType()) {
+        for (auto param : paramType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().front()->Params()) {
+            if (param->TsType()->HasTypeFlag(TypeFlag::ETS_ANY)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, Signature *signature)
 {
     ES2PANDA_ASSERT(signature->Params().size() >= lambda->Params().size());
@@ -2630,12 +2662,20 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, Signature *sign
         }
         auto *const lambdaParam = lambda->Params().at(i)->AsETSParameterExpression()->Ident();
         if (lambdaParam->TypeAnnotation() == nullptr) {
+            // note: case in #31893 should be fixed later
+            if (ETSChecker::ContainsTypeParameter(signature->Params().at(i)->TsType())) {
+                continue;
+            }
             lambdaParam->Variable()->SetTsType(signature->Params().at(i)->TsType());
             lambdaParam->SetTsType(signature->Params().at(i)->TsType());
         }
     }
 
     if (lambda->ReturnTypeAnnotation() == nullptr) {
+        // note: case in #31893 should be fixed later
+        if (ETSChecker::ContainsTypeParameter(signature->ReturnType())) {
+            return;
+        }
         lambda->SetPreferredReturnType(signature->ReturnType());
     }
 }

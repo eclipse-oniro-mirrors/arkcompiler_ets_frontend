@@ -13,14 +13,15 @@
  * limitations under the License.
  */
 
-async function foo() {
-    const p = Promise.resolve(null);
-
-    const result = await p.then(obj => {
-        const value = obj?.prop ?? "default";
-        return typeof value;
-    });
+function foo(a: Promise<Any>): Promise<number>{
+    return new Promise<number>((resolve) => {
+        a.then((result) => {
+            resolve(result)
+        })
+    })
 }
 
-
-/* @@? 20:23 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */
+function main() {
+    let a = Promise.resolve(undefined);
+    arktest.assertTrue(foo(a) instanceof Promise)
+}

@@ -20,4 +20,4 @@ p.then(obj => {
 });
 
 
-/* @@? 19:27 Error Semantic error ESE0010: Value is possibly nullish. */
+/* @@? 19:27 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */

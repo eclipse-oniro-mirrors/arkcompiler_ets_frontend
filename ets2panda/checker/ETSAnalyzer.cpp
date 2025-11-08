@@ -1365,9 +1365,8 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
     checker->AddStatus(checker::CheckerStatus::IN_LAMBDA);
     checker->Context().SetContainingLambda(expr);
 
-    auto preferredType = expr->GetPreferredType();
-    if (preferredType != nullptr) {
-        TryInferPreferredType(expr, preferredType, checker);
+    if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSArrowType()) {
+        TryInferPreferredType(expr, expr->PreferredType(), checker);
     } else {
         checker->BuildFunctionSignature(expr->Function(), false);
     }
