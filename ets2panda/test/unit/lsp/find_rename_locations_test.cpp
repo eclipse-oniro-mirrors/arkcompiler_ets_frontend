@@ -94,7 +94,7 @@ static size_t getLine(std::string source, size_t pos)
     return line;
 }
 
-class LspFindRenameLocationsTests : public LSPAPITests {
+class LspFindRenameLocationsTests1 : public LSPAPITests {
 public:
     std::set<RenameLocation> genTestData(std::string word, std::string filePath, std::string source)
     {
@@ -156,7 +156,7 @@ std::set<RenameLocation> expected_name = {
     {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14},
 };
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
@@ -172,7 +172,7 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassName)
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsFunctionName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
@@ -198,7 +198,7 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName)
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName2)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsFunctionName2)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
@@ -224,7 +224,7 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName2)
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassMemberName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassMemberName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
