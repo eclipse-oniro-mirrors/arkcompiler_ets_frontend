@@ -117,17 +117,23 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
                 continue;
             }
 
+            auto *const paramType = (ix < signature->ArgCount())  ? sigInfo->params[ix]->TsType()
+                                    : sigInfo->restVar != nullptr ? sigInfo->restVar->TsType()
+                                                                  : nullptr;
+            if (paramType == nullptr) {
+                continue;
+            }
+
+            // note: case in #31893 should be fixed later
+            if (!ETSChecker::ContainsTypeParameter(paramType)) {
+                arg->SetPreferredType(paramType);
+            }
+
             auto *const argType = arg->IsSpreadElement()
                                       ? MaybeBoxedType(checker, arg->AsSpreadElement()->Argument()->Check(checker),
                                                        arg->AsSpreadElement()->Argument())
                                       : MaybeBoxedType(checker, arg->Check(checker), arg);
-            auto *const paramType = (ix < signature->ArgCount())  ? sigInfo->params[ix]->TsType()
-                                    : sigInfo->restVar != nullptr ? sigInfo->restVar->TsType()
-                                                                  : nullptr;
 
-            if (paramType == nullptr) {
-                continue;
-            }
             if (arg->IsArrowFunctionExpression()) {
                 checker->Relation()->SetNode(arg);
             }
@@ -1407,6 +1413,7 @@ static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature,
     }
 
     arrowFuncExpr->SetTsType(nullptr);
+    arrowFuncExpr->SetPreferredType(nullptr);
     auto *const param =
         signature->GetSignatureInfo()->params[paramPosition]->Declaration()->Node()->AsETSParameterExpression();
     Type *const parameterType = signature->Params()[paramPosition]->TsType();

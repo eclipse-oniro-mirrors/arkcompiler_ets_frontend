@@ -413,6 +413,7 @@ public:
 
     // Function
     static bool NeedTypeInference(const ir::ScriptFunction *lambda);
+    static bool ContainsTypeParameter(checker::Type *type);
     void InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunctionType *calleeType,
                              Signature *maybeSubstitutedFunctionSig = nullptr);
     void InferTypesForLambda(ir::ScriptFunction *lambda, Signature *signature);
