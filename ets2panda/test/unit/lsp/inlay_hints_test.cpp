@@ -338,7 +338,7 @@ TEST_F(LSPInlayHintsTests, VisitVariableLikeDeclarationTest)
 
 TEST_F(LSPInlayHintsTests, StdLibMapGet)
 {
-    std::vector<std::string> files = {"getSignatureHelpItemsTest_map.ets"};
+    std::vector<std::string> files = {"LSPInlayHintsTests_StdLibMapGet.ets"};
     std::vector<std::string> texts = {R"(let map = new Map<string, number>();
 map.set("a", 1);
 let a = map.get("a");
