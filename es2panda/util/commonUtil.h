@@ -42,6 +42,8 @@ const std::string NORMALIZED_OHMURL_NOT_SO = "@normalized:N";
 const std::string NORMALIZED = "@normalized:";
 const std::string MODULE_RECORD_IDX = "moduleRecordIdx";
 const std::string GLOBAL_TYPE_NAME = "_GLOBAL";
+const std::string BUILD_RESOURCE_TABLE_REGEX =
+    ".+?&((?!@)[\\w]+/build|@[\\w]+/[\\w]+/build)/.+?/ResourceTable&";
 
 constexpr char NORMALIZED_OHMURL_SEPARATOR = '&';
 constexpr char NORMALIZED_OHMURL_PREFIX = '@';
