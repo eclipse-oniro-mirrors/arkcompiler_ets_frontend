@@ -331,6 +331,12 @@ struct NodeInfo {
     ark::es2panda::ir::AstNodeType kind;
 };
 
+struct TokenTypeInfo {
+    std::string name;
+    std::string type;
+    TokenTypeInfo(std::string n, std::string t) : name(n), type(t) {}
+};
+
 typedef struct LSPAPI {
     DefinitionInfo (*getDefinitionAtPosition)(es2panda_Context *context, size_t position);
     std::vector<ark::es2panda::lsp::ApplicableRefactorInfo> (*getApplicableRefactors)(es2panda_Context *context,
@@ -405,6 +411,7 @@ typedef struct LSPAPI {
     DefinitionInfo (*getDefinitionDataFromNode)(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos);
     ark::es2panda::lsp::RenameLocation (*findRenameLocationsFromNode)(es2panda_Context *context,
                                                                       const std::vector<NodeInfo *> &nodeInfos);
+    TokenTypeInfo (*getTokenTypes)(es2panda_Context *context, size_t offset);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

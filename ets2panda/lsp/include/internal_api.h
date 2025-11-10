@@ -153,6 +153,7 @@ varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util
 std::string GetImportFilePath(es2panda_Context *context, size_t pos);
 void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
                               DiagnosticReferences &result);
+std::string GetTokenTypes(ir::ModifierFlags flags);
 }  // namespace ark::es2panda::lsp
 
 #endif

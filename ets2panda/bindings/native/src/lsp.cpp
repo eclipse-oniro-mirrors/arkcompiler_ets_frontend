@@ -2017,3 +2017,25 @@ KNativePointer impl_getColAndLineByOffset(KStringPtr &sourceCodePtr, KInt offset
     return new std::pair<size_t, size_t>(impl->getColAndLineByOffset(sourceCodePtr.Data(), offset));
 }
 TS_INTEROP_2(getColAndLineByOffset, KNativePointer, KStringPtr, KInt)
+
+KNativePointer impl_getTokenTypes(KNativePointer context, KInt position)
+{
+    LSPAPI const *ctx = GetImpl();
+    return new TokenTypeInfo(
+        ctx->getTokenTypes(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position)));
+}
+TS_INTEROP_2(getTokenTypes, KNativePointer, KNativePointer, KInt)
+
+KNativePointer impl_GetNameFromTypeInfo(KNativePointer typePtr)
+{
+    auto *typeInfo = reinterpret_cast<TokenTypeInfo *>(typePtr);
+    return new std::string(typeInfo->name);
+}
+TS_INTEROP_1(GetNameFromTypeInfo, KNativePointer, KNativePointer)
+
+KNativePointer impl_GetTypeFromTypeInfo(KNativePointer typePtr)
+{
+    auto *typeInfo = reinterpret_cast<TokenTypeInfo *>(typePtr);
+    return new std::string(typeInfo->type);
+}
+TS_INTEROP_1(GetTypeFromTypeInfo, KNativePointer, KNativePointer)

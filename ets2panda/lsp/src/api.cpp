@@ -43,6 +43,7 @@
 #include "get_name_or_dotted_name_span.h"
 #include "get_signature.h"
 #include "node_matchers.h"
+#include "compiler/lowering/util.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 
@@ -606,6 +607,23 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
     return result;
 }
 
+TokenTypeInfo GetTokenTypes(es2panda_Context *context, size_t offset)
+{
+    auto token = GetTouchingToken(context, offset, false);
+    std::string result;
+    std::string name;
+    ir::ModifierFlags flags;
+    if (token != nullptr && token->IsIdentifier()) {
+        name = std::string(token->AsIdentifier()->Name());
+        token = compiler::DeclarationFromIdentifier(token->AsIdentifier());
+        if (token != nullptr) {
+            flags = token->Modifiers();
+            result = GetTokenTypes(flags);
+        }
+    }
+    return {name, result};
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetEditsForRefactor,
@@ -656,7 +674,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetClassDefinition,
                     GetIdentifier,
                     GetDefinitionDataFromNode,
-                    FindRenameLocationsFromNode};
+                    FindRenameLocationsFromNode,
+                    GetTokenTypes};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

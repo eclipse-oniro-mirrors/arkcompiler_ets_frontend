@@ -1033,3 +1033,22 @@ export class LspNodeInfo extends LspNode {
   readonly name: string;
   readonly kind: AstNodeType;
 }
+
+export class LspTokenTypeInfo extends LspNode {
+  constructor(peer: KNativePointer, filePath?: string) {
+    super(peer);
+    this.name = filePath ? filePath : unpackString(global.es2panda._GetNameFromTypeInfo(peer));
+    this.type = filePath ? filePath : unpackString(global.es2panda._GetTypeFromTypeInfo(peer));
+  }
+  readonly name: string;
+  readonly type: string;
+}
+
+export class LspTokenNativeInfo {
+  constructor(name: string = '', isNative: boolean = false) {
+    this.name = name;
+    this.isNative = isNative;
+  }
+  readonly name: string;
+  readonly isNative: boolean;
+}

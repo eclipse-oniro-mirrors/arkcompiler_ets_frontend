@@ -88,7 +88,7 @@ export class Es2pandaNativeModule {
   ): KInt {
     throw new Error('Not implemented');
   }
-  _CreateContextGenerateAbcForExternalSourceFiles(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array):  KPtr {
+  _CreateContextGenerateAbcForExternalSourceFiles(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array): KPtr {
     throw new Error('Not implemented');
   }
   _GenerateStaticDeclarationsFromContext(context: KPtr, filename: String): KPtr {
@@ -1017,7 +1017,7 @@ export class Es2pandaNativeModule {
     globalContext: KPtr,
     isExternal: boolean
   ): KPtr {
-      throw new Error('Not implemented');
+    throw new Error('Not implemented');
   }
 
   _CreateCacheContextFromFile(
@@ -1074,6 +1074,18 @@ export class Es2pandaNativeModule {
   }
 
   _getIdentifier(astNode: KPtr, nodeName: String): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getTokenTypes(context: KNativePointer, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _GetNameFromTypeInfo(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _GetTypeFromTypeInfo(ptr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
 }

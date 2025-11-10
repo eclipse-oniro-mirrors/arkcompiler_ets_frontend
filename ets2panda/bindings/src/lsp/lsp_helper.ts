@@ -50,6 +50,8 @@ import {
   LspRenameInfoFailure,
   LspSourceLocation,
   LspNodeInfo,
+  LspTokenTypeInfo,
+  LspTokenNativeInfo,
   LspNode
 } from './lspNode';
 import { passStringArray, unpackString } from '../common/private';
@@ -72,7 +74,7 @@ import { generateArkTsConfigs, generateModuleInfo } from './generateArkTSConfig'
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { KInt, KNativePointer, KPointer } from '../common/InteropTypes';
+import { KInt, KNativePointer, KPointer, KStringPtr } from '../common/InteropTypes';
 import { passPointerArray } from '../common/private';
 import { NativePtrDecoder } from '../common/Platform';
 import { Worker as ThreadWorker } from 'worker_threads';
@@ -935,6 +937,28 @@ export class Lsp {
     } catch (error) {
       logger.error('failed to getSafeDeleteInfo', error);
       return;
+    } finally {
+      this.destroyContext(cfg, ctx);
+    }
+    return result;
+  }
+
+  getTokenNative(filename: String, position: number): LspTokenNativeInfo {
+    let result = new LspTokenNativeInfo();
+    const [cfg, ctx] = this.createContext(filename) ?? [];
+    if (!cfg || !ctx) { return result; }
+    try {
+      let ptr = global.es2panda._getTokenTypes(ctx, position);
+      let typeInfo = new LspTokenTypeInfo(ptr);
+      if (typeof typeInfo.type == "string" && typeInfo.type.includes("native")) {
+        return new LspTokenNativeInfo(typeInfo.name, true);
+      }
+      else {
+        result = new LspTokenNativeInfo(typeInfo.name, false);
+      }
+    } catch (error) {
+      console.error(error);
+      throw error;
     } finally {
       this.destroyContext(cfg, ctx);
     }
