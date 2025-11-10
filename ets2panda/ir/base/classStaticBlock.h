@@ -36,6 +36,7 @@ public:
 
     ir::ScriptFunction *Function();
     const ir::ScriptFunction *Function() const;
+    void SetFunction(ir::ScriptFunction *function);
     const util::StringView &Name() const;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

@@ -42,6 +42,15 @@ public:
         return init_;
     }
 
+    void SetInit(AstNode *init)
+    {
+        init_ = init;
+
+        if (init) {
+            init->SetParent(this);
+        }
+    }
+
     Expression *Test()
     {
         return test_;
@@ -50,6 +59,15 @@ public:
     const Expression *Test() const
     {
         return test_;
+    }
+
+    void SetTest(Expression *test)
+    {
+        test_ = test;
+
+        if (test) {
+            test->SetParent(this);
+        }
     }
 
     Expression *Update()
@@ -62,6 +80,15 @@ public:
         return update_;
     }
 
+    void SetUpdate(Expression *update)
+    {
+        update_ = update;
+
+        if (update) {
+            update->SetParent(this);
+        }
+    }
+
     Statement *Body()
     {
         return body_;
@@ -70,6 +97,15 @@ public:
     const Statement *Body() const
     {
         return body_;
+    }
+
+    void SetBody(Statement *body)
+    {
+        body_ = body;
+
+        if (body) {
+            body->SetParent(this);
+        }
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

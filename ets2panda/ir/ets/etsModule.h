@@ -85,6 +85,16 @@ public:
         return GetHistoryNodeAs<ETSModule>()->ident_;
     }
 
+    void SetIdent(ir::Identifier *ident)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<ETSModule>();
+        newNode->ident_ = ident;
+
+        if (ident != nullptr) {
+            ident->SetParent(newNode);
+        }
+    }
+
     parser::Program *Program()
     {
         return GetHistoryNodeAs<ETSModule>()->program_;

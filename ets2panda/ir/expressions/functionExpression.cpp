@@ -20,6 +20,24 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
+void FunctionExpression::SetFunction(ScriptFunction *func)
+{
+    func_ = func;
+
+    if (func) {
+        func->SetParent(this);
+    }
+}
+
+void FunctionExpression::SetId(ir::Identifier *id)
+{
+    exprName_ = id;
+
+    if (id) {
+        id->SetParent(this);
+    }
+}
+
 void FunctionExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     if (auto *transformedNode = cb(func_); func_ != transformedNode) {

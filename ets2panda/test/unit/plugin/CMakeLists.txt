@@ -121,6 +121,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_function_dump compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "pugin_proceed_to_state_annotationUsage_source_range_access compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_optional_language compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_setters compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_dump_src_for_etsglobal_test compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_setters_for_param_rewrite compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_dump_src_with_jsdoc_after_parse compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
@@ -247,3 +248,13 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
 endforeach()
 
 add_dependencies(es2panda_tests es2panda-plugin-test)
+
+set(ES2PANDA_PUBLIC ${ES2PANDA_ROOT}/public)
+add_custom_target(compare_manual_capi_and_idl
+    COMMAND python3 -B ${CMAKE_CURRENT_SOURCE_DIR}/compare_manual_capi_and_idl.py
+        --header ${ES2PANDA_PUBLIC}/es2panda_lib.h
+        --idl ${ES2PANDA_PUBLIC}/es2panda_lib.idl.erb
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/compare_manual_capi_and_idl.py ${ES2PANDA_PUBLIC}/es2panda_lib.h
+        ${ES2PANDA_PUBLIC}/es2panda_lib.idl.erb
+)
+add_dependencies(es2panda_tests compare_manual_capi_and_idl)

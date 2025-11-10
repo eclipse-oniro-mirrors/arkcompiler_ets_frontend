@@ -27,7 +27,12 @@ void ClassElement::SetOrigEnumMember(TSEnumMember *enumMember)
 
 void ClassElement::SetKey(Expression *key)
 {
-    this->GetOrCreateHistoryNodeAs<ClassElement>()->key_ = key;
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    newNode->key_ = key;
+
+    if (key != nullptr) {
+        key->SetParent(newNode);
+    }
 }
 
 void ClassElement::SetValue(Expression *value) noexcept
@@ -52,6 +57,16 @@ const Identifier *ClassElement::Id() const noexcept
 {
     auto const key = GetHistoryNode()->AsClassElement()->key_;
     return key != nullptr && key->IsIdentifier() ? key->AsIdentifier() : nullptr;
+}
+
+void ClassElement::SetId(Identifier *id)
+{
+    auto newNode = this->GetOrCreateHistoryNodeAs<ClassElement>();
+    newNode->key_ = id;
+
+    if (id != nullptr) {
+        id->SetParent(newNode);
+    }
 }
 
 bool ClassElement::IsPrivateElement() const noexcept

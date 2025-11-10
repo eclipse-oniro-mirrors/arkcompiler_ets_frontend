@@ -62,6 +62,11 @@ public:
         return typeParams_;
     }
 
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams) noexcept
+    {
+        typeParams_ = typeParams;
+    }
+
     [[nodiscard]] TypeNode *ReturnType() noexcept
     {
         return returnTypeAnnotation_;

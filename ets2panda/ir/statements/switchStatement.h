@@ -70,6 +70,8 @@ public:
         return cases_;
     }
 
+    void SetCases(ArenaVector<SwitchCaseStatement *> &&casesList);
+
     [[nodiscard]] bool IsScopeBearer() const noexcept override
     {
         return true;

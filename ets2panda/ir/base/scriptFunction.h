@@ -103,6 +103,8 @@ public:
         return GetHistoryNode()->AsScriptFunction()->irSignature_.TypeParams();
     }
 
+    void SetTypeParams(TSTypeParameterDeclaration *typeParams);
+
     [[nodiscard]] const AstNode *Body() const noexcept
     {
         return GetHistoryNodeAs<ScriptFunction>()->body_;

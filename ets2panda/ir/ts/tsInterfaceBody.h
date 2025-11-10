@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,6 +45,15 @@ public:
     [[nodiscard]] ArenaVector<AstNode *> const &Body() const noexcept
     {
         return body_;
+    }
+
+    void SetBody(ArenaVector<AstNode *> &&statementList)
+    {
+        body_ = std::move(statementList);
+
+        for (auto *statement : body_) {
+            statement->SetParent(this);
+        }
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

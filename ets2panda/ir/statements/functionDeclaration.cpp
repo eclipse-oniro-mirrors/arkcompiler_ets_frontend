@@ -26,7 +26,12 @@ namespace ark::es2panda::ir {
 
 void FunctionDeclaration::SetFunction(ScriptFunction *func)
 {
-    this->GetOrCreateHistoryNodeAs<FunctionDeclaration>()->func_ = func;
+    auto newNode = this->GetOrCreateHistoryNodeAs<FunctionDeclaration>();
+    newNode->func_ = func;
+
+    if (func != nullptr) {
+        func->SetParent(newNode);
+    }
 }
 
 void FunctionDeclaration::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)

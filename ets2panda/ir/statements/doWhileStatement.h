@@ -42,6 +42,15 @@ public:
         return body_;
     }
 
+    void SetBody(Statement *body)
+    {
+        body_ = body;
+
+        if (body) {
+            body->SetParent(this);
+        }
+    }
+
     const Expression *Test() const
     {
         return test_;
@@ -50,6 +59,15 @@ public:
     Expression *Test()
     {
         return test_;
+    }
+
+    void SetTest(Expression *test)
+    {
+        test_ = test;
+
+        if (test) {
+            test->SetParent(this);
+        }
     }
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

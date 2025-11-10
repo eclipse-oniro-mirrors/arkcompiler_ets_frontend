@@ -20,35 +20,18 @@ typedef (String or f64 or boolean) es2panda_variantDoubleCharArrayBool;
 [Entity=Class] interface es2panda_Config {};
 [Entity=Class] interface es2panda_Context {};
 [Entity=Class] interface es2panda_GlobalContext {};
-[Entity=Class] interface es2panda_Program {};
 [Entity=Class] interface es2panda_ExternalSource {};
-[Entity=Class] interface es2panda_ArkTsConfig {};
-[Entity=Class] interface es2panda_AstNode {};
-[Entity=Class] interface es2panda_FunctionSignature {};
 [Entity=Class] interface es2panda_SourcePosition {};
 [Entity=Class] interface es2panda_SourceRange {};
-[Entity=Class] interface es2panda_SrcDumper {};
-[Entity=Class] interface es2panda_AstDumper {};
 [Entity=Class] interface es2panda_LabelPair {};
 [Entity=Class] interface es2panda_ScriptFunctionData {};
 [Entity=Class] interface es2panda_ImportSource {};
-[Entity=Class] interface es2panda_Signature {};
 [Entity=Class] interface es2panda_SignatureInfo {};
-[Entity=Class] interface es2panda_CheckerContext {};
-[Entity=Class] interface es2panda_ResolveResult {};
-[Entity=Class] interface es2panda_ValidationInfo {};
-[Entity=Class] interface es2panda_Type {};
-[Entity=Class] interface es2panda_TypeRelation {};
 [Entity=Class] interface es2panda_IndexInfo {};
-[Entity=Class] interface es2panda_GlobalTypesHolder {};
 [Entity=Class] interface es2panda_ObjectDescriptor {};
-[Entity=Class] interface es2panda_Variable {};
-[Entity=Class] interface es2panda_Scope {};
 [Entity=Class] interface es2panda_ScopeFindResult {};
 [Entity=Class] interface es2panda_BindingProps {};
 [Entity=Class] interface es2panda_Declaration {};
-[Entity=Class] interface es2panda_RecordTable {};
-[Entity=Class] interface es2panda_BoundContext {};
 [Entity=Class] interface es2panda_AstVisitor {};
 [Entity=Class] interface es2panda_AstVerifier {};
 [Entity=Class] interface es2panda_VerifierMessage {};
@@ -57,9 +40,8 @@ typedef (String or f64 or boolean) es2panda_variantDoubleCharArrayBool;
 [Entity=Class] interface es2panda_IRNode {};
 [Entity=Class] interface es2panda_ErrorLogger {};
 [Entity=Class] interface es2panda_VerificationContext {};
-[Entity=Class] interface es2panda_ImportPathManager {};
-[Entity=Class] interface es2panda_Path {};
-[Entity=Class] interface es2panda_Options {};
+[Entity=Class] interface es2panda_DiagnosticKind {};
+[Entity=Class] interface es2panda_DiagnosticStorage {};
 
 
 interface NodeTraverser {
@@ -142,10 +124,17 @@ interface es2panda_DiagnosticInfo {
     attribute es2panda_SourcePosition pos;
 };
 
-dictionary es2panda_PluginDiagnosticType { 
+dictionary es2panda_PluginDiagnosticType {
     i32 ES2PANDA_PLUGIN_WARNING = 0;
     i32 ES2PANDA_PLUGIN_ERROR = 1;
     i32 ES2PANDA_PLUGIN_SUGGESTION = 2;
+};
+
+dictionary Es2pandaLanguage {
+    i32 LANGUAGE_AS = 0;
+    i32 LANGUAGE_JS = 1;
+    i32 LANGUAGE_TS = 2;
+    i32 LANGUAGE_ETS = 3;
 };
 
 [Entity=Class] interface VoidPtr {}; // void *
@@ -169,11 +158,14 @@ typedef u64 Es2panda<%= name %>;
 % end
 
 
+// COMPARE_MANUAL_CAPI_AND_IDL_START
 interface es2panda_Impl {
+    void MemInitialize();
+    void MemFinalize();
     es2panda_Config CreateConfig(i32 argc, sequence<String> argv);
     void DestroyConfig(es2panda_Config config);
     String GetAllErrorMessages(es2panda_Context context);
-    es2panda_Options ConfigGetOptions(es2panda_Config config);
+    util.Options ConfigGetOptions(es2panda_Config config);
 
     es2panda_Context CreateContextFromFile(es2panda_Config config, String source_file_name);
     es2panda_Context CreateCacheContextFromFile(es2panda_Config config, String source_file_name, es2panda_GlobalContext globalContext, boolean isExternal);
@@ -189,21 +181,24 @@ interface es2panda_Impl {
     es2panda_ContextState ContextState(es2panda_Context context);
     String ContextErrorMessage(es2panda_Context context);
 
-    es2panda_Program ContextProgram(es2panda_Context context);
+    parser.Program ContextProgram(es2panda_Context context);
     String ExternalSourceName(es2panda_ExternalSource e_source);
-    sequence<es2panda_Program> ExternalSourcePrograms(es2panda_ExternalSource e_source, sequence<u32> len_p);
+    sequence<parser.Program> ExternalSourcePrograms(es2panda_ExternalSource e_source, sequence<u32> len_p);
 
     void AstNodeForEach(ir.AstNode ast, AstNodeForEachFunction func, VoidPtr arg);
-
+    String NumberLiteralStrConst(es2panda_Context context, ir.AstNode classInstance);
     VoidPtr AllocMemory(es2panda_Context context, u32 numberOfElements, u32 sizeOfElement);
 
     es2panda_SourcePosition CreateSourcePosition(es2panda_Context context, u32 index, u32 line);
     es2panda_SourceRange CreateSourceRange(es2panda_Context context, es2panda_SourcePosition start,
                                                es2panda_SourcePosition end);
+    u32 SourcePositionCol(es2panda_Context context, es2panda_SourcePosition position);
     u32 SourcePositionIndex(es2panda_Context context, es2panda_SourcePosition position);
     u32 SourcePositionLine(es2panda_Context context, es2panda_SourcePosition position);
     es2panda_SourcePosition SourceRangeStart(es2panda_Context context, es2panda_SourceRange range);
     es2panda_SourcePosition SourceRangeEnd(es2panda_Context context, es2panda_SourceRange range);
+    es2panda_DiagnosticKind CreateDiagnosticKind(es2panda_Context context, String dmessage,
+                                                           es2panda_PluginDiagnosticType etype);
     es2panda_DiagnosticInfo CreateDiagnosticInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
                                         sequence<String> args, u32 argc, es2panda_SourcePosition position);
     es2panda_SuggestionInfo CreateSuggestionInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
@@ -211,9 +206,12 @@ interface es2panda_Impl {
                                         String message, es2panda_SourceRange range);
     void LogDiagnosticWithSuggestion(es2panda_Context context, es2panda_DiagnosticInfo diagnosticInfo,
                                         es2panda_SuggestionInfo suggestionInfo);
-    void LogTypeError(es2panda_Context context, String errorMsg, es2panda_SourcePosition pos);
-    void LogWarning(es2panda_Context context, String warnMsg, es2panda_SourcePosition pos);
-    void LogSyntaxError(es2panda_Context context, String errorMsg, es2panda_SourcePosition pos);
+    void LogDiagnostic(es2panda_Context context, es2panda_DiagnosticKind kind, sequence<String> args,
+                          u32 argc, es2panda_SourcePosition pos);
+    es2panda_DiagnosticStorage GetSemanticErrors(es2panda_Context ctx);
+    es2panda_DiagnosticStorage GetSyntaxErrors(es2panda_Context ctx);
+    es2panda_DiagnosticStorage GetPluginErrors(es2panda_Context ctx);
+    es2panda_DiagnosticStorage GetWarnings(es2panda_Context ctx);
     boolean IsAnyError(es2panda_Context context);
     varbinder.Scope AstNodeFindNearestScope(es2panda_Context ctx, ir.AstNode node);
     varbinder.Scope AstNodeRebind(es2panda_Context ctx, ir.AstNode node);
@@ -225,15 +223,18 @@ interface es2panda_Impl {
     String JsdocStringFromDeclaration(es2panda_Context ctx, ir.AstNode node);
     String GetLicenseFromRootNode(es2panda_Context ctx, ir.AstNode node);
     ir.AstNode FirstDeclarationByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
-    ir.AstNode FirstDeclarationByNameFromProgram(es2panda_Context ctx, es2panda_Program program, String name);
+    ir.AstNode FirstDeclarationByNameFromProgram(es2panda_Context ctx, parser.Program program, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
-    sequence<ir.AstNode> AllDeclarationsByNameFromProgram(es2panda_Context ctx, es2panda_Program program, String name);
-    void InsertETSImportDeclarationAndParse(es2panda_Context context, es2panda_Program program,
-                                            ETSImportDeclaration node);
+    sequence<ir.AstNode> AllDeclarationsByNameFromProgram(es2panda_Context ctx, parser.Program program, String name);
+    i32 GenerateTsDeclarationsFromContext(es2panda_Context ctx, String outputDeclEts, String outputEts,
+                                          boolean exportAll, boolean isolated, String recordFile);
+    void InsertETSImportDeclarationAndParse(es2panda_Context context, parser.Program program,
+                                            ir.ETSImportDeclaration node);
     i32 GenerateStaticDeclarationsFromContext(es2panda_Context context, String outputPath);
     void InvalidateFileCache(es2panda_GlobalContext globalContext, String fileName);
     void RemoveFileCache(es2panda_GlobalContext globalContext, String fileName);
     void AddFileCache(es2panda_GlobalContext globalContext, String fileName);
+// COMPARE_MANUAL_CAPI_AND_IDL_END
 
 % Es2pandaLibApi::ast_nodes&.each do |ast_node|
 %   if ast_node != 'AstNode' && ast_node != 'TypeNode'
@@ -262,9 +263,11 @@ interface es2panda_Impl {
     String AstNodeName(ir.AstNode ast);
 };
 
+% Es2pandaLibApi::classes&.each do |namespaceName, namespaceClasses|
 
-namespace ir {
+namespace <%= namespaceName %> {
 
+%   if namespaceName == 'ir'
 % number_literal_ast_node_type = Enums::enums['AstNodeType'].all_flags_with_value['NUMBER_LITERAL']
 [Entity=Class, Es2pandaAstNodeType=<%= number_literal_ast_node_type %>, c_type=es2panda_AstNode] interface NumberLiteral: Literal {
     ir.AstNode Create(es2panda_Context ctx, i32 value);
@@ -285,13 +288,7 @@ namespace ir {
     [get] String StrConst(es2panda_Context context);
 };
 
-};  // namespace ir
-
-
-% Es2pandaLibApi::classes&.each do |namespaceName, namespaceClasses|
-
-namespace <%= namespaceName %> {
-
+%   end
 %   namespaceClasses&.each do |className, classData|
 [Entity=Class<%=
     classData.ast_node_type_value ? ", Es2pandaAstNodeType=#{classData.ast_node_type_value}" : ''

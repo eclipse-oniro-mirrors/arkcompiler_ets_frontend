@@ -67,15 +67,21 @@ public:
         return GetHistoryNodeAs<ETSTypeReferencePart>()->prev_;
     }
 
+    void SetPrevious(ir::ETSTypeReferencePart *prev);
+
     ir::Expression *Name()
     {
         return GetHistoryNodeAs<ETSTypeReferencePart>()->name_;
     }
 
+    void SetName(ir::Expression *name);
+
     ir::TSTypeParameterInstantiation *TypeParams()
     {
         return GetHistoryNodeAs<ETSTypeReferencePart>()->typeParams_;
     }
+
+    void SetTypeParams(ir::TSTypeParameterInstantiation *typeParams);
 
     const ir::TSTypeParameterInstantiation *TypeParams() const
     {
@@ -113,9 +119,6 @@ private:
     checker::Type *HandleInternalTypes(checker::ETSChecker *checker);
 
     friend class SizeOfNodeTest;
-    void SetName(ir::Expression *name);
-    void SetTypeParams(ir::TSTypeParameterInstantiation *typeParams);
-    void SetPrevious(ir::ETSTypeReferencePart *prev);
 
     ir::Expression *name_;
     ir::TSTypeParameterInstantiation *typeParams_ {};

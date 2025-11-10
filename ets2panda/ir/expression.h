@@ -128,6 +128,8 @@ public:
         return true;
     }
 
+    void SetTypeAnnotation(TypeNode *typeAnnotation);
+
 protected:
     explicit AnnotatedExpression(AstNodeType const type, TypeNode *const typeAnnotation)
         : Annotated<Expression>(type, typeAnnotation)

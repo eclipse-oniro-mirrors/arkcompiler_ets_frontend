@@ -37,6 +37,17 @@ public:
         GetOrCreateHistoryNodeAs<ETSUnionType>()->types_[index] = type;
     }
 
+    void SetTypes(ArenaVector<TypeNode *> &&typesList)
+    {
+        auto newNode = GetOrCreateHistoryNodeAs<ETSUnionType>();
+        auto &types = newNode->types_;
+        types = std::move(typesList);
+
+        for (auto *type : types) {
+            type->SetParent(newNode);
+        }
+    }
+
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
