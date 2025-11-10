@@ -434,10 +434,14 @@ export abstract class BaseMode {
                     )
                 );
             }
+            // workaround: information for main module is filled incorrectly
+            if (dependency.packageName == mainModuleInfo.packageName) {
+                mainModuleInfo.declFilesPath = dependency.declFilesPath;
+                mainModuleInfo.language = dependency.language;
+            }
             if (this.moduleInfos.has(dependency.packageName)) {
                 return;
             }
-
             // NOTE: workaround
             // NOTE: to be refactored
             const getNormalizedEntryFile = (dependency: DependencyModuleConfig): string => {
@@ -490,6 +494,7 @@ export abstract class BaseMode {
             declgenV2OutPath: this.declgenV2OutPath,
             declgenBridgeCodePath: this.declgenBridgeCodePath,
             byteCodeHar: this.byteCodeHar,
+            // workaround! Should be fixed
             language: LANGUAGE_VERSION.ARKTS_1_2,
             dependencies: []
         };
