@@ -133,7 +133,8 @@ export class Context extends ArktsObject {
     filePath: string,
     cfg: Config,
     globalContextPtr: KPtr,
-    isExternal: boolean
+    isExternal: boolean,
+    isLspUsage: boolean
   ): KPtr {
     if (cfg === undefined) {
       throwError(`Config not initialized`);
@@ -143,7 +144,8 @@ export class Context extends ArktsObject {
       passString(source),
       passString(filePath),
       globalContextPtr,
-      isExternal
+      isExternal,
+      isLspUsage
     );
   }
 

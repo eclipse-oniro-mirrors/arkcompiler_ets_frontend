@@ -314,3 +314,109 @@ TEST_F(LspGetDefTests, GetDefinitionAtPositionForStdLibraryTaskPool)
     ASSERT_TRUE(result.fileName.find(expectedFileName) != std::string::npos);
     ASSERT_EQ(result.length, expectedLength);
 }
+
+TEST_F(LspGetDefTests, DisableLoweringTest1)
+{
+    std::vector<std::string> files = {"DefaultParameters.ets"};
+    std::vector<std::string> texts = {R"(
+    export class AAA {
+        constructor(a : number, b : string = "a") {}
+    }
+    let a = new AAA(1);)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 100;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    size_t const expectedStart = 18;
+    size_t const expectedLength = 3;
+    ASSERT_EQ(result.fileName, expectedFileName);
+    ASSERT_EQ(result.start, expectedStart);
+    ASSERT_EQ(result.length, expectedLength);
+}
+
+TEST_F(LspGetDefTests, DisableLoweringTest2)
+{
+    std::vector<std::string> files = {"RestTuple.ets"};
+    std::vector<std::string> texts = {R"(
+    function sum(a : int, ...numbers : [number, number]) {
+        return a + numbers[0] + numbers[1];
+    }
+    let a = sum(1, 2, 3);)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 123;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    size_t const expectedStart = 0;
+    size_t const expectedLength = 0;
+    ASSERT_EQ(result.fileName, expectedFileName);
+    ASSERT_EQ(result.start, expectedStart);
+    ASSERT_EQ(result.length, expectedLength);
+}
+
+TEST_F(LspGetDefTests, DisableLoweringTest3)
+{
+    std::vector<std::string> files = {"CapturedVariable.ets"};
+    std::vector<std::string> texts = {R"(
+    let aaa = 1;
+    let lam : () => void = () => {
+        aaa = 2
+    };
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 62;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    size_t const expectedStart = 9;
+    size_t const expectedLength = 3;
+    ASSERT_EQ(result.fileName, expectedFileName);
+    ASSERT_EQ(result.start, expectedStart);
+    ASSERT_EQ(result.length, expectedLength);
+}
+
+TEST_F(LspGetDefTests, DisableLoweringTest4)
+{
+    std::vector<std::string> files = {"SetJumpTarget.ets"};
+    std::vector<std::string> texts = {R"(
+    let iii : number = 0;
+    do {
+        iii++;
+    } while (iii < 10);
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 45;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    size_t const expectedStart = 9;
+    size_t const expectedLength = 3;
+    ASSERT_EQ(result.fileName, expectedFileName);
+    ASSERT_EQ(result.start, expectedStart);
+    ASSERT_EQ(result.length, expectedLength);
+}

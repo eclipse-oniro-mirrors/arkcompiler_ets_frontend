@@ -393,7 +393,7 @@ static Context *InitContext(es2panda_Config *config)
 __attribute__((unused)) static es2panda_Context *CreateContext(es2panda_Config *config, std::string &&source,
                                                                const char *fileName,
                                                                es2panda_GlobalContext *globalContext, bool isExternal,
-                                                               bool genStdLib)
+                                                               bool genStdLib, bool isLspUsage = false)
 {
     auto res = InitContext(config);
     if (res->state == ES2PANDA_STATE_ERROR) {
@@ -402,6 +402,7 @@ __attribute__((unused)) static es2panda_Context *CreateContext(es2panda_Config *
     auto *cfg = reinterpret_cast<ConfigImpl *>(config);
 
     res->isExternal = isExternal;
+    res->isLspUsage = isLspUsage;
     res->globalContext = reinterpret_cast<GlobalContext *>(globalContext);
 
     res->input = std::move(source);
@@ -476,9 +477,9 @@ extern "C" __attribute__((unused)) es2panda_Context *CreateCacheContextFromStrin
                                                                                   const char *source,
                                                                                   char const *fileName,
                                                                                   es2panda_GlobalContext *globalContext,
-                                                                                  bool isExternal)
+                                                                                  bool isExternal, bool isLspUsage)
 {
-    return CreateContext(config, std::string(source), fileName, globalContext, isExternal, false);
+    return CreateContext(config, std::string(source), fileName, globalContext, isExternal, false, isLspUsage);
 }
 
 extern "C" __attribute__((unused)) es2panda_Context *CreateContextFromMultiFile(es2panda_Config *config,
@@ -593,6 +594,40 @@ __attribute__((unused)) static Context *Bind(Context *ctx)
     return ctx;
 }
 
+__attribute__((unused)) static void SaveCache(Context *ctx)
+{
+    if (ctx->allocator == ctx->globalContext->stdLibAllocator) {
+        return;
+    }
+    ES2PANDA_ASSERT(ctx->globalContext != nullptr &&
+                    ctx->globalContext->cachedExternalPrograms.count(ctx->sourceFileName) != 0);
+    ctx->globalContext->cachedExternalPrograms[ctx->sourceFileName] = &(ctx->parserProgram->ExternalSources());
+
+    // cycle dependencies
+    for (auto &[_, extPrograms] : ctx->parserProgram->ExternalSources()) {
+        for (auto extProgram : extPrograms) {
+            auto absPath = std::string {extProgram->AbsoluteName()};
+            auto &cacheMap = ctx->globalContext->cachedExternalPrograms;
+            if (cacheMap.count(absPath) == 1 && cacheMap[absPath] == nullptr) {
+                cacheMap[absPath] = &(ctx->parserProgram->ExternalSources());
+            }
+        }
+    }
+}
+
+__attribute__((unused)) static void MarkAndSaveCache(Context *ctx)
+{
+    auto &externalSource = ctx->parserProgram->ExternalSources();
+    for (auto &[_, extPrograms] : externalSource) {
+        for (auto extProgram : extPrograms) {
+            if (!extProgram->IsASTLowered()) {
+                extProgram->MarkASTAsLowered();
+            }
+        }
+    }
+    SaveCache(ctx);
+}
+
 __attribute__((unused)) static Context *Check(Context *ctx)
 {
     if (ctx->state < ES2PANDA_STATE_PARSED) {
@@ -613,28 +648,10 @@ __attribute__((unused)) static Context *Check(Context *ctx)
     }
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
     ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_CHECKED : ES2PANDA_STATE_ERROR;
+    if (ctx->isLspUsage) {
+        MarkAndSaveCache(ctx);
+    }
     return ctx;
-}
-
-__attribute__((unused)) static void SaveCache(Context *ctx)
-{
-    if (ctx->allocator == ctx->globalContext->stdLibAllocator) {
-        return;
-    }
-    ES2PANDA_ASSERT(ctx->globalContext != nullptr &&
-                    ctx->globalContext->cachedExternalPrograms.count(ctx->sourceFileName) != 0);
-    ctx->globalContext->cachedExternalPrograms[ctx->sourceFileName] = &(ctx->parserProgram->ExternalSources());
-
-    // cycle dependencies
-    for (auto &[_, extPrograms] : ctx->parserProgram->ExternalSources()) {
-        for (auto extProgram : extPrograms) {
-            auto absPath = std::string {extProgram->AbsoluteName()};
-            auto &cacheMap = ctx->globalContext->cachedExternalPrograms;
-            if (cacheMap.count(absPath) == 1 && cacheMap[absPath] == nullptr) {
-                cacheMap[absPath] = &(ctx->parserProgram->ExternalSources());
-            }
-        }
-    }
 }
 
 extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
@@ -1401,15 +1418,15 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
     auto cfg = reinterpret_cast<ConfigImpl *>(config);
     globalContext->stdLibAllocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
     auto ctx = CreateContext(config, std::move(""), cfg->options->SourceFileName().c_str(),
-                             reinterpret_cast<es2panda_GlobalContext *>(globalContext), true, true);
+                             reinterpret_cast<es2panda_GlobalContext *>(globalContext), true, true, LspUsage);
     ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_CHECKED);
     if (!LspUsage) {
         AstNodeRecheck(ctx,
                        reinterpret_cast<es2panda_AstNode *>(reinterpret_cast<Context *>(ctx)->parserProgram->Ast()));
         AstNodeRecheck(ctx,
                        reinterpret_cast<es2panda_AstNode *>(reinterpret_cast<Context *>(ctx)->parserProgram->Ast()));
+        ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_LOWERED);
     }
-    ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_LOWERED);
     globalContext->stdLibAstCache = &(reinterpret_cast<Context *>(ctx)->parserProgram->ExternalSources());
     DestroyContext(ctx);
 }

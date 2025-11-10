@@ -140,6 +140,7 @@ struct Context {
 
     ExternalSources externalSources;
     bool isExternal = false;
+    bool isLspUsage = false;
     bool compiledByCapi = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
