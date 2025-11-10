@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
-set a '1;'
+get duplicateGetter(): number { return 1 }
+get duplicateGetter(): string { return "2" }
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+set duplicateSetter(x: number){}
+set duplicateSetter(x: string) {}
+
+/* @@? 17:5 Error Semantic error ESE0219: Duplicate accessor definition */
+/* @@? 17:20 Error Semantic error ESE0130: Function duplicateGetter is already declared. */
+/* @@? 20:5 Error Semantic error ESE0219: Duplicate accessor definition */

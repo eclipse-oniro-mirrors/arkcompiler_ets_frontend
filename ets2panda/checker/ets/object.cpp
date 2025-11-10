@@ -22,6 +22,7 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "checker/types/ets/etsAwaitedType.h"
+#include "checker/types/signature.h"
 #include "compiler/lowering/phase.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/classElement.h"
@@ -1570,6 +1571,7 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
     }
 
     CheckClassAnnotations(classDef);
+    CheckGetterSetterProperties(classType);
 
     if (classDef->IsGlobal()) {
         return;
@@ -1579,7 +1581,6 @@ void ETSChecker::CheckClassDefinition(ir::ClassDefinition *classDef)
     CheckConstructors(classDef, classType);
     CheckValidInheritance(classType, classDef);
     CheckConstFields(classType);
-    CheckGetterSetterProperties(classType);
     CheckInvokeMethodsLegitimacy(classType);
     CheckTypeParameterVariance(classDef);
 }
@@ -2314,15 +2315,15 @@ varbinder::Variable *ETSChecker::ResolveInstanceExtension(const ir::MemberExpres
     return GetExtensionFuncVarInFunctionScope(memberExpr);
 }
 
-PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::MemberExpression *const memberExpr)
+PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::Expression *const expr)
 {
     constexpr auto FUNCTIONAL_FLAGS = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::SEARCH_FIELD;
     constexpr auto GETTER_FLAGS = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::IS_GETTER;
     constexpr auto SETTER_FLAGS = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::IS_SETTER;
 
-    switch (memberExpr->Parent()->Type()) {
+    switch (expr->Parent()->Type()) {
         case ir::AstNodeType::CALL_EXPRESSION: {
-            if (memberExpr->Parent()->AsCallExpression()->Callee() == memberExpr) {
+            if (expr->Parent()->AsCallExpression()->Callee() == expr) {
                 return PropertySearchFlags::SEARCH_ALL;
             }
             break;
@@ -2332,7 +2333,7 @@ PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::MemberExpression
             break;
         }
         case ir::AstNodeType::ETS_NEW_CLASS_INSTANCE_EXPRESSION: {
-            if (memberExpr->Parent()->AsETSNewClassInstanceExpression()->GetTypeRef() == memberExpr) {
+            if (expr->Parent()->AsETSNewClassInstanceExpression()->GetTypeRef() == expr) {
                 return PropertySearchFlags::SEARCH_DECL;
             }
             break;
@@ -2346,9 +2347,9 @@ PropertySearchFlags ETSChecker::GetInitialSearchFlags(const ir::MemberExpression
             return PropertySearchFlags::SEARCH_FIELD | GETTER_FLAGS;
         }
         case ir::AstNodeType::ASSIGNMENT_EXPRESSION: {
-            const auto *const assignmentExpr = memberExpr->Parent()->AsAssignmentExpression();
+            const auto *const assignmentExpr = expr->Parent()->AsAssignmentExpression();
 
-            if (assignmentExpr->Left() == memberExpr) {
+            if (assignmentExpr->Left() == expr) {
                 if (assignmentExpr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
                     return PropertySearchFlags::SEARCH_FIELD | SETTER_FLAGS;
                 }
@@ -2514,6 +2515,19 @@ std::vector<ResolveResult *> ETSChecker::ValidateAccessor(ir::MemberExpression *
     searchFlag = memberExpr->Parent()->IsUpdateExpression() ? searchFlag | PropertySearchFlags::IS_SETTER : searchFlag;
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ETSFunctionType *finalRes = ResolveAccessorTypeByFlag(memberExpr, propType, funcType, searchFlag);
+
+    if (oAcc != nullptr && oAcc->Declaration() != nullptr && oAcc->Declaration()->Node() != nullptr) {
+        auto node = oAcc->Declaration()->Node();
+        auto parent = node->Parent();
+        bool isExported = node->IsExported() || node->IsDefaultExported();
+        if (parent != nullptr && parent->IsClassDefinition() && parent->AsClassDefinition()->IsNamespaceTransformed() &&
+            !parent->AsClassDefinition()->IsDeclare() && !isExported) {
+            LogError(diagnostic::NOT_EXPORTED,
+                     {memberExpr->Property()->AsIdentifier()->Name(), memberExpr->ObjType()->Name()},
+                     memberExpr->Property()->Start());
+        }
+    }
+
     std::vector<ResolveResult *> resolveRes = {};
     if (finalRes == nullptr) {
         return resolveRes;
@@ -2915,7 +2929,8 @@ void ETSChecker::CheckGetterSetterProperties(ETSObjectType *classType)
                 LogError(diagnostic::METHOD_ACCESSOR_COLLISION, {name}, sig->Function()->Start());
                 return;
             }
-            if (sig != sigGetter && sig != sigSetter) {
+            // #31254 Check duplicate accessor for extension accessor
+            if (sig != sigGetter && sig != sigSetter && !sig->IsExtensionAccessor()) {
                 LogError(diagnostic::DUPLICATE_ACCESSOR, {}, sig->Function()->Start());
                 return;
             }

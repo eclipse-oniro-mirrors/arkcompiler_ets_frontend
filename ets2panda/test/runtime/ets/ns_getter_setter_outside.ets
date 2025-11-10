@@ -13,9 +13,19 @@
  * limitations under the License.
  */
 
-set a '1;'
+namespace NS {
+    export get name(): string {return 'hello'; }
+    export set name(arg: string) { 
+        if (arg == '111') {
+            arktest.assertTrue(true);
+        } else {
+            throw Error('Not correct name');
+        }
+     }
+}
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+function main() {
+    arktest.assertEQ(NS.name, 'hello');
+    NS.name = '111'
+    arktest.expectError((): void => {NS.name = '222'}, Error('Not correct name'))
+}

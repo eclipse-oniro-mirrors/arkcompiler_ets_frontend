@@ -22,4 +22,3 @@ let a = /* @@ label */MyAnno
 /* @@@ label Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
 /* @@@ label Error Semantic error ESE0144: Annotation name 'MyAnno' used in the wrong context */
 /* @@@ label Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
-/* @@@ label Error Semantic error ESE0144: Annotation name 'MyAnno' used in the wrong context */

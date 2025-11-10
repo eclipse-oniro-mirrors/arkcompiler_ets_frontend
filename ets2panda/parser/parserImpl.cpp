@@ -994,10 +994,6 @@ FunctionSignature ParserImpl::ParseFunctionSignature(ParserStatus status)
         returnTypeAnnotation = ParseFunctionReturnType(status);
     }
 
-    if (GetContext().IsExtensionAccessor() && !hasReceiver) {
-        LogError(diagnostic::EXTENSION_ACCESSOR_RECEIVER);
-    }
-
     auto res = ir::FunctionSignature(typeParamDecl, std::move(params), returnTypeAnnotation, hasReceiver);
     return {std::move(res), ir::ScriptFunctionFlags::NONE};
 }

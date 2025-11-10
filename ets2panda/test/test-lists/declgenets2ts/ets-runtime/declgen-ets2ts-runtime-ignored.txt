@@ -53,3 +53,15 @@ re_export_default/reexport1.ets
 re_export_default/reexport2.ets
 re_export_class/import_class.ets
 re_export_class/re_export_class.ets
+
+#31191 TSC Fail
+chain_accessor.ets
+chain_accessor1.ets
+complex_accessor.ets
+diff_type_accessor.ets
+ns_getter_setter.ets
+ns_getter_setter1.ets
+ns_getter_setter_outside.ets
+ns_getter_setter_outside1.ets
+primitive_accessor.ets
+top_level_getter_setter.ets

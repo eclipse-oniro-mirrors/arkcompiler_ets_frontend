@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 
-set a '1;'
+export set name(a:string) {}
+export get age() { return '1'; }
 
-/* @@? 16:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 16:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 22:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+function main() {
+    name
+    age = "1"
+}
+
+/* @@? 20:5 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 21:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
