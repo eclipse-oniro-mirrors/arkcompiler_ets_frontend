@@ -873,7 +873,9 @@ export class Lsp {
   getDocumentHighlights(filename: String, offset: number): LspDocumentHighlightsReferences | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) return;
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._getDocumentHighlights(ctx, byteOffset);
@@ -912,7 +914,9 @@ export class Lsp {
   toLineColumnOffset(filename: String, offset: number): LspLineAndCharacter | undefined {
     let ptr: KPointer;
     const [cfg, ctx] = this.createContext(filename) ?? [];
-    if (!cfg || !ctx) return;
+    if (!cfg || !ctx) {
+      return;
+    }
     try {
       const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
       ptr = global.es2panda._toLineColumnOffset(ctx, byteOffset);

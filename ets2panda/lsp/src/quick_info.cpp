@@ -781,8 +781,13 @@ std::vector<SymbolDisplayPart> CreateDisplayOfReturnType(ark::es2panda::ir::Type
     }
     if (returnType->Type() == ir::AstNodeType::ETS_TYPE_REFERENCE) {
         auto part = returnType->AsETSTypeReference()->Part()->AsETSTypeReferencePart();
-        auto typeName = part->Name()->AsIdentifier()->Name();
-        displayParts.emplace_back(CreateReturnType(std::string(typeName)));
+        auto nameNode = part->Name();
+        if (nameNode->IsIdentifier()) {
+            auto typeName = part->Name()->AsIdentifier()->Name();
+            displayParts.emplace_back(CreateReturnType(std::string(typeName)));
+        } else if (nameNode->IsTSQualifiedName()) {
+            displayParts.emplace_back(CreateReturnType(std::string(nameNode->AsTSQualifiedName()->Name())));
+        }
     }
     if (returnType->Type() == ir::AstNodeType::ETS_UNION_TYPE) {
         auto unionType = returnType->AsETSUnionType();
