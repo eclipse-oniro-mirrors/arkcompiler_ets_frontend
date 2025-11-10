@@ -836,9 +836,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         if (typeDecl && ts.isClassDeclaration(typeDecl) && ts.isMethodDeclaration(prop)) {
           this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
         }
-        if (typeDecl &&
+        if (
+          typeDecl &&
           (ts.isClassDeclaration(typeDecl) || ts.isInterfaceDeclaration(typeDecl)) &&
-          (ts.isGetAccessor(prop) || ts.isSetAccessor(prop))) {
+          (ts.isGetAccessor(prop) || ts.isSetAccessor(prop))
+        ) {
           this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
         }
       }
@@ -9703,24 +9705,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (!parent) {
         return;
       }
-      const shouldSkipFix = TypeScriptLinter.shouldSkipFixForCollectionsArray(node);
-      if (shouldSkipFix) {
-        if (ts.isPropertyAccessExpression(parent)) {
-          this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer);
-        }
-        if (ts.isQualifiedName(parent)) {
-          this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer);
-        }
-      } else {
-        if (ts.isPropertyAccessExpression(parent)) {
-          this.checkCollectionsForPropAccess(parent, parent.name);
-          return;
-        }
-        if (ts.isQualifiedName(parent)) {
-          this.checkCollectionsForPropAccess(parent, parent.right);
-          return;
-        }
+      if (ts.isPropertyAccessExpression(parent)) {
+        this.checkCollectionsForPropAccess(parent, parent.name);
+        return;
       }
+      if (ts.isQualifiedName(parent)) {
+        this.checkCollectionsForPropAccess(parent, parent.right);
+        return;
+      }
+
       if (ts.isImportSpecifier(parent) && ts.isIdentifier(node)) {
         const bitVectorUsed = this.checkBitVector(node.getSourceFile());
 
@@ -9743,35 +9736,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
   }
 
-  private static shouldSkipFixForCollectionsArray(node: ts.Node): boolean {
-    const isArrayWithNumericArg = (n: ts.Node | undefined): boolean => {
-      return !!(
-        n &&
-        ts.isNewExpression(n) &&
-        ts.isPropertyAccessExpression(n.expression) &&
-        n.expression.name.text === 'Array' &&
-        n.arguments?.some((arg) => {
-          return ts.isNumericLiteral(arg);
-        })
-      );
-    };
-    if (isArrayWithNumericArg(node.parent)) {
-      return true;
-    }
-
-    let currentNode: ts.Node | undefined = node;
-    while (currentNode) {
-      if (ts.isVariableDeclaration(currentNode)) {
-        if (isArrayWithNumericArg(currentNode.initializer)) {
-          return true;
-        }
-        break;
-      }
-      currentNode = currentNode.parent;
-    }
-
-    return false;
-  }
 
   private checkWorkerSymbol(symbol: ts.Symbol, node: ts.Node): void {
     const cb = (): void => {
@@ -13281,7 +13245,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return paramType;
       }).
-      filter((param): param is ts.Type => { return param !== undefined; });
+      filter((param): param is ts.Type => {
+        return param !== undefined;
+      });
 
     tsCallExpr.arguments.forEach((arg, index) => {
       if (index >= parameterTypes.length) {
