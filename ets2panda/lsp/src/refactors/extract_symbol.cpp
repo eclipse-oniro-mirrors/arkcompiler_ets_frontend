@@ -87,15 +87,30 @@
  * @see services/text_change/change_tracker.h
  */
 
+#include <algorithm>
+#include <cctype>
 #include <cstddef>
 #include <cstring>
 #include <ostream>
 #include <string>
 #include <string_view>
+#include <utility>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "refactors/extract_symbol.h"
 #include "ir/astNode.h"
+#include "ir/base/scriptFunction.h"
+#include "ir/expressions/arrowFunctionExpression.h"
+#include "ir/expressions/functionExpression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/memberExpression.h"
+#include "ir/ets/etsParameterExpression.h"
+#include "ir/statements/classDeclaration.h"
+#include "ir/statements/expressionStatement.h"
+#include "ir/statements/functionDeclaration.h"
+#include "ir/statements/variableDeclaration.h"
+#include "util/ustring.h"
 #include "lexer/token/sourceLocation.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
@@ -108,6 +123,15 @@
 
 namespace ark::es2panda::lsp {
 
+#ifdef _WIN32
+constexpr const char *NEWLINE = "\r\n";
+#else
+constexpr const char *NEWLINE = "\n";
+#endif
+
+constexpr size_t HELPER_RESERVE_PADDING = 64;
+constexpr size_t HELPER_INDENT_FACTOR = 4;
+
 ExtractSymbolRefactor::ExtractSymbolRefactor()
 {
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.kind));
@@ -117,6 +141,7 @@ ExtractSymbolRefactor::ExtractSymbolRefactor()
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.kind));
     AddKind(std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.kind));
     AddKind(std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.kind));
+    AddKind(std::string(EXTRACT_FUNCTION_ACTION_CLASS.kind));
 }
 
 std::vector<ir::AstNode *> IsRightNodeInRange(ir::AstNode *node, TextRange span)
@@ -163,6 +188,625 @@ static size_t LineColToPos(public_lib::Context *context, const size_t line, cons
     auto pos = index.GetOffset(ark::es2panda::lexer::SourceLocation(line, col, context->parserProgram));
     return pos;
 }
+
+namespace {
+
+struct VariableBindingInfo {
+    ir::VariableDeclaration *declaration {nullptr};
+    ir::VariableDeclarator *declarator {nullptr};
+    ir::Identifier *identifier {nullptr};
+    ir::Expression *initializer {nullptr};
+};
+
+struct HelperPieces {
+    bool insertHelper {false};
+    size_t insertPos {0};
+    std::string helperText;
+    TextRange replaceRange {};
+    std::string replacementText;
+};
+
+bool ResolveVariableBinding(ir::AstNode *node, VariableBindingInfo &out)
+{
+    for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (!current->IsVariableDeclaration()) {
+            continue;
+        }
+        auto *decl = current->AsVariableDeclaration();
+        auto &items = decl->Declarators();
+        if (items.size() != 1) {
+            return false;
+        }
+        auto *item = items.front();
+        if (item == nullptr || item->Id() == nullptr || !item->Id()->IsIdentifier() || item->Init() == nullptr ||
+            !item->Init()->IsExpression()) {
+            return false;
+        }
+        out.declaration = decl;
+        out.declarator = item;
+        out.identifier = item->Id()->AsIdentifier();
+        out.initializer = item->Init()->AsExpression();
+        return true;
+    }
+    return false;
+}
+
+std::pair<size_t, size_t> ComputeLineIndent(util::StringView source, size_t pos)
+{
+    auto sv = source.Utf8();
+    if (sv.empty()) {
+        return {0, 0};
+    }
+    size_t cursor = std::min(pos, sv.size());
+    while (cursor > 0) {
+        char ch = sv[cursor - 1];
+        if (ch == '\n' || ch == '\r') {
+            break;
+        }
+        --cursor;
+    }
+    size_t indentEnd = cursor;
+    while (indentEnd < sv.size()) {
+        char ch = sv[indentEnd];
+        if (ch == ' ' || ch == '\t') {
+            ++indentEnd;
+            continue;
+        }
+        break;
+    }
+    return {cursor, indentEnd};
+}
+
+ir::ScriptFunction *FindEnclosingScriptFunction(ir::AstNode *node)
+{
+    for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (current->IsFunctionDeclaration()) {
+            return current->AsFunctionDeclaration()->Function();
+        }
+        if (current->IsFunctionExpression()) {
+            return current->AsFunctionExpression()->Function();
+        }
+        if (current->IsArrowFunctionExpression()) {
+            return current->AsArrowFunctionExpression()->Function();
+        }
+    }
+    return nullptr;
+}
+
+ir::ClassDefinition *FindEnclosingClassDefinition(ir::AstNode *node)
+{
+    for (ir::AstNode *current = node; current != nullptr; current = current->Parent()) {
+        if (current->IsClassDeclaration()) {
+            return current->AsClassDeclaration()->Definition();
+        }
+    }
+    return nullptr;
+}
+
+std::string GetNodeText(public_lib::Context *ctx, const ir::AstNode *node)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || node == nullptr) {
+        return "";
+    }
+    return GetSourceTextOfNodeFromSourceFile(ctx->sourceFile->source, const_cast<ir::AstNode *>(node));
+}
+
+std::unordered_map<std::string, std::string> CollectParameterText(public_lib::Context *ctx, ir::ScriptFunction *func)
+{
+    std::unordered_map<std::string, std::string> result;
+    if (ctx == nullptr || func == nullptr) {
+        return result;
+    }
+    for (auto *paramExpr : func->Params()) {
+        if (paramExpr == nullptr || !paramExpr->IsETSParameterExpression()) {
+            continue;
+        }
+        auto *param = paramExpr->AsETSParameterExpression();
+        auto *ident = param->Ident();
+        if (ident == nullptr) {
+            continue;
+        }
+        std::string name = ident->Name().Mutf8();
+        std::string text = GetNodeText(ctx, param);
+        if (text.empty()) {
+            text = name;
+        }
+        result.emplace(std::move(name), std::move(text));
+    }
+    return result;
+}
+
+std::string GetKeyword(ir::VariableDeclaration::VariableDeclarationKind kind)
+{
+    if (kind == ir::VariableDeclaration::VariableDeclarationKind::CONST) {
+        return "const";
+    }
+    return "let";
+}
+
+std::string GetDeclaratorIdText(public_lib::Context *ctx, const VariableBindingInfo &binding)
+{
+    std::string text = GetNodeText(ctx, binding.declarator->Id());
+    if (text.empty()) {
+        return binding.identifier->Name().Mutf8();
+    }
+    while (!text.empty() && (text.back() == '\n' || text.back() == '\r')) {
+        text.pop_back();
+    }
+    return text;
+}
+
+std::vector<std::string> CollectIdentifierNames(ir::Expression *expr, const std::string &skip)
+{
+    std::vector<std::string> names;
+    if (expr == nullptr) {
+        return names;
+    }
+    std::unordered_set<std::string> seen;
+    expr->FindChild([&](ir::AstNode *node) {
+        if (!node->IsIdentifier()) {
+            return false;
+        }
+        auto *ident = node->AsIdentifier();
+        auto *parent = ident->Parent();
+        if (parent != nullptr && parent->IsMemberExpression()) {
+            auto *member = parent->AsMemberExpression();
+            if (!member->IsComputed() && member->Property() == ident) {
+                return false;
+            }
+        }
+        std::string name = ident->Name().Mutf8();
+        if (name == skip) {
+            return false;
+        }
+        if (seen.insert(name).second) {
+            names.emplace_back(std::move(name));
+        }
+        return false;
+    });
+    return names;
+}
+
+std::string JoinWithComma(const std::vector<std::string> &items)
+{
+    if (items.empty()) {
+        return "";
+    }
+    std::string joined;
+    size_t total = (items.size() - 1) * 2;  // comma + space
+    for (const auto &item : items) {
+        total += item.size();
+    }
+    joined.reserve(total);
+    for (size_t i = 0; i < items.size(); ++i) {
+        if (i != 0) {
+            joined.append(", ");
+        }
+        joined.append(items[i]);
+    }
+    return joined;
+}
+
+bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::string &name)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return false;
+    }
+
+    const auto &src = ctx->sourceFile->source;
+    if (src.empty()) {
+        return false;
+    }
+
+    const std::string needle = "function " + name;
+    size_t pos = src.find(needle);
+    while (pos != std::string::npos) {
+        size_t next = pos + needle.size();
+        while (next < src.size() && (std::isspace(static_cast<unsigned char>(src[next])) != 0)) {
+            ++next;
+        }
+        if (next < src.size() && (src[next] == '(' || src[next] == '<')) {
+            return true;
+        }
+        pos = src.find(needle, pos + 1);
+    }
+
+    return false;
+}
+
+bool IsVariableExtractionAction(const std::string &actionName)
+{
+    return actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name ||
+           actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.kind || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.kind;
+}
+
+bool IsConstantExtractionAction(const std::string &actionName)
+{
+    return actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
+           actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.kind || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.kind;
+}
+
+std::string GetIndentAtPosition(public_lib::Context *ctx, size_t pos)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return "";
+    }
+    const auto &source = ctx->sourceFile->source;
+    auto [lineStart, indentEnd] = ComputeLineIndent(util::StringView(source), pos);
+    if (indentEnd <= lineStart) {
+        return "";
+    }
+    return std::string(source.substr(lineStart, indentEnd - lineStart));
+}
+
+bool ProgramHasFunction(public_lib::Context *ctx, const std::string &name)
+{
+    if (ctx == nullptr || ctx->parserProgram == nullptr) {
+        return false;
+    }
+    bool found = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (found || node == nullptr || !node->IsFunctionDeclaration()) {
+            return false;
+        }
+        auto *decl = node->AsFunctionDeclaration();
+        auto *func = decl->Function();
+        if (func != nullptr && func->Id() != nullptr && func->Id()->Name().Mutf8() == name) {
+            found = true;
+            return true;
+        }
+        auto text = GetNodeText(ctx, decl);
+        std::string prefix = "function " + name;
+        auto it = std::search(text.begin(), text.end(), prefix.begin(), prefix.end());
+        if (it != text.end()) {
+            found = true;
+            return true;
+        }
+        return false;
+    });
+    if (found) {
+        return true;
+    }
+
+    return SourceContainsFunctionDefinition(ctx, name);
+}
+
+size_t DetermineGlobalInsertPos(public_lib::Context *ctx)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return 0;
+    }
+    const auto &src = ctx->sourceFile->source;
+    size_t offset = 0;
+    size_t lastDirectiveEnd = 0;
+    while (offset < src.size()) {
+        size_t lineStart = offset;
+        while (lineStart < src.size() && (src[lineStart] == ' ' || src[lineStart] == '\t')) {
+            ++lineStart;
+        }
+        if (lineStart >= src.size()) {
+            break;
+        }
+        if (src[lineStart] != '\'' && src[lineStart] != '"') {
+            break;
+        }
+#ifdef _WIN32
+        size_t newline = src.find("\r\n", lineStart);
+#else
+        size_t newline = src.find('\n', lineStart);
+#endif
+        if (newline == std::string::npos) {
+            lastDirectiveEnd = src.size();
+            break;
+        }
+        lastDirectiveEnd = newline + 1;
+        offset = newline + 1;
+    }
+    return lastDirectiveEnd;
+}
+
+size_t ExtendToLineEnd(util::StringView source, size_t index)
+{
+    auto sv = source.Utf8();
+    size_t pos = std::min(index, sv.size());
+
+    while (pos < sv.size() && sv[pos] != '\n' && sv[pos] != '\r') {
+        ++pos;
+    }
+    while (pos < sv.size() && (sv[pos] == '\n' || sv[pos] == '\r')) {
+        ++pos;
+    }
+    return pos;
+}
+
+void TrimTrailingNewlines(std::string &text)
+{
+    while (!text.empty() && (text.back() == '\n' || text.back() == '\r')) {
+        text.pop_back();
+    }
+}
+
+void StripLeadingIndent(std::string &text, const std::string &indent)
+{
+    if (text.rfind(indent, 0) == 0) {
+        text.erase(0, indent.size());
+    }
+}
+
+std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingInfo &binding, const std::string &indent,
+                                const std::string &callExpr)
+{
+    std::string line;
+    auto *parent = binding.declaration != nullptr ? binding.declaration->Parent() : nullptr;
+    bool needsLeadingBlank = parent != nullptr && !parent->IsProgram();
+    auto keyword = GetKeyword(binding.declaration->Kind());
+    auto declaratorId = GetDeclaratorIdText(ctx, binding);
+    line.reserve(indent.size() + keyword.size() + declaratorId.size() + callExpr.size());
+    if (needsLeadingBlank) {
+        line.append(NEWLINE);
+    }
+
+    line.append(indent);
+    line.append(keyword);
+    line.append(" ");
+    line.append(declaratorId);
+    line.append(" = ");
+    line.append(callExpr);
+    if (line.back() != ';') {
+        line.append(";");
+    }
+    line.append(NEWLINE);
+    return line;
+}
+
+bool PrepareBindingLayout(public_lib::Context *ctx, const VariableBindingInfo &binding, size_t &lineStart,
+                          std::string &indent, std::string &trimmedBody)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return false;
+    }
+    const auto &source = ctx->sourceFile->source;
+    auto [start, indentEnd] = ComputeLineIndent(util::StringView(source), binding.declaration->Start().index);
+    lineStart = start;
+    indent = source.substr(start, indentEnd - start);
+
+    trimmedBody = GetNodeText(ctx, binding.declaration);
+    if (trimmedBody.empty()) {
+        return false;
+    }
+    TrimTrailingNewlines(trimmedBody);
+    StripLeadingIndent(trimmedBody, indent);
+    return true;
+}
+
+std::pair<std::string, std::string> BuildParamSignature(public_lib::Context *ctx, const VariableBindingInfo &binding)
+{
+    std::vector<std::string> freeVars = CollectIdentifierNames(binding.initializer, binding.identifier->Name().Mutf8());
+    auto *enclosingFunc = FindEnclosingScriptFunction(binding.declaration);
+    auto paramText = CollectParameterText(ctx, enclosingFunc);
+
+    std::vector<std::string> paramDecls;
+    paramDecls.reserve(freeVars.size());
+    for (const auto &name : freeVars) {
+        auto it = paramText.find(name);
+        paramDecls.push_back(it == paramText.end() ? name : it->second);
+    }
+    return {JoinWithComma(paramDecls), JoinWithComma(freeVars)};
+}
+
+bool BuildEnclosePieces(public_lib::Context *ctx, const VariableBindingInfo &binding, HelperPieces &out)
+{
+    size_t lineStart = 0;
+    std::string indent;
+    std::string body;
+    if (!PrepareBindingLayout(ctx, binding, lineStart, indent, body)) {
+        return false;
+    }
+    constexpr const char *kHelperName = "newMethod";
+
+    std::string helper;
+    helper.reserve(indent.size() * HELPER_INDENT_FACTOR + body.size() + HELPER_RESERVE_PADDING);
+    helper.append(indent).append("function ").append(kHelperName).append("() {").append(NEWLINE);
+    helper.append(indent).append("    ").append(body).append(NEWLINE);
+    helper.append(indent).append("    return ").append(binding.identifier->Name().Mutf8()).append(";").append(NEWLINE);
+    helper.append(indent).append("}").append(NEWLINE);
+
+    std::string callExpr = std::string(kHelperName) + "()";
+    std::string replacement = BuildAssignmentLine(ctx, binding, indent, callExpr);
+
+    out.insertHelper = true;
+    out.insertPos = lineStart;
+    out.helperText = std::move(helper);
+    out.replacementText = std::move(replacement);
+    const auto &source = ctx->sourceFile->source;
+    out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), binding.declaration->End().index)};
+    return true;
+}
+
+bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo &binding, HelperPieces &out)
+{
+    auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (pubCtx == nullptr || pubCtx->sourceFile == nullptr) {
+        return false;
+    }
+    constexpr const char *kHelperName = "newFunction";
+
+    if (FindEnclosingClassDefinition(binding.declaration) == nullptr) {
+        return false;
+    }
+
+    const auto &source = pubCtx->sourceFile->source;
+    auto [lineStart, indentEnd] = ComputeLineIndent(util::StringView(source), binding.declaration->Start().index);
+    std::string indent(source.substr(lineStart, indentEnd - lineStart));
+
+    auto [paramsSig, callArgs] = BuildParamSignature(pubCtx, binding);
+
+    std::string callExpr = std::string(kHelperName) + "(" + callArgs + ")";
+    std::string replacement = BuildAssignmentLine(pubCtx, binding, indent, callExpr);
+
+    out.insertHelper = false;
+
+    if (!ProgramHasFunction(pubCtx, std::string(kHelperName))) {
+        std::string initBody = GetNodeText(pubCtx, binding.initializer);
+        TrimTrailingNewlines(initBody);
+        std::string helper;
+        helper.reserve(paramsSig.size() + initBody.size() + HELPER_RESERVE_PADDING);
+        helper.append(NEWLINE);
+        helper.append("function ").append(kHelperName).append("(").append(paramsSig).append(") {").append(NEWLINE);
+        helper.append("    return ").append(initBody);
+        if (!initBody.empty() && helper.back() != ';') {
+            helper.append(";");
+        }
+        helper.append(NEWLINE).append("}").append(NEWLINE).append(NEWLINE);
+        out.insertHelper = true;
+        out.insertPos = DetermineGlobalInsertPos(pubCtx);
+        out.helperText = std::move(helper);
+    }
+
+    out.replacementText = std::move(replacement);
+    out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), binding.declaration->End().index)};
+    return true;
+}
+
+size_t FindClassHelperInsertPos(public_lib::Context *ctx, ir::ClassDefinition *classDef)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || classDef == nullptr) {
+        return 0;
+    }
+
+    const auto &source = ctx->sourceFile->source;
+    size_t pos = std::min(classDef->End().index, source.size());
+    while (pos > 0 && (std::isspace(static_cast<unsigned char>(source[pos - 1])) != 0)) {
+        --pos;
+    }
+    if (pos == 0) {
+        return 0;
+    }
+
+    size_t bracePos = pos;
+    while (bracePos > 0 && source[bracePos - 1] != '}') {
+        --bracePos;
+    }
+    if (bracePos == 0 && (source[bracePos] != '}')) {
+        return pos;
+    }
+
+    size_t lineStart = bracePos;
+    while (lineStart > 0 && source[lineStart - 1] != '\n' && source[lineStart - 1] != '\r') {
+        --lineStart;
+    }
+    return lineStart;
+}
+
+bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo &binding, HelperPieces &out)
+{
+    auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (pubCtx == nullptr || pubCtx->sourceFile == nullptr) {
+        return false;
+    }
+    constexpr const char *kHelperName = "newMethod";
+
+    auto *classDef = FindEnclosingClassDefinition(binding.declaration);
+    if (classDef == nullptr) {
+        return false;
+    }
+
+    size_t lineStart = 0;
+    std::string methodIndent;
+    std::string body;
+    if (!PrepareBindingLayout(pubCtx, binding, lineStart, methodIndent, body)) {
+        return false;
+    }
+    std::string classIndent = methodIndent.size() >= 4 ? methodIndent.substr(0, methodIndent.size() - 4) : "";
+
+    auto [paramsSig, callArgs] = BuildParamSignature(pubCtx, binding);
+
+    std::string helper;
+    helper.reserve(body.size() + paramsSig.size() + HELPER_RESERVE_PADDING);
+    helper.append(NEWLINE);
+    helper.append(classIndent)
+        .append("private ")
+        .append(kHelperName)
+        .append("(")
+        .append(paramsSig)
+        .append(") {")
+        .append(NEWLINE);
+    helper.append(classIndent).append("    ").append(body).append(NEWLINE);
+    helper.append(classIndent)
+        .append("    return ")
+        .append(binding.identifier->Name().Mutf8())
+        .append(";")
+        .append(NEWLINE);
+    helper.append(classIndent).append("}").append(NEWLINE);
+
+    std::string callExpr = "this." + std::string(kHelperName) + "(" + callArgs + ")";
+    std::string replacement = BuildAssignmentLine(pubCtx, binding, methodIndent, callExpr);
+
+    out.insertHelper = true;
+    size_t insertPos = FindClassHelperInsertPos(pubCtx, classDef);
+    out.insertPos = insertPos == 0 ? classDef->End().index : insertPos;
+    out.helperText = std::move(helper);
+    out.replacementText = std::move(replacement);
+    const auto &source = pubCtx->sourceFile->source;
+    out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), binding.declaration->End().index)};
+    return true;
+}
+
+bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extractedNode, const std::string &actionName,
+                              RefactorEditInfo &outEdits)
+{
+    if (actionName != std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name) &&
+        actionName != std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) &&
+        actionName != std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
+        return false;
+    }
+
+    auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (pubCtx == nullptr || context.textChangesContext == nullptr) {
+        return false;
+    }
+
+    VariableBindingInfo binding;
+    if (!ResolveVariableBinding(extractedNode, binding)) {
+        return false;
+    }
+
+    HelperPieces pieces;
+    bool success = false;
+    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name)) {
+        success = BuildEnclosePieces(pubCtx, binding, pieces);
+    } else if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
+        success = BuildGlobalPieces(context, binding, pieces);
+    } else if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
+        success = BuildClassPieces(context, binding, pieces);
+    }
+
+    if (!success) {
+        return false;
+    }
+
+    TextChangesContext textChangesContext = *context.textChangesContext;
+    auto edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
+        if (pieces.insertHelper && !pieces.helperText.empty()) {
+            tracker.InsertText(pubCtx->sourceFile, pieces.insertPos, pieces.helperText);
+        }
+        tracker.ReplaceRangeWithText(pubCtx->sourceFile, pieces.replaceRange, pieces.replacementText);
+    });
+
+    outEdits = RefactorEditInfo(std::move(edits));
+    return true;
+}
+
+bool IsClassMethodContext(ir::AstNode *node)
+{
+    auto *func = FindEnclosingScriptFunction(node);
+    if (func == nullptr) {
+        return false;
+    }
+    return FindEnclosingClassDefinition(node) != nullptr;
+}
+
+}  // namespace
 static bool IsEncloseFunctionBreak(ir::AstNode *parent)
 {
     return parent != nullptr && parent->IsBlockStatement();
@@ -228,9 +872,8 @@ size_t FindTopLevelInsertionPos(public_lib::Context *context, ir::AstNode *targe
 
     if (statement->Start().line == 0 || statement->Start().index == 0) {
         return statement->Start().index;
-    } else {
-        return LineColToPos(context, statement->Start().line, statement->Start().index);
     }
+    return LineColToPos(context, statement->Start().line, statement->Start().index);
 }
 TextRange GetVarAndFunctionPosToWriteNode(const RefactorContext &context, const std::string &actionName)
 {
@@ -360,7 +1003,7 @@ bool IsNodeInParamList(ir::Identifier *ident, const std::vector<ir::Identifier *
     }
     return false;
 }
-std::string GetParamsText(const FunctionExtraction &candidate, std::vector<ir::Identifier *> functionParams)
+std::string GetParamsText(const FunctionExtraction &candidate, const std::vector<ir::Identifier *> &functionParams)
 {
     std::string params;
     for (size_t i = 0; i < candidate.parameters.size(); i++) {
@@ -399,7 +1042,7 @@ std::string BuildFunctionBody(const std::string &body, const char *nl)
     std::istringstream lines(body);
     std::string line;
     while (std::getline(lines, line)) {
-        oss << "    return " << line << (std::strchr(line.c_str(), ';') ? "" : ";") << nl;
+        oss << "    return " << line << (std::strchr(line.c_str(), ';') != nullptr ? "" : ";") << nl;
     }
     return oss.str();
 }
@@ -496,11 +1139,15 @@ static bool HasEnclosingFunction(ir::AstNode *node)
     return false;
 }
 
-static void AddExtractFunctionActions(std::vector<RefactorAction> &actions, bool isEncloseScopeAvailable)
+static void AddExtractFunctionActions(std::vector<RefactorAction> &actions, bool isEncloseScopeAvailable,
+                                      bool hasClassScope)
 {
     AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_GLOBAL);
     if (isEncloseScopeAvailable) {
         AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_ENCLOSE);
+    }
+    if (hasClassScope) {
+        AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_CLASS);
     }
 }
 
@@ -520,18 +1167,21 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
     std::vector<RefactorAction> actions;
 
     const auto node = GetTouchingToken(context.context, context.span.pos, false);
-    if (node == nullptr)
+    if (node == nullptr) {
         return actions;
+    }
 
     const auto positions = GetCallPositionOfExtraction(context);
-    if (!IsInsideExtractionRange(node, positions))
+    if (!IsInsideExtractionRange(node, positions)) {
         return actions;
+    }
 
     const bool hasScope = HasEnclosingFunction(node);
+    const bool hasClassScope = IsClassMethodContext(node);
 
     if (node->IsExpression() || node->IsFunctionExpression() || node->IsArrowFunctionExpression() ||
         node->IsStatement()) {
-        AddExtractFunctionActions(actions, hasScope);
+        AddExtractFunctionActions(actions, hasScope, hasClassScope);
     }
 
     if (!node->IsStatement() || node->IsVariableDeclaration() || node->IsBinaryExpression()) {
@@ -547,7 +1197,8 @@ ir::AstNode *FindRefactor(const RefactorContext &context, const std::string &act
         actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
         return FindExtractedVals(context);
     }
-    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name) {
+    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name ||
+        actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         return FindExtractedFunction(context);
     }
 
@@ -608,6 +1259,49 @@ std::string GetConstantString(std::string_view &src, ir::AstNode *extractedText,
     return "";
 }
 
+std::string BuildExtractionDeclaration(const RefactorContext &context, public_lib::Context *ctx,
+                                       ir::AstNode *extractedText, const std::string &actionName,
+                                       bool &isVariableExtraction)
+{
+    isVariableExtraction = IsVariableExtractionAction(actionName);
+    const bool isConstantExtraction = IsConstantExtractionAction(actionName);
+    if (!isConstantExtraction && !isVariableExtraction) {
+        return "";
+    }
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return "";
+    }
+
+    std::string_view srcView(ctx->sourceFile->source);
+    std::string placeholder = GetConstantString(srcView, extractedText, context);
+    if (placeholder.empty()) {
+        return "";
+    }
+
+    std::string declaration(isConstantExtraction ? "const " : "let ");
+    declaration.append("newLocal = ").append(placeholder);
+    if (declaration.find(';') == std::string::npos) {
+        declaration.append(";");
+    }
+    return declaration;
+}
+
+void ApplyVariableFormatting(const RefactorContext &context, public_lib::Context *ctx, const std::string &actionName,
+                             std::string &declaration)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return;
+    }
+    size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
+    std::string insertionIndent = GetIndentAtPosition(ctx, insertPos);
+    TextRange callRange = GetCallPositionOfExtraction(context);
+    std::string statementIndent = GetIndentAtPosition(ctx, callRange.pos);
+    const std::string &indentToUse = statementIndent.empty() ? insertionIndent : statementIndent;
+
+    declaration = NEWLINE + indentToUse + declaration;
+    declaration.append(NEWLINE).append(NEWLINE);
+}
+
 std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *extractedText,
                                 const std::string &actionName)
 {
@@ -618,36 +1312,24 @@ std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *ext
     if (impl == nullptr) {
         return "";
     }
-    const auto ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    if (ctx == nullptr) {
-        return "";
-    }
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
     while (IsNodeInScope(extractedText) || IsNodeInRange(extractedText, context.span)) {
         extractedText = extractedText->Parent();
     }
-    if (extractedText == nullptr) {
+    if (extractedText == nullptr || ctx->sourceFile == nullptr || ctx->sourceFile->source.empty()) {
         return "";
     }
-    auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile->source;
-    if (src.empty()) {
+
+    bool isVariableExtraction = false;
+    std::string declaration = BuildExtractionDeclaration(context, ctx, extractedText, actionName, isVariableExtraction);
+    if (declaration.empty()) {
         return "";
     }
-    std::string extractedStr;
-    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name) {
-        extractedStr = "const EXTRACTED_VAL = ";
-    } else if (actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name ||
-               actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
-        extractedStr = "let EXTRACTED_VAL = ";
+
+    if (isVariableExtraction) {
+        ApplyVariableFormatting(context, ctx, actionName, declaration);
     }
-    auto placeholder = GetConstantString(src, extractedText, context);
-    if (placeholder.empty()) {
-        return "";
-    }
-    extractedStr += placeholder;
-    if (extractedStr.find(';') == std::string::npos) {
-        extractedStr += ";";
-    }
-    return extractedStr;
+    return declaration;
 }
 
 std::vector<ApplicableRefactorInfo> ExtractSymbolRefactor::GetAvailableActions(const RefactorContext &refContext) const
@@ -663,7 +1345,7 @@ std::vector<ApplicableRefactorInfo> ExtractSymbolRefactor::GetAvailableActions(c
 
     std::vector<ApplicableRefactorInfo> resList;
 
-    for (RefactorAction ref : refactoredNodeList) {
+    for (const RefactorAction &ref : refactoredNodeList) {
         if (!refContext.kind.empty()) {
             if (refContext.kind != ref.kind) {
                 continue;
@@ -688,13 +1370,10 @@ RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, i
     std::vector<FileTextChanges> edits;
     TextChangesContext textChangesContext = *context.textChangesContext;
     const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
+    std::string extractedName("newLocal");
     edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
         tracker.InsertText(src, GetVarAndFunctionPosToWriteNode(context, actionName).pos, generatedText);
-        tracker.ReplaceRangeWithText(src, GetCallPositionOfExtraction(context),
-                                     actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name ||
-                                             actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name
-                                         ? "EXTRACTED_VAL"
-                                         : "EXTRACTED_VAL");
+        tracker.ReplaceRangeWithText(src, GetCallPositionOfExtraction(context), extractedName);
     });
 
     RefactorEditInfo refactorEdits(std::move(edits));
@@ -709,13 +1388,17 @@ RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &contex
     if (extractedNode == nullptr) {
         return RefactorEditInfo();
     }
+
+    RefactorEditInfo helperEdits;
+    if (TryBuildHelperExtraction(context, extractedNode, actionName, helperEdits)) {
+        return helperEdits;
+    }
     auto candidates = GetPossibleFunctionExtractions(context);
     if (candidates.empty()) {
         return RefactorEditInfo();
     }
 
-    int index = 0;
-    FunctionExtraction candidate = candidates[index];
+    FunctionExtraction candidate = candidates.front();
 
     CollectFunctionParameters(candidate);
     std::string functionText = BuildFunctionText(candidate, context);
@@ -758,7 +1441,7 @@ std::unique_ptr<RefactorEditInfo> ExtractSymbolRefactor::GetEditsForAction(const
                actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
         refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
     } else if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name ||
-               actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name) {
+               actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         refactor = GetRefactorEditsToExtractFunction(context, actionName);
     }
 
