@@ -253,7 +253,6 @@ export class ArkTSConfigGenerator {
             });
         }
 
-        // this.getAllFilesToPathSection(moduleInfo, arktsconfig);
         this.logger.printDebug(`Collected path section: ${JSON.stringify(arktsconfig.compilerOptions.paths, null, 1)}`)
     }
 

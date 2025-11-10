@@ -102,9 +102,8 @@ export class Ets2panda {
 
         // NOTE: uncomment if you really need this
         // NOTE: decl files are internal files, not for external usage!!!!!
+        // this[.]declgenV2OutDir [=] buildConfig[.]declgenV2OutPath;
         this.declgenV2OutDir = undefined;
-        // this.declgenV2OutDir = buildConfig.declgenV2OutPath;
-
 
         this.pluginDriver.initPlugins(buildConfig)
     }

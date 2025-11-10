@@ -430,9 +430,9 @@ export class DependencyAnalyzer {
             if (node.data.fileList.length > 1) {
                 let shouldBeCompiled: boolean = false;
                 for (const file of node.data.fileList) {
-                    shouldBeCompiled = updateFileHash(file, this.filesHashCache)
-                        || shouldBeUpdated(file, node.data.fileInfo.output)
-                        || shouldBeCompiled
+                    shouldBeCompiled = updateFileHash(file, this.filesHashCache) ||
+                        shouldBeUpdated(file, node.data.fileInfo.output) ||
+                        shouldBeCompiled
                 }
 
                 if (!shouldBeCompiled) {
