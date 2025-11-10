@@ -1388,7 +1388,7 @@ export class Lsp {
     ];
 
     this.globalLspDriverHelper = new LspDriverHelper();
-    this.globalLspDriverHelper.memInitialize();
+    this.globalLspDriverHelper.memInitialize(this.pandaLibPath);
     this.globalConfig = this.globalLspDriverHelper.createCfg(ets2pandaCmd, files[0], this.pandaLibPath);
     this.globalContextPtr = this.globalLspDriverHelper.createGlobalContext(this.globalConfig.peer, files, files.length);
   }

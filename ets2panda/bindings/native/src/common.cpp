@@ -155,6 +155,13 @@ void impl_MemInitialize()
 }
 TS_INTEROP_V0(MemInitialize)
 
+void impl_MemInitializeWithPath(KStringPtr &pandaLibPath)
+{
+    g_pandaLibPath = GetStringView(pandaLibPath);
+    GetPublicImpl()->MemInitialize();
+}
+TS_INTEROP_V1(MemInitializeWithPath, KStringPtr)
+
 void impl_MemFinalize()
 {
     GetPublicImpl()->MemFinalize();
