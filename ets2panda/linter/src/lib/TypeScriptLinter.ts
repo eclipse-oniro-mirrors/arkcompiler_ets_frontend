@@ -836,9 +836,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         if (typeDecl && ts.isClassDeclaration(typeDecl) && ts.isMethodDeclaration(prop)) {
           this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
         }
-        if (typeDecl &&
+        if (
+          typeDecl &&
           (ts.isClassDeclaration(typeDecl) || ts.isInterfaceDeclaration(typeDecl)) &&
-          (ts.isGetAccessor(prop) || ts.isSetAccessor(prop))) {
+          (ts.isGetAccessor(prop) || ts.isSetAccessor(prop))
+        ) {
           this.incrementCounters(prop, FaultID.ObjectLiteralProperty);
         }
       }
@@ -13281,7 +13283,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
         return paramType;
       }).
-      filter((param): param is ts.Type => { return param !== undefined; });
+      filter((param): param is ts.Type => {
+        return param !== undefined;
+      });
 
     tsCallExpr.arguments.forEach((arg, index) => {
       if (index >= parameterTypes.length) {

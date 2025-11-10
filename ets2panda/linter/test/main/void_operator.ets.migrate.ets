@@ -120,7 +120,7 @@ function foo() {
     console.log(b.filter(x => x % 2 !== 0));
     return undefined;
 })();
-  
+
   (() => {
     (() => {
     console.log('foo');
@@ -134,7 +134,7 @@ function foo() {
 });
     return undefined;
 })();
-  
+
   (() => {
     (class {
     });
@@ -146,4 +146,13 @@ function foo() {
     });
     return undefined;
 })();
+}
+
+function bar(value: string | undefined) {
+    if (value === (() => {
+          (0);
+          return undefined;
+        })()) {
+        return ''
+    }
 }

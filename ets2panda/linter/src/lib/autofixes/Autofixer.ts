@@ -2693,7 +2693,12 @@ export class Autofixer {
       undefined
     );
 
-    const text = this.printer.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
+    let text = this.printer.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
+    const ancestor = ts.findAncestor(voidExpr, ts.isIfStatement);
+    if (ancestor) {
+      const startPos = this.sourceFile.getLineAndCharacterOfPosition(voidExpr.parent.getStart()).character;
+      text = this.adjustIndentation(text, startPos);
+    }
     return [{ start: voidExpr.getStart(), end: voidExpr.getEnd(), replacementText: text }];
   }
 
