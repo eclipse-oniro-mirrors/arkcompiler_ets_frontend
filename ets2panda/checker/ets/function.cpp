@@ -699,6 +699,23 @@ bool ETSChecker::EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParam
     return checker::EnhanceSubstitutionForType(this, typeParams, paramType, argumentType, substitution);
 }
 
+static bool CheckLambdaTypeParameter(ETSChecker *checker, ir::ScriptFunction *lambda)
+{
+    if (lambda->Params().empty()) {
+        return true;
+    }
+    for (auto param : lambda->Params()) {
+        if (param->IsETSParameterExpression() &&
+            param->AsETSParameterExpression()->Ident()->TypeAnnotation() == nullptr &&
+            param->AsETSParameterExpression()->Ident()->TsType()->IsTypeError()) {
+            checker->LogError(diagnostic::INFER_FAILURE_FUNC_PARAM,
+                              {param->AsETSParameterExpression()->Ident()->Name()}, param->Start());
+            return false;
+        }
+    }
+    return true;
+}
+
 // #22952: optional arrow leftovers
 static bool CheckLambdaAssignableUnion(ir::AstNode *typeAnn, ir::ScriptFunction *lambda)
 {
@@ -731,7 +748,7 @@ static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *param, ir
         typeAnn = util::Helpers::DerefETSTypeReference(typeAnn);
     }
     if (typeAnn->IsTSTypeParameter()) {
-        return true;
+        return CheckLambdaTypeParameter(checker, lambda);
     }
     if (!typeAnn->IsETSFunctionType()) {
         // the surrounding function is made so we can *bypass* the typecheck in the "inference" context,
