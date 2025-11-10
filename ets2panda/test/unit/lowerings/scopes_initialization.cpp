@@ -59,6 +59,8 @@ TEST_F(ScopesInitPhaseTest, TestForUpdateLoop)
      * for (int x = 0; x < 10; x++ ) { let x; }
      */
     auto varbinder = varbinder::VarBinder(Allocator());
+    auto program = parser::Program(varbinder.Allocator(), &varbinder);
+    varbinder.SetProgram(&program);
     auto forNode = NodeGen().CreateForUpdate();
     compiler::InitScopesPhaseETS::RunExternalNode(forNode, &varbinder);
 
@@ -88,6 +90,8 @@ TEST_F(ScopesInitPhaseTest, CreateWhile)
      * while (x < 10) { let x; }
      */
     auto varbinder = varbinder::VarBinder(Allocator());
+    auto program = parser::Program(varbinder.Allocator(), &varbinder);
+    varbinder.SetProgram(&program);
     auto whileNode = NodeGen().CreateWhile();
 
     compiler::InitScopesPhaseETS::RunExternalNode(whileNode, &varbinder);
