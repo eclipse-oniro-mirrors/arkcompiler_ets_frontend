@@ -1,58 +1,6 @@
 {
     "1": [
         {
-            "fileName": "ExportFile1.ets",
-            "textChanges": [
-                {
-                    "span": {
-                        "start": 616,
-                        "length": 9
-                    },
-                    "newText": " default "
-                }
-            ]
-        },
-        {
-            "fileName": "ImportFile1.ets",
-            "textChanges": [
-                {
-                    "span": {
-                        "start": 610,
-                        "length": 34
-                    },
-                    "newText": "import bar from \"./ExportFile1\";"
-                }
-            ]
-        }
-    ],
-    "2": [
-        {
-            "fileName": "ExportFile2.ets",
-            "textChanges": [
-                {
-                    "span": {
-                        "start": 616,
-                        "length": 0
-                    },
-                    "newText": ""
-                }
-            ]
-        },
-        {
-            "fileName": "ImportFile2.ets",
-            "textChanges": [
-                {
-                    "span": {
-                        "start": 0,
-                        "length": 610
-                    },
-                    "newText": "import { foo } from \"./ExportFile2\";"
-                }
-            ]
-        }
-    ],
-    "3": [
-        {
             "fileName": "ExtractConstant3.ets",
             "textChanges": [
                 {
@@ -65,7 +13,7 @@
             ]
         }
     ],
-    "4": [
+    "2": [
         {
             "fileName": "ExtractFunction4.ets",
             "textChanges": [
@@ -79,7 +27,7 @@
             ]
         }
     ],
-    "5": [
+    "3": [
         {
             "fileName": "ExtractInterface.ets",
             "textChanges": [

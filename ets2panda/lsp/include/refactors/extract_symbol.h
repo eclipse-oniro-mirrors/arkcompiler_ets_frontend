@@ -68,4 +68,4 @@ std::string ReplaceWithFunctionCall(const FunctionExtraction &candidate, const s
 
 }  // namespace ark::es2panda::lsp
 
-#endif  // CONVERT_EXPORT_H
+#endif
