@@ -24,7 +24,7 @@
 /ets2panda/ast_verifier ^mbolshov @dkofanov ^igelhaus ^Prof
 /ets2panda/bindings ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
 /ets2panda/lexer @robertsipka ^csabaosztrogonac @igelhaus ^zelentsovdmitry @Prof
-/ets2panda/lsp ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
+/ets2panda/lsp ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu @doneyildiz
 /ets2panda/public @mbolshov @zhelyapovaleksey ^igelhaus ^Prof
 /ets2panda/test ^akmaevaleksey ^igelhaus ^Prof
 /legacy_bin/ @ctw-ian @jokerxd-liu
@@ -91,7 +91,7 @@
 /ets2panda/test/test-lists/declgenets2ts @Nojpg ^igelhaus ^Prof ^luobohua2025 @chenmudan
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof
 /ets2panda/test/unit/arktsconfig-parser @trubachevilya @Nojpg ^igelhaus ^Prof
-/ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof 
+/ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof @doneyildiz
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/checker/types/ets/Nullish.* ^vpukhov @gogabr ^igelhaus ^Prof
