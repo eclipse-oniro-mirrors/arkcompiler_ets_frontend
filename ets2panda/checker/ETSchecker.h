@@ -93,7 +93,8 @@ public:
           functionalInterfaceCache_(Allocator()->Adapter()),
           apparentTypes_(Allocator()->Adapter()),
           overloadSigContainer_(Allocator()->Adapter()),
-          readdedChecker_(Allocator()->Adapter())
+          readdedChecker_(Allocator()->Adapter()),
+          stringLiteralTypes_(Allocator()->Adapter())
     {
     }
 
@@ -990,6 +991,7 @@ private:
     ArenaVector<Signature *> overloadSigContainer_;
     ArenaSet<ETSChecker *> readdedChecker_;
     bool permitRelaxedAny_ {false};
+    ArenaMap<std::string, checker::ETSStringType *> stringLiteralTypes_;
 };
 
 }  // namespace ark::es2panda::checker
