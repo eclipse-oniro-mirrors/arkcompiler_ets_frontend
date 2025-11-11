@@ -88,13 +88,13 @@ export interface ArkTS {
         fromContext: Function;
     };
     proceedToState: Function;
-    GenerateTsDeclarationsFromContext: Function;
+    generateTsDeclarationsFromContext: Function;
     generateStaticDeclarationsFromContext: Function;
     destroyConfig: Function;
     Es2pandaContextState: typeof Es2pandaContextState;
-    MemInitialize: Function;
-    MemFinalize: Function;
-    CreateGlobalContext: Function;
+    memInitialize: Function;
+    memFinalize: Function;
+    createGlobalContext: Function;
     AstNode: AstNode;
     ETSImportDeclaration: ETSImportDeclaration;
     isEtsScript: Function;

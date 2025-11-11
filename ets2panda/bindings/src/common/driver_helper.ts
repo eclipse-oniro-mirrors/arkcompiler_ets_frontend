@@ -171,11 +171,11 @@ export class DriverHelper {
         return ctx;
     }
 
-    public MemInitialize(): void {
+    public memInitialize(): void {
         global.es2panda._MemInitialize();
     }
 
-    public MemFinalize(): void {
+    public memFinalize(): void {
         global.es2panda._MemFinalize();
     }
 }
