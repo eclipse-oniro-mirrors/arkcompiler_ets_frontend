@@ -120,6 +120,7 @@ ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test2_1.ets
 ast/compiler/ets/import_export/test3_1.ets
 ast/compiler/ets/namespace_import/namespace_export2.ets
+runtime/ets/import_namespaces.ets
 
 #Issue 30577
 runtime/ets/re_export_default/reexport1.ets

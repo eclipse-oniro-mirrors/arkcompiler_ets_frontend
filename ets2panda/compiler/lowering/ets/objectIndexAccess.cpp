@@ -46,7 +46,6 @@ static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::Assignme
     ES2PANDA_ASSERT(loweringResult != nullptr);
     loweringResult->SetParent(assignmentExpression->Parent());
     loweringResult->SetRange(assignmentExpression->Range());
-    loweringResult->AddModifier(ir::ModifierFlags::ARRAY_SETTER);
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
                                                                   NearestScope(assignmentExpression->Parent()));
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
