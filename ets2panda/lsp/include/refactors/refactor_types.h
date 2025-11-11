@@ -105,6 +105,7 @@ constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overlo
 constexpr std::string_view CONVERT_PARAMS_TO_OBJECT = "Convert parameters to object and introduce interface";
 constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_NAME = "Generate Constructor";
 
+constexpr std::string_view GENERATE_GETTERS_AND_SETTERS_REFACTOR_NAME = "GenerateGettersAndSettersRefactor";
 }  // namespace refactor_name
 
 namespace refactor_description {
@@ -129,6 +130,7 @@ constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_DESC =
 constexpr std::string_view CONVERT_PARAMS_TO_OBJECT_DESC =
     "Convert multiple function parameters to a single object parameter with an interface";
 constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_DESC = "Generate Constructor";
+constexpr std::string_view GENERATE_GETTERS_AND_SETTERS_REFACTOR_DESC = "Generate getters and setters";
 }  // namespace refactor_description
 
 class Refactor {
