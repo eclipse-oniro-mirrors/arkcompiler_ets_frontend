@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,16 +106,6 @@ static void ReplaceThisInExtensionMethod(checker::ETSChecker *checker, ir::Scrip
         !extensionFunc->Params()[0]->AsETSParameterExpression()->Ident()->IsReceiver()) {
         ES2PANDA_ASSERT(checker->IsAnyError());
         return;
-    }
-
-    if (extensionFunc->ReturnTypeAnnotation() != nullptr && extensionFunc->ReturnTypeAnnotation()->IsTSThisType()) {
-        // when return `this` in extensionFunction, the type of `this` actually should be type of the receiver,
-        // so some substitution should be done, temporary solution(xingshunxiang).
-        auto *const thisType = extensionFunc->Signature()->Params()[0]->TsType();
-        auto *const thisTypeAnnotation =
-            extensionFunc->Params()[0]->AsETSParameterExpression()->Ident()->TypeAnnotation();
-        extensionFunc->Signature()->SetReturnType(thisType);
-        extensionFunc->SetReturnTypeAnnotation(thisTypeAnnotation->Clone(checker->ProgramAllocator(), extensionFunc));
     }
 
     auto thisVariable = extensionFunc->Params()[0]->Variable();
@@ -674,7 +664,12 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
         containingFunc->Signature()->SetReturnType(funcReturnType);
     }
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
-    containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
+    if (stArgument != nullptr && stArgument->IsIdentifier() && stArgument->OriginalNode() != nullptr &&
+        stArgument->OriginalNode()->IsThisExpression()) {
+        containingFunc->Signature()->AddSignatureFlag(SignatureFlags::THIS_RETURN_TYPE);
+    } else {
+        containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
+    }
     checker->VarBinder()->AsETSBinder()->BuildFunctionName(containingFunc);
 
     if (stArgument != nullptr) {

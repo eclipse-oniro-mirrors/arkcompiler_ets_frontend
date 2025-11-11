@@ -17,9 +17,8 @@ class B {
     data: int = 1;
 }
 
-function foo(this: B): this {
-    return /* @@ label */2;
+function foo(this: B): /* @@ label */this {
+    return 2;
 }
 
-
-/* @@@ label Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'B' */
+/* @@? 20:38 Error Semantic error ESE0392: type 'this' can be used only as a method return type. */
