@@ -132,6 +132,11 @@ public:
         scope_ = topScope_;
     }
 
+    void SetTopScope(GlobalScope *topScope) noexcept
+    {
+        topScope_ = topScope;
+    }
+
     [[nodiscard]] GlobalScope *TopScope() const noexcept
     {
         return topScope_;
@@ -458,6 +463,30 @@ private:
     GlobalScope *prevTopscope_ {};
     Scope *prevScope_ {};
     VariableScope *prevVarScope_ {};
+};
+
+class GlobalScopeContext {
+public:
+    GlobalScopeContext(VarBinder *varbinder, parser::Program *extProgram, GlobalScope *globalScope)
+        : varbinder_(varbinder), savedProgram_(varbinder->Program()), prevTopscope_(varbinder->TopScope())
+    {
+        varbinder_->SetProgram(extProgram);
+        varbinder_->SetTopScope(globalScope);
+    }
+
+    NO_COPY_SEMANTIC(GlobalScopeContext);
+    NO_MOVE_SEMANTIC(GlobalScopeContext);
+
+    ~GlobalScopeContext()
+    {
+        varbinder_->SetProgram(savedProgram_);
+        varbinder_->SetTopScope(prevTopscope_);
+    }
+
+private:
+    VarBinder *varbinder_ {};
+    parser::Program *savedProgram_ {};
+    GlobalScope *prevTopscope_ {};
 };
 
 }  // namespace ark::es2panda::varbinder
