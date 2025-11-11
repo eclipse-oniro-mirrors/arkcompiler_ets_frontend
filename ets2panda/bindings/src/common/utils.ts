@@ -16,7 +16,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { DECL_ETS_SUFFIX } from './preDefine';
+import { DECL_ETS_SUFFIX, LANGUAGE_VERSION } from './preDefine';
 
 export function throwError(error: string): never {
   throw new Error(error);
@@ -66,4 +66,16 @@ export function getModuleNameAndPath(filePath: string, projectPath: string): [st
     moduleRootPath = path.join(projectPath, moduleName);
   }
   return [moduleName, moduleRootPath];
+}
+
+export function getFileLanguageVersion(fileSource: string): string {
+  const lines = fileSource.split(/\r?\n/);
+  if (lines.length === 0) {
+    return LANGUAGE_VERSION.ARKTS_1_1;
+  }
+  const firstLine = lines[0].trim();
+  if (firstLine === "'use static'" || firstLine === "'use static';") {
+    return LANGUAGE_VERSION.ARKTS_1_2;
+  }
+  return LANGUAGE_VERSION.ARKTS_1_1;
 }
