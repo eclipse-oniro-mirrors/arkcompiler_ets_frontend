@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 
- function identity<A>(a: A): A {
-  return a;
-}
-let x = [1, 2, 3].map(identity)[0];
+function id<T>(v: T): T { return v; }
 
-/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */
+function returnBad() { return id; }
+
+function main() {
+  let g = id;
+}
+
+/* @@? 18:31 Error Semantic error ESE655063: Generic function id requires explicit type arguments when used as a value. */
+/* @@? 21:11 Error Semantic error ESE655063: Generic function id requires explicit type arguments when used as a value. */

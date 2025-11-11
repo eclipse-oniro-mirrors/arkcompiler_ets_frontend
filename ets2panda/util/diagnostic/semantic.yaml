@@ -437,6 +437,10 @@ semantic:
   id: 274
   message: "Expected at least {} type arguments, but got {}."
 
+- name: EXPLICIT_TYPE_ARGUMENTS_REQUIRED
+  id: 655063
+  message: Generic function {} requires explicit type arguments when used as a value.
+
 - name: EXPONENTIATION_BASE_LESS_ZERO
   id: 22843
   message: "Exponent must be an integer if base is less than 0."

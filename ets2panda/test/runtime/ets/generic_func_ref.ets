@@ -97,33 +97,33 @@ function paramFunGen<T>(f: (y: T) => T, f1: T): int {
 }
 
 function main(): void {
-    let test1 = paramRetFunVoid(genFunRetFunVoid);
+    let test1 = paramRetFunVoid(genFunRetFunVoid<Int>);
     arktest.assertEQ(test1, 1)
 
-    let test2 = paramRetFunParam(genFunRetFunS);
+    let test2 = paramRetFunParam(genFunRetFunS<Int>);
     arktest.assertEQ(test2, 2)
 
-    let test3 = paramFun(genFun)
+    let test3 = paramFun(genFun<Int>)
     arktest.assertEQ(test3, 3)
 
 
     let aClass = new A();
 
-    let test4 = aClass.paramRetFunVoid(aClass.genFunRetFunVoid);
+    let test4 = aClass.paramRetFunVoid(aClass.genFunRetFunVoid<Int>);
     arktest.assertEQ(test4, 4)
 
-    let test5 = aClass.paramRetFunParam(aClass.genFunRetFunS);
+    let test5 = aClass.paramRetFunParam(aClass.genFunRetFunS<Int>);
     arktest.assertEQ(test5, 5)
 
-    let test6 = aClass.paramFun(aClass.genFun)
+    let test6 = aClass.paramFun(aClass.genFun<Int>)
     arktest.assertEQ(test6, 6)
 
-    let test7 = paramRetFunVoidGen<Int>(genFunRetFunVoid, 11);
+    let test7 = paramRetFunVoidGen<Int>(genFunRetFunVoid<Int>, 11);
     arktest.assertEQ(test7, 7)
 
-    let test8 = paramRetFunParamGen<Int>(genFunRetFunS, 12);
+    let test8 = paramRetFunParamGen<Int>(genFunRetFunS<Int>, 12);
     arktest.assertEQ(test8, 8)
 
-    let test9 = paramFunGen<Int>(genFun, 13)
+    let test9 = paramFunGen<Int>(genFun<Int>, 13)
     arktest.assertEQ(test9, 9)
 }

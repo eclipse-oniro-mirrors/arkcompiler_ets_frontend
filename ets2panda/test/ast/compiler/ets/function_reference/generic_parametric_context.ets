@@ -13,9 +13,19 @@
  * limitations under the License.
  */
 
- function identity<A>(a: A): A {
-  return a;
-}
-let x = [1, 2, 3].map(identity)[0];
+function id<T>(x: T): T { return x; }
+function use<T>(f: (x: T) => T, v: T): T { return f(v); }
 
-/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */
+function good<T>(v: T): T {
+  return use<T>(id<T>, v);
+}
+
+function bad<T>(v: T): T {
+  return use<T>(id, v);
+}
+
+function main() {
+  arktest.assertEQ(good<Int>(5), 5);
+}
+
+/* @@? 24:17 Error Semantic error ESE655063: Generic function id requires explicit type arguments when used as a value. */

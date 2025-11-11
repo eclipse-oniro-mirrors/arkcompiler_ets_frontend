@@ -20,9 +20,9 @@ function main() {
     let fooInt2 = foo<Int>
     let fooInt3: (a0: Int) => Int = fooInt2
 
-    let fooInt4 = foo
+    let fooInt4 = foo<Int>
     let fooInt5: (a0: Int) => Int = fooInt4
 
-    let fooInt6 = foo
-    let fooInt7: (a0: Int) => Int = fooInt6<Int>
+    let fooInt6 = foo<Int>
+    let fooInt7: (a0: Int) => Int = fooInt6
 }

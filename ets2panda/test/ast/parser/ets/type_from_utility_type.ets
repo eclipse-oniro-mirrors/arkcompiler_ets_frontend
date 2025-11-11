@@ -34,7 +34,7 @@ function foo<T>(){
 /* @@? 17:36 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
 /* @@? 21:38 Error Semantic error ESE124644: T in Required<T> must be a class or an interface type. */
 /* @@? 25:38 Error Semantic error ESE124644: T in Readonly<T> must be a class or an interface type. */
-/* @@? 29:18 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 29:18 Error Semantic error ESE655063: Generic function from requires explicit type arguments when used as a value. */
 /* @@? 29:28 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in Record. Record() is not allowed. */
 /* @@? 29:28 Error Semantic error ESE0002: Type 'Record<K,V>' has no call signatures. */
 /* @@? 30:37 Error Semantic error ESE0228: Type argument 'Array<String>' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

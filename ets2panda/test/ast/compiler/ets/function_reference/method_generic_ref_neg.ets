@@ -13,9 +13,22 @@
  * limitations under the License.
  */
 
- function identity<A>(a: A): A {
-  return a;
+class C {
+  gen<T>(x: T): T { return x; }
+  static sgen<T>(x: T): T { return x; }
 }
-let x = [1, 2, 3].map(identity)[0];
+interface I {
+  gen<T>(x: T): T;
+}
+declare const i: I;
 
-/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */
+function main() {
+  let c = new C();
+
+  let a = c.gen;
+  let b = C.sgen;
+  let d = i.gen;
+}
+/* @@? 28:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */
+/* @@? 29:11 Error Semantic error ESE655063: Generic function sgen requires explicit type arguments when used as a value. */
+/* @@? 30:11 Error Semantic error ESE655063: Generic function gen requires explicit type arguments when used as a value. */

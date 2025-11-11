@@ -24,13 +24,13 @@ function main() {
     let fooInt3: (a0: Int) => Int = fooInt1
     arktest.assertEQ(2, fooInt3(2));
 
-    let fooInt4 = foo
+    let fooInt4 = foo<Int>
     arktest.assertEQ(3, fooInt4(3));
     let fooInt5: (a0: Int) => Int = fooInt4
     arktest.assertEQ(4, fooInt5(4));
 
-    let fooInt6 = foo
+    let fooInt6 = foo<Int>
     arktest.assertEQ(5, fooInt6(5));
-    let fooInt7: (a0: Int) => Int = fooInt6<Int>
+    let fooInt7: (a0: Int) => Int = fooInt6
     arktest.assertEQ(6, fooInt7(6));
 }

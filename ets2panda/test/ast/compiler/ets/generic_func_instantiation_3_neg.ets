@@ -20,11 +20,11 @@ function main() {
     let fooInt2 = foo<Double>
     let fooInt3: (a0: Int) => Int = /* @@ label2 */fooInt2
 
-    let fooInt4 = foo
-    let fooInt5: (a0: Int) => Int = /* @@ label3 */fooInt4<Double>
+    let fooInt4 = foo<Double>
+    let fooInt5: (a0: Int) => Int = /* @@ label3 */fooInt4
 
-    let fooInt6 = foo
-    let fooInt7: (a0: Int) => Int = /* @@ label4 */fooInt6<Double>
+    let fooInt6 = foo<Double>
+    let fooInt7: (a0: Int) => Int = /* @@ label4 */fooInt6
 }
 
 /* @@@ label1 Error Semantic error ESE0318: Type '((p1: Double) => Double)' cannot be assigned to type '((p1: Int) => Int)' */
