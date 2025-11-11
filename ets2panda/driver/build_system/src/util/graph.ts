@@ -35,7 +35,7 @@ export class Graph<T> {
     // NOTE: should be private
     public nodes: Set<GraphNode<T>> = new Set<GraphNode<T>>();
 
-    public hasNodes() {
+    public hasNodes(): boolean {
         return this.nodes.size > 0;
     }
 
@@ -43,7 +43,7 @@ export class Graph<T> {
         return this.id2Node.get(id)!;
     }
 
-    static createGraphFromNodes<T>(nodes: GraphNode<T>[]) {
+    static createGraphFromNodes<T>(nodes: GraphNode<T>[]): Graph<T> {
         const res: Graph<T> = new Graph<T>();
 
         for (const node of nodes) {
@@ -64,8 +64,8 @@ export class Graph<T> {
         return res;
     }
 
-    public verify() {
-        if (this.nodes.size != this.id2Node.size) {
+    public verify(): void {
+        if (this.nodes.size !== this.id2Node.size) {
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
@@ -156,7 +156,7 @@ export class Graph<T> {
         return undefined;
     }
 
-    addNode(node: GraphNode<T>) {
+    addNode(node: GraphNode<T>): void {
         this.nodes.add(node);
         this.id2Node.set(node.id, node);
         for (const predecessor of node.predecessors) {
@@ -186,7 +186,7 @@ export class Graph<T> {
         }
     }
 
-    removeNode(node: GraphNode<T>) {
+    removeNode(node: GraphNode<T>): void {
         this.nodes.delete(node);
         this.id2Node.delete(node.id)
         delete this.adjacency[node.id];
@@ -209,9 +209,9 @@ export class Graph<T> {
         const resNode = new GraphNode<T>(resId, resData);
 
         resNode.predecessors = new Set([...lhs.predecessors, ...rhs.predecessors]
-            .filter((node) => (node != lhs.id) && (node != rhs.id)));
+            .filter((node) => (node !== lhs.id) && (node !== rhs.id)));
         resNode.descendants = new Set([...lhs.descendants, ...rhs.descendants]
-            .filter((node) => (node != lhs.id) && (node != rhs.id)));
+            .filter((node) => (node !== lhs.id) && (node !== rhs.id)));
 
         this.removeNode(lhs);
         this.removeNode(rhs);
@@ -287,7 +287,7 @@ export class Graph<T> {
 
     static collapseCycles<T>(graph: Graph<T>, mergeDataCb: (srcData: GraphNode<T>, dstData: GraphNode<T>) => T): Graph<T> {
         const scc: Map<string, Set<string>> = Graph.findStronglyConnectedComponents(graph);
-        if (scc.size == 0) {
+        if (scc.size === 0) {
             return graph;
         }
 
