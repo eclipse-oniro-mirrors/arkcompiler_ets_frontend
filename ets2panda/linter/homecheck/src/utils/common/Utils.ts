@@ -126,9 +126,7 @@ export class Utils {
                     if (!this.isNearlyNumberType(t)) {
                         return false;
                     }
-                    continue;
                 }
-                return false;
             }
             return true;
         }
