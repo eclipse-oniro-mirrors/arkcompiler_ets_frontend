@@ -487,4 +487,54 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionClass)
     initializer.DestroyContext(ctx);
 }
 
+const std::vector<std::string> &GetFileContentsOfJSON()
+{
+    static const std::vector<std::string> CONTENTS = {R"(let obj = JSON.parseJsonElement("");)"};
+    return CONTENTS;
+}
+
+QuickInfo ExpectResultJSONParse()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetQuickInfoAtPositionJSON.ets";
+    const std::string kind = "method";
+    size_t const start = 15;
+    size_t const length = 16;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "static public declare";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("JSON", "className");
+    expected.emplace_back(".", "punctuation");
+    expected.emplace_back("parseJsonElement", "functionName");
+    expected.emplace_back("(", "punctuation");
+    expected.emplace_back("text", "functionParameter");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("string", "typeParameter");
+    expected.emplace_back(")", "punctuation");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("jsonx.JsonElement", "returnType");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionJSON)
+{
+    std::vector<std::string> fileNames = {"GetQuickInfoAtPositionJSON.ets"};
+
+    auto filePaths = CreateTempFile(fileNames, GetFileContentsOfJSON());
+    ASSERT_TRUE(filePaths.size() == GetFileContentsOfJSON().size());
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset = 20;  // parseJsonElement
+    auto quickInfo = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionJSON.ets", ctx, offset);
+    auto expectedQuickInfo = ExpectResultJSONParse();
+    AssertQuickInfo(expectedQuickInfo, quickInfo);
+
+    initializer.DestroyContext(ctx);
+}
 }  // namespace

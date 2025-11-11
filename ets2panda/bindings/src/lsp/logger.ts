@@ -134,7 +134,9 @@ export class Logger {
     }
 
     private writeToFile(entry: string): void {
-        if (!this.config.fileOutput) return;
+        if (!this.config.fileOutput) {
+            return;
+        }
 
         const entrySize = Buffer.byteLength(entry, 'utf8');
         const newFileSize = this.currentFileSize + entrySize;
@@ -153,7 +155,9 @@ export class Logger {
     }
 
     private log(level: LogLevel, message: string, context?: any): void {
-        if (level < this.config.minLevel) return;
+        if (level < this.config.minLevel) {
+            return;
+        }
 
         const entry: LogEntry = {
             timestamp: new Date(),
