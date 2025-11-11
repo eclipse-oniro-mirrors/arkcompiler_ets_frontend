@@ -348,6 +348,7 @@ static void SwitchMethodCallToFunctionCall(checker::ETSChecker *checker, ir::Cal
     expr->SetCallee(memberExpr->Property());
     memberExpr->Property()->AsIdentifier()->SetParent(expr);
     expr->Arguments()[0]->SetParent(expr);
+    auto scopeCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), expr->EnclosingScope(expr));
     checker->HandleUpdatedCallExpressionNode(expr);
     // Set TsType for new Callee(original member expression's Object)
     expr->Callee()->Check(checker);
