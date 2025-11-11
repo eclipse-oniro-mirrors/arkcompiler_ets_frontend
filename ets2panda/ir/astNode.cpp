@@ -67,8 +67,7 @@ AstNode::AstNode(AstNode const &other)
     if (UNLIKELY(IsClassDefinition())) {
         return GetHistoryNode()->parent_->HasExportAlias();
     }
-
-    return (GetHistoryNode()->astNodeFlags_ & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+    return (GetHistoryNode()->flags_ & ModifierFlags::EXPORT_WITH_ALIAS) != 0;
 }
 
 bool AstNode::IsScopeBearer() const noexcept

@@ -104,7 +104,7 @@ void ImportExportDecls::PopulateAliasMap(const ir::ExportNamedDeclaration *decl,
 void ImportExportDecls::AddExportFlags(ir::AstNode *node, util::StringView originalFieldName, bool exportedWithAlias)
 {
     if (exportedWithAlias) {
-        node->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
+        node->AddModifier(ir::ModifierFlags::EXPORT_WITH_ALIAS);
         return;
     }
     if (originalFieldName == exportDefaultName_) {
