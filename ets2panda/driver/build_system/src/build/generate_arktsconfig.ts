@@ -264,13 +264,9 @@ export class ArkTSConfigGenerator {
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
             if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_DYNAMIC_MODULE_DECL_FILE_NOT_FOUND,
-                        `Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
-                        `, but decl file not found on path ${depModuleInfo.declFilesPath}`
-                    )
-                );
+                this.logger.printWarn(`Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
+                        `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
+                return;
             }
 
             const declFilesObject = JSON.parse(fs.readFileSync(depModuleInfo.declFilesPath, 'utf-8'));
