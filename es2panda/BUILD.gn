@@ -435,8 +435,8 @@ ohos_static_library("es2panda_lib") {
       "$ark_root/abc2program",
       "$ark_root/assembler",
       "$ark_root/libpandafile",
-      "$ark_root/libpandabase",
-      "$ark_root/libpandabase/mem",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
     ]
   } else {
     external_deps += [
@@ -537,8 +537,8 @@ ohos_executable("es2panda") {
       "$ark_root/abc2program",
       "$ark_root/assembler",
       "$ark_root/libpandafile",
-      "$ark_root/libpandabase",
-      "$ark_root/libpandabase/mem",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
     ]
   } else {
     external_deps += [
