@@ -70,10 +70,6 @@ void GlobalDeclTransformer::VisitFunctionDeclaration(ir::FunctionDeclaration *fu
         method->Function()->SetAnnotations(funcDecl->Annotations());
     }
 
-    if (funcDecl->Function()->HasExportAlias()) {
-        method->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
-    }
-
     result_.classProperties.emplace_back(method);
 }
 
@@ -97,10 +93,6 @@ void GlobalDeclTransformer::VisitVariableDeclaration(ir::VariableDeclaration *va
 
         if (varDecl->HasAnnotations()) {
             field->SetAnnotations(varDecl->Annotations());
-        }
-
-        if (varDecl->HasExportAlias() || declarator->HasExportAlias()) {
-            field->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
         }
 
         result_.classProperties.emplace_back(field);

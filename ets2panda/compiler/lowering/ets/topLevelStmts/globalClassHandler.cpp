@@ -171,7 +171,7 @@ ir::ClassDeclaration *GlobalClassHandler::CreateTransformedClass(ir::ETSModule *
     auto *classDecl = NodeAllocator::Alloc<ir::ClassDeclaration>(allocator_, classDef, allocator_);
     ES2PANDA_ASSERT(classDecl != nullptr);
     classDecl->SetRange(ns->Range());
-    classDecl->SetAstNodeFlags(ns->GetAstNodeFlags());
+    classDef->AddModifier(ns->Modifiers());
     classDecl->AddModifier(ns->Modifiers());
     classDef->SetNamespaceTransformed();
 

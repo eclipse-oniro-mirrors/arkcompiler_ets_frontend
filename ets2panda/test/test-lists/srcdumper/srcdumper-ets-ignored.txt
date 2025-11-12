@@ -183,6 +183,7 @@ ast/compiler/ets/import_export/external_export.ets
 ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test2_1.ets
 ast/compiler/ets/import_export/test3_1.ets
+runtime/ets/import_namespaces.ets
 ast/compiler/ets/import_tests/selective_export_tests/import_same_type_form_alias_1.ets
 ast/compiler/ets/import_tests/selective_export_tests/import_same_type_form_alias_2.ets
 ast/compiler/ets/import_export/test3_1.ets

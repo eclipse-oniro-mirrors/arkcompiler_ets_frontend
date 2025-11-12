@@ -49,6 +49,7 @@ fuzz/class_body_interface.ets
 fuzz/repeated_del.ets
 fuzz/create_partial.ets
 namespace_class_decl.ets
+import_namespaces.ets
 
 #30971
 non_null_number_as_index.ets

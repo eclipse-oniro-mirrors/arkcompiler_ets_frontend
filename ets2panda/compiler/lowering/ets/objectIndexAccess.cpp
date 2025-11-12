@@ -39,7 +39,7 @@ ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *pa
     auto indexSymbol = Gensym(checker->Allocator());
     auto *const memberExpression = assignmentExpression->Left()->AsMemberExpression();
     ir::Expression *loweringResult = nullptr;
-    ir::AstNode *setter = nullptr;
+    [[maybe_unused]] ir::AstNode *setter = nullptr;
     // Generate call to $_get to handle the chained assignment expression
     if (assignmentExpression->Parent()->IsExpression() || assignmentExpression->Parent()->IsVariableDeclarator()) {
         ArenaVector<ir::Statement *> blockStatements(checker->Allocator()->Adapter());
@@ -74,7 +74,6 @@ ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *pa
     ES2PANDA_ASSERT(loweringResult != nullptr && setter != nullptr);
     loweringResult->SetParent(assignmentExpression->Parent());
     loweringResult->SetRange(assignmentExpression->Range());
-    setter->AddModifier(ir::ModifierFlags::ARRAY_SETTER);
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
                                                                   NearestScope(assignmentExpression->Parent()));
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
