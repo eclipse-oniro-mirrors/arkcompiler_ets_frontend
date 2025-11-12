@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -164,6 +164,7 @@ private:
     bool ParseCompileContextInfo(const std::string compileContextInfoPath);
     bool ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson);
     bool ParseReplaceRecords(nlohmann::json &compileContextInfoJson);
+    bool ParseCompileEntries(nlohmann::json &compileContextInfoJson);
     bool CheckReplaceRecordsIsExist(const std::vector<std::string> &replaceRecords);
     bool IsAbcFile(const std::string &fileName, const std::string &inputExtension);
     es2panda::parser::ScriptKind scriptKind_ {es2panda::parser::ScriptKind::SCRIPT};

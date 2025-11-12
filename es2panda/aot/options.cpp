@@ -402,6 +402,20 @@ bool Options::ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVer
     return true;
 }
 
+bool Options::ParseCompileEntries(nlohmann::json &compileContextInfoJson)
+{
+    for (const auto& elem : compileContextInfoJson["compileEntries"]) {
+        if (elem.is_string()) {
+            compilerOptions_.compileContextInfo.compileEntries.push_back(elem.get<std::string>());
+        } else {
+            std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
+                         "', compileEntries type is incorrect." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
 {
     std::stringstream ss;
@@ -442,8 +456,7 @@ bool Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
         }
     }
     compilerOptions_.compileContextInfo.externalPkgNames = externalPkgNames;
-    compilerOptions_.compileContextInfo.compileEntries = compileContextInfoJson["compileEntries"];
-    if (!ParseUpdateVersionInfo(compileContextInfoJson)) {
+    if (!ParseCompileEntries(compileContextInfoJson) || !ParseUpdateVersionInfo(compileContextInfoJson)) {
         return false;
     }
     if (compileContextInfoJson.contains("replaceRecords")) {
