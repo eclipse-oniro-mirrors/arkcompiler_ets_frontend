@@ -30,9 +30,9 @@ defines:
     ref: GET_INDEX_METHOD
   - name: $_set
     ref: SET_INDEX_METHOD
-  - name: <get>
+  - name: '%%get-'
     ref: GETTER_METHOD_BEGIN
-  - name: <set>
+  - name: '%%set-'
     ref: SETTER_METHOD_BEGIN
   - name: $_iterator
     ref: ITERATOR_METHOD
@@ -170,7 +170,7 @@ defines:
     ref: ARRAY
   - name: 'gradual'
     ref: GRADUAL_TYPE_NAME
-  - name: '<property>'
+  - name: '%%property-'
     ref: PROPERTY
   - name: 'Any'
     ref: ANY_TYPE_NAME
@@ -789,7 +789,7 @@ signatures:
     ref: BUILTIN_STRING_CHAR_AT
 
   - callee: BUILTIN_ARRAY
-    method_name: <get>length
+    method_name: '%%get-length'
     params: []
     return_type: PRIMITIVE_INT
     ref: BUILTIN_ARRAY_LENGTH

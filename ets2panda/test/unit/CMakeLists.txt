@@ -39,6 +39,10 @@ ets2panda_add_gtest(es2panda_name_mangling_tests
     CPP_SOURCES name_mangling_test.cpp
 )
 
+ets2panda_add_gtest(es2panda_name_mangling_disasm_tests
+    CPP_SOURCES name_mangling_disasm_test.cpp
+)
+
 ets2panda_add_gtest(es2panda_union_normalization_tests_1
     CPP_SOURCES union_normalization_test_1.cpp
 )

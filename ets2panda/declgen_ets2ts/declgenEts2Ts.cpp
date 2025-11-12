@@ -662,7 +662,7 @@ void TSDeclGen::ProcessParameterName(varbinder::LocalVariable *param)
 
 void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
 {
-    if (std::string(param->Name()).find("<property>") != std::string::npos) {
+    if (std::string(param->Name()).find("%%property-") != std::string::npos) {
         return;
     }
 
@@ -932,7 +932,7 @@ void TSDeclGen::GenObjectType(const checker::ETSObjectType *objectType)
     } else {
         if (typeStr == "Exception" || typeStr == "NullPointerError") {
             OutDts("Error");
-        } else if (size_t partialPos = typeStr.find("$partial"); partialPos != std::string::npos) {
+        } else if (size_t partialPos = typeStr.find("%%partial-"); partialPos != std::string::npos) {
             OutDts("Partial<", typeStr.substr(0, partialPos), ">");
         } else {
             OutDts(typeStr);
@@ -1794,7 +1794,7 @@ void TSDeclGen::GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interf
 {
     const auto interfaceName = interfaceDecl->Id()->Name().Mutf8();
     DebugPrint("GenInterfaceDeclaration: " + interfaceName);
-    if (interfaceName.find("$partial") != std::string::npos) {
+    if (interfaceName.find("%%partial-") != std::string::npos) {
         return;
     }
     if (!ShouldEmitDeclaration(interfaceDecl)) {
@@ -1952,7 +1952,7 @@ void TSDeclGen::PrepareClassDeclaration(const ir::ClassDefinition *classDef)
 
 bool TSDeclGen::ShouldSkipClassDeclaration(const std::string_view &className) const
 {
-    return className.find("$partial") != std::string::npos;
+    return className.find("%%partial-") != std::string::npos;
 }
 
 void TSDeclGen::EmitDeclarationPrefix(const ir::ClassDefinition *classDef, const std::string &typeName,
@@ -2119,7 +2119,7 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         } else if (prop->IsClassProperty()) {
             const auto classProp = prop->AsClassProperty();
             const auto propName = GetKeyIdent(classProp->Key())->Name().Mutf8();
-            if (propName.find("<property>") != std::string::npos) {
+            if (propName.find("%%property-") != std::string::npos) {
                 continue;
             }
             GenPropDeclaration(classProp);

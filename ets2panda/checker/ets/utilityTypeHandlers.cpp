@@ -252,7 +252,7 @@ void ETSChecker::ValidateReturnTypeUtilityType(const Type *typeToValidate,
 
 static std::pair<util::StringView, util::StringView> GetPartialClassName(ETSChecker *checker, ir::AstNode *typeNode)
 {
-    // Partial class name for class 'T' will be 'T$partial'
+    // Partial class name for class 'T' will be '%%partial-T'
     auto const addSuffix = [checker](util::StringView name) {
         std::string newName =
             util::NameMangler::GetInstance()->CreateMangledNameByTypeAndName(util::NameMangler::PARTIAL, name);
@@ -338,9 +338,9 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
     BuildBasicClassProperties(partialClassDef);
 
     // If class prototype was created before, then we cached it's type. In that case return it.
-    // This handles cases where a Partial<T> presents in class T, because during generating T$partial we'd need the
-    // complete class T$partial which is not present at the time. Binding it's own type for it however will make it
-    // possible to resolve member references later, when the full T$partial class was created.
+    // This handles cases where a Partial<T> presents in class T, because during generating %%partial-T we'd need the
+    // complete class %%partial-T which is not present at the time. Binding it's own type for it however will make it
+    // possible to resolve member references later, when the full %%partial-T class was created.
     if (const auto found = NamedTypeStack().find(partialClassDef->TsType()); found != NamedTypeStack().end()) {
         return *found;
     }

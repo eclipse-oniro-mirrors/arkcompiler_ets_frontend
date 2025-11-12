@@ -186,11 +186,11 @@ static bool IsGeneratedForUtilityType(ir::AstNode const *ast)
 {
     if (ast->IsClassDeclaration()) {
         auto &name = ast->AsClassDeclaration()->Definition()->Ident()->Name();
-        return name.EndsWith(checker::PARTIAL_CLASS_SUFFIX);
+        return name.StartsWith(checker::PARTIAL_CLASS_PREFIX);
     }
     if (ast->IsTSInterfaceDeclaration()) {
         auto &name = ast->AsTSInterfaceDeclaration()->Id()->Name();
-        return name.EndsWith(checker::PARTIAL_CLASS_SUFFIX);
+        return name.StartsWith(checker::PARTIAL_CLASS_PREFIX);
     }
     return false;
 }

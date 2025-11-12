@@ -31,8 +31,8 @@ function main() {
 }
 
 /* @@? 18:1 Error Syntax error ESY0138: Invalid Type. */
-/* @@? 21:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type 'I$partial' */
-/* @@? 22:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type 'I$partial' */
+/* @@? 21:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type '%%partial-I' */
+/* @@? 22:13 Error Semantic error ESE0087: Property 'var_one' does not exist on type '%%partial-I' */
 /* @@? 27:18 Error Semantic error ESE0065: type I has no property named var_one */
 /* @@? 28:11 Error Semantic error ESE0087: Property 'var_one' does not exist on type 'I' */
 /* @@? 29:9 Error Semantic error ESE0351: Variable 'a' has already been declared. */

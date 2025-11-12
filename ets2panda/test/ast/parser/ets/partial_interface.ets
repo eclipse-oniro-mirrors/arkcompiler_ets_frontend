@@ -33,6 +33,6 @@ function main(){
 }
 
 
-/* @@? 28:32 Error Semantic error ESE0065: type I$partial has no property named a */
+/* @@? 28:32 Error Semantic error ESE0065: type %%partial-I has no property named a */
 /* @@? 29:34 Error Semantic error ESE0319: Type '"abcd"' is not compatible with type 'Int|undefined' at property 'i' */
 /* @@? 32:14 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
