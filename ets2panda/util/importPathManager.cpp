@@ -65,7 +65,7 @@ namespace fs = std::experimental::filesystem;
 #endif
 namespace ark::es2panda::util {
 
-constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 4;
+constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 8;
 
 static bool IsCompatibleExtension(const std::string &extension)
 {
@@ -815,8 +815,8 @@ ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string
 std::string_view ImportPathManager::DirOrDirWithIndexFile(StringView dir) const
 {
     // Supported index files: keep this checking order
-    std::array<std::string, SUPPORTED_INDEX_FILES_SIZE> supportedIndexFiles = {"index.ets", "index.sts", "index.ts",
-                                                                               "index.d.ets"};
+    std::array<std::string, SUPPORTED_INDEX_FILES_SIZE> supportedIndexFiles = {
+        "index.ets", "index.sts", "index.ts", "index.d.ets", "Index.ets", "Index.sts", "Index.ts", "Index.d.ets"};
     for (const auto &indexFile : supportedIndexFiles) {
         std::string indexFilePath = dir.Mutf8() + ark::os::file::File::GetPathDelim().at(0) + indexFile;
         if (ark::os::file::File::IsRegularFile(indexFilePath)) {

@@ -278,7 +278,7 @@ export abstract class BaseMode {
                 'One or more errors occured.'
             );
             this.logger.printError(logData);
-            return;
+            throw new Error("Run failed.")
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
@@ -577,7 +577,7 @@ export abstract class BaseMode {
         Ets2panda.getInstance(this.buildConfig)
         // We do not need any queues just compile a bunch of files
         // Ets2panda will build it simultaneous
-        this.compileSimultaneous('SimultaneousBuildId', {
+        let res = this.compileSimultaneous('SimultaneousBuildId', {
             fileList: [...this.entryFiles],
             fileInfo: {
                 input: entryFile,
@@ -591,7 +591,10 @@ export abstract class BaseMode {
             },
             type: CompileJobType.ABC
         });
-        Ets2panda.destroyInstance()
+        Ets2panda.destroyInstance();
+        if (!res) {
+            throw new Error("Simultaneous build failed.")
+        }
     }
 
     public async runParallel(): Promise<void> {
@@ -640,7 +643,7 @@ export abstract class BaseMode {
                 'One or more errors occured.'
             );
             this.logger.printError(logData);
-            return;
+            throw new Error("Parallel run failed.")
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
@@ -698,7 +701,7 @@ export abstract class BaseMode {
         // Just to init
         Ets2panda.getInstance(this.buildConfig)
 
-        let success: boolean = false;
+        let success: boolean = true;
         while (jobs.length > 0) {
             let job: CompileJobInfo = jobs.shift()!;
             const res: boolean = this.declgenV1(job)
