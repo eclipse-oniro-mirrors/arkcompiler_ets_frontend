@@ -135,3 +135,6 @@ non_null_number_as_index.ets
 
 #31069
 type_error_test.ets
+
+#31442
+import_namespaces.ets
