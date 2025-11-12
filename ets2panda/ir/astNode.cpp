@@ -72,9 +72,9 @@ AstNode::AstNode(AstNode const &other)
         return GetHistoryNode()->parent_->HasExportAlias();
     }
 #ifndef NDEBUG
-    return (GetHistoryNode()->astNodeFlags_ & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+    return (GetHistoryNode()->flags_ & ModifierFlags::EXPORT_WITH_ALIAS) != 0;
 #else
-    return (Flags() & AstNodeFlags::HAS_EXPORT_ALIAS) != 0;
+    return (Modifiers() & ModifierFlags::EXPORT_WITH_ALIAS) != 0;
 #endif
 }
 

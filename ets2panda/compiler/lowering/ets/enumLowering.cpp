@@ -356,11 +356,14 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateClass(ir::TSEnumDeclaration *cons
 
     if (enumDecl->IsExported()) {
         classDecl->AddModifier(ir::ModifierFlags::EXPORT);
+        classDef->AddModifier(ir::ModifierFlags::EXPORT);
         program_->GlobalClass()->AddToExportedClasses(classDecl);
     } else if (enumDecl->IsDefaultExported()) {
         classDecl->AddModifier(ir::ModifierFlags::DEFAULT_EXPORT);
+        classDef->AddModifier(ir::ModifierFlags::DEFAULT_EXPORT);
     } else if (enumDecl->HasExportAlias()) {
-        classDecl->AddAstNodeFlags(ir::AstNodeFlags::HAS_EXPORT_ALIAS);
+        classDecl->AddModifier(ir::ModifierFlags::EXPORT_WITH_ALIAS);
+        classDef->AddModifier(ir::ModifierFlags::EXPORT_WITH_ALIAS);
     }
 
     classDef->SetOrigEnumDecl(enumDecl);
