@@ -162,7 +162,6 @@ public:
         parseList_.clear();
     }
 
-    static std::string TruncateFileExtension(std::string path, bool &hasExtension);
     util::StringView FormModuleName(const util::Path &path, const lexer::SourcePosition &srcPos);
     ImportMetadata GatherImportMetadata(parser::Program *program, ImportFlags importFlags,
                                         ir::StringLiteral *importPath);

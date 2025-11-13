@@ -2986,10 +2986,6 @@ static checker::ETSObjectType *ResolveObjectTypeFromPreferredType(ETSChecker *ch
         preferredType = preferredType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
     }
 
-    if (preferredType->IsETSAsyncFuncReturnType()) {
-        preferredType = preferredType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
-    }
-
     if (preferredType->IsETSUnionType()) {
         return ResolveUnionObjectTypeForObjectLiteral(checker, expr, preferredType->AsETSUnionType());
     }

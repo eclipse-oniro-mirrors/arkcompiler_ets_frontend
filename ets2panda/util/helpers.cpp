@@ -821,7 +821,9 @@ bool Helpers::IsNumericGlobalBuiltIn(checker::Type *type, checker::ETSChecker *c
 
 bool Helpers::IsStdLib(const parser::Program *program)
 {
-    if (program->AbsoluteName().Utf8().find("stdlib") != std::string_view::npos) {
+    if (program->AbsoluteName().Utf8().find("stdlib") != std::string_view::npos ||
+        program->AbsoluteName().Utf8().find("std.") != std::string_view::npos ||
+        program->AbsoluteName().Utf8().find("escompat.") != std::string_view::npos) {
         return true;
     }
 
