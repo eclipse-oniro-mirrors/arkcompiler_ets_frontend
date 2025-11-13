@@ -954,7 +954,7 @@ export class Lsp {
     try {
       let ptr = global.es2panda._getTokenTypes(ctx, position);
       let typeInfo = new LspTokenTypeInfo(ptr);
-      if (typeof typeInfo.type == "string" && typeInfo.type.includes("native")) {
+      if (typeof typeInfo.type === 'string' && typeInfo.type.includes('native')) {
         return new LspTokenNativeInfo(typeInfo.name, true);
       }
       else {
