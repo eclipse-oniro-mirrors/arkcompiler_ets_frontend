@@ -1,0 +1,2 @@
+The input file 'test/compiler/bytecodehar/projects/bytecodehar-compile-context-info/compileContextInfo.json', compileEntries type is incorrect.
+

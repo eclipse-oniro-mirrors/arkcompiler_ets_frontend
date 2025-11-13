@@ -1,0 +1,2 @@
+bytecodehar-test:&bytecodehar/bytecodehartest&
+hap-file-exec:&myapp/hap-file-exec&

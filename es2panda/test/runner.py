@@ -1126,6 +1126,7 @@ class CompilerProjectTest(Test):
             es2abc_cmd = self.gen_es2abc_cmd(runner, '@' + self.files_info_path, output_abc_name)
         compile_context_info_path = path.join(path.join(self.projects_path, self.project), "compileContextInfo.json")
         if path.exists(compile_context_info_path):
+            compile_context_info_path = os.path.relpath(compile_context_info_path)
             es2abc_cmd.append("%s%s" % ("--compile-context-info=", compile_context_info_path))
         if path.exists(self.modifyPkgNamePath):
             with open(self.modifyPkgNamePath, 'r') as file:
