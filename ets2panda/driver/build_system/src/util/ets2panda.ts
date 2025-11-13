@@ -40,7 +40,6 @@ import {
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
-    ETSCACHE_SUFFIX,
     DECL_TS_SUFFIX,
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
@@ -82,9 +81,8 @@ export class Ets2panda {
     private readonly buildSdkPath: string;
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
     private readonly cacheDir: string;
-    private readonly declgenV2OutDir?: string;
+    private readonly declgenV2OutDir: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
-    private readonly projectRootPath: string;
     private readonly recordType?: 'ON' | 'OFF';
 
     // NOTE: should be Ets2panda Wrapper Module
@@ -98,13 +96,7 @@ export class Ets2panda {
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
         this.recordType = buildConfig.recordType;
-        this.projectRootPath = buildConfig.projectRootPath;
-
-        // NOTE: uncomment if you really need this
-        // NOTE: decl files are internal files, not for external usage!!!!!
-        // this[.]declgenV2OutDir [=] buildConfig[.]declgenV2OutPath;
-        this.declgenV2OutDir = undefined;
-
+        this.declgenV2OutDir = buildConfig.declgenV2OutPath;
         this.pluginDriver.initPlugins(buildConfig)
     }
 
@@ -206,24 +198,19 @@ export class Ets2panda {
                 // emit declarations based on relative location of the file in a project,
                 // since es2panda doesn't know about ohos modules right now
                 const relativeDeclPath = changeFileExtension(
-                    path.relative(this.projectRootPath, job.fileInfo.output),
-                    ETSCACHE_SUFFIX
+                    path.relative(job.fileInfo.moduleRoot, job.fileInfo.input),
+                    DECL_ETS_SUFFIX
                 )
-                const outputDeclFilePath = path.resolve(this.cacheDir, relativeDeclPath);
+                const outputDeclFilePath = path.resolve(this.declgenV2OutDir, relativeDeclPath);
                 ensurePathExists(outputDeclFilePath)
 
                 // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
                 arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
                 this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
 
-                // Copy file to declgenV2OutDir
-                if (this.declgenV2OutDir) {
-                    const newPath = path.resolve(this.declgenV2OutDir, relativeDeclPath);
-                    ensurePathExists(newPath)
-                    fs.copyFileSync(outputDeclFilePath, newPath)
-                }
                 declGenCb?.();
             }
+
             if (job.type & CompileJobType.ABC) {
                 ensurePathExists(outputFilePath);
                 statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
@@ -317,27 +304,16 @@ export class Ets2panda {
                     // emit declarations based on relative location of the file in a project,
                     // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(
-                        path.relative(this.projectRootPath, file),
-                        ETSCACHE_SUFFIX
+                        path.relative(job.fileInfo.moduleRoot, file),
+                        DECL_ETS_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
-                        this.cacheDir,
+                        this.declgenV2OutDir,
                         relative
                     )
                     ensurePathExists(declEtsOutputPath);
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${file}`)
-
-                    // Copy file to declgenV2OutDir
-                    if (this.declgenV2OutDir) {
-                        const newPath = path.resolve(
-                            this.declgenV2OutDir,
-                            job.fileInfo.moduleName,
-                            relative
-                        )
-                        ensurePathExists(newPath)
-                        fs.copyFileSync(declEtsOutputPath, newPath)
-                    }
                 }
                 declGenCb?.();
             }
