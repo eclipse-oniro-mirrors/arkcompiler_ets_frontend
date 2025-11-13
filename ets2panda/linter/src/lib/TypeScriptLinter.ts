@@ -9699,9 +9699,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
+    const parent = node.parent;
 
     const cb = (): void => {
-      const parent = node.parent;
       if (!parent) {
         return;
       }
@@ -9729,13 +9729,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
 
         const autofix = this.autofixer?.removeImport(node, parent);
-        this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+        this.incrementCounters(node, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+
+        return;
       }
+
+      const importDecl = ts.findAncestor(node, ts.isImportDeclaration);
+      if (!importDecl) {
+        return;
+      }
+
+      const autofix = this.autofixer?.removeNode(importDecl);
+      this.incrementCounters(node, FaultID.LimitedStdLibNoImportConcurrency, autofix);
     };
 
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
   }
-
 
   private checkWorkerSymbol(symbol: ts.Symbol, node: ts.Node): void {
     const cb = (): void => {
@@ -9870,7 +9879,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private checkNodeForUsage(node: ts.Node, symbolName: string, modules: string[], cb: () => void): void {
     const symbol = this.tsUtils.trueSymbolAtLocation(node);
-    if (symbol) {
+    if (symbol && symbol.name !== 'unknown') {
       this.checkSymbolAndExecute(symbol, [symbolName], modules, cb);
 
       return;
