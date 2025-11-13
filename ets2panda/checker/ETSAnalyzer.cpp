@@ -1467,7 +1467,7 @@ checker::Type *ETSAnalyzer::GetSmartType(ir::AssignmentExpression *expr, checker
     return smartType;
 }
 
-static ir::MethodDefinition const *ResolveMethodDefinition(const ir::Expression *const expression, ETSChecker *checker)
+static checker::Type const *ResolveMethodDefinition(const ir::Expression *const expression, ETSChecker *checker)
 {
     if (!expression->IsMemberExpression()) {
         return nullptr;
@@ -1492,9 +1492,7 @@ static ir::MethodDefinition const *ResolveMethodDefinition(const ir::Expression 
     }
 
     if (variable != nullptr) {
-        if (variable->Declaration() != nullptr && variable->Declaration()->Node()->IsMethodDefinition()) {
-            return variable->Declaration()->Node()->AsMethodDefinition();
-        }
+        return variable->TsType();
     }
 
     return nullptr;
@@ -1503,13 +1501,16 @@ static ir::MethodDefinition const *ResolveMethodDefinition(const ir::Expression 
 static bool IsInvalidMethodAssignment(const ir::AssignmentExpression *const expr, ETSChecker *checker)
 {
     auto left = expr->Left();
-    if (auto const *methodDefinition = ResolveMethodDefinition(left, checker); methodDefinition != nullptr) {
-        if (!methodDefinition->IsSetter() &&
-            std::none_of(methodDefinition->Overloads().cbegin(), methodDefinition->Overloads().cend(),
-                         [](const auto *overload) { return overload->IsSetter(); })) {
-            checker->LogError(diagnostic::METHOD_ASSIGNMENT, left->Start());
-            return true;
+    if (auto const *methodType = ResolveMethodDefinition(left, checker);
+        methodType != nullptr && methodType->IsETSMethodType()) {
+        auto const callSigs = methodType->AsETSFunctionType()->CallSignatures();
+        for (auto callSig : callSigs) {
+            if (callSig->HasSignatureFlag(SignatureFlags::SETTER)) {
+                return false;
+            }
         }
+        checker->LogError(diagnostic::METHOD_ASSIGNMENT, left->Start());
+        return true;
     }
     return false;
 }
