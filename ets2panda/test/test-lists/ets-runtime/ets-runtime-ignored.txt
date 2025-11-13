@@ -134,3 +134,12 @@ generic_union.ets
 register_overflow.ets
 spill_fill_virtual_range.ets
 union_call.ets
+
+#31475
+as_string.ets
+
+#31475
+readonly_array/readonly_array_arg.ets
+readonly_array/readonly_array_field.ets
+readonly_array/readonly_array_var.ets
+finallyClauseThrow.ets
