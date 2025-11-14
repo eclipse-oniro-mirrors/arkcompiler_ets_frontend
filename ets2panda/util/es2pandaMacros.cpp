@@ -44,7 +44,7 @@ void CompilerBugAction(const lexer::SourcePosition &position)
     std::cerr << "." << std::endl;
 
     std::cerr << "PLEASE submit a bug report to ";
-    std::cerr << "https://gitee.com/openharmony/arkcompiler_ets_frontend/issues";
+    std::cerr << "https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues";
     std::cerr << " and include the crash backtrace, source code and associated run script. ";
     std::cerr << std::endl;
 }
