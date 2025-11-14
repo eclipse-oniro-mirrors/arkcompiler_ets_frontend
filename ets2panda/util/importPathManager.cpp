@@ -177,7 +177,7 @@ std::chrono::system_clock::time_point GetFileCreationTime([[maybe_unused]] const
 #endif
 }
 
-bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &importData)
+bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &importData, bool isStdlib)
 {
 #ifdef USE_UNIX_SYSCALL
     // hack for builds when no filesystem is included
@@ -196,8 +196,14 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
         importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
         return true;
     }
+    if (!isStdlib) {
+        return false;
+    }
 
     // since was not found in memory cache, take from disk cache
+    if (!GetCacheCanBeUpdated()) {
+        return false;
+    }
     if (fs::exists(fileNameToCheck) && fs::is_regular_file(fileNameToCheck)) {
         if (fs::file_size(fileNameToCheck) == 0) {
             return false;
@@ -216,7 +222,11 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
             return true;
         }
         // means that etsstdlib.abc file was updated, so we need to update declarations
-        SetCacheUpdateIsNeeded(true);
+        // and block futher disk cache checking
+        SetCacheCannotBeUpdated();
+        for (const auto &entry : fs::directory_iterator(arktsConfig_->CacheDir())) {
+            fs::remove_all(entry.path());
+        }
     }
     return false;
 #endif
@@ -229,7 +239,7 @@ void ImportPathManager::ProcessExternalLibraryImportSimple(ImportMetadata &impor
     ES2PANDA_ASSERT(it != arktsConfig_->Dependencies().cend());
     const auto &externalModuleImportData = it->second;
 
-    if (DeclarationIsInCache(importData)) {
+    if (DeclarationIsInCache(importData, false)) {
         return;
     }
 
@@ -281,8 +291,7 @@ std::wstring s2ws(const std::string &str)
     return wstrTo;
 }
 
-static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl,
-                                         const bool cacheUpdateIsNeeded)
+static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     std::wstring semNameWide = s2ws(semName);
@@ -292,54 +301,41 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         return;
     }
-
     DWORD waitRes = WaitForSingleObject(sem, INFINITE);
     if (waitRes != WAIT_OBJECT_0) {
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         CloseHandle(sem);
         return;
     }
-    auto flags = _O_CREAT | _O_WRONLY;
-    if (cacheUpdateIsNeeded) {
-        flags |= _O_TRUNC;
-    } else {
-        flags |= _O_EXCL;
-    }
-    int fd = _open(absDecl.c_str(), flags, 0644);
-    if (fd == -1) {
+    HANDLE fd =
+        CreateFile(absDecl.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (fd == INVALID_HANDLE_VALUE) {
         ReleaseSemaphore(sem, 1, nullptr);
         CloseHandle(sem);
         return;
     }
-
-    int res = _write(fd, processed.data(), processed.size());
-    if (res == -1) {
+    DWORD written;
+    if (!WriteFile(fd, processed.data(), processed.size(), &written, NULL)) {
         LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
     }
-    _commit(fd);
-    _close(fd);
+    CloseHandle(fd);
 
     ReleaseSemaphore(sem, 1, nullptr);
     CloseHandle(sem);
 }
 #else
 #ifndef USE_UNIX_SYSCALL
-static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl,
-                                       const bool cacheUpdateIsNeeded)
+#include <sys/file.h>
+static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
+    sem_wait(sem);
     if (sem == SEM_FAILED) {
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         return;
     }
-    auto flags = O_CREAT | O_WRONLY;
-    if (cacheUpdateIsNeeded) {
-        flags |= O_TRUNC | O_CLOEXEC;
-    } else {
-        flags |= O_EXCL;
-    }
-    sem_wait(sem);
+    auto flags = O_CREAT | O_WRONLY | O_EXCL;
     int fd = open(absDecl.c_str(), flags, 0644);
     if (fd == -1) {
         sem_post(sem);
@@ -347,12 +343,17 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
         sem_unlink(semName.c_str());
         return;
     }
+    flock(fd, LOCK_EX);
 
     int res = write(fd, processed.data(), processed.size());
     if (res == -1) {
         LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
     }
-    fsync(fd);
+    int fdres = fsync(fd);
+    if (fdres == -1) {
+        LOG(FATAL, ES2PANDA) << "Failed to sync a file for declaration: " << absDecl;
+    }
+    flock(fd, LOCK_UN);
     close(fd);
     sem_post(sem);
     sem_close(sem);
@@ -362,8 +363,7 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
 #endif
 
 void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
-                           [[maybe_unused]] const std::string &processed,
-                           [[maybe_unused]] const bool cacheUpdateIsNeeded)
+                           [[maybe_unused]] const std::string &processed)
 {
 #ifdef USE_UNIX_SYSCALL
     return;
@@ -371,9 +371,9 @@ void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
     const std::string absDecl = fs::absolute(declFileName).string();
     fs::create_directories(fs::path(absDecl).parent_path());
 #ifdef PANDA_TARGET_WINDOWS
-    CreateDeclarationFileWindows(processed, absDecl, cacheUpdateIsNeeded);
+    CreateDeclarationFileWindows(processed, absDecl);
 #else
-    CreateDeclarationFileLinux(processed, absDecl, cacheUpdateIsNeeded);
+    CreateDeclarationFileLinux(processed, absDecl);
 #endif
 #endif
 }
@@ -427,8 +427,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
             importData.ohmUrl = util::UString(ohmUrl, allocator_).View().Utf8();
 
             const std::string processed = DeleteEscapeSymbols(ss.str());
-            const bool cacheUpdateFlag = GetCacheUpdateIsNeeded();
-            CreateDeclarationFile(declFileName, processed, cacheUpdateFlag);
+            CreateDeclarationFile(declFileName, processed);
         }
         return;  // if we reach this line, we already took that one class and created that one d.ets, no need to
                  // continue
@@ -470,13 +469,15 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
         importData.declPath = externalModuleImportData.Path();
         return ProcessExternalLibraryImportSimple(importData);
     }
+    {
+        std::scoped_lock<std::shared_mutex> processStdlib(m_);
+        // trying to find declaration in memory and disk caches
+        if (DeclarationIsInCache(importData, true)) {
+            return;
+        }
 
-    // trying to find declaration in memory and disk caches
-    if (DeclarationIsInCache(importData)) {
-        return;
+        ProcessExternalLibraryImportFromEtsstdlib(importData, externalModuleImportData.Path());
     }
-
-    ProcessExternalLibraryImportFromEtsstdlib(importData, externalModuleImportData.Path());
 }
 
 // If needed, the result of this function can be cached
