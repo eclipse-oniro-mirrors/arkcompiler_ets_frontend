@@ -50,7 +50,8 @@
     "IncrementCompileTest1": "node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/hello world from harA!/hello world from harA! (modified)/' \"$(pwd)/test/e2e/IncrementDemo/harB/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
     "IncrementCompileTest2": "node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/console.log(strA)/console.log(strA + \"modified\")/' \"$(pwd)/test/e2e/IncrementDemo/entry/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
     "simultaneous_compiling:namespace_import": "node ./dist/entry.js test/simultaneous_compiling/namespace_import/build_config.json",
-    "run_tests:all": "npm run build && npm run gen_abc_single && npm run gen_abc_two && npm run simultaneous_compiling:namespace_import && npm run interop_sdk && npm run gen_abc_multi"
+    "run_tests:all": "npm run build && npm run gen_abc_single && npm run gen_abc_two && npm run simultaneous_compiling:namespace_import && npm run interop_sdk && npm run gen_abc_multi",
+    "run_tests:ci": "npm run build && npm run gen_abc_single && npm run gen_abc_two && npm run simultaneous_compiling:namespace_import"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
