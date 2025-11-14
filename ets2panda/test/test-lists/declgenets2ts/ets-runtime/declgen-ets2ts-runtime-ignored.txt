@@ -1,4 +1,6 @@
 #FailKind.SEGFAULT_FAIL - 3 tests:
+AnnotationConstExpression.ets
+annotation_tests/annotationUsageSingleFileds04.ets
 lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 #FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
 StringFasta.ets
