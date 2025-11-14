@@ -54,7 +54,6 @@ export interface BuildBaseConfig {
     isBuildConfigModified?: boolean;
     recordType?: 'OFF' | 'ON';
     dumpDependencyGraph?: boolean;
-    clusteredBuild?: boolean;
     dumpPerf?: boolean;
 }
 

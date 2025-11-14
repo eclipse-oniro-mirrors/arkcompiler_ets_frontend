@@ -41,7 +41,7 @@ export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
 export const KIT_CONFIGS_PATH_FROM_SDK: string = '../dynamic/build-tools/ets-loader/kit_configs';
 
-export const DEFAULT_WORKER_NUMS: number = 6;
+export const DEFAULT_WORKER_NUMS: number = 3;
 
 export const ETS_1_1 = 'dynamic';
 export const ETS_1_1_INTEROP = 'dynamic-interop';
@@ -69,10 +69,12 @@ export const KOALA_WRAPPER_PATH_FROM_SDK: string = process.env.USE_KOALA_LIBARKT
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'
 export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plugin/lib/entry.js'
 
+
+// Build control constants
+export const ENABLE_CLUSTERS: boolean = true;
 // Optimal number for each application should be selected manually right now
-export const CLUSTER_FILES_TRESHOLD: number = 100;
-// Currently there are bugs in cache generation on applications
-export const ENABLE_DECL_CACHE: boolean = true;
+export const CLUSTER_FILES_TRESHOLD: number = 460;
+// Declaration cache is not fixed right now
+export const ENABLE_DECL_CACHE: boolean = false;
 // Synchronize execution on declaration generation.
-// Current scheduling algorithm is not optimal, therefore disabled by default
 export const ENABLE_DECLARATION_BARRIER: boolean = true;

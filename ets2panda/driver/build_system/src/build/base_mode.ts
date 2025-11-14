@@ -25,6 +25,8 @@ import {
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
     CLUSTER_FILES_TRESHOLD,
+    ENABLE_CLUSTERS,
+    DEFAULT_WORKER_NUMS
 } from '../pre_define';
 import {
     ensurePathExists,
@@ -603,6 +605,10 @@ export abstract class BaseMode {
     }
 
     public async runParallel(): Promise<void> {
+        if (ENABLE_CLUSTERS && this.entryFiles.size <= CLUSTER_FILES_TRESHOLD) {
+            await this.runSimultaneous();
+            return;
+        }
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         const allOutputs: string[] = [];
@@ -614,7 +620,7 @@ export abstract class BaseMode {
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
 
-        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit);
+        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit, false, DEFAULT_WORKER_NUMS);
         const workerFactory = new DriverProcessFactory(
             path.resolve(__dirname, 'compile_process_worker.js'),
             ['process child:' + __filename],
@@ -692,7 +698,7 @@ export abstract class BaseMode {
 
     public async generateDeclarationV1(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
@@ -729,7 +735,7 @@ export abstract class BaseMode {
 
     public async generateDeclarationV1Parallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')

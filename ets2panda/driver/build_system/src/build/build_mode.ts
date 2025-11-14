@@ -44,9 +44,9 @@ export class BuildMode extends BaseMode {
             // RUN: Executes tasks sequentially in a single process and single thread
             await super.run();
         } else {
-            this.logger.printInfo('Run simultaneous (default)')
-            // Default fallback: same as RUN_SIMULTANEOUS
-            await super.runSimultaneous();
+            this.logger.printInfo("Run parallel (default)")
+            // Default fallback: same as RUN_PARALLEL
+            await super.runParallel();
         }
 
         this.statsRecorder.record(RecordEvent.END);
