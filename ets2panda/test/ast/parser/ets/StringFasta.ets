@@ -170,6 +170,7 @@ function main(): void {
 /* @@? 112:16 Error TypeError: Static property 'fastaRepeat' must be accessed through it's class 'StringFasta' */
 /* @@? 112:16 Error TypeError: No matching call signature for fastaRepeat(Int, "GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA") */
 /* @@? 112:32 Error TypeError: Property 'count' must be accessed through 'this' */
+/* @@? 112:48 Error TypeError: Static property 'ALU' must be accessed through it's class 'StringFasta' */
 /* @@? 113:16 Error TypeError: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
 /* @@? 113:16 Error TypeError: No matching call signature for fastaRandom(Int, IUB) */
 /* @@? 113:32 Error TypeError: Property 'count' must be accessed through 'this' */

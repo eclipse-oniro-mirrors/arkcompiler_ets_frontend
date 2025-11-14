@@ -1119,6 +1119,12 @@ static ir::Expression *AsRValue(ir::Identifier *ident)
     return nullptr;
 }
 
+static bool IsValidScopeVarResult(const ir::Identifier *ident, varbinder::Variable *var)
+{
+    return ident->Parent()->IsMemberExpression() || !var->Declaration()->Node()->IsClassProperty() ||
+           !var->GetScope()->Node()->IsClassDefinition() || var->GetScope()->Node()->AsClassDefinition()->IsGlobal();
+}
+
 static varbinder::Variable *ResolveIdentifier(const ir::Identifier *ident)
 {
     if (ident->Variable() != nullptr) {
@@ -1130,7 +1136,16 @@ static varbinder::Variable *ResolveIdentifier(const ir::Identifier *ident)
         varbinder::ResolveBindingOptions::ALL_DECLARATION | varbinder::ResolveBindingOptions::ALL_VARIABLES;
 
     varbinder::Scope *scope = NearestScope(ident);
-    return scope != nullptr ? scope->Find(ident->Name(), option).variable : nullptr;
+    do {
+        varbinder::Variable *res = scope->Find(ident->Name(), option).variable;
+        if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr &&
+            IsValidScopeVarResult(ident, res)) {
+            return res;
+        }
+        scope = scope->Parent();
+    } while (scope != nullptr);
+
+    return nullptr;
 }
 
 // NOTE(dkofanov): Remove after enum refactoring. The reason for this function is to limit contexts where

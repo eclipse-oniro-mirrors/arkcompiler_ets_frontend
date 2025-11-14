@@ -153,6 +153,7 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     method->Function()->AddModifier(method->Modifiers());
     paramScope->BindNode(func);
     functionScope->BindNode(func);
+    decl->BindNode(method);
 
     if (field->HasAnnotations()) {
         ArenaVector<ir::AnnotationUsage *> functionAnnotations(ctx->Allocator()->Adapter());

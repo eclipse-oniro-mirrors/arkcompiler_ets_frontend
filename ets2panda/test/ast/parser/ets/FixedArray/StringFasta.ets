@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,7 +82,7 @@ export class StringFasta  {
         return ret;
     }
     static fastaRandom(n : int, table : HashMap<Char, Double>): int {
-        let line : FixedArray<char> = new char[60];
+        let line : char[] = new char[60];
         makeCumulative(table);
         let ret : int = 0;
         while(n > 0)
@@ -170,6 +170,7 @@ function main(): void {
 /* @@? 112:16 Error TypeError: Static property 'fastaRepeat' must be accessed through it's class 'StringFasta' */
 /* @@? 112:16 Error TypeError: No matching call signature for fastaRepeat(Int, "GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA") */
 /* @@? 112:32 Error TypeError: Property 'count' must be accessed through 'this' */
+/* @@? 112:48 Error TypeError: Static property 'ALU' must be accessed through it's class 'StringFasta' */
 /* @@? 113:16 Error TypeError: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
 /* @@? 113:16 Error TypeError: No matching call signature for fastaRandom(Int, IUB) */
 /* @@? 113:32 Error TypeError: Property 'count' must be accessed through 'this' */
