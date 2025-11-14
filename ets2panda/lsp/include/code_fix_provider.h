@@ -28,11 +28,11 @@ namespace ark::es2panda::lsp {
 using ark::es2panda::lsp::codefixes::DiagnosticCode;
 class CodeFixProvider {
 private:
-    std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> errorCodeToFixes_;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<CodeFixRegistration>>> errorCodeToFixes_;
     std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> fixIdToRegistration_;
 
 public:
-    std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> GetErrorCodeToFixes() const
+    std::unordered_map<std::string, std::vector<std::shared_ptr<CodeFixRegistration>>> GetErrorCodeToFixes() const
     {
         return errorCodeToFixes_;
     }

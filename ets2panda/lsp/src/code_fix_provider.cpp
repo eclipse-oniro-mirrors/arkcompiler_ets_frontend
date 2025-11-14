@@ -25,19 +25,21 @@
 namespace ark::es2panda::lsp {
 
 // Registers a new code fix and maps it to its diagnostic error codes and fix IDs
-void CodeFixProvider::RegisterCodeFix(const std::string &aliasName, std::unique_ptr<CodeFixRegistration> registration)
+void CodeFixProvider::RegisterCodeFix([[maybe_unused]] const std::string &aliasName,
+                                      std::unique_ptr<CodeFixRegistration> registration)
 {
-    (void)aliasName;
     ASSERT(!aliasName.empty());
     auto shared = std::shared_ptr<CodeFixRegistration>(std::move(registration));
 
+    // Allow multiple fixes for the same error code
     for (auto error : shared->GetErrorCodes()) {
-        errorCodeToFixes_.emplace(std::to_string(error), shared);
+        auto &vec = errorCodeToFixes_[std::to_string(error)];
+        vec.push_back(shared);
     }
-    if (!shared->GetFixIds().empty()) {
-        for (const auto &fixId : shared->GetFixIds()) {
-            fixIdToRegistration_.emplace(fixId, shared);
-        }
+
+    // Fix IDs remain one-to-one, so we keep the existing map
+    for (const auto &fixId : shared->GetFixIds()) {
+        fixIdToRegistration_.emplace(fixId, shared);
     }
 }
 
@@ -213,15 +215,36 @@ void CodeFixProvider::EachDiagnostic(const CodeFixAllContext &context, const std
     }
 }
 
+bool IsAllContained(const std::vector<CodeFixAction> &actions, const std::vector<CodeFixAction> &existingActions)
+{
+    return std::all_of(actions.begin(), actions.end(), [&](const CodeFixAction &a) {
+        return std::any_of(existingActions.begin(), existingActions.end(), [&](const CodeFixAction &r) {
+            if (!a.fixId.empty() || !r.fixId.empty()) {
+                return a.fixId == r.fixId;
+            }
+            return a.fixName == r.fixName;
+        });
+    });
+}
+
 // Returns applicable fix actions for a given error code
 std::vector<CodeFixAction> CodeFixProvider::GetFixes(const CodeFixContext &context)
 {
     std::vector<CodeFixAction> result;
     auto it = errorCodeToFixes_.find(std::to_string(context.errorCode));
     if (it != errorCodeToFixes_.end()) {
-        const auto &registrations = it->second;
-        if (registrations) {
-            auto actions = registrations->GetCodeActions(context);
+        for (auto &reg : it->second) {
+            if (reg == nullptr) {
+                continue;
+            }
+            auto actions = reg->GetCodeActions(context);
+            if (actions.empty()) {
+                continue;
+            }
+            bool allContained = IsAllContained(actions, result);
+            if (allContained) {
+                break;
+            }
             result.insert(result.end(), actions.begin(), actions.end());
         }
     }
