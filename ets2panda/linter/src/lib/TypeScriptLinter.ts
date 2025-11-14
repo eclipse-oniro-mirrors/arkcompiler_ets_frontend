@@ -9736,7 +9736,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
   }
 
-
   private checkWorkerSymbol(symbol: ts.Symbol, node: ts.Node): void {
     const cb = (): void => {
       this.incrementCounters(node, FaultID.NoNeedStdlibWorker);

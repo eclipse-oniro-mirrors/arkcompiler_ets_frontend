@@ -12,17 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export const number:number = 1;
-
-export const value1:number = 0;
-
-const value2 = 1;
-export default value2;
-
-export const value3:number = 3;
-
-const abstract = 1;
-export default abstract;
-
-export const class:number = 2; 
+ 
+export let unionVoidVal = (()=>{
+  return undefined;
+})() as void;
+export function undefinedFooFun(){
+  return undefined;
+}
+export function func3Void(): void { }
+export function fun4undefined(): undefined | boolean { }
+export function fun5String(): string {
+  return '';
+}
