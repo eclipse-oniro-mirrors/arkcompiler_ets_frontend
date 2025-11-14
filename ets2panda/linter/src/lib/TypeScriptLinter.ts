@@ -159,7 +159,7 @@ import {
   REFLECT_LITERAL,
   REFLECT_PROPERTIES
 } from './utils/consts/InteropAPI';
-import { EXTNAME_TS, EXTNAME_D_TS, EXTNAME_JS, EXTNAME_JSON } from './utils/consts/ExtensionName';
+import { EXTNAME_TS, EXTNAME_D_TS, EXTNAME_JS, EXTNAME_JSON, EXTNAME_D_ETS } from './utils/consts/ExtensionName';
 import { ARKTS_IGNORE_DIRS_OH_MODULES } from './utils/consts/ArktsIgnorePaths';
 import type { ApiInfo, ApiListItem } from './utils/consts/SdkWhitelist';
 import { ApiList, SdkProblem, SdkNameInfo } from './utils/consts/SdkWhitelist';
@@ -8526,6 +8526,70 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.incrementCounters(node, FaultID.DebuggerStatement);
   }
 
+  private static isInAmbientFunction(node: ts.FunctionDeclaration): boolean {
+    const tsModifiers = ts.getModifiers(node);
+    return TsUtils.hasModifier(tsModifiers, ts.SyntaxKind.DeclareKeyword);
+  }
+
+  private static isInAmbientNameSpace(
+    decl: ts.FunctionDeclaration | ts.MethodDeclaration | ts.ConstructorDeclaration
+  ): boolean {
+    let temptNode = decl.parent;
+    if (temptNode && ts.isModuleBlock(temptNode)) {
+      temptNode = temptNode.parent;
+      const tsModuleDecl = temptNode as ts.ModuleDeclaration;
+      const tsModuleBody = tsModuleDecl.body;
+      if (!tsModuleDecl.name || !ts.isIdentifier(tsModuleDecl.name)) {
+        return false;
+      }
+      const tsModifiers = ts.getModifiers(tsModuleDecl);
+      if (
+        tsModuleBody &&
+        tsModuleDecl.flags & ts.NodeFlags.Namespace &&
+        TsUtils.hasModifier(tsModifiers, ts.SyntaxKind.DeclareKeyword)
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private static isTSOverload(len: number, isInternalFunction: boolean): boolean {
+    return isInternalFunction && len > 2 || !isInternalFunction && len > 1;
+  }
+
+  private static isInAmbientClass(
+    decl: ts.FunctionDeclaration | ts.MethodDeclaration | ts.ConstructorDeclaration
+  ): boolean {
+    if (ts.isMethodDeclaration(decl) || ts.isConstructorDeclaration(decl)) {
+      const tempNode = decl.parent;
+      if (ts.isClassDeclaration(tempNode)) {
+        const tsModifiers = ts.getModifiers(tempNode);
+        return TsUtils.hasModifier(tsModifiers, ts.SyntaxKind.DeclareKeyword);
+      }
+    }
+    return false;
+  }
+
+  private static isDeclarationFile(
+    decl: ts.FunctionDeclaration | ts.MethodDeclaration | ts.ConstructorDeclaration
+  ): boolean {
+    const sourceFile = decl.getSourceFile();
+    return sourceFile.fileName.endsWith(EXTNAME_D_ETS);
+  }
+
+  private static isInAmbientContext(
+    decl: ts.FunctionDeclaration | ts.MethodDeclaration | ts.ConstructorDeclaration
+  ): boolean {
+    return (
+      TypeScriptLinter.isInAmbientNameSpace(decl) ||
+      TypeScriptLinter.isInAmbientClass(decl) ||
+      TypeScriptLinter.isDeclarationFile(decl) ||
+      (ts.isFunctionDeclaration(decl) && TypeScriptLinter.isInAmbientFunction(decl))
+    );
+  }
+
   private handleTSOverload(decl: ts.FunctionDeclaration | ts.MethodDeclaration | ts.ConstructorDeclaration): void {
     if (!this.options.arkts2) {
       return;
@@ -8539,11 +8603,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (!declarations) {
         return;
       }
+
+      if (TypeScriptLinter.isInAmbientContext(decl)) {
+        return;
+      }
       const filterDecl = declarations.filter((name) => {
         return ts.isFunctionDeclaration(name) || ts.isMethodDeclaration(name);
       });
       const isInternalFunction = decl.name && ts.isIdentifier(decl.name) && interanlFunction.includes(decl.name.text);
-      if (isInternalFunction && filterDecl.length > 2 || !isInternalFunction && filterDecl.length > 1) {
+
+      if (TypeScriptLinter.isTSOverload(filterDecl.length, isInternalFunction)) {
         if (!decl.body) {
           const autofix = this.autofixer?.removeNode(decl);
           this.incrementCounters(decl, FaultID.TsOverload, autofix);
@@ -8552,6 +8621,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
       }
     } else if (ts.isConstructorDeclaration(decl) && decl.getText()) {
+      if (TypeScriptLinter.isInAmbientContext(decl)) {
+        return;
+      }
       this.handleTSOverloadUnderConstructorDeclaration(decl);
     }
   }
