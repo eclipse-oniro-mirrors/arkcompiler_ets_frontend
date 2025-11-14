@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,36 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-const isTrue = true;
-switch (isTrue) {
-  case true:
-    console.log('It\'s true');
-    break;
-  case false:
-    console.log('It\'s false')
-    break;
-}
-
-let objValue = { key: "value" };
-
-switch (objValue) {
-  case { key: "value" }:
-    console.log("Matching object!");
-    break;
-  default:
-    console.log("Non-matching object");
-}
-
-let arrayValue = [1, 2, 3];
-
-switch (arrayValue) {
-  case [1, 2, 3]:
-    console.log("Matching array!");
-    break;
-  default:
-    console.log("Non-matching array");
-}
 
 const isT = 'true';
 switch (isT) {
@@ -107,7 +77,7 @@ switch (number4) {
     break;
 }
 
-let day:int = 2;
+let day:number = 2;
 let dayName = "empty";
 switch (day) {
     case 0:
@@ -429,4 +399,213 @@ class CFE {
             this.using = 1907;
         }
     }
+}
+
+// number
+const number1 = 1;
+switch (number1) {
+  case 1:
+    console.log('It\'s 1');
+    break;
+}
+
+const num11: number = 2;
+switch (num11) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+const num12 = 0b1;
+switch (num12) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+const num5 = new Number(42);
+switch (num5) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+const num6 = Number(42);
+switch (num6) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+const number3 = Number.NaN;
+switch (number3) {
+  case -1.1:
+    console.log('It\'s 1');
+    break;
+}
+
+const num9 = 10 + 5;
+switch (num9) {
+  case -1.1:
+    console.log('It\'s 1');
+    break;
+}
+
+const num10 = Math.PI;
+switch (num10) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+const num14 = Infinity;
+switch (num14) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+// string
+const str11 = 'string';
+switch (str11) {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+const str35: string = "string";
+switch (str35) {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+const str36: String = "string";
+switch (str36) {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+const str4 = new String("string");
+switch (str4) {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+const str5 = String("string");
+switch (str5) {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+// enum
+enum Color {
+  RED,
+  BLUE
+}
+const test = Color.RED
+switch (test) {
+  case Color.RED: {
+    console.log('One');
+    break;
+  }
+}
+
+type CC = Color
+const test2 : CC = Color.RED
+switch (test2) {
+  case Color.RED: {
+    console.log('One');
+    break;
+  }
+}
+
+switch (1) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+switch ('string') {
+  case 'string': {
+    console.log('One');
+    break;
+  }
+}
+
+const arr22 = [1, 2, 3];
+switch (arr22.length) {
+  case 1: {
+    console.log('One');
+    break;
+  }
+}
+
+type sw1 = number
+function FunSw4(): sw1 {
+  return 1
+}
+switch (FunSw4()) {
+  case 1:
+    console.log('A');
+    break;
+}
+
+function FunSw5() {
+  return 1
+}
+
+switch (FunSw5()) {
+  case 1:
+    console.log('A');
+    break;
+}
+
+enum H {
+  RED,
+  BLUE
+}
+function foo11(e: H) {
+  switch (e) {
+    case H.RED:
+  }
+}
+
+let isNum1: string | number = 1;
+switch (isNum1) {
+  case 1.1:
+    console.log('Its num');
+  break;
+}
+
+type sn1 = string | number
+let isNum2: sn1 = 1;
+switch (isNum2) {
+  case 1.1:
+    console.log('Its num');
+    break;
+}
+
+type sn2 = string | CC
+let isColor: sn2 = Color.RED;
+switch (isColor) {
+  case Color.RED: {
+    console.log('One');
+    break;
+  }
 }

@@ -8615,18 +8615,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private validateSwitchExpression(switchStatement: ts.SwitchStatement): void {
     const expr = switchStatement.expression;
     const nodeType = this.tsTypeChecker.getTypeAtLocation(expr);
-    const { isLiteralInitialized, hasExplicitTypeAnnotation } = this.getDeclarationInfo(expr);
 
     const isUnionType = (nodeType.flags & ts.TypeFlags.Union) !== 0;
 
     const isTypeAllowed = (t: ts.Type): boolean => {
       const typeText = this.tsTypeChecker.typeToString(t);
       return Boolean(
-        t.flags & ts.TypeFlags.StringLike ||
+        t.flags & ts.TypeFlags.NumberLike ||
+          t.flags & ts.TypeFlags.StringLike ||
+          typeText === 'Number' ||
           typeText === 'String' ||
-          typeText.toLowerCase() === 'number' ||
-          t.flags & ts.TypeFlags.NumberLike && (/^\d+$/).test(typeText) ||
-          isLiteralInitialized && !hasExplicitTypeAnnotation ||
           t.flags & ts.TypeFlags.EnumLike
       );
     };
@@ -8641,26 +8639,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!isAllowed) {
       this.incrementCounters(expr, FaultID.SwitchExpression);
     }
-  }
-
-  private getDeclarationInfo(expression: ts.Expression): {
-    isLiteralInitialized: boolean;
-    hasExplicitTypeAnnotation: boolean;
-  } {
-    const symbol = this.tsTypeChecker.getSymbolAtLocation(expression);
-    const declaration = symbol?.valueDeclaration;
-
-    if (!declaration || !ts.isVariableDeclaration(declaration)) {
-      return { isLiteralInitialized: false, hasExplicitTypeAnnotation: false };
-    }
-
-    const hasExplicitTypeAnnotation = !!declaration.type;
-    const initializerInfo = TypeScriptLinter.getInitializerInfo(declaration.initializer);
-
-    return {
-      isLiteralInitialized: initializerInfo.isLiteralInitialized,
-      hasExplicitTypeAnnotation
-    };
   }
 
   private static getInitializerInfo(initializer?: ts.Expression): {
@@ -9735,7 +9713,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
   }
-
 
   private checkWorkerSymbol(symbol: ts.Symbol, node: ts.Node): void {
     const cb = (): void => {
