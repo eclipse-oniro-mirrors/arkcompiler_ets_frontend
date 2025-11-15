@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 27,
+            "line": 26,
             "column": 1,
-            "endLine": 27,
+            "endLine": 26,
             "endColumn": 21,
             "problem": "MissingSuperCall",
             "suggest": "",
@@ -25,49 +25,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
+            "line": 34,
             "column": 1,
-            "endLine": 31,
-            "endColumn": 2,
+            "endLine": 34,
+            "endColumn": 21,
             "problem": "MissingSuperCall",
             "suggest": "",
             "rule": "The subclass constructor must call the parent class's parametered constructor (arkts-subclass-must-call-super-constructor-with-args)",
             "severity": "ERROR"
         },
         {
-            "line": 40,
-            "column": 5,
-            "endLine": 40,
-            "endColumn": 31,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 5,
-            "endLine": 41,
-            "endColumn": 51,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 62,
+            "line": 44,
             "column": 1,
-            "endLine": 66,
-            "endColumn": 2,
-            "problem": "MissingSuperCall",
-            "suggest": "",
-            "rule": "The subclass constructor must call the parent class's parametered constructor (arkts-subclass-must-call-super-constructor-with-args)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 1,
-            "endLine": 73,
+            "endLine": 45,
             "endColumn": 2,
             "problem": "MissingSuperCall",
             "suggest": "",

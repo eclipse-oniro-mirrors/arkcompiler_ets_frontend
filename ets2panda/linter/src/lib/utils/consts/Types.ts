@@ -16,13 +16,12 @@ import type { Type, ClassDeclaration } from 'typescript';
 
 export enum ExtendedIdentifierType {
   UNKNOWN,
-  CLASS,
-  ERROR
+  CLASS
 }
 
 export type ExtendedIdentifierInfo =
   | {
-    type: ExtendedIdentifierType.UNKNOWN | ExtendedIdentifierType.ERROR;
+    type: ExtendedIdentifierType.UNKNOWN;
   }
   | { type: ExtendedIdentifierType.CLASS; decl: ClassDeclaration };
 
