@@ -1395,7 +1395,12 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         if (stmt instanceof ArkReturnStmt) {
             // return语句，local作为返回值，若为同步函数则不会影响其值的变化，不会导致int被重新赋值为number使用，若为异步函数则一定为number
-            if (stmt.getCfg().getDeclaringMethod().containsModifier(ModifierType.ASYNC)) {
+            const method = stmt.getCfg().getDeclaringMethod();
+            if (method.containsModifier(ModifierType.ASYNC)) {
+                return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
+            }
+            if (method.getOuterMethod()?.containsModifier(ModifierType.ASYNC)) {
+                // 对于存在嵌套场景的异步函数，返回值也为number
                 return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
             }
             return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
@@ -2246,12 +2251,31 @@ export class NumericSemanticCheck implements BaseChecker {
             if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
                 return true;
             }
-            if (issueCategory !== NumberCategory.long && numberCategory === NumberCategory.long) {
-                // 删除掉之前的修复为int的，用本次即将add的新的issue替代
-                this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+            if (numberCategory === NumberCategory.long) {
+                if (issueCategory === NumberCategory.int) {
+                    // 删除掉之前的修复为int的，用本次即将add的新的issue替代
+                    this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+                    return false;
+                }
+                if (issueCategory === NumberCategory.number || issueCategory === NumberCategory.long) {
+                    return true;
+                }
+                // 其他情况理论上不存在，按照不冲突处理，正常写入新的告警
                 return false;
-            } else {
-                // 已有的issue已经足够进行自动修复处理，无需重复添加
+            }
+            if (numberCategory === NumberCategory.number) {
+                if (issueCategory === NumberCategory.int || issueCategory === NumberCategory.long) {
+                    // 删除掉之前的修复为int或long的，用本次即将add的新的issue替代
+                    this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+                    return false;
+                }
+                if (issueCategory === NumberCategory.number) {
+                    return true;
+                }
+                // 其他情况理论上不存在，按照不冲突处理，正常写入新的告警
+                return false;
+            }
+            if (numberCategory === NumberCategory.int) {
                 return true;
             }
         }
