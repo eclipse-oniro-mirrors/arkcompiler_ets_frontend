@@ -65,33 +65,23 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 48,
             "column": 9,
-            "endLine": 81,
+            "endLine": 48,
+            "endColumn": 11,
+            "problem": "SwitchExpression",
+            "suggest": "",
+            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 8,
+            "endLine": 49,
             "endColumn": 16,
-            "problem": "SwitchExpression",
+            "problem": "ClassAsObjectError",
             "suggest": "",
-            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 112,
-            "column": 9,
-            "endLine": 112,
-            "endColumn": 12,
-            "problem": "SwitchExpression",
-            "suggest": "",
-            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 215,
-            "column": 13,
-            "endLine": 215,
-            "endColumn": 32,
-            "problem": "CreatingPrimitiveTypes",
-            "suggest": "",
-            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
             "severity": "ERROR"
         }
     ]
