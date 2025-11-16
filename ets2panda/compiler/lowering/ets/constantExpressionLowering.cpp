@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -432,11 +432,13 @@ private:
                 break;
             }
             case lexer::TokenType::PUNCTUATOR_EXPONENTIATION: {
-                if (leftNum < 0 && !std::is_integral_v<TargetType>) {
-                    LogError(diagnostic::EXPONENTIATION_BASE_LESS_ZERO, {}, expr->Start());
+                const auto rightNumber = inputs_[1]->AsNumberLiteral()->Number();
+                if (leftNum < 0 && !rightNumber.IsInteger()) {
                     resNum = std::numeric_limits<TargetType>::quiet_NaN();
+                    break;
+                } else {
+                    return CreateNumberLiteral(std::pow(leftNum, rightNum));
                 }
-                return CreateNumberLiteral(std::pow(leftNum, rightNum));
             }
             default:
                 ES2PANDA_UNREACHABLE();
