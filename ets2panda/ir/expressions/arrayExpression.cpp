@@ -284,19 +284,6 @@ checker::Type *ArrayExpression::CheckPattern(checker::TSChecker *checker)
     return checker->CreateTupleType(desc, std::move(elementFlags), tupleTypeInfo);
 }
 
-void ArrayExpression::ClearPreferredType()
-{
-    SetPreferredType(nullptr);
-    SetTsType(nullptr);
-    for (auto element : Elements()) {
-        element->SetTsType(nullptr);
-        element->SetAstNodeFlags(ir::AstNodeFlags::NO_OPTS);
-        if (element->IsArrayExpression()) {
-            element->AsArrayExpression()->ClearPreferredType();
-        }
-    }
-}
-
 void ArrayExpression::CleanCheckInformation()
 {
     SetPreferredType(nullptr);
@@ -304,6 +291,8 @@ void ArrayExpression::CleanCheckInformation()
     for (auto *element : elements_) {
         element->SetAstNodeFlags(ir::AstNodeFlags::NO_OPTS);
         element->CleanCheckInformation();
+        SetPreferredType(nullptr);
+        element->SetTsType(nullptr);
     }
 }
 

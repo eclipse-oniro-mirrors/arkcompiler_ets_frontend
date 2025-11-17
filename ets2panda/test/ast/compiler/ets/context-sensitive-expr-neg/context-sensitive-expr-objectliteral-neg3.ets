@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-enum Color { Red }
+// SpecificTypeMatchContext test, the error log `undefined zzz` should be throw.
+class C { o: object }
+class D { z: number }
+let x: C | D = /* @@ label1 */{ o : zzz }
 
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
-}
+/* @@@ label1 Error Semantic error ESE0063: Target type for class composite needs to be an object type, found 'C|D' */

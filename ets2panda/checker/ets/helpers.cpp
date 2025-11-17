@@ -1003,35 +1003,35 @@ static void CheckRecordProperty(ir::Property *p, ArenaVector<checker::Type *> &t
         util::DiagnosticWithParams {diagnostic::TYPE_MISMATCH_AT_IDX, {valueType, typeArguments[1], size_t(2)}});
 }
 
-static void CheckRecordType(ir::Expression *init, checker::Type *annotationType, ETSChecker *checker)
+void ETSChecker::CheckRecordType(ir::Expression *init, checker::Type *recordType)
 {
-    if (!annotationType->IsETSObjectType() || !init->IsObjectExpression()) {
+    if (!recordType->IsETSObjectType() || !init->IsObjectExpression()) {
         return;
     }
     // Check if this is actually a Record or Map type using proper type identity checking
-    auto *objType = annotationType->AsETSObjectType();
+    auto *objType = recordType->AsETSObjectType();
     auto *originalBaseType = objType->GetOriginalBaseType();
-    auto *globalTypes = checker->GetGlobalTypesHolder();
+    auto *globalTypes = GetGlobalTypesHolder();
 
-    if (!checker->IsTypeIdenticalTo(originalBaseType, globalTypes->GlobalMapBuiltinType()) &&
-        !checker->IsTypeIdenticalTo(originalBaseType, globalTypes->GlobalRecordBuiltinType())) {
+    if (!IsTypeIdenticalTo(originalBaseType, globalTypes->GlobalMapBuiltinType()) &&
+        !IsTypeIdenticalTo(originalBaseType, globalTypes->GlobalRecordBuiltinType())) {
         return;
     }
 
     auto objectExpr = init->AsObjectExpression();
-    auto typeArguments = annotationType->AsETSObjectType()->TypeArguments();
+    auto typeArguments = recordType->AsETSObjectType()->TypeArguments();
     auto properties = objectExpr->Properties();
     for (const auto &property : properties) {
         if (property->IsSpreadElement()) {
-            CheckRecordSpreadElement(property->AsSpreadElement(), typeArguments, checker, property->Start());
+            CheckRecordSpreadElement(property->AsSpreadElement(), typeArguments, this, property->Start());
             continue;
         }
         if (!property->IsProperty()) {
-            checker->LogError(diagnostic::INVALID_RECORD_PROPERTY, property->Start());
+            LogError(diagnostic::INVALID_RECORD_PROPERTY, property->Start());
             continue;
         }
 
-        CheckRecordProperty(property->AsProperty(), typeArguments, checker);
+        CheckRecordProperty(property->AsProperty(), typeArguments, this);
     }
 }
 
@@ -1086,7 +1086,7 @@ checker::Type *ETSChecker::CheckVariableDeclaration(ir::Identifier *ident, ir::T
 
     if (annotationType != nullptr) {
         if (typeAnnotation != nullptr) {
-            CheckRecordType(init, annotationType, this);
+            CheckRecordType(init, annotationType);
             AssignmentContext(Relation(), init, initType, annotationType, init->Start(),
                               {{diagnostic::INVALID_ASSIGNMNENT, {initType, annotationType}}});
             if (!Relation()->IsTrue()) {
@@ -2620,6 +2620,19 @@ bool ETSChecker::NeedTypeInference(const ir::ScriptFunction *lambda)
 void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunctionType *calleeType,
                                      Signature *maybeSubstitutedFunctionSig)
 {
+    if (lambda->ReturnTypeAnnotation() == nullptr) {
+        Type *inferredReturnType = calleeType->ReturnType()->GetType(this);
+        bool isPrimitive = inferredReturnType != nullptr && inferredReturnType->IsETSPrimitiveType();
+        if (!isPrimitive && maybeSubstitutedFunctionSig != nullptr) {
+            inferredReturnType = maybeSubstitutedFunctionSig->ReturnType();
+        }
+        lambda->SetPreferredReturnType(inferredReturnType);
+    }
+
+    if (calleeType->Params().empty()) {
+        return;
+    }
+
     for (size_t i = 0; i < lambda->Params().size(); ++i) {
         if (!lambda->Params().at(i)->IsETSParameterExpression()) {
             LogError(diagnostic::INVALID_LAMBDA_PARAMETER, lambda->Params().at(i)->Start());
@@ -2646,15 +2659,6 @@ void ETSChecker::InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunction
         }
         lambdaParam->Variable()->SetTsType(inferredType);
         lambdaParam->SetTsType(inferredType);
-    }
-
-    if (lambda->ReturnTypeAnnotation() == nullptr) {
-        Type *inferredReturnType = calleeType->ReturnType()->GetType(this);
-        bool isPrimitive = inferredReturnType != nullptr && inferredReturnType->IsETSPrimitiveType();
-        if (!isPrimitive && maybeSubstitutedFunctionSig != nullptr) {
-            inferredReturnType = maybeSubstitutedFunctionSig->ReturnType();
-        }
-        lambda->SetPreferredReturnType(inferredReturnType);
     }
 }
 

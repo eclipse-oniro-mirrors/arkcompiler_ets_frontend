@@ -335,7 +335,7 @@ public:
     ETSResizableArrayType *CreateETSResizableArrayType(Type *element);
     ETSArrayType *CreateETSArrayType(Type *elementType, bool isCachePolluting = false);
 
-    Type *CreateETSUnionType(Span<Type *const> constituentTypes);
+    Type *CreateETSUnionType(Span<Type *const> constituentTypes, bool needSubtypeReduction = false);
     template <size_t N>
     Type *CreateETSUnionType(Type *const (&arr)[N])  // NOLINT(modernize-avoid-c-arrays)
     {
@@ -355,6 +355,7 @@ public:
     Type *CreateUnionFromKeyofType(ETSObjectType *const type);
     ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromPromiseType(ETSObjectType *promiseType);
     ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromBaseType(Type *baseType);
+    ETSTupleType *CreateETSTupleType(const ArenaVector<Type *> &typeList);
     ETSTypeAliasType *CreateETSTypeAliasType(util::StringView name, const ir::AstNode *declNode,
                                              bool isRecursive = false);
     ETSFunctionType *CreateETSArrowType(Signature *signature);
@@ -521,6 +522,7 @@ public:
     Type *GetTypeFromInterfaceReference(varbinder::Variable *var);
     Type *GetTypeFromTypeAliasReference(varbinder::Variable *var);
     Type *GetTypeFromClassReference(varbinder::Variable *var);
+    Type *GetNormalizedType(Type *tsType);
     void ValidateGenericTypeAliasForClonedNode(ir::TSTypeAliasDeclaration *typeAliasNode,
                                                const ir::TSTypeParameterInstantiation *exactTypeParams);
     Type *HandleTypeAlias(ir::Expression *name, const ir::TSTypeParameterInstantiation *typeParams,
@@ -574,6 +576,7 @@ public:
 
     checker::Type *FixOptionalVariableType(varbinder::Variable *const bindingVar, ir::ModifierFlags flags);
     void CheckEnumType(ir::Expression *init, checker::Type *initType, const util::StringView &varName);
+    void CheckRecordType(ir::Expression *init, checker::Type *recordType);
     checker::Type *CheckVariableDeclaration(ir::Identifier *ident, ir::TypeNode *typeAnnotation, ir::Expression *init,
                                             ir::ModifierFlags flags);
     void CheckTruthinessOfType(ir::Expression *expr);
@@ -656,7 +659,8 @@ public:
     void SetArrayPreferredTypeForNestedMemberExpressions(ir::MemberExpression *expr, Type *annotationType);
     bool IsExtensionETSFunctionType(const checker::Type *type);
     bool IsExtensionAccessorFunctionType(const checker::Type *type);
-    bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple);
+    bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple,
+                                      TypeRelationFlag flags = TypeRelationFlag::NONE);
     void ModifyPreferredType(ir::ArrayExpression *arrayExpr, Type *newPreferredType);
     Type *SelectGlobalIntegerTypeForNumeric(Type *type) const;
 

@@ -225,6 +225,10 @@ void ETSBinder::ResolveReferenceForScope(ir::AstNode *const node, Scope *const s
             ResolveReferences(node);
             break;
         }
+        case ir::AstNodeType::SCRIPT_FUNCTION: {
+            ResolveReferencesForScope(node, node->AsScriptFunction()->Scope());
+            break;
+        }
         default: {
             ResolveReferencesForScope(node, scope);
             break;

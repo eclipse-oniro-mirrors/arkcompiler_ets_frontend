@@ -969,14 +969,15 @@ static void AddSpreadElementTypes(ETSChecker *checker, ir::SpreadElement *const 
 }
 
 static bool ValidArrayExprSizeForTupleSize(ETSChecker *checker, Type *possibleTupleType,
-                                           ir::Expression *possibleArrayExpr)
+                                           ir::Expression *possibleArrayExpr,
+                                           TypeRelationFlag const flags = TypeRelationFlag::NONE)
 {
     if (!possibleArrayExpr->IsArrayExpression() || !possibleTupleType->IsETSTupleType()) {
         return true;
     }
 
     return checker->IsArrayExprSizeValidForTuple(possibleArrayExpr->AsArrayExpression(),
-                                                 possibleTupleType->AsETSTupleType());
+                                                 possibleTupleType->AsETSTupleType(), flags);
 }
 
 static std::vector<std::pair<Type *, ir::Expression *>> GetElementTypes(ETSChecker *checker, ir::ArrayExpression *expr)
@@ -1105,8 +1106,9 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
 
     // NOTE (smartin): optimize element access on constant array expressions (note is here, because the constant value
     // will be present on the type)
+    auto *un = checker->CreateETSUnionType(std::move(arrayExpressionElementTypes));
     return checker->CreateETSResizableArrayType(
-        checker->GetNonConstantType(checker->CreateETSUnionType(std::move(arrayExpressionElementTypes))));
+        checker->GetNonConstantType(un->IsETSUnionType() ? un->AsETSUnionType()->NormalizedType() : un));
 }
 
 static bool CheckArrayExpressionElements(ETSChecker *checker, ir::ArrayExpression *arrayExpr)
@@ -1168,74 +1170,100 @@ static inline checker::Type *CheckElemUnder(checker::ETSChecker *checker, ir::Ex
 
 static bool CheckCandidateCompatibility(ETSChecker *checker, ir::ArrayExpression *arrayLiteral, Type *candElem)
 {
-    for (auto *el : arrayLiteral->Elements()) {
+    return std::all_of(arrayLiteral->Elements().begin(), arrayLiteral->Elements().end(), [=](auto *el) {
         Type *elTy = CheckElemUnder(checker, el, candElem);
-        TypeRelationContext ctx(checker, el, TypeRelationFlag::NO_THROW);
-        if (elTy == nullptr || !checker->Relation()->IsAssignableTo(elTy, candElem)) {
+        if (elTy == nullptr || elTy->IsTypeError()) {
+            return false;
+        }
+        AssignmentContext ctx(checker->Relation(), el, elTy, candElem, arrayLiteral->Start(), std::nullopt,
+                              TypeRelationFlag::NO_THROW);
+        return ctx.IsAssignable();
+    });
+}
+
+static bool CheckElementTypeAssignabilityToTuple(ETSChecker *checker, ETSTupleType *tupleType,
+                                                 ir::ArrayExpression *arrayExpr)
+{
+    if (!ValidArrayExprSizeForTupleSize(checker, tupleType, arrayExpr, TypeRelationFlag::NO_THROW)) {
+        return false;
+    }
+
+    for (size_t i = 0; i < arrayExpr->Elements().size(); ++i) {
+        ir::Expression *element = arrayExpr->Elements()[i];
+        element->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        auto *elementType = *element->Check(checker);
+        auto *targetType = tupleType->GetTypeAtIndex(i);
+        if (const auto ctx = AssignmentContext(checker->Relation(), element, elementType, targetType,
+                                               arrayExpr->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
+            !ctx.IsAssignable()) {
             return false;
         }
     }
+
     return true;
 }
 
-static Type *SelectArrayPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayExpression *arrayLiteral,
-                                                Type *contextualType)
+static Type *ValidatePreferredTypeForArrayLiteral(ETSChecker *checker, ir::ArrayExpression *arrayLiteral,
+                                                  Type *candidate)
 {
-    ES2PANDA_ASSERT(checker != nullptr);
-    ES2PANDA_ASSERT(arrayLiteral != nullptr);
-    ES2PANDA_ASSERT(contextualType != nullptr && contextualType->IsETSUnionType());
+    ES2PANDA_ASSERT(candidate->IsETSArrayType() || candidate->IsETSResizableArrayType() || candidate->IsETSTupleType());
+    InferMatchContext specificTypeMatchCtx(checker, util::DiagnosticType::SEMANTIC, arrayLiteral->Range(), false);
+    bool valid = true;
+    if (candidate->IsETSArrayType() || candidate->IsETSResizableArrayType()) {
+        Type *candidateElem = checker->GetElementTypeOfArray(candidate);
+        valid = CheckCandidateCompatibility(checker, arrayLiteral, candidateElem);
+    }
 
-    auto &alts = contextualType->AsETSUnionType()->ConstituentTypes();
+    if (candidate->IsETSTupleType()) {
+        valid = CheckElementTypeAssignabilityToTuple(checker, candidate->AsETSTupleType(), arrayLiteral);
+    }
+    valid &= specificTypeMatchCtx.ValidMatchStatus();
+    arrayLiteral->CleanCheckInformation();
+    return valid ? candidate : nullptr;
+}
 
+static Type *SelectPreferredTypeForLiteral(ETSChecker *checker, ir::ArrayExpression *arrayLiteral,
+                                           ETSUnionType *contextualType)
+{
     for (auto *el : arrayLiteral->Elements()) {
-        ES2PANDA_ASSERT(el != nullptr);
         if (el->IsSpreadElement() || el->IsBrokenExpression()) {
             return nullptr;
         }
     }
 
-    std::vector<Type *> initialTypes;
-    initialTypes.reserve(arrayLiteral->Elements().size());
-    for (auto *el : arrayLiteral->Elements()) {
-        initialTypes.push_back(el->TsType());
-    }
-
-    Type *selected = nullptr;
-    Type *selectedElem = nullptr;
-
+    auto &alts = contextualType->ConstituentTypes();
+    std::vector<Type *> matchedCandidates;
+    checker->AddStatus(checker::CheckerStatus::IN_TYPE_INFER);
     for (Type *candidate : alts) {
-        if (!candidate->IsETSArrayType() && !candidate->IsETSResizableArrayType()) {
+        if (!candidate->IsETSArrayType() && !candidate->IsETSResizableArrayType() && !candidate->IsETSTupleType()) {
             continue;
         }
 
-        Type *candElem = checker->GetElementTypeOfArray(candidate);
-        ES2PANDA_ASSERT(candElem != nullptr);
-
-        if (!CheckCandidateCompatibility(checker, arrayLiteral, candElem)) {
-            for (size_t i = 0; i < arrayLiteral->Elements().size(); ++i) {
-                arrayLiteral->Elements()[i]->SetTsType(initialTypes[i]);
-            }
-            continue;
-        }
-
-        if (selected == nullptr) {
-            selected = candidate;
-            selectedElem = candElem;
-            continue;
-        }
-
-        auto *relation = checker->Relation();
-        const bool candMoreSpecific = relation->IsSupertypeOf(selectedElem, candElem);
-        const bool selMoreSpecific = relation->IsSupertypeOf(candElem, selectedElem);
-        if (candMoreSpecific && !selMoreSpecific) {
-            selected = candidate;
-            selectedElem = candElem;
-        } else if (!candMoreSpecific && !selMoreSpecific && !relation->IsIdenticalTo(selected, candidate)) {
-            return nullptr;
+        if (auto select = ValidatePreferredTypeForArrayLiteral(checker, arrayLiteral, candidate); select != nullptr) {
+            matchedCandidates.emplace_back(select);
         }
     }
+    checker->RemoveStatus(checker::CheckerStatus::IN_TYPE_INFER);
+    if (matchedCandidates.empty()) {
+        return nullptr;
+    }
 
-    return selected;
+    if (matchedCandidates.size() != 1) {
+        checker->LogError(diagnostic::AMBIGUOUS_ARRAY_LITERAL_TYPE, {matchedCandidates[0], matchedCandidates[1]},
+                          arrayLiteral->Start());
+        return nullptr;
+    }
+
+    // get result and do final check.
+    auto res = matchedCandidates.front();
+    if (res->IsETSTupleType()) {
+        CheckElementTypeAssignabilityToTuple(checker, res->AsETSTupleType(), arrayLiteral);
+        return res;
+    }
+
+    Type *resElem = checker->GetElementTypeOfArray(res);
+    CheckCandidateCompatibility(checker, arrayLiteral, resElem);
+    return res;
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
@@ -1248,7 +1276,7 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     auto *preferredType = GetAppropriatePreferredType(expr->PreferredType(), &Type::IsAnyETSArrayOrTupleType);
 
     if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSUnionType()) {
-        if (auto *picked = SelectArrayPreferredTypeForLiteral(checker, expr, expr->PreferredType())) {
+        if (auto *picked = SelectPreferredTypeForLiteral(checker, expr, expr->PreferredType()->AsETSUnionType())) {
             preferredType = picked;
             expr->SetPreferredType(preferredType);
         }
@@ -1290,6 +1318,58 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     return expr->TsType();
 }
 
+static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checker)
+{
+    if (!type->IsETSUnionType()) {
+        return false;
+    }
+    for (auto subtype : type->AsETSUnionType()->ConstituentTypes()) {
+        if (subtype->IsETSObjectType() &&
+            subtype->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, ir::ArrowFunctionExpression *expr)
+{
+    if (expr->Function()->HasReceiver()) {
+        checker->AddStatus(checker::CheckerStatus::IN_EXTENSION_METHOD);
+        CheckExtensionMethod(checker, expr->Function(), expr);
+    }
+    auto *signature = expr->Function()->Signature();
+
+    checker->Context().SetContainingSignature(signature);
+
+    if (expr->Function()->HasBody()) {
+        expr->Function()->Body()->Check(checker);
+    }
+
+    // If all the path is unreachable, the return type should be never.
+    if (expr->Function()->ReturnTypeAnnotation() == nullptr && !expr->Function()->HasReturnStatement() &&
+        expr->Function()->HasThrowStatement() && checker->HasStatus(CheckerStatus::MEET_THROW)) {
+        expr->Function()->Signature()->SetReturnType(checker->GlobalETSNeverType());
+    }
+
+    if (expr->Function()->ReturnTypeAnnotation() != nullptr || !expr->Function()->IsAsyncFunc()) {
+        return;
+    }
+
+    auto *retType = signature->ReturnType();
+    if (!IsUnionTypeContainingPromise(retType, checker) &&
+        (!retType->IsETSObjectType() ||
+         retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType())) {
+        auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
+        ES2PANDA_ASSERT(returnType != nullptr);
+        expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
+        for (auto &returnStatement : expr->Function()->ReturnStatements()) {
+            returnStatement->SetReturnType(checker, returnType);
+        }
+    }
+}
+
 static void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Type *preferredType, ETSChecker *checker)
 {
     if (!preferredType->IsETSUnionType()) {
@@ -1305,27 +1385,17 @@ static void TryInferPreferredType(ir::ArrowFunctionExpression *expr, checker::Ty
         if (!ct->IsETSArrowType() || ct->AsETSFunctionType()->CallSignaturesOfMethodOrArrow().empty()) {
             continue;
         }
+        InferMatchContext specificTypeMatchCtx(checker, util::DiagnosticType::SEMANTIC, expr->Range(), false);
         checker->TryInferTypeForLambdaTypeAlias(expr, ct->AsETSFunctionType());
         checker->BuildFunctionSignature(expr->Function(), false);
-        if (expr->Function()->Signature() != nullptr) {
+        CheckArrowFunctionAfterSignatureBuild(checker, expr);
+        if (specificTypeMatchCtx.ValidMatchStatus()) {
             return;
         }
+        expr->CleanCheckInformation();
     }
-}
-
-static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checker)
-{
-    if (!type->IsETSUnionType()) {
-        return false;
-    }
-    for (auto subtype : type->AsETSUnionType()->ConstituentTypes()) {
-        if (subtype->IsETSObjectType() &&
-            subtype->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
-            return true;
-        }
-    }
-
-    return false;
+    // Note: no matching preferred type, but the signature still need to be created.
+    checker->BuildFunctionSignature(expr->Function(), false);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
@@ -1367,7 +1437,8 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
     checker->AddStatus(checker::CheckerStatus::IN_LAMBDA);
     checker->Context().SetContainingLambda(expr);
 
-    if (expr->PreferredType() != nullptr && expr->PreferredType()->IsETSArrowType()) {
+    if (expr->PreferredType() != nullptr &&
+        (expr->PreferredType()->IsETSArrowType() || expr->PreferredType()->IsETSUnionType())) {
         TryInferPreferredType(expr, expr->PreferredType(), checker);
     } else {
         checker->BuildFunctionSignature(expr->Function(), false);
@@ -1377,40 +1448,8 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
         return checker->InvalidateType(expr);
     }
 
-    if (expr->Function()->HasReceiver()) {
-        checker->AddStatus(checker::CheckerStatus::IN_EXTENSION_METHOD);
-        CheckExtensionMethod(checker, expr->Function(), expr);
-    }
-    auto *signature = expr->Function()->Signature();
-
-    checker->Context().SetContainingSignature(signature);
-
-    if (expr->Function()->HasBody()) {
-        expr->Function()->Body()->Check(checker);
-    }
-
-    if (expr->Function()->ReturnTypeAnnotation() == nullptr) {
-        // If all the path is unreachable, the return type should be never.
-        if (!expr->Function()->HasReturnStatement() && expr->Function()->HasThrowStatement() &&
-            checker->HasStatus(CheckerStatus::MEET_THROW)) {
-            expr->Function()->Signature()->SetReturnType(checker->GlobalETSNeverType());
-        }
-        if (expr->Function()->IsAsyncFunc()) {
-            auto *retType = signature->ReturnType();
-            if (!IsUnionTypeContainingPromise(retType, checker) &&
-                (!retType->IsETSObjectType() ||
-                 retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType())) {
-                auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
-                ES2PANDA_ASSERT(returnType != nullptr);
-                expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
-                for (auto &returnStatement : expr->Function()->ReturnStatements()) {
-                    returnStatement->SetReturnType(checker, returnType);
-                }
-            }
-        }
-    }
-
-    auto *funcType = checker->CreateETSArrowType(signature);
+    CheckArrowFunctionAfterSignatureBuild(checker, expr);
+    auto *funcType = checker->CreateETSArrowType(expr->Function()->Signature());
     checker->Context().SetContainingSignature(nullptr);
     return expr->SetTsType(funcType);
 }
@@ -1846,6 +1885,9 @@ static checker::Type *HandleSubstitution(ETSChecker *checker, ir::AssignmentExpr
             preferredType != nullptr) {
             checker->TryInferTypeForLambdaTypeAlias(expr->Right()->AsArrowFunctionExpression(),
                                                     preferredType->AsETSFunctionType());
+        } else {
+            // Try infer the type from the UnionType.
+            expr->Right()->SetPreferredType(leftType);
         }
     } else if (expr->Right()->IsObjectExpression()) {
         expr->Right()->AsObjectExpression()->SetPreferredType(leftType);
@@ -2766,7 +2808,6 @@ static bool CheckSinglePropertyCompatibility(ir::Expression *propExpr, checker::
     util::StringView pname = optPname.value();
 
     checker::PropertySearchFlags searchFlags = DetermineSearchFlagsForLiteral(potentialObjType);
-
     return potentialObjType->GetProperty(pname, searchFlags) != nullptr;
 }
 
@@ -2990,50 +3031,13 @@ static bool IsObjectTypeCompatibleWithLiteral(ETSChecker *checker, ir::ObjectExp
     return CheckObjectLiteralCompatibility(expr, potentialObjType);
 }
 
-checker::ETSObjectType *ResolveUnionObjectTypeForObjectLiteral(ETSChecker *checker, ir::ObjectExpression *expr,
-                                                               checker::ETSUnionType *unionType)
-{
-    std::vector<checker::ETSObjectType *> candidateObjectTypes;
-    // Phase 1: Gather all ETSObjectTypes from the union
-    for (auto *constituentType : unionType->ConstituentTypes()) {
-        if (constituentType->IsETSObjectType()) {
-            candidateObjectTypes.push_back(constituentType->AsETSObjectType());
-        }
-    }
-
-    std::vector<checker::ETSObjectType *> matchingObjectTypes;
-    // Phase 2: Filter candidates using the helper function
-    for (auto *potentialObjType : candidateObjectTypes) {
-        if (IsObjectTypeCompatibleWithLiteral(checker, expr, potentialObjType)) {
-            matchingObjectTypes.push_back(potentialObjType);
-        }
-    }
-
-    // Phase 3: Decide based on number of matches
-    if (matchingObjectTypes.size() == 1) {
-        return matchingObjectTypes.front();
-    }
-    if (matchingObjectTypes.empty()) {
-        // No candidate ETSObjectType from the union matched all properties
-        checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()}, expr->Start());
-        return nullptr;
-    }
-    // Ambiguous
-    checker->LogError(diagnostic::AMBIGUOUS_REFERENCE, {expr->PreferredType()->ToString()}, expr->Start());
-    return nullptr;
-}
-
-static checker::ETSObjectType *ResolveObjectTypeFromPreferredType(ETSChecker *checker, ir::ObjectExpression *expr)
+static checker::ETSObjectType *ResolveObjectTypeFromPreferredType(ir::ObjectExpression *expr)
 {
     // Assume not null, checked by caller in Check()
     checker::Type *preferredType = expr->PreferredType();
 
     if (preferredType->IsETSAsyncFuncReturnType()) {
         preferredType = preferredType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
-    }
-
-    if (preferredType->IsETSUnionType()) {
-        return ResolveUnionObjectTypeForObjectLiteral(checker, expr, preferredType->AsETSUnionType());
     }
 
     if (preferredType->IsETSObjectType()) {
@@ -3065,42 +3069,30 @@ static checker::Type *HandleRecordOrMapType(ETSChecker *checker, ir::ObjectExpre
     return objType;
 }
 
-checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
+static bool IsMapOrRecordBuiltinType(checker::ETSChecker *checker, checker::ETSObjectType *objType)
+{
+    checker::ETSObjectType *originalBaseObjType = objType->GetOriginalBaseType();
+    checker::GlobalTypesHolder *globalTypes = checker->GetGlobalTypesHolder();
+    return checker->IsTypeIdenticalTo(originalBaseObjType, globalTypes->GlobalMapBuiltinType()) ||
+           checker->IsTypeIdenticalTo(originalBaseObjType, globalTypes->GlobalRecordBuiltinType());
+}
+
+checker::Type *ETSAnalyzer::CheckObjectExprBaseOnObjectType(ir::ObjectExpression *expr,
+                                                            checker::ETSObjectType *objType) const
 {
     ETSChecker *checker = GetETSChecker();
-    if (expr->TsType() != nullptr) {
-        return expr->TsType();
-    }
-
-    if (expr->PreferredType() == nullptr) {
-        checker->LogError(diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
-        expr->SetTsType(checker->GlobalTypeError());
-        return expr->TsType();
-    }
-
-    if (!expr->PreferredType()->IsETSUnionType() && !ValidatePreferredType(checker, expr)) {
-        expr->SetTsType(checker->GlobalTypeError());
-        return expr->TsType();
-    }
-
-    checker::ETSObjectType *objType = ResolveObjectTypeFromPreferredType(checker, expr);
-
     if (objType == nullptr) {
         if (!expr->PreferredType()->IsETSUnionType()) {
             checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()}, expr->Start());
         }
-        expr->SetTsType(checker->GlobalTypeError());
-        return expr->TsType();
+        return checker->GlobalTypeError();
     }
 
     if (objType->HasObjectFlag(checker::ETSObjectFlags::INTERFACE)) {
         return HandleInterfaceType(checker, expr, objType);
     }
 
-    checker::ETSObjectType *originalBaseObjType = objType->GetOriginalBaseType();
-    checker::GlobalTypesHolder *globalTypes = checker->GetGlobalTypesHolder();
-    if (checker->IsTypeIdenticalTo(originalBaseObjType, globalTypes->GlobalMapBuiltinType()) ||
-        checker->IsTypeIdenticalTo(originalBaseObjType, globalTypes->GlobalRecordBuiltinType())) {
+    if (IsMapOrRecordBuiltinType(checker, objType)) {
         return HandleRecordOrMapType(checker, expr, objType);
     }
 
@@ -3114,9 +3106,117 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
                          checker::PropertySearchFlags::SEARCH_INSTANCE_FIELD |
                              checker::PropertySearchFlags::SEARCH_IN_BASE |
                              checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD);
-
-    expr->SetTsType(objType);
     return objType;
+}
+
+static checker::Type *TryFindPublicBaseType(checker::ETSChecker *checker,
+                                            const std::vector<checker::ETSObjectType *> &matchingObjectTypes)
+{
+    // Note: after we remove the type normalization between Base type and Derived type at the Union creating side, we
+    // need to do some modification at type using side. if we got `Father | ... | Son_x` from the context, then just
+    // return the base type as the specific type.
+    ES2PANDA_ASSERT(matchingObjectTypes.size() > 1);
+    Type *candidateBaseType = matchingObjectTypes.front();
+    for (auto *tp : matchingObjectTypes) {
+        if (checker->Relation()->IsSupertypeOf(tp, candidateBaseType)) {
+            candidateBaseType = tp;
+        }
+    }
+
+    for (auto *tp : matchingObjectTypes) {
+        if (!checker->Relation()->IsSupertypeOf(candidateBaseType, tp)) {
+            return nullptr;
+        }
+    }
+
+    return candidateBaseType;
+}
+
+checker::Type *ETSAnalyzer::CheckObjectExprBaseOnUnionType(ir::ObjectExpression *expr,
+                                                           checker::ETSUnionType *preferredType) const
+{
+    ETSChecker *checker = GetETSChecker();
+    std::vector<checker::ETSObjectType *> candidateObjectTypes;
+    // Phase 1: Gather all ETSObjectTypes from the union
+    for (auto *constituentType : preferredType->ConstituentTypes()) {
+        if (constituentType->IsETSObjectType()) {
+            candidateObjectTypes.push_back(constituentType->AsETSObjectType());
+        }
+    }
+
+    std::vector<checker::ETSObjectType *> matchingObjectTypes;
+    // Phase 2: Filter candidates using the helper function
+    for (auto *potentialObjType : candidateObjectTypes) {
+        if (!IsObjectTypeCompatibleWithLiteral(checker, expr, potentialObjType)) {
+            continue;
+        }
+
+        InferMatchContext specificTypeMatchCtx(checker, util::DiagnosticType::SEMANTIC, expr->Range(), false);
+        CheckObjectExprBaseOnObjectType(expr, potentialObjType);
+        if (IsMapOrRecordBuiltinType(checker, potentialObjType)) {
+            checker->CheckRecordType(expr, potentialObjType);
+        }
+
+        if (specificTypeMatchCtx.ValidMatchStatus()) {
+            matchingObjectTypes.emplace_back(potentialObjType);
+        }
+        expr->CleanCheckInformation();
+        expr->SetPreferredType(preferredType);
+    }
+
+    // Phase 3: Decide based on number of matches
+    if (matchingObjectTypes.empty()) {
+        // No candidate ETSObjectType from the union matched all properties
+        checker->LogError(diagnostic::CLASS_COMPOSITE_INVALID_TARGET, {expr->PreferredType()}, expr->Start());
+        return checker->GlobalTypeError();
+    }
+
+    if (matchingObjectTypes.size() > 1) {
+        if (auto *specificType = TryFindPublicBaseType(checker, matchingObjectTypes); specificType != nullptr) {
+            CheckObjectExprBaseOnObjectType(expr, specificType->AsETSObjectType());
+            return specificType;
+        }
+        // Ambiguous
+        checker->LogError(diagnostic::AMBIGUOUS_REFERENCE, {expr->PreferredType()->ToString()}, expr->Start());
+        return checker->GlobalTypeError();
+    }
+    expr->SetPreferredType(matchingObjectTypes.front());
+    CheckObjectExprBaseOnObjectType(expr, matchingObjectTypes.front()->AsETSObjectType());
+    return matchingObjectTypes.front();
+}
+
+checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
+{
+    ETSChecker *checker = GetETSChecker();
+    if (expr->TsType() != nullptr) {
+        return expr->TsType();
+    }
+
+    if (expr->PreferredType() == nullptr) {
+        checker->LogError(diagnostic::CLASS_COMPOSITE_UNKNOWN_TYPE, {}, expr->Start());
+        expr->SetTsType(checker->GlobalTypeError());
+        return expr->TsType();
+    }
+    auto actualPreferredType = expr->PreferredType();
+    if (actualPreferredType->IsETSTypeAliasType()) {
+        actualPreferredType = actualPreferredType->AsETSTypeAliasType()->GetTargetType();
+        expr->SetPreferredType(actualPreferredType);
+    }
+
+    if (!expr->PreferredType()->IsETSUnionType() && !ValidatePreferredType(checker, expr)) {
+        expr->SetTsType(checker->GlobalTypeError());
+        return expr->TsType();
+    }
+
+    checker::Type *tsType = nullptr;
+    if (actualPreferredType->IsETSUnionType()) {
+        tsType = CheckObjectExprBaseOnUnionType(expr, actualPreferredType->AsETSUnionType());
+    } else {
+        tsType = CheckObjectExprBaseOnObjectType(expr, ResolveObjectTypeFromPreferredType(expr));
+    }
+
+    expr->SetTsType(tsType);
+    return tsType;
 }
 
 void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,

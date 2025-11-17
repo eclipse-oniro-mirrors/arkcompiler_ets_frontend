@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,12 +29,18 @@ public:
           element_(nullptr)
     {
         SetSuperType(super);
+        if (HasObjectFlag(ETSObjectFlags::BUILTIN_READONLY_ARRAY)) {
+            AddTypeFlag(TypeFlag::READONLY);
+        }
     }
 
     explicit ETSResizableArrayType(ArenaAllocator *allocator, util::StringView name,
                                    std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info)
         : ETSObjectType(allocator, name, compiler::Signatures::BUILTIN_ARRAY, info), element_(nullptr)
     {
+        if (HasObjectFlag(ETSObjectFlags::BUILTIN_READONLY_ARRAY)) {
+            AddTypeFlag(TypeFlag::READONLY);
+        }
     }
 
     explicit ETSResizableArrayType(ArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation,
@@ -48,6 +54,9 @@ public:
     {
         SetSuperType(super);
         variable_ = super->Variable();
+        if (HasObjectFlag(ETSObjectFlags::BUILTIN_READONLY_ARRAY)) {
+            AddTypeFlag(TypeFlag::READONLY);
+        }
     }
 
     NO_COPY_SEMANTIC(ETSResizableArrayType);

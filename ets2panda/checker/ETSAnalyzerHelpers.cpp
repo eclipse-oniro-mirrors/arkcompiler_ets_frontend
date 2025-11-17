@@ -640,8 +640,9 @@ bool HasSingleReturnStatement(const ir::AstNode *node)
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument)
 {
     //  First (or single) return statement in the function:
-    auto *funcReturnType =
-        stArgument == nullptr ? checker->GlobalVoidType() : checker->GetNonConstantType(stArgument->Check(checker));
+    auto *funcReturnType = stArgument == nullptr
+                               ? checker->GlobalVoidType()
+                               : checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)));
     ES2PANDA_ASSERT(funcReturnType != nullptr);
     if (funcReturnType->IsTypeError()) {
         containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);

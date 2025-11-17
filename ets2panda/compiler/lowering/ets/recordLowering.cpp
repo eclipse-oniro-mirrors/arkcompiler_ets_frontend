@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -118,7 +118,7 @@ void RecordLowering::CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression 
 
 void RecordLowering::CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx)
 {
-    auto *keyType = expr->PreferredType()->AsETSObjectType()->TypeArguments().front();
+    auto *keyType = expr->TsType()->AsETSObjectType()->TypeArguments().front();
     if (!keyType->IsETSUnionType()) {
         return;
     }
@@ -175,13 +175,13 @@ ir::Expression *RecordLowering::UpdateObjectExpression(ir::ObjectExpression *exp
         expr->SetPreferredType(expr->PreferredType()->AsETSAsyncFuncReturnType()->GetPromiseTypeArg());
     }
 
-    if (!expr->PreferredType()->IsETSObjectType()) {
+    if (!expr->TsType()->IsETSObjectType()) {
         // Unexpected preferred type
         return expr;
     }
 
     // Check if this is actually a Record or Map type using proper type identity checking
-    auto *objType = expr->PreferredType()->AsETSObjectType();
+    auto *objType = expr->TsType()->AsETSObjectType();
     auto *originalBaseType = objType->GetOriginalBaseType();
     auto *globalTypes = checker->GetGlobalTypesHolder();
 
@@ -193,7 +193,7 @@ ir::Expression *RecordLowering::UpdateObjectExpression(ir::ObjectExpression *exp
 
     // Access type arguments
     [[maybe_unused]] size_t constexpr NUM_ARGUMENTS = 2;
-    auto const &typeArguments = expr->PreferredType()->AsETSObjectType()->TypeArguments();
+    auto const &typeArguments = expr->TsType()->AsETSObjectType()->TypeArguments();
     ES2PANDA_ASSERT(typeArguments.size() == NUM_ARGUMENTS);
 
     auto const *keyType = typeArguments[0];
@@ -255,7 +255,7 @@ ir::Expression *RecordLowering::CreateBlockExpression(ir::ObjectExpression *expr
     auto *ident = Gensym(ctx->Allocator());
 
     // Determine container type using proper type checking
-    auto *objType = expr->PreferredType()->AsETSObjectType();
+    auto *objType = expr->TsType()->AsETSObjectType();
     auto *originalBaseType = objType->GetOriginalBaseType();
     auto *globalTypes = checker->GetGlobalTypesHolder();
 

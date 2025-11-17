@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,13 +24,14 @@ const strPrimitive = 'test';
 const strObject = new String('test');
 const set = new Set<number | string>([numPrimitive, numObject, strPrimitive, strObject]);
 const visited: Base10[] = [];
-/* @@ label1 */set.forEach((/* @@ label2 */value) : void => {
+/* @@ label1 */set.forEach((value) : void => {
     visited.push({ value: value.value.Of(), type: typeof value});
 });
 
-/* @@ label3 */[0, 1, 2].forEach(()=>{/* @@ label4 */({})});
+/* @@ label2 */[0, 1, 2].forEach(()=>{/* @@ label3 */({})});
 
-/* @@@ label1 Error Semantic error ESE0127: No matching call signature for forEach(((p1: *ERROR_TYPE*) => void)) */
-/* @@@ label2 Error Semantic error ESE0132: The type of parameter 'value' cannot be inferred */
-/* @@@ label3 Error Semantic error ESE0127: No matching call signature for forEach((() => void)) */
-/* @@@ label4 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for forEach(((p1: Double|String) => void)) */
+/* @@? 28:33 Error Semantic error ESE0087: Property 'value' does not exist on type 'Double' */
+/* @@? 28:33 Error Semantic error ESE0087: Property 'value' does not exist on type 'String' */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for forEach((() => void)) */
+/* @@@ label3 Error Semantic error ESE0062: need to specify target type for class composite */

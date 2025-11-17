@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,19 @@
  * limitations under the License.
  */
 
-enum Color { Red }
+type RecordData = Record<string, RecordData> | ((n2: number, n3: number) => number) | number
 
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
+let want: RecordData = {
+	"numberkey": 123,
+    "lambdakey": (a: number, b: number) : number => {
+		let want_inner: RecordData = {
+			"numberkey": 1234
+		} 
+        return a + b;
+    }
+	
 }
+
+const add = (want as Record<string, RecordData>)["lambdakey"] as (n2: number, n3: number) => number;
+
+arktest.assertEQ(add(5, 6), 11)

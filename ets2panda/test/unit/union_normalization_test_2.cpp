@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,7 @@ using ark::es2panda::gtests::UnionNormalizationTest;
 
 namespace ark::es2panda {
 
-TEST_F(UnionNormalizationTest, UnionWithSubTypes)
+TEST_F(UnionNormalizationTest, UnionWithSubTypes1)
 {
     // Test 4 cases of normalization
     static constexpr std::string_view SRC =
@@ -68,7 +68,9 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     unionConstituents1.emplace_back(baseType);
 
     // Create union type, which will be normalized inside creation function
-    auto *const normalizedType1 = checker->CreateETSUnionType(std::move(unionConstituents1));
+    auto *const un1 = checker->CreateETSUnionType(std::move(unionConstituents1));
+    ASSERT_TRUE(un1->IsETSUnionType());
+    auto *const normalizedType1 = un1->AsETSUnionType()->NormalizedType();
     ASSERT_NE(normalizedType1, nullptr);
     ASSERT_TRUE(normalizedType1->IsETSObjectType());
     ASSERT_EQ(normalizedType1, baseType);
@@ -79,16 +81,40 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     unionConstituents2.emplace_back(derived2Type);
 
     // Create union type, which will be normalized inside creation function
-    auto *const normalizedType2 = checker->CreateETSUnionType(std::move(unionConstituents2));
+    auto *const un2 = checker->CreateETSUnionType(std::move(unionConstituents2));
+    ASSERT_TRUE(un2->IsETSUnionType());
+    auto *const normalizedType2 = un2->AsETSUnionType()->NormalizedType();
     ASSERT_NE(normalizedType2, nullptr);
     ASSERT_TRUE(normalizedType2->IsETSObjectType());
     ASSERT_EQ(normalizedType2, baseType);
+}
 
+TEST_F(UnionNormalizationTest, UnionWithSubTypes2)
+{
+    static constexpr std::string_view SRC =
+        "\
+        class Base {}\
+        class Derived1 extends Base {}\
+        class Derived2 extends Base {}\
+        ";
+    InitializeChecker("_.ets", SRC);
+
+    auto program = Program();
+    ASSERT(program);
+
+    auto *const baseType = FindClassType(program->VarBinder()->AsETSBinder(), "Base");
+    ASSERT_NE(baseType, nullptr);
+    auto *const derived1Type = FindClassType(program->VarBinder()->AsETSBinder(), "Derived1");
+    ASSERT_NE(derived1Type, nullptr);
+    auto *const derived2Type = FindClassType(program->VarBinder()->AsETSBinder(), "Derived2");
+    ASSERT_NE(derived2Type, nullptr);
+
+    auto checker = Checker();
+    ASSERT(checker);
     // Test normalization: Derived1 | Derived2 ==> Derived1 | Derived2
     std::vector<checker::Type *> unionConstituents3;
     unionConstituents3.emplace_back(derived1Type);
     unionConstituents3.emplace_back(derived2Type);
-
     // Create union type, which will be normalized inside creation function
     auto *const normalizedType3 = checker->CreateETSUnionType(std::move(unionConstituents3));
     ASSERT_NE(normalizedType3, nullptr);
@@ -104,7 +130,9 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     unionConstituents4.emplace_back(derived2Type);
 
     // Create union type, which will be normalized inside creation function
-    auto *const normalizedType4 = checker->CreateETSUnionType(std::move(unionConstituents4));
+    auto *const un4 = checker->CreateETSUnionType(std::move(unionConstituents4));
+    ASSERT_TRUE(un4->IsETSUnionType());
+    auto *const normalizedType4 = un4->AsETSUnionType()->NormalizedType();
     ASSERT_NE(normalizedType4, nullptr);
     ASSERT_TRUE(normalizedType4->IsETSObjectType());
     ASSERT_EQ(normalizedType4, baseType);

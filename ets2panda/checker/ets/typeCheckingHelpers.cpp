@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -901,6 +901,11 @@ Type *ETSChecker::GetTypeFromTypeParameterReference(varbinder::LocalVariable *va
     }
 
     return var->TsType();
+}
+
+Type *ETSChecker::GetNormalizedType(Type *tsType)
+{
+    return tsType != nullptr && tsType->IsETSUnionType() ? tsType->AsETSUnionType()->NormalizedType() : tsType;
 }
 
 bool ETSChecker::CheckAmbientAnnotationFieldInitializer(ir::Expression *init, ir::Expression *expected)
