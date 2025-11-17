@@ -37,7 +37,101 @@ function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGet
     Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger));
 }
 
+function replaceOnEnv(str: string, indexA: number, indexB: number) {
+    let envName: string = str.substring(indexA + 2, indexB)
+    const envValue = process.env[envName] || ""
+
+    if (envValue == "") {
+        throw new Error(envName + ' environment variable is not set');
+    }
+
+    return str.replace(str.substring(indexA, indexB + 1), envValue)
+}
+
+function getVar(str: string) {
+    if (str == null) {
+        return str
+    }
+    let indexA = str.indexOf('$')
+    let indexB = str.indexOf('}')
+
+    if (indexA == -1 || indexB == -1) {
+        return str
+    }
+
+    return replaceOnEnv(str, indexA, indexB)
+}
+
+function validate(projectConfig: BuildConfig) {
+    for (const key in projectConfig.plugins) {
+        projectConfig.plugins[key] = getVar(projectConfig.plugins[key])
+    }
+
+    for (const key in projectConfig.paths) {
+        for (let i = 0; i < projectConfig.paths[key].length; i++) {
+            projectConfig.paths[key][i] = getVar(projectConfig.paths[key][i])
+        }
+    }
+
+
+    if (projectConfig.pandaStdlibPath) {
+        projectConfig.pandaStdlibPath = getVar(projectConfig.pandaStdlibPath)
+    }
+
+    for (let i = 0; i < projectConfig.interopApiPaths?.length || 0; i++) {
+        projectConfig.interopApiPaths[i] = getVar(projectConfig.interopApiPaths[i])
+    }
+    
+    projectConfig.sdkAliasMap = projectConfig.sdkAliasMap instanceof Map
+        ? projectConfig.sdkAliasMap
+        : new Map(Object.entries(projectConfig.sdkAliasMap || {}));
+
+    if (projectConfig.sdkAliasMap.size !== 0) {
+        for (const [name, path] of projectConfig.sdkAliasMap) {
+            const newPath = getVar(path);
+            projectConfig.sdkAliasMap.set(name, newPath);
+        }
+    }
+
+    projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
+    projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
+    
+    projectConfig.entryFile = getVar(projectConfig.entryFile);
+
+    for (let i = 0; i < projectConfig.compileFiles.length; i++) {
+        projectConfig.compileFiles[i] = getVar(projectConfig.compileFiles[i])
+    }
+
+    for(let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
+        projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
+        
+        const currentDeclFilesPath = projectConfig.dependencyModuleList[i].declFilesPath;
+        if (currentDeclFilesPath) {
+            projectConfig.dependencyModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
+        }
+
+        for (let j = 0; j < projectConfig.dependencyModuleList[i].sourceRoots.length; j++) {
+            projectConfig.dependencyModuleList[i].sourceRoots[j] = getVar(projectConfig.dependencyModuleList[i].sourceRoots[j])
+        }
+    }
+
+    for(let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
+        projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
+        
+        const currentDeclFilesPath = projectConfig.dependentModuleList[i].declFilesPath;
+        if (currentDeclFilesPath) {
+            projectConfig.dependentModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
+        }
+
+        for (let j = 0; j < projectConfig.dependentModuleList[i].sourceRoots.length; j++) {
+            projectConfig.dependentModuleList[i].sourceRoots[j] = getVar(projectConfig.dependentModuleList[i].sourceRoots[j])
+        }
+    }
+
+}
+
 export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
+    validate(projectConfig)
     backwardCompatibleBuildConfigStub(projectConfig, loggerGetter)
 
     let logger: Logger = Logger.getInstance();
