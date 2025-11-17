@@ -24,3 +24,6 @@ TestCaseError_Set_Error_difference
 Eval_Eval
 TestCaseError_Intl.PluralRules_Error_selectRange
 Object_defineSetter
+
+#31521
+Object_getOwnPropertySymbols
