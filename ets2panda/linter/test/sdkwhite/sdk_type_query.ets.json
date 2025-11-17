@@ -1,178 +1,148 @@
 {
     "copyright": [
-      "Copyright (c) 2025 Huawei Device Co., Ltd.",
-      "Licensed under the Apache License, Version 2.0 (the 'License');",
-      "you may not use this file except in compliance with the License.",
-      "You may obtain a copy of the License at",
-      "",
-      "http://www.apache.org/licenses/LICENSE-2.0",
-      "",
-      "Unless required by applicable law or agreed to in writing, software",
-      "distributed under the License is distributed on an 'AS IS' BASIS,",
-      "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-      "See the License for the specific language governing permissions and",
-      "limitations under the License."
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
     ],
     "result": [
-      {
-          "line": 18,
-          "column": 39,
-          "endLine": 18,
-          "endColumn": 77,
-          "problem": "SdkTypeQuery",
-          "suggest": "",
-          "rule": "Using typeof as a type is not allowed in this API (sdk-type-query)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 21,
-          "column": 41,
-          "endLine": 21,
-          "endColumn": 79,
-          "problem": "SdkTypeQuery",
-          "suggest": "",
-          "rule": "Using typeof as a type is not allowed in this API (sdk-type-query)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 25,
-          "column": 22,
-          "endLine": 25,
-          "endColumn": 60,
-          "problem": "SdkTypeQuery",
-          "suggest": "",
-          "rule": "Using typeof as a type is not allowed in this API (sdk-type-query)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 29,
-          "column": 7,
-          "endLine": 29,
-          "endColumn": 36,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 33,
-          "column": 7,
-          "endLine": 33,
-          "endColumn": 37,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 37,
-          "column": 7,
-          "endLine": 37,
-          "endColumn": 37,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 41,
-          "column": 5,
-          "endLine": 41,
-          "endColumn": 71,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 41,
-          "column": 45,
-          "endLine": 41,
-          "endColumn": 55,
-          "problem": "GlobalThis",
-          "suggest": "",
-          "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
-          "severity": "WARNING"
-      },
-      {
-          "line": 48,
-          "column": 14,
-          "endLine": 48,
-          "endColumn": 79,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 49,
-          "column": 31,
-          "endLine": 49,
-          "endColumn": 36,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 49,
-          "column": 38,
-          "endLine": 49,
-          "endColumn": 43,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 50,
-          "column": 7,
-          "endLine": 50,
-          "endColumn": 26,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 51,
-          "column": 7,
-          "endLine": 51,
-          "endColumn": 25,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 52,
-          "column": 7,
-          "endLine": 52,
-          "endColumn": 39,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 53,
-          "column": 7,
-          "endLine": 53,
-          "endColumn": 34,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      },
-      {
-          "line": 54,
-          "column": 7,
-          "endLine": 54,
-          "endColumn": 34,
-          "problem": "AnyType",
-          "suggest": "",
-          "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-          "severity": "ERROR"
-      }
-  ]
+        {
+            "line": 29,
+            "column": 7,
+            "endLine": 29,
+            "endColumn": 36,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 7,
+            "endLine": 33,
+            "endColumn": 37,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 7,
+            "endLine": 37,
+            "endColumn": 37,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 5,
+            "endLine": 41,
+            "endColumn": 71,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 45,
+            "endLine": 41,
+            "endColumn": 55,
+            "problem": "GlobalThis",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "WARNING"
+        },
+        {
+            "line": 48,
+            "column": 14,
+            "endLine": 48,
+            "endColumn": 79,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 31,
+            "endLine": 49,
+            "endColumn": 36,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 38,
+            "endLine": 49,
+            "endColumn": 43,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 7,
+            "endLine": 50,
+            "endColumn": 26,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 7,
+            "endLine": 51,
+            "endColumn": 25,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 7,
+            "endLine": 52,
+            "endColumn": 39,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 7,
+            "endLine": 53,
+            "endColumn": 34,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 7,
+            "endLine": 54,
+            "endColumn": 34,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        }
+    ]
 }
