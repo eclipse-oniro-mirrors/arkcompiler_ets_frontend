@@ -77,7 +77,7 @@ public:
             AddModifier(ir::ModifierFlags::STATIC);
         }
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

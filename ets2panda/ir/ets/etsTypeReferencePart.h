@@ -39,7 +39,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE_PART, allocator), name_(name)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -51,7 +51,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE_PART, allocator), name_(name), typeParams_(typeParams), prev_(prev)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

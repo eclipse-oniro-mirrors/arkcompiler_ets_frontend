@@ -31,7 +31,7 @@ public:
         : Statement(AstNodeType::CLASS_DECLARATION), def_(def)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

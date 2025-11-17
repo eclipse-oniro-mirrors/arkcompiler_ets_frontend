@@ -39,7 +39,7 @@ public:
           requiredParams_(requiredParams)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

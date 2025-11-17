@@ -1552,9 +1552,7 @@ void ETSBinder::ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl)
 {
     // Reexport declarations are available in all files, see ReExportImports()
     // Check that reexport declaration is in this file
-    const auto program = Program()->SourceFile().GetAbsolutePath();
-    const auto reexportSource = os::GetAbsolutePath(decl->GetProgramPath().Utf8());
-    if (program.Utf8() != reexportSource) {
+    if (Program()->SourceFile().GetAbsolutePath() != decl->GetProgramPath()) {
         return;
     }
 

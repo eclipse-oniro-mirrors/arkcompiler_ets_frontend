@@ -49,7 +49,7 @@ public:
           importKinds_(importKinds)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

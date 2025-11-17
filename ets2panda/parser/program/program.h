@@ -254,14 +254,14 @@ public:
         return moduleInfo_.kind == util::ModuleKind::MODULE;
     }
 
-    bool IsDeclarationModule() const
-    {
-        return moduleInfo_.kind == util::ModuleKind::DECLARATION;
-    }
-
     bool IsPackage() const
     {
         return moduleInfo_.kind == util::ModuleKind::PACKAGE;
+    }
+
+    bool IsDeclarationModule() const
+    {
+        return moduleInfo_.isDeclarationModule;
     }
 
     bool IsDeclForDynamicStaticInterop() const

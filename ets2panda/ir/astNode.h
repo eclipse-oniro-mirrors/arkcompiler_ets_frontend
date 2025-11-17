@@ -789,6 +789,7 @@ public:
 
     AstNode *ShallowClone(ArenaAllocator *allocator);
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     bool IsValidInCurrentPhase() const;
 
     AstNode *GetHistoryNode() const
@@ -800,6 +801,22 @@ public:
     }
 
     AstNode *GetOrCreateHistoryNode() const;
+#else
+    ALWAYS_INLINE bool IsValidInCurrentPhase() const
+    {
+        return true;
+    }
+
+    ALWAYS_INLINE AstNode *GetHistoryNode() const
+    {
+        return const_cast<AstNode *>(this);
+    }
+
+    ALWAYS_INLINE AstNode *GetOrCreateHistoryNode() const
+    {
+        return const_cast<AstNode *>(this);
+    }
+#endif
 
     virtual void CleanCheckInformation();
 
@@ -821,10 +838,39 @@ protected:
         }
     }
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     void InitHistory();
     bool HistoryInitialized() const;
-
     AstNode *GetFromExistingHistory() const;
+
+    ALWAYS_INLINE void SetHistoryInternal([[maybe_unused]] AstNodeHistory *history)
+    {
+        history_ = history;
+    }
+
+    ALWAYS_INLINE AstNodeHistory *GetHistoryInternal()
+    {
+        return history_;
+    }
+#else
+    ALWAYS_INLINE void InitHistory() const {}
+    ALWAYS_INLINE bool HistoryInitialized() const
+    {
+        return false;
+    }
+
+    AstNode *GetFromExistingHistory() const
+    {
+        return nullptr;
+    }
+
+    ALWAYS_INLINE void SetHistoryInternal([[maybe_unused]] AstNodeHistory *history) const {}
+
+    ALWAYS_INLINE AstNodeHistory *GetHistoryInternal() const
+    {
+        return nullptr;
+    }
+#endif
 
     template <typename T>
     T *GetHistoryNodeAs() const
@@ -841,7 +887,6 @@ protected:
     friend class SizeOfNodeTest;
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     AstNode *parent_ {};
-    AstNodeHistory *history_ {nullptr};
     lexer::CompressedSourceRange range_ {};
 #ifndef NDEBUG
     ModifierFlags flags_ {};
@@ -859,11 +904,13 @@ protected:
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:
-    compiler::PhaseId GetFirstCreated() const;
     AstNode &operator=(const AstNode &) = default;
 
     varbinder::Variable *variable_ {};
     AstNode *originalNode_ = nullptr;
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
+    AstNodeHistory *history_ {nullptr};
+#endif
 };
 
 template <typename T>

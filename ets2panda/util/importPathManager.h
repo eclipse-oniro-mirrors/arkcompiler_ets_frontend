@@ -63,13 +63,14 @@ class ETSParser;
 
 namespace ark::es2panda::util {
 
-enum class ModuleKind { MODULE, DECLARATION, PACKAGE };
+enum class ModuleKind { MODULE, PACKAGE };
 
 struct ModuleInfo {
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     StringView moduleName {};
     StringView modulePrefix {};
     ModuleKind kind {};
+    bool isDeclarationModule {};
     // NOTE(dkofanov): Should be refactored and aligned with 'ModuleKind' and
     // 'Program::MaybeTransformToDeclarationModule'.
     bool isDeclForDynamicStaticInterop {};

@@ -256,7 +256,9 @@ void AstNode::CopyTo(AstNode *other) const
     FlagsField::Set(FlagsField::Decode(bitFields_), &(other->bitFields_));
     AstNodeFlagsField::Set(AstNodeFlagsField::Decode(bitFields_), &(other->bitFields_));
 #endif
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     other->history_ = history_;
+#endif
     other->variable_ = variable_;
     other->originalNode_ = originalNode_;
 }
@@ -266,17 +268,13 @@ AstNode *AstNode::Construct([[maybe_unused]] ArenaAllocator *allocator)
     ES2PANDA_UNREACHABLE();
 }
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
 bool AstNode::IsValidInCurrentPhase() const
 {
     if (!HistoryInitialized()) {
         return true;
     }
-    return compiler::GetPhaseManager()->CurrentPhaseId() >= GetFirstCreated();
-}
-
-compiler::PhaseId AstNode::GetFirstCreated() const
-{
-    return history_->FirstCreated();
+    return compiler::GetPhaseManager()->CurrentPhaseId() >= history_->FirstCreated();
 }
 
 AstNode *AstNode::GetFromExistingHistory() const
@@ -310,6 +308,22 @@ AstNode *AstNode::GetOrCreateHistoryNode() const
     return node;
 }
 
+void AstNode::InitHistory()
+{
+    if (!g_enableContextHistory || HistoryInitialized()) {
+        return;
+    }
+
+    history_ = compiler::GetPhaseManager()->Allocator()->New<AstNodeHistory>(
+        this, compiler::GetPhaseManager()->CurrentPhaseId(), compiler::GetPhaseManager()->Allocator());
+}
+
+bool AstNode::HistoryInitialized() const
+{
+    return history_ != nullptr;
+}
+#endif  // ES2PANDA_ENABLE_AST_HISTORY
+
 void AstNode::AddModifier(ModifierFlags const flags) noexcept
 {
     if (!All(Modifiers(), flags)) {
@@ -332,21 +346,6 @@ void AstNode::ClearModifier(ModifierFlags const flags) noexcept
                         &(GetOrCreateHistoryNode()->bitFields_));
 #endif
     }
-}
-
-void AstNode::InitHistory()
-{
-    if (!g_enableContextHistory || HistoryInitialized()) {
-        return;
-    }
-
-    history_ = compiler::GetPhaseManager()->Allocator()->New<AstNodeHistory>(
-        this, compiler::GetPhaseManager()->CurrentPhaseId(), compiler::GetPhaseManager()->Allocator());
-}
-
-bool AstNode::HistoryInitialized() const
-{
-    return history_ != nullptr;
 }
 
 void AstNode::CleanCheckInformation()

@@ -173,7 +173,7 @@ ScriptFunction::ScriptFunction(ArenaAllocator *allocator, ScriptFunctionData &&d
         typeParams->SetParent(this);
     }
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }

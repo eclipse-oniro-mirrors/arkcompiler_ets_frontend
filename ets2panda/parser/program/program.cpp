@@ -128,19 +128,30 @@ void Program::SetPackageInfo(const util::StringView &name, util::ModuleKind kind
     moduleInfo_.kind = kind;
 }
 
-// NOTE(vpukhov): part of ongoing design
+// NOTE(vpukhov): #31581: the flags should be set by the build system
 void Program::MaybeTransformToDeclarationModule()
 {
     ES2PANDA_ASSERT(ast_ != nullptr);
     if (IsPackage() || ast_->Statements().empty()) {
         return;
     }
+    bool hasLocalDefs = false;
     for (auto stmt : ast_->Statements()) {
+        if (stmt->IsETSImportDeclaration()) {
+            continue;
+        }
+        // The existing logic is as follows:
+        // * if module is empty, it is not a declaration module
+        // * if there is any local non-declare definition in the module, it is not a declaration module
+        // * otherwise, it is a declaration module
+        hasLocalDefs = true;
         if (!(stmt->IsDeclare() || stmt->IsTSTypeAliasDeclaration())) {
             return;
         }
     }
-    moduleInfo_.kind = util::ModuleKind::DECLARATION;
+    if (hasLocalDefs) {
+        moduleInfo_.isDeclarationModule = true;
+    }
 }
 
 void Program::AddNodeToETSNolintCollection(const ir::AstNode *node, const std::set<ETSWarnings> &warningsCollection)

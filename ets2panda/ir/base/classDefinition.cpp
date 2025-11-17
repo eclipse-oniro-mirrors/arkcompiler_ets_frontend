@@ -506,7 +506,7 @@ ClassDefinition *ClassDefinition::Construct(ArenaAllocator *allocator)
 {
     ArenaVector<AstNode *> body {allocator->Adapter()};
     return allocator->New<ClassDefinition>(allocator, nullptr, std::move(body), ClassDefinitionModifiers::NONE,
-                                           ModifierFlags::NONE, Language::Id::COUNT, history_);
+                                           ModifierFlags::NONE, Language::Id::COUNT, GetHistoryInternal());
 }
 
 void ClassDefinition::CopyTo(AstNode *other) const
