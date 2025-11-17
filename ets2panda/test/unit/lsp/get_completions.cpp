@@ -62,6 +62,31 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 }
 
 namespace {
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionParamMember)
+{
+    std::vector<std::string> files = {"getCompletionsAtPositionParamMember.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+function json2Array(jsonArr: Array<number>) {
+      jsonArr.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset1 = 61;  // jsonArr.
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res1 = lspApi->getCompletionsAtPosition(ctx, offset1);
+    auto expectedEntries1 = std::vector<CompletionEntry> {CompletionEntry(
+        "at", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "at()")};
+    AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition21)
 {
     std::vector<std::string> files = {"getCompletionsAtPosition22.ets"};
