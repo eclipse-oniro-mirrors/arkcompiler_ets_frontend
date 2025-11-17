@@ -27,5 +27,3 @@ let promise2 = promise1.catch((value: string): string => {
     arktest.assertEQ(result, "hello");
     return "bye";
 })
-
-/* @@? 25:31 Warning Warning W49710: No matching signature found for Promise.then/catch: ((p1: String) => String) */

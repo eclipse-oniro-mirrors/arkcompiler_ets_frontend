@@ -23,6 +23,5 @@ function main() {
     }
 }
 
-
 /* @@? 21:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 21:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 21:5 Error Semantic error ESE0127: No matching call signature for f() */

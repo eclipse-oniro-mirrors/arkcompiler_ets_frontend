@@ -20,4 +20,3 @@ class A {
 }
 
 /* @@? 18:9 Error Semantic error ESE0145: Property 'f' must be accessed through 'this' */
-/* @@? 18:13 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type '(() => void)' */

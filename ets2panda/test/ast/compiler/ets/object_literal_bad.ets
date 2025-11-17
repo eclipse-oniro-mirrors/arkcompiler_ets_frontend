@@ -17,5 +17,4 @@ class A {
     public age: number = 1
 }
 
-let a : A = { /* @@ label */"age" : 30}
-/* @@@ label Warning Warning W98268: Key in class composite should be identifier, the use of strings as keys will be deprecated soon */
+let a : A = { "age" : 30}

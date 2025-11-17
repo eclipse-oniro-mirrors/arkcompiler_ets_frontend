@@ -15,7 +15,5 @@
 
 function foo(arg1: int): /* @@ label */this { return this; }
 
-
-/* @@@ label Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@? 16:40 Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
 /* @@? 16:54 Error Semantic error ESE0203: Cannot reference 'this' in this context. */
-/* @@? 16:54 Error Semantic error ESE0091: Type 'Error' is not compatible with the enclosing method's return type 'ETSGLOBAL' */

@@ -19,6 +19,4 @@ function sum(...numbers: [number, number, number]): number {
 
 /* @@ label */sum()
 
-
-/* @@@ label Error Semantic error ESE0124: Expected 3 arguments, got 0. */
-/* @@@ label Error Semantic error ESE0128: No matching call signature */
+/* @@? 20:15 Error Semantic error ESE0127: No matching call signature for sum() */

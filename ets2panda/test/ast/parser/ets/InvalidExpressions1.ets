@@ -47,8 +47,8 @@ let a = [1, 2, 3);
 /* @@? 18:8 Error Syntax error ESY0227: Unexpected token '55'. */
 /* @@? 18:10 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 20:5 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 20:6 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 20:6 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 20:6 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
 /* @@? 20:9 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 20:11 Error Syntax error ESY0227: Unexpected token '78'. */
 /* @@? 20:13 Error Syntax error ESY0227: Unexpected token ']'. */
@@ -66,13 +66,12 @@ let a = [1, 2, 3);
 /* @@? 28:5 Error Semantic error ESE0351: Variable 'a' has already been declared. */
 /* @@? 28:20 Error Syntax error ESY0230: Expected '}', got ')'. */
 /* @@? 30:5 Error Semantic error ESE0351: Variable 'a' has already been declared. */
+/* @@? 30:13 Error Syntax error ESY0138: Invalid Type. */
 /* @@? 30:13 Error Syntax error ESY0227: Unexpected token 'import'. */
 /* @@? 30:13 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
-/* @@? 30:13 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 30:13 Error Syntax error ESY0227: Unexpected token 'import'. */
 /* @@? 32:10 Error Semantic error ESE0351: Variable 'f' has already been declared. */
 /* @@? 33:5 Error Semantic error ESE0201: Call to 'super' must be first statement in constructor */
-/* @@? 33:5 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
-/* @@? 33:5 Error Semantic error ESE0127: No matching call signature for std.core.Object(Int) */
 /* @@? 33:10 Error Syntax error ESY0061: Unexpected super keyword. */
 /* @@? 36:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 36:8 Error Syntax error ESY0228: Unexpected token, expected ']'. */

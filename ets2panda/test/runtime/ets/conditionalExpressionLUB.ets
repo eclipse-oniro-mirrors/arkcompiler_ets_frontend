@@ -21,28 +21,27 @@ final class C extends A implements I {}
 final class D extends A {}
 final class F extends B {}
 
-function foo(p: Object): int {
-  return 1;
-}
-
-function foo(p: A): int {
-  return 2;
-}
-
-function foo(p: B): int {
-  return 3;
-}
-
-function foo(p: C): int {
-  return 4;
+function foo(p: F): int {
+  return 6;
 }
 
 function foo(p: D): int {
   return 5;
 }
 
-function foo(p: F): int {
-  return 6;
+function foo(p: C): int {
+  return 4;
+}
+
+function foo(p: B): int {
+  return 3;
+}
+
+function foo(p: A): int {
+  return 2;
+}
+function foo(p: Object): int {
+  return 1;
 }
 
 function getTrue(): boolean {

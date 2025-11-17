@@ -13,18 +13,32 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo(5), 5);
+interface I {
+    foo(a: number){
+        return "invoke1"
+    }
 }
 
-function foo(a : int, b ?: int) : int
-{
-    return a + 2;
+interface J extends I {
+    foo(a: string): string
 }
 
-function foo(a : int) : int
-{
-    return a;
+class C implements I {
+    foo(a: number) {
+        return "invoke2"
+    }
+    foo(a: string) {
+        return "invoke3"
+    }
 }
 
+function foo(param: J) {
+    param.foo(1);
+    param.foo("abc")
+}
+
+function main() {
+    let c = new C();
+    arktest.assertEQ(c.foo(1), "invoke2");
+    arktest.assertEQ(c.foo("abc"), "invoke3");
+}

@@ -229,8 +229,8 @@ function main(): void {
 /* @@? 93:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 103:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 104:21 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
-/* @@? 115:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 115:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 115:26 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 115:26 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 115:26 Error Syntax error ESY0227: Unexpected token 'case'. */
 /* @@? 115:30 Error Syntax error ESY0227: Unexpected token ':'. */
@@ -263,30 +263,34 @@ function main(): void {
 /* @@? 125:1 Error Semantic error ESE0399: Method declaration `foo` must all ambient or non-ambient */
 /* @@? 127:1 Error Syntax error ESY0106: The modifier async cannot be used in an ambient context. */
 /* @@? 132:14 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
-/* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
-/* @@? 137:16 Error Syntax error ESY0230: Expected ')', got '='. */
 /* @@? 137:16 Error Syntax error ESY0230: Expected '{', got '='. */
 /* @@? 137:16 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? 137:16 Error Syntax error ESY0101: Catch clause variable cannot have an initializer. */
+/* @@? 137:16 Error Syntax error ESY0230: Expected '{', got '='. */
+/* @@? 137:16 Error Syntax error ESY0230: Expected ')', got '='. */
 /* @@? 137:18 Error Syntax error ESY0227: Unexpected token '0'. */
 /* @@? 137:19 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 137:21 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 141:5 Error Semantic error ESE0127: No matching call signature for assertTrue(..., undefined) */
 /* @@? 141:24 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 145:18 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
+/* @@? 146:5 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 146:28 Error Semantic error ESE0087: Property 'getInner' does not exist on type 'A' */
 /* @@? 148:25 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
 /* @@? 149:24 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
 /* @@? 151:20 Error Semantic error ESE0371: Cannot find type 'D0'. */
 /* @@? 151:29 Error Semantic error ESE0371: Cannot find type 'D0'. */
 /* @@? 157:16 Error Semantic error ESE0052: A is abstract therefore cannot be instantiated. */
+/* @@? 158:5 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 158:26 Error Semantic error ESE0087: Property 'getInner' does not exist on type 'A' */
-/* @@? 161:9 Error Syntax error ESY0224: Identifier expected, got 'let'. */
 /* @@? 161:9 Error Syntax error ESY0316: Hard keyword 'let' cannot be used as identifier */
-/* @@? 162:9 Error Syntax error ESY0224: Identifier expected, got 'const'. */
+/* @@? 161:9 Error Syntax error ESY0224: Identifier expected, got 'let'. */
 /* @@? 162:9 Error Syntax error ESY0316: Hard keyword 'const' cannot be used as identifier */
-/* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
+/* @@? 162:9 Error Syntax error ESY0224: Identifier expected, got 'const'. */
 /* @@? 163:9 Error Syntax error ESY0316: Hard keyword 'new' cannot be used as identifier */
+/* @@? 163:9 Error Syntax error ESY0224: Identifier expected, got 'new'. */
 /* @@? 164:5 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 165:5 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 166:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 293:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 297:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -78,13 +78,11 @@ interface I1 {
     x: number =
 }
 
-
 /* @@? 16:9 Error Semantic error ESE0190: A is not abstract and does not override abstract method f5(): Promise<void> in A */
 /* @@? 17:12 Error Syntax error ESY0115: Duplicated modifier is not allowed. */
 /* @@? 17:20 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 18:12 Error Syntax error ESY0115: Duplicated modifier is not allowed. */
 /* @@? 18:30 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
-/* @@? 19:21 Error Semantic error ESE0173: Static property 'f' must be accessed through it's class 'A' */
 /* @@? 22:12 Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */
 /* @@? 22:36 Error Semantic error ESE0047: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */
 /* @@? 22:46 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
@@ -96,8 +94,8 @@ interface I1 {
 /* @@? 41:11 Error Syntax error ESY0221: The special predefined method '$_get' should have exactly one required parameter. */
 /* @@? 41:11 Error Syntax error ESY0220: The special predefined method '$_get' cannot be asynchronous. */
 /* @@? 41:16 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
-/* @@? 45:11 Error Syntax error ESY0222: The special predefined method '$_set' should have exactly two required parameter. */
 /* @@? 45:11 Error Syntax error ESY0220: The special predefined method '$_set' cannot be asynchronous. */
+/* @@? 45:11 Error Syntax error ESY0222: The special predefined method '$_set' should have exactly two required parameter. */
 /* @@? 45:16 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 47:11 Error Syntax error ESY0220: The special predefined method '$_iterator' cannot be asynchronous. */
 /* @@? 47:11 Error Syntax error ESY0223: The special predefined method '$_iterator' should not have parameters. */
@@ -120,9 +118,9 @@ interface I1 {
 /* @@? 66:9 Error Syntax error ESY0030: Local class or interface declaration members can not have access modifies. */
 /* @@? 66:18 Error Syntax error ESY0032: Private interface methods must have body. */
 /* @@? 67:9 Error Syntax error ESY0224: Identifier expected, got 'static'. */
-/* @@? 67:16 Error Syntax error ESY0224: Identifier expected, got 'static'. */
 /* @@? 67:16 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 67:16 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 67:16 Error Syntax error ESY0224: Identifier expected, got 'static'. */
 /* @@? 72:5 Error Syntax error ESY0224: Identifier expected, got 'class'. */
 /* @@? 72:13 Error Syntax error ESY0119: Interface fields must have type annotation. */
 /* @@? 72:14 Error Syntax error ESY0138: Invalid Type. */

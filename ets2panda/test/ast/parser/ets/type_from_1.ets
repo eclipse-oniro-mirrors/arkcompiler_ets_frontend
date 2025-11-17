@@ -16,6 +16,5 @@
    let a  = Type.from<>();
   }
 
-
- /* @@? 16:13 Error Semantic error ESE0273: Expected 1 type arguments, got 0 . */
-/* @@? 16:13 Error Semantic error ESE0128: No matching call signature */
+/* @@? 16:13 Error Semantic error ESE0273: Expected 1 type arguments, got 0 . */
+/* @@? 16:13 Error Semantic error ESE0127: No matching call signature for from() */

@@ -26,8 +26,6 @@ class A {
 	}
 }
 
-
-
 /* @@? 17:7 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 17:23 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 17:23 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
@@ -56,7 +54,6 @@ class A {
 /* @@? 21:6 Error Syntax error ESY0227: Unexpected token 'else'. */
 /* @@? 21:11 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 23:5 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
-/* @@? 23:10 Error Semantic error ESE0087: Property 'func' does not exist on type 'ETSGLOBAL' */
 /* @@? 23:21 Error Syntax error ESY0227: Unexpected token 'final'. */
 /* @@? 25:3 Error Syntax error ESY0227: Unexpected token '}'. */
 /* @@? 26:2 Error Syntax error ESY0227: Unexpected token '}'. */

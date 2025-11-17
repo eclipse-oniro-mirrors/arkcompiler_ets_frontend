@@ -88,12 +88,7 @@ const _exported: ExportedType = _exportedStructure;
 
 export default _exported;
 
-
 /* @@? 26:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 41:12 Error Semantic error ESE0127: No matching call signature for (...) */
-/* @@? 41:23 Error Semantic error ESE0062: need to specify target type for class composite */
-/* @@? 54:20 Error Semantic error ESE0127: No matching call signature for (...) */
-/* @@? 54:31 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 61:66 Error Syntax error ESY145527: Intersection types are not supported, use inheritance instead! */
 /* @@? 62:12 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 62:12 Error Semantic error ESE0144: Type name 'IndexableType' used in the wrong context */

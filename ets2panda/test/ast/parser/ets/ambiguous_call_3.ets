@@ -22,6 +22,3 @@ class X extends B implements I1 {}
 function main (): void {
     /* @@ label */goo (new X())
 }
-
-
-/* @@@ label Error Semantic error ESE0142: Call to `goo` is ambiguous as `2` versions of `goo` are available: `goo(p2: B): void` and `goo(p1: I1): void` */

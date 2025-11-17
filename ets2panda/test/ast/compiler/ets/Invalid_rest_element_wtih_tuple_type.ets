@@ -22,6 +22,6 @@ function main() {
     let mc = new TH<number, string, boolean>
 }
 
-
-/* @@? 17:38 Error Semantic error ESE0288: Cannot make a static reference to the non-static type B */
-/* @@? 17:41 Error Semantic error ESE0288: Cannot make a static reference to the non-static type C */
+/* @@? 16:19 Error Semantic error ESE0127: No matching call signature for restMethod(...) */
+/* @@? 17:38 Error Semantic error ESE0371: Cannot find type 'B'. */
+/* @@? 17:41 Error Semantic error ESE0371: Cannot find type 'C'. */

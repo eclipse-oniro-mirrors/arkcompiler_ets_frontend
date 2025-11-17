@@ -13,18 +13,23 @@
  * limitations under the License.
  */
 
-function main() : void
-{
-    arktest.assertEQ(foo(5, 2), 7);
+class C {
+    static foo(a: number) {
+        return "static invoke1"
+    }
 }
 
-function foo(a : int, ...b: int[]) : int
-{
-    return 0;
+class D extends C {
+    static foo(a: number) {
+        return "static invoke2"
+    }
+    static foo(a: string) {
+        return "static invoke3"
+    }
 }
 
-function foo(a : int, b:int) : int
-{
-    return a + b;
+function main() {
+    arktest.assertEQ(D.foo(1), "static invoke2");
+    arktest.assertEQ(D.foo("abc"), "static invoke3");
+    arktest.assertEQ(C.foo(1), "static invoke1");
 }
-

@@ -18,7 +18,6 @@ let obj: Record<string, number> = {
     [this.viewModel.ads]: 123
 }
 
-
 /* @@? 18:5 Error Syntax error ESY0016: Unexpected token. */
 /* @@? 18:6 Error Syntax error ESY0228: Unexpected token, expected '('. */
 /* @@? 18:10 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
@@ -34,3 +33,4 @@ let obj: Record<string, number> = {
 /* @@? 18:25 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 18:27 Error Syntax error ESY0227: Unexpected token '123'. */
 /* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */
+

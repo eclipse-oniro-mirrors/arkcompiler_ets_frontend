@@ -31,13 +31,13 @@ function name(this: Banana): int {
 function asFuncCall() {
     let banana = new Banana();
     let res: int = name(banana);
-    arktest.assertEQ(res, 2 )
+    arktest.assertEQ(res, 1 )
 }
 
 function asMethodCall() {
     let banana = new Banana();
     let res: int = banana.name();
-    arktest.assertEQ(res, 2 )
+    arktest.assertEQ(res, 1 )
 }
 
 function main() {

@@ -23,7 +23,6 @@ function main(): void {
     new A {}; // It is forbidden to extend a class by an anonymous class
 }
 
-
 /* @@? 23:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
-/* @@? 23:5 Error Semantic error ESE0128: No matching construct signature */
+/* @@? 23:5 Error Semantic error ESE0127: No matching construct signature for trailing_lambda_not_transform_trailing_block_4.A() */
 /* @@? 23:11 Error Syntax error ESY0227: Unexpected token '{'. */

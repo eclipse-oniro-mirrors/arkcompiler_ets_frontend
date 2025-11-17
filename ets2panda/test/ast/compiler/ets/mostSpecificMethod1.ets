@@ -23,6 +23,3 @@ function main() : void {
 
     /* @@ label */foo(a, a);
 }
-
-
-/* @@@ label Error Semantic error ESE0126: Reference to foo is ambiguous */

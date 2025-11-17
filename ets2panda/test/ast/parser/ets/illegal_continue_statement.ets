@@ -41,12 +41,10 @@ function foo4() {
     console.log(a + 5)
 }
 
-
 /* @@? 18:5 Error Syntax error ESY0165: Illegal continue statement. */
 /* @@? 18:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
 /* @@? 25:5 Error Syntax error ESY0165: Illegal continue statement. */
 /* @@? 25:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 27:17 Error Semantic error ESE0143: Unresolved reference a */
 /* @@? 32:5 Error Syntax error ESY0209: Illegal break statement. */
 /* @@? 32:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
 /* @@? 39:5 Error Syntax error ESY0209: Illegal break statement. */

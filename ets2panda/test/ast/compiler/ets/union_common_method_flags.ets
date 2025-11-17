@@ -52,9 +52,9 @@ function f3(x: B | D) {
 }
 
 /* @@? 43:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@? 43:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 43:5 Error Semantic error ESE0127: No matching call signature for name() */
 /* @@? 47:12 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@? 47:12 Error Semantic error ESE0128: No matching call signature */
+/* @@? 47:12 Error Semantic error ESE0127: No matching call signature for name() */
 /* @@? 51:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@? 51:5 Error Semantic error ESE0128: No matching call signature */
+/* @@? 51:5 Error Semantic error ESE0127: No matching call signature for name() */
 /* @@? 51:7 Error Semantic error ESE0207: 'name' is a static property of 'D' */

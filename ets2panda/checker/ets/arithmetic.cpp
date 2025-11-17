@@ -453,6 +453,7 @@ checker::Type *ETSChecker::CheckBinaryOperatorPlus(
             return type;
         }
         LogError(diagnostic::BINOP_NONARITHMETIC_TYPE, {}, pos);
+        return GlobalTypeError();
     }
 
     return promotedType;

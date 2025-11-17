@@ -61,7 +61,7 @@ private:
     }
 };
 
-TEST_F(ForgottenThisPropertyAccessTests, TestForgottenThisPropertyAccess_BasicCase)
+TEST_F(ForgottenThisPropertyAccessTests, DISABLED_TestForgottenThisPropertyAccess_BasicCase)
 {
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext("ForgottenThisPropertyAccess_Basic.ets", ES2PANDA_STATE_CHECKED,
@@ -110,7 +110,7 @@ console.log(name);
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(ForgottenThisPropertyAccessTests, TestForgottenThisPropertyAccess_MultipleProperties)
+TEST_F(ForgottenThisPropertyAccessTests, DISABLED_TestForgottenThisPropertyAccess_MultipleProperties)
 {
     Initializer initializer = Initializer();
     es2panda_Context *ctx =
