@@ -2681,6 +2681,13 @@ std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::Member
             LogError(diagnostic::EXTENSION_ACCESSOR_INVALID_CALL, {}, memberExpr->Start());
             return resolveRes;
         }
+        if (resolvedKind == ResolvedKind::EXTENSION_FUNCTION && !globalFunctionVar->TsType()->IsETSArrowType() &&
+            !memberExpr->Parent()->IsCallExpression()) {
+            LogError(diagnostic::PROPERTY_NONEXISTENT,
+                     {memberExpr->Property()->AsIdentifier()->Name(), memberExpr->ObjType()},
+                     memberExpr->Property()->Start());
+            return resolveRes;
+        }
         resolveRes.emplace_back(ProgramAllocator()->New<ResolveResult>(globalFunctionVar, resolvedKind));
     } else {
         ValidateResolvedProperty(&prop, target, memberExpr->Property()->AsIdentifier(), searchFlag);
