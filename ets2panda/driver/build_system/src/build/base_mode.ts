@@ -447,7 +447,7 @@ export abstract class BaseMode {
                 );
             }
             // workaround: information for main module is filled incorrectly
-            if (dependency.packageName == mainModuleInfo.packageName) {
+            if (dependency.packageName === mainModuleInfo.packageName) {
                 mainModuleInfo.declFilesPath = dependency.declFilesPath;
                 mainModuleInfo.language = dependency.language;
             }
