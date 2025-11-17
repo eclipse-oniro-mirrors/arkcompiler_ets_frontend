@@ -762,6 +762,7 @@ public:
 
     // Covariant and contravariant
     void CheckTypeParameterVariance(ir::ClassDefinition *classDef);
+    void CheckTypeParameterVariance(ir::TSInterfaceDeclaration *ifaceDecl);
 
     checker::Type *CheckArrayElements(ir::ArrayExpression *init);
     void ResolveReturnStatement(checker::Type *funcReturnType, checker::Type *argumentType,

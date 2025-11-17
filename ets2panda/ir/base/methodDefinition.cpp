@@ -316,6 +316,7 @@ static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dum
             // NOTE(zhelyapov): workaround, see #26031
             if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
                 anno->Dump(dumper);
+                dumper->Endl();
             }
         }
     }

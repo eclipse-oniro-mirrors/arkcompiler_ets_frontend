@@ -341,12 +341,6 @@ checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::TSStringKeyword *node) co
     ES2PANDA_UNREACHABLE();
 }
 
-checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::TSThisType *node) const
-{
-    ES2PANDA_ASSERT(GetETSChecker()->IsAnyError());
-    return GetChecker()->AsETSChecker()->InvalidateType(node);
-}
-
 checker::Type *ETSAnalyzer::Check([[maybe_unused]] ir::TSTupleType *node) const
 {
     ES2PANDA_UNREACHABLE();

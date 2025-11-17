@@ -544,6 +544,7 @@ ir::TSTypeParameterDeclaration *ETSChecker::ProcessTypeParamAndGenSubstitution(
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             CloneNodeIfNotNullptr(classOrInterfaceDefTypeParam->DefaultType(), ProgramAllocator()), ProgramAllocator());
         ES2PANDA_ASSERT(newTypeParam != nullptr);
+        newTypeParam->AddModifier(classOrInterfaceDefTypeParam->Modifiers());
         newTypeParams->AddParam(newTypeParam);
         newTypeParam->SetParent(newTypeParams);
         ES2PANDA_ASSERT(likeSubstitution != nullptr);
@@ -637,6 +638,7 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
                 CloneNodeIfNotNullptr(classDefTypeParam->Constraint(), ProgramAllocator()),
                 // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
                 CloneNodeIfNotNullptr(classDefTypeParam->DefaultType(), ProgramAllocator()), ProgramAllocator());
+            newTypeParam->AddModifier(classDefTypeParam->Modifiers());
             typeParams.emplace_back(newTypeParam);
         }
 

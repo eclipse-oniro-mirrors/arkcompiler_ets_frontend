@@ -110,7 +110,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
 
     bool isTypeError = false;
     for (auto *const typeAnnotation : GetTupleTypeAnnotationsList()) {
-        auto *const checkedType = typeAnnotation->GetType(checker);
+        auto checkedType = typeAnnotation->Check(checker);
         if (!isTypeError && checkedType->IsTypeError()) {
             isTypeError = true;
         }

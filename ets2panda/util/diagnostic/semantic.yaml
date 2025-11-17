@@ -1469,6 +1469,10 @@ semantic:
   message: "Unresolved reference {}"
   code_fix_ids: [FixSpelling, AddLocalVariable]
 
+- name: UNSAFE_VARIANCE_ONLY_IN_STDLIB
+  id: 154779
+  message: "The type annotation '@SkipVarianceCheckDontUseItWillBeRemoved' can be only used inside stdlib"
+
 - name: UNSUPPORTED_CLASS_LITERAL
   id: 20
   message: "Class literal is not yet supported."
