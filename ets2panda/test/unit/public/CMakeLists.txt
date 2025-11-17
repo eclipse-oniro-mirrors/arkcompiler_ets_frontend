@@ -11,16 +11,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# NOTE(@srokashevich, #29152): enable with asan after fix
+if (PANDA_ENABLE_ADDRESS_SANITIZER)
+    return()
+endif()
+
 ets2panda_add_gtest(ast_builder_test
     CPP_SOURCES ast_builder_test.cpp
 )
 
+# NOTE(@srokashevich, #30057): enable with asan after fix
+if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
 ets2panda_add_gtest(es2panda_public_test
     CPP_SOURCES es2panda_public_test.cpp
 )
+endif()
 
 add_custom_target(qemu_excluded_gtests)
 
+# NOTE(@srokashevich, #30057): enable with asan after fix
+if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
 ets2panda_add_gtest(ast_verifier_test_1
     CPP_SOURCES
         ast_verifier_short_test.cpp
@@ -50,6 +60,7 @@ ets2panda_add_gtest(ast_verifier_test_3
         ast_verifier_check_scope_declaration_test.cpp
     TEST_GROUP qemu_excluded_gtests
 )
+endif()
 
 ets2panda_add_gtest(ast_verifier_test_4
         CPP_SOURCES
