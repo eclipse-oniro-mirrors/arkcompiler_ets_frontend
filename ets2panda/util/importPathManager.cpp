@@ -177,7 +177,8 @@ std::chrono::system_clock::time_point GetFileCreationTime([[maybe_unused]] const
 #endif
 }
 
-bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &importData, bool isStdlib)
+bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &importData,
+                                             [[maybe_unused]] bool isStdlib)
 {
 #ifdef USE_UNIX_SYSCALL
     // hack for builds when no filesystem is included
@@ -336,6 +337,7 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
         return;
     }
     auto flags = O_CREAT | O_WRONLY | O_EXCL;
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
     int fd = open(absDecl.c_str(), flags, 0644);
     if (fd == -1) {
         sem_post(sem);
