@@ -52,6 +52,7 @@
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsEnumDeclaration.h"
 
+#include "libarkbase/os/file.h"
 #include "libarkbase/utils/utf.h"
 
 namespace ark::es2panda::util {
@@ -901,6 +902,58 @@ void Helpers::CheckValidFileName(const util::StringView &fileName, util::Diagnos
         util::DiagnosticMessageParams diagParams = {std::move(fileNameStr)};
         diagnosticEngine.LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
     }
+}
+
+std::vector<std::string> Helpers::Split(const std::string &str, const char delimiter)
+{
+    std::vector<std::string> items;
+
+    size_t start = 0;
+    size_t pos = str.find(delimiter);
+    while (pos != std::string::npos) {
+        std::string item = str.substr(start, pos - start);
+        items.emplace_back(item);
+        start = pos + 1;
+        pos = str.find(delimiter, start);
+    }
+    std::string tail = str.substr(start);
+    items.emplace_back(tail);
+
+    return items;
+}
+
+/*
+    it is better to use std::filesystem::relative()
+    but using std::filesystem::relative() in xts_static CI pipeline is disallowed
+    and there is no relative() in std::experimental::filesystem
+*/
+std::string Helpers::CalcRelativePath(std::string target, std::string base)
+{
+    std::string targetPath = ark::os::GetAbsolutePath(target);
+    std::string basePath = ark::os::GetAbsolutePath(base);
+    // if path doesn't exist, then ark::os::GetAbsolutePath() will return empty string
+    if (targetPath.empty() || basePath.empty()) {
+        return "";
+    }
+    auto delim = ark::os::file::File::GetPathDelim();
+    ES2PANDA_ASSERT(delim.length() == 1);
+    auto delimChar = delim[0];
+
+    std::string ret;
+    auto targetPathVec = Split(targetPath, delimChar);
+    auto basePathVec = Split(basePath, delimChar);
+
+    auto mismatched = std::mismatch(targetPathVec.begin(), targetPathVec.end(), basePathVec.begin(), basePathVec.end());
+    if (mismatched.first == targetPathVec.end() && mismatched.second == basePathVec.end()) {
+        return ".";
+    }
+    for (auto it_base = mismatched.second; it_base != basePathVec.end(); ++it_base) {
+        ret = ret + "../";
+    }
+    for (auto it_p = mismatched.first; it_p != targetPathVec.end(); ++it_p) {
+        ret = ret + *it_p + "/";
+    }
+    return ret;
 }
 
 }  // namespace ark::es2panda::util

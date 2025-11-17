@@ -33,8 +33,8 @@ public:
     NO_MOVE_SEMANTIC(DiagnosticPrinter);
     virtual ~DiagnosticPrinter() = default;
 
-    virtual void Print(const DiagnosticBase &diagnostic) const = 0;
-    virtual void Print(const DiagnosticBase &diagnostic, std::ostream &out) const = 0;
+    virtual void Print(const DiagnosticBase &diagnostic, std::string basePath) const = 0;
+    virtual void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const = 0;
 };
 
 class CLIDiagnosticPrinter : public DiagnosticPrinter {
@@ -44,8 +44,8 @@ public:
     NO_MOVE_SEMANTIC(CLIDiagnosticPrinter);
     ~CLIDiagnosticPrinter() override = default;
 
-    void Print(const DiagnosticBase &diagnostic) const override;
-    void Print(const DiagnosticBase &diagnostic, std::ostream &out) const override;
+    void Print(const DiagnosticBase &diagnostic, std::string basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const override;
 };
 
 using DiagnosticStorage = std::vector<std::shared_ptr<DiagnosticBase>>;
@@ -98,7 +98,7 @@ public:
     // NOTE(schernykh): should be removed
     void Log([[maybe_unused]] const ThrowableDiagnostic &error)
     {
-        printer_->Print(error);
+        printer_->Print(error, basePath_);
     };
 
     template <typename... T>
@@ -139,6 +139,11 @@ public:
     void SetWError(bool wError)
     {
         wError_ = wError;
+    }
+
+    void SetBasePath(std::string basePath)
+    {
+        basePath_ = basePath;
     }
 
     void CleanDuplicateLog(DiagnosticType type);
@@ -185,6 +190,7 @@ private:
     std::array<DiagnosticStorage, static_cast<size_t>(DiagnosticType::COUNT)> diagnostics_;
     std::unique_ptr<const DiagnosticPrinter> printer_;
     bool wError_ {false};
+    std::string basePath_ {""};
 };
 
 }  // namespace ark::es2panda::util

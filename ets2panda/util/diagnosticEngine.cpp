@@ -16,29 +16,38 @@
 #include "diagnosticEngine.h"
 #include <memory>
 #include "util/diagnostic.h"
+#include "util/helpers.h"
 #include "util/options.h"
 
 #include <csignal>
 
 namespace ark::es2panda::util {
 
-void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out) const
+void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const
 {
     // Message collected and printed once to avoid spliting printed message in case multithreading execution
     std::ostringstream stream;
+    std::string fileName = "";
+    if (!basePath.empty()) {
+        fileName = util::Helpers::CalcRelativePath(diagnostic.File(), basePath);
+    }
+    // if basePath is empty, it means basepath in cmdline is not setted, then output base name of file
+    // if fileName is empty, it means basePath in cmdline option is wrong, maybe basepath is not a real path in system
+    if (fileName.empty() || basePath.empty()) {
+        fileName = util::BaseName(diagnostic.File());
+    }
     if (!diagnostic.File().empty()) {
-        stream << "[" << util::BaseName(diagnostic.File()) << ":" << diagnostic.Line() << ":" << diagnostic.Offset()
-               << "] ";
+        stream << "[" << fileName << ":" << diagnostic.Line() << ":" << diagnostic.Offset() << "] ";
     }
     stream << DiagnosticTypeToString(diagnostic.Type()) << " " << diagnostic.ToStringUniqueNumber() << ": "
            << diagnostic.Message() << std::endl;
     out << stream.str();
 }
 
-void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic) const
+void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::string basePath) const
 {
     // NOTE(pronai) test harness is not prepared for cerr
-    Print(diagnostic, std::cout);
+    Print(diagnostic, std::cout, basePath);
 }
 
 void DiagnosticEngine::CleanDuplicateLog(DiagnosticType type)
@@ -126,7 +135,7 @@ std::string DiagnosticEngine::PrintAndFlushErrorDiagnostic()
     auto last = std::unique(log.begin(), log.end(), [](const auto &lhs, const auto &rhs) { return *lhs == *rhs; });
     std::ostringstream oss;
     for (auto it = log.begin(); it != last; ++it) {
-        printer_->Print(**it, oss);
+        printer_->Print(**it, oss, basePath_);
     }
     return oss.str();
 }
@@ -138,7 +147,7 @@ void DiagnosticEngine::FlushDiagnostic()
     auto last =
         std::unique(log.begin(), log.end(), [&](const auto &rhs, const auto &lhs) -> bool { return *rhs == *lhs; });
     for (auto it = log.begin(); it != last; it++) {
-        printer_->Print(**it);
+        printer_->Print(**it, basePath_);
     }
     for (auto &vec : diagnostics_) {
         vec.clear();

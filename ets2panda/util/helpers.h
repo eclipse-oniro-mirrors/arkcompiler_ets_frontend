@@ -16,7 +16,9 @@
 #ifndef ES2PANDA_UTIL_HELPERS_H
 #define ES2PANDA_UTIL_HELPERS_H
 
+#include <string>
 #include "ir/module/importSpecifier.h"
+#include "libarkbase/os/filesystem.h"
 
 namespace ark::es2panda::parser {
 class Program;
@@ -208,6 +210,9 @@ public:
 
     [[nodiscard]] static util::UString EscapeHTMLString(ArenaAllocator *allocator, const std::string &str);
     [[nodiscard]] static ir::AstNode *DerefETSTypeReference(ir::AstNode *node);
+
+    static std::vector<std::string> Split(const std::string &str, const char delimiter);
+    static std::string CalcRelativePath(std::string targetPath, std::string basePath);
 };
 
 template <typename T>

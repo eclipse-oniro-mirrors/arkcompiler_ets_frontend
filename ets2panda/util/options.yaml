@@ -148,6 +148,10 @@ options:
     default: []
     possible_values: *ETSWarnings
     delimiter: ":"
+  - name: base-path
+    type: std::string
+    default: ""
+    description: Base directory for relative paths of filenames in warnings;
 
 - name: debugger-eval
   description: Compile given file in evaluation mode

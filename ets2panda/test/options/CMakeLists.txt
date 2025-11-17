@@ -22,7 +22,7 @@ function(check_option_help_otput target_name INPUT_ARGS OUTPUT_HELP_LINE)
     separate_arguments(INPUT_ARGS)
     add_custom_target(es2panda_check_opts_${target_name}
         COMMENT "es2panda: checking option ${INPUT_ARGS}"
-        COMMAND es2panda ${INPUT_ARGS} 2> ${CMAKE_BINARY_DIR}/es2panda_check_opts_${target_name}.out || true
+        COMMAND es2panda ${INPUT_ARGS} 2> ${CMAKE_BINARY_DIR}/es2panda_check_opts_${target_name}.out 1>&2 || true
         COMMAND grep -q ${OUTPUT_HELP_LINE} ${CMAKE_BINARY_DIR}/es2panda_check_opts_${target_name}.out
         DEPENDS es2panda
     )
@@ -39,3 +39,4 @@ check_option_help_otput(version "--version" "Es2panda Version")
 check_option_help_otput(version_build "--version" "Build date:")
 check_option_help_otput(version_hash "--version" "Last commit hash")
 check_option_help_otput(list_phases "--list-phases" "Available phases:")
+check_option_help_otput(warn_error_path "${CMAKE_CURRENT_SOURCE_DIR}/../ast/compiler/ets/ambient_function.ets --output a.abc --ets-warnings:base-path=${CMAKE_CURRENT_SOURCE_DIR}" "../ast/compiler/ets/ambient_function.ets")
