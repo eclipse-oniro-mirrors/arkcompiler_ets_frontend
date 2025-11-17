@@ -22,7 +22,7 @@ function main() {
 }
 
 /* @@@ label Error SyntaxError: Index type expected in index signature. */
-/* @@@ label1 Error SyntaxError: Index type must be number in index signature. */
+/* @@@ label1 Error SyntaxError: Invalid index type ':' in index signature. */
 /* @@@ label1 Error SyntaxError: ] expected in index signature. */
 /* @@@ label2 Error SyntaxError: An index signature must have a type annotation. */
 /* @@@ label2 Error SyntaxError: Expected ':', got 'identification literal'. */
