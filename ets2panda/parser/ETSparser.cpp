@@ -185,6 +185,11 @@ ir::ETSModule *ETSParser::ParseETSGlobalScript(lexer::SourcePosition startLoc, A
                                                GetContext().GetLanguage(), GetProgram());
     ES2PANDA_ASSERT(etsModule != nullptr);
     etsModule->SetRange({startLoc, Lexer()->GetToken().End()});
+    for (auto topLevelStatement : topLevelStatements) {
+        if (topLevelStatement->IsETSReExportDeclaration()) {
+            topLevelStatement->AsETSReExportDeclaration()->GetETSImportDeclarations()->SetParent(etsModule);
+        }
+    }
     return etsModule;
 }
 
