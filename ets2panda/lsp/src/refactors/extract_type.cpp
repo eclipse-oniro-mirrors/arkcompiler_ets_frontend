@@ -291,22 +291,6 @@ size_t FindTopLevelInsertionPos(const TypeExtractionTarget &target)
     }
     return statement->Start().index;
 }
-
-/// @brief Returns true if inserting at @p pos should be prefixed with a newline.
-bool NeedsLeadingNewline(std::string_view source, size_t pos)
-{
-    if (pos == 0 || pos > source.size()) {
-        return false;
-    }
-
-    auto view = source.substr(pos - 1, 1);
-    std::string prev(view.data(), view.size());
-#ifdef _WIN32
-    return prev != "\r\n";
-#else
-    return prev != "\n";
-#endif
-}
 }  // namespace
 
 std::vector<ApplicableRefactorInfo> ExtractTypeRefactor::GetAvailableActions(const RefactorContext &refContext) const
@@ -372,9 +356,6 @@ std::unique_ptr<RefactorEditInfo> ExtractTypeRefactor::GetEditsForAction(const R
     }
     const size_t boundedInsertionPos = std::min(insertionPos, fileSource.size());
     std::string extractedDeclaration;
-    if (NeedsLeadingNewline(fileSource, boundedInsertionPos) && !newLine.empty()) {
-        extractedDeclaration += newLine;
-    }
     if (isInterfaceAction) {
         extractedDeclaration += "interface " + declarationName + " " + selectedType + newLine + newLine;
     } else {

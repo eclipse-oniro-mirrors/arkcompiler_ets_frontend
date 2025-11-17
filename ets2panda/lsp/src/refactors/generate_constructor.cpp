@@ -336,6 +336,10 @@ std::vector<ApplicableRefactorInfo> GenerateConstructorRefactor::GetAvailableAct
         return {};
     }
 
+    if (!context.kind.empty() && context.kind != TO_GENERATE_CONSTRUCTOR_ACTION.kind) {
+        return {};
+    }
+
     auto *cur = GetTouchingToken(context.context, context.span.pos, false);
     while (cur != nullptr && !IsClass(cur)) {
         cur = cur->Parent();

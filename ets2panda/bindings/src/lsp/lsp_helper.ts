@@ -493,7 +493,11 @@ export class Lsp {
 
   private getNodeInfos(paramFileName: String, fileName: String, start: number): LspNodeInfo[] | undefined {
     let nodeInfos: LspNodeInfo[] = [];
-    const moduleName = this.moduleInfos[path.resolve(paramFileName.valueOf())].packageName;
+    const moduleInfo = this.moduleInfos[path.resolve(paramFileName.valueOf())];
+    if (!moduleInfo) {
+      return;
+    }
+    const moduleName = moduleInfo.packageName;
     const declgenOutDir = this.buildConfigs[moduleName].declgenOutDir;
     if (
       (fileName.endsWith(DECL_ETS_SUFFIX) && fileName.startsWith(declgenOutDir)) ||

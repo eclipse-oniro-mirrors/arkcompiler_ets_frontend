@@ -123,12 +123,6 @@
 
 namespace ark::es2panda::lsp {
 
-#ifdef _WIN32
-constexpr const char *NEWLINE = "\r\n";
-#else
-constexpr const char *NEWLINE = "\n";
-#endif
-
 constexpr size_t HELPER_RESERVE_PADDING = 64;
 
 ExtractSymbolRefactor::ExtractSymbolRefactor()
@@ -531,7 +525,7 @@ void StripLeadingIndent(std::string &text, const std::string &indent)
 }
 
 std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingInfo &binding, const std::string &indent,
-                                const std::string &callExpr)
+                                const std::string &callExpr, const std::string &newLine)
 {
     std::string line;
     auto *parent = binding.declaration != nullptr ? binding.declaration->Parent() : nullptr;
@@ -540,7 +534,7 @@ std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingI
     auto declaratorId = GetDeclaratorIdText(ctx, binding);
     line.reserve(indent.size() + keyword.size() + declaratorId.size() + callExpr.size());
     if (needsLeadingBlank) {
-        line.append(NEWLINE);
+        line.append(newLine);
     }
 
     line.append(indent);
@@ -552,7 +546,7 @@ std::string BuildAssignmentLine(public_lib::Context *ctx, const VariableBindingI
     if (line.back() != ';') {
         line.append(";");
     }
-    line.append(NEWLINE);
+    line.append(newLine);
     return line;
 }
 
@@ -597,6 +591,7 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
     if (pubCtx == nullptr || pubCtx->sourceFile == nullptr) {
         return false;
     }
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
     constexpr const char *kHelperName = "newFunction";
 
     if (FindEnclosingClassDefinition(binding.declaration) == nullptr) {
@@ -610,7 +605,7 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
     auto [paramsSig, callArgs] = BuildParamSignature(pubCtx, binding);
 
     std::string callExpr = std::string(kHelperName) + "(" + callArgs + ")";
-    std::string replacement = BuildAssignmentLine(pubCtx, binding, indent, callExpr);
+    std::string replacement = BuildAssignmentLine(pubCtx, binding, indent, callExpr, newLine);
 
     out.insertHelper = false;
 
@@ -619,13 +614,13 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
         TrimTrailingNewlines(initBody);
         std::string helper;
         helper.reserve(paramsSig.size() + initBody.size() + HELPER_RESERVE_PADDING);
-        helper.append(NEWLINE);
-        helper.append("function ").append(kHelperName).append("(").append(paramsSig).append(") {").append(NEWLINE);
+        helper.append(newLine);
+        helper.append("function ").append(kHelperName).append("(").append(paramsSig).append(") {").append(newLine);
         helper.append("    return ").append(initBody);
         if (!initBody.empty() && helper.back() != ';') {
             helper.append(";");
         }
-        helper.append(NEWLINE).append("}").append(NEWLINE);
+        helper.append(newLine).append("}").append(newLine);
         out.insertHelper = true;
         out.insertPos = DetermineGlobalInsertPos(pubCtx);
         out.helperText = std::move(helper);
@@ -672,6 +667,7 @@ bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo 
     if (pubCtx == nullptr || pubCtx->sourceFile == nullptr) {
         return false;
     }
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
     constexpr const char *kHelperName = "newMethod";
 
     auto *classDef = FindEnclosingClassDefinition(binding.declaration);
@@ -691,24 +687,24 @@ bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo 
 
     std::string helper;
     helper.reserve(body.size() + paramsSig.size() + HELPER_RESERVE_PADDING);
-    helper.append(NEWLINE);
+    helper.append(newLine);
     helper.append(classIndent)
         .append("private ")
         .append(kHelperName)
         .append("(")
         .append(paramsSig)
         .append(") {")
-        .append(NEWLINE);
-    helper.append(classIndent).append("    ").append(body).append(NEWLINE);
+        .append(newLine);
+    helper.append(classIndent).append("    ").append(body).append(newLine);
     helper.append(classIndent)
         .append("    return ")
         .append(binding.identifier->Name().Mutf8())
         .append(";")
-        .append(NEWLINE);
-    helper.append(classIndent).append("}").append(NEWLINE);
+        .append(newLine);
+    helper.append(classIndent).append("}").append(newLine);
 
     std::string callExpr = "this." + std::string(kHelperName) + "(" + callArgs + ")";
-    std::string replacement = BuildAssignmentLine(pubCtx, binding, methodIndent, callExpr);
+    std::string replacement = BuildAssignmentLine(pubCtx, binding, methodIndent, callExpr, newLine);
 
     out.insertHelper = true;
     size_t insertPos = FindClassHelperInsertPos(pubCtx, classDef);
@@ -1012,31 +1008,26 @@ std::vector<ir::Identifier *> CollectFunctionParams(ir::AstNode *ast, size_t sta
     return params;
 }
 
-std::string BuildFunctionBody(const std::string &body, const char *nl)
+std::string BuildFunctionBody(const std::string &body, const std::string &newLine)
 {
     std::ostringstream oss;
     std::istringstream lines(body);
     std::string line;
     while (std::getline(lines, line)) {
-        oss << "    return " << line << (std::strchr(line.c_str(), ';') != nullptr ? "" : ";") << nl;
+        oss << "    return " << line << (std::strchr(line.c_str(), ';') != nullptr ? "" : ";") << newLine;
     }
     return oss.str();
 }
-std::string GenerateExtractedFunctionCode(const std::string &bodyText, const std::string &params)
+std::string GenerateExtractedFunctionCode(const std::string &bodyText, const std::string &params,
+                                          const RefactorContext &context)
 {
     static int anonCounter = 0;
     std::string functionName = "extractedFunction" + std::to_string(++anonCounter);
-
-    const char *nl =
-#ifdef _WIN32
-        "\r\n";
-#else
-        "\n";
-#endif
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
 
     std::ostringstream oss;
-    oss << "function " << functionName << "(" << params << ") {" << nl << BuildFunctionBody(bodyText, nl) << "}" << nl
-        << nl;
+    oss << "function " << functionName << "(" << params << ") {" << newLine << BuildFunctionBody(bodyText, newLine)
+        << "}" << newLine << newLine;
     return oss.str();
 }
 
@@ -1062,7 +1053,7 @@ std::string BuildFunctionText(const FunctionExtraction &candidate, const Refacto
     std::string params = needParams ? GetParamsText(candidate, functionParams) : "";
 
     std::string bodyText(src.begin() + start, src.begin() + end);
-    return GenerateExtractedFunctionCode(bodyText, params);
+    return GenerateExtractedFunctionCode(bodyText, params, context);
 }
 
 std::string ReplaceWithFunctionCall(const FunctionExtraction &candidate, const std::string &functionText)
@@ -1262,14 +1253,15 @@ void ApplyVariableFormatting(const RefactorContext &context, public_lib::Context
     if (ctx == nullptr || ctx->sourceFile == nullptr) {
         return;
     }
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
     size_t insertPos = GetVarAndFunctionPosToWriteNode(context, actionName).pos;
     std::string insertionIndent = GetIndentAtPosition(ctx, insertPos);
     TextRange callRange = GetCallPositionOfExtraction(context);
     std::string statementIndent = GetIndentAtPosition(ctx, callRange.pos);
     const std::string &indentToUse = statementIndent.empty() ? insertionIndent : statementIndent;
 
-    declaration = NEWLINE + indentToUse + declaration;
-    declaration.append(NEWLINE).append(NEWLINE);
+    declaration = newLine + indentToUse + declaration;
+    declaration.append(newLine).append(newLine);
 }
 
 std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *extractedText,
@@ -1294,10 +1286,6 @@ std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *ext
     std::string declaration = BuildExtractionDeclaration(context, ctx, extractedText, actionName, isVariableExtraction);
     if (declaration.empty()) {
         return "";
-    }
-
-    if (isVariableExtraction) {
-        ApplyVariableFormatting(context, ctx, actionName, declaration);
     }
     return declaration;
 }

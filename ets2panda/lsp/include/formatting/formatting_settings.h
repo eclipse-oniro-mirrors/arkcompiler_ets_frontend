@@ -21,6 +21,8 @@
 
 namespace ark::es2panda::lsp {
 
+static const std::string DEFAULT_NEWLINE_CHARACTER = "\n";
+
 enum class IndentStyle { NONE, BLOCK, SMART };
 
 enum class SemicolonPreference { IGNORE, INSERT, REMOVE };
@@ -103,7 +105,7 @@ private:
     size_t baseIndentSize_ = 4;
     size_t indentSize_ = 4;
     size_t tabSize_ = 4;
-    std::string newLineCharacter_ = "\n";
+    std::string newLineCharacter_ = DEFAULT_NEWLINE_CHARACTER;
     bool convertTabsToSpaces_ = true;
     IndentStyle indentStyle_ = IndentStyle::SMART;
     bool trimTrailingWhitespace_ = true;
@@ -314,7 +316,8 @@ private:
     SemicolonPreference semicolons_ = SemicolonPreference::IGNORE;
 };
 
-CAPI_EXPORT FormatCodeSettings GetDefaultFormatCodeSettings(const std::string &newLineCharacter);
+CAPI_EXPORT FormatCodeSettings
+GetDefaultFormatCodeSettings(const std::string &newLineCharacter = DEFAULT_NEWLINE_CHARACTER);
 
 }  // namespace ark::es2panda::lsp
 
