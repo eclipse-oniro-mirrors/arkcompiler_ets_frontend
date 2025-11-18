@@ -962,6 +962,14 @@ Variable *ETSBinder::AddImportSpecifierFromReExport(ir::AstNode *importSpecifier
     };
     if (implDecl != nullptr) {
         if (localSpecifier->IsImportSpecifier() || localSpecifier->IsImportDefaultSpecifier()) {
+            std::optional<GlobalScopeContext> scopeCtx;
+            ir::AstNode *global = localSpecifier;
+            while (global != nullptr && !global->IsETSModule()) {
+                global = global->Parent();
+            }
+            if (global != nullptr) {
+                scopeCtx.emplace(this, global->AsETSModule()->Program(), global->Scope()->AsGlobalScope());
+            }
             AddSpecifiersToTopBindings(localSpecifier, implDecl);
             if (localSpecifier->IsImportSpecifier()) {
                 localVar = localSpecifier->AsImportSpecifier()->Imported()->Variable();
