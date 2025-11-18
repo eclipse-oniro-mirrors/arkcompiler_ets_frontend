@@ -15,6 +15,16 @@
     ],
     "result": [
         {
+            "line": 15,
+            "column": 10,
+            "endLine": 15,
+            "endColumn": 21,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
             "line": 19,
             "column": 5,
             "endLine": 19,
@@ -35,6 +45,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 19,
+            "column": 17,
+            "endLine": 19,
+            "endColumn": 34,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
             "line": 20,
             "column": 5,
             "endLine": 20,
@@ -55,6 +75,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 20,
+            "column": 18,
+            "endLine": 20,
+            "endColumn": 35,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
             "line": 21,
             "column": 5,
             "endLine": 21,
@@ -72,6 +102,16 @@
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 18,
+            "endLine": 21,
+            "endColumn": 35,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -86,12 +126,42 @@
         },
         {
             "line": 23,
+            "column": 11,
+            "endLine": 23,
+            "endColumn": 28,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
             "column": 43,
             "endLine": 23,
             "endColumn": 60,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 43,
+            "endLine": 23,
+            "endColumn": 60,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 23,
+            "endLine": 24,
+            "endColumn": 40,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
