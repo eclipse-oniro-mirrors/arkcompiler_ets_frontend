@@ -110,7 +110,11 @@ import { StdClassVarDecls } from './utils/consts/StdClassVariableDeclarations';
 import type { LinterOptions } from './LinterOptions';
 import { BUILTIN_GENERIC_CONSTRUCTORS } from './utils/consts/BuiltinGenericConstructor';
 import { DEFAULT_DECORATOR_WHITE_LIST } from './utils/consts/DefaultDecoratorWhitelist';
-import { INVALID_IDENTIFIER_KEYWORDS, INVALID_IDENTIFIER_GETSET } from './utils/consts/InValidIndentifierKeywords';
+import {
+  INVALID_IDENTIFIER_KEYWORDS,
+  INVALID_IDENTIFIER_GETSET,
+  VALID_EXPORT_NAME
+} from './utils/consts/InValidIndentifierKeywords';
 import { WORKER_MODULES, WORKER_TEXT } from './utils/consts/WorkerAPI';
 import type { BitVectorUsage } from './utils/consts/CollectionsAPI';
 import { COLLECTIONS_TEXT, COLLECTIONS_MODULES, BIT_VECTOR } from './utils/consts/CollectionsAPI';
@@ -195,8 +199,7 @@ import {
   USE_CONCURRENT,
   ESLIB_SHAREDMEMORY_FILENAME,
   ESLIB_SHAREDARRAYBUFFER,
-  TASKPOOL_MODULES,
-  SYSTEM_MODULES
+  TASKPOOL_MODULES
 } from './utils/consts/ConcurrentAPI';
 import {
   DEPRECATED_TASKPOOL_METHOD_SETCLONELIST,
@@ -1917,7 +1920,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleDefiniteAssignmentAssertion(node);
     this.handleSendableClassProperty(node);
     this.handleInvalidIdentifier(node);
-    this.handleInvalidGetSetKeyword(node);
     this.handleStructPropertyDecl(node);
     this.handlePropertyDeclarationForProp(node);
     this.handleSdkGlobalApi(node);
@@ -9280,6 +9282,62 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
+  private checkIdentifierForInvalidKeyword(identifier: ts.Identifier | undefined): void {
+    const text = identifier && ts.isIdentifier(identifier) ? identifier.text : '';
+    if (identifier && text && INVALID_IDENTIFIER_KEYWORDS.includes(text)) {
+      this.incrementCounters(identifier, FaultID.InvalidIdentifier);
+    }
+  }
+
+  private handleInvalidIdentifierForImport(decl: ts.ImportDeclaration): void {
+    const importClause = decl.importClause;
+    if (importClause?.namedBindings && ts.isNamedImports(importClause?.namedBindings)) {
+      importClause.namedBindings.elements.forEach((importSpecifier) => {
+        if (importSpecifier.propertyName && importSpecifier.name) {
+          this.checkIdentifierForInvalidKeyword(importSpecifier.name);
+        }
+      });
+    }
+    if (importClause?.namedBindings && ts.isNamespaceImport(importClause?.namedBindings)) {
+      this.checkIdentifierForInvalidKeyword(importClause?.namedBindings.name);
+    }
+    this.checkIdentifierForInvalidKeyword(importClause?.name);
+  }
+
+  private handleInvalidIdentifierForExport(decl: ts.ExportDeclaration): void {
+    if (decl.exportClause && ts.isNamedExports(decl.exportClause)) {
+      for (const exportSpecifier of decl.exportClause.elements) {
+        if (exportSpecifier.propertyName && exportSpecifier.name && exportSpecifier.name.text !== VALID_EXPORT_NAME) {
+          this.checkIdentifierForInvalidKeyword(exportSpecifier.name);
+        }
+      }
+    }
+  }
+
+  private handleInvalidIdentifierForOtherDeclarations(
+    decl:
+      | ts.TypeAliasDeclaration
+      | ts.StructDeclaration
+      | ts.VariableDeclaration
+      | ts.FunctionDeclaration
+      | ts.MethodSignature
+      | ts.ClassDeclaration
+      | ts.PropertyDeclaration
+      | ts.MethodDeclaration
+      | ts.ParameterDeclaration
+      | ts.PropertySignature
+      | ts.EnumDeclaration
+      | ts.EnumMember
+      | ts.ModuleDeclaration
+      | ts.InterfaceDeclaration
+  ): void {
+    if (isStructDeclaration(decl)) {
+      this.checkIdentifierForInvalidKeyword((decl as ts.StructDeclaration).name);
+    } else {
+      this.checkIdentifierForInvalidKeyword(decl.name as ts.Identifier);
+    }
+  }
+
   private handleInvalidIdentifier(
     decl:
       | ts.TypeAliasDeclaration
@@ -9302,46 +9360,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
-    const checkIdentifier = (identifier: ts.Identifier | undefined): void => {
-      const text = identifier && ts.isIdentifier(identifier) ? identifier.text : '';
-      if (identifier && text && INVALID_IDENTIFIER_KEYWORDS.includes(text) && !this.checkImportSymbol(identifier)) {
-        this.incrementCounters(identifier, FaultID.InvalidIdentifier);
-      }
-    };
     if (ts.isImportDeclaration(decl)) {
-      const importClause = decl.importClause;
-      if (importClause?.namedBindings && ts.isNamedImports(importClause?.namedBindings)) {
-        importClause.namedBindings.elements.forEach((importSpecifier) => {
-          checkIdentifier(importSpecifier.name);
-        });
-      }
-      checkIdentifier(importClause?.name);
+      this.handleInvalidIdentifierForImport(decl);
     } else if (ts.isExportDeclaration(decl)) {
-      if (decl.exportClause && ts.isNamedExports(decl.exportClause)) {
-        for (const exportSpecifier of decl.exportClause.elements) {
-          checkIdentifier(exportSpecifier.name);
-        }
-      }
-    } else if (isStructDeclaration(decl)) {
-      checkIdentifier((decl as ts.StructDeclaration).name);
+      this.handleInvalidIdentifierForExport(decl);
     } else {
-      checkIdentifier(decl.name as ts.Identifier);
+      this.handleInvalidIdentifierForOtherDeclarations(decl);
     }
-  }
-
-  private checkImportSymbol(identifier: ts.Identifier): boolean {
-    let symbol = this.tsUtils.trueSymbolAtLocation(identifier);
-    if (symbol && 'unknown' === symbol.name) {
-      symbol = this.tsTypeChecker.getSymbolAtLocation(identifier);
-    }
-    let res = false;
-    const cb = (): void => {
-      res = true;
-    };
-    if (symbol) {
-      this.checkSymbolAndExecute(symbol, [identifier.text], SYSTEM_MODULES, cb);
-    }
-    return res;
   }
 
   private handleInvalidGetSetKeyword(decl: ts.MethodSignature | ts.PropertySignature | ts.PropertyDeclaration): void {
@@ -9355,7 +9380,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const text = nameNode.text;
     const parent = decl.parent;
-    if (!ts.isClassDeclaration(parent) && !ts.isInterfaceDeclaration(parent)) {
+    if (!ts.isInterfaceDeclaration(parent)) {
       return;
     }
     if (INVALID_IDENTIFIER_GETSET.includes(text)) {
