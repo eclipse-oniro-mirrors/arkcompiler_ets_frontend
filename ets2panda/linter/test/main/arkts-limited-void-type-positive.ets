@@ -13,14 +13,43 @@
  * limitations under the License.
  */
 
-export let unionVoidVal = (()=>{
-  return undefined;
-})() as void;
-export function undefinedFooFun(){
+// Example 1
+function foo(): void { }
+function bar(): void { }
+function foo1(): void {
+  return foo();
+}
+
+//Example 2
+let test5 = '1';
+test5 === '1' ? foo() : bar();
+
+//Example 3
+interface BT {
+  qaq: Function;
+}
+
+class C {
+  private cc?: BT;
+
+  private d(): void {
+    this.cc = {
+      qaq: (caller?: string): void => this.qaqq(caller)
+    }
+  }
+  private qaqq(caller?: string): void {
+    return;
+  }
+}
+
+//Example 4
+function foocfe(a: number): string | undefined {
+  if (a >= 0) {
+    return "a >= 0";
+  }
   return undefined;
 }
-export function func3Void(): void { }
-export function fun4undefined(): undefined | boolean { }
-export function fun5String(): string {
-  return '';
-}
+
+//Example 5
+function roo(): number { return 3 }
+let t: undefined | number = roo()

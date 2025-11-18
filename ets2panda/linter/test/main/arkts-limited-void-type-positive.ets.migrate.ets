@@ -13,16 +13,43 @@
  * limitations under the License.
  */
 
-export const number:number = 1;
+// Example 1
+function foo(): void { }
+function bar(): void { }
+function foo1(): void {
+  return foo();
+}
 
-export const value1:number = 0;
+//Example 2
+let test5 = '1';
+test5 === '1' ? foo() : bar();
 
-const value2 = 1;
-export default value2;
+//Example 3
+interface BT {
+  qaq: Function;
+}
 
-export const value3:number = 3;
+class C {
+  private cc?: BT;
 
-const abstract = 1;
-export default abstract;
+  private d(): void {
+    this.cc = {
+      qaq: (caller?: string): void => this.qaqq(caller)
+    }
+  }
+  private qaqq(caller?: string): void {
+    return;
+  }
+}
 
-export const class:number = 2; 
+//Example 4
+function foocfe(a: number): string | undefined {
+  if (a >= 0) {
+    return "a >= 0";
+  }
+  return undefined;
+}
+
+//Example 5
+function roo(): number { return 3 }
+let t: undefined | number = roo()

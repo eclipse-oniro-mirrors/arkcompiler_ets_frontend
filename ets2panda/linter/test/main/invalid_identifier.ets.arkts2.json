@@ -45,6 +45,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 18,
+            "column": 1,
+            "endLine": 18,
+            "endColumn": 54,
+            "problem": "InterOpImportJs",
+            "suggest": "",
+            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+            "severity": "ERROR"
+        },
+        {
             "line": 22,
             "column": 7,
             "endLine": 22,
