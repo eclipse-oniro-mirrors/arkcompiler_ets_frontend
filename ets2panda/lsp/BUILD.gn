@@ -65,6 +65,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/formatting/formatting_settings.cpp",
     "src/formatting/rules.cpp",
     "src/formatting/rules_map.cpp",
+    "src/formatting/smart_indenter.cpp",
     "src/generate_constructor.cpp",
     "src/get_adjusted_location.cpp",
     "src/get_class_property_info.cpp",

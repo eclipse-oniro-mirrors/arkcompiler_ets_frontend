@@ -573,6 +573,10 @@ ets2panda_add_gtest(lsp_api_test_refactors_generate_constructor CPP_SOURCES
     refactors_generate_constructor_test.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_smart_indenter_test CPP_SOURCES
+    smart_indenter_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_get_token_native_test CPP_SOURCES
     get_token_native_test.cpp
 )

@@ -100,6 +100,7 @@ set(ES2PANDA_LSP_SRC
   ./src/formatting/formatting.cpp
   ./src/formatting/rules_map.cpp
   ./src/formatting/rules.cpp
+  ./src/formatting/smart_indenter.cpp
   ./src/string_completions.cpp
   ./src/rename.cpp
   ./src/generate_constructor.cpp
