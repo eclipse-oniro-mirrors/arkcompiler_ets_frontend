@@ -188,8 +188,9 @@ export class TaskManager<PayloadT extends JobInfo> {
     private checkIfComplete(): boolean {
         const noRunningTasks = this.runningTasks.size === 0;
         const noQueuedTasks = this.taskQueue.length === 0;
+        const allWorkersIdle = this.idleWorkers.length === this.maxWorkers;
 
-        return noRunningTasks && noQueuedTasks;
+        return noRunningTasks && noQueuedTasks && allWorkersIdle;
     }
 
     private signalCompletion(): void {
@@ -263,9 +264,13 @@ export class TaskManager<PayloadT extends JobInfo> {
     }
 
     private onDeclGenerated(taskId: string, workerInfo: WorkerInfo): void {
-        this.settleTask(taskId, false);
+        // (1) Declgen-only mode: worker is now free for next task
+        // (2) Compile mode: we can only release the worker until ABC compilation is done
+        // in this case, declgen is only a signal to queue the next compilation task
 
+        this.settleTask(taskId, false);
         if (this.isDeclgen) {
+            // Declgen-only mode here
             workerInfo.currentTaskId = undefined;
             this.idleWorkers.push(workerInfo);
         }
@@ -352,10 +357,28 @@ export class TaskManager<PayloadT extends JobInfo> {
         return success;
     }
 
+    private queueDependentTasks(taskId: string): void {
+        const graphNode: GraphNode<PayloadT> = this.buildGraph.getNodeById(taskId);
+        graphNode.descendants.forEach((descendant: string) => {
+            const descendantNode = this.buildGraph.getNodeById(descendant);
+            descendantNode.predecessors.delete(taskId);
+            if (descendantNode.predecessors.size === 0) {
+                this.taskQueue.push({
+                    id: descendantNode.id,
+                    payload: descendantNode.data
+                });
+                this.logger.printDebug(`[Declgen milestone] Added job ${descendant} to the queue`);
+            } else {
+                this.logger.printDebug(`[Declgen milestone] Job ${descendant} still has dependencies ${descendantNode.predecessors}`)
+            }
+        });
+        this.logger.printDebug(`[Declgen milestone] Task [${taskId}] declgen completed, unlocked dependents`);
+    }
+
     private settleTask(completedTaskId: string, failed: boolean = false): void {
         const task = this.runningTasks.get(completedTaskId);
         if (!task) {
-            this.logger.printInfo(`Task [${completedTaskId}] has already been removed`)
+            this.logger.printDebug(`Task [${completedTaskId}] has already been removed`)
             return;
         }
         if (task.timeoutTimer) {
@@ -364,23 +387,11 @@ export class TaskManager<PayloadT extends JobInfo> {
         }
         this.runningTasks.delete(completedTaskId);
 
-        this.logger.printDebug(`Removed task [${completedTaskId}] from the queue`)
+        this.logger.printDebug(`Removed task [${completedTaskId}] from running tasks`)
 
-        const graphNode: GraphNode<PayloadT> = this.buildGraph.getNodeById(completedTaskId);
-        graphNode.descendants.forEach((descendant: string) => {
-            const descendantNode = this.buildGraph.getNodeById(descendant);
-            descendantNode.predecessors.delete(completedTaskId);
-            if (descendantNode.predecessors.size === 0) {
-                this.taskQueue.push({
-                    id: descendantNode.id,
-                    payload: descendantNode.data
-                });
-                this.logger.printDebug(`Added job ${descendant} to the queue`);
-            } else {
-                this.logger.printDebug(`Job ${descendant} still has dependencies ${descendantNode.predecessors}`)
-            }
-        });
-        this.logger.printDebug(`Task [${completedTaskId}] is completed`)
+        this.queueDependentTasks(completedTaskId);
+
+        this.logger.printDebug(`Task [${completedTaskId}] is completed with status: ${!failed ? 'success' : 'failed'}`)
         task.success = !failed;
         this.completedTasks.push(task)
     }
