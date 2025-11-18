@@ -231,9 +231,11 @@ std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, [[maybe_unused]]
     std::vector<ir::AstNode *> children {};
     if (node->Type() == ir::AstNodeType::ETS_MODULE) {
         // ETS_MODULE is the root node, need to get the definition of global class
-        auto globalClass =
-            node->FindChild([](ir::AstNode *child) { return child->IsClassDeclaration(); })->AsClassDeclaration();
-        node = globalClass->Definition();
+        auto classNode = node->FindChild([](ir::AstNode *child) { return child->IsClassDeclaration(); });
+        if (classNode != nullptr) {
+            auto globalClass = classNode->AsClassDeclaration();
+            node = globalClass->Definition();
+        }
     }
     node->Iterate([&children](ir::AstNode *child) { children.push_back(child); });
     return children;
@@ -749,7 +751,7 @@ DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size
     auto ast = ctx->parserProgram->Ast();
     std::string fileName(ctx->sourceFile->filePath);
     auto touchingToken = GetTouchingToken(context, position, false);
-    if (!touchingToken) {
+    if (touchingToken == nullptr) {
         return DocumentHighlights(fileName, {});
     }
     if (!touchingToken->IsIdentifier()) {
