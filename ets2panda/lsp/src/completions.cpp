@@ -301,6 +301,31 @@ std::string GetMethodDefinitionName(ir::AstNode *node)
     return std::string(key->AsIdentifier()->Name());
 }
 
+ir::AstNode *GetDefinitionFromTypeAnnotation(ir::TypeNode *type)
+{
+    if (type == nullptr || !type->IsETSTypeReference()) {
+        return nullptr;
+    }
+    auto typeRefPart = type->AsETSTypeReference()->Part();
+    if (typeRefPart == nullptr) {
+        return nullptr;
+    }
+    auto id = typeRefPart->Name();
+    if (id == nullptr || !id->IsIdentifier()) {
+        return nullptr;
+    }
+    return compiler::DeclarationFromIdentifier(id->AsIdentifier());
+}
+
+ir::AstNode *GetDefinitionFromParameterExpr(ir::AstNode *node)
+{
+    if (!node->IsETSParameterExpression()) {
+        return nullptr;
+    }
+    auto type = node->AsETSParameterExpression()->TypeAnnotation();
+    return GetDefinitionFromTypeAnnotation(type);
+}
+
 ir::AstNode *GetClassDefinitionFromClassProperty(ir::AstNode *node)
 {
     if (!node->IsClassProperty()) {
@@ -312,17 +337,7 @@ ir::AstNode *GetClassDefinitionFromClassProperty(ir::AstNode *node)
         return compiler::DeclarationFromIdentifier(ident);
     }
     auto type = node->AsClassProperty()->TypeAnnotation();
-    if (type != nullptr && type->IsETSTypeReference()) {
-        auto typeRefPart = type->AsETSTypeReference()->Part();
-        if (typeRefPart == nullptr) {
-            return nullptr;
-        }
-        auto id = typeRefPart->Name();
-        if (id != nullptr && id->IsIdentifier()) {
-            return compiler::DeclarationFromIdentifier(id->AsIdentifier());
-        }
-    }
-    return nullptr;
+    return GetDefinitionFromTypeAnnotation(type);
 }
 
 std::vector<CompletionEntry> GetEntriesForClassDeclaration(
@@ -650,13 +665,13 @@ std::vector<CompletionEntry> GetPropertyCompletions(ir::AstNode *preNode, const 
         return completions;
     }
     auto decl = compiler::DeclarationFromIdentifier(preNode->AsIdentifier());
-    if (decl == nullptr) {
-        return completions;
-    }
-    if (decl->IsClassProperty()) {
+    if (decl != nullptr && decl->IsClassProperty()) {
         decl = GetClassDefinitionFromClassProperty(decl);
     }
-    if (decl->IsClassDeclaration()) {
+    if (decl != nullptr && decl->IsETSParameterExpression()) {
+        decl = GetDefinitionFromParameterExpr(decl);
+    }
+    if (decl != nullptr && decl->IsClassDeclaration()) {
         decl = decl->AsClassDeclaration()->Definition();
     }
     if (decl == nullptr) {
