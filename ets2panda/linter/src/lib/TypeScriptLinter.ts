@@ -226,7 +226,7 @@ import { ERROR_TASKPOOL_PROP_LIST } from './utils/consts/ErrorProp';
 import { COMMON_UNION_MEMBER_ACCESS_WHITELIST } from './utils/consts/ArktsWhiteApiPaths';
 import type { BaseClassConstructorInfo, ConstructorParameter, ExtendedIdentifierInfo } from './utils/consts/Types';
 import { ExtendedIdentifierType } from './utils/consts/Types';
-import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS, STRING_ERROR_LITERAL } from './utils/consts/Literals';
+import { COMPONENT_DECORATOR, SELECT_IDENTIFIER, SELECT_OPTIONS } from './utils/consts/Literals';
 import { ES_OBJECT } from './utils/consts/ESObject';
 import { cookBookMsg } from './CookBookMsg';
 import { getCommonApiInfoMap } from './utils/functions/CommonApiInfo';
@@ -11885,24 +11885,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    /*
-     * Get the parent class declaration (what the child class extends)
-     * This could be a stdlib error type
-     */
+    // Get the parent class declaration (what the child class extends)
     const identInfo = this.getExtendedIdentifiersInfo(node);
     if (identInfo.type === ExtendedIdentifierType.UNKNOWN) {
-      // if it's unknown return
-      return;
-    }
-
-    if (identInfo.type === ExtendedIdentifierType.ERROR) {
-      this.handleErrorClassExtend(node.parent);
-      // handled error case return
       return;
     }
 
     if (identInfo.type === ExtendedIdentifierType.CLASS) {
-      // If it's class, get the constructor's parameters and match against it.
+      // If it's class, get the constructor's parameters
       const extendedClassInfo = this.extractExtendedClassConstructorInfo(identInfo.decl);
       if (!extendedClassInfo) {
         return;
@@ -11914,91 +11904,18 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return;
       }
 
-      this.handleExtendCustomClass(node.parent, extendedClassInfo, identInfo.decl.name?.text + '');
+      this.handleExtendCustomClassSuperCall(node.parent, identInfo.decl.name?.text + '');
     }
   }
 
-  private handleExtendCustomClass(
-    classDecl: ts.ClassDeclaration,
-    extendedClassInfo: Set<ConstructorParameter[]>,
-    extendedClassName: string
-  ): void {
+  private handleExtendCustomClassSuperCall(classDecl: ts.ClassDeclaration, extendedClassName: string): void {
     const superCall = TypeScriptLinter.checkIfSuperCallExists(classDecl);
     if (!superCall) {
       this.incrementCounters(classDecl, FaultID.MissingSuperCall);
       return;
     }
-    outer: for (const ctorParams of extendedClassInfo) {
-      const matches: boolean[] = [];
-      if (superCall.arguments.length > ctorParams.length) {
-        continue;
-      }
-
-      for (const [idx, param] of ctorParams.entries()) {
-        const argument = superCall.arguments[idx];
-        if (!this.checkParameter(param, argument, matches, idx)) {
-          continue outer;
-        }
-      }
-
-      if (
-        matches.some((val) => {
-          return !val;
-        })
-      ) {
-        continue;
-      }
-      this.handleExtendCustomClassForSdkApiDeprecated(extendedClassName, superCall, SDK_COMMON_TYPE);
-      this.handleExtendCustomClassForSdkApiDeprecated(extendedClassName, superCall, BUILTIN_TYPE);
-      return;
-    }
-
-    this.incrementCounters(classDecl, FaultID.MissingSuperCall);
-  }
-
-  private checkParameter(
-    param: ConstructorParameter,
-    argument: ts.Expression | undefined,
-    matches: boolean[],
-    idx: number
-  ): boolean {
-    if (!param.isOptional && !argument) {
-      matches[idx] = false;
-      return false;
-    }
-
-    if (!argument && param.isOptional) {
-      matches[idx] = true;
-      return true;
-    }
-
-    if (argument !== undefined) {
-      if (this.isEnumArgument(argument)) {
-        matches[idx] = true;
-        return true;
-      }
-      matches[idx] = this.checkIfArgumentAndParamMatches(param, argument);
-      return matches[idx];
-    }
-    return true;
-  }
-
-  private isEnumArgument(argument: ts.Expression): boolean {
-    if (!ts.isPropertyAccessExpression(argument)) {
-      return false;
-    }
-
-    const leftSide = argument.expression;
-    const symbol = this.tsTypeChecker?.getSymbolAtLocation(leftSide);
-
-    return (
-      symbol?.declarations?.some((decl) => {
-        return (
-          ts.isEnumDeclaration(decl) ||
-          ts.isVariableDeclaration(decl) && decl.initializer && ts.isEnumDeclaration(decl.initializer)
-        );
-      }) ?? false
-    );
+    this.handleExtendCustomClassForSdkApiDeprecated(extendedClassName, superCall, SDK_COMMON_TYPE);
+    this.handleExtendCustomClassForSdkApiDeprecated(extendedClassName, superCall, BUILTIN_TYPE);
   }
 
   private handleExtendCustomClassForSdkApiDeprecated(
@@ -12037,80 +11954,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return errorMsg;
   }
 
-  private checkIfArgumentAndParamMatches(param: ConstructorParameter, argument: ts.Expression): boolean {
-    if (this.isParamGeneric(param.type)) {
-      return true;
-    }
-
-    const typeNode = this.tsTypeChecker.getTypeAtLocation(argument);
-
-    if (param.typeString.includes(STRINGLITERAL_STRING) && argument.kind === ts.SyntaxKind.StringLiteral) {
-      return true;
-    }
-    if (param.typeString.includes(NUMBER_LITERAL) && argument.kind === ts.SyntaxKind.NumericLiteral) {
-      return true;
-    }
-
-    if (
-      param.typeString.includes('boolean') &&
-      (argument.kind === ts.SyntaxKind.FalseKeyword || argument.kind === ts.SyntaxKind.TrueKeyword)
-    ) {
-      return true;
-    }
-
-    return this.isTypeAssignable(typeNode, param.type);
-  }
-
-  private isParamGeneric(type: ts.Type): boolean {
-    void this;
-    const symbol = type.getSymbol();
-    if (!symbol) {
-      return false;
-    }
-    const decls = symbol?.getDeclarations();
-    if (!decls) {
-      return false;
-    }
-
-    if (decls.length === 0) {
-      return false;
-    }
-
-    return ts.isTypeParameterDeclaration(decls[0]);
-  }
-
-  private handleErrorClassExtend(classDecl: ts.ClassDeclaration): void {
-    // if it's Error, the super method should be called with no arguments or a single string argument
-    const superCall = TypeScriptLinter.checkIfSuperCallExists(classDecl);
-    if (!superCall) {
-      this.incrementCounters(classDecl, FaultID.MissingSuperCall);
-      return;
-    }
-
-    if (superCall.arguments.length > 1) {
-
-      /*
-       * STD Error Type have two constructors
-       * either empty constructor which is just "Error" message
-       * or the message you provide, so if it's more than one argument provided,
-       * this should be raised as an issue
-       */
-      this.incrementCounters(classDecl, FaultID.MissingSuperCall);
-      return;
-    }
-
-    if (superCall.arguments.length === 1) {
-      const argument = superCall.arguments[0];
-      const typeNode = this.tsTypeChecker.getTypeAtLocation(argument);
-      const typeString = this.tsTypeChecker.typeToString(typeNode);
-
-      if (typeString === 'string' || ts.isStringLiteral(argument) || ts.isNumericLiteral(argument)) {
-        return;
-      }
-      this.incrementCounters(classDecl, FaultID.MissingSuperCall);
-    }
-  }
-
   private static checkIfSuperCallExists(classDecl: ts.ClassDeclaration): ts.CallExpression | undefined {
     // check if current class has constructor
     const constructor = TypeScriptLinter.getConstructorOfClass(classDecl);
@@ -12137,17 +11980,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const symbol = this.tsUtils.trueSymbolAtLocation(extendedIdentifier);
     if (!symbol) {
       return { type: ExtendedIdentifierType.UNKNOWN };
-    }
-
-    if (symbol.getName().includes(STRING_ERROR_LITERAL)) {
-      const declaration = this.tsUtils.getDeclarationNode(extendedIdentifier);
-      if (!declaration) {
-        return { type: ExtendedIdentifierType.ERROR };
-      }
-
-      if (declaration.getSourceFile().fileName !== this.sourceFile.fileName) {
-        return { type: ExtendedIdentifierType.ERROR };
-      }
     }
 
     const classDecl = symbol?.declarations?.find(ts.isClassDeclaration);
