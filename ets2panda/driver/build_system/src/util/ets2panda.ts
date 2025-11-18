@@ -116,12 +116,12 @@ export class Ets2panda {
 
     public initalize(): void {
         const arkts: ArkTS = this.koalaModule.arkts;
-        arkts.MemInitialize();
+        arkts.memInitialize();
     }
 
     public finalize(): void {
         const arkts: ArkTS = this.koalaModule.arkts;
-        arkts.MemFinalize();
+        arkts.memFinalize();
     }
 
     private transformImportStatementsWithAliasConfig(): void {
