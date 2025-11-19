@@ -1202,7 +1202,7 @@ ir::MethodDefinition *ETSParser::ParseInterfaceMethod(ir::ModifierFlags flags, i
     if ((flags & ir::ModifierFlags::STATIC) == 0 && body == nullptr) {
         func->AddModifier(ir::ModifierFlags::ABSTRACT);
     }
-    ValidateGetterSetter(methodKind, func->Params().size());
+    ValidateGetterSetter(methodKind, func->Params());
     func->SetRange({name->Start(), GetEndLoc(body, func, Lexer())});
 
     auto *funcExpr = AllocNode<ir::FunctionExpression>(func);
