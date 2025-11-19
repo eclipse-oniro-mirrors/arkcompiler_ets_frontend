@@ -87,6 +87,7 @@ ast_nodes_supported = [
     "ETSGenericInstantiatedNode",
     "ETSPackageDeclaration",
     "ETSClassLiteral",
+    "ETSDestructuring",
     "ETSTypeReference",
     "ETSTypeReferencePart",
     "ETSUnionType",

@@ -20,6 +20,7 @@
 #include "ir/base/classStaticBlock.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
+#include "ir/ets/etsDestructuring.h"
 #include "ir/statements/classDeclaration.h"
 #include "ir/statements/variableDeclaration.h"
 #include "ir/statements/doWhileStatement.h"
@@ -965,7 +966,12 @@ static bool IsIdentOrThisDotIdent(const ir::AstNode *node)
 
 void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr)
 {
-    if (!IsIdentOrThisDotIdent(assignExpr->Left())) {
+    if (assignExpr->Left()->IsETSDestructuring()) {
+        auto *dstrNode = assignExpr->Left()->AsETSDestructuring();
+        for (auto *elem : dstrNode->Elements()) {
+            LetInit(elem);
+        }
+    } else if (!IsIdentOrThisDotIdent(assignExpr->Left())) {
         AnalyzeExpr(assignExpr->Left());
     }
 

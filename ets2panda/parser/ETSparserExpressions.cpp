@@ -15,9 +15,10 @@
 
 #include "ETSparser.h"
 
-#include "lexer/lexer.h"
-#include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/ets/etsTuple.h"
+#include "ir/ets/etsDestructuring.h"
+#include "ir/expressions/literals/undefinedLiteral.h"
+#include "lexer/lexer.h"
 
 namespace ark::es2panda::parser {
 class FunctionContext;
@@ -427,7 +428,7 @@ ir::Expression *ETSParser::ParsePrimaryExpression(ExpressionParseFlags flags)
             return ParseAwaitExpression();
         }
         case lexer::TokenType::PUNCTUATOR_LEFT_SQUARE_BRACKET: {
-            return ParseArrayExpression(CarryPatternFlags(flags));
+            return ParseArrayOrDestructuringExpression(CarryPatternFlags(flags));
         }
         case lexer::TokenType::PUNCTUATOR_LEFT_BRACE: {
             return ParseObjectExpression(CarryPatternFlags(flags));
@@ -815,6 +816,28 @@ ir::Expression *ETSParser::ParseAwaitExpression()
     ES2PANDA_ASSERT(awaitExpression != nullptr);
     awaitExpression->SetRange({start, Lexer()->GetToken().End()});
     return awaitExpression;
+}
+
+ir::Expression *ETSParser::ParseArrayOrDestructuringExpression(const ExpressionParseFlags flags)
+{
+    auto *parsedArrayOrDestructuring = ParserImpl::ParseArrayExpression(flags, true);
+
+    if (parsedArrayOrDestructuring->IsArrayPattern()) {
+        return AllocNode<ir::ETSDestructuring>(parsedArrayOrDestructuring->Elements());
+    }
+
+    auto arrayElements = parsedArrayOrDestructuring->Elements();
+    if (std::any_of(arrayElements.begin(), arrayElements.end(),
+                    [](const ir::AstNode *node) { return node->IsOmittedExpression(); })) {
+        LogError(diagnostic::OMITTED_ELEMENTS_NOT_SUPPORTED_IN_ARRAYS, {}, parsedArrayOrDestructuring->Start());
+        ArenaVector<ir::Expression *> elements(Allocator()->Adapter());
+        std::copy_if(arrayElements.begin(), arrayElements.end(), std::back_inserter(elements),
+                     [](const ir::AstNode *node) { return !node->IsOmittedExpression(); });
+        auto *const newArrayNode = AllocNode<ir::ArrayExpression>(std::move(elements), Allocator());
+        return newArrayNode;
+    }
+
+    return parsedArrayOrDestructuring;
 }
 
 ir::ArrayExpression *ETSParser::ParseArrayExpression(ExpressionParseFlags flags)

@@ -1105,7 +1105,8 @@ void ParserImpl::ValidateAssignmentTarget(ExpressionParseFlags flags, ir::Expres
 {
     switch (node->Type()) {
         case ir::AstNodeType::ARRAY_PATTERN:
-        case ir::AstNodeType::OBJECT_PATTERN: {
+        case ir::AstNodeType::OBJECT_PATTERN:
+        case ir::AstNodeType::ETS_DESTRUCTURING: {
             break;
         }
         case ir::AstNodeType::ARRAY_EXPRESSION:

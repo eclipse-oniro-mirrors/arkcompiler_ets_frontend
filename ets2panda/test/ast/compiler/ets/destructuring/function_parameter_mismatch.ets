@@ -13,9 +13,15 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function foo(a: number, b: string) : void {}
+function bar(t: [number, string]) : void {}
 
+function main() {
+  let tuple1: [number, string] = [1, "a"];
 
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+  foo(tuple1); // CTE
+  bar(tuple1);
+}
+
+/* @@? 22:3 Error Semantic error ESE0124: Expected 2 arguments, got 1. */
+/* @@? 22:3 Error Semantic error ESE0127: No matching call signature for foo([Double, String]) */

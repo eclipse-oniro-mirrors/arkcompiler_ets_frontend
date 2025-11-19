@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-[a, b, ...rest] = [1, 2, 3, 4, 5];
+function main() {
+  let a: byte, b: number;
+  [a, 1, b] = [1, 2, 3];
+}
 
-
-/* @@? 16:2 Error Semantic error ESE0143: Unresolved reference a */
-/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference b */
-/* @@? 16:8 Error Syntax error ESY165518: Rest is not supported in destructuring. */
+/* @@? 18:3 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */

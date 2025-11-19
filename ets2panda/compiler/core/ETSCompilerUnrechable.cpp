@@ -188,6 +188,11 @@ void ETSCompiler::Compile([[maybe_unused]] const ir::DirectEvalExpression *expr)
     ES2PANDA_UNREACHABLE();
 }
 
+void ETSCompiler::Compile([[maybe_unused]] const ir::ETSDestructuring *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 void ETSCompiler::Compile([[maybe_unused]] const ir::FunctionExpression *expr) const
 {
     ES2PANDA_UNREACHABLE();

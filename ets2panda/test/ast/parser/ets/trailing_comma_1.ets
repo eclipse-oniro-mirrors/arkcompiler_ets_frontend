@@ -39,32 +39,27 @@ foo(,)
 /* @@? 16:30 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
 /* @@? 24:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 24:15 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 28:12 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 28:14 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
-/* @@? 28:14 Error Syntax error ESY0227: Unexpected token '2'. */
-/* @@? 28:15 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 28:16 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 30:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 31:1 Error Semantic error ESE0127: No matching call signature for foo(a[0], a[1], ...a) */
-/* @@? 31:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 31:11 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 31:17 Error Semantic error ESE0123: Spread argument for the rest parameter can be only one. */
-/* @@? 32:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 28:9 Error Syntax error ESY167720: Omitted elements are not supported in arrays. */
+/* @@? 29:1 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 29:5 Error Semantic error ESE0323: Type 'Array<Double>' is not compatible with rest parameter type 'Array<Int>' at index 1 */
+/* @@? 30:1 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 30:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
+/* @@? 31:1 Error Semantic error ESE0127: No matching call signature for foo(Double, Double, Double) */
+/* @@? 31:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
+/* @@? 32:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 32:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 32:11 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 32:11 Error Syntax error ESY0227: Unexpected token 'a'. */
-/* @@? 32:11 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 32:15 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 33:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 33:1 Error Semantic error ESE0127: No matching call signature for foo(Double, ...) */
+/* @@? 33:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 33:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 34:5 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 34:6 Error Syntax error ESY0227: Unexpected token 'a'. */
 /* @@? 34:6 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 34:6 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 34:6 Error Syntax error ESY0227: Unexpected token 'a'. */
 /* @@? 34:10 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 35:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 35:10 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 35:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 35:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 35:10 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 35:10 Error Syntax error ESY0227: Unexpected token 'a'. */
 /* @@? 35:14 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 36:5 Error Syntax error ESY0227: Unexpected token ','. */
