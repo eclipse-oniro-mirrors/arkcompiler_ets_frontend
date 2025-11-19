@@ -207,8 +207,9 @@ export class Ets2panda {
                 // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
                 arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
                 this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
-
-                declGenCb?.();
+                if (ENABLE_DECLARATION_BARRIER) {
+                    declGenCb?.();
+                }
             }
 
             if (job.type & CompileJobType.ABC) {
@@ -315,7 +316,9 @@ export class Ets2panda {
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
                     this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${file}`)
                 }
-                declGenCb?.();
+                if (ENABLE_DECLARATION_BARRIER) {
+                    declGenCb?.();
+                }
             }
 
             if (job.type & CompileJobType.ABC) {
