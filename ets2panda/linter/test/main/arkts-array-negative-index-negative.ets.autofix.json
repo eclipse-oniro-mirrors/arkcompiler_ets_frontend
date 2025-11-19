@@ -1,0 +1,1597 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 15,
+            "endLine": 17,
+            "endColumn": 26,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 16,
+            "endLine": 18,
+            "endColumn": 28,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 16,
+            "endLine": 18,
+            "endColumn": 28,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 1,
+            "endLine": 19,
+            "endColumn": 13,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 1,
+            "endLine": 19,
+            "endColumn": 13,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 1,
+            "endLine": 20,
+            "endColumn": 13,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 1,
+            "endLine": 21,
+            "endColumn": 13,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 10,
+            "endLine": 21,
+            "endColumn": 12,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 840,
+                    "end": 842,
+                    "replacementText": "~5 as int",
+                    "line": 21,
+                    "column": 10,
+                    "endLine": 21,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 11,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 11,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 12,
+            "endLine": 28,
+            "endColumn": 17,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 1,
+            "endLine": 36,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 1,
+            "endLine": 36,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 1,
+            "endLine": 37,
+            "endColumn": 14,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 1,
+            "endLine": 37,
+            "endColumn": 14,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 1,
+            "endLine": 38,
+            "endColumn": 12,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 5,
+            "endLine": 38,
+            "endColumn": 11,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1315,
+                    "end": 1321,
+                    "replacementText": "test() as int",
+                    "line": 38,
+                    "column": 5,
+                    "endLine": 38,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 1,
+            "endLine": 39,
+            "endColumn": 14,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 5,
+            "endLine": 39,
+            "endColumn": 13,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1388,
+                    "end": 1396,
+                    "replacementText": "(test()*6) as int",
+                    "line": 39,
+                    "column": 5,
+                    "endLine": 39,
+                    "endColumn": 13
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 1,
+            "endLine": 41,
+            "endColumn": 7,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 1,
+            "endLine": 41,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 5,
+            "endLine": 41,
+            "endColumn": 6,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1485,
+                    "end": 1486,
+                    "replacementText": "b as int",
+                    "line": 41,
+                    "column": 5,
+                    "endLine": 41,
+                    "endColumn": 6
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 1,
+            "endLine": 43,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 5,
+            "endLine": 43,
+            "endColumn": 8,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1578,
+                    "end": 1581,
+                    "replacementText": "a.a as int",
+                    "line": 43,
+                    "column": 5,
+                    "endLine": 43,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 1,
+            "endLine": 44,
+            "endColumn": 12,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 5,
+            "endLine": 44,
+            "endColumn": 11,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1661,
+                    "end": 1667,
+                    "replacementText": "a.aa() as int",
+                    "line": 44,
+                    "column": 5,
+                    "endLine": 44,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 1,
+            "endLine": 46,
+            "endColumn": 11,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 46,
+            "column": 5,
+            "endLine": 46,
+            "endColumn": 10,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1735,
+                    "end": 1740,
+                    "replacementText": "(a.a+5) as int",
+                    "line": 46,
+                    "column": 5,
+                    "endLine": 46,
+                    "endColumn": 10
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 1,
+            "endLine": 47,
+            "endColumn": 14,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 5,
+            "endLine": 47,
+            "endColumn": 13,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1807,
+                    "end": 1815,
+                    "replacementText": "(a.aa()*5) as int",
+                    "line": 47,
+                    "column": 5,
+                    "endLine": 47,
+                    "endColumn": 13
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 1,
+            "endLine": 49,
+            "endColumn": 10,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 1,
+            "endLine": 49,
+            "endColumn": 10,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 5,
+            "endLine": 49,
+            "endColumn": 9,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1883,
+                    "end": 1887,
+                    "replacementText": "(-1*6) as int",
+                    "line": 49,
+                    "column": 5,
+                    "endLine": 49,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 1,
+            "endLine": 51,
+            "endColumn": 15,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 1,
+            "endLine": 51,
+            "endColumn": 15,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 5,
+            "endLine": 51,
+            "endColumn": 14,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 1981,
+                    "end": 1990,
+                    "replacementText": "-Infinity as int",
+                    "line": 51,
+                    "column": 5,
+                    "endLine": 51,
+                    "endColumn": 14
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 1,
+            "endLine": 52,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 5,
+            "endLine": 52,
+            "endColumn": 6,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2067,
+                    "end": 2068,
+                    "replacementText": "m as int",
+                    "line": 52,
+                    "column": 5,
+                    "endLine": 52,
+                    "endColumn": 6
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 1,
+            "endLine": 53,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 1,
+            "endLine": 53,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 5,
+            "endLine": 53,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2136,
+                    "end": 2138,
+                    "replacementText": "-m as int",
+                    "line": 53,
+                    "column": 5,
+                    "endLine": 53,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 1,
+            "endLine": 55,
+            "endColumn": 31,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 6,
+            "endLine": 55,
+            "endColumn": 30,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2256,
+                    "end": 2280,
+                    "replacementText": "-Number.MIN_SAFE_INTEGER as int",
+                    "line": 55,
+                    "column": 6,
+                    "endLine": 55,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 1,
+            "endLine": 56,
+            "endColumn": 29,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 1,
+            "endLine": 56,
+            "endColumn": 29,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 5,
+            "endLine": 56,
+            "endColumn": 28,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2346,
+                    "end": 2369,
+                    "replacementText": "Number.MIN_SAFE_INTEGER as int",
+                    "line": 56,
+                    "column": 5,
+                    "endLine": 56,
+                    "endColumn": 28
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 1,
+            "endLine": 57,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 5,
+            "endLine": 57,
+            "endColumn": 6,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2426,
+                    "end": 2427,
+                    "replacementText": "n as int",
+                    "line": 57,
+                    "column": 5,
+                    "endLine": 57,
+                    "endColumn": 6
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 1,
+            "endLine": 58,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 5,
+            "endLine": 58,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2484,
+                    "end": 2486,
+                    "replacementText": "-n as int",
+                    "line": 58,
+                    "column": 5,
+                    "endLine": 58,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 1,
+            "endLine": 59,
+            "endColumn": 17,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 1,
+            "endLine": 59,
+            "endColumn": 17,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 5,
+            "endLine": 59,
+            "endColumn": 16,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2552,
+                    "end": 2563,
+                    "replacementText": "-Number.NaN as int",
+                    "line": 59,
+                    "column": 5,
+                    "endLine": 59,
+                    "endColumn": 16
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 1,
+            "endLine": 60,
+            "endColumn": 16,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 1,
+            "endLine": 60,
+            "endColumn": 16,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 5,
+            "endLine": 60,
+            "endColumn": 15,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2635,
+                    "end": 2645,
+                    "replacementText": "Number.NaN as int",
+                    "line": 60,
+                    "column": 5,
+                    "endLine": 60,
+                    "endColumn": 15
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 1,
+            "endLine": 62,
+            "endColumn": 31,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 1,
+            "endLine": 62,
+            "endColumn": 31,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 6,
+            "endLine": 62,
+            "endColumn": 30,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2751,
+                    "end": 2775,
+                    "replacementText": "-Number.MAX_SAFE_INTEGER as int",
+                    "line": 62,
+                    "column": 6,
+                    "endLine": 62,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 1,
+            "endLine": 63,
+            "endColumn": 31,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 1,
+            "endLine": 64,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 1,
+            "endLine": 64,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 5,
+            "endLine": 64,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2872,
+                    "end": 2874,
+                    "replacementText": "-p as int",
+                    "line": 64,
+                    "column": 5,
+                    "endLine": 64,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 1,
+            "endLine": 65,
+            "endColumn": 10,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 1,
+            "endLine": 65,
+            "endColumn": 10,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 5,
+            "endLine": 65,
+            "endColumn": 9,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 2940,
+                    "end": 2944,
+                    "replacementText": "(-p+7) as int",
+                    "line": 65,
+                    "column": 5,
+                    "endLine": 65,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 1,
+            "endLine": 67,
+            "endColumn": 31,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 1,
+            "endLine": 67,
+            "endColumn": 31,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 5,
+            "endLine": 67,
+            "endColumn": 30,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3050,
+                    "end": 3075,
+                    "replacementText": "-Number.POSITIVE_INFINITY as int",
+                    "line": 67,
+                    "column": 5,
+                    "endLine": 67,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 1,
+            "endLine": 68,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 5,
+            "endLine": 68,
+            "endColumn": 6,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3152,
+                    "end": 3153,
+                    "replacementText": "q as int",
+                    "line": 68,
+                    "column": 5,
+                    "endLine": 68,
+                    "endColumn": 6
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 1,
+            "endLine": 69,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 5,
+            "endLine": 69,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3221,
+                    "end": 3223,
+                    "replacementText": "-q as int",
+                    "line": 69,
+                    "column": 5,
+                    "endLine": 69,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 1,
+            "endLine": 71,
+            "endColumn": 31,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 5,
+            "endLine": 71,
+            "endColumn": 30,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3335,
+                    "end": 3360,
+                    "replacementText": "-Number.NEGATIVE_INFINITY as int",
+                    "line": 71,
+                    "column": 5,
+                    "endLine": 71,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 1,
+            "endLine": 72,
+            "endColumn": 7,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 1,
+            "endLine": 72,
+            "endColumn": 7,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 5,
+            "endLine": 72,
+            "endColumn": 6,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3428,
+                    "end": 3429,
+                    "replacementText": "c as int",
+                    "line": 72,
+                    "column": 5,
+                    "endLine": 72,
+                    "endColumn": 6
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 1,
+            "endLine": 79,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 5,
+            "endLine": 79,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3601,
+                    "end": 3603,
+                    "replacementText": "y1 as int",
+                    "line": 79,
+                    "column": 5,
+                    "endLine": 79,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 1,
+            "endLine": 80,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 5,
+            "endLine": 80,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3660,
+                    "end": 3662,
+                    "replacementText": "y2 as int",
+                    "line": 80,
+                    "column": 5,
+                    "endLine": 80,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 1,
+            "endLine": 81,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 1,
+            "endLine": 81,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 5,
+            "endLine": 81,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3728,
+                    "end": 3730,
+                    "replacementText": "y3 as int",
+                    "line": 81,
+                    "column": 5,
+                    "endLine": 81,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 1,
+            "endLine": 82,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 1,
+            "endLine": 82,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 5,
+            "endLine": 82,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3807,
+                    "end": 3809,
+                    "replacementText": "y4 as int",
+                    "line": 82,
+                    "column": 5,
+                    "endLine": 82,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 1,
+            "endLine": 83,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 5,
+            "endLine": 83,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3876,
+                    "end": 3878,
+                    "replacementText": "y5 as int",
+                    "line": 83,
+                    "column": 5,
+                    "endLine": 83,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 1,
+            "endLine": 84,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 1,
+            "endLine": 84,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 5,
+            "endLine": 84,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 3935,
+                    "end": 3937,
+                    "replacementText": "y6 as int",
+                    "line": 84,
+                    "column": 5,
+                    "endLine": 84,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 1,
+            "endLine": 86,
+            "endColumn": 8,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 1,
+            "endLine": 86,
+            "endColumn": 8,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 5,
+            "endLine": 86,
+            "endColumn": 7,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4023,
+                    "end": 4025,
+                    "replacementText": "y7 as int",
+                    "line": 86,
+                    "column": 5,
+                    "endLine": 86,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 1,
+            "endLine": 87,
+            "endColumn": 18,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 1,
+            "endLine": 87,
+            "endColumn": 18,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 5,
+            "endLine": 87,
+            "endColumn": 17,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4082,
+                    "end": 4094,
+                    "replacementText": "-1 as int",
+                    "line": 87,
+                    "column": 5,
+                    "endLine": 87,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 1,
+            "endLine": 88,
+            "endColumn": 9,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 1,
+            "endLine": 88,
+            "endColumn": 9,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 5,
+            "endLine": 88,
+            "endColumn": 8,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4179,
+                    "end": 4182,
+                    "replacementText": "NaN as int",
+                    "line": 88,
+                    "column": 5,
+                    "endLine": 88,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 1,
+            "endLine": 89,
+            "endColumn": 10,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 1,
+            "endLine": 89,
+            "endColumn": 10,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 5,
+            "endLine": 89,
+            "endColumn": 9,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4246,
+                    "end": 4250,
+                    "replacementText": "-NaN as int",
+                    "line": 89,
+                    "column": 5,
+                    "endLine": 89,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 11,
+            "endLine": 93,
+            "endColumn": 24,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
+            "column": 11,
+            "endLine": 93,
+            "endColumn": 24,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 94,
+            "column": 11,
+            "endLine": 94,
+            "endColumn": 25,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 94,
+            "column": 15,
+            "endLine": 94,
+            "endColumn": 24,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4450,
+                    "end": 4459,
+                    "replacementText": "-E34.BLUE as int",
+                    "line": 94,
+                    "column": 15,
+                    "endLine": 94,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 96,
+            "column": 1,
+            "endLine": 96,
+            "endColumn": 25,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 96,
+            "column": 1,
+            "endLine": 96,
+            "endColumn": 25,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 96,
+            "column": 5,
+            "endLine": 96,
+            "endColumn": 24,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4482,
+                    "end": 4501,
+                    "replacementText": "(num + 1) as int",
+                    "line": 96,
+                    "column": 5,
+                    "endLine": 96,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 1,
+            "endLine": 97,
+            "endColumn": 19,
+            "problem": "IndexNegative",
+            "suggest": "",
+            "rule": "The index expression must be zero or positive value.(arkts-array-index-negative)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 1,
+            "endLine": 97,
+            "endColumn": 19,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 5,
+            "endLine": 97,
+            "endColumn": 18,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4587,
+                    "end": 4600,
+                    "replacementText": "num as int",
+                    "line": 97,
+                    "column": 5,
+                    "endLine": 97,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        }
+    ]
+}
