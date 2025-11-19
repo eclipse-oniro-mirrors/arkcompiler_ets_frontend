@@ -496,17 +496,28 @@ bool ETSChecker::CheckTypeParameterConstraint(ir::TSTypeParameter *param, Type2T
 void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 {
     ETSTypeParameter *const paramType = param->Name()->Variable()->TsType()->AsETSTypeParameter();
-    auto const traverseReferenced =
-        [this, scope = param->Parent()->AsTSTypeParameterDeclaration()->Scope()](ir::TypeNode *typeNode) {
-            if (!typeNode->IsETSTypeReference()) {
-                return;
+    auto *const paramScope = param->Parent()->AsTSTypeParameterDeclaration()->Scope();
+    auto const traverseReferenced = [this, paramScope](ir::TypeNode *typeNode) {
+        if (!typeNode->IsETSTypeReference()) {
+            return;
+        }
+        const auto typeName = typeNode->AsETSTypeReference()->Part()->GetIdent()->Name();
+        auto *const found = paramScope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
+        if (found != nullptr) {
+            SetUpTypeParameterConstraint(found->Declaration()->Node()->AsTSTypeParameter());
+        }
+    };
+    auto const traverseDefaultTypeIfNeeded = [paramScope, &traverseReferenced](ir::TypeNode *defaultType) {
+        if (defaultType->IsETSTypeReference()) {
+            const auto typeName = defaultType->AsETSTypeReference()->Part()->GetIdent()->Name();
+            auto *found = paramScope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
+            if (found == nullptr) {
+                traverseReferenced(defaultType);
             }
-            const auto typeName = typeNode->AsETSTypeReference()->Part()->GetIdent()->Name();
-            auto *const found = scope->FindLocal(typeName, varbinder::ResolveBindingOptions::BINDINGS);
-            if (found != nullptr) {
-                SetUpTypeParameterConstraint(found->Declaration()->Node()->AsTSTypeParameter());
-            }
-        };
+        } else {
+            traverseReferenced(defaultType);
+        }
+    };
 
     if (param->Constraint() != nullptr) {
         traverseReferenced(param->Constraint());
@@ -516,7 +527,7 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
     }
 
     if (param->DefaultType() != nullptr) {
-        traverseReferenced(param->DefaultType());
+        traverseDefaultTypeIfNeeded(param->DefaultType());
         // NOTE: #14993 ensure default matches constraint
         paramType->SetDefaultType(MaybeBoxType(param->DefaultType()->GetType(this)));
     }
