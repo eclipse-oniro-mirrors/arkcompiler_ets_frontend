@@ -185,7 +185,7 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
     auto [memberModifiers, startLoc] = ParseMemberModifiers();
 
     if (CheckAccessorDeclaration(memberModifiers)) {
-        return ParseAccessorWithReceiver(memberModifiers);
+        return ParseTopLevelAccessor(memberModifiers);
     }
 
     ir::Statement *result = nullptr;

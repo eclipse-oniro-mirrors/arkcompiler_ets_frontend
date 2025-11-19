@@ -1459,7 +1459,9 @@ std::pair<ir::ModifierFlags, lexer::SourcePosition> ETSParser::ParseMemberModifi
         Lexer()->NextToken();
 
         if (Lexer()->GetToken().Type() != lexer::TokenType::KEYW_FUNCTION &&
-            Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_OVERLOAD) {
+            Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_OVERLOAD &&
+            Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_GET &&
+            Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_SET) {
             // async_function_bas.ets
             if (isAsync) {
                 LogError(diagnostic::ASYNC_FLAG_ONLY_FOR_TOP_FUN);

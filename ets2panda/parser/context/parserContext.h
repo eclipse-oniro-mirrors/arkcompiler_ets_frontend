@@ -67,14 +67,13 @@ enum class ParserStatus : uint64_t {
     ALLOW_DEFAULT_VALUE = 1ULL << 33ULL,
     FUNCTION_HAS_THROW_STATEMENT = 1ULL << 34ULL,
     ALLOW_RECEIVER = 1ULL << 35ULL,
-    EXTENSION_ACCESSOR = 1ULL << 36ULL,
-    HAS_RECEIVER = 1ULL << 37ULL,
-    PARSE_TRAILING_BLOCK = 1ULL << 38ULL,
+    HAS_RECEIVER = 1ULL << 36ULL,
+    PARSE_TRAILING_BLOCK = 1ULL << 37ULL,
 
-    DEPENDENCY_ANALYZER_MODE = 1ULL << 39ULL,
+    DEPENDENCY_ANALYZER_MODE = 1ULL << 38ULL,
 
-    STATIC_BLOCK = 1ULL << 40ULL,
-    IN_PACKAGE = 1ULL << 41ULL,
+    STATIC_BLOCK = 1ULL << 39ULL,
+    IN_PACKAGE = 1ULL << 40ULL,
 };
 
 }  // namespace ark::es2panda::parser
@@ -147,11 +146,6 @@ public:
     [[nodiscard]] bool AllowReceiver() const noexcept
     {
         return (status_ & ParserStatus::ALLOW_RECEIVER) != 0;
-    }
-
-    [[nodiscard]] bool IsExtensionAccessor() const noexcept
-    {
-        return (status_ & ParserStatus::EXTENSION_ACCESSOR) != 0;
     }
 
     [[nodiscard]] bool IsGenerator() const noexcept

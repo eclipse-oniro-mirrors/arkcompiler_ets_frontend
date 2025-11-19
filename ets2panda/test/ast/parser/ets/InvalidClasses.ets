@@ -118,15 +118,13 @@ interface I1 {
 /* @@? 66:9 Error SyntaxError: Local class or interface declaration members can not have access modifies. */
 /* @@? 66:18 Error SyntaxError: Private interface methods must have body. */
 /* @@? 67:9 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 67:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 67:16 Error SyntaxError: Identifier expected. */
+/* @@? 67:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 67:16 Error SyntaxError: Unexpected token, expected ','. */
 /* @@? 67:24 Error SyntaxError: Private interface methods must have body. */
 /* @@? 72:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
 /* @@? 72:13 Error SyntaxError: Interface fields must have type annotation. */
 /* @@? 72:14 Error SyntaxError: Invalid Type. */
-/* @@? 74:5 Error SyntaxError: Extension Getter can only have 1 parameter. */
-/* @@? 74:25 Error SyntaxError: Extension Accessor must have a receiver. */
 /* @@? 78:8 Error SyntaxError: Label must be followed by a loop statement. */
 /* @@? 78:8 Error TypeError: Type name 'number' used in the wrong context */
 /* @@? 79:1 Error SyntaxError: Unexpected token '}'. */

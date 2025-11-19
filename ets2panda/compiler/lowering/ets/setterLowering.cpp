@@ -37,14 +37,12 @@ namespace ark::es2panda::compiler {
 // x = c.x = y
 static bool IsSetterCall(const ir::Expression *const expr)
 {
-    if (!expr->IsMemberExpression()) {
+    if (!expr->IsMemberExpression() && !expr->IsIdentifier()) {
         return false;
     }
 
-    const auto *memberExpr = expr->AsMemberExpression();
-    const auto *property = memberExpr->Property();
-
-    auto *variable = property->Variable();
+    auto *const variable = expr->IsMemberExpression() ? expr->AsMemberExpression()->Property()->Variable()
+                                                      : expr->AsIdentifier()->Variable();
     if (!checker::ETSChecker::IsVariableGetterSetter(variable)) {
         return false;
     }

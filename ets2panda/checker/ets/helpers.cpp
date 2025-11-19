@@ -286,6 +286,29 @@ void ETSChecker::SaveCapturedVariable(varbinder::Variable *const var, ir::Identi
     }
 }
 
+void ETSChecker::ValidateAccessorIdentifier(ir::Identifier *ident)
+{
+    if (!IsVariableGetterSetter(ident->Variable())) {
+        return;
+    }
+
+    auto searchFlag = GetInitialSearchFlags(ident);
+    auto propType = ident->Variable()->TsType()->AsETSFunctionType();
+    if ((searchFlag & PropertySearchFlags::IS_GETTER) != 0) {
+        if (propType->FindGetter() == nullptr) {
+            LogError(diagnostic::READ_FROM_WRITEONLY_PROP, {}, ident->Start());
+            return;
+        }
+    }
+
+    if ((searchFlag & PropertySearchFlags::IS_SETTER) != 0) {
+        if (propType->FindSetter() == nullptr) {
+            LogError(diagnostic::ASSIGN_TO_READONLY_PROP, {}, ident->Start());
+            return;
+        }
+    }
+}
+
 Type *ETSChecker::ResolveIdentifier(ir::Identifier *ident)
 {
     if (ident->Variable() != nullptr) {
@@ -330,6 +353,7 @@ Type *ETSChecker::ResolveIdentifier(ir::Identifier *ident)
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     ValidateResolvedIdentifier(ident);
 
+    ValidateAccessorIdentifier(ident);
     ValidatePropertyAccess(resolved, Context().ContainingClass(), ident->Start());
     SaveCapturedVariable(resolved, ident);
 
@@ -3168,7 +3192,7 @@ bool ETSChecker::TryTransformingToStaticInvoke(ir::Identifier *const ident, cons
         callExpr = ident->Parent()->AsCallExpression();
     }
 
-    if (!resolvedType->IsETSObjectType()) {
+    if (!resolvedType->IsETSObjectType() || IsVariableGetterSetter(ident->Variable())) {
         return false;
     }
 

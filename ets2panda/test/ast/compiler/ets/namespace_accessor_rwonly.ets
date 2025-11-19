@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+namespace NS {
+    export get name() {return '1'}
 }
 
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
+namespace NS1 {
+    export set name(a:string) {}
 }
 
-/* @@ label2 */set field() {}
+function main() {
+    NS.name = '1';
+    NS1.name;
+}
 
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 25:8 Error TypeError: Cannot assign to this property because it is readonly. */
+/* @@? 26:9 Error TypeError: Cannot read from this property because it is writeonly. */

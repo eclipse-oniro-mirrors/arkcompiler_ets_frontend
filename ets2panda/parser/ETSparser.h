@@ -403,7 +403,7 @@ private:
     ir::Statement *ParseFunctionStatement(StatementParsingFlags flags) override;
     ir::OverloadDeclaration *ParseOverloadDeclaration(ir::ModifierFlags modifiers);
     ir::FunctionDeclaration *ParseFunctionDeclaration(bool canBeAnonymous, ir::ModifierFlags modifiers);
-    ir::FunctionDeclaration *ParseAccessorWithReceiver(ir::ModifierFlags modifiers);
+    ir::FunctionDeclaration *ParseTopLevelAccessor(ir::ModifierFlags modifiers);
     ir::TypeNode *ParseExtensionFunctionsTypeAnnotation();
     std::tuple<ir::Expression *, ir::TSTypeParameterInstantiation *> ParseClassImplementsElement() override;
     ir::TypeNode *ParseInterfaceExtendsElement() override;

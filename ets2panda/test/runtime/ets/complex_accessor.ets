@@ -13,16 +13,18 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+let _complex: Complex = { x: 1, y: "test" }
+interface Complex { x: number; y: string }
+get complexObj(): Complex { return _complex }
+set complexObj(v: Complex) { _complex = v }
+
+function main() {
+    // For passing JIT test purpose 
+    _complex = { x: 1, y: "test" }
+    arktest.assertEQ(complexObj.x, 1)
+    arktest.assertEQ(complexObj.y, "test")
+
+    complexObj = { x: 2, y: "updated" }
+    arktest.assertEQ(complexObj.x, 2)
+    arktest.assertEQ(complexObj.y, "updated")
 }
-
-/* @@ label1 */get field(a: A): int {
-    return a.field_;
-}
-
-/* @@ label2 */set field() {}
-
-
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
