@@ -118,3 +118,12 @@ non_null_number_as_index.ets
 
 #31069
 type_error_test.ets
+
+#31475
+as_string.ets
+
+#31475
+readonly_array/readonly_array_arg.ets
+readonly_array/readonly_array_field.ets
+readonly_array/readonly_array_var.ets
+finallyClauseThrow.ets
