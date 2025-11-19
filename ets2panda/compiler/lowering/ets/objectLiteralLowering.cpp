@@ -126,7 +126,8 @@ static void PopulateCtorArgumentsFromMap(public_lib::Context *ctx, ir::ObjectExp
 
     for (auto param : classType->ConstructSignatures().front()->Params()) {
         auto ctorArgument = ctorArgumentsMap[param->Declaration()->Name()];
-        if (ctorArgument == nullptr && objExpr->PreferredType()->AsETSObjectType()->IsPartial()) {
+        if (ctorArgument == nullptr && objExpr->PreferredType()->IsETSObjectType() &&
+            objExpr->PreferredType()->AsETSObjectType()->IsPartial()) {
             ctorArguments.push_back(allocator->New<ir::UndefinedLiteral>());
             continue;
         }
