@@ -25,14 +25,12 @@ constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_GLOBAL {
     "extract_constant_scope_2", "Extract Constant in Global Scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_GLOBAL {
     "extract_function_scope_2", "Extract Function in Global Scope", "refactor.extract.function"};
-constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_GLOBAL {
-    "extract_variable_scope_2", "Extract Variable in Global Scope", "refactor.extract.variable"};
 constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_CLASS {
     "extract_function_scope_1", "Extract Function in Class Scope", "refactor.extract.function"};
+constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_CLASS {
+    "extract_constant_scope_1", "Extract Constant in Class Scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_ENCLOSE {
     "extract_constant_scope_0", "Extract Constant in Enclose Scope", "refactor.extract.constant"};
-constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_ENCLOSE {
-    "extract_function_scope_0", "Extract Function in Enclose Scope", "refactor.extract.function"};
 constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_ENCLOSE {
     "extract_variable_scope_0", "Extract Variable in Enclose Scope", "refactor.extract.variable"};
 

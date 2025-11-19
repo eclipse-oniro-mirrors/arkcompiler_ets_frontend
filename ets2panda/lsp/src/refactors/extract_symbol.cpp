@@ -130,16 +130,13 @@ constexpr const char *NEWLINE = "\n";
 #endif
 
 constexpr size_t HELPER_RESERVE_PADDING = 64;
-constexpr size_t HELPER_INDENT_FACTOR = 4;
 
 ExtractSymbolRefactor::ExtractSymbolRefactor()
 {
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.kind));
     AddKind(std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.kind));
-    AddKind(std::string(EXTRACT_VARIABLE_ACTION_GLOBAL.kind));
 
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.kind));
-    AddKind(std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.kind));
     AddKind(std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.kind));
     AddKind(std::string(EXTRACT_FUNCTION_ACTION_CLASS.kind));
 }
@@ -416,14 +413,14 @@ bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::strin
 
 bool IsVariableExtractionAction(const std::string &actionName)
 {
-    return actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name ||
-           actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.kind || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.kind;
+    return actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.kind;
 }
 
 bool IsConstantExtractionAction(const std::string &actionName)
 {
     return actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
-           actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.kind || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.kind;
+           actionName == EXTRACT_CONSTANT_ACTION_CLASS.name || actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.kind ||
+           actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.kind || actionName == EXTRACT_CONSTANT_ACTION_CLASS.kind;
 }
 
 std::string GetIndentAtPosition(public_lib::Context *ctx, size_t pos)
@@ -594,35 +591,6 @@ std::pair<std::string, std::string> BuildParamSignature(public_lib::Context *ctx
     return {JoinWithComma(paramDecls), JoinWithComma(freeVars)};
 }
 
-bool BuildEnclosePieces(public_lib::Context *ctx, const VariableBindingInfo &binding, HelperPieces &out)
-{
-    size_t lineStart = 0;
-    std::string indent;
-    std::string body;
-    if (!PrepareBindingLayout(ctx, binding, lineStart, indent, body)) {
-        return false;
-    }
-    constexpr const char *kHelperName = "newMethod";
-
-    std::string helper;
-    helper.reserve(indent.size() * HELPER_INDENT_FACTOR + body.size() + HELPER_RESERVE_PADDING);
-    helper.append(indent).append("function ").append(kHelperName).append("() {").append(NEWLINE);
-    helper.append(indent).append("    ").append(body).append(NEWLINE);
-    helper.append(indent).append("    return ").append(binding.identifier->Name().Mutf8()).append(";").append(NEWLINE);
-    helper.append(indent).append("}").append(NEWLINE);
-
-    std::string callExpr = std::string(kHelperName) + "()";
-    std::string replacement = BuildAssignmentLine(ctx, binding, indent, callExpr);
-
-    out.insertHelper = true;
-    out.insertPos = lineStart;
-    out.helperText = std::move(helper);
-    out.replacementText = std::move(replacement);
-    const auto &source = ctx->sourceFile->source;
-    out.replaceRange = {lineStart, ExtendToLineEnd(util::StringView(source), binding.declaration->End().index)};
-    return true;
-}
-
 bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo &binding, HelperPieces &out)
 {
     auto *pubCtx = reinterpret_cast<public_lib::Context *>(context.context);
@@ -657,7 +625,7 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
         if (!initBody.empty() && helper.back() != ';') {
             helper.append(";");
         }
-        helper.append(NEWLINE).append("}").append(NEWLINE).append(NEWLINE);
+        helper.append(NEWLINE).append("}").append(NEWLINE);
         out.insertHelper = true;
         out.insertPos = DetermineGlobalInsertPos(pubCtx);
         out.helperText = std::move(helper);
@@ -755,8 +723,7 @@ bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo 
 bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extractedNode, const std::string &actionName,
                               RefactorEditInfo &outEdits)
 {
-    if (actionName != std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name) &&
-        actionName != std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) &&
+    if (actionName != std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) &&
         actionName != std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
         return false;
     }
@@ -773,9 +740,7 @@ bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extra
 
     HelperPieces pieces;
     bool success = false;
-    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name)) {
-        success = BuildEnclosePieces(pubCtx, binding, pieces);
-    } else if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
+    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
         success = BuildGlobalPieces(context, binding, pieces);
     } else if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
         success = BuildClassPieces(context, binding, pieces);
@@ -807,10 +772,6 @@ bool IsClassMethodContext(ir::AstNode *node)
 }
 
 }  // namespace
-static bool IsEncloseFunctionBreak(ir::AstNode *parent)
-{
-    return parent != nullptr && parent->IsBlockStatement();
-}
 
 static bool IsEncloseVarConstBreak(ir::AstNode *parent)
 {
@@ -831,6 +792,20 @@ static void AdjustStatementForGlobalIfClass(ir::AstNode *&statement, ir::AstNode
         }
     }
 }
+void GetFirstNodeWithoutImport(ir::AstNode *parent, ir::AstNode *&statement)
+{
+    if (!parent->IsClassDeclaration()) {
+        return;
+    }
+
+    auto nodeListToFirsElement = parent->AsClassDeclaration()->Definition()->Body();
+    for (auto ndx : nodeListToFirsElement) {
+        if (!ndx->IsImportSpecifier() && !ndx->IsImportDeclaration()) {
+            statement = ndx;
+            return;
+        }
+    }
+}
 
 size_t FindTopLevelInsertionPos(public_lib::Context *context, ir::AstNode *target, const std::string &actionName)
 {
@@ -842,12 +817,6 @@ size_t FindTopLevelInsertionPos(public_lib::Context *context, ir::AstNode *targe
         }
         statement = node;
         ir::AstNode *parent = node->Parent();
-        if (actionName == std::string(EXTRACT_FUNCTION_ACTION_ENCLOSE.name)) {
-            if (IsEncloseFunctionBreak(parent)) {
-                break;
-            }
-            continue;
-        }
         if (actionName == std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.name) ||
             actionName == std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.name)) {
             if (IsEncloseVarConstBreak(parent)) {
@@ -856,8 +825,15 @@ size_t FindTopLevelInsertionPos(public_lib::Context *context, ir::AstNode *targe
             continue;
         }
         if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) ||
-            actionName == std::string(EXTRACT_VARIABLE_ACTION_GLOBAL.name) ||
             actionName == std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.name)) {
+            if (IsGlobalBreak(parent)) {
+                GetFirstNodeWithoutImport(parent, statement);
+                break;
+            }
+            continue;
+        }
+        if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name) ||
+            actionName == std::string(EXTRACT_CONSTANT_ACTION_CLASS.name)) {
             if (IsGlobalBreak(parent)) {
                 AdjustStatementForGlobalIfClass(statement, node);
                 break;
@@ -1110,9 +1086,6 @@ std::string ReplaceWithFunctionCall(const FunctionExtraction &candidate, const s
         callArgs += candidate.parameters[i]->Ident()->Name().Mutf8();
     }
     std::string callText = functionName + "(" + callArgs + ")";
-    if (candidate.node->Parent()->IsBlockStatement() || candidate.node->Parent()->IsStatement()) {
-        callText += ",";
-    }
     return callText;
 }
 static void AddRefactorAction(std::vector<RefactorAction> &list, const RefactorActionView &info)
@@ -1139,27 +1112,25 @@ static bool HasEnclosingFunction(ir::AstNode *node)
     return false;
 }
 
-static void AddExtractFunctionActions(std::vector<RefactorAction> &actions, bool isEncloseScopeAvailable,
-                                      bool hasClassScope)
+static void AddExtractFunctionActions(std::vector<RefactorAction> &actions, bool hasClassScope)
 {
-    AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_GLOBAL);
-    if (isEncloseScopeAvailable) {
-        AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_ENCLOSE);
-    }
     if (hasClassScope) {
         AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_CLASS);
     }
+    AddRefactorAction(actions, EXTRACT_FUNCTION_ACTION_GLOBAL);
 }
 
-static void AddExtractVariableActions(std::vector<RefactorAction> &actions, bool isEncloseScopeAvailable)
+static void AddExtractVariableActions(std::vector<RefactorAction> &actions, bool isEncloseScopeAvailable,
+                                      bool hasClassScope)
 {
-    AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_GLOBAL);
-    AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_GLOBAL);
-
     if (isEncloseScopeAvailable) {
         AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_ENCLOSE);
         AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_ENCLOSE);
     }
+    if (hasClassScope) {
+        AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_CLASS);
+    }
+    AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_GLOBAL);
 }
 
 std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &context)
@@ -1181,11 +1152,11 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
 
     if (node->IsExpression() || node->IsFunctionExpression() || node->IsArrowFunctionExpression() ||
         node->IsStatement()) {
-        AddExtractFunctionActions(actions, hasScope, hasClassScope);
+        AddExtractFunctionActions(actions, hasClassScope);
     }
 
     if (!node->IsStatement() || node->IsVariableDeclaration() || node->IsBinaryExpression()) {
-        AddExtractVariableActions(actions, hasScope);
+        AddExtractVariableActions(actions, hasScope, hasClassScope);
     }
 
     return actions;
@@ -1193,12 +1164,11 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
 
 ir::AstNode *FindRefactor(const RefactorContext &context, const std::string &actionName)
 {
-    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name ||
-        actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
+    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
+        actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_CONSTANT_ACTION_CLASS.name) {
         return FindExtractedVals(context);
     }
-    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name ||
-        actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
+    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         return FindExtractedFunction(context);
     }
 
@@ -1435,13 +1405,12 @@ std::unique_ptr<RefactorEditInfo> ExtractSymbolRefactor::GetEditsForAction(const
         return nullptr;
     }
     RefactorEditInfo refactor;
-    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name) {
+    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
+        actionName == EXTRACT_CONSTANT_ACTION_CLASS.name) {
         refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
-    } else if (actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name ||
-               actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
+    } else if (actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
         refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
-    } else if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name ||
-               actionName == EXTRACT_FUNCTION_ACTION_ENCLOSE.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
+    } else if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         refactor = GetRefactorEditsToExtractFunction(context, actionName);
     }
 
