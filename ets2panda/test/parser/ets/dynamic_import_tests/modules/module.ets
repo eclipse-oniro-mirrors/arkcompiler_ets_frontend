@@ -63,3 +63,5 @@ export declare class MyError extends Error {
 export declare interface OptionalInterface {
     s?: string
 }
+
+export type NullableNumber = number | null

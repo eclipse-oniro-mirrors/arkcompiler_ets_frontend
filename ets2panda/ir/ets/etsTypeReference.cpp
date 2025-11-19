@@ -64,10 +64,6 @@ ir::Identifier *ETSTypeReference::BaseName() const
         return baseName->AsIdentifier();
     }
 
-    if (baseName->IsIdentifier()) {
-        return baseName->AsIdentifier();
-    }
-
     if (baseName->IsTSQualifiedName()) {
         ir::TSQualifiedName *iter = baseName->AsTSQualifiedName();
 

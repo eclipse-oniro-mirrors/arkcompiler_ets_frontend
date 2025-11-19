@@ -4299,6 +4299,115 @@
       }
     },
     {
+      "type": "TSTypeAliasDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "NullableNumber",
+        "loc": {
+          "start": {
+            "line": 67,
+            "column": 13,
+            "program": "module.ets"
+          },
+          "end": {
+            "line": 67,
+            "column": 27,
+            "program": "module.ets"
+          }
+        }
+      },
+      "typeAnnotation": {
+        "type": "ETSUnionType",
+        "types": [
+          {
+            "type": "ETSTypeReference",
+            "part": {
+              "type": "ETSTypeReferencePart",
+              "name": {
+                "type": "Identifier",
+                "name": "number",
+                "loc": {
+                  "start": {
+                    "line": 67,
+                    "column": 30,
+                    "program": "module.ets"
+                  },
+                  "end": {
+                    "line": 67,
+                    "column": 36,
+                    "program": "module.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 67,
+                  "column": 30,
+                  "program": "module.ets"
+                },
+                "end": {
+                  "line": 67,
+                  "column": 36,
+                  "program": "module.ets"
+                }
+              }
+            },
+            "loc": {
+              "start": {
+                "line": 67,
+                "column": 30,
+                "program": "module.ets"
+              },
+              "end": {
+                "line": 67,
+                "column": 36,
+                "program": "module.ets"
+              }
+            }
+          },
+          {
+            "type": "ETSNullType",
+            "loc": {
+              "start": {
+                "line": 67,
+                "column": 39,
+                "program": "module.ets"
+              },
+              "end": {
+                "line": 67,
+                "column": 43,
+                "program": "module.ets"
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 67,
+            "column": 30,
+            "program": "module.ets"
+          },
+          "end": {
+            "line": 67,
+            "column": 43,
+            "program": "module.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 67,
+          "column": 8,
+          "program": "module.ets"
+        },
+        "end": {
+          "line": 67,
+          "column": 43,
+          "program": "module.ets"
+        }
+      }
+    },
+    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
@@ -5065,7 +5174,7 @@
       "program": "module.ets"
     },
     "end": {
-      "line": 66,
+      "line": 68,
       "column": 1,
       "program": "module.ets"
     }

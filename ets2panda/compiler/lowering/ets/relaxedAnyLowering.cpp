@@ -15,6 +15,7 @@
 
 #include "relaxedAnyLowering.h"
 #include "ir/expressions/memberExpression.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -51,6 +52,9 @@ static ir::Expression *InsertTypeGuard(public_lib::Context *ctx, checker::Type *
     if (checker->Relation()->IsIdenticalTo(type, checker->GlobalETSAnyType())) {
         return expr;
     }
+    if (checker->Relation()->IsIdenticalTo(type, checker->GlobalETSNeverType())) {
+        return expr;
+    }
     return util::NodeAllocator::ForceSetParent<ir::TSAsExpression>(
         allocator, expr, allocator->New<ir::OpaqueTypeNode>(type, allocator), false);
 }
@@ -78,10 +82,15 @@ static ir::StringLiteral *IdentifierToLiteral(public_lib::Context *ctx, ir::Iden
     return ctx->Allocator()->New<ir::StringLiteral>(id->Name());
 }
 
+static bool IsUsedAsTypeReference(ir::AstNode *node)
+{
+    return node->Parent()->IsETSTypeReferencePart() || node->Parent()->IsTSQualifiedName();
+}
+
 static ir::AstNode *TransformMemberExpression(public_lib::Context *ctx, ir::MemberExpression *node)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
-    if (!IsLoweringCandidate(checker, node->Object()->TsType())) {
+    if (!IsLoweringCandidate(checker, node->Object()->TsType()) || IsUsedAsTypeReference(node)) {
         return node;
     }
 
@@ -197,6 +206,7 @@ static ir::AstNode *LowerOperationIfNeeded(public_lib::Context *ctx, ir::AstNode
     auto const setParent = [node](ir::AstNode *res) {
         if (res != node) {
             res->SetParent(node->Parent());
+            SetSourceRangesRecursively(res, node->Range());
         }
         return res;
     };
