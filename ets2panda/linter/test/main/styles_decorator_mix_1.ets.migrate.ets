@@ -37,7 +37,11 @@ struct MyButton1 {
 
   PressedStyles: CustomStyles = (instance: CommonMethod): void => {
     instance.backgroundColor(Color.Green)
-  };
+    instance.onKeyEvent(() => {
+        console.log("key pressed")
+    	return true;
+	})
+    };
 
   build() {
     Button("MyButton1") {

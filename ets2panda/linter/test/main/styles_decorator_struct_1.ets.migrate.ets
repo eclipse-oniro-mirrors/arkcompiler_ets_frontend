@@ -33,7 +33,7 @@ struct MyCard1 {
     // comment here
     instance.backgroundColor('#ffffff')
     instance.borderRadius(8)
-  };
+    };
 
   build() {
     Column() {
@@ -53,7 +53,7 @@ struct MyCard2 {
     })
     // comment here
     instance.backgroundColor('#ffffff')
-  };
+    };
 
   private getColor(): Color {
     return Color.Red
@@ -80,11 +80,11 @@ struct MyButton {
 
   NormalStyles: CustomStyles = (instance: CommonMethod): void => {
     instance.backgroundColor(Color.Red)
-  };
+    };
 
   PressedStyles: CustomStyles = (instance: CommonMethod): void => {
     instance.backgroundColor(Color.Green)
-  };
+    };
 
   build() {
     Button() {
@@ -126,7 +126,7 @@ struct imageTest {
       return this.DragBuilder;
     })
     instance.accessibilityText(this.isOpenTouchGuide ? this.getImageItemGridAccessibilityText() : '')
-  };
+    };
 
   private isShowLongPressMenu(): boolean {
     return true;
