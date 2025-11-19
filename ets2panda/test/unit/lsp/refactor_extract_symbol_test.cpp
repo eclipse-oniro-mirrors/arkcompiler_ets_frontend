@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 #include <gtest/gtest.h>
+#include <iostream>
+#include <ostream>
 #include <string>
 #include <algorithm>
 #include <cctype>
@@ -26,6 +28,7 @@
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
 #include "lsp_api_test.h"
+#include "public/public.h"
 
 namespace {
 using ark::es2panda::lsp::Initializer;
@@ -190,7 +193,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaPublicAPI)
 TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaGlobalPublicAPI)
 {
     const std::string code = R"(
-    import {{ something }} from 'somewhere';
+    import hilog from '@ohos.hilog'
     const a = 42;
     function main() {
     let x = 10;
@@ -222,7 +225,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaGlobalPublicAPI)
     std::string_view expect = "const newLocal = \"x + y = \";";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
 
-    constexpr size_t expectedInsertPos = 45;
+    constexpr size_t expectedInsertPos = 0;
     EXPECT_EQ(startPos1, expectedInsertPos);
     EXPECT_EQ(newText, expect);
 
@@ -317,59 +320,6 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractFunctionViaPublicAPI)
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "function extractedFunction1() {\n    return kkmm + 1;\n}\n\n";
     EXPECT_EQ(newText, expect);
-
-    initializer->DestroyContext(refactorContext->context);
-}
-
-TEST_F(LspExtrSymblGetEditsTests, ExtractMethodEnclose)
-{
-    const std::string code = R"('use static'
-
-class MyClass {
-
-    MyMethod(a: number, b: number) {
-        let c = a + b;
-        let d = c * c;
-        return d;
-    }
-}
-)";
-    const std::string expected = R"('use static'
-
-class MyClass {
-
-    MyMethod(a: number, b: number) {
-        function newMethod() {
-            let c = a + b;
-            return c;
-        }
-
-        let c = newMethod();
-        let d = c * c;
-        return d;
-    }
-}
-)";
-
-    const std::string target = "let c = a + b;";
-    const size_t spanStart = code.find(target);
-    EXPECT_NE(spanStart, std::string::npos);
-    const size_t spanEnd = spanStart + target.size();
-
-    auto initializer = std::make_unique<Initializer>();
-    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
-
-    auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    EXPECT_FALSE(applicable.empty());
-
-    const std::string encloseScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_ENCLOSE.name);
-    const bool hasEnclose = std::any_of(applicable.begin(), applicable.end(),
-                                        [&](const auto &info) { return info.action.name == encloseScopeAction; });
-
-    EXPECT_TRUE(hasEnclose);
-
-    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
-    ExpectExtractionApplies(code, refactorContext, refactorName, encloseScopeAction, expected);
 
     initializer->DestroyContext(refactorContext->context);
 }

@@ -114,6 +114,12 @@ ets2panda_add_gtest(lsp_api_test_class_hierarchies CPP_SOURCES
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol CPP_SOURCES
     refactor_extract_symbol_test.cpp
 )
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_variable CPP_SOURCES
+    refactor_extract_symbol_test_variable.cpp
+)
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_function CPP_SOURCES
+    refactor_extract_symbol_test_function.cpp
+)
 ets2panda_add_gtest(lsp_api_test_refactors_convert_chain CPP_SOURCES
     refactors_convert_chain_test.cpp
 )
