@@ -93,6 +93,32 @@ static void CreateDummyVariable(ETSBinder *varBinder, ir::Identifier *ident)
     decl->BindNode(ident);
 }
 
+static bool IsInStaticMember(ir::AstNode *node)
+{
+    if (node == nullptr || node->IsClassDefinition()) {
+        return false;
+    }
+    if (node->Parent() != nullptr && node->Parent()->IsClassDefinition()) {
+        if ((node->Modifiers() & ir::ModifierFlags::STATIC) != 0) {
+            return true;
+        }
+        return false;
+    }
+    return IsInStaticMember(node->Parent());
+}
+
+static void CheckAndSetVariableReference(ETSBinder *varBinder, ir::Identifier *ident,
+                                         ark::es2panda::varbinder::Variable *resVar)
+{
+    bool isIdentInStaticMethod = IsInStaticMember(ident);
+    bool isVarInStaticMethod = IsInStaticMember(resVar->Declaration()->Node());
+    if (isIdentInStaticMethod && !isVarInStaticMethod) {
+        varBinder->ThrowError(ident->Start(), diagnostic::STATIC_METHOD_CANNOT_REFERENCE_CLASS_TYPE, {ident->Name()});
+    } else {
+        ident->SetVariable(resVar);
+    }
+}
+
 void ETSBinder::LookupTypeReference(ir::Identifier *ident)
 {
     ES2PANDA_ASSERT(ident != nullptr);
@@ -125,11 +151,14 @@ void ETSBinder::LookupTypeReference(ir::Identifier *ident)
             case ir::AstNodeType::STRUCT_DECLARATION:
             case ir::AstNodeType::TS_ENUM_DECLARATION:
             case ir::AstNodeType::TS_INTERFACE_DECLARATION:
-            case ir::AstNodeType::TS_TYPE_PARAMETER:
             case ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION:
             case ir::AstNodeType::ANNOTATION_DECLARATION:
             case ir::AstNodeType::IMPORT_NAMESPACE_SPECIFIER: {
                 ident->SetVariable(res.variable);
+                return;
+            }
+            case ir::AstNodeType::TS_TYPE_PARAMETER: {
+                CheckAndSetVariableReference(this, ident, res.variable);
                 return;
             }
             default: {

@@ -1,6 +1,5 @@
-/* @@ label */
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,13 +13,15 @@
  * limitations under the License.
  */
 
-enum Color {
-    Red = 4 / 3.0
+class A<CTE> {
+    static bypass(input:CTE): CTE {
+        return input;
+    }
 }
 
-enum Date {
-    Day = /* @@ label1 */Date.now()
-}
+arktest.assertEQ(A.bypass(1), 1)
 
-/* @@@ label Error TypeError: Class 'Date' is already defined with different type. */
-/* @@@ label1 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 17:25 Error TypeError: Static members cannot reference class type parameters 'CTE' */
+/* @@? 17:25 Error TypeError: Cannot find type 'CTE'. */
+/* @@? 17:31 Error TypeError: Static members cannot reference class type parameters 'CTE' */
+/* @@? 17:31 Error TypeError: Cannot find type 'CTE'. */
