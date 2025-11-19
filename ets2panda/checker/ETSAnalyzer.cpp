@@ -4156,11 +4156,14 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
 
     if (containingFunc->ReturnTypeAnnotation() != nullptr) {
         if (containingFunc->IsAsyncFunc()) {
-            auto *promiseType = containingFunc->ReturnTypeAnnotation()->GetType(checker);
-            if (!promiseType->IsETSObjectType() || promiseType->AsETSObjectType()->TypeArguments().size() != 1) {
+            auto *type = containingFunc->ReturnTypeAnnotation()->GetType(checker);
+            if (!type->IsETSObjectType() ||
+                type->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
+                checker->LogError(diagnostic::ASYNC_FUNCTION_RETURN_TYPE, {},
+                                  containingFunc->ReturnTypeAnnotation()->Start());
                 return false;
             }
-            funcReturnType = checker->CreateETSAsyncFuncReturnTypeFromPromiseType(promiseType->AsETSObjectType());
+            funcReturnType = checker->CreateETSAsyncFuncReturnTypeFromPromiseType(type->AsETSObjectType());
         } else {
             funcReturnType = containingFunc->ReturnTypeAnnotation()->GetType(checker);
         }

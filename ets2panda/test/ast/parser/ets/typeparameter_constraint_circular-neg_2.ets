@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
-let lambda: () => int = async (): int => { return 1; }
+type Alias<T> = T
 
-/* @@? 16:35 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
+function foo<A extends /* @@ label */Alias<A>>() {}
+
+/* @@@ label Error Semantic error ESE0184: Type parameter 'A' has circular constraint dependency. */
+
