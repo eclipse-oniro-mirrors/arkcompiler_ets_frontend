@@ -47,6 +47,9 @@ return_type_utility_2.ets
 abstract_method_override.ets
 import_namespaces.ets
 
+#31593 TSC Fail
+generic_bridges_1.ets
+
 #30364 TSC Fail
 array_const_anno.ets
 
