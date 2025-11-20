@@ -74,7 +74,8 @@ ir::AstNode *RefineSourceRanges(ir::AstNode *node)
 {
     auto const isDummyLoc = [](lexer::SourceRange const &range, ir::AstNode *ast) {
         return (range.start.index == 0 && range.start.line == 0) || (range.end.index < range.start.index) ||
-               (range.start.index < ast->Parent()->Start().index) || (range.end.index > ast->Parent()->End().index);
+               (range.start.index < ast->Parent()->Start().index) || (range.end.index > ast->Parent()->End().index) ||
+               (ast->IsMethodDefinition() && !ast->AsMethodDefinition()->Overloads().empty());
     };
 
     auto const refine = [isDummyLoc](ir::AstNode *ast) {
