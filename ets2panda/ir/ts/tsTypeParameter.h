@@ -55,7 +55,7 @@ public:
     {
         ES2PANDA_ASSERT(flags == ModifierFlags::NONE || flags == ModifierFlags::IN || flags == ModifierFlags::OUT);
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -69,7 +69,7 @@ public:
           defaultType_(defaultType)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

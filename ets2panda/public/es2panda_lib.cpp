@@ -290,6 +290,9 @@ extern "C" const es2panda_Options *ConfigGetOptions(es2panda_Config *config)
 static void CompileJob(public_lib::Context *context, varbinder::FunctionScope *scope,
                        compiler::ProgramElement *programElement)
 {
+    if (!compiler::ETSFunctionEmitter::IsEmissionRequired(scope->Node()->AsScriptFunction(), context->parserProgram)) {
+        return;
+    }
     compiler::StaticRegSpiller regSpiller;
     ArenaAllocator allocator {SpaceType::SPACE_TYPE_COMPILER, nullptr, true};
     compiler::ETSCompiler astCompiler {};

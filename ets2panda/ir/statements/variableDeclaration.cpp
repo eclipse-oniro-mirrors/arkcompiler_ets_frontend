@@ -171,7 +171,7 @@ VariableDeclaration::VariableDeclaration([[maybe_unused]] Tag const tag, Variabl
     }
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }

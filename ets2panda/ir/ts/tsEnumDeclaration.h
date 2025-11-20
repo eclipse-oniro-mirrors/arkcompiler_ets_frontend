@@ -94,7 +94,7 @@ public:
             AddModifier(ModifierFlags::DECLARE);
         }
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

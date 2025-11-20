@@ -19,6 +19,8 @@
 
 namespace ark::es2panda {
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
+
 class NodeHistoryTest : public testing::Test {
 public:
     ~NodeHistoryTest() override = default;
@@ -374,4 +376,7 @@ TEST_F(NodeHistoryTest, UpdateChild)
     PhaseManager()->SetCurrentPhaseId(PHASE_ID_2.minor);
     ASSERT_EQ(declaration->Definition()->Ident(), nullptr);
 }
+
+#endif  // ES2PANDA_ENABLE_AST_HISTORY
+
 }  // namespace ark::es2panda

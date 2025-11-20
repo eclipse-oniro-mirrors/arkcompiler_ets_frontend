@@ -156,7 +156,7 @@ public:
           exportedClasses_(body_.get_allocator())
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

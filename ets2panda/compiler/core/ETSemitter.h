@@ -63,6 +63,8 @@ public:
     NO_COPY_SEMANTIC(ETSFunctionEmitter);
     NO_MOVE_SEMANTIC(ETSFunctionEmitter);
 
+    static bool IsEmissionRequired(ir::ScriptFunction *func, parser::Program *globalProgram);
+
 protected:
     pandasm::Function *GenFunctionSignature() override;
 

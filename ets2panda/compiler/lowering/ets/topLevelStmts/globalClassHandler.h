@@ -61,7 +61,8 @@ private:
      * @param init_statements statements which should be executed
      */
     void SetupGlobalMethods(ArenaVector<ir::Statement *> &&statements);
-    void AddStaticBlockToClass(ir::AstNode *node);
+    void AddStaticBlockToClass(ir::ClassDefinition *classDef);
+    void SetupClassStaticBlocksInModule(ir::ETSModule *module);
     void CollectProgramGlobalClasses(ArenaVector<ir::ETSModule *> namespaces);
     ir::ClassDeclaration *TransformNamespace(ir::ETSModule *ns);
     ir::ClassDeclaration *CreateTransformedClass(ir::ETSModule *ns);

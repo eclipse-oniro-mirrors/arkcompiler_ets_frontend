@@ -69,7 +69,7 @@ public:
     {
         SetType(AstNodeType::ETS_MODULE);
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

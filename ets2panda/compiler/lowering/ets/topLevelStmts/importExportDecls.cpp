@@ -377,8 +377,13 @@ void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program
 
 void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
 {
-    bool isChanged = false;
-    auto mergeNameSpace = [&program, &isChanged](ir::AstNode *ast) {
+    bool hasChange = true;
+
+    std::function<void(ir::AstNode *)> merge = [&program, &hasChange, &merge](ir::AstNode *ast) {
+        if (ast->IsClassDeclaration() && ast->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
+            ast->Iterate(merge);
+            return;
+        }
         if (!ast->IsETSModule()) {
             return;
         }
@@ -400,14 +405,14 @@ void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
         for (auto ns : namespaces) {
             body.emplace_back(ns);
         }
+        hasChange |= (originalSize != body.size());
 
-        isChanged |= (originalSize != body.size());
+        ast->Iterate(merge);
     };
 
-    do {
-        isChanged = false;
-        mergeNameSpace(program->Ast());
-        program->Ast()->IterateRecursivelyPreorder(mergeNameSpace);
-    } while (isChanged);
+    while (hasChange) {
+        hasChange = false;
+        merge(program->Ast());
+    }
 }
 }  // namespace ark::es2panda::compiler

@@ -32,7 +32,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE, allocator), part_(part)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

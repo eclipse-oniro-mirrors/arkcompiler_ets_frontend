@@ -275,17 +275,35 @@ std::string const &ETSEmitter::AddDependence(std::string const &str)
     return dependencies_->AddDependence(str);
 }
 
+static parser::Program *GetProgram(ir::AstNode *node)
+{
+    while (node->Parent() != nullptr) {
+        node = node->Parent();
+    }
+    return node->AsETSModule()->Program();
+}
+
+bool ETSFunctionEmitter::IsEmissionRequired(ir::ScriptFunction *func, parser::Program *globalProgram)
+{
+    auto *scriptFunc = func;
+    if (scriptFunc->IsExternal() || scriptFunc->Signature()->Owner()->GetDeclNode()->IsDeclare()) {
+        return false;
+    }
+
+    auto varbinder = static_cast<varbinder::ETSBinder *>(globalProgram->VarBinder());
+
+    // NOTE(vpukhov): #28197: remove emitter-related things from the Varbinder and Program
+    // CompileQueue::Schedule enqueues external functions for compilation, so we have to filter them out
+    auto program = GetProgram(scriptFunc->Signature()->Owner()->GetDeclNode());
+    bool programIsExternal = !(varbinder->IsGenStdLib() || program->IsGenAbcForExternal() || program == globalProgram ||
+                               varbinder->GetExternalRecordTable().at(program) == varbinder->GetGlobalRecordTable());
+    return !programIsExternal;
+}
+
 pandasm::Function *ETSFunctionEmitter::GenFunctionSignature()
 {
-    auto *scriptFunc = Cg()->RootNode()->AsScriptFunction();
-    if (scriptFunc->IsExternal() || scriptFunc->Signature()->Owner()->GetDeclNode()->IsDeclare()) {
-        return nullptr;
-    }
     auto *emitter = static_cast<ETSEmitter *>(Cg()->Context()->emitter);
-    auto func = GenScriptFunction(scriptFunc, emitter, false);
-    if (scriptFunc->IsExternal()) {  // why do we emit an external method?
-        func.metadata->SetAttribute(Signatures::EXTERNAL);
-    }
+    auto func = GenScriptFunction(Cg()->RootNode()->AsScriptFunction(), emitter, false);
 
     auto *funcElement = new pandasm::Function(func.name, func.language);
     *funcElement = std::move(func);

@@ -72,7 +72,9 @@ size_t SizeOfNodeTest::SizeOf<AstNode>()
 #else
         sizeof(node->bitFields_) +
 #endif
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
         sizeof(node->history_) +
+#endif
         sizeof(node->variable_) +
         sizeof(node->originalNode_));
     // clang-format on

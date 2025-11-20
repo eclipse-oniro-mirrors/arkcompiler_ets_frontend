@@ -66,7 +66,7 @@ ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identO
     }
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }
@@ -85,7 +85,7 @@ ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identO
     SetInitializer(initializer);
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }
