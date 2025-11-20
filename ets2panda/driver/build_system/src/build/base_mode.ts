@@ -559,25 +559,13 @@ export abstract class BaseMode {
     public async runSimultaneous(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SIMULTANEOUS));
 
-        const mainModule: ModuleInfo | undefined = this.moduleInfos.get(this.mainPackageName)
-
-        // NOTE: workaround (main module entry file problem)
-        // NOTE: to be refactored
-        let entryFile: string;
-        let module: ModuleInfo;
-        if (!mainModule || !mainModule.entryFile) {
-            entryFile = [...this.entryFiles][0]
-            module = this.fileToModule.get(entryFile)!
-        } else {
-            entryFile = mainModule.entryFile
-            module = mainModule
-        }
-
+        const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!;
+        let entryFile: string = mainModule.entryFile || [...this.entryFiles][0];
         let outputFile: string = this.mergedAbcFile
-        let arktsConfigFile: string = module.arktsConfigFile;
+        let arktsConfigFile: string = mainModule.arktsConfigFile;
 
         this.logger.printDebug(`entryFile: ${entryFile}`)
-        this.logger.printDebug(`module: ${JSON.stringify(module, null, 1)}`)
+        this.logger.printDebug(`module: ${JSON.stringify(mainModule, null, 1)}`)
         this.logger.printDebug(`arktsConfigFile: ${arktsConfigFile}`)
 
         // Just to init
@@ -590,11 +578,11 @@ export abstract class BaseMode {
                 input: entryFile,
                 output: outputFile,
                 arktsConfig: arktsConfigFile,
-                moduleName: module.packageName,
-                moduleRoot: module.moduleRootPath
+                moduleName: mainModule.packageName,
+                moduleRoot: mainModule.moduleRootPath
             },
             declgenConfig: {
-                output: module.declgenV2OutPath!
+                output: mainModule.declgenV2OutPath!
             },
             type: CompileJobType.ABC
         });
