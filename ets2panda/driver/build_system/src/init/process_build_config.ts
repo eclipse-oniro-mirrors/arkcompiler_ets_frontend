@@ -94,7 +94,7 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
     }
 
     if (isMac() || isLinux()) {
-        if (process.env.BUILD_DIR != undefined) {
+        if (process.env.BUILD_DIR !== undefined) {
             buildConfig.abcLinkerPath = path.join(process.env.BUILD_DIR, 'bin', 'ark_link')
             buildConfig.dependencyAnalyzerPath = path.join(process.env.BUILD_DIR, 'bin', 'dependency_analyzer');
 
