@@ -1,3 +1,7 @@
+#31623
+compiler/js/eval_lexically_unbound.js
+compiler/js/many_locals_1.js
+
 # 26272
 compiler/ets/dynamic-equality.ets
 parser/ets/test_jsvalue_set_double.ets
