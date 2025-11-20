@@ -6189,9 +6189,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (callSignature !== undefined) {
       if (!this.tsUtils.isLibrarySymbol(calleeSym)) {
         this.handleStructIdentAndUndefinedInArgs(callExpr, callSignature);
-        this.handleGenericCallWithNoTypeArgs(callExpr, callSignature);
-      } else if (this.options.arkts2) {
-        this.handleGenericCallWithNoTypeArgs(callExpr, callSignature);
       }
       this.handleNotsLikeSmartTypeOnCallExpression(callExpr, callSignature);
     }
@@ -6591,7 +6588,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleGenericCallWithNoTypeArgs(
-    callLikeExpr: ts.CallExpression | ts.NewExpression | ts.ExpressionWithTypeArguments,
+    newExpr: ts.NewExpression | ts.ExpressionWithTypeArguments,
     callSignature?: ts.Signature
   ): void {
 
@@ -6601,33 +6598,31 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
      * became redundant. Therefore, it was reverted. See #13721 comments
      * for a detailed analysis.
      */
-    if (this.options.arkts2 && TypeScriptLinter.isInvalidBuiltinGenericConstructorCall(callLikeExpr)) {
-      const autofix = this.autofixer?.fixGenericCallNoTypeArgs(callLikeExpr as ts.NewExpression);
-      this.incrementCounters(callLikeExpr, FaultID.GenericCallNoTypeArgs, autofix);
+    if (this.options.arkts2 && TypeScriptLinter.isInvalidBuiltinGenericConstructorCall(newExpr)) {
+      const autofix = this.autofixer?.fixGenericCallNoTypeArgs(newExpr as ts.NewExpression);
+      this.incrementCounters(newExpr, FaultID.GenericCallNoTypeArgs, autofix);
       return;
     }
     if (callSignature) {
-      this.checkTypeArgumentsForGenericCallWithNoTypeArgs(callLikeExpr, callSignature);
+      this.checkTypeArgumentsForGenericCallWithNoTypeArgs(newExpr, callSignature);
     }
   }
 
   private static isInvalidBuiltinGenericConstructorCall(
-    newExpression: ts.CallExpression | ts.NewExpression | ts.ExpressionWithTypeArguments
+    newExpression: ts.NewExpression | ts.ExpressionWithTypeArguments
   ): boolean {
     const isBuiltin = BUILTIN_GENERIC_CONSTRUCTORS.has(newExpression.expression.getText().replace(/Constructor$/, ''));
     return isBuiltin && (!newExpression.typeArguments || newExpression.typeArguments.length === 0);
   }
 
   private checkTypeArgumentsForGenericCallWithNoTypeArgs(
-    callLikeExpr: ts.CallExpression | ts.NewExpression | ts.ExpressionWithTypeArguments,
+    newExpr: ts.NewExpression | ts.ExpressionWithTypeArguments,
     callSignature: ts.Signature
   ): void {
-    if (ts.isNewExpression(callLikeExpr) && this.isNonGenericClass(callLikeExpr)) {
+    if (ts.isNewExpression(newExpr) && this.isNonGenericClass(newExpr)) {
       return;
     }
-    const tsSyntaxKind = ts.isNewExpression(callLikeExpr) ?
-      ts.SyntaxKind.Constructor :
-      ts.SyntaxKind.FunctionDeclaration;
+    const tsSyntaxKind = ts.isNewExpression(newExpr) ? ts.SyntaxKind.Constructor : ts.SyntaxKind.FunctionDeclaration;
     const signFlags = ts.NodeBuilderFlags.WriteTypeArgumentsOfSignature | ts.NodeBuilderFlags.IgnoreErrors;
     const signDecl = this.tsTypeChecker.signatureToSignatureDeclaration(
       callSignature,
@@ -6639,95 +6634,28 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
     const resolvedTypeArgs = signDecl.typeArguments;
-    const providedTypeArgs = callLikeExpr.typeArguments;
+    const providedTypeArgs = newExpr.typeArguments;
     const startTypeArg = providedTypeArgs?.length ?? 0;
     let shouldReportError = startTypeArg !== resolvedTypeArgs.length;
-    const shouldCheck = this.shouldCheckGenericCallExpression(callLikeExpr as ts.CallExpression);
-    if (
-      this.options.arkts2 &&
-      (ts.isNewExpression(callLikeExpr) || ts.isCallExpression(callLikeExpr) && shouldCheck)
-    ) {
+    if (this.options.arkts2) {
       shouldReportError = this.shouldReportGenericTypeArgsError(
-        callLikeExpr,
+        newExpr,
         resolvedTypeArgs,
         providedTypeArgs,
         startTypeArg,
         shouldReportError
       );
       if (shouldReportError) {
-        const autofix = this.autofixer?.fixGenericCallNoTypeArgs(callLikeExpr);
-        this.incrementCounters(callLikeExpr, FaultID.GenericCallNoTypeArgs, autofix);
+        const autofix = this.autofixer?.fixGenericCallNoTypeArgs(newExpr as ts.NewExpression);
+        this.incrementCounters(newExpr, FaultID.GenericCallNoTypeArgs, autofix);
       }
     } else {
-      this.checkForUnknownTypeInNonArkTS2(callLikeExpr, resolvedTypeArgs, startTypeArg);
+      this.checkForUnknownTypeInNonArkTS2(newExpr, resolvedTypeArgs, startTypeArg);
     }
-  }
-
-  private shouldCheckGenericCallExpression(callExpr: ts.CallExpression): boolean {
-    const signature = this.tsTypeChecker.getResolvedSignature(callExpr);
-    if (!signature?.declaration) {
-      return false;
-    }
-    const typeParamsSafeToInfer = this.areTypeParametersReturnTypeOnly(signature.declaration);
-    if (!typeParamsSafeToInfer) {
-      return false;
-    }
-    return TypeScriptLinter.isInStrictTypeContext(callExpr);
-  }
-
-  private areTypeParametersReturnTypeOnly(decl: ts.SignatureDeclaration | ts.JSDocSignature): boolean {
-    if (!decl.typeParameters?.length) {
-      return false;
-    }
-
-    const typeParamNames = new Set(
-      decl.typeParameters.map((tp) => {
-        return tp.name.getText();
-      })
-    );
-    let affectsParams = false;
-
-    decl.parameters.forEach((param) => {
-      if (param.type && this.containsTypeParameters(param.type, typeParamNames)) {
-        affectsParams = true;
-      }
-    });
-
-    return !affectsParams;
-  }
-
-  private containsTypeParameters(node: ts.Node, typeParamNames: Set<string>): boolean {
-    let found = false;
-    ts.forEachChild(node, (child) => {
-      if (ts.isIdentifier(child) && typeParamNames.has(child.text)) {
-        found = true;
-      }
-      if (!found) {
-        found = this.containsTypeParameters(child, typeParamNames);
-      }
-    });
-    return found;
-  }
-
-  private static isInStrictTypeContext(callExpr: ts.CallExpression): boolean {
-    const parent = callExpr.parent;
-
-    if ((ts.isVariableDeclaration(parent) || ts.isPropertyDeclaration(parent)) && parent.type) {
-      return true;
-    }
-
-    if (ts.isAsExpression(parent) || ts.isTypeAssertionExpression(parent)) {
-      return true;
-    }
-
-    if (ts.isCallExpression(parent.parent) && parent.parent.typeArguments) {
-      return true;
-    }
-    return false;
   }
 
   private checkForUnknownTypeInNonArkTS2(
-    callLikeExpr: ts.CallExpression | ts.NewExpression | ts.ExpressionWithTypeArguments,
+    newExpr: ts.NewExpression | ts.ExpressionWithTypeArguments,
     resolvedTypeArgs: ts.NodeArray<ts.TypeNode>,
     startTypeArg: number
   ): void {
@@ -6742,23 +6670,20 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
        * in ArkTS and already have separate check for it.
        */
       if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) {
-        const autofix = ts.isCallExpression(callLikeExpr) ?
-          this.autofixer?.fixGenericCallNoTypeArgsForUnknown(callLikeExpr) :
-          undefined;
-        this.incrementCounters(callLikeExpr, FaultID.GenericCallNoTypeArgs, autofix);
+        this.incrementCounters(newExpr, FaultID.GenericCallNoTypeArgs, undefined);
         break;
       }
     }
   }
 
   private shouldReportGenericTypeArgsError(
-    callLikeExpr: ts.CallExpression | ts.NewExpression,
+    newExpr: ts.NewExpression | ts.ExpressionWithTypeArguments,
     resolvedTypeArgs: ts.NodeArray<ts.TypeNode>,
     providedTypeArgs: ts.NodeArray<ts.TypeNode> | undefined,
     startTypeArg: number,
     initialErrorState: boolean
   ): boolean {
-    const typeParameters = this.getOriginalTypeParameters(callLikeExpr);
+    const typeParameters = this.getOriginalTypeParameters(newExpr);
     if (!typeParameters || typeParameters.length === 0) {
       return initialErrorState;
     }
@@ -6772,10 +6697,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private getOriginalTypeParameters(
-    callLikeExpr: ts.CallExpression | ts.NewExpression
+    newExpr: ts.NewExpression | ts.ExpressionWithTypeArguments
   ): ts.TypeParameterDeclaration[] | undefined {
     const typeChecker = this.tsTypeChecker;
-    const expressionType = typeChecker.getTypeAtLocation(callLikeExpr.expression);
+    const expressionType = typeChecker.getTypeAtLocation(newExpr.expression);
     const declarations = expressionType.symbol?.declarations;
     if (!declarations || declarations.length === 0) {
       return undefined;
@@ -9468,7 +9393,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (node.token === ts.SyntaxKind.ExtendsKeyword || node.token === ts.SyntaxKind.ImplementsKeyword) {
       node.types.forEach((type) => {
         const expr = type.expression;
-        this.handleGenericCallWithNoTypeArgs(type);
         if (ts.isCallExpression(expr)) {
           this.incrementCounters(expr, FaultID.ExtendsExpression);
           return;

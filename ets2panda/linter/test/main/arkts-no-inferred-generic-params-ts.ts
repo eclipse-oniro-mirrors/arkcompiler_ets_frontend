@@ -12,11 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import  Session from './sdk/import';
-import {Event,EventListener} from './sdk/import2';
 
-let session: Map<string,Session.A> = new Map<string, Session.A>();
+declare namespace Session{
+  interface AV{}
+  type A = 'play' | 'pause';
+}
 
-let bb : Map<string,Array<Session.A>> = new Map<string, Array<Session.A>>();
+export class A {
+  id?: string;
+  map?: Map<string, B>;
+}
 
-let eventListener : Map<EventListener<Object>,Event.EventEmitter<Object>> = new Map<EventListener<Object>, Event.EventEmitter<Object>>();
+export class B {}
+export class C11 {}
+
+export default Session;
+
+export type EventListener<T> = (data: T) => void;
+
+export namespace Event{
+  export type EventEmitter<T> = (data: T) => void;
+}
+
+export class EventBus<T> {
+  private eventListeners: Map<string, EventListener<T>> = new Map();
+}
