@@ -28,6 +28,9 @@ struct MyButton1 {
   @Styles
   PressedStyles() {
     .backgroundColor(Color.Green)
+    .onKeyEvent(() => {
+        console.log("key pressed");
+    })
   }
 
   build() {

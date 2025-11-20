@@ -8594,7 +8594,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       TypeScriptLinter.isInAmbientNameSpace(decl) ||
       TypeScriptLinter.isInAmbientClass(decl) ||
       TypeScriptLinter.isDeclarationFile(decl) ||
-      (ts.isFunctionDeclaration(decl) && TypeScriptLinter.isInAmbientFunction(decl))
+      ts.isFunctionDeclaration(decl) && TypeScriptLinter.isInAmbientFunction(decl)
     );
   }
 

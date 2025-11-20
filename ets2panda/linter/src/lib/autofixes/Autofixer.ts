@@ -3896,9 +3896,9 @@ export class Autofixer {
     const expr = ts.factory.createPropertyDeclaration(newModifiers, methodDecl.name, undefined, type, arrowFunc);
     needImport.add(COMMON_METHOD_IDENTIFIER);
     let text = this.printer.printNode(ts.EmitHint.Unspecified, expr, methodDecl.getSourceFile());
+    text = text.replace(' { }', updatedBlockText);
     const startPos = this.sourceFile.getLineAndCharacterOfPosition(methodDecl.getStart()).character;
     text = this.adjustIndentation(text, startPos);
-    text = text.replace(' { }', updatedBlockText);
 
     const autofix = [{ start: methodDecl.getStart(), end: methodDecl.getEnd(), replacementText: text }];
     const argument = ts.factory.createPropertyAccessExpression(
@@ -3915,8 +3915,18 @@ export class Autofixer {
     }
 
     const accessExpression = / \./gi;
-    return block.getFullText().replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).
-      replace(');', ')');
+    const onKeyEventParsedBlock = Autofixer.updateOnKeyEvent(block.getFullText());
+    return onKeyEventParsedBlock.replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).replace(');', ')');
+  }
+
+  private static updateOnKeyEvent(functionBody: string): string {
+    const keyEventSplit = functionBody.split('onKeyEvent');
+    if (keyEventSplit.length !== 2) {
+      return functionBody;
+    }
+    const onKeyPart = keyEventSplit[1];
+    const updatedKeyEventBody = onKeyPart.replace('}', '\treturn true;\n\t}');
+    return functionBody.replace(onKeyPart, updatedKeyEventBody);
   }
 
   private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
@@ -3931,6 +3941,8 @@ export class Autofixer {
     const indentBase = startPos - (currentIndent - INDENT_STEP);
 
     const middleLines = lines.slice(1, -1).map((line) => {
+
+      const indentBase = startPos - (currentIndent - INDENT_STEP);
       if (indentBase > 0) {
         return ' '.repeat(indentBase) + line;
       }

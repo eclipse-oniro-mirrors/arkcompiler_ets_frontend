@@ -24,7 +24,7 @@
                 {
                     "start": 635,
                     "end": 736,
-                    "replacementText": "cardStyle1: CustomStyles = (instance: CommonMethod): void => {\n    // comment here\n    instance.backgroundColor('#ffffff')\n    instance.borderRadius(8)\n  };",
+                    "replacementText": "cardStyle1: CustomStyles = (instance: CommonMethod): void => {\n    // comment here\n    instance.backgroundColor('#ffffff')\n    instance.borderRadius(8)\n    };",
                     "line": 18,
                     "column": 3,
                     "endLine": 23,
@@ -63,7 +63,7 @@
                 {
                     "start": 890,
                     "end": 1050,
-                    "replacementText": "cardStyle2: CustomStyles = (instance: CommonMethod): void => {\n    instance.border({\n      color: this.getColor(),\n      width: this.getWidth()\n    })\n    // comment here\n    instance.backgroundColor('#ffffff')\n  };",
+                    "replacementText": "cardStyle2: CustomStyles = (instance: CommonMethod): void => {\n    instance.border({\n      color: this.getColor(),\n      width: this.getWidth()\n    })\n    // comment here\n    instance.backgroundColor('#ffffff')\n    };",
                     "line": 36,
                     "column": 3,
                     "endLine": 44,
@@ -102,7 +102,7 @@
                 {
                     "start": 1362,
                     "end": 1424,
-                    "replacementText": "NormalStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Red)\n  };",
+                    "replacementText": "NormalStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Red)\n    };",
                     "line": 69,
                     "column": 3,
                     "endLine": 72,
@@ -123,7 +123,7 @@
                 {
                     "start": 1428,
                     "end": 1493,
-                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n  };",
+                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n    };",
                     "line": 74,
                     "column": 3,
                     "endLine": 77,
@@ -144,7 +144,7 @@
                 {
                     "start": 1989,
                     "end": 2485,
-                    "replacementText": "imageStyle: CustomStyles = (instance: CommonMethod): void => {\n    instance.draggable(this.isShowLongPressMenu() && this.isPC())\n    instance.onDragStart(() => {\n      console.info(TAG, 'onDragStart')\n      this.touchVibrate(VibrateType.DRAG);\n      if (this.mediaItem?.path) {\n        this.previewUri =\n          this.getPreviewUri(this.mediaItem?.path, this.mediaItem?.getDateModified?.(), false, true);\n      }\n      return this.DragBuilder;\n    })\n    instance.accessibilityText(this.isOpenTouchGuide ? this.getImageItemGridAccessibilityText() : '')\n  };",
+                    "replacementText": "imageStyle: CustomStyles = (instance: CommonMethod): void => {\n    instance.draggable(this.isShowLongPressMenu() && this.isPC())\n    instance.onDragStart(() => {\n      console.info(TAG, 'onDragStart')\n      this.touchVibrate(VibrateType.DRAG);\n      if (this.mediaItem?.path) {\n        this.previewUri =\n          this.getPreviewUri(this.mediaItem?.path, this.mediaItem?.getDateModified?.(), false, true);\n      }\n      return this.DragBuilder;\n    })\n    instance.accessibilityText(this.isOpenTouchGuide ? this.getImageItemGridAccessibilityText() : '')\n    };",
                     "line": 107,
                     "column": 3,
                     "endLine": 120,
