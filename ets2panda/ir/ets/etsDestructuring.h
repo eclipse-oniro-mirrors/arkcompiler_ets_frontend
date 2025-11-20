@@ -44,9 +44,10 @@ public:
         InitHistory();
     }
 
-    Expression *GetExpressionAtPos(std::size_t pos)
+    Expression *GetExpressionAtIndex(std::size_t index)
     {
-        return elements_.at(pos);
+        ES2PANDA_ASSERT(index < Size());
+        return elements_.at(index);
     }
 
     ArenaVector<Expression *> Elements()

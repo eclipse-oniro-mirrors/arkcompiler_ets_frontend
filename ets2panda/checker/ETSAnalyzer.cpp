@@ -1708,11 +1708,16 @@ static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *che
     if (initType->IsAnyETSArrayOrTupleType()) {
         bool isTuple = initType->IsETSTupleType();
         auto *initArrayElementType = !isTuple ? GetArrayElementType(checker, initType) : nullptr;
+        if (isTuple && initType->AsETSTupleType()->GetTupleSize() < dstrNode->Size()) {
+            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE,
+                              {initType->AsETSTupleType()->GetTupleSize(), dstrNode->Size()}, initializer->Start());
+            return initType;
+        }
 
         for (uint32_t idx = 0; idx < dstrNode->Size(); idx++) {
-            auto *initElementType =
-                isTuple ? initType->AsETSTupleType()->GetTupleTypesList().at(idx) : initArrayElementType;
-            auto *dstrElement = dstrNode->GetExpressionAtPos(idx);
+            auto *initElementType = isTuple ? initType->AsETSTupleType()->GetTypeAtIndex(idx) : initArrayElementType;
+            auto *dstrElement = dstrNode->GetExpressionAtIndex(idx);
+            ES2PANDA_ASSERT(initElementType != nullptr);
 
             if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
                 dstrElement->IsAssignmentPattern()) {
@@ -1723,11 +1728,6 @@ static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *che
                 checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, dstrElement->TsType()},
                                   dstrElement->Start());
             }
-        }
-
-        if (isTuple && initType->AsETSTupleType()->GetTupleSize() < dstrNode->Size()) {
-            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE,
-                              {initType->AsETSTupleType()->GetTupleSize(), dstrNode->Size()}, initializer->Start());
         }
     } else {
         checker->LogError(diagnostic::INVALID_DESTRUCTURING_TARGET, {}, initializer->Start());
@@ -1746,7 +1746,7 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
         auto arrayElements = initializer->AsArrayExpression()->Elements();
         for (uint32_t idx = 0; idx < dstrNode->Size() && idx < arrayElements.size(); idx++) {
             auto *arrayElement = arrayElements.at(idx);
-            auto *dstrElement = dstrNode->GetExpressionAtPos(idx);
+            auto *dstrElement = dstrNode->GetExpressionAtIndex(idx);
 
             if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
                 dstrElement->IsAssignmentPattern()) {
