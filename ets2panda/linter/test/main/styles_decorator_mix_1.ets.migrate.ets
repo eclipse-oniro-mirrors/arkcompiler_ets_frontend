@@ -38,9 +38,9 @@ struct MyButton1 {
   PressedStyles: CustomStyles = (instance: CommonMethod): void => {
     instance.backgroundColor(Color.Green)
     instance.onKeyEvent(() => {
-        console.log("key pressed")
-    	return true;
-	})
+      console.log("key pressed")
+      return true;
+	  })
     };
 
   build() {
@@ -62,6 +62,14 @@ struct MyButton2 {
   @BuilderParam
   @Require
   content: () => void;
+
+  PressedStyles: CustomStyles = (instance: CommonMethod): void => {
+    instance.backgroundColor(Color.Green)
+    instance.onKeyEvent(() => {
+      this.onKeyEvent()
+      return true;
+	  })
+    };
 
   build() {
     Button("MyButton2") {

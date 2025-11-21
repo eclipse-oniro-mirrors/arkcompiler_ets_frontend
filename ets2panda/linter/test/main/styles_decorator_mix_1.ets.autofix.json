@@ -44,8 +44,8 @@
             "autofix": [
                 {
                     "start": 765,
-                    "end": 897,
-                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n    instance.onKeyEvent(() => {\n        console.log(\"key pressed\")\n    \treturn true;\n\t})\n    };",
+                    "end": 895,
+                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n    instance.onKeyEvent(() => {\n      console.log(\"key pressed\")\n      return true;\n\t  })\n    };",
                     "line": 28,
                     "column": 3,
                     "endLine": 34,
@@ -64,8 +64,8 @@
             "problem": "StateStylesBlockNeedArrowFunc",
             "autofix": [
                 {
-                    "start": 979,
-                    "end": 1111,
+                    "start": 977,
+                    "end": 1109,
                     "replacementText": "{\n      pressed: this.PressedStyles,\n      selected: (instance: CommonMethod): void => {\n          instance.backgroundColor(Color.Red);\n      },\n      normal: NormalStyles\n    }",
                     "line": 40,
                     "column": 18,
@@ -78,19 +78,40 @@
             "severity": "ERROR"
         },
         {
-            "line": 60,
+            "line": 56,
+            "column": 3,
+            "endLine": 62,
+            "endColumn": 4,
+            "problem": "StylesDecoratorNotSupported",
+            "autofix": [
+                {
+                    "start": 1201,
+                    "end": 1322,
+                    "replacementText": "PressedStyles: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor(Color.Green)\n    instance.onKeyEvent(() => {\n      this.onKeyEvent()\n      return true;\n\t  })\n    };",
+                    "line": 56,
+                    "column": 3,
+                    "endLine": 62,
+                    "endColumn": 4
+                }
+            ],
+            "suggest": "",
+            "rule": "\"@Styles\" decorator is not supported (arkui-no-styles-decorator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
             "column": 18,
-            "endLine": 65,
+            "endLine": 73,
             "endColumn": 6,
             "problem": "StateStylesBlockNeedArrowFunc",
             "autofix": [
                 {
-                    "start": 1281,
-                    "end": 1379,
+                    "start": 1404,
+                    "end": 1502,
                     "replacementText": "{\n      selected: (instance: CommonMethod): void => {\n          instance.backgroundColor(Color.Red);\n      },\n      normal: NormalStyles\n    }",
-                    "line": 60,
+                    "line": 68,
                     "column": 18,
-                    "endLine": 65,
+                    "endLine": 73,
                     "endColumn": 6
                 }
             ],
@@ -99,19 +120,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 74,
+            "line": 82,
             "column": 20,
-            "endLine": 79,
+            "endLine": 87,
             "endColumn": 8,
             "problem": "StateStylesBlockNeedArrowFunc",
             "autofix": [
                 {
-                    "start": 1474,
-                    "end": 1581,
+                    "start": 1597,
+                    "end": 1704,
                     "replacementText": "{\n        normal: NormalStyles,\n        selected: (instance: CommonMethod): void => {\n            instance.backgroundColor(Color.Red);\n        }\n      }",
-                    "line": 74,
+                    "line": 82,
                     "column": 20,
-                    "endLine": 79,
+                    "endLine": 87,
                     "endColumn": 8
                 }
             ],
@@ -120,19 +141,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 96,
             "column": 20,
-            "endLine": 93,
+            "endLine": 101,
             "endColumn": 8,
             "problem": "StateStylesBlockNeedArrowFunc",
             "autofix": [
                 {
-                    "start": 1676,
-                    "end": 1783,
+                    "start": 1799,
+                    "end": 1906,
                     "replacementText": "{\n        selected: (instance: CommonMethod): void => {\n            instance.backgroundColor(Color.Red);\n        },\n        normal: NormalStyles\n      }",
-                    "line": 88,
+                    "line": 96,
                     "column": 20,
-                    "endLine": 93,
+                    "endLine": 101,
                     "endColumn": 8
                 }
             ],
@@ -151,9 +172,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -172,9 +193,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -193,9 +214,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -214,9 +235,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -235,9 +256,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -256,9 +277,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -277,9 +298,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -298,9 +319,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -319,9 +340,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -340,9 +361,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -361,9 +382,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -372,9 +393,30 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 58,
+            "column": 22,
+            "endLine": 58,
+            "endColumn": 27,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
+                    "line": 98,
+                    "column": 28,
+                    "endLine": 98,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Color\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
             "column": 5,
-            "endLine": 57,
+            "endLine": 65,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -382,9 +424,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -393,9 +435,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 62,
+            "line": 70,
             "column": 26,
-            "endLine": 62,
+            "endLine": 70,
             "endColumn": 31,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -403,83 +445,20 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
             "suggest": "",
             "rule": "The ArkUI interface \"Color\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 2,
-            "endLine": 69,
-            "endColumn": 11,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
-                    "column": 28,
-                    "endLine": 90,
-                    "endColumn": 33
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 73,
-            "column": 5,
-            "endLine": 73,
-            "endColumn": 11,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
-                    "column": 28,
-                    "endLine": 90,
-                    "endColumn": 33
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
             "line": 77,
-            "column": 28,
-            "endLine": 77,
-            "endColumn": 33,
-            "problem": "UIInterfaceImport",
-            "autofix": [
-                {
-                    "start": 603,
-                    "end": 603,
-                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
-                    "column": 28,
-                    "endLine": 90,
-                    "endColumn": 33
-                }
-            ],
-            "suggest": "",
-            "rule": "The ArkUI interface \"Color\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
             "column": 2,
-            "endLine": 83,
+            "endLine": 77,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -487,9 +466,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -498,9 +477,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 87,
+            "line": 81,
             "column": 5,
-            "endLine": 87,
+            "endLine": 81,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -508,9 +487,9 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
@@ -519,9 +498,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 90,
+            "line": 85,
             "column": 28,
-            "endLine": 90,
+            "endLine": 85,
             "endColumn": 33,
             "problem": "UIInterfaceImport",
             "autofix": [
@@ -529,9 +508,72 @@
                     "start": 603,
                     "end": 603,
                     "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
-                    "line": 90,
+                    "line": 98,
                     "column": 28,
-                    "endLine": 90,
+                    "endLine": 98,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Color\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 91,
+            "column": 2,
+            "endLine": 91,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
+                    "line": 98,
+                    "column": 28,
+                    "endLine": 98,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 95,
+            "column": 5,
+            "endLine": 95,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
+                    "line": 98,
+                    "column": 28,
+                    "endLine": 98,
+                    "endColumn": 33
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 28,
+            "endLine": 98,
+            "endColumn": 33,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  CommonMethod,\n  Color,\n  Entry,\n  Component,\n  BuilderParam,\n  Require,\n  Button,\n} from '@kit.ArkUI';",
+                    "line": 98,
+                    "column": 28,
+                    "endLine": 98,
                     "endColumn": 33
                 }
             ],
