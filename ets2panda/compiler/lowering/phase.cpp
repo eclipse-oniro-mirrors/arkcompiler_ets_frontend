@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,6 @@ std::vector<Phase *> GetETSPhaseList()
     // NOLINTBEGIN
     return {
         new PluginPhase {g_pluginsAfterParse, ES2PANDA_STATE_PARSED, &util::Plugin::AfterParse},
-        new StringConstantsLowering,
         new PackageImplicitImport,
         new ExportAnonymousConstPhase,
         new InitModuleLowering,
@@ -121,6 +120,7 @@ std::vector<Phase *> GetETSPhaseList()
         new PromiseVoidInferencePhase,
         new InterfacePropertyDeclarationsPhase,
         new ConstantExpressionLowering,
+        new StringConstantsLowering,
         new EnumLoweringPhase,
         new ResolveIdentifiers,
         new PluginPhase {g_pluginsAfterBind, ES2PANDA_STATE_BOUND, &util::Plugin::AfterBind},
