@@ -194,3 +194,6 @@ runtime/ets/interfaceObjectLiteral_03.ets
 
 #31069
 type_error_test.ets
+
+#31721 FailKind.SRC_DUMPER_FAI
+runtime/ets/objliteral_method_returntype_infer.ets
