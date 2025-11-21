@@ -29,7 +29,7 @@ struct MyButton1 {
   PressedStyles() {
     .backgroundColor(Color.Green)
     .onKeyEvent(() => {
-        console.log("key pressed");
+      console.log("key pressed");
     })
   }
 
@@ -52,6 +52,14 @@ struct MyButton2 {
   @BuilderParam
   @Require
   content: () => void;
+
+  @Styles
+  PressedStyles() {
+    .backgroundColor(Color.Green)
+    .onKeyEvent(() => {
+      this.onKeyEvent();
+    })
+  }
 
   build() {
     Button("MyButton2") {

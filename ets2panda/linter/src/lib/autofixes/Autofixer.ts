@@ -78,6 +78,7 @@ import {
   GENERIC_PASSING_FIXED,
   GENERIC_PASSING_NON_RESOLVED
 } from '../utils/consts/GenericAutofixAPI';
+import { ON_KEY_EVENT } from '../utils/consts/OverloadCommon';
 
 const UNDEFINED_NAME = 'undefined';
 
@@ -3920,13 +3921,17 @@ export class Autofixer {
   }
 
   private static updateOnKeyEvent(functionBody: string): string {
-    const keyEventSplit = functionBody.split('onKeyEvent');
-    if (keyEventSplit.length !== 2) {
+    const keyEventSplit = functionBody.split(ON_KEY_EVENT);
+    if (keyEventSplit.length < 2) {
       return functionBody;
     }
-    const onKeyPart = keyEventSplit[1];
-    const updatedKeyEventBody = onKeyPart.replace('}', '\treturn true;\n\t}');
-    return functionBody.replace(onKeyPart, updatedKeyEventBody);
+    const header = keyEventSplit.shift();
+    const onKeyPart = keyEventSplit.join(ON_KEY_EVENT);
+    const updatedKeyEventBody = onKeyPart.replace(
+      '}',
+      `${' '.repeat(INDENT_STEP)}return true;\n\t${' '.repeat(INDENT_STEP)}}`
+    );
+    return `${header}${ON_KEY_EVENT}${updatedKeyEventBody}`;
   }
 
   private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
