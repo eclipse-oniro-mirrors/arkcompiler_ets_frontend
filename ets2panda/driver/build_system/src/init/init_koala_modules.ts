@@ -58,6 +58,6 @@ export function cleanKoalaModule(): void {
 }
 
 // for ut
-export function getKoalaModule() {
+export function getKoalaModule(): any {
     return koalaModule;
 }

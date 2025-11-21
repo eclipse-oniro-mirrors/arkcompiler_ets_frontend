@@ -80,7 +80,7 @@ export class DriverThread implements DriverWorker {
     }
     stop(): number {
         let res = 0;
-        (async () => {
+        (async (): Promise<void> => {
             await this.thread.terminate().then((value: number) => { res = value; })
         })();
         return res;
