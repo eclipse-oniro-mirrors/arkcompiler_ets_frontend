@@ -81,9 +81,11 @@ static public_lib::Context::CodeGenCb MakeCompileJob()
 {
     return [](public_lib::Context *context, varbinder::FunctionScope *scope,
               compiler::ProgramElement *programElement) -> void {
-        if (!compiler::ETSFunctionEmitter::IsEmissionRequired(scope->Node()->AsScriptFunction(),
-                                                              context->parserProgram)) {
-            return;
+        if constexpr (std::is_same_v<FunctionEmitter, compiler::ETSFunctionEmitter>) {
+            if (!compiler::ETSFunctionEmitter::IsEmissionRequired(scope->Node()->AsScriptFunction(),
+                                                                  context->parserProgram)) {
+                return;
+            }
         }
         RegSpiller regSpiller;
         ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
