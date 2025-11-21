@@ -293,16 +293,6 @@
             "suggest": "",
             "rule": "Special arguments object inside functions are not supported (arkts-no-arguments-obj)",
             "severity": "ERROR"
-        },
-        {
-            "line": 79,
-            "column": 15,
-            "endLine": 79,
-            "endColumn": 29,
-            "problem": "PropertyAccessByIndex",
-            "suggest": "",
-            "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
-            "severity": "ERROR"
         }
     ]
 }
