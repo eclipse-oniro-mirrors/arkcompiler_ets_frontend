@@ -284,7 +284,7 @@ export abstract class BaseMode {
                 'One or more errors occured.'
             );
             this.logger.printError(logData);
-            throw new Error("Run failed.")
+            throw new Error('Run failed.');
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
@@ -600,7 +600,7 @@ export abstract class BaseMode {
         });
         Ets2panda.destroyInstance();
         if (!res) {
-            throw new Error("Simultaneous build failed.")
+            throw new Error('Simultaneous build failed.');
         }
     }
 
@@ -656,7 +656,7 @@ export abstract class BaseMode {
                 'One or more errors occured.'
             );
             this.logger.printError(logData);
-            throw new Error("Parallel run failed.")
+            throw new Error('Parallel run failed.');
         }
 
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
