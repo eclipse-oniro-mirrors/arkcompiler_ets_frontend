@@ -257,8 +257,8 @@ export class PluginDriver {
     }
 
     public getPluginContext(): PluginContext {
-        if (this.context == undefined) {
-            throw new Error("Plugin context not initialized, pls call setPluginContext before")
+        if (this.context === undefined) {
+            throw new Error('Plugin context not initialized, pls call setPluginContext before')
         }
         return this.context;
     }
