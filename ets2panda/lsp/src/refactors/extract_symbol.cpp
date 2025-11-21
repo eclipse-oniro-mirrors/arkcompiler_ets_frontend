@@ -416,6 +416,11 @@ bool IsVariableExtractionAction(const std::string &actionName)
     return actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.kind;
 }
 
+bool IsConstantExtractionInClassAction(const std::string &actionName)
+{
+    return actionName == EXTRACT_CONSTANT_ACTION_CLASS.name || actionName == EXTRACT_CONSTANT_ACTION_CLASS.kind;
+}
+
 bool IsConstantExtractionAction(const std::string &actionName)
 {
     return actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
@@ -1248,8 +1253,14 @@ std::string BuildExtractionDeclaration(const RefactorContext &context, public_li
         return "";
     }
 
-    std::string declaration(isConstantExtraction ? "const " : "let ");
-    declaration.append("newLocal = ").append(placeholder);
+    const bool isConstantExtractionInClass = IsConstantExtractionInClassAction(actionName);
+    std::string declaration = "";
+    if (isConstantExtractionInClass) {
+        declaration.append("private readonly newProperty = ");
+    } else {
+        declaration.append(isConstantExtraction ? "const newLocal = " : "let newLocal = ");
+    }
+    declaration.append(placeholder);
     if (declaration.find(';') == std::string::npos) {
         declaration.append(";");
     }
@@ -1340,7 +1351,13 @@ RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, i
     std::vector<FileTextChanges> edits;
     TextChangesContext textChangesContext = *context.textChangesContext;
     const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
-    std::string extractedName("newLocal");
+    std::string extractedName = "";
+    const bool isConstantExtractionInClass = IsConstantExtractionInClassAction(actionName);
+    if (isConstantExtractionInClass) {
+        extractedName.append("this.newProperty");
+    } else {
+        extractedName.append("newLocal");
+    }
     edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
         tracker.InsertText(src, GetVarAndFunctionPosToWriteNode(context, actionName).pos, generatedText);
         tracker.ReplaceRangeWithText(src, GetCallPositionOfExtraction(context), extractedName);

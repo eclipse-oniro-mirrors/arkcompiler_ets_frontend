@@ -271,12 +271,12 @@ class AccountingDepartment {
     const std::string expected = R"('use static'
 
 class AccountingDepartment {
-    const newLocal = 'Department name:';
+private readonly newProperty = 'Department name:';
     name: string = '';
 
     printName(): void {
 
-        console.log(newLocal + this.name);
+        console.log(this.newProperty + this.name);
     }
 }
 )";
