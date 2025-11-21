@@ -3941,7 +3941,6 @@ export class Autofixer {
     const indentBase = startPos - (currentIndent - INDENT_STEP);
 
     const middleLines = lines.slice(1, -1).map((line) => {
-
       const indentBase = startPos - (currentIndent - INDENT_STEP);
       if (indentBase > 0) {
         return ' '.repeat(indentBase) + line;

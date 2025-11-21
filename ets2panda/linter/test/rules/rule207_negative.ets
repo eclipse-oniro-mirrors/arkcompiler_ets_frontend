@@ -70,11 +70,10 @@ class C {
 
   m() {
     console.log(arguments); // Error
-    console.log(this.arguments) // No error
   }
 }
 
 function foo_test_11() {
   let c = new C();
-  console.log(c.arguments[0]) // No error
+  c.m();
 }
