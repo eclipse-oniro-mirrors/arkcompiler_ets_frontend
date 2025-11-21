@@ -51,11 +51,12 @@ void CompileQueue::Schedule(public_lib::Context *context)
 {
     ES2PANDA_ASSERT(jobsCount_ == 0);
     std::unique_lock<std::mutex> lock(m_);
+    // NOTE(vpukhov): #28197: do not use the functions list and traverse the program as the ETSEmitter does
     auto &functions = context->parserProgram->VarBinder()->Functions();
     jobs_ = new CompileJob[functions.size()]();
 
     for (auto *function : functions) {
-        if (function->IsEmitted()) {
+        if (function->IsEmitted()) {  // NOTE(vpukhov): #28197: remove the emitted_ flag
             continue;
         }
         jobs_[jobsCount_++].SetContext(context, function);  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)

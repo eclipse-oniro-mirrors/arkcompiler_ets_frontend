@@ -27,5 +27,4 @@ class BindFuncExpr {
 /* @@? 19:5 Error Syntax error ESY0227: Unexpected token 'let'. */
 /* @@? 19:21 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
 /* @@? 20:5 Error Semantic error ESE0351: Variable 'callback1' has already been declared. */
-/* @@? 20:17 Error Semantic error ESE0143: Unresolved reference callback1 */
 /* @@? 20:30 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */

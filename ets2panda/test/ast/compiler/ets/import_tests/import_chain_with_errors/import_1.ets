@@ -25,7 +25,6 @@ let 1: number
 
 // First level import with both types of error
 
-/* @@? import_2.ets:17:17 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
 /* @@? import_2.ets:20:5 Error Syntax error ESY0297: 'var' keyword is not supported. Use 'let' instead. */
 
 /* @@? import_1.ets:21:17 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

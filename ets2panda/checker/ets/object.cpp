@@ -601,6 +601,7 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
         ES2PANDA_ASSERT(IsAnyError());
         return GlobalTypeError();
     }
+    // NOTE(vpukhov): #31391 node type is not set
 
     // Save before we mess with savedContext.
     bool builtinsInitialized = HasStatus(CheckerStatus::BUILTINS_INITIALIZED);
@@ -624,7 +625,7 @@ Type *ETSChecker::BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *inte
     // Skip this check if the builtins are not initialized.
     // They will be initialized in different order,
     // and it is possible that the FunctionType interface is not yet created.
-    if (builtinsInitialized) {
+    if (builtinsInitialized) {  // NOTE(vpukhov): #31391
         CheckInterfaceFunctions(interfaceType);
     }
 
@@ -684,7 +685,7 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
         return GlobalTypeError();
     }
 
-    classDef->SetTsType(classType);
+    classDef->SetTsType(classType);  // NOTE(vpukhov): #31391 type is set
 
     ConstraintCheckScope ctScope(this);
     if (classDef->TypeParams() != nullptr) {
@@ -2648,13 +2649,11 @@ std::vector<ResolveResult *> ETSChecker::HandlePropertyResolution(varbinder::Loc
 
 // NOLINTNEXTLINE(readability-function-size)
 std::vector<ResolveResult *> ETSChecker::ResolveMemberReference(const ir::MemberExpression *const memberExpr,
-                                                                const ETSObjectType *const target)
+                                                                ETSObjectType *const target)
 {
-    if (target->GetDeclNode() != nullptr && target->GetDeclNode()->IsClassDefinition() &&
-        !target->GetDeclNode()->AsClassDefinition()->IsClassDefinitionChecked()) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        this->CheckClassDefinition(target->GetDeclNode()->AsClassDefinition());
-    }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    ETSObjectTypeDeclNode(this, target);
+
     const auto *const targetRef = GetTargetRef(memberExpr);
     auto searchFlag = GetSearchFlags(memberExpr, targetRef);
     if (target->HasObjectFlag(ETSObjectFlags::LAZY_IMPORT_OBJECT)) {
@@ -3097,6 +3096,7 @@ Type *ETSChecker::GetConstantBuiltinType(Type *type)
     auto cloned = type->Clone(this);
     cloned->AddTypeFlag(TypeFlag::CONSTANT);
     cache.insert({type, cloned});
+
     return cloned;
 }
 

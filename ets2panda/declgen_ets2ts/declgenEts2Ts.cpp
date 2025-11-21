@@ -47,6 +47,12 @@ static void DebugPrint([[maybe_unused]] const std::string &msg)
 
 bool TSDeclGen::Generate()
 {
+    auto ctx = checker_->VarBinder()->GetContext();
+    if (ctx->lazyCheck) {
+        ctx->lazyCheck = false;
+        checker_->StartChecker(ctx->parserProgram->VarBinder(), *ctx->config->options);
+        ctx->lazyCheck = true;
+    }
     if (!GenGlobalDescriptor()) {
         return false;
     }
@@ -246,11 +252,10 @@ void TSDeclGen::CollectClassPropDependencies(const ir::ClassDefinition *classDef
 
 void TSDeclGen::CollectClassMethodDependencies(const ir::MethodDefinition *methodDef)
 {
-    auto methDefFunc = methodDef->Function();
-    if (methDefFunc == nullptr) {
+    if (methodDef->Function() == nullptr || methodDef->Function()->Signature() == nullptr) {
         return;
     }
-    auto sig = methDefFunc->Signature();
+    auto sig = methodDef->Function()->Signature();
     GenSeparated(
         sig->Params(), [this](varbinder::LocalVariable *param) { AddDependency(param->TsType()); }, "");
 
@@ -293,11 +298,10 @@ void TSDeclGen::CollectInterfacePropDependencies(const ir::TSInterfaceDeclaratio
 
 void TSDeclGen::CollectInterfaceMethodDependencies(const ir::MethodDefinition *methodDef)
 {
-    auto methDefFunc = methodDef->Function();
-    if (methDefFunc == nullptr) {
+    if (methodDef->Function() == nullptr || methodDef->Function()->Signature() == nullptr) {
         return;
     }
-    auto sig = methDefFunc->Signature();
+    auto sig = methodDef->Function()->Signature();
     GenSeparated(
         sig->Params(), [this](varbinder::LocalVariable *param) { AddDependency(param->TsType()); }, "");
 

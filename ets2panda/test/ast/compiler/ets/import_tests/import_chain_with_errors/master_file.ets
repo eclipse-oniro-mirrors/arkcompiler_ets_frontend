@@ -19,11 +19,9 @@ let b = new B(10);
 
 // First level import with both types of error
 
-/* @@? import_1.ets:21:17 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
 /* @@? import_1.ets:24:5 Error Syntax error ESY0315: Number, string or computed value property name '1' is not allowed, use classes to access data by property names that are identifiers */
 /* @@? import_1.ets:24:5 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
 
-/* @@? import_2.ets:17:17 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
 /* @@? import_2.ets:20:5 Error Syntax error ESY0297: 'var' keyword is not supported. Use 'let' instead. */
 
 /* @@? master_file.ets:18:9 Error Semantic error ESE0124: Expected 0 arguments, got 1. */

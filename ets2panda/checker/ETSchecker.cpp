@@ -404,11 +404,14 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
 
     ES2PANDA_ASSERT(Program()->Ast()->IsProgram());
 
-    Program()->Ast()->Check(this);
-
-    if (runAnalysis && !IsAnyError()) {
-        AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
-        AssignAnalyzer(this).Analyze(Program()->Ast());
+    if (runAnalysis) {
+        Program()->Ast()->Check(this);
+        if (!IsAnyError()) {
+            AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
+            AssignAnalyzer(this).Analyze(Program()->Ast());
+        }
+    } else if (!VarBinder()->GetContext()->lazyCheck) {
+        Program()->Ast()->Check(this);
     }
 
     ES2PANDA_ASSERT(VarBinder()->AsETSBinder()->GetExternalRecordTable().find(program)->second);

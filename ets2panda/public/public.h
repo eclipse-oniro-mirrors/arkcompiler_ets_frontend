@@ -141,6 +141,7 @@ struct Context {
     ExternalSources externalSources;
     bool isExternal = false;
     bool compiledByCapi = false;
+    bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
     std::map<util::StringView, parser::Program *> dupPrograms {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)

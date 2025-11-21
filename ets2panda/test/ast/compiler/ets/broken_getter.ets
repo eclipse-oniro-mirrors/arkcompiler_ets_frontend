@@ -19,10 +19,8 @@ class  A {
 
 /* @@? 17:7 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:7 Error Syntax error ESY0227: Unexpected token '.'. */
-/* @@? 17:13 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 17:18 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
 /* @@? 17:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:18 Error Syntax error ESY0227: Unexpected token '.'. */
 /* @@? 17:29 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 17:30 Error Syntax error ESY0227: Unexpected token '.'. */
-/* @@? 17:39 Error Semantic error ESE0017: Only abstract or native methods can't have body. */

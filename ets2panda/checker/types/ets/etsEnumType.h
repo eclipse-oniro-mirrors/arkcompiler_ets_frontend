@@ -59,15 +59,19 @@ public:
     static constexpr std::string_view VALUES_ARRAY_NAME {"#ValuesArray"};
     static constexpr std::string_view NAMES_ARRAY_NAME {"#NamesArray"};
 
-    auto *Underlying()
+    Type *Underlying()
     {
-        ES2PANDA_ASSERT(membersValues_->TsType() != nullptr);
+        if (membersValues_->TsType() == nullptr) {
+            return nullptr;
+        }
         return membersValues_->TsType()->AsETSArrayType()->ElementType();
     }
 
-    auto *Underlying() const
+    Type const *Underlying() const
     {
-        ES2PANDA_ASSERT(membersValues_->TsType() != nullptr);
+        if (membersValues_->TsType() == nullptr) {
+            return nullptr;
+        }
         return membersValues_->TsType()->AsETSArrayType()->ElementType();
     }
 

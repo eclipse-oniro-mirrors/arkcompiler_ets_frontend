@@ -2979,7 +2979,7 @@ void ETSChecker::SetupGetterSetterFlags(ir::ClassProperty *originalProp, ETSObje
             func->AddFlag(ir::ScriptFunctionFlags::EXTERNAL);
         }
 
-        if (originalProp->IsDeclare()) {
+        if (originalProp->IsDeclare()) {  // NOTE(vpukhov): #28197 DECLARE flag should not be read from the method
             method->AddModifier(ir::ModifierFlags::DECLARE);
             func->AddModifier(ir::ModifierFlags::DECLARE);
         }
@@ -3239,7 +3239,7 @@ ETSChecker::NamedAccessMeta ETSChecker::FormNamedAccessMetadata(varbinder::Varia
 
 void ETSChecker::ETSObjectTypeDeclNode(ETSChecker *checker, ETSObjectType *const objectType)
 {
-    auto *declNode = objectType->AsETSObjectType()->GetDeclNode();
+    auto *declNode = objectType->GetDeclNode();
     if (declNode == nullptr) {
         return;
     }
