@@ -36,6 +36,10 @@ private:
         checker::Substitution derivedConstraints {};
     };
 
+    void ProcessClassWithGenericSupertype(const ir::ClassDefinition *classDefinition,
+                                          const checker::ETSObjectType *superType,
+                                          const ArenaVector<checker::Type *> &typeParameters) const;
+
     ir::ClassDefinition *ProcessClassDefinition(ir::ClassDefinition *classDefinition) const;
 
     void ProcessInterfaces(ir::ClassDefinition *classDefinition) const;

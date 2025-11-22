@@ -250,8 +250,8 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
             checker, checker->Context().Status() | checker::CheckerStatus::IN_BRIDGE_TEST,
             classDefinition->TsType()->AsETSObjectType());
         checker::SavedTypeRelationFlagsContext const savedFlags(relation, checker::TypeRelationFlag::BRIDGE_CHECK);
-        return relation->SignatureIsSupertypeOf(const_cast<checker::Signature *>(source),
-                                                const_cast<checker::Signature *>(target));
+        return relation->SignatureIsSupertypeOf(const_cast<checker::Signature *>(target),
+                                                const_cast<checker::Signature *>(source));
     };
 
     //  We are not interested in functions that either don't have type parameters at all
@@ -275,14 +275,14 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
     for (auto *signature : methodType->CallSignatures()) {
         signature = signature->Substitute(relation, &substitutions.derivedConstraints);
         // A special case is when the overriding function's return type is going to be unboxed.
-        if ((overrides(baseSignature1, signature) || checker->HasSameAssemblySignature(baseSignature1, signature)) &&
+        if ((overrides(signature, baseSignature1) || checker->HasSameAssemblySignature(baseSignature1, signature)) &&
             baseSignature1->ReturnType()->IsETSUnboxableObject() == signature->ReturnType()->IsETSUnboxableObject()) {
             //  NOTE: we already have custom-implemented method with the required bridge signature.
             //  Probably sometimes we will issue warning notification here...
             return;
         }
 
-        if (overrides(signature, baseSignature1) && overrides(baseSignature1, baseSignature2)) {
+        if (overrides(baseSignature1, signature) && overrides(baseSignature2, baseSignature1)) {
             // This derived overload already handles the base union signature.
             return;
         }
@@ -440,6 +440,28 @@ void GenericBridgesPhase::ProcessInterfaces(ir::ClassDefinition *const classDefi
     }
 }
 
+void GenericBridgesPhase::ProcessClassWithGenericSupertype(const ir::ClassDefinition *const classDefinition,
+                                                           const checker::ETSObjectType *const superType,
+                                                           const ArenaVector<checker::Type *> &typeParameters) const
+{
+    //  Check if the class derived from base generic class has either explicit class type substitutions
+    //  or type parameters with narrowing constraints.
+    Substitutions substitutions = GetSubstitutions(superType, typeParameters);
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
+    if (substitutions.derivedSubstitutions.empty()) {
+        return;
+    }
+
+    // If it has, then probably the generic bridges should be created.
+    auto const &superClassBody = superType->GetDeclNode()->AsClassDefinition()->Body();
+    CreateGenericBridges(classDefinition, substitutions, superClassBody);
+    const ArenaVector<checker::ETSObjectType *> &interfaces = superType->Interfaces();
+    for (const checker::ETSObjectType *const interface : interfaces) {
+        const auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
+        CreateGenericBridges(classDefinition, substitutions, interfaceBody);
+    }
+}
+
 ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefinition *const classDefinition) const
 {
     //  Check class interfaces.
@@ -451,27 +473,16 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
         return classDefinition;
     }
 
-    auto const *const superType = classDefinition->Super()->TsType()->AsETSObjectType();
-    auto const &typeParameters = superType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
-    if (typeParameters.empty()) {
-        return classDefinition;
-    }
-
-    //  Check if the class derived from base generic class has either explicit class type substitutions
-    //  or type parameters with narrowing constraints.
-    if (Substitutions substitutions = GetSubstitutions(superType, typeParameters);
-        // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
-        !substitutions.derivedSubstitutions.empty()) {
-        // If it has, then probably the generic bridges should be created.
-        auto const &superClassBody = superType->GetDeclNode()->AsClassDefinition()->Body();
-        CreateGenericBridges(classDefinition, substitutions, superClassBody);
-        ArenaVector<checker::ETSObjectType *> interfaces = superType->Interfaces();
-        if (!interfaces.empty()) {
-            for (checker::ETSObjectType *interface : interfaces) {
-                auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
-                CreateGenericBridges(classDefinition, substitutions, interfaceBody);
-            }
+    const auto *superType = classDefinition->Super()->TsType()->AsETSObjectType();
+    while (superType != nullptr) {
+        auto const &typeParameters = superType->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments();
+        if (typeParameters.empty()) {
+            return classDefinition;
         }
+
+        ProcessClassWithGenericSupertype(classDefinition, superType, typeParameters);
+
+        superType = superType->SuperType();
     }
 
     return classDefinition;
