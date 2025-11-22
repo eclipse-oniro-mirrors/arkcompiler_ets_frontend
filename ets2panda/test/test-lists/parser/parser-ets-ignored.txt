@@ -1,71 +1,12 @@
-#30349
-compiler/ets/lambdaFunctionArrayDeclaration.ets
-
-# Issue: ##21522
-compiler/ts/interfaceAssignment.ts
-compiler/ts/memberExpTests.ts
-compiler/ts/objectLiteralAssignability.ts
-
-# Issue: ##20990
-compiler/ets/instanceof_dyndecl_dynvalue.ets
-compiler/ets/instanceof_dyndecl_jsvalue.ets
-compiler/ets/instanceof_x_dyndecl.ets
-compiler/ets/instanceof_x_etstype.ets
-compiler/ets/instanceof_x_object.ets
-parser/ets/dynamic_import_tests/dynamic_decl_import.ets
-parser/ets/dynamic_import_tests/dynamic_iface_decl_bad.ets
-
-
 parser/as/test_class_method.ts
 parser/as/test_class_property.ts
 parser/as/test_decorators4.ts
 parser/ets/dynamic_import_tests/modules/instanceof.ets
-parser/ts/test-func-param.ts
-parser/ts/test-tuple-type.ts
-parser/ts/test-type-literal.ts
-parser/ts/test_generic.ts
-compiler/ts/functionCall.ts
-
-#24986
-ark_tests/parser/js/expressions/binary/test-binary-expression.js
-ark_tests/parser/js/expressions/binary/test-logical-expression.js
-ark_tests/parser/js/expressions/binary/test-nullish-coalescing.js
-ark_tests/parser/js/expressions/conditional/test-conditional-expression.js
-ark_tests/parser/js/expressions/test-grouping-level.js
-ark_tests/parser/js/functions/declarations/test-function-return.js
-parser/js/test-binary-expression.js
-parser/js/test-conditional-expression.js
-parser/js/test-grouping-level.js
-parser/js/test-logical-expression.js
-parser/js/test-nullish-coalescing.js
-parser/ets/tuple_type_1.ets
-
-# No-primitives #24986 [start]
-
-# Assertion failed: tsAsExpression.cpp:80...
-parser/ets/test_jsvalue_get_double.ets
-
-# Expected CTE "Cannot infer type"
-parser/ets/lambda-type-inference-overloaded.ets
-
-# No-primitives #24986 [end]
-
-#26700
-ark_tests/parser/js/classes/test-class-private-field.js
-parser/ets/constructor_with_optional_parameter.ets
-parser/ets/default_parameter8.ets
-parser/js/test-private-field.js
-
-# 28073 Package's static blocks may present only in a single module.
-compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
-compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
 
 # remove decorator
 parser/as/test_decorators1.ts
 parser/as/test_interface.ts
 parser/as/test_object_literal.ts
 parser/as/test_type_annotation.ts
-parser/ts/test-keyword-declare.ts
-parser/ts/test-keyword-declare7.ts
 parser/ts/test_decorator.ts
 parser/ts/test_decorator3.ts
