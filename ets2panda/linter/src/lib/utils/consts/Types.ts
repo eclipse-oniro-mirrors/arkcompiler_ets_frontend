@@ -30,6 +30,7 @@ export type ConstructorParameter = {
   isOptional: boolean;
   typeString: string;
   type: Type;
+  isInitialized: boolean;
 };
 
 export type ParameterName = string;
