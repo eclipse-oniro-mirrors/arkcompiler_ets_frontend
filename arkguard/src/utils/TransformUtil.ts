@@ -136,7 +136,7 @@ export function isMatchWildcard(wildcardArray: RegExp[], item: string): boolean 
  * Separate parts of an array that contain wildcard characters.
  */
 export function handleReservedConfig(config: IOptions, optionName: string, reservedListName: string,
-  universalLisName: string, enableRemove?: string): void {
+  universalListName: string, enableRemove?: string, enablePrint?: boolean): void {
   const reservedConfig = config?.[optionName];
   let needSeparate: boolean = !!(reservedConfig?.[reservedListName]);
   if (enableRemove) {
@@ -144,10 +144,10 @@ export function handleReservedConfig(config: IOptions, optionName: string, reser
   }
   if (needSeparate) {
     // separate items which contain wildcards from others
-    const reservedInfo: ReservedNameInfo =
-      separateUniversalReservedItem(reservedConfig[reservedListName], !!(config.mUnobfuscationOption?.mPrintKeptNames));
+    const shouldPrintKeptName = enablePrint === undefined ? !!(config.mUnobfuscationOption?.mPrintKeptNames) : enablePrint;
+    const reservedInfo: ReservedNameInfo = separateUniversalReservedItem(reservedConfig[reservedListName], shouldPrintKeptName);
     reservedConfig[reservedListName] = reservedInfo.specificReservedArray;
-    reservedConfig[universalLisName] = reservedInfo.universalReservedArray;
+    reservedConfig[universalListName] = reservedInfo.universalReservedArray;
   }
 }
 

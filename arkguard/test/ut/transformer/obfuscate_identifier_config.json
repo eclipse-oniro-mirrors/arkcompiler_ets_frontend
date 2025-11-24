@@ -6,6 +6,10 @@
       "mReservedComments": [],
       "mUniversalReservedComments": []
   },
+  "mRemoveNoSideEffectsCalls": {
+      "mRemovedCallNames": ["testClass1.Log", "testClass1['property'][\"Log\"]"],
+      "mUniversalRemovedCallNames": [] 
+  },
   "mDisableConsole": true,
   "mSimplify": true,
   "mNameObfuscation": {

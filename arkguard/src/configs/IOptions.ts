@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import type {
   INameObfuscationOption,
   IKeepSourcePathsAndDependency,
   IDeclarationCommentOption,
+  ICallNameOption,
   IUnobfuscationOption
 } from './INameObfuscationOption';
 
@@ -31,6 +32,9 @@ export interface IOptions {
 
   // Whether to remove JSDoc comments;
   readonly mRemoveDeclarationComments?: IDeclarationCommentOption;
+
+  // Whether to remove no side-effects calls
+  readonly mRemoveNoSideEffectsCalls?: ICallNameOption;
 
   // Whether to disable console output
   readonly mDisableConsole?: boolean;

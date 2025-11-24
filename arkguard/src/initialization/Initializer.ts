@@ -129,6 +129,9 @@ function initArkGuardConfig(
       mEnable: mergedObConfig.options.removeComments,
       mReservedComments: mergedObConfig.keepComments,
     },
+    mRemoveNoSideEffectsCalls: {
+      mRemovedCallNames: mergedObConfig.options.removeNoSideEffectsCalls,
+    },
     mEnableSourceMap: true,
     mEnableNameCache: true,
     mRenameFileName: {
