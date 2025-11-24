@@ -13,17 +13,12 @@
  * limitations under the License.
  */
 
-enum Colors {
-  Red,
-  Orange,
-  Yellow
-}
-
 enum Numbers {
   A = 10,
-  B = 2.57,
+  B = 2.57, // err
   C = 0x2B7F,
-  D = -1.5,
+  D = -1.5, // err
+  E = 1.1e2 // err
 }
 
 enum Direction {
@@ -31,14 +26,7 @@ enum Direction {
   Down = 'DOWN',
   Left = 'LEFT',
   Right = 'RIGHT',
-  Across = 'UP'+'LEFT',
-}
-
-enum FileAccess {
-  None,
-  Read = 1 << 1,
-  Write = 1 << 2,
-  ReadWrite = Read | Write,
+  Across = 'UP'+'LEFT',  // no err
 }
 
 const constVar = 25;
@@ -46,16 +34,48 @@ let letVar = 50;
 
 enum ExprInits {
   A = constVar,
-  B = letVar,
-  C = A,
-  D = Direction.Right,
-  E = Numbers.C,
-  H = '123'.length,
-  I = 1 && 2,
+  B = letVar, // err
+  C = A, // no err
+  D = Direction.Right, // no err
+  E = Numbers.C, // no err
+  H = '123'.length, // err
+  I = 1 && 2, // no err
+}
+
+enum TT1 {
+  A = 1,
+  B = 2
+}
+
+
+enum TT2 {
+  A = 's',
+  B = 'aa'
+}
+
+enum TT3 {
+  A = TT1.A,
+  B = TT2.A //err
+}
+
+enum TR2 {
+  Z = 1,
+  H = 2,
+  M = 4.4 + 4 //err
+}
+
+enum TE1 {
+  A = 1.0, // err
+  B = 2
 }
 
 enum Numbers14{
-  RED = 1 as number,
+  RED = 1 as number, // err
   BLUE = 2,
-  GREEN = -1
+  GREEN = -1 // no err
+}
+
+const enum RTE {
+  A = 'aaa',
+  B = 2 // err
 }
