@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -250,11 +250,13 @@ void ETSTryContext::EmitFinalizerInsertion(ETSGen *etsg, compiler::LabelPair lab
 
     ES2PANDA_ASSERT(statement != nullptr);
     bool isReturn = statement->IsReturnStatement();
-
+    bool isReturnVoid = etsg->ReturnType()->IsETSVoidType();
+    if (etsg->ReturnType()->IsETSAsyncFuncReturnType()) {
+        isReturnVoid = statement->AsReturnStatement()->ReturnType()->IsETSVoidType();
+    }
     compiler::RegScope rs(etsg);
     compiler::VReg res = etsg->AllocReg();
-
-    if (isReturn) {
+    if (isReturn && !isReturnVoid) {
         etsg->SetAccumulatorType(statement->AsReturnStatement()->ReturnType());
         etsg->StoreAccumulator(tryStmt_, res);
         etsg->SetVRegType(res, statement->AsReturnStatement()->ReturnType());
@@ -264,20 +266,26 @@ void ETSTryContext::EmitFinalizerInsertion(ETSGen *etsg, compiler::LabelPair lab
     // return, break, or continue statements.
     tryStmt_->FinallyBlock()->Compile(etsg);
 
-    if (isReturn) {
+    if (isReturn && !isReturnVoid) {
         etsg->SetAccumulatorType(statement->AsReturnStatement()->ReturnType());
         etsg->LoadAccumulator(tryStmt_, res);
     }
 
     if (labelPair.End() != nullptr) {
         etsg->Branch(tryStmt_, labelPair.End());
+    } else if (isReturn && isReturnVoid) {
+        if (statement->AsReturnStatement()->IsAsyncImplReturn()) {
+            etsg->LoadAccumulatorUndefined(tryStmt_);
+            etsg->ReturnAcc(tryStmt_);
+        } else {
+            etsg->EmitReturnVoid(tryStmt_);
+        }
     } else if (isReturn) {
         if (etsg->CheckControlFlowChange()) {
             etsg->StoreAccumulator(tryStmt_, res);
             etsg->ControlFlowChangeBreak();
             etsg->LoadAccumulator(tryStmt_, res);
         }
-
         etsg->ReturnAcc(tryStmt_);
     } else if (statement->IsBreakStatement()) {
         compiler::Label *target = etsg->ControlFlowChangeBreak(statement->AsBreakStatement()->Ident());
