@@ -1897,7 +1897,7 @@ export class Lsp {
     });
   }
 
-  private dealWithJob(jobs: Record<string, Job>, queues: Job[])
+  private dealWithJob(jobs: Record<string, Job>, queues: Job[]): void
   {
     let job: Job | undefined;
     let jobInfo: JobInfo | undefined;
@@ -1970,7 +1970,7 @@ export class Lsp {
     global.es2pandaPublic._RemoveFileCache(this.globalContextPtr!, filename);
   }
 
-  public updateFileCache(filename: String) {
+  public updateFileCache(filename: String): void {
     const queues: Job[] = [];
     const jobs: Record<string, Job> = {};
     this.collectCompileJobs(jobs, true);

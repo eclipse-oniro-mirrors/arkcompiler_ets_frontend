@@ -133,19 +133,38 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
     return CompletionEntry();
 }
 
-std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program)
+static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries)
 {
-    std::vector<CompletionEntry> exportEntries;
-    auto ast = program->Ast();
-    auto collectExportNames = [&exportEntries](ir::AstNode *node) {
-        if (node->IsExported()) {
-            auto entry = GetDeclarationEntry(node);
+    for (auto &prop : classDef->Body()) {
+        if (prop->IsClassDeclaration() && prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
+            GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries);
+        }
+        if (prop->IsExported()) {
+            auto entry = GetDeclarationEntry(prop);
             if (!entry.GetName().empty()) {
                 exportEntries.emplace_back(entry);
             }
         }
-    };
-    ast->IterateRecursivelyPreorder(collectExportNames);
+    }
+}
+
+std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program)
+{
+    std::vector<CompletionEntry> exportEntries;
+    for (auto &stmt : program->Ast()->Statements()) {
+        if (stmt->IsClassDeclaration()) {
+            auto classDef = stmt->AsClassDeclaration()->Definition();
+            if (classDef->IsGlobal() || classDef->IsNamespaceTransformed()) {
+                GetExportFromClass(classDef, exportEntries);
+            }
+        }
+        if (stmt->IsExported()) {
+            auto entry = GetDeclarationEntry(stmt);
+            if (!entry.GetName().empty()) {
+                exportEntries.emplace_back(entry);
+            }
+        }
+    }
 
     return exportEntries;
 }
@@ -1113,7 +1132,7 @@ bool IsInETSImportStatement(size_t pos, ir::AstNode *node)
     }
     if (importDecl != nullptr) {
         for (auto &specifier : importDecl->Specifiers()) {
-            size_t specifierEnd = specifier->Range().end.line;
+            size_t specifierEnd = specifier->Range().end.index;
             if (pos < specifierEnd) {
                 return false;
             }

@@ -63,6 +63,57 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 
 namespace {
 
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition26)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition26.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+Ab
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 3;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("AbcFile", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
+                        "AbcFile"),
+        CompletionEntry("AbcFileNotFoundError", ark::es2panda::lsp::CompletionEntryKind::CLASS,
+                        std::string(GLOBALS_OR_KEYWORDS), "AbcFileNotFoundError")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition25)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition25.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+bo
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 3;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Box", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Box"),
+        CompletionEntry("Boolean", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
+                        "Boolean"),
+        CompletionEntry("BootRuntimeLinker", ark::es2panda::lsp::CompletionEntryKind::CLASS,
+                        std::string(GLOBALS_OR_KEYWORDS), "BootRuntimeLinker")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionMemberKeyWord)
 {
     std::vector<std::string> files = {"getCompletionsAtPositionMemberKeyWord.ets"};
