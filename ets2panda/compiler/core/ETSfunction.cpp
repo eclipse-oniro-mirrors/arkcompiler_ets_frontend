@@ -129,8 +129,12 @@ void ETSFunction::CompileAsStaticBlock(ETSGen *etsg)
 
 void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc)
 {
+    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded() || !scriptFunc->IsExplicitThisCall() ||
+                    !scriptFunc->IsExplicitSuperCall());
     if (scriptFunc->IsImplicitSuperCallNeeded()) {
         CallImplicitCtor(etsg);
+    } else if (scriptFunc->IsExplicitThisCall()) {
+        return;
     }
 
     const auto *classDef = etsg->ContainingObjectType()->GetDeclNode()->AsClassDefinition();
