@@ -11915,24 +11915,54 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (identInfo.type === ExtendedIdentifierType.CLASS) {
       // If it's class, get the constructor's parameters
       const extendedClassInfo = this.extractExtendedClassConstructorInfo(identInfo.decl);
-      if (!extendedClassInfo) {
+      // If the extended class has more than one constructor, do not check
+      if (!extendedClassInfo || extendedClassInfo.size !== 1) {
         return;
       }
 
-      // If there are only non parametric constructions, do not check.
-      const value = extendedClassInfo.values().next().value;
-      if (extendedClassInfo.size === 1 && value && value.length === 0) {
+      const superCall = TypeScriptLinter.checkIfSuperCallExists(node.parent);
+      this.handleExtendCustomClassForApiDeprecated(superCall, identInfo.decl.name?.text + '');
+
+      // If there is a default constructor or non-parametric constructor, do not check.
+      if (TypeScriptLinter.hasDefaultConstructor(extendedClassInfo.values().next().value || [])) {
         return;
       }
 
-      this.handleExtendCustomClassSuperCall(node.parent, identInfo.decl.name?.text + '');
+      if (superCall === undefined) {
+        this.incrementCounters(node.parent, FaultID.MissingSuperCall);
+      }
     }
   }
 
-  private handleExtendCustomClassSuperCall(classDecl: ts.ClassDeclaration, extendedClassName: string): void {
-    const superCall = TypeScriptLinter.checkIfSuperCallExists(classDecl);
+  private static hasDefaultConstructor(constructorParams: ConstructorParameter[]): boolean {
+    // there are three cases: non-parametric, default-parametric, and optional-parametric constructor
+    if (constructorParams.length === 0) {
+      return true;
+    }
+    // If all parameters have default values, it's a default constructor
+    if (
+      constructorParams.every((param) => {
+        return param.isInitialized;
+      })
+    ) {
+      return true;
+    }
+    // If all parameters are optional, it's a default constructor
+    if (
+      constructorParams.every((param) => {
+        return param.isOptional;
+      })
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private handleExtendCustomClassForApiDeprecated(
+    superCall: ts.CallExpression | undefined,
+    extendedClassName: string
+  ): void {
     if (!superCall) {
-      this.incrementCounters(classDecl, FaultID.MissingSuperCall);
       return;
     }
     this.handleExtendCustomClassForSdkApiDeprecated(extendedClassName, superCall, SDK_COMMON_TYPE);
@@ -12027,7 +12057,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         const type = this.tsTypeChecker.getTypeAtLocation(ident);
         const typeString = this.tsTypeChecker.typeToString(type);
         const isOptional = !!param.questionToken;
-        const info = { name, typeString, type, isOptional };
+        const isInitialized = !!param.initializer;
+        const info = { name, typeString, type, isOptional, isInitialized };
 
         allParams.push(info);
       }

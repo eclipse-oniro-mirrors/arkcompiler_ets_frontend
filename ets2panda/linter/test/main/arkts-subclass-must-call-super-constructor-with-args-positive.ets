@@ -138,3 +138,21 @@ class MyNumber extends Number {}
 class MyString extends String {}
 
 class AB extends ArrayBuffer {}
+
+class AB9{
+  constructor(i?:number) {
+
+  }
+}
+
+class BB9 extends AB9 { // no err
+}
+
+class AB10{
+  constructor(i:number = 1) {
+
+  }
+}
+
+class BB10 extends AB10 { // no err
+}
