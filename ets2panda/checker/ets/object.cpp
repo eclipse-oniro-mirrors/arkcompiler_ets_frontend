@@ -521,7 +521,13 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 
     if (param->Constraint() != nullptr) {
         traverseReferenced(param->Constraint());
-        paramType->SetConstraintType(param->Constraint()->GetType(this));
+        auto *constraintType = param->Constraint()->GetType(this);
+        if (constraintType == paramType) {
+            LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
+                     param->Constraint()->Start());
+            constraintType = GlobalTypeError();
+        }
+        paramType->SetConstraintType(constraintType);
     } else {
         paramType->SetConstraintType(GlobalETSAnyType());
     }
