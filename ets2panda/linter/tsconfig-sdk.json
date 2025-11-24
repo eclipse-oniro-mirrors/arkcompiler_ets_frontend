@@ -197,7 +197,6 @@
         "GridItem",
         "GridContainer",
         "Hyperlink",
-        "Image",
         "ImageAnimator",
         "IndicatorComponent",
         "LazyVGridLayout",
@@ -478,11 +477,6 @@
             "name": "Hyperlink",
             "type": "HyperlinkAttribute",
             "instance": "HyperlinkInstance"
-          },
-          {
-            "name": "Image",
-            "type": "ImageAttribute",
-            "instance": "ImageInstance"
           },
           {
             "name": "ImageAnimator",
