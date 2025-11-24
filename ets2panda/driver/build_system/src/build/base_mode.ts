@@ -446,11 +446,6 @@ export abstract class BaseMode {
                     )
                 );
             }
-            // workaround: information for main module is filled incorrectly
-            if (dependency.packageName === mainModuleInfo.packageName) {
-                mainModuleInfo.declFilesPath = dependency.declFilesPath;
-                mainModuleInfo.language = dependency.language;
-            }
             if (this.moduleInfos.has(dependency.packageName)) {
                 return;
             }
@@ -490,25 +485,26 @@ export abstract class BaseMode {
     }
 
     protected getMainModuleInfo(): ModuleInfo {
+        const mainModuleInfo = this.dependencyModuleList.find((module) =>
+            module.packageName === this.mainPackageName
+        );
         return {
             isMainModule: true,
             packageName: this.mainPackageName,
-            moduleRootPath: this.mainModuleRootPath,
-            moduleType: this.mainModuleType,
+            moduleRootPath: mainModuleInfo?.modulePath ?? this.mainModuleRootPath,
+            moduleType: mainModuleInfo?.moduleType ?? this.moduleType,
             sourceRoots: this.mainSourceRoots,
-            // NOTE: workaround. (entryFile is almost always undefined)
-            // NOTE: to be refactored
             entryFile: this.entryFile ?? '',
             arktsConfigFile: path.resolve(this.cacheDir, this.mainPackageName, ARKTSCONFIG_JSON_FILE),
             dynamicDependencyModules: new Map<string, ModuleInfo>(),
             staticDependencyModules: new Map<string, ModuleInfo>(),
-            declgenV1OutPath: this.declgenV1OutPath,
-            declgenV2OutPath: this.declgenV2OutPath,
-            declgenBridgeCodePath: this.declgenBridgeCodePath,
+            declgenV1OutPath: mainModuleInfo?.declgenV1OutPath ?? this.declgenV1OutPath,
+            declgenV2OutPath: mainModuleInfo?.declgenV2OutPath ?? this.declgenV2OutPath,
+            declgenBridgeCodePath: mainModuleInfo?.declgenBridgeCodePath ?? this.declgenBridgeCodePath,
             byteCodeHar: this.byteCodeHar,
-            // workaround! Should be fixed
-            language: LANGUAGE_VERSION.ARKTS_1_2,
-            dependencies: []
+            language: mainModuleInfo?.language ?? LANGUAGE_VERSION.ARKTS_1_2,
+            declFilesPath: mainModuleInfo?.declFilesPath,
+            dependencies: mainModuleInfo?.dependencies ?? []
         };
     }
 

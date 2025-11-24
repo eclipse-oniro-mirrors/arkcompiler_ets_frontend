@@ -101,11 +101,11 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
         const fs = require('fs');
         const path = require('path');
 
-        jest.spyOn(fs, 'existsSync').mockImplementation(function(path) {
+        jest.spyOn(fs, 'existsSync').mockImplementation(function (path) {
             return ['/sdk/api', '/sdk/arkts'].includes(path as string);
         });
 
-        jest.spyOn(fs, 'readdirSync').mockImplementation(function(dir) {
+        jest.spyOn(fs, 'readdirSync').mockImplementation(function (dir) {
             if (dir === '/sdk/api') {
                 return ['web.d.ets', 'component', 'arkui'];
             }
@@ -127,7 +127,7 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
             return [];
         });
 
-        jest.spyOn(fs, 'statSync').mockImplementation(function(itemPath) {
+        jest.spyOn(fs, 'statSync').mockImplementation(function (itemPath) {
             const isFile = (itemPath as string).endsWith('.d.ets');
             return {
                 isFile: () => isFile,
@@ -135,20 +135,20 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
             } as fs.Stats;
         });
 
-        jest.spyOn(path, 'basename').mockImplementation(function(p, ext) {
+        jest.spyOn(path, 'basename').mockImplementation(function (p, ext) {
             const base = (p as string).split('/').pop() || '';
             return ext && base.endsWith(ext as string) ? base.slice(0, -(ext as string).length) : base;
         });
 
-        jest.spyOn(path, 'join').mockImplementation(function() {
+        jest.spyOn(path, 'join').mockImplementation(function () {
             return Array.from(arguments).join('/');
         });
 
-        jest.spyOn(path, 'resolve').mockImplementation(function(a, b) {
+        jest.spyOn(path, 'resolve').mockImplementation(function (a, b) {
             return `${a as string}/${b as string}`;
         });
 
-        (global as any).changeFileExtension = jest.fn(function(filePath, newExt, oldExt) {
+        (global as any).changeFileExtension = jest.fn(function (filePath, newExt, oldExt) {
             return (filePath as string).replace(oldExt as string, newExt as string);
         });
 
@@ -173,11 +173,11 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
         const fs = require('fs');
         const path = require('path');
 
-        jest.spyOn(fs, 'existsSync').mockImplementation(function(path) {
+        jest.spyOn(fs, 'existsSync').mockImplementation(function (path) {
             return path === '/external/api';
         });
 
-        jest.spyOn(fs, 'readdirSync').mockImplementation(function(dir) {
+        jest.spyOn(fs, 'readdirSync').mockImplementation(function (dir) {
             if (dir === '/external/api') {
                 return ['external.d.ets', 'widgets'];
             }
@@ -187,7 +187,7 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
             return [];
         });
 
-        jest.spyOn(fs, 'statSync').mockImplementation(function(itemPath) {
+        jest.spyOn(fs, 'statSync').mockImplementation(function (itemPath) {
             const isFile = (itemPath as string).endsWith('.d.ets');
             return {
                 isFile: () => isFile,
@@ -195,20 +195,20 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
             } as fs.Stats;
         });
 
-        jest.spyOn(path, 'basename').mockImplementation(function(p, ext) {
+        jest.spyOn(path, 'basename').mockImplementation(function (p, ext) {
             const base = (p as string).split('/').pop() || '';
             return ext && base.endsWith(ext as string) ? base.slice(0, -(ext as string).length) : base;
         });
 
-        jest.spyOn(path, 'join').mockImplementation(function() {
+        jest.spyOn(path, 'join').mockImplementation(function () {
             return Array.from(arguments).join('/');
         });
 
-        jest.spyOn(path, 'resolve').mockImplementation(function(a, b) {
+        jest.spyOn(path, 'resolve').mockImplementation(function (a, b) {
             return `${a as string}/${b as string}`;
         });
 
-        (global as any).changeFileExtension = jest.fn(function(filePath, newExt, oldExt) {
+        (global as any).changeFileExtension = jest.fn(function (filePath, newExt, oldExt) {
             return (filePath as string).replace(oldExt as string, newExt as string);
         });
 
@@ -243,7 +243,7 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
 
         jest.spyOn(fs, 'existsSync').mockReturnValue(true);
 
-        jest.spyOn(fs, 'readdirSync').mockImplementation(function(dir) {
+        jest.spyOn(fs, 'readdirSync').mockImplementation(function (dir) {
             if (dir === '/sdk/api') {
                 return [
                     'valid.d.ets',
@@ -255,27 +255,27 @@ describe('test if the generateSystemSdkPathSection is working correctly', () => 
             return [];
         });
 
-        jest.spyOn(fs, 'statSync').mockImplementation(function(itemPath) {
+        jest.spyOn(fs, 'statSync').mockImplementation(function (itemPath) {
             return {
                 isFile: () => true,
                 isDirectory: () => false
             } as fs.Stats;
         });
 
-        jest.spyOn(path, 'basename').mockImplementation(function(p, ext) {
+        jest.spyOn(path, 'basename').mockImplementation(function (p, ext) {
             const base = (p as string).split('/').pop() || '';
             return ext && base.endsWith(ext as string) ? base.slice(0, -(ext as string).length) : base;
         });
 
-        jest.spyOn(path, 'join').mockImplementation(function() {
+        jest.spyOn(path, 'join').mockImplementation(function () {
             return Array.from(arguments).join('/');
         });
 
-        jest.spyOn(path, 'resolve').mockImplementation(function(a, b) {
+        jest.spyOn(path, 'resolve').mockImplementation(function (a, b) {
             return `${a}/${b}`;
         });
 
-        (global as any).changeFileExtension = jest.fn(function(filePath, newExt, oldExt) {
+        (global as any).changeFileExtension = jest.fn(function (filePath, newExt, oldExt) {
             return filePath.replace(oldExt, newExt);
         });
 
@@ -662,5 +662,206 @@ describe('test if the processDynamicAlias is working correctly', () => {
         delete (global as any).getOhmurlByApi;
         delete (global as any).LogDataFactory;
         delete (global as any).ErrorCode;
+    });
+});
+
+describe('test if the getAllFilesToPathSection is working correctly', () => {
+
+    test('should handle mixed file types with and without .d prefix', () => {
+
+        (global as any).isSubPathOf = jest.fn().mockReturnValue(true);
+
+        const generator = Object.create(ArkTSConfigGenerator.prototype);
+        generator.buildConfig = {
+            compileFiles: [
+                '/test/module/src/app.ets',
+                '/test/module/src/app.d.ets',
+                '/test/module/src/utils.ts',
+                '/test/module/src/utils.d.ts'
+            ]
+        };
+
+        const moduleInfo: ModuleInfo = {
+            packageName: 'mixedPackage',
+            moduleRootPath: '/test/module',
+            sourceRoots: ['src'],
+            arktsConfigFile: '/test/arktsconfig.json',
+            compileFileInfos: []
+        } as any;
+
+        const arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+
+        (ArkTSConfigGenerator.prototype as any).getAllFilesToPathSection.call(
+            generator,
+            moduleInfo,
+            arktsConfig
+        );
+
+        // Both app.ets and app.d.ets should map to the same key (last one wins)
+        expect(arktsConfig.pathSection['mixedPackage/src/app']).toBeDefined();
+        expect(arktsConfig.pathSection['mixedPackage/src/utils']).toBeDefined();
+
+        delete (global as any).isSubPathOf;
+    });
+
+    test('should skip files outside module root', () => {
+
+        (global as any).isSubPathOf = jest.fn().mockImplementation((filePath: string, moduleRoot: string) => {
+            return filePath.startsWith(moduleRoot);
+        });
+
+        const generator = Object.create(ArkTSConfigGenerator.prototype);
+        generator.buildConfig = {
+            compileFiles: [
+                '/test/module/src/file1.ets',
+                '/other/module/src/file2.ets',
+                '/test/module/src/file3.d.ets'
+            ]
+        };
+
+        const moduleInfo: ModuleInfo = {
+            packageName: 'testPackage',
+            moduleRootPath: '/test/module',
+            sourceRoots: ['src'],
+            arktsConfigFile: '/test/arktsconfig.json',
+            compileFileInfos: []
+        } as any;
+
+        const arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+
+        (ArkTSConfigGenerator.prototype as any).getAllFilesToPathSection.call(
+            generator,
+            moduleInfo,
+            arktsConfig
+        );
+
+        // Only files under /test/module should be included
+        expect(arktsConfig.pathSection['testPackage/src/file1']).toEqual(['/test/module/src/file1.ets']);
+        expect(arktsConfig.pathSection['testPackage/src/file3']).toEqual(['/test/module/src/file3.d.ets']);
+        expect(arktsConfig.pathSection['testPackage/src/file2']).toBeUndefined();
+
+        delete (global as any).isSubPathOf;
+    });
+
+    test('should handle edge case with multiple dots in filename', () => {
+
+        (global as any).isSubPathOf = jest.fn().mockReturnValue(true);
+
+        const generator = Object.create(ArkTSConfigGenerator.prototype);
+        generator.buildConfig = {
+            compileFiles: [
+                '/test/module/src/file.component.ets',
+                '/test/module/src/api.v2.d.ets',
+                '/test/module/src/utils.min.d.ts'
+            ]
+        };
+
+        const moduleInfo: ModuleInfo = {
+            packageName: 'edgeCasePackage',
+            moduleRootPath: '/test/module',
+            sourceRoots: ['src'],
+            arktsConfigFile: '/test/arktsconfig.json',
+            compileFileInfos: []
+        } as any;
+
+        const arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+
+        (ArkTSConfigGenerator.prototype as any).getAllFilesToPathSection.call(
+            generator,
+            moduleInfo,
+            arktsConfig
+        );
+
+        // Should only remove the last extension (with optional .d)
+        expect(arktsConfig.pathSection['edgeCasePackage/src/file.component']).toEqual(['/test/module/src/file.component.ets']);
+        expect(arktsConfig.pathSection['edgeCasePackage/src/api.v2']).toEqual(['/test/module/src/api.v2.d.ets']);
+        expect(arktsConfig.pathSection['edgeCasePackage/src/utils.min']).toEqual(['/test/module/src/utils.min.d.ts']);
+
+        delete (global as any).isSubPathOf;
+    });
+
+    test('should handle Windows-style paths correctly', () => {
+        (global as any).isSubPathOf = jest.fn().mockReturnValue(true);
+        (global as any).toUnixPath = jest.fn((p: string) => p.replace(/\\/g, '/'));
+
+        const generator = Object.create(ArkTSConfigGenerator.prototype);
+        generator.buildConfig = {
+            compileFiles: [
+                'C:\\project\\module\\src\\file1.ets',
+                'C:\\project\\module\\src\\components\\Button.d.ets',
+                'C:\\project\\module\\index.d.ts'
+            ]
+        };
+
+        const moduleInfo: ModuleInfo = {
+            packageName: 'windowsPackage',
+            moduleRootPath: 'C:\\project\\module',
+            sourceRoots: ['src'],
+            arktsConfigFile: 'C:\\project\\arktsconfig.json',
+            compileFileInfos: []
+        } as any;
+
+        const arktsConfig = new ArkTSConfig(moduleInfo, 'C:\\cache', 'C:\\project');
+
+        (ArkTSConfigGenerator.prototype as any).getAllFilesToPathSection.call(
+            generator,
+            moduleInfo,
+            arktsConfig
+        );
+
+        // Windows paths should be converted to Unix style and processed correctly
+        expect(arktsConfig.pathSection['windowsPackage/src/file1']).toEqual(['C:\\project\\module\\src\\file1.ets']);
+        expect(arktsConfig.pathSection['windowsPackage/src/components/Button']).toEqual(['C:\\project\\module\\src\\components\\Button.d.ets']);
+        expect(arktsConfig.pathSection['windowsPackage/index']).toEqual(['C:\\project\\module\\index.d.ts']);
+
+        delete (global as any).isSubPathOf;
+        delete (global as any).toUnixPath;
+    });
+
+    test('should correctly filter similar paths with trailing slash', () => {
+        // This test verifies that moduleRoot with trailing '/' prevents matching similar prefixes
+        // e.g., '/test/library/' should not match '/test/library1/file.ets'
+        (global as any).isSubPathOf = jest.fn().mockImplementation((filePath: string, moduleRoot: string) => {
+            return filePath.startsWith(moduleRoot);
+        });
+
+        (global as any).toUnixPath = jest.fn((p: string) => p);
+
+        const generator = Object.create(ArkTSConfigGenerator.prototype);
+        generator.buildConfig = {
+            compileFiles: [
+                '/test/library/src/file1.ets',
+                '/test/library/src/file2.d.ets',
+                '/test/library1/src/file3.ets',
+                '/test/library_backup/src/file4.ets'
+            ]
+        };
+
+        const moduleInfo: ModuleInfo = {
+            packageName: 'libraryPackage',
+            moduleRootPath: '/test/library',
+            sourceRoots: ['src'],
+            arktsConfigFile: '/test/arktsconfig.json',
+            compileFileInfos: []
+        } as any;
+
+        const arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+
+        (ArkTSConfigGenerator.prototype as any).getAllFilesToPathSection.call(
+            generator,
+            moduleInfo,
+            arktsConfig
+        );
+
+        // Only files under /test/library/ should be included
+        expect(arktsConfig.pathSection['libraryPackage/src/file1']).toEqual(['/test/library/src/file1.ets']);
+        expect(arktsConfig.pathSection['libraryPackage/src/file2']).toEqual(['/test/library/src/file2.d.ets']);
+        
+        // Files under similar paths should NOT be included
+        expect(arktsConfig.pathSection['libraryPackage/src/file3']).toBeUndefined();
+        expect(arktsConfig.pathSection['libraryPackage/src/file4']).toBeUndefined();
+
+        delete (global as any).isSubPathOf;
+        delete (global as any).toUnixPath;
     });
 });

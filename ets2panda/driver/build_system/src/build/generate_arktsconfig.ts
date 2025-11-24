@@ -265,7 +265,7 @@ export class ArkTSConfigGenerator {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
             if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
                 this.logger.printWarn(`Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
-                        `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
+                    `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
                 return;
             }
 
@@ -492,17 +492,18 @@ export class ArkTSConfigGenerator {
         moduleInfo: ModuleInfo,
         arktsConfig: ArkTSConfig
     ): void {
-        const moduleRoot: string = path.posix.join(moduleInfo.moduleRootPath, '/');
+        const moduleRoot = toUnixPath(moduleInfo.moduleRootPath) + '/';
 
         for (const file of this.buildConfig.compileFiles) {
-            const unixFilePath: string = path.posix.normalize(file);
+            const unixFilePath: string = toUnixPath(file);
 
             if (!isSubPathOf(unixFilePath, moduleRoot)) {
                 continue;
             }
 
-            let relativePath = path.posix.relative(moduleRoot, unixFilePath)
-            const keyWithoutExtension = relativePath.replace(/\.[^/.]+$/, '');
+            let relativePath = unixFilePath.substring(moduleRoot.length);
+            // remove extension and if it is declaration file, remove .d too
+            const keyWithoutExtension = relativePath.replace(/\.(?:d\.)?[^/.]+$/, '');
 
             const pathKey = `${moduleInfo.packageName}/${keyWithoutExtension}`;
             arktsConfig.addPathMappings({ [pathKey]: [file] });
