@@ -18,6 +18,7 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
+#include "util/es2pandaMacros.h"
 #include "util/nameMangler.h"
 
 namespace ark::es2panda::compiler {
@@ -1606,18 +1607,7 @@ static ir::AstNode *ConvertFunctionReference(public_lib::Context *ctx, ir::Expre
         var = funcRef->AsIdentifier()->Variable();
     } else {
         auto *mexpr = funcRef->AsMemberExpression();
-        // NOTE(gogabr): mexpr->PropVar() is a synthetic variable wwith no reference to the method definition. Why?
-        auto refVar = ctx->GetChecker()->AsETSChecker()->GetTargetRef(mexpr);
-        auto flags = checker::PropertySearchFlags::SEARCH_IN_BASE |
-                     checker::PropertySearchFlags::DISALLOW_SYNTHETIC_METHOD_CREATION;
-        if (refVar != nullptr && refVar->HasFlag(varbinder::VariableFlags::CLASS)) {
-            flags |= checker::PropertySearchFlags::SEARCH_STATIC_METHOD;
-        } else {
-            flags |= (checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
-                      checker::PropertySearchFlags::SEARCH_STATIC_METHOD);
-        }
-        var =
-            mexpr->Object()->TsType()->AsETSObjectType()->GetProperty(mexpr->Property()->AsIdentifier()->Name(), flags);
+        var = mexpr->PropVar();
         ES2PANDA_ASSERT(var != nullptr);
     }
 
