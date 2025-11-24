@@ -112,7 +112,10 @@ util::StringView BoundContext::FormRecordName() const
         }
 
         if (!fileName.empty()) {
-            name.Append(fileName).Append('.');
+            util::UString modulePrefix(fileName, recordTable_->program_->Allocator());
+            modulePrefix.Append('$').Append('.');
+            const_cast<util::ModuleInfo &>(recordTable_->program_->ModuleInfo()).modulePrefix = modulePrefix.View();
+            name.Append(recordTable_->program_->ModulePrefix());
         }
     };
 
