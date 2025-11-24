@@ -1,0 +1,54 @@
+{
+    "buildType": "build",
+    "buildMode": "Debug",
+    "packageName": "entry",
+    "moduleType": "entry",
+    "moduleName": "entry",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry",
+    "sourceRoots": [
+        "./"
+    ],
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry/circular1.ets",
+        "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry/circular2.ets"
+    ],
+    "loaderOutPath": "./build",
+    "cachePath": "./build/cache",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "enableDeclgenEts2Ts": true,
+    "declgenV1OutPath": "./entry/dist/declgen/decl_ets",
+    "declgenBridgeCodePath": "./entry/dist/declgen/ets",
+    "dependentModuleList": [
+        {
+            "language": "hybrid",
+            "packageName": "entry",
+            "moduleType": "feature",
+            "moduleName": "entry",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry",
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry/circular1.ets",
+            "declgenV1OutPath": "./entry/dist/declgen/decl_ets",
+            "declgenBridgeCodePath": "./entry/dist/declgen/ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": []
+        }
+    ],
+    "dependencyModuleList": [
+        {
+            "language": "hybrid",
+            "packageName": "entry",
+            "moduleType": "feature",
+            "moduleName": "entry",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry",
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_circular_dependency_1.2/entry/circular1.ets",
+            "declgenV1OutPath": "./entry/dist/declgen/decl_ets",
+            "declgenBridgeCodePath": "./entry/dist/declgen/ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": []
+        }
+    ],
+    "byteCodeHar": false
+}
