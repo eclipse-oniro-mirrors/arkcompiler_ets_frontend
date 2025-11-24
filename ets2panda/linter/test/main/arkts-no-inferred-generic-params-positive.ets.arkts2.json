@@ -13,5 +13,26 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 35,
+            "column": 26,
+            "endLine": 35,
+            "endColumn": 33,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 26,
+            "endLine": 37,
+            "endColumn": 33,
+            "problem": "BuiltinFinalClass",
+            "suggest": "",
+            "rule": "API is not support use class in this API (arkts-builtin-final-class)",
+            "severity": "ERROR"
+        }
+    ]
 }

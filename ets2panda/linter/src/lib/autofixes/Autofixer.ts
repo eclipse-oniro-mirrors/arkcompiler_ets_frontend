@@ -69,15 +69,8 @@ import {
   IS_INSTANCE_OF
 } from '../utils/consts/InteropAPI';
 import path from 'node:path';
-import { isStdLibrarySymbol } from '../utils/functions/IsStdLibrary';
 import { propertyAccessReplacements, identifierReplacements } from '../utils/consts/DeprecatedApi';
 import { ARKTS_COLLECTIONS_MODULE, BIT_VECTOR } from '../utils/consts/CollectionsAPI';
-import type { GenericPassingType } from '../utils/consts/GenericAutofixAPI';
-import {
-  GenericPassingCheck,
-  GENERIC_PASSING_FIXED,
-  GENERIC_PASSING_NON_RESOLVED
-} from '../utils/consts/GenericAutofixAPI';
 import { ON_KEY_EVENT } from '../utils/consts/OverloadCommon';
 
 const UNDEFINED_NAME = 'undefined';
@@ -4840,47 +4833,13 @@ export class Autofixer {
     );
   }
 
-  private fixGenericCallNoTypeArgsWithContextualType(
-    node: ts.NewExpression | ts.CallExpression
-  ): Autofix[] | undefined {
-    const contextualType = this.typeChecker.getContextualType(node);
-    if (!contextualType) {
-      return undefined;
-    }
-
-    const contextualTypeString = this.typeChecker.typeToString(contextualType);
-    if (contextualTypeString.startsWith('Hash')) {
-      const identifier = node.expression;
-      return this.replaceNode(identifier, contextualTypeString);
-    }
-
-    const typeArgs = this.getTypeArgumentsFromType(contextualType);
-    if (typeArgs.length === 0) {
-      return undefined;
-    }
-    const reference = typeArgs.map((arg) => {
-      return ts.factory.createTypeReferenceNode(this.typeChecker.typeToString(arg));
-    });
-    return this.generateGenericTypeArgumentsAutofix(node, reference);
-  }
-
-  fixGenericCallNoTypeArgs(node: ts.NewExpression | ts.CallExpression): Autofix[] | undefined {
+  fixGenericCallNoTypeArgs(node: ts.NewExpression): Autofix[] | undefined {
     const typeNode = this.getTypeNodeForNewExpression(node);
     if (!typeNode) {
-      const isFixed = this.fixTypeArgsPassingFromEnclosingClass(node);
-      if (isFixed.kind === GenericPassingCheck.FIXED) {
-        return isFixed.autofix;
-      }
-      return this.fixGenericCallNoTypeArgsWithContextualType(node);
+      return undefined;
     }
-    let nodeExpressionText = node.expression.getText();
-    if (ts.isCallExpression(node)) {
-      const returnTypeText = this.getReturnTypeFromMethodDeclaration(node);
-      if (!returnTypeText) {
-        return undefined;
-      }
-      nodeExpressionText = returnTypeText;
-    }
+    const nodeExpressionText = node.expression.getText();
+
     if (ts.isUnionTypeNode(typeNode)) {
       return this.fixGenericCallNoTypeArgsForUnionType(node, typeNode, nodeExpressionText);
     }
@@ -4898,177 +4857,6 @@ export class Autofixer {
     }
     const insertPos = node.expression.getEnd();
     return [{ start: insertPos, end: insertPos, replacementText: typeArgsText }];
-  }
-
-  /*
-   * we are inside of a class creating a new class,
-   * we need to check if our ancestor has a generic type param
-   * and also need to check if the class we are initializing has generic parameters
-   * there are some cases that we can't provide fixes for (if there is multiple generics)
-   *
-   * We will handle the only one we can safely provide autofix for,
-   * Ancestor Class has a single Generic Type Parameter and the class we are initializing
-   * has only one generic type param.
-   */
-  private fixTypeArgsPassingFromEnclosingClass(node: ts.NewExpression | ts.CallExpression): GenericPassingType {
-    if (ts.isCallExpression(node)) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-    const ancestor = ts.findAncestor(node, ts.isClassDeclaration);
-
-    if (!ancestor) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    const classDecl = this.utils.getDeclarationNode(node.expression);
-    if (!classDecl || !ts.isClassDeclaration(classDecl)) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    if (!classDecl.typeParameters) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    if (!ancestor.typeParameters) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    if (classDecl.typeParameters.length > 1 || classDecl.typeParameters.length === 0) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    if (ancestor.typeParameters.length > 1 || ancestor.typeParameters.length === 0) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    const genericParam = classDecl.typeParameters[0];
-    if (this.utils.getDeclarationNode(genericParam)) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-
-    const ancestorParam = ancestor.typeParameters[0];
-    if (this.utils.getDeclarationNode(ancestorParam)) {
-      return GENERIC_PASSING_NON_RESOLVED();
-    }
-    const fix = this.printer.printNode(ts.EmitHint.Unspecified, ancestorParam, ancestor.getSourceFile());
-    const replacementText = `<${fix}>`;
-    return GENERIC_PASSING_FIXED([{ start: node.expression.end, end: node.expression.end, replacementText }]);
-  }
-
-  fixGenericCallNoTypeArgsForUnknown(node: ts.CallExpression): Autofix[] | undefined {
-    if (ts.isPropertyAccessExpression(node.parent)) {
-      const insertPos = node.expression.getEnd();
-      return [{ start: insertPos, end: insertPos, replacementText: '<Any>' }];
-    }
-
-    const typeNode = this.getTypeNodeForNewExpression(node);
-    if (!typeNode) {
-      return undefined;
-    }
-
-    const nodeExpressionText = ts.isVariableDeclaration(node.parent) ?
-      this.getReturnTypeFromMethodDeclaration(node) ?? node.expression.getText() :
-      node.expression.getText();
-
-    if (ts.isUnionTypeNode(typeNode)) {
-      const targetTypeRef = typeNode.types.find((t): t is ts.TypeReferenceNode => {
-        return ts.isTypeReferenceNode(t) && t.typeName.getText() === nodeExpressionText;
-      });
-      if (!targetTypeRef) {
-        return undefined;
-      }
-      return this.createFixWithTypeArgs(node, targetTypeRef.typeArguments);
-    }
-
-    if (ts.isTypeReferenceNode(typeNode) && typeNode.typeName.getText() === nodeExpressionText) {
-      return this.createFixWithTypeArgs(node, typeNode.typeArguments);
-    }
-
-    return undefined;
-  }
-
-  private createFixWithTypeArgs(
-    node: ts.CallExpression,
-    typeArguments: ts.NodeArray<ts.TypeNode> | undefined
-  ): Autofix[] | undefined {
-    const typeArgsText = this.printGenericCallTypeArgs(node.getSourceFile(), typeArguments);
-    return typeArgsText ?
-      [
-        {
-          start: node.expression.getEnd(),
-          end: node.expression.getEnd(),
-          replacementText: typeArgsText
-        }
-      ] :
-      undefined;
-  }
-
-  getReturnTypeFromMethodDeclaration(node: ts.CallExpression): string | undefined {
-    if (ts.isPropertyAccessExpression(node.expression)) {
-      const propertyAccess = node.expression;
-      const methodName = propertyAccess.name.text;
-      const receiver = propertyAccess.expression;
-      const receiverType = this.typeChecker.getTypeAtLocation(receiver);
-      const methodSymbol = this.typeChecker.getPropertyOfType(receiverType, methodName);
-
-      if (!methodSymbol) {
-        return undefined;
-      }
-      const methodDecl = methodSymbol.declarations?.[0] as ts.MethodSignature;
-      if (!methodDecl.type || !ts.isTypeReferenceNode(methodDecl.type) && !ts.isUnionTypeNode(methodDecl.type)) {
-        return undefined;
-      }
-      if (ts.isTypeReferenceNode(methodDecl.type)) {
-        return methodDecl.type.typeName.getText();
-      }
-      if (ts.isUnionTypeNode(methodDecl.type)) {
-        const typeNode = this.getTypeNodeForNewExpression(node);
-        if (!typeNode) {
-          return undefined;
-        }
-        const targetTypeName = this.getTargetTypeName(typeNode, methodDecl.type);
-
-        if (ts.isUnionTypeNode(typeNode)) {
-          return targetTypeName;
-        }
-        const targetTypeNode = methodDecl.type.types.find((type) => {
-          return ts.isTypeReferenceNode(type) && type.typeName.getText() === targetTypeName;
-        }) as ts.TypeReferenceNode;
-        if (!targetTypeNode) {
-          return undefined;
-        }
-        return targetTypeNode.typeName.getText();
-      }
-    }
-    return undefined;
-  }
-
-  private getTargetTypeName(typeNode: ts.TypeNode, methodDeclType: ts.UnionTypeNode): string | undefined {
-    if (ts.isTypeReferenceNode(typeNode)) {
-      return typeNode.typeName.getText();
-    }
-
-    if (!ts.isUnionTypeNode(typeNode)) {
-      return undefined;
-    }
-
-    const hasGenericType = methodDeclType.types.some((type) => {
-      return this.isGenericTypeParameter(type);
-    });
-    const typeNames = new Set(typeNode.types.map(Autofixer.getTypeName).filter(Boolean));
-
-    const candidateNames = hasGenericType ?
-      typeNode.types.map(Autofixer.getTypeName) :
-      methodDeclType.types.map(Autofixer.getTypeName);
-    const targetTypeName = candidateNames.find((name) => {
-      return name && name !== 'undefined' && (hasGenericType || typeNames.has(name));
-    });
-    return targetTypeName;
-  }
-
-  private isGenericTypeParameter(type: ts.TypeNode): boolean {
-    const getType = this.typeChecker.getTypeFromTypeNode(type);
-    return getType.isTypeParameter();
   }
 
   private static getTypeName(type: ts.TypeNode): string {
@@ -5136,13 +4924,6 @@ export class Autofixer {
     typeArg: ts.TypeNode | readonly ts.Node[] | undefined
   ): string | undefined {
     if (Array.isArray(typeArg)) {
-      if (
-        typeArg.some((arg) => {
-          return !this.isTypeArgumentAccessible(sourceFile, arg as ts.TypeNode);
-        })
-      ) {
-        return undefined;
-      }
       return `<${typeArg.
         map((arg) => {
           ts.setEmitFlags(arg, ts.EmitFlags.SingleLine);
@@ -5150,116 +4931,27 @@ export class Autofixer {
         }).
         join(', ')}>`;
     }
-    if (!typeArg || !this.isTypeArgumentAccessible(sourceFile, typeArg as ts.TypeNode)) {
+    if (!typeArg) {
       return undefined;
     }
     ts.setEmitFlags(typeArg as ts.TypeNode, ts.EmitFlags.SingleLine);
     return `<${this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, typeArg as ts.TypeNode, sourceFile)}>`;
   }
 
-  private getTypeOfTypeNode(typeNode: ts.TypeNode): ts.Type {
-    const type = this.typeChecker.getTypeFromTypeNode(typeNode);
-    if (!ts.isTypeReferenceNode(typeNode)) {
-      return type;
-    }
-    if (!ts.isQualifiedName(typeNode.typeName)) {
-      return type;
-    }
-    return this.typeChecker.getTypeAtLocation(typeNode.typeName.left);
-  }
-
-  private isTypeArgumentAccessible(sourceFile: ts.SourceFile, arg: ts.TypeNode): boolean {
-    const type = this.getTypeOfTypeNode(arg);
-    const symbol = type.symbol || type.aliasSymbol;
-    const decl = TsUtils.getDeclaration(symbol);
-    const fileName = decl?.getSourceFile().fileName;
-    const isStdLib = isStdLibrarySymbol(symbol, true);
-    const isMatchPathOnSourceAndDecl = decl && path.normalize(sourceFile.fileName) === path.normalize(fileName!);
-    if (!decl || isMatchPathOnSourceAndDecl || isStdLib) {
-      return true;
-    }
-    let result = false;
-    ts.forEachChild(sourceFile, (node) => {
-      if (ts.isImportDeclaration(node)) {
-        if (node.importClause?.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
-          node.importClause.namedBindings.elements.some((element) => {
-            result = this.isTypeArgImport(arg, element.name, symbol);
-            return result;
-          });
-        }
-        if (node.importClause?.name) {
-          result = this.isTypeArgImport(arg, node.importClause.name, symbol);
-        }
-      }
-      return result;
-    });
-    return result;
-  }
-
-  private isTypeArgImport(arg: ts.Node, importName: ts.Identifier, typeArgSym: ts.Symbol): boolean {
-    let argText = arg.getText();
-    const importText = importName.text;
-    if (ts.isTypeReferenceNode(arg) && ts.isQualifiedName(arg.typeName)) {
-      argText = arg.typeName.left.getText();
-    }
-
-    if (ts.isTypeReferenceNode(arg) && arg.typeArguments && ts.isIdentifier(arg.typeName)) {
-      argText = arg.typeName.text;
-      const typeArgTypeNameSym = this.utils.trueSymbolAtLocation(arg.typeName);
-      if (typeArgTypeNameSym) {
-        typeArgSym = typeArgTypeNameSym;
-      }
-    }
-
-    if (argText !== importText) {
-      return false;
-    }
-    const importSym = this.utils.trueSymbolAtLocation(importName);
-    return importSym === typeArgSym;
-  }
-
-  private generateGenericTypeArgumentsAutofix(
-    node: ts.NewExpression | ts.CallExpression,
-    typeArgs: ts.TypeReferenceNode[]
-  ): Autofix[] | undefined {
-    const srcFile = node.getSourceFile();
-    const identifier = node.expression;
-    const hasValidArgs = typeArgs.some((arg) => {
-      return arg?.typeName && ts.isIdentifier(arg.typeName);
-    });
-    if (!hasValidArgs) {
-      return undefined;
-    }
-    const hasAnyType = typeArgs.some((arg) => {
-      return ts.isIdentifier(arg?.typeName) && arg.typeName.text === 'any';
-    });
-    if (hasAnyType) {
-      return undefined;
-    }
-    const typeArgsText = this.printGenericCallTypeArgs(srcFile, typeArgs);
-    if (!typeArgsText) {
-      return undefined;
-    }
-    return [{ start: identifier.getEnd(), end: identifier.getEnd(), replacementText: typeArgsText }];
-  }
-
-  private getTypeArgumentsFromType(type: ts.Type): ts.Type[] {
-    const typeReference = this.utils.getNonNullableType(type) as ts.TypeReference;
-    if (typeReference.typeArguments) {
-      return [...typeReference.typeArguments];
-    }
-    return [];
-  }
-
-  private getTypeNodeForNewExpression(node: ts.NewExpression | ts.CallExpression): ts.TypeNode | undefined {
+  private getTypeNodeForNewExpression(node: ts.NewExpression): ts.TypeNode | undefined {
     if (ts.isVariableDeclaration(node.parent) || ts.isPropertyDeclaration(node.parent)) {
       return node.parent.type;
     } else if (ts.isBinaryExpression(node.parent)) {
       return this.utils.getDeclarationTypeNode(node.parent.left);
     } else if (ts.isReturnStatement(node.parent) && ts.isBlock(node.parent.parent)) {
-      const funcNode = node.parent.parent.parent;
-      const isFunc = ts.isFunctionDeclaration(funcNode) || ts.isMethodDeclaration(funcNode);
-      if (!isFunc || !funcNode.type) {
+      let funcNode = node.parent.parent.parent;
+      while (!ts.isFunctionLike(funcNode)) {
+        if (!funcNode.parent) {
+          return undefined;
+        }
+        funcNode = funcNode.parent;
+      }
+      if (!funcNode.type) {
         return undefined;
       }
 
