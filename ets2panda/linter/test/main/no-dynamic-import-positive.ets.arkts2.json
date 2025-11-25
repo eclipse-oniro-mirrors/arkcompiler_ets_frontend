@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2023-2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,39 +15,19 @@
     ],
     "result": [
         {
-            "line": 139,
-            "column": 1,
-            "endLine": 139,
-            "endColumn": 112,
-            "problem": "ImportAfterStatement",
+            "line": 26,
+            "column": 10,
+            "endLine": 26,
+            "endColumn": 16,
+            "problem": "LimitedReturnTypeInference",
             "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
         },
         {
-            "line": 140,
+            "line": 30,
             "column": 1,
-            "endLine": 140,
-            "endColumn": 52,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 141,
-            "column": 1,
-            "endLine": 141,
-            "endColumn": 32,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 142,
-            "column": 1,
-            "endLine": 142,
+            "endLine": 30,
             "endColumn": 31,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -55,43 +35,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 162,
-            "column": 15,
-            "endLine": 162,
-            "endColumn": 38,
+            "line": 34,
+            "column": 1,
+            "endLine": 34,
+            "endColumn": 25,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 1,
+            "endLine": 35,
+            "endColumn": 25,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 7,
+            "endLine": 37,
+            "endColumn": 28,
             "problem": "AnyType",
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 176,
-            "column": 50,
-            "endLine": 176,
-            "endColumn": 54,
-            "problem": "ThisType",
-            "suggest": "",
-            "rule": "Type notation using \"this\" is not supported (arkts-no-typing-with-this)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 180,
-            "column": 10,
-            "endLine": 180,
-            "endColumn": 14,
-            "problem": "FunctionContainsThis",
-            "suggest": "",
-            "rule": "Using \"this\" inside stand-alone functions is not supported (arkts-no-standalone-this)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 179,
-            "column": 57,
-            "endLine": 179,
-            "endColumn": 61,
-            "problem": "ThisType",
-            "suggest": "",
-            "rule": "Type notation using \"this\" is not supported (arkts-no-typing-with-this)",
             "severity": "ERROR"
         }
     ]
