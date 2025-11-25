@@ -229,6 +229,16 @@ public:
         return (Flags() & ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED) != 0;
     }
 
+    [[nodiscard]] bool IsExplicitThisCall() const noexcept
+    {
+        return (Flags() & ir::ScriptFunctionFlags::EXPLICIT_THIS_CALL) != 0;
+    }
+
+    [[nodiscard]] bool IsExplicitSuperCall() const noexcept
+    {
+        return (Flags() & ir::ScriptFunctionFlags::EXPLICIT_SUPER_CALL) != 0;
+    }
+
     [[nodiscard]] bool HasBody() const noexcept
     {
         return Body() != nullptr;

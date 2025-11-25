@@ -1667,6 +1667,7 @@ void ETSChecker::CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig
     });
     // There is an alternate constructor invocation, no need for super constructor invocation
     if (thisCall != stmts.end()) {
+        ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_THIS_CALL);
         return;
     }
 
@@ -1674,8 +1675,10 @@ void ETSChecker::CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig
         return stmt->IsExpressionStatement() && stmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
                stmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsSuperExpression();
     });
-    // There is no super expression
-    if (superExpr == stmts.end()) {
+    if (superExpr != stmts.end()) {
+        ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_SUPER_CALL);
+    } else if (superExpr == stmts.end()) {
+        // There is no super expression
         const auto superTypeCtorSigs = classType->SuperType()->ConstructSignatures();
         const auto superTypeCtorSig = std::find_if(superTypeCtorSigs.begin(), superTypeCtorSigs.end(),
                                                    [](const Signature *sig) { return sig->MinArgCount() == 0; });
