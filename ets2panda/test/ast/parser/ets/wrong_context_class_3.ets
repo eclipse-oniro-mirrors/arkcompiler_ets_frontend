@@ -24,4 +24,3 @@ function main()
 
 
 /* @@? 22:5 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@? 22:5 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */

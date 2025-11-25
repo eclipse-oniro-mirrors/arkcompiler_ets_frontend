@@ -13,18 +13,17 @@
  * limitations under the License.
  */
 
-class A{}
+class B
+{
 
-@interface MyAnno {
-    testProperty1: string
 }
 
-interface itf {
-    @MyAnno({testProperty1: /* @@ label */A})
-    foo() : string
-}
+B > 1;
+B = 1;
+B + 1;
+B || 1
 
-
-
-/* @@@ label Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@? 21:1 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 22:1 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 23:1 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 24:1 Error Syntax error ESY0318: Class cannot be used as object. */
