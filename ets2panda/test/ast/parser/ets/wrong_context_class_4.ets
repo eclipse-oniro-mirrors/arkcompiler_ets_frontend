@@ -28,4 +28,3 @@ function main()
 
 
 /* @@? 26:5 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@? 26:5 Error Semantic error ESE0250: Object type doesn't have proper index access method. */

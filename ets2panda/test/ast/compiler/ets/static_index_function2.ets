@@ -22,11 +22,11 @@ class A {
 function main(): int {
   let a = new A
   a[/* @@ label */'a'] = 42.0
-  /* @@ label1 */A[/* @@ label2 */'a'] = 42.0
+  /* @@ label1 */A['a'] = 42.0
   return 0
 }
 
 
 /* @@@ label Error Semantic error ESE0207: '$_set' is a static property of 'A' */
 /* @@@ label1 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label2 Error Semantic error ESE0207: '$_set' is a static property of 'A' */
+/* @@@ label1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

@@ -25,5 +25,4 @@ function foo(@MyAnno({testProperty1: /* @@ label */A}) x: int) {
 
 
 /* @@@ label Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'String' */
 /* @@@ label Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
