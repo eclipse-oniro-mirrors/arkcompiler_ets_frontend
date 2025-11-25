@@ -63,7 +63,7 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     ASSERT(checker);
 
     // Test normalization: Derived1 | Base ==> Base
-    ArenaVector<checker::Type *> unionConstituents1(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents1;
     unionConstituents1.emplace_back(derived1Type);
     unionConstituents1.emplace_back(baseType);
 
@@ -74,7 +74,7 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     ASSERT_EQ(normalizedType1, baseType);
 
     // Test normalization: Base | Derived2 ==> Base
-    ArenaVector<checker::Type *> unionConstituents2(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents2;
     unionConstituents2.emplace_back(baseType);
     unionConstituents2.emplace_back(derived2Type);
 
@@ -85,7 +85,7 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     ASSERT_EQ(normalizedType2, baseType);
 
     // Test normalization: Derived1 | Derived2 ==> Derived1 | Derived2
-    ArenaVector<checker::Type *> unionConstituents3(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents3;
     unionConstituents3.emplace_back(derived1Type);
     unionConstituents3.emplace_back(derived2Type);
 
@@ -98,7 +98,7 @@ TEST_F(UnionNormalizationTest, UnionWithSubTypes)
     ASSERT_EQ(unionType->ConstituentTypes().at(IDX1), derived2Type);
 
     // Test normalization: Derived2 | Base | Derived1 ==> Base
-    ArenaVector<checker::Type *> unionConstituents4(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents4;
     unionConstituents4.emplace_back(derived1Type);
     unionConstituents4.emplace_back(baseType);
     unionConstituents4.emplace_back(derived2Type);
@@ -178,7 +178,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals1)
     ASSERT(checker);
 
     // Test normalization: string | "abc" ==> string
-    ArenaVector<checker::Type *> unionConstituents1(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents1;
     unionConstituents1.emplace_back(checker->GlobalBuiltinETSStringType());
     unionConstituents1.emplace_back(checker->CreateETSStringLiteralType("abc"));
 
@@ -189,7 +189,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals1)
     ASSERT_EQ(normalizedType1, checker->GlobalBuiltinETSStringType());
 
     // Test normalization: "abc" | string | string ==> string
-    ArenaVector<checker::Type *> unionConstituents2(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents2;
     unionConstituents2.emplace_back(checker->CreateETSStringLiteralType("abc"));
     unionConstituents2.emplace_back(checker->GlobalBuiltinETSStringType());
     unionConstituents2.emplace_back(checker->GlobalBuiltinETSStringType());
@@ -201,7 +201,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals1)
     ASSERT_EQ(normalizedType2, checker->GlobalBuiltinETSStringType());
 
     // Test normalization: number | "abc" | string | "xy" ==> number | string
-    ArenaVector<checker::Type *> unionConstituents3(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents3;
     unionConstituents3.emplace_back(checker->GlobalDoubleBuiltinType());
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("abc"));
     unionConstituents3.emplace_back(checker->GlobalBuiltinETSStringType());
@@ -217,7 +217,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals1)
     ASSERT_EQ(unionType->ConstituentTypes().at(IDX1), checker->GlobalBuiltinETSStringType());
 
     // Test normalization: "abcd" | "abcd" | "abcd" ==> "abcd"
-    ArenaVector<checker::Type *> unionConstituents4(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents4;
     unionConstituents4.emplace_back(checker->CreateETSStringLiteralType("abcd"));
     unionConstituents4.emplace_back(checker->CreateETSStringLiteralType("abcd"));
     unionConstituents4.emplace_back(checker->CreateETSStringLiteralType("abcd"));
@@ -237,7 +237,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals2)
     ASSERT(checker);
 
     // Test absence of normalization: "ab1" | "bc2" | "cd3" ==> "ab1" | "bc2" | "cd3"
-    ArenaVector<checker::Type *> unionConstituents1(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents1;
     unionConstituents1.emplace_back(checker->CreateETSStringLiteralType("ab1"));
     unionConstituents1.emplace_back(checker->CreateETSStringLiteralType("bc2"));
     unionConstituents1.emplace_back(checker->CreateETSStringLiteralType("cd3"));
@@ -256,7 +256,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals2)
     ASSERT_EQ(unionType1->ConstituentTypes().at(IDX2)->AsETSStringType()->GetValue(), "cd3");
 
     // Test normalization: "ab1" | "bc2" | "ab1" ==> "ab1" | "bc2"
-    ArenaVector<checker::Type *> unionConstituents2(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents2;
     unionConstituents2.emplace_back(checker->CreateETSStringLiteralType("ab1"));
     unionConstituents2.emplace_back(checker->CreateETSStringLiteralType("bc2"));
     unionConstituents2.emplace_back(checker->CreateETSStringLiteralType("ab1"));
@@ -273,7 +273,7 @@ TEST_F(UnionNormalizationTest, UnionStringLiterals2)
     ASSERT_EQ(unionType2->ConstituentTypes().at(IDX1)->AsETSStringType()->GetValue(), "bc2");
 
     // Test absence of normalization: "ab1" | "bc2" | "cd3" | string | int ==> string | int
-    ArenaVector<checker::Type *> unionConstituents3(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents3;
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("ab1"));
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("bc2"));
     unionConstituents3.emplace_back(checker->CreateETSStringLiteralType("cd3"));
@@ -298,7 +298,7 @@ TEST_F(UnionNormalizationTest, DISABLED_UnionWithNever)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(checker->GlobalIntType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSNeverType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalDoubleBuiltinType());

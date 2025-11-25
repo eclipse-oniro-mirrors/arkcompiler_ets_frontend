@@ -589,7 +589,7 @@ void ETSChecker::ResolveReturnStatement(ETSChecker *checker, checker::Type *func
 
 checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
 {
-    ArenaVector<checker::Type *> elementTypes(ProgramAllocator()->Adapter());
+    std::vector<checker::Type *> elementTypes;
     for (auto *elementNode : init->AsArrayExpression()->Elements()) {
         Type *elementType = elementNode->Check(this);
         if (elementType->IsTypeError()) {
@@ -1143,9 +1143,10 @@ Signature *ETSChecker::FindRelativeExtensionGetter(ir::MemberExpression *const e
 
     ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
     arguments.insert(arguments.begin(), expr->Object());
+    auto accessorSigs = funcType->CollectExtensionAccessorSigs(Allocator());
     Signature *signature =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
+        MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
     if (signature != nullptr) {
         InsertExtensionGetterToMap(funcType->Name(), expr->ObjType(), signature);
     }
@@ -1165,11 +1166,12 @@ Signature *ETSChecker::FindRelativeExtensionSetter(ir::MemberExpression *expr, E
     Signature *signature = nullptr;
     ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
     arguments.insert(arguments.begin(), expr->Object());
+    auto accessorSigs = funcType->CollectExtensionAccessorSigs(Allocator());
     if (expr->Parent()->IsAssignmentExpression()) {
         arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
         signature =
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
+            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
     } else {
         // When handle ++a.m, a.m++, is mean to check whether a.m(xx, 1) existed.
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -1178,7 +1180,7 @@ Signature *ETSChecker::FindRelativeExtensionSetter(ir::MemberExpression *expr, E
         arguments.emplace_back(expr);
         signature =
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            MatchOrderSignatures(funcType->GetExtensionAccessorSigs(), arguments, expr, TypeRelationFlag::NO_THROW);
+            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
     }
 
     if (signature == nullptr) {
@@ -1390,7 +1392,7 @@ checker::Type *CheckerContext::GetUnionOfTypes(checker::Type *const type1, check
 }
 
 static std::optional<checker::Type *> GetIntersectionOfTypeAndTypeSetIfExist(ETSChecker *checker, checker::Type *type,
-                                                                             const ArenaVector<Type *> &typeSet)
+                                                                             const std::vector<Type *> &typeSet)
 {
     for (auto *const typeOfTypeSet : typeSet) {
         if (checker->Relation()->IsSupertypeOf(type, typeOfTypeSet)) {
@@ -1422,18 +1424,18 @@ checker::Type *CheckerContext::GetIntersectionOfTypes(checker::Type *const type1
         return type1;
     }
 
-    ArenaVector<Type *> typeSet1(checker->ProgramAllocator()->Adapter());
-    ArenaVector<Type *> typeSet2(checker->ProgramAllocator()->Adapter());
-    ArenaVector<Type *> intersection(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> typeSet1;
+    std::vector<Type *> typeSet2;
+    std::vector<Type *> intersection;
 
     if (type1->IsETSUnionType()) {
-        typeSet1 = type1->AsETSUnionType()->ConstituentTypes();
+        typeSet1 = ArenaVectorToStdVector(type1->AsETSUnionType()->ConstituentTypes());
     } else {
         typeSet1.push_back(type1);
     }
 
     if (type2->IsETSUnionType()) {
-        typeSet2 = type2->AsETSUnionType()->ConstituentTypes();
+        typeSet2 = ArenaVectorToStdVector(type2->AsETSUnionType()->ConstituentTypes());
     } else {
         typeSet2.push_back(type2);
     }
@@ -2130,7 +2132,7 @@ Type *ETSChecker::HandleStringConcatenation(Type *leftType, Type *rightType)
 }
 
 checker::ETSFunctionType *ETSChecker::FindFunctionInVectorGivenByName(util::StringView name,
-                                                                      ArenaVector<checker::ETSFunctionType *> &list)
+                                                                      std::vector<checker::ETSFunctionType *> &list)
 {
     for (auto *it : list) {
         if (it->Name() == name) {
@@ -2189,8 +2191,8 @@ void ETSChecker::MergeSignatures(checker::ETSFunctionType *target, checker::ETSF
     }
 }
 
-void ETSChecker::MergeComputedAbstracts(ArenaVector<checker::ETSFunctionType *> &merged,
-                                        ArenaVector<checker::ETSFunctionType *> &current)
+void ETSChecker::MergeComputedAbstracts(std::vector<checker::ETSFunctionType *> &merged,
+                                        std::vector<checker::ETSFunctionType *> &current)
 {
     for (auto *curr : current) {
         auto name = curr->Name();
@@ -2472,32 +2474,6 @@ util::StringView ETSChecker::GetHashFromTypeArguments(const ArenaVector<Type *> 
         ss << it << compiler::Signatures::MANGLE_SEPARATOR;
     }
 
-    return util::UString(ss.str(), ProgramAllocator()).View();
-}
-
-util::StringView ETSChecker::GetHashFromSubstitution(const Substitution *substitution, const bool extensionFuncFlag)
-{
-    std::vector<std::string> fields;
-    for (auto [k, v] : *substitution) {
-        std::stringstream ss;
-        k->ToString(ss, true);
-        ss << ":";
-        v->ToString(ss, true);
-        // NOTE (mmartin): change bare address to something more appropriate unique representation
-        ss << ":" << k << ":" << v;
-        fields.push_back(ss.str());
-    }
-    std::sort(fields.begin(), fields.end());
-
-    std::stringstream ss;
-    for (auto &fstr : fields) {
-        ss << fstr;
-        ss << ";";
-    }
-
-    if (extensionFuncFlag) {
-        ss << "extensionFunctionType;";
-    }
     return util::UString(ss.str(), ProgramAllocator()).View();
 }
 

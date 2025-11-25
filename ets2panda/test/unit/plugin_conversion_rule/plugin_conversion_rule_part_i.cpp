@@ -240,24 +240,6 @@ es2panda_AstNode *classInstance/*return_args:*/, size_t *returnTypeLen)
     EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
 }
 
-/* ETSObjectType *GetInstantiatedType(util::StringView hash) */
-TEST_F(PluginConversionRuleUnitTest, ArenaSetInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C"  es2panda_Type *ETSObjectTypeGetInstantiatedType([[maybe_unused]] es2panda_Context *context,
-es2panda_Type *classInstance, [[maybe_unused]] char *hash/*return_args:*/)
-    {
-        util::StringView hashE2p{hash};
-        auto apiRes = reinterpret_cast<es2panda_Type *>
-    ((reinterpret_cast<checker::ETSObjectType *>(classInstance))->GetInstantiatedType(hashE2p));
-	    return apiRes;
-    }
-    )"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
 /* const ArenaSet<ir::ClassDefinition *> &ClassDefinitions() const */
 TEST_F(PluginConversionRuleUnitTest, ArenaSetPtrReturnValue)
 {

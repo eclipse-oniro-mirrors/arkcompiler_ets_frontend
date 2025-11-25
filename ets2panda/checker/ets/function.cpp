@@ -340,8 +340,8 @@ static bool EnhanceSubstitutionForUnion(ETSChecker *checker, const ArenaVector<T
     }
     auto *const argUn = argumentType->AsETSUnionType();
 
-    std::vector<Type *> paramWlist {};
-    ArenaVector<Type *> argWlist(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> paramWlist;
+    std::vector<Type *> argWlist;
 
     bool isIdenticalUpToTypeParams = false;
     for (auto *pc : paramUn->ConstituentTypes()) {
@@ -1345,11 +1345,6 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
 
         auto overloadSig = currentFunc->Function()->Signature();
         funcType->AddCallSignature(overloadSig);
-        if (overloadSig->IsExtensionAccessor()) {
-            funcType->GetExtensionAccessorSigs().emplace_back(overloadSig);
-        } else if (overloadSig->IsExtensionFunction()) {
-            funcType->GetExtensionFunctionSigs().emplace_back(overloadSig);
-        }
         overloads.push_back(overloadType);
 
         ldInfo.minArg = std::min(ldInfo.minArg, currentFunc->Function()->Signature()->MinArgCount());

@@ -46,6 +46,8 @@ class ETSResizableArrayType;
 using Substitution = std::map<ETSTypeParameter *, Type *>;
 using ArenaSubstitution = ArenaMap<ETSTypeParameter *, Type *>;
 
+extern void TypeStatsHook(Type *t);
+
 class Type {
 public:
     explicit Type(TypeFlag flag) : typeFlags_(flag)

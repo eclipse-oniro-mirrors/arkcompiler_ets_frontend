@@ -1073,7 +1073,7 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
 
 static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpression *arrayExpr)
 {
-    ArenaVector<Type *> arrayExpressionElementTypes(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> arrayExpressionElementTypes;
     for (auto *const element : arrayExpr->Elements()) {
         element->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
         auto *elementType = *element->Check(checker);
@@ -1683,7 +1683,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
 {
     ETSChecker *checker = GetETSChecker();
 
-    ArenaVector<checker::Type *> tupleTypeList(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> tupleTypeList;
 
     for (auto *elem : expr->Elements()) {
         if (elem->IsOmittedExpression()) {
@@ -1701,7 +1701,7 @@ checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
         tupleTypeList.emplace_back(elem->TsType());
     }
 
-    return expr->SetTsType(checker->Allocator()->New<checker::ETSTupleType>(checker, tupleTypeList));
+    return expr->SetTsType(checker->CreateETSTupleType(std::move(tupleTypeList), false));
 }
 
 static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
@@ -1745,7 +1745,7 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
     dstrNode->Check(checker);
 
     if (initializer->IsArrayExpression()) {
-        ArenaVector<checker::Type *> tupleTypeList(checker->Allocator()->Adapter());
+        std::vector<Type *> tupleTypeList;
         auto arrayElements = initializer->AsArrayExpression()->Elements();
         for (uint32_t idx = 0; idx < dstrNode->Size() && idx < arrayElements.size(); idx++) {
             auto *arrayElement = arrayElements.at(idx);
@@ -1777,7 +1777,7 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
             }
         }
 
-        return initializer->SetTsType(checker->Allocator()->New<checker::ETSTupleType>(checker, tupleTypeList));
+        return initializer->SetTsType(checker->CreateETSTupleType(std::move(tupleTypeList), false));
     }
 
     return ValidateETSArrayOrTupleTypeInDestructuring(checker, dstrNode, initializer);
@@ -2019,7 +2019,8 @@ static checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpress
         checker->LogDiagnostic(diagnostic::DUPLICATE_SIGS, {helperSignature->Function()->Id()->Name(), helperSignature},
                                expr->Start());
         checker->CreateOverloadSigContainer(helperSignature);
-        return checker->FirstMatchSignatures(checker->GetOverloadSigContainer(), expr);
+        auto arenaSigs = StdVectorToArenaVector(checker->GetOverloadSigContainer(), checker->Allocator());
+        return checker->FirstMatchSignatures(arenaSigs, expr);
     }
 
     if (calleeType->IsETSExtensionFuncHelperType()) {
@@ -3483,7 +3484,7 @@ static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *ch
 static checker::Type *ComputeTypeOfType(ETSChecker *checker, checker::Type *argType)
 {
     checker::Type *ret = nullptr;
-    ArenaVector<checker::Type *> types(checker->ProgramAllocator()->Adapter());
+    std::vector<checker::Type *> types;
     ES2PANDA_ASSERT(argType != nullptr);
     if (argType->IsETSUnionType()) {
         for (auto *it : argType->AsETSUnionType()->ConstituentTypes()) {

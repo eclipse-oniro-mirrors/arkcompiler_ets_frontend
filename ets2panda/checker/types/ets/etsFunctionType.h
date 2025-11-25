@@ -56,7 +56,7 @@ public:
     [[nodiscard]] util::StringView Name() const
     {
         ES2PANDA_ASSERT(!IsETSArrowType());
-        return name_;
+        return nameOrAsmName_;
     }
 
     void AddCallSignature(Signature *signature);
@@ -84,16 +84,17 @@ public:
         return FindSpecificSignature([](auto const *const sig) -> bool { return sig->Function()->IsSetter(); });
     }
 
-    [[nodiscard]] ArenaVector<Signature *> &GetExtensionAccessorSigs()
+    [[nodiscard]] ArenaVector<Signature *> CollectExtensionAccessorSigs(ArenaAllocator *allocator)
     {
         ES2PANDA_ASSERT(!IsETSArrowType());
-        return extensionAccessorSigs_;
-    }
-
-    [[nodiscard]] ArenaVector<Signature *> &GetExtensionFunctionSigs()
-    {
-        ES2PANDA_ASSERT(!IsETSArrowType());
-        return extensionFunctionSigs_;
+        ES2PANDA_ASSERT(IsExtensionAccessorType());
+        ArenaVector<Signature *> accessorSigs {allocator->Adapter()};
+        for (auto s : callSignatures_) {
+            if (s->IsExtensionAccessor()) {
+                accessorSigs.push_back(s);
+            }
+        }
+        return accessorSigs;
     }
 
     [[nodiscard]] Signature *FirstAbstractSignature() const noexcept
@@ -116,12 +117,12 @@ public:
     ETSObjectType *ArrowToFunctionalInterfaceDesiredArity(ETSChecker *checker, size_t arity);
     [[nodiscard]] bool IsExtensionFunctionType() const
     {
-        return !extensionFunctionSigs_.empty() || !extensionAccessorSigs_.empty();
+        return hasExtensionSignatures_;
     }
 
     [[nodiscard]] bool IsExtensionAccessorType() const
     {
-        return !extensionAccessorSigs_.empty();
+        return hasExtensionAccessorSignatures_;
     }
 
     void ToAssemblerType(std::stringstream &ss) const override;
@@ -161,11 +162,10 @@ public:
 
 private:
     ArenaVector<Signature *> callSignatures_;
-    ArenaVector<Signature *> extensionFunctionSigs_;
-    ArenaVector<Signature *> extensionAccessorSigs_;
-    util::StringView const name_;
-    util::StringView const assemblerName_;
+    util::StringView const nameOrAsmName_;
     Signature *helperSignature_ {};
+    bool hasExtensionSignatures_ {};
+    bool hasExtensionAccessorSignatures_ {};
 };
 }  // namespace ark::es2panda::checker
 

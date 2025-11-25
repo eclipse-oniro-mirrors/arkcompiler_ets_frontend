@@ -64,16 +64,34 @@ struct PairHash {
         return hash1 ^ (hash2 << 1ULL);
     }
 };
+
+template <typename T>
+std::vector<T> ArenaVectorToStdVector(ArenaVector<T> const &av)
+{
+    std::vector<T> res;
+    res.assign(av.begin(), av.end());
+    return res;
+}
+
+template <typename T>
+ArenaVector<T> StdVectorToArenaVector(std::vector<T> const &av, ArenaAllocator *allocator)
+{
+    ArenaVector<T> res {allocator->Adapter()};
+    res.assign(av.begin(), av.end());
+    return res;
+}
+
 using ComputedAbstracts =
-    ArenaUnorderedMap<ETSObjectType *, std::pair<ArenaVector<ETSFunctionType *>, ArenaUnorderedSet<ETSObjectType *>>>;
-using ArrayMap = ArenaUnorderedMap<std::pair<Type *, bool>, ETSArrayType *, PairHash>;
-using ObjectInstantiationMap = ArenaUnorderedMap<ETSObjectType *, ArenaUnorderedMap<util::StringView, ETSObjectType *>>;
-using FunctionTypeInstantiationMap = std::unordered_map<std::string, ETSFunctionType *>;
-using GlobalArraySignatureMap = ArenaUnorderedMap<const ETSArrayType *, Signature *>;
-using FunctionSignatureMap = ArenaUnorderedMap<ETSFunctionType *, ETSFunctionType *>;
-using FunctionInterfaceMap = ArenaUnorderedMap<ETSFunctionType *, ETSObjectType *>;
-using FunctionalInterfaceMap = ArenaUnorderedMap<util::StringView, ETSObjectType *>;
-using TypeMapping = ArenaUnorderedMap<Type const *, Type *>;
+    std::unordered_map<ETSObjectType *, std::pair<std::vector<ETSFunctionType *>, std::unordered_set<ETSObjectType *>>>;
+using ArrayMap = std::unordered_map<std::pair<Type *, bool>, ETSArrayType *, PairHash>;
+using ObjectInstantiationMap = std::unordered_map<ETSObjectType *, std::unordered_map<std::string, ETSObjectType *>>;
+template <typename T>
+using TypeInstantiationCacheMap = std::unordered_map<std::string, T *>;
+using GlobalArraySignatureMap = std::unordered_map<const ETSArrayType *, Signature *>;
+using FunctionSignatureMap = std::unordered_map<ETSFunctionType *, ETSFunctionType *>;
+using FunctionInterfaceMap = std::unordered_map<ETSFunctionType *, ETSObjectType *>;
+using FunctionalInterfaceMap = std::unordered_map<util::StringView, ETSObjectType *>;
+using TypeMapping = std::unordered_map<Type const *, Type *>;
 using ConstraintCheckRecord = std::tuple<const ArenaVector<Type *> *, const Substitution, lexer::SourcePosition>;
 // can't use util::DiagnosticWithParams because std::optional can't contain references
 using MaybeDiagnosticInfo =
@@ -85,18 +103,7 @@ class ETSChecker final : public Checker {
 public:
     explicit ETSChecker(ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         // NOLINTNEXTLINE(readability-redundant-member-init)
-        : Checker(allocator, diagnosticEngine),
-          arrayTypes_(Allocator()->Adapter()),
-          objectInstantiationMap_(Allocator()->Adapter()),
-          invokeToArrowSignatures_(Allocator()->Adapter()),
-          arrowToFuncInterfaces_(Allocator()->Adapter()),
-          globalArraySignatures_(Allocator()->Adapter()),
-          unionAssemblerTypes_(Allocator()->Adapter()),
-          functionalInterfaceCache_(Allocator()->Adapter()),
-          apparentTypes_(Allocator()->Adapter()),
-          overloadSigContainer_(Allocator()->Adapter()),
-          readdedChecker_(Allocator()->Adapter()),
-          stringLiteralTypes_(Allocator()->Adapter())
+        : Checker(allocator, diagnosticEngine)
     {
     }
 
@@ -162,8 +169,15 @@ public:
     GlobalArraySignatureMap &GlobalArrayTypes();
     const GlobalArraySignatureMap &GlobalArrayTypes() const;
 
-    const ArenaSet<util::StringView> &UnionAssemblerTypes() const;
-    ArenaSet<util::StringView> &UnionAssemblerTypes();
+    const auto &UnionAssemblerTypes() const
+    {
+        return unionAssemblerTypes_;
+    }
+
+    auto &UnionAssemblerTypes()
+    {
+        return unionAssemblerTypes_;
+    }
 
     bool IsRelaxedAnyTypeAnnotationAllowed() const
     {
@@ -223,22 +237,22 @@ public:
     void CheckDynamicInheritanceAndImplement(ETSObjectType *const interfaceOrClassType);
     void CheckFunctionRedeclarationInInterface(ETSObjectType *classType, ArenaVector<Signature *> &similarSignatures,
                                                Signature *sigFunc);
-    void ValidateAbstractMethodsToBeImplemented(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+    void ValidateAbstractMethodsToBeImplemented(std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                 ETSObjectType *classType,
                                                 const std::vector<Signature *> &implementedSignatures);
     void ValidateOptionalPropOverriding(const std::vector<ETSFunctionType *> &optionalProps, ETSObjectType *classType);
-    void ApplyModifiersAndRemoveImplementedAbstracts(ArenaVector<ETSFunctionType *>::iterator &it,
-                                                     ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+    void ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunctionType *>::iterator &it,
+                                                     std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                      ETSObjectType *classType, bool &functionOverridden,
                                                      const Accessor &isGetSetExternal);
-    void ValidateAbstractSignature(ArenaVector<ETSFunctionType *>::iterator &it,
-                                   ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+    void ValidateAbstractSignature(std::vector<ETSFunctionType *>::iterator &it,
+                                   std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                    const std::vector<Signature *> &implementedSignatures, bool &functionOverridden,
                                    Accessor &isGetSetExternal);
-    void ValidateNonOverriddenFunction(ETSObjectType *classType, ArenaVector<ETSFunctionType *>::iterator &it,
-                                       ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+    void ValidateNonOverriddenFunction(ETSObjectType *classType, std::vector<ETSFunctionType *>::iterator &it,
+                                       std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                        bool &functionOverridden, const Accessor &isGetSet);
-    void MaybeReportErrorsForOverridingValidation(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+    void MaybeReportErrorsForOverridingValidation(std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                   ETSObjectType *classType, const lexer::SourcePosition &pos,
                                                   bool reportError);
     void AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classType, ETSObjectType *interfaceType,
@@ -248,7 +262,7 @@ public:
     void CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                  std::vector<Signature *> *implementedSignatures,
                                                  std::vector<ETSFunctionType *> *optionalProps,
-                                                 const ArenaVector<ETSFunctionType *> &abstractsToBeImplemented);
+                                                 const std::vector<ETSFunctionType *> &abstractsToBeImplemented);
     void AddImplementedSignature(std::vector<Signature *> *implementedSignatures, varbinder::LocalVariable *function,
                                  ETSFunctionType *it);
     void AddOptionalProps(std::vector<ETSFunctionType *> *optionalPropSignatures, varbinder::LocalVariable *function);
@@ -265,10 +279,10 @@ public:
     void CheckConstFieldInitialized(const ETSObjectType *classType, varbinder::LocalVariable *classVar);
     void CheckConstFieldInitialized(const Signature *signature, varbinder::LocalVariable *classVar);
     void ComputeAbstractsFromInterface(ETSObjectType *interfaceType);
-    ArenaVector<ETSFunctionType *> &GetAbstractsForClass(ETSObjectType *classType);
+    std::vector<ETSFunctionType *> &GetAbstractsForClass(ETSObjectType *classType);
     std::vector<Signature *> CollectAbstractSignaturesFromObject(const ETSObjectType *objType);
     void CreateFunctionTypesFromAbstracts(const std::vector<Signature *> &abstracts,
-                                          ArenaVector<ETSFunctionType *> *target);
+                                          std::vector<ETSFunctionType *> *target);
     void CheckCyclicConstructorCall(Signature *signature);
     void CheckAnnotationReference(const ir::MemberExpression *memberExpr, const varbinder::LocalVariable *prop);
     std::vector<ResolveResult *> HandlePropertyResolution(varbinder::LocalVariable *const prop,
@@ -323,18 +337,25 @@ public:
     ETSResizableArrayType *CreateETSMultiDimResizableArrayType(Type *element, size_t dimSize);
     ETSResizableArrayType *CreateETSResizableArrayType(Type *element);
     ETSArrayType *CreateETSArrayType(Type *elementType, bool isCachePolluting = false);
+
     Type *CreateETSUnionType(Span<Type *const> constituentTypes);
     template <size_t N>
     Type *CreateETSUnionType(Type *const (&arr)[N])  // NOLINT(modernize-avoid-c-arrays)
     {
         return CreateETSUnionType(Span(arr));
     }
-    Type *CreateETSUnionType(ArenaVector<Type *> &&constituentTypes)
+    Type *CreateETSUnionType(std::vector<Type *> &&constituentTypes)
     {
         return CreateETSUnionType(Span<Type *const>(constituentTypes));
     }
+
+    ETSTupleType *CreateETSTupleType(Span<Type *const> elements, bool readonly);
+    ETSTupleType *CreateETSTupleType(std::vector<Type *> &&elements, bool readonly)
+    {
+        return CreateETSTupleType(Span<Type *const>(elements), readonly);
+    }
+
     Type *CreateUnionFromKeyofType(ETSObjectType *const type);
-    void ProcessTypeMembers(ETSObjectType *type, ArenaVector<Type *> &literals);
     ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromPromiseType(ETSObjectType *promiseType);
     ETSAsyncFuncReturnType *CreateETSAsyncFuncReturnTypeFromBaseType(Type *baseType);
     ETSTypeAliasType *CreateETSTypeAliasType(util::StringView name, const ir::AstNode *declNode,
@@ -558,8 +579,8 @@ public:
     void ConcatConstantString(util::UString &target, Type *type);
     Type *HandleStringConcatenation(Type *leftType, Type *rightType);
     Type *ResolveIdentifier(ir::Identifier *ident);
-    ETSFunctionType *FindFunctionInVectorGivenByName(util::StringView name, ArenaVector<ETSFunctionType *> &list);
-    void MergeComputedAbstracts(ArenaVector<ETSFunctionType *> &merged, ArenaVector<ETSFunctionType *> &current);
+    ETSFunctionType *FindFunctionInVectorGivenByName(util::StringView name, std::vector<ETSFunctionType *> &list);
+    void MergeComputedAbstracts(std::vector<ETSFunctionType *> &merged, std::vector<ETSFunctionType *> &current);
     void MergeSignatures(ETSFunctionType *target, ETSFunctionType *source);
     ir::AstNode *FindAncestorGivenByType(ir::AstNode *node, ir::AstNodeType type, const ir::AstNode *endNode = nullptr);
     util::StringView GetContainingObjectNameFromSignature(Signature *signature);
@@ -622,7 +643,6 @@ public:
 
     ETSObjectType *GetRelevantArgumentedTypeFromChild(ETSObjectType *child, ETSObjectType *target);
     util::StringView GetHashFromTypeArguments(const ArenaVector<Type *> &typeArgTypes);
-    util::StringView GetHashFromSubstitution(const Substitution *substitution, const bool isExtensionFuncFlag);
     util::StringView GetHashFromFunctionType(ir::ETSFunctionType *type);
     static ETSObjectType *GetOriginalBaseType(Type *object);
     void SetArrayPreferredTypeForNestedMemberExpressions(ir::MemberExpression *expr, Type *annotationType);
@@ -817,7 +837,7 @@ public:
         overloadSigContainer_.insert(overloadSigContainer_.end(), overloadHelperSig);
     }
 
-    ArenaVector<Signature *> &GetOverloadSigContainer()
+    std::vector<Signature *> &GetOverloadSigContainer()
     {
         ES2PANDA_ASSERT(overloadSigContainer_.size() == 1);
         return overloadSigContainer_;
@@ -851,7 +871,7 @@ public:
         constraintCheckScopesCount_ = 0;
         globalArraySignatures_.clear();
         unionAssemblerTypes_.clear();
-        GetCachedComputedAbstracts()->clear();
+        cachedComputedAbstracts_.clear();
         functionalInterfaceCache_.clear();
         constantBuiltinTypesCache_.clear();
         apparentTypes_.clear();
@@ -865,26 +885,9 @@ public:
     checker::ETSFunctionType *IntersectSignatureSets(const checker::ETSFunctionType *left,
                                                      const checker::ETSFunctionType *right);
 
-    ComputedAbstracts *GetCachedComputedAbstracts()
+    ComputedAbstracts &GetCachedComputedAbstracts()
     {
-        if (cachedComputedAbstracts_ == nullptr) {
-            InitCachedComputedAbstracts();
-        }
         return cachedComputedAbstracts_;
-    }
-
-    void SetCachedComputedAbstracts(ComputedAbstracts *cachedComputedAbstracts)
-    {
-        cachedComputedAbstracts_ = cachedComputedAbstracts;
-    }
-
-    void InitCachedComputedAbstracts()
-    {
-        // clang-format off
-        cachedComputedAbstracts_ = ProgramAllocator()->New<ArenaUnorderedMap<ETSObjectType *,
-            std::pair<ArenaVector<ETSFunctionType *>,
-            ArenaUnorderedSet<ETSObjectType *>>>>(ProgramAllocator()->Adapter());
-        // clang-format on
     }
 
 private:
@@ -931,14 +934,8 @@ private:
     bool CheckDefaultTypeParameter(const ir::TSTypeParameter *param, TypeSet &typeParameterDecls);
 
     void SetUpTypeParameterConstraint(ir::TSTypeParameter *param);
-    ETSObjectType *UpdateGlobalType(ETSObjectType *objType, util::StringView name);
-    void WrapTypeNode(ir::AstNode *node);
     void CheckProgram(parser::Program *program, bool runAnalysis = false);
     void CheckWarnings(parser::Program *program, const util::Options &options);
-
-    Type *ResolveUnionUncheckedType(ArenaVector<checker::Type *> &&apparentTypes);
-
-    bool ComputeSuperType(ETSObjectType *type);
 
     template <typename... Args>
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
@@ -968,24 +965,26 @@ private:
     ArrayMap arrayTypes_;
     std::vector<ConstraintCheckRecord> pendingConstraintCheckRecords_ {};
     ObjectInstantiationMap objectInstantiationMap_;
-    FunctionTypeInstantiationMap functionTypeInstantiationMap_;  // not an arena container
+    TypeInstantiationCacheMap<ETSFunctionType> functionTypeInstantiationMap_;
+    TypeInstantiationCacheMap<ETSTupleType> tupleInstantiationCacheMap_;
+    TypeInstantiationCacheMap<Type> unionInstantiationCacheMap_;
     FunctionSignatureMap invokeToArrowSignatures_;
     FunctionInterfaceMap arrowToFuncInterfaces_;
     std::unordered_map<Type *, Type *> awaitedTypeCache_;
     size_t constraintCheckScopesCount_ {0};
     GlobalArraySignatureMap globalArraySignatures_;
-    ArenaSet<util::StringView> unionAssemblerTypes_;
-    ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
+    std::unordered_set<util::StringView> unionAssemblerTypes_;
+    ComputedAbstracts cachedComputedAbstracts_;
     std::unordered_map<Type *, Type *> constantBuiltinTypesCache_;
     FunctionalInterfaceMap functionalInterfaceCache_;
     TypeMapping apparentTypes_;
     std::recursive_mutex mtx_;
     evaluate::ScopedDebugInfoPlugin *debugInfoPlugin_ {nullptr};
     std::unordered_set<ir::TSTypeAliasDeclaration *> elementStack_;
-    ArenaVector<Signature *> overloadSigContainer_;
-    ArenaSet<ETSChecker *> readdedChecker_;
+    std::vector<Signature *> overloadSigContainer_;
+    std::unordered_set<ETSChecker *> readdedChecker_;
     bool permitRelaxedAny_ {false};
-    ArenaMap<std::string, checker::ETSStringType *> stringLiteralTypes_;
+    std::unordered_map<std::string, checker::ETSStringType *> stringLiteralTypes_;
 };
 
 }  // namespace ark::es2panda::checker
