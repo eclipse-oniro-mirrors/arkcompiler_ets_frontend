@@ -35,6 +35,25 @@ Type *ETSEnumType::GetBaseEnumElementType(ETSChecker *checker)
     return checker->MaybeUnboxType(SuperType()->TypeArguments()[0]);
 }
 
+static void SetGenerateValueOfFlag(TypeRelation *relation)
+{
+    if (!relation->GetNode()->TsType()->IsETSUnionType()) {
+        relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        return;
+    }
+
+    if (relation->GetNode()->IsConditionalExpression()) {
+        auto consequent = relation->GetNode()->AsConditionalExpression()->Consequent();
+        auto alternate = relation->GetNode()->AsConditionalExpression()->Alternate();
+        if (consequent->TsType()->IsETSEnumType()) {
+            consequent->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        }
+        if (alternate->TsType()->IsETSEnumType()) {
+            alternate->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        }
+    }
+}
+
 bool ETSStringEnumType::AssignmentSource(TypeRelation *relation, Type *target)
 {
     bool result = false;
@@ -43,7 +62,7 @@ bool ETSStringEnumType::AssignmentSource(TypeRelation *relation, Type *target)
     } else if (target->IsETSStringType()) {
         result = true;
         if (relation->GetNode() != nullptr) {
-            relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+            SetGenerateValueOfFlag(relation);
         }
     } else if (target->IsETSUnionType()) {
         auto &unionConstituentTypes = target->AsETSUnionType()->ConstituentTypes();
@@ -142,15 +161,15 @@ bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
         } else if (EnumAnnotedType() != nullptr) {
             if (CheckAssignableNumericTypes(target)) {
                 result = true;
-                relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+                SetGenerateValueOfFlag(relation);
             }
         } else if (target->IsBuiltinNumeric()) {
             result = true;
-            relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+            SetGenerateValueOfFlag(relation);
         }
     } else if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC)) {
         result = true;
-        relation->GetNode()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        SetGenerateValueOfFlag(relation);
     } else if (target->IsETSUnionType()) {
         auto &unionConstituentTypes = target->AsETSUnionType()->ConstituentTypes();
         for (auto *constituentType : unionConstituentTypes) {

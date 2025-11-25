@@ -925,6 +925,7 @@ private:
     void CheckItemCasesConstant(ArenaVector<ir::SwitchCaseStatement *> const &cases);
 
     void CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &annotations);
+    void ReputCheckerDataProgram(ETSChecker *eChecker);
 
     template <typename EnumType>
     EnumType *CreateEnumTypeFromEnumDeclaration(ir::TSEnumDeclaration const *const enumDecl);

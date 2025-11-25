@@ -89,6 +89,13 @@ def parse_method_or_constructor(data: str, start: int = 0) -> Tuple[int, Dict]:
         if data[first_body_token_pos: first_body_token_pos + len('return')] == 'return':
             res["additional_attributes"] = "get"
 
+    setters_begin_names = ["Set", "Add", "Update"]
+    setters_banned_names = ["SetOriginalNode", "SetParent", "SetRange", "SetStart", "SetEnd", "SetAnnotations"]
+    is_setter = any(res["name"].startswith(s) for s in setters_begin_names)
+    is_banned_setter = any(res["name"].find(s) != -1 for s in setters_banned_names)
+    if is_setter and not is_banned_setter:
+        res["additional_attributes"] = "set"
+
     return end_of_function + 1, res
 
 

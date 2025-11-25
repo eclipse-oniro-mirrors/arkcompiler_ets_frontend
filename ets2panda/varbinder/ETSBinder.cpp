@@ -1089,19 +1089,37 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
     return true;
 }
 
+using GlobalBindingItem = std::pair<const util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
+static bool isDefaultExported(const GlobalBindingItem &item)
+{
+    if (item.second.second == nullptr) {
+        return false;
+    }
+    if (item.second.second->IsDefaultExported()) {
+        return true;
+    }
+    if (!item.second.second->IsETSImportDeclaration()) {
+        return false;
+    }
+
+    auto *specifier = item.second.second->AsETSImportDeclaration()->Specifiers()[0];
+    util::StringView name;
+    if (specifier->IsImportSpecifier()) {
+        name = specifier->AsImportSpecifier()->Local()->Name();
+    } else if (specifier->IsImportNamespaceSpecifier()) {
+        name = specifier->AsImportNamespaceSpecifier()->Local()->Name();
+    } else {
+        ES2PANDA_UNREACHABLE();
+    }
+    return name == compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY;
+}
+
 void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *const> records,
                                                         ir::ImportDefaultSpecifier *const importDefaultSpecifier,
                                                         const ir::ETSImportDeclaration *const import)
 {
     auto importProgram = records[0];
     const auto &globalBindings = importProgram->GlobalScope()->Bindings();
-    auto isDefaultExported = [](const auto &item) {
-        return item.second.second != nullptr &&
-               (item.second.second->IsDefaultExported() ||
-                (item.second.second->IsETSImportDeclaration() &&
-                 item.second.second->AsETSImportDeclaration()->Specifiers()[0]->AsImportSpecifier()->Local()->Name() ==
-                     compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY));
-    };
     auto selectMap = importProgram->VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto selectMap2 = selectMap.find(import->ResolvedSource());
     if (selectMap2 != selectMap.end()) {
@@ -1456,7 +1474,7 @@ void ETSBinder::BuildExternalProgram(parser::Program *extProgram)
     recordTable_ = extRecordTable;
     SetProgram(extProgram);
 
-    if (!extProgram->IsASTLowered()) {
+    if (!extProgram->IsASTLowered() && extProgram->IsProgramModified()) {
         BuildProgram();
     } else {
         extRecordTable->Merge(extProgram->VarBinder()->AsETSBinder()->GetExternalRecordTable().at(extProgram));

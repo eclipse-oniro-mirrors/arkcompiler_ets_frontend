@@ -877,15 +877,17 @@ void InitScopesPhaseETS::HandleProgram(parser::Program *program)
         (void)_;
         auto savedTopScope(program->VarBinder()->TopScope());
         auto mainProg = progList.front();
-        if (mainProg->IsASTLowered()) {
-            continue;
+        if (!mainProg->IsASTLowered() && mainProg->IsProgramModified()) {
+            mainProg->VarBinder()->InitTopScope();
+            AddGlobalToBinder(mainProg);
+            BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
         }
-        mainProg->VarBinder()->InitTopScope();
-        AddGlobalToBinder(mainProg);
-        BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
         auto globalClass = mainProg->GlobalClass();
         auto globalScope = mainProg->GlobalScope();
         for (auto &prog : progList) {
+            if (prog->IsASTLowered() || !prog->IsProgramModified()) {
+                continue;
+            }
             prog->SetGlobalClass(globalClass);
             BindScopeNode(prog->VarBinder()->GetScope(), prog->Ast());
             prog->VarBinder()->ResetTopScope(globalScope);

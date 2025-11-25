@@ -131,6 +131,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_dump_src_with_jsdoc_after_parse compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_decl_from_id compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "pugin_proceed_to_state_test_overload_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_recheck_optimize_test recheck_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS

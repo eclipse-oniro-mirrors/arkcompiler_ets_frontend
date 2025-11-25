@@ -40,56 +40,62 @@
 
 namespace ark::es2panda::checker {
 
+void ETSChecker::ReputCheckerDataProgram(ETSChecker *eChecker)
+{
+    if (!HasStatus(CheckerStatus::BUILTINS_INITIALIZED)) {
+        SetGlobalTypesHolder(eChecker->GetGlobalTypesHolder());
+        AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
+    }
+
+    if (auto it = readdedChecker_.find(eChecker); it != readdedChecker_.end()) {
+        return;
+    }
+    readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
+    auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
+    for (auto &[key, value] : *computedAbstractMapToCopy) {
+        if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+            return;
+        }
+        auto &[v1, v2] = value;
+        ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
+        ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
+        newV1.assign(v1.cbegin(), v1.cend());
+        newV2.insert(v2.cbegin(), v2.cend());
+        GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+    }
+
+    auto &globalArraySigs = eChecker->globalArraySignatures_;
+    globalArraySignatures_.insert(globalArraySigs.cbegin(), globalArraySigs.cend());
+
+    auto &apparentTypes = eChecker->apparentTypes_;
+    apparentTypes_.insert(apparentTypes.cbegin(), apparentTypes.cend());
+
+    auto &objectInstantiationMap = eChecker->objectInstantiationMap_;
+    for (auto &[key, value] : objectInstantiationMap) {
+        if (objectInstantiationMap_.find(key) == objectInstantiationMap_.end()) {
+            objectInstantiationMap_.insert(objectInstantiationMap.cbegin(), objectInstantiationMap.cend());
+        }
+    }
+
+    auto &invokeToArrowSignatures = eChecker->invokeToArrowSignatures_;
+    invokeToArrowSignatures_.insert(invokeToArrowSignatures.cbegin(), invokeToArrowSignatures.cend());
+    auto &arrowToFuncInterfaces = eChecker->arrowToFuncInterfaces_;
+    arrowToFuncInterfaces_.insert(arrowToFuncInterfaces.cbegin(), arrowToFuncInterfaces.cend());
+    auto unionAssemblerTypes = eChecker->unionAssemblerTypes_;
+    unionAssemblerTypes_.insert(unionAssemblerTypes.cbegin(), unionAssemblerTypes.cend());
+}
+
 void ETSChecker::ReputCheckerData()
 {
     readdedChecker_.insert(this);
     for (auto &[_, extPrograms] : Program()->ExternalSources()) {
         (void)_;
-        auto *extProg = extPrograms.front();
-        if (!extProg->IsASTLowered()) {
-            continue;
-        }
-        auto eChecker = extProg->Checker()->AsETSChecker();
-
-        if (!HasStatus(CheckerStatus::BUILTINS_INITIALIZED)) {
-            SetGlobalTypesHolder(eChecker->GetGlobalTypesHolder());
-            AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
-        }
-
-        if (auto it = readdedChecker_.find(eChecker); it != readdedChecker_.end()) {
-            continue;
-        }
-        readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
-        auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
-        for (auto &[key, value] : *computedAbstractMapToCopy) {
-            if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+        for (auto *extProg : extPrograms) {
+            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
                 continue;
             }
-            auto &[v1, v2] = value;
-            ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
-            ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
-            newV1.assign(v1.cbegin(), v1.cend());
-            newV2.insert(v2.cbegin(), v2.cend());
-            GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+            ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
-
-        auto &globalArraySigs = eChecker->globalArraySignatures_;
-        globalArraySignatures_.insert(globalArraySigs.cbegin(), globalArraySigs.cend());
-
-        auto &apparentTypes = eChecker->apparentTypes_;
-        apparentTypes_.insert(apparentTypes.cbegin(), apparentTypes.cend());
-
-        auto &objectInstantiationMap = eChecker->objectInstantiationMap_;
-        for (auto &[key, value] : objectInstantiationMap) {
-            if (objectInstantiationMap_.find(key) == objectInstantiationMap_.end()) {
-                objectInstantiationMap_.insert(objectInstantiationMap.cbegin(), objectInstantiationMap.cend());
-            }
-        }
-
-        auto &invokeToArrowSignatures = eChecker->invokeToArrowSignatures_;
-        invokeToArrowSignatures_.insert(invokeToArrowSignatures.cbegin(), invokeToArrowSignatures.cend());
-        auto &arrowToFuncInterfaces = eChecker->arrowToFuncInterfaces_;
-        arrowToFuncInterfaces_.insert(arrowToFuncInterfaces.cbegin(), arrowToFuncInterfaces.cend());
     }
 }
 
@@ -387,7 +393,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     for (auto &[_, extPrograms] : program->ExternalSources()) {
         (void)_;
         for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered()) {
+            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
                 extProg->PushChecker(this);
                 auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
                 varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);
@@ -398,6 +404,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
                 CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
                 VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
                 VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
+                extProg->SetProgramModified(false);
             }
         }
     }
