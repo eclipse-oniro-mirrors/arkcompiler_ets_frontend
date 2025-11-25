@@ -296,7 +296,7 @@ public:
         return static_cast<checker::ETSObjectFlags>(flags_ & ETSObjectFlags::UNBOXABLE_TYPE);
     }
 
-    ETSObjectType *GetInstantiatedType(util::StringView hash);
+    ETSObjectType *GetTypeInstantiation(ETSChecker *checker, std::string const &hash);
 
     varbinder::Scope *GetTypeArgumentScope() const
     {
@@ -307,7 +307,7 @@ public:
         return typeParams->Scope();
     }
 
-    void InsertInstantiationMap(const util::StringView key, ETSObjectType *value);
+    void InsertTypeInstantiation(ETSChecker *checker, std::string const &hash, ETSObjectType *value);
 
     template <PropertyType TYPE>
     varbinder::LocalVariable *GetOwnProperty(const util::StringView name) const
@@ -509,9 +509,9 @@ private:
 
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
 
-    void SetCopiedTypeProperties(TypeRelation *relation, ETSObjectType *copiedType, ArenaVector<Type *> &&newTypeArgs,
-                                 ETSObjectType *base);
-    bool SubstituteTypeArgs(TypeRelation *relation, ArenaVector<Type *> &newTypeArgs, const Substitution *substitution);
+    void SetCopiedTypeProperties(TypeRelation *relation, ETSObjectType *copiedType,
+                                 std::vector<Type *> const &newTypeArgs, ETSObjectType *base);
+    bool SubstituteTypeArgs(TypeRelation *relation, std::vector<Type *> &newTypeArgs, const Substitution *substitution);
 
     bool TryCastByte(TypeRelation *const relation, Type *const target);
     bool TryCastIntegral(TypeRelation *const relation, Type *const target);

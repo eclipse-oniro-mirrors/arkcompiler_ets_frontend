@@ -74,7 +74,7 @@ checker::VerifiedType ETSUnionType::Check(checker::ETSChecker *checker)
     return {this, GetType(checker)};
 }
 
-static bool CheckConstituentTypesValid(ArenaVector<checker::Type *> const &constituentTypes)
+static bool CheckConstituentTypesValid(std::vector<checker::Type *> const &constituentTypes)
 {
     for (auto &it : constituentTypes) {
         if (it->IsTypeError()) {
@@ -91,7 +91,7 @@ checker::Type *ETSUnionType::GetType(checker::ETSChecker *checker)
     }
     checker->CheckAnnotations(this);
 
-    ArenaVector<checker::Type *> types(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> types;
 
     for (auto *it : Types()) {
         types.push_back(it->GetType(checker));

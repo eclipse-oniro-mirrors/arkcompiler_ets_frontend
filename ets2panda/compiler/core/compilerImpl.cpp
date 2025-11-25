@@ -393,7 +393,6 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
 
     if constexpr (std::is_same_v<Checker, checker::ETSChecker>) {
         CreateDebuggerEvaluationPlugin(checker, *context->allocator, &program, unit.options);
-        checker.InitCachedComputedAbstracts();
     }
     auto emitter = Emitter(context);
     context->emitter = &emitter;

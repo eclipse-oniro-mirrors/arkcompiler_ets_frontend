@@ -19,4 +19,3 @@ class C extends A/* @@ label1 */<A/* @@ label2 */<C>>{}
 
 /* @@@ label Error Semantic error ESE0228: Type argument 'A<T>' should be a subtype of 'A<A<A<T>>>' constraint */
 /* @@@ label1 Error Semantic error ESE0228: Type argument 'A<C>' should be a subtype of 'A<A<A<C>>>' constraint */
-/* @@@ label2 Error Semantic error ESE0228: Type argument 'C' should be a subtype of 'A<A<C>>' constraint */

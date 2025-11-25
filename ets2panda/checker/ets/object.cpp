@@ -167,15 +167,6 @@ static bool CheckFunctionDecl(varbinder::LocalVariable *child, varbinder::LocalV
     return childIsField == parentIsField;
 }
 
-ETSObjectType *ETSChecker::GetSuperType(ETSObjectType *type)
-{
-    ComputeSuperType(type);
-    if (type == GlobalETSObjectType()) {
-        return GlobalETSObjectType();
-    }
-    return type->SuperType();
-}
-
 static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type)
 {
     if (type->HasObjectFlag(ETSObjectFlags::RESOLVED_SUPER)) {
@@ -205,14 +196,14 @@ static bool CheckObjectTypeAndSuperType(ETSChecker *checker, ETSObjectType *type
     return false;
 }
 
-bool ETSChecker::ComputeSuperType(ETSObjectType *type)
+static bool ComputeSuperType(ETSChecker *checker, ETSObjectType *type)
 {
-    if (CheckObjectTypeAndSuperType(this, type)) {
+    if (CheckObjectTypeAndSuperType(checker, type)) {
         return true;
     }
     auto *classDef = type->GetDeclNode()->AsClassDefinition();
 
-    TypeStackElement tse(this, type, {{diagnostic::CYCLIC_INHERITANCE, {type->Name()}}}, classDef->Ident()->Start());
+    TypeStackElement tse(checker, type, {{diagnostic::CYCLIC_INHERITANCE, {type->Name()}}}, classDef->Ident()->Start());
     if (tse.HasTypeError()) {
         type->AddObjectFlag(ETSObjectFlags::RESOLVED_SUPER);
         return false;
@@ -225,18 +216,19 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
             superName == compiler::Signatures::REQUIRED_TYPE_NAME ||
             superName == compiler::Signatures::RETURN_TYPE_TYPE_NAME ||
             superName == compiler::Signatures::AWAITED_TYPE_NAME) {
-            LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
+            checker->LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()},
+                              classDef->Super()->Start());
             return false;
         }
     }
 
-    auto *superType = classDef->Super()->AsTypeNode()->GetType(this);
+    auto *superType = classDef->Super()->AsTypeNode()->GetType(checker);
     if (superType == nullptr) {
         return true;
     }
     if (!superType->IsETSObjectType() || !superType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::CLASS)) {
-        LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
-        type->SetSuperType(GlobalETSObjectType());
+        checker->LogError(diagnostic::EXTENDING_UTILITY_TYPE, {classDef->Ident()->Name()}, classDef->Super()->Start());
+        type->SetSuperType(checker->GlobalETSObjectType());
         return true;
     }
 
@@ -244,19 +236,28 @@ bool ETSChecker::ComputeSuperType(ETSObjectType *type)
 
     // struct node has class definition, too
     if (superObj->GetDeclNode()->Parent()->IsETSStructDeclaration()) {
-        LogError(diagnostic::EXTENDING_STRUCT, {classDef->Ident()->Name()}, classDef->Super()->Start());
+        checker->LogError(diagnostic::EXTENDING_STRUCT, {classDef->Ident()->Name()}, classDef->Super()->Start());
     }
 
     if (superObj->GetDeclNode()->IsFinal()) {
-        LogError(diagnostic::EXTENDING_FINAL, {}, classDef->Super()->Start());
+        checker->LogError(diagnostic::EXTENDING_FINAL, {}, classDef->Super()->Start());
         /* It still makes sense to treat superObj as the supertype in future checking */
     }
-    if (GetSuperType(superObj) == nullptr && !superObj->IsGradual()) {
-        superObj = GlobalETSObjectType();
+    if (checker->GetSuperType(superObj) == nullptr && !superObj->IsGradual()) {
+        superObj = checker->GlobalETSObjectType();
     }
     type->SetSuperType(superObj);
     type->AddObjectFlag(ETSObjectFlags::RESOLVED_SUPER);
     return true;
+}
+
+ETSObjectType *ETSChecker::GetSuperType(ETSObjectType *type)
+{
+    ComputeSuperType(this, type);
+    if (type == GlobalETSObjectType()) {
+        return GlobalETSObjectType();
+    }
+    return type->SuperType();
 }
 
 static bool ProcessTypeArguments(ETSObjectType *currentInterface, std::unordered_set<Type *> *extendsSet)
@@ -941,7 +942,7 @@ std::vector<Signature *> ETSChecker::CollectAbstractSignaturesFromObject(const E
 }
 
 void ETSChecker::CreateFunctionTypesFromAbstracts(const std::vector<Signature *> &abstracts,
-                                                  ArenaVector<ETSFunctionType *> *target)
+                                                  std::vector<ETSFunctionType *> *target)
 {
     for (auto *it : abstracts) {
         auto name = it->Function()->Id()->Name();
@@ -956,10 +957,9 @@ void ETSChecker::CreateFunctionTypesFromAbstracts(const std::vector<Signature *>
 
 void ETSChecker::ComputeAbstractsFromInterface(ETSObjectType *interfaceType)
 {
-    auto cachedComputedAbstracts = GetCachedComputedAbstracts();
-    ES2PANDA_ASSERT(cachedComputedAbstracts != nullptr);
-    auto cached = cachedComputedAbstracts->find(interfaceType);
-    if (cached != cachedComputedAbstracts->end()) {
+    auto &cachedComputedAbstracts = GetCachedComputedAbstracts();
+    auto cached = cachedComputedAbstracts.find(interfaceType);
+    if (cached != cachedComputedAbstracts.end()) {
         return;
     }
 
@@ -967,13 +967,13 @@ void ETSChecker::ComputeAbstractsFromInterface(ETSObjectType *interfaceType)
         ComputeAbstractsFromInterface(it);
     }
 
-    ArenaVector<ETSFunctionType *> merged(ProgramAllocator()->Adapter());
+    std::vector<ETSFunctionType *> merged;
     CreateFunctionTypesFromAbstracts(CollectAbstractSignaturesFromObject(interfaceType), &merged);
-    ArenaUnorderedSet<ETSObjectType *> abstractInheritanceTarget(ProgramAllocator()->Adapter());
+    std::unordered_set<ETSObjectType *> abstractInheritanceTarget;
 
     for (auto *interface : interfaceType->Interfaces()) {
-        auto found = cachedComputedAbstracts->find(interface);
-        ES2PANDA_ASSERT(found != cachedComputedAbstracts->end());
+        auto found = cachedComputedAbstracts.find(interface);
+        ES2PANDA_ASSERT(found != cachedComputedAbstracts.end());
 
         if (!abstractInheritanceTarget.insert(found->first).second) {
             continue;
@@ -986,18 +986,18 @@ void ETSChecker::ComputeAbstractsFromInterface(ETSObjectType *interfaceType)
         }
     }
 
-    cachedComputedAbstracts->insert({interfaceType, {merged, abstractInheritanceTarget}});
+    cachedComputedAbstracts.insert({interfaceType, {merged, abstractInheritanceTarget}});
 }
 
-ArenaVector<ETSFunctionType *> &ETSChecker::GetAbstractsForClass(ETSObjectType *classType)
+std::vector<ETSFunctionType *> &ETSChecker::GetAbstractsForClass(ETSObjectType *classType)
 {
-    ArenaVector<ETSFunctionType *> merged(ProgramAllocator()->Adapter());
+    std::vector<ETSFunctionType *> merged;
     CreateFunctionTypesFromAbstracts(CollectAbstractSignaturesFromObject(classType), &merged);
 
-    ArenaUnorderedSet<ETSObjectType *> abstractInheritanceTarget(ProgramAllocator()->Adapter());
+    std::unordered_set<ETSObjectType *> abstractInheritanceTarget;
     if (classType->SuperType() != nullptr) {
-        auto base = GetCachedComputedAbstracts()->find(classType->SuperType());
-        ES2PANDA_ASSERT(base != GetCachedComputedAbstracts()->end());
+        auto base = GetCachedComputedAbstracts().find(classType->SuperType());
+        ES2PANDA_ASSERT(base != GetCachedComputedAbstracts().end());
         MergeComputedAbstracts(merged, base->second.first);
 
         abstractInheritanceTarget.insert(base->first);
@@ -1008,8 +1008,8 @@ ArenaVector<ETSFunctionType *> &ETSChecker::GetAbstractsForClass(ETSObjectType *
 
     for (auto *it : classType->Interfaces()) {
         ComputeAbstractsFromInterface(it);
-        auto found = GetCachedComputedAbstracts()->find(it);
-        ES2PANDA_ASSERT(found != GetCachedComputedAbstracts()->end());
+        auto found = GetCachedComputedAbstracts().find(it);
+        ES2PANDA_ASSERT(found != GetCachedComputedAbstracts().end());
 
         if (!abstractInheritanceTarget.insert(found->first).second) {
             continue;
@@ -1022,7 +1022,7 @@ ArenaVector<ETSFunctionType *> &ETSChecker::GetAbstractsForClass(ETSObjectType *
         }
     }
 
-    return GetCachedComputedAbstracts()->insert({classType, {merged, abstractInheritanceTarget}}).first->second.first;
+    return GetCachedComputedAbstracts().insert({classType, {merged, abstractInheritanceTarget}}).first->second.first;
 }
 
 [[maybe_unused]] static bool DoObjectImplementInterface(const ETSObjectType *interfaceType, const ETSObjectType *target,
@@ -1162,7 +1162,7 @@ void ETSChecker::CheckInterfaceFunctions(ETSObjectType *classType)
 void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classType,
                                                          std::vector<Signature *> *implementedSignatures,
                                                          std::vector<ETSFunctionType *> *optionalProps,
-                                                         const ArenaVector<ETSFunctionType *> &abstractsToBeImplemented)
+                                                         const std::vector<ETSFunctionType *> &abstractsToBeImplemented)
 {
     std::vector<ETSObjectType *> collectedInterfaces;
 
@@ -1189,8 +1189,8 @@ void ETSChecker::CollectImplementedMethodsFromInterfaces(ETSObjectType *classTyp
     }
 }
 
-void ETSChecker::ValidateAbstractSignature(ArenaVector<ETSFunctionType *>::iterator &it,
-                                           ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+void ETSChecker::ValidateAbstractSignature(std::vector<ETSFunctionType *>::iterator &it,
+                                           std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                            const std::vector<Signature *> &implementedSignatures,
                                            bool &functionOverridden, Accessor &isGetSetExternal)
 {
@@ -1236,8 +1236,8 @@ void ETSChecker::ValidateAbstractSignature(ArenaVector<ETSFunctionType *>::itera
     }
 }
 
-void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, ArenaVector<ETSFunctionType *>::iterator &it,
-                                               ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, std::vector<ETSFunctionType *>::iterator &it,
+                                               std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                bool &functionOverridden, const Accessor &isGetSet)
 {
     auto superClassType = classType->SuperType();
@@ -1279,8 +1279,8 @@ void ETSChecker::ValidateNonOverriddenFunction(ETSObjectType *classType, ArenaVe
     }
 }
 
-void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(ArenaVector<ETSFunctionType *>::iterator &it,
-                                                             ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+void ETSChecker::ApplyModifiersAndRemoveImplementedAbstracts(std::vector<ETSFunctionType *>::iterator &it,
+                                                             std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                              ETSObjectType *classType, bool &functionOverridden,
                                                              const Accessor &isGetSetExternal)
 {
@@ -1347,7 +1347,7 @@ void ETSChecker::ValidateOptionalPropOverriding(const std::vector<ETSFunctionTyp
     }
 }
 
-void ETSChecker::ValidateAbstractMethodsToBeImplemented(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+void ETSChecker::ValidateAbstractMethodsToBeImplemented(std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                         ETSObjectType *classType,
                                                         const std::vector<Signature *> &implementedSignatures)
 {
@@ -1383,7 +1383,7 @@ void ETSChecker::ValidateAbstractMethodsToBeImplemented(ArenaVector<ETSFunctionT
     }
 }
 
-void ETSChecker::MaybeReportErrorsForOverridingValidation(ArenaVector<ETSFunctionType *> &abstractsToBeImplemented,
+void ETSChecker::MaybeReportErrorsForOverridingValidation(std::vector<ETSFunctionType *> &abstractsToBeImplemented,
                                                           ETSObjectType *classType, const lexer::SourcePosition &pos,
                                                           bool reportError)
 {
@@ -1434,7 +1434,7 @@ void ETSChecker::AddAccessorFlagsForOptionalPropInterface(ETSObjectType *classTy
 
 void ETSChecker::ValidateOverriding(ETSObjectType *classType, const lexer::SourcePosition &pos)
 {
-    if (GetCachedComputedAbstracts()->find(classType) != GetCachedComputedAbstracts()->end()) {
+    if (GetCachedComputedAbstracts().find(classType) != GetCachedComputedAbstracts().end()) {
         return;
     }
 
@@ -3082,7 +3082,7 @@ Type *ETSChecker::GetApparentType(Type *type)
     }
     if (type->IsETSUnionType()) {
         bool differ = false;
-        ArenaVector<checker::Type *> newConstituent(ProgramAllocator()->Adapter());
+        std::vector<checker::Type *> newConstituent;
         for (auto const &ct : type->AsETSUnionType()->ConstituentTypes()) {
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             newConstituent.push_back(GetApparentType(ct));

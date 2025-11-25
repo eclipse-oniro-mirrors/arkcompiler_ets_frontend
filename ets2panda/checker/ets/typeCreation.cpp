@@ -18,9 +18,11 @@
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/ets/etsEnumType.h"
 #include "checker/types/ets/etsResizableArrayType.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/type.h"
 #include "ir/statements/annotationDeclaration.h"
+#include "util/perfMetrics.h"
 
 #include <compiler/lowering/phase.h>
 
@@ -146,6 +148,17 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
         return nullptr;
     }
 
+    std::stringstream ss;
+    for (auto t : constituentTypes) {
+        ss << ":" << t;
+    }
+    auto hash = ss.str();
+
+    auto &cache = unionInstantiationCacheMap_;
+    if (auto it = cache.find(hash); it != cache.end()) {
+        return it->second;
+    }
+
     ArenaVector<Type *> newConstituentTypes(ProgramAllocator()->Adapter());
     newConstituentTypes.assign(constituentTypes.begin(), constituentTypes.end());
 
@@ -153,12 +166,38 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
     if (newConstituentTypes.size() == 1) {
         return newConstituentTypes[0];
     }
-    auto *un = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
-    auto ut = un->GetAssemblerType().Mutf8();
+    auto type = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
+    auto ut = type->GetAssemblerType().Mutf8();
     if (std::count_if(ut.begin(), ut.end(), [](char c) { return c == ','; }) > 0) {
-        unionAssemblerTypes_.insert(un->GetAssemblerType());
+        unionAssemblerTypes_.insert(type->GetAssemblerType());
     }
-    return un;
+    cache.insert({hash, type});
+    return type;
+}
+
+ETSTupleType *ETSChecker::CreateETSTupleType(Span<Type *const> elements, bool readonly)
+{
+    std::stringstream ss;
+    ss << "tup" << (readonly ? "-ro" : "");
+    for (auto t : elements) {
+        ss << ":" << t;
+    }
+    auto hash = ss.str();
+
+    auto &cache = tupleInstantiationCacheMap_;
+    if (auto it = cache.find(hash); it != cache.end()) {
+        return it->second->AsETSTupleType();
+    }
+
+    ArenaVector<Type *> copiedTypes(ProgramAllocator()->Adapter());
+    copiedTypes.assign(elements.begin(), elements.end());
+
+    auto type = Allocator()->New<ETSTupleType>(this, std::move(copiedTypes));
+    if (readonly) {
+        type->AddTypeFlag(TypeFlag::READONLY);
+    }
+    cache.insert({hash, type});
+    return type;
 }
 
 ETSTypeAliasType *ETSChecker::CreateETSTypeAliasType(util::StringView name, const ir::AstNode *declNode,
@@ -517,9 +556,9 @@ static bool IsInValidKeyofTypeNode(ir::AstNode *node)
            (node->Modifiers() & ir::ModifierFlags::PROTECTED) != 0;
 }
 
-void ETSChecker::ProcessTypeMembers(ETSObjectType *type, ArenaVector<Type *> &literals)
+static void ProcessTypeMembers(ETSChecker *checker, ETSObjectType *type, std::vector<Type *> &literals)
 {
-    if (type == GlobalETSObjectType()) {
+    if (type == checker->GlobalETSObjectType()) {
         return;
     }
 
@@ -529,10 +568,10 @@ void ETSChecker::ProcessTypeMembers(ETSObjectType *type, ArenaVector<Type *> &li
             if (IsInValidKeyofTypeNode(overload)) {
                 continue;
             }
-            literals.push_back(CreateETSStringLiteralType(overload->Key()->Variable()->Name()));
+            literals.push_back(checker->CreateETSStringLiteralType(overload->Key()->Variable()->Name()));
         }
         if (!IsInValidKeyofTypeNode(method->Declaration()->Node())) {
-            literals.push_back(CreateETSStringLiteralType(method->Name()));
+            literals.push_back(checker->CreateETSStringLiteralType(method->Name()));
         }
     }
 
@@ -540,13 +579,13 @@ void ETSChecker::ProcessTypeMembers(ETSObjectType *type, ArenaVector<Type *> &li
         if (IsInValidKeyofTypeNode(field->Declaration()->Node())) {
             continue;
         }
-        literals.push_back(CreateETSStringLiteralType(field->Name()));
+        literals.push_back(checker->CreateETSStringLiteralType(field->Name()));
     }
 }
 
 Type *ETSChecker::CreateUnionFromKeyofType(ETSObjectType *const type)
 {
-    ArenaVector<Type *> stringLiterals(ProgramAllocator()->Adapter());
+    std::vector<Type *> stringLiterals;
     std::deque<ETSObjectType *> superTypes;
     superTypes.push_back(type);
     auto enqueueSupers = [&](ETSObjectType *currentType) {
@@ -562,7 +601,7 @@ Type *ETSChecker::CreateUnionFromKeyofType(ETSObjectType *const type)
         auto *currentType = superTypes.front();
         superTypes.pop_front();
 
-        ProcessTypeMembers(currentType, stringLiterals);
+        ProcessTypeMembers(this, currentType, stringLiterals);
         enqueueSupers(currentType);
     }
 

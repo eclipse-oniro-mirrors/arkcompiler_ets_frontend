@@ -148,7 +148,7 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
     if (it == ctypes.end()) {
         return type;
     }
-    ArenaVector<Type *> newCTypes(ctypes);
+    auto newCTypes = ArenaVectorToStdVector(ctypes);
     do {
         size_t index = it - ctypes.begin();
         newCTypes[index] = UnwrapPromiseType(ctypes[index]);
@@ -230,7 +230,7 @@ Type *ETSChecker::HandleReturnTypeUtilityType(Type *baseType)
     }
 
     if (baseType->IsETSUnionType()) {
-        ArenaVector<Type *> returnTypes(ProgramAllocator()->Adapter());
+        std::vector<Type *> returnTypes;
         for (Type *type : baseType->AsETSUnionType()->ConstituentTypes()) {
             auto *constituentRetType = HandleReturnTypeUtilityType(type);
             if (constituentRetType->IsTypeError()) {
@@ -1095,7 +1095,7 @@ Type *ETSChecker::HandleUnionForPartialType(ETSUnionType *const typeToBePartial)
     // Convert a union type to partial, by converting all types in it to partial, and making a new union
     // type out of them
     const auto *const unionTypeNode = typeToBePartial->AsETSUnionType();
-    ArenaVector<checker::Type *> newTypesForUnion(ProgramAllocator()->Adapter());
+    std::vector<Type *> newTypesForUnion;
 
     for (auto *const typeFromUnion : unionTypeNode->ConstituentTypes()) {
         if ((typeFromUnion->Variable() != nullptr) && (typeFromUnion->Variable()->Declaration() != nullptr)) {
@@ -1255,7 +1255,7 @@ Type *ETSChecker::GetReadonlyType(Type *type)
         return ProgramAllocator()->New<ETSReadonlyType>(type->AsETSTypeParameter());
     }
     if (type->IsETSUnionType()) {
-        ArenaVector<Type *> unionTypes(ProgramAllocator()->Adapter());
+        std::vector<Type *> unionTypes;
         for (auto *t : type->AsETSUnionType()->ConstituentTypes()) {
             unionTypes.emplace_back(t->IsETSObjectType() ? GetReadonlyType(t) : t->Clone(this));
         }
@@ -1294,7 +1294,7 @@ Type *ETSChecker::HandleRequiredType(Type *typeToBeRequired)
     }
 
     if (typeToBeRequired->IsETSUnionType()) {
-        ArenaVector<Type *> unionTypes(ProgramAllocator()->Adapter());
+        std::vector<Type *> unionTypes;
         for (auto *type : typeToBeRequired->AsETSUnionType()->ConstituentTypes()) {
             if (type->IsETSObjectType()) {
                 type = type->Clone(this);
