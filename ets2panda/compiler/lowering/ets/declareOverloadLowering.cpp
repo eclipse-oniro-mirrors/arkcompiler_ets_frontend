@@ -108,12 +108,26 @@ void BuildOverloadHelperFunction(public_lib::Context *ctx, ir::MethodDefinition 
     method->TsType()->AsETSFunctionType()->SetHelperSignature(helperOverload->Function()->Signature());
 }
 
-void UpdateCallSignature(public_lib::Context *ctx, ir::CallExpression *expr)
+static checker::ETSObjectType *FindContainingClass(ir::CallExpression *expr)
+{
+    varbinder::Scope *scope = NearestScope(expr);
+    while (scope != nullptr && !scope->IsClassScope()) {
+        scope = scope->Parent();
+    }
+
+    if (scope == nullptr || scope->AsClassScope()->Node() == nullptr) {
+        return nullptr;
+    }
+
+    return scope->AsClassScope()->Node()->AsClassDefinition()->TsType()->AsETSObjectType();
+}
+
+static void UpdateCallSignature(public_lib::Context *ctx, ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Signature()->HasSignatureFlag(checker::SignatureFlags::DUPLICATE_ASM));
-
     auto *checker = ctx->GetChecker()->AsETSChecker();
     expr->SetTsType(nullptr);
+    checker->Context().SetContainingClass(FindContainingClass(expr));
     expr->Check(checker);
 }
 
