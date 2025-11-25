@@ -23,6 +23,6 @@ function main() {
 
 
 /* @@? 16:35 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
-/* @@? 21:3 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 21:3 Error Semantic error ESE655063: Generic function genericFunc requires explicit type arguments when used as a value. */
 /* @@? 21:15 Error Semantic error ESE0062: need to specify target type for class composite */
 /* @@? 21:38 Error Semantic error ESE0062: need to specify target type for class composite */

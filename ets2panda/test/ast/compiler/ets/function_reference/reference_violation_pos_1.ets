@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
- function identity<A>(a: A): A {
-  return a;
-}
-let x = [1, 2, 3].map(identity)[0];
+function gen<T>(x: T): T { return x; }
 
-/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */
+function main(): void {
+  let f = gen<string>;
+  let r = f("hello");
+  arktest.assertEQ(r, "hello");
+}

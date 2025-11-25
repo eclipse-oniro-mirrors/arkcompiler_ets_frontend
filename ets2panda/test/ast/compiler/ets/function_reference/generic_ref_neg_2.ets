@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
- function identity<A>(a: A): A {
-  return a;
-}
-let x = [1, 2, 3].map(identity)[0];
+function gen<T>(x: T): T { return x; }
+function apply(fn: (n: number) => number): number { return fn(5); }
 
-/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */
+function main() {
+  let bad = apply(gen<string>);
+}
+
+/* @@? 20:13 Error Semantic error ESE0127: No matching call signature for apply(((p1: String) => String)) */
+/* @@? 20:19 Error Semantic error ESE0046: Type '((p1: String) => String)' is not compatible with type '((p1: Double) => Double)' at index 1 */

@@ -2356,42 +2356,104 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     return expr->TsType();
 }
 
-// Convert method references to Arrow type if method is used as value
-static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression *const use, Type *type)
+static bool HasGenericTypeParams(const checker::Type *type)
 {
-    ES2PANDA_ASSERT(use->IsIdentifier() || use->IsMemberExpression());
+    if (type == nullptr || type->IsTypeError() || !type->IsETSFunctionType()) {
+        return false;
+    }
+    auto *functionType = type->AsETSFunctionType();
+    auto &sigs = functionType->CallSignaturesOfMethodOrArrow();
+    for (auto *sig : sigs) {
+        if (!sig->TypeParams().empty()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool IsUsedAsCall(const ir::Expression *expr)
+{
+    auto *p = expr->Parent();
+    return p != nullptr && p->IsCallExpression() && expr == p->AsCallExpression()->Callee();
+}
+
+// Generic function/method references used as values require explicit type arguments.
+static Type *CheckExplicitTypeArgumentsRequired(ETSChecker *checker, ir::Expression *const use, Type *type)
+{
+    ir::Expression *top = use;
+    while (top->Parent()->IsMemberExpression() && !top->Parent()->AsMemberExpression()->IsComputed() &&
+           top->Parent()->AsMemberExpression()->Property() == top) {
+        top = top->Parent()->AsMemberExpression();
+    }
+    const bool usedAsCall = IsUsedAsCall(top);
+    const bool usedAsExplicitInstantiation = top->Parent()->IsETSGenericInstantiatedNode();
+    const bool hasGenericTypeParams = HasGenericTypeParams(type);
+    if (hasGenericTypeParams && !usedAsCall && !usedAsExplicitInstantiation) {
+        util::StringView name;
+        util::StringView func = "function";
+        if (use->IsIdentifier()) {
+            name = use->AsIdentifier()->Name();
+        } else {
+            auto *prop = use->AsMemberExpression()->Property();
+            name = prop->IsIdentifier() ? prop->AsIdentifier()->Name() : func;
+        }
+        checker->LogError(diagnostic::EXPLICIT_TYPE_ARGUMENTS_REQUIRED, {name}, use->Start());
+        return checker->GlobalTypeError();
+    }
+    return nullptr;
+}
+
+// Handles non-method types and cases where the method reference is actually a call or overload declaration.
+static Type *HandleNonMethodAndCallSite(ETSChecker *checker, ir::Expression *use, Type *type)
+{
+    auto *parent = use->Parent();
+
     if (!type->IsETSMethodType()) {
-        if (use->Parent()->IsCallExpression() && type->IsETSObjectType() && use->IsMemberExpression()) {
+        if (parent != nullptr && parent->IsCallExpression() && type->IsETSObjectType() && use->IsMemberExpression()) {
             checker->ValidateCallExpressionIdentifier(use->AsMemberExpression()->Property()->AsIdentifier(), type);
         }
         return type;
     }
-    auto const getUseSite = [use]() {
-        return use->IsIdentifier() ? use->Start() : use->AsMemberExpression()->Property()->Start();
-    };
 
     ir::Expression *expr = use;
     while (expr->Parent()->IsMemberExpression() && !expr->Parent()->AsMemberExpression()->IsComputed() &&
            expr->Parent()->AsMemberExpression()->Property() == expr) {
         expr = expr->Parent()->AsMemberExpression();
     }
-    if (expr->Parent()->IsCallExpression() && expr->Parent()->AsCallExpression()->Callee() == expr) {
-        return type;  // type is actually used as method
-    }
-    if (expr->Parent()->IsOverloadDeclaration()) {
-        return type;  // Don't trans overloaded name to arrow type.
+
+    parent = expr->Parent();
+    if (parent != nullptr) {
+        if (parent->IsCallExpression() && parent->AsCallExpression()->Callee() == expr) {
+            return type;
+        }
+        if (parent->IsOverloadDeclaration()) {
+            return type;
+        }
     }
 
-    auto *const functionType = type->AsETSFunctionType();
+    return nullptr;
+}
+
+// Validates method reference usage and converts method types to arrow function types when valid.
+static Type *TransformMethodTypeToArrow(ETSChecker *checker, ir::Expression *use, Type *methodType)
+{
+    auto *functionType = methodType->AsETSFunctionType();
     auto &signatures = functionType->CallSignatures();
 
-    if (signatures.at(0)->HasSignatureFlag(SignatureFlags::PRIVATE)) {
-        checker->LogError(diagnostic::PRIVATE_OR_PROTECTED_METHOD_AS_VALUE, {"Private"}, getUseSite());
-        return checker->GlobalTypeError();
-    }
-    if (signatures.at(0)->HasSignatureFlag(SignatureFlags::PROTECTED)) {
-        checker->LogError(diagnostic::PRIVATE_OR_PROTECTED_METHOD_AS_VALUE, {"Protected"}, getUseSite());
-        return checker->GlobalTypeError();
+    auto getUseSite = [use]() {
+        return use->IsIdentifier() ? use->Start() : use->AsMemberExpression()->Property()->Start();
+    };
+
+    if (!signatures.empty()) {
+        auto *first = signatures.front();
+        if (first->HasSignatureFlag(SignatureFlags::PRIVATE)) {
+            checker->LogError(diagnostic::PRIVATE_OR_PROTECTED_METHOD_AS_VALUE, {"Private"}, getUseSite());
+            return checker->GlobalTypeError();
+        }
+        if (first->HasSignatureFlag(SignatureFlags::PROTECTED)) {
+            checker->LogError(diagnostic::PRIVATE_OR_PROTECTED_METHOD_AS_VALUE, {"Protected"}, getUseSite());
+            return checker->GlobalTypeError();
+        }
     }
 
     auto it = signatures.begin();
@@ -2408,8 +2470,25 @@ static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression
         checker->LogError(diagnostic::OVERLOADED_METHOD_AS_VALUE, getUseSite());
         return checker->GlobalTypeError();
     }
+
     auto *otherFuncType = functionType->MethodToArrow(checker);
     return otherFuncType == nullptr ? checker->GlobalTypeError() : otherFuncType;
+}
+
+// Method-reference handling: generic rules, call-site behavior, and performs arrow conversion.
+static Type *TransformTypeForMethodReference(ETSChecker *checker, ir::Expression *const use, Type *type)
+{
+    ES2PANDA_ASSERT(use->IsIdentifier() || use->IsMemberExpression());
+
+    if (auto *errType = CheckExplicitTypeArgumentsRequired(checker, use, type); errType != nullptr) {
+        return errType;
+    }
+
+    if (auto *early = HandleNonMethodAndCallSite(checker, use, type); early != nullptr) {
+        return early;
+    }
+
+    return TransformMethodTypeToArrow(checker, use, type);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
@@ -2420,7 +2499,8 @@ checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
 
     ETSChecker *checker = GetETSChecker();
 
-    auto *identType = TransformTypeForMethodReference(checker, expr, checker->ResolveIdentifier(expr));
+    auto *type = checker->ResolveIdentifier(expr);
+    auto *identType = TransformTypeForMethodReference(checker, expr, type);
 
     if (expr->TsType() != nullptr && expr->TsType()->IsTypeError()) {
         return expr->TsType();
