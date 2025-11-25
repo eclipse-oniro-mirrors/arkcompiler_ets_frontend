@@ -152,8 +152,7 @@ static bool TestLiteral(const ir::Literal *lit)
     ES2PANDA_UNREACHABLE();
 }
 // NOTE(recep) To avoid bad accumulator verifier
-static void HandleUndefinedInLogicalExpression(public_lib::Context *context_, ir::Expression *node,
-                                               ir::Expression *init)
+static void HandleUndefinedInLogicalExpression(public_lib::Context *context, ir::Expression *node, ir::Expression *init)
 {
     if (init == nullptr || !init->IsUndefinedLiteral()) {
         return;
@@ -171,8 +170,8 @@ static void HandleUndefinedInLogicalExpression(public_lib::Context *context_, ir
     }
 
     if (bexpr->Left() == node || bexpr->Right() == node) {
-        auto *undef = util::NodeAllocator::Alloc<ir::UndefinedLiteral>(context_->allocator);
-        undef->SetTsType(context_->GetChecker()->AsETSChecker()->GlobalETSUndefinedType());
+        auto *undef = util::NodeAllocator::Alloc<ir::UndefinedLiteral>(context->allocator);
+        undef->SetTsType(context->GetChecker()->AsETSChecker()->GlobalETSUndefinedType());
         undef->SetParent(parent);
 
         if (bexpr->Left() == node) {

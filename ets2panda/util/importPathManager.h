@@ -83,19 +83,22 @@ public:
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
     static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
         "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
-    static constexpr std::string_view etsSuffix = ".ets";
-    static constexpr std::string_view dEtsSuffix = ".d.ets";
-    static constexpr std::string_view cacheSuffix = ".etscache";
-    static constexpr std::string_view abcSuffix = ".abc";
-    static constexpr std::string_view etsstdlibAbcSuffix = "etsstdlib.abc";
+    static constexpr std::string_view ETS_SUFFIX = ".ets";
+    static constexpr std::string_view D_ETS_SUFFIX = ".d.ets";
+    static constexpr std::string_view CACHE_SUFFIX = ".etscache";
+    static constexpr std::string_view ABC_SUFFIX = ".abc";
+    static constexpr std::string_view ETSSTDLIB_ABC_SUFFIX = "etsstdlib.abc";
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr size_t extensionsSize = 9;
     // declaration file must follow source file according to spec
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr std::array<std::string_view, extensionsSize> supportedExtensions = {
-        etsSuffix, dEtsSuffix, cacheSuffix, abcSuffix, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
+        ETS_SUFFIX, D_ETS_SUFFIX, CACHE_SUFFIX, ABC_SUFFIX, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
     // source file must follow declaration file so that extension "best match" will succeed
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr std::array<std::string_view, extensionsSize> supportedExtensionsInversed = {
-        dEtsSuffix, etsSuffix, cacheSuffix, abcSuffix, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
+        D_ETS_SUFFIX, ETS_SUFFIX, CACHE_SUFFIX, ABC_SUFFIX, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
 
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)

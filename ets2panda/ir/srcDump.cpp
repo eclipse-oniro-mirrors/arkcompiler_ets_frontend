@@ -246,7 +246,7 @@ struct PostDumper {
         dumper_->Add(nsClose);
     }
 
-    void operator()([[maybe_unused]] std::monostate)
+    void operator()([[maybe_unused]] std::monostate /*unused*/)
     {
         ES2PANDA_UNREACHABLE();
     }

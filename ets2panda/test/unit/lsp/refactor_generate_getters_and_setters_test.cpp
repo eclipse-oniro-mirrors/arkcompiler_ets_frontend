@@ -34,10 +34,13 @@ using ark::es2panda::lsp::Initializer;
 
 class LspGenerateGS : public LSPAPITests {
 public:
-    static constexpr std::string_view kind = "refactor.rewrite.property.generateAccessors";
-    static constexpr std::string_view name = "GenerateGettersAndSettersRefactor";
-    static constexpr size_t ageFieldPos = 34;   // caret at "_age"
+    static constexpr std::string_view KIND = "refactor.rewrite.property.generateAccessors";
+    static constexpr std::string_view NAME = "GenerateGettersAndSettersRefactor";
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr size_t ageFieldPos = 34;  // caret at "_age"
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr size_t nameFieldPos = 27;  // caret at "name"
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr size_t homeFieldPos = 27;  // caret at "_home"/"home"
 
     // Create a temporary ArkTS file with given class body
@@ -73,7 +76,7 @@ public:
         const std::vector<ark::es2panda::lsp::ApplicableRefactorInfo> &applicable)
     {
         auto it = std::find_if(applicable.begin(), applicable.end(),
-                               [](const auto &info) { return info.action.name == name && info.action.kind == kind; });
+                               [](const auto &info) { return info.action.name == NAME && info.action.kind == KIND; });
         return it != applicable.end() ? &(*it) : nullptr;
     }
 };
@@ -97,7 +100,7 @@ TEST_F(LspGenerateGS, OfferOnPrivateUnderscoredFieldAndGenerateTypedAccessors)
     ark::es2panda::lsp::RefactorContext rc;
     rc.textChangesContext = tcc.get();
     rc.context = ctx;
-    rc.kind = std::string(LspGenerateGS::kind);
+    rc.kind = std::string(LspGenerateGS::KIND);
 
     // Hardcoded position (pick start of "_age")
     rc.span.pos = ageFieldPos;
@@ -132,7 +135,7 @@ TEST_F(LspGenerateGS, OfferOnPlainFieldAndUseNonClashingAccessorNames)
     ark::es2panda::lsp::RefactorContext rc;
     rc.textChangesContext = tcc.get();
     rc.context = ctx;
-    rc.kind = std::string(LspGenerateGS::kind);
+    rc.kind = std::string(LspGenerateGS::KIND);
 
     // Hardcoded position (pick start of "name")
     rc.span.pos = nameFieldPos;
@@ -168,7 +171,7 @@ TEST_F(LspGenerateGS, OfferOnCustomClassFieldAndGenerateTypedAccessors)
     ark::es2panda::lsp::RefactorContext rc;
     rc.textChangesContext = tcc.get();
     rc.context = ctx;
-    rc.kind = std::string(LspGenerateGS::kind);
+    rc.kind = std::string(LspGenerateGS::KIND);
 
     // Hardcoded position (pick start of "home")
     rc.span.pos = homeFieldPos;

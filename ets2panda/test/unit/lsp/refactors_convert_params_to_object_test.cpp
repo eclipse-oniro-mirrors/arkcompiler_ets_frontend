@@ -43,9 +43,11 @@ function main(): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 22;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -62,6 +64,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_PARAMS_TO_OBJECT_ACTION.name), result[0].action.name);
@@ -92,9 +95,11 @@ function main(): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInMethodName = 35;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -111,6 +116,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
@@ -135,9 +141,11 @@ function main(): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 18;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -154,6 +162,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
@@ -170,9 +179,11 @@ function greet(name: string): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 18;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -189,6 +200,7 @@ function greet(name: string): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
@@ -209,9 +221,11 @@ function main(): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 22;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -227,6 +241,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 
@@ -249,9 +264,11 @@ function main(): void {
 )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInStaticMethod = 38;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -267,6 +284,7 @@ function main(): void {
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 

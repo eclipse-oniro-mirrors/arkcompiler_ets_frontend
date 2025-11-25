@@ -108,7 +108,7 @@ ir::AstNode *GetContextualTypeNode(ir::AstNode *node)
             // note: There should not be a null pointer here.
             // This is a temporary workaround to avoid null pointer issues.
             // A proper fix may require modifying the checker-related code in issue 30716.
-            if (!type->Variable() || !type->Variable()->Declaration()) {
+            if ((type->Variable() == nullptr) || (type->Variable()->Declaration() == nullptr)) {
                 return nullptr;
             }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
@@ -120,7 +120,7 @@ ir::AstNode *GetContextualTypeNode(ir::AstNode *node)
             // note: There should not be a null pointer here.
             // This is a temporary workaround to avoid null pointer issues.
             // A proper fix may require modifying the checker-related code in issue 30716.
-            if (!type->Variable() || !type->Variable()->Declaration()) {
+            if ((type->Variable() == nullptr) || (type->Variable()->Declaration() == nullptr)) {
                 return nullptr;
             }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
@@ -1254,7 +1254,7 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
         if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
             auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
             auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
-            if (enumMember) {
+            if (enumMember != nullptr) {
                 displayParts = CreateDisplayForEnumMember(enumMember);
             }
         } else {

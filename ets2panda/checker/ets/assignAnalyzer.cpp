@@ -98,7 +98,7 @@ static std::string Capitalize(const util::StringView &str)
     return ret;
 }
 
-AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker), varDecls_(), nodeIdMap_(), foundErrors_() {}
+AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker) {}
 
 void AssignAnalyzer::Analyze(const ir::AstNode *node)
 {
@@ -1310,7 +1310,8 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
     if (type->PossiblyETSUndefined()) {
         if (!type->HasTypeFlag(checker::TypeFlag::GENERIC)) {
             return true;
-        } else if (!CHECK_GENERIC_NON_READONLY_PROPERTIES && isNonReadonlyField) {
+        }
+        if (!CHECK_GENERIC_NON_READONLY_PROPERTIES && isNonReadonlyField) {
             return true;
         }
     }

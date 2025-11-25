@@ -52,6 +52,7 @@ enum class BinaryExpressionValidity {
     LHS_ERR = 1U << 0U,
     RHS_ERR = 1U << 1U,
     EITHER_ERR = 1U << 2U,
+    // NOLINTNEXTLINE(hicpp-signed-bitwise)
     BOTH_ERR = LHS_ERR | RHS_ERR,
 };
 

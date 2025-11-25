@@ -26,8 +26,8 @@ void SwitchStatement::SetCases(ArenaVector<SwitchCaseStatement *> &&casesList)
 {
     cases_ = std::move(casesList);
 
-    for (auto *case_ : cases_) {
-        case_->SetParent(this);
+    for (auto *cse : cases_) {
+        cse->SetParent(this);
     }
 }
 

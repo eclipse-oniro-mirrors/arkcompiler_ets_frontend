@@ -86,7 +86,7 @@ MatchKind DetermineMatchKind(const std::string &candidate, const PatternMatcher 
 std::optional<NavigateToItem> TryMakeItemFromNode(ir::AstNode *node, const PatternMatcher &matcher,
                                                   const std::string &filePath)
 {
-    if (!node || !node->IsIdentifier()) {
+    if ((node == nullptr) || !node->IsIdentifier()) {
         return std::nullopt;
     }
 
@@ -97,7 +97,7 @@ std::optional<NavigateToItem> TryMakeItemFromNode(ir::AstNode *node, const Patte
     }
 
     auto *container = GetContainerNode(node);
-    if (!container) {
+    if (container == nullptr) {
         return std::nullopt;
     }
 

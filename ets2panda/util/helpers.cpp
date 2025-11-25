@@ -244,6 +244,7 @@ const checker::ETSObjectType *Helpers::GetContainingObjectType(const ir::AstNode
     return nullptr;
 }
 
+// NOLINTNEXTLINE(readability-const-return-type)
 const util::StringView Helpers::GetContainingObjectName(const ir::AstNode *node)
 {
     const auto *iter = node;
@@ -927,7 +928,7 @@ std::vector<std::string> Helpers::Split(const std::string &str, const char delim
     but using std::filesystem::relative() in xts_static CI pipeline is disallowed
     and there is no relative() in std::experimental::filesystem
 */
-std::string Helpers::CalcRelativePath(std::string target, std::string base)
+std::string Helpers::CalcRelativePath(const std::string &target, const std::string &base)
 {
     std::string targetPath = ark::os::GetAbsolutePath(target);
     std::string basePath = ark::os::GetAbsolutePath(base);
@@ -947,11 +948,11 @@ std::string Helpers::CalcRelativePath(std::string target, std::string base)
     if (mismatched.first == targetPathVec.end() && mismatched.second == basePathVec.end()) {
         return ".";
     }
-    for (auto it_base = mismatched.second; it_base != basePathVec.end(); ++it_base) {
-        ret = ret + "../";
+    for (auto itBase = mismatched.second; itBase != basePathVec.end(); ++itBase) {
+        ret += "../";
     }
-    for (auto it_p = mismatched.first; it_p != targetPathVec.end(); ++it_p) {
-        ret = ret + *it_p + "/";
+    for (auto itP = mismatched.first; itP != targetPathVec.end(); ++itP) {
+        ret += *itP + "/";
     }
     return ret;
 }

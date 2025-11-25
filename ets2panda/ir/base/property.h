@@ -66,7 +66,7 @@ public:
     {
         key_ = key;
 
-        if (key) {
+        if (key != nullptr) {
             key->SetParent(this);
         }
     }

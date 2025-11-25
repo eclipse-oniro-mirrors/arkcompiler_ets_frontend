@@ -115,7 +115,7 @@ inline bool IsOptionalChainNode(const ir::Expression *e)
     return false;
 }
 
-static bool IsLogicalAndBetween(const RefactorContext &ctx, const ir::AstNode *l, const ir::AstNode *r)
+bool IsLogicalAndBetween(const RefactorContext &ctx, const ir::AstNode *l, const ir::AstNode *r)
 {
     const SourceFile *sf = GetSourceFile(ctx);
     if (sf == nullptr) {
@@ -240,7 +240,7 @@ bool ChainStartsWith(ir::Expression *chain, ir::Expression *sub)
     return c->DumpEtsSrc() == s->DumpEtsSrc();
 }
 
-static ir::Expression *GetMatchingStart(ir::Expression *chain, ir::Expression *sub)
+ir::Expression *GetMatchingStart(ir::Expression *chain, ir::Expression *sub)
 {
     if (sub == nullptr) {
         return nullptr;
@@ -251,7 +251,7 @@ static ir::Expression *GetMatchingStart(ir::Expression *chain, ir::Expression *s
     return ChainStartsWith(SkipParens(chain), SkipParens(sub)) ? sub : nullptr;
 }
 
-static ir::Expression *FinalAccessInChain(ir::Expression *node)
+ir::Expression *FinalAccessInChain(ir::Expression *node)
 {
     ir::Expression *cur = SkipParens(node);
     if (cur == nullptr) {
@@ -278,7 +278,7 @@ std::vector<ir::Expression *> CollectOccurrences(const RefactorContext &ctx, ir:
         }
         ir::Expression *right = SkipParens(be->Right());
         ir::Expression *m = GetMatchingStart(SkipParens(matchTo), right);
-        if (!m) {
+        if (m == nullptr) {
             break;
         }
         occ.push_back(m);
@@ -297,7 +297,7 @@ std::string ArgumentsToSrc(const ir::CallExpression *call)
     std::string s;
     const auto &args = call->Arguments();
     for (size_t i = 0; i < args.size(); ++i) {
-        if (i) {
+        if (i != 0U) {
             s += ", ";
         }
         s += args[i]->DumpEtsSrc();
@@ -308,7 +308,7 @@ std::string ArgumentsToSrc(const ir::CallExpression *call)
 std::vector<ir::Expression *> BuildChainFromFinal(ir::Expression *finalExpr)
 {
     std::vector<ir::Expression *> chain;
-    for (ir::Expression *cur = finalExpr; cur; cur = GetObjectOf(cur)) {
+    for (ir::Expression *cur = finalExpr; cur != nullptr; cur = GetObjectOf(cur)) {
         chain.push_back(cur);
         if (cur->IsIdentifier()) {
             break;
@@ -337,7 +337,7 @@ void EmitCallHop(std::string &out, const ir::CallExpression *c)
     out += ")";
 }
 
-static std::string ConvertChainToOptional(ir::Expression *finalExpr)
+std::string ConvertChainToOptional(ir::Expression *finalExpr)
 {
     std::string out;
     std::vector<ir::Expression *> chain = BuildChainFromFinal(finalExpr);
@@ -361,7 +361,7 @@ static std::string ConvertChainToOptional(ir::Expression *finalExpr)
     return out;
 }
 
-static TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpression *rootBe)
+TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpression *rootBe)
 {
     TargetInfo out {};
     if (rootBe == nullptr) {
@@ -388,7 +388,7 @@ static TargetInfo ResolveBinaryTarget(const RefactorContext &ctx, ir::BinaryExpr
     return out;
 }
 
-static TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::ConditionalExpression *ce)
+TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::ConditionalExpression *ce)
 {
     TargetInfo out {};
     if (ce == nullptr) {
@@ -396,13 +396,13 @@ static TargetInfo ResolveConditionalTarget(const RefactorContext &ctx, ir::Condi
     }
 
     ir::Expression *finalExpr = FinalAccessInChain(ce->Consequent());
-    if (!finalExpr) {
+    if (finalExpr == nullptr) {
         return out;
     }
 
     ir::Expression *test = ce->Test()->AsExpression();
     if (test != nullptr && (test->IsIdentifier() || test->IsMemberExpression())) {
-        if (GetMatchingStart(finalExpr, test)) {
+        if (GetMatchingStart(finalExpr, test) != nullptr) {
             out.expr = ce->AsExpression();
             out.finalExpr = finalExpr;
             out.occurrences.push_back(test);

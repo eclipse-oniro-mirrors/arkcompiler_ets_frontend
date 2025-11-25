@@ -562,7 +562,8 @@ std::vector<CompletionEntry> GetCompletionFromMethodDefinition(ir::MethodDefinit
             return {};
         }
         return GetPropertyCompletions(reinterpret_cast<ir::AstNode *>(ident), triggerWord);
-    } else if (returnType->IsETSTypeReference()) {
+    }
+    if (returnType->IsETSTypeReference()) {
         auto expr = returnType->AsETSTypeReference()->Part()->Name();
         if (expr == nullptr || !expr->IsIdentifier()) {
             return {};

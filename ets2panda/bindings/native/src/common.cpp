@@ -19,10 +19,12 @@
 #include "public/es2panda_lib.h"
 #include "dynamic-loader.h"
 
-using std::string, std::cout, std::endl, std::vector;
+// NOLINTNEXTLINE(misc-unused-using-decls)
+using std::string, std::cout, std::endl;
 
 static es2panda_Impl const *g_impl = nullptr;
 
+// NOLINTBEGIN
 #ifdef _WIN32
 #include <windows.h>
 #define PLUGIN_DIR "windows_host_tools"
@@ -40,6 +42,7 @@ static es2panda_Impl const *g_impl = nullptr;
 #define LIB_PREFIX "lib"
 #define LIB_SUFFIX ".so"
 #endif
+// NOLINTEND
 
 constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
 constexpr const char *G_LIB_ES2_PANDA_PUBLIC = LIB_PREFIX "es2panda-public" LIB_SUFFIX;
@@ -48,13 +51,13 @@ void *FindLibrary()
 {
     std::string basePath;
     char *envValue = getenv("PANDA_SDK_PATH");
-    if (envValue) {
+    if (envValue != nullptr) {
         basePath = std::string(envValue) + "/" + PLUGIN_DIR + "/lib/";
     } else {
         char *envBuildPath = getenv("BUILD_DIR");
         if (!g_pandaLibPath.empty()) {
             basePath = g_pandaLibPath + "/";
-        } else if (envBuildPath) {
+        } else if (envBuildPath != nullptr) {
             basePath = std::string(envBuildPath) + "/lib/";
         } else {
             basePath = "";
@@ -126,6 +129,7 @@ KNativePointer impl_CreateConfig(KInt argc, KStringArray argvPtr, KStringPtr &pa
     for (std::size_t i = 0; i < static_cast<std::size_t>(argc); ++i) {
         strLen = UnpackUInt(argvPtr + position);
         position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         argv[i] = strdup(std::string(reinterpret_cast<const char *>(argvPtr + position), strLen).c_str());
         position += strLen;
     }
@@ -182,6 +186,7 @@ KNativePointer impl_CreateGlobalContext(KNativePointer configPtr, KStringArray e
     for (std::size_t i = 0; i < static_cast<std::size_t>(fileNum); ++i) {
         strLen = UnpackUInt(externalFileListPtr + position);
         position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         externalFileList[i] =
             strdup(std::string(reinterpret_cast<const char *>(externalFileListPtr + position), strLen).c_str());
         position += strLen;
@@ -205,7 +210,7 @@ KNativePointer impl_CreateCacheContextFromString(KNativePointer configPtr, KStri
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
     return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.Data(), filenamePtr.Data(), context,
-                                                         isExternal);
+                                                         isExternal != 0);
 }
 TS_INTEROP_5(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
              KBoolean)

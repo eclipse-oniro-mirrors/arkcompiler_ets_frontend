@@ -220,6 +220,7 @@ private:
     Type *result_ {};
 };
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class TypeRelationContext {
 public:
     TypeRelationContext(ETSChecker *checker, ir::Expression *node, TypeRelationFlag flags) : checker_(checker)

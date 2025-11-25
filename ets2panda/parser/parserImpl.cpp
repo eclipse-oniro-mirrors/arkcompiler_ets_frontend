@@ -428,7 +428,7 @@ void ParserImpl::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition,
             LogError(diagnostic::SETTER_OPTIONAL_PARAM, {}, params[0]->Start());
         }
     } else if (methodDefinition == ir::MethodDefinitionKind::GET) {
-        if (params.size() != 0) {
+        if (!params.empty()) {
             LogError(diagnostic::GETTER_FORMAL_PARAMS);
         }
     }

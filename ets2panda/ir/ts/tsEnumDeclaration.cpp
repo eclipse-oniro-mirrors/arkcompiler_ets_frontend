@@ -199,6 +199,7 @@ void TSEnumDeclaration::CopyTo(AstNode *other) const
     otherImpl->boxedClass_ = boxedClass_;
     otherImpl->isConst_ = isConst_;
 
+    // NOLINTNEXTLINE(bugprone-parent-virtual-call)
     TypedStatement::CopyTo(other);
 }
 

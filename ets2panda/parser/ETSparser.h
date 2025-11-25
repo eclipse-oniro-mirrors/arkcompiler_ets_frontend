@@ -207,7 +207,7 @@ private:
     bool ParseNamedSpecifiesImport(ArenaVector<ir::ImportSpecifier *> *result,
                                    ArenaVector<ir::ExportSpecifier *> *resultExportDefault);
     SpecifiersInfo ParseNamedSpecifiers(const ir::ImportKinds importKind);
-    SpecifiersInfo ParseExportNamedSpecifiers(const ir::ImportKinds importKind);
+    SpecifiersInfo ParseExportNamedSpecifiers(const ir::ImportKinds exportKind);
     ir::ExportNamedDeclaration *ParseSingleExport(ir::ModifierFlags modifiers);
     ir::ExportNamedDeclaration *ParseSingleExportForAnonymousConst(ir::ModifierFlags modifiers);
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();

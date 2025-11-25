@@ -143,7 +143,7 @@ public:
 
     void SetBasePath(std::string basePath)
     {
-        basePath_ = basePath;
+        basePath_ = basePath;  // NOLINT(performance-unnecessary-value-param)
     }
 
     void CleanDuplicateLog(DiagnosticType type);
@@ -190,6 +190,7 @@ private:
     std::array<DiagnosticStorage, static_cast<size_t>(DiagnosticType::COUNT)> diagnostics_;
     std::unique_ptr<const DiagnosticPrinter> printer_;
     bool wError_ {false};
+    // NOLINTNEXTLINE(readability-redundant-string-init)
     std::string basePath_ {""};
 };
 

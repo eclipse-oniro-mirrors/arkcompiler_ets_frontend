@@ -24,7 +24,7 @@ namespace ark::es2panda::compiler {
 
 constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
 
-static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, std::string decls)
+static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, const std::string &decls)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *phaseManager = ctx->phaseManager;

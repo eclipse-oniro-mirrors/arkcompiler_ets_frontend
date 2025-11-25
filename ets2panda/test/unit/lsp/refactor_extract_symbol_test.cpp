@@ -183,6 +183,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaPublicAPI)
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "const newLocal = \"x + y = \";";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t expectedInsertPos = 49;
     EXPECT_EQ(startPos1, expectedInsertPos);
     EXPECT_EQ(newText, expect);
@@ -225,6 +226,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaGlobalPublicAPI)
     std::string_view expect = "const newLocal = \"x + y = \";";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t expectedInsertPos = 0;
     EXPECT_EQ(startPos1, expectedInsertPos);
     EXPECT_EQ(newText, expect);

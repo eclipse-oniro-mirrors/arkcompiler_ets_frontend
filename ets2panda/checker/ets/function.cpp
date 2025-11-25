@@ -992,7 +992,7 @@ static bool ValidateSignatureInvocationContext(ETSChecker *checker, Signature *s
                                    {{diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, targetType, index + 1}}}, flags);
 
     auto sig = substitutedSig;
-    if (invocationCtx.HasError() && sig && sig->HasFunction()) {
+    if (invocationCtx.HasError() && sig != nullptr && sig->HasFunction()) {
         if ((sig->Function()->IsConstructor() || sig->Function()->Id()->Name().Is("then") ||
              sig->Function()->Id()->Name().Is("catch")) &&
             sig->Owner()->Name().Is("Promise")) {
@@ -1219,11 +1219,6 @@ static std::vector<bool> FindTypeInferenceArguments(const ArenaVector<ir::Expres
     }
     return argTypeInferenceRequired;
 }
-
-static Signature *ValidateSignature(
-    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-    const std::vector<bool> &argTypeInferenceRequired);
 
 // CC-OFFNXT(huge_method) solid logic
 static ArenaVector<Signature *> CollectSignatures(ETSChecker *checker, ArenaVector<Signature *> &signatures,
@@ -1543,8 +1538,7 @@ static void RemoveEnumTypeFlagIfNeed(ark::es2panda::checker::Signature *signatur
     if (signature == nullptr) {
         return;
     }
-    for (size_t index = 0; index < arguments.size(); ++index) {
-        auto &argument = arguments[index];
+    for (auto argument : arguments) {
         argument->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }
@@ -2170,7 +2164,7 @@ static bool CheckRestParamOverload(Signature *funcSig, Signature *overloadSig, T
     };
     if ((funcSig->HasRestParameter() && isLastParamIdentical(funcSig, overloadSig)) ||
         (overloadSig->HasRestParameter() && isLastParamIdentical(overloadSig, funcSig))) {
-        return false;
+        return false;  // NOLINT(readability-simplify-boolean-expr)
     }
     return true;
 }
@@ -2977,8 +2971,6 @@ static ir::ScriptFunction *CreateLambdaFunction(ETSChecker *checker, ir::BlockSt
 
     return funcNode;
 }
-
-static ir::ScriptFunction *CreateLambdaFunction(ETSChecker *checker, ir::BlockStatement *trailingBlock, Signature *sig);
 
 static void TransformTraillingLambda(ETSChecker *checker, ir::CallExpression *callExpr, Signature *sig)
 {

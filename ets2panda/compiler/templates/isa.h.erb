@@ -319,7 +319,7 @@ public:
         ES2PANDA_ASSERT(idx < static_cast<size_t>(imm0_));
         return OperandType::REF;
 % else # get operand type from reg type defined in isa.yaml
-        switch (idx) {
+        switch (idx) { // NOLINT(hicpp-multiway-paths-covered)
 % i = 0
 % for reg, type in op_map['reg_type']
             case <%= i %>: {

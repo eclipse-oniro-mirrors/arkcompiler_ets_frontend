@@ -78,13 +78,13 @@ ETSStringType *ETSChecker::CreateETSStringLiteralType(util::StringView value)
     if (it != stringLiteralTypes_.end()) {
         // Key found
         return it->second;
-    } else {
-        // Key not found
-        ETSStringType *newValue =
-            ProgramAllocator()->New<ETSStringType>(ProgramAllocator(), GlobalBuiltinETSStringType(), Relation(), value);
-        stringLiteralTypes_.emplace(std::move(valueString), newValue);
-        return newValue;
     }
+
+    // Key not found
+    ETSStringType *newValue =
+        ProgramAllocator()->New<ETSStringType>(ProgramAllocator(), GlobalBuiltinETSStringType(), Relation(), value);
+    stringLiteralTypes_.emplace(std::move(valueString), newValue);
+    return newValue;
 }
 
 ETSResizableArrayType *ETSChecker::CreateETSMultiDimResizableArrayType(Type *element, size_t dimSize)

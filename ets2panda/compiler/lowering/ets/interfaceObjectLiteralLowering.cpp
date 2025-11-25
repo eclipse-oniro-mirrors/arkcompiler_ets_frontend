@@ -441,10 +441,10 @@ static void AddCapturedVariables(public_lib::Context *ctx, ArenaVector<ir::AstNo
                                  std::vector<CapturedVariable> &capturedVariables)
 {
     for (auto const &[variable, fieldName, ident] : capturedVariables) {
-        constexpr auto const fieldDeclaration = "public @@I1 : @@T2;";
+        constexpr auto const FIELD_DECLARATION = "public @@I1 : @@T2;";
 
-        auto *const field = ctx->parser->AsETSParser()->CreateFormattedClassFieldDefinition(fieldDeclaration, fieldName,
-                                                                                            variable->TsType());
+        auto *const field = ctx->parser->AsETSParser()->CreateFormattedClassFieldDefinition(
+            FIELD_DECLARATION, fieldName, variable->TsType());
         classBody.emplace_back(field);
 
         auto *const property = ctx->AllocNode<ir::Property>(
@@ -622,12 +622,11 @@ static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::
     } else {
         if (helperClass != nullptr) {
             return helperClass->Definition()->TsType();
-        } else {
-            // because of lazy checker auxilary classes can be no created here
-            interfaceDecl->Check(checker);
-            if (CheckInterfaceShouldGenerateAnonClass(interfaceDecl)) {
-                return GenerateAnonClassFromInterface(ctx, interfaceDecl);
-            }
+        }
+        // because of lazy checker auxilary classes can be no created here
+        interfaceDecl->Check(checker);
+        if (CheckInterfaceShouldGenerateAnonClass(interfaceDecl)) {
+            return GenerateAnonClassFromInterface(ctx, interfaceDecl);
         }
     }
 

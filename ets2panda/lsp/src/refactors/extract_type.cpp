@@ -85,7 +85,7 @@ bool ContainsOnlyIdentifierChars(std::string_view text)
         return false;
     }
     for (unsigned char ch : text) {
-        if (!std::isalnum(ch) && ch != '_' && ch != '$') {
+        if ((std::isalnum(ch) == 0) && ch != '_' && ch != '$') {
             return false;
         }
     }
@@ -127,7 +127,8 @@ std::string_view GetSelectionText(const RefactorContext &context, const public_l
     }
     return fileSource.substr(start, end - start);
 }
-static ir::AstNode *FindCandidateNode(const RefactorContext &context, size_t position)
+
+ir::AstNode *FindCandidateNode(const RefactorContext &context, size_t position)
 {
     ir::AstNode *node = GetTouchingToken(context.context, position, false);
     while (node != nullptr) {

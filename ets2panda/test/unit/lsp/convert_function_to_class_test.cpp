@@ -25,16 +25,16 @@
 #include "lsp/include/refactors/convert_function_to_class.h"
 
 using ::FileTextChanges;
-using ark::es2panda::lsp::ApplicableRefactorInfo;
 using ark::es2panda::lsp::ConvertFunctionToClassRefactor;
 using ark::es2panda::lsp::RefactorContext;
 
 namespace {
 class LSPConvertFunctionToClass : public LSPAPITests {
 public:
-    static constexpr std::string_view kKind = "refactor.rewrite.function.to.class";
-    static constexpr std::string_view kActionName = "convert_to_class";
+    static constexpr std::string_view K_KIND = "refactor.rewrite.function.to.class";
+    static constexpr std::string_view K_ACTION_NAME = "convert_to_class";
     // Named sentinel for "caret at start-of-file" to avoid magic number 0.
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr size_t kCaretAtStart = 0;
 
 protected:
@@ -81,7 +81,7 @@ protected:
     {
         RefactorContext rc;
         rc.context = ctx;
-        rc.kind = std::string(kKind);
+        rc.kind = std::string(K_KIND);
         rc.span.pos = pos;
         rc.span.end = pos;  // caret on identifier (explicitly equal to pos)
         return rc;
@@ -100,7 +100,7 @@ TEST_F(LSPConvertFunctionToClass, DoesNotOfferAction_WhenCursorOutsideIdentifier
 
     ark::es2panda::lsp::RefactorContext refCtx;
     refCtx.context = ctx;
-    refCtx.kind = std::string(kKind);
+    refCtx.kind = std::string(K_KIND);
     refCtx.span.pos = LSPConvertFunctionToClass::kCaretAtStart;  // start-of-file, explicit
     refCtx.span.end = refCtx.span.pos;
 
@@ -130,7 +130,7 @@ TEST_F(LSPConvertFunctionToClass, AppliesEdits_AndContainsClassSkeleton)
     ark::es2panda::lsp::RefactorContext refCtx = MakeCtx(ctx, pos);
 
     ark::es2panda::lsp::ConvertFunctionToClassRefactor refactor;
-    auto editsPtr = refactor.GetEditsForAction(refCtx, std::string(kActionName));
+    auto editsPtr = refactor.GetEditsForAction(refCtx, std::string(K_ACTION_NAME));
     if (!editsPtr) {
         GTEST_SKIP() << "codefix::DoConvertToClass not implemented; skipping text application assertion.";
     }
@@ -162,8 +162,8 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnArrowWithParams_WhenSelectingId
     auto avail = refactor.GetAvailableActions(rc);
     EXPECT_FALSE(avail.empty());
     ASSERT_FALSE(avail[0].action.kind.empty());
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
-    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
+    EXPECT_EQ(avail[0].action.kind, std::string(K_KIND));
 
     initializer.DestroyContext(ctx);
 }
@@ -184,7 +184,7 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_WithRangeSelectionCoveringIdentif
 
     ark::es2panda::lsp::RefactorContext rc;
     rc.context = ctx;
-    rc.kind = std::string(kKind);
+    rc.kind = std::string(K_KIND);
     rc.span.pos = idPos;
     rc.span.end = idPos + idLen;  // selection spans the whole identifier
 
@@ -192,7 +192,7 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_WithRangeSelectionCoveringIdentif
     auto avail = refactor.GetAvailableActions(rc);
     ASSERT_FALSE(avail.empty());
     ASSERT_FALSE(avail[0].action.kind.empty());
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
 
     initializer.DestroyContext(ctx);
 }
@@ -265,8 +265,8 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnTypedFunctionDeclaration_WhenSe
     auto avail = refactor.GetAvailableActions(rc);
     ASSERT_FALSE(avail.empty());
     ASSERT_FALSE(avail[0].action.kind.empty());
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
-    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
+    EXPECT_EQ(avail[0].action.kind, std::string(K_KIND));
 
     initializer.DestroyContext(ctx);
 }
@@ -287,8 +287,8 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnArrowVar_WhenSelectingIdent)
     ConvertFunctionToClassRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, pos));
     ASSERT_FALSE(avail.empty());
-    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.kind, std::string(K_KIND));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
 
     init.DestroyContext(ctx);
 }
@@ -309,8 +309,8 @@ TEST_F(LSPConvertFunctionToClass, OffersAction_OnFunctionDecl_WhenSelectingName)
     ConvertFunctionToClassRefactor ref;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, pos));
     EXPECT_FALSE(avail.empty());
-    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.kind, std::string(K_KIND));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
 
     init.DestroyContext(ctx);
 }
@@ -349,7 +349,7 @@ TEST_F(LSPConvertFunctionToClass, Converts_ConciseArrow_ToClassConstructor_Retur
     ASSERT_NE(pos, std::string::npos);
 
     ConvertFunctionToClassRefactor ref;
-    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(kActionName));
+    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(K_ACTION_NAME));
     ASSERT_NE(editsPtr, nullptr) << "Refactor returned no edits — converter likely not wired.";
     const auto &edits = editsPtr->GetFileTextChanges();
     ASSERT_FALSE(edits.empty());
@@ -378,7 +378,7 @@ TEST_F(LSPConvertFunctionToClass, Converts_BlockArrow_ToClassConstructor_CopiesB
     ASSERT_NE(pos, std::string::npos);
 
     ConvertFunctionToClassRefactor ref;
-    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(kActionName));
+    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(K_ACTION_NAME));
     ASSERT_NE(editsPtr, nullptr);
     const auto &edits = editsPtr->GetFileTextChanges();
     ASSERT_FALSE(edits.empty());
@@ -407,7 +407,7 @@ TEST_F(LSPConvertFunctionToClass, Converts_FunctionDeclaration_ToClass)
     ASSERT_NE(pos, std::string::npos);
 
     ConvertFunctionToClassRefactor ref;
-    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(kActionName));
+    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, pos), std::string(K_ACTION_NAME));
     ASSERT_NE(editsPtr, nullptr);
     const auto &edits = editsPtr->GetFileTextChanges();
     ASSERT_FALSE(edits.empty());

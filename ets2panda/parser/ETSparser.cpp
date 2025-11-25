@@ -2155,6 +2155,7 @@ bool ETSParser::ParsePotentialGenericFunctionCall(ir::Expression *primaryExpr, i
     // unexpected_token_49,ets, 50, 51
     if (Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
         *returnExpression = AllocNode<ir::ETSGenericInstantiatedNode>(primaryExpr, typeParams);
+        // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
         (*returnExpression)->SetRange({startLoc, Lexer()->GetToken().Start()});
         return false;
     }

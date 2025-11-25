@@ -48,7 +48,7 @@ KNativePointer impl_CreateCacheContextFromFile(KNativePointer configPtr, KString
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
-    return GetPublicImpl()->CreateCacheContextFromFile(config, sourceFileName.Data(), context, isExternal);
+    return GetPublicImpl()->CreateCacheContextFromFile(config, sourceFileName.Data(), context, isExternal != 0);
 }
 TS_INTEROP_4(CreateCacheContextFromFile, KNativePointer, KNativePointer, KStringPtr, KNativePointer, KBoolean)
 
@@ -93,6 +93,7 @@ KNativePointer impl_CreateContextGenerateAbcForExternalSourceFiles(KNativePointe
     for (std::size_t i = 0; i < static_cast<std::size_t>(fileNamesCount); ++i) {
         strLen = UnpackUInt(filenames + position);
         position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         externalFileList[i] = strdup(std::string(reinterpret_cast<const char *>(filenames + position), strLen).c_str());
         position += strLen;
     }

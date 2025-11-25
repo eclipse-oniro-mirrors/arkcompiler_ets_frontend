@@ -33,6 +33,7 @@ public:
         auto program = GetCurrentProgram(text);
         EXPECT_NE(program, nullptr);
         pandasm::AsmEmitter::PandaFileToPandaAsmMaps maps;
+        // NOLINTNEXTLINE(readability-identifier-naming)
         static const std::string fileName = "reg_allocator_test";
         auto pfile = pandasm::AsmEmitter::Emit(fileName, *program, nullptr, &maps);
         EXPECT_NE(pfile, false);

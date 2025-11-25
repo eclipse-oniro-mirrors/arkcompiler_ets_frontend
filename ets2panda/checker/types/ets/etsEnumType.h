@@ -120,7 +120,7 @@ public:
     Type *GetBaseEnumElementType(ETSChecker *checker);
 
 protected:
-    Type *enumType_ {nullptr};
+    Type *enumType_ {nullptr};  // NOLINT(misc-non-private-member-variables-in-classes)
 
 private:
     void InitElementsShortcuts(ir::ClassDefinition *declNode)
@@ -177,7 +177,7 @@ public:
     }
 
 private:
-    bool CheckAssignableNumericTypes(Type *target);
+    bool CheckAssignableNumericTypes(Type *let);
 };
 
 class ETSStringEnumType : public ETSEnumType {

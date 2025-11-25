@@ -93,7 +93,7 @@ void ETSStringEnumType::CastTarget(TypeRelation *relation, Type *source)
         return enumType_->AsETSObjectType()->HasObjectFlag(flag);
     }
 
-    return checker->GlobalBuiltinETSStringType();
+    return checker->GlobalBuiltinETSStringType() != nullptr;
 }
 
 bool ETSNumericEnumType::CheckAssignableNumericTypes(Type *let)
@@ -103,7 +103,8 @@ bool ETSNumericEnumType::CheckAssignableNumericTypes(Type *let)
     ES2PANDA_ASSERT(enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_NUMERIC));
     if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
         return true;
-    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
+    }
+    if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
         if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
             return true;
         }
@@ -199,7 +200,7 @@ void ETSNumericEnumType::CastTarget(TypeRelation *relation, Type *source)
         return enumType_->AsETSObjectType()->HasObjectFlag(flag);
     }
 
-    return checker->GlobalIntBuiltinType();
+    return checker->GlobalIntBuiltinType() != nullptr;
 }
 
 }  // namespace ark::es2panda::checker
