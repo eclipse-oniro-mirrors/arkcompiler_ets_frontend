@@ -431,9 +431,10 @@ static void ProcessCalleeMethodBody(ir::AstNode *body, checker::ETSChecker *chec
             node->AsCallExpression()->SetSignature(
                 node->AsCallExpression()->Signature()->Substitute(checker->Relation(), substitution));
         }
-        if (node->IsETSNewClassInstanceExpression()) {
+        if (node->IsETSNewClassInstanceExpression() &&
+            !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
             node->AsETSNewClassInstanceExpression()->SetSignature(
-                node->AsETSNewClassInstanceExpression()->GetSignature()->Substitute(checker->Relation(), substitution));
+                node->AsETSNewClassInstanceExpression()->Signature()->Substitute(checker->Relation(), substitution));
         }
         if (node->IsScriptFunction()) {
             node->AsScriptFunction()->SetSignature(
@@ -747,7 +748,7 @@ static std::string GetArrayReallocationStringFixedArray(std::size_t startIdx)
     // rewitten with a runtime intrinsic
     std::stringstream statements;
     statements << "let @@I1: int = @@I2.length > " << startIdx << " ? (@@I3.length - " << startIdx << ") : 0;";
-    statements << "let @@I4: FixedArray<@@T5> = new (@@T6)[@@I7];";
+    statements << "let @@I4: FixedArray<@@T5> = new FixedArray<@@T6>(@@I7);";
     statements << "let @@I8 = @@I9 as FixedArray<@@T10>;";
     statements << "for (let i: int = 0; i < @@I11; i = i + 1) {";
     statements << "    @@I12[i] = @@I13[i + " << startIdx << "] as @@T14;";

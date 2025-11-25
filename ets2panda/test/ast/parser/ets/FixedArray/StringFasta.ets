@@ -82,13 +82,13 @@ export class StringFasta  {
         return ret;
     }
     static fastaRandom(n : int, table : HashMap<Char, Double>): int {
-        let line : char[] = new char[60];
+        let line : FixedArray<char> = new FixedArray<char>(60)
         makeCumulative(table);
         let ret : int = 0;
         while(n > 0)
         {
             if (n < line.length) {
-                line = new char[n];
+                line = new FixedArray<char>(n)
             }
             for (let i : int = 0; i < line.length; i++) {
                 let r : double = Random.rand(1);

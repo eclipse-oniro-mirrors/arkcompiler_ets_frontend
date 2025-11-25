@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,19 +54,19 @@ ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
     auto *parser = ctx->parser->AsETSParser();
 
     // Skip missing signatures
-    if (newClassInstExpr->GetSignature() == nullptr || newClassInstExpr->GetSignature()->InternalName() == nullptr) {
+    if (newClassInstExpr->Signature() == nullptr || newClassInstExpr->Signature()->InternalName() == nullptr) {
         return newClassInstExpr;
     }
 
     // Case for the constructor: new String(str: string)
-    if (newClassInstExpr->GetSignature()->InternalName() == Signatures::BUILTIN_STRING_FROM_STRING_CTOR) {
+    if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_STRING_CTOR) {
         auto *arg = newClassInstExpr->GetArguments()[0];
         arg->SetParent(newClassInstExpr->Parent());
         return arg;
     }
 
     // Case for the constructor: new String(str: Object)
-    if (newClassInstExpr->GetSignature()->InternalName() == Signatures::BUILTIN_STRING_FROM_NULLISH_CTOR) {
+    if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_NULLISH_CTOR) {
         auto *arg = newClassInstExpr->GetArguments()[0];
         auto *argType = arg->TsType();
 

@@ -889,6 +889,10 @@ semantic:
   id: 567795
   message: "Method '{}' in {} cannot overload property {} in {}."
 
+- name: MISSING_ARRAY_SIZE
+  id: 421701
+  message: "Missing array size when create fixed-size array {}."
+
 - name: MISSING_EXTENSION_ACCESSOR
   id: 246
   message: "Can't find the extension accessor."

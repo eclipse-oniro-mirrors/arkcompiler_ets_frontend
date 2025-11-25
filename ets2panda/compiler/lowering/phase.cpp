@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,6 +78,7 @@
 #include "compiler/lowering/plugin_phase.h"
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
+#include "compiler/lowering/ets/fixedarrayLowering.h"
 #include "generated/diagnostic.h"
 #include "lexer/token/sourceLocation.h"
 #include "public/es2panda_lib.h"
@@ -134,6 +135,7 @@ std::vector<Phase *> GetETSPhaseList()
         new DeclGenPhase,
         // pluginsAfterCheck has to go right after checkerPhase
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
+        new FixedArrayLowering,
         new DynamicImport,
         new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,

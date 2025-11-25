@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,7 @@ let non_prim_c: Char = c'b';
 let s: String = "abc";
 
 // see 3.2.2 Array types
-let a: FixedArray<int> = new int[5];
+let a: FixedArray<int> = new FixedArray<int>(5)
 
 
 /* @@? 23:25 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -931,7 +931,13 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
 
     void VisitETSNewClassInstanceExpression(ir::ETSNewClassInstanceExpression *call) override
     {
-        auto *func = call->GetSignature()->Function();
+        if (call->TsType()->IsETSArrayType()) {
+            return;
+        }
+        if (!call->Signature()->HasFunction()) {
+            return;
+        }
+        auto *func = call->Signature()->Function();
         if (func == nullptr || func->Language() == Language::Id::JS) {
             // For dynamic call to js, all arguments and return type need to be boxed
             // NOLINTNEXTLINE(modernize-loop-convert)
@@ -948,7 +954,7 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
             auto *arg = call->GetArguments()[i];
 
             if (i >= func->Signature()->Params().size()) {
-                auto *restVar = call->GetSignature()->RestVar();
+                auto *restVar = call->Signature()->RestVar();
                 if (restVar != nullptr &&
                     !arg->IsSpreadElement()) {  // NOTE(gogabr) should we try to unbox spread elements?
                     auto *restElemType = GetArrayElementType(restVar->TsType());
@@ -957,10 +963,10 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
             } else {
                 auto *origSigType = func->Signature()->Params()[i]->TsType();
                 if (origSigType->IsETSPrimitiveType()) {
-                    call->GetSignature()->Params()[i]->SetTsType(origSigType);
+                    call->Signature()->Params()[i]->SetTsType(origSigType);
                     call->GetArguments()[i] = AdjustType(uctx_, arg, origSigType);
                 } else {
-                    call->GetArguments()[i] = AdjustType(uctx_, arg, call->GetSignature()->Params()[i]->TsType());
+                    call->GetArguments()[i] = AdjustType(uctx_, arg, call->Signature()->Params()[i]->TsType());
                 }
             }
         }

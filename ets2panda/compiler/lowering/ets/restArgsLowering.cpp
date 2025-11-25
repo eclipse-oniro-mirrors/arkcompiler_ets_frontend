@@ -192,8 +192,9 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     auto nonSpreadArgCount = GetNonSpreadArgCount(arguments, spreadElements);
 
     // tmp array to store spread arguments for avoiding repeated evaluation
-    blockStatements.push_back(parser->CreateFormattedStatement(
-        "let @@I1: FixedArray<Any> = new Any[" + std::to_string(spreadElements.size()) + "];", data.spreadArgsArray));
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: FixedArray<Any> = new FixedArray<Any>(" +
+                                                                   std::to_string(spreadElements.size()) + ");",
+                                                               data.spreadArgsArray));
 
     // calculate the length of array to be created
     blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: int = 0;", data.arrayLength));
@@ -223,7 +224,7 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     // normal function it depends on the type of the rest parameter.
     if (useConstraintType || arrayType->IsETSArrayType()) {
         blockStatements.push_back(parser->CreateFormattedStatement(
-            "let @@I1: FixedArray<@@T2> = new @@T3[@@I4];", data.arraySymbol, constraintTypeNode,
+            "let @@I1: FixedArray<@@T2> = new FixedArray<@@T3>(@@I4);", data.arraySymbol, constraintTypeNode,
             constraintTypeNode->Clone(allocator, nullptr), data.arrayLength));
     } else {
         blockStatements.push_back(parser->CreateFormattedStatement(
@@ -458,7 +459,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Exp
     const auto &arguments = expr->IsCallExpression() ? expr->AsCallExpression()->Arguments()
                                                      : expr->AsETSNewClassInstanceExpression()->GetArguments();
     const auto *signature = expr->IsCallExpression() ? expr->AsCallExpression()->Signature()
-                                                     : expr->AsETSNewClassInstanceExpression()->GetSignature();
+                                                     : expr->AsETSNewClassInstanceExpression()->Signature();
 
     checker::Type *restParamType = signature->RestVar()->TsType();
     auto arrayTypeNode =
@@ -566,7 +567,7 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
 ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithRestArgs(
     ir::ETSNewClassInstanceExpression *expr, public_lib::Context *context)
 {
-    checker::Signature *signature = expr->GetSignature();
+    checker::Signature *signature = expr->Signature();
     if (!ShouldProcessRestParameters(signature, expr->GetTypeRef()->TsType(), expr->GetArguments())) {
         return expr;
     }

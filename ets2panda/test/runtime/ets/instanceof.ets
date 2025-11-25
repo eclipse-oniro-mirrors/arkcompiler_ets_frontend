@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ function main(): void {
   arktest.assertTrue((intArr instanceof FixedArray<Int>))
   arktest.assertTrue(!(intArr instanceof Int))
 
-  let integerArr: FixedArray<Int> = new Int[10];
+  let integerArr: FixedArray<Int> = new FixedArray<Int>(10);
 
   arktest.assertTrue(integerArr instanceof FixedArray<Int>)
   arktest.assertTrue(integerArr instanceof Object)

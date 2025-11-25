@@ -107,7 +107,7 @@ static ir::Identifier *CreateNewArrayDeclareStatement(public_lib::Context *ctx, 
     if (array->TsType()->IsETSResizableArrayType()) {
         newArrayDeclareStr << "let @@I1: Array<@@T2> = new Array<@@T3>(@@I4);" << std::endl;
     } else {
-        newArrayDeclareStr << "let @@I1: FixedArray<@@T2> = new (@@T3)[@@I4];" << std::endl;
+        newArrayDeclareStr << "let @@I1: FixedArray<@@T2> = new FixedArray<@@T3>(@@I4);" << std::endl;
     }
 
     ES2PANDA_ASSERT(newArrayLengthId != nullptr);
