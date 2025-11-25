@@ -80,7 +80,7 @@ export class FileManager {
     }
     private static isFirstLineUseStatic(filePath: string): boolean {
         const firstLine = readFirstLineSync(filePath);
-        return firstLine === "'use static'";
+        return firstLine === '\'use static\'';
     }
 
     getLanguageVersionByFilePath(filePath: string): string {
