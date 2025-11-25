@@ -17,10 +17,10 @@
 
 namespace ark::es2panda::lsp {
 
-FormatCodeSettings GetDefaultFormatCodeSettings(const std::string &newLineCharacter)
+FormatCodeSettings GetDefaultFormatCodeSettings(const std::string &newLineCharacter /* = DEFAULT_NEWLINE_CHARACTER */)
 {
     FormatCodeSettings settings;
-    if (!(newLineCharacter.empty())) {
+    if (!newLineCharacter.empty()) {
         settings.SetNewLineCharacter(newLineCharacter);
     }
     return settings;

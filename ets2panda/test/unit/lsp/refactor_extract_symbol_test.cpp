@@ -263,6 +263,7 @@ class AccountingDepartment {
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    refactorContext->kind = "refactor.extract.variable";
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
     EXPECT_FALSE(applicable.empty());

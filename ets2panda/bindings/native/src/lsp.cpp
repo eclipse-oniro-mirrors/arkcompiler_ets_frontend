@@ -1072,16 +1072,10 @@ static TextChangesContext *ResolveTextChangesContext(KNativePointer userPrefsPtr
     }
 
     static auto prefs = ark::es2panda::lsp::UserPreferences::GetDefaultUserPreferences();
-    const char *newline =
-#ifdef _WIN32
-        "\r\n";
-#else
-        "\n";
-#endif
 
     auto settings = formattingSettingsPtr != nullptr
                         ? *reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(formattingSettingsPtr)
-                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings(newline);
+                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings();
 
     auto fmt = ark::es2panda::lsp::GetFormatContext(settings);
 

@@ -453,7 +453,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForTypeAssertionObject)
 
     auto *initializer = new Initializer();
     auto *refactorContext = CreateExtractContext(initializer, code, spanStart, spanEnd);
-
+    refactorContext->kind = "refactor.extract.interface";
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
     ASSERT_FALSE(applicable.empty());
@@ -478,6 +478,60 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForTypeAssertionObject)
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
     EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { n: number; s: string }\n\n");
+
+    const auto &replaceChange = fileEdit.textChanges.at(1);
+    EXPECT_GT(replaceChange.span.length, 0U);
+    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForClassMethodReturn)
+{
+    const std::string code = R"('use static'
+class Circle {
+    radius: number;
+    constructor(radius: number) {
+        this.radius = radius;
+    }
+    
+    getBoundingBox(): { width: number; height: number } {
+        return {
+            width: this.radius * 2,
+            height: this.radius * 2
+        }
+    }
+})";
+    const size_t spanStart = 145;
+    const size_t spanEnd = 178;
+
+    auto *initializer = new Initializer();
+    auto *refactorContext = CreateExtractContext(initializer, code, spanStart, spanEnd);
+
+    // Step 1: get applicable refactors
+    auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    ASSERT_FALSE(applicable.empty());
+
+    const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
+    const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_TYPE_NAME;
+    const bool found =
+        std::any_of(applicable.begin(), applicable.end(),
+                    [&](const ark::es2panda::lsp::ApplicableRefactorInfo &info) { return info.action.name == target; });
+    ASSERT_TRUE(found);
+
+    // Step 2: run GetEditsForRefactorsImpl
+    auto edits =
+        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
+
+    ASSERT_NE(edits, nullptr);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 1);
+
+    const auto &fileEdit = edits->GetFileTextChanges().at(0);
+    ASSERT_EQ(fileEdit.textChanges.size(), 2U);
+
+    const auto &insertChange = fileEdit.textChanges.at(0);
+    EXPECT_EQ(insertChange.span.length, 0U);
+    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { width: number; height: number }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
