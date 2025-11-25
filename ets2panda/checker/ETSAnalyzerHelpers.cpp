@@ -464,6 +464,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
     auto *calleeObj = expr->Callee()->AsMemberExpression()->Object();
+    ERROR_SANITY_CHECK(checker, calleeObj->TsType()->IsETSObjectType(), return nullptr);
     bool isCalleeObjETSGlobal = calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->IsClassDefinition() &&
                                 calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->IsGlobal();
     // for callExpr `a.foo`, there are 3 situations:
