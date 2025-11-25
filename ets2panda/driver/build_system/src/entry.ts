@@ -37,38 +37,38 @@ function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGet
     Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger));
 }
 
-function replaceOnEnv(str: string, indexA: number, indexB: number) {
+function replaceOnEnv(str: string, indexA: number, indexB: number): string {
     let envName: string = str.substring(indexA + 2, indexB)
-    const envValue = process.env[envName] || ""
+    const envValue = process.env[envName] || ''
 
-    if (envValue == "") {
+    if (envValue === '') {
         throw new Error(envName + ' environment variable is not set');
     }
 
     return str.replace(str.substring(indexA, indexB + 1), envValue)
 }
 
-function getVar(str: string) {
-    if (str == null) {
-        return str
+function getVar(str: string | null | undefined): string {
+    if (str === null || str === undefined || str === '') {
+        return ''
     }
     let indexA = str.indexOf('$')
     let indexB = str.indexOf('}')
 
-    if (indexA == -1 || indexB == -1) {
+    if (indexA === -1 || indexB === -1) {
         return str
     }
 
     return replaceOnEnv(str, indexA, indexB)
 }
 
-function validatePlugins(projectConfig: BuildConfig) {
+function validatePlugins(projectConfig: BuildConfig): void {
     for (const key in projectConfig.plugins) {
         projectConfig.plugins[key] = getVar(projectConfig.plugins[key])
     }
 }
 
-function validatePaths(projectConfig: BuildConfig) {
+function validatePaths(projectConfig: BuildConfig): void {
     for (const key in projectConfig.paths) {
         for (let i = 0; i < projectConfig.paths[key].length; i++) {
             projectConfig.paths[key][i] = getVar(projectConfig.paths[key][i])
@@ -76,28 +76,28 @@ function validatePaths(projectConfig: BuildConfig) {
     }
 }
 
-function validateSingleFieldPaths(projectConfig: BuildConfig) {
+function validateSingleFieldPaths(projectConfig: BuildConfig): void {
     if (projectConfig.pandaStdlibPath) {
         projectConfig.pandaStdlibPath = getVar(projectConfig.pandaStdlibPath)
     }
-
+    
     projectConfig.sdkAliasMap = projectConfig.sdkAliasMap instanceof Map
         ? projectConfig.sdkAliasMap
         : new Map(Object.entries(projectConfig.sdkAliasMap || {}));
 
     projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
     projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
-    
+
     projectConfig.entryFile = getVar(projectConfig.entryFile);
 }
 
-function validateInteropApiPaths(interopApiPaths: string[]) {
+function validateInteropApiPaths(interopApiPaths: string[]): void {
     for (let i = 0; i < interopApiPaths?.length || 0; i++) {
         interopApiPaths[i] = getVar(interopApiPaths[i])
     }
 }
 
-function validateSdkAliasMap(projectConfig: BuildConfig) {
+function validateSdkAliasMap(projectConfig: BuildConfig): void {
     if (projectConfig.sdkAliasMap.size !== 0) {
         for (const [name, path] of projectConfig.sdkAliasMap) {
             const newPath = getVar(path);
@@ -106,16 +106,16 @@ function validateSdkAliasMap(projectConfig: BuildConfig) {
     }
 }
 
-function validateCompileFiles(compileFiles: string[]) {
+function validateCompileFiles(compileFiles: string[]): void {
     compileFiles.forEach((file, i) => {
         compileFiles[i] = getVar(file);
     });
 }
 
-function validateDependencyModuleList(projectConfig: BuildConfig) {
+function validateDependencyModuleList(projectConfig: BuildConfig): void {
     for(let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
         projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
-        
+
         const currentDeclFilesPath = projectConfig.dependencyModuleList[i].declFilesPath;
         if (currentDeclFilesPath) {
             projectConfig.dependencyModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
@@ -127,10 +127,10 @@ function validateDependencyModuleList(projectConfig: BuildConfig) {
     }
 }
 
-function validateDependentModuleList(projectConfig: BuildConfig) {
+function validateDependentModuleList(projectConfig: BuildConfig): void {
     for(let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
         projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
-        
+
         const currentDeclFilesPath = projectConfig.dependentModuleList[i].declFilesPath;
         if (currentDeclFilesPath) {
             projectConfig.dependentModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
@@ -142,11 +142,11 @@ function validateDependentModuleList(projectConfig: BuildConfig) {
     }
 }
 
-function validate(projectConfig: BuildConfig) {
+function validate(projectConfig: BuildConfig): void {
     validatePlugins(projectConfig)
     validatePaths(projectConfig)
     validateSingleFieldPaths(projectConfig)
-    validateInteropApiPaths(projectConfig.interopApiPaths)    
+    validateInteropApiPaths(projectConfig.interopApiPaths)
     validateSdkAliasMap(projectConfig)
     validateCompileFiles(projectConfig.compileFiles)
     validateDependencyModuleList(projectConfig)

@@ -261,8 +261,12 @@ export abstract class BaseMode {
 
         let success: boolean = true;
         const tasks: { id: string, job: CompileJobInfo }[] = Graph.topologicalSort(buildGraph)
-            .map((nodeId) => { return buildGraph.getNodeById(nodeId); })
-            .map((node) => { return { id: node.id, job: node.data }; })
+            .map((nodeId) => {
+                return buildGraph.getNodeById(nodeId);
+            })
+            .map((node) => {
+                return { id: node.id, job: node.data };
+            })
 
         while (tasks.length > 0) {
             const task = tasks.shift()!;
@@ -580,7 +584,9 @@ export abstract class BaseMode {
         // NOTE: to be refactored
         const mainModuleFileList: string[] = [...this.fileToModule.entries()].filter(([_, module]: [string, ModuleInfo]) => {
             return module.isMainModule
-        }).map(([file, _]: [string, ModuleInfo]) => { return file })
+        }).map(([file, _]: [string, ModuleInfo]) => {
+            return file
+        })
         mainModule.entryFile = mainModuleFileList[0]
 
         this.logger.printDebug(`mainModule entryFile: ${mainModule.entryFile}`)
@@ -727,8 +733,12 @@ export abstract class BaseMode {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DECLGEN_V1_SEQUENTIAL));
 
         const jobs: CompileJobInfo[] = Graph.topologicalSort(buildGraph)
-            .map((nodeId: string) => { return buildGraph.getNodeById(nodeId); })
-            .map((node) => { return node.data; });
+            .map((nodeId: string) => {
+                return buildGraph.getNodeById(nodeId);
+            })
+            .map((node) => {
+                return node.data;
+            });
 
         // Just to init
         Ets2panda.getInstance(this.buildConfig)

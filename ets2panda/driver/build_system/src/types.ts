@@ -76,6 +76,7 @@ export interface ArkTSGlobal {
         _CreateGlobalContext: Function;
         _DestroyGlobalContext: Function;
         _SetUpSoPath: Function;
+        _FreeCompilerPartMemory: Function;
     }
 }
 
@@ -87,6 +88,8 @@ export interface ArkTS {
     Context: {
         createFromString: Function;
         createFromStringWithHistory: Function;
+        createCacheContextFromFile: Function;
+        createContextGenerateAbcForExternalSourceFiles: Function;
     };
     EtsScript: {
         fromContext: Function;
@@ -115,6 +118,11 @@ export interface ArkTS {
     };
     Es2pandaImportKinds: typeof Es2pandaImportKinds;
     Es2pandaImportFlags: typeof Es2pandaImportFlags;
+}
+
+export interface KoalaModule {
+    arkts: ArkTS;
+    arktsGlobal: ArkTSGlobal;
 }
 
 export enum Es2pandaContextState {

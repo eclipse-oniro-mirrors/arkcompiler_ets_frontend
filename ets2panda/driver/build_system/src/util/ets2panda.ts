@@ -25,7 +25,8 @@ import {
     DeclgenV1JobInfo,
     CompileJobType,
     AliasConfig,
-    ArkTS
+    ArkTS,
+    KoalaModule
 } from '../types';
 import {
     Logger,
@@ -87,7 +88,7 @@ export class Ets2panda {
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
-    private readonly koalaModule: any;
+    private readonly koalaModule: KoalaModule;
 
     private constructor(buildConfig: BuildConfig) {
         this.koalaModule = initKoalaModules(buildConfig);
@@ -115,11 +116,17 @@ export class Ets2panda {
     }
 
     public initalize(): void {
+        if (this.koalaModule === undefined) {
+            throw new Error('KoalaModule is not initialized');
+        }
         const arkts: ArkTS = this.koalaModule.arkts;
         arkts.memInitialize();
     }
 
     public finalize(): void {
+        if (this.koalaModule === undefined) {
+            throw new Error('KoalaModule is not initialized');
+        }
         const arkts: ArkTS = this.koalaModule.arkts;
         arkts.memFinalize();
     }
