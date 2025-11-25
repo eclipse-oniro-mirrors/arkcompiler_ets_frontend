@@ -99,6 +99,13 @@ void ETSChecker::LogUnresolvedReferenceError(ir::Identifier *const ident)
     }
 }
 
+void ThrowErrorWithSpecificCategoryName(ETSChecker *checker, const diagnostic::DiagnosticKind &errMsg,
+                                        std::string identCategoryName, ir::Identifier *ident)
+{
+    checker->LogError(errMsg, {identCategoryName}, ident->Start());
+    ident->SetTsType(checker->GlobalTypeError());
+}
+
 void ETSChecker::WrongContextErrorClassifyByType(ir::Identifier *ident)
 {
     if (ident->IsErrorPlaceHolder()) {
@@ -113,13 +120,11 @@ void ETSChecker::WrongContextErrorClassifyByType(ir::Identifier *ident)
          varbinder::VariableFlags::ANNOTATIONUSAGE | varbinder::VariableFlags::TYPE_ALIAS |
          varbinder::VariableFlags::TYPE))) {
         case varbinder::VariableFlags::CLASS:
-            identCategoryName = "Class";
-            LogError(diagnostic::NOT_AS_OBJECT, {identCategoryName}, ident->Start());
+            ThrowErrorWithSpecificCategoryName(this, diagnostic::NOT_AS_OBJECT, "Class", ident);
             return;
 
         case varbinder::VariableFlags::NAMESPACE:
-            identCategoryName = "Namespace";
-            LogError(diagnostic::NOT_AS_OBJECT, {identCategoryName}, ident->Start());
+            ThrowErrorWithSpecificCategoryName(this, diagnostic::NOT_AS_OBJECT, "Namespace", ident);
             return;
 
         case varbinder::VariableFlags::METHOD:
@@ -147,7 +152,7 @@ void ETSChecker::WrongContextErrorClassifyByType(ir::Identifier *ident)
             break;
 
         default:
-            LogError(diagnostic::ID_WRONG_CTX, {ident->Name()}, ident->Start());
+            ThrowErrorWithSpecificCategoryName(this, diagnostic::ID_WRONG_CTX, ident->Name().Mutf8(), ident);
             return;
     }
     ident->SetTsType(GlobalTypeError());

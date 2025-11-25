@@ -31,7 +31,6 @@ function main(): void {
 
 
 /* @@@ label1 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label1 Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'String' */
 /* @@@ label1 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
 /* @@@ label2 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
 /* @@@ label2 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

@@ -19,9 +19,8 @@ class a
 }
 function main()
 {
-    /* @@ label */a = /* @@ label1 */5
+    /* @@ label */a = 5
 }
 
 
 /* @@@ label Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'a' */

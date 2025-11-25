@@ -36,5 +36,5 @@ WeakSet [12] = new undefined()
 /* @@? 20:1 Error Semantic error ESE0292: This expression is not constructible. */
 /* @@? 23:1 Error Semantic error ESE0300: The union type is not constructible. */
 /* @@? 26:1 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@? 26:1 Error Semantic error ESE0250: Object type doesn't have proper index access method. */
+/* @@? 26:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 26:16 Error Semantic error ESE0290: Type 'undefined' is not constructible. */
