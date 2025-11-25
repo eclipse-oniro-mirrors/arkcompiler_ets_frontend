@@ -91,7 +91,6 @@ ENVIRONMENT:
 
 ```
 export LD_LIBRARY_PATH=/build/lib
-
 ```
 
 Build ts-bindings:
