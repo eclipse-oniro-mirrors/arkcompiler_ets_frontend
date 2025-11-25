@@ -475,5 +475,5 @@ if (require.main === module) {
   process.env.PANDA_LIB_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'lib');
   process.env.PANDA_BIN_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'ets2panda', 'bin');
   run(testDir, pathConfig);
-  runWithAstCache(testDir, pathConfig).then(() => { });
+  runWithAstCache(testDir, pathConfig).then(() => {});
 }

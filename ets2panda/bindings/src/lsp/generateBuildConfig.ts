@@ -54,7 +54,7 @@ function parseJson5(filePath: string): Json5Object {
     const rawContent = fs.readFileSync(filePath, 'utf8');
     return JSON5.parse(rawContent) as Json5Object;
   } catch (error) {
-    logger.error(`Error parsing ${filePath}:`, error)
+    logger.error(`Error parsing ${filePath}:`, error);
     return {} as Json5Object;
   }
 }
@@ -116,7 +116,7 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
         .filter(([_, depPath]) => depPath.startsWith('file:'))
         .map(([_, depPath]) => path.resolve(modulePath, depPath.replace('file:', '')));
     } catch (error) {
-      logger.error(`Error parsing ${packageFilePath}:`, error)
+      logger.error(`Error parsing ${packageFilePath}:`, error);
       return [];
     }
   };
@@ -129,9 +129,11 @@ function createMapEntryForPlugin(buildSdkPath: string, pluginName: string): stri
   return path.join(buildSdkPath, 'build-tools', 'ui-plugins', 'lib', pluginName, 'index');
 }
 
-function createPluginMap(buildSdkPath: string): Record<string, string> {
-  let pluginMap: Record<string, string> = {};
-  const pluginList: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+const DEFAULT_PLUGIN_LIST = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+
+function createPluginMap(buildSdkPath: string, pluginList: string[] = DEFAULT_PLUGIN_LIST): Record<string, string> {
+  const pluginMap: Record<string, string> = {};
+
   for (const plugin of pluginList) {
     pluginMap[plugin] = createMapEntryForPlugin(buildSdkPath, plugin);
   }
@@ -166,14 +168,16 @@ function getModuleLanguageVersion(compileFiles: Set<string>): string {
 
 export function generateBuildConfigs(
   pathConfig: PathConfig,
-  modules: ModuleDescriptor[]
+  modules: ModuleDescriptor[],
+  plugins?: string[]
 ): Record<string, BuildConfig> {
   const allBuildConfigs: Record<string, BuildConfig> = {};
   const definedModules = modules;
+  const pluginMap = createPluginMap(pathConfig.buildSdkPath, plugins);
+
   for (const module of definedModules) {
     const modulePath = module.srcPath;
     const compileFiles = new Set(getEtsFiles(modulePath));
-    const pluginMap = createPluginMap(pathConfig.buildSdkPath);
 
     // Get recursive dependencies
     const depModuleCompileFiles = new Set<string>();
@@ -221,13 +225,22 @@ export function generateBuildConfigs(
   return allBuildConfigs;
 }
 
-function processDependencies(currentModule: string, dependencies: string[], definedModules: ModuleDescriptor[]) {
-  let result: string[] = [];
+function processDependencies(
+  currentModule: string,
+  dependencies: string[],
+  definedModules: ModuleDescriptor[]
+): string[] {
+  const moduleMap = new Map<string, ModuleDescriptor>();
+  definedModules.forEach((module) => {
+    moduleMap.set(module.srcPath, module);
+  });
+
+  const result: string[] = [];
   dependencies.forEach((dep) => {
-    const depModule = definedModules.find((m) => m.srcPath === dep)
+    const depModule = moduleMap.get(dep);
     if (depModule && depModule.name !== currentModule) {
       result.push(depModule.name);
     }
-  })
+  });
   return result;
 }

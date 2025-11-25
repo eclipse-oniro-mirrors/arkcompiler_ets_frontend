@@ -24,7 +24,7 @@ export enum LANGUAGE_VERSION {
 export const DECL_ETS_SUFFIX: string = '.d.ets';
 export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
-export const EXTERNAL_API_PATH_FROM_SDK: string = '../../../hms/ets/ets1.2';
+export const EXTERNAL_API_PATH_FROM_SDK: string = '../../../hms/ets/static';
 export const INTEROP_API_PATH_FROM_SDK: string = '../dynamic/build-tools/interop';
 export const DEFAULT_CACHE_DIR: string = './.idea/.deveco';
 export const ETS_SUFFIX: string = '.ets';
