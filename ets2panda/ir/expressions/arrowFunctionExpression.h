@@ -73,6 +73,7 @@ public:
     void Compile(compiler::ETSGen *etsg) const override;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
+    void CleanCheckInformation() override;
     ir::TypeNode *CreateTypeAnnotation(checker::ETSChecker *checker);
     ir::TypeNode *CreateReturnNodeFromType(checker::ETSChecker *checker, checker::Type *returnType);
     bool IsVarFromSubscope(const varbinder::Variable *var) const;

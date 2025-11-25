@@ -13,15 +13,24 @@
  * limitations under the License.
  */
 
-const mustChecks: Array<Function> = new Array<Function>();
+/**
+ * This test simulates a real SDK usage scenario.
+ * It verifies that during the recheck phase of `declareOverloadLowering`,
+ * the `this` keyword is able to resolve the correct ContainingClass.
+ */
 
-function mustCallArgSize() {
-    mustChecks.push(() => {
-        xf(){
-
-        }
-    });
+declare class A {
+    on(type: 'A', cb: () => void): void
+    on(type: 'B', cb: () => void): void
 }
 
-/* @@? 19:5 Error Semantic error ESE0127: No matching call signature for push((() => void)) */
-/* @@? 20:9 Error Semantic error ESE0289: This expression is not callable. */
+let a = new A();
+
+class B {
+    prop:string = "xxx"
+    foo() {
+        a.on('B', () => {
+            this.prop // test `this` exprssion could be recheck in the lowering
+        })
+    }
+}
