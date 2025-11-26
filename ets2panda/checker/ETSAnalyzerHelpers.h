@@ -56,6 +56,7 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
                            ir::ReturnStatement *st);
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc);
+bool HasSingleReturnStatement(const ir::AstNode *node);
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument);
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *arrayExprPreferredType);
 void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr);
