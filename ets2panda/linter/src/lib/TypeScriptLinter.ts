@@ -1635,7 +1635,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
-    const typeString = this.tsTypeChecker.typeToString(baseType);
+    const typeString = this.tsTypeChecker.typeToStringForLinter(baseType);
 
     const symbol = baseType.getSymbol();
     if (symbol && !isStdLibrarySymbol(symbol)) {
@@ -1656,7 +1656,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private isSpecialType(baseType: ts.Type, node: ts.Node): boolean {
-    const baseTypeStr = this.tsTypeChecker.typeToString(baseType);
+    const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(baseType);
     if (TypeScriptLinter.extractKeyofFromString(baseTypeStr)) {
       return true;
     }
@@ -1715,7 +1715,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         for (const member of decl.members) {
           if (member.initializer) {
             const memberType = this.tsTypeChecker.getTypeAtLocation(member.initializer);
-            const baseTypeStr = this.tsTypeChecker.typeToString(
+            const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(
               this.tsTypeChecker.getBaseTypeOfLiteralType(memberType)
             );
             initializerTypes.add(baseTypeStr);
@@ -1847,7 +1847,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const baseExprType = this.tsTypeChecker.getTypeAtLocation(propertyAccessNode.expression);
     const baseExprSym = baseExprType.aliasSymbol || baseExprType.getSymbol();
-    const symbolName = baseExprSym ? baseExprSym.name : this.tsTypeChecker.typeToString(baseExprType);
+    const symbolName = baseExprSym ? baseExprSym.name : this.tsTypeChecker.typeToStringForLinter(baseExprType);
 
     if (!baseExprType.isUnion() || COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(symbolName)) {
       return;
@@ -1872,7 +1872,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const propSym = this.tsUtils.findProperty(t, propName);
       if (propSym) {
         const propType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propSym, propertyAccessNode);
-        propTypes.push(this.tsTypeChecker.typeToString(propType));
+        propTypes.push(this.tsTypeChecker.typeToStringForLinter(propType));
       }
     }
 
@@ -4307,13 +4307,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
     const returnStatements = this.collectReturnStatements(method);
-    const declaredReturnTypeStr = this.tsTypeChecker.typeToString(declaredReturnType);
+    const declaredReturnTypeStr = this.tsTypeChecker.typeToStringForLinter(declaredReturnType);
     for (const returnStmt of returnStatements) {
       if (!returnStmt.expression) {
         continue;
       }
       const actualReturnType = this.tsTypeChecker.getTypeAtLocation(returnStmt.expression);
-      const actualReturnTypeStr = this.tsTypeChecker.typeToString(actualReturnType);
+      const actualReturnTypeStr = this.tsTypeChecker.typeToStringForLinter(actualReturnType);
       if (declaredReturnTypeStr === actualReturnTypeStr) {
         return;
       }
@@ -4406,7 +4406,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return true;
     }
 
-    return this.tsTypeChecker.typeToString(type1) === this.tsTypeChecker.typeToString(type2);
+    return this.tsTypeChecker.typeToStringForLinter(type1) === this.tsTypeChecker.typeToStringForLinter(type2);
   }
 
   private getAllBaseTypes(type: ts.Type, classDecl: ts.ClassDeclaration, isStatic?: boolean): ts.Type[] | undefined {
@@ -4616,7 +4616,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private isTypeSameOrWider(baseType: ts.Type, derivedType: ts.Type): boolean {
-    if (this.tsTypeChecker.typeToString(baseType) === this.tsTypeChecker.typeToString(derivedType)) {
+    if (this.tsTypeChecker.typeToStringForLinter(baseType) === this.tsTypeChecker.typeToStringForLinter(derivedType)) {
       return true;
     }
 
@@ -4789,10 +4789,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private flattenUnionTypes(type: ts.Type): string[] {
     if (type.isUnion()) {
       return type.types.map((t) => {
-        return TypeScriptLinter.normalizeTypeString(this.tsTypeChecker.typeToString(t));
+        return TypeScriptLinter.normalizeTypeString(this.tsTypeChecker.typeToStringForLinter(t));
       });
     }
-    return [TypeScriptLinter.normalizeTypeString(this.tsTypeChecker.typeToString(type))];
+    return [TypeScriptLinter.normalizeTypeString(this.tsTypeChecker.typeToStringForLinter(type))];
   }
 
   // Normalize type string to handle primitive wrapper types consistently
@@ -5838,7 +5838,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       STRINGLITERAL_LONG,
       STRINGLITERAL_CHAR
     ];
-    const argTypeString = this.tsTypeChecker.typeToString(argType);
+    const argTypeString = this.tsTypeChecker.typeToStringForLinter(argType);
 
     if (this.tsUtils.isNumberLikeType(argType)) {
       this.handleNumericArgument(expr.argumentExpression, argType);
@@ -5860,7 +5860,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         const autofix = this.autofixer?.fixArrayIndexExprType(argExpr);
         this.incrementCounters(argExpr, FaultID.ArrayIndexExprType, autofix);
       }
-    } else if (this.tsTypeChecker.typeToString(argType) === 'number') {
+    } else if (this.tsTypeChecker.typeToStringForLinter(argType) === 'number') {
       if (this.isArrayIndexValidNumber(argExpr)) {
         return;
       }
@@ -6247,7 +6247,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const arg = args[0];
     const argumentType = this.tsTypeChecker.getTypeAtLocation(arg);
-    const argumentTypeString = this.tsTypeChecker.typeToString(argumentType);
+    const argumentTypeString = this.tsTypeChecker.typeToStringForLinter(argumentType);
 
     if (SELECT_OPTIONS.includes(argumentTypeString)) {
       return;
@@ -6317,7 +6317,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const expression = callExpr.expression;
     const type = this.tsTypeChecker.getTypeAtLocation(expression);
-    const typeText = this.tsTypeChecker.typeToString(type);
+    const typeText = this.tsTypeChecker.typeToStringForLinter(type);
 
     if (LIKE_FUNCTION !== typeText) {
       return;
@@ -6325,7 +6325,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isNewExpression(expression) || ts.isCallExpression(expression)) {
       const exprIndentifier = expression.expression;
       const typeExprIndent = this.tsTypeChecker.getTypeAtLocation(exprIndentifier);
-      const typeTextExprIndent = this.tsTypeChecker.typeToString(typeExprIndent);
+      const typeTextExprIndent = this.tsTypeChecker.typeToStringForLinter(typeExprIndent);
       if (typeTextExprIndent === LIKE_FUNCTION_CONSTRUCTOR) {
         this.incrementCounters(expression, FaultID.ExplicitFunctionType);
       }
@@ -6501,7 +6501,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         continue;
       }
       const parameterType = this.tsTypeChecker.getTypeAtLocation(parameter);
-      const parameterTypeString = this.tsTypeChecker.typeToString(parameterType);
+      const parameterTypeString = this.tsTypeChecker.typeToStringForLinter(parameterType);
 
       if (parameterTypeString === OBJECT_LITERAL) {
         return true;
@@ -6747,7 +6747,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private static readonly listFunctionBindApis = ['Function.bind', 'CallableFunction.bind'];
 
   private handleFunctionApplyBindPropCall(tsCallExpr: ts.CallExpression, calleeSym: ts.Symbol): void {
-    const exprName = this.tsTypeChecker.getFullyQualifiedName(calleeSym);
+    const exprName = this.tsTypeChecker.getFullyQualifiedNameForLinter(calleeSym);
     if (TypeScriptLinter.listFunctionApplyCallApis.includes(exprName)) {
       this.incrementCounters(tsCallExpr, FaultID.FunctionApplyCall);
     }
@@ -7147,7 +7147,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
-    const typeStr = this.tsTypeChecker.typeToString(this.tsTypeChecker.getTypeAtLocation(tsNewExpr));
+    const typeStr = this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(tsNewExpr));
     const primitiveTypes = ['Number', 'String', 'Boolean'];
     if (primitiveTypes.includes(typeStr)) {
       this.incrementCounters(tsNewExpr, FaultID.CreatingPrimitiveTypes);
@@ -8378,7 +8378,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const returnType = this.tsTypeChecker.getReturnTypeOfSignature(signature);
-    if (this.tsTypeChecker.typeToString(returnType) !== 'void') {
+    if (this.tsTypeChecker.typeToStringForLinter(returnType) !== 'void') {
       return;
     }
 
@@ -8598,7 +8598,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const isUnionType = (nodeType.flags & ts.TypeFlags.Union) !== 0;
 
     const isTypeAllowed = (t: ts.Type): boolean => {
-      const typeText = this.tsTypeChecker.typeToString(t);
+      const typeText = this.tsTypeChecker.typeToStringForLinter(t);
       return Boolean(
         t.flags & ts.TypeFlags.NumberLike ||
           t.flags & ts.TypeFlags.StringLike ||
@@ -8959,7 +8959,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const isArray = this.tsUtils.isArray(lhsType) && this.tsUtils.isArray(rhsType);
-    if (isArray && this.tsTypeChecker.typeToString(lhsType) === 'never[]') {
+    if (isArray && this.tsTypeChecker.typeToStringForLinter(lhsType) === 'never[]') {
       return;
     }
     const isTuple =
@@ -9000,7 +9000,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       typeString = lhsTypeDecl.type.getText().replace('(', '').
         replace(')', '');
     } else {
-      typeString = this.tsTypeChecker.typeToString(type);
+      typeString = this.tsTypeChecker.typeToStringForLinter(type);
     }
 
     /*
@@ -10743,7 +10743,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
     const checkSymbol = TypeScriptLinter.isIdentifierFromSDK(symbol);
     const type = this.tsTypeChecker.getTypeAtLocation(errorNode);
-    const typeName = this.tsTypeChecker.typeToString(type);
+    const typeName = this.tsTypeChecker.typeToStringForLinter(type);
 
     if (checkSymbol) {
       if (arkTsBuiltInTypeName.has(typeName)) {
@@ -11753,13 +11753,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private isFieldTypeMatchingBetweenDerivedAndBase(derivedType: ts.Type, baseType: ts.Type): boolean {
     // Split union type strings into trimmed member names
     const derivedNames = this.tsTypeChecker.
-      typeToString(derivedType).
+      typeToStringForLinter(derivedType).
       split('|').
       map((s) => {
         return s.trim();
       });
     const baseNames = this.tsTypeChecker.
-      typeToString(baseType).
+      typeToStringForLinter(baseType).
       split('|').
       map((s) => {
         return s.trim();
@@ -12055,7 +12055,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         const ident = param.name;
         const name = ident.getText();
         const type = this.tsTypeChecker.getTypeAtLocation(ident);
-        const typeString = this.tsTypeChecker.typeToString(type);
+        const typeString = this.tsTypeChecker.typeToStringForLinter(type);
         const isOptional = !!param.questionToken;
         const isInitialized = !!param.initializer;
         const info = { name, typeString, type, isOptional, isInitialized };
@@ -12669,7 +12669,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return true;
     }
     const indexType = this.tsTypeChecker.getTypeAtLocation(indexExpr);
-    const typeString = this.tsTypeChecker.typeToString(indexType);
+    const typeString = this.tsTypeChecker.typeToStringForLinter(indexType);
     if (typeString === 'number' || typeString === 'string') {
       return true;
     }
@@ -12987,7 +12987,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const type = this.tsTypeChecker.getTypeAtLocation(declaration);
-    const typeString = this.tsTypeChecker.typeToString(type);
+    const typeString = this.tsTypeChecker.typeToStringForLinter(type);
 
     if (typeString.split('<')[0] !== 'Promise') {
       return;
@@ -13078,8 +13078,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const asType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.type);
     const originType = this.tsTypeChecker.getTypeAtLocation(tsAsExpr.expression);
-    const originTypeStr = this.tsTypeChecker.typeToString(originType);
-    if (originTypeStr === 'never' && this.tsTypeChecker.typeToString(asType) !== originTypeStr) {
+    const originTypeStr = this.tsTypeChecker.typeToStringForLinter(originType);
+    if (originTypeStr === 'never' && this.tsTypeChecker.typeToStringForLinter(asType) !== originTypeStr) {
       this.incrementCounters(tsAsExpr, FaultID.NoTsLikeSmartType);
     }
   }
@@ -13149,7 +13149,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const type = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, object);
-    const typeString = this.tsTypeChecker.typeToString(type);
+    const typeString = this.tsTypeChecker.typeToStringForLinter(type);
 
     for (const [typeName, properties] of Object.entries(ERROR_TASKPOOL_PROP_LIST)) {
       if (typeString === typeName && properties.has(propertyName.text)) {
@@ -13257,7 +13257,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }) :
       (declaredType.getFlags() & ts.TypeFlags.NumberLike) === 0;
 
-    if (!hasNonNumberType || this.tsTypeChecker.typeToString(declaredType) === 'int') {
+    if (!hasNonNumberType || this.tsTypeChecker.typeToStringForLinter(declaredType) === 'int') {
       return;
     }
 
@@ -13423,8 +13423,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (type2.isUnion() && this.isTypeAssignable(type1, type2)) {
       return true;
     }
-    const type1String = this.tsTypeChecker.typeToString(type1);
-    const type2String = this.tsTypeChecker.typeToString(type2);
+    const type1String = this.tsTypeChecker.typeToStringForLinter(type1);
+    const type2String = this.tsTypeChecker.typeToStringForLinter(type2);
     if (type1String === type2String) {
       return true;
     }
@@ -14920,7 +14920,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const constructorDeclaration = resolvedSignature.declaration;
     const parentName = type.symbol ?
-      this.tsTypeChecker.getFullyQualifiedName(type.symbol) :
+      this.tsTypeChecker.getFullyQualifiedNameForLinter(type.symbol) :
       newExpr.expression.getText();
     if (!constructorDeclaration) {
       return;
@@ -15201,7 +15201,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     const functionSymbol = this.getFunctionSymbol(signature.declaration);
     const functionDeclaration = functionSymbol?.valueDeclaration;
-    let returnType = this.tsTypeChecker.typeToString(signature.getReturnType());
+    let returnType = this.tsTypeChecker.typeToStringForLinter(signature.getReturnType());
     let isSpecialTypeForBuiltIn = false;
     if (!functionDeclaration) {
       const signatureDecl = signature.getDeclaration();
@@ -15209,7 +15209,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         returnType = signatureDecl.type.getText();
         if (!parName && BUILTIN_CALLSIGNATURE_NEWCTOR.includes(name.text)) {
           const type = this.tsTypeChecker.getTypeAtLocation(name);
-          parName = this.tsTypeChecker.typeToString(type);
+          parName = this.tsTypeChecker.typeToStringForLinter(type);
           isSpecialTypeForBuiltIn = !!parName;
         }
       }
@@ -15310,7 +15310,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (('mask' === name.getText() || 'clip' === name.getText()) && node.arguments.length === 1) {
       const types = ['CircleAttribute', 'EllipseAttribute', ' PathAttribute', 'RectAttribute'];
       const arg = node.arguments[0];
-      const argType = this.tsTypeChecker.typeToString(this.tsTypeChecker.getTypeAtLocation(arg));
+      const argType = this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(arg));
       if (types.includes(argType)) {
         if (name.getText() === 'clip') {
           const typeMapping = {
@@ -15387,7 +15387,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (parameters && parameters.length === 2) {
         let paramMatch = true;
         for (let i = 0; i < parameters.length; i++) {
-          if (this.tsTypeChecker.typeToString(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !== argsType[i]) {
+          if (this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !== argsType[i]) {
             paramMatch = false;
             break;
           }
@@ -15443,7 +15443,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       let parName = this.tsUtils.getParentSymbolName(funSymbol);
       this.hanldeSdkCommonTypeName(expression, funSymbol, parName ? parName : expression.text, decl);
       if (decl && TypeScriptLinter.checkIsAppropriateTypeWithNode(decl)) {
-        let returnType: string | undefined = this.tsTypeChecker.typeToString(
+        let returnType: string | undefined = this.tsTypeChecker.typeToStringForLinter(
           this.tsTypeChecker.getTypeAtLocation(decl)
         );
         if (ts.isPropertySignature(decl) && decl.type) {
@@ -15618,7 +15618,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const decl = TsUtils.getDeclaration(funSymbol);
       const parName = this.tsUtils.getParentSymbolName(funSymbol);
       if (decl) {
-        const returnType: string | undefined = this.tsTypeChecker.typeToString(
+        const returnType: string | undefined = this.tsTypeChecker.typeToStringForLinter(
           this.tsTypeChecker.getTypeAtLocation(decl)
         );
         const deprecatedApiCheckMap = TypeScriptLinter.updateDeprecatedApiCheckMap(
@@ -16423,7 +16423,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private isSpecificTypeOfSerialization(type: ts.Type): boolean {
-    const typeName = this.tsTypeChecker.typeToString(type);
+    const typeName = this.tsTypeChecker.typeToStringForLinter(type);
     return serializationTypeFlags.has(type.flags) || serializationTypeName.has(typeName);
   }
 

@@ -1048,7 +1048,7 @@ export class Autofixer {
   fixPropertyAccessByIndex(node: ts.ElementAccessExpression): Autofix[] | undefined {
     if (ts.isParenthesizedExpression(node.expression) && ts.isAsExpression(node.expression.expression)) {
       const assertedType = this.typeChecker.getTypeAtLocation(node.expression.expression.type);
-      if (this.typeChecker.typeToString(assertedType) === 'object') {
+      if (this.typeChecker.typeToStringForLinter(assertedType) === 'object') {
         return this.renameAsObjectElementAccessExpression(node);
       }
     }
