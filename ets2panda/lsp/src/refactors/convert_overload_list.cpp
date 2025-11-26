@@ -68,6 +68,7 @@ std::vector<ir::AstNode *> FindOverloadDeclarations(const ir::AstNode *containin
 
 bool ValidateSignatureDeclarations(const std::vector<ir::AstNode *> &declarations)
 {
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kMinimumOverloadCount = 2;
     if (declarations.size() < kMinimumOverloadCount) {
         return false;
@@ -150,6 +151,7 @@ std::string GenerateUnionParameterType(const std::vector<const checker::Signatur
         tupleTypes.push_back(GenerateSignatureParametersToTuple(sig));
     }
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kFirstIndex = 0;
     for (size_t i = kFirstIndex; i < tupleTypes.size(); ++i) {
         if (i > kFirstIndex) {
@@ -253,6 +255,7 @@ OverloadGroupInfo GetOverloadGroupAtPosition(const RefactorContext &context)
 
 bool ValidateOverloadGroup(const OverloadGroupInfo &group)
 {
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kMinimumOverloadCount = 2;
     if (group.GetDeclarations().size() < kMinimumOverloadCount) {
         return false;
@@ -310,7 +313,9 @@ std::string GenerateConvertedOverloadSignature(const OverloadGroupInfo &group,
         return "";
     }
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kStartPosition = 0;
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kCharAfterCloseParen = 1;
     std::string result = fullSignature.substr(kStartPosition, openParen);
     result += newParams;
@@ -337,9 +342,9 @@ std::vector<FileTextChanges> GetEditInfoForConvertOverloadList(const RefactorCon
     }
 
     return ChangeTracker::With(*context.textChangesContext, [&](ChangeTracker &tracker) {
-        constexpr size_t kFirstDeclarationIndex = 0;
-        size_t minStart = group.GetDeclarations()[kFirstDeclarationIndex]->Start().index;
-        size_t maxEnd = group.GetDeclarations()[kFirstDeclarationIndex]->End().index;
+        constexpr size_t K_FIRST_DECLARATION_INDEX = 0;
+        size_t minStart = group.GetDeclarations()[K_FIRST_DECLARATION_INDEX]->Start().index;
+        size_t maxEnd = group.GetDeclarations()[K_FIRST_DECLARATION_INDEX]->End().index;
 
         for (auto *decl : group.GetDeclarations()) {
             if (decl->Start().index < minStart) {

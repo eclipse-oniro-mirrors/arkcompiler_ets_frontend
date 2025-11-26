@@ -212,7 +212,7 @@ public:
     [[nodiscard]] static ir::AstNode *DerefETSTypeReference(ir::AstNode *node);
 
     static std::vector<std::string> Split(const std::string &str, const char delimiter);
-    static std::string CalcRelativePath(std::string targetPath, std::string basePath);
+    static std::string CalcRelativePath(const std::string &targetPath, const std::string &basePath);
 };
 
 template <typename T>

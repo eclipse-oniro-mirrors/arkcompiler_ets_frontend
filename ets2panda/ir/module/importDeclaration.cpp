@@ -29,7 +29,7 @@ void ImportDeclaration::SetSource(StringLiteral *source)
     auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
     newNode->source_ = source;
 
-    if (source) {
+    if (source != nullptr) {
         source->SetParent(newNode);
     }
 }

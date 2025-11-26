@@ -36,7 +36,7 @@ static bool IsInitModuleCall(ir::AstNode *node)
     }
     auto *callee = node->AsCallExpression()->Callee();
     if (callee->IsIdentifier() && callee->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
-        return true;
+        return true;  // NOLINT(readability-simplify-boolean-expr)
     }
     return false;
 }
@@ -55,7 +55,7 @@ static bool IsESValueLoadCall(ir::AstNode *node)
     auto *property = callee->AsMemberExpression()->Property();
     if (object->AsIdentifier()->Name() == compiler::Signatures::ESVALUE &&
         property->AsIdentifier()->Name() == compiler::Signatures::LOAD) {
-        return true;
+        return true;  // NOLINT(readability-simplify-boolean-expr)
     }
     return false;
 }

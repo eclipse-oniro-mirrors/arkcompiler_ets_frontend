@@ -27,6 +27,7 @@ void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream 
 {
     // Message collected and printed once to avoid spliting printed message in case multithreading execution
     std::ostringstream stream;
+    // NOLINTNEXTLINE(readability-redundant-string-init)
     std::string fileName = "";
     if (!basePath.empty()) {
         fileName = util::Helpers::CalcRelativePath(diagnostic.File(), basePath);

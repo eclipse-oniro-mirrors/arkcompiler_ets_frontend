@@ -66,7 +66,7 @@ public:
     {
         left_ = left;
 
-        if (left) {
+        if (left != nullptr) {
             left->SetParent(this);
         }
     }
@@ -85,7 +85,7 @@ public:
     {
         right_ = right;
 
-        if (right) {
+        if (right != nullptr) {
             right->SetParent(this);
         }
     }
@@ -104,7 +104,7 @@ public:
     {
         body_ = body;
 
-        if (body) {
+        if (body != nullptr) {
             body->SetParent(this);
         }
     }

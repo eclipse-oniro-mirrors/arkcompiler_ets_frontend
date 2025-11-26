@@ -206,12 +206,12 @@ public:
 
         if (w < words_.size()) {
             uint64_t cur = words_[w] & (BS_WORD_ALL_SET << b) & WordMask(w);
-            if (cur) {
+            if (cur != 0U) {
                 return static_cast<int>((w << BS_WORD_SHIFT) + Ctz64(cur));
             }
             for (size_t j = w + 1; j < words_.size(); ++j) {
                 uint64_t ww = words_[j] & WordMask(j);
-                if (ww) {
+                if (ww != 0U) {
                     return static_cast<int>((j << BS_WORD_SHIFT) + Ctz64(ww));
                 }
             }

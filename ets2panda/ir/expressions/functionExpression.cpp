@@ -24,7 +24,7 @@ void FunctionExpression::SetFunction(ScriptFunction *func)
 {
     func_ = func;
 
-    if (func) {
+    if (func != nullptr) {
         func->SetParent(this);
     }
 }
@@ -33,7 +33,7 @@ void FunctionExpression::SetId(ir::Identifier *id)
 {
     exprName_ = id;
 
-    if (id) {
+    if (id != nullptr) {
         id->SetParent(this);
     }
 }

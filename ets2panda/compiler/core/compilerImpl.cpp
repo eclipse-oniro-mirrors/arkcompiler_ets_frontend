@@ -153,10 +153,9 @@ std::string ResolveDeclsOutputPath(const util::Options &options)
 {
     if (!options.WasSetGenerateDeclPath()) {
         return ark::os::RemoveExtension(util::BaseName(options.SourceFileName()))
-            .append(util::ImportPathManager::cacheSuffix);
-    } else {
-        return options.GetGenerateDeclPath();
+            .append(util::ImportPathManager::CACHE_SUFFIX);
     }
+    return options.GetGenerateDeclPath();
 }
 
 static bool CheckOptionsAfterPhase(const util::Options &options, const parser::Program &program,
@@ -187,12 +186,12 @@ static void GenDeclsForStdlib(public_lib::Context &context, const util::Options 
         dumper.GetDeclgen()->Run();
         dumper.DumpExports();
 
-        std::string path = moduleName.Mutf8() + std::string(util::ImportPathManager::cacheSuffix);
+        std::string path = moduleName.Mutf8() + std::string(util::ImportPathManager::CACHE_SUFFIX);
         if (options.WasSetGenerateDeclPath()) {
             // NOTE: "/" at the end needed because of bug in GetParentDir
             auto parentDir = ark::os::GetParentDir(options.GetGenerateDeclPath() + "/");
             ark::os::CreateDirectories(parentDir);
-            path = parentDir + "/" + path;
+            path = parentDir.append("/").append(path);
         }
 
         std::string res = "'use static'\n";

@@ -61,7 +61,7 @@ public:
     {
         argument_ = argument;
 
-        if (argument) {
+        if (argument != nullptr) {
             argument->SetParent(this);
         }
     }

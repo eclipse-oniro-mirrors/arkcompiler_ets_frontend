@@ -70,7 +70,7 @@ struct FnShape {
     bool bodyIsExpression {false};
 };
 
-static bool SelectionInsideIdent(size_t start, size_t end, ir::Identifier *ident)
+bool SelectionInsideIdent(size_t start, size_t end, ir::Identifier *ident)
 {
     if (ident == nullptr) {
         return false;
@@ -87,7 +87,7 @@ static bool SelectionInsideIdent(size_t start, size_t end, ir::Identifier *ident
     return true;
 }
 
-static ir::AstNode *FindEnclosingFunctionLike(ir::AstNode *n)
+ir::AstNode *FindEnclosingFunctionLike(ir::AstNode *n)
 {
     ir::AstNode *cur = n;
     while (cur != nullptr) {
@@ -99,7 +99,7 @@ static ir::AstNode *FindEnclosingFunctionLike(ir::AstNode *n)
     return cur;
 }
 
-static ir::VariableDeclaration *FindEnclosingVarDecl(ir::AstNode *n)
+ir::VariableDeclaration *FindEnclosingVarDecl(ir::AstNode *n)
 {
     ir::AstNode *cur = n;
     while (cur != nullptr && !cur->IsVariableDeclaration()) {
@@ -111,7 +111,7 @@ static ir::VariableDeclaration *FindEnclosingVarDecl(ir::AstNode *n)
     return cur->AsVariableDeclaration();
 }
 
-static bool CanConvertToClass(ir::AstNode *fnNode)
+bool CanConvertToClass(ir::AstNode *fnNode)
 {
     if (fnNode == nullptr) {
         return false;
@@ -128,7 +128,7 @@ static bool CanConvertToClass(ir::AstNode *fnNode)
     return false;
 }
 
-static ir::Identifier *GetIdFromFunctionDecl(ir::AstNode *fnNode)
+ir::Identifier *GetIdFromFunctionDecl(ir::AstNode *fnNode)
 {
     auto *func = fnNode->AsFunctionDeclaration()->Function();
     if (func == nullptr || func->Id() == nullptr || !func->Id()->IsIdentifier()) {
@@ -137,7 +137,7 @@ static ir::Identifier *GetIdFromFunctionDecl(ir::AstNode *fnNode)
     return func->Id()->AsIdentifier();
 }
 
-static ir::Identifier *GetIdFromFunctionExpr(ir::AstNode *fnNode)
+ir::Identifier *GetIdFromFunctionExpr(ir::AstNode *fnNode)
 {
     auto *func = fnNode->AsFunctionExpression()->Function();
     if (func == nullptr) {
@@ -147,7 +147,7 @@ static ir::Identifier *GetIdFromFunctionExpr(ir::AstNode *fnNode)
     return (id != nullptr && id->IsIdentifier()) ? id->AsIdentifier() : nullptr;
 }
 
-static ir::Identifier *GetIdFromVariableBinding(ir::AstNode *fnNode)
+ir::Identifier *GetIdFromVariableBinding(ir::AstNode *fnNode)
 {
     ir::AstNode *p = fnNode->Parent();
     while (p != nullptr && !p->IsVariableDeclaration()) {
@@ -169,7 +169,7 @@ static ir::Identifier *GetIdFromVariableBinding(ir::AstNode *fnNode)
     return nullptr;
 }
 
-static ir::Identifier *FindNameForFunctionLike(ir::AstNode *fnNode)
+ir::Identifier *FindNameForFunctionLike(ir::AstNode *fnNode)
 {
     if (fnNode == nullptr) {
         return nullptr;
@@ -193,8 +193,8 @@ static ir::Identifier *FindNameForFunctionLike(ir::AstNode *fnNode)
     return nullptr;
 }
 
-static ir::Expression *TryGetFunctionInitFromVarDecl(ir::VariableDeclaration *vardecl, const TextRange &span,
-                                                     ir::Identifier **outName)
+ir::Expression *TryGetFunctionInitFromVarDecl(ir::VariableDeclaration *vardecl, const TextRange &span,
+                                              ir::Identifier **outName)
 {
     if (vardecl == nullptr) {
         return nullptr;
@@ -232,7 +232,7 @@ static ir::Expression *TryGetFunctionInitFromVarDecl(ir::VariableDeclaration *va
     return nullptr;
 }
 
-static es2panda_AstNode *GetScriptFunction(es2panda_Context *ctx, ir::AstNode *fnNode)
+es2panda_AstNode *GetScriptFunction(es2panda_Context *ctx, ir::AstNode *fnNode)
 {
     if (fnNode == nullptr) {
         return nullptr;
@@ -250,7 +250,7 @@ static es2panda_AstNode *GetScriptFunction(es2panda_Context *ctx, ir::AstNode *f
     return nullptr;
 }
 
-static std::string SafeNameFromIdent(ir::Identifier *nameIdent)
+std::string SafeNameFromIdent(ir::Identifier *nameIdent)
 {
     if (nameIdent == nullptr) {
         return "ConvertedClass";
@@ -262,17 +262,18 @@ static std::string SafeNameFromIdent(ir::Identifier *nameIdent)
     return "ConvertedClass";
 }
 
-static std::string BuildParamsText(es2panda_Context *ctx, es2panda_AstNode *scriptFunc)
+std::string BuildParamsText(es2panda_Context *ctx, es2panda_AstNode *scriptFunc)
 {
     const auto impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
     size_t paramCount = 0;
     auto **params = impl->ScriptFunctionParams(ctx, scriptFunc, &paramCount);
     std::ostringstream oss;
     for (size_t i = 0; i < paramCount; ++i) {
-        if (params == nullptr || params[i] == nullptr) {
+        if (params == nullptr || params[i] == nullptr) {  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             continue;
         }
-        auto *p = reinterpret_cast<ir::AstNode *>(params[i]);
+        auto *p =
+            reinterpret_cast<ir::AstNode *>(params[i]);  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (i != 0) {
             oss << ", ";
         }
@@ -281,7 +282,7 @@ static std::string BuildParamsText(es2panda_Context *ctx, es2panda_AstNode *scri
     return oss.str();
 }
 
-static std::string TrimView(std::string_view v)
+std::string TrimView(std::string_view v)
 {
     const size_t first = v.find_first_not_of(" \t\r\n");
     const size_t last = v.find_last_not_of(" \t\r\n");
@@ -291,7 +292,7 @@ static std::string TrimView(std::string_view v)
     return std::string(v.substr(first, last - first + 1));
 }
 
-static bool SliceBlockInnerFromFile(const SourceFile *sf, const ir::AstNode *bodyNode, std::string *out)
+bool SliceBlockInnerFromFile(const SourceFile *sf, const ir::AstNode *bodyNode, std::string *out)
 {
     if (sf == nullptr || out == nullptr) {
         return false;
@@ -318,7 +319,7 @@ static bool SliceBlockInnerFromFile(const SourceFile *sf, const ir::AstNode *bod
     return true;
 }
 
-static bool ExtractBlockBodyText(es2panda_Context *ctx, es2panda_AstNode *body, std::string *out)
+bool ExtractBlockBodyText(es2panda_Context *ctx, es2panda_AstNode *body, std::string *out)
 {
     if (out == nullptr) {
         return false;
@@ -333,6 +334,7 @@ static bool ExtractBlockBodyText(es2panda_Context *ctx, es2panda_AstNode *body, 
     }
 
     // Fallback to DumpEtsSrc if direct slice failed
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t bracePair = 2;
     std::string dumped = bodyNode->DumpEtsSrc();
     if (!dumped.empty() && dumped.front() == '{' && dumped.back() == '}') {
@@ -343,7 +345,7 @@ static bool ExtractBlockBodyText(es2panda_Context *ctx, es2panda_AstNode *body, 
     return true;
 }
 
-static bool TryExtractBlockBody(es2panda_Context *ctx, es2panda_AstNode *body, std::string *out)
+bool TryExtractBlockBody(es2panda_Context *ctx, es2panda_AstNode *body, std::string *out)
 {
     if (out == nullptr) {
         return false;
@@ -357,7 +359,7 @@ static bool TryExtractBlockBody(es2panda_Context *ctx, es2panda_AstNode *body, s
     return ExtractBlockBodyText(ctx, body, out);
 }
 
-static bool TryExtractExprBody(es2panda_AstNode *body, std::string *out)
+bool TryExtractExprBody(es2panda_AstNode *body, std::string *out)
 {
     if (out == nullptr) {
         return false;
@@ -373,7 +375,7 @@ static bool TryExtractExprBody(es2panda_AstNode *body, std::string *out)
     return true;
 }
 
-static FnShape ExtractFunctionShape(es2panda_Context *ctx, ir::AstNode *fnNode, ir::Identifier *nameIdent)
+FnShape ExtractFunctionShape(es2panda_Context *ctx, ir::AstNode *fnNode, ir::Identifier *nameIdent)
 {
     FnShape out;
     out.name = SafeNameFromIdent(nameIdent);
@@ -407,7 +409,7 @@ static FnShape ExtractFunctionShape(es2panda_Context *ctx, ir::AstNode *fnNode, 
     return out;
 }
 
-static std::string BuildClassText(const FnShape &shape)
+std::string BuildClassText(const FnShape &shape)
 {
     const std::string &clsName = !shape.name.empty() ? shape.name : std::string("ConvertedClass");
 
@@ -426,7 +428,7 @@ static std::string BuildClassText(const FnShape &shape)
     return oss.str();
 }
 
-static ir::AstNode *PickEditBoundary(ir::AstNode *n)
+ir::AstNode *PickEditBoundary(ir::AstNode *n)
 {
     if (n == nullptr) {
         return nullptr;
@@ -438,7 +440,7 @@ static ir::AstNode *PickEditBoundary(ir::AstNode *n)
     return n;
 }
 
-static TargetInfo ResolveTarget(es2panda_Context *ctx, const TextRange &span)
+TargetInfo ResolveTarget(es2panda_Context *ctx, const TextRange &span)
 {
     TargetInfo out {};
     ir::AstNode *token = GetTouchingToken(ctx, span.pos, false);
@@ -502,8 +504,8 @@ static TargetInfo ResolveTarget(es2panda_Context *ctx, const TextRange &span)
  * @see BuildClassText
  * @see PickEditBoundary
  */
-static std::vector<FileTextChanges> DoConvertToClassInternal(const RefactorContext &context, ir::AstNode *fnNode,
-                                                             ir::Identifier *nameIdent)
+std::vector<FileTextChanges> DoConvertToClassInternal(const RefactorContext &context, ir::AstNode *fnNode,
+                                                      ir::Identifier *nameIdent)
 {
     std::vector<FileTextChanges> out;
     if (fnNode == nullptr || nameIdent == nullptr || context.context == nullptr) {
@@ -609,7 +611,7 @@ std::unique_ptr<RefactorEditInfo> ConvertFunctionToClassRefactor::GetEditsForAct
     auto edits = DoConvertToClassInternal(context, target.node, target.name);
     return std::make_unique<RefactorEditInfo>(std::move(edits));
 }
-// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp, readability-identifier-naming)
 AutoRefactorRegister<ConvertFunctionToClassRefactor> g_ConvertToClassRefactorRegister("ConvertFunctionToClassRefactor");
 
 }  // namespace ark::es2panda::lsp

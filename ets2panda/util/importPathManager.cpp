@@ -69,7 +69,7 @@ constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 8;
 
 static bool IsCompatibleExtension(const std::string &extension)
 {
-    return extension == ImportPathManager::etsSuffix || extension == ".ts" || extension == ".sts";
+    return extension == ImportPathManager::ETS_SUFFIX || extension == ".ts" || extension == ".sts";
 }
 
 static bool IsAbsolute(const std::string &path)
@@ -95,10 +95,9 @@ size_t HandleSpecialSymbols(const std::string &input, std::string &output, const
             if (input.compare(i, pattern.size(), pattern) == 0) {
                 output += "'use static'";
                 return (pattern.size() - 1);
-            } else {
-                output.push_back('\'');
-                return 0;
             }
+            output.push_back('\'');
+            return 0;
         }
         default:
             output.push_back(input[i]);
@@ -189,7 +188,7 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
     ES2PANDA_ASSERT(it != arktsConfig_->Dependencies().cend());
     const auto &externalModuleImportData = it->second;
     std::replace(resSource.begin(), resSource.end(), '/', '.');
-    auto fileNameToCheck = arktsConfig_->CacheDir() + "/" + resSource + cacheSuffix.data();
+    auto fileNameToCheck = arktsConfig_->CacheDir() + "/" + resSource + CACHE_SUFFIX.data();
     // memory cache checking
     if (parser::DeclarationCache::GetFromCache(fileNameToCheck) != parser::DeclarationCache::ABSENT) {
         importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
@@ -330,6 +329,7 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
 static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
 {
     std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     sem_wait(sem);
     if (sem == SEM_FAILED) {
@@ -397,7 +397,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
         auto ohmUrl = moduleName;
 
         // create a name for d.ets file - related on module name and cache dir
-        auto declFileName = arktsConfig_->CacheDir() + "/" + moduleName + cacheSuffix.data();
+        auto declFileName = arktsConfig_->CacheDir() + "/" + moduleName + CACHE_SUFFIX.data();
         // the module name`s separators are '.' now, but for resolvedSource we have '/'
         std::replace(moduleName.begin(), moduleName.end(), '.', '/');
         if (importData.resolvedSource != moduleName) {
@@ -410,8 +410,8 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
         std::stringstream ss;
         // a class can contain more than one ModuleAnnotation annotation,
         // so we need to search in all of them in order to take all the declarations
-        cda.EnumerateAnnotations([&pf, &ss](panda_file::File::EntityId ann_id) {
-            panda_file::AnnotationDataAccessor annotationAccessor(*pf, ann_id);
+        cda.EnumerateAnnotations([&pf, &ss](panda_file::File::EntityId annId) {
+            panda_file::AnnotationDataAccessor annotationAccessor(*pf, annId);
             auto annName =
                 std::string(ark::utf::Mutf8AsCString(pf->GetStringData(annotationAccessor.GetClassId()).data));
             if (annName == ANNOTATION_MODULE_DECLARATION.data()) {
@@ -423,7 +423,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
             }
             return true;
         });
-        if (ss.str().size() > 0) {
+        if (!ss.str().empty()) {
             importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
             importData.declPath = util::UString(declFileName, allocator_).View().Utf8();
             importData.ohmUrl = util::UString(ohmUrl, allocator_).View().Utf8();
@@ -447,7 +447,7 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
 
     // process .d.ets "path" in "dependencies"
     // process empty "path" in dependencies, since in interop we allow imports without typecheck
-    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), abcSuffix)) {
+    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ABC_SUFFIX)) {
         importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
         importData.ohmUrl = util::UString(externalModuleImportData.OhmUrl(), allocator_).View().Utf8();
         importData.declPath = externalModuleImportData.Path();
@@ -461,9 +461,9 @@ void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData)
     }
 
     // process .abc "path" in "dependencies"
-    ES2PANDA_ASSERT(Helpers::EndsWith(std::string(externalModuleImportData.Path()), abcSuffix));
+    ES2PANDA_ASSERT(Helpers::EndsWith(std::string(externalModuleImportData.Path()), ABC_SUFFIX));
 
-    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), etsstdlibAbcSuffix)) {
+    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ETSSTDLIB_ABC_SUFFIX)) {
         // currently only two modes are supported:
         // 1. import from .abc file with one package (simple case)
         // 2. import from etstdlib.abc
@@ -500,14 +500,14 @@ std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_vi
         return resolvedImportPath;
     }
     // declaration cache is used only for .ets files, located in the same application as compiling file
-    if (!Helpers::EndsWith(resolvedImportPath, etsSuffix) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
+    if (!Helpers::EndsWith(resolvedImportPath, ETS_SUFFIX) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
         return resolvedImportPath;
     }
     const auto &relativeFilePath =
         resolvedImportPath.substr(rootDir.size(), resolvedImportPath.size() - rootDir.size());
     const auto &declarationCacheFile =
-        cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - etsSuffix.size())) +
-        cacheSuffix.data();
+        cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - ETS_SUFFIX.size())) +
+        CACHE_SUFFIX.data();
 
     if (!ark::os::file::File::IsRegularFile(declarationCacheFile)) {
         return resolvedImportPath;

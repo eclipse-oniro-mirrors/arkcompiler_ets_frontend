@@ -724,7 +724,7 @@ public:
                                               const ir::ObjectExpression *initObjExpr);
     // ReturnType
     Type *HandleReturnTypeUtilityType(Type *baseType);
-    void ValidateReturnTypeUtilityType(const Type *baseType, const ir::TSTypeParameterInstantiation *typeParams);
+    void ValidateReturnTypeUtilityType(const Type *typeToValidate, const ir::TSTypeParameterInstantiation *typeParams);
 
     bool IsStaticInvoke(ir::MemberExpression *const expr);
     void ValidateCallExpressionIdentifier(ir::Identifier *const ident, Type *const type);

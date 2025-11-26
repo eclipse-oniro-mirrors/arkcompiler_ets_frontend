@@ -42,6 +42,7 @@ TEST_F(LspConvertOverloadListTests, BasicFunctionOverloads)
 
     auto filePaths = CreateTempFile(files, texts);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 22;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -57,6 +58,7 @@ TEST_F(LspConvertOverloadListTests, BasicFunctionOverloads)
     refactorContext.textChangesContext = &textChangesContext;
 
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
@@ -90,9 +92,11 @@ TEST_F(LspConvertOverloadListTests, ClassMethodOverloads)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInMethodName = 26;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -104,6 +108,7 @@ TEST_F(LspConvertOverloadListTests, ClassMethodOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
@@ -131,9 +136,11 @@ TEST_F(LspConvertOverloadListTests, OptionalParameterOverloads)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming
     constexpr size_t kPositionInFunctionName = 12;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -145,6 +152,7 @@ TEST_F(LspConvertOverloadListTests, OptionalParameterOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
@@ -171,9 +179,11 @@ TEST_F(LspConvertOverloadListTests, InterfaceMethodOverloads)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInInterfaceMethod = 60;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -185,6 +195,7 @@ TEST_F(LspConvertOverloadListTests, InterfaceMethodOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 2;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     EXPECT_FALSE(result.empty());
@@ -203,9 +214,11 @@ TEST_F(LspConvertOverloadListTests, NoOverloadsAvailable)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 30;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -217,6 +230,7 @@ TEST_F(LspConvertOverloadListTests, NoOverloadsAvailable)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 }
@@ -235,9 +249,11 @@ TEST_F(LspConvertOverloadListTests, InvalidRefactorKind)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInFunctionName = 20;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -249,6 +265,7 @@ TEST_F(LspConvertOverloadListTests, InvalidRefactorKind)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
 }
@@ -278,9 +295,11 @@ TEST_F(LspConvertOverloadListTests, AbstractClassMethodOverloads)
  )"};
 
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInAbstractMethod = 48;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -292,6 +311,7 @@ TEST_F(LspConvertOverloadListTests, AbstractClassMethodOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);
@@ -316,10 +336,13 @@ TEST_F(LspConvertOverloadListTests, StaticMethodOverloads)
  }
  )"};
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     auto filePaths = CreateTempFile(files, texts);
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), kExpectedFileCount);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kPositionInStaticMethod = 33;
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
@@ -331,6 +354,7 @@ TEST_F(LspConvertOverloadListTests, StaticMethodOverloads)
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
 
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr size_t kExpectedRefactorCount = 1;
     ASSERT_EQ(kExpectedRefactorCount, result.size());
     ASSERT_EQ(std::string(CONVERT_OVERLOAD_LIST_ACTION.name), result[0].action.name);

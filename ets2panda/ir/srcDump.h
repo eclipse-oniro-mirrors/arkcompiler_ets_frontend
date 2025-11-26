@@ -51,7 +51,7 @@ public:
         public:
             NO_COPY_SEMANTIC(Releaser);
             Releaser &operator=(Releaser &&other) = delete;
-            explicit Releaser(Releaser &&other) : lock_ {other.lock_}, prevAcquired_ {other.prevAcquired_}
+            Releaser(Releaser &&other) : lock_ {other.lock_}, prevAcquired_ {other.prevAcquired_}
             {
                 other.lock_ = nullptr;
             }
@@ -170,10 +170,12 @@ private:
 class SrcDumper {
 public:
     // Delete after the bindings problem solved:
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit SrcDumper([[maybe_unused]] const ir::AstNode *node)
     {
         ES2PANDA_UNREACHABLE();
     }
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit SrcDumper([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] bool isDeclgen)
     {
         ES2PANDA_UNREACHABLE();

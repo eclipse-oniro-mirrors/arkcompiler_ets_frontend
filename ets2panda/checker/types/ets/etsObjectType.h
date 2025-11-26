@@ -448,7 +448,7 @@ private:
           transitiveSupertypes_(nullptr),
           relation_(std::get<TypeRelation *>(info)),
           constructSignatures_(allocator->Adapter()),
-          properties_ {}
+          properties_ {}  // NOLINT(modernize-use-default-member-init)
     {
     }
 

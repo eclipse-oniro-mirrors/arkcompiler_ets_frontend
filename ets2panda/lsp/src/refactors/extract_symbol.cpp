@@ -597,6 +597,7 @@ bool BuildGlobalPieces(const RefactorContext &context, const VariableBindingInfo
         return false;
     }
     const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr const char *kHelperName = "newFunction";
 
     if (FindEnclosingClassDefinition(binding.declaration) == nullptr) {
@@ -673,6 +674,7 @@ bool BuildClassPieces(const RefactorContext &context, const VariableBindingInfo 
         return false;
     }
     const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
+    // NOLINTNEXTLINE(readability-identifier-naming)
     constexpr const char *kHelperName = "newMethod";
 
     auto *classDef = FindEnclosingClassDefinition(binding.declaration);

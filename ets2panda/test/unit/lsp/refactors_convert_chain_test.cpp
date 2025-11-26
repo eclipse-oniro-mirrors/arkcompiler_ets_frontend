@@ -24,17 +24,17 @@
 #include "lsp/include/refactors/refactor_types.h"
 
 using ::FileTextChanges;
-using ark::es2panda::lsp::ApplicableRefactorInfo;
 using ark::es2panda::lsp::ConvertToOptionalChainExpressionRefactor;
 using ark::es2panda::lsp::RefactorContext;
 
 namespace {
 class LSPConvertChainRefactorTests : public LSPAPITests {
 public:
-    static constexpr std::string_view kKind = "refactor.rewrite.expression.optionalChain";
-    static constexpr std::string_view kActionName = "convert_to_optional_chain_expression";
+    static constexpr std::string_view K_KIND = "refactor.rewrite.expression.optionalChain";
+    static constexpr std::string_view K_ACTION_NAME = "convert_to_optional_chain_expression";
     // static constexpr size_t kCaretAtStart = 0;
-    static constexpr std::string_view kTriggerMarker = "/*1*/";
+    static constexpr std::string_view K_TRIGGER_MARKER = "/*1*/";
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static constexpr size_t kAfterMarkerOffset = 8;
 
 protected:
@@ -46,7 +46,7 @@ protected:
 
     static size_t PosAfterMarker(const std::string &src)
     {
-        const size_t pos = FindPos(src, std::string(kTriggerMarker).c_str());
+        const size_t pos = FindPos(src, std::string(K_TRIGGER_MARKER).c_str());
         return (pos == std::string::npos) ? std::string::npos : (pos + kAfterMarkerOffset);
     }
 
@@ -82,7 +82,7 @@ protected:
     {
         RefactorContext rc;
         rc.context = ctx;
-        rc.kind = std::string(kKind);
+        rc.kind = std::string(K_KIND);
         rc.span.pos = pos;
         rc.span.end = pos;
         return rc;
@@ -109,8 +109,8 @@ let r = /*1*/a && a.b && a.b.c/*2*/;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
     ASSERT_FALSE(avail.empty());
     ASSERT_FALSE(avail[0].action.kind.empty());
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
-    EXPECT_EQ(avail[0].action.kind, std::string(kKind));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
+    EXPECT_EQ(avail[0].action.kind, std::string(K_KIND));
 
     init.DestroyContext(ctx);
 }
@@ -135,7 +135,7 @@ let r = /*1*/a && a.b && a.b()/*2*/;
     auto avail = ref.GetAvailableActions(MakeCtx(ctx, caret));
     ASSERT_FALSE(avail.empty());
     ASSERT_FALSE(avail[0].action.kind.empty());
-    EXPECT_EQ(avail[0].action.name, std::string(kActionName));
+    EXPECT_EQ(avail[0].action.name, std::string(K_ACTION_NAME));
 
     init.DestroyContext(ctx);
 }
@@ -206,7 +206,7 @@ let r = /*1*/a && a.b && a.b.c/*2*/;
     ASSERT_NE(caret, std::string::npos);
 
     ConvertToOptionalChainExpressionRefactor ref;
-    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, caret), std::string(kActionName));
+    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, caret), std::string(K_ACTION_NAME));
     ASSERT_NE(editsPtr, nullptr);
     const auto &edits = editsPtr->GetFileTextChanges();
     ASSERT_FALSE(edits.empty());
@@ -236,7 +236,7 @@ let ccc = /*1*/foo.bar ? foo.bar.baz : "whenFalse"/*2*/;
     ASSERT_NE(caret, std::string::npos);
 
     ConvertToOptionalChainExpressionRefactor ref;
-    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, caret), std::string(kActionName));
+    auto editsPtr = ref.GetEditsForAction(MakeCtx(ctx, caret), std::string(K_ACTION_NAME));
     ASSERT_NE(editsPtr, nullptr);
     const auto &edits = editsPtr->GetFileTextChanges();
     ASSERT_FALSE(edits.empty());

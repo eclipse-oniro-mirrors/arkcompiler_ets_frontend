@@ -44,8 +44,8 @@ public:
         ASSERT_NE(result, nullptr);
 
         bool found = false;
-        for (auto it = result->fieldList.begin(); it != result->fieldList.end(); it++) {
-            std::string name = expectedRecordName.data() + std::string(".") + it->name;
+        for (auto &it : result->fieldList) {
+            std::string name = expectedRecordName.data() + std::string(".") + it.name;
             if (name == expectedPropName) {
                 found = true;
                 break;

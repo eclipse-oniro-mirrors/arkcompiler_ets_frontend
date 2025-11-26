@@ -73,6 +73,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceViaPublicAPI)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -112,6 +113,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeAliasViaPublicAPI)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;
@@ -155,6 +157,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForInlineObjectVariable)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -198,6 +201,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForObjectParameter)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -241,6 +245,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForPromiseReturn)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;
@@ -284,6 +289,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForClassProperty)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -327,6 +333,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForUnionType)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;
@@ -370,6 +377,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForExampleVariable)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -413,6 +421,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForFunctionVariable)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;
@@ -456,6 +465,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForTypeAssertionObject)
     refactorContext->kind = "refactor.extract.interface";
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -553,6 +563,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForFirstArrayVariable)
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;
@@ -597,6 +608,7 @@ const second: Array<number> = [];)";
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_TYPE_ACTION.name;

@@ -52,7 +52,7 @@ bool IsClassFieldNode(ir::AstNode *n)
 
     if (n->IsVariableDeclarator()) {
         auto *par = n->Parent();
-        while (par && !IsClassLike(par)) {
+        while (par != nullptr && !IsClassLike(par)) {
             par = par->Parent();
         }
         if (IsClassLike(par)) {
@@ -80,7 +80,7 @@ std::pair<std::string, std::string> ExtractFieldNameAndType(ir::AstNode *fieldOr
         field = fieldOrChild->Parent();
     }
 
-    bool gotName = field->FindChild([&](ir::AstNode *c) {
+    bool gotName = field->FindChild([&](ir::AstNode *c) {  // NOLINT (readability-implicit-bool-conversion)
         if (c->IsIdentifier()) {
             name = c->AsIdentifier()->Name().Utf8();
             return true;
@@ -104,7 +104,7 @@ std::pair<std::string, std::string> ExtractFieldNameAndType(ir::AstNode *fieldOr
 // Position before the closing brace of the class body
 inline size_t ClassBodyInsertPos(ir::AstNode *cls)
 {
-    return cls ? (cls->End().index - 1) : 0;
+    return cls != nullptr ? (cls->End().index - 1) : 0;
 }
 
 // Plan getter and setter names to avoid clashes
@@ -174,7 +174,7 @@ std::vector<ApplicableRefactorInfo> GenerateGettersAndSettersRefactor::GetAvaila
         return res;
     }
 
-    if (!IsClassFieldNode(token) && !(token->Parent() && IsClassFieldNode(token->Parent()))) {
+    if (!IsClassFieldNode(token) && !((token->Parent() != nullptr) && IsClassFieldNode(token->Parent()))) {
         return res;
     }
 
@@ -216,9 +216,10 @@ std::unique_ptr<RefactorEditInfo> GenerateGettersAndSettersRefactor::GetEditsFor
         return edits;
     }
 
-    ir::AstNode *fieldNode = IsClassFieldNode(token)
-                                 ? token
-                                 : (token->Parent() && IsClassFieldNode(token->Parent()) ? token->Parent() : nullptr);
+    ir::AstNode *fieldNode =
+        IsClassFieldNode(token)
+            ? token
+            : ((token->Parent() != nullptr) && IsClassFieldNode(token->Parent()) ? token->Parent() : nullptr);
     if (fieldNode == nullptr) {
         return edits;
     }
@@ -245,7 +246,7 @@ std::unique_ptr<RefactorEditInfo> GenerateGettersAndSettersRefactor::GetEditsFor
     return edits;
 }
 
-// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp, readability-identifier-naming)
 AutoRefactorRegister<GenerateGettersAndSettersRefactor> g_GenerateGettersAndSettersRefactorRegister(
     "GenerateGettersAndSettersRefactor");
 

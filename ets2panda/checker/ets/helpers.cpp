@@ -3226,8 +3226,8 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);
     SetPropertiesForModuleObject(
         moduleObjectType, importPath,
-        importDecl->Specifiers().size() != 0 && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr
-                                                                                                          : importDecl);
+        !importDecl->Specifiers().empty() && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr
+                                                                                                       : importDecl);
     SetrModuleObjectTsType(ident, moduleObjectType);
 
     return moduleObjectType;

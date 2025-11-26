@@ -562,7 +562,7 @@ template <EnumLoweringPhase::EnumType TYPE>
 ir::ClassDeclaration *EnumLoweringPhase::CreateEnumNumericClassFromEnumDeclaration(
     ir::TSEnumDeclaration *const enumDecl, const DeclarationFlags flags)
 {
-    constexpr ir::PrimitiveType enumType = MapEnum(TYPE);
+    constexpr ir::PrimitiveType ENUM_TYPE = MapEnum(TYPE);
 
     auto *const enumClassDecl = CreateClass(enumDecl, flags, TYPE);
     auto *const enumClass = enumClassDecl->Definition();
@@ -572,7 +572,7 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateEnumNumericClassFromEnumDeclarati
 
     ir::Identifier *valuesArrayIdent;
     if (TYPE != EnumType::STRING) {
-        valuesArrayIdent = CreateEnumValuesArray<enumType>(enumDecl, enumClass);
+        valuesArrayIdent = CreateEnumValuesArray<ENUM_TYPE>(enumDecl, enumClass);
     }
 
     auto *const stringValuesArrayIdent = CreateEnumStringValuesArray(enumDecl, enumClass);
@@ -583,8 +583,8 @@ ir::ClassDeclaration *EnumLoweringPhase::CreateEnumNumericClassFromEnumDeclarati
     CreateEnumGetValueOfMethod(enumDecl, enumClass, namesArrayIdent, itemsArrayIdent);
 
     if (TYPE != EnumType::STRING) {
-        CreateEnumFromValueMethod(enumDecl, enumClass, valuesArrayIdent, itemsArrayIdent, enumType);
-        CreateEnumValueOfMethod(enumDecl, enumClass, valuesArrayIdent, enumType);
+        CreateEnumFromValueMethod(enumDecl, enumClass, valuesArrayIdent, itemsArrayIdent, ENUM_TYPE);
+        CreateEnumValueOfMethod(enumDecl, enumClass, valuesArrayIdent, ENUM_TYPE);
     } else {
         CreateEnumFromValueMethod(enumDecl, enumClass, stringValuesArrayIdent, itemsArrayIdent, std::nullopt);
         CreateEnumValueOfMethod(enumDecl, enumClass, stringValuesArrayIdent, std::nullopt);
@@ -637,20 +637,25 @@ checker::AstNodePtr EnumLoweringPhase::TransformAnnotedEnumChildrenRecursively(c
     if ((primitiveType == ir::PrimitiveType::BYTE) &&
         CheckEnumMemberType<EnumType::BYTE>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::BYTE>(enumDecl, flags);
-    } else if ((primitiveType == ir::PrimitiveType::SHORT) &&
-               CheckEnumMemberType<EnumType::SHORT>(enumDecl->Members(), hasLoggedError, true)) {
+    }
+    if ((primitiveType == ir::PrimitiveType::SHORT) &&
+        CheckEnumMemberType<EnumType::SHORT>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::SHORT>(enumDecl, flags);
-    } else if ((primitiveType == ir::PrimitiveType::FLOAT) &&
-               CheckEnumMemberType<EnumType::FLOAT>(enumDecl->Members(), hasLoggedError, true)) {
+    }
+    if ((primitiveType == ir::PrimitiveType::FLOAT) &&
+        CheckEnumMemberType<EnumType::FLOAT>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::FLOAT>(enumDecl, flags);
-    } else if ((primitiveType == ir::PrimitiveType::LONG) &&
-               CheckEnumMemberType<EnumType::LONG>(enumDecl->Members(), hasLoggedError, true)) {
+    }
+    if ((primitiveType == ir::PrimitiveType::LONG) &&
+        CheckEnumMemberType<EnumType::LONG>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::LONG>(enumDecl, flags);
-    } else if ((primitiveType == ir::PrimitiveType::INT) &&
-               CheckEnumMemberType<EnumType::INT>(enumDecl->Members(), hasLoggedError, true)) {
+    }
+    if ((primitiveType == ir::PrimitiveType::INT) &&
+        CheckEnumMemberType<EnumType::INT>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::INT>(enumDecl, flags);
-    } else if ((primitiveType == ir::PrimitiveType::DOUBLE) &&
-               CheckEnumMemberType<EnumType::DOUBLE>(enumDecl->Members(), hasLoggedError, true)) {
+    }
+    if ((primitiveType == ir::PrimitiveType::DOUBLE) &&
+        CheckEnumMemberType<EnumType::DOUBLE>(enumDecl->Members(), hasLoggedError, true)) {
         return CreateEnumNumericClassFromEnumDeclaration<EnumType::DOUBLE>(enumDecl, flags);
     }
 

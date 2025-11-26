@@ -27,7 +27,6 @@
 #include "lsp/include/refactors/refactor_types.h"
 #include "public/public.h"
 
-using ark::es2panda::lsp::ApplicableRefactorInfo;
 namespace {
 class LSPGenerateOverrideMethodsTests : public LSPAPITests {};
 

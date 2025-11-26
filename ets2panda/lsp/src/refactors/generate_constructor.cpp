@@ -51,8 +51,8 @@ struct PropertyInfo {
     }
 
 private:
-    std::string name;
-    std::string type;
+    std::string name;  // NOLINT(readability-identifier-naming)
+    std::string type;  // NOLINT(readability-identifier-naming)
 };
 
 static std::string GetParamName(std::string_view name)

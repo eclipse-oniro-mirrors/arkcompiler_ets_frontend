@@ -1688,10 +1688,12 @@ checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
     for (auto *elem : expr->Elements()) {
         if (elem->IsOmittedExpression()) {
             continue;
-        } else if (elem->IsRestElement()) {
+        }
+        if (elem->IsRestElement()) {
             checker->LogError(diagnostic::REST_UNSUPPORTED_IN_DESTRUCTURING, {}, elem->Start());
             continue;
-        } else if (elem->IsAssignmentPattern()) {
+        }
+        if (elem->IsAssignmentPattern()) {
             checker->LogError(diagnostic::DEFAULT_UNSUPPORTED_IN_DESTRUCTURING, {}, elem->Start());
             continue;
         }
@@ -1903,9 +1905,8 @@ static bool CheckAwaitExpressionInAsyncFunc(ir::AwaitExpression *expr)
         if (node->IsScriptFunction() &&
             (node->AsScriptFunction()->IsAsyncFunc() || node->AsScriptFunction()->IsAsyncImplFunc())) {
             return true;
-        } else {
-            node = node->Parent();
         }
+        node = node->Parent();
     }
     return false;
 }
@@ -2126,8 +2127,9 @@ static void CheckCallee(ETSChecker *checker, ir::CallExpression *expr)
     }
     auto baseType = memberExpr->Object()->TsType();
     auto *baseTypeObj = baseType->IsETSObjectType() ? baseType->AsETSObjectType() : nullptr;
-    if (baseTypeObj && (baseTypeObj->HasObjectFlag(ETSObjectFlags::READONLY) ||
-                        (baseTypeObj->HasTypeFlag(TypeFlag::READONLY) && !baseType->IsAnyETSArrayOrTupleType()))) {
+    if (baseTypeObj != nullptr &&
+        (baseTypeObj->HasObjectFlag(ETSObjectFlags::READONLY) ||
+         (baseTypeObj->HasTypeFlag(TypeFlag::READONLY) && !baseType->IsAnyETSArrayOrTupleType()))) {
         checker->LogError(diagnostic::READONLY_CALL, {}, expr->Start());
         expr->SetTsType(checker->GlobalTypeError());
     }
@@ -3424,6 +3426,7 @@ checker::Type *ETSAnalyzer::Check(ir::ThisExpression *expr) const
     return expr->TsType();
 }
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 static checker::Type *checkUnboxedTypeKind(TypeFlag unboxedFlag, ETSChecker *checker)
 {
     switch (unboxedFlag) {

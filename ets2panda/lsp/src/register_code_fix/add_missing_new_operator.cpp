@@ -51,7 +51,7 @@ bool FixAddMissingNewOperator::IsValidTarget(const ir::AstNode *node)
 
     const auto *decl = var->Declaration()->Node();
     if (decl == nullptr || (!decl->IsClassDeclaration() && !decl->IsClassDefinition())) {
-        return false;
+        return false;  // NOLINT(readability-simplify-boolean-expr)
     }
 
     return true;

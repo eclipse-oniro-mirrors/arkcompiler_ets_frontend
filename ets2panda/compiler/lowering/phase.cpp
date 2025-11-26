@@ -409,6 +409,7 @@ bool PhaseForBodies::Postcondition(public_lib::Context *ctx, const parser::Progr
     return PostconditionForModule(ctx, program);
 }
 
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
 void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb)
 {
     auto mode = context->config->options->GetCompilationMode();
