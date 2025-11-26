@@ -3101,6 +3101,12 @@ Type const *ETSChecker::GetApparentType(Type const *type) const
     return const_cast<Type const *>(const_cast<ETSChecker *>(this)->GetApparentType(const_cast<Type *>(type)));
 }
 
+void ETSChecker::ComputeApparentType(Type *type)
+{
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    [[maybe_unused]] auto x = GetApparentType(type);
+}
+
 Type *ETSChecker::GetConstantBuiltinType(Type *type)
 {
     ES2PANDA_ASSERT(type->IsETSObjectType() && type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE));

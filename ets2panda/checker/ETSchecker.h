@@ -294,11 +294,7 @@ public:
     void TransformProperties(ETSObjectType *classType);
     void CheckGetterSetterProperties(ETSObjectType *classType);
     void AddElementsToModuleObject(ETSObjectType *moduleObj, const util::StringView &str);
-    void ComputeApparentType(Type *type)
-    {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        [[maybe_unused]] auto x = GetApparentType(type);
-    }
+    void ComputeApparentType(Type *type);
     [[nodiscard]] Type *GetApparentType(Type *type);
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
     ETSObjectType *GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target);
