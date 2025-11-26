@@ -17,5 +17,5 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: ['**/dist-test/test/ut/*.js', '**/dist-test/test/e2e/*.js'],
-  maxWorkers: "50%",
+  maxWorkers: '50%',
 };

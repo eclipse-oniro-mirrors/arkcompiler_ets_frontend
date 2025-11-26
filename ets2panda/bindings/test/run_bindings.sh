@@ -23,4 +23,4 @@ readonly CURRENT_NODE="${NODE_DIR}/node"
 
 cp -rfp -- "$SDK_DIR" "$TEST_DIR"
 cd "$CWD" && "$CURRENT_NPM" run test:build
-"$CURRENT_NODE" dist-test/test/run_tests.js ./test
+"$CURRENT_NODE" node_modules/jest/bin/jest.js test/e2e
