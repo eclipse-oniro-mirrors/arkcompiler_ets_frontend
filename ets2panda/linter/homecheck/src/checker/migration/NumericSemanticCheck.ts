@@ -1556,6 +1556,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 if (op1 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op1)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
                 } else if (op1 instanceof Local) {
+                    this.handleGlobalLocal(stmt, op1, hasChecked);
                     hasChecked.set(op1, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                     // 对于 enum.A / enum.B的场景，需要将第一个enum.A修复成enum.A.valueOf().toDouble()
                     if (op1.getName().startsWith(TEMP_LOCAL_PREFIX) && op1.getType() instanceof EnumValueType) {
@@ -1567,6 +1568,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 if (op2 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op2)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
                 } else if (op2 instanceof Local) {
+                    this.handleGlobalLocal(stmt, op2, hasChecked);
                     hasChecked.set(op2, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                     if (!fixedEnumOp2Number && op2.getName().startsWith(TEMP_LOCAL_PREFIX) && op2.getType() instanceof EnumValueType) {
                         this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
@@ -2839,5 +2841,23 @@ export class NumericSemanticCheck implements BaseChecker {
     private static IsNotDecimalNumber(value: string): boolean {
         const loweredValue = value.toLowerCase();
         return loweredValue.startsWith('0b') || loweredValue.startsWith('0x') || loweredValue.startsWith('0o') || loweredValue.includes('e');
+    }
+
+    private handleGlobalLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>): void {
+        if (local.getDeclaringStmt() === null) {
+            const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
+            if (globals && globals.get(local.getName())) {
+                const global = globals.get(local.getName());
+                if (global instanceof GlobalRef) {
+                    const newLocal = global.getRef();
+                    if (newLocal instanceof Local) {
+                        hasChecked.set(newLocal, { 
+                            issueReason: IssueReason.UsedWithOtherType, 
+                            numberCategory: NumberCategory.number 
+                        });
+                    }
+                } 
+            }
+        }
     }
 }
