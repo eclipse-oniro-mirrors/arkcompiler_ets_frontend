@@ -5969,49 +5969,38 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private handleEnumMember(node: ts.Node): void {
     const tsEnumMember = node as ts.EnumMember;
-    const tsEnumMemberType = this.tsTypeChecker.getTypeAtLocation(tsEnumMember);
     const constVal = this.tsTypeChecker.getConstantValue(tsEnumMember);
     const tsEnumMemberName = tsEnumMember.name;
-    if (this.options.arkts2) {
-      this.handleInvalidIdentifier(tsEnumMember);
-      if (ts.isStringLiteral(tsEnumMemberName)) {
-        this.handleStringLiteralEnumMember(tsEnumMember, tsEnumMemberName, node);
-      }
+
+    this.handleInvalidIdentifier(tsEnumMember);
+    if (ts.isStringLiteral(tsEnumMemberName)) {
+      this.handleStringLiteralEnumMember(tsEnumMember, tsEnumMemberName, node);
     }
 
     if (tsEnumMember.initializer && !this.tsUtils.isValidEnumMemberInit(tsEnumMember.initializer)) {
       this.incrementCounters(node, FaultID.EnumMemberNonConstInit);
+      return;
     }
     // check for type - all members should be of same type
     const enumDecl = tsEnumMember.parent;
     const firstEnumMember = enumDecl.members[0];
-    const firstEnumMemberType = this.tsTypeChecker.getTypeAtLocation(firstEnumMember);
-    const firstElewmVal = this.tsTypeChecker.getConstantValue(firstEnumMember);
-    this.handleEnumNotSupportFloat(tsEnumMember);
-
-    /*
-     * each string enum member has its own type
-     * so check that value type is string
-     */
-    if (
-      constVal !== undefined &&
-      typeof constVal === STRINGLITERAL_STRING &&
-      firstElewmVal !== undefined &&
-      typeof firstElewmVal === STRINGLITERAL_STRING
-    ) {
-      return;
-    }
-    if (
-      constVal !== undefined &&
-      typeof constVal === STRINGLITERAL_NUMBER &&
-      firstElewmVal !== undefined &&
-      typeof firstElewmVal === STRINGLITERAL_NUMBER
-    ) {
-      return;
-    }
-    if (firstEnumMemberType !== tsEnumMemberType) {
+    const firstElemVal = this.tsTypeChecker.getConstantValue(firstEnumMember);
+    if (!!constVal && !!firstElemVal && !TypeScriptLinter.isEnumMemberTypeConsistency(constVal, firstElemVal)) {
       this.incrementCounters(node, FaultID.EnumMemberNonConstInit);
+      return;
     }
+
+    this.handleEnumNotSupportFloat(tsEnumMember, constVal);
+  }
+
+  private static isEnumMemberTypeConsistency(constVal: string | number, firstElemVal: string | number): boolean {
+    const bothAreStrings = typeof constVal === STRINGLITERAL_STRING && typeof firstElemVal === STRINGLITERAL_STRING;
+    const bothAreNumbers = typeof constVal === STRINGLITERAL_NUMBER && typeof firstElemVal === STRINGLITERAL_NUMBER;
+
+    if (bothAreStrings || bothAreNumbers) {
+      return true;
+    }
+    return false;
   }
 
   private handleStringLiteralEnumMember(
@@ -6019,11 +6008,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     tsEnumMemberName: ts.StringLiteral,
     node: ts.Node
   ): void {
+    if (!this.options.arkts2) {
+      return;
+    }
     const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyName(tsEnumMemberName, tsEnumMember);
     this.incrementCounters(node, FaultID.LiteralAsPropertyName, autofix);
   }
 
-  private handleEnumNotSupportFloat(enumMember: ts.EnumMember): void {
+  private handleEnumNotSupportFloat(enumMember: ts.EnumMember, constVal: string | number | undefined): void {
     if (!this.options.arkts2) {
       return;
     }
@@ -6034,23 +6026,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isAsExpression(initializer) || ts.isTypeAssertionExpression(initializer)) {
       const typeNode = ts.isAsExpression(initializer) ? initializer.type : initializer.type;
 
-      if (typeNode.kind === ts.SyntaxKind.NumberKeyword) {
+      if (typeNode.kind !== ts.SyntaxKind.StringKeyword) {
         this.incrementCounters(enumMember, FaultID.EnumMemberNonConstInit);
         return;
       }
     }
 
-    let value;
-    if (ts.isNumericLiteral(initializer)) {
-      value = parseFloat(initializer.text);
-    } else if (ts.isPrefixUnaryExpression(initializer)) {
-      const operand = initializer.operand;
-      value = ts.isNumericLiteral(operand) ? parseFloat(operand.text) : value;
-    } else {
+    if (typeof constVal !== STRINGLITERAL_NUMBER) {
       return;
     }
 
-    if (!Number.isInteger(value)) {
+    if (constVal !== undefined && TsUtils.isWrittenAsFloat(constVal)) {
+      this.incrementCounters(enumMember, FaultID.EnumMemberNonConstInit);
+    } else if (
+      initializer.kind === ts.SyntaxKind.NumericLiteral &&
+      TsUtils.isWrittenAsFloat(initializer.getFullText())
+    ) {
       this.incrementCounters(enumMember, FaultID.EnumMemberNonConstInit);
     }
   }

@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 49,
+            "line": 37,
             "column": 3,
-            "endLine": 49,
+            "endLine": 37,
             "endColumn": 13,
             "problem": "EnumMemberNonConstInit",
             "suggest": "",
@@ -25,10 +25,30 @@
             "severity": "ERROR"
         },
         {
-            "line": 53,
+            "line": 41,
             "column": 3,
-            "endLine": 53,
+            "endLine": 41,
             "endColumn": 19,
+            "problem": "EnumMemberNonConstInit",
+            "suggest": "",
+            "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 3,
+            "endLine": 58,
+            "endColumn": 12,
+            "problem": "EnumMemberNonConstInit",
+            "suggest": "",
+            "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 3,
+            "endLine": 80,
+            "endColumn": 8,
             "problem": "EnumMemberNonConstInit",
             "suggest": "",
             "rule": "Enumeration members can be initialized only with compile time expressions of the same type (arkts-no-enum-mixed-types)",

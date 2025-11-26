@@ -4029,4 +4029,11 @@ export class TsUtils {
     }
     return false;
   }
+
+  static isWrittenAsFloat(constVal: string | number): boolean {
+    return constVal.toString().trim().
+      includes('.') || constVal.toString().trim().
+      toLowerCase().
+      includes('e');
+  }
 }
