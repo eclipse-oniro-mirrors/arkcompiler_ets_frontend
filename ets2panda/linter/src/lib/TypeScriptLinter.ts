@@ -6327,7 +6327,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const expression = callExpr.expression;
     const type = this.tsTypeChecker.getTypeAtLocation(expression);
-    if (!this.typeWithinUnion(type, LIKE_FUNCTION, 0)) {
+    const typeText = this.tsTypeChecker.typeToStringForLinter(type);
+
+    if (LIKE_FUNCTION !== typeText) {
       return;
     }
 
@@ -15388,6 +15390,33 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const expression = node.name;
     if (!ts.isIdentifier(expression)) {
       return;
+    }
+    if (
+      (expression.getText() === 'onLayout' || expression.getText() === 'onMeasure') &&
+      node.type?.getText() === 'void' &&
+      node.parent &&
+      ts.isStructDeclaration(node.parent)
+    ) {
+      const argsType = ['LayoutChild[]', 'ConstraintSizeOptions'];
+      const parameters = node.parameters;
+      if (parameters && parameters.length === 2) {
+        let paramMatch = true;
+        for (let i = 0; i < parameters.length; i++) {
+          if (this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !== argsType[i]) {
+            paramMatch = false;
+            break;
+          }
+        }
+        if (paramMatch) {
+          this.incrementCounters(
+            expression,
+            FaultID.NoDeprecatedApi,
+            undefined,
+            TypeScriptLinter.getErrorMsgForSdkCommonApi(expression.getText(), FaultID.NoDeprecatedApi)
+          );
+          return;
+        }
+      }
     }
     this.processApiNodeDeprecatedApi(expression.text, expression);
   }
