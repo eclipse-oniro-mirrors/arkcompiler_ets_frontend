@@ -198,7 +198,8 @@ bool IsToken(const ir::AstNode *node)
            node->Type() == ir::AstNodeType::TS_VOID_KEYWORD || node->Type() == ir::AstNodeType::TS_UNDEFINED_KEYWORD ||
            node->Type() == ir::AstNodeType::TS_UNKNOWN_KEYWORD || node->Type() == ir::AstNodeType::TS_OBJECT_KEYWORD ||
            node->Type() == ir::AstNodeType::TS_BIGINT_KEYWORD || node->Type() == ir::AstNodeType::TS_NEVER_KEYWORD ||
-           node->Type() == ir::AstNodeType::TS_NULL_KEYWORD || node->Type() == ir::AstNodeType::TEMPLATE_ELEMENT;
+           node->Type() == ir::AstNodeType::TS_NULL_KEYWORD || node->Type() == ir::AstNodeType::TEMPLATE_ELEMENT ||
+           node->Type() == ir::AstNodeType::EMPTY_STATEMENT;
 }
 
 bool IsNonWhitespaceToken(const ir::AstNode *node)

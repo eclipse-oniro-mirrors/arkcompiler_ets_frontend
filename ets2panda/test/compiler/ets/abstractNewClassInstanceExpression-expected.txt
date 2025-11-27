@@ -821,6 +821,21 @@
       }
     },
     {
+      "type": "EmptyStatement",
+      "loc": {
+        "start": {
+          "line": 32,
+          "column": 11,
+          "program": "abstractNewClassInstanceExpression.ets"
+        },
+        "end": {
+          "line": 32,
+          "column": 12,
+          "program": "abstractNewClassInstanceExpression.ets"
+        }
+      }
+    },
+    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {

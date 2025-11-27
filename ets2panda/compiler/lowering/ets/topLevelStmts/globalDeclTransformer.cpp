@@ -17,12 +17,26 @@
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
-
 void GlobalDeclTransformer::FilterDeclarations(ArenaVector<ir::Statement *> &stmts)
 {
-    const auto isDeclCb = [&types = typeDecl_](const ir::AstNode *node) {
-        return types.count(node->Type()) == 0U || (node->IsExportNamedDeclaration());
+    const auto isDeclCb = [&](const ir::AstNode *node) {
+        if (node->IsBrokenStatement()) {
+            ES2PANDA_ASSERT(parser_->DiagnosticEngine().IsAnyError());
+            return false;
+        }
+        return typeDecl_.count(node->Type()) == 0U || (node->IsExportNamedDeclaration());
     };
+
+    if (parser_->DiagnosticEngine().IsAnyError()) {
+        for (auto &stmt : stmts) {
+            if (stmt->IsExportNamedDeclaration()) {
+                auto *brokenStmt = util::NodeAllocator::ForceSetParent<ir::EmptyStatement>(allocator_, true);
+                brokenStmt->SetRange(stmt->Range());
+                brokenStmt->SetParent(stmt->Parent());
+                stmt = brokenStmt;
+            }
+        }
+    }
     stmts.erase(std::remove_if(stmts.begin(), stmts.end(), isDeclCb), stmts.end());
 }
 

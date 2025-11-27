@@ -86,6 +86,70 @@ function json2Array(jsonArr: Array<number>) {
     AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
     initializer.DestroyContext(ctx);
 }
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition24)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition25.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+'use static'
+export fun
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 24;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "function", ark::es2panda::lsp::CompletionEntryKind::KEYWORD, std::string(GLOBALS_OR_KEYWORDS), "function")};
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition23)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition24.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+'use static'
+export function aa(n)
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 34;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), {}, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition22)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition23.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+'use static'
+export function a
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 31;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), {}, {});
+    initializer.DestroyContext(ctx);
+}
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition21)
 {
