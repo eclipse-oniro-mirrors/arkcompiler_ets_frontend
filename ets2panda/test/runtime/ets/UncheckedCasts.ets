@@ -31,6 +31,11 @@ class X<T> { }
 function erase<T>(x: Object | null | undefined): T { return x as T; }
 
 function test_substitution() {
+    assert_ccexc(() => { erase<undefined>(new Object()); })
+    assert_ccexc(() => { erase<null>(new Object()); })
+    assert_ccexc(() => { erase<undefined | null>(new Object()); })
+    assert_ccexc(() => { erase<string>(new Object()); })
+
     assert_ccexc(() => { erase<Object>(null); })
     assert_ccexc(() => { erase<Object>(undefined); })
     assert_ccexc(() => { erase<A>(null); })

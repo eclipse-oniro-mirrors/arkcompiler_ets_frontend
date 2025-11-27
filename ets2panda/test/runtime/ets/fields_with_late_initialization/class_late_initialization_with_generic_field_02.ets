@@ -39,7 +39,7 @@ function main(): void {
   try {
     console.log(gen.genericField);
   } catch (e) {
-    arktest.assertTrue(e instanceof ClassCastError)
+    arktest.assertTrue(e instanceof NullPointerError)
   }
   gen.genericField = "1"
   arktest.assertEQ(gen.genericField, "1")

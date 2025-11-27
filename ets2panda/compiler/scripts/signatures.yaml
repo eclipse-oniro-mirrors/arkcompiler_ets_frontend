@@ -809,10 +809,16 @@ signatures:
     ref: BUILTIN_ASSERTION_ERROR_CTOR
 
   - callee: BUILTIN_RUNTIME
-    method_name: failedTypeCastException
-    params: [BUILTIN_OBJECT, BUILTIN_STRING, PRIMITIVE_BOOLEAN]
+    method_name: failedTypeCastInclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
     return_type: BUILTIN_CLASS_CAST_ERROR
-    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_INCL_UNDEFINED_STUB
+
+  - callee: BUILTIN_RUNTIME
+    method_name: failedTypeCastExclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
+    return_type: BUILTIN_CLASS_CAST_ERROR
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCL_UNDEFINED_STUB
 
   - callee: BUILTIN_ERROR
     method_name: $CTOR
