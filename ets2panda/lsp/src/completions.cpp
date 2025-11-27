@@ -1065,6 +1065,13 @@ CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry)
                            autoImportData);
 }
 
+bool IsNameForDelaration(ir::AstNode *node)
+{
+    return node->Parent() != nullptr &&
+           (node->Parent()->IsClassDefinition() || node->Parent()->IsTSInterfaceDeclaration() ||
+            node->Parent()->IsMethodDefinition());
+}
+
 bool IsTokenAfterPoint(ir::AstNode *precedingToken)
 {
     return precedingToken->IsMemberExpression() || precedingToken->IsTSQualifiedName();
@@ -1167,6 +1174,9 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
     auto memberExpr = GetMemberExprOfIdentifier(precedingToken);
     if (IsEndWithToken(precedingToken, triggerValue) && IsTokenAfterPoint(memberExpr)) {
         return GetPropertyCompletionsWithValidPoint(precedingToken, triggerValue);
+    }
+    if (IsNameForDelaration(precedingToken)) {
+        return {};
     }
     return GetGlobalCompletions(context, pos);
 }
