@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -130,10 +130,6 @@ warning:
   id: 3
   message: "Prohibit top-level statements."
 
-- name: PROMISE_NO_MATCHING_SIG
-  id: 49710
-  message: "No matching signature found for Promise.then/catch: {}"
-
 - name: REPLACE_ASYNC_FUNCTION_WITH_COROUTINE
   id: 5
   message: "Replace asynchronous function with coroutine."
@@ -176,4 +172,5 @@ graveyard:
 - 19
 - 27
 - 28
+- 49710
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.

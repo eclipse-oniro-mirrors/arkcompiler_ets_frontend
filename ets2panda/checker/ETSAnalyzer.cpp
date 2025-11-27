@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1390,6 +1390,11 @@ checker::Type *ETSAnalyzer::Check(ir::ArrowFunctionExpression *expr) const
     }
 
     if (expr->Function()->ReturnTypeAnnotation() == nullptr) {
+        // If all the path is unreachable, the return type should be never.
+        if (!expr->Function()->HasReturnStatement() && expr->Function()->HasThrowStatement() &&
+            checker->HasStatus(CheckerStatus::MEET_THROW)) {
+            expr->Function()->Signature()->SetReturnType(checker->GlobalETSNeverType());
+        }
         if (expr->Function()->IsAsyncFunc()) {
             auto *retType = signature->ReturnType();
             if (!IsUnionTypeContainingPromise(retType, checker) &&
@@ -4458,7 +4463,10 @@ checker::Type *ETSAnalyzer::Check(ir::TryStatement *st) const
 
     std::vector<SmartCastArray> casts {};
     auto smartCasts = checker->Context().CheckTryBlock(*st->Block());
+    checker->Context().EnterPath();
     st->Block()->Check(checker);
+    // Just used for clear MEET_THROW flags in try blocks.
+    [[maybe_unused]] bool const tryTerminated = checker->Context().ExitPath();
 
     bool defaultCatchFound = false;
     for (auto *catchClause : st->CatchClauses()) {

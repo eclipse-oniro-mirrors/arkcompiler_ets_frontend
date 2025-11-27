@@ -745,6 +745,21 @@ bool ETSChecker::EnhanceSubstitutionForType(const ArenaVector<Type *> &typeParam
     return checker::EnhanceSubstitutionForType(this, typeParams, paramType, argumentType, substitution);
 }
 
+// #22952: optional arrow leftovers
+static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *expr, Type *paramType,
+                                  ir::ScriptFunction *lambda);
+
+static bool CheckLambdaAssignableUnion(ETSChecker *checker, ir::Expression *expr, ETSUnionType *paramType,
+                                       ir::ScriptFunction *lambda)
+{
+    for (auto *type : paramType->ConstituentTypes()) {
+        if (CheckLambdaAssignable(checker, expr, type, lambda)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool CheckLambdaTypeParameter(ETSChecker *checker, ir::ScriptFunction *lambda)
 {
     if (lambda->Params().empty()) {
@@ -763,56 +778,40 @@ static bool CheckLambdaTypeParameter(ETSChecker *checker, ir::ScriptFunction *la
 }
 
 // #22952: optional arrow leftovers
-static bool CheckLambdaAssignableUnion(ir::AstNode *typeAnn, ir::ScriptFunction *lambda)
+static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *expr, Type *paramType,
+                                  ir::ScriptFunction *lambda)
 {
-    bool assignable = false;
-    for (auto *type : typeAnn->AsETSUnionType()->Types()) {
-        if (type->IsETSFunctionType()) {
-            assignable |= lambda->Params().size() <= type->AsETSFunctionType()->Params().size();
-            continue;
-        }
-
-        if (type->IsETSTypeReference()) {
-            auto aliasType = util::Helpers::DerefETSTypeReference(type);
-            assignable |= aliasType->IsETSFunctionType() &&
-                          lambda->Params().size() <= aliasType->AsETSFunctionType()->Params().size();
-        }
-    }
-
-    return assignable;
-}
-
-// #22952: optional arrow leftovers
-static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *param, ir::ScriptFunction *lambda)
-{
-    ES2PANDA_ASSERT(param->IsETSParameterExpression());
-    ir::AstNode *typeAnn = param->AsETSParameterExpression()->Ident()->TypeAnnotation();
-    if (typeAnn == nullptr) {
-        return false;
-    }
-    if (typeAnn->IsETSTypeReference() && !typeAnn->AsETSTypeReference()->TsType()->IsETSArrayType()) {
-        typeAnn = util::Helpers::DerefETSTypeReference(typeAnn);
-    }
-    if (typeAnn->IsTSTypeParameter()) {
-        return CheckLambdaTypeParameter(checker, lambda);
-    }
-    if (!typeAnn->IsETSFunctionType()) {
+    if (!paramType->IsETSArrowType()) {
         // the surrounding function is made so we can *bypass* the typecheck in the "inference" context,
         // however the body of the function has to be checked in any case
-        if (typeAnn->IsETSUnionType()) {
-            return CheckLambdaAssignableUnion(typeAnn, lambda);
+        if (paramType->IsETSUnionType()) {
+            return CheckLambdaAssignableUnion(checker, expr, paramType->AsETSUnionType(), lambda);
         }
 
-        Type *paramType = param->AsETSParameterExpression()->Ident()->TsType();
         if (checker->Relation()->IsSupertypeOf(paramType, checker->GlobalBuiltinFunctionType())) {
+            ES2PANDA_ASSERT(lambda->Parent()->IsArrowFunctionExpression());
+            lambda->Parent()->AsArrowFunctionExpression()->SetPreferredType(nullptr);
             lambda->Parent()->Check(checker);
             return true;
         }
         return false;
     }
 
-    ir::ETSFunctionType *calleeType = typeAnn->AsETSFunctionType();
-    return lambda->Params().size() <= calleeType->Params().size();
+    // Workaround for lambda with type param, should be removed after preferred type regularization
+    ir::AstNode *typeAnn = expr->AsETSParameterExpression()->Ident()->TypeAnnotation();
+    if (typeAnn == nullptr) {
+        return false;
+    }
+    if (typeAnn->IsETSTypeReference() && !typeAnn->AsETSTypeReference()->TsType()->IsETSArrayType()) {
+        typeAnn = util::Helpers::DerefETSTypeReference(typeAnn);
+    }
+    if (typeAnn->IsTSTypeParameter() && !CheckLambdaTypeParameter(checker, lambda)) {
+        return false;
+    }
+
+    auto *calleeType = paramType->AsETSFunctionType();
+    const size_t restVarCount = calleeType->ArrowSignature()->RestVar() != nullptr ? 1 : 0;
+    return lambda->Params().size() <= calleeType->ArrowSignature()->Params().size() + restVarCount;
 }
 
 // #22952: remove optional arrow leftovers
@@ -824,12 +823,13 @@ static bool CheckOptionalLambdaFunction(ETSChecker *checker, ir::Expression *arg
         auto *const arrowFuncExpr = argument->AsArrowFunctionExpression();
 
         if (ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-            CheckLambdaAssignable(checker, param, lambda)) {
+            CheckLambdaAssignable(checker, param, substitutedSig->Params()[index]->TsType(), lambda)) {
             return true;
         }
+        return false;
     }
 
-    return false;
+    return true;
 }
 
 static bool IsInvalidArgumentAsIdentifier(varbinder::Scope *scope, const ir::Identifier *identifier)
@@ -846,7 +846,8 @@ static bool CheckArrowFunctionParamIfNeeded(ETSChecker *checker, Signature *subs
     if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && arguments.back()->IsArrowFunctionExpression()) {
         ir::ScriptFunction *const lambda = arguments.back()->AsArrowFunctionExpression()->Function();
         auto targetParm = substitutedSig->GetSignatureInfo()->params.back()->Declaration()->Node();
-        if (!CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), lambda)) {
+        auto targetParmType = substitutedSig->GetSignatureInfo()->params.back()->TsType();
+        if (!CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), targetParmType, lambda)) {
             return false;
         }
     }
@@ -1222,7 +1223,7 @@ static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature,
                               arrowFuncExpr->Start());
         }
         rc = false;
-    } else if ((lambda->Signature() != nullptr) && !lambda->HasReturnStatement()) {
+    } else if ((lambda->Signature() != nullptr) && !lambda->HasReturnStatement() && !lambda->HasThrowStatement()) {
         //  Need to check void return type here if there are no return statement(s) in the body.
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         if (!AssignmentContext(
@@ -2657,7 +2658,7 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
             ir::ScriptFunction *const lambda = argument->AsArrowFunctionExpression()->Function();
             auto targetParm = substitutedSig->GetSignatureInfo()->params[index]->Declaration()->Node();
             ERROR_SANITY_CHECK(checker, targetParm->IsETSParameterExpression(), return false);
-            if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), lambda) &&
+            if (CheckLambdaAssignable(checker, targetParm->AsETSParameterExpression(), paramType, lambda) &&
                 TypeInference(checker, substitutedSig, arguments, flags)) {
                 continue;
             }
@@ -2692,7 +2693,7 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
     if ((flags & TypeRelationFlag::OVERLOADING_CONTEXT) != 0) {
         return invocationCtx.IsInvocable();
     }
-    return invocationCtx.IsInvocable() || CheckOptionalLambdaFunction(checker, argument, substitutedSig, index);
+    return invocationCtx.IsInvocable() && CheckOptionalLambdaFunction(checker, argument, substitutedSig, index);
 }
 
 static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallExpression *callExpr,

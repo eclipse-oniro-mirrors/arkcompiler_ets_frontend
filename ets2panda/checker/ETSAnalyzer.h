@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,7 +65,7 @@ private:
     checker::Type *ResolveMemberExpressionByBaseType(ETSChecker *checker, checker::Type *baseType,
                                                      ir::MemberExpression *expr) const;
 
-    void CheckVoidTypeExpression(ETSChecker *checker, const ir::Expression *expr) const
+    void CheckVoidTypeExpression(ETSChecker *checker, ir::Expression *expr) const
     {
         // Existing void expression inconsistency,refer to #17762
         if (expr->TsType() == nullptr || !expr->TsType()->IsETSVoidType() || expr->Parent() == nullptr) {
@@ -82,6 +82,7 @@ private:
             parent->IsExpressionStatement() || parent->IsReturnStatement() ||
             (parent->IsSequenceExpression() && parent->Parent() != nullptr && parent->Parent()->IsForUpdateStatement());
         if (!acceptVoid) {
+            expr->SetTsType(checker->GlobalTypeError());
             checker->LogError(diagnostic::VOID_VALUE, {}, expr->Start());
         }
     }
