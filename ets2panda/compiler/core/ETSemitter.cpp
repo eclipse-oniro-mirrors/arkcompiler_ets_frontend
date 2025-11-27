@@ -165,6 +165,11 @@ private:
 static pandasm::Type PandasmTypeWithRank(ETSEmitter *emitter, checker::Type const *type)
 {
     if (type->IsETSTypeParameter()) {
+        if (type->AsETSTypeParameter()->GetConstraintType()->IsETSVoidType()) {
+            // Note: Currently, use 'void' type as type annotation is not supported.
+            // After using void as type annotation is supported, this needs to be removed, #31817.
+            return pandasm::Type(compiler::Signatures::BUILTIN_OBJECT, type->Rank());
+        }
         return PandasmTypeWithRank(emitter, type->AsETSTypeParameter()->GetConstraintType());
     }
     if (type->IsETSNonNullishType()) {
