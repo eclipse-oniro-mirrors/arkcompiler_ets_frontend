@@ -29,11 +29,11 @@ namespace util {
 class Options;
 }  // namespace util
 
-template <class T>
-T DirName(T const &path, T const &delims = ark::os::file::File::GetPathDelim())
+std::string_view DirName(std::string_view const &path,
+                         std::string_view const &delims = ark::os::file::File::GetPathDelim())
 {
     std::size_t pos = path.find_last_of(delims);
-    if (pos == std::string::npos) {
+    if (pos == std::string_view::npos) {
         return "./";
     }
 
