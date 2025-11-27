@@ -16,6 +16,7 @@
 #include "compiler/core/compilerImpl.h"
 #include "generated/diagnostic.h"
 #include "public/public.h"
+#include "util/eheap.h"
 #include "util/diagnostic.h"
 #include "util/generateBin.h"
 #include "varbinder/ETSBinder.h"
@@ -88,7 +89,7 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
                                     util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus)
 {
     public_lib::Context context;
-    ThreadSafeArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    auto allocator = EHeap::CreateAllocator();
     context.allocator = &allocator;
 
     try {

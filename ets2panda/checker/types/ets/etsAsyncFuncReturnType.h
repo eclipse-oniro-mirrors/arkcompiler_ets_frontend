@@ -23,7 +23,7 @@ class GlobalTypesHolder;
 
 class ETSAsyncFuncReturnType : public ETSObjectType {
 public:
-    ETSAsyncFuncReturnType(ThreadSafeArenaAllocator *allocator, TypeRelation *relation, ETSObjectType *promiseType)
+    ETSAsyncFuncReturnType(ArenaAllocator *allocator, TypeRelation *relation, ETSObjectType *promiseType)
         : ETSObjectType(allocator, "", compiler::Signatures::BUILTIN_OBJECT,
                         std::make_tuple(nullptr, ETSObjectFlags::ASYNC_FUNC_RETURN_TYPE, relation)),
           promiseType_(promiseType)

@@ -16,8 +16,7 @@
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "bytecode_optimizer/optimize_bytecode.h"
 #include "compiler/compiler_logger.h"
-#include "libarkbase/mem/arena_allocator.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/diagnosticEngine.h"
@@ -33,14 +32,12 @@
 #include <optional>
 
 namespace ark::es2panda::aot {
-using mem::MemConfig;
 
 class MemManager {
 public:
     explicit MemManager()
     {
-        MemConfig::Initialize(0, 0, COMPILER_SIZE, 0, 0, 0);
-        PoolManager::Initialize(PoolType::MMAP);
+        EHeap::Initialize();
     }
 
     NO_COPY_SEMANTIC(MemManager);
@@ -48,8 +45,7 @@ public:
 
     ~MemManager()
     {
-        PoolManager::Finalize();
-        MemConfig::Finalize();
+        EHeap::Finalize();
     }
 };
 

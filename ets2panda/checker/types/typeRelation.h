@@ -95,7 +95,7 @@ public:
         RelationType type;
     };
 
-    explicit RelationHolder(ThreadSafeArenaAllocator *allocator) : cached_(allocator->Adapter()) {}
+    explicit RelationHolder(ArenaAllocator *allocator) : cached_(allocator->Adapter()) {}
 
     static RelationKey MakeKey(uint32_t sourceId, uint32_t targetId)
     {

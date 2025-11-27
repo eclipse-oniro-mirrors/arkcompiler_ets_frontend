@@ -24,7 +24,7 @@ namespace ark::es2panda::gtests {
 class UnionNormalizationTest : public testing::Test {
 public:
     UnionNormalizationTest()
-        : allocator_(std::make_unique<ark::ThreadSafeArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
+        : allocator_(EHeap::NewAllocator()),
           publicContext_ {std::make_unique<public_lib::Context>()},
           phaseManager_ {ScriptExtension::ETS, Allocator()},
           varbinder_(allocator_.get()),
@@ -40,11 +40,10 @@ public:
 
     static void SetUpTestCase()
     {
-        mem::MemConfig::Initialize(0, 0, COMPILER_SIZE, 0, 0, 0);
-        PoolManager::Initialize();
+        es2panda::EHeap::Initialize();
     }
 
-    ark::ThreadSafeArenaAllocator *Allocator()
+    ark::ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -167,7 +166,7 @@ protected:
     static constexpr uint8_t IDX2 = 2;
 
 private:
-    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
+    std::unique_ptr<ark::ArenaAllocator> allocator_;
     std::unique_ptr<public_lib::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
     varbinder::ETSBinder varbinder_;

@@ -83,7 +83,7 @@ using TypePtr = Type *;
 
 class ETSChecker final : public Checker {
 public:
-    explicit ETSChecker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
+    explicit ETSChecker(ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         // NOLINTNEXTLINE(readability-redundant-member-init)
         : Checker(allocator, diagnosticEngine),
           arrayTypes_(Allocator()->Adapter()),
@@ -344,7 +344,7 @@ public:
     ETSObjectType *CreateETSObjectType(
         ir::AstNode *declNode, ETSObjectFlags flags,
         /* this parameter maintanis the behavior of the broken ast-cache logic, avoid it whenever possible */
-        std::optional<std::pair<ThreadSafeArenaAllocator *, TypeRelation *>> caches = std::nullopt);
+        std::optional<std::pair<ArenaAllocator *, TypeRelation *>> caches = std::nullopt);
     ETSObjectType *CreateETSObjectTypeOrBuiltin(ir::AstNode *declNode, ETSObjectFlags flags);
     std::tuple<util::StringView, SignatureInfo *> CreateBuiltinArraySignatureInfo(const ETSArrayType *arrayType,
                                                                                   size_t dim);

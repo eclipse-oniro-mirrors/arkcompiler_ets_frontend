@@ -23,7 +23,7 @@ namespace ark::es2panda::checker {
 class ASChecker : public Checker {
 public:
     // NOLINTNEXTLINE(readability-redundant-member-init)
-    explicit ASChecker([[maybe_unused]] ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
+    explicit ASChecker([[maybe_unused]] ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         : Checker(allocator, diagnosticEngine)
     {
     }

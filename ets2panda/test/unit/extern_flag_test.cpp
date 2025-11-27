@@ -23,7 +23,7 @@
 #include "assembler/assembly-program.h"
 #include "assembly-function.h"
 #include "assembly-record.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "util/diagnosticEngine.h"
 #include "util/options.h"
 
@@ -90,13 +90,11 @@ class DeclareTest : public testing::Test {
 public:
     DeclareTest()
     {
-        mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-        PoolManager::Initialize(PoolType::MMAP);
+        EHeap::Initialize();
     }
     ~DeclareTest() override
     {
-        PoolManager::Finalize();
-        mem::MemConfig::Finalize();
+        EHeap::Finalize();
     }
 
 protected:

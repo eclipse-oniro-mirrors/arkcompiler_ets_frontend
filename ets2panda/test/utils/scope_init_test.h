@@ -20,7 +20,7 @@
 #include "ir/statements/blockStatement.h"
 #include "ir/statements/variableDeclarator.h"
 #include "ir/statements/variableDeclaration.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "compiler/lowering/phase.h"
 
 #include <gtest/gtest.h>
@@ -31,9 +31,7 @@ namespace test::utils {
 
 class ScopeInitTest : public testing::Test {
 public:
-    ScopeInitTest()
-        : allocator_(
-              std::make_unique<ark::ThreadSafeArenaAllocator>(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true))
+    ScopeInitTest() : allocator_(ark::es2panda::EHeap::NewAllocator())
     {
         phaseManager_ = std::make_unique<ark::es2panda::compiler::PhaseManager>(ark::es2panda::ScriptExtension::ETS,
                                                                                 allocator_.get());
@@ -48,17 +46,16 @@ public:
 
     static void SetUpTestCase()
     {
-        ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-        ark::PoolManager::Initialize();
+        ark::es2panda::EHeap::Initialize();
     }
 
-    ark::ThreadSafeArenaAllocator *Allocator()
+    ark::ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
 
 private:
-    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
+    std::unique_ptr<ark::ArenaAllocator> allocator_;
     std::unique_ptr<ark::es2panda::compiler::PhaseManager> phaseManager_;
 };
 

@@ -19,6 +19,7 @@
 #include <cstdint>
 
 #include "util/diagnostic.h"
+#include "util/eheap.h"
 #include "util/perfMetrics.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/scope.h"
@@ -217,17 +218,15 @@ __attribute__((unused)) char const *ArenaStrdup(ArenaAllocator *allocator, char 
 
 extern "C" void MemInitialize()
 {
-    if (mem::MemConfig::IsInitialized()) {
+    if (EHeap::IsInitialized()) {
         return;
     }
-    mem::MemConfig::Initialize(0, 0, COMPILER_SIZE, 0, 0, 0);
-    PoolManager::Initialize(PoolType::MMAP);
+    EHeap::Initialize();
 }
 
 extern "C" void MemFinalize()
 {
-    PoolManager::Finalize();
-    mem::MemConfig::Finalize();
+    EHeap::Finalize();
 }
 
 extern "C" es2panda_Config *CreateConfig(int args, char const *const *argv)
@@ -294,7 +293,7 @@ static void CompileJob(public_lib::Context *context, varbinder::FunctionScope *s
         return;
     }
     compiler::StaticRegSpiller regSpiller;
-    ArenaAllocator allocator {SpaceType::SPACE_TYPE_COMPILER, nullptr, true};
+    auto allocator = EHeap::CreateAllocator();
     compiler::ETSCompiler astCompiler {};
     compiler::ETSGen cg {&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astCompiler)};
     compiler::ETSFunctionEmitter funcEmitter {&cg, programElement};
@@ -310,7 +309,7 @@ extern "C" __attribute__((unused)) es2panda_GlobalContext *CreateGlobalContext(e
     auto *globalContext = new GlobalContext;
     for (size_t i = 0; i < fileNum; i++) {
         auto fileName = externalFileList[i];
-        auto globalAllocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        auto globalAllocator = EHeap::NewAllocator().release();
         globalContext->cachedExternalPrograms.emplace(fileName, nullptr);
         globalContext->externalProgramAllocators.emplace(fileName, globalAllocator);
     }
@@ -333,7 +332,7 @@ extern "C" __attribute__((unused)) void AddFileCache(es2panda_GlobalContext *glo
 {
     auto globalCtx = reinterpret_cast<GlobalContext *>(globalContext);
     ES2PANDA_ASSERT(globalCtx->cachedExternalPrograms.count(fileName) == 0);
-    auto globalAllocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    auto globalAllocator = EHeap::NewAllocator().release();
     globalCtx->cachedExternalPrograms.emplace(fileName, nullptr);
     globalCtx->externalProgramAllocators.emplace(fileName, globalAllocator);
 }
@@ -417,11 +416,11 @@ __attribute__((unused)) static es2panda_Context *CreateContext(es2panda_Config *
         } else {
             ES2PANDA_ASSERT(res->globalContext->externalProgramAllocators.count(fileName) != 0);
             res->allocator =
-                reinterpret_cast<ThreadSafeArenaAllocator *>(res->globalContext->externalProgramAllocators[fileName]);
+                reinterpret_cast<ArenaAllocator *>(res->globalContext->externalProgramAllocators[fileName]);
         }
     } else {
         ir::DisableContextHistory();
-        res->allocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        res->allocator = EHeap::NewAllocator().release();
     }
 
     InitializeContext(res);
@@ -515,7 +514,7 @@ extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExte
     res->sourceFileName = "";
     res->sourceFile = new SourceFile(res->sourceFileName, res->input, cfg->options->IsModule());
     ir::DisableContextHistory();
-    res->allocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    res->allocator = EHeap::NewAllocator().release();
 
     InitializeContext(res);
     return reinterpret_cast<es2panda_Context *>(res);
@@ -1420,7 +1419,7 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
                                                         bool LspUsage)
 {
     auto cfg = reinterpret_cast<ConfigImpl *>(config);
-    globalContext->stdLibAllocator = new ThreadSafeArenaAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    globalContext->stdLibAllocator = EHeap::NewAllocator().release();
     auto ctx = CreateContext(config, std::move(""), cfg->options->SourceFileName().c_str(),
                              reinterpret_cast<es2panda_GlobalContext *>(globalContext), true, true, LspUsage);
     ProceedToState(ctx, es2panda_ContextState::ES2PANDA_STATE_CHECKED);

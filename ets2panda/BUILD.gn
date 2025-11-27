@@ -513,6 +513,7 @@ libes2panda_sources = [
   "util/diagnostic.cpp",
   "util/diagnosticEngine.cpp",
   "util/dtoa_helper.cpp",
+  "util/eheap.cpp",
   "util/errorRecovery.cpp",
   "util/es2pandaMacros.cpp",
   "util/helpers.cpp",

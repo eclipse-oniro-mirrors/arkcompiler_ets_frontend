@@ -136,8 +136,7 @@ static void ProcessTypeParameterProperties(checker::ETSTypeParameter *oldTypePar
 
 // NOTE (smartin): The two methods 'CreateNewTypeParamVectors' and 'SetConstraintTypeAndDefaultTypeForTypeParams'
 // contain very similar logic that can be found in 'CloneTypeParamsForClass'. Merge these later if possible
-static void FillNewTypeParamVectors(ThreadSafeArenaAllocator *allocator,
-                                    std::vector<checker::ETSTypeParameter *> &newTypeParams,
+static void FillNewTypeParamVectors(ArenaAllocator *allocator, std::vector<checker::ETSTypeParameter *> &newTypeParams,
                                     ArenaVector<ir::TSTypeParameter *> &newTypeParamNodes,
                                     const checker::Signature *const lambdaSig,
                                     checker::Substitution *const substitution)

@@ -25,6 +25,7 @@
 #include "compiler/core/ETSGen.h"
 #include "checker/ETSAnalyzer.h"
 #include "ir/astNode.h"
+#include "util/eheap.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include <gtest/gtest.h>
@@ -41,8 +42,7 @@ namespace test::utils {
 class CheckerTest : public testing::Test {
 public:
     CheckerTest()
-        : allocator_(
-              std::make_unique<ark::ThreadSafeArenaAllocator>(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
+        : allocator_(ark::es2panda::EHeap::NewAllocator()),
           publicContext_ {std::make_unique<plib_alias::Context>()},
           phaseManager_ {ark::es2panda::ScriptExtension::ETS, Allocator()},
           varbinder_(allocator_.get()),
@@ -59,8 +59,7 @@ public:
 
     static void SetUpTestCase()
     {
-        ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-        ark::PoolManager::Initialize();
+        ark::es2panda::EHeap::Initialize();
     }
 
     checker_alias::ETSChecker *Checker()
@@ -68,7 +67,7 @@ public:
         return &checker_;
     }
 
-    ark::ThreadSafeArenaAllocator *Allocator()
+    ark::ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -114,7 +113,7 @@ public:
         return [](plib_alias::Context *context, varbinder_alias::FunctionScope *scope,
                   compiler_alias::ProgramElement *programElement) -> void {
             RegSpiller regSpiller;
-            ark::ArenaAllocator allocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+            auto allocator = ark::es2panda::EHeap::CreateAllocator();
             AstCompiler astcompiler;
             compiler_alias::SetPhaseManager(context->phaseManager);
             CodeGen cg(&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astcompiler));
@@ -247,7 +246,7 @@ public:
     NO_MOVE_SEMANTIC(CheckerTest);
 
 private:
-    std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
+    std::unique_ptr<ark::ArenaAllocator> allocator_;
     std::unique_ptr<plib_alias::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
     varbinder_alias::ETSBinder varbinder_;
