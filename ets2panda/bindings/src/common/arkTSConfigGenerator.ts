@@ -208,7 +208,7 @@ export class ArkTSConfigGenerator {
 
   private parseDeclFile(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
     if (!moduleInfo.declFilesPath || !fs.existsSync(moduleInfo.declFilesPath)) {
-      logger.error(`Module ${moduleInfo.packageName} depends on dynamic module ${moduleInfo.packageName}, but
+      logger.debug(`Module ${moduleInfo.packageName} depends on dynamic module ${moduleInfo.packageName}, but
           decl file not found on path ${moduleInfo.declFilesPath}`);
       return;
     }
