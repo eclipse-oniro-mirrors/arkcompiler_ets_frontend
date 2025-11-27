@@ -1625,6 +1625,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    if (node.name.text === 'name') {
+      return;
+    }
+
     if (
       baseExprSym && TsUtils.isFunctionSymbol(baseExprSym) ||
       this.tsUtils.isStdFunctionType(baseExprType) ||

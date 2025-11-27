@@ -74,3 +74,7 @@ class SimpleExpressions {
     return 'Invalid';
   }
 }
+
+function foo() {}
+
+console.log(foo.name)
