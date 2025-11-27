@@ -1886,9 +1886,15 @@ bool ETSChecker::ValidateArrayIndex(ir::Expression *const expr, bool relaxed)
 
     if (!expressionType->IsETSObjectType() ||
         (!expressionType->AsETSObjectType()->HasObjectFlag(relaxed ? ETSObjectFlags::BUILTIN_ARRAY_NUMERIC
-                                                                   : ETSObjectFlags::BUILTIN_ARRAY_INDEX))) {
+                                                                   : ETSObjectFlags::BUILTIN_ARRAY_INDEX) &&
+         // CC-OFFNXT(G.FMT.02-CPP) project code style
+         !expressionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::NUMERIC_ENUM_OBJECT))) {
         LogError(diagnostic::INVALID_INDEX_TYPE, {expressionType->ToString()}, expr->Start());
         return false;
+    }
+
+    if (expressionType->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::NUMERIC_ENUM_OBJECT)) {
+        expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 
     if (!relaxed || !expressionType->IsConstantType() || !expr->IsNumberLiteral()) {
