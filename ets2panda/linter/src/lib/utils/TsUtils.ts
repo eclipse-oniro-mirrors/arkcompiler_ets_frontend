@@ -369,7 +369,7 @@ export class TsUtils {
     if (!symbol) {
       return false;
     }
-    const name = this.tsTypeChecker.getFullyQualifiedName(symbol);
+    const name = this.tsTypeChecker.getFullyQualifiedNameForLinter(symbol);
     if (this.isGlobalSymbol(symbol) && allowTypeArrays.includes(name)) {
       return true;
     }
@@ -917,10 +917,10 @@ export class TsUtils {
 
   skipCheckForArrayBufferLike(lhsType: string | ts.Type, rhsType: string | ts.Type): boolean {
     const lhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToString(lhsType)
+      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToStringForLinter(lhsType)
     );
     const rhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToString(rhsType)
+      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToStringForLinter(rhsType)
     );
     return !!this.options.arkts2 && lhsIsArrayBufferLike && rhsIsArrayBufferLike;
   }
@@ -1409,7 +1409,7 @@ export class TsUtils {
       return cached;
     }
 
-    const fullName = this.tsTypeChecker.getFullyQualifiedName(symbol);
+    const fullName = this.tsTypeChecker.getFullyQualifiedNameForLinter(symbol);
     const match = fullName.match(/['"](.*)['"]\.(.*)/);
     const name = match ? match[2] : fullName;
     const dotPosition = name.lastIndexOf('.');
@@ -1424,7 +1424,7 @@ export class TsUtils {
   }
 
   isStdSymbol(symbol: ts.Symbol): boolean {
-    const name = this.tsTypeChecker.getFullyQualifiedName(symbol);
+    const name = this.tsTypeChecker.getFullyQualifiedNameForLinter(symbol);
     return name === SYMBOL || name === SYMBOL_CONSTRUCTOR;
   }
 
@@ -1724,7 +1724,7 @@ export class TsUtils {
     if (!symbol) {
       return false;
     }
-    const name = this.tsTypeChecker.getFullyQualifiedName(symbol);
+    const name = this.tsTypeChecker.getFullyQualifiedNameForLinter(symbol);
     return name === 'Error' && this.isGlobalSymbol(symbol);
   }
 
@@ -2991,7 +2991,7 @@ export class TsUtils {
     if (symbol === undefined) {
       return false;
     }
-    const name = this.tsTypeChecker.getFullyQualifiedName(symbol);
+    const name = this.tsTypeChecker.getFullyQualifiedNameForLinter(symbol);
     return name === 'String' && this.isGlobalSymbol(symbol);
   }
 
@@ -3514,7 +3514,7 @@ export class TsUtils {
 
   isNumberLike(type: ts.Type): boolean {
     const typeFlags = type.flags;
-    const typeText = this.tsTypeChecker.typeToString(type);
+    const typeText = this.tsTypeChecker.typeToStringForLinter(type);
 
     const isNumberLike =
       typeText === STRINGLITERAL_NUMBER ||
@@ -3688,11 +3688,11 @@ export class TsUtils {
     // Default
     let conversionMethod = '';
 
-    if (this.tsTypeChecker.typeToString(type) === 'boolean') {
+    if (this.tsTypeChecker.typeToStringForLinter(type) === 'boolean') {
       conversionMethod = '.toBoolean()';
-    } else if (this.tsTypeChecker.typeToString(type) === 'number') {
+    } else if (this.tsTypeChecker.typeToStringForLinter(type) === 'number') {
       conversionMethod = '.toNumber()';
-    } else if (this.tsTypeChecker.typeToString(type) === 'string') {
+    } else if (this.tsTypeChecker.typeToStringForLinter(type) === 'string') {
       conversionMethod = '.toString()';
     }
 
