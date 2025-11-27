@@ -260,32 +260,40 @@ checker::Type *ETSTypeReferencePart::GetType(checker::ETSChecker *checker)
     if (TypeParams() != nullptr) {
         for (auto *param : TypeParams()->Params()) {
             checker->CheckAnnotations(param);
-            if (param->IsETSTypeReference() && param->AsETSTypeReference()->Part()->Name()->IsTSQualifiedName()) {
+            if (param->IsETSTypeReference()) {
                 param->Check(checker);
             }
         }
     }
-    auto const name = Name();
-    if (Previous() == nullptr) {
-        if (name->IsIdentifier() || name->IsTSQualifiedName()) {
-            SetTsType(HandleInternalTypes(checker));
-        }
 
-        if (TsType() == nullptr) {
-            checker::Type *baseType = checker->GetReferencedTypeBase(name);
-            ES2PANDA_ASSERT(baseType != nullptr);
-            if (baseType->IsETSObjectType()) {
-                checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), TypeParams(), Start());
-                SetTsType(ctx.Result());
-            } else {
-                SetTsType(baseType);
-            }
-        }
-    } else {
+    auto const name = Name();
+    if (Previous() != nullptr) {
         checker::Type *baseType = Previous()->GetType(checker);
-        SetTsType(checker->GetReferencedTypeFromBase(baseType, name));
+        return SetTsType(checker->GetReferencedTypeFromBase(baseType, name));
     }
-    return TsType();
+
+    if (name->IsIdentifier() || name->IsTSQualifiedName()) {
+        SetTsType(HandleInternalTypes(checker));
+    }
+
+    if (TsType() != nullptr) {
+        return TsType();
+    }
+
+    checker::Type *baseType = checker->GetReferencedTypeBase(name);
+    ES2PANDA_ASSERT(baseType != nullptr);
+
+    if (baseType->IsETSObjectType()) {
+        checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), TypeParams(), Start());
+        return SetTsType(ctx.Result());
+    }
+
+    if (TypeParams() != nullptr) {
+        checker->LogError(diagnostic::NOT_GENERIC, {baseType}, Start());
+        return SetTsType(checker->GlobalTypeError());
+    }
+
+    return SetTsType(baseType);
 }
 
 ETSTypeReferencePart *ETSTypeReferencePart::Clone(ArenaAllocator *const allocator, AstNode *const parent)
