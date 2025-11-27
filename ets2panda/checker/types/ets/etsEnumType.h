@@ -29,17 +29,6 @@ namespace ark::es2panda::checker {
 
 class ETSEnumType : public ETSObjectType {
 public:
-    // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
-    explicit ETSEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
-                         ir::AstNode *declNode, TypeRelation *relation, ETSObjectFlags const flag)
-        : ETSObjectType(allocator, name, internalName,
-                        std::make_tuple(declNode, ETSObjectFlags::CLASS | flag, relation)),
-          memberNameToOrdinal_(allocator->Adapter())
-    {
-        InitElementsShortcuts(declNode->AsClassDefinition());
-    }
-
     NO_COPY_SEMANTIC(ETSEnumType);
     NO_MOVE_SEMANTIC(ETSEnumType);
 
@@ -120,6 +109,17 @@ public:
     Type *GetBaseEnumElementType(ETSChecker *checker);
 
 protected:
+    // CC-OFFNXT(G.FUN.01-CPP) solid logic
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
+    explicit ETSEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+                         ir::AstNode *declNode, TypeRelation *relation, ETSObjectFlags const flag)
+        : ETSObjectType(allocator, name, internalName,
+                        std::make_tuple(declNode, ETSObjectFlags::CLASS | flag, relation)),
+          memberNameToOrdinal_(allocator->Adapter())
+    {
+        InitElementsShortcuts(declNode->AsClassDefinition());
+    }
+
     Type *enumType_ {nullptr};  // NOLINT(misc-non-private-member-variables-in-classes)
 
 private:
@@ -151,8 +151,8 @@ private:
 
 class ETSNumericEnumType : public ETSEnumType {
 public:
-    explicit ETSNumericEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name,
-                                util::StringView internalName, ir::AstNode *declNode, TypeRelation *relation)
+    explicit ETSNumericEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+                                ir::AstNode *declNode, TypeRelation *relation)
         : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::NUMERIC_ENUM_OBJECT)
     {
         AddTypeFlag(checker::TypeFlag::ETS_NUMERIC_ENUM);
@@ -182,8 +182,8 @@ private:
 
 class ETSStringEnumType : public ETSEnumType {
 public:
-    explicit ETSStringEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name,
-                               util::StringView internalName, ir::AstNode *declNode, TypeRelation *relation)
+    explicit ETSStringEnumType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+                               ir::AstNode *declNode, TypeRelation *relation)
         : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::STRING_ENUM_OBJECT)
     {
         AddTypeFlag(checker::TypeFlag::ETS_STRING_ENUM);

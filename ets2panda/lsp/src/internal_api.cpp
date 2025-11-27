@@ -33,6 +33,8 @@
 #include "get_class_property_info.h"
 #include "generated/code_fix_register.h"
 #include "quick_info.h"
+#include "util/eheap.h"
+
 namespace ark::es2panda::lsp {
 
 Initializer::Initializer()
@@ -48,7 +50,7 @@ Initializer::Initializer()
     }
     std::array<const char *, 1> argv = {buildDir.c_str()};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
-    allocator_ = new ark::ArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER);
+    allocator_ = EHeap::NewAllocator().release();
 }
 
 Initializer::~Initializer()

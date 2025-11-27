@@ -14,6 +14,7 @@
  */
 
 #include "ast_verifier_test.h"
+#include "util/eheap.h"
 
 #include <compiler/lowering/phase.h>
 
@@ -26,7 +27,7 @@ AstVerifierTest::AstVerifierTest()
     auto es2pandaPath = test::utils::PandaExecutablePathGetter::Get()[0];
     std::array argv = {es2pandaPath};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
-    allocator_ = new ark::ThreadSafeArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    allocator_ = ark::es2panda::EHeap::NewAllocator().release();
     phaseManager_ = new ark::es2panda::compiler::PhaseManager(nullptr, ark::es2panda::ScriptExtension::ETS, allocator_);
 }
 

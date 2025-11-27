@@ -27,13 +27,12 @@ public:
 
     static void SetUpTestCase()
     {
-        ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-        ark::PoolManager::Initialize();
+        EHeap::Initialize();
     }
 
     NodeHistoryTest()
     {
-        allocator_ = std::make_unique<ArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER);
+        allocator_ = Eheap::NewAllocator();
         phaseManager_ = std::make_unique<compiler::PhaseManager>(ScriptExtension::ETS, Allocator());
         compiler::SetPhaseManager(phaseManager_.get());
         ir::EnableContextHistory();

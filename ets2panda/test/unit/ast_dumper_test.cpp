@@ -22,8 +22,7 @@
 #include "ir/expressions/literals/stringLiteral.h"
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "compiler/compiler_logger.h"
-#include "libarkbase/mem/arena_allocator.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/generateBin.h"
@@ -109,14 +108,12 @@ class ASTDumperTest : public testing::TestWithParam<TestParams> {
 public:
     ASTDumperTest()
     {
-        ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-        ark::PoolManager::Initialize(ark::PoolType::MMAP);
+        ark::es2panda::EHeap::Initialize();
     }
 
     ~ASTDumperTest() override
     {
-        ark::PoolManager::Finalize();
-        ark::mem::MemConfig::Finalize();
+        ark::es2panda::EHeap::Finalize();
     };
 
     NO_COPY_SEMANTIC(ASTDumperTest);
