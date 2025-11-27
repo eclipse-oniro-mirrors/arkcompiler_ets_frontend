@@ -421,9 +421,9 @@ describe('test for ApiExtractor', function () {
       initScanProjectConfigByMergeConfig(config);
 
       collectApi(filePath, ApiExtractor.ApiType.API);
-      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest1'), true);
-      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest2'), true);
-      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest3'), false);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest3'), false);
       clearAll();
     });
   });
