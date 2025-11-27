@@ -15,39 +15,9 @@
     ],
     "result": [
         {
-            "line": 106,
-            "column": 18,
-            "endLine": 106,
-            "endColumn": 19,
-            "problem": "ObjectLiteralNoContextType",
-            "suggest": "",
-            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 142,
-            "column": 5,
-            "endLine": 142,
-            "endColumn": 13,
-            "problem": "LocalFunction",
-            "suggest": "",
-            "rule": "Nested functions are not supported (arkts-no-nested-funcs)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 148,
-            "column": 5,
-            "endLine": 148,
-            "endColumn": 13,
-            "problem": "LocalFunction",
-            "suggest": "",
-            "rule": "Nested functions are not supported (arkts-no-nested-funcs)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 149,
+            "line": 89,
             "column": 14,
-            "endLine": 149,
+            "endLine": 89,
             "endColumn": 15,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -55,20 +25,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 165,
-            "column": 9,
-            "endLine": 165,
-            "endColumn": 10,
+            "line": 128,
+            "column": 10,
+            "endLine": 128,
+            "endColumn": 11,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
             "severity": "ERROR"
         },
         {
-            "line": 181,
-            "column": 33,
-            "endLine": 181,
-            "endColumn": 34,
+            "line": 151,
+            "column": 29,
+            "endLine": 151,
+            "endColumn": 30,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",

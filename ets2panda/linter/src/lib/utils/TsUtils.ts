@@ -467,6 +467,10 @@ export class TsUtils {
     return (tsType.getFlags() & ts.TypeFlags.Unknown) !== 0;
   }
 
+  static isSymbolType(tsType: ts.Type): boolean {
+    return (tsType.getFlags() & (ts.TypeFlags.ESSymbol | ts.TypeFlags.UniqueESSymbol)) !== 0;
+  }
+
   static isUnsupportedType(tsType: ts.Type): boolean {
     return (
       !!tsType.flags &&

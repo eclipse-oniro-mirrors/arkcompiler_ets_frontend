@@ -1642,39 +1642,42 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
-    const typeString = this.tsTypeChecker.typeToStringForLinter(baseType);
-
-    const symbol = baseType.getSymbol();
-    if (symbol && !isStdLibrarySymbol(symbol)) {
-      return;
-    }
-
     if (
-      TsUtils.isAnyType(baseType) ||
+      TsUtils.isAnyType(baseType) && !this.isDeclaredWithNameSpace(baseType, node) ||
       TsUtils.isUnknownType(baseType) ||
       this.tsUtils.isStdFunctionType(baseType) ||
-      typeString === 'symbol' ||
-      this.isMixedEnum(baseType) ||
-      this.isSpecialType(baseType, node) ||
+      TsUtils.isSymbolType(baseType) ||
+      this.isIntersectionType(node) ||
+      this.isDeclaredWithTypeOf(node) ||
+      this.isDeclaredWithKeyOf(node) ||
+      this.isMixedEnum(node)||
+      this.isSpecialType(node) ||
+      this.isSpecialSignature(baseType, node) ||
       this.isStdUtilityTools(node)
     ) {
       this.incrementCounters(node, FaultID.InteropDirectAccessToTSTypes);
     }
   }
 
-  private isSpecialType(baseType: ts.Type, node: ts.Node): boolean {
-    const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(baseType);
-    if (TypeScriptLinter.extractKeyofFromString(baseTypeStr)) {
-      return true;
-    }
+  private isDeclaredWithNameSpace(baseType: ts.Type, node: ts.Node): boolean {
     let symbol = baseType.getSymbol();
     if (!symbol) {
       symbol = this.tsUtils.trueSymbolAtLocation(node);
     }
     const decl = TsUtils.getDeclaration(symbol);
+    if (decl) {
+      return ts.isModuleDeclaration(decl);
+    }
+    return false;
+  }
+
+  private isSpecialType(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
     if (!decl) {
       return false;
     }
+
     if (
       ts.isTypeAliasDeclaration(decl) && this.checkSpecialTypeNode(decl.type, true) ||
       this.checkSpecialTypeNode(decl, true)
@@ -1704,37 +1707,75 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private isMixedEnum(type: ts.Type): boolean {
-    const symbol = type.getSymbol();
-    if (!symbol) {
+  private isIntersectionType(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+
+    return !!decl && (
+      ts.isVariableDeclaration(decl) &&
+      decl.type &&
+      ts.isIntersectionTypeNode(decl.type) ||
+      ts.isIntersectionTypeNode(decl)
+    );
+  }
+
+  private isSpecialSignature(baseType: ts.Type, node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
       return false;
     }
 
-    const declarations = symbol.getDeclarations();
+    if (!ts.isVariableDeclaration(decl) && !ts.isTypeAliasDeclaration(decl)) {
+      return false;
+    }
+    const typeNode = decl.type;
+    if (!typeNode || !ts.isTypeLiteralNode(typeNode) || typeNode.members.length === 0) {
+      return false;
+    }
+
+    return typeNode.members.some((member) => {
+      return (
+        ts.isCallSignatureDeclaration(member) ||
+        ts.isConstructSignatureDeclaration(member) ||
+        ts.isIndexSignatureDeclaration(member)
+      );
+    });
+  }
+
+  private isMixedEnum(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const declarations = symbol?.getDeclarations();	
     if (!declarations) {
-      return false;
-    }
+      return false;	
+    }	
 
-    for (const decl of declarations) {
-      if (ts.isEnumDeclaration(decl)) {
+    const declarationKinds = new Set<number>();
+    for (const decl of declarations) {	
+      declarationKinds.add(decl.kind);
+      if(declarationKinds.size > 1){
+        // mixed-kind declarations
+        return true;
+      }
+      if (ts.isEnumDeclaration(decl)) {	
         const initializerTypes = new Set<string>();
 
-        for (const member of decl.members) {
-          if (member.initializer) {
-            const memberType = this.tsTypeChecker.getTypeAtLocation(member.initializer);
-            const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(
-              this.tsTypeChecker.getBaseTypeOfLiteralType(memberType)
+        for (const member of decl.members) {	
+          if (member.initializer) {	
+            const memberType = this.tsTypeChecker.getTypeAtLocation(member.initializer);	
+            const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(	
+              this.tsTypeChecker.getBaseTypeOfLiteralType(memberType)	
             );
             initializerTypes.add(baseTypeStr);
           }
+          
+          if (initializerTypes.size > 1) {
+            // mixed-type enum
+            return true;
+          }	
         }
-
-        if (initializerTypes.size > 1) {
-          return true;
-        }
-      }
+      }	
     }
-
     return false;
   }
 
@@ -1767,6 +1808,37 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     traverse(decl);
     return isStdUtilityType;
+  }
+
+  private isObjectLiteralExpression(decl: ts.Node): boolean {
+    const isVariableWithInitializer =
+      ts.isVariableDeclaration(decl) && decl.initializer && ts.isObjectLiteralExpression(decl.initializer);
+
+    const isVariableWithTypeLiteral = ts.isVariableDeclaration(decl) && decl.type && this.checkIsTypeLiteral(decl.type);
+    const isObjectLiteralExpression =
+      ts.isObjectLiteralExpression(decl) ||
+      this.checkIsTypeLiteral(decl) ||
+      isVariableWithInitializer ||
+      isVariableWithTypeLiteral;
+    return !!isObjectLiteralExpression;
+  }
+
+  private static hasObjectLiteralReturn(funcNode: ts.FunctionLikeDeclaration): boolean {
+    let found = false;
+    function visit(node: ts.Node): void {
+      if (found) {
+        return;
+      }
+
+      if (ts.isReturnStatement(node) && node.expression && ts.isObjectLiteralExpression(node.expression)) {
+        found = true;
+        return;
+      }
+
+      ts.forEachChild(node, visit);
+    }
+    visit(funcNode);
+    return found;
   }
 
   private checkIsTypeLiteral(node: ts.Node): boolean {
@@ -1807,39 +1879,37 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return specialType;
   }
 
-  private isObjectLiteralExpression(decl: ts.Node): boolean {
-    const isVariableWithInitializer =
-      ts.isVariableDeclaration(decl) && decl.initializer && ts.isObjectLiteralExpression(decl.initializer);
-
-    const isVariableWithTypeLiteral = ts.isVariableDeclaration(decl) && decl.type && this.checkIsTypeLiteral(decl.type);
-    const isObjectLiteralExpression =
-      ts.isObjectLiteralExpression(decl) ||
-      this.checkIsTypeLiteral(decl) ||
-      isVariableWithInitializer ||
-      isVariableWithTypeLiteral;
-    return !!isObjectLiteralExpression;
-  }
-
-  private static hasObjectLiteralReturn(funcNode: ts.FunctionLikeDeclaration): boolean {
-    let found = false;
-    function visit(node: ts.Node): void {
-      if (found) {
-        return;
-      }
-
-      if (ts.isReturnStatement(node) && node.expression && ts.isObjectLiteralExpression(node.expression)) {
-        found = true;
-        return;
-      }
-
-      ts.forEachChild(node, visit);
+  private isDeclaredWithKeyOf(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
+      return false;
     }
-    visit(funcNode);
-    return found;
+    type NodeWithOptionalType = ts.Node & {
+      type?: ts.TypeNode;
+    };
+    const nodeWithType: NodeWithOptionalType = decl;
+    if (
+      nodeWithType.type &&
+      ts.isTypeOperatorNode(nodeWithType.type) &&
+      nodeWithType.type.operator === ts.SyntaxKind.KeyOfKeyword
+    ) {
+      return true;
+    }
+    return false;
   }
 
-  private static extractKeyofFromString(typeString: string): boolean {
-    return (/\bkeyof\b/).test(typeString);
+  private isDeclaredWithTypeOf(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
+      return false;
+    }
+    type NodeWithOptionalType = ts.Node & {
+      type?: ts.TypeNode;
+    };
+    const nodeWithType: NodeWithOptionalType = decl;
+    return !!nodeWithType.type && ts.isTypeQueryNode(nodeWithType.type);
   }
 
   checkUnionTypes(propertyAccessNode: ts.PropertyAccessExpression): void {
