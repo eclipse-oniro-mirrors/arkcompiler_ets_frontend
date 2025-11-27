@@ -62,46 +62,57 @@ function getVar(str: string) {
     return replaceOnEnv(str, indexA, indexB)
 }
 
-function validate(projectConfig: BuildConfig) {
+function validatePlugins(projectConfig: BuildConfig) {
     for (const key in projectConfig.plugins) {
         projectConfig.plugins[key] = getVar(projectConfig.plugins[key])
     }
+}
 
+function validatePaths(projectConfig: BuildConfig) {
     for (const key in projectConfig.paths) {
         for (let i = 0; i < projectConfig.paths[key].length; i++) {
             projectConfig.paths[key][i] = getVar(projectConfig.paths[key][i])
         }
     }
+}
 
-
+function validateSingleFieldPaths(projectConfig: BuildConfig) {
     if (projectConfig.pandaStdlibPath) {
         projectConfig.pandaStdlibPath = getVar(projectConfig.pandaStdlibPath)
     }
 
-    for (let i = 0; i < projectConfig.interopApiPaths?.length || 0; i++) {
-        projectConfig.interopApiPaths[i] = getVar(projectConfig.interopApiPaths[i])
-    }
-    
     projectConfig.sdkAliasMap = projectConfig.sdkAliasMap instanceof Map
         ? projectConfig.sdkAliasMap
         : new Map(Object.entries(projectConfig.sdkAliasMap || {}));
 
+    projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
+    projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
+    
+    projectConfig.entryFile = getVar(projectConfig.entryFile);
+}
+
+function validateInteropApiPaths(interopApiPaths: string[]) {
+    for (let i = 0; i < interopApiPaths?.length || 0; i++) {
+        interopApiPaths[i] = getVar(interopApiPaths[i])
+    }
+}
+
+function validateSdkAliasMap(projectConfig: BuildConfig) {
     if (projectConfig.sdkAliasMap.size !== 0) {
         for (const [name, path] of projectConfig.sdkAliasMap) {
             const newPath = getVar(path);
             projectConfig.sdkAliasMap.set(name, newPath);
         }
     }
+}
 
-    projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
-    projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
-    
-    projectConfig.entryFile = getVar(projectConfig.entryFile);
+function validateCompileFiles(compileFiles: string[]) {
+    compileFiles.forEach((file, i) => {
+        compileFiles[i] = getVar(file);
+    });
+}
 
-    for (let i = 0; i < projectConfig.compileFiles.length; i++) {
-        projectConfig.compileFiles[i] = getVar(projectConfig.compileFiles[i])
-    }
-
+function validateDependencyModuleList(projectConfig: BuildConfig) {
     for(let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
         projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
         
@@ -114,7 +125,9 @@ function validate(projectConfig: BuildConfig) {
             projectConfig.dependencyModuleList[i].sourceRoots[j] = getVar(projectConfig.dependencyModuleList[i].sourceRoots[j])
         }
     }
+}
 
+function validateDependentModuleList(projectConfig: BuildConfig) {
     for(let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
         projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
         
@@ -127,7 +140,17 @@ function validate(projectConfig: BuildConfig) {
             projectConfig.dependentModuleList[i].sourceRoots[j] = getVar(projectConfig.dependentModuleList[i].sourceRoots[j])
         }
     }
+}
 
+function validate(projectConfig: BuildConfig) {
+    validatePlugins(projectConfig)
+    validatePaths(projectConfig)
+    validateSingleFieldPaths(projectConfig)
+    validateInteropApiPaths(projectConfig.interopApiPaths)    
+    validateSdkAliasMap(projectConfig)
+    validateCompileFiles(projectConfig.compileFiles)
+    validateDependencyModuleList(projectConfig)
+    validateDependentModuleList(projectConfig)
 }
 
 export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {
