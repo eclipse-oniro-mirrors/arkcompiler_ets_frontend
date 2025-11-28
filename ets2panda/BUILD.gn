@@ -228,7 +228,6 @@ libes2panda_sources = [
   "compiler/lowering/ets/cfgBuilderPhase.cpp",
   "compiler/lowering/ets/classFromExpressionLowering.cpp",
   "compiler/lowering/ets/constantExpressionLowering.cpp",
-  "compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp",
   "compiler/lowering/ets/declGenPhase.cpp",
   "compiler/lowering/ets/declareOverloadLowering.cpp",
   "compiler/lowering/ets/defaultParametersInConstructorLowering.cpp",
