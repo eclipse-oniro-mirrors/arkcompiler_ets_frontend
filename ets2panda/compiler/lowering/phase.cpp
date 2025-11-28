@@ -27,7 +27,6 @@
 #include "compiler/lowering/ets/boxingForLocals.h"
 #include "compiler/lowering/ets/capturedVariables.h"
 #include "compiler/lowering/ets/constantExpressionLowering.h"
-#include "compiler/lowering/ets/convertPrimitiveCastMethodCall.h"
 #include "compiler/lowering/ets/declareOverloadLowering.h"
 #include "compiler/lowering/ets/cfgBuilderPhase.h"
 #include "compiler/lowering/ets/declGenPhase.h"
@@ -135,7 +134,6 @@ std::vector<Phase *> GetETSPhaseList()
         new DeclGenPhase,
         // pluginsAfterCheck has to go right after checkerPhase
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
-        // new ConvertPrimitiveCastMethodCall,
         new DynamicImport,
         new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
