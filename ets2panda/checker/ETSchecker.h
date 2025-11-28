@@ -971,6 +971,7 @@ private:
     FunctionTypeInstantiationMap functionTypeInstantiationMap_;  // not an arena container
     FunctionSignatureMap invokeToArrowSignatures_;
     FunctionInterfaceMap arrowToFuncInterfaces_;
+    std::unordered_map<Type *, Type *> awaitedTypeCache_;
     size_t constraintCheckScopesCount_ {0};
     GlobalArraySignatureMap globalArraySignatures_;
     ArenaSet<util::StringView> unionAssemblerTypes_;

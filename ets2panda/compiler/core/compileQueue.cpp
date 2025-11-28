@@ -56,11 +56,7 @@ void CompileQueue::Schedule(public_lib::Context *context)
     jobs_ = new CompileJob[functions.size()]();
 
     for (auto *function : functions) {
-        if (function->IsEmitted()) {  // NOTE(vpukhov): #28197: remove the emitted_ flag
-            continue;
-        }
         jobs_[jobsCount_++].SetContext(context, function);  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        function->SetEmitted();
     }
 
     totalJobsCount_ = jobsCount_;

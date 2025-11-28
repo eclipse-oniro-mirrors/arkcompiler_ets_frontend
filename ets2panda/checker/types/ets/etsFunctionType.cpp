@@ -317,11 +317,11 @@ ETSFunctionType *ETSFunctionType::Substitute(TypeRelation *relation, const Subst
         auto *const checker = relation->GetChecker()->AsETSChecker();
         auto *const allocator = checker->ProgramAllocator();
 
-        auto signatures = ArenaVector<Signature *>(allocator->Adapter());
+        auto signatures = std::vector<Signature *> {};
         bool anyChange = false;
 
         for (auto *const signature : callSignatures_) {
-            auto *newSignature = signature->Substitute(relation, substitution);
+            auto *newSignature = signature->Substitute(relation, substitution);  // NOTE(vpukhov): memory waste
             anyChange |= newSignature != signature;
             signatures.emplace_back(newSignature);
         }
@@ -330,7 +330,8 @@ ETSFunctionType *ETSFunctionType::Substitute(TypeRelation *relation, const Subst
             if (IsETSArrowType()) {
                 return allocator->New<ETSFunctionType>(checker, signatures[0]);
             }
-            return allocator->New<ETSFunctionType>(checker, name_, std::move(signatures));
+            auto arenaSigs = ArenaVector<Signature *>(signatures.begin(), signatures.end(), allocator->Adapter());
+            return allocator->New<ETSFunctionType>(checker, name_, std::move(arenaSigs));
         }
     }
 

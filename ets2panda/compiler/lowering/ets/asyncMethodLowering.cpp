@@ -129,9 +129,6 @@ ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodD
 {
     ir::ScriptFunction *asyncFunc = asyncMethod->Function();
     ES2PANDA_ASSERT(asyncFunc != nullptr);
-    if (!asyncFunc->IsExternal()) {
-        checker->VarBinder()->AsETSBinder()->GetRecordTable()->EmplaceSignatures(asyncFunc->Scope(), asyncFunc);
-    }
 
     ir::MethodDefinition *implMethod = CreateAsyncImplMethod(checker, asyncMethod, classDef);
     ES2PANDA_ASSERT(implMethod != nullptr && implMethod->Function() != nullptr && implMethod->Id() != nullptr);

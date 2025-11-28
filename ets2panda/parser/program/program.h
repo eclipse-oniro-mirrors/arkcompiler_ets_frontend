@@ -225,7 +225,7 @@ public:
 
     void SetSource(const ark::es2panda::SourceFile &sourceFile)
     {
-        sourceCode_ = util::UString(sourceFile.source, Allocator()).View();
+        sourceCode_ = sourceFile.source;
         sourceFile_ = util::Path(sourceFile.filePath, Allocator());
         sourceFileFolder_ = util::UString(sourceFile.fileFolder, Allocator()).View();
         resolvedFilePath_ = util::UString(sourceFile.resolvedPath, Allocator()).View();

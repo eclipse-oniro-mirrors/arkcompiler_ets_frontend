@@ -550,8 +550,7 @@ ir::OverloadDeclaration *ETSParser::ParseClassOverloadDeclaration(ir::ModifierFl
         overloadName = ExpectIdentifier(false, false, TypeAnnotationParsingOptions::REPORT_ERROR);
     }
 
-    auto *overloadDef = AllocNode<ir::OverloadDeclaration>(overloadName->Clone(Allocator(), nullptr)->AsExpression(),
-                                                           modifiers, Allocator());
+    auto *overloadDef = AllocNode<ir::OverloadDeclaration>(overloadName, modifiers, Allocator());
     overloadDef->AddOverloadDeclFlag(ir::OverloadDeclFlags::CLASS_METHOD);
 
     auto startLoc = Lexer()->GetToken().Start();
@@ -619,7 +618,8 @@ ir::MethodDefinition *ETSParser::ParseClassMethod(ClassElementDescriptor *desc,
     ir::ScriptFunction *func = ParseFunction(desc->newStatus);
     ES2PANDA_ASSERT(func != nullptr);
     if (propName->IsIdentifier()) {
-        func->SetIdent(propName->AsIdentifier()->Clone(Allocator(), nullptr));
+        ES2PANDA_ASSERT(propName->Parent() == nullptr);
+        func->SetIdent(propName->AsIdentifier());
     }
 
     auto *funcExpr = AllocNode<ir::FunctionExpression>(func);
@@ -1089,8 +1089,7 @@ ir::AstNode *ETSParser::ParseInterfaceField()
 
     ParseInterfaceModifiers(fieldModifiers, optionalField);
     auto *typeAnnotation = ParseInterfaceTypeAnnotation(name);
-    auto *field = AllocNode<ir::ClassProperty>(name, nullptr, typeAnnotation->Clone(Allocator(), nullptr),
-                                               fieldModifiers, Allocator(), false);
+    auto *field = AllocNode<ir::ClassProperty>(name, nullptr, typeAnnotation, fieldModifiers, Allocator(), false);
     ES2PANDA_ASSERT(field != nullptr);
     if (optionalField) {
         field->AddModifier(ir::ModifierFlags::OPTIONAL);
@@ -1121,8 +1120,7 @@ ir::OverloadDeclaration *ETSParser::ParseInterfaceOverload(ir::ModifierFlags mod
 {
     ValidateOverloadDeclarationModifiers(modifiers);
     auto *overloadName = ExpectIdentifier(false, false, TypeAnnotationParsingOptions::REPORT_ERROR);
-    auto *overloadDef = AllocNode<ir::OverloadDeclaration>(overloadName->Clone(Allocator(), nullptr)->AsExpression(),
-                                                           modifiers, Allocator());
+    auto *overloadDef = AllocNode<ir::OverloadDeclaration>(overloadName, modifiers, Allocator());
     overloadDef->AddOverloadDeclFlag(ir::OverloadDeclFlags::INTERFACE_METHOD);
 
     auto startLoc = Lexer()->GetToken().Start();

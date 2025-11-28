@@ -283,12 +283,12 @@ void FunctionEmitter::GenScopeVariableInfo(pandasm::Function *func, const varbin
     auto iter = instructions.begin();
 
     for (; iter != lastIter; ++iter, ++count) {
-        if (*iter == scope->ScopeStart()) {
+        if (*iter == cg_->ScopeInsnRange(scope).first) {
             break;
         }
     }
 
-    if (iter == lastIter || *iter == scope->ScopeEnd()) {
+    if (iter == lastIter || *iter == cg_->ScopeInsnRange(scope).second) {
         return;
     }
 
@@ -297,7 +297,8 @@ void FunctionEmitter::GenScopeVariableInfo(pandasm::Function *func, const varbin
     auto checkNodeIsValid = [](const ir::AstNode *node) { return node != nullptr && node != FIRST_NODE_OF_FUNCTION; };
     // NOTE(dslynko, #19090): need to track start location for each local variable
     std::unordered_map<const varbinder::Variable *, uint32_t> varsStarts;
-    for (const auto *scopeEnd = scope->ScopeEnd(); iter != lastIter && *iter != scopeEnd; ++iter, ++count) {
+    for (const auto *scopeEnd = cg_->ScopeInsnRange(scope).second; iter != lastIter && *iter != scopeEnd;
+         ++iter, ++count) {
         const auto *node = (*iter)->Node();
         if (!checkNodeIsValid(node)) {
             continue;
