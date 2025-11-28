@@ -1205,9 +1205,13 @@ std::tuple<Type *, Type *> ETSChecker::CheckArithmeticOperations(
             tsType = MaybeBoxType(tsType);
         }
         if (left->TsType()->IsTypeError()) {
+            left->SetPreferredType(GlobalTypeError());
+            expr->SetPreferredType(GlobalTypeError());
             left->SetTsType(tsType);
         }
         if (right->TsType()->IsTypeError()) {
+            right->SetPreferredType(GlobalTypeError());
+            expr->SetPreferredType(GlobalTypeError());
             right->SetTsType(tsType);
         }
         return {tsType, tsType};
