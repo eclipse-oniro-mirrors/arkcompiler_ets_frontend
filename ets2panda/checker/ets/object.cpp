@@ -479,17 +479,31 @@ bool ETSChecker::CheckTypeParameterConstraint(ir::TSTypeParameter *param, Type2T
 {
     const auto typeParamVar = param->Name()->Variable();
     const auto constraintVar = param->Constraint()->AsETSTypeReference()->Part()->GetIdent()->Variable();
-    extends.emplace(typeParamVar, constraintVar);
-    auto it = extends.find(constraintVar);
-    while (it != extends.cend()) {
-        if (it->second == typeParamVar) {
+    // Check if constraintVar is the same as typeParamVar (self-reference)
+    if (constraintVar == typeParamVar) {
+        LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
+                 param->Constraint()->Start());
+        return false;
+    }
+
+    TypeSet visited {};
+    auto current = extends.find(constraintVar);
+    while (current != extends.cend()) {
+        if (current->second == typeParamVar) {
             LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
                      param->Constraint()->Start());
             return false;
         }
-        it = extends.find(it->second);
+        // Avoid infinite loop by tracking visited nodes
+        // If we've already visited this node, we're in a cycle (but not involving typeParamVar)
+        if (visited.find(current->first) != visited.cend()) {
+            break;
+        }
+        visited.emplace(current->first);
+        current = extends.find(current->second);
     }
 
+    extends.emplace(typeParamVar, constraintVar);
     return true;
 }
 
