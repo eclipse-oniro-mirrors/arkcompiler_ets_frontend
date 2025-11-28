@@ -68,15 +68,25 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
     }
     auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     auto checkFunc = [&pos](ir::AstNode *node) { return pos >= node->Start().index && pos < node->End().index; };
-    auto found = ast->FindChild(checkFunc);
-    while (found != nullptr && !flagFindFirstMatch) {
-        auto *nestedFound = found->FindChild(checkFunc);
-        if (nestedFound == nullptr) {
+    ir::AstNode *bestMatch = ast->FindChild(checkFunc);
+
+    for (auto *stmt : ast->AsETSModule()->Statements()) {
+        ir::AstNode *stmtMatch = stmt->FindChild(checkFunc);
+        if (stmtMatch != nullptr && stmtMatch->Start().index <= pos && stmtMatch->End().index >= pos &&
+            !flagFindFirstMatch) {
+            bestMatch = stmtMatch;
+        }
+    }
+
+    while (bestMatch != nullptr && !flagFindFirstMatch) {
+        ir::AstNode *nestedMatch = bestMatch->FindChild(checkFunc);
+        if (nestedMatch == nullptr) {
             break;
         }
-        found = nestedFound;
+        bestMatch = nestedMatch;
     }
-    return found;
+
+    return bestMatch;
 }
 
 Position TransSourcePositionToPosition(lexer::SourcePosition sourcePos)

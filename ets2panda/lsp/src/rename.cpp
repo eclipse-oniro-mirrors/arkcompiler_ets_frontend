@@ -418,6 +418,19 @@ std::string GetNodeKindForRenameInfo(ir::AstNode *node)
             return "module";
         case ir::AstNodeType::ETS_PARAMETER_EXPRESSION:
             return "parameter";
+        case ir::AstNodeType::IMPORT_DECLARATION:
+        case ir::AstNodeType::ETS_IMPORT_DECLARATION:
+            return "import";
+        case ir::AstNodeType::ANNOTATION_DECLARATION:
+            return "annotation";
+        case ir::AstNodeType::STRUCT_DECLARATION:
+            return "struct";
+        case ir::AstNodeType::METHOD_DEFINITION:
+            return "method";
+        case ir::AstNodeType::CLASS_DECLARATION:
+        case ir::AstNodeType::CLASS_EXPRESSION:
+        case ir::AstNodeType::CLASS_DEFINITION:
+            return "class";
         default:
             return "";
     }

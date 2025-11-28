@@ -13,14 +13,14 @@
               "name": "field",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 18,
+                  "column": 4,
+                  "program": "optional_field_interface.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 18,
+                  "column": 9,
+                  "program": "optional_field_interface.ets"
                 }
               }
             },
@@ -38,13 +38,13 @@
                   "name": "field",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 4,
                       "program": "optional_field_interface.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 9,
                       "program": "optional_field_interface.ets"
                     }
                   }
@@ -213,14 +213,14 @@
                   "name": "field",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 4,
+                      "program": "optional_field_interface.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 9,
+                      "program": "optional_field_interface.ets"
                     }
                   }
                 },
@@ -238,13 +238,13 @@
                       "name": "field",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 18,
+                          "column": 4,
                           "program": "optional_field_interface.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 18,
+                          "column": 9,
                           "program": "optional_field_interface.ets"
                         }
                       }

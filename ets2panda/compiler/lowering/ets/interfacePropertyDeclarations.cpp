@@ -162,6 +162,7 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     auto var = functionScope->AddDecl(ctx->Allocator(), decl, ScriptExtension::ETS);
     ES2PANDA_ASSERT(var != nullptr);
     methodIdent->SetVariable(var);
+    methodIdent->SetRange(field->Key()->Range());
 
     auto *funcExpr = ctx->AllocNode<ir::FunctionExpression>(func);
     funcExpr->SetRange(func->Range());

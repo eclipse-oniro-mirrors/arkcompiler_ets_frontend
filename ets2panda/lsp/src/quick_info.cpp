@@ -52,6 +52,10 @@ bool IsIncludedToken(const ir::AstNode *node)
         ir::AstNodeType::TEMPLATE_LITERAL,
         ir::AstNodeType::TEMPLATE_ELEMENT,
         ir::AstNodeType::ASSIGNMENT_EXPRESSION,
+        ir::AstNodeType::TS_INTERFACE_DECLARATION,
+        ir::AstNodeType::TS_TYPE_ALIAS_DECLARATION,
+        ir::AstNodeType::CLASS_DEFINITION,
+        ir::AstNodeType::STRUCT_DECLARATION,
     };
     return INCLUDED_TOKEN_TYPES.find(type) != INCLUDED_TOKEN_TYPES.end();
 }
@@ -208,6 +212,13 @@ ir::AstNode *GetNodeAtLocation(ir::AstNode *node)
     if (node->Type() == ir::AstNodeType::IDENTIFIER) {
         // could get decl instead of getting parant declaration and then child
         return compiler::DeclarationFromIdentifier(node->AsIdentifier());
+    }
+    if (node->Type() == ir::AstNodeType::STRING_LITERAL && node->Parent() != nullptr &&
+        node->Parent()->Type() == ir::AstNodeType::ETS_IMPORT_DECLARATION) {
+        return node->Parent();
+    }
+    if (IsDeclaration(node) || IsDefinition(node)) {
+        return node;
     }
 
     return nullptr;
@@ -1231,6 +1242,50 @@ std::vector<SymbolDisplayPart> CreateDisplayForImportDeclaration(ir::AstNode *no
     return displayParts;
 }
 
+std::vector<SymbolDisplayPart> CreateDisplayForETSImportDeclaration(ir::AstNode *node)
+{
+    std::vector<SymbolDisplayPart> displayParts;
+    if (node == nullptr || node->Type() != ir::AstNodeType::ETS_IMPORT_DECLARATION) {
+        return displayParts;
+    }
+    displayParts.emplace_back(CreateKeyword("module"));
+    displayParts.emplace_back(CreateSpace());
+    displayParts.emplace_back(
+        CreateClassName(std::string(node->AsETSImportDeclaration()->ImportMetadata().resolvedSource)));
+
+    return displayParts;
+}
+
+std::vector<SymbolDisplayPart> CreateDisplayForAnnotationDeclaration(ir::AstNode *node)
+{
+    std::vector<SymbolDisplayPart> displayParts;
+    if (node == nullptr || node->Type() != ir::AstNodeType::ANNOTATION_DECLARATION) {
+        return displayParts;
+    }
+    auto annotation = node->AsAnnotationDeclaration();
+    displayParts.emplace_back(CreatePunctuation("@"));
+    displayParts.emplace_back(CreateKeyword("interface"));
+    displayParts.emplace_back(CreateSpace());
+    displayParts.emplace_back(CreateClassName(std::string(annotation->InternalName().Mutf8())));
+    displayParts.emplace_back(CreateSpace());
+    displayParts.emplace_back(CreatePunctuation("{"));
+    displayParts.emplace_back(CreatePunctuation("}"));
+    return displayParts;
+}
+
+std::vector<SymbolDisplayPart> BuildClassOrEnumDisplayParts(ir::AstNode *node, std::string &kind)
+{
+    std::vector<SymbolDisplayPart> displayParts;
+    auto originalNode = GetOriginalNode(node);
+    if (originalNode != nullptr && originalNode->Type() == ir::AstNodeType::TS_ENUM_DECLARATION) {
+        displayParts = CreateDisplayForEnum(originalNode);
+        kind = GetNodeKindForRenameInfo(originalNode);
+    } else {
+        displayParts = CreateDisplayForClass(node);
+    }
+    return displayParts;
+}
+
 QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNode *nodeForQuickInfo,
                        const std::string &fileName, checker::ETSChecker *checker)
 {
@@ -1245,8 +1300,10 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
     std::vector<SymbolDisplayPart> document;
     std::vector<DocTagInfo> tags;
 
+    kind = GetNodeKindForRenameInfo(node);
+
     if (IsClass(node)) {
-        displayParts = CreateDisplayForClass(node);
+        displayParts = BuildClassOrEnumDisplayParts(node, kind);
     } else if (node->Type() == ir::AstNodeType::ETS_PARAMETER_EXPRESSION) {
         displayParts = CreateDisplayForETSParameterExpression(node);
     } else if (node->Type() == ir::AstNodeType::CLASS_PROPERTY) {
@@ -1270,13 +1327,16 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
         displayParts = CreateDisplayForEnum(node);
     } else if (node->Type() == ir::AstNodeType::IMPORT_DECLARATION) {
         displayParts = CreateDisplayForImportDeclaration(node);
+    } else if (node->Type() == ir::AstNodeType::ETS_IMPORT_DECLARATION) {
+        displayParts = CreateDisplayForETSImportDeclaration(node);
     } else if (node->Type() == ir::AstNodeType::TS_TYPE_PARAMETER) {
         displayParts = CreateDisplayForTypeParameter(node);
     } else if (node->Type() == ir::AstNodeType::METHOD_DEFINITION) {
         displayParts = CreateDisplayForMethodDefinition(node, kindModifiers, checker);
+    } else if (node->Type() == ir::AstNodeType::ANNOTATION_DECLARATION) {
+        displayParts = CreateDisplayForAnnotationDeclaration(node);
     }
     // Unify this kind
-    kind = GetNodeKindForRenameInfo(node);
     return QuickInfo(kind, kindModifiers, span, displayParts, document, tags, fileName);
 }
 
