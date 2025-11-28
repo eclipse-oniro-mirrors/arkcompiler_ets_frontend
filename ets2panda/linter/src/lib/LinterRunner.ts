@@ -288,7 +288,7 @@ function filterLinterProblemsWithAutofixConfig(
     const needToFix: ProblemInfo[] = problems.filter((problem) => {
       return autofixRuleConfigTags.has(problem.ruleTag);
     });
-    if (needToFix.length > 0) {
+    if (needToFix.length >= 0) {
       needToBeFixedProblemsInfos.set(filePath, needToFix);
     }
   }
