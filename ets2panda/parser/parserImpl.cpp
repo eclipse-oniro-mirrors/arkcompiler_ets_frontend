@@ -1015,6 +1015,11 @@ ir::ScriptFunction *ParserImpl::ParseFunction(ParserStatus newStatus)
         functionContext.AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
     }
 
+    if ((GetContext().Status() & ParserStatus::FUNCTION_HAS_RETURN_STATEMENT) != 0) {
+        functionContext.AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
+        GetContext().Status() &= ~ParserStatus::FUNCTION_HAS_RETURN_STATEMENT;
+    }
+
     functionContext.AddFlag(throw_marker);
     auto *funcNode = AllocNode<ir::ScriptFunction>(
         Allocator(),
