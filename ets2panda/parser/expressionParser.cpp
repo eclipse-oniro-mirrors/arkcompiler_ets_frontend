@@ -1801,10 +1801,6 @@ ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExp
                                                       bool isOptional)
 {
     ir::Identifier *ident = ExpectIdentifier(true);
-    if (ident->IsBrokenExpression()) {
-        // set the end of '.' as broken token
-        ident->SetRange({periodPos, periodPos});
-    }
     ident->SetRange({periodPos, ident->Range().end});
     if (program_->Extension() == util::gen::extension::ETS && ident->Name().Is("prototype")) {
         LogError(diagnostic::PROTOTYPE_ACCESS);
