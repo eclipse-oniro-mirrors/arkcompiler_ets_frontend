@@ -2606,7 +2606,6 @@ checker::Type *ETSAnalyzer::ResolveMemberExpressionByBaseType(ETSChecker *checke
         auto res = std::find(castMethods.begin(), castMethods.end(), expr->Property()->AsIdentifier()->Name().Utf8());
         if (res != castMethods.end()) {
             auto type = checker->MaybeBoxType(baseType);
-            expr->SetAstNodeFlags(ir::AstNodeFlags::TMP_CONVERT_PRIMITIVE_CAST_METHOD_CALL);
             checker->ETSObjectTypeDeclNode(checker, type->AsETSObjectType());
             return expr->SetTsType(TransformTypeForMethodReference(
                 checker, expr, expr->SetAndAdjustType(checker, type->AsETSObjectType())));

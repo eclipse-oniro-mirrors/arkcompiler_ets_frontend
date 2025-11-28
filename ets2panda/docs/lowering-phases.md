@@ -673,19 +673,3 @@ class %%partial-C {
 
 - `plugins-after-lowering` call compiler plugins that work at the end of the lowering process, if any.
 
-- `ConvertPrimitiveCastMethodCall` replaces all primitive cast method calls with corresponding 'as' expressions.
-NOTE: To be removed after delivering 'primitive types refactoring' patch
-
-Before phase:
-
-```
-let d: double = 3.14
-let i: int = d.toInt()
-```
-
-After phase:
-
-```
-let d: double = 3.14
-let i: int = d as int
-```
