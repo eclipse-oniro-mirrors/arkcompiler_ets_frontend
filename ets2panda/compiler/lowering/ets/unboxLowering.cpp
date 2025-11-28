@@ -37,8 +37,7 @@ struct UnboxContext {
         : parser(ctx->parser->AsETSParser()),
           varbinder(ctx->GetChecker()->VarBinder()->AsETSBinder()),
           checker(ctx->GetChecker()->AsETSChecker()),
-          allocator(ctx->Allocator()),
-          handled(ctx->Allocator()->Adapter())
+          allocator(ctx->Allocator())
     {
     }
 
@@ -47,7 +46,7 @@ struct UnboxContext {
     varbinder::ETSBinder *varbinder;
     checker::ETSChecker *checker;
     ArenaAllocator *allocator;
-    ArenaSet<ir::AstNode *> handled;
+    std::unordered_set<ir::AstNode *> handled;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 

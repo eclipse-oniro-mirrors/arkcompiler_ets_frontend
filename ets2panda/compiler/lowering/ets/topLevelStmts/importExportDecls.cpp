@@ -36,7 +36,8 @@ void ImportExportDecls::ParseDefaultSources()
         }
         importStdlibFile += "import * from \"" + path + "\";";
     }
-    auto imports = parser_->ParseDefaultSources(DEFAULT_IMPORT_SOURCE_FILE, importStdlibFile);
+    auto imports = parser_->ParseDefaultSources(
+        DEFAULT_IMPORT_SOURCE_FILE, util::UString(importStdlibFile, varbinder_->Program()->Allocator()).View().Utf8());
     if (UNLIKELY(ctx_->config->options->IsGenStdlib())) {
         for (const auto *import : imports) {
             if (import->ImportMetadata().HasSpecifiedDeclPath()) {

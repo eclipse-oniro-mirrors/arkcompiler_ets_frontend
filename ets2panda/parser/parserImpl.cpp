@@ -899,7 +899,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
 {
     ExpectToken(lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
 
-    ArenaVector<ir::Expression *> params(Allocator()->Adapter());
+    std::vector<ir::Expression *> params;
 
     auto parseFunc = [this, &params](bool &) {
         ir::Expression *parameter = ParseFunctionParameter();
@@ -934,11 +934,12 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_FORMAT &&
         lexer_->Lookahead() == static_cast<char32_t>(ARRAY_FORMAT_NODE)) {
         return ParseExpressionsArrayFormatPlaceholder();
+    } else {
+        ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
+                  ParseListOptions::ALLOW_TRAILING_SEP);
     }
-    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
-              ParseListOptions::ALLOW_TRAILING_SEP);
 
-    return params;
+    return ArenaVector<ir::Expression *>(params.begin(), params.end(), Allocator()->Adapter());
 }
 
 ir::Expression *ParserImpl::CreateParameterThis([[maybe_unused]] ir::TypeNode *typeAnnotation)
