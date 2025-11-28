@@ -71,7 +71,7 @@ export const INVALID_IDENTIFIER_KEYWORDS = [
   'bigint',
   'int',
   'short',
-  'Bigint',
+  'BigInt',
   'Int',
   'Short',
   'char',
