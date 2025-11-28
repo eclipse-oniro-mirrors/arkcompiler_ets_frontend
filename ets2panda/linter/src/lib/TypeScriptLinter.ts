@@ -1647,7 +1647,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       this.isIntersectionType(node) ||
       this.isDeclaredWithTypeOf(node) ||
       this.isDeclaredWithKeyOf(node) ||
-      this.isMixedEnum(node)||
+      this.isMixedEnum(node) ||
       this.isSpecialType(node) ||
       this.isSpecialSignature(baseType, node) ||
       this.isStdUtilityTools(node)
@@ -1708,11 +1708,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const symbol = this.tsUtils.trueSymbolAtLocation(node);
     const decl = TsUtils.getDeclaration(symbol);
 
-    return !!decl && (
-      ts.isVariableDeclaration(decl) &&
-      decl.type &&
-      ts.isIntersectionTypeNode(decl.type) ||
-      ts.isIntersectionTypeNode(decl)
+    return (
+      !!decl &&
+      (ts.isVariableDeclaration(decl) && decl.type && ts.isIntersectionTypeNode(decl.type) ||
+        ts.isIntersectionTypeNode(decl))
     );
   }
 
@@ -1742,36 +1741,36 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private isMixedEnum(node: ts.Node): boolean {
     const symbol = this.tsUtils.trueSymbolAtLocation(node);
-    const declarations = symbol?.getDeclarations();	
+    const declarations = symbol?.getDeclarations();
     if (!declarations) {
-      return false;	
-    }	
+      return false;
+    }
 
     const declarationKinds = new Set<number>();
-    for (const decl of declarations) {	
+    for (const decl of declarations) {
       declarationKinds.add(decl.kind);
-      if(declarationKinds.size > 1){
+      if (declarationKinds.size > 1) {
         // mixed-kind declarations
         return true;
       }
-      if (ts.isEnumDeclaration(decl)) {	
+      if (ts.isEnumDeclaration(decl)) {
         const initializerTypes = new Set<string>();
 
-        for (const member of decl.members) {	
-          if (member.initializer) {	
-            const memberType = this.tsTypeChecker.getTypeAtLocation(member.initializer);	
-            const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(	
-              this.tsTypeChecker.getBaseTypeOfLiteralType(memberType)	
+        for (const member of decl.members) {
+          if (member.initializer) {
+            const memberType = this.tsTypeChecker.getTypeAtLocation(member.initializer);
+            const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(
+              this.tsTypeChecker.getBaseTypeOfLiteralType(memberType)
             );
             initializerTypes.add(baseTypeStr);
           }
-          
+
           if (initializerTypes.size > 1) {
             // mixed-type enum
             return true;
-          }	
+          }
         }
-      }	
+      }
     }
     return false;
   }
@@ -1964,13 +1963,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private getDeclaredUnionType(expression: ts.Expression): ts.Type | null {
     const symbol = this.tsTypeChecker.getSymbolAtLocation(expression);
-    if (!symbol) { 
-      return null; 
+    if (!symbol) {
+      return null;
     }
 
     const decl = symbol.getDeclarations()?.[0];
-    if (!decl || !ts.isVariableDeclaration(decl) || !decl.type) { 
-      return null; 
+    if (!decl || !ts.isVariableDeclaration(decl) || !decl.type) {
+      return null;
     }
 
     const type = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
@@ -16633,11 +16632,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isPropertyAccessExpression(callExpr.expression)) {
       const objectName = callExpr.expression.expression.getText();
       const methodName = callExpr.expression.name.getText();
-      if (objectName === UI_UTILS && 
-        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility || methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)) {
+      if (
+        objectName === UI_UTILS &&
+        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility ||
+          methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)
+      ) {
         if (callExpr.arguments.length === 1) {
-            const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
-            this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
+          const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
+          this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
         }
       }
     }
