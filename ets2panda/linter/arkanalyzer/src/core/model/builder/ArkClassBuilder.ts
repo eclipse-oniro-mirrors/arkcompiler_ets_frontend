@@ -446,6 +446,21 @@ function buildParameterProperty2ArkField(params: ts.NodeArray<ParameterDeclarati
         return;
     }
     params.forEach(parameter => {
+        let fieldName: string;
+        if (ts.isIdentifier(parameter.name)) {
+            fieldName = parameter.name.text;
+        } else if (ts.isObjectBindingPattern(parameter.name)) {
+            // TODO
+            logger.warn(`Need to support param property with ObjectBindingPattern node type: ${cls.getSignature().toString()}!`);
+            return;
+        } else if (ts.isArrayBindingPattern(parameter.name)) {
+            // TODO
+            logger.warn(`Need to support param property with ArrayBindingPattern node type: ${cls.getSignature().toString()}!`);
+            return;
+        } else {
+            logger.warn(`Need to support param property with new node type: ${cls.getSignature().toString()}!`);
+            return;
+        }
         if (parameter.modifiers === undefined || !ts.isIdentifier(parameter.name)) {
             return;
         }
@@ -456,7 +471,6 @@ function buildParameterProperty2ArkField(params: ts.NodeArray<ParameterDeclarati
         field.setCategory(FieldCategory.PARAMETER_PROPERTY);
         field.setOriginPosition(LineColPosition.buildFromNode(parameter, sourceFile));
 
-        let fieldName = parameter.name.text;
         let fieldType: Type;
         if (parameter.type) {
             fieldType = buildGenericType(tsNode2Type(parameter.type, sourceFile, field), field);
