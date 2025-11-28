@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,6 +63,9 @@
 // NOLINTBEGIN
 
 namespace ark::es2panda::public_lib {
+
+static const char *ETSCACHE_SUFFIX = ".etscache";
+static const char *DECL_ETS_SUFFIX = ".d.ets";
 
 struct TokenTypeToStr {
     lexer::TokenType token;
@@ -1361,12 +1364,17 @@ extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2pand
                                                                                                                   : 1;
 }
 
-// #28937 Will be removed after binary import support is fully implemented.
-__attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const std::string &outputPath)
+static bool HandleMultiFileModeTemplate(
+    Context *ctxImpl, const std::string &outputPath,
+    const std::function<std::pair<bool, const std::string>(const std::string &)> &findPath,
+    const std::function<bool(const std::string &, const std::string &)> &compare)
 {
-    std::string outputDir = ark::os::RemoveExtension(outputPath);
-    auto &externalSources = ctxImpl->parserProgram->DirectExternalSources();
+    std::pair<bool, const std::string> pair = findPath(outputPath);
+    if (!pair.first) {
+        return false;
+    }
 
+    auto &externalSources = ctxImpl->parserProgram->DirectExternalSources();
     for (const auto &entry : externalSources) {
         for (auto *prog : entry.second) {
             if (prog == nullptr || !prog->IsGenAbcForExternal()) {
@@ -1374,11 +1382,55 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
             }
 
             std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath().Mutf8());
-            if (util::StringView(outputDir).EndsWith(inputRelativeDir)) {
+            if (compare(pair.second, inputRelativeDir)) {
                 compiler::HandleGenerateDecl(*prog, ctxImpl, outputPath);
                 return !ctxImpl->diagnosticEngine->IsAnyError();
             }
         }
+    }
+    return false;
+}
+
+// #28937 Will be removed after binary import support is fully implemented.
+__attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const std::string &outputPath)
+{
+    if (util::StringView(outputPath).EndsWith(ETSCACHE_SUFFIX)) {
+        auto findPathFunc = [](const std::string &path) -> std::pair<bool, const std::string> {
+            return std::pair<bool, const std::string>(true, ark::os::RemoveExtension(path));
+        };
+
+        auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool {
+            return util::StringView(path1).EndsWith(path2);
+        };
+
+        return HandleMultiFileModeTemplate(ctxImpl, outputPath, findPathFunc, compareFunc);
+    }
+
+    if (util::StringView(outputPath).EndsWith(DECL_ETS_SUFFIX)) {
+        auto findPathFunc = [ctxImpl](const std::string &path) -> std::pair<bool, const std::string> {
+            /**
+             * path = declgenV2OutPath + /direct1/direct2/file.d.ets
+             * relativePath = /direct1/direct2/file.d.ets
+             * relativePath = package/direct1/direct2/file.d.ets
+             * relativePath = package/direct1/direct2/file
+             */
+            const util::Options &options = *ctxImpl->config->options;
+            auto arktsConfig = options.ArkTSConfig();
+            const std::string &declgenV2OutPath = arktsConfig->DeclgenV2OutPath();
+            if (!util::StringView(path).StartsWith(declgenV2OutPath)) {
+                return std::pair<bool, const std::string>(false, path);
+            }
+
+            std::string relativePath = path.substr(declgenV2OutPath.length());
+            relativePath = arktsConfig->Package() + relativePath;
+            relativePath = ark::os::RemoveExtension(relativePath);
+            relativePath = ark::os::RemoveExtension(relativePath);
+
+            return std::pair<bool, const std::string>(true, relativePath);
+        };
+
+        auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool { return path1 == path2; };
+        return HandleMultiFileModeTemplate(ctxImpl, outputPath, findPathFunc, compareFunc);
     }
 
     return false;

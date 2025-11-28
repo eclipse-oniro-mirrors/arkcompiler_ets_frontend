@@ -37,7 +37,7 @@ describe('ArkTSConfig - Constructor and Initialization', () => {
 
     beforeEach(() => {
         moduleInfo = createMockModuleInfo();
-        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
     });
 
     test('should initialize object structure correctly', () => {
@@ -75,13 +75,13 @@ describe('ArkTSConfig - Constructor and Initialization', () => {
 
     test('should support custom package name', () => {
         const customInfo = createMockModuleInfo({ packageName: 'customPackage' });
-        const customConfig = new ArkTSConfig(customInfo, '/cache', '/project');
+        const customConfig = new ArkTSConfig(customInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
         expect(customConfig.packageName).toBe('customPackage');
     });
 
     test('should support multiple source roots (uses first one)', () => {
         const multiSourceInfo = createMockModuleInfo({ sourceRoots: ['src', 'lib', 'util'] });
-        const multiConfig = new ArkTSConfig(multiSourceInfo, '/cache', '/project');
+        const multiConfig = new ArkTSConfig(multiSourceInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
         expect(multiConfig.compilerOptions.baseUrl).toBe('/test/module/src');
     });
 });
@@ -94,7 +94,7 @@ describe('ArkTSConfig - Path Mappings Management', () => {
 
     beforeEach(() => {
         const moduleInfo = createMockModuleInfo();
-        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
     });
 
     describe('Adding Single Path Mapping', () => {
@@ -184,7 +184,7 @@ describe('ArkTSConfig - Dependencies Management', () => {
 
     beforeEach(() => {
         const moduleInfo = createMockModuleInfo();
-        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
     });
 
     describe('Adding Single Dependency', () => {
@@ -372,8 +372,8 @@ describe('ArkTSConfig - Config Merging', () => {
     beforeEach(() => {
         const moduleInfo1 = createMockModuleInfo({ packageName: 'target' });
         const moduleInfo2 = createMockModuleInfo({ packageName: 'source' });
-        arktsConfig = new ArkTSConfig(moduleInfo1, '/cache', '/project');
-        sourceConfig = new ArkTSConfig(moduleInfo2, '/cache', '/project');
+        arktsConfig = new ArkTSConfig(moduleInfo1, '/cache', '/project', '/test/loader_out/default/etsFortgz');
+        sourceConfig = new ArkTSConfig(moduleInfo2, '/cache', '/project', '/test/loader_out/default/etsFortgz');
     });
 
     describe('Basic Merging Functionality', () => {
@@ -454,12 +454,14 @@ describe('ArkTSConfig - Config Merging', () => {
             const source1 = new ArkTSConfig(
                 createMockModuleInfo({ packageName: 's1' }),
                 '/cache',
-                '/project'
+                '/project',
+                '/test/loader_out/default/etsFortgz'
             );
             const source2 = new ArkTSConfig(
                 createMockModuleInfo({ packageName: 's2' }),
                 '/cache',
-                '/project'
+                '/project',
+                '/test/loader_out/default/etsFortgz'
             );
 
             source1.addPathMappings({ 'a1': ['/p1'] });
@@ -487,9 +489,9 @@ describe('ArkTSConfig - Config Merging', () => {
         });
 
         test('should support chained merging', () => {
-            const c1 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project');
-            const c2 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project');
-            const c3 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project');
+            const c1 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project', '/test/loader_out/default/etsFortgz');
+            const c2 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project', '/test/loader_out/default/etsFortgz');
+            const c3 = new ArkTSConfig(createMockModuleInfo(), '/cache', '/project', '/test/loader_out/default/etsFortgz');
 
             c1.addPathMappings({ 'a': ['/1'] });
             c2.addPathMappings({ 'b': ['/2'] });
@@ -513,7 +515,7 @@ describe('ArkTSConfig - Getters and Setters', () => {
 
     beforeEach(() => {
         const moduleInfo = createMockModuleInfo({ packageName: 'testPkg' });
-        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project');
+        arktsConfig = new ArkTSConfig(moduleInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
     });
 
     describe('Getter Methods', () => {

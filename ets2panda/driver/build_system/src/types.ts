@@ -332,6 +332,7 @@ export interface CompilerOptions {
     useEmptyPackage?: boolean;
     projectRootPath?: string;
     cacheDir?: string;
+    declgenV2OutPath?: string;
 }
 
 export interface ArkTSConfigObject {
