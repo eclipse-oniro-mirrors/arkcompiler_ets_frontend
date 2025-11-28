@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-class exc extends Exception{}
+class exc extends Error{}
 
 function main() : void{
   let a = 0;
   try {
     try {
-      throw new Exception();
-    } catch (e: exc) {
-      arktest.assertTrue(false)
+      throw new Error();
+    } catch (e) {
+      arktest.assertEQ(e instanceof exc, false);
     } finally {
       a = 1;
     }
