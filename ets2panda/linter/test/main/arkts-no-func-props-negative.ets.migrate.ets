@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 function foo(path: string): void {
   console.log(path);
 }
@@ -20,7 +20,6 @@ function foo(path: string): void {
 foo.baz = 1;  // Property 'baz' does not exist on type 'Function'
 
 console.log(foo.baz.toString());  // Property 'baz' does not exist on type 'Function'
-console.log(foo.name);
 console.log(foo.length.toString());  // Property 'length' does not exist on type 'Function'
 console.log(foo.arguments);  // Property 'arguments' does not exist on type 'Function'
 console.log(foo.caller.toString());  // Property 'caller' does not exist on type 'Function'
@@ -32,7 +31,6 @@ const foo2 = (path: string) => {
 
 foo2.bar = 2;  // Property 'bar' does not exist on type 'Function'
 console.log(foo2.bar.toString());  //  Property 'bar' does not exist on type 'Function'
-console.log(foo2.name);
 console.log(foo2.length.toString());  // Property 'length' does not exist on type 'Function'
 console.log(foo2.arguments);  // Property 'arguments' does not exist on type 'Function'
 console.log(foo2.caller.toString());  // Property 'caller' does not exist on type 'Function'
@@ -42,7 +40,6 @@ const stdFunc: Function  = (path: string) => {
   console.log(path);
 };
 
-console.log(stdFunc.name);
 console.log(stdFunc.length.toString());  // Property 'length' does not exist on type 'Function'
 console.log(stdFunc.arguments);   // Property 'arguments' does not exist on type 'Function'
 console.log(stdFunc.caller.toString());  // Property 'caller' does not exist on type 'Function'
@@ -53,7 +50,6 @@ let ft: FuncType = (path: string): string => {
   return path + ': foo.bar';
 };
 
-console.log(ft.name);
 console.log(ft.length.toString());   //Property 'length' does not exist on type 'Function'
 console.log(ft.caller.toString());  //  Property 'caller' does not exist on type 'Function'
 
@@ -63,7 +59,6 @@ let ft2: FT2 = (path: string): string => {  // Type '((p1: String) => String)' c
   return path + ': foo.bar';
 };
 
-console.log(ft2.name);
 console.log(ft2.length.toString()); //Property 'length' does not exist on type 'Function'
 console.log(ft2.caller.toString()); //  Property 'caller' does not exist on type 'Function'
 // Standard Function Declaration
