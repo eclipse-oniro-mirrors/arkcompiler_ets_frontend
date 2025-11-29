@@ -235,7 +235,9 @@ TEST_F(OrganizeImportsTest, UnusedDefaultImports)
     std::vector<std::string> files = {"UnusedDefaultImports_import.ets", "UnusedDefaultImports_export.ets"};
     std::vector<std::string> texts = {
         R"(
-        import Foo from "./UnusedDefaultImports_export";
+        import Foo from "./UnusedDefaultImports_export";// test comment
+        // import Foo from "./UnusedDefaultImports_export";
+        import Foo from "./UnusedDefaultImports_export";import Foo from "./UnusedDefaultImports_export";
         )",
         R"(
         class Foo {
@@ -255,10 +257,11 @@ TEST_F(OrganizeImportsTest, UnusedDefaultImports)
     auto result = changes[0].textChanges[0];
 
     const size_t expectedStart = 9;
-    const size_t expectedLength = 48;
+    const size_t expectedLength = 228;
     ASSERT_EQ(result.span.start, expectedStart);
     ASSERT_EQ(result.span.length, expectedLength);
-    ASSERT_EQ(result.newText, "");
+    ASSERT_EQ(result.newText,
+              "// test comment\n        // import Foo from \"./UnusedDefaultImports_export\";\n        ");
 
     initializer.DestroyContext(ctx);
 }
@@ -367,6 +370,42 @@ TEST_F(OrganizeImportsTest, ExtractDefaultImport3)
     ASSERT_EQ(result.span.start, expectedStart);
     ASSERT_EQ(result.span.length, expectedLength);
     ASSERT_EQ(result.newText, "import Foo, { one, two } from './ExtractDefaultImport3_export';");
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(OrganizeImportsTest, ExtractDefaultImport4)
+{
+    std::vector<std::string> files = {"ExtractDefaultImport4_import.ets", "ExtractDefaultImport4_export.ets"};
+    std::vector<std::string> texts = {
+        R"(
+        import { a } from './ExtractDefaultImport4_export';
+        import { b } from './ExtractDefaultImport4_export';
+        let c = a;
+        c = b;
+        )",
+        R"(
+        export let a = 1;
+        export let b = 1;
+        )"};
+
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    std::vector<FileTextChanges> changes = OrganizeImports::Organize(ctx, filePaths[0]);
+
+    ASSERT_EQ(changes.size(), 1);
+
+    auto result = changes[0].textChanges[0];
+
+    const size_t expectedStart = 9;
+    const size_t expectedLength = 111;
+    ASSERT_EQ(result.span.start, expectedStart);
+    ASSERT_EQ(result.span.length, expectedLength);
+    ASSERT_EQ(result.newText,
+              "import { a } from './ExtractDefaultImport4_export';\n        import { b } from "
+              "'./ExtractDefaultImport4_export';");
 
     initializer.DestroyContext(ctx);
 }

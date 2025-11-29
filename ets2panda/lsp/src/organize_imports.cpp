@@ -14,10 +14,12 @@
  */
 
 #include <algorithm>
+#include <cstddef>
 #include <sstream>
 
 #include "compiler/lowering/util.h"
 #include "internal_api.h"
+#include "parser/program/program.h"
 #include "public/public.h"
 #include "lsp/include/organize_imports.h"
 
@@ -221,7 +223,7 @@ void ExtractDefaultImport(const ImportInfo &imp, std::ostringstream &osst, const
     if (imp.namedImports.size() > 1) {
         osst << " }";
     }
-    osst << " from \'" << imp.moduleName << "\';\n";
+    osst << " from \'" << imp.moduleName << "\';";
 }
 
 void GenerateImportBlock(const ImportInfo &imp, std::ostringstream &osst, const std::string &prefix)
@@ -240,50 +242,59 @@ void GenerateImportBlock(const ImportInfo &imp, std::ostringstream &osst, const 
         }
         index++;
     }
-    osst << " } from \'" << imp.moduleName << "\';\n";
+    osst << " } from \'" << imp.moduleName << "\';";
 }
 
-std::vector<TextChange> GenerateTextChanges(const std::vector<ImportInfo> &imports)
+void ProcessComment(es2panda_Context *context, size_t start, size_t end, std::ostringstream &oss)
 {
-    if (imports.empty()) {
+    if (context == nullptr || end <= start) {
+        return;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto sourceCode = ctx->parserProgram->SourceCode();
+    oss << sourceCode.Substr(start, end);
+}
+
+std::vector<TextChange> GenerateTextChanges([[maybe_unused]] es2panda_Context *context,
+                                            const std::vector<ImportInfo> &imp)
+{
+    if (imp.empty()) {
         return {};
     }
 
     std::ostringstream oss;
 
-    for (const auto &imp : imports) {
-        if (imp.namedImports.empty()) {
+    for (size_t i = 0; i < imp.size(); i++) {
+        if (i > 0 && imp[i].startIndex > imp[i - 1].endIndex) {
+            ProcessComment(context, imp[i - 1].endIndex, imp[i].startIndex, oss);
+        }
+        if (imp[i].namedImports.empty()) {
             continue;
         }
 
-        auto hasDefault = HasDefaultSpecifier(imp.namedImports);
-        if (std::get<0>(hasDefault) && imp.namedImports.size() > 1) {
-            ExtractDefaultImport(imp, oss, "import ", hasDefault);
+        auto hasDefault = HasDefaultSpecifier(imp[i].namedImports);
+        if (std::get<0>(hasDefault) && imp[i].namedImports.size() > 1) {
+            ExtractDefaultImport(imp[i], oss, "import ", hasDefault);
             continue;
         }
-        switch (imp.namedImports[0].type) {
+        switch (imp[i].namedImports[0].type) {
             case ImportType::NORMAL:
-                GenerateImportBlock(imp, oss, "import { ");
+                GenerateImportBlock(imp[i], oss, "import { ");
                 break;
             case ImportType::DEFAULT:
-                oss << "import " << imp.namedImports[0].localName << " from \'" << imp.moduleName << "\';\n";
+                oss << "import " << imp[i].namedImports[0].localName << " from \'" << imp[i].moduleName << "\';";
                 break;
             case ImportType::NAMESPACE:
-                oss << "import * as " << imp.namedImports[0].localName << " from \'" << imp.moduleName << "\';\n";
+                oss << "import * as " << imp[i].namedImports[0].localName << " from \'" << imp[i].moduleName << "\';";
                 break;
             case ImportType::TYPE_ONLY:
-                GenerateImportBlock(imp, oss, "import type { ");
+                GenerateImportBlock(imp[i], oss, "import type { ");
                 break;
         }
     }
 
     std::string result = oss.str();
-    if (!result.empty() && result.back() == '\n') {
-        result.pop_back();  // Remove trailing newline to avoid adding newlines repeatedly.
-    }
-
-    return {
-        TextChange(TextSpan(imports.front().startIndex, imports.back().endIndex - imports.front().startIndex), result)};
+    return {TextChange(TextSpan(imp.front().startIndex, imp.back().endIndex - imp.front().startIndex), result)};
 }
 
 std::vector<FileTextChanges> OrganizeImports::Organize(es2panda_Context *context, const std::string &fileName)
@@ -293,6 +304,6 @@ std::vector<FileTextChanges> OrganizeImports::Organize(es2panda_Context *context
     CollectImports(context, imports);
     RemoveUnusedImports(imports, context);
 
-    return {FileTextChanges(fileName, GenerateTextChanges(imports))};
+    return {FileTextChanges(fileName, GenerateTextChanges(context, imports))};
 }
 }  // namespace ark::es2panda::lsp
