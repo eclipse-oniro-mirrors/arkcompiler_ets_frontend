@@ -37,14 +37,14 @@ public:
     using PropertyTraverser = std::function<void(const varbinder::LocalVariable *)>;
     using PropertyHolder = std::array<PropertyMap *, static_cast<size_t>(PropertyType::COUNT)>;
 
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
                            ir::AstNode *declNode, ETSObjectFlags flags)
         : ETSObjectType(allocator, name, internalName, std::make_tuple(declNode, flags, nullptr),
                         std::make_index_sequence<static_cast<size_t>(PropertyType::COUNT)> {})
     {
     }
 
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
                            std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info)
         : ETSObjectType(allocator, name, internalName, info,
                         std::make_index_sequence<static_cast<size_t>(PropertyType::COUNT)> {})
@@ -415,7 +415,7 @@ public:
     const ArenaVector<ETSObjectType *> &ReExports() const;
     bool IsSameBasedGeneric(TypeRelation *relation, Type const *other) const;
 
-    ThreadSafeArenaAllocator *Allocator() const
+    ArenaAllocator *Allocator() const
     {
         return allocator_;
     }
@@ -432,7 +432,7 @@ protected:
 
 private:
     template <size_t... IS>
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView assemblerName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView assemblerName,
                            std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info,
                            [[maybe_unused]] std::index_sequence<IS...> s)
         : Type(TypeFlag::ETS_OBJECT),
@@ -523,7 +523,7 @@ private:
 
     ir::TSTypeParameterDeclaration *GetTypeParams() const;
 
-    ThreadSafeArenaAllocator *const allocator_;
+    ArenaAllocator *const allocator_;
     util::StringView const name_;
     util::StringView const internalName_;
     ir::AstNode *const declNode_;

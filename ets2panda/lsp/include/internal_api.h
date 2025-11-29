@@ -22,6 +22,7 @@
 #include "ir/astNode.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
+#include "util/eheap.h"
 
 namespace ark::es2panda::lsp {
 
@@ -53,7 +54,7 @@ public:
     {
         es2panda_Context *ctx = nullptr;
         auto *globalContext = new ark::es2panda::public_lib::GlobalContext();
-        auto globalAllocator = new ark::ThreadSafeArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        auto globalAllocator = ark::es2panda::EHeap::NewAllocator().release();
         globalContext->cachedExternalPrograms.emplace(fileName, nullptr);
         globalContext->externalProgramAllocators.emplace(fileName, globalAllocator);
         globalContext->stdLibAllocator = globalAllocator;

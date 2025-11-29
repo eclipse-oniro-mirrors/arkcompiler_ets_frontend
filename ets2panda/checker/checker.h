@@ -64,13 +64,13 @@ using ArgRange = std::pair<uint32_t, uint32_t>;
 
 class Checker {
 public:
-    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine);
+    explicit Checker(ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine);
     virtual ~Checker() = default;
 
     NO_COPY_SEMANTIC(Checker);
     NO_MOVE_SEMANTIC(Checker);
 
-    [[nodiscard]] ThreadSafeArenaAllocator *Allocator() noexcept
+    [[nodiscard]] ArenaAllocator *Allocator() noexcept
     {
         return allocator_;
     }
@@ -234,7 +234,7 @@ public:
     virtual void CleanUp();
 
     // legacy API, use Allocator() instead
-    [[nodiscard]] ThreadSafeArenaAllocator *ProgramAllocator()
+    [[nodiscard]] ArenaAllocator *ProgramAllocator()
     {
         return allocator_;
     }
@@ -246,7 +246,7 @@ protected:
     void SetProgram(parser::Program *program);
 
 private:
-    ThreadSafeArenaAllocator *allocator_;
+    ArenaAllocator *allocator_;
     CheckerContext context_;
     GlobalTypesHolder *globalTypes_ {nullptr};
     TypeRelation *relation_;
@@ -536,7 +536,7 @@ public:
         return checker_->Context().ContainingOverloadDeclaration() != nullptr;
     }
 
-    varbinder::LocalVariable *CreateSyntheticVar(ThreadSafeArenaAllocator *const allocator)
+    varbinder::LocalVariable *CreateSyntheticVar(ArenaAllocator *const allocator)
     {
         varbinder::VariableFlags variableFlags =
             IsOverloadDeclarationCall() ? varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::METHOD |

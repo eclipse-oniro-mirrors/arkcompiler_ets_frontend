@@ -414,7 +414,7 @@ ETSObjectType *ETSChecker::CreateETSObjectTypeOrBuiltin(ir::AstNode *declNode, E
 ETSObjectType *ETSChecker::CreateETSObjectType(
     ir::AstNode *declNode, ETSObjectFlags flags,
     /* this parameter maintanis the behavior of the broken ast-cache logic, avoid it whenever possible */
-    std::optional<std::pair<ThreadSafeArenaAllocator *, TypeRelation *>> caches)
+    std::optional<std::pair<ArenaAllocator *, TypeRelation *>> caches)
 {
     auto const allocator = caches.has_value() ? caches->first : ProgramAllocator();
     auto const relation = caches.has_value() ? caches->second : Relation();

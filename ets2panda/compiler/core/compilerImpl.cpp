@@ -43,6 +43,7 @@
 #include "parser/ETSparser.h"
 #include "parser/program/program.h"
 #include "public/public.h"
+#include "util/eheap.h"
 #include "util/ustring.h"
 #include "util/perfMetrics.h"
 #include "varbinder/JSBinder.h"
@@ -88,7 +89,7 @@ static public_lib::Context::CodeGenCb MakeCompileJob()
             }
         }
         RegSpiller regSpiller;
-        ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        auto allocator = EHeap::CreateAllocator();
         AstCompiler astcompiler;
         compiler::SetPhaseManager(context->phaseManager);
         CodeGen cg(&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astcompiler));

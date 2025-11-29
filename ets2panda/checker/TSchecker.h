@@ -121,7 +121,7 @@ struct TupleTypeInfo {
 class TSChecker : public Checker {
 public:
     // NOLINTNEXTLINE(readability-redundant-member-init)
-    explicit TSChecker([[maybe_unused]] ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
+    explicit TSChecker([[maybe_unused]] ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
         : Checker(allocator, diagnosticEngine)
     {
     }

@@ -56,7 +56,7 @@ using ComputedAbstracts =
 struct GlobalContext {
     std::unordered_map<std::string, ArenaAllocator *> externalProgramAllocators;
     std::unordered_map<std::string, ExternalSource *> cachedExternalPrograms;
-    ThreadSafeArenaAllocator *stdLibAllocator = nullptr;
+    ArenaAllocator *stdLibAllocator = nullptr;
     ExternalSource *stdLibAstCache = nullptr;
     std::unordered_set<varbinder::ETSBinder *> allocatedVarbinders;
 };
@@ -120,7 +120,7 @@ struct Context {
     std::string sourceFileName;
     std::string input;
     SourceFile const *sourceFile = nullptr;
-    ThreadSafeArenaAllocator *allocator = nullptr;
+    ArenaAllocator *allocator = nullptr;
     compiler::CompileQueue *queue = nullptr;
     std::vector<util::Plugin> const *plugins = nullptr;
     std::vector<compiler::LiteralBuffer> contextLiterals;
