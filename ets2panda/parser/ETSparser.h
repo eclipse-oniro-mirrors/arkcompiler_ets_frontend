@@ -215,7 +215,7 @@ private:
                                                 ir::ImportKinds importKind);
     bool TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData);
 
-    std::optional<std::string_view> GetDeclarationSource(std::string &&fileToParse) const;
+    std::optional<std::string> GetDeclarationSource(std::string &&fileToParse) const;
     std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
                                               std::vector<util::StringView> &directImportsFromMainSource);
     parser::Program *ParseSource(const SourceFile &sourceFile);
