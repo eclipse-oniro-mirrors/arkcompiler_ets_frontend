@@ -91,139 +91,393 @@ describe('test for CommonCollections', function () {
   describe('test for ProjectWhiteListManager', function () {
     let cachePath = 'test/ut/utils/obfuscation';
     describe('test for constructor', function () {
-      let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, true);
-      const fileWhiteLists = projectWhiteListManager.fileWhiteListInfo;
-      expect(fileWhiteLists).to.be.undefined;
-      expect(projectWhiteListManager.getEnableAtKeep()).to.be.true;
-      expect(projectWhiteListManager.getFileWhiteListsCachePath()).to.be.equal('test/ut/utils/obfuscation/fileWhiteLists.json');
-      expect(projectWhiteListManager.getProjectWhiteListCachePath()).to.be.equal('test/ut/utils/obfuscation/projectWhiteList.json');
-      expect(projectWhiteListManager.getIsIncremental()).to.be.false;
-      expect(projectWhiteListManager.getFileWhiteListMap().size).to.be.equal(0);
+      it('the value of all the options (isIncremental/enableAtKeep/keepObjectProperty) is false', () => {
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false, false);
+        const fileWhiteLists = projectWhiteListManager.fileWhiteListInfo;
+        expect(fileWhiteLists).to.be.undefined;
+        expect(projectWhiteListManager.getEnableAtKeep()).to.be.false;
+        expect(projectWhiteListManager.getKeepObjectProperty()).to.be.false;
+        expect(projectWhiteListManager.getFileWhiteListsCachePath()).to.be.equal('test/ut/utils/obfuscation/fileWhiteLists.json');
+        expect(projectWhiteListManager.getProjectWhiteListCachePath()).to.be.equal('test/ut/utils/obfuscation/projectWhiteList.json');
+        expect(projectWhiteListManager.getIsIncremental()).to.be.false;
+        expect(projectWhiteListManager.getFileWhiteListMap().size).to.be.equal(0);
+      });
+
+      it('the value of all the options (isIncremental/enableAtKeep/keepObjectProperty) is true', () => {
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true, true);
+        const fileWhiteLists = projectWhiteListManager.fileWhiteListInfo;
+        expect(fileWhiteLists).to.be.undefined;
+        expect(projectWhiteListManager.getEnableAtKeep()).to.be.true;
+        expect(projectWhiteListManager.getKeepObjectProperty()).to.be.true;
+        expect(projectWhiteListManager.getFileWhiteListsCachePath()).to.be.equal('test/ut/utils/obfuscation/fileWhiteLists.json');
+        expect(projectWhiteListManager.getProjectWhiteListCachePath()).to.be.equal('test/ut/utils/obfuscation/projectWhiteList.json');
+        expect(projectWhiteListManager.getIsIncremental()).to.be.true;
+        expect(projectWhiteListManager.getFileWhiteListMap().size).to.be.equal(0);
+      });
     });
+
     describe('test for createFileWhiteList', function () {
-      let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false);
-      const fileWhiteLists = projectWhiteListManager.createFileWhiteList();
-      expect(fileWhiteLists).to.not.be.undefined;
-      expect(fileWhiteLists.fileKeepInfo.keepSymbol?.globalNames).to.be.undefined;
-      expect(fileWhiteLists.fileKeepInfo.keepSymbol?.propertyNames).to.be.undefined;
-      expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.globalNames).to.be.undefined;
-      expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.propertyNames).to.be.undefined;
-      expect(fileWhiteLists.fileKeepInfo.structProperties.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.exported?.propertyNames.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.exported?.globalNames.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.enumProperties.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.stringProperties.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.propertyNames.size).to.be.equal(0);
-      expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.globalNames.size).to.be.equal(0);
-      expect(fileWhiteLists.fileReservedInfo.enumProperties.size).to.be.equal(0);
-      expect(fileWhiteLists.fileReservedInfo.propertyParams.size).to.be.equal(0);
+      it('the value of all the options (isIncremental/enableAtKeep/keepObjectProperty) is false', () => {
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false, false);
+        const fileWhiteLists = projectWhiteListManager.createFileWhiteList();
+        expect(fileWhiteLists).to.not.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.keepSymbol?.globalNames).to.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.keepSymbol?.propertyNames).to.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.globalNames).to.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.propertyNames).to.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.objectProperties).to.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.structProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.exported?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.exported?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.enumProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.stringProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileReservedInfo.enumProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileReservedInfo.propertyParams.size).to.be.equal(0);
+      });
+
+      it('the value of all the options (isIncremental/enableAtKeep/keepObjectProperty) is true', () => {
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true, true);
+        const fileWhiteLists = projectWhiteListManager.createFileWhiteList();
+        expect(fileWhiteLists).to.not.be.undefined;
+        expect(fileWhiteLists.fileKeepInfo.keepSymbol?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.keepSymbol?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.keepAsConsumer?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.structProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.exported?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.exported?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.enumProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.stringProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.objectProperties?.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.propertyNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileKeepInfo.arkUIKeepInfo?.globalNames.size).to.be.equal(0);
+        expect(fileWhiteLists.fileReservedInfo.enumProperties.size).to.be.equal(0);
+        expect(fileWhiteLists.fileReservedInfo.propertyParams.size).to.be.equal(0);
+      });
     });
 
     describe('test for collect FileWhiteLists', function () {
-      it('should update fileWhiteList if already exists', () => {
-        let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, false, true);
-        projectWhiteListManagerForTest.setCurrentCollector('testPath1');
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.structProperties.add('test1');
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.enumProperties.add('test2');
-        const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get('testPath1');
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.true;
-        expect(projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.structProperties.size).to.be.equal(1);
-        expect(projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.enumProperties.size).to.be.equal(1);        
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.structProperties.add('test3');
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.enumProperties.add('test4');
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test3')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test4')).to.be.true;
+      // Define all possible parameter combinations
+      const parameterCombinations = [
+        // [isIncremental, enableAtKeep, keepObjectProperty]
+        [false, false, false],
+        [false, false, true],
+        [false, true, false],
+        [false, true, true],
+        [true, false, false],
+        [true, false, true],
+        [true, true, false],
+        [true, true, true]
+      ];
+
+      // Testing the update and creation behavior of the file whitelist
+      describe('file white list management', () => {
+        parameterCombinations.forEach(([isIncremental, enableAtKeep, keepObjectProperty]) => {
+          it(`should update fileWhiteList if already exists [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+            projectWhiteListManagerForTest.setCurrentCollector('testPath1');
+
+            // Add test data including object properties
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.structProperties.add('test1');
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.enumProperties.add('test2');
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.objectProperties?.add('objTest1');
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get('testPath1');
+
+            // Verify basic properties
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.true;
+            expect(projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.structProperties.size).to.be.equal(1);
+            expect(projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.enumProperties.size).to.be.equal(1);        
+
+            // Verify object properties based on keepObjectProperty flag
+            if (keepObjectProperty) {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest1')).to.be.true;
+              expect(projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.objectProperties?.size).to.be.equal(1);
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+
+            // Add more test data
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.structProperties.add('test3');
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.enumProperties.add('test4');
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.objectProperties?.add('objTest2');
+
+            // Verify updated data
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test3')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test4')).to.be.true;
+
+            // Verify updated object properties based on keepObjectProperty flag
+            if (keepObjectProperty) {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest2')).to.be.true;
+              expect(projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.objectProperties?.size).to.be.equal(2);
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+          });
+
+          it(`should create new fileWhiteList if not exists [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+            projectWhiteListManagerForTest.setCurrentCollector('testPath2');
+
+            // Add test data including object properties
+            projectWhiteListManagerForTest.fileWhiteListInfo?.fileKeepInfo.structProperties.add("test3");
+            projectWhiteListManagerForTest.fileWhiteListInfo?.fileKeepInfo.enumProperties.add("test4");
+            projectWhiteListManagerForTest.fileWhiteListInfo?.fileKeepInfo.objectProperties?.add("objTest3");
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get('testPath2');
+
+            // Verify basic properties
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.false;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.false;
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test3')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test4')).to.be.true;
+
+            // Verify object properties based on keepObjectProperty flag
+            if (keepObjectProperty) {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest3')).to.be.true;
+              expect(projectWhiteListManagerForTest.fileWhiteListInfo?.fileKeepInfo.objectProperties?.size).to.be.equal(1);
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+          });
+        });
       });
-      it('should create new fileWhiteList if not exists', () => {
-        let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, false, true);
-        projectWhiteListManagerForTest.setCurrentCollector('testPath2');
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.structProperties.add("test3");
-        projectWhiteListManagerForTest.fileWhiteListInfo.fileKeepInfo.enumProperties.add("test4");
-        const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get('testPath2');
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test1')).to.be.false;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test2')).to.be.false;
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test3')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test4')).to.be.true;
+
+      // Testing the behavior of the atKeep option
+      describe('atKeep functionality', () => {
+        parameterCombinations.forEach(([isIncremental, enableAtKeep, keepObjectProperty]) => {
+          it(`should handle atKeep collections correctly [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+            projectWhiteListManagerForTest.setCurrentCollector(`testPath_${isIncremental}_${enableAtKeep}_${keepObjectProperty}`);
+            let fileWhilteListTemp: FileWhiteList = projectWhiteListManagerForTest.fileWhiteListInfo;
+
+            // Add various types of test data
+            fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.add('test1');
+            fileWhilteListTemp.fileKeepInfo.keepSymbol?.propertyNames.add('test2');
+            fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.globalNames.add('test3');
+            fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.add('test4');
+            fileWhilteListTemp.fileKeepInfo.structProperties.add('test5');
+            fileWhilteListTemp.fileKeepInfo.enumProperties.add('test6');
+            fileWhilteListTemp.fileKeepInfo.exported.globalNames.add('test7');
+            fileWhilteListTemp.fileKeepInfo.exported.propertyNames.add('test8');
+            fileWhilteListTemp.fileKeepInfo.stringProperties.add('test9');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('testObjectProperties1');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('testObjectProperties2');
+            fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.globalNames.add('test111');
+            fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.propertyNames.add('test112');
+            fileWhilteListTemp.fileReservedInfo.enumProperties.add('test10');
+            fileWhilteListTemp.fileReservedInfo.propertyParams.add('test11');
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get(`testPath_${isIncremental}_${enableAtKeep}_${keepObjectProperty}`);
+
+            // Verify basic attributes (should always exist)
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('test5')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test6')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.exported.globalNames.has('test7')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.exported.propertyNames.has('test8')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.stringProperties.has('test9')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo?.globalNames.has('test111')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo?.propertyNames.has('test112')).to.be.true;
+            expect(fileWhilteList?.fileReservedInfo.enumProperties.has('test10')).to.be.true;
+            expect(fileWhilteList?.fileReservedInfo.propertyParams.has('test11')).to.be.true;
+
+            // Verify object properties based on keepObjectProperty flag
+            if (keepObjectProperty) {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('testObjectProperties1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('testObjectProperties2')).to.be.true;
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(2);
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+
+            // Verify atKeep related attributes (determined by the enableAtKeep parameter)
+            if (enableAtKeep) {
+              // When enableAtKeep is true, the atKeep-related properties should exist.
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames.has('test1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.propertyNames.has('test2')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.globalNames.has('test3')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames.has('test4')).to.be.true;
+            } else {
+              // 当 enableAtKeep 为 false 时，atKeep 相关属性应该不存在
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames).to.be.undefined;
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.propertyNames).to.be.undefined;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.globalNames).to.be.undefined;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames).to.be.undefined;
+            }
+
+            // Verify dimensions (determined by the enableAtKeep and keepObjectProperty parameters)
+            expect(fileWhilteListTemp.fileKeepInfo.structProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.enumProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.exported.globalNames.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.exported.propertyNames.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.stringProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileReservedInfo.enumProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileReservedInfo.propertyParams.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.globalNames.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.propertyNames.size).to.be.equal(1);
+
+            if (enableAtKeep) {
+              expect(fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.size).to.be.equal(1);
+              expect(fileWhilteListTemp.fileKeepInfo.keepSymbol?.propertyNames.size).to.be.equal(1);
+              expect(fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.globalNames.size).to.be.equal(1);
+              expect(fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.size).to.be.equal(1);
+            }
+
+            if (keepObjectProperty) {
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(2);
+            }
+          });
+        });
       });
-      it('should collect atKeep if is enabled', () => {
-        let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, false, true);
-        projectWhiteListManagerForTest.setCurrentCollector('testPath3');
-        let fileWhilteListTemp: FileWhiteList = projectWhiteListManagerForTest.fileWhiteListInfo;
-        fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.add('test1');
-        fileWhilteListTemp.fileKeepInfo.keepSymbol?.propertyNames.add('test2');
-        fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.globalNames.add('test3');
-        fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.add('test4');
-        fileWhilteListTemp.fileKeepInfo.structProperties.add('test5');
-        fileWhilteListTemp.fileKeepInfo.enumProperties.add('test6');
-        fileWhilteListTemp.fileKeepInfo.exported.globalNames.add('test7');
-        fileWhilteListTemp.fileKeepInfo.exported.propertyNames.add('test8');
-        fileWhilteListTemp.fileKeepInfo.stringProperties.add('test9');
-        fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.globalNames.add('test111');
-        fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.propertyNames.add('test112');
-        fileWhilteListTemp.fileReservedInfo.enumProperties.add('test10');
-        fileWhilteListTemp.fileReservedInfo.propertyParams.add('test11');
-        const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get('testPath3');
-        expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames.has('test1')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.keepSymbol?.propertyNames.has('test2')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.globalNames.has('test3')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames.has('test4')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test5')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test6')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.exported.globalNames.has('test7')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.exported.propertyNames.has('test8')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.stringProperties.has('test9')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo.globalNames.has('test111')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo.propertyNames.has('test112')).to.be.true;
-        expect(fileWhilteList?.fileReservedInfo.enumProperties.has('test10')).to.be.true;
-        expect(fileWhilteList?.fileReservedInfo.propertyParams.has('test11')).to.be.true;
-        expect(fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.keepSymbol?.propertyNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.globalNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.structProperties.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.enumProperties.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.exported.globalNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.exported.propertyNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.stringProperties.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileReservedInfo.enumProperties.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileReservedInfo.propertyParams.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.globalNames.size).to.be.equal(1);
-        expect(fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.propertyNames.size).to.be.equal(1);
+
+      // Specifically testing the effect of the keepObjectProperty parameter
+      describe('keepObjectProperty functionality', () => {
+        parameterCombinations.forEach(([isIncremental, enableAtKeep, keepObjectProperty]) => {
+          it(`should handle object property collection based on keepObjectProperty flag [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+            projectWhiteListManagerForTest.setCurrentCollector(`testPath_obj_${keepObjectProperty}`);
+            let fileWhilteListTemp: FileWhiteList = projectWhiteListManagerForTest.fileWhiteListInfo;
+
+            // Add test data related to object properties
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('objTest1');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('objTest2');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('objTest3');
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get(`testPath_obj_${keepObjectProperty}`);
+
+            // Verify the behavior of object properties based on the keepObjectProperty flag
+            if (keepObjectProperty) {
+              // When keepObjectProperty is true, the object property should exist and contain all added values.
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.not.be.undefined;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest2')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest3')).to.be.true;
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(3);
+
+              // Validation can continue to add object properties
+              fileWhilteListTemp.fileKeepInfo.objectProperties?.add('objTest4');
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('objTest4')).to.be.true;
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(4);
+            } else {
+              // When keepObjectProperty is false, the object property should not exist
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties).to.be.undefined;
+
+              // Verify that attempting to add object properties does not take effect
+              fileWhilteListTemp.fileKeepInfo.objectProperties?.add('objTest4');
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+          });
+        });
       });
-      it('should not collect atKeep if not enabled', () => {
-        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false);
-        projectWhiteListManager.setCurrentCollector('testPath4')
-        let fileWhilteListTemp: FileWhiteList = projectWhiteListManager.fileWhiteListInfo;
-        fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.add('test1');
-        fileWhilteListTemp.fileKeepInfo.keepSymbol?.propertyNames.add('test2');
-        fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.globalNames.add('test3');
-        fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.add('test4');
-        fileWhilteListTemp.fileKeepInfo.structProperties.add('test5');
-        fileWhilteListTemp.fileKeepInfo.enumProperties.add('test6');
-        fileWhilteListTemp.fileKeepInfo.exported.globalNames.add('test7');
-        fileWhilteListTemp.fileKeepInfo.exported.propertyNames.add('test8');
-        fileWhilteListTemp.fileKeepInfo.stringProperties.add('test9');
-        fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.globalNames.add('test111');
-        fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo.propertyNames.add('test112');
-        fileWhilteListTemp.fileReservedInfo.enumProperties.add('test10');
-        fileWhilteListTemp.fileReservedInfo.propertyParams.add('test11');
-        const fileWhilteList: FileWhiteList | undefined = projectWhiteListManager.getFileWhiteListMap().get('testPath4');
-        expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames).to.be.undefined;
-        expect(fileWhilteList?.fileKeepInfo.keepSymbol?.propertyNames).to.be.undefined;
-        expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.globalNames).to.be.undefined;
-        expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames).to.be.undefined;
-        expect(fileWhilteList?.fileKeepInfo.structProperties.has('test5')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.enumProperties.has('test6')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.exported.globalNames.has('test7')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.exported.propertyNames.has('test8')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.stringProperties.has('test9')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo.globalNames.has('test111')).to.be.true;
-        expect(fileWhilteList?.fileKeepInfo.arkUIKeepInfo.propertyNames.has('test112')).to.be.true;
-        expect(fileWhilteList?.fileReservedInfo.enumProperties.has('test10')).to.be.true;
-        expect(fileWhilteList?.fileReservedInfo.propertyParams.has('test11')).to.be.true;
+
+      // Specifically testing the interaction between keepObjectProperty and other features
+      describe('keepObjectProperty interaction with other features', () => {
+        parameterCombinations.forEach(([isIncremental, enableAtKeep, keepObjectProperty]) => {
+          it(`should handle object properties correctly when combined with other features [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+            projectWhiteListManagerForTest.setCurrentCollector(`testPath_combo_${keepObjectProperty}`);
+            let fileWhilteListTemp: FileWhiteList = projectWhiteListManagerForTest.fileWhiteListInfo;
+
+            // Add test data of mixed types
+            fileWhilteListTemp.fileKeepInfo.structProperties.add('struct1');
+            fileWhilteListTemp.fileKeepInfo.enumProperties.add('enum1');
+            fileWhilteListTemp.fileKeepInfo.stringProperties.add('string1');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('object1');
+            fileWhilteListTemp.fileKeepInfo.objectProperties?.add('object2');
+
+            if (enableAtKeep) {
+              fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.add('keepSymbol1');
+              fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.add('keepConsumer1');
+            }
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get(`testPath_combo_${keepObjectProperty}`);
+
+            // Verify that basic attributes always exist
+            expect(fileWhilteList?.fileKeepInfo.structProperties.has('struct1')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.enumProperties.has('enum1')).to.be.true;
+            expect(fileWhilteList?.fileKeepInfo.stringProperties.has('string1')).to.be.true;
+
+            // Verify atKeep related properties
+            if (enableAtKeep) {
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames.has('keepSymbol1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames.has('keepConsumer1')).to.be.true;
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.keepSymbol?.globalNames).to.be.undefined;
+              expect(fileWhilteList?.fileKeepInfo.keepAsConsumer?.propertyNames).to.be.undefined;
+            }
+
+            // Validate object properties based on the keepObjectProperty flag
+            if (keepObjectProperty) {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('object1')).to.be.true;
+              expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('object2')).to.be.true;
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(2);
+            } else {
+              expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+            }
+
+            // Verify whether the length of the Set collection data is correct
+            expect(fileWhilteListTemp.fileKeepInfo.structProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.enumProperties.size).to.be.equal(1);
+            expect(fileWhilteListTemp.fileKeepInfo.stringProperties.size).to.be.equal(1);
+
+            if (keepObjectProperty) {
+              expect(fileWhilteListTemp.fileKeepInfo.objectProperties?.size).to.be.equal(2);
+            }
+ 
+            if (enableAtKeep) {
+              expect(fileWhilteListTemp.fileKeepInfo.keepSymbol?.globalNames.size).to.be.equal(1);
+              expect(fileWhilteListTemp.fileKeepInfo.keepAsConsumer?.propertyNames.size).to.be.equal(1);
+            }
+          });
+        });
+      });
+
+      // Specifically testing the impact of the incremental mode
+      describe('incremental mode functionality', () => {
+        parameterCombinations.forEach(([isIncremental, enableAtKeep, keepObjectProperty]) => {
+          it(`should behave correctly in incremental mode [incremental:${isIncremental}, atKeep:${enableAtKeep}, keepObj:${keepObjectProperty}]`, () => {
+            let projectWhiteListManagerForTest = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
+
+            // Testing specific behavior in incremental mode
+            projectWhiteListManagerForTest.setCurrentCollector(`testPath_inc_${isIncremental}`);
+
+            // Add test data containing object properties
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.structProperties.add('incStruct1');
+            projectWhiteListManagerForTest.fileWhiteListInfo!.fileKeepInfo.objectProperties?.add('incObject1');
+
+            const fileWhilteList: FileWhiteList | undefined = projectWhiteListManagerForTest.getFileWhiteListMap().get(`testPath_inc_${isIncremental}`);
+
+            // Test different behaviors based on the isIncremental flag
+            if (isIncremental) {
+              // Specific tests in incremental mode
+              expect(projectWhiteListManagerForTest.getIsIncremental()).to.be.true;
+
+              // Verify the behavior of object properties in incremental mode
+              if (keepObjectProperty) {
+                expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('incObject1')).to.be.true;
+              } else {
+                expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+              }
+            } else {
+              // Specific tests in full mode
+              expect(projectWhiteListManagerForTest.getIsIncremental()).to.be.false;
+
+              // Verify the behavior of object properties in full mode
+              if (keepObjectProperty) {
+                expect(fileWhilteList?.fileKeepInfo.objectProperties?.has('incObject1')).to.be.true;
+              } else {
+                expect(fileWhilteList?.fileKeepInfo.objectProperties).to.be.undefined;
+              }
+            }
+          });
+        });
       });
     });
 
@@ -234,7 +488,7 @@ describe('test for CommonCollections', function () {
         ApiExtractor.mEnumMemberSet.clear();
       })
       it('should write fileWhiteLists and projectWhiteList if is not incremental', () => {
-        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, true);
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, true, false);
         projectWhiteListManager.setCurrentCollector('testPath1');
         let fileWhilteListTemp: FileWhiteList = projectWhiteListManager.fileWhiteListInfo;
         fileWhilteListTemp.fileKeepInfo.structProperties.add('test01');
@@ -248,6 +502,7 @@ describe('test for CommonCollections', function () {
         fileWhilteListTemp.fileKeepInfo.exported.globalNames.add('test7');
         fileWhilteListTemp.fileKeepInfo.exported.propertyNames.add('test8');
         fileWhilteListTemp.fileKeepInfo.stringProperties.add('test9');
+        fileWhilteListTemp.fileKeepInfo.objectProperties?.add('testObjectProperties1');
         fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.globalNames.add('test111');
         fileWhilteListTemp.fileKeepInfo.arkUIKeepInfo?.propertyNames.add('test112');
         fileWhilteListTemp.fileReservedInfo.enumProperties.add('test10');
@@ -282,7 +537,7 @@ describe('test for CommonCollections', function () {
         expect(AtIntentCollections.propertyNames.has('test112')).to.be.true;
       });
       it('should update fileWhiteLists and projectWhiteList if is incremental(project white list changed)', () => {
-        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true);
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true, false);
         projectWhiteListManager.setCurrentCollector('testPath4');
         let fileWhilteListTemp: FileWhiteList = projectWhiteListManager.fileWhiteListInfo;
         fileWhilteListTemp.fileKeepInfo.structProperties.add('test01');
@@ -337,7 +592,7 @@ describe('test for CommonCollections', function () {
         expect(AtIntentCollections.propertyNames.has('test123')).to.be.true;
       });
       it('should update fileWhiteLists and projectWhiteList if is incremental(project white list not changed)', () => {
-        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true);
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, true, true, false);
         projectWhiteListManager.setCurrentCollector('testPath5');
         let fileWhilteListTemp: FileWhiteList | undefined = projectWhiteListManager.fileWhiteListInfo;
         fileWhilteListTemp.fileKeepInfo.structProperties.add('test01');
@@ -357,7 +612,7 @@ describe('test for CommonCollections', function () {
 
     describe('test for createProjectWhiteList when bytecodeObfuscate enable', function () {
       it('should add property decorated to projectWhiteList when bytecodeObfuscate enable)', () => {
-        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false);
+        let projectWhiteListManager = new ProjectWhiteListManager(cachePath, false, false, false);
         projectWhiteListManager.setCurrentCollector("testPath5")
         const fileWhiteLists = projectWhiteListManager.createFileWhiteList();
         fileWhiteLists.bytecodeObfuscateKeepInfo = {

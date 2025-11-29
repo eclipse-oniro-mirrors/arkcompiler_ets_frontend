@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,6 @@ import {
   fillNameCache,
   writeObfuscationNameCache,
   generateConsumerObConfigFile,
-  mangleFilePath,
   enableObfuscatedFilePathConfig,
   handleObfuscatedFilePath,
   enableObfuscateFileName,
@@ -718,6 +717,7 @@ describe('test for ConfigResolve', function() {
           ObConfigResolver.KEEP_PROPERTY_NAME,
           ObConfigResolver.KEEP_FILE_NAME,
           ObConfigResolver.KEEP_COMMENTS,
+          ObConfigResolver.KEEP_OBJECT_PROPS,
           ObConfigResolver.DISABLE_OBFUSCATION,
           ObConfigResolver.ENABLE_PROPERTY_OBFUSCATION,
           ObConfigResolver.ENABLE_STRING_PROPERTY_OBFUSCATION,
@@ -744,6 +744,7 @@ describe('test for ConfigResolve', function() {
           OptionTypeForTest.KEEP_PROPERTY_NAME,
           OptionTypeForTest.KEEP_FILE_NAME,
           OptionTypeForTest.KEEP_COMMENTS,
+          OptionTypeForTest.KEEP_OBJECT_PROPS,
           OptionTypeForTest.DISABLE_OBFUSCATION,
           OptionTypeForTest.ENABLE_PROPERTY_OBFUSCATION,
           OptionTypeForTest.ENABLE_STRING_PROPERTY_OBFUSCATION,
@@ -786,6 +787,7 @@ describe('test for ConfigResolve', function() {
           -keep-property-name,
           -keep-file-name,
           -keep-comments,
+          -keep-object-props,
           -disable-obfuscation,
           -enable-property-obfuscation,
           -enable-string-property-obfuscation,

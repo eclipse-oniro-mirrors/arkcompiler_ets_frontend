@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -440,10 +440,24 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
   });
 
   describe('test for ArkObfuscator.addReservedSetForPropertyObf', () => {
+    let obfuscator: ArkObfuscator;
+
+    beforeEach(() => {
+      // Reset the status of UnobfuscationCollections
+      UnobfuscationCollections.reservedStruct.clear();
+      UnobfuscationCollections.reservedStrProp.clear();
+      UnobfuscationCollections.reservedObjProp.clear();
+      UnobfuscationCollections.reservedExportNameAndProp.clear();
+      UnobfuscationCollections.reservedEnum.clear();
+      
+      obfuscator = new ArkObfuscator();
+    });
+
     it('should add reserved sets correctly', () => {
       const properties: ReseverdSetForArkguard = {
         structPropertySet: new Set(['struct1']),
         stringPropertySet: new Set(['string1']),
+        objectPropertySet: new Set(['object1']),
         exportNameAndPropSet: new Set(['export1']),
         exportNameSet: undefined,
         enumPropertySet: new Set(['enum1']),
@@ -453,6 +467,7 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
 
       expect(UnobfuscationCollections.reservedStruct.has('struct1')).to.be.true;
       expect(UnobfuscationCollections.reservedStrProp.has('string1')).to.be.true;
+      expect(UnobfuscationCollections.reservedObjProp.has('object1')).to.be.true;
       expect(UnobfuscationCollections.reservedExportNameAndProp.has('export1')).to.be.true;
       expect(UnobfuscationCollections.reservedEnum.has('enum1')).to.be.true;
     });
@@ -461,6 +476,7 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
       const properties: ReseverdSetForArkguard = {
         structPropertySet: new Set(),
         stringPropertySet: new Set(),
+        objectPropertySet: new Set(),
         exportNameAndPropSet: new Set(),
         exportNameSet: undefined,
         enumPropertySet: new Set(),
@@ -470,8 +486,176 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
 
       expect(UnobfuscationCollections.reservedStruct.size).to.equal(0);
       expect(UnobfuscationCollections.reservedStrProp.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedObjProp.size).to.equal(0);
       expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(0);
       expect(UnobfuscationCollections.reservedEnum.size).to.equal(0);
+    });
+
+    it('should add all non-empty reserved sets to corresponding collections', () => {
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: new Set(['struct1', 'struct2']),
+        stringPropertySet: new Set(['string1', 'string2']),
+        objectPropertySet: new Set(['object1', 'object2']),
+        exportNameAndPropSet: new Set(['export1', 'export2']),
+        exportNameSet: undefined,
+        enumPropertySet: new Set(['enum1', 'enum2']),
+      };
+
+      obfuscator.addReservedSetForPropertyObf(properties);
+  
+      // Verify structPropertySet (using the add method)
+      expect(UnobfuscationCollections.reservedStruct.has('struct1')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.has('struct2')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.size).to.equal(2);
+
+      // Verify stringPropertySet (using assignment)
+      expect(UnobfuscationCollections.reservedStrProp.has('string1')).to.be.true;
+      expect(UnobfuscationCollections.reservedStrProp.has('string2')).to.be.true;
+      expect(UnobfuscationCollections.reservedStrProp.size).to.equal(2);
+
+      // Verify objectPropertySet (using assignment)
+      expect(UnobfuscationCollections.reservedObjProp.has('object1')).to.be.true;
+      expect(UnobfuscationCollections.reservedObjProp.has('object2')).to.be.true;
+      expect(UnobfuscationCollections.reservedObjProp.size).to.equal(2);
+
+      // Verify exportNameAndPropSet (using assignment)
+      expect(UnobfuscationCollections.reservedExportNameAndProp.has('export1')).to.be.true;
+      expect(UnobfuscationCollections.reservedExportNameAndProp.has('export2')).to.be.true;
+      expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(2);
+
+      // Verify enumPropertySet (using the add method)
+      expect(UnobfuscationCollections.reservedEnum.has('enum1')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.has('enum2')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.size).to.equal(2);
+    });
+
+    it('should handle adding to existing collections correctly', () => {
+      // Set initial value
+      UnobfuscationCollections.reservedStruct.add('existingStruct');
+      UnobfuscationCollections.reservedEnum.add('existingEnum');
+
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: new Set(['newStruct1', 'newStruct2']),
+        stringPropertySet: new Set(['newString']),
+        objectPropertySet: new Set(['newObject']),
+        exportNameAndPropSet: new Set(['newExport']),
+        exportNameSet: undefined,
+        enumPropertySet: new Set(['newEnum1', 'newEnum2']),
+      };
+
+      obfuscator.addReservedSetForPropertyObf(properties);
+
+      // Verify that structPropertySet is merged
+      expect(UnobfuscationCollections.reservedStruct.has('existingStruct')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.has('newStruct1')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.has('newStruct2')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.size).to.equal(3);
+
+      // Verify that enumPropertySet is merged
+      expect(UnobfuscationCollections.reservedEnum.has('existingEnum')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.has('newEnum1')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.has('newEnum2')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.size).to.equal(3);
+
+      // Verify that the other set is substitutable
+      expect(UnobfuscationCollections.reservedStrProp.size).to.equal(1);
+      expect(UnobfuscationCollections.reservedObjProp.size).to.equal(1);
+      expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(1);
+    });
+
+    it('should not modify collections when all sets are empty', () => {
+      const initialStructSize = UnobfuscationCollections.reservedStruct.size;
+      const initialStrPropSize = UnobfuscationCollections.reservedStrProp.size;
+      const initialObjPropSize = UnobfuscationCollections.reservedObjProp.size;
+      const initialExportSize = UnobfuscationCollections.reservedExportNameAndProp.size;
+      const initialEnumSize = UnobfuscationCollections.reservedEnum.size;
+
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: new Set(),
+        stringPropertySet: new Set(),
+        objectPropertySet: new Set(),
+        exportNameAndPropSet: new Set(),
+        exportNameSet: undefined,
+        enumPropertySet: new Set(),
+      };
+
+      obfuscator.addReservedSetForPropertyObf(properties);
+  
+      expect(UnobfuscationCollections.reservedStruct.size).to.equal(initialStructSize);
+      expect(UnobfuscationCollections.reservedStrProp.size).to.equal(initialStrPropSize);
+      expect(UnobfuscationCollections.reservedObjProp.size).to.equal(initialObjPropSize);
+      expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(initialExportSize);
+      expect(UnobfuscationCollections.reservedEnum.size).to.equal(initialEnumSize);
+    });
+
+    it('should handle undefined sets correctly', () => {
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: undefined,
+        stringPropertySet: undefined,
+        objectPropertySet: undefined,
+        exportNameAndPropSet: undefined,
+        exportNameSet: undefined,
+        enumPropertySet: undefined,
+      };
+
+      // This shouldn't throw an error.
+      expect(() => {
+        obfuscator.addReservedSetForPropertyObf(properties);
+      }).not.to.throw();
+
+      expect(UnobfuscationCollections.reservedStruct.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedStrProp.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedObjProp.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedEnum.size).to.equal(0);
+    });
+
+    it('should handle mixed empty and non-empty sets', () => {
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: new Set(['struct1']),
+        stringPropertySet: new Set(), // empty set
+        objectPropertySet: new Set(['object1']),
+        exportNameAndPropSet: new Set(), // empty set
+        exportNameSet: undefined,
+        enumPropertySet: new Set(['enum1']),
+      };
+
+      obfuscator.addReservedSetForPropertyObf(properties);
+
+      // Verify that a non-empty set is added
+      expect(UnobfuscationCollections.reservedStruct.has('struct1')).to.be.true;
+      expect(UnobfuscationCollections.reservedObjProp.has('object1')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.has('enum1')).to.be.true;
+
+      // Verify that the empty set has not been added
+      expect(UnobfuscationCollections.reservedStrProp.size).to.equal(0);
+      expect(UnobfuscationCollections.reservedExportNameAndProp.size).to.equal(0);
+    });
+
+    it('should handle duplicate values in struct and enum sets', () => {
+      // Set initial value
+      UnobfuscationCollections.reservedStruct.add('duplicateValue');
+      UnobfuscationCollections.reservedEnum.add('duplicateValue');
+
+      const properties: ReseverdSetForArkguard = {
+        structPropertySet: new Set(['duplicateValue', 'newValue']),
+        stringPropertySet: new Set(['string1']),
+        objectPropertySet: new Set(['object1']),
+        exportNameAndPropSet: new Set(['export1']),
+        exportNameSet: undefined,
+        enumPropertySet: new Set(['duplicateValue', 'newEnum']),
+      };
+
+      obfuscator.addReservedSetForPropertyObf(properties);
+
+      // Verify that duplicate values are not added repeatedly (a characteristic of Set)
+      expect(UnobfuscationCollections.reservedStruct.has('duplicateValue')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.has('newValue')).to.be.true;
+      expect(UnobfuscationCollections.reservedStruct.size).to.equal(2);
+
+      expect(UnobfuscationCollections.reservedEnum.has('duplicateValue')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.has('newEnum')).to.be.true;
+      expect(UnobfuscationCollections.reservedEnum.size).to.equal(2);
     });
   });
 
@@ -480,6 +664,7 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
       const properties: ReseverdSetForArkguard = {
         structPropertySet: undefined,
         stringPropertySet: undefined,
+        objectPropertySet: undefined,
         exportNameAndPropSet: undefined,
         exportNameSet: new Set(['exportName1']),
         enumPropertySet: undefined,
@@ -600,14 +785,15 @@ export declare function findElement<T>(arr: T[], callback: (item: T) => boolean)
       PropCollections.universalReservedProperties.push(/universal\d+/);
       globalFileNameMangledTable.set('key1', 'value1');
       renameFileNameModule.historyFileNameMangledTable = new Map([['keyA', 'valueA']]);
-      UnobfuscationCollections.reservedSdkApiForProp.add('api1');  
-      UnobfuscationCollections.reservedSdkApiForGlobal.add('globalApi1');  
-      UnobfuscationCollections.reservedSdkApiForLocal.add('localApi1');  
-      UnobfuscationCollections.reservedStruct.add('struct1');  
-      UnobfuscationCollections.reservedLangForProperty.add('lang1');  
-      UnobfuscationCollections.reservedExportName.add('exportName1');  
-      UnobfuscationCollections.reservedExportNameAndProp.add('exportNameAndProp1');  
-      UnobfuscationCollections.reservedStrProp.add('stringProp1');  
+      UnobfuscationCollections.reservedSdkApiForProp.add('api1');
+      UnobfuscationCollections.reservedSdkApiForGlobal.add('globalApi1');
+      UnobfuscationCollections.reservedSdkApiForLocal.add('localApi1');
+      UnobfuscationCollections.reservedStruct.add('struct1');
+      UnobfuscationCollections.reservedLangForProperty.add('lang1');
+      UnobfuscationCollections.reservedExportName.add('exportName1');
+      UnobfuscationCollections.reservedExportNameAndProp.add('exportNameAndProp1');
+      UnobfuscationCollections.reservedStrProp.add('stringProp1');
+      UnobfuscationCollections.reservedObjProp.add('objectProp1');
       UnobfuscationCollections.reservedEnum.add('enum1');  
       UnobfuscationCollections.unobfuscatedPropMap.set('age', new Set(['key', 'value']));
       UnobfuscationCollections.unobfuscatedNamesMap.set('name1', new Set(['key1', 'value2']));  

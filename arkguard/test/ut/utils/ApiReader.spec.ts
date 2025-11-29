@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,7 +50,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -98,7 +98,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -152,7 +152,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -191,7 +191,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -280,7 +280,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -370,7 +370,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -406,7 +406,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -496,7 +496,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -640,7 +640,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
         {
@@ -786,7 +786,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(ohModulesFileList,
         {
@@ -897,7 +897,7 @@ describe('test for ApiReader', function () {
         }
       };
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       let projectAndLibs: ReseverdSetForArkguard =
         readProjectPropertiesByCollectedPaths(fileList,
           {

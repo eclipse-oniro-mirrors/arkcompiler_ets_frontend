@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,6 @@
 import fs from 'fs';
 import path from 'path';
 import JSON5 from 'json5';
-
-import type * as ts from 'typescript';
 
 import { FileUtils } from '../utils/FileUtils';
 import {
@@ -41,7 +39,7 @@ import { AtIntentCollections, AtKeepCollections, LocalVariableCollections, Unobf
 import { INameObfuscationOption } from '../configs/INameObfuscationOption';
 import { WhitelistType } from '../utils/TransformUtil';
 import { endFilesEvent, startFilesEvent } from '../utils/PrinterUtils';
-import { initScanProjectConfigByMergeConfig, scanProjectConfig, resetScanProjectConfig } from '../common/ApiReader';
+import { initScanProjectConfigByMergeConfig, resetScanProjectConfig } from '../common/ApiReader';
 import { MemoryDottingDefine } from '../utils/MemoryDottingDefine';
 import type { HvigorErrorInfo } from '../common/type';
 import { addToSet, KeepInfo } from '../utils/ProjectCollections';
@@ -76,6 +74,7 @@ enum OptionType {
   ENABLE_BYTECODE_OBFUSCATION_DEBUGGING,
   ENABLE_BYTECODE_OBFUSCATION_ENHANCED,
   ENABLE_BYTECODE_OBFUSCATION_ARKUI,
+  KEEP_OBJECT_PROPS,
   STRIP_NOT_COMPILED_MODULE_NAME
 }
 export { OptionType as OptionTypeForTest };
@@ -125,6 +124,7 @@ class ObOptions {
   stripSystemApiArgs: boolean = false;
   keepParameterNames: boolean = false;
   stripNotCompiledModuleName: boolean = false;
+  keepObjectProps: boolean = false;
 
   mergeObOptions(other: ObOptions): void {
     this.disableObfuscation = this.disableObfuscation || other.disableObfuscation;
@@ -143,6 +143,7 @@ class ObOptions {
     this.keepParameterNames = this.keepParameterNames || other.keepParameterNames;
     this.enableAtKeep = this.enableAtKeep || other.enableAtKeep;
     this.stripNotCompiledModuleName = this.stripNotCompiledModuleName || other.stripNotCompiledModuleName;
+    this.keepObjectProps = this.keepObjectProps || other.keepObjectProps;
 
     if (other.printNameCache.length > 0) {
       this.printNameCache = other.printNameCache;
@@ -413,6 +414,8 @@ export class ObConfigResolver {
   static readonly STRIP_SYSTEM_API_ARGS = 'strip-system-api-args';
   static readonly KEEP_PARAMETER_NAMES = '-keep-parameter-names';
   static readonly STRIP_NOT_COMPILED_MODULE_NAME = 'strip-not-compiled-module-name';
+  // obfuscation options for add object literal props to white list
+  static readonly KEEP_OBJECT_PROPS = '-keep-object-props';
 
   // renameFileName, printNameCache, applyNameCache, removeComments and keepComments won't be reserved in obfuscation.txt file.
   static exportedSwitchMap: Map<string, string> = new Map([
@@ -483,6 +486,8 @@ export class ObConfigResolver {
         return OptionType.KEEP_PARAMETER_NAMES;
        case ObConfigResolver.STRIP_NOT_COMPILED_MODULE_NAME:
         return OptionType.STRIP_NOT_COMPILED_MODULE_NAME; 
+      case ObConfigResolver.KEEP_OBJECT_PROPS:
+        return OptionType.KEEP_OBJECT_PROPS;
       default:
         return OptionType.NONE;
     }
@@ -592,6 +597,11 @@ export class ObConfigResolver {
         }
         case OptionType.KEEP_PARAMETER_NAMES: {
           configs.options.keepParameterNames = true;
+          extraOptionType = OptionType.NONE;
+          continue;
+        }
+        case OptionType.KEEP_OBJECT_PROPS: {
+          configs.options.keepObjectProps = true;
           extraOptionType = OptionType.NONE;
           continue;
         }
@@ -1242,6 +1252,7 @@ export function printWhitelist(obfuscationOptions: ObOptions, nameOptions: IName
   const enableStringProp = obfuscationOptions.enableStringPropertyObfuscation;
   const enableExport = obfuscationOptions.enableExportObfuscation;
   const enableAtKeep = obfuscationOptions.enableAtKeep;
+  const keepObjectProps = obfuscationOptions.keepObjectProps;
   const reservedConfToplevelArrary = nameOptions.mReservedToplevelNames ?? [];
   const reservedConfPropertyArray = nameOptions.mReservedProperties ?? [];
   let whitelistObj = {
@@ -1250,6 +1261,7 @@ export function printWhitelist(obfuscationOptions: ObOptions, nameOptions: IName
     struct: [],
     exported: [],
     strProp: [],
+    objectProp: [],
     enum: []
   };
 
@@ -1280,6 +1292,12 @@ export function printWhitelist(obfuscationOptions: ObOptions, nameOptions: IName
     stringSet = UnobfuscationCollections.reservedStrProp;
   }
   whitelistObj.strProp = convertSetToArray(stringSet);
+
+  if (keepObjectProps && enableProperty) {
+    let reversedObjPropsSet: Set<string> = new Set();
+    reversedObjPropsSet = UnobfuscationCollections.reservedObjProp;
+    whitelistObj.objectProp = convertSetToArray(reversedObjPropsSet);
+  }
 
   whitelistObj.conf = convertSetToArray(LocalVariableCollections.reservedConfig);
   const hasPropertyConfig = enableProperty && reservedConfPropertyArray?.length > 0;
@@ -1343,6 +1361,7 @@ export function printUnobfuscationReasons(configPath: string, defaultPath: strin
     conf: 'same as the user-configured kept name',
     struct: 'same as the ArkUI struct property',
     strProp: 'same as the string property',
+    objectProp: 'same as the object property',
     exported: 'same as the exported names and properties',
     enum: 'same as the members in the enum'
   };

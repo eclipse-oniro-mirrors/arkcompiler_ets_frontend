@@ -17,7 +17,6 @@ import type {
   AnnotationDeclaration,
   ClassDeclaration,
   CommentRange,
-  CompilerOptions,
   Decorator,
   ElementAccessExpression,
   EnumDeclaration,
@@ -31,6 +30,7 @@ import type {
   Node,
   ParameterDeclaration,
   PropertyAccessExpression,
+  PropertyName,
   SourceFile,
   TypeAliasDeclaration,
   VariableDeclaration,
@@ -42,10 +42,10 @@ import {
   ClassElement,
   forEachChild,
   getLeadingCommentRangesOfNode,
-  isAnnotationDeclaration,
   isBinaryExpression,
   isClassDeclaration,
   isClassExpression,
+  isComputedPropertyName,
   isExpressionStatement,
   isEnumDeclaration,
   isExportAssignment,
@@ -104,6 +104,7 @@ import {
   getObjectProperties,
   getTypeAliasProperties,
   isParameterPropertyModifier,
+  objectPropsSet,
 } from '../utils/OhsUtil';
 import { scanProjectConfig } from './ApiReader';
 import { enumPropsSet } from '../utils/OhsUtil';
@@ -115,7 +116,7 @@ import {
   FileWhiteList, KeepInfo,
   projectWhiteListManager
 } from '../utils/ProjectCollections';
-import { AtKeepCollections, BytecodeObfuscationCollections, PropCollections } from '../utils/CommonCollections';
+import { AtKeepCollections, BytecodeObfuscationCollections } from '../utils/CommonCollections';
 import { hasExportModifier } from '../utils/NodeUtils';
 
 export namespace ApiExtractor {
@@ -751,10 +752,15 @@ export namespace ApiExtractor {
       collectAndAddFieldDecorator(sourceFile);
     }
 
+    // collect object properties
+    if (scanProjectConfig.mKeepObjectProperty && scanProjectConfig.mPropertyObfuscation) {
+      collectObjectProperties(sourceFile);
+    }
+
     // collect names marked with '// @KeepSymbol' or '// @KeepAsConsumer', only support .ts/.ets
     if (shouldCollectAtKeep(fileName)) {
       collectAndAddAtKeepNames(sourceFile);
-    } 
+    }
 
     // collect origin source file white lists
     if (shouldCollectFileWhiteLists(apiType)) {
@@ -1505,6 +1511,50 @@ export namespace ApiExtractor {
       }
     }
     return atKeepType;
+  }
+
+  export function collectObjectProperties(node: Node): void {
+    if (isObjectLiteralExpression(node)) {
+      if (!node || !node.properties) {
+        return;
+      }
+
+      node.properties.forEach((propertyElement) => {
+        if (!propertyElement || !propertyElement.name) {
+          return;
+        }
+
+        const propertyName: PropertyName = propertyElement.name;
+        collectPropertyNamesAndStringPropertyNames(propertyName);
+      });
+    }
+
+    forEachChild(node, collectObjectProperties);
+    return;
+  }
+
+  // Collect the property and string attribute whitelist under the propertyAssignment node.
+  export function collectPropertyNamesAndStringPropertyNames(propertyName: PropertyName): void {
+    const objectPropertiesTemp: Set<string> | undefined = projectWhiteListManager?.fileWhiteListInfo?.fileKeepInfo.objectProperties;
+
+    if (isIdentifier(propertyName)) {
+      objectPropsSet.add(propertyName.text);
+      objectPropertiesTemp?.add(propertyName.text);
+    }
+
+    if (scanProjectConfig.mKeepStringProperty) {
+      return;
+    }
+
+    if (isStringLiteral(propertyName)) {
+      objectPropsSet.add(propertyName.text);
+      objectPropertiesTemp?.add(propertyName.text);
+    }
+
+    if (isComputedPropertyName(propertyName) && isStringLiteral(propertyName.expression)) {
+      objectPropsSet.add(propertyName.expression.text);
+      objectPropertiesTemp?.add(propertyName.expression.text);
+    }
   }
 
   function collectToplevelOrExportedNames(node: KeepTargetNode, isToplevel: boolean, isExported: boolean, atKeepType: AtKeepType): void {
