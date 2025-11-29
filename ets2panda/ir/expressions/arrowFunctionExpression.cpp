@@ -123,6 +123,45 @@ ir::TypeNode *ArrowFunctionExpression::CreateReturnNodeFromType(checker::ETSChec
     return returnNode;
 }
 
+void ArrowFunctionExpression::CleanCheckInformation()
+{
+    SetTsType(nullptr);
+    ir::ScriptFunction *const lambda = Function();
+    for (auto *p : lambda->Params()) {
+        if (!p->IsETSParameterExpression()) {
+            continue;
+        }
+        auto *const lambdaParam = p->AsETSParameterExpression()->Ident();
+        if (lambdaParam->TypeAnnotation() == nullptr) {
+            lambdaParam->Variable()->SetTsType(nullptr);
+            lambdaParam->SetTsType(nullptr);
+        }
+    }
+
+    if (lambda->ReturnTypeAnnotation() == nullptr) {
+        lambda->SetPreferredReturnType(nullptr);
+    }
+
+    lambda->SetSignature(nullptr);
+    if (!lambda->HasBody()) {
+        return;
+    }
+
+    lambda->Body()->IterateRecursivelyPostorder([](ir::AstNode *node) {
+        if (node->IsOpaqueTypeNode() || !node->IsTyped()) {
+            return;
+        }
+
+        node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+        node->AsTyped()->SetPreferredType(nullptr);
+        node->AsTyped()->SetTsType(nullptr);
+        if (node->IsIdentifier() && node->Parent()->IsCallExpression() &&
+            node->Parent()->AsCallExpression()->Callee() == node) {
+            node->AsTyped()->SetVariable(nullptr);
+        }
+    });
+}
+
 ir::TypeNode *ArrowFunctionExpression::CreateTypeAnnotation(checker::ETSChecker *checker)
 {
     ir::TypeNode *returnNode = nullptr;

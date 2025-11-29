@@ -13,6 +13,21 @@
  * limitations under the License.
  */
 
+/*
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 function foo(callback: (x: int, y: String) => boolean): void {
     let x: boolean = callback(5, "Hello");
 }
@@ -29,10 +44,12 @@ function main(): void {
         return y.length == x;
     });
     // Should report an error
-    foo((x, y) => /* @@ label1 */{
+    /* @@ label1 */foo((/* @@ label2 */x, /* @@ label3 */y) => {
         console.println("hello");
     });
 }
 
-/* @@? 20:15 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
-/* @@? 32:5 Error Semantic error ESE0127: No matching call signature for foo(((p1: Double, p2: String) => Boolean)) */
+/* @@@ label Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo(((p1: *ERROR_TYPE*, p2: *ERROR_TYPE*) => void)) */
+/* @@@ label2 Error Semantic error ESE0132: The type of parameter 'x' cannot be inferred */
+/* @@@ label3 Error Semantic error ESE0132: The type of parameter 'y' cannot be inferred */
