@@ -1,0 +1,48 @@
+{
+    "buildType": "build",
+    "buildMode": "Debug",
+    "packageName": "entry",
+    "moduleType": "entry",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/har_app/",
+    "sourceRoots": [
+        "src/"
+    ],
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/har_app/src/main.ets"
+    ],
+    "loaderOutPath": "./build/har_app",
+    "cachePath": "./build/cache/har_app",
+    "buildSdkPath": ".",
+    "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "dependentModuleList": [
+        {
+            "language": "1.2",
+            "packageName": "har_app",
+            "moduleType": "feature",
+            "moduleName": "har_app",
+            "modulePath": "${absolute_path_to_build_system}/test/har_app/",
+            "entryFile": "${absolute_path_to_build_system}/test/har_app/src/main.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [
+                "mock_har_abc"
+            ]
+        },
+        {
+            "language": "1.2",
+            "packageName": "mock_har_abc",
+            "moduleType": "har",
+            "moduleName": "mock_har_abc",
+            "modulePath": "${absolute_path_to_build_system}/test/mock_har_abc",
+            "entryFile": "${absolute_path_to_build_system}/test/mock_har_abc",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": [],
+            "byteCodeHar": true,
+            "abcPath": "./build/mock_har_abc/modules_static.abc"
+        }
+    ],
+    "enableDeclgenEts2Ts": false
+}

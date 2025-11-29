@@ -321,7 +321,8 @@ export interface DependencyItem {
     path: string,
     ohmUrl: string,
     sourceFilePath?: string,
-    alias?: string[]
+    alias?: string[],
+    mainFile?: string,
 }
 
 export interface CompilerOptions {

@@ -1,4 +1,5 @@
 {
+    "plugins": {},
     "buildType": "build",
     "buildMode": "Debug",
     "packageName": "entry",
@@ -8,8 +9,9 @@
     "compileFiles": [
         "${absolute_path_to_build_system}/test/mock_abc/src/MainPage.ets"
     ],
-    "loaderOutPath": "./build/cache",
-    "cachePath": "./build/cache",
+    "loaderOutPath": "./build/mock_abc",
+    "cachePath": "./build/cache/mock_abc",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/build/cache",
     "buildSdkPath": ".",
     "pandaStdlibPath": "${absolute_path_to_stdlib}",
     "enableDeclgenEts2Ts": false,
