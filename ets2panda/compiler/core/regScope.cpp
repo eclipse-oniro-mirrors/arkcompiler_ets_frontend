@@ -40,7 +40,7 @@ void RegScope::DebuggerCloseScope()
         return;
     }
 
-    cg_->scope_->SetScopeEnd(cg_->insns_.back());
+    cg_->ScopeInsnRange(cg_->scope_).second = cg_->insns_.back();
 }
 
 // LocalRegScope
@@ -60,7 +60,7 @@ LocalRegScope::LocalRegScope(CodeGen *cg, varbinder::Scope *scope) : RegScope(cg
     }
 
     if (cg_->IsDebug() && !cg_->insns_.empty()) {
-        cg_->scope_->SetScopeStart(cg_->insns_.back());
+        cg_->ScopeInsnRange(cg_->scope_).first = cg_->insns_.back();
         cg_->debugInfo_.VariableDebugInfo().push_back(cg_->scope_);
     }
 }
@@ -156,7 +156,7 @@ FunctionRegScope::FunctionRegScope(PandaGen *pg) : RegScope(pg), envScope_(pg->A
 FunctionRegScope::~FunctionRegScope()
 {
     if (cg_->IsDebug() && !cg_->insns_.empty()) {
-        cg_->topScope_->SetScopeStart(cg_->insns_.front());
+        cg_->ScopeInsnRange(cg_->topScope_).first = cg_->insns_.front();
         DebuggerCloseScope();
     }
 

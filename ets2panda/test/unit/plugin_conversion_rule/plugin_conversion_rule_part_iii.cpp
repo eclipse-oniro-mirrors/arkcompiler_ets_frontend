@@ -224,37 +224,6 @@ TEST_F(PluginConversionRuleUnitTest, VRegInputParameter)
     EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
 }
 
-// apiName: ScopeSetScopeStart
-TEST_F(PluginConversionRuleUnitTest, IRNodePtrInputParameter)
-{
-    std::string targetCAPI {R"(
-    extern "C" void ScopeSetScopeStart([[maybe_unused]] es2panda_Context *context, es2panda_Scope *classInstance,
-    [[maybe_unused]] es2panda_IRNode *ins/*return_args:*/)
-    {
-        auto *insE2p = reinterpret_cast<compiler::IRNode *>(ins);
-        ((reinterpret_cast< varbinder::Scope *>(classInstance))->SetScopeStart(insE2p));
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-// apiName: ScopeScopeStartConst
-TEST_F(PluginConversionRuleUnitTest, IRNodePtrReturnValue)
-{
-    std::string targetCAPI {R"(
-    extern "C" const es2panda_IRNode *ScopeScopeStartConst([[maybe_unused]] es2panda_Context *context,
-    es2panda_Scope *classInstance/*return_args:*/)
-    {
-        auto apiRes = reinterpret_cast<const es2panda_IRNode *>((reinterpret_cast<const varbinder::Scope *>
-                   (classInstance))->ScopeStart());
-    	return apiRes;
-    })"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
 // apiName: AstNodeDumpConst1
 TEST_F(PluginConversionRuleUnitTest, SrcDumperPtrInputParameter)
 {

@@ -179,26 +179,6 @@ public:
         return parent_;
     }
 
-    [[nodiscard]] const compiler::IRNode *ScopeStart() const noexcept
-    {
-        return startIns_;
-    }
-
-    [[nodiscard]] const compiler::IRNode *ScopeEnd() const noexcept
-    {
-        return endIns_;
-    }
-
-    void SetScopeStart(const compiler::IRNode *ins) noexcept
-    {
-        startIns_ = ins;
-    }
-
-    void SetScopeEnd(const compiler::IRNode *ins) noexcept
-    {
-        endIns_ = ins;
-    }
-
     [[nodiscard]] ir::AstNode *Node() noexcept
     {
         return node_;
@@ -372,8 +352,6 @@ private:
     VariableMap bindings_;
     ir::AstNode *node_ {};
     ScopeFlags flags_ {};
-    const compiler::IRNode *startIns_ {};
-    const compiler::IRNode *endIns_ {};
 };
 
 class VariableScope : public Scope {
@@ -575,16 +553,6 @@ public:
         return internalName_;
     }
 
-    void SetEmitted()
-    {
-        emitted_ = true;
-    }
-
-    bool IsEmitted() const
-    {
-        return emitted_;
-    }
-
     Variable *AddBinding(ArenaAllocator *allocator, Variable *currentVariable, Decl *newDecl,
                          [[maybe_unused]] ScriptExtension extension) override;
     Variable *InsertBindingIfAbsentInScope(ArenaAllocator *allocator, Variable *currentVariable, Decl *newDecl,
@@ -593,7 +561,6 @@ public:
 private:
     util::StringView name_ {};
     util::StringView internalName_ {};
-    bool emitted_ {false};
 };
 
 class ClassScope : public LocalScope {

@@ -153,12 +153,21 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
 
 Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
 {
+    auto cached = [this, typeToBeAwaited](Type *res) {
+        awaitedTypeCache_.insert({typeToBeAwaited, res});
+        return res;
+    };
+
+    if (auto it = awaitedTypeCache_.find(typeToBeAwaited); it != awaitedTypeCache_.end()) {
+        return it->second;
+    }
+
     if (typeToBeAwaited->IsETSTypeParameter()) {
-        return ProgramAllocator()->New<ETSAwaitedType>(typeToBeAwaited->AsETSTypeParameter());
+        return cached(ProgramAllocator()->New<ETSAwaitedType>(typeToBeAwaited->AsETSTypeParameter()));
     }
 
     if (typeToBeAwaited->IsETSUnionType()) {
-        ArenaVector<Type *> awaitedTypes(ProgramAllocator()->Adapter());
+        std::vector<Type *> awaitedTypes;
         for (Type *type : typeToBeAwaited->AsETSUnionType()->ConstituentTypes()) {
             Type *unwrapped = IsPromiseType(type) ? type->AsETSObjectType()->TypeArguments().at(0) : type;
             if (unwrapped->IsETSTypeParameter()) {
@@ -166,13 +175,13 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
             }
             awaitedTypes.push_back(UnwrapPromiseType(unwrapped));
         }
-        return CreateETSUnionType(std::move(awaitedTypes));
+        return cached(CreateETSUnionType(Span<Type *const>(awaitedTypes)));
     }
 
     if (IsPromiseType(typeToBeAwaited)) {
         Type *typeArg = typeToBeAwaited->AsETSObjectType()->TypeArguments().at(0);
         auto unwrappedType = UnwrapPromiseType(typeArg);
-        return unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType;
+        return cached(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
     }
 
     return typeToBeAwaited;

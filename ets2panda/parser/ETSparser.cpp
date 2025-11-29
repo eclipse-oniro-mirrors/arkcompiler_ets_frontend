@@ -373,7 +373,7 @@ bool ETSParser::TryMergeFromCache(util::ImportPathManager::ImportMetadata const 
 }
 
 //  Extracted from `ETSParser::SearchForNotParsed` to reduce its size and complexity
-std::optional<std::string> ETSParser::GetDeclarationSource(std::string &&fileToParse) const
+std::optional<std::string_view> ETSParser::GetDeclarationSource(std::string &&fileToParse) const
 {
     auto const readFromFile = [this, &fileToParse]() -> std::optional<std::string> {
         if (std::ifstream inputStream {fileToParse}; !inputStream) {
@@ -388,7 +388,11 @@ std::optional<std::string> ETSParser::GetDeclarationSource(std::string &&fileToP
     };
 
     if (!DeclarationCache::IsCacheActivated()) {
-        return readFromFile();
+        auto externalSource = readFromFile();
+        if (!externalSource.has_value()) {
+            return std::nullopt;
+        }
+        return std::make_optional(Allocator()->New<util::UString>(*externalSource, Allocator())->View().Utf8());
     }
 
     auto declaration = DeclarationCache::GetFromCache(fileToParse);
@@ -401,7 +405,7 @@ std::optional<std::string> ETSParser::GetDeclarationSource(std::string &&fileToP
                                                         std::make_shared<std::string>(std::move(*externalSource)));
     }
 
-    return std::make_optional(*declaration);
+    return std::make_optional(std::string_view {*declaration});
 }
 
 std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,

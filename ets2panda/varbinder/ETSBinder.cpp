@@ -1324,12 +1324,7 @@ bool ETSBinder::BuildInternalName(ir::ScriptFunction *scriptFunc)
     auto *funcScope = scriptFunc->Scope();
     funcScope->BindName(recordTable_->RecordName());
 
-    bool compilable = scriptFunc->Body() != nullptr && !isExternal;
-    if (!compilable) {
-        recordTable_->EmplaceSignatures(funcScope, scriptFunc);
-    }
-
-    return compilable;
+    return scriptFunc->Body() != nullptr && !isExternal;
 }
 
 bool ETSBinder::BuildInternalNameWithCustomRecordTable(ir::ScriptFunction *const scriptFunc,
@@ -1347,12 +1342,7 @@ bool ETSBinder::BuildInternalNameWithCustomRecordTable(ir::ScriptFunction *const
     auto *const funcScope = scriptFunc->Scope();
     funcScope->BindName(recordTable->RecordName());
 
-    const bool compilable = scriptFunc->Body() != nullptr && !isExternal;
-    if (!compilable) {
-        recordTable->EmplaceSignatures(funcScope, scriptFunc);
-    }
-
-    return compilable;
+    return scriptFunc->Body() != nullptr && !isExternal;
 }
 
 void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
@@ -1401,9 +1391,11 @@ void ETSBinder::BuildFunctionName(const ir::ScriptFunction *func) const
     }
 
     signature->ToAssemblerType(ss);
-
-    util::UString internalName(ss.str(), Allocator());
-    funcScope->BindInternalName(internalName.View());
+    auto newName = ss.str();
+    if (funcScope->InternalName().Utf8() == newName) {
+        return;
+    }
+    funcScope->BindInternalName(util::UString(newName, Allocator()).View());
 }
 
 void ETSBinder::InitImplicitThisParam()

@@ -82,6 +82,7 @@ public:
           catchList_(allocator_->Adapter()),
           typeMap_(allocator_->Adapter()),
           programElement_(std::get<ProgramElement *>(toCompile)),
+          scopeInsnRanges_(allocator->Adapter()),
           sa_(this),
           ra_(this, spiller),
           rra_(this, spiller)
@@ -185,6 +186,18 @@ public:
         Ra().AdjustInsRegWhenHasSpill();
     }
 
+    auto &ScopeInsnRange(varbinder::Scope const *scope)
+    {
+        return scopeInsnRanges_.insert({scope, {}}).first->second;
+    }
+
+    auto const &ScopeInsnRange(varbinder::Scope const *scope) const
+    {
+        auto it = scopeInsnRanges_.find(scope);
+        ES2PANDA_ASSERT(it->first);
+        return it->second;
+    }
+
 protected:
     [[nodiscard]] SimpleAllocator &Sa() noexcept;
     [[nodiscard]] const SimpleAllocator &Sa() const noexcept;
@@ -209,6 +222,8 @@ private:
     TypeMap typeMap_;
     ProgramElement *programElement_ {};
     DynamicContext *dynamicContext_ {};
+    ArenaUnorderedMap<varbinder::Scope const *, std::pair<const compiler::IRNode *, const compiler::IRNode *>>
+        scopeInsnRanges_;
 
     SimpleAllocator sa_;
     RegAllocator ra_;
