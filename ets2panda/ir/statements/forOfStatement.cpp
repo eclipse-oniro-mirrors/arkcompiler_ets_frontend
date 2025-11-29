@@ -23,7 +23,7 @@ namespace ark::es2panda::ir {
 
 checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::Type *exprType)
 {
-    ArenaVector<checker::Type *> types(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> types;
 
     for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
         if (it->IsETSStringType()) {

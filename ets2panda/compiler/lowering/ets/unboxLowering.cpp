@@ -113,21 +113,23 @@ static checker::Type *MaybeRecursivelyUnboxTupleType(UnboxContext *uctx, checker
     bool anyChange = false;
     auto *srcTup = t->AsETSTupleType();
 
-    ArenaVector<checker::Type *> newTps {uctx->allocator->Adapter()};
+    std::vector<checker::Type *> newTps;
     for (auto *e : srcTup->GetTupleTypesList()) {
         auto *newE = MaybeRecursivelyUnboxReferenceType(uctx, e, alreadySeen);
         newTps.push_back(newE);
         anyChange |= (newE != e);
     }
 
-    return anyChange ? uctx->allocator->New<checker::ETSTupleType>(uctx->checker, newTps) : t;
+    return anyChange
+               ? uctx->checker->CreateETSTupleType(std::move(newTps), srcTup->HasTypeFlag(checker::TypeFlag::READONLY))
+               : t;
 }
 
 static checker::Type *MaybeRecursivelyUnboxUnionType(UnboxContext *uctx, checker::Type *t, TypeIdStorage *alreadySeen)
 {
     bool anyChange = false;
     auto *srcUnion = t->AsETSUnionType();
-    ArenaVector<checker::Type *> newTps {uctx->allocator->Adapter()};
+    std::vector<checker::Type *> newTps;
     for (auto *e : srcUnion->ConstituentTypes()) {
         auto *newE = MaybeRecursivelyUnboxReferenceType(uctx, e, alreadySeen);
         newTps.push_back(newE);

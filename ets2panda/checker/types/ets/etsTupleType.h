@@ -25,9 +25,9 @@ class ETSTupleType : public Type {
     using TupleSizeType = std::size_t;
 
 public:
-    explicit ETSTupleType(ETSChecker *checker, const ArenaVector<Type *> &typeList)
+    explicit ETSTupleType(ETSChecker *checker, const ArenaVector<Type *> &&typeList)
         : Type(checker::TypeFlag::ETS_TUPLE),
-          typeList_(typeList),
+          typeList_(std::move(typeList)),
           // NOLINTNEXTLINE(readability-implicit-bool-conversion)
           wrapperType_(checker->GlobalBuiltinTupleType(typeList_.size()) != nullptr
                            ? checker->GlobalBuiltinTupleType(typeList_.size())->AsETSObjectType()

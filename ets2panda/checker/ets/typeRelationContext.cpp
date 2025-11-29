@@ -147,7 +147,6 @@ void ConstraintCheckScope::TryCheckConstraints()
 void InstantiationContext::InstantiateType(ETSObjectType *type, ArenaVector<Type *> &&typeArgTypes,
                                            const lexer::SourcePosition &pos)
 {
-    util::StringView hash = checker_->GetHashFromTypeArguments(typeArgTypes);
     auto const &typeParams = type->TypeArguments();
 
     while (typeArgTypes.size() < typeParams.size()) {
@@ -168,9 +167,7 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ArenaVector<Type
         checker_->PendingConstraintCheckRecords().emplace_back(&typeParams, std::move(substitution), pos);
     }
 
-    type->InsertInstantiationMap(hash, result_->AsETSObjectType());
     result_->AddTypeFlag(TypeFlag::GENERIC);
-
     ctScope.TryCheckConstraints();
 }
 

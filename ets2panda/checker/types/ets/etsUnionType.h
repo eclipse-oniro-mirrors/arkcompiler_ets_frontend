@@ -52,8 +52,6 @@ public:
 
     static void NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &types);
 
-    [[nodiscard]] ArenaVector<Type *> GetNonConstantTypes(ETSChecker *checker) const noexcept;
-
     const util::StringView &GetAssemblerType() const
     {
         return assemblerTypeCache_;
@@ -98,7 +96,7 @@ private:
 
     static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types);
     [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::Type *source,
-                                          ArenaVector<Type *> &unionTypes) noexcept;
+                                          std::vector<Type *> &unionTypes) noexcept;
 
     [[nodiscard]] checker::Type *GetAssignableBuiltinType(
         checker::ETSChecker *checker, checker::ETSObjectType *sourceType,

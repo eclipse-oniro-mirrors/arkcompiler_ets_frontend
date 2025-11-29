@@ -106,7 +106,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
         return checker->InvalidateType(this);
     }
 
-    ArenaVector<checker::Type *> typeList(checker->ProgramAllocator()->Adapter());
+    std::vector<checker::Type *> typeList;
 
     bool isTypeError = false;
     for (auto *const typeAnnotation : GetTupleTypeAnnotationsList()) {
@@ -121,15 +121,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
         return SetTsType(checker->GlobalTypeError());
     }
 
-    auto *tupleType = checker->ProgramAllocator()->New<checker::ETSTupleType>(checker, typeList);
-
-    if (IsReadonlyType()) {
-        ES2PANDA_ASSERT(checker->GetReadonlyType(tupleType));
-        tupleType = checker->GetReadonlyType(tupleType)->AsETSTupleType();
-    }
-
-    SetTsType(tupleType);
-    return TsType();
+    return SetTsType(checker->CreateETSTupleType(std::move(typeList), IsReadonlyType()));
 }
 
 ETSTuple *ETSTuple::Clone(ArenaAllocator *const allocator, AstNode *const parent)

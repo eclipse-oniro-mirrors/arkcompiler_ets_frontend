@@ -125,13 +125,13 @@ void ETSTupleType::AssignmentTarget(TypeRelation *const relation, Type *const so
 Type *ETSTupleType::Substitute(TypeRelation *relation, const Substitution *substitution)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    ArenaVector<Type *> newTypeList(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> newTypeList;
 
     for (auto *const tupleTypeListElement : GetTupleTypesList()) {
         newTypeList.emplace_back(tupleTypeListElement->Substitute(relation, substitution));
     }
 
-    return checker->ProgramAllocator()->New<ETSTupleType>(checker, std::move(newTypeList));
+    return checker->CreateETSTupleType(std::move(newTypeList), HasTypeFlag(TypeFlag::READONLY));
 }
 
 void ETSTupleType::IsSubtypeOf(TypeRelation *const relation, Type *target)
@@ -197,7 +197,12 @@ Type *ETSTupleType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[ma
                                 [[maybe_unused]] GlobalTypesHolder *globalTypes)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    auto *const tupleType = allocator->New<ETSTupleType>(checker, GetTupleTypesList());
+    ArenaVector<Type *> copiedElements(checker->Allocator()->Adapter());
+    copiedElements.reserve(GetTupleTypesList().size());
+    for (auto t : GetTupleTypesList()) {
+        copiedElements.push_back(t->Instantiate(allocator, relation, globalTypes));
+    }
+    auto *const tupleType = allocator->New<ETSTupleType>(checker, std::move(copiedElements));
     ES2PANDA_ASSERT(tupleType != nullptr);
     tupleType->typeFlags_ = typeFlags_;
     return tupleType;

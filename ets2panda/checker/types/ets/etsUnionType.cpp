@@ -312,7 +312,7 @@ void ETSUnionType::NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &t
 Type *ETSUnionType::Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    ArenaVector<Type *> copiedConstituents(allocator->Adapter());
+    std::vector<Type *> copiedConstituents;
     for (auto *it : constituentTypes_) {
         copiedConstituents.emplace_back(it->Instantiate(allocator, relation, globalTypes));
     }
@@ -322,7 +322,7 @@ Type *ETSUnionType::Instantiate(ArenaAllocator *allocator, TypeRelation *relatio
 Type *ETSUnionType::Substitute(TypeRelation *relation, const Substitution *substitution)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    ArenaVector<Type *> substitutedConstituents(checker->Allocator()->Adapter());
+    std::vector<Type *> substitutedConstituents;
     for (auto *ctype : constituentTypes_) {
         substitutedConstituents.emplace_back(ctype->Substitute(relation, substitution));
     }
@@ -409,7 +409,7 @@ checker::Type *ETSUnionType::GetAssignableBuiltinType(
 }
 
 bool ETSUnionType::ExtractType(checker::ETSChecker *checker, checker::Type *source,
-                               ArenaVector<Type *> &unionTypes) noexcept
+                               std::vector<Type *> &unionTypes) noexcept
 {
     source = checker->GetNonConstantType(source);
 
@@ -449,9 +449,9 @@ bool ETSUnionType::ExtractType(checker::ETSChecker *checker, checker::Type *sour
 std::pair<checker::Type *, checker::Type *> ETSUnionType::GetComplimentaryType(ETSChecker *const checker,
                                                                                checker::Type *sourceType)
 {
-    ArenaVector<Type *> unionTypes(checker->Allocator()->Adapter());
+    std::vector<Type *> unionTypes;
     for (auto *ct : constituentTypes_) {
-        unionTypes.emplace_back(ct->Clone(checker));
+        unionTypes.emplace_back(ct);
     }
 
     auto const extractType = [checker, &unionTypes](Type *&type) -> bool {
@@ -519,15 +519,6 @@ bool ETSUnionType::IsOverlapWith(TypeRelation *relation, Type const *type) const
         }
     }
     return false;
-}
-
-ArenaVector<Type *> ETSUnionType::GetNonConstantTypes(ETSChecker *checker) const noexcept
-{
-    ArenaVector<Type *> nonConstTypes(checker->Allocator()->Adapter());
-    for (auto *ct : constituentTypes_) {
-        nonConstTypes.emplace_back(checker->GetNonConstantType(ct));
-    }
-    return nonConstTypes;
 }
 
 }  // namespace ark::es2panda::checker
