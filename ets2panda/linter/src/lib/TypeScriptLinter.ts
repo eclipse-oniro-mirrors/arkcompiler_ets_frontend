@@ -1890,6 +1890,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private handleLiteralAsPropertyName(node: ts.PropertyDeclaration | ts.PropertySignature): void {
     const propName = node.name;
     if (!!propName && (ts.isNumericLiteral(propName) || this.options.arkts2 && ts.isStringLiteral(propName))) {
+      const text = propName.text;
+      if (INVALID_IDENTIFIER_KEYWORDS.includes(text)) {
+        this.incrementCounters(node.name, FaultID.LiteralAsPropertyName);
+        return;
+      }
       const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyName(propName);
       this.incrementCounters(node.name, FaultID.LiteralAsPropertyName, autofix);
     }
@@ -6013,6 +6018,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     node: ts.Node
   ): void {
     if (!this.options.arkts2) {
+      return;
+    }
+    const text = tsEnumMemberName.text;
+    if (INVALID_IDENTIFIER_KEYWORDS.includes(text)) {
+      this.incrementCounters(node, FaultID.LiteralAsPropertyName);
       return;
     }
     const autofix = this.autofixer?.fixLiteralAsPropertyNamePropertyName(tsEnumMemberName, tsEnumMember);
