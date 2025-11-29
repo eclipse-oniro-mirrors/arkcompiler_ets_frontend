@@ -1,0 +1,11 @@
+#31759
+fuzz/too_many_async.ets
+#31476
+fuzz/too_many_call_expr.ets
+#31378
+fuzz/too_many_left_square_brackets.ets
+#31379
+fuzz/too_many_new_expr.ets
+#31456
+fuzz/too_many_plus_1.ets
+
