@@ -206,10 +206,11 @@ export class LspDriverHelper {
         filePath: string,
         cfg: Config,
         globalContextPtr?: KNativePointer,
-        isExternal: boolean = false
+        isExternal: boolean = false,
+        isLspUsage: boolean = false
     ): KNativePointer {
         if (globalContextPtr) {
-            return Context.lspCreateCacheContextFromString(source, filePath, cfg, globalContextPtr, isExternal);
+            return Context.lspCreateCacheContextFromString(source, filePath, cfg, globalContextPtr, isExternal, isLspUsage);
         } else {
             return Context.lspCreateFromString(source, filePath, cfg);
         }

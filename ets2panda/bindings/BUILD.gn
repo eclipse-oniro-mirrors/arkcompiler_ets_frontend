@@ -386,7 +386,6 @@ action("build_bindings") {
     "src/generated/Es2pandaEnums.ts",
     "src/generated/Es2pandaNativeModule.ts",
     "src/index.ts",
-    "src/lsp/compile_thread_worker.ts",
     "src/lsp/generateArkTSConfig.ts",
     "src/lsp/generateBuildConfig.ts",
     "src/lsp/index.ts",

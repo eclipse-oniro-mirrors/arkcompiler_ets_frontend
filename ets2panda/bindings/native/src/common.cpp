@@ -205,15 +205,15 @@ TS_INTEROP_V1(DestroyGlobalContext, KNativePointer)
 
 KNativePointer impl_CreateCacheContextFromString(KNativePointer configPtr, KStringPtr &sourcePtr,
                                                  KStringPtr &filenamePtr, KNativePointer globalContext,
-                                                 KBoolean isExternal)
+                                                 KBoolean isExternal, KBoolean isLspUsage)
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
     return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.Data(), filenamePtr.Data(), context,
-                                                         isExternal != 0);
+                                                         isExternal != 0, isLspUsage);
 }
-TS_INTEROP_5(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
-             KBoolean)
+TS_INTEROP_6(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
+             KBoolean, KBoolean)
 
 void impl_RemoveFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
 {
