@@ -385,6 +385,27 @@
             "suggest": "",
             "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
             "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 3,
+            "endLine": 187,
+            "endColumn": 5,
+            "problem": "ExplicitFunctionType",
+            "autofix": [
+                {
+                    "start": 3946,
+                    "end": 3950,
+                    "replacementText": "a1?.unsafeCall",
+                    "line": 187,
+                    "column": 3,
+                    "endLine": 187,
+                    "endColumn": 5
+                }
+            ],
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
         }
     ]
 }
