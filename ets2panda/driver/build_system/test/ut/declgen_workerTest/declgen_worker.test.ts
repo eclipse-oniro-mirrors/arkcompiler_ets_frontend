@@ -47,6 +47,21 @@ jest.mock('../../../src/plugins/plugins_driver', () => {
     } as any;
     return { PluginDriver: mPluginDriver, PluginHook: { PARSED: 1, CHECKED: 2 } };
 });
+
+jest.mock('../../../src/init/init_koala_modules', () => ({
+    initKoalaModules: jest.fn((buildConfig) => {
+        const fakeKoala = {
+            arkts: fakeArkts,
+            arktsGlobal: fakeArktsGlobal
+        };
+        fakeKoala.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+
+        buildConfig.arkts = fakeKoala.arkts;
+        buildConfig.arktsGlobal = fakeKoala.arktsGlobal;
+        return fakeKoala;
+    })
+}));
+
 jest.mock('../../../src/logger', () => {
     const mLogger = {
         printError: jest.fn(),

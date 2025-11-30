@@ -1,0 +1,93 @@
+slotNum = 0x0
+.language TypeScript
+.function any &library/annotation-test&1.0.0.#~C=#C(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x0
+.language TypeScript
+.function any &library/annotation-test&1.0.0.#~C>#M(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x3
+.language TypeScript
+.function any &library/annotation-test&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, &library/annotation-test&1.0.0.#~C=#C, &library/annotation-test&1.0.0_2, 0x0, v0
+	ldobjbyname 0x1, prototype
+	returnundefined
+label_2: 
+}
+
+
+slotNum = 0x9
+.language TypeScript
+.function any &library/dynamic-import-test&1.0.0.#*#(any a0, any a1, any a2, any a3) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, console
+	sta v0
+	ldobjbyname 0x1, info
+	sta v1
+	lda.str DynamicImport ns.add(3, 5) = %d
+	sta v2
+	lda a3
+	ldobjbyname 0x3, add
+	sta v3
+	ldai 0x3
+	sta v4
+	ldai 0x5
+	sta v5
+	lda v3
+	callthis2 0x5, a3, v4, v5
+	sta v3
+	lda v1
+	callthis2 0x7, v0, v2, v3
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x5
+.language TypeScript
+.function any &library/dynamic-import-test&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda.str @normalized:N&&&library/util&1.0.0
+	dynamicimport
+	sta v0
+	ldobjbyname 0x0, then
+	sta v1
+	definefunc 0x2, &library/dynamic-import-test&1.0.0.#*#, 0x1
+	sta v2
+	lda v1
+	callthis1 0x3, v0, v2
+	returnundefined
+label_2: 
+}
+
+
+slotNum = 0x0
+.language TypeScript
+.function any &library/static-import-test&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldexternalmodulevar 0x0
+	throw.undefinedifholewithname X
+	ldexternalmodulevar 0x1
+	throw.undefinedifholewithname Y
+	returnundefined
+label_2: 
+}
+
+

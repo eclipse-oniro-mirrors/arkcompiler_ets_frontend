@@ -240,6 +240,7 @@ public:
 
     bool IsDebug() const;
     bool isDebuggerEvaluateExpressionMode() const;
+    bool EnableColumn() const;
     std::string SourceFile() const;
     uint32_t ParamCount() const;
     uint32_t FormalParametersCount() const;

@@ -284,7 +284,7 @@
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "optional_field_interfaceUnion.ets"
                     }
                   }
                 },

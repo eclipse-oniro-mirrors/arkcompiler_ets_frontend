@@ -19,11 +19,6 @@ slotNum = 0x0
 slotNum = 0x7
 .language ECMAScript
 .function any original.func_main_0(any a0, any a1, any a2) {
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 	ldexternalmodulevar 0x0
 	sta v0
 	throw.undefinedifholewithname test

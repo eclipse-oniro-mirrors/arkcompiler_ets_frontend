@@ -1,0 +1,60 @@
+slotNum = 0x0
+.language ECMAScript
+.function any .#~AA=#AA(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any .#~AA>#test(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, .#~AA>@0*#cb, 0x0
+	sta v0
+	tryldglobalbyname 0x1, print
+	sta v1
+	lda.str test
+	sta v2
+	lda v1
+	callarg1 0x2, v2
+	lda v0
+	return
+label_2: 
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any .#~AA>@0*#cb(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str cb
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any .func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, .#~AA=#AA, _1, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	sttoglobalrecord 0x3, AA
+	returnundefined
+label_2: 
+}
+
+

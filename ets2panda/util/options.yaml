@@ -55,9 +55,12 @@ options:
   description: Parse the input only
 
 - name: dump-ast
-  type: bool
-  default: false
   description: Dump the parsed AST
+  sub_options:
+  - name: output
+    type: std::string
+    default: ""
+    description: Dump the parsed AST to the specified file
 
 - name: dump-cfg
   type: bool

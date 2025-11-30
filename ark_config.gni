@@ -1,0 +1,60 @@
+# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("ark_root.gni")
+
+if (is_standard_system) {
+  default_enabled_plugins = []
+  platform_libs = []
+  platform_ldflags = [ "-static-libstdc++" ]
+  platform_include_dirs = []
+  use_pbqp = false
+} else {
+  default_enabled_plugins = []
+  platform_libs = []
+  platform_ldflags = []
+  platform_include_dirs = []
+  use_pbqp = false
+}
+
+enabled_plugins = default_enabled_plugins
+
+if (current_cpu == "arm") {
+  if (!defined(arm_float_abi) || arm_float_abi == "") {
+    arm_float_abi = "softfp"
+  }
+
+  assert(arm_float_abi == "soft" || arm_float_abi == "softfp" ||
+             arm_float_abi == "hard",
+         "arm_float_abi should be soft, softfp or hard")
+}
+
+enable_bytecode_optimizer = true
+enable_relayout_profile = false
+
+sdk_libc_secshared_dep = "bounds_checking_function:libsec_shared"
+sdk_libc_secshared_config =
+    "$ark_third_party_root/bounds_checking_function:libsec_public_config"
+
+if (is_mingw || is_mac || is_linux || target_os == "ios" ||
+    target_os == "android" || (is_build_sdk && is_ohos) ||
+    (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable)) {
+  sdk_libc_secshared_dep = "bounds_checking_function:libsec_static"
+}
+
+is_mob = !ark_standalone_build && !is_standard_system &&
+         (current_cpu != "arm" || is_wearable_product)
+
+enable_hilog =
+    !ark_standalone_build && is_standard_system && current_os == "ohos" &&
+    (current_cpu == "arm64" || current_cpu == "arm")

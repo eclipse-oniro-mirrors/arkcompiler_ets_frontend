@@ -166,7 +166,9 @@ VariableDeclaration::VariableDeclaration([[maybe_unused]] Tag const tag, Variabl
       declarators_(allocator->Adapter())
 {
     for (auto const &d : other.declarators_) {
-        declarators_.emplace_back(d->Clone(allocator, nullptr)->AsVariableDeclarator());
+        auto *dClone = d->Clone(allocator, nullptr);
+        ES2PANDA_ASSERT(dClone != nullptr);
+        declarators_.emplace_back(dClone->AsVariableDeclarator());
         declarators_.back()->SetParent(this);
     }
 

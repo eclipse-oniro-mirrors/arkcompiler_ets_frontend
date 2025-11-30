@@ -34,7 +34,8 @@ panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const e
 {
     CompilerContext context(program->Binder(), options.isDebug, options.isDebuggerEvaluateExpressionMode,
                             options.mergeAbc, false, options.recordDebugSource,
-                            debugInfoSourceFile, pkgName, program->RecordName(), patchFixHelper_);
+                            debugInfoSourceFile, pkgName, program->RecordName(), patchFixHelper_,
+                            options.enableColumn);
 
     ArenaAllocator localAllocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
 

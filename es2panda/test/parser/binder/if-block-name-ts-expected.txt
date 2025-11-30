@@ -50,11 +50,6 @@ slotNum = 0xb
 .function any .func_main_0(any a0, any a1, any a2) {
 label_6: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 	definefunc 0x0, .#*#, 0x0
 	callarg0 0x1
 	callruntime.isfalse 0x3

@@ -134,6 +134,7 @@ void RegAllocator::Run(IRNode *const ins, uint32_t realRegCount)
     ES2PANDA_ASSERT(ins != nullptr);
 
     std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+    ES2PANDA_ASSERT(ins != nullptr);
     const auto regCnt = ins->Registers(&regs);
 
     auto realRegCnt = std::min(realRegCount, static_cast<uint32_t>(regCnt));
@@ -295,6 +296,7 @@ void RangeRegAllocator::Run(IRNode *const ins, [[maybe_unused]] VReg rangeStart,
     ES2PANDA_ASSERT(ins != nullptr);
 
     std::array<VReg *, IRNode::MAX_REG_OPERAND> regs {};
+    ES2PANDA_ASSERT(ins != nullptr);
     const auto regCnt = ins->Registers(&regs);
     ES2PANDA_ASSERT(regCnt > 0);
 

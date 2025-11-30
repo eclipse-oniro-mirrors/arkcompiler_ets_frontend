@@ -21,8 +21,15 @@ if ((defined(ark_standalone_build) && ark_standalone_build) ||
       "//build/config/components/runtime_core/static_core/ark_common_config.gni")
 }
 
-typescript_dir = get_label_info("//third_party/typescript:build_typescript",
-                                "target_out_dir")
+if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
+  typescript_dir =
+      get_label_info("typescript:build_typescript_etc", "target_out_dir")
+  typescript_tgz = "${typescript_dir}/libs/ohos-typescript-4.9.5-r4.tgz"
+} else {
+  typescript_dir = get_label_info("//third_party/typescript:build_typescript",
+                                  "target_out_dir")
+  typescript_tgz = "${typescript_dir}/ohos-typescript-4.9.5-r4.tgz"
+}
 
 action("build_arkguard") {
   sources = [
@@ -62,11 +69,11 @@ action("build_arkguard") {
   script = "compile_arkguard.py"
   args = [
     rebase_path(get_path_info("./", "abspath")),
-    rebase_path("${typescript_dir}/ohos-typescript-4.9.5-r4.tgz"),
-    rebase_path("${target_out_dir}"),
+    rebase_path("$typescript_tgz"),
+    rebase_path("${target_out_dir}/${target_name}"),
   ]
 
-  outputs = [ "${target_out_dir}/arkguard-1.1.3.tgz" ]
+  outputs = [ "${target_out_dir}/${target_name}/arkguard-1.1.3.tgz" ]
 }
 
 if (!(defined(ark_static_standalone_build) && ark_static_standalone_build)) {

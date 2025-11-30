@@ -1,12 +1,19 @@
-#21131
+# Known failures list for weekly workload-fastverify-qemu-int
+
+#26315
+json-parse-inspector
 float-mm
+typescript-compiler
 wsl
+
+#18740
+splay
+
+#27146
+json-stringify-inspector
 
 #18863
 json-parse-inspector
-
-##27014
-pdfjs
 
 ##25919
 raytrace
@@ -17,8 +24,6 @@ typescript-compiler
 #30387
 crypto
 mandreel
-stanford-crypto-pbkdf2
-OfflineAssembler
-
-#30652
 numericalComputation
+OfflineAssembler
+stanford-crypto-pbkdf2

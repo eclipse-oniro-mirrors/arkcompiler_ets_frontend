@@ -143,6 +143,7 @@ public:
         compiler_alias::CompilationUnit unit {input, *options, 0, options->GetExtension(), diagnosticEngine_};
         auto parser = Parser(program, unit.options, diagnosticEngine_,
                              static_cast<parser_alias::ParserStatus>(unit.rawParserStatus));
+        parser.SetContext(publicContext_.get());
         auto analyzer = Analyzer(checker);
         checker->SetAnalyzer(&analyzer);
 

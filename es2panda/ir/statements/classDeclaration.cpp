@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "classDeclaration.h"
 
+#include <common/abc_file_utils.h>
 #include <compiler/base/lreference.h>
 #include <compiler/core/compilerContext.h>
 #include <compiler/core/emitter/emitter.h>
@@ -53,7 +54,8 @@ void ClassDeclaration::Compile(compiler::PandaGen *pg) const
     if (isAnnotationDecl_) {
         std::string annoName = std::string(def_->GetName());
         if (pg->Context()->IsMergeAbc()) {
-            std::string prefix = std::string(pg->Context()->RecordName()) + ".";
+            std::string prefix =
+                std::string(pg->Context()->RecordName()) + std::string(abc2program::RECORD_ANNOTATION_SEPARATOR);
             annoName.insert(0, prefix);
         }
         pg->Context()->GetEmitter()->AddAnnotationRecord(annoName, this);

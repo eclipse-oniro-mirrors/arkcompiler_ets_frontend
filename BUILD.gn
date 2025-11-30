@@ -11,11 +11,193 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//arkcompiler/runtime_core/ark_config.gni")
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
+  import("//arkcompiler/runtime_core/ark_config.gni")
+} else {
+  import("//arkcompiler/ets_frontend/ark_config.gni")
+}
 
 group("ets_frontend_build") {
   deps = [
     "./es2panda:es2panda_build",
     "./merge_abc:merge_proto_abc_build",
   ]
+}
+
+# Common config for ark source
+config("ark_config") {
+  visibility = [
+    "./*",
+    "//arkcompiler/ets_frontend/*",
+  ]
+
+  defines = [ "PANDA_TARGET_MOBILE_WITH_MANAGED_LIBS=1" ]
+
+  if (is_linux) {
+    defines += [
+      "PANDA_TARGET_UNIX",
+      "PANDA_TARGET_LINUX",
+      "PANDA_WITH_BYTECODE_OPTIMIZER",
+      "PANDA_WITH_COMPILER",
+      "PANDA_USE_FUTEX",
+    ]
+  } else if (is_mingw) {
+    defines += [
+      "PANDA_TARGET_WINDOWS",
+      "PANDA_WITH_BYTECODE_OPTIMIZER",
+      "PANDA_WITH_COMPILER",
+      "_CRTBLD",
+      "__LIBMSVCRT__",
+    ]
+  } else if (is_mac) {
+    defines += [
+      "PANDA_TARGET_UNIX",
+      "PANDA_TARGET_MACOS",
+      "PANDA_WITH_BYTECODE_OPTIMIZER",
+      "PANDA_WITH_COMPILER",
+    ]
+  } else if (target_os == "ios") {
+    defines += [
+      "PANDA_TARGET_UNIX",
+      "PANDA_TARGET_IOS",
+      "PANDA_WITH_BYTECODE_OPTIMIZER",
+      "PANDA_WITH_COMPILER",
+    ]
+  } else if (is_mob) {
+    defines += [
+      "PANDA_TARGET_OHOS",
+      "PANDA_TARGET_UNIX",
+      "PANDA_USE_FUTEX",
+      "PANDA_TARGET_MOBILE",
+      "PANDA_TARGET_MOBILE_WITH_NATIVE_LIBS",
+    ]
+  } else if (is_ohos) {
+    if (is_build_sdk) {
+      defines += [
+        "PANDA_TARGET_OHOS",
+        "PANDA_TARGET_UNIX",
+        "PANDA_WITH_BYTECODE_OPTIMIZER",
+        "PANDA_USE_FUTEX",
+      ]
+    } else {
+      defines += [
+        "PANDA_TARGET_OHOS",
+        "PANDA_TARGET_UNIX",
+        "PANDA_USE_FUTEX",
+      ]
+    }
+  } else {
+    defines += [
+      "PANDA_TARGET_UNIX",
+      "PANDA_USE_FUTEX",
+    ]
+  }
+
+  if (current_os == "android" && defined(is_arkui_x) && is_arkui_x) {
+    defines += [ "PANDA_TARGET_ARKUI_X" ]
+  }
+
+  if (enable_hilog) {
+    defines += [ "ENABLE_HILOG" ]
+  }
+
+  if (!is_debug) {
+    defines += [ "NDEBUG" ]
+  }
+
+  cflags_cc = [
+    "-std=c++17",
+    "-pedantic",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fno-rtti",
+    "-Wno-invalid-offsetof",
+
+    "-Wno-gnu-statement-expression",
+    "-Wno-unused-parameter",
+    "-Wno-unused-result",
+    "-Wno-unused-but-set-variable",
+  ]
+  if (defined(ohos_indep_compiler_enable) && !ohos_indep_compiler_enable) {
+    cflags_cc += [ "-fno-exceptions" ]
+  }
+
+  cflags_c = []
+
+  if (!is_mac && use_pbqp) {
+    cflags_cc += [
+      # PBQP regalloc
+      "-mllvm",
+      "-regalloc=pbqp",
+    ]
+  }
+
+  if (is_fastverify) {
+    cflags_cc += [
+      "-O3",
+      "-ggdb3",
+      "-gdwarf-4",
+      "-fno-omit-frame-pointer",
+      "-D_GLIBCXX_ASSERTIONS",
+    ]
+    cflags_c += [
+      "-O3",
+      "-ggdb3",
+      "-gdwarf-4",
+      "-fno-omit-frame-pointer",
+      "-D_GLIBCXX_ASSERTIONS",
+    ]
+  } else if (is_debug) {
+    cflags_cc += [
+      "-Og",
+      "-ggdb3",
+      "-gdwarf-4",
+    ]
+  }
+
+  if (enable_relayout_profile) {
+    defines += [ "PANDA_ENABLE_RELAYOUT_PROFILE" ]
+  }
+
+  configs = []
+  foreach(plugin, enabled_plugins) {
+    configs += [ "$ark_root/plugins/$plugin:ark_config" ]
+  }
+
+  if (current_cpu == "arm") {
+    cflags_cc += [
+      "-march=armv7-a",
+      "-mfloat-abi=${arm_float_abi}",
+      "-marm",
+      "-mfpu=vfp",
+    ]
+
+    if (arm_float_abi == "soft") {
+      defines += [ "PANDA_TARGET_ARM32_ABI_SOFT=1" ]
+    } else if (arm_float_abi == "softfp") {
+      defines += [ "PANDA_TARGET_ARM32_ABI_SOFTFP=1" ]
+    } else if (arm_float_abi == "hard") {
+      defines += [ "PANDA_TARGET_ARM32_ABI_HARD=1" ]
+    }
+
+    defines += [ "PANDA_TARGET_ARM32" ]
+  } else if (current_cpu == "arm64") {
+    defines += [
+      "PANDA_TARGET_ARM64",
+      "PANDA_TARGET_64",
+      "PANDA_ENABLE_GLOBAL_REGISTER_VARIABLES",
+      "PANDA_USE_32_BIT_POINTER",
+    ]
+  } else if (current_cpu == "x86") {
+    defines += [ "PANDA_TARGET_X86" ]
+  } else if (current_cpu == "amd64" || current_cpu == "x64" ||
+             current_cpu == "x86_64") {
+    defines += [
+      "PANDA_TARGET_64",
+      "PANDA_TARGET_AMD64",
+      "PANDA_USE_32_BIT_POINTER",
+    ]
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,6 +66,7 @@ import {
   isPropertyAccessExpression,
   isSetAccessor,
   isStringLiteral,
+  getJSDocTags,
   ScriptTarget,
   SyntaxKind,
   sys,
@@ -84,7 +85,8 @@ import {
   isIndexedAccessTypeNode,
   Extension,
   isCallExpression,
-  isDecorator
+  isDecorator,
+  isFunctionDeclaration
 } from 'typescript';
 
 import fs from 'fs';
@@ -366,6 +368,38 @@ export namespace ApiExtractor {
   };
 
   /**
+   * Collect all property names of recordkey tag in the AST.
+   */
+  const visitNodeForElementsWithRecordkey = function (astNode): void {
+    if (!astNode) {
+      return;
+    }
+    if (isPropertySignature(astNode) ||
+      isMethodSignature(astNode) ||
+      isPropertyDeclaration(astNode) ||
+      isMethodDeclaration(astNode) ||
+      isConstructorDeclaration(astNode) ||
+      isFunctionDeclaration(astNode) ||
+      isVariableStatement(astNode) ||
+      isSetAccessor(astNode) ||
+      isTypeAliasDeclaration(astNode)
+    ) {
+      getRecordkeyProps(astNode);
+    }
+    forEachChild(astNode, visitNodeForElementsWithRecordkey);
+  };
+
+  function getRecordkeyProps(node: Node): void {
+    const tags = getJSDocTags(node);
+    let recordkeyComment: string[] = [];
+    for (const tag of tags) {
+      if (tag.tagName.escapedText === 'recordkey' && tag.comment && typeof tag.comment === 'string') {
+        recordkeyComment = tag.comment.split(/[,\s]+/).filter(item => item.length > 0);
+        recordkeyComment.forEach(item => mCurrentExportedPropertySet.add(item));
+      }
+    }
+  }
+  /**
    * commonjs exports extract
    * examples:
    * - exports.A = 1;
@@ -621,6 +655,7 @@ export namespace ApiExtractor {
 
       if (astNode.exportClause.kind === SyntaxKind.NamespaceExport) {
         mCurrentExportedPropertySet.add(astNode.exportClause.name.getText());
+        mCurrentExportNameSet.add(astNode.exportClause.name.getText());
         return;
       }
     }
@@ -840,6 +875,7 @@ export namespace ApiExtractor {
     switch (apiType) {
       case ApiType.COMPONENT:
         forEachChild(sourceFile, node => visitChildNode(node, true));
+        forEachChild(sourceFile, visitNodeForElementsWithRecordkey);
         break;
       case ApiType.KEEP_DTS:
         forEachChild(sourceFile, visitChildNode);
@@ -850,6 +886,7 @@ export namespace ApiExtractor {
         mCurrentExportNameSet.forEach(item => mSystemExportSet.add(item));
 
         forEachChild(sourceFile, visitPropertyAndNameForSdk);
+        forEachChild(sourceFile, visitNodeForElementsWithRecordkey);
         mCurrentExportNameSet.clear();
         break;
       case ApiType.PROJECT:

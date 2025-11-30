@@ -66,6 +66,7 @@ namespace fs = std::experimental::filesystem;
 namespace ark::es2panda::util {
 
 constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 8;
+constexpr size_t ALLOWED_EXTENSIONS_SIZE = 8;
 
 static bool IsCompatibleExtension(const std::string &extension)
 {
@@ -79,6 +80,15 @@ static bool IsAbsolute(const std::string &path)
 #else
     return fs::path(path).is_absolute();
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
+}
+
+void RemoveEscapedNewlines(std::string &s)
+{
+    std::string pattern = "\\n";
+    size_t pos = 0;
+    while ((pos = s.find(pattern, pos)) != std::string::npos) {
+        s.erase(pos, pattern.size());
+    }
 }
 
 size_t HandleSpecialSymbols(const std::string &input, std::string &output, const size_t &i)
@@ -123,15 +133,6 @@ std::string DeleteEscapeSymbols(const std::string &input)
         }
     }
     return output;
-}
-
-void RemoveEscapedNewlines(std::string &s)
-{
-    std::string pattern = "\\n";
-    size_t pos = 0;
-    while ((pos = s.find(pattern, pos)) != std::string::npos) {
-        s.erase(pos, pattern.size());
-    }
 }
 
 ImportPathManager::ImportPathManager(const parser::ETSParser *parser)
@@ -869,24 +870,35 @@ static std::string FormUnitName(std::string_view name)
     return std::string(name);
 }
 
-// Transform /a/b/c.ets to a.b.c
-static std::string FormRelativeModuleName(std::string relPath)
+std::string ImportPathManager::TruncateFileExtension(std::string path, bool &hasExtension)
 {
-    bool isMatched = false;
-    for (const auto &ext : ImportPathManager::supportedExtensionsInversed) {
-        if (relPath.size() >= ext.size() && relPath.compare(relPath.size() - ext.size(), ext.size(), ext) == 0) {
-            relPath = relPath.substr(0, relPath.size() - ext.size());
-            isMatched = true;
+    hasExtension = false;
+    // Supported extensions: keep this checking order, and source files should follow header files
+    std::array<std::string, ALLOWED_EXTENSIONS_SIZE> supportedExtensionsDesc = {".d.ets", ".ets", ".d.sts", ".sts",
+                                                                                ".d.ts",  ".ts",  ".js",    ".abc"};
+    for (const auto &ext : supportedExtensionsDesc) {
+        if (path.size() >= ext.size() && path.compare(path.size() - ext.size(), ext.size(), ext) == 0) {
+            path = path.substr(0, path.size() - ext.size());
+            hasExtension = true;
             break;
         }
     }
+    return path;
+}
+
+// Transform /a/b/c.ets to a.b.c
+static std::string FormRelativeModuleName(std::string relPath)
+{
+    bool hasExtension = false;
+    relPath = ImportPathManager::TruncateFileExtension(relPath, hasExtension);
     if (relPath.empty()) {
         return "";
     }
 
-    if (!isMatched) {
+    if (!hasExtension) {
         ASSERT_PRINT(false, "Invalid relative filename: " + relPath);
     }
+
     while (relPath[0] == util::PATH_DELIMITER) {
         relPath = relPath.substr(1);
     }

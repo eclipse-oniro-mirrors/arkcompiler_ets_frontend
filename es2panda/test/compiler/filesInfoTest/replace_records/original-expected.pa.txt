@@ -1,0 +1,107 @@
+slotNum = 0x7
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file1&1.0.0.#*#run(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file1.run
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	ldexternalmodulevar 0x1
+	sta v0
+	throw.undefinedifholewithname test2
+	lda v0
+	callarg0 0x3
+	ldexternalmodulevar 0x2
+	sta v0
+	throw.undefinedifholewithname test3
+	lda v0
+	callarg0 0x5
+	lda.str @normalized:N&&&sourcehar/sourcehar-file1&1.0.0
+	dynamicimport
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file1&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file1&1.0.0.#*#run, 0x0
+	stmodulevar 0x0
+	returnundefined
+label_2: 
+}
+
+
+slotNum = 0x7
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file2&1.0.0.#*#test2(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	ldexternalmodulevar 0x0
+	sta v0
+	throw.undefinedifholewithname bytecodehar2test
+	lda v0
+	callarg0 0x3
+	ldexternalmodulevar 0x1
+	sta v0
+	throw.undefinedifholewithname test3
+	lda v0
+	callarg0 0x5
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&1.0.0
+	dynamicimport
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file2&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file2&1.0.0.#*#test2, 0x0
+	stmodulevar 0x0
+	returnundefined
+label_2: 
+}
+
+
+slotNum = 0x3
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file3&1.0.0.#*#test3(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&1.0.0
+	dynamicimport
+	returnundefined
+label_2: 
+}
+
+slotNum = 0x1
+.language TypeScript
+.function any &bytecodehar1/bytecodehar1-file3&1.0.0.func_main_0(any a0, any a1, any a2) {
+label_1: 
+label_0: 
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file3&1.0.0.#*#test3, 0x0
+	stmodulevar 0x0
+	returnundefined
+label_2: 
+}
+
+

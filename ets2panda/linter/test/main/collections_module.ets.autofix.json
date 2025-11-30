@@ -37,6 +37,36 @@
         },
         {
             "line": 20,
+            "column": 10,
+            "endLine": 20,
+            "endColumn": 39,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 753,
+                    "end": 825,
+                    "replacementText": "",
+                    "line": 20,
+                    "column": 10,
+                    "endLine": 20,
+                    "endColumn": 39
+                },
+                {
+                    "start": 1136,
+                    "end": 1150,
+                    "replacementText": "collections",
+                    "line": 20,
+                    "column": 10,
+                    "endLine": 20,
+                    "endColumn": 39
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
             "column": 25,
             "endLine": 20,
             "endColumn": 39,

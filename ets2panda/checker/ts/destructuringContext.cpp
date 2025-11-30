@@ -324,7 +324,7 @@ Type *ArrayDestructuringContext::CreateTupleTypeForRest(TupleType *tuple)
     uint32_t iterIndex = 0;
 
     Type *tupleElementType = GetTypeFromTupleByIndex(tuple);
-
+    ES2PANDA_ASSERT(desc != nullptr);
     while (tupleElementType != nullptr) {
         ElementFlags memberFlag = ElementFlags::REQUIRED;
         util::StringView memberIndex = util::Helpers::ToStringView(checker_->Allocator(), iterIndex);

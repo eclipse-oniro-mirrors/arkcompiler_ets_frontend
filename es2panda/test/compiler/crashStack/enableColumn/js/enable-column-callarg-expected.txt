@@ -1,0 +1,18 @@
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:19:5)
+
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:27:5)
+
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:35:5)
+
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:43:5)
+
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:51:5)
+
+123 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/js/enable-column-callarg.js:59:5)
+

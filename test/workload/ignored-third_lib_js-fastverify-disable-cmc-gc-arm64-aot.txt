@@ -1,0 +1,16 @@
+# Known failures list for  third_lib_js-fastverify-disable-cmc-gc-arm64-aot
+#21456
+pinyin4js_test
+Easyrelpace_test
+
+#21663
+crypto-js_test
+jsDiff_test
+mathjs_test
+
+#18546
+jBox2d_test
+
+#20690
+dayjs_test
+

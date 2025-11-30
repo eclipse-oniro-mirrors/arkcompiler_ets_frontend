@@ -1,0 +1,3 @@
+dynamic-import-test.ts;&library/dynamic-import-test&1.0.0;esm;library|library|1.0.0|mod/dynamic-import-test.ts;ts;false;ts
+static-import-test.ts;&library/static-import-test&1.0.0;esm;library|library|1.0.0|mod/static-import-test.ts;ts;false;ts
+annotation-test.ts;&library/annotation-test&1.0.0;esm;library|library|1.0.0|mod/annotation-test.ts;ts;false;ts

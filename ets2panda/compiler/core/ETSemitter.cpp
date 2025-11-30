@@ -788,7 +788,7 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     }
 
     if (!annotations.empty() && !classDef->IsLazyImportObjectClass()) {
-        classRecord.metadata->AddAnnotations(annotations);
+        classRecord.metadata->AddAnnotations(std::move(annotations));
     }
 
     Program()->AddToRecordTable(std::move(classRecord));

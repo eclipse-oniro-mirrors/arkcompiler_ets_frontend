@@ -98,11 +98,9 @@ public:
     void EmitReturnVoid(const ir::AstNode *node);
     void ReturnAcc(const ir::AstNode *node);
 
-    void BranchIfIsInstance(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void BranchIfIsInstanceUnion(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void IsInstance(const ir::AstNode *node, VReg srcReg, checker::Type const *target);
-    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target,
-                                     bool isUndef = false);
+    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target);
 
     void EmitNullcheck([[maybe_unused]] const ir::AstNode *node)
     {
@@ -283,9 +281,6 @@ public:
     void CastToInt(const ir::AstNode *node);
     void CastToReftype(const ir::AstNode *node, const checker::Type *targetType, bool unchecked);
 
-    void InternalIsInstance(const ir::AstNode *node, const checker::Type *target);
-    void InternalCheckCast(const ir::AstNode *node, const checker::Type *target);
-    void EmitAnyCheckCast(const ir::AstNode *node, const checker::Type *target);
     void CheckedReferenceNarrowing(const ir::AstNode *node, const checker::Type *target);
     void GuardUncheckedType(const ir::AstNode *node, const checker::Type *unchecked, const checker::Type *target);
 
@@ -530,9 +525,6 @@ private:
     void UnaryTilde(const ir::AstNode *node);
 
     util::StringView ToAssemblerType(const es2panda::checker::Type *type) const;
-    void TestIsInstanceType(const ir::AstNode *const node, std::tuple<Label *, Label *> label,
-                            checker::Type const *target, const VReg srcReg, bool acceptNull);
-    void CheckedReferenceNarrowingObject(const ir::AstNode *node, const checker::Type *target);
 
     template <bool IS_SRTICT = false>
     void HandleDefinitelyNullishEquality(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse);

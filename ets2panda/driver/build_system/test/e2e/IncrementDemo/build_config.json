@@ -4,10 +4,8 @@
         "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harA/index.ets",
         "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harB/index.ets"
     ],
-
     "packageName": "entry",
     "moduleType": "shared",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/entry/",
@@ -16,12 +14,11 @@
     ],
     "loaderOutPath": "./dist/out/entry",
     "cachePath": "./dist/cache",
-
+    "es2pandaMode": 0,
     "enableDeclgenEts2Ts": false,
     "declgenV1OutPath": "./dist/declgen/decl_ets1",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [
@@ -30,17 +27,23 @@
             "moduleName": "harA",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harA",
-            "sourceRoots": ["./"],
+            "sourceRoots": [
+                "./"
+            ],
             "entryFile": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harA/index.ets",
             "language": "1.2",
-            "dependencies": [ "harB" ]
+            "dependencies": [
+                "harB"
+            ]
         },
         {
             "packageName": "harB",
             "moduleName": "harB",
             "moduleType": "shared",
             "modulePath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harB",
-            "sourceRoots": ["./"],
+            "sourceRoots": [
+                "./"
+            ],
             "entryFile": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/harB/index.ets",
             "language": "1.2"
         }

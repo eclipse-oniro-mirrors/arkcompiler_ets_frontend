@@ -3,23 +3,20 @@
         "${absolute_path_to_build_system}/test/e2e/externalProject/har1_2/Calc.ets",
         "${absolute_path_to_build_system}/test/e2e/externalProject/har1_2/index.ets"
     ],
-
     "packageName": "har1_2",
     "moduleType": "har",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/externalProject/har1_2/",
-    "sourceRoots": ["./"],
-
+    "sourceRoots": [
+        "./"
+    ],
     "loaderOutPath": "./dist/out/",
     "cachePath": "./dist/cache",
-
     "enableDeclgenEts2Ts": true,
     "declgenV1OutPath": "./dist/declgen/decl_ets",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [

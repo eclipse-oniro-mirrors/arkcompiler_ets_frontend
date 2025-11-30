@@ -49,6 +49,21 @@ void ResolveIdentifiers::FetchCache([[maybe_unused]] public_lib::Context *ctx,
     }
 }
 
+void ResolveIdentifiers::DumpAstOutput(parser::Program *program, [[maybe_unused]] const std::string &dumpAstFile)
+{
+#ifdef ARKTSCONFIG_USE_FILESYSTEM
+    auto dumpAstFilePath = fs::path(dumpAstFile);
+    fs::create_directories(dumpAstFilePath.parent_path());
+    std::ofstream outputFile(dumpAstFilePath);
+    if (outputFile.is_open()) {
+        outputFile << program->Dump() << std::endl;
+        outputFile.close();
+    }
+#else
+    std::cout << program->Dump() << std::endl;
+#endif
+}
+
 bool ResolveIdentifiers::Perform(public_lib::Context *ctx, [[maybe_unused]] parser::Program *program)
 {
     FetchCache(ctx, program);
@@ -58,7 +73,11 @@ bool ResolveIdentifiers::Perform(public_lib::Context *ctx, [[maybe_unused]] pars
     static bool firstDump = true;
     if (options->IsDumpAst() && firstDump) {
         firstDump = false;
-        std::cout << varbinder->Program()->Dump() << std::endl;
+        if (!options->GetDumpAstOutput().empty()) {
+            DumpAstOutput(program, options->GetDumpAstOutput());
+        } else {
+            std::cout << varbinder->Program()->Dump() << std::endl;
+        }
     }
 
     if (options->IsDumpAstOnlySilent()) {

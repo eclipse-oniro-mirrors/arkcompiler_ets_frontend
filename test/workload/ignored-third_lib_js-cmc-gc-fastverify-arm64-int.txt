@@ -8,3 +8,4 @@ memory-cache_test
 validator_test
 dayjs_test
 rxjs_test
+Easyrelpace_test

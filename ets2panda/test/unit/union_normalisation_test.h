@@ -100,6 +100,7 @@ public:
 
         auto parser =
             Parser(program, unit.options, diagnosticEngine_, static_cast<parser::ParserStatus>(unit.rawParserStatus));
+        parser.SetContext(publicContext_.get());
         auto analyzer = Analyzer(checker);
         checker->SetAnalyzer(&analyzer);
 

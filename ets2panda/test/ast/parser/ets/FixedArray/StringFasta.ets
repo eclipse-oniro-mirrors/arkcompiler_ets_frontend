@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,7 +82,7 @@ export class StringFasta  {
         return ret;
     }
     static fastaRandom(n : int, table : HashMap<Char, Double>): int {
-        let line : FixedArray<char> = new char[60];
+        let line : char[] = new char[60];
         makeCumulative(table);
         let ret : int = 0;
         while(n > 0)

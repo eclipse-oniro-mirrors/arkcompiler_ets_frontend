@@ -13,7 +13,13 @@
 
 import("//arkcompiler/ets_frontend/es2panda/es2abc_config.gni")
 import("//arkcompiler/ets_frontend/ets_frontend_config.gni")
-import("//arkcompiler/runtime_core/ark_config.gni")
+
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
+  import("//arkcompiler/runtime_core/ark_config.gni")
+} else {
+  import("//arkcompiler/ets_frontend/ark_config.gni")
+}
 
 es2panda_src = [
   "es2panda.cpp",
@@ -347,14 +353,22 @@ action_foreach("gen_keywords_headers") {
 
 # generate headers for es2panda compiler
 isa_gen = "${ark_root}/isa/gen.rb"
-if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
-  isa_gen_data = "$root_build_dir/gen/isa/isa.yaml"
-} else {
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
   isa_gen_data = "$root_gen_dir/isa/isa.yaml"
+} else {
+  isa_combine_etc_out_dir =
+      get_label_info("runtime_core:isa_combine_etc", "target_out_dir")
+  isa_gen_data = "$isa_combine_etc_out_dir/$root_gen_dir/isa/isa.yaml"
 }
 isa_gen_require = "${ark_root}/isa/isapi.rb"
 action_foreach("gen_isa_headers") {
-  deps = [ "//arkcompiler/runtime_core/isa:isa_combine" ]
+  if ((defined(ark_standalone_build) && ark_standalone_build) ||
+      (defined(is_arkui_x) && is_arkui_x)) {
+    deps = [ "//arkcompiler/runtime_core/isa:isa_combine" ]
+  } else {
+    external_deps = [ "runtime_core:isa_combine_etc" ]
+  }
 
   template_files = [
     "isa.h.erb",
@@ -418,9 +432,20 @@ ohos_static_library("es2panda_lib") {
       "//third_party/icu/icu4c/source/common",
       "//third_party/icu/icu4c/source/i18n",
       "//third_party/icu/icu4c/source",
+      "$ark_root/abc2program",
+      "$ark_root/assembler",
+      "$ark_root/libpandafile",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
     ]
   } else {
-    external_deps += [ "icu:static_icuuc" ]
+    external_deps += [
+      "icu:static_icuuc",
+      "runtime_core:arkabc2program_public_headers",
+      "runtime_core:arkassembler_public_headers",
+      "runtime_core:arkbase_public_headers",
+      "runtime_core:arkfile_public_headers",
+    ]
   }
 
   if (!is_arkui_x) {
@@ -465,11 +490,11 @@ ohos_static_library("es2panda_lib") {
     "-Wno-c++20-designator",
     "-Wno-implicit-fallthrough",
   ]
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
     external_deps += [ "runtime_core:libarkassembler_static" ]
-    if (enable_hilog) {
-      external_deps += [ "hilog:libhilog" ]
-    }
     cflags += [ "-I" + rebase_path(
                     "$root_build_dir/gen/arkcompiler/runtime_core/compiler/generated") ]
   }
@@ -507,16 +532,31 @@ ohos_executable("es2panda") {
     "zlib:libz",
     sdk_libc_secshared_dep,
   ]
-
+  if (ark_standalone_build || (defined(is_arkui_x) && is_arkui_x)) {
+    include_dirs += [
+      "$ark_root/abc2program",
+      "$ark_root/assembler",
+      "$ark_root/libpandafile",
+      "$ark_root/libpandabase/include/libpandabase",
+      "$ark_root/libpandabase/include/libpandabase/mem",
+    ]
+  } else {
+    external_deps += [
+      "icu:static_icuuc",
+      "runtime_core:arkabc2program_public_headers",
+      "runtime_core:arkassembler_public_headers",
+      "runtime_core:arkbase_public_headers",
+      "runtime_core:arkfile_public_headers",
+    ]
+  }
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (defined(ohos_indep_compiler_enable) && ohos_indep_compiler_enable) {
     external_deps += [
       "abseil-cpp:absl_base_static",
-      "icu:shared_icuuc",
       "runtime_core:libarkassembler_static",
     ]
-    if (enable_hilog) {
-      external_deps += [ "hilog:libhilog" ]
-    }
     cflags = [
       "-Wno-constant-conversion",
       "-I" + rebase_path(
@@ -524,6 +564,10 @@ ohos_executable("es2panda") {
       "-I" + rebase_path(
               "$root_build_dir/gen/arkcompiler/runtime_core/compiler/generated"),
     ]
+  }
+
+  if (is_build_sdk && is_ohos) {
+    defines = [ "OHOS_PLATFORM" ]
   }
 
   if (ark_standalone_build) {

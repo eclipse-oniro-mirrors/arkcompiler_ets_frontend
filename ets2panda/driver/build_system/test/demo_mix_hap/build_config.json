@@ -3,9 +3,7 @@
         "${absolute_path_to_build_system}/test/demo_mix_hap/entry/index.ets",
         "${absolute_path_to_build_system}/test/demo_mix_hap/static_har/index.ets"
     ],
-
-    "packageName" : "entry",
-
+    "packageName": "entry",
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_mix_hap/entry/",
@@ -14,9 +12,7 @@
 
     "loaderOutPath": "./dist/cache/demo_mix_hap",
     "cachePath": "./dist/cache/demo_mix_hap",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
-
     "enableDeclgenEts2Ts": false,
     "declgenDtsOutPath": "./dist/cache/demo_mix_hap/decl",
     "declgenTsOutPath": "./dist/cache/demo_mix_hap/ts",
@@ -27,8 +23,10 @@
             "moduleName": "static_har",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/demo_mix_hap/static_har",
-            "sourceRoots": ["./"],
-            "entryFile": "index.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/demo_mix_hap/static_har/index.ets",
             "language": "1.2",
             "dependencies": []
         },
@@ -37,11 +35,15 @@
             "moduleName": "dynamic_har",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/demo_mix_hap/dynamic_har",
-            "sourceRoots": ["./"],
-            "entryFile": "index.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "entryFile": "${absolute_path_to_build_system}/test/demo_mix_hap/dynamic_har/index.ets",
             "language": "1.1",
             "declFilesPath": "${absolute_path_to_build_system}/test/demo_mix_hap/dynamic_har/declFileConfig.json",
-            "dependencies": ["static_har"]
+            "dependencies": [
+                "static_har"
+            ]
         }
     ]
 }

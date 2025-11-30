@@ -92,6 +92,7 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
     }
     auto &stmt = module->StatementsForUpdates();
     auto iterator = std::find_if(stmt.begin(), stmt.end(), isExportAnonymousConst);
+
     if ((*iterator)->AsExportNamedDeclaration()->Specifiers().size() != exportDefaultMaxSize) {
         ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS,
                                                     (*iterator)->AsExportNamedDeclaration()->Start());

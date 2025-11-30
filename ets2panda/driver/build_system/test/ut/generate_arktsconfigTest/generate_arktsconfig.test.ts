@@ -326,7 +326,6 @@ describe('test if the getDependenciesSection is working correctly', () => {
 
         const generator = Object.create(ArkTSConfigGenerator.prototype);
         generator.systemDependenciesSection = {};
-
         generator.getOhmurl = jest.fn((file, depModuleInfo) => {
             return `${depModuleInfo.packageName}/${file.replace(/^src\//, '').replace(/\.ets$/, '')}`;
         });

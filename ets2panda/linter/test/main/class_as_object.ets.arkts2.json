@@ -765,6 +765,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 184,
+            "column": 13,
+            "endLine": 184,
+            "endColumn": 19,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
             "line": 185,
             "column": 13,
             "endLine": 185,

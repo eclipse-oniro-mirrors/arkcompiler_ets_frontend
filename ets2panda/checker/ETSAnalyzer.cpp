@@ -1533,52 +1533,6 @@ static bool IsInvalidMethodAssignment(const ir::AssignmentExpression *const expr
     return false;
 }
 
-// In assignment expression or object literal, we need the type of the setter instead of the type of the getter
-static checker::Type *GetSetterType(varbinder::Variable *const var, ETSChecker *checker)
-{
-    if (var == nullptr || !checker->IsVariableGetterSetter(var)) {
-        return nullptr;
-    }
-
-    if (var->TsType()->IsETSFunctionType()) {
-        auto *funcType = var->TsType()->AsETSFunctionType();
-        if (funcType->HasTypeFlag(checker::TypeFlag::SETTER)) {
-            auto *setter = funcType->FindSetter();
-            ES2PANDA_ASSERT(setter != nullptr && setter->Params().size() == 1);
-            return setter->Params()[0]->TsType();
-        }
-    }
-
-    return nullptr;
-}
-
-// Helper to set the target of assignment expression
-bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const expr, ETSChecker *checker) const
-{
-    if (expr->Left()->IsIdentifier()) {
-        expr->target_ = expr->Left()->AsIdentifier()->Variable();
-    } else if (expr->Left()->IsMemberExpression()) {
-        if (!expr->IsIgnoreConstAssign() &&
-            expr->Left()->AsMemberExpression()->Object()->TsType()->HasTypeFlag(TypeFlag::READONLY)) {
-            checker->LogError(diagnostic::READONLY_PROPERTY_REASSIGN, {}, expr->Left()->Start());
-        }
-        expr->target_ = expr->Left()->AsMemberExpression()->PropVar();
-    } else if (expr->Left()->IsETSDestructuring()) {
-        for (auto dstrElement : expr->Left()->AsETSDestructuring()->Elements()) {
-            if (!(dstrElement->IsIdentifier() || dstrElement->IsMemberExpression() ||
-                  dstrElement->IsOmittedExpression())) {
-                return false;
-            }
-        }
-
-        return true;
-    } else {
-        return false;
-    }
-
-    return true;
-}
-
 static bool TryExtractNumberFromIdentifier(ir::Expression *expr, lexer::Number &outNum, std::string &outStr)
 {
     auto *id = expr->AsIdentifier();
@@ -1660,6 +1614,42 @@ static bool FitsNumericType(Type *ctype, const lexer::Number &number)
     }
 
     return false;
+}
+
+// In assignment expression or object literal, we need the type of the setter instead of the type of the getter
+static checker::Type *GetSetterType(varbinder::Variable *const var, ETSChecker *checker)
+{
+    if (var == nullptr || !checker->IsVariableGetterSetter(var)) {
+        return nullptr;
+    }
+
+    if (var->TsType()->IsETSFunctionType()) {
+        auto *funcType = var->TsType()->AsETSFunctionType();
+        if (funcType->HasTypeFlag(checker::TypeFlag::SETTER)) {
+            auto *setter = funcType->FindSetter();
+            ES2PANDA_ASSERT(setter != nullptr && setter->Params().size() == 1);
+            return setter->Params()[0]->TsType();
+        }
+    }
+
+    return nullptr;
+}
+
+// Helper to set the target of assignment expression
+bool ETSAnalyzer::SetAssignmentExpressionTarget(ir::AssignmentExpression *const expr, ETSChecker *checker) const
+{
+    if (expr->Left()->IsIdentifier()) {
+        expr->target_ = expr->Left()->AsIdentifier()->Variable();
+    } else if (expr->Left()->IsMemberExpression()) {
+        if (!expr->IsIgnoreConstAssign() &&
+            expr->Left()->AsMemberExpression()->Object()->TsType()->HasTypeFlag(TypeFlag::READONLY)) {
+            checker->LogError(diagnostic::READONLY_PROPERTY_REASSIGN, {}, expr->Left()->Start());
+        }
+        expr->target_ = expr->Left()->AsMemberExpression()->PropVar();
+    } else {
+        return false;
+    }
+    return true;
 }
 
 static void IsAmbiguousUnionInit(checker::ETSUnionType *unionType, ir::Expression *initExpr, ETSChecker *checker)
@@ -2517,6 +2507,7 @@ checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
         }
     }
 
+    ES2PANDA_ASSERT(identType != nullptr);
     expr->SetTsType(identType);
     ES2PANDA_ASSERT(identType != nullptr);
     if (!identType->IsTypeError()) {
@@ -3035,6 +3026,10 @@ static checker::ETSObjectType *ResolveObjectTypeFromPreferredType(ETSChecker *ch
         preferredType = preferredType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
     }
 
+    if (preferredType->IsETSAsyncFuncReturnType()) {
+        preferredType = preferredType->AsETSAsyncFuncReturnType()->GetPromiseTypeArg();
+    }
+
     if (preferredType->IsETSUnionType()) {
         return ResolveUnionObjectTypeForObjectLiteral(checker, expr, preferredType->AsETSUnionType());
     }
@@ -3528,7 +3523,7 @@ checker::Type *ETSAnalyzer::Check(ir::UnaryExpression *expr) const
         switch (expr->OperatorType()) {
             case lexer::TokenType::PUNCTUATOR_MINUS: {
                 checker::Type *type = checker->CreateETSBigIntLiteralType(argType->AsETSBigIntType()->GetValue());
-
+                ES2PANDA_ASSERT(type != nullptr);
                 // We do not need this const anymore as we are negating the bigint object in runtime
                 ES2PANDA_ASSERT(type != nullptr);
                 type->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
@@ -4230,6 +4225,7 @@ static bool CheckIsValidReturnTypeAnnotation(ir::ReturnStatement *st, ir::Script
     return true;
 }
 
+// CC-OFFNXT(huge_method[C++], G.FUN.01-CPP) solid logic
 bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc,
                                                   checker::Type *&funcReturnType, ir::TypeNode *returnTypeAnnotation,
                                                   ETSChecker *checker) const
@@ -4332,6 +4328,7 @@ checker::Type *ETSAnalyzer::Check(ir::ReturnStatement *st) const
     ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(st, ir::AstNodeType::SCRIPT_FUNCTION);
     ES2PANDA_ASSERT(ancestor && ancestor->IsScriptFunction());
 
+    ES2PANDA_ASSERT(ancestor != nullptr);
     auto *containingFunc = ancestor->AsScriptFunction();
     containingFunc->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
 

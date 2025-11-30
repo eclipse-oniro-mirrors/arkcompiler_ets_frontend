@@ -360,7 +360,6 @@ public:
     {
         return name_.StartsWith(PARTIAL_CLASS_PREFIX);
     }
-
     std::vector<const varbinder::LocalVariable *> ForeignProperties() const;
     varbinder::LocalVariable *GetProperty(util::StringView name, PropertySearchFlags flags) const;
     std::vector<varbinder::LocalVariable *> GetAllProperties() const;

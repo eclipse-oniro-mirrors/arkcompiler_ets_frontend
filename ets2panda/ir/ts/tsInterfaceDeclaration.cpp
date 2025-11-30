@@ -211,7 +211,6 @@ void TSInterfaceDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export default ");
         dumper->SetDefaultExport();
     }
-
     if (dumper->IsDeclgen()) {
         dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
     } else if (IsDeclare()) {

@@ -1,0 +1,6 @@
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/ts/ts-enable-column-callthis.ts:27:7)
+
+func is not callable
+    at func_main_0 (test/compiler/crashStack/enableColumn/ts/ts-enable-column-callthis.ts:34:5)
+

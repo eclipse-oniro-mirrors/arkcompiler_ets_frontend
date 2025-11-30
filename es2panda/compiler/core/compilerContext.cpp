@@ -22,11 +22,12 @@ namespace panda::es2panda::compiler {
 CompilerContext::CompilerContext(binder::Binder *binder, bool isDebug, bool isDebuggerEvaluateExpressionMode,
                                  bool isMergeAbc, bool isJsonInputFile,
                                  bool isRecordDebugSource, const std::string &sourceFile, const std::string &pkgName,
-                                 util::StringView recordName, util::PatchFix *patchFixHelper)
+                                 util::StringView recordName, util::PatchFix *patchFixHelper, bool enableColumn)
     : binder_(binder), isDebug_(isDebug), isDebuggerEvaluateExpressionMode_(isDebuggerEvaluateExpressionMode),
       isMergeAbc_(isMergeAbc), isJsonInputFile_(isJsonInputFile),
       isRecordDebugSource_(isRecordDebugSource), sourceFile_(sourceFile), pkgName_(pkgName), recordName_(recordName),
-      patchFixHelper_(patchFixHelper), emitter_(std::make_unique<class Emitter>(this))
+      patchFixHelper_(patchFixHelper), emitter_(std::make_unique<class Emitter>(this)),
+      enableColumn_(enableColumn)
 {
 }
 

@@ -79,7 +79,7 @@
               {
                 "type": "Property",
                 "method": false,
-                "shorthand": true,
+                "shorthand": false,
                 "computed": false,
                 "key": {
                   "type": "StringLiteral",

@@ -6,6 +6,157 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "A",
+          "loc": {
+            "start": {
+              "line": 20,
+              "column": 7,
+              "program": "instanceof_etsobject_jsvalue.ets"
+            },
+            "end": {
+              "line": 20,
+              "column": 8,
+              "program": "instanceof_etsobject_jsvalue.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 10,
+                      "program": "instanceof_etsobject_jsvalue.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 10,
+                    "program": "instanceof_etsobject_jsvalue.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 10,
+                    "program": "instanceof_etsobject_jsvalue.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 10,
+                  "program": "instanceof_etsobject_jsvalue.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 20,
+            "column": 9,
+            "program": "instanceof_etsobject_jsvalue.ets"
+          },
+          "end": {
+            "line": 22,
+            "column": 9,
+            "program": "instanceof_etsobject_jsvalue.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 20,
+          "column": 1,
+          "program": "instanceof_etsobject_jsvalue.ets"
+        },
+        "end": {
+          "line": 22,
+          "column": 9,
+          "program": "instanceof_etsobject_jsvalue.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "ETSGLOBAL",
           "loc": {
             "start": {

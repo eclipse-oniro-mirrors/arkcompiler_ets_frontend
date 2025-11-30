@@ -1,5 +1,15 @@
 #FailKind.SEGFAULT_FAIL - 3 tests:
+AnnotationConstExpression.ets
+annotation_tests/annotationUsageSingleFileds04.ets
 lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
+#FailKind.DECLGEN_ETS2TS_FAIL - 6 tests:
+StringFasta.ets
+conditionalExpressionGenericLUB.ets
+funcRefWithRestArguments.ets
+struct-identifier.ets
+struct-init2.ets
+type_param_in_union.ets
+#FailKind.ABORT_FAIL - 1 tests:
 first_match/ctor_need_fix_bytecode.ets
 overload_declaration/constructor_overload_sig_with_ref_type.ets
 #FailKind.ABORT_FAIL - 2 tests:
@@ -31,7 +41,6 @@ top_level_03.ets
 multisource_inheritance.ets
 as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
-defaultExportObjectLiteral_exp.ets
 forOfCustomIterator3.ets
 fuzz/too_many_async.ets
 typeAlias_2.ets

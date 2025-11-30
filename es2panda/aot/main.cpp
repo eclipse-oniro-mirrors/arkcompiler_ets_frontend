@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include <abc2program/program_dump.h>
+#include <program_dump.h>
 #include <mem/pool_manager.h>
 #include "utils/timers.h"
 
@@ -23,6 +23,9 @@
 #include <util/commonUtil.h>
 #include <util/dumper.h>
 #include <util/moduleHelpers.h>
+#ifdef OHOS_PLATFORM
+#include <malloc.h>
+#endif
 
 namespace panda::es2panda::aot {
 using mem::MemConfig;
@@ -353,6 +356,13 @@ int Run(int argc, const char **argv)
 
 int main(int argc, const char **argv)
 {
+// Enable tcache for malloc, resolve the global lock competition caused by multi-threaded scenarios.
+#ifdef OHOS_PLATFORM
+    mallopt(M_OHOS_CONFIG, M_TCACHE_PERFORMANCE_MODE);
+    mallopt(M_OHOS_CONFIG, M_ENABLE_OPT_TCACHE);
+    mallopt(M_SET_THREAD_CACHE, M_THREAD_CACHE_ENABLE);
+    mallopt(M_DELAYED_FREE, M_DELAYED_FREE_ENABLE);
+#endif
     panda::es2panda::aot::MemManager mm;
     return panda::es2panda::aot::Run(argc, argv);
 }

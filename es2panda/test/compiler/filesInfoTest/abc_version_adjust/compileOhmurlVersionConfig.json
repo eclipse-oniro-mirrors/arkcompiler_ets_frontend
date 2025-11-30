@@ -1,0 +1,8 @@
+{
+    "packageName": "library",
+    "originVersion": "1.0.0",
+    "targetVersion": "2.0.0",
+    "updateVersionInfo": {
+        "library": "2.0.0"
+    }
+}

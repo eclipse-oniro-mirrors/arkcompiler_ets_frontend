@@ -1,8 +1,12 @@
 All Dependency Files:
 program_file: bytecodehar1-abcinput.abc
 record_name: &bytecodehar1/bytecodehar1-file1&2.0.0
+program_file: bytecodehar1-abcinput.abc
+record_name: &bytecodehar1/bytecodehar1-file2&2.0.0
 program_file: bytecodehar2-abcinput.abc
 record_name: &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0
+program_file: bytecodehar2-abcinput.abc
+record_name: &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0
 program_file: hap-file-exec.ts
 record_name: &myapp/hap-file-exec&
 program_file: sourcehar-file1.ts
@@ -498,7 +502,7 @@ slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1712
 ======> literal array buffer <======
 ======> strings <======
 
-slotNum = 0x4
+slotNum = 0x8
 .language ECMAScript
 .function any &myapp/hap-file-exec&.#*#main(any a0, any a1, any a2) {
 label_1: 
@@ -513,6 +517,12 @@ label_0:
 	throw.undefinedifholewithname A
 	mov v1, v0
 	newobjrange 0x2, 0x1, v1
+	ldlexvar 0x0, 0x0
+	sta v0
+	throw.undefinedifholewithname ns
+	lda v0
+	ldobjbyname 0x4, test
+	callthis0 0x6, v0
 	returnundefined
 label_2: 
 }
@@ -527,18 +537,46 @@ label_0:
 label_2: 
 }
 
-slotNum = 0x4
+slotNum = 0x0
 .language ECMAScript
-.function any &myapp/hap-file-exec&.func_main_0(any a0, any a1, any a2) {
+.function any &myapp/hap-file-exec&.#~C=#C(any a0, any a1, any a2) {
 label_1: 
 label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x10
+.language ECMAScript
+.function any &myapp/hap-file-exec&.func_main_0(any a0, any a1, any a2) {
+label_4: 
+label_0: 
+	newlexenv 0x1
 	definefunc 0x0, &myapp/hap-file-exec&.#*#main, 0x0
+	getmodulenamespace 0x1
+	stlexvar 0x0, 0x0
 	ldhole
 	sta v0
 	defineclasswithbuffer 0x1, &myapp/hap-file-exec&.#~B=#B, &myapp/hap-file-exec&_2, 0x0, v0
 	ldobjbyname 0x2, prototype
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x4, &myapp/hap-file-exec&.#~C=#C, &myapp/hap-file-exec&_3, 0x0, v0
+	sta v0
+	ldobjbyname 0x5, prototype
+	tryldglobalbyname 0x7, __$$ETS_ANNOTATION$$__ns
+	sta v1
+	ldobjbyname 0x8, Anno2
+	sta v2
+	createobjectwithbuffer 0xa, &myapp/hap-file-exec&_4
+	sta v3
+	lda v2
+	callthis1 0xb, v1, v3
+	callarg1 0xd, v0
+	callruntime.istrue 0xf
 	returnundefined
-label_2: 
+label_5: 
 }
 
 
@@ -550,7 +588,7 @@ slot &myapp/hap-file-exec&_1
 {
   index: 0
     tag: 2
-    val: 1
+    val: 2
 },
 {
   index: 1
@@ -559,13 +597,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 2
-    tag: 2
-    val: 3
+    tag: 5
+    val: @normalized:N&&&bytecodehar1/bytecodehar1-file2&2.0.0
 },
 {
   index: 3
-    tag: 5
-    val: A
+    tag: 2
+    val: 3
 },
 {
   index: 4
@@ -574,13 +612,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 5
-    tag: 9
-    val: 0
+    tag: 5
+    val: A
 },
 {
   index: 6
-    tag: 5
-    val: Anno1
+    tag: 9
+    val: 0
 },
 {
   index: 7
@@ -589,13 +627,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 8
-    tag: 9
-    val: 0
+    tag: 5
+    val: Anno1
 },
 {
   index: 9
-    tag: 5
-    val: test
+    tag: 9
+    val: 0
 },
 {
   index: 10
@@ -604,26 +642,41 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 11
-    tag: 9
-    val: 0
+    tag: 5
+    val: test
 },
 {
   index: 12
-    tag: 2
+    tag: 9
     val: 0
 },
 {
   index: 13
     tag: 2
-    val: 0
+    val: 1
 },
 {
   index: 14
+    tag: 5
+    val: ns
+},
+{
+  index: 15
+    tag: 9
+    val: 1
+},
+{
+  index: 16
     tag: 2
     val: 0
 },
 {
-  index: 15
+  index: 17
+    tag: 2
+    val: 0
+},
+{
+  index: 18
     tag: 2
     val: 0
 },
@@ -639,8 +692,42 @@ slot &myapp/hap-file-exec&_2
     tag: 2
     val: 0
 },
+------------------------------------
+slot &myapp/hap-file-exec&_3
+{
+  index: 0
+    tag: 0
+    val: 2
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &myapp/hap-file-exec&_4
+{
+  index: 0
+    tag: 0
+    val: 5
+},
+{
+  index: 1
+    tag: 5
+    val: b
+},
+{
+  index: 2
+    tag: 0
+    val: 1
+},
+{
+  index: 3
+    tag: 1
+    val: 1
+},
 ======> strings <======
-"&myapp/hap-file-exec&.#*#main"; "&myapp/hap-file-exec&.#~B=#B"; "A"; "prototype"; "test"; 
+"&myapp/hap-file-exec&.#*#main"; "&myapp/hap-file-exec&.#~B=#B"; "&myapp/hap-file-exec&.#~C=#C"; "A"; "Anno2"; "__$$ETS_ANNOTATION$$__ns"; "ns"; "prototype"; "test"; 
 slotNum = 0x3
 .language ECMAScript
 .function any &sourcehar/sourcehar-file1&2.0.0.#*#test(any a0, any a1, any a2) {
@@ -938,6 +1025,133 @@ slot &bytecodehar1/bytecodehar1-file1&2.0.0_1844
 
 slotNum = 0x3
 .language ECMAScript
+.function any &bytecodehar1/bytecodehar1-file2&2.0.0.#*#test(any a0, any a1, any a2) {
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar1.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	lda.str @normalized:N&&&sourcehar/sourcehar-file2&2.0.0
+	dynamicimport
+	returnundefined
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any &bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A(any a0, any a1, any a2) {
+	lda a2
+	return
+}
+
+slotNum = 0x4
+.language ECMAScript
+.function any &bytecodehar1/bytecodehar1-file2&2.0.0.func_main_0(any a0, any a1, any a2) {
+	definefunc 0x0, &bytecodehar1/bytecodehar1-file2&2.0.0.#*#test, 0x0
+	stmodulevar 0x1
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x1, &bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A, &bytecodehar1/bytecodehar1-file2&2.0.0_1915, 0x0, v0
+	ldobjbyname 0x2, prototype
+	returnundefined
+}
+
+
+======> literal array buffer <======
+------------------------------------
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1853
+------------------------------------
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1857
+{
+  index: 0
+    tag: 2
+    val: 1
+},
+{
+  index: 1
+    tag: 5
+    val: @normalized:N&&&@ohos/bytecodehar2/bytecodehar2-file2&2.0.0
+},
+{
+  index: 2
+    tag: 2
+    val: 1
+},
+{
+  index: 3
+    tag: 5
+    val: test1
+},
+{
+  index: 4
+    tag: 5
+    val: test
+},
+{
+  index: 5
+    tag: 9
+    val: 0
+},
+{
+  index: 6
+    tag: 2
+    val: 0
+},
+{
+  index: 7
+    tag: 2
+    val: 2
+},
+{
+  index: 8
+    tag: 5
+    val: Anno2
+},
+{
+  index: 9
+    tag: 5
+    val: Anno2
+},
+{
+  index: 10
+    tag: 5
+    val: test
+},
+{
+  index: 11
+    tag: 5
+    val: test
+},
+{
+  index: 12
+    tag: 2
+    val: 0
+},
+{
+  index: 13
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &bytecodehar1/bytecodehar1-file2&2.0.0_1915
+{
+  index: 0
+    tag: 0
+    val: 2
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+======> strings <======
+"&bytecodehar1/bytecodehar1-file2&2.0.0.#*#test"; "&bytecodehar1/bytecodehar1-file2&2.0.0.#~A=#A"; "@normalized:N&&&sourcehar/sourcehar-file2&2.0.0"; "bytecodehar1.file2.test"; "print"; "prototype"; 
+
+======> literal array buffer <======
+======> strings <======
+
+slotNum = 0x3
+.language ECMAScript
 .function any &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0.#*#test(any a0, any a1, any a2) {
 	tryldglobalbyname 0x0, print
 	sta v0
@@ -1041,7 +1255,112 @@ slot &@ohos/bytecodehar2/bytecodehar2-file1&2.0.0_1655
 ======> literal array buffer <======
 ======> strings <======
 
+slotNum = 0x3
+.language ECMAScript
+.function any &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#*#test(any a0, any a1, any a2) {
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str bytecodehar2.file2.test
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	returnundefined
+}
+
+slotNum = 0x0
+.language ECMAScript
+.function any &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#~A=#A(any a0, any a1, any a2) {
+	lda a2
+	return
+}
+
 slotNum = 0x4
+.language ECMAScript
+.function any &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.func_main_0(any a0, any a1, any a2) {
+	definefunc 0x0, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#*#test, 0x0
+	stmodulevar 0x1
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x1, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#~A=#A, &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1712, 0x0, v0
+	ldobjbyname 0x2, prototype
+	returnundefined
+}
+
+
+======> literal array buffer <======
+------------------------------------
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1664
+------------------------------------
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1668
+{
+  index: 0
+    tag: 2
+    val: 0
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+{
+  index: 2
+    tag: 2
+    val: 0
+},
+{
+  index: 3
+    tag: 2
+    val: 2
+},
+{
+  index: 4
+    tag: 5
+    val: Anno2
+},
+{
+  index: 5
+    tag: 5
+    val: Anno2
+},
+{
+  index: 6
+    tag: 5
+    val: test
+},
+{
+  index: 7
+    tag: 5
+    val: test
+},
+{
+  index: 8
+    tag: 2
+    val: 0
+},
+{
+  index: 9
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &@ohos/bytecodehar2/bytecodehar2-file2&2.0.0_1712
+{
+  index: 0
+    tag: 0
+    val: 2
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+======> strings <======
+"&@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#*#test"; "&@ohos/bytecodehar2/bytecodehar2-file2&2.0.0.#~A=#A"; "bytecodehar2.file2.test"; "print"; "prototype"; 
+
+======> literal array buffer <======
+======> strings <======
+
+slotNum = 0x8
 .language ECMAScript
 .function any &myapp/hap-file-exec&.#*#main(any a0, any a1, any a2) {
 label_1: 
@@ -1056,6 +1375,12 @@ label_0:
 	throw.undefinedifholewithname A
 	mov v1, v0
 	newobjrange 0x2, 0x1, v1
+	ldlexvar 0x0, 0x0
+	sta v0
+	throw.undefinedifholewithname ns
+	lda v0
+	ldobjbyname 0x4, test
+	callthis0 0x6, v0
 	returnundefined
 label_2: 
 }
@@ -1070,18 +1395,46 @@ label_0:
 label_2: 
 }
 
-slotNum = 0x4
+slotNum = 0x0
 .language ECMAScript
-.function any &myapp/hap-file-exec&.func_main_0(any a0, any a1, any a2) {
+.function any &myapp/hap-file-exec&.#~C=#C(any a0, any a1, any a2) {
 label_1: 
 label_0: 
+	lda a2
+	return
+label_2: 
+}
+
+slotNum = 0x10
+.language ECMAScript
+.function any &myapp/hap-file-exec&.func_main_0(any a0, any a1, any a2) {
+label_4: 
+label_0: 
+	newlexenv 0x1
 	definefunc 0x0, &myapp/hap-file-exec&.#*#main, 0x0
+	getmodulenamespace 0x1
+	stlexvar 0x0, 0x0
 	ldhole
 	sta v0
 	defineclasswithbuffer 0x1, &myapp/hap-file-exec&.#~B=#B, &myapp/hap-file-exec&_2, 0x0, v0
 	ldobjbyname 0x2, prototype
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x4, &myapp/hap-file-exec&.#~C=#C, &myapp/hap-file-exec&_3, 0x0, v0
+	sta v0
+	ldobjbyname 0x5, prototype
+	tryldglobalbyname 0x7, __$$ETS_ANNOTATION$$__ns
+	sta v1
+	ldobjbyname 0x8, Anno2
+	sta v2
+	createobjectwithbuffer 0xa, &myapp/hap-file-exec&_4
+	sta v3
+	lda v2
+	callthis1 0xb, v1, v3
+	callarg1 0xd, v0
+	callruntime.istrue 0xf
 	returnundefined
-label_2: 
+label_5: 
 }
 
 
@@ -1093,7 +1446,7 @@ slot &myapp/hap-file-exec&_1
 {
   index: 0
     tag: 2
-    val: 1
+    val: 2
 },
 {
   index: 1
@@ -1102,13 +1455,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 2
-    tag: 2
-    val: 3
+    tag: 5
+    val: @normalized:N&&&bytecodehar1/bytecodehar1-file2&2.0.0
 },
 {
   index: 3
-    tag: 5
-    val: A
+    tag: 2
+    val: 3
 },
 {
   index: 4
@@ -1117,13 +1470,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 5
-    tag: 9
-    val: 0
+    tag: 5
+    val: A
 },
 {
   index: 6
-    tag: 5
-    val: Anno1
+    tag: 9
+    val: 0
 },
 {
   index: 7
@@ -1132,13 +1485,13 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 8
-    tag: 9
-    val: 0
+    tag: 5
+    val: Anno1
 },
 {
   index: 9
-    tag: 5
-    val: test
+    tag: 9
+    val: 0
 },
 {
   index: 10
@@ -1147,26 +1500,41 @@ slot &myapp/hap-file-exec&_1
 },
 {
   index: 11
-    tag: 9
-    val: 0
+    tag: 5
+    val: test
 },
 {
   index: 12
-    tag: 2
+    tag: 9
     val: 0
 },
 {
   index: 13
     tag: 2
-    val: 0
+    val: 1
 },
 {
   index: 14
+    tag: 5
+    val: ns
+},
+{
+  index: 15
+    tag: 9
+    val: 1
+},
+{
+  index: 16
     tag: 2
     val: 0
 },
 {
-  index: 15
+  index: 17
+    tag: 2
+    val: 0
+},
+{
+  index: 18
     tag: 2
     val: 0
 },
@@ -1182,8 +1550,42 @@ slot &myapp/hap-file-exec&_2
     tag: 2
     val: 0
 },
+------------------------------------
+slot &myapp/hap-file-exec&_3
+{
+  index: 0
+    tag: 0
+    val: 2
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &myapp/hap-file-exec&_4
+{
+  index: 0
+    tag: 0
+    val: 5
+},
+{
+  index: 1
+    tag: 5
+    val: b
+},
+{
+  index: 2
+    tag: 0
+    val: 1
+},
+{
+  index: 3
+    tag: 1
+    val: 1
+},
 ======> strings <======
-"&myapp/hap-file-exec&.#*#main"; "&myapp/hap-file-exec&.#~B=#B"; "A"; "prototype"; "test"; 
+"&myapp/hap-file-exec&.#*#main"; "&myapp/hap-file-exec&.#~B=#B"; "&myapp/hap-file-exec&.#~C=#C"; "A"; "Anno2"; "__$$ETS_ANNOTATION$$__ns"; "ns"; "prototype"; "test"; 
 slotNum = 0x3
 .language ECMAScript
 .function any &sourcehar/sourcehar-file1&2.0.0.#*#test(any a0, any a1, any a2) {

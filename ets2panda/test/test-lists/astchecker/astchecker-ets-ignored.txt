@@ -54,6 +54,10 @@ ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
 ast/parser/ets/import_tests/export_and_import_class.ets
 ast/parser/ets/import_tests/export_and_import_top_level.ets
 
+# This case will emit different error messages on debug and release builds.
+# It behaves different because `Phase::Apply` contains `#ifndef NDEBUG`.
+ast/compiler/ets/type_error_processing/param_typeannotation_null.ets
+
 # Issue: #22951
 ast/compiler/ets/extension_accessor_tests/getterAsMethodCall.ets
 ast/compiler/ets/extension_accessor_tests/setterAsMethodCall.ets
@@ -162,11 +166,13 @@ ast/compiler/ets/import_tests/export_multi_error.ets
 ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
 
-ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.eets
+ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
 
 #29727
 ast/compiler/ets/first_match/override.ets
 
+#30971
+ast/compiler/ets/nagative_trailingLambda_abort.ets
 #31069
 ast/parser/ets/overload_function_match_neg.ets
 ast/compiler/type_error_test.ets

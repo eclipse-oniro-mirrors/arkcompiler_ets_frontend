@@ -1048,7 +1048,7 @@ export class Autofixer {
   fixPropertyAccessByIndex(node: ts.ElementAccessExpression): Autofix[] | undefined {
     if (ts.isParenthesizedExpression(node.expression) && ts.isAsExpression(node.expression.expression)) {
       const assertedType = this.typeChecker.getTypeAtLocation(node.expression.expression.type);
-      if (this.typeChecker.typeToString(assertedType) === 'object') {
+      if (this.typeChecker.typeToStringForLinter(assertedType) === 'object') {
         return this.renameAsObjectElementAccessExpression(node);
       }
     }
@@ -3950,7 +3950,11 @@ export class Autofixer {
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
-  private addAutofixFromCalls(calls: ts.Identifier[], autofix: Autofix[], argument: ts.Expression): void {
+  private addAutofixFromCalls(
+    calls: ts.Identifier[],
+    autofix: Autofix[],
+    argument: ts.Expression
+  ): void {
     calls.forEach((call) => {
       const callExpr = ts.factory.createCallExpression(
         ts.factory.createIdentifier(APPLY_STYLES_IDENTIFIER),

@@ -1,0 +1,254 @@
+slotNum = 0x0
+.language ECMAScript
+.function any &importAnnoPgName/exportAnno&2.0.0.#~A=#A(any a0, any a1, any a2) {
+	lda a2
+	return
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any &importAnnoPgName/exportAnno&2.0.0.func_main_0(any a0, any a1, any a2) {
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/exportAnno&2.0.0.#~A=#A, &importAnnoPgName/exportAnno&2.0.0_1378, 0x0, v0
+	ldobjbyname 0x1, prototype
+	returnundefined
+}
+
+
+======> literal array buffer <======
+------------------------------------
+slot &importAnnoPgName/exportAnno&2.0.0_1338
+------------------------------------
+slot &importAnnoPgName/exportAnno&2.0.0_1342
+{
+  index: 0
+    tag: 2
+    val: 0
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+{
+  index: 2
+    tag: 2
+    val: 0
+},
+{
+  index: 3
+    tag: 2
+    val: 1
+},
+{
+  index: 4
+    tag: 5
+    val: MyAnno
+},
+{
+  index: 5
+    tag: 5
+    val: MyAnno
+},
+{
+  index: 6
+    tag: 2
+    val: 0
+},
+{
+  index: 7
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &importAnnoPgName/exportAnno&2.0.0_1378
+{
+  index: 0
+    tag: 0
+    val: 2
+},
+{
+  index: 1
+    tag: 2
+    val: 0
+},
+======> strings <======
+"&importAnnoPgName/exportAnno&2.0.0.#~A=#A"; "prototype"; 
+
+======> literal array buffer <======
+======> strings <======
+
+slotNum = 0x0
+.language ECMAScript
+.function any &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B(any a0, any a1, any a2) {
+	lda a2
+	return
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any &importAnnoPgName/importAnno-exec&2.0.0.#~B>#fun(any a0, any a1, any a2) {
+	tryldglobalbyname 0x0, print
+	sta v0
+	lda.str B
+	sta v1
+	lda v0
+	callarg1 0x1, v1
+	returnundefined
+}
+
+slotNum = 0x3
+.language ECMAScript
+.function any &importAnnoPgName/importAnno-exec&2.0.0.func_main_0(any a0, any a1, any a2) {
+	ldhole
+	sta v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B, &importAnnoPgName/importAnno-exec&2.0.0_1451, 0x0, v0
+	sta v0
+	ldobjbyname 0x1, prototype
+	lda v0
+	stmodulevar 0x0
+	returnundefined
+}
+
+
+======> literal array buffer <======
+------------------------------------
+slot &importAnnoPgName/importAnno-exec&2.0.0_1387
+------------------------------------
+slot &importAnnoPgName/importAnno-exec&2.0.0_1391
+{
+  index: 0
+    tag: 2
+    val: 1
+},
+{
+  index: 1
+    tag: 5
+    val: @normalized:N&&&importAnnoPgName/exportAnno&
+},
+{
+  index: 2
+    tag: 2
+    val: 2
+},
+{
+  index: 3
+    tag: 5
+    val: MyAnno
+},
+{
+  index: 4
+    tag: 5
+    val: MyAnno
+},
+{
+  index: 5
+    tag: 9
+    val: 0
+},
+{
+  index: 6
+    tag: 5
+    val: fun
+},
+{
+  index: 7
+    tag: 5
+    val: fun
+},
+{
+  index: 8
+    tag: 9
+    val: 0
+},
+{
+  index: 9
+    tag: 2
+    val: 0
+},
+{
+  index: 10
+    tag: 2
+    val: 1
+},
+{
+  index: 11
+    tag: 5
+    val: B
+},
+{
+  index: 12
+    tag: 5
+    val: B
+},
+{
+  index: 13
+    tag: 2
+    val: 0
+},
+{
+  index: 14
+    tag: 2
+    val: 0
+},
+------------------------------------
+slot &importAnnoPgName/importAnno-exec&2.0.0_1451
+{
+  index: 0
+    tag: 0
+    val: 5
+},
+{
+  index: 1
+    tag: 5
+    val: fun
+},
+{
+  index: 2
+    tag: 0
+    val: 6
+},
+{
+  index: 3
+    tag: 6
+    val: &importAnnoPgName/importAnno-exec&2.0.0.#~B>#fun
+},
+{
+  index: 4
+    tag: 0
+    val: 9
+},
+{
+  index: 5
+    tag: 9
+    val: 0
+},
+{
+  index: 6
+    tag: 0
+    val: 2
+},
+{
+  index: 7
+    tag: 2
+    val: 1
+},
+======> strings <======
+"&importAnnoPgName/importAnno-exec&2.0.0.#~B=#B"; "B"; "print"; "prototype"; 
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+
+
+======> literal array buffer <======
+======> strings <======
+

@@ -17,7 +17,7 @@ class B {
     name_: string
 }
 
-function name(b: B) {}
+function /* @@ label1 */name(b: B) {}
 function name(b: B, n: string) {}
 
 get name(this: B): string {

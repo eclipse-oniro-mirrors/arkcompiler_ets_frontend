@@ -48,7 +48,6 @@
                         }
                       }
                     },
-                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 17,
@@ -61,22 +60,37 @@
                         "program": "test_type_annotation.ts"
                       }
                     }
-                  }
-                ],
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
                   },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                  "annotations": [],
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 8,
+                      "program": "test_type_annotation.ts"
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 13,
+                      "program": "test_type_annotation.ts"
+                    }
+                  }
+                },
+                {
+                  "type": "TSNullKeyword",
+                  "loc": {
+                    "start": {
+                      "line": 17,
+                      "column": 16,
+                      "program": "test_type_annotation.ts"
+                    },
+                    "end": {
+                      "line": 17,
+                      "column": 20,
+                      "program": "test_type_annotation.ts"
+                    }
                   }
                 }
-              },
-              "isNullable": true,
+              ],
               "loc": {
                 "start": {
                   "line": 17,
@@ -147,8 +161,8 @@
                   "type": "Identifier",
                   "name": "a",
                   "typeAnnotation": {
-                    "type": "NamedType",
-                    "name": {
+                    "type": "TSTypeReference",
+                    "typeName": {
                       "type": "Identifier",
                       "name": "i8",
                       "loc": {
@@ -164,7 +178,6 @@
                         }
                       }
                     },
-                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 18,
@@ -212,7 +225,6 @@
                         }
                       }
                     },
-                    "isNullable": false,
                     "loc": {
                       "start": {
                         "line": 18,
@@ -279,35 +291,27 @@
                           }
                         }
                       },
-                      "isNullable": false,
-                      "loc": {
-                        "start": {
-                          "line": 18,
-                          "column": 28,
-                          "program": "test_type_annotation.ts"
-                        },
-                        "end": {
-                          "line": 18,
-                          "column": 31,
-                          "program": "test_type_annotation.ts"
-                        }
+                      "end": {
+                        "line": 18,
+                        "column": 31,
+                        "program": "test_type_annotation.ts"
                       }
                     }
-                  ],
+                  },
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 28,
+                      "program": "test_type_annotation.ts"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 18,
+                      "column": 31,
+                      "program": "test_type_annotation.ts"
                     }
                   }
                 },
-                "isNullable": false,
+                "annotations": [],
                 "loc": {
                   "start": {
                     "line": 18,
@@ -315,8 +319,8 @@
                     "program": "test_type_annotation.ts"
                   },
                   "end": {
-                    "line": 19,
-                    "column": 4,
+                    "line": 18,
+                    "column": 33,
                     "program": "test_type_annotation.ts"
                   }
                 }
@@ -328,8 +332,8 @@
                   "program": "test_type_annotation.ts"
                 },
                 "end": {
-                  "line": 19,
-                  "column": 4,
+                  "line": 18,
+                  "column": 33,
                   "program": "test_type_annotation.ts"
                 }
               }
@@ -413,12 +417,12 @@
                       "loc": {
                         "start": {
                           "line": 19,
-                          "column": 15,
+                          "column": 8,
                           "program": "test_type_annotation.ts"
                         },
                         "end": {
                           "line": 19,
-                          "column": 16,
+                          "column": 11,
                           "program": "test_type_annotation.ts"
                         }
                       }
@@ -530,26 +534,40 @@
                       },
                       "end": {
                         "line": 19,
-                        "column": 16,
+                        "column": 11,
                         "program": "test_type_annotation.ts"
                       }
                     }
+                  },
+                  "annotations": [],
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 8,
+                      "program": "test_type_annotation.ts"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 13,
+                      "program": "test_type_annotation.ts"
+                    }
                   }
-                ],
+                },
+                "annotations": [],
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 19,
+                    "column": 8,
+                    "program": "test_type_annotation.ts"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 19,
+                    "column": 15,
+                    "program": "test_type_annotation.ts"
                   }
                 }
               },
-              "isNullable": false,
+              "annotations": [],
               "loc": {
                 "start": {
                   "line": 19,
@@ -557,8 +575,8 @@
                   "program": "test_type_annotation.ts"
                 },
                 "end": {
-                  "line": 20,
-                  "column": 4,
+                  "line": 19,
+                  "column": 17,
                   "program": "test_type_annotation.ts"
                 }
               }
@@ -674,8 +692,8 @@
                         "type": "Identifier",
                         "name": "c",
                         "typeAnnotation": {
-                          "type": "NamedType",
-                          "name": {
+                          "type": "TSTypeReference",
+                          "typeName": {
                             "type": "Identifier",
                             "name": "i32",
                             "loc": {
@@ -691,7 +709,6 @@
                               }
                             }
                           },
-                          "isNullable": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -759,35 +776,27 @@
                                 }
                               }
                             },
-                            "isNullable": false,
-                            "loc": {
-                              "start": {
-                                "line": 20,
-                                "column": 34,
-                                "program": "test_type_annotation.ts"
-                              },
-                              "end": {
-                                "line": 20,
-                                "column": 36,
-                                "program": "test_type_annotation.ts"
-                              }
+                            "end": {
+                              "line": 20,
+                              "column": 36,
+                              "program": "test_type_annotation.ts"
                             }
                           }
-                        ],
+                        },
                         "loc": {
                           "start": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
+                            "line": 20,
+                            "column": 34,
+                            "program": "test_type_annotation.ts"
                           },
                           "end": {
-                            "line": 1,
-                            "column": 1,
-                            "program": null
+                            "line": 20,
+                            "column": 36,
+                            "program": "test_type_annotation.ts"
                           }
                         }
                       },
-                      "isNullable": false,
+                      "annotations": [],
                       "loc": {
                         "start": {
                           "line": 20,
@@ -796,7 +805,7 @@
                         },
                         "end": {
                           "line": 20,
-                          "column": 39,
+                          "column": 38,
                           "program": "test_type_annotation.ts"
                         }
                       }
@@ -809,7 +818,7 @@
                       },
                       "end": {
                         "line": 20,
-                        "column": 39,
+                        "column": 38,
                         "program": "test_type_annotation.ts"
                       }
                     }
@@ -869,7 +878,6 @@
                               }
                             }
                           },
-                          "isNullable": false,
                           "loc": {
                             "start": {
                               "line": 20,
@@ -882,22 +890,37 @@
                               "program": "test_type_annotation.ts"
                             }
                           }
-                        }
-                      ],
-                      "loc": {
-                        "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
                         },
-                        "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
+                        "annotations": [],
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 43,
+                            "program": "test_type_annotation.ts"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 48,
+                            "program": "test_type_annotation.ts"
+                          }
+                        }
+                      },
+                      {
+                        "type": "TSNullKeyword",
+                        "loc": {
+                          "start": {
+                            "line": 20,
+                            "column": 51,
+                            "program": "test_type_annotation.ts"
+                          },
+                          "end": {
+                            "line": 20,
+                            "column": 55,
+                            "program": "test_type_annotation.ts"
+                          }
                         }
                       }
-                    },
-                    "isNullable": true,
+                    ],
                     "loc": {
                       "start": {
                         "line": 20,
@@ -964,7 +987,6 @@
                           }
                         }
                       },
-                      "isNullable": false,
                       "loc": {
                         "start": {
                           "line": 20,
@@ -977,22 +999,37 @@
                           "program": "test_type_annotation.ts"
                         }
                       }
-                    }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
                     },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                    "annotations": [],
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 60,
+                        "program": "test_type_annotation.ts"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 64,
+                        "program": "test_type_annotation.ts"
+                      }
+                    }
+                  },
+                  {
+                    "type": "TSNullKeyword",
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 67,
+                        "program": "test_type_annotation.ts"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 71,
+                        "program": "test_type_annotation.ts"
+                      }
                     }
                   }
-                },
-                "isNullable": true,
+                ],
                 "loc": {
                   "start": {
                     "line": 20,

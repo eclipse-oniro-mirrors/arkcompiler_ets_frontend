@@ -41,7 +41,7 @@ public:
     CompilerContext(binder::Binder *binder, bool isDebug, bool isDebuggerEvaluateExpressionMode,
                     bool isMergeAbc, bool isJsonInputFile, bool isRecordDebugSource,
                     const std::string &sourceFile, const std::string &pkgName, util::StringView recordName,
-                    util::PatchFix *patchFixHelper);
+                    util::PatchFix *patchFixHelper, bool enableColumn = false);
 
     NO_COPY_SEMANTIC(CompilerContext);
     NO_MOVE_SEMANTIC(CompilerContext);
@@ -81,6 +81,11 @@ public:
     bool IsDebug() const
     {
         return isDebug_;
+    }
+
+    bool EnableColumn() const
+    {
+        return enableColumn_;
     }
 
     bool isDebuggerEvaluateExpressionMode() const
@@ -138,6 +143,7 @@ private:
     util::StringView recordName_;
     util::PatchFix *patchFixHelper_ {nullptr};
     std::unique_ptr<Emitter> emitter_;
+    bool enableColumn_ {false};
 };
 
 }  // namespace panda::es2panda::compiler

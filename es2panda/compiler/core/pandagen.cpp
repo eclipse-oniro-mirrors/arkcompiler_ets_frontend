@@ -137,6 +137,11 @@ bool PandaGen::IsDebug() const
     return context_->IsDebug();
 }
 
+bool PandaGen::EnableColumn() const
+{
+    return context_->EnableColumn();
+}
+
 bool PandaGen::isDebuggerEvaluateExpressionMode() const
 {
     return context_->isDebuggerEvaluateExpressionMode();

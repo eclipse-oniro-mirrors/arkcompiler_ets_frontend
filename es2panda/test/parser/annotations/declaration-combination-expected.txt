@@ -51,11 +51,11 @@
           "loc": {
             "start": {
               "line": 17,
-              "column": 9
+              "column": 5
             },
             "end": {
               "line": 17,
-              "column": 11
+              "column": 10
             }
           }
         },
@@ -92,11 +92,11 @@
           "loc": {
             "start": {
               "line": 18,
-              "column": 9
+              "column": 5
             },
             "end": {
               "line": 18,
-              "column": 11
+              "column": 10
             }
           }
         },
@@ -133,11 +133,11 @@
           "loc": {
             "start": {
               "line": 19,
-              "column": 9
+              "column": 5
             },
             "end": {
-              "line": 20,
-              "column": 2
+              "line": 19,
+              "column": 10
             }
           }
         }
@@ -204,11 +204,11 @@
           "loc": {
             "start": {
               "line": 23,
-              "column": 9
+              "column": 5
             },
             "end": {
               "line": 23,
-              "column": 17
+              "column": 16
             }
           }
         },
@@ -245,11 +245,11 @@
           "loc": {
             "start": {
               "line": 24,
-              "column": 9
+              "column": 5
             },
             "end": {
-              "line": 25,
-              "column": 2
+              "line": 24,
+              "column": 16
             }
           }
         }
@@ -319,23 +319,23 @@
                 "statements": [],
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1
+                    "line": 27,
+                    "column": 2
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1
+                    "line": 38,
+                    "column": 2
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1
+                  "line": 27,
+                  "column": 2
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1
+                  "line": 38,
+                  "column": 2
                 }
               }
             },

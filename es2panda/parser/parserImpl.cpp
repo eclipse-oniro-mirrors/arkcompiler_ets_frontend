@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1148,6 +1148,7 @@ ir::Expression *ParserImpl::ParseTsTypeReferenceOrQuery(TypeAnnotationParsingOpt
         lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN) {
         typeParamInst = ParseTsTypeParameterInstantiation(options & TypeAnnotationParsingOptions::THROW_ERROR);
         if (parseQuery) {
+            CHECK_NOT_NULL(typeParamInst);
             typeName = AllocNode<ir::TypeArgumentsExpression>(typeName, typeParamInst);
             lexer::SourcePosition endLoc = typeParamInst->End();
             typeName->SetRange({referenceStartLoc, endLoc});
@@ -3061,7 +3062,8 @@ ir::Identifier *ParserImpl::GetKeyByFuncFlag(ir::ScriptFunctionFlags funcFlag)
 }
 
 ir::MethodDefinition *ParserImpl::CreateImplicitMethod(ir::Expression *superClass, bool hasSuperClass,
-                                                       ir::ScriptFunctionFlags funcFlag, bool isDeclare)
+                                                       ir::ScriptFunctionFlags funcFlag, bool isDeclare,
+                                                       lexer::SourceRange range)
 {
     ArenaVector<ir::Expression *> params(Allocator()->Adapter());
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
@@ -3085,13 +3087,16 @@ ir::MethodDefinition *ParserImpl::CreateImplicitMethod(ir::Expression *superClas
                                                             AllocNode<ir::Identifier>(argsStr)));
 
             auto *callExpr = AllocNode<ir::CallExpression>(superExpr, std::move(callArgs), nullptr, false);
+            callExpr->SetRange(range);
             statements.push_back(AllocNode<ir::ExpressionStatement>(callExpr));
         }
     }
 
     auto *body = AllocNode<ir::BlockStatement>(scope, std::move(statements));
+    body->SetRange(range);
     auto *func = AllocNode<ir::ScriptFunction>(scope, std::move(params), nullptr, isDeclare ? nullptr : body, nullptr,
                                                funcFlag, isDeclare, Extension() == ScriptExtension::TS);
+    func->SetRange(range);
     if (isConstructor) {
         func->AddFlag(ir::ScriptFunctionFlags::GENERATED_CONSTRUCTOR);
     }
@@ -3260,6 +3265,7 @@ ir::ClassDefinition *ParserImpl::ParseClassDefinition(bool isDeclaration, bool i
     ArenaVector<ir::TSIndexSignature *> indexSignatures(Allocator()->Adapter());
     bool hasConstructorFuncBody = false;
     bool isCtorContinuousDefined = true;
+    bool hasInstanceProperty = false;
 
     auto *static_scope  = staticInitializer->Function()->Scope();
     auto *instance_scope = instanceInitializer->Function()->Scope();
@@ -3295,13 +3301,26 @@ ir::ClassDefinition *ParserImpl::ParseClassDefinition(bool isDeclaration, bool i
         isCtorContinuousDefined = ctor == nullptr;
         ValidatePrivateProperty(property, usedPrivateNames, unusedGetterSetterPairs);
         properties.push_back(property);
+        if (property->IsClassProperty() && !property->AsClassProperty()->IsStatic()) {
+            hasInstanceProperty = true;
+        }
     }
 
     context_.Status() = savedStatus;
 
     lexer::SourcePosition classBodyEndLoc = lexer_->GetToken().End();
     if (ctor == nullptr) {
-        ctor = CreateImplicitMethod(superClass, hasSuperClass, ir::ScriptFunctionFlags::CONSTRUCTOR, isDeclare);
+        // By default, cover from class start to class body end
+        lexer::SourceRange range = {startLoc, classBodyEndLoc};
+        /*
+        * If no instance property exists, the implicit constructor does not generate actual code.
+        * Its line number would be determined by 'return' instruction, pointing debug info to the class's last line.
+        * To avoid incorrect line mapping, in this scenario, set the start and end positions to the same point.
+        */
+        if (!hasInstanceProperty) {
+            range = {startLoc, startLoc};
+        }
+        ctor = CreateImplicitMethod(superClass, hasSuperClass, ir::ScriptFunctionFlags::CONSTRUCTOR, isDeclare, range);
         ctor->SetRange({startLoc, classBodyEndLoc});
         hasConstructorFuncBody = !isDeclare;
     }
@@ -3607,7 +3626,7 @@ ir::TSEnumDeclaration *ParserImpl::ParseEnumMembers(ir::Identifier *key, const l
 
     while (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_RIGHT_BRACE) {
         ir::Expression *memberKey = nullptr;
-        const auto &keyStartLoc = lexer_->GetToken().Start();
+        const auto keyStartLoc = lexer_->GetToken().Start();
         binder::EnumDecl *decl {};
 
         if (lexer_->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
@@ -3637,7 +3656,9 @@ ir::TSEnumDeclaration *ParserImpl::ParseEnumMembers(ir::Identifier *key, const l
 
         auto *member = AllocNode<ir::TSEnumMember>(memberKey, memberInit);
         decl->BindNode(member);
-        member->SetRange({initStart, lexer_->GetToken().End()});
+        lexer::SourcePosition memberEnd =
+            memberInit ? memberInit->Range().end : memberKey->Range().end;
+        member->SetRange({keyStartLoc, memberEnd});
         members.push_back(member);
 
         if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA) {
@@ -3808,7 +3829,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams(bool isDeclare,
 bool ParserImpl::CheckTypeNameIsReserved(const util::StringView &paramName)
 {
     return paramName.Is("number") || paramName.Is("any") || paramName.Is("unknown") || paramName.Is("never") ||
-           paramName.Is("bigint") || paramName.Is("boolean") || paramName.Is("string") || paramName.Is("string") ||
+           paramName.Is("bigint") || paramName.Is("boolean") || paramName.Is("string") ||
            paramName.Is("void") || paramName.Is("object");
 }
 

@@ -108,6 +108,7 @@ private:
     void GenConcurrentModuleRequestsAnnotation();
     void GenExpectedPropertyCountAnnotation();
     void GenSlotNumberAnnotation();
+    bool NeedToAddColumnForPandaIns(panda::pandasm::Ins *pandaIns);
 
     const PandaGen *pg_;
     panda::pandasm::Function *func_ {};

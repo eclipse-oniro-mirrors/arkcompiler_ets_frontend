@@ -107,7 +107,7 @@ panda::es2panda::util::AbcProgramsCache *ProtobufSnapshotGenerator::GetAbcInputC
     }
 
     uint32_t hashCode = abcProtoCache.hashcode();
-    auto *abcProgarmsCache = allocator->New<panda::es2panda::util::AbcProgramsCache>(hashCode, abcProgsInfo);
+    auto *abcProgarmsCache = new panda::es2panda::util::AbcProgramsCache(hashCode, abcProgsInfo);
     CHECK_NOT_NULL(abcProgarmsCache);
 
     return abcProgarmsCache;

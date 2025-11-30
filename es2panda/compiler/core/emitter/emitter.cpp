@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "emitter.h"
 
+#include <common/abc_file_utils.h>
 #include <compiler/base/literals.h>
 #include <compiler/core/compilerContext.h>
 #include <compiler/core/pandagen.h>
@@ -198,6 +199,22 @@ uint32_t FunctionEmitter::UpdateForReturnIns(const ir::AstNode *astNode, panda::
     return columnNum;
 }
 
+bool FunctionEmitter::NeedToAddColumnForPandaIns(panda::pandasm::Ins *pandaIns)
+{
+    if (pg_->IsDebug()) {
+        return true;
+    }
+    // In other mode, adds column numbers to the call instructions can include the column numbers in the backstack info
+    // of the 'not a callable' type errors.
+    return pg_->EnableColumn() && (pandaIns->opcode == pandasm::Opcode::CALLTHIS0 ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS1 || pandaIns->opcode == pandasm::Opcode::CALLTHIS2 ||
+        pandaIns->opcode == pandasm::Opcode::CALLTHIS3 || pandaIns->opcode == pandasm::Opcode::CALLTHISRANGE ||
+        pandaIns->opcode == pandasm::Opcode::WIDE_CALLTHISRANGE ||
+        pandaIns->opcode == pandasm::Opcode::CALLARG0 || pandaIns->opcode == pandasm::Opcode::CALLARG1 ||
+        pandaIns->opcode == pandasm::Opcode::CALLARGS2 || pandaIns->opcode == pandasm::Opcode::CALLARGS3 ||
+        pandaIns->opcode == pandasm::Opcode::CALLRANGE || pandaIns->opcode == pandasm::Opcode::WIDE_CALLRANGE);
+}
+
 void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, panda::pandasm::Ins *pandaIns)
 {
     const ir::AstNode *astNode = ins->Node();
@@ -209,7 +226,7 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, panda::pandasm:
     }
     uint32_t columnNum = UpdateForReturnIns(astNode, pandaIns);
 
-    if (pg_->IsDebug()) {
+    if (NeedToAddColumnForPandaIns(pandaIns)) {
         size_t insLen = GetIRNodeWholeLength(ins);
         offset_ += insLen;
         pandaIns->ins_debug.column_number = columnNum;
@@ -394,7 +411,8 @@ pandasm::AnnotationData FunctionEmitter::CreateAnnotation(const ir::Annotation *
 {
     std::string annoName = std::string(anno->Name());
     if (pg_->Context()->IsMergeAbc()) {
-        std::string prefix = std::string(pg_->Context()->RecordName()) + ".";
+        std::string prefix =
+            std::string(pg_->Context()->RecordName()) + std::string(abc2program::RECORD_ANNOTATION_SEPARATOR);
         annoName.insert(0, prefix);
     }
     pandasm::AnnotationData annotation(annoName);

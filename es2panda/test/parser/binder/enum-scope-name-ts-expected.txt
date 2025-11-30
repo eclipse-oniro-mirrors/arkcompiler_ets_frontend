@@ -3,11 +3,6 @@ slotNum = 0xe
 .function any .#%#A(any a0, any a1, any a2, any a3) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 	lda.str b
 	sta v0
 	definefunc 0x0, .#%A*#, 0x0
@@ -33,11 +28,6 @@ slotNum = 0xe
 .function any .#%#A^1(any a0, any a1, any a2, any a3) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 	lda.str d
 	sta v0
 	definefunc 0x0, .#%A^1*#, 0x0

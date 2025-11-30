@@ -14,6 +14,7 @@
  */
 
 #include "srcDump.h"
+#include "public/public.h"
 
 #include "util/helpers.h"
 #include "public/public.h"

@@ -1,1 +1,20 @@
 # Known failure list for test262 - fastverify-x64
+
+#27177
+test262/data/test_es2021/language/expressions/async-generator/yield-thenable-create-resolving-functions-resolve.js
+
+#27289
+test262/data/test_es2021/built-ins/Symbol/replace/cross-realm.js
+
+#26061
+test262/data/test_es2021/built-ins/Proxy/defineProperty/targetdesc-not-compatible-descriptor-realm.js
+test262/data/test_es2021/built-ins/String/prototype/toString/non-generic-realm.js
+
+#26061
+test262/data/test_es2021/built-ins/Proxy/defineProperty/trap-is-not-callable-realm.js
+
+#27184
+test262/data/test_es2021/language/module-code/instn-iee-err-circular-as.js
+
+#27695
+test262/data/test_es2021/built-ins/Object/defineProperty/15.2.3.6-4-211.js

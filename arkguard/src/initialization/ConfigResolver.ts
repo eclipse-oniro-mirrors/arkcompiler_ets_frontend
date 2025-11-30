@@ -35,7 +35,7 @@ import {
 } from '../ArkObfuscator';
 
 import { isDebug, isFileExist, sortAndDeduplicateStringArr, mergeSet, convertSetToArray } from './utils';
-import { nameCacheMap, yellow, unobfuscationNamesObj } from './CommonObject';
+import { nameCacheMap, yellow, red, unobfuscationNamesObj } from './CommonObject';
 import { clearHistoryUnobfuscatedMap, historyAllUnobfuscatedNamesMap, historyUnobfuscatedPropMap } from './Initializer';
 import { AtIntentCollections, AtKeepCollections, LocalVariableCollections, UnobfuscationCollections } from '../utils/CommonCollections';
 import { INameObfuscationOption } from '../configs/INameObfuscationOption';
@@ -75,9 +75,15 @@ enum OptionType {
   ENABLE_BYTECODE_OBFUSCATION,
   ENABLE_BYTECODE_OBFUSCATION_DEBUGGING,
   ENABLE_BYTECODE_OBFUSCATION_ENHANCED,
-  ENABLE_BYTECODE_OBFUSCATION_ARKUI
+  ENABLE_BYTECODE_OBFUSCATION_ARKUI,
+  STRIP_NOT_COMPILED_MODULE_NAME
 }
 export { OptionType as OptionTypeForTest };
+
+enum LoggerLevel {
+  WARN = 'warn',
+  ERROR = 'error'
+}
 
 type SystemApiContent = {
   ReservedPropertyNames?: string[];
@@ -118,6 +124,7 @@ class ObOptions {
   stripLanguageDefault: boolean = false;
   stripSystemApiArgs: boolean = false;
   keepParameterNames: boolean = false;
+  stripNotCompiledModuleName: boolean = false;
 
   mergeObOptions(other: ObOptions): void {
     this.disableObfuscation = this.disableObfuscation || other.disableObfuscation;
@@ -135,6 +142,7 @@ class ObOptions {
     this.stripSystemApiArgs = this.stripSystemApiArgs || other.stripSystemApiArgs;
     this.keepParameterNames = this.keepParameterNames || other.keepParameterNames;
     this.enableAtKeep = this.enableAtKeep || other.enableAtKeep;
+    this.stripNotCompiledModuleName = this.stripNotCompiledModuleName || other.stripNotCompiledModuleName;
 
     if (other.printNameCache.length > 0) {
       this.printNameCache = other.printNameCache;
@@ -404,6 +412,7 @@ export class ObConfigResolver {
   static readonly STRIP_LANGUAGE_DEFAULT = 'strip-language-default';
   static readonly STRIP_SYSTEM_API_ARGS = 'strip-system-api-args';
   static readonly KEEP_PARAMETER_NAMES = '-keep-parameter-names';
+  static readonly STRIP_NOT_COMPILED_MODULE_NAME = 'strip-not-compiled-module-name';
 
   // renameFileName, printNameCache, applyNameCache, removeComments and keepComments won't be reserved in obfuscation.txt file.
   static exportedSwitchMap: Map<string, string> = new Map([
@@ -472,6 +481,8 @@ export class ObConfigResolver {
         return OptionType.STRIP_SYSTEM_API_ARGS;
       case ObConfigResolver.KEEP_PARAMETER_NAMES:
         return OptionType.KEEP_PARAMETER_NAMES;
+       case ObConfigResolver.STRIP_NOT_COMPILED_MODULE_NAME:
+        return OptionType.STRIP_NOT_COMPILED_MODULE_NAME; 
       default:
         return OptionType.NONE;
     }
@@ -668,6 +679,10 @@ export class ObConfigResolver {
         }
         case OptionType.STRIP_SYSTEM_API_ARGS: {
           configs.options.stripSystemApiArgs = true;
+          return true;
+        }
+        case OptionType.STRIP_NOT_COMPILED_MODULE_NAME: {
+          configs.options.stripNotCompiledModuleName = true;
           return true;
         }
       }
@@ -1376,11 +1391,35 @@ export function printUnobfuscationReasons(configPath: string, defaultPath: strin
   }
 }
 
-
-export function generateConsumerObConfigFile(obfuscationOptions: SourceObConfig, printObfLogger: Function): void {
+//This function will be called by hvigor when build in release mode and obfuscation is off.
+export function generateConsumerObConfigFile(obfuscationOptions: SourceObConfig, printObfLogger: Function | Object): void {
   const projectConfig = { obfuscationOptions, compileHar: true };
-  const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, printObfLogger);
+  let obfLoggerPrinter = generateobfLoggerPrinter(printObfLogger);
+  const obConfig: ObConfigResolver = new ObConfigResolver(projectConfig, obfLoggerPrinter);
   obConfig.resolveObfuscationConfigs();
+}
+
+export function generateobfLoggerPrinter(obfLogger: any): Function {
+  if (typeof obfLogger === 'function') {
+    return obfLogger;
+  } else {
+    return (errorInfo: string, errorCodeInfo: HvigorErrorInfo | string,
+            level: string) => {
+      const isNewLogger: boolean = obfLogger.printError && obfLogger.printWarn;
+      switch (level) {
+        case LoggerLevel.ERROR:
+          isNewLogger ? obfLogger.printError(errorCodeInfo) :
+                        obfLogger.error(red, errorInfo);
+          return;
+        case LoggerLevel.WARN:
+          isNewLogger ? obfLogger.printWarn(errorCodeInfo) :
+                        obfLogger.warn(yellow, errorInfo);
+          return;
+        default:
+          return;
+      }
+    }
+  }
 }
 
 export function mangleFilePath(originalPath: string): string {

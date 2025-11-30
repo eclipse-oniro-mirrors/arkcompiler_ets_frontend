@@ -225,6 +225,7 @@ void ETSTryContext::EmitFinalizer(
     // First compile of the finaly clause, executed if the statement executed normally
     tryStmt_->FinallyBlock()->Compile(etsg);
 
+    ES2PANDA_ASSERT(finalizerTable != nullptr);
     etsg->Branch(tryStmt_, finalizerTable->LabelSet().CatchEnd());
 
     for (std::pair<compiler::LabelPair, const ir::Statement *> insertion : finalizerInsertions) {

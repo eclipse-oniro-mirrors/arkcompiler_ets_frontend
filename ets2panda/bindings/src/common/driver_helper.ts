@@ -94,6 +94,7 @@ export class DriverHelper {
                     throwError(`Could not get AllErrorMessages`);
                 }
 
+
                 throwError('Failed proceed to: ' + Es2pandaContextState[state] + '\n' + errorMessage);
             }
         } catch (e) {

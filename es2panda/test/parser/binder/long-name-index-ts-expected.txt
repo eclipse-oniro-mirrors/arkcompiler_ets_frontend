@@ -29,11 +29,6 @@ slotNum = 0x7
 .function any .#&@0%#LongEnum(any a0, any a1, any a2, any a3) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 	lda.str b
 	sta v0
 	definefunc 0x0, .#&@0%@1*#, 0x0

@@ -52,12 +52,12 @@
               "declare": true,
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1
+                  "line": 17,
+                  "column": 9
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1
+                  "line": 17,
+                  "column": 9
                 }
               }
             },
@@ -305,12 +305,12 @@
               "declare": true,
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1
+                  "line": 21,
+                  "column": 9
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1
+                  "line": 21,
+                  "column": 9
                 }
               }
             },
@@ -579,12 +579,12 @@
                     "declare": true,
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1
+                        "line": 26,
+                        "column": 13
                       },
                       "end": {
-                        "line": 1,
-                        "column": 1
+                        "line": 26,
+                        "column": 13
                       }
                     }
                   },
@@ -832,12 +832,12 @@
                     "declare": true,
                     "loc": {
                       "start": {
-                        "line": 1,
-                        "column": 1
+                        "line": 30,
+                        "column": 13
                       },
                       "end": {
-                        "line": 1,
-                        "column": 1
+                        "line": 30,
+                        "column": 13
                       }
                     }
                   },

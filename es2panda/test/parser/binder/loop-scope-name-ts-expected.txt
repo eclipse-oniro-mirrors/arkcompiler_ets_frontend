@@ -60,11 +60,6 @@ slotNum = 0x21
 	nop
 label_38: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
 label_3: 
 	definefunc 0x0, .#*#, 0x0
 	callarg0 0x1

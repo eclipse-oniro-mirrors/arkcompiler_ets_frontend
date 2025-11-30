@@ -14,3 +14,5 @@ jBox2d_test
 #27438
 dayjs_test
 
+#26457
+memory-cache_test

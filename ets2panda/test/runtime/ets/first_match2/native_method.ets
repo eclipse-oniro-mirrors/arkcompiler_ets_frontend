@@ -31,7 +31,6 @@ native function foo(x: number): void;
 function foo(x: string) {
     return "invoke3"
 }
-
 function main() {
     let a = new A();
     arktest.assertEQ(a.foo("abc"), "invoke1");

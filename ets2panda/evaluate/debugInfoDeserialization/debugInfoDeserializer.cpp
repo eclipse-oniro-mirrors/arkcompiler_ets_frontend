@@ -75,7 +75,7 @@ varbinder::Variable *DebugInfoDeserializer::CreateIrClass(panda_file::File::Enti
     ES2PANDA_ASSERT(program);
 
     const auto *pf = debugInfoPlugin_.GetDebugInfoStorage()->GetPandaFile(pathToSource.Utf8());
-    ES2PANDA_ASSERT(pf);
+    ES2PANDA_ASSERT(pf != nullptr);
 
     // NOTE: may cache the created `ClassDataAccessor`.
     auto cda = panda_file::ClassDataAccessor(*pf, classId);

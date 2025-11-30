@@ -158,6 +158,8 @@ enum class VariableScopeFlags : uint8_t {
     USE_ARGS = 1U << 2U,
     USE_SUPER = 1U << 3U,
     INNER_ARROW = 1U << 4U,
+    USE_THIS = 1U << 5U,
+    USE_NEW_TARGET = 1U << 6U,
 };
 
 DEFINE_BITOPS(VariableScopeFlags)

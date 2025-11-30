@@ -4,20 +4,11 @@ expectedProperty = 0x2
 .function any .#~A=#A(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
-	ldlexvar 0x0, 0x1
-	sta v0
 	ldai 0x5
-	stobjbyname 0x0, a, v0
-	ldlexvar 0x0, 0x1
-	sta v0
+	stobjbyname 0x0, a, a2
 	definefunc 0x2, .#~A=A*#, 0x0
-	stobjbyname 0x3, b, v0
-	ldlexvar 0x0, 0x1
+	stobjbyname 0x3, b, a2
+	lda a2
 	return
 label_2: 
 }

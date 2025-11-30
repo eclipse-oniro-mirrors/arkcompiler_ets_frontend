@@ -38,7 +38,7 @@ function byte_test(): boolean {
     byte_long   = testByte; // Byte -> Long
     byte_float  = testByte; // Byte -> Float
     byte_double = testByte; // Byte -> Double
-    byte_char   = testByte; // Byte -> Char
+    byte_char   = testByte.toChar(); // Byte -> Char
 
     // true test Type speciefic operations
     {
@@ -114,10 +114,10 @@ function char_test(): boolean {
 
     // char_byte   = testChar; // Char -> Byte is not available according 6.5.2 widening table and CTE happens
     // char_short  = testChar; // Char -> Short is not available according 6.5.2 widening table and CTE happens
-    char_int    = testChar; // Char -> Int
-    char_long   = testChar; // Char -> Long
-    char_float  = testChar; // Char -> Float
-    char_double = testChar; // Char -> Double
+    char_int    = testChar.toInt(); // Char -> Int
+    char_long   = testChar.toLong(); // Char -> Long
+    char_float  = testChar.toFloat(); // Char -> Float
+    char_double = testChar.toDouble(); // Char -> Double
     char_char   = testChar; // Char -> Char
 
     // true test Type speciefic operations

@@ -29,7 +29,6 @@ function foo(a: number): string {
     return "invoke2"
 }
 
-
 function main() {
     arktest.assertEQ(foo(new A()), "invoke1")
     arktest.assertEQ(foo(123), "invoke2")

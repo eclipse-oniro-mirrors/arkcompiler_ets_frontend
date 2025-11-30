@@ -203,6 +203,7 @@ ir::FunctionExpression *MethodBuilder::CreateFunctionExpression(ir::Identifier *
     auto *func = checker_->AllocNode<ir::ScriptFunction>(
         checker_->Allocator(),
         ir::ScriptFunction::ScriptFunctionData {body, std::move(funcSignature), scriptFuncFlags, modifierFlags_});
+    ES2PANDA_ASSERT(func != nullptr);
 
     ES2PANDA_ASSERT(func != nullptr);
     func->SetIdent(id);

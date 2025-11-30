@@ -796,11 +796,6 @@ void ETSCompiler::Compile(const ir::ConditionalExpression *expr) const
     etsg->SetAccumulatorType(expr->TsType());
 }
 
-static bool TypeNeedInternalCheckCast(const checker::Type *type)
-{
-    return type->IsETSObjectType() || type->IsETSArrayType() || type->IsETSTupleType() || type->IsETSFunctionType();
-}
-
 bool ETSCompiler::HandleTopLevelGetter(const ir::Identifier *expr, ETSGen *etsg) const
 {
     if (auto const *const variable = expr->Variable(); checker::ETSChecker::IsVariableStatic(variable)) {
@@ -840,15 +835,13 @@ void ETSCompiler::Compile(const ir::Identifier *expr) const
     }
 
     if (smartType->IsETSReferenceType()) {
-        auto *localVar = expr->Variable()->AsLocalVariable();
+        auto checker = etsg->Checker()->AsETSChecker();
+        etsg->SetAccumulatorType(expr->Variable()->TsType());
         //  In case when smart cast type of identifier differs from initial variable type perform cast if required
-        if (!etsg->Checker()->AsETSChecker()->Relation()->IsSupertypeOf(smartType, etsg->GetAccumulatorType())) {
+        if (!checker->Relation()->IsSupertypeOf(smartType, etsg->GetAccumulatorType())) {
             etsg->CastToReftype(expr, smartType, false);
-        } else if (!etsg->Checker()->AsETSChecker()->Relation()->IsIdenticalTo(smartType, localVar->TsType()) &&
-                   TypeNeedInternalCheckCast(smartType)) {
-            //  All the non-union type that can get their properties by memberExpression should add a check cast while
-            //  the `smartType` is not same with the type of its variable.
-            etsg->InternalCheckCast(expr, smartType);
+        } else if (smartType->IsETSUndefinedType()) {  // #31356
+            etsg->CastToReftype(expr, smartType, false);
         }
     } else if (smartType->IsETSPrimitiveType()) {
         etsg->ApplyConversionCast(expr, smartType);
@@ -992,6 +985,7 @@ void ETSCompiler::Compile(const ir::ObjectExpression *expr) const
 
     auto *signatureInfo = etsg->Allocator()->New<checker::SignatureInfo>(etsg->Allocator());
     auto *createObjSig = etsg->Allocator()->New<checker::Signature>(signatureInfo, nullptr, nullptr);
+    ES2PANDA_ASSERT(createObjSig != nullptr);
     createObjSig->SetInternalName(compiler::Signatures::BUILTIN_JSRUNTIME_CREATE_OBJECT);
     compiler::VReg dummyReg = compiler::VReg::RegStart();
     etsg->CallDynamic(ETSGen::CallDynamicData {expr, dummyReg, dummyReg}, createObjSig,

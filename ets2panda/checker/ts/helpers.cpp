@@ -370,6 +370,7 @@ void TSChecker::GetTypeVar(varbinder::Decl *decl)
         util::Helpers::FindAncestorGivenByType(decl->Node(), ir::AstNodeType::VARIABLE_DECLARATOR);
     ES2PANDA_ASSERT(declarator);
 
+    ES2PANDA_ASSERT(declarator);
     if (declarator->AsVariableDeclarator()->Id()->IsIdentifier()) {
         InferSimpleVariableDeclaratorType(declarator->AsVariableDeclarator());
         return;

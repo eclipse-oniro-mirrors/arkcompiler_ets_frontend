@@ -81,6 +81,7 @@ UnaryExpression *UnaryExpression::Clone(ArenaAllocator *const allocator, AstNode
         argument->SetParent(clone);
     }
 
+    ES2PANDA_ASSERT(clone != nullptr);
     if (parent != nullptr) {
         clone->SetParent(parent);
     }

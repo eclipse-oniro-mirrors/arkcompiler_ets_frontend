@@ -44,7 +44,7 @@ slotNum = 0x2
 .function any .#*#setD(any a0, any a1, any a2, any a3) {
 label_1: 
 label_0: 
-	ldlexvar 0x0, 0x1
+	ldlexvar 0x0, 0x0
 	sta v0
 	lda a3
 	stobjbyname 0x0, d, v0
@@ -57,11 +57,9 @@ slotNum = 0x3
 .function any .func_main_0(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
+	newlexenv 0x1
 	lda a2
-	stlexvar 0x0, 0x1
+	stlexvar 0x0, 0x0
 	definefunc 0x0, .#*#setC, 0x1
 	definefunc 0x1, .#*#setB, 0x1
 	definefunc 0x2, .#*#setD, 0x1

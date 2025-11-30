@@ -231,6 +231,7 @@ static ir::AstNode *HandleVariableDeclarator(public_lib::Context *ctx, ir::Varia
 
     auto *newDecl = allocator->New<varbinder::ConstDecl>(oldVar->Name(), newDeclarator);
     auto *newVar = allocator->New<varbinder::LocalVariable>(newDecl, oldVar->Flags());
+    ES2PANDA_ASSERT(newVar != nullptr);
     newDeclarator->Id()->AsIdentifier()->SetVariable(newVar);
     newVar->AddFlag(varbinder::VariableFlags::INITIALIZED);
     newVar->SetScope(scope);

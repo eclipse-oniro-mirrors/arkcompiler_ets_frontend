@@ -42,13 +42,14 @@ const std::string NORMALIZED_OHMURL_NOT_SO = "@normalized:N";
 const std::string NORMALIZED = "@normalized:";
 const std::string MODULE_RECORD_IDX = "moduleRecordIdx";
 const std::string GLOBAL_TYPE_NAME = "_GLOBAL";
+const std::string BUILD_RESOURCE_TABLE_REGEX =
+    ".+?&((?!@)[\\w]+/build|@[\\w]+/[\\w]+/build)/.+?/ResourceTable&";
 
 constexpr char NORMALIZED_OHMURL_SEPARATOR = '&';
 constexpr char NORMALIZED_OHMURL_PREFIX = '@';
 constexpr char SLASH_TAG = '/';
 constexpr char CHAR_VERTICAL_LINE = '|';
 constexpr char COLON_SEPARATOR = ':';
-constexpr char DOT_SEPARATOR = '.';
 constexpr size_t ORIGINAL_PKG_NAME_POS = 0U;
 constexpr size_t TARGET_PKG_NAME_POS = 1U;
 
@@ -64,7 +65,7 @@ std::string GetRecordNameFromNormalizedOhmurl(const std::string &ohmurl);
 std::string GetPkgNameFromNormalizedOhmurl(const std::string &ohmurl);
 std::string GetPkgNameFromNormalizedImport(const std::string &normalizedImport);
 std::string UpdatePackageVersionIfNeeded(const std::string &ohmurl,
-                                         const std::map<std::string, PkgInfo> &pkgContextInfo);
+                                         const std::unordered_map<std::string, PkgInfo> &pkgContextInfo);
 std::string UpdatePackageNameIfNeeded(const std::string &ohmurl, const std::string &modifiedPkgName);
 std::string UpdateBundleNameIfNeeded(std::string &ohmurl, const std::string &bundleName,
                                      const std::set<std::string> &externalPkgNames);

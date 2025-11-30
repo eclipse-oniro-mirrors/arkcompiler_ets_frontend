@@ -14,6 +14,7 @@
  */
 
 #include "ETSparser.h"
+#include <string_view>
 #include "ETSNolintParser.h"
 #include "program/program.h"
 #include "program/DeclarationCache.h"

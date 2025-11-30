@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -651,7 +651,8 @@ class CompilerTest(Test):
         es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
         es2abc_cmd.extend(self.flags)
         es2abc_cmd.extend(["--output=" + test_abc_path])
-        es2abc_cmd.append(self.path)
+        relative_path = os.path.relpath(self.path)
+        es2abc_cmd.append(relative_path)
         enable_arkguard = runner.args.enable_arkguard
         if enable_arkguard:
             success = self.execute_arkguard(runner)
@@ -1084,6 +1085,8 @@ class CompilerProjectTest(Test):
             self.error = err.decode("utf-8", errors="ignore")
 
     def gen_merged_abc(self, runner):
+        output_abc_name = ""
+        exec_file_path = ""
         # Generate abc inputs
         if (os.path.exists(self.generated_abc_inputs_path)):
             files_info_names = os.listdir(self.generated_abc_inputs_path)
@@ -1123,6 +1126,7 @@ class CompilerProjectTest(Test):
             es2abc_cmd = self.gen_es2abc_cmd(runner, '@' + self.files_info_path, output_abc_name)
         compile_context_info_path = path.join(path.join(self.projects_path, self.project), "compileContextInfo.json")
         if path.exists(compile_context_info_path):
+            compile_context_info_path = os.path.relpath(compile_context_info_path)
             es2abc_cmd.append("%s%s" % ("--compile-context-info=", compile_context_info_path))
         if path.exists(self.modifyPkgNamePath):
             with open(self.modifyPkgNamePath, 'r') as file:
@@ -1133,7 +1137,6 @@ class CompilerProjectTest(Test):
         process = run_subprocess_with_beta3(self, es2abc_cmd)
         self.path = exec_file_path
         out, err = [None, None]
-
         # Check single-thread execution timeout when required
         if "--file-threads=0" in self.flags:
             try:
@@ -1144,6 +1147,9 @@ class CompilerProjectTest(Test):
         else:
             out, err = process.communicate()
         
+        if "non-merged-abc"  in self.path and "--merge-abc" in es2abc_cmd:
+            es2abc_cmd.remove("--merge-abc")
+
         if "--cache-file" in self.flags:
             # Firstly generate cache file, and generate abc from cache file
             if (os.path.exists(self.project_mod_path)):
@@ -1246,9 +1252,12 @@ class FilesInfoRunner(Runner):
 
     def add_directory(self, directory, extension, flags):
         projects_path = path.join(self.test_root, directory)
-        test_projects = ["base", "mod"]
+        test_projects = ["original", "base", "mod"]
         for project in test_projects:
-            filesinfo_path = path.join(projects_path, project, "filesInfo.txt")
+            project_dir = path.join(projects_path, project)
+            if not path.isdir(project_dir):
+                continue
+            filesinfo_path = path.join(project_dir, "filesInfo.txt")
             self.tests.append(FilesInfoTest(projects_path, project, filesinfo_path, flags))
 
     def test_path(self, src):
@@ -1256,6 +1265,11 @@ class FilesInfoRunner(Runner):
 
 
 class FilesInfoTest(Test):
+    LONG_PATH_MARKER = "long_path_filesinfo"
+    SOURCE_LANG = "sourceLang"
+    ABC_VERSION_ADJUST = "abc_version_adjust"
+    REPLACE_RECORDS = "replace_records"
+
     def __init__(self, projects_path, project, filesinfo_path, flags):
         Test.__init__(self, "", flags)
         self.projects_path = projects_path
@@ -1267,6 +1281,10 @@ class FilesInfoTest(Test):
         self.symbol_table_file = os.path.join(self.output_path, 'base.map')
         self.output_abc_name = path.join(self.output_path, self.project + ".abc")
         self.output_abc_name_of_input_abc = path.join(self.output_path, self.project + "_input.abc")
+        self.output_abc_name_of_adjust_version_abc = path.join(self.output_path, self.project + "_adjust_version.abc")
+        self.is_long_path_case = self.LONG_PATH_MARKER in self.path
+        self.compile_context_info_path = path.join(self.path, "compileContextInfo.json")
+        self.compile_ohmurl_version_config = path.join(self.projects_path, "compileOhmurlVersionConfig.json")
 
         if not path.exists(self.output_path):
             os.makedirs(self.output_path)
@@ -1283,25 +1301,62 @@ class FilesInfoTest(Test):
         if self.project == "mod": # clear after all tests
             self.remove_output()
 
-    def gen_es2abc_cmd(self, runner, input_file, output_file):
-        es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
-        es2abc_cmd.extend(self.flags)
-        es2abc_cmd.extend(['%s%s' % ("--output=", output_file)])
+    def build_es2abc_cmd(self, runner, input_file, output_file, *,
+                     enable_input=False,
+                     dump_asm=False,
+                     compile_info=None):
+        es2abc_cmd = runner.cmd_prefix + [runner.es2panda] + self.flags
+        es2abc_cmd.append(f"--output={output_file}")
+
+        # Add options based on parameters
+        if enable_input:
+            es2abc_cmd.append("--enable-abc-input")
+        if dump_asm:
+            es2abc_cmd.append("--dump-assembly")
+        if compile_info:
+            es2abc_cmd.append(f"--ohmurl-version-config={compile_info}")
+
+        # Add special parameters based on path conditions
+        if self.SOURCE_LANG in self.projects_path:
+            if self.project == "base":
+                es2abc_cmd.extend(["--dump-symbol-table", self.symbol_table_file])
+            else:
+                es2abc_cmd.extend(["--input-symbol-table", self.symbol_table_file])
+        elif self.ABC_VERSION_ADJUST in self.projects_path and not dump_asm:
+            es2abc_cmd.extend(['--dump-assembly'])
+            es2abc_cmd.extend(['--target-api-version=20'])
+            es2abc_cmd.extend(['--enable-annotations'])
+        elif self.REPLACE_RECORDS in self.projects_path:
+            if path.exists(self.compile_context_info_path):
+                es2abc_cmd.extend(["--compile-context-info", self.compile_context_info_path, "--enable-abc-input"])
+        
         es2abc_cmd.append(input_file)
-        if ("base" == self.project):
-            es2abc_cmd.extend(['--dump-symbol-table', self.symbol_table_file])
-        else:
-            es2abc_cmd.extend(['--input-symbol-table', self.symbol_table_file])
         return es2abc_cmd
+
+    def gen_es2abc_cmd(self, runner, input_file, output_file):
+        return self.build_es2abc_cmd(runner, input_file, output_file)
 
     def gen_es2abc_cmd_input_abc(self, runner, input_file, output_file):
-        es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
-        es2abc_cmd.extend(self.flags)
-        es2abc_cmd.extend(['%s%s' % ("--output=", output_file), "--enable-abc-input"])
-        es2abc_cmd.append(input_file)
-        return es2abc_cmd
+        return self.build_es2abc_cmd(runner, input_file, output_file, enable_input=True)
+
+    def gen_es2abc_with_adjust_version(self, runner, input_file, output_file, compile_ohmurl_version_config):
+        return self.build_es2abc_cmd(runner, input_file, output_file,
+                                    enable_input=True, dump_asm=True,
+                                    compile_info=compile_ohmurl_version_config)
+
+    def get_long_path_filesinfo_path(self):
+        long_dir = "a" * 4096
+        return path.join(self.projects_path, self.project, long_dir, "filesInfo.txt")
+
+    def replace_expected_file_root(self, expected):
+        full_root_path = os.path.abspath(path.join(self.projects_path, self.project))
+        return expected.replace("{{EXPECTED_FILE_ROOT}}", full_root_path)
 
     def gen_merged_abc(self, runner):
+        # Generate long path filesinfo if it is path contains long path
+        if self.is_long_path_case:
+            self.files_info_path = self.get_long_path_filesinfo_path()
+
         # Generate the abc to be tested
         es2abc_cmd = self.gen_es2abc_cmd(runner, '@' + self.files_info_path, self.output_abc_name)
         process = run_subprocess_with_beta3(self, es2abc_cmd)
@@ -1314,6 +1369,8 @@ class FilesInfoTest(Test):
         try:
             with open(pa_expected_path, 'r') as fp:
                 expected = fp.read()
+            if self.is_long_path_case:
+                expected = self.replace_expected_file_root(expected)
             self.passed = expected == self.output and process.returncode in [0, 1]
         except Exception:
             self.passed = False
@@ -1324,16 +1381,36 @@ class FilesInfoTest(Test):
         # Input abc and verify it when it is base.
         if self.project == "base":
             self.input_abc(runner)
+        if self.ABC_VERSION_ADJUST in self.projects_path:
+            self.adjust_abc_version(runner)
         return self
 
     def input_abc(self, runner):
         es2abc_cmd = self.gen_es2abc_cmd_input_abc(runner, self.output_abc_name, self.output_abc_name_of_input_abc)
-        process = run_subprocess_with_beta3(self, es2abc_cmd)
-        out, err = process.communicate()
         pa_expected_path = "".join([self.path, "input_base-expected.pa.txt"])
+        self.run_cmd_and_validate(es2abc_cmd, pa_expected_path, use_beta3_wrapper=True)
+
+    def adjust_abc_version(self, runner):
+        es2abc_cmd = self.gen_es2abc_with_adjust_version(
+            runner,
+            self.output_abc_name,
+            self.output_abc_name_of_adjust_version_abc,
+            self.compile_ohmurl_version_config
+        )
+        pa_expected_path = "".join([self.path, "_adjust_version-expected.pa.txt"])
+        self.run_cmd_and_validate(es2abc_cmd, pa_expected_path, use_beta3_wrapper=False)
+
+    def run_cmd_and_validate(self, cmd, expected_path, use_beta3_wrapper=False):
+        if use_beta3_wrapper:
+            process = run_subprocess_with_beta3(self, cmd)
+        else:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        out, err = process.communicate()
         self.output = out.decode("utf-8", errors="ignore") + err.decode("utf-8", errors="ignore")
+
         try:
-            with open(pa_expected_path, 'r') as fp:
+            with open(expected_path, 'r') as fp:
                 expected = fp.read()
             self.passed = expected == self.output and process.returncode in [0, 1]
         except Exception:
@@ -1341,7 +1418,6 @@ class FilesInfoTest(Test):
         if not self.passed:
             self.error = err.decode("utf-8", errors="ignore")
             return self
-
 
     def run(self, runner):
         self.gen_files_info()
@@ -2970,6 +3046,10 @@ def add_directory_for_asm(runners, args, mode=""):
 def add_directory_for_compiler(runners, args):
     runner = CompilerRunner(args)
     compiler_test_infos = []
+    compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/enableColumn/js", "js", ["--enable-release-column"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/enableColumn/ts", "ts", ["--enable-release-column"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/js", "js", []))
+    compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/ts", "ts", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/js", "js", ["--module"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/cases", "ts", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/projects", "ts", ["--module"]))
@@ -3030,16 +3110,36 @@ def add_directory_for_compiler(runners, args):
 
     for info in compiler_test_infos:
         runner.add_directory(info.directory, info.extension, info.flags)
-    
-    filesinfo_compiler_infos  = []
-    filesinfo_runner = FilesInfoRunner(args)
-    filesinfo_compiler_infos.append(CompilerTestInfo("compiler/filesInfoTest/sourceLang", "txt",
-                                                ["--module", "--merge-abc", "--dump-assembly"]))
 
-    for info in filesinfo_compiler_infos:
-        filesinfo_runner.add_directory(info.directory, info.extension, info.flags)
-    
     runners.append(runner)
+    
+    add_directory_for_filesinfo(runners, args)
+
+
+def add_directory_for_filesinfo(runners, args):
+    filesinfo_runner = FilesInfoRunner(args)
+    base_dir = path.join(path.dirname(path.abspath(__file__)), "compiler/filesInfoTest")
+
+    def infer_ext(dir_name: str):
+        return "ts" if "replace_records" in dir_name else "txt"
+
+    def infer_flags(dir_name: str):
+        flags = ["--module", "--merge-abc"]
+        if any(key in dir_name for key in ["sourceLang", "replace_records"]):
+            flags.append("--dump-assembly")
+        return flags
+
+    if not os.path.exists(base_dir):
+        return
+
+    for entry in os.listdir(base_dir):
+        dir_path = os.path.join(base_dir, entry)
+        if not os.path.isdir(dir_path):
+            continue
+        ext = infer_ext(entry)
+        flags = infer_flags(entry)
+        filesinfo_runner.add_directory(dir_path, ext, flags)
+
     runners.append(filesinfo_runner)
 
 

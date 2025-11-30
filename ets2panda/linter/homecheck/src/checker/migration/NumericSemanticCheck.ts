@@ -1658,7 +1658,6 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!local.getName().startsWith(TEMP_LOCAL_PREFIX)) {
             return;
         }
-
         const decl = local.getDeclaringStmt();
         if (decl === null) {
             return;

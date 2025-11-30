@@ -142,6 +142,10 @@ export {
   collectReservedNameForObf
 } from './utils/NodeUtils';
 
+export {
+  addReservedFileNames
+} from './transformers/rename/RenameFileNameTransformer';
+
 export const renameIdentifierModule = require('./transformers/rename/RenameIdentifierTransformer');
 export const renameFileNameModule = require('./transformers/rename/RenameFileNameTransformer');
 

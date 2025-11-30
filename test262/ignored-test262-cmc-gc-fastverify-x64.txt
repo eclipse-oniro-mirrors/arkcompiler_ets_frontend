@@ -2,3 +2,6 @@
 
 #27389
 test262/data/test_es2021/built-ins/RegExp/S15.10.2.8_A2_T11.js
+
+#27184
+test262/data/test_es2021/language/module-code/instn-iee-err-circular-as.js

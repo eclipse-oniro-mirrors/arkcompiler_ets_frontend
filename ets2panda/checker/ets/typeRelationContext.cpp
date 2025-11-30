@@ -20,6 +20,8 @@ bool AssignmentContext::ValidateArrayTypeInitializerByElement(TypeRelation *rela
                                                               ETSArrayType *target)
 {
     bool ok = true;
+    ES2PANDA_ASSERT(node != nullptr);
+    ES2PANDA_ASSERT(target != nullptr);
     if (target->IsETSTupleType()) {
         return true;
     }

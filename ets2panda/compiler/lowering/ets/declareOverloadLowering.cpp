@@ -34,6 +34,7 @@ void GenerateOverloadHelperParams(public_lib::Context *ctx, uint32_t minArg, siz
             id->SetTsTypeAnnotation(typeAnnotation);
             typeAnnotation->SetParent(id);
             auto *param = ctx->AllocNode<ir::ETSParameterExpression>(id, false, allocator);
+            ES2PANDA_ASSERT(param);
             param->SetOptional(idx >= minArg);
             params.push_back(param);
         }

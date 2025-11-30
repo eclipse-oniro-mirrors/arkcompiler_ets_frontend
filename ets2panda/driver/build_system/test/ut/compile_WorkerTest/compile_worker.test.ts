@@ -66,6 +66,7 @@ const fakeArkts = {
     destroyConfig: jest.fn(),
     EtsScript: { fromContext: jest.fn(() => ({})) }
 };
+
 const fakeArktsGlobal = {
     es2panda: {
         _SetUpSoPath: jest.fn(),

@@ -1,15 +1,14 @@
 {
     "compileFiles": [
+        "${absolute_path_to_build_system}/test/demo_hap/entry/a.ets",
         "${absolute_path_to_build_system}/test/demo_hap/entry/b.ets",
         "${absolute_path_to_build_system}/test/demo_hap/entry/c.ets",
         "${absolute_path_to_build_system}/test/demo_hap/entry/d.ets",
         "${absolute_path_to_build_system}/test/demo_hap/harA/index.ets",
         "${absolute_path_to_build_system}/test/demo_hap/harB/index.ets"
     ],
-
     "packageName": "entry",
     "moduleType": "shared",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/demo_hap/entry/",
@@ -18,11 +17,9 @@
 
     "loaderOutPath": "./dist",
     "cachePath": "./dist/cache",
-
     "enableDeclgenEts2Ts": false,
     "declgenV1OutPath": "./dist/declgen/decl_ets",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [

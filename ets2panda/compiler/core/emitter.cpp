@@ -126,6 +126,9 @@ static LiteralPair TransformLiteral(const compiler::Literal *literal)
 void FunctionEmitter::Generate()
 {
     auto *func = GenFunctionSignature();
+    if (func == nullptr) {
+        return;
+    }
     GenFunctionInstructions(func);
     GenVariablesDebugInfo(func);
     GenSourceFileDebugInfo(func);

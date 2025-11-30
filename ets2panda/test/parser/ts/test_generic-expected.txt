@@ -7900,3 +7900,4 @@
     }
   }
 }
+TypeError: This reference refers to a value, but is being used as a type here. Did you mean to use 'typeof'? [test_generic.ts:17:59]

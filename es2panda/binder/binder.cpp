@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@
 #include "ir/base/annotation.h"
 #include "ir/base/catchClause.h"
 #include "ir/base/classDefinition.h"
+#include "ir/base/metaProperty.h"
 #include "ir/base/property.h"
 #include "ir/base/scriptFunction.h"
 #include "ir/base/spreadElement.h"
@@ -756,7 +757,7 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
             break;
         }
         case ir::AstNodeType::SUPER_EXPRESSION: {
-            VariableScope *varScope = scope_->EnclosingVariableScope();
+            VariableScope *varScope = scope_->EnclosingFunctionVariableScope();
             CHECK_NOT_NULL(varScope);
             varScope->AddFlag(VariableScopeFlags::USE_SUPER);
 
@@ -948,6 +949,23 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
             ResolveReferences(childNode);
             break;
         }
+        case ir::AstNodeType::THIS_EXPRESSION: {
+            VariableScope *varScope = scope_->EnclosingFunctionVariableScope();
+            CHECK_NOT_NULL(varScope);
+            varScope->AddFlag(VariableScopeFlags::USE_THIS);
+            ResolveReferences(childNode);
+            break;
+        }
+        case ir::AstNodeType::META_PROPERTY_EXPRESSION: {
+            if (childNode->AsMetaProperty()->Kind() ==
+                ir::MetaProperty::MetaPropertyKind::NEW_TARGET) {
+                VariableScope *varScope = scope_->EnclosingFunctionVariableScope();
+                CHECK_NOT_NULL(varScope);
+                varScope->AddFlag(VariableScopeFlags::USE_NEW_TARGET);
+            }
+            ResolveReferences(childNode);
+            break;
+        }
         default: {
             ResolveReferences(childNode);
             break;
@@ -1016,8 +1034,12 @@ void Binder::AddMandatoryParams()
             AddMandatoryParams(ARROW_MANDATORY_PARAMS);
         }
 
-        LookupReference(MANDATORY_PARAM_NEW_TARGET);
-        LookupReference(MANDATORY_PARAM_THIS);
+        if (funcScope->HasFlag(VariableScopeFlags::USE_NEW_TARGET)) {
+            LookupReference(MANDATORY_PARAM_NEW_TARGET);
+        }
+        if (funcScope->HasFlag(VariableScopeFlags::USE_THIS) || funcScope->HasFlag(VariableScopeFlags::USE_SUPER)) {
+            LookupReference(MANDATORY_PARAM_THIS);
+        }
 
         if (funcScope->HasFlag(VariableScopeFlags::USE_ARGS)) {
             LookupReference(FUNCTION_ARGUMENTS);

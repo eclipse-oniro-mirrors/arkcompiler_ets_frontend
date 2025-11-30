@@ -14,7 +14,7 @@
  */
 
 const constbyte: byte = 101
-const constchar: char = constbyte
+const constchar: char = constbyte.toChar()
 
 function main() {
     enum TestEnum { One = constchar }

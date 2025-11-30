@@ -27,7 +27,7 @@ function getFunctionArgumentsCount(funcStr: string): number {
     const regex = new RegExp("^[0123456789]$", "g")
     let count = ""
     for(let ch of funcStr) {
-        let str = new Char(ch).toString();
+        let str = ch;
         if(regex.test(str)) {
             count = str
         }

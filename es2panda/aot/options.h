@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -148,7 +148,10 @@ public:
     bool CollectInputFilesFromFileList(const std::string &input, const std::string &inputExtension);
     bool CollectInputFilesFromFileDirectory(const std::string &input, const std::string &extension);
     void ParseCacheFileOption(const std::string &cacheInput);
-    void ParseCompileContextInfo(const std::string compileContextInfoPath);
+    bool ReadFileToJsonString(const std::string &path, std::string &outJsonStr);
+    bool GetRequiredString(const nlohmann::json &jsonObj, const std::string &key, std::string &out);
+    bool ExtractString(const nlohmann::json &value, const std::string &fieldName, std::string &out);
+    bool ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVersionConfigPath);
     bool NeedCollectDepsRelation();
     bool NeedRemoveRedundantRecord();
 
@@ -158,7 +161,11 @@ private:
     void CollectInputSourceFile(const std::vector<std::string> &itemList, const std::string &inputExtension);
     bool CheckFilesValidity(const std::string &input, const std::vector<std::string> &itemList,
                             const std::string &line);
-    void ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson);
+    bool ParseCompileContextInfo(const std::string compileContextInfoPath);
+    bool ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson);
+    bool ParseReplaceRecords(nlohmann::json &compileContextInfoJson);
+    bool ParseCompileEntries(nlohmann::json &compileContextInfoJson);
+    bool CheckReplaceRecordsIsExist(const std::vector<std::string> &replaceRecords);
     bool IsAbcFile(const std::string &fileName, const std::string &inputExtension);
     es2panda::parser::ScriptKind scriptKind_ {es2panda::parser::ScriptKind::SCRIPT};
     OptionFlags options_ {OptionFlags::DEFAULT};

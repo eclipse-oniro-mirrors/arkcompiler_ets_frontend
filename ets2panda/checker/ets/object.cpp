@@ -642,18 +642,28 @@ void ETSChecker::CheckDynamicInheritanceAndImplement(ETSObjectType *const interf
 {
     auto getTypeString = [](ETSObjectType *type) { return type->IsInterface() ? "interface" : "class"; };
     auto extendsOrImplements = [](ETSObjectType *type) { return type->IsInterface() ? "extends" : "implements"; };
-    if (interfaceOrClassType->IsGradual()) {
+    auto isFromDynamicDecl = [](ETSObjectType *type) {
+        auto declNode = type->GetDeclNode();
+        if (declNode->IsTSInterfaceDeclaration()) {
+            return declNode->AsTSInterfaceDeclaration()->Language().IsDynamic();
+        }
+        if (declNode->IsClassDefinition()) {
+            return declNode->AsClassDefinition()->Language().IsDynamic();
+        }
+        return false;
+    };
+    if (isFromDynamicDecl(interfaceOrClassType)) {
         return;
     }
-    for (ETSObjectType *itf : interfaceOrClassType->Interfaces()) {
-        if (itf->IsGradual()) {
+    for (ETSObjectType *interType : interfaceOrClassType->Interfaces()) {
+        if (isFromDynamicDecl(interType)) {
             LogError(diagnostic::INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC,
                      {getTypeString(interfaceOrClassType), interfaceOrClassType->Name(),
-                      extendsOrImplements(interfaceOrClassType), getTypeString(itf), itf->Name()},
+                      extendsOrImplements(interfaceOrClassType), getTypeString(interType), interType->Name()},
                      interfaceOrClassType->GetDeclNode()->Start());
         }
     }
-    if (interfaceOrClassType->SuperType() != nullptr && interfaceOrClassType->SuperType()->IsGradual()) {
+    if (interfaceOrClassType->SuperType() != nullptr && isFromDynamicDecl(interfaceOrClassType->SuperType())) {
         LogError(diagnostic::INTERFACE_OR_CLASS_CANNOT_IMPL_OR_EXTEND_DYNAMIC,
                  {getTypeString(interfaceOrClassType), interfaceOrClassType->Name(), "extends",
                   getTypeString(interfaceOrClassType->SuperType()), interfaceOrClassType->SuperType()->Name()},
@@ -3105,7 +3115,6 @@ Type *ETSChecker::GetConstantBuiltinType(Type *type)
     auto cloned = type->Clone(this);
     cloned->AddTypeFlag(TypeFlag::CONSTANT);
     cache.insert({type, cloned});
-
     return cloned;
 }
 

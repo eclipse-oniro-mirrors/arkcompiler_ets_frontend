@@ -722,6 +722,7 @@ void ETSChecker::InferAliasLambdaType(ir::TypeNode *localTypeAnnotation, ir::Arr
 
 checker::Type *ETSChecker::FixOptionalVariableType(varbinder::Variable *const bindingVar, ir::ModifierFlags flags)
 {
+    ES2PANDA_ASSERT(bindingVar != nullptr);
     if ((flags & ir::ModifierFlags::OPTIONAL) != 0) {
         ES2PANDA_ASSERT(bindingVar != nullptr);
         auto *variableType = bindingVar->TsType() != nullptr ? bindingVar->TsType() : GlobalTypeError();
@@ -810,8 +811,12 @@ bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNod
     }
     if (init->IsConditionalExpression() && annotationType != nullptr) {
         auto *conditionalExpr = init->AsConditionalExpression();
-        conditionalExpr->Consequent()->SetPreferredType(annotationType);
-        conditionalExpr->Alternate()->SetPreferredType(annotationType);
+        if (!conditionalExpr->Consequent()->IsLiteral()) {
+            conditionalExpr->Consequent()->SetPreferredType(annotationType);
+        }
+        if (!conditionalExpr->Alternate()->IsLiteral()) {
+            conditionalExpr->Alternate()->SetPreferredType(annotationType);
+        }
     }
 
     if (typeAnnotation != nullptr && init->IsArrowFunctionExpression()) {
@@ -1209,9 +1214,8 @@ checker::Type *ETSChecker::GetExtensionAccessorReturnType(ir::MemberExpression *
             candidateSig.emplace_back(signature);
             arguments.emplace_back(expr->Object());
             arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
-            signature =
-                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                MatchOrderSignatures(candidateSig, arguments, expr, TypeRelationFlag::NO_THROW);
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            signature = MatchOrderSignatures(candidateSig, arguments, expr, TypeRelationFlag::NO_THROW);
         }
 
         if (signature == nullptr) {

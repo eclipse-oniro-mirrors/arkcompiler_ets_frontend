@@ -64,6 +64,7 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         }
         newStmts.emplace_back(arraySymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
+        ES2PANDA_ASSERT(typeNode != nullptr);
         newStmts.emplace_back(typeNode->Clone(Allocator(), nullptr));
         ss << "}";
     } else {

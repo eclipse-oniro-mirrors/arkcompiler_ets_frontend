@@ -40,6 +40,12 @@ std::optional<ir::TypeNode *> ETSChecker::GetUtilityTypeTypeParamNode(
     return typeParams->Params().front();
 }
 
+static bool ValidBaseTypeOfRequiredAndPartial(Type *type)
+{
+    return type->IsETSObjectType() &&
+           type->AsETSObjectType()->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::CLASS);
+}
+
 static bool InvalidBaseTypeOfRequiredPartialAndReadonly(Type *type, const std::string_view &utilityType)
 {
     if (utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
@@ -70,8 +76,10 @@ Type *ETSChecker::HandleUtilityTypeParameterNode(const ir::TSTypeParameterInstan
         return baseType;
     }
 
-    if (!baseType->IsETSReferenceType()) {
-        LogError(diagnostic::UTIL_TYPE_OF_NONREFERENCE, {}, typeParams->Start());
+    if ((utilityType == compiler::Signatures::PARTIAL_TYPE_NAME ||
+         utilityType == compiler::Signatures::REQUIRED_TYPE_NAME) &&
+        !ValidBaseTypeOfRequiredAndPartial(baseType)) {
+        LogError(diagnostic::MUST_BE_CLASS_INTERFACE_TYPE, {utilityType}, typeParams->Start());
         return GlobalTypeError();
     }
 
@@ -483,7 +491,6 @@ ir::ClassProperty *ETSChecker::CreateNullishProperty(ir::ClassProperty *const pr
     prop->SetValue(nullptr);
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const propClone = prop->Clone(ProgramAllocator(), newClassDefinition)->AsClassProperty();
-
     std::function<void(ir::AstNode *)> cleanNode = [&](ir::AstNode *node) {
         if (node->IsOpaqueTypeNode()) {
             return;
@@ -803,6 +810,7 @@ ir::TSInterfaceDeclaration *ETSChecker::CreateInterfaceProto(util::StringView na
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const interfaceId = ProgramAllocNode<ir::Identifier>(name, ProgramAllocator());
+    ES2PANDA_ASSERT(interfaceId);
     const auto [decl, var] = VarBinder()->NewVarDecl<varbinder::InterfaceDecl>(interfaceId->Start(), ProgramAllocator(),
                                                                                interfaceId->Name());
     ES2PANDA_ASSERT(interfaceId != nullptr);
@@ -844,7 +852,8 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
 {
     auto &partialInterfaceMethods = partialInterface->Body()->Body();
 
-    auto const addNullishAccessor = [&partialInterfaceMethods](ir::MethodDefinition *accessor) -> void {
+    auto const addNullishAccessor = [this, &partialInterfaceMethods](ir::MethodDefinition *accessor) -> void {
+        (void)this;
         auto const it = std::find_if(partialInterfaceMethods.begin(), partialInterfaceMethods.end(),
                                      [accessor](ir::AstNode const *node) -> bool {
                                          return node->AsMethodDefinition()->Id()->Name() == accessor->Id()->Name();

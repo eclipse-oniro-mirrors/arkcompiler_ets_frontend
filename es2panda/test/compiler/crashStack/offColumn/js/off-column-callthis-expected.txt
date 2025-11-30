@@ -1,0 +1,54 @@
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:32:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:39:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:45:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:54:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:61:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:67:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:76:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:83:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:89:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:97:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:103:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:109:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:118:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:124:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:130:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:139:1)
+
+call is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:158:1)
+
+1 is not callable
+    at func_main_0 (test/compiler/crashStack/offColumn/js/off-column-callthis.js:176:1)
+

@@ -77,7 +77,7 @@ YieldExpression *YieldExpression::Clone(ArenaAllocator *const allocator, AstNode
     if (argument != nullptr) {
         argument->SetParent(clone);
     }
-
+    ES2PANDA_ASSERT(clone != nullptr);
     if (parent != nullptr) {
         clone->SetParent(parent);
     }

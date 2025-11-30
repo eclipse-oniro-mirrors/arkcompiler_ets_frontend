@@ -34,6 +34,7 @@ std::pair<size_t, size_t> CFG::BasicBlock::AddSuccessor(BasicBlock *successor)
 {
     ES2PANDA_ASSERT(successor != nullptr);
     succs_.push_back(successor);
+    ES2PANDA_ASSERT(successor != nullptr);
     successor->preds_.push_back(this);
     return std::make_pair(succs_.size() - 1, successor->preds_.size() - 1);
 }

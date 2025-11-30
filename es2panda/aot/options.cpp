@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -230,17 +230,18 @@ void Options::ParseCacheFileOption(const std::string &cacheInput)
     }
 }
 
-void Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
+bool Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
 {
     if (compileContextInfoJson.contains("updateVersionInfo") &&
         compileContextInfoJson["updateVersionInfo"].is_object()) {
-        std::unordered_map<std::string, std::map<std::string, PkgInfo>> updateVersionInfo {};
+        std::unordered_map<std::string, std::unordered_map<std::string, PkgInfo>> updateVersionInfo {};
         for (const auto& [abcName, versionInfo] : compileContextInfoJson["updateVersionInfo"].items()) {
             if (!versionInfo.is_object()) {
-                std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath
-                          << "' is incomplete format of json" << std::endl;
+                std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
+                             "' updateVersionInfo format is incorrect." << std::endl;
+                return false;
             }
-            std::map<std::string, PkgInfo> pkgContextMap {};
+            std::unordered_map<std::string, PkgInfo> pkgContextMap {};
             for (const auto& [pkgName, version] : versionInfo.items()) {
                 PkgInfo pkgInfo;
                 pkgInfo.version = version;
@@ -252,18 +253,20 @@ void Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
         compilerOptions_.compileContextInfo.updateVersionInfo = updateVersionInfo;
     } else if (compileContextInfoJson.contains("pkgContextInfo") &&
                compileContextInfoJson["pkgContextInfo"].is_object()) {
-        std::map<std::string, PkgInfo> pkgContextMap {};
+        std::unordered_map<std::string, PkgInfo> pkgContextMap {};
         for (const auto& [pkgName, pkgContextInfo] : compileContextInfoJson["pkgContextInfo"].items()) {
             PkgInfo pkgInfo;
             if (pkgContextInfo.contains("version") && pkgContextInfo["version"].is_string()) {
                 pkgInfo.version = pkgContextInfo["version"];
             } else {
                 std::cerr << "Failed to get version from pkgContextInfo."  << std::endl;
+                return false;
             }
             if (pkgContextInfo.contains("packageName") && pkgContextInfo["packageName"].is_string()) {
                 pkgInfo.packageName = pkgContextInfo["packageName"];
             } else {
                 std::cerr << "Failed to get package name from pkgContextInfo."  << std::endl;
+                return false;
             }
             pkgContextMap[pkgName] = pkgInfo;
         }
@@ -271,30 +274,172 @@ void Options::ParseUpdateVersionInfo(nlohmann::json &compileContextInfoJson)
     } else {
         UNREACHABLE();
     }
+    return true;
 }
 
-void Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
+bool Options::CheckReplaceRecordsIsExist(const std::vector<std::string> &replaceRecords)
+{
+    for (const std::string &recordName : replaceRecords) {
+        auto it = std::find_if(sourceFiles_.begin(), sourceFiles_.end(), [recordName](es2panda::SourceFile &src) {
+            return src.recordName == recordName;
+        });
+        if (it == sourceFiles_.end()) {
+            std::cerr << "The replace record '" << recordName << "' is not exist." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Options::ParseReplaceRecords(nlohmann::json &compileContextInfoJson)
+{
+    if (!compileContextInfoJson["replaceRecords"].is_object()) {
+        std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
+                     "', replaceRecords type is incorrect." << std::endl;
+        return false;
+    }
+    std::unordered_map<std::string, std::vector<std::string>> replaceRecords {};
+    for (const auto& [abcName, recordsArr] : compileContextInfoJson["replaceRecords"].items()) {
+        if (!recordsArr.is_array()) {
+            std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
+                         "', replaceRecords." << abcName << " type is incorrect." << std::endl;
+            return false;
+        }
+        std::vector<std::string> records {};
+        for (const auto& elem : recordsArr) {
+            if (elem.is_string()) {
+                records.push_back(elem.get<std::string>());
+            }
+        }
+        replaceRecords[abcName] = records;
+    }
+    compilerOptions_.compileContextInfo.replaceRecords = replaceRecords;
+    for (const auto &recordsPair : replaceRecords) {
+        if (!CheckReplaceRecordsIsExist(recordsPair.second)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Options::ReadFileToJsonString(const std::string &path, std::string &outJsonStr)
+{
+    std::stringstream ss;
+    if (!util::Helpers::ReadFileToBuffer(path, ss)) {
+        std::cerr << "[ERROR] Failed to read file: " << path << std::endl;
+        return false;
+    }
+
+    outJsonStr = ss.str();
+    if (outJsonStr.empty() || !nlohmann::json::accept(outJsonStr)) {
+        std::cerr << "[ERROR] The input file '" << path << "' is not a valid JSON" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool Options::GetRequiredString(const nlohmann::json &jsonObj, const std::string &key, std::string &out)
+{
+    if (!jsonObj.contains(key)) {
+        std::cerr << "[ERROR] Missing required field: '" << key << "'." << std::endl;
+        return false;
+    }
+
+    return ExtractString(jsonObj[key], key, out);
+}
+
+bool Options::ExtractString(const nlohmann::json &value, const std::string &fieldName, std::string &out)
+{
+    if (!value.is_string()) {
+        std::cerr << "[ERROR] Invalid type for field '" << fieldName << "'. Expected string." << std::endl;
+        return false;
+    }
+
+    out = value.get<std::string>();
+    if (out.empty()) {
+        std::cerr << "[ERROR] Field '" << fieldName << "' cannot be empty." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+bool Options::ParseCompileOhmurlVersionConfig(const std::string compileOhmurlVersionConfigPath)
+{
+    std::string buffer;
+    if (!ReadFileToJsonString(compileOhmurlVersionConfigPath, buffer)) {
+        return false;
+    }
+    // Parser compile context info base on the input json file.
+    nlohmann::json compileContextInfoJson = nlohmann::json::parse(buffer);
+    auto &config = compilerOptions_.compileOhmurlVersionConfig;
+    if (!GetRequiredString(compileContextInfoJson, "packageName", config.packageName) ||
+        !GetRequiredString(compileContextInfoJson, "originVersion", config.originVersion) ||
+        !GetRequiredString(compileContextInfoJson, "targetVersion", config.targetVersion)) {
+        return false;
+    }
+
+    if (!compileContextInfoJson.contains("updateVersionInfo") ||
+        !compileContextInfoJson["updateVersionInfo"].is_object()) {
+        std::cerr << "[ERROR] Missing or invalid field: 'updateVersionInfo'." << std::endl;
+        return false;
+    }
+
+    const auto &updateInfoJson = compileContextInfoJson["updateVersionInfo"];
+    std::unordered_map<std::string, PkgInfo> pkgContextMap {};
+    for (const auto &[pkgName, pkgValue] : updateInfoJson.items()) {
+        std::string version;
+        if (!ExtractString(pkgValue, pkgName, version)) {
+            return false;
+        }
+        PkgInfo pkgInfo;
+        pkgInfo.version = version;
+        pkgInfo.packageName = pkgName;
+        pkgContextMap[pkgName] = pkgInfo;
+    }
+    compilerOptions_.compileOhmurlVersionConfig.updateVersionInfo = pkgContextMap;
+    return true;
+}
+
+bool Options::ParseCompileEntries(nlohmann::json &compileContextInfoJson)
+{
+    for (const auto& elem : compileContextInfoJson["compileEntries"]) {
+        if (elem.is_string()) {
+            compilerOptions_.compileContextInfo.compileEntries.push_back(elem.get<std::string>());
+        } else {
+            std::cerr << "The input file '" << compilerOptions_.compileContextInfoPath <<
+                         "', compileEntries type is incorrect." << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
 {
     std::stringstream ss;
     std::string buffer;
     if (!util::Helpers::ReadFileToBuffer(compileContextInfoPath, ss)) {
-        return;
+        return false;
     }
 
     buffer = ss.str();
     if (buffer.empty() || !nlohmann::json::accept(buffer)) {
         std::cerr << "The input file '" << compileContextInfoPath <<"' is incomplete format of json" << std::endl;
-        return;
+        return false;
     }
     // Parser compile context info base on the input json file.
     nlohmann::json compileContextInfoJson = nlohmann::json::parse(buffer);
     if (!compileContextInfoJson.contains("compileEntries") || !compileContextInfoJson.contains("hspPkgNames")) {
-        std::cerr << "The input json file '" << compileContextInfoPath << "' content format is incorrect" << std::endl;
-        return;
+        std::cerr << "The input json file '" << compileContextInfoPath <<
+                     "' is not contain compileEntries or hspPkgNames." << std::endl;
+        return false;
     }
     if (!compileContextInfoJson["compileEntries"].is_array() || !compileContextInfoJson["hspPkgNames"].is_array()) {
-        std::cerr << "The input json file '" << compileContextInfoPath << "' content type is incorrect" << std::endl;
-        return;
+        std::cerr << "The input json file '" << compileContextInfoPath <<
+                     "' compileEntries or hspPkgNames format is incorrect" << std::endl;
+        return false;
     }
     if (compileContextInfoJson.contains("needModifyRecord") &&
         compileContextInfoJson["needModifyRecord"].is_boolean()) {
@@ -311,8 +456,13 @@ void Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
         }
     }
     compilerOptions_.compileContextInfo.externalPkgNames = externalPkgNames;
-    compilerOptions_.compileContextInfo.compileEntries = compileContextInfoJson["compileEntries"];
-    ParseUpdateVersionInfo(compileContextInfoJson);
+    if (!ParseCompileEntries(compileContextInfoJson) || !ParseUpdateVersionInfo(compileContextInfoJson)) {
+        return false;
+    }
+    if (compileContextInfoJson.contains("replaceRecords")) {
+        return ParseReplaceRecords(compileContextInfoJson);
+    }
+    return true;
 }
 
 // Collect dependencies based on the compile entries.
@@ -400,6 +550,11 @@ bool Options::Parse(int argc, const char **argv)
         "in accordance with ECMAScript2022");
     panda::PandArg<std::string> moduleRecordFieldName("module-record-field-name", "", "Specify the field name "\
         "of module record in unmerged abc");
+    panda::PandArg<bool> opEnableReleaseColumn("enable-release-column", false, "Enable column number information "\
+        "for bytecode instructions in non-debug mode.\n"\
+        "Debug mode: Column numbers are emitted for all instructions.\n"\
+        "Non-debug mode:\n1. Enabled: Column numbers generated for call instructions only.\n"\
+        "2. Disabled: No column number information included.");
 
     // optimizer
     panda::PandArg<bool> opBranchElimination("branch-elimination", false, "Enable branch elimination optimization");
@@ -434,6 +589,14 @@ bool Options::Parse(int argc, const char **argv)
     // compile entries and pkg context info
     panda::PandArg<std::string> compileContextInfoPath("compile-context-info", "", "The path to compile context"\
         "info file");
+    panda::PandArg<std::string> compileOhmurlVersionConfigPath("ohmurl-version-config", "",
+        "The path to a JSON file describing rules for adjusting OHMURL version information. "
+        "This is an [Experimental Feature]. The JSON file must contain the following fields: \n"
+        "  packageName (string) – the HAR package name to be modified; \n"
+        "  originVersion (string) – the original version; \n"
+        "  targetVersion (string) – the new version; \n"
+        "  updateVersionInfo (object) – a mapping of package names to their updated versions."
+    );
     panda::PandArg<bool> opDumpDepsInfo("dump-deps-info", false, "Dump all dependency files and records "\
         "including source files and bytecode files");
     panda::PandArg<bool> opRemoveRedundantFile("remove-redundant-file", false, "Remove redundant info"\
@@ -497,6 +660,7 @@ bool Options::Parse(int argc, const char **argv)
     argparser_->Add(&moduleRecordFieldName);
     argparser_->Add(&opBranchElimination);
     argparser_->Add(&opOptTryCatchFunc);
+    argparser_->Add(&opEnableReleaseColumn);
 
     argparser_->Add(&opDumpSymbolTable);
     argparser_->Add(&opInputSymbolTable);
@@ -513,6 +677,7 @@ bool Options::Parse(int argc, const char **argv)
     argparser_->Add(&enableAnnotations);
 
     argparser_->Add(&compileContextInfoPath);
+    argparser_->Add(&compileOhmurlVersionConfigPath);
     argparser_->Add(&opDumpDepsInfo);
     argparser_->Add(&opRemoveRedundantFile);
     argparser_->Add(&opDumpString);
@@ -625,9 +790,11 @@ bool Options::Parse(int argc, const char **argv)
         // common mode
         auto inputAbs = panda::os::file::File::GetAbsolutePath(sourceFile_);
         if (!inputAbs) {
-            std::cerr << "Failed to find file '" << sourceFile_ << "' during input file resolution" << std::endl
-                      << "Please check if the file name is correct, the file exists at the specified path, "
-                      << "and your project has the necessary permissions to access it." << std::endl;
+            std::cerr << "Failed to find file '" << sourceFile_ << "' during input file resolution." << std::endl <<
+                         "Solutions: > Check whether the file name is correct." <<
+                         "> Check whether the file exists at the specified path." <<
+                         "> Check whether the file path length is within OS limits." <<
+                         "> Check whether your project has the necessary permissions to access the file.";
             return false;
         }
 
@@ -702,6 +869,7 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.enableTypeCheck = opEnableTypeCheck.GetValue();
     compilerOptions_.dumpLiteralBuffer = opDumpLiteralBuffer.GetValue();
     compilerOptions_.isDebuggerEvaluateExpressionMode = debuggerEvaluateExpression.GetValue();
+    compilerOptions_.enableColumn = compilerOptions_.isDebug ? true : opEnableReleaseColumn.GetValue();
 
     compilerOptions_.functionThreadCount = functionThreadCount_;
     compilerOptions_.fileThreadCount = fileThreadCount_;
@@ -713,8 +881,13 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.sourceFiles = sourceFiles_;
     compilerOptions_.mergeAbc = opMergeAbc.GetValue();
     compilerOptions_.compileContextInfoPath = compileContextInfoPath.GetValue();
-    if (!compileContextInfoPath.GetValue().empty()) {
-        ParseCompileContextInfo(compileContextInfoPath.GetValue());
+    if (!compileContextInfoPath.GetValue().empty() && !ParseCompileContextInfo(compileContextInfoPath.GetValue())) {
+        return false;
+    }
+    compilerOptions_.compileOhmurlVersionConfigPath = compileOhmurlVersionConfigPath.GetValue();
+    if (!compileOhmurlVersionConfigPath.GetValue().empty() &&
+        !ParseCompileOhmurlVersionConfig(compileOhmurlVersionConfigPath.GetValue())) {
+        return false;
     }
     compilerOptions_.dumpDepsInfo = opDumpDepsInfo.GetValue();
     compilerOptions_.updatePkgVersionForAbcInput = compilerOptions_.enableAbcInput &&
@@ -728,6 +901,7 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.patchFixOptions.symbolTable = opInputSymbolTable.GetValue();
 
     if (!srcPkgName.GetValue().empty() && !dstPkgName.GetValue().empty()) {
+        compilerOptions_.dstPkgName = dstPkgName.GetValue();
         compilerOptions_.modifiedPkgName = srcPkgName.GetValue() + util::COLON_SEPARATOR + dstPkgName.GetValue();
     }
 
@@ -757,9 +931,11 @@ bool Options::Parse(int argc, const char **argv)
         // check file exist or not
         auto transformLibAbs = panda::os::file::File::GetAbsolutePath(libName);
         if (!transformLibAbs) {
-            std::cerr << "Failed to find file '" << libName << "' during transformLib file resolution" << std::endl
-                      << "Please check if the file name is correct, the file exists at the specified path, "
-                      << "and your project has the necessary permissions to access it." << std::endl;
+            std::cerr << "Failed to find file '" << libName << "' during transformLib file resolution." << std::endl <<
+                         "Solutions: > Check whether the file name is correct." <<
+                         "> Check whether the file exists at the specified path." <<
+                         "> Check whether the file path length is within OS limits." <<
+                         "> Check whether your project has the necessary permissions to access the file.";
             return false;
         }
         compilerOptions_.transformLib = transformLibAbs.Value();

@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+* http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@
 #include <util/patchFix.h>
 #include <util/programCache.h>
 #include <util/symbolTable.h>
-#include <abc2program/abc2program_compiler.h>
+#include <abc2program_compiler.h>
 
 #include <string>
 #include <unordered_map>
@@ -117,6 +117,8 @@ struct CompilerOptions {
     bool requireGlobalOptimization {false};
     std::string compileContextInfoPath {};
     CompileContextInfo compileContextInfo {};
+    std::string compileOhmurlVersionConfigPath {};
+    CompileOhmurlVersionConfig compileOhmurlVersionConfig {};
     bool dumpDepsInfo {false};
     bool updatePkgVersionForAbcInput {false};
     bool removeRedundantFile {false};
@@ -127,6 +129,15 @@ struct CompilerOptions {
     bool enableEtsImplements {false};
     // Ability to modify package names using bytecode
     std::string modifiedPkgName {};
+    // Ability to delete redundant resource table
+    std::string dstPkgName {};
+    /**
+     * Column number recording switch for bytecode instructions.
+     * In debug mode: adds column numbers to all bytecode instructions.
+     * In other mode: adds column numbers to call instructions when on,
+     * adds no column numbers when off.
+     */
+    bool enableColumn {false};
 };
 
 enum class ErrorType {

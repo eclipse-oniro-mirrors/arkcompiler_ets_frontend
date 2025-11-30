@@ -55,12 +55,6 @@ slotNum = 0x5
 .function any .#~A>#static_initializer(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
-	ldlexvar 0x0, 0x1
 	ldexternalmodulevar 0x0
 	throw.undefinedifholewithname a
 	definefunc 0x0, .#~A>@0*#, 0x0
@@ -102,12 +96,6 @@ slotNum = 0x1
 .function any .#~A>@0~B>#static_initializer(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
-	ldlexvar 0x0, 0x1
 	ldexternalmodulevar 0x0
 	throw.undefinedifholewithname a
 	definefunc 0x0, .#~A>@0~B>@0*#, 0x0

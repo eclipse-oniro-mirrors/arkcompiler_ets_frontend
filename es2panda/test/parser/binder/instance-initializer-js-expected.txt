@@ -16,17 +16,10 @@ slotNum = 0x5
 .function any .#~A>#instance_initializer(any a0, any a1, any a2) {
 label_1: 
 label_0: 
-	newlexenv 0x2
-	lda a1
-	stlexvar 0x0, 0x0
-	lda a2
-	stlexvar 0x0, 0x1
-	ldlexvar 0x0, 0x1
-	sta v0
 	ldai 0x5
-	definepropertybyname 0x0, a, v0
+	definepropertybyname 0x0, a, a2
 	definefunc 0x2, .#~A>@0*#b, 0x0
-	definepropertybyname 0x3, b, v0
+	definepropertybyname 0x3, b, a2
 	returnundefined
 label_2: 
 }

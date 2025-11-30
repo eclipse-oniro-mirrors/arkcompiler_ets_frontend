@@ -13,6 +13,7 @@
     ],
     "loaderOutPath": "./dist/out/",
     "cachePath": "./dist/cache",
+    "es2pandaMode": 0,
     "enableDeclgenEts2Ts": false,
     "declgenV1OutPath": "./dist/declgen/decl_ets",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",

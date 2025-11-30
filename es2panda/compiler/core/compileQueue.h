@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include <abc2program/abc2program_compiler.h>
+#include <abc2program_compiler.h>
 
 namespace panda::es2panda::binder {
 class FunctionScope;
@@ -94,7 +94,7 @@ private:
     void CompileAbcFileJobInParallel(es2panda::Compiler &compiler);
     void InsertAbcCachePrograms(uint32_t hashCode,
                                 std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo);
-
+    void EraseDuplicateRecordsForAbcFile(std::map<std::string, panda::es2panda::util::ProgramCache *> &abcProgramsInfo);
     static std::mutex globalMutex_;
     es2panda::SourceFile *src_;
     es2panda::CompilerOptions *options_;
@@ -122,6 +122,7 @@ public:
         hasOhmurlBeenChanged_ = hasOhmurlBeenChanged;
     }
     void UpdatePkgNameOfImportOhmurl(panda::pandasm::Program *prog, const panda::es2panda::CompilerOptions &options);
+    void UpdateAbcImportAndStrings(panda::pandasm::Program *prog, const panda::es2panda::CompilerOptions &options);
 
     NO_COPY_SEMANTIC(CompileAbcClassJob);
     NO_MOVE_SEMANTIC(CompileAbcClassJob);
@@ -132,9 +133,9 @@ public:
 private:
     void UpdateImportOhmurl(panda::pandasm::Program *prog, const CompilerOptions &options);
     void UpdateDynamicImport(panda::pandasm::Program *prog,
-        const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
+        const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
     void UpdateStaticImport(panda::pandasm::Program *prog,
-        const std::map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
+        const std::unordered_map<std::string, panda::es2panda::PkgInfo> &pkgContextInfo);
     void UpdateBundleNameOfOhmurl(std::string &ohmurl);
 
     es2panda::SourceFile *src_;

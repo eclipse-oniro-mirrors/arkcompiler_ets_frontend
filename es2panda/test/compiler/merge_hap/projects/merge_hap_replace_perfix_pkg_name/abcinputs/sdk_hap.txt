@@ -1,2 +1,4 @@
 sdk_hap.ts
 sdk_hap_import_file.ts
+sdk_resource_table.ts
+sdk_resource_table1.ts

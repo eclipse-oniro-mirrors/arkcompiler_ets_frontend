@@ -1,22 +1,20 @@
 {
     "compileFiles": [],
-
     "packageName": "harA",
     "moduleType": "har",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.2_har1.1_hsp1.1/harA",
-    "sourceRoots": ["./", "src/main1/ets"],
-
+    "sourceRoots": [
+        "./",
+        "src/main1/ets"
+    ],
     "loaderOutPath": "./dist/out/harA",
     "cachePath": "./dist/cache",
-
     "enableDeclgenEts2Ts": true,
     "declgenV1OutPath": "./dist/declgen/decl_ets",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [

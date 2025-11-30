@@ -3,23 +3,20 @@
         "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/hspA/index.ets",
         "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/hspA/Calc.ets"
     ],
-
     "packageName": "hspA",
     "moduleType": "shared",
-
     "buildType": "build",
     "buildMode": "Debug",
     "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/hspA/",
-    "sourceRoots": ["./"],
-
+    "sourceRoots": [
+        "./"
+    ],
     "loaderOutPath": "./dist/out/",
     "cachePath": "./dist/cache",
-
     "enableDeclgenEts2Ts": true,
     "declgenV1OutPath": "./dist/declgen/decl_ets1",
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
-
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [

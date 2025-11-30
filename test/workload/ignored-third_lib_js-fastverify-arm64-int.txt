@@ -3,6 +3,8 @@ jsDiff_test
 
 #30387
 crypto-js_test
+Easyrelpace_test
+memory-cache_test
 
 #27810
 validator_test
@@ -13,3 +15,5 @@ dayjs_test
 #30387
 jBox2d_test
 
+#27789
+mathjs_test

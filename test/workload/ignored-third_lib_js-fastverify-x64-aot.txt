@@ -6,3 +6,7 @@ jsDiff_test
 
 #19576
 js-joda_test
+
+#24147
+jBox2d_test
+zxing_test

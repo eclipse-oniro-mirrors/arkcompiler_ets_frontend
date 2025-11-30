@@ -21,11 +21,11 @@ import { A, I, Animal } from "dynamic_import_tests/modules/module"
 
 let a = new Animal() // CTE
 
-class Bird extends Animal { // OK
+class Bird extends Animal /* @@ label1 */{ // OK
     move(): void { }
 }
 
-class C extends A {
+class C extends A /* @@ label2 */{
     override foo(p: double): string {
     } //ok
 } // ok
@@ -38,7 +38,7 @@ c.foo(123) // ok
 C.bar() // ok
 c.foa() //cte
 
-class C1 implements I { // ok
+class C1 implements I /* @@ label5 */{ // ok
     s: string
     f1(p: string): double {
         return 12

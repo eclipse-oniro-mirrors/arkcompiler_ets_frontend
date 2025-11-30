@@ -869,6 +869,7 @@ ArenaVector<ir::TSInterfaceHeritage *> ParserImpl::ParseTsInterfaceExtends()
         ir::TSTypeParameterInstantiation *typeParamInst = nullptr;
         if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LESS_THAN) {
             typeParamInst = ParseTsTypeParameterInstantiation();
+            CHECK_NOT_NULL(typeParamInst);
             heritageEnd = typeParamInst->End();
         }
         auto *typeReference = AllocNode<ir::TSTypeReference>(expr, typeParamInst);
@@ -2611,10 +2612,11 @@ ir::ExportNamedDeclaration *ParserImpl::ParseExportNamedSpecifiers(const lexer::
 
         lexer::Token localToken = lexer_->GetToken();
         if (program_.IsEnableAnnotations() && CheckAnnotationPrefix(lexer_->GetToken().Ident())) {
-            localToken.SetIdent(lexer_->GetToken().Ident().Substr(std::strlen(ir::Annotation::annotationPrefix),
-                                                                  lexer_->GetToken().Ident().Length()));
+            auto annotationName = lexer_->GetToken().Ident().Substr(std::strlen(ir::Annotation::annotationPrefix),
+                                                                    lexer_->GetToken().Ident().Length());
+            localToken.SetIdent(annotationName);
         }
-        auto *local = AllocNode<ir::Identifier>(lexer_->GetToken().Ident());
+        auto *local = AllocNode<ir::Identifier>(localToken.Ident());
         local->SetRange(lexer_->GetToken().Loc());
 
         if (Extension() == ScriptExtension::TS) {
@@ -2731,6 +2733,10 @@ ir::ExportNamedDeclaration *ParserImpl::ParseNamedExportDeclaration(const lexer:
             lexer_->NextToken(); // eat @ symbol
             if (lexer_->GetToken().KeywordType() != lexer::TokenType::KEYW_INTERFACE) {
                 ThrowSyntaxError("'interface' keyword expected.");
+            }
+
+            if (!program_.IsEnableAnnotations()) {
+                ThrowAnnotationNotEnable();
             }
 
             if (!decorators.empty()) {

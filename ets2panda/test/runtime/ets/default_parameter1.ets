@@ -18,13 +18,14 @@ function main() : void
     arktest.assertEQ(foo(5), 15);
 }
 
+function foo(a : int) : int
+{
+    return a;
+}
+
 function foo(a : int, b : int = 10) : int
 {
     return a + b;
 }
 
-function foo(a : int) : int
-{
-    return a;
-}
 

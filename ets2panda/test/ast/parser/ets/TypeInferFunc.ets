@@ -25,4 +25,3 @@ function main(): void {
     foo(bar);
 }
 
-

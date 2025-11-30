@@ -2568,3 +2568,4 @@
     }
   }
 }
+TypeError: Parameter b implicitly has any type. [test-func-param.ts:19:31]

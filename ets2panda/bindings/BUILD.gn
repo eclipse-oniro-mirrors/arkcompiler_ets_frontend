@@ -59,7 +59,7 @@ shared_library("ts_bindings") {
   include_dirs = [
     "./native/include",
     "../public/",
-    "//third_party/node/src",
+    "./node_modules/node-api-headers/include",
     rebase_path("$root_gen_dir/arkcompiler/ets_frontend/ets2panda/"),
   ]
 
@@ -214,7 +214,7 @@ shared_library("public") {
   include_dirs = [
     "./native/include",
     "../public/",
-    "//third_party/node/src",
+    "./node_modules/node-api-headers/include",
     rebase_path("$root_gen_dir/arkcompiler/ets_frontend/ets2panda/"),
   ]
 
@@ -358,6 +358,7 @@ action("build_bindings") {
     "src/common/InteropTypes.ts",
     "src/common/Platform.ts",
     "src/common/Wrapper.ts",
+    "src/common/arkTSConfigGenerator.ts",
     "src/common/arrays.ts",
     "src/common/driver_helper.ts",
     "src/common/global.ts",
@@ -370,7 +371,6 @@ action("build_bindings") {
     "src/common/types.ts",
     "src/common/ui_plugins_driver.ts",
     "src/common/utils.ts",
-    "src/common/arkTSConfigGenerator.ts",
     "src/generated/Es2pandaEnums.ts",
     "src/generated/Es2pandaNativeModule.ts",
     "src/index.ts",

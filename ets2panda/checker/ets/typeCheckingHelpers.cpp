@@ -82,6 +82,10 @@ bool ETSChecker::CheckNonNullish(ir::Expression const *expr)
         return true;
     }
 
+    if (expr->TsType()->IsETSPartialTypeParameter()) {
+        return true;
+    }
+
     if (HasStatus(checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK)) {
         return false;
     }
@@ -709,6 +713,7 @@ Type *ETSChecker::GuaranteedTypeForUncheckedCallReturn(Signature *sig)
 {
     ES2PANDA_ASSERT(sig != nullptr);
     ES2PANDA_ASSERT(sig->HasFunction());
+    ES2PANDA_ASSERT(sig);
     if (sig->HasSignatureFlag(SignatureFlags::THIS_RETURN_TYPE)) {
         return sig->ReturnType();
     }

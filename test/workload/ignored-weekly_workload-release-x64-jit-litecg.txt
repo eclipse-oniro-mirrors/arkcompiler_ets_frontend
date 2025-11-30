@@ -10,3 +10,7 @@ date-format-tofte
 #30387
 n-body
 deltablue
+
+#18740
+splay
+

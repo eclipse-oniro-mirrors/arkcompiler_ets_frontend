@@ -2252,6 +2252,7 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     if (ShouldSkipMethodDeclaration(methodDef)) {
         return;
     }
+    GenAnnotations(methodDef->Function());
     const auto methodIdent = GetKeyIdent(methodDef->Key());
     auto methodName = methodIdent->Name().Mutf8();
     if (methodName == "$_iterator") {

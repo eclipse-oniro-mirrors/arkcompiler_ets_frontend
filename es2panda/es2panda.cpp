@@ -111,6 +111,11 @@ void Compiler::CompileAbcFileInParallel(SourceFile *src, const CompilerOptions &
     if (!options.modifiedPkgName.empty()) {
         abcToAsmCompiler_->SetModifyPkgName(options.modifiedPkgName);
     }
+    if (!options.compileOhmurlVersionConfigPath.empty()) {
+        abcToAsmCompiler_->SetPackageName(options.compileOhmurlVersionConfig.packageName);
+        abcToAsmCompiler_->SetOriginVersion(options.compileOhmurlVersionConfig.originVersion);
+        abcToAsmCompiler_->SetTargetVersion(options.compileOhmurlVersionConfig.targetVersion);
+    }
 
     auto *compileAbcClassQueue = new compiler::CompileAbcClassQueue(options.abcClassThreadCount,
                                                                     options,

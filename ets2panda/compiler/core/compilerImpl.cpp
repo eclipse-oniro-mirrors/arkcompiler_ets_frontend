@@ -377,6 +377,7 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     auto program = parser::Program::NewProgram<VarBinder>(context->allocator, &varBinder);
     auto parser =
         Parser(&program, unit.options, unit.diagnosticEngine, static_cast<parser::ParserStatus>(unit.rawParserStatus));
+    parser.SetContext(context);
     context->parser = &parser;
     parser.SetContext(context);
     auto checker = Checker(context->allocator, unit.diagnosticEngine);

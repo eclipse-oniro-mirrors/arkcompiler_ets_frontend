@@ -166,6 +166,308 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "A",
+          "loc": {
+            "start": {
+              "line": 23,
+              "column": 7,
+              "program": "instanceof_x_etstype.ets"
+            },
+            "end": {
+              "line": 23,
+              "column": 8,
+              "program": "instanceof_x_etstype.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_etstype.ets"
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_etstype.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 23,
+            "column": 9,
+            "program": "instanceof_x_etstype.ets"
+          },
+          "end": {
+            "line": 24,
+            "column": 6,
+            "program": "instanceof_x_etstype.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 1,
+          "program": "instanceof_x_etstype.ets"
+        },
+        "end": {
+          "line": 24,
+          "column": 6,
+          "program": "instanceof_x_etstype.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "B",
+          "loc": {
+            "start": {
+              "line": 24,
+              "column": 7,
+              "program": "instanceof_x_etstype.ets"
+            },
+            "end": {
+              "line": 24,
+              "column": 8,
+              "program": "instanceof_x_etstype.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 24,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                },
+                "end": {
+                  "line": 24,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 24,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 24,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    },
+                    "end": {
+                      "line": 24,
+                      "column": 10,
+                      "program": "instanceof_x_etstype.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 24,
+                    "column": 10,
+                    "program": "instanceof_x_etstype.ets"
+                  },
+                  "end": {
+                    "line": 24,
+                    "column": 10,
+                    "program": "instanceof_x_etstype.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 24,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                },
+                "end": {
+                  "line": 24,
+                  "column": 10,
+                  "program": "instanceof_x_etstype.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 24,
+            "column": 9,
+            "program": "instanceof_x_etstype.ets"
+          },
+          "end": {
+            "line": 26,
+            "column": 9,
+            "program": "instanceof_x_etstype.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 24,
+          "column": 1,
+          "program": "instanceof_x_etstype.ets"
+        },
+        "end": {
+          "line": 26,
+          "column": 9,
+          "program": "instanceof_x_etstype.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "ETSGLOBAL",
           "loc": {
             "start": {

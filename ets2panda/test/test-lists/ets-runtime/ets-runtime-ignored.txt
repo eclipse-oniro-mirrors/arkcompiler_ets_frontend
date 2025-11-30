@@ -87,6 +87,8 @@ import_self_head_tests/B/test.d.ets
 #Issue 25550
 enum-initialize-with-enum3.ets
 
+# 27159 Recursive type alias with generics
+RecursiveTypeAlias10.ets
 #24986
 RecordKeyTypeCheck.ets
 nullishTypeCodesamples.ets
@@ -113,17 +115,22 @@ first_match/namespace.ets
 first_match/namespace2.ets
 first_match/namespace3.ets
 
+# Issue #28214
+large_number_parse.ets
+
 # Issue #28914
 non_null_number_as_index.ets
 
 #31069
 type_error_test.ets
 
-#31475
-as_string.ets
+#31442
+import_namespaces.ets
 
-#31475
-readonly_array/readonly_array_arg.ets
-readonly_array/readonly_array_field.ets
-readonly_array/readonly_array_var.ets
-finallyClauseThrow.ets
+# 74119 fail after tests-u-runner-2 update
+fields_with_late_initialization/class_late_initialization_with_unionType.ets.ets
+finallyExecutedAbruptly.ets
+generic_union.ets
+register_overflow.ets
+spill_fill_virtual_range.ets
+union_call.ets

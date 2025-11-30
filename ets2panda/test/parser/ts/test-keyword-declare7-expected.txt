@@ -211,3 +211,4 @@
     }
   }
 }
+TypeError: Function implementation is missing or not immediately following the declaration. [test-keyword-declare7.ts:17:18]
