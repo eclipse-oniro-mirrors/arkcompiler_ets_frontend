@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -198,6 +198,19 @@ public:
         return program_.Allocator();
     }
     bool IsDtsFile() const;
+
+    uintptr_t StackLimit() const
+    {
+        return stackLimit_;
+    }
+
+    void SetStackLimit(uintptr_t stackLimit)
+    {
+        stackLimit_ = stackLimit;
+        Binder()->SetStackLimit(stackLimit);
+    }
+
+    bool CheckStackOverFlow();
 
 private:
     bool IsStartOfMappedType() const;
@@ -621,31 +634,8 @@ private:
     {
         return program_.Binder();
     }
-    static constexpr unsigned MAX_RECURSION_DEPTH = 1024;
-
-    inline void RecursiveDepthCheck()
-    {
-        if (recursiveDepth_ < MAX_RECURSION_DEPTH) {
-            return;
-        }
-        RecursiveDepthException();
-    }
 
     void RecursiveDepthException();
-    // RAII to recursive depth tracking.
-    class TrackRecursive {
-    public:
-        explicit TrackRecursive(ParserImpl *parser) : parser_(parser)
-        {
-            ++parser_->recursiveDepth_;
-        }
-        ~TrackRecursive()
-        {
-            --parser_->recursiveDepth_;
-        }
-    private:
-        ParserImpl *const parser_;
-    };
 
     friend class Lexer;
     friend class SavedParserContext;
@@ -655,15 +645,13 @@ private:
     ParserContext context_;
     lexer::Lexer *lexer_ {nullptr};
     size_t namespaceExportCount_ {0};
-    size_t recursiveDepth_{0};
+    uintptr_t stackLimit_ {0};
 };
 
-// Declare a RAII recursive tracker. Check whether the recursion limit has
-// been exceeded, if so, throw a generic error.
-// The macro only works from inside parserImpl methods.
-#define CHECK_PARSER_RECURSIVE_DEPTH                  \
-    TrackRecursive trackRecursive{this};       \
-    RecursiveDepthCheck()
+#define CHECK_PARSER_STACK_OVER_FLOW                      \
+    if (UNLIKELY(CheckStackOverFlow())) {                 \
+        RecursiveDepthException();                        \
+    }
 
 template <ParserStatus status>
 class SavedStatusContext {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include <compiler/core/compilerContext.h>
 #include <compiler/core/compilerImpl.h>
 #include <compiler/core/emitter/emitter.h>
+#include <os/stackGuard.h>
 #include <parser/parserImpl.h>
 #include <parser/transformer/transformer.h>
 #include <typescript/checker.h>
@@ -37,6 +38,10 @@ Compiler::Compiler(ScriptExtension ext, size_t threadCount)
     : parser_(new parser::ParserImpl(ext)), compiler_(new compiler::CompilerImpl(threadCount)),
     abcToAsmCompiler_(new panda::abc2program::Abc2ProgramCompiler)
 {
+    panda::StackGuard stackGuard;
+    stackGuard.Initialize();
+    parser_->SetStackLimit(stackGuard.StackLimit());
+   
     if (parser_->Extension() == ScriptExtension::TS) {
         transformer_ = std::make_unique<parser::Transformer>(parser_->Allocator());
     }
