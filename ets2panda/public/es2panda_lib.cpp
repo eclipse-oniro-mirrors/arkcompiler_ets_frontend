@@ -293,7 +293,7 @@ static void CompileJob(public_lib::Context *context, varbinder::FunctionScope *s
         return;
     }
     compiler::StaticRegSpiller regSpiller;
-    auto allocator = EHeap::CreateAllocator();
+    auto allocator = EHeap::CreateScopedAllocator();
     compiler::ETSCompiler astCompiler {};
     compiler::ETSGen cg {&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astCompiler)};
     compiler::ETSFunctionEmitter funcEmitter {&cg, programElement};

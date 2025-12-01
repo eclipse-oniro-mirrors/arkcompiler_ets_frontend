@@ -175,11 +175,11 @@ public:
     }
 
 private:
-    Expression *left_ = nullptr;
-    Expression *right_ = nullptr;
-    Expression *result_ = nullptr;
+    EPtr<Expression> left_ = nullptr;
+    EPtr<Expression> right_ = nullptr;
+    EPtr<Expression> result_ = nullptr;
     lexer::TokenType operator_;
-    checker::Type *operationType_ {};
+    EPtr<checker::Type> operationType_ {};
 };
 }  // namespace ark::es2panda::ir
 

@@ -219,20 +219,6 @@ public:
         return variable_;
     }
 
-    util::StringView ToAssemblerTypeView(ArenaAllocator *allocator) const
-    {
-        std::stringstream ss;
-        ToAssemblerType(ss);
-        return util::UString(ss.str(), allocator).View();
-    }
-
-    util::StringView ToAssemblerTypeWithRankView(ArenaAllocator *allocator) const
-    {
-        std::stringstream ss;
-        ToAssemblerTypeWithRank(ss);
-        return util::UString(ss.str(), allocator).View();
-    }
-
     std::stringstream ToAssemblerName() const
     {
         std::stringstream ss;
@@ -297,7 +283,7 @@ public:
 protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     TypeFlag typeFlags_;
-    varbinder::Variable *variable_ {};  // Variable associated with the type if any
+    EPtr<varbinder::Variable> variable_ {};  // Variable associated with the type if any
     uint32_t id_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };

@@ -87,8 +87,8 @@ protected:
 
 private:
     friend class SizeOfNodeTest;
-    checker::Type *tsType_ {};
-    checker::Type *preferredType_ {};  // used by the checker to supply information from context
+    EPtr<checker::Type> tsType_ {};
+    EPtr<checker::Type> preferredType_ {};  // used by the checker to supply information from context
 };
 
 class TypedAstNode : public Typed<AstNode> {
@@ -150,8 +150,6 @@ protected:
     explicit TypedStatement(AstNodeType type, ModifierFlags flags) : Typed<Statement>(type, flags) {};
 
     TypedStatement(TypedStatement const &other) : Typed<Statement>(static_cast<Typed<Statement> const &>(other)) {}
-
-    inline static checker::Type *const CHECKED = reinterpret_cast<checker::Type *>(0x01);
 };
 
 class AnnotatedStatement : public Annotated<Statement> {

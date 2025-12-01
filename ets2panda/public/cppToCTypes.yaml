@@ -48,7 +48,7 @@ change_types:
           start: "\n
             \tauto *ctx = reinterpret_cast<Context *>(context);\n
             \tauto *ctxAllocator = ctx->allocator;\n
-            \tauto resultVector = "
+            \tdecltype(auto) resultVector = "
           end: ";\n
             \t*|return_args.0.name| = resultVector|accessor|size();\n
             \tauto apiRes = ctxAllocator->New<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|[]>(*|return_args.0.name|);\n
@@ -94,7 +94,7 @@ change_types:
           start: "\n
             \tauto *ctx = reinterpret_cast<Context *>(context);\n
             \tauto *ctxAllocator = ctx->allocator;\n
-            \tauto resultVector = "
+            \tdecltype(auto) resultVector = "
           end: ";\n
             \t*|return_args.0.name| = resultVector|accessor|size();\n
             \tauto apiRes = ctxAllocator->New<|new_args.0.type.const| |new_args.0.type.name| |new_args.0.type.ptr_depth - 1||new_args.0.type.ref_depth|[]>(*|return_args.0.name|);\n
@@ -137,7 +137,7 @@ change_types:
           start: "\n
             auto *ctx = reinterpret_cast<Context *>(context);\n
             auto *ctxAllocator = ctx->allocator;\n
-            auto resultVector = "
+            decltype(auto) resultVector = "
           end: ";\n
             \t/* WARNING! This section has not been tested! */\n
             \t*|return_args.0.name| = resultVector|accessor|size();\n

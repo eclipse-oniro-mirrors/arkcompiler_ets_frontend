@@ -30,7 +30,7 @@ private:
     struct Tag {};
 
 public:
-    enum class VariableDeclarationKind { CONST, LET, VAR };
+    enum class VariableDeclarationKind : uint8_t { CONST, LET, VAR };
 
     explicit VariableDeclaration(VariableDeclarationKind kind, ArenaAllocator *allocator,
                                  ArenaVector<VariableDeclarator *> &&declarators)

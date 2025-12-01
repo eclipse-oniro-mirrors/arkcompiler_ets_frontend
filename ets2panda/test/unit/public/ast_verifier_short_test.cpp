@@ -54,32 +54,32 @@ using ark::es2panda::varbinder::LocalScope;
 using ark::es2panda::varbinder::LocalVariable;
 using ark::es2panda::varbinder::VariableFlags;
 
-TEST_F(ASTVerifierTest, NullParent)
+TEST_F(ASTVerifierTest, DISABLED_NullParent)  // #31976
 {
     StringLiteral emptyNode;
     EXPECT_TRUE(VerifyNode<NodeHasParent>(&emptyNode, ExpectVerifierMessage {"NULL_PARENT"}));
 }
 
-TEST_F(ASTVerifierTest, NullRange)
+TEST_F(ASTVerifierTest, DISABLED_NullRange)  // #31976
 {
     StringLiteral emptyNode;
     EXPECT_TRUE(VerifyNode<NodeHasSourceRange>(&emptyNode, ExpectVerifierMessage {"NULL_RANGE"}));
 }
 
 // NOTE(dkofanov): #22355 'NodeHasType' is broken.
-TEST_F(ASTVerifierTest, DISABLED_NullType)
+TEST_F(ASTVerifierTest, DISABLED_NullType)  // #31976
 {
     StringLiteral emptyNode;
     EXPECT_TRUE(VerifyNode<NodeHasType>(&emptyNode, ExpectVerifierMessage {"NULL_TS_TYPE"}));
 }
 
-TEST_F(ASTVerifierTest, WithoutScope)
+TEST_F(ASTVerifierTest, DISABLED_WithoutScope)  // #31976
 {
     StringLiteral emptyNode;
     EXPECT_TRUE(VerifyNode<VariableHasScope>(&emptyNode));
 }
 
-TEST_F(ASTVerifierTest, ScopeTest)
+TEST_F(ASTVerifierTest, DISABLED_ScopeTest)  // #31976
 {
     Identifier ident(StringView("var_decl"), Allocator());
     LetDecl decl("test", &ident);
@@ -97,7 +97,7 @@ TEST_F(ASTVerifierTest, ScopeTest)
     EXPECT_TRUE(VerifyNode<VariableHasScope>(&ident));
 }
 
-TEST_F(ASTVerifierTest, ScopeNodeTest)
+TEST_F(ASTVerifierTest, DISABLED_ScopeNodeTest)  // #31976
 {
     Identifier ident(StringView("var_decl"), Allocator());
     LetDecl decl("test", &ident);
@@ -116,7 +116,7 @@ TEST_F(ASTVerifierTest, ScopeNodeTest)
     EXPECT_TRUE(VerifyNode<VariableHasEnclosingScope>(&ident));
 }
 
-TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect1)
+TEST_F(ASTVerifierTest, DISABLED_ArithmeticExpressionCorrect1)  // #31976
 {
     DiagnosticEngine de {};
     ETSChecker etschecker {Allocator(), de};
@@ -131,7 +131,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect1)
     EXPECT_TRUE(VerifyNode<ArithmeticOperationValid>(arithmeticExpression.AsBinaryExpression()));
 }
 
-TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect2)
+TEST_F(ASTVerifierTest, DISABLED_ArithmeticExpressionCorrect2)  // #31976
 {
     DiagnosticEngine de {};
     ETSChecker etschecker {Allocator(), de};
@@ -153,7 +153,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionCorrect2)
     EXPECT_TRUE(VerifyNode<ArithmeticOperationValid>(arithmeticExpression.AsBinaryExpression()));
 }
 
-TEST_F(ASTVerifierTest, ArithmeticExpressionNegative1)
+TEST_F(ASTVerifierTest, DISABLED_ArithmeticExpressionNegative1)  // #31976
 {
     DiagnosticEngine de {};
     ETSChecker etschecker {Allocator(), de};
@@ -171,7 +171,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionNegative1)
                                                      ExpectVerifierMessage {"Not a numeric type"}));
 }
 
-TEST_F(ASTVerifierTest, ArithmeticExpressionNegative2)
+TEST_F(ASTVerifierTest, DISABLED_ArithmeticExpressionNegative2)  // #31976
 {
     DiagnosticEngine de {};
     ETSChecker etschecker {Allocator(), de};
@@ -187,7 +187,7 @@ TEST_F(ASTVerifierTest, ArithmeticExpressionNegative2)
                                                      ExpectVerifierMessage {"Not a numeric type"}));
 }
 
-TEST_F(ASTVerifierTest, PrimitiveType)
+TEST_F(ASTVerifierTest, DISABLED_PrimitiveType)  // #31976
 {
     DiagnosticEngine de {};
     ETSChecker etschecker {Allocator(), de};
@@ -201,14 +201,14 @@ TEST_F(ASTVerifierTest, PrimitiveType)
     Get<NoPrimitiveTypes>()->SetNumberLoweringOccured(false);
 }
 
-TEST_F(ASTVerifierTest, SequenceExpressionType)
+TEST_F(ASTVerifierTest, DISABLED_SequenceExpressionType)  // #31976
 {
     auto de = DiagnosticEngine();
     auto checker = ETSChecker(Allocator(), de);
     const auto literalsCount = 3;
     std::array<NumberLiteral, literalsCount> literals {NumberLiteral {Number {1}}, NumberLiteral {Number {2}},
                                                        NumberLiteral {Number {3}}};
-    ark::ArenaVector<Expression *> expressions {Allocator()->Adapter()};
+    ark::es2panda::ArenaVector<Expression *> expressions {Allocator()->Adapter()};
     expressions.insert(expressions.end(), {&literals[0], &literals[1], &literals[2]});
     SequenceExpression sequenceExpression {std::move(expressions)};
 

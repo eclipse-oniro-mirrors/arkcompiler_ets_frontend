@@ -138,9 +138,9 @@ CallExpression::CallExpression(CallExpression const &other, ArenaAllocator *cons
     : MaybeOptionalExpression(static_cast<MaybeOptionalExpression const &>(other)),
       arguments_(allocator->Adapter()),
       signature_(other.signature_),
-      trailingComma_(other.trailingComma_),
       trailingLambdaInfo_({other.trailingLambdaInfo_.block, other.trailingLambdaInfo_.isBlockInNewLine,
-                           other.trailingLambdaInfo_.isTrailingCall})
+                           other.trailingLambdaInfo_.isTrailingCall}),
+      trailingComma_(other.trailingComma_)
 {
     callee_ = other.callee_->Clone(allocator, this)->AsExpression();
     typeParams_ = other.typeParams_ != nullptr ? other.typeParams_->Clone(allocator, this) : nullptr;

@@ -48,7 +48,7 @@ class DynamicContext;
 
 class PandaGen final : public CodeGen {
 public:
-    explicit PandaGen(ArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
+    explicit PandaGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                       std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile);
 
     ~PandaGen() override = default;

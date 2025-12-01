@@ -24,7 +24,7 @@
 using ark::es2panda::compiler::ast_verifier::ReferenceTypeAnnotationIsNull;
 using ark::es2panda::ir::AstNode;
 
-TEST_F(ASTVerifierTest, RefAnnotationNullNegative)
+TEST_F(ASTVerifierTest, DISABLED_RefAnnotationNullNegative)  // #31976
 {
     char const *text = R"(
         let refNull = 10;

@@ -61,7 +61,7 @@ public:
     [[nodiscard]] ExpressionStatement *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
 private:
-    Expression *expression_;
+    EPtr<Expression> expression_;
 };
 }  // namespace ark::es2panda::ir
 

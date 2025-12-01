@@ -119,9 +119,9 @@ private:
 
     friend class SizeOfNodeTest;
 
-    ir::Expression *name_;
-    ir::TSTypeParameterInstantiation *typeParams_ {};
-    ir::ETSTypeReferencePart *prev_ {};
+    EPtr<ir::Expression> name_;
+    EPtr<ir::TSTypeParameterInstantiation> typeParams_ {};
+    EPtr<ir::ETSTypeReferencePart> prev_ {};
 };
 }  // namespace ark::es2panda::ir
 

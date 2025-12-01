@@ -192,8 +192,7 @@ bool IsWordPartOfIdentifierName(ir::AstNode *node, std::string triggerWord)
     return lowerName.find(lowerTrigger) != std::string::npos && !IsIgnoredName(name);
 }
 
-std::vector<ir::AstNode *> FilterFromBody(const ark::ArenaVector<ir::AstNode *> &bodyNodes,
-                                          const std::string &triggerWord)
+std::vector<ir::AstNode *> FilterFromBody(const ArenaVector<ir::AstNode *> &bodyNodes, const std::string &triggerWord)
 {
     std::vector<ir::AstNode *> res;
     if (bodyNodes.empty()) {
@@ -220,7 +219,7 @@ std::vector<ir::AstNode *> FilterFromBody(const ark::ArenaVector<ir::AstNode *> 
     return res;
 }
 
-std::vector<ir::AstNode *> FilterFromEnumMember(const ark::ArenaVector<ir::AstNode *> &members,
+std::vector<ir::AstNode *> FilterFromEnumMember(const ArenaVector<ir::AstNode *> &members,
                                                 const std::string &triggerWord)
 {
     std::vector<ir::AstNode *> res;
@@ -235,7 +234,7 @@ std::vector<ir::AstNode *> FilterFromEnumMember(const ark::ArenaVector<ir::AstNo
     return res;
 }
 
-std::vector<ir::AstNode *> FilterFromInterfaceBody(const ark::ArenaVector<ir::AstNode *> &members,
+std::vector<ir::AstNode *> FilterFromInterfaceBody(const ArenaVector<ir::AstNode *> &members,
                                                    const std::string &triggerWord)
 {
     std::vector<ir::AstNode *> res;

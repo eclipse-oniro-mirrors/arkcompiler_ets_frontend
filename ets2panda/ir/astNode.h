@@ -886,8 +886,8 @@ protected:
 
     friend class SizeOfNodeTest;
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
-    AstNode *parent_ {};
     lexer::CompressedSourceRange range_ {};
+    EPtr<AstNode> parent_ {};
 #ifndef NDEBUG
     ModifierFlags flags_ {};
     mutable AstNodeFlags astNodeFlags_ {};
@@ -906,8 +906,8 @@ protected:
 private:
     AstNode &operator=(const AstNode &) = default;
 
-    varbinder::Variable *variable_ {};
-    AstNode *originalNode_ = nullptr;
+    EPtr<varbinder::Variable> variable_ {};
+    EPtr<AstNode> originalNode_ = nullptr;
 #ifdef ES2PANDA_ENABLE_AST_HISTORY
     AstNodeHistory *history_ {nullptr};
 #endif
@@ -955,7 +955,7 @@ protected:
 
 private:
     friend class SizeOfNodeTest;
-    TypeNode *typeAnnotation_ {};
+    EPtr<TypeNode> typeAnnotation_ {};
 };
 
 /**

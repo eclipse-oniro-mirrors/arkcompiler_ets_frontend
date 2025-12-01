@@ -179,12 +179,12 @@ protected:
     }
 
 private:
-    Expression *left_ = nullptr;
-    Expression *right_ = nullptr;
-    Expression *result_ = nullptr;
+    EPtr<Expression> left_ = nullptr;
+    EPtr<Expression> right_ = nullptr;
+    EPtr<Expression> result_ = nullptr;
+    EPtr<varbinder::Variable> target_ {};
+    EPtr<checker::Type> operationType_ {};
     lexer::TokenType operator_;
-    varbinder::Variable *target_ {};
-    checker::Type *operationType_ {};
     bool ignoreConstAssign_ = false;
 };
 }  // namespace ark::es2panda::ir

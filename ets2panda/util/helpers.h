@@ -108,6 +108,9 @@ public:
     static util::StringView ToStringView(ArenaAllocator *allocator, double number);
     static util::StringView ToStringView(ArenaAllocator *allocator, int32_t number);
     static util::StringView ToStringView(ArenaAllocator *allocator, uint32_t number);
+    static util::StringView ToStringView(SArenaAllocator *allocator, double number);
+    static util::StringView ToStringView(SArenaAllocator *allocator, int32_t number);
+    static util::StringView ToStringView(SArenaAllocator *allocator, uint32_t number);
     static bool StartsWith(const std::string_view str, const std::string_view prefix);
     static bool EndsWith(const std::string_view str, const std::string_view suffix);
 

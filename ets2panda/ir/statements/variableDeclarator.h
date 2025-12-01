@@ -24,7 +24,7 @@ class TSAnalyzer;
 namespace ark::es2panda::ir {
 class Expression;
 
-enum class VariableDeclaratorFlag {
+enum class VariableDeclaratorFlag : uint8_t {
     LET,
     CONST,
     VAR,
@@ -100,8 +100,8 @@ public:
     [[nodiscard]] VariableDeclarator *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
 private:
-    Expression *id_;
-    Expression *init_ {};
+    EPtr<Expression> id_;
+    EPtr<Expression> init_ {};
     const VariableDeclaratorFlag flag_;
 };
 }  // namespace ark::es2panda::ir
