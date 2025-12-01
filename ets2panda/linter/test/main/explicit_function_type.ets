@@ -182,3 +182,19 @@ SysApiWrapper.setTimeout = (handler: Function | string, delay?: number): number 
 new Function('return 42')();
 
 Function('return 42')();
+
+function bar(a1?: Function) {
+  a1?.();     //ts like function call error for union type
+}
+
+type Function1 = ()=>void
+
+function bar1(a1?: Function1){
+  a1?.();
+}
+
+type _Function = ()=>void
+
+function bar2(a1?: _Function){
+  a1?.();
+}

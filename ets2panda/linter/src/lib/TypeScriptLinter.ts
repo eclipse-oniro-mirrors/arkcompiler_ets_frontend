@@ -6322,11 +6322,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const expression = callExpr.expression;
     const type = this.tsTypeChecker.getTypeAtLocation(expression);
-    const typeText = this.tsTypeChecker.typeToStringForLinter(type);
-
-    if (LIKE_FUNCTION !== typeText) {
+    if (!this.typeWithinUnion(type, LIKE_FUNCTION, 0)) {
       return;
     }
+
     if (ts.isNewExpression(expression) || ts.isCallExpression(expression)) {
       const exprIndentifier = expression.expression;
       const typeExprIndent = this.tsTypeChecker.getTypeAtLocation(exprIndentifier);
@@ -6338,6 +6337,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       const autofix = this.autofixer?.fixNoTsLikeFunctionCall(callExpr);
       this.incrementCounters(expression, FaultID.ExplicitFunctionType, autofix);
     }
+  }
+
+  private typeWithinUnion(type: ts.Type, targetTypeName: string, depth: number): boolean {
+    if (depth > 10) {
+      return false;
+    }
+    if (type.isUnion()) {
+      for (const t of type.types) {
+        if (this.typeWithinUnion(t, targetTypeName, depth + 1)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    const typeName = this.tsTypeChecker.typeToStringForLinter(type);
+    return typeName === targetTypeName;
   }
 
   handleInteropForCallJSExpression(
@@ -15392,7 +15407,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (parameters && parameters.length === 2) {
         let paramMatch = true;
         for (let i = 0; i < parameters.length; i++) {
-          if (this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !== argsType[i]) {
+          if (
+            this.tsTypeChecker.typeToStringForLinter(this.tsTypeChecker.getTypeAtLocation(parameters[i])) !==
+            argsType[i]
+          ) {
             paramMatch = false;
             break;
           }
