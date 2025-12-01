@@ -2098,7 +2098,8 @@ void TSDeclGen::EmitClassGlueCode(const ir::ClassDefinition *classDef, const std
 void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
 {
     state_.inClass = true;
-    std::unordered_set<std::string> processedMethods;
+    std::unordered_set<std::string> processedStaticMethods;
+    std::unordered_set<std::string> processedInstanceMethods;
     for (const auto *prop : classDef->Body()) {
         const auto jsdoc = compiler::JsdocStringFromDeclaration(prop);
         if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
@@ -2119,7 +2120,9 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         } else if (prop->IsTSTypeAliasDeclaration()) {
             GenTypeAliasDeclaration(prop->AsTSTypeAliasDeclaration());
         } else if (prop->IsMethodDefinition()) {
-            ProcessMethodDefinition(prop->AsMethodDefinition(), processedMethods);
+            const ir::MethodDefinition *methodDef = prop->AsMethodDefinition();
+            ProcessMethodDefinition(methodDef,
+                                    methodDef->IsStatic() ? processedStaticMethods : processedInstanceMethods);
         } else if (prop->IsClassProperty()) {
             const auto classProp = prop->AsClassProperty();
             const auto propName = GetKeyIdent(classProp->Key())->Name().Mutf8();
