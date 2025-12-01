@@ -290,7 +290,11 @@ def main():
 
 if __name__ == '__main__':
     lock_file_path = "./rule-config.json"
-    lock_file = open(lock_file_path, "w")
+    try:
+        fd = os.open(lock_file_path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o644)
+        lock_file = os.fdopen(fd, "w")
+    except OSError as e:
+        raise Exception("Failed to open lock file: {e}")
     acquired = False
 
     try:
