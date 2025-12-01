@@ -1,0 +1,13 @@
+export declare class MixedClass {
+    public static success(): void;
+    public success(a: number): void;
+    public error(a: number, b: string): void;
+    public message(a: string): string;
+    constructor();
+}
+export declare class StaticOverrideClass {
+    constructor();
+}
+export declare class InstanceOverrideClass {
+    constructor();
+}
