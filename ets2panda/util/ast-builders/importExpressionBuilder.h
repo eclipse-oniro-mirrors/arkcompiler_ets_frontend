@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ImportExpressionBuilder : public AstBuilder<ir::ImportExpression> {
 public:
-    explicit ImportExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ImportExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ImportExpressionBuilder &SetSource(StringLiteral *source)
     {

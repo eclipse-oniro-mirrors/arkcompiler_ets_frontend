@@ -19,7 +19,6 @@
 #include "ir/astNodeFlags.h"
 #include "public/es2panda_lib.h"
 #include "get_adjusted_location.h"
-#include "libarkbase/utils/arena_containers.h"
 
 using ark::es2panda::ir::AstNode;
 using ark::es2panda::ir::AstNodeType;

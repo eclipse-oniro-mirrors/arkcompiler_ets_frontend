@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class OpaqueTypeNodeBuilder : public AstBuilder<ir::OpaqueTypeNode> {
 public:
-    explicit OpaqueTypeNodeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit OpaqueTypeNodeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     OpaqueTypeNodeBuilder &SetType(checker::Type *type)
     {

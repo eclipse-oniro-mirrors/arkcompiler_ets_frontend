@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TemplateLiteralBuilder : public AstBuilder<TemplateLiteral> {
 public:
-    explicit TemplateLiteralBuilder(ark::ArenaAllocator *allocator)
+    explicit TemplateLiteralBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), quasis_(allocator->Adapter()), expressions_(allocator->Adapter())
     {
     }

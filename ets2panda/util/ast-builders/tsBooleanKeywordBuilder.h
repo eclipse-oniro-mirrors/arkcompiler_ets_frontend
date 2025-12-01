@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSBooleanKeywordBuilder : public AstBuilder<TSBooleanKeyword> {
 public:
-    explicit TSBooleanKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSBooleanKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSBooleanKeyword *Build()
     {

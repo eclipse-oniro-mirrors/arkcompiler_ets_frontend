@@ -17,7 +17,6 @@
 #define ES2PANDA_VARBINDER_RECORDTABLE_H
 
 #include "util/es2pandaMacros.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "util/ustring.h"
 #include "util/enumbitops.h"
 

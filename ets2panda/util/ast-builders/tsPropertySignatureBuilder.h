@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSPropertySignatureBuilder : public AstBuilder<TSPropertySignature> {
 public:
-    explicit TSPropertySignatureBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSPropertySignatureBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSPropertySignatureBuilder &SetTypeAnnotation(TypeNode *typeAnnotation)
     {

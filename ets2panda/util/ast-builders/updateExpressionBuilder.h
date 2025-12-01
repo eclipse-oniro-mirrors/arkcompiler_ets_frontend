@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class UpdateExpressionBuilder : public AstBuilder<ir::UpdateExpression> {
 public:
-    explicit UpdateExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit UpdateExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     UpdateExpressionBuilder &SetOperator(lexer::TokenType op)
     {

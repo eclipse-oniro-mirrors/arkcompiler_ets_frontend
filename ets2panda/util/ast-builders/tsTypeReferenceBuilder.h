@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeReferenceBuilder : public AstBuilder<TSTypeReference> {
 public:
-    explicit TSTypeReferenceBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypeReferenceBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypeReferenceBuilder &SetTypeName(Identifier *typeName)
     {

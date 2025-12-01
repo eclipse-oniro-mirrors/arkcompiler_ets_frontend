@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class StringLiteralBuilder : public AstBuilder<ir::StringLiteral> {
 public:
-    explicit StringLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit StringLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     StringLiteralBuilder &SetValue(util::StringView value)
     {

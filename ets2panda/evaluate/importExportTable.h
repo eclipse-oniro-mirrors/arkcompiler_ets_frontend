@@ -16,8 +16,6 @@
 #ifndef ES2PANDA_EVALUATE_IMPORT_EXPORT_TABLE_H
 #define ES2PANDA_EVALUATE_IMPORT_EXPORT_TABLE_H
 
-#include "libarkbase/utils/arena_containers.h"
-
 namespace ark::es2panda::evaluate {
 
 struct EntityInfo final {

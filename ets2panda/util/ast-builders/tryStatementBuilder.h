@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TryStatementBuilder : public AstBuilder<ir::TryStatement> {
 public:
-    explicit TryStatementBuilder(ark::ArenaAllocator *allocator)
+    explicit TryStatementBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), catchClauses_(allocator->Adapter()), finalizerInsertions_(allocator->Adapter())
     {
     }

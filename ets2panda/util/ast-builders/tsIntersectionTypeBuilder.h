@@ -24,8 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSIntersectionTypeBuilder : public AstBuilder<TSIntersectionType> {
 public:
-    explicit TSIntersectionTypeBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), types_(allocator->Adapter())
+    explicit TSIntersectionTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), types_(allocator->Adapter())
     {
     }
 

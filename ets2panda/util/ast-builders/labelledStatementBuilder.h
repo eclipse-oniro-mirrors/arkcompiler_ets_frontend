@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class LabelledStatementBuilder : public AstBuilder<ir::LabelledStatement> {
 public:
-    explicit LabelledStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit LabelledStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     LabelledStatementBuilder &SetIdent(Identifier *ident)
     {

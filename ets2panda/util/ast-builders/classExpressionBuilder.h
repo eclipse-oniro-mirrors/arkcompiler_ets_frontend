@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ClassExpressionBuilder : public AstBuilder<ir::ClassExpression> {
 public:
-    explicit ClassExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ClassExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ClassExpressionBuilder &SetDefinition(ClassDefinition *def)
     {

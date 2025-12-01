@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ConditionalExpressionBuilder : public AstBuilder<ir::ConditionalExpression> {
 public:
-    explicit ConditionalExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ConditionalExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ConditionalExpressionBuilder &SetTest(Expression *test)
     {

@@ -40,7 +40,6 @@
 #include "ir/statements/whileStatement.h"
 #include "ir/ts/tsTypeParameterInstantiation.h"
 #include "parser/program/program.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "util/helpers.h"
 #include "util/language.h"
 #include "varbinder/declaration.h"

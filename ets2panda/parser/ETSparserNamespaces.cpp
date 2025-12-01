@@ -17,7 +17,6 @@
 #include "lexer/lexer.h"
 #include "ir/astNode.h"
 #include "ir/ets/etsModule.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "util/errorRecovery.h"
 #include "generated/diagnostic.h"
 

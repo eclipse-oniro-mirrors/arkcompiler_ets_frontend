@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ChainExpressionBuilder : public AstBuilder<ir::ChainExpression> {
 public:
-    explicit ChainExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ChainExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ChainExpressionBuilder &SetExpression(Expression *expression)
     {

@@ -24,8 +24,7 @@ namespace ark::es2panda::ir {
 
 class NewExpressionBuilder : public AstBuilder<ir::NewExpression> {
 public:
-    explicit NewExpressionBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), arguments_(Allocator()->Adapter())
+    explicit NewExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), arguments_(Allocator()->Adapter())
     {
     }
 

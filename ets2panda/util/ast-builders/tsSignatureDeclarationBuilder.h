@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSSignatureDeclarationBuilder : public AstBuilder<TSSignatureDeclaration> {
 public:
-    explicit TSSignatureDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSSignatureDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSSignatureDeclarationBuilder &SetFunctionSignature(ir::FunctionSignature *signature)
     {

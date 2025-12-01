@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ContinueStatementBuilder : public AstBuilder<ir::ContinueStatement> {
 public:
-    explicit ContinueStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ContinueStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ContinueStatement *Build()
     {

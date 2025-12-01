@@ -27,7 +27,6 @@
 #include "libarkbase/mem/arena_allocator.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/declaration.h"
 
 namespace ark::es2panda::lsp {

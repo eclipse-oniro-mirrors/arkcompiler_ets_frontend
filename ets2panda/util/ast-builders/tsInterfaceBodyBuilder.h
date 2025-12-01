@@ -24,9 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSInterfaceBodyBuilder : public AstBuilder<TSInterfaceBody> {
 public:
-    explicit TSInterfaceBodyBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator), body_(allocator->Adapter())
-    {
-    }
+    explicit TSInterfaceBodyBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), body_(allocator->Adapter()) {}
 
     TSInterfaceBodyBuilder &AddBody(AstNode *body)
     {

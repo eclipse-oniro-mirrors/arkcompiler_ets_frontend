@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSNeverKeywordBuilder : public AstBuilder<TSNeverKeyword> {
 public:
-    explicit TSNeverKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSNeverKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSNeverKeyword *Build()
     {

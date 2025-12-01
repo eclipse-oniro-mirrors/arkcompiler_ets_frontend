@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSTupleBuilder : public AstBuilder<ETSTuple> {
 public:
-    explicit ETSTupleBuilder(ark::ArenaAllocator *allocator)
+    explicit ETSTupleBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), typeAnnotationList_(allocator->Adapter())
     {
     }

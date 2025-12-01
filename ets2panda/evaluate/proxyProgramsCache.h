@@ -19,7 +19,6 @@
 #include "util/ustring.h"
 
 #include "libarkbase/mem/arena_allocator.h"
-#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::parser {
 class Program;

@@ -24,12 +24,12 @@ namespace ark::es2panda::ir {
 template <typename NodeType>
 class AstBuilder {
 public:
-    explicit AstBuilder(ark::ArenaAllocator *allocator) : allocator_(allocator) {}
+    explicit AstBuilder(ArenaAllocator *allocator) : allocator_(allocator) {}
     NO_COPY_SEMANTIC(AstBuilder);
     NO_MOVE_SEMANTIC(AstBuilder);
     virtual ~AstBuilder() = default;
 
-    ark::ArenaAllocator *Allocator()
+    ArenaAllocator *Allocator()
     {
         return allocator_;
     }
@@ -52,7 +52,7 @@ public:
     }
 
 private:
-    ark::ArenaAllocator *allocator_;
+    ArenaAllocator *allocator_;
     AstNode *parent_ {};
 };
 

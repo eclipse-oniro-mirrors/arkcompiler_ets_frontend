@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ClassDeclarationBuilder : public AstBuilder<ir::ClassDeclaration> {
 public:
-    explicit ClassDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ClassDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ClassDeclarationBuilder &SetDefinition(ClassDefinition *def)
     {

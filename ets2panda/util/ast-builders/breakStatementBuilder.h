@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class BreakStatementBuilder : public AstBuilder<ir::BreakStatement> {
 public:
-    explicit BreakStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit BreakStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     BreakStatement *Build()
     {

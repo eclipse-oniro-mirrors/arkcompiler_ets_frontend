@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ForInStatementBuilder : public AstBuilder<ir::ForInStatement> {
 public:
-    explicit ForInStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ForInStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ForInStatementBuilder &SetLeft(AstNode *left)
     {

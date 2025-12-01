@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class RegExpLiteralBuilder : public AstBuilder<ir::RegExpLiteral> {
 public:
-    explicit RegExpLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit RegExpLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     RegExpLiteralBuilder &SetPattern(util::StringView pattern)
     {

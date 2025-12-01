@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ScriptFunctionBuilder : public AstBuilder<ir::ScriptFunction> {
 public:
-    explicit ScriptFunctionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ScriptFunctionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ScriptFunctionBuilder &SetSignature(FunctionSignature *signature)
     {

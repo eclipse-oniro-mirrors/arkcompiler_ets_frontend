@@ -24,10 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeLiteralBuilder : public AstBuilder<TSTypeLiteral> {
 public:
-    explicit TSTypeLiteralBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), members_(allocator->Adapter())
-    {
-    }
+    explicit TSTypeLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), members_(allocator->Adapter()) {}
 
     TSTypeLiteralBuilder &AddType(AstNode *member)
     {

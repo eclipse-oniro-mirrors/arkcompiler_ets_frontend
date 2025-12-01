@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class PrefixAssertionExpressionBuilder : public AstBuilder<ir::PrefixAssertionExpression> {
 public:
-    explicit PrefixAssertionExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit PrefixAssertionExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     PrefixAssertionExpressionBuilder &SetExpression(Expression *expr)
     {

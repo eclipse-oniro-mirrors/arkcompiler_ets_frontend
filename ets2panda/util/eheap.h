@@ -17,6 +17,7 @@
 #define ES2PANDA_UTIL_EHEAP_H
 
 #include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda {
 

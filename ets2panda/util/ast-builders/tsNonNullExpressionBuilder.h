@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSNonNullExpressionBuilder : public AstBuilder<TSNonNullExpression> {
 public:
-    explicit TSNonNullExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSNonNullExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSNonNullExpressionBuilder &SetExpression(Expression *expr)
     {

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class AssignmentExpressionBuilder : public AstBuilder<ir::AssignmentExpression> {
 public:
-    explicit AssignmentExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit AssignmentExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     AssignmentExpressionBuilder &SetOperator(lexer::TokenType op)
     {

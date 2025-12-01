@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class VariableDeclaratorBuilder : public AstBuilder<ir::VariableDeclarator> {
 public:
-    explicit VariableDeclaratorBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit VariableDeclaratorBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     VariableDeclaratorBuilder &SetId(Expression *id)
     {

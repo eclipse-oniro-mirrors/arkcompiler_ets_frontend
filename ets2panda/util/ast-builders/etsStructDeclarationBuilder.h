@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSStructDeclarationBuilder : public AstBuilder<ETSStructDeclaration> {
 public:
-    explicit ETSStructDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSStructDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSStructDeclarationBuilder &SetDefenition(ClassDefinition *def)
     {

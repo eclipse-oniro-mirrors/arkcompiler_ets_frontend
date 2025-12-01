@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ExportAllDeclarationBuilder : public AstBuilder<ir::ExportAllDeclaration> {
 public:
-    explicit ExportAllDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ExportAllDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ExportAllDeclarationBuilder &SetSource(StringLiteral *source)
     {
