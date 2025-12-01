@@ -21,6 +21,8 @@ import type { Autofix } from './Autofixer';
 import type { LinterOptions } from '../LinterOptions';
 import { USE_STATIC } from '../utils/consts/InteropAPI';
 import { AUTOFIX_HTML_TEMPLATE_TEXT, AutofixHtmlTemplate } from './AutofixReportHtmlHelper';
+import { ARKUI_MODULE } from '../utils/consts/ArkuiConstants';
+import { getRulePriority } from '../utils/consts/RulePriority';
 
 const BACKUP_AFFIX = '~';
 export const DEFAULT_MAX_AUTOFIX_PASSES = 10;
@@ -125,7 +127,9 @@ export class QuasiEditor {
   }
 
   private static sortAndRemoveIntersections(problemInfos: ProblemInfo[]): Autofix[] {
+    // Track accepted patches and their source problemInfo
     let acceptedPatches: Autofix[] = [];
+    const patchToProblemInfoMap = new Map<Autofix, ProblemInfo>();
 
     problemInfos.forEach((problemInfo): void => {
       if (!problemInfo.autofix) {
@@ -134,40 +138,40 @@ export class QuasiEditor {
 
       const consideredAutofix = QuasiEditor.sortAutofixes(problemInfo.autofix);
 
+      // Check for intersections
       if (QuasiEditor.intersect(consideredAutofix, acceptedPatches)) {
+        // If completely same, no conflict
         if (QuasiEditor.isContainSame(consideredAutofix, acceptedPatches)) {
           return;
         }
-        problemInfo.autofix = undefined;
-        problemInfo.autofixable = undefined;
+        // If autofix of UI Import, no conflict
+        if (consideredAutofix.length === 1 && consideredAutofix[0].replacementText.includes(ARKUI_MODULE)) {
+          return;
+        }
+        // check if we can replace based on rule priority
+        if (
+          QuasiEditor.handleSingleAutofixByPriority(
+            consideredAutofix,
+            acceptedPatches,
+            patchToProblemInfoMap,
+            problemInfo
+          )
+        ) {
+          return;
+        }
+        // Default behavior: mark as not autofixable
+        problemInfo.autofixable = false;
         return;
       }
 
+      // No conflicts, add the patches
       acceptedPatches.push(...consideredAutofix);
       acceptedPatches = QuasiEditor.sortAutofixes(acceptedPatches);
+      consideredAutofix.forEach((fix) => {
+        return patchToProblemInfoMap.set(fix, problemInfo);
+      });
     });
-
     return acceptedPatches;
-  }
-
-  private static isContainSame(consideredAutofix: readonly Autofix[], acceptedFixes: readonly Autofix[]): boolean {
-    for (const consideredFix of consideredAutofix) {
-      let found = false;
-      for (const acceptedFix of acceptedFixes) {
-        if (
-          consideredFix.start === acceptedFix.start &&
-          consideredFix.end === acceptedFix.end &&
-          consideredFix.replacementText === acceptedFix.replacementText
-        ) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        return false;
-      }
-    }
-    return true;
   }
 
   private static sortAutofixes(autofixes: Autofix[]): Autofix[] {
@@ -218,6 +222,77 @@ export class QuasiEditor {
     return !(lhs.end < rhs.start || rhs.end < lhs.start);
   }
 
+  /**
+   * Handle conflict resolution between single autofixes using rule priority.
+   */
+  private static handleSingleAutofixByPriority(
+    consideredAutofix: Autofix[],
+    acceptedPatches: Autofix[],
+    patchToProblemInfoMap: Map<Autofix, ProblemInfo>,
+    problemInfo: ProblemInfo
+  ): boolean {
+    if (consideredAutofix.length !== 1) {
+      return false;
+    }
+    const currentFix = consideredAutofix[0];
+    const currentPriority = getRulePriority(problemInfo.rule);
+    const conflictingPatches = QuasiEditor.findConflictingPatches(currentFix, acceptedPatches, patchToProblemInfoMap);
+
+    if (!QuasiEditor.canReplaceByPriority(currentPriority, conflictingPatches)) {
+      return false;
+    }
+    QuasiEditor.replaceConflictingPatches(conflictingPatches, acceptedPatches, patchToProblemInfoMap);
+    acceptedPatches.push(...consideredAutofix);
+    consideredAutofix.forEach((fix) => {
+      return patchToProblemInfoMap.set(fix, problemInfo);
+    });
+    return true;
+  }
+
+  private static findConflictingPatches(
+    currentFix: Autofix,
+    acceptedPatches: Autofix[],
+    patchToProblemInfoMap: Map<Autofix, ProblemInfo>
+  ): { patch: Autofix; sourceProblemInfo: ProblemInfo }[] {
+    const result: { patch: Autofix; sourceProblemInfo: ProblemInfo }[] = [];
+    acceptedPatches.forEach((patch) => {
+      if (QuasiEditor.autofixesIntersect(currentFix, patch)) {
+        const sourceProblemInfo = patchToProblemInfoMap.get(patch);
+        if (sourceProblemInfo?.autofix && sourceProblemInfo.autofix.length === 1) {
+          result.push({ patch, sourceProblemInfo });
+        }
+      }
+    });
+    return result;
+  }
+
+  private static canReplaceByPriority(
+    currentPriority: number,
+    conflictingPatches: { sourceProblemInfo: ProblemInfo }[]
+  ): boolean {
+    if (conflictingPatches.length === 0) {
+      return false;
+    }
+    return conflictingPatches.every((c) => {
+      return currentPriority > getRulePriority(c.sourceProblemInfo.rule);
+    });
+  }
+
+  private static replaceConflictingPatches(
+    conflictingPatches: { patch: Autofix; sourceProblemInfo: ProblemInfo }[],
+    acceptedPatches: Autofix[],
+    patchToProblemInfoMap: Map<Autofix, ProblemInfo>
+  ): void {
+    conflictingPatches.forEach((conflicting) => {
+      conflicting.sourceProblemInfo.autofixable = false;
+      const index = acceptedPatches.indexOf(conflicting.patch);
+      if (index !== -1) {
+        acceptedPatches.splice(index, 1);
+        patchToProblemInfoMap.delete(conflicting.patch);
+      }
+    });
+  }
+
   private static addUseStaticDirective(content: string): string {
     const lines = content.split('\n');
     if (lines.length > 0 && lines[0].trim() === USE_STATIC) {
@@ -230,5 +305,32 @@ export class QuasiEditor {
     return problemInfos.some((problemInfo) => {
       return problemInfo.autofix !== undefined;
     });
+  }
+
+  /**
+   * Determine if accepted autofixes contains all the same autofixes of considered autofixes.
+   *
+   * @param consideredAutofix sorted patches of the considered autofix
+   * @param acceptedFixes sorted list of accepted autofixes
+   * @returns
+   */
+  private static isContainSame(consideredAutofix: readonly Autofix[], acceptedFixes: readonly Autofix[]): boolean {
+    for (const consideredFix of consideredAutofix) {
+      let found = false;
+      for (const acceptedFix of acceptedFixes) {
+        if (
+          consideredFix.start === acceptedFix.start &&
+          consideredFix.end === acceptedFix.end &&
+          consideredFix.replacementText === acceptedFix.replacementText
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return false;
+      }
+    }
+    return true;
   }
 }

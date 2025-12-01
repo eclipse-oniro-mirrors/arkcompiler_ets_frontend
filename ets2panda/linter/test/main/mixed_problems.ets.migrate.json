@@ -15,9 +15,29 @@
     ],
     "result": [
         {
-            "line": 51,
+            "line": 17,
+            "column": 30,
+            "endLine": 17,
+            "endColumn": 31,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 30,
+            "endLine": 27,
+            "endColumn": 31,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
             "column": 17,
-            "endLine": 51,
+            "endLine": 43,
             "endColumn": 19,
             "problem": "InOperator",
             "suggest": "",
@@ -25,9 +45,29 @@
             "severity": "ERROR"
         },
         {
-            "line": 59,
-            "column": 13,
+            "line": 46,
+            "column": 11,
             "endLine": 59,
+            "endColumn": 2,
+            "problem": "FunctionExpression",
+            "suggest": "",
+            "rule": "Use arrow functions instead of function expressions (arkts-no-func-expressions)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 5,
+            "endLine": 47,
+            "endColumn": 8,
+            "problem": "VarDeclaration",
+            "suggest": "",
+            "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 13,
+            "endLine": 47,
             "endColumn": 14,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -35,9 +75,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 63,
+            "line": 51,
+            "column": 5,
+            "endLine": 51,
+            "endColumn": 8,
+            "problem": "VarDeclaration",
+            "suggest": "",
+            "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
             "column": 14,
-            "endLine": 63,
+            "endLine": 51,
             "endColumn": 15,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
@@ -45,9 +95,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 73,
+            "line": 54,
+            "column": 12,
+            "endLine": 54,
+            "endColumn": 13,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
             "column": 5,
-            "endLine": 73,
+            "endLine": 63,
             "endColumn": 24,
             "problem": "DefiniteAssignmentError",
             "suggest": "",
@@ -55,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 77,
+            "line": 67,
             "column": 27,
-            "endLine": 77,
+            "endLine": 67,
             "endColumn": 18,
             "problem": "ConstAssertion",
             "suggest": "",

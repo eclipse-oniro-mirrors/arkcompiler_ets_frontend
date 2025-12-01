@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,15 +38,11 @@ interface GeneratedObjectLiteralInterface_1 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_2 {
-    a: number;
-    b: string;
-}
 function localVariable(): void {
   // Declaration
   let a1: GeneratedObjectLiteralInterface_1 = { a: 1, b: 'a' }; // NOT OK
   let a2: any = { a: 2, b: 'b' }; // OK - ASSIGNMENT TO ANY
-  let a3: GeneratedTypeLiteralInterface_2 = { a: 30, b: 'c' }; // NOT OK
+  let a3: { a: number; b: string } = { a: 30, b: 'c' }; // NOT OK
   let a4: I = { a: 4, b: 'd' }; // OK
   let a5: C = { a: 5, b: 'e' }; // OK
   let a6: C2 = {
@@ -76,10 +72,6 @@ interface GeneratedObjectLiteralInterface_2 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_3 {
-    a: number;
-    b: string;
-}
 function defaultParamValue(): void {
   function foo(x: GeneratedObjectLiteralInterface_2 = { a: 21, b: 'a' }) {
     console.log(x.a, x.b);
@@ -87,7 +79,7 @@ function defaultParamValue(): void {
   function foo2(x: any = { a: 22, b: 'b' }) {
     console.log(x.a, x.b);
   } // NOT OK
-  function foo3(x: GeneratedTypeLiteralInterface_3 = { a: 23, b: 'c' }) {
+  function foo3(x: { a: number; b: string } = { a: 23, b: 'c' }) {
     console.log(x.a, x.b);
   } // NOT OK
   function foo4(x: I = { a: 24, b: 'd' }) {
@@ -109,14 +101,6 @@ interface GeneratedObjectLiteralInterface_3 {
     a: number;
     b: string;
 }
-interface GeneratedTypeLiteralInterface_4 {
-    a: number;
-    b: string;
-}
-interface GeneratedTypeLiteralInterface_5 {
-    a: number;
-    b: string;
-}
 function returnFromFunction(): void {
   function bar() {
     return ({ a: 31, b: 'a' } as GeneratedObjectLiteralInterface_3);
@@ -124,7 +108,13 @@ function returnFromFunction(): void {
   let bar2: () => any = (): any => {
     return { a: 32, b: 'b' };
 }; // OK - ASSIGNMENT TO ANY
-  let bar3: () => GeneratedTypeLiteralInterface_4 = (): GeneratedTypeLiteralInterface_5 => {
+  let bar3: () => {
+    a: number;
+    b: string;
+} = (): {
+    a: number;
+    b: string;
+} => {
     return { a: 33, b: 'c' };
 }; // NOT OK
   let bar4: () => I = (): I => {
@@ -139,20 +129,12 @@ interface GeneratedObjectLiteralInterface_4 {
     a: number;
     b: string;
 }
-interface GeneratedObjectLiteralInterface_5 {
-    a: number;
-    b: string;
-}
-interface GeneratedTypeLiteralInterface_6 {
-    a: number;
-    b: string;
-}
 function ternaryOperator(): void {
   // In ternary operator
   const condition = true;
-  const a1 = condition ? ({ a: 41, b: 'a' } as GeneratedObjectLiteralInterface_4) : ({ a: 42, b: 'b' } as GeneratedObjectLiteralInterface_5); // NOT OK
+  const a1 = condition ? ({ a: 41, b: 'a' } as GeneratedObjectLiteralInterface_4) : { a: 42, b: 'b' }; // NOT OK
   const a2: any = condition ? { a: 43, b: 'c' } : { a: 44, b: 'd' }; // OK - ASSIGNMENT TO ANY
-  const a3: GeneratedTypeLiteralInterface_6 = condition
+  const a3: { a: number; b: string } = condition
     ? { a: 45, b: 'e' }
     : { a: 46, b: 'f' }; // NOT OK
   const a4: I = condition ? { a: 47, b: 'g' } : { a: 48, b: 'h' }; // OK
@@ -163,24 +145,16 @@ interface GeneratedObjectLiteralInterface_6 {
     a: number;
     b: string;
 }
-interface GeneratedObjectLiteralInterface_7 {
-    a: number;
-    b: string;
-}
-interface GeneratedTypeLiteralInterface_7 {
-    a: number;
-    b: string;
-}
 function arrayLiteral(): void {
   const arr1 = [
     ({ a: 51, b: 'a' } as GeneratedObjectLiteralInterface_6),
-    ({ a: 52, b: 'b' } as GeneratedObjectLiteralInterface_7),
+    { a: 52, b: 'b' },
   ]; // NOT OK
   const arr2: any[] = [
     { a: 53, b: 'c' },
     { a: 54, b: 'd' },
   ]; // OK - ASSIGNMENT TO ANY
-  const arr3: GeneratedTypeLiteralInterface_7[] = [
+  const arr3: { a: number; b: string }[] = [
     { a: 55, b: 'e' },
     { a: 56, b: 'f' },
   ]; // NOT OK

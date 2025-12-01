@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import { stream } from './oh_modules/@kit.ArkTS'
+import { ArkTSUtils, stream } from './oh_modules/@kit.ArkTS'
 
-
+import {ArkTSUtils as AU} from './oh_modules/@kit.ArkTS'
 import { stream as st } from './oh_modules/@kit.ArkTS'
 
 
@@ -31,4 +31,4 @@ let lck1: AsyncLock = AsyncLock.request("lock");
 let pro = new SendableLruCache<number, number>();
 let pro1 = new SendableLruCache<number, number>();
 let write: stream.Writable = new stream.Writable();
-let map126: Map<Array<number>, number> = new Map<Array<number>, number>();
+let map126: Map<Array<number>, number> = new Map();

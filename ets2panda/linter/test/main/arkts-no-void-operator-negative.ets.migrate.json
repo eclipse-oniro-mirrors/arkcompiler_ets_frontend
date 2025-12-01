@@ -15,9 +15,19 @@
     ],
     "result": [
         {
-            "line": 87,
+            "line": 57,
+            "column": 5,
+            "endLine": 57,
+            "endColumn": 9,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
             "column": 10,
-            "endLine": 87,
+            "endLine": 84,
             "endColumn": 19,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -25,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 85,
             "column": 11,
-            "endLine": 88,
+            "endLine": 85,
             "endColumn": 21,
             "problem": "LimitedVoidType",
             "suggest": "",

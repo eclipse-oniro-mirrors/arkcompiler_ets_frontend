@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -108,4 +108,19 @@ export function transferIssues2ProblemInfo(fileIssuesArray: FileIssues[]): Map<s
     });
   });
   return result;
+}
+
+export function removeOutOfRangeFiles(
+  homeCheckResult: Map<string, ProblemInfo[]>,
+  cmdOptions: CommandLineOptions
+): Map<string, ProblemInfo[]> {
+  const filteredResult = new Map<string, ProblemInfo[]>();
+
+  for (const [filePath, problems] of homeCheckResult) {
+    if (cmdOptions.inputFiles.includes(filePath)) {
+      filteredResult.set(filePath, problems);
+    }
+  }
+
+  return filteredResult;
 }

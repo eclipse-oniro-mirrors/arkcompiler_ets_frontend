@@ -136,9 +136,19 @@
         },
         {
             "line": 58,
-            "column": 33,
+            "column": 13,
             "endLine": 58,
-            "endColumn": 36,
+            "endColumn": 37,
+            "problem": "FunctionExpression",
+            "suggest": "",
+            "rule": "Use arrow functions instead of function expressions (arkts-no-func-expressions)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 39,
+            "endLine": 58,
+            "endColumn": 42,
             "problem": "VarDeclaration",
             "suggest": "",
             "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,32 +16,16 @@
 // Object destructuring
 let a = 5, b = 10, c = 15, d = 20, s = 'foo';
 let rest, rest2;
-interface GeneratedObjectLiteralInterface_2 {
-    a: number;
-    b: number;
-    s: string;
-}
-let GeneratedDestructObj_1: GeneratedObjectLiteralInterface_2 = { a: 100, b: 200, s: 'bar' };
+let GeneratedDestructObj_1 = { a: 100, b: 200, s: 'bar' };
 a = GeneratedDestructObj_1.a;
 b = GeneratedDestructObj_1.b;
 s = GeneratedDestructObj_1.s;
  // NOT OK
 ({ a, b, s } = {}); // NOT OK, not fixable
 ({ a, ...rest } = { a: 1, b: 2 }); // NOT OK
-interface GeneratedObjectLiteralInterface_3 {
-    c: number;
-    d: string;
-}
-interface GeneratedObjectLiteralInterface_6 {
-    a: number;
-    b: GeneratedObjectLiteralInterface_3;
-}
-let GeneratedDestructObj_2: GeneratedObjectLiteralInterface_6 = { a: 1, b: ({ c: 3, d: 'baz' } as GeneratedObjectLiteralInterface_3) };
+let GeneratedDestructObj_2 = { a: 1, b: { c: 3, d: 'baz' } };
 a = GeneratedDestructObj_2.a;
-let GeneratedDestructObj_7 = GeneratedDestructObj_2.b;
-c = GeneratedDestructObj_7.c;
-s = GeneratedDestructObj_7.d;
-
+({ c, d: s } = GeneratedDestructObj_2.b);
  // NOT OK
 ({ a, b: { ...rest } } = { a: 1, b: { c: 3, d: 'bah' }}); // NOT OK
 
@@ -65,15 +49,9 @@ c = GeneratedDestructArray_1[2];
 
 [a, b, c] = [];
 let GeneratedDestructArray_2 = [[1, 2], [3, 4], [5, 6]];
-a1 = GeneratedDestructArray_2[0][0];
-a2 = GeneratedDestructArray_2[0][1];
-
-b1 = GeneratedDestructArray_2[1][0];
-b2 = GeneratedDestructArray_2[1][1];
-
-c1 = GeneratedDestructArray_2[2][0];
-c2 = GeneratedDestructArray_2[2][1];
-
+[a1, a2] = GeneratedDestructArray_2[0];
+[b1, b2] = GeneratedDestructArray_2[1];
+[c1, c2] = GeneratedDestructArray_2[2];
   
 let GeneratedDestructArray_3 = [b, a];
 a = GeneratedDestructArray_3[0];
@@ -108,34 +86,16 @@ let e: number, f: number, x: GeneratedTypeLiteralInterface_1, g;
 [a, b, {e, e: f, ...g}] = [1, 2, {e: 10}]; // NOT OK
 [a, b, ...{length}] = [1, 2, {e: 10}]; // NOT OK
 
-interface GeneratedObjectLiteralInterface_4 {
-    a: number;
-    b: number[];
-}
-let GeneratedDestructObj_4: GeneratedObjectLiteralInterface_4 = { a: 1, b: [2, 3] };
+let GeneratedDestructObj_4 = { a: 1, b: [2, 3] };
 a = GeneratedDestructObj_4.a;
-let GeneratedDestructArray_5 = GeneratedDestructObj_4.b;
-c = GeneratedDestructArray_5[0];
-d = GeneratedDestructArray_5[1];
-
+[c, d] = GeneratedDestructObj_4.b;
  // NOT OK
-interface GeneratedObjectLiteralInterface_5 {
-    s: string;
-    c: number[];
-}
-interface GeneratedObjectLiteralInterface_7 {
-    a: number;
-    b: GeneratedObjectLiteralInterface_5;
-}
-let GeneratedDestructObj_5: GeneratedObjectLiteralInterface_7 = { a: 10, b: ({ s: 'foo', c: [30, 40] } as GeneratedObjectLiteralInterface_5) };
+let GeneratedDestructObj_5 = { a: 10, b: { s: 'foo', c: [30, 40] } };
 a = GeneratedDestructObj_5.a;
-let GeneratedDestructObj_8 = GeneratedDestructObj_5.b;
-s = GeneratedDestructObj_8.s;
-let GeneratedDestructArray_6 = GeneratedDestructObj_8.c;
-d = GeneratedDestructArray_6[0];
-f = GeneratedDestructArray_6[1];
-
-
+({
+    s,
+    c: [d, f],
+  } = GeneratedDestructObj_5.b);
  // NOT OK
 
 // test for default value
