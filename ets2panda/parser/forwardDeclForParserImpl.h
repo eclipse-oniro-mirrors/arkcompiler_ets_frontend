@@ -77,12 +77,12 @@ class VariableDeclarator;
 class ClassElement;
 
 enum class PropertyKind;
-enum class MethodDefinitionKind;
+enum class MethodDefinitionKind : uint8_t;
 enum class ModifierFlags : uint32_t;
 enum class Primitives;
 enum class ClassDefinitionModifiers : uint32_t;
 enum class CatchClauseType;
-enum class VariableDeclaratorFlag;
+enum class VariableDeclaratorFlag : uint8_t;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::parser {

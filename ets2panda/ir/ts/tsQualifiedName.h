@@ -79,9 +79,8 @@ public:
     }
 
 private:
-    Expression *left_;
-    Identifier *right_;
-    ArenaAllocator *allocator_;
+    EPtr<Expression> left_;
+    EPtr<Identifier> right_;
 };
 }  // namespace ark::es2panda::ir
 

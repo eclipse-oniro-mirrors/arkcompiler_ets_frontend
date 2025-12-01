@@ -31,8 +31,8 @@ public:
     explicit FunctionSignature(TSTypeParameterDeclaration *typeParams, ArenaVector<ir::Expression *> &&params,
                                TypeNode *returnTypeAnnotation, bool hasReceiver = false)
         : typeParams_(typeParams),
-          params_(std::move(params)),
           returnTypeAnnotation_(returnTypeAnnotation),
+          params_(std::move(params)),
           hasReceiver_(hasReceiver)
     {
     }
@@ -93,9 +93,9 @@ public:
     }
 
 private:
-    TSTypeParameterDeclaration *typeParams_;
+    EPtr<TSTypeParameterDeclaration> typeParams_;
+    EPtr<TypeNode> returnTypeAnnotation_;
     ArenaVector<ir::Expression *> params_;
-    TypeNode *returnTypeAnnotation_;
     bool hasReceiver_;
 
     friend class ScriptFunction;

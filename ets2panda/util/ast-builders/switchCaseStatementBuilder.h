@@ -49,7 +49,7 @@ public:
 
 private:
     Expression *test_ {};
-    ark::ArenaVector<Statement *> consequent_;
+    ArenaVector<Statement *> consequent_;
 };
 
 }  // namespace ark::es2panda::ir

@@ -237,9 +237,9 @@ public:
         return bindings_;
     }
 
-    [[nodiscard]] ArenaMap<util::StringView, Variable *> OrderedBindings(ArenaAllocator *allocator) const noexcept
+    [[nodiscard]] std::map<util::StringView, Variable *> CodegenOrderedBindings() const noexcept
     {
-        ArenaMap<util::StringView, Variable *> result(allocator->Adapter());
+        std::map<util::StringView, Variable *> result;
         result.insert(bindings_.begin(), bindings_.end());
         return result;
     }

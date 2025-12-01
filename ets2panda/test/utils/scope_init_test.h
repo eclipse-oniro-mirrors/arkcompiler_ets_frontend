@@ -49,13 +49,13 @@ public:
         ark::es2panda::EHeap::Initialize();
     }
 
-    ark::ArenaAllocator *Allocator()
+    ark::es2panda::ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
 
 private:
-    std::unique_ptr<ark::ArenaAllocator> allocator_;
+    std::unique_ptr<ark::es2panda::ArenaAllocator> allocator_;
     std::unique_ptr<ark::es2panda::compiler::PhaseManager> phaseManager_;
 };
 

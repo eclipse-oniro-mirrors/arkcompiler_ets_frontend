@@ -84,6 +84,7 @@ public:
     void SetProgram(const parser::Program *program);
 };
 
+#pragma pack(push, 1)
 class CompressedSourceRange {
 public:
     explicit CompressedSourceRange() = default;
@@ -93,14 +94,14 @@ public:
 
     void SetStart(SourcePosition const &s)
     {
-        startLine_ = Limit<uint32_t>(s.line);
+        startLine_ = Limit<uint16_t>(s.line);
         startIndex_ = Limit<uint32_t>(s.index);
         program_ = s.Program();
     }
 
     void SetEnd(SourcePosition const &e)
     {
-        endLine_ = Limit<uint32_t>(e.line);
+        endLine_ = Limit<uint16_t>(e.line);
         endIndex_ = Limit<uint32_t>(e.index);
         program_ = e.Program();
     }
@@ -139,11 +140,12 @@ private:
     }
 
     parser::Program const *program_ {};
-    uint32_t startLine_ {};
-    uint32_t endLine_ {};
     uint32_t startIndex_ {};
     uint32_t endIndex_ {};
+    uint16_t startLine_ {};
+    uint16_t endLine_ {};
 };
+#pragma pack(pop)
 
 class SourceLocation {
 public:

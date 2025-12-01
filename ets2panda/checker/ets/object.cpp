@@ -1834,6 +1834,7 @@ void ETSChecker::FindAssignment(const ir::AstNode *node, const varbinder::LocalV
 {
     if (node->IsAssignmentExpression() && node->AsAssignmentExpression()->Target() == classVar) {
         if (initialized) {
+            // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
             LogError(diagnostic::MAYBE_DOUBLE_INIT, {classVar->Declaration()->Name()}, node->Start());
         }
 

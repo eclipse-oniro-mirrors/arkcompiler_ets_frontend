@@ -55,31 +55,6 @@ TEST_F(PluginConversionRuleUnitTest, ArenaVectorInputParameter)
     EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
 }
 
-/* [[nodiscard]] ArenaVector<ir::AnnotationUsage *> &Annotations() noexcept */
-/* ir::AnnotationAllowedPtrMethodCall */
-TEST_F(PluginConversionRuleUnitTest, ArenaVectorReturnValue)
-{
-    std::string targetCAPI {R"(
-    extern "C" es2panda_AstNode **AnnotationAllowedAnnotations([[maybe_unused]] es2panda_Context *context,
-es2panda_AstNode *classInstance/*return_args:*/, size_t *returnTypeLen)
-    {
- 	    auto *ctx = reinterpret_cast<Context *>(context);
- 	    auto *ctxAllocator = ctx->allocator;
- 	    auto resultVector = ((reinterpret_cast< ir::AnnotationAllowed<ir::AstNode> *>(classInstance))->Annotations());
- 	    *returnTypeLen = resultVector.size();
- 	    auto apiRes = ctxAllocator->New<es2panda_AstNode *[]>(*returnTypeLen);
- 	    for (size_t i = 0; i < *returnTypeLen; ++i) {
- 	        auto toPush = reinterpret_cast< es2panda_AstNode *>(resultVector.at(i));
- 		    apiRes[i] = reinterpret_cast<es2panda_AstNode *>(toPush);
- 	    };
-	    return apiRes;
-    }
-    )"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
 /* static bool SignatureRelatedToSomeSignature(TypeRelation *relation, Signature *sourceSignature,
                                                ArenaVector<Signature *> *targetSignatures) */
 TEST_F(PluginConversionRuleUnitTest, ArenaVectorPtrInputParameter)
@@ -118,7 +93,7 @@ es2panda_AstNode *classInstance/*return_args:*/, size_t *returnTypeLen)
     {
  	    auto *ctx = reinterpret_cast<Context *>(context);
  	    auto *ctxAllocator = ctx->allocator;
- 	    auto resultVector = ((reinterpret_cast<const ir::BlockStatement *>(classInstance))->Statements());
+ 	    decltype(auto) resultVector = ((reinterpret_cast<const ir::BlockStatement *>(classInstance))->Statements());
  	    *returnTypeLen = resultVector.size();
  	    auto apiRes = ctxAllocator->New<es2panda_AstNode *[]>(*returnTypeLen);
  	    for (size_t i = 0; i < *returnTypeLen; ++i) {
@@ -174,7 +149,7 @@ es2panda_Type *classInstance/*return_args:*/, size_t *returnTypeLen)
     {
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;
-        auto resultVector = ((reinterpret_cast<const checker::ETSObjectType *>(classInstance))->Fields());
+        decltype(auto) resultVector = ((reinterpret_cast<const checker::ETSObjectType *>(classInstance))->Fields());
  	    /* WARNING! This section has not been tested! */
  	    *returnTypeLen = resultVector.size();
  	    auto apiRes = ctxAllocator->New<es2panda_Variable *[]>(*returnTypeLen);
@@ -209,30 +184,6 @@ size_t insertingNodesLen/*return_args:*/)
         auto apiRes = reinterpret_cast< es2panda_AstNode *>((reinterpret_cast<Context *>(context)->parser
             ->AsETSParser())->CreateFormattedTopLevelStatement(sourceCodeE2p, insertingNodesVector));
         return apiRes;
-    }
-    )"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-/* const ArenaVector<util::StringView> &GetUserPaths() const */
-TEST_F(PluginConversionRuleUnitTest, VectorPtrReturnValue)
-{
-    std::string targetCAPI {R"(
-    extern "C" char **ETSReExportDeclarationGetUserPathsConst([[maybe_unused]] es2panda_Context *context,
-es2panda_AstNode *classInstance/*return_args:*/, size_t *returnTypeLen)
-    {
- 	    auto *ctx = reinterpret_cast<Context *>(context);
- 	    auto *ctxAllocator = ctx->allocator;
- 	    auto resultVector = ((reinterpret_cast<const ir::ETSReExportDeclaration *>(classInstance))->GetUserPaths());
- 	    *returnTypeLen = resultVector.size();
- 	    auto apiRes = ctxAllocator->New< char *[]>(*returnTypeLen);
- 	    for (size_t i = 0; i < *returnTypeLen; ++i) {
- 	        auto toPush = StringViewToCString(reinterpret_cast<Context *>(context)->allocator, (resultVector.at(i)));
- 		    apiRes[i] = reinterpret_cast< char *>(toPush);
- 	    };
-	    return apiRes;
     }
     )"};
 
@@ -334,35 +285,6 @@ es2panda_Type **returnTypeSecond)
  	    *returnTypeSecond = reinterpret_cast<es2panda_Type *>(const_cast<checker::Type *>(resultPair.second));
  	    auto apiRes = reinterpret_cast<es2panda_Type *>(resultPair.first);
         ;
-	    return apiRes;
-    }
-    )"};
-
-    std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
-    EXPECT_TRUE(HasMatched(targetAPIWithNoSpace));
-}
-
-/* ArenaMap<util::StringView, Variable *> OrderedBindings(ArenaAllocator *allocator) const */
-TEST_F(PluginConversionRuleUnitTest, ArenaMapReturnValue)
-{
-    std::string targetCAPI {R"(
-    extern "C" char **ScopeOrderedBindingsConst([[maybe_unused]] es2panda_Context *context,
-es2panda_Scope *classInstance/*return_args:*/, es2panda_Variable ***arenaMapValueArray, size_t *returnTypeLen)
-    {
-        auto *allocatorE2p = reinterpret_cast<Context *>(context)->allocator;
-
- 	    auto *ctx = reinterpret_cast<Context *>(context);
- 	    auto *ctxAllocator = ctx->allocator;
- 	    auto resultMap = ((reinterpret_cast<const varbinder::Scope *>(classInstance))->OrderedBindings(allocatorE2p));
- 	    *returnTypeLen = resultMap.size();
- 	    auto apiRes = ctxAllocator->New<char *[]>(*returnTypeLen);
- 	    *arenaMapValueArray = ctxAllocator->New<es2panda_Variable *[]>(*returnTypeLen);
- 	    size_t i = 0;
- 	    for (auto [key, value] : resultMap) {
- 		    apiRes[i] = StringViewToCString(reinterpret_cast<Context *>(context)->allocator, (key));
- 		    (*arenaMapValueArray)[i] = reinterpret_cast<es2panda_Variable *>(value);
- 		    ++i;
- 	    };
 	    return apiRes;
     }
     )"};

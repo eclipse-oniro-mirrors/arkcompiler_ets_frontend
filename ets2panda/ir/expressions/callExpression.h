@@ -48,8 +48,8 @@ public:
                             bool const trailingComma = false)
         : MaybeOptionalExpression(AstNodeType::CALL_EXPRESSION, optional),
           callee_(callee),
-          arguments_(std::move(arguments)),
           typeParams_(typeParams),
+          arguments_(std::move(arguments)),
           trailingLambdaInfo_({nullptr, false, false, trailingComma})
     {
     }
@@ -192,7 +192,7 @@ public:
 
 private:
     struct TrailingLambdaInfo {
-        ir::BlockStatement *block {nullptr};
+        EPtr<ir::BlockStatement> block {nullptr};
         bool isTrailingCall {false};
         bool isBlockInNewLine {false};
         bool hasTrailingComma {false};
@@ -200,13 +200,14 @@ private:
 
 protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
-    Expression *callee_;
+    EPtr<Expression> callee_;
+    EPtr<TSTypeParameterInstantiation> typeParams_;
     ArenaVector<Expression *> arguments_;
-    TSTypeParameterInstantiation *typeParams_;
-    checker::Signature *signature_ {};
+    EPtr<checker::Signature> signature_ {};
     // for trailing lambda feature in ets
     TrailingLambdaInfo trailingLambdaInfo_ {};
-    checker::Type *uncheckedType_ {};
+    EPtr<checker::Type> uncheckedType_ {};
+    bool trailingComma_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 }  // namespace ark::es2panda::ir

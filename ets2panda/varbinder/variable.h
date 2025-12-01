@@ -140,13 +140,13 @@ protected:
     explicit Variable(VariableFlags flags) : flags_(flags) {}
 
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
-    Decl *decl_ {};
+    EPtr<Decl> decl_ {};
     VariableFlags flags_ {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:
-    checker::Type *tsType_ {};
-    Scope *scope_ {};
+    EPtr<checker::Type> tsType_ {};
+    EPtr<Scope> scope_ {};
 };
 
 class LocalVariable : public Variable {

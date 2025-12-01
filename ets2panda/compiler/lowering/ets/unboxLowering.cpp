@@ -406,7 +406,7 @@ static ir::Expression *InsertUnboxing(UnboxContext *uctx, ir::Expression *expr)
 
     BindLoweredNode(uctx->varbinder, call);
 
-    auto *methodVar = boxedType->AsETSObjectType()->InstanceMethods()[methodId->Name()];
+    auto *methodVar = &*boxedType->AsETSObjectType()->InstanceMethods()[methodId->Name()];
     methodId->SetVariable(methodVar);
 
     /* Ensure that calleeMethod's signature is updated to return an unboxed value */
@@ -443,7 +443,7 @@ static ir::Expression *CreateToIntrinsicCallExpression(UnboxContext *uctx, check
 
     BindLoweredNode(uctx->varbinder, call);
 
-    auto *methodVar = boxedExprType->StaticMethods()[name];
+    auto *methodVar = &*boxedExprType->StaticMethods()[name];
     memberExpr->Property()->SetVariable(methodVar);
 
     /* Ensure that calleeMethod's signature is updated to accept an unboxed value */

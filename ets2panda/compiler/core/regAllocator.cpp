@@ -42,12 +42,12 @@ const CodeGen &AllocatorBase::GetCodeGen() const noexcept
     return *cg_;
 }
 
-ArenaAllocator &AllocatorBase::Allocator() noexcept
+SArenaAllocator &AllocatorBase::Allocator() noexcept
 {
     return *cg_->Allocator();
 }
 
-const ArenaAllocator &AllocatorBase::Allocator() const noexcept
+const SArenaAllocator &AllocatorBase::Allocator() const noexcept
 {
     return *cg_->Allocator();
 }
@@ -183,7 +183,7 @@ void RegAllocator::AdjustInsRegWhenHasSpill()
     ES2PANDA_ASSERT(spillRegCount + GetCodeGen().GetRegsNum() < VReg::REG_MAX);
     GetCodeGen().AddSpillRegsToUsedRegs(spillRegCount);
 
-    ArenaList<IRNode *> newInsns(GetCodeGen().Allocator()->Adapter());
+    SArenaList<IRNode *> newInsns(GetCodeGen().Allocator()->Adapter());
     auto &insns = GetCodeGen().GetInsns();
     const auto funcRegsNum = GetCodeGen().GetRegsNum();
 
@@ -232,7 +232,7 @@ public:
 };
 // NOLINTEND(misc-non-private-member-variables-in-classes)
 
-void RegAllocator::AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, ArenaList<IRNode *> &newInsns)
+void RegAllocator::AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, SArenaList<IRNode *> &newInsns)
 {
     VReg::Index spillIndex = VReg::REG_START;
     std::vector<DstRegSpillInfo> dstRegSpills;
@@ -313,7 +313,7 @@ void RangeRegAllocator::Run(IRNode *const ins, [[maybe_unused]] VReg rangeStart,
     PushBack(ins);
 }
 
-void RegAllocator::AdjustRangeInsSpill(IRNode *ins, ArenaList<IRNode *> &newInsns)
+void RegAllocator::AdjustRangeInsSpill(IRNode *ins, SArenaList<IRNode *> &newInsns)
 {
     const auto realRegCount = ins->GetRealRegCount();
 

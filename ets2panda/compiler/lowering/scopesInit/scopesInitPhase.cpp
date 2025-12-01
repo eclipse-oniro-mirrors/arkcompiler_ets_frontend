@@ -1387,7 +1387,7 @@ void InitScopesPhaseETS::VisitTSInterfaceBody(ir::TSInterfaceBody *interfBody)
     FilterInterfaceOverloads(interfBody->Body());
 }
 
-void InitScopesPhaseETS::FilterInterfaceOverloads(ArenaVector<ir::AstNode *, false> &props)
+void InitScopesPhaseETS::FilterInterfaceOverloads(ArenaVector<ir::AstNode *> &props)
 {
     auto condition = [](ir::AstNode *prop) {
         if (prop->IsMethodDefinition()) {
@@ -1399,7 +1399,7 @@ void InitScopesPhaseETS::FilterInterfaceOverloads(ArenaVector<ir::AstNode *, fal
     props.erase(std::remove_if(props.begin(), props.end(), condition), props.end());
 }
 
-void InitScopesPhaseETS::FilterOverloads(ArenaVector<ir::AstNode *, false> &props)
+void InitScopesPhaseETS::FilterOverloads(ArenaVector<ir::AstNode *> &props)
 {
     auto condition = [](ir::AstNode *prop) {
         if (prop->IsMethodDefinition()) {

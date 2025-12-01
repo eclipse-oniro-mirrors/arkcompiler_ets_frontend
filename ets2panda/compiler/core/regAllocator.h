@@ -52,8 +52,8 @@ protected:
     }
 
 private:
-    [[nodiscard]] ArenaAllocator &Allocator() noexcept;
-    [[nodiscard]] const ArenaAllocator &Allocator() const noexcept;
+    [[nodiscard]] SArenaAllocator &Allocator() noexcept;
+    [[nodiscard]] const SArenaAllocator &Allocator() const noexcept;
 
     CodeGen *cg_;
 };
@@ -118,8 +118,8 @@ public:
 
 private:
     void Run(IRNode *ins, uint32_t realRegCount);
-    void AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, ArenaList<IRNode *> &newInsns);
-    void AdjustRangeInsSpill(IRNode *ins, ArenaList<IRNode *> &newInsns);
+    void AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, SArenaList<IRNode *> &newInsns);
+    void AdjustRangeInsSpill(IRNode *ins, SArenaList<IRNode *> &newInsns);
     bool CheckFinalInsNeedSpill();
 };
 

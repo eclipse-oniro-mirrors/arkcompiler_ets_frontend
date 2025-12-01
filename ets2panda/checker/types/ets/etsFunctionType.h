@@ -164,7 +164,7 @@ public:
 private:
     ArenaVector<Signature *> callSignatures_;
     util::StringView const nameOrAsmName_;
-    Signature *helperSignature_ {};
+    EPtr<Signature> helperSignature_ {};
     bool hasExtensionSignatures_ {};
     bool hasExtensionAccessorSignatures_ {};
 };

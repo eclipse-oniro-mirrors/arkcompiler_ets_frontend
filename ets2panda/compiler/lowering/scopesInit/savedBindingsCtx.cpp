@@ -26,7 +26,7 @@ void ImportDeclarationContext::BindImportDecl(ir::ImportDeclaration *importDecl)
 {
     varbinder::ModuleScope::ImportDeclList declList(Allocator()->Adapter());
 
-    for (const auto &[name, variable] : VarBinder()->GetScope()->OrderedBindings(Allocator())) {
+    for (const auto &[name, variable] : VarBinder()->GetScope()->CodegenOrderedBindings()) {
         if (SavedBindings().find(name) != SavedBindings().end()) {
             continue;
         }

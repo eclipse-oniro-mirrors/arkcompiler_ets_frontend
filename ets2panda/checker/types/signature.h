@@ -62,7 +62,7 @@ public:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     ArenaVector<Type *> typeParams;
     uint32_t minArgCount {};
-    varbinder::LocalVariable *restVar {};
+    EPtr<varbinder::LocalVariable> restVar {};
     ArenaVector<varbinder::LocalVariable *> params;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
@@ -313,13 +313,13 @@ public:
 private:
     Signature *CreateSignatureForSubstitute(ArenaAllocator *allocator, SignatureInfo *sigInfo, Type *returnType);
 
-    checker::SignatureInfo *const signatureInfo_;
-    Type *returnType_;
-    ir::ScriptFunction *const func_ {};
+    EPtr<checker::SignatureInfo> const signatureInfo_;
+    EPtr<Type> returnType_;
+    EPtr<ir::ScriptFunction> const func_ {};
     SignatureFlags flags_ {SignatureFlags::NO_OPTS};
     util::StringView internalName_ {};
-    ETSObjectType *ownerObj_ {};
-    varbinder::Variable *ownerVar_ {};
+    EPtr<ETSObjectType> ownerObj_ {};
+    EPtr<varbinder::Variable> ownerVar_ {};
 };
 }  // namespace ark::es2panda::checker
 

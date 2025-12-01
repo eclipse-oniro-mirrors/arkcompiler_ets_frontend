@@ -402,16 +402,16 @@ private:
     void DumpBody(ir::SrcDumper *dumper) const;
     void DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const;
     friend class SizeOfNodeTest;
-    Identifier *id_ {};
+    EPtr<Identifier> id_ {};
     FunctionSignature irSignature_;
-    AstNode *body_;
-    varbinder::FunctionScope *scope_ {nullptr};
+    EPtr<AstNode> body_;
+    EPtr<varbinder::FunctionScope> scope_ {nullptr};
     ir::ScriptFunctionFlags funcFlags_;
-    checker::Signature *signature_ {};
-    checker::Type *preferredReturnType_ {};
+    EPtr<checker::Signature> signature_ {};
+    EPtr<checker::Type> preferredReturnType_ {};
     es2panda::Language lang_;
     ArenaVector<ReturnStatement *> returnStatements_;
-    ScriptFunction *asyncPairFunction_;
+    EPtr<ScriptFunction> asyncPairFunction_;
 };
 }  // namespace ark::es2panda::ir
 

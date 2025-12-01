@@ -47,6 +47,7 @@ public:
           inAssignment_(data.inAssignment),
           convertTupleToArray_(data.convertTupleToArray)
     {
+        // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
         Prepare(data.typeAnnotation, data.initializer, data.id->Start());
     }
 

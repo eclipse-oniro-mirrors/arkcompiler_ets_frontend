@@ -1372,13 +1372,13 @@ checker::Type *TSAnalyzer::Check(ir::VariableDeclarator *st) const
 {
     TSChecker *checker = GetTSChecker();
 
-    if (st->TsType() == st->CHECKED) {
+    if (st->TsType() == checker->GetMagicCheckedType()) {
         return nullptr;
     }
 
     if (st->Id()->IsIdentifier()) {
         CheckSimpleVariableDeclaration(checker, st);
-        st->SetTsType(st->CHECKED);
+        st->SetTsType(checker->GetMagicCheckedType());
         return nullptr;
     }
 
@@ -1389,7 +1389,7 @@ checker::Type *TSAnalyzer::Check(ir::VariableDeclarator *st) const
                                             st->Id()->AsArrayPattern()->TypeAnnotation(), st->Init()})
             .Start();
 
-        st->SetTsType(st->CHECKED);
+        st->SetTsType(checker->GetMagicCheckedType());
         return nullptr;
     }
 
@@ -1400,7 +1400,7 @@ checker::Type *TSAnalyzer::Check(ir::VariableDeclarator *st) const
                                          st->Id()->AsObjectPattern()->TypeAnnotation(), st->Init()})
         .Start();
 
-    st->SetTsType(st->CHECKED);
+    st->SetTsType(checker->GetMagicCheckedType());
     return nullptr;
 }
 

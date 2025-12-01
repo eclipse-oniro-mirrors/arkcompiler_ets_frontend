@@ -38,17 +38,17 @@ enum class Constant {
 
 class DebugInfo {
 public:
-    explicit DebugInfo(ArenaAllocator *allocator) : variableDebugInfo_(allocator->Adapter()) {};
+    explicit DebugInfo(SArenaAllocator *allocator) : variableDebugInfo_(allocator->Adapter()) {};
     DEFAULT_COPY_SEMANTIC(DebugInfo);
     DEFAULT_MOVE_SEMANTIC(DebugInfo);
     ~DebugInfo() = default;
 
-    ArenaVector<const varbinder::Scope *> &VariableDebugInfo()
+    SArenaVector<const varbinder::Scope *> &VariableDebugInfo()
     {
         return variableDebugInfo_;
     }
 
-    const ArenaVector<const varbinder::Scope *> &VariableDebugInfo() const
+    const SArenaVector<const varbinder::Scope *> &VariableDebugInfo() const
     {
         return variableDebugInfo_;
     }
@@ -61,15 +61,15 @@ public:
 private:
     friend class CodeGen;
 
-    ArenaVector<const varbinder::Scope *> variableDebugInfo_;
+    SArenaVector<const varbinder::Scope *> variableDebugInfo_;
     const ir::Statement *firstStmt_ {};
 };
 
 class CodeGen {
 public:
-    using TypeMap = ArenaUnorderedMap<VReg, const checker::Type *>;
+    using TypeMap = SArenaUnorderedMap<VReg, const checker::Type *>;
 
-    explicit CodeGen(ArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
+    explicit CodeGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                      std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile) noexcept
         : astCompiler_(std::get<AstCompiler *>(toCompile)),
           allocator_(allocator),
@@ -97,14 +97,14 @@ public:
     [[nodiscard]] virtual IRNode *AllocMov(const ir::AstNode *node, VReg vd, VReg vs) = 0;
     [[nodiscard]] virtual IRNode *AllocMov(const ir::AstNode *node, OutVReg vd, VReg vs) = 0;
 
-    [[nodiscard]] ArenaAllocator *Allocator() const noexcept;
-    [[nodiscard]] const ArenaVector<CatchTable *> &CatchList() const noexcept;
+    [[nodiscard]] SArenaAllocator *Allocator() const noexcept;
+    [[nodiscard]] const SArenaVector<CatchTable *> &CatchList() const noexcept;
     [[nodiscard]] const varbinder::FunctionScope *TopScope() const noexcept;
     [[nodiscard]] const varbinder::Scope *Scope() const noexcept;
     [[nodiscard]] const ir::AstNode *RootNode() const noexcept;
 
-    [[nodiscard]] ArenaList<IRNode *> &Insns() noexcept;
-    [[nodiscard]] const ArenaList<IRNode *> &Insns() const noexcept;
+    [[nodiscard]] SArenaList<IRNode *> &Insns() noexcept;
+    [[nodiscard]] const SArenaList<IRNode *> &Insns() const noexcept;
 
     [[nodiscard]] VReg AllocReg();
     [[nodiscard]] VReg AllocRegWithType(const checker::Type *type);
@@ -156,12 +156,12 @@ public:
 
     compiler::AstCompiler *GetAstCompiler() const;
 
-    const ArenaList<IRNode *> &GetInsns() const noexcept
+    const SArenaList<IRNode *> &GetInsns() const noexcept
     {
         return insns_;
     }
 
-    void SetInsns(const ArenaList<IRNode *> &insns)
+    void SetInsns(const SArenaList<IRNode *> &insns)
     {
         insns_ = insns;
     }
@@ -211,18 +211,18 @@ protected:
 
 private:
     AstCompiler *astCompiler_;
-    ArenaAllocator *allocator_ {};
+    SArenaAllocator *allocator_ {};
     public_lib::Context *context_ {};
     DebugInfo debugInfo_;
     varbinder::FunctionScope *topScope_ {};
     varbinder::Scope *scope_ {};
     const ir::AstNode *rootNode_ {};
-    ArenaList<IRNode *> insns_;
-    ArenaVector<CatchTable *> catchList_;
+    SArenaList<IRNode *> insns_;
+    SArenaVector<CatchTable *> catchList_;
     TypeMap typeMap_;
     ProgramElement *programElement_ {};
     DynamicContext *dynamicContext_ {};
-    ArenaUnorderedMap<varbinder::Scope const *, std::pair<const compiler::IRNode *, const compiler::IRNode *>>
+    SArenaUnorderedMap<varbinder::Scope const *, std::pair<const compiler::IRNode *, const compiler::IRNode *>>
         scopeInsnRanges_;
 
     SimpleAllocator sa_;

@@ -67,7 +67,7 @@ public:
         return &checker_;
     }
 
-    ark::ArenaAllocator *Allocator()
+    ark::es2panda::ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -246,7 +246,7 @@ public:
     NO_MOVE_SEMANTIC(CheckerTest);
 
 private:
-    std::unique_ptr<ark::ArenaAllocator> allocator_;
+    std::unique_ptr<ark::es2panda::ArenaAllocator> allocator_;
     std::unique_ptr<plib_alias::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
     varbinder_alias::ETSBinder varbinder_;

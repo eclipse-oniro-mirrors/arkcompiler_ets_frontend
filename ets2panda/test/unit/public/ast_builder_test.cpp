@@ -287,7 +287,7 @@ TEST_F(ASTVerifierTest, memberExpressionBuild)
 TEST_F(ASTVerifierTest, methodDefinitionBuild)
 {
     auto id = IdentifierBuilder(Allocator()).SetName("a").Build();
-    ark::ArenaVector<ark::es2panda::ir::Expression *> params(Allocator()->Adapter());
+    ark::es2panda::ArenaVector<ark::es2panda::ir::Expression *> params(Allocator()->Adapter());
     auto signature = ark::es2panda::ir::FunctionSignature(nullptr, std::move(params), nullptr);
     auto func = ScriptFunctionBuilder(Allocator()).SetSignature(&signature).Build();
     auto funcExpr = FunctionExpressionBuilder(Allocator()).SetFunction(func).Build();
@@ -315,7 +315,7 @@ TEST_F(ASTVerifierTest, tsClassImplementsBuild)
                           .SetRight(right)
                           .SetOperator(ark::es2panda::lexer::TokenType::PUNCTUATOR_PLUS)
                           .Build();
-    ark::ArenaVector<ark::es2panda::ir::TypeNode *> types(Allocator()->Adapter());
+    ark::es2panda::ArenaVector<ark::es2panda::ir::TypeNode *> types(Allocator()->Adapter());
     auto typeParams = TSTypeParameterInstantiationBuilder(Allocator()).SetParams(std::move(types)).Build();
     auto tsClassImpl =
         TSClassImplementsBuilder(Allocator()).SetExpression(binaryExpr).SetTypeParameters(typeParams).Build();
@@ -334,8 +334,8 @@ TEST_F(ASTVerifierTest, switchStatementBuild)
     auto consStmnt = ExpressionStatementBuilder(Allocator()).SetExpression(binaryExpr).Build();
 
     auto thisExpr = ThisExpressionBuilder(Allocator()).Build();
-    ark::ArenaVector<ark::es2panda::ir::SwitchCaseStatement *> cases(Allocator()->Adapter());
-    ark::ArenaVector<ark::es2panda::ir::Statement *> conseq(Allocator()->Adapter());
+    ark::es2panda::ArenaVector<ark::es2panda::ir::SwitchCaseStatement *> cases(Allocator()->Adapter());
+    ark::es2panda::ArenaVector<ark::es2panda::ir::Statement *> conseq(Allocator()->Adapter());
     conseq.push_back(consStmnt);
     auto switchCase = SwitchCaseStatementBuilder(Allocator()).SetTest(binaryExpr).SetConsequent(conseq).Build();
     cases.push_back(switchCase);
@@ -391,7 +391,7 @@ TEST_F(ASTVerifierTest, VariableDeclarationBuild)
     auto idDeclarator = IdentifierBuilder(Allocator()).SetName("a").Build();
     auto init = NumberLiteralBuilder(Allocator()).SetValue(ark::es2panda::lexer::Number(10)).Build();
     auto varDeclarator = VariableDeclaratorBuilder(Allocator()).SetId(idDeclarator).SetInit(init).Build();
-    ark::ArenaVector<ark::es2panda::ir::VariableDeclarator *> declarators(Allocator()->Adapter());
+    ark::es2panda::ArenaVector<ark::es2panda::ir::VariableDeclarator *> declarators(Allocator()->Adapter());
     declarators.push_back(varDeclarator);
     auto varDecl = VariableDeclarationBuilder(Allocator())
                        .SetDeclarators(std::move(declarators))
