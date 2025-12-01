@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_EVALUATE_PATH_RESOLVER_H
 #define ES2PANDA_EVALUATE_PATH_RESOLVER_H
 
-#include "libarkbase/utils/arena_containers.h"
+#include "util/eheap.h"
 
 namespace ark::es2panda::evaluate {
 

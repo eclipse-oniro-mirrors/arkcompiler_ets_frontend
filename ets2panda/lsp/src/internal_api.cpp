@@ -27,7 +27,6 @@
 #include "libarkbase/macros.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "formatting/formatting.h"
 #include "code_fix_provider.h"
 #include "get_class_property_info.h"

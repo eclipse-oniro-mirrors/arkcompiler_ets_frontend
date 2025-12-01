@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSModuleDeclarationBuilder : public AstBuilder<TSModuleDeclaration> {
 public:
-    explicit TSModuleDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSModuleDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSModuleDeclarationBuilder &SetName(Expression *name)
     {

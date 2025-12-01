@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeQueryBuilder : public AstBuilder<TSTypeQuery> {
 public:
-    explicit TSTypeQueryBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypeQueryBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypeQueryBuilder &SetExpressionName(Expression *exprName)
     {

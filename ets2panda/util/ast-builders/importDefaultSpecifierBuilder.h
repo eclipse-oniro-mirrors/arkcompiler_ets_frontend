@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ImportDefaultSpecifierBuilder : public AstBuilder<ir::ImportDefaultSpecifier> {
 public:
-    explicit ImportDefaultSpecifierBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ImportDefaultSpecifierBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ImportDefaultSpecifierBuilder &SetLocal(Identifier *local)
     {

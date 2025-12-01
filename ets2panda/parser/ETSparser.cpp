@@ -26,7 +26,6 @@
 #include "util/helpers.h"
 #include "util/language.h"
 #include "util/options.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/lexer.h"

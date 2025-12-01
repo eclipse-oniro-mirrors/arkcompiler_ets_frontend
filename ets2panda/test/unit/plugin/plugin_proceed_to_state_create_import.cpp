@@ -25,7 +25,6 @@
 #include "public/es2panda_lib.h"
 #include "ir/ets/etsImportDeclaration.h"
 #include "ir/statements/expressionStatement.h"
-#include "libarkbase/utils/arena_containers.h"
 
 // NOLINTBEGIN
 

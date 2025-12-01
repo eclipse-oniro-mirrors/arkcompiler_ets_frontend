@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class FunctionDeclarationBuilder : public AstBuilder<ir::FunctionDeclaration> {
 public:
-    explicit FunctionDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit FunctionDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     FunctionDeclarationBuilder &SetFunction(ScriptFunction *func)
     {

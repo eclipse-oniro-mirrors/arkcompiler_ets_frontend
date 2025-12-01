@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TemplateElementBuilder : public AstBuilder<TemplateElement> {
 public:
-    explicit TemplateElementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TemplateElementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TemplateElementBuilder &SetRaw(util::StringView raw)
     {

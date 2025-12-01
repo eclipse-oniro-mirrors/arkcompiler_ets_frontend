@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSImportTypeBuilder : public AstBuilder<TSImportType> {
 public:
-    explicit TSImportTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSImportTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSImportTypeBuilder &SetParam(Expression *param)
     {

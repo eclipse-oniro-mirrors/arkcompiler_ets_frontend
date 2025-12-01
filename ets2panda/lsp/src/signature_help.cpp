@@ -15,7 +15,6 @@
 
 #include "signature_help.h"
 #include "internal_api.h"
-#include "libarkbase/utils/arena_containers.h"
 #include <cstddef>
 #include <iostream>
 #include <optional>

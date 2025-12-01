@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSInferTypeBuilder : public AstBuilder<TSInferType> {
 public:
-    explicit TSInferTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSInferTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSInferTypeBuilder &SetFunctionSignature(TSTypeParameter *typeParam)
     {

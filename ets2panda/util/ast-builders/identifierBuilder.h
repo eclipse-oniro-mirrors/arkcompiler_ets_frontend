@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class IdentifierBuilder : public AstBuilder<ir::Identifier> {
 public:
-    explicit IdentifierBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit IdentifierBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     IdentifierBuilder &SetName(util::StringView name)
     {

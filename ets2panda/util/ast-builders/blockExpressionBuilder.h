@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class BlockExpressionBuilder : public AstBuilder<ir::BlockExpression> {
 public:
-    explicit BlockExpressionBuilder(ark::ArenaAllocator *allocator)
+    explicit BlockExpressionBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), statements_(allocator->Adapter())
     {
     }

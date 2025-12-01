@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSNumberKeywordBuilder : public AstBuilder<TSNumberKeyword> {
 public:
-    explicit TSNumberKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSNumberKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSNumberKeyword *Build()
     {

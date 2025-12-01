@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ThrowStatementBuilder : public AstBuilder<ir::ThrowStatement> {
 public:
-    explicit ThrowStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ThrowStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ThrowStatementBuilder &SetArgument(Expression *arg)
     {

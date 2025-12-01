@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSIndexedAccessTypeBuilder : public AstBuilder<TSIndexedAccessType> {
 public:
-    explicit TSIndexedAccessTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSIndexedAccessTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSIndexedAccessTypeBuilder &SetObjectType(TypeNode *objectType)
     {

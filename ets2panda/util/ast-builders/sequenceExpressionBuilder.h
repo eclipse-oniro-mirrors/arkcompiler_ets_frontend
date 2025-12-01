@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class SequenceExpressionBuilder : public AstBuilder<ir::SequenceExpression> {
 public:
-    explicit SequenceExpressionBuilder(ark::ArenaAllocator *allocator)
+    explicit SequenceExpressionBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), sequence_(allocator->Adapter())
     {
     }

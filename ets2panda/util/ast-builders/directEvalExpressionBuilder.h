@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class DirectEvalExpressionBuilder : public AstBuilder<ir::DirectEvalExpression> {
 public:
-    explicit DirectEvalExpressionBuilder(ark::ArenaAllocator *allocator)
+    explicit DirectEvalExpressionBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), arguments_(Allocator()->Adapter())
     {
     }

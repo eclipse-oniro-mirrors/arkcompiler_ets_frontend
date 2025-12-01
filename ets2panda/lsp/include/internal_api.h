@@ -32,7 +32,7 @@ public:
 
     ~Initializer();
 
-    ark::ArenaAllocator *Allocator()
+    ArenaAllocator *Allocator()
     {
         return allocator_;
     }
@@ -127,7 +127,7 @@ public:
 private:
     es2panda_Impl const *impl_;
     es2panda_Config *cfg_;
-    ark::ArenaAllocator *allocator_;
+    ArenaAllocator *allocator_;
 };
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);

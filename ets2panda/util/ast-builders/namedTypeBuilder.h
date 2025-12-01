@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class NamedTypeBuilder : public AstBuilder<ir::NamedType> {
 public:
-    explicit NamedTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit NamedTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     NamedTypeBuilder &SetName(Identifier *name)
     {

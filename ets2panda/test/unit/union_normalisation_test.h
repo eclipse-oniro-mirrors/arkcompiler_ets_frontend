@@ -43,7 +43,7 @@ public:
         es2panda::EHeap::Initialize();
     }
 
-    ark::ArenaAllocator *Allocator()
+    ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -166,7 +166,7 @@ protected:
     static constexpr uint8_t IDX2 = 2;
 
 private:
-    std::unique_ptr<ark::ArenaAllocator> allocator_;
+    std::unique_ptr<ArenaAllocator> allocator_;
     std::unique_ptr<public_lib::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
     varbinder::ETSBinder varbinder_;

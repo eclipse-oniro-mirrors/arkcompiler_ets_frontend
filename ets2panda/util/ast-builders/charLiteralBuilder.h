@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class CharLiteralBuilder : public AstBuilder<ir::CharLiteral> {
 public:
-    explicit CharLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit CharLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     CharLiteralBuilder &SetValue(char16_t val)
     {

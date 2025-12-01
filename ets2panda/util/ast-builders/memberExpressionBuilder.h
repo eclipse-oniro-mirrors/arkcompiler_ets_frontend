@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class MemberExpressionBuilder : public AstBuilder<ir::MemberExpression> {
 public:
-    explicit MemberExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit MemberExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     MemberExpressionBuilder &SetObject(Expression *obj)
     {

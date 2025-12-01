@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class BlockStatementBuilder : public AstBuilder<ir::BlockStatement> {
 public:
-    explicit BlockStatementBuilder(ark::ArenaAllocator *allocator)
+    explicit BlockStatementBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), statementList_(allocator->Adapter())
     {
     }

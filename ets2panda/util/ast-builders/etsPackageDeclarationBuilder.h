@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSPackageDeclarationBuilder : public AstBuilder<ETSPackageDeclaration> {
 public:
-    explicit ETSPackageDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSPackageDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSPackageDeclarationBuilder &SetName(ir::Expression *name)
     {

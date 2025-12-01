@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class DecoratorBuilder : public AstBuilder<ir::Decorator> {
 public:
-    explicit DecoratorBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit DecoratorBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     DecoratorBuilder &SetExpression(Expression *expression)
     {

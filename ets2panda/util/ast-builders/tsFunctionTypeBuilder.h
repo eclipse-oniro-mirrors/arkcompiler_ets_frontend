@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSFunctionTypeBuilder : public AstBuilder<TSFunctionType> {
 public:
-    explicit TSFunctionTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSFunctionTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSFunctionTypeBuilder &SetFunctionSignature(FunctionSignature *signature)
     {

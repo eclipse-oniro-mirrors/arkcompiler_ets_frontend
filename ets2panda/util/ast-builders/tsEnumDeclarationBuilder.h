@@ -24,8 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSEnumDeclarationBuilder : public AstBuilder<ir::TSEnumDeclaration> {
 public:
-    explicit TSEnumDeclarationBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), members_(allocator->Adapter())
+    explicit TSEnumDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), members_(allocator->Adapter())
     {
     }
 
