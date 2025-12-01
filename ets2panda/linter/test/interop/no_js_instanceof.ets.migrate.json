@@ -46,9 +46,9 @@
         },
         {
             "line": 68,
-            "column": 28,
+            "column": 21,
             "endLine": 68,
-            "endColumn": 33,
+            "endColumn": 26,
             "problem": "InteropJsObjectExpandStaticInstance",
             "suggest": "",
             "rule": "Direct usage of interop JS functions is not supported (arkts-interop-js2s-js-expand-static-instance)",
@@ -56,9 +56,19 @@
         },
         {
             "line": 68,
-            "column": 28,
+            "column": 4,
             "endLine": 68,
-            "endColumn": 33,
+            "endColumn": 7,
+            "problem": "CallJSFunction",
+            "suggest": "",
+            "rule": "ArkTS directly call JS functions or parameters is not supported (arkts-interop-js2s-call-js-func)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 21,
+            "endLine": 68,
+            "endColumn": 26,
             "problem": "ClassAsObjectError",
             "suggest": "",
             "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
@@ -82,6 +92,26 @@
             "problem": "InteropObjectProperty",
             "suggest": "",
             "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 24,
+            "endLine": 74,
+            "endColumn": 39,
+            "problem": "InteropObjectProperty",
+            "suggest": "",
+            "rule": "Properties of interop objects can't be accessed directly (arkts-interop-js2s-access-js-prop)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 24,
+            "endLine": 74,
+            "endColumn": 39,
+            "problem": "InteropJsObjectConditionJudgment",
+            "suggest": "",
+            "rule": "Direct usage of interop JS objects is not supported (arkts-interop-js2s-condition-judgment)",
             "severity": "ERROR"
         }
     ]

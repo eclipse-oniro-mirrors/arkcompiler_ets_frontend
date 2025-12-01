@@ -630,6 +630,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleImportCauseForCollections();
   }
 
+  lintForUI(): void {
+    if (this.options.enableAutofix || this.options.migratorMode) {
+      this.autofixer = new Autofixer(this.tsTypeChecker, this.tsUtils, this.sourceFile, this.options.cancellationToken);
+    }
+
+    this.useStatic = this.tsUtils.isArkts12File(this.sourceFile);
+    this.fileExportDeclCaches = undefined;
+    this.extractImportedNames(this.sourceFile);
+    this.visitIdentifiersForInterfaceImport(this.sourceFile);
+    this.handleCommentDirectives(this.sourceFile);
+    this.processInterfacesToImport(this.sourceFile);
+  }
+
   private visitSourceFile(sf: ts.SourceFile): void {
     const callback = (node: ts.Node): void => {
       this.fileStats.visitedNodes++;
@@ -661,6 +674,24 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       // Skip synthetic constructor in Struct declaration.
       if (node.parent && isStructDeclaration(node.parent) && ts.isConstructorDeclaration(node)) {
+        return true;
+      }
+      if (TypeScriptLinterConfig.terminalTokens.has(node.kind)) {
+        return true;
+      }
+      return false;
+    };
+    forEachNodeInSubtree(sf, callback, stopCondition);
+  }
+
+  private visitIdentifiersForInterfaceImport(sf: ts.SourceFile): void {
+    const callback = (node: ts.Node): void => {
+      if (ts.isIdentifier(node)) {
+        this.handleInterfaceImport(node);
+      }
+    };
+    const stopCondition = (node: ts.Node): boolean => {
+      if (!node) {
         return true;
       }
       if (TypeScriptLinterConfig.terminalTokens.has(node.kind)) {

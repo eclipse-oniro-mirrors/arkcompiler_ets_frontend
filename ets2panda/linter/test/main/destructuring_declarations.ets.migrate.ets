@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,31 +14,15 @@
  */
 
 // Object destructuring
-interface GeneratedObjectLiteralInterface_2 {
-    a: number;
-    b: number;
-    c: string;
-}
-let GeneratedDestructObj_1: GeneratedObjectLiteralInterface_2 = { a: 100, b: 200, c: 'bar' };
+let GeneratedDestructObj_1 = { a: 100, b: 200, c: 'bar' };
 let a = GeneratedDestructObj_1.a;
 let b = GeneratedDestructObj_1.b;
 let c = GeneratedDestructObj_1.c;
  // NOT OK
 let { a2, ...rest2 } = { a2: 1, b2: 2 }; // NOT OK
-interface GeneratedObjectLiteralInterface_3 {
-    c3: number;
-    d3: string;
-}
-interface GeneratedObjectLiteralInterface_6 {
-    a3: number;
-    b3: GeneratedObjectLiteralInterface_3;
-}
-let GeneratedDestructObj_2: GeneratedObjectLiteralInterface_6 = { a3: 1, b3: ({ c3: 3, d3: 'baz' } as GeneratedObjectLiteralInterface_3)};
+let GeneratedDestructObj_2 = { a3: 1, b3: { c3: 3, d3: 'baz' }};
 let a3 = GeneratedDestructObj_2.a3;
-let GeneratedDestructObj_7 = GeneratedDestructObj_2.b3;
-let c3 = GeneratedDestructObj_7.c3;
-let e3 = GeneratedDestructObj_7.d3;
-
+let { c3, d3: e3 } = GeneratedDestructObj_2.b3;
  // NOT OK
 let { a4, b4: { ...rest4 } } = { a4: 1, b4: { c4: 3, d4: 'bah' }}; // NOT OK
 
@@ -67,29 +51,14 @@ const [a8, b8, [c8, e8]] = [10, 20, [300, 400], 50];
 const [a9, b9, [c9, ...rest9]] = [10, 20, [30, 40, 50]]; // NOT OK
 
 const GeneratedDestructArray_2 = [[1, 2], [3, 4], [5, 6]];
-const a1 = GeneratedDestructArray_2[0][0];
-const a2 = GeneratedDestructArray_2[0][1];
-
-const b1 = GeneratedDestructArray_2[1][0];
-const b2 = GeneratedDestructArray_2[1][1];
-
-const c1 = GeneratedDestructArray_2[2][0];
-const c2 = GeneratedDestructArray_2[2][1];
-
+const [a1, a2] = GeneratedDestructArray_2[0];
+const [b1, b2] = GeneratedDestructArray_2[1];
+const [c1, c2] = GeneratedDestructArray_2[2];
   
 const GeneratedDestructArray_3 = [[1, 2, 3], [3, 4, 5], [5, 6, 7]];
-const a1 = GeneratedDestructArray_3[0][0];
-const a2 = GeneratedDestructArray_3[0][1];
-const a3 = GeneratedDestructArray_3[0][2];
-
-const b1 = GeneratedDestructArray_3[1][0];
-const b2 = GeneratedDestructArray_3[1][1];
-const b3 = GeneratedDestructArray_3[1][2];
-
-const c1 = GeneratedDestructArray_3[2][0];
-const c2 = GeneratedDestructArray_3[2][1];
-const c3 = GeneratedDestructArray_3[2][2];
-
+const [a1, a2, a3] = GeneratedDestructArray_3[0];
+const [b1, b2, b3] = GeneratedDestructArray_3[1];
+const [c1, c2, c3] = GeneratedDestructArray_3[2];
  
 
 let tuple: [number, string, number] = [1, '2', 3];
@@ -113,34 +82,16 @@ let [a15, b15, [x15, { f15 }]] = [1, 2, [{ e15: 20 }, { f15: 5 }]]; // NOT OK
 let [a16, b16, {e16, e16: f16, ...g16}] = [1, 2, {e16: 10}]; // NOT OK
 { let [a17, b17, ...{length}] = [1, 2, 3, 4]; } // NOT OK
 
-interface GeneratedObjectLiteralInterface_4 {
-    a18: number;
-    b18: number[];
-}
-let GeneratedDestructObj_4: GeneratedObjectLiteralInterface_4 = { a18: 1, b18: [2, 3] };
+let GeneratedDestructObj_4 = { a18: 1, b18: [2, 3] };
 let a18 = GeneratedDestructObj_4.a18;
-let GeneratedDestructArray_5 = GeneratedDestructObj_4.b18;
-let c18 = GeneratedDestructArray_5[0];
-let d18 = GeneratedDestructArray_5[1];
-
+let [c18, d18] = GeneratedDestructObj_4.b18;
  // NOT OK
-interface GeneratedObjectLiteralInterface_5 {
-    c19: string;
-    d19: number[];
-}
-interface GeneratedObjectLiteralInterface_7 {
-    a19: number;
-    b19: GeneratedObjectLiteralInterface_5;
-}
-let GeneratedDestructObj_5: GeneratedObjectLiteralInterface_7 = { a19: 10, b19: ({ c19: 'foo', d19: [30, 40] } as GeneratedObjectLiteralInterface_5) };
+let GeneratedDestructObj_5 = { a19: 10, b19: { c19: 'foo', d19: [30, 40] } };
 let a19 = GeneratedDestructObj_5.a19;
-let GeneratedDestructObj_8 = GeneratedDestructObj_5.b19;
-let c19 = GeneratedDestructObj_8.c19;
-let GeneratedDestructArray_6 = GeneratedDestructObj_8.d19;
-let e19 = GeneratedDestructArray_6[0];
-let f19 = GeneratedDestructArray_6[1];
-
-
+let {
+    c19,
+    d19: [e19, f19],
+  } = GeneratedDestructObj_5.b19;
  // NOT OK
 
 // test for default value

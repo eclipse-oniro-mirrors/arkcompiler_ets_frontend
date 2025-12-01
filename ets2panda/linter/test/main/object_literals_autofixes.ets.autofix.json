@@ -32,8 +32,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1131,
-                    "end": 1131,
+                    "start": 1136,
+                    "end": 1136,
                     "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n}\n",
                     "line": 33,
                     "column": 12,
@@ -41,8 +41,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1139,
-                    "end": 1139,
+                    "start": 1144,
+                    "end": 1144,
                     "replacementText": ": GeneratedObjectLiteralInterface_1",
                     "line": 33,
                     "column": 12,
@@ -62,8 +62,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1146,
-                    "end": 1146,
+                    "start": 1151,
+                    "end": 1151,
                     "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    hello: string;\n}\n",
                     "line": 34,
                     "column": 12,
@@ -71,8 +71,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1154,
-                    "end": 1154,
+                    "start": 1159,
+                    "end": 1159,
                     "replacementText": ": GeneratedObjectLiteralInterface_2",
                     "line": 34,
                     "column": 12,
@@ -102,8 +102,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1177,
-                    "end": 1177,
+                    "start": 1182,
+                    "end": 1182,
                     "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    a: number;\n    b: number;\n}\n",
                     "line": 35,
                     "column": 13,
@@ -111,8 +111,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 1186,
-                    "end": 1186,
+                    "start": 1191,
+                    "end": 1191,
                     "replacementText": ": GeneratedObjectLiteralInterface_3",
                     "line": 35,
                     "column": 13,
@@ -132,8 +132,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1203,
-                    "end": 1203,
+                    "start": 1208,
+                    "end": 1208,
                     "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    field: string;\n    field1: number;\n    field2: string;\n    field3: number;\n    field4: boolean;\n    field5: boolean;\n}\n",
                     "line": 36,
                     "column": 12,
@@ -141,8 +141,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1211,
-                    "end": 1211,
+                    "start": 1216,
+                    "end": 1216,
                     "replacementText": ": GeneratedObjectLiteralInterface_5",
                     "line": 36,
                     "column": 12,
@@ -172,8 +172,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1385,
-                    "end": 1385,
+                    "start": 1390,
+                    "end": 1390,
                     "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n}\n",
                     "line": 51,
                     "column": 8,
@@ -181,8 +181,8 @@
                     "endColumn": 9
                 },
                 {
-                    "start": 1464,
-                    "end": 1466,
+                    "start": 1469,
+                    "end": 1471,
                     "replacementText": "({} as GeneratedObjectLiteralInterface_6)",
                     "line": 51,
                     "column": 8,
@@ -202,8 +202,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1385,
-                    "end": 1385,
+                    "start": 1390,
+                    "end": 1390,
                     "replacementText": "interface GeneratedObjectLiteralInterface_10 {\n    a: number;\n    b: string;\n}\n",
                     "line": 52,
                     "column": 8,
@@ -211,8 +211,8 @@
                     "endColumn": 9
                 },
                 {
-                    "start": 1475,
-                    "end": 1491,
+                    "start": 1480,
+                    "end": 1496,
                     "replacementText": "({ a: 1, b: '2' } as GeneratedObjectLiteralInterface_10)",
                     "line": 52,
                     "column": 8,
@@ -232,8 +232,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1385,
-                    "end": 1385,
+                    "start": 1390,
+                    "end": 1390,
                     "replacementText": "interface GeneratedObjectLiteralInterface_13 {\n    q: number;\n    w: number;\n}\n",
                     "line": 53,
                     "column": 8,
@@ -241,8 +241,8 @@
                     "endColumn": 9
                 },
                 {
-                    "start": 1500,
-                    "end": 1536,
+                    "start": 1505,
+                    "end": 1541,
                     "replacementText": "({ q: 10,\n    w: 20 } as GeneratedObjectLiteralInterface_13)",
                     "line": 53,
                     "column": 8,
@@ -272,8 +272,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1541,
-                    "end": 1541,
+                    "start": 1546,
+                    "end": 1546,
                     "replacementText": "interface GeneratedObjectLiteralInterface_14 {\n    q: number;\n    w: number;\n}\n",
                     "line": 61,
                     "column": 8,
@@ -281,8 +281,8 @@
                     "endColumn": 9
                 },
                 {
-                    "start": 1583,
-                    "end": 1599,
+                    "start": 1588,
+                    "end": 1604,
                     "replacementText": "({ q: 10, w: 20 } as GeneratedObjectLiteralInterface_14)",
                     "line": 61,
                     "column": 8,
@@ -302,8 +302,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1541,
-                    "end": 1541,
+                    "start": 1546,
+                    "end": 1546,
                     "replacementText": "interface GeneratedObjectLiteralInterface_16 {\n    q: number;\n    w: number;\n}\n",
                     "line": 63,
                     "column": 8,
@@ -311,8 +311,8 @@
                     "endColumn": 9
                 },
                 {
-                    "start": 1621,
-                    "end": 1637,
+                    "start": 1626,
+                    "end": 1642,
                     "replacementText": "({ q: 30, w: 40 } as GeneratedObjectLiteralInterface_16)",
                     "line": 63,
                     "column": 8,
@@ -332,8 +332,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1687,
-                    "end": 1687,
+                    "start": 1692,
+                    "end": 1692,
                     "replacementText": "interface GeneratedObjectLiteralInterface_17 {\n    a: number;\n    b: number;\n}\n",
                     "line": 67,
                     "column": 12,
@@ -341,8 +341,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1698,
-                    "end": 1710,
+                    "start": 1703,
+                    "end": 1715,
                     "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_17)",
                     "line": 67,
                     "column": 12,
@@ -362,8 +362,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1687,
-                    "end": 1687,
+                    "start": 1692,
+                    "end": 1692,
                     "replacementText": "interface GeneratedObjectLiteralInterface_18 {\n    a: number;\n    b: number;\n}\n",
                     "line": 67,
                     "column": 29,
@@ -371,8 +371,8 @@
                     "endColumn": 30
                 },
                 {
-                    "start": 1715,
-                    "end": 1727,
+                    "start": 1720,
+                    "end": 1732,
                     "replacementText": "({ a: 3, b: 4 } as GeneratedObjectLiteralInterface_18)",
                     "line": 67,
                     "column": 29,
@@ -402,8 +402,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1731,
-                    "end": 1731,
+                    "start": 1736,
+                    "end": 1736,
                     "replacementText": "interface GeneratedObjectLiteralInterface_19 {\n    x: number;\n    y: number;\n}\n",
                     "line": 71,
                     "column": 9,
@@ -411,8 +411,8 @@
                     "endColumn": 10
                 },
                 {
-                    "start": 1773,
-                    "end": 1783,
+                    "start": 1778,
+                    "end": 1788,
                     "replacementText": "{ x: 1, y: 2 } as GeneratedObjectLiteralInterface_19",
                     "line": 71,
                     "column": 9,
@@ -432,8 +432,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1731,
-                    "end": 1731,
+                    "start": 1736,
+                    "end": 1736,
                     "replacementText": "interface GeneratedObjectLiteralInterface_20 {\n    q: number;\n    w: number;\n}\n",
                     "line": 72,
                     "column": 12,
@@ -441,8 +441,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1797,
-                    "end": 1807,
+                    "start": 1802,
+                    "end": 1812,
                     "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_20)",
                     "line": 72,
                     "column": 12,
@@ -462,8 +462,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1731,
-                    "end": 1731,
+                    "start": 1736,
+                    "end": 1736,
                     "replacementText": "interface GeneratedObjectLiteralInterface_21 {\n    q: number;\n    w: number;\n}\n",
                     "line": 72,
                     "column": 27,
@@ -471,8 +471,8 @@
                     "endColumn": 28
                 },
                 {
-                    "start": 1812,
-                    "end": 1822,
+                    "start": 1817,
+                    "end": 1827,
                     "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_21)",
                     "line": 72,
                     "column": 27,
@@ -492,8 +492,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_22 {\n    a: number;\n    b: number;\n}\n",
                     "line": 77,
                     "column": 10,
@@ -501,8 +501,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1890,
-                    "end": 1890,
+                    "start": 1895,
+                    "end": 1895,
                     "replacementText": ": GeneratedObjectLiteralInterface_22",
                     "line": 77,
                     "column": 10,
@@ -522,8 +522,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_23 {\n    a: number;\n    b: number;\n}\n",
                     "line": 78,
                     "column": 11,
@@ -531,8 +531,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 1914,
-                    "end": 1914,
+                    "start": 1919,
+                    "end": 1919,
                     "replacementText": ": GeneratedObjectLiteralInterface_23",
                     "line": 78,
                     "column": 11,
@@ -562,8 +562,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_24 {\n    a: number;\n    b: number;\n}\n",
                     "line": 79,
                     "column": 11,
@@ -571,8 +571,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 1938,
-                    "end": 1938,
+                    "start": 1943,
+                    "end": 1943,
                     "replacementText": ": GeneratedObjectLiteralInterface_24",
                     "line": 79,
                     "column": 11,
@@ -592,8 +592,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_25 {\n    c: number;\n    d: number;\n}\n",
                     "line": 80,
                     "column": 11,
@@ -601,8 +601,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 1965,
-                    "end": 1977,
+                    "start": 1970,
+                    "end": 1982,
                     "replacementText": "{ c: 3, d: 4 } as GeneratedObjectLiteralInterface_25",
                     "line": 80,
                     "column": 11,
@@ -622,8 +622,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_26 {\n    e: number;\n}\n",
                     "line": 81,
                     "column": 10,
@@ -631,8 +631,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1989,
-                    "end": 1995,
+                    "start": 1994,
+                    "end": 2000,
                     "replacementText": "({ e: 5 } as GeneratedObjectLiteralInterface_26)",
                     "line": 81,
                     "column": 10,
@@ -652,8 +652,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_27 {\n    f: number;\n    g: number;\n}\n",
                     "line": 81,
                     "column": 21,
@@ -661,8 +661,8 @@
                     "endColumn": 22
                 },
                 {
-                    "start": 2000,
-                    "end": 2012,
+                    "start": 2005,
+                    "end": 2017,
                     "replacementText": "({ f: 6, g: 7 } as GeneratedObjectLiteralInterface_27)",
                     "line": 81,
                     "column": 21,
@@ -682,8 +682,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_28 {\n    a: number;\n    b: number;\n}\n",
                     "line": 84,
                     "column": 17,
@@ -691,8 +691,8 @@
                     "endColumn": 18
                 },
                 {
-                    "start": 2040,
-                    "end": 2040,
+                    "start": 2045,
+                    "end": 2045,
                     "replacementText": ": GeneratedObjectLiteralInterface_28",
                     "line": 84,
                     "column": 17,
@@ -712,8 +712,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1874,
-                    "end": 1874,
+                    "start": 1879,
+                    "end": 1879,
                     "replacementText": "interface GeneratedObjectLiteralInterface_29 {\n    c: number;\n    d: number;\n    e: number;\n}\n",
                     "line": 85,
                     "column": 17,
@@ -721,8 +721,8 @@
                     "endColumn": 18
                 },
                 {
-                    "start": 2068,
-                    "end": 2068,
+                    "start": 2073,
+                    "end": 2073,
                     "replacementText": ": GeneratedObjectLiteralInterface_29",
                     "line": 85,
                     "column": 17,
@@ -742,8 +742,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2150,
-                    "end": 2150,
+                    "start": 2155,
+                    "end": 2155,
                     "replacementText": "interface GeneratedObjectLiteralInterface_30 {\n    a: number;\n    b: number;\n}\n",
                     "line": 90,
                     "column": 22,
@@ -751,8 +751,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2168,
-                    "end": 2168,
+                    "start": 2173,
+                    "end": 2173,
                     "replacementText": ": GeneratedObjectLiteralInterface_30",
                     "line": 90,
                     "column": 22,
@@ -792,8 +792,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_31 {\n    a: number;\n    b: number;\n}\n",
                     "line": 95,
                     "column": 13,
@@ -801,8 +801,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 2440,
-                    "end": 2440,
+                    "start": 2445,
+                    "end": 2445,
                     "replacementText": ": GeneratedObjectLiteralInterface_31",
                     "line": 95,
                     "column": 13,
@@ -822,8 +822,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_32 {\n    c: number;\n    d: number;\n}\n",
                     "line": 96,
                     "column": 13,
@@ -831,8 +831,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 2466,
-                    "end": 2466,
+                    "start": 2471,
+                    "end": 2471,
                     "replacementText": ": GeneratedObjectLiteralInterface_32",
                     "line": 96,
                     "column": 13,
@@ -852,8 +852,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_33 {\n    e: number;\n    f: number;\n}\n",
                     "line": 99,
                     "column": 17,
@@ -861,8 +861,8 @@
                     "endColumn": 18
                 },
                 {
-                    "start": 2518,
-                    "end": 2518,
+                    "start": 2523,
+                    "end": 2523,
                     "replacementText": ": GeneratedObjectLiteralInterface_33",
                     "line": 99,
                     "column": 17,
@@ -882,8 +882,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_34 {\n    g: number;\n    d: number;\n}\n",
                     "line": 102,
                     "column": 13,
@@ -891,8 +891,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 2551,
-                    "end": 2551,
+                    "start": 2556,
+                    "end": 2556,
                     "replacementText": ": GeneratedObjectLiteralInterface_34",
                     "line": 102,
                     "column": 13,
@@ -912,8 +912,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_35 {\n    q: number;\n    w: number;\n}\n",
                     "line": 102,
                     "column": 27,
@@ -921,8 +921,8 @@
                     "endColumn": 28
                 },
                 {
-                    "start": 2568,
-                    "end": 2577,
+                    "start": 2573,
+                    "end": 2582,
                     "replacementText": "({ q: 1, w: 2 } as GeneratedObjectLiteralInterface_35)",
                     "line": 102,
                     "column": 27,
@@ -942,8 +942,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 2408,
-                    "end": 2408,
+                    "start": 2413,
+                    "end": 2413,
                     "replacementText": "interface GeneratedObjectLiteralInterface_36 {\n    q: number;\n    w: number;\n}\n",
                     "line": 102,
                     "column": 41,
@@ -951,8 +951,8 @@
                     "endColumn": 42
                 },
                 {
-                    "start": 2582,
-                    "end": 2591,
+                    "start": 2587,
+                    "end": 2596,
                     "replacementText": "({ q: 3, w: 4 } as GeneratedObjectLiteralInterface_36)",
                     "line": 102,
                     "column": 41,
@@ -1092,8 +1092,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 3051,
-                    "end": 3051,
+                    "start": 3056,
+                    "end": 3056,
                     "replacementText": "class GeneratedObjectLiteralClass_1 {\n    m() { }\n}\n\n",
                     "line": 115,
                     "column": 13,
@@ -1101,8 +1101,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 3063,
-                    "end": 3073,
+                    "start": 3068,
+                    "end": 3078,
                     "replacementText": "new GeneratedObjectLiteralClass_1()",
                     "line": 115,
                     "column": 13,
@@ -1172,8 +1172,8 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 3759,
-                    "end": 3799,
+                    "start": 3764,
+                    "end": 3804,
                     "replacementText": "interface LocalType {\n    a: number;\n    b: string;\n}",
                     "line": 134,
                     "column": 22,
@@ -1253,8 +1253,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 4281,
-                    "end": 4282,
+                    "start": 4286,
+                    "end": 4287,
                     "replacementText": "\"a\"",
                     "line": 145,
                     "column": 33,
@@ -1262,8 +1262,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 4291,
-                    "end": 4292,
+                    "start": 4296,
+                    "end": 4297,
                     "replacementText": "\"b\"",
                     "line": 145,
                     "column": 33,
@@ -1271,8 +1271,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 4301,
-                    "end": 4302,
+                    "start": 4306,
+                    "end": 4307,
                     "replacementText": "\"c\"",
                     "line": 145,
                     "column": 33,
@@ -1302,8 +1302,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 4356,
-                    "end": 4359,
+                    "start": 4361,
+                    "end": 4364,
                     "replacementText": "\"foo\"",
                     "line": 151,
                     "column": 42,
@@ -1311,8 +1311,8 @@
                     "endColumn": 43
                 },
                 {
-                    "start": 4368,
-                    "end": 4371,
+                    "start": 4373,
+                    "end": 4376,
                     "replacementText": "\"bar\"",
                     "line": 151,
                     "column": 42,
@@ -1320,8 +1320,8 @@
                     "endColumn": 43
                 },
                 {
-                    "start": 4410,
-                    "end": 4413,
+                    "start": 4415,
+                    "end": 4418,
                     "replacementText": "\"baz\"",
                     "line": 151,
                     "column": 42,
@@ -1381,8 +1381,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 4701,
-                    "end": 4704,
+                    "start": 4706,
+                    "end": 4709,
                     "replacementText": "\"key\"",
                     "line": 171,
                     "column": 13,
@@ -1390,8 +1390,8 @@
                     "endColumn": 14
                 },
                 {
-                    "start": 4719,
-                    "end": 4726,
+                    "start": 4724,
+                    "end": 4731,
                     "replacementText": "\"message\"",
                     "line": 171,
                     "column": 13,

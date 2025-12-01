@@ -23,8 +23,8 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_1",
-                    "start": 663,
-                    "end": 671,
+                    "start": 668,
+                    "end": 676,
                     "line": 17,
                     "column": 5,
                     "endLine": 17,
@@ -32,8 +32,8 @@
                 },
                 {
                     "replacementText": "\nlet a = GeneratedDestructObj_1.a;\nlet b = GeneratedDestructObj_1.b;\n",
-                    "start": 689,
-                    "end": 689,
+                    "start": 694,
+                    "end": 694,
                     "line": 17,
                     "column": 5,
                     "endLine": 17,
@@ -63,8 +63,8 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_2",
-                    "start": 764,
-                    "end": 774,
+                    "start": 769,
+                    "end": 779,
                     "line": 20,
                     "column": 5,
                     "endLine": 26,
@@ -72,8 +72,8 @@
                 },
                 {
                     "replacementText": "\nlet a2 = GeneratedDestructObj_2.a2;\nlet b2 = GeneratedDestructObj_2.b2;\n",
-                    "start": 869,
-                    "end": 869,
+                    "start": 874,
+                    "end": 874,
                     "line": 20,
                     "column": 5,
                     "endLine": 26,
@@ -112,8 +112,8 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 760,
-                    "end": 760,
+                    "start": 765,
+                    "end": 765,
                     "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    c2: number;\n    d2: string;\n}\n",
                     "line": 25,
                     "column": 10,
@@ -121,8 +121,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 840,
-                    "end": 866,
+                    "start": 845,
+                    "end": 871,
                     "replacementText": "GeneratedTypeLiteralInterface_1",
                     "line": 25,
                     "column": 10,
@@ -152,8 +152,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 913,
-                    "end": 913,
+                    "start": 918,
+                    "end": 918,
                     "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n",
                     "line": 29,
                     "column": 20,
@@ -161,8 +161,8 @@
                     "endColumn": 21
                 },
                 {
-                    "start": 932,
-                    "end": 946,
+                    "start": 937,
+                    "end": 951,
                     "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)",
                     "line": 29,
                     "column": 20,
@@ -182,8 +182,8 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1043,
-                    "end": 1238,
+                    "start": 1048,
+                    "end": 1243,
                     "replacementText": "let fun = function () {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
                     "line": 32,
                     "column": 1,
@@ -203,8 +203,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1053,
-                    "end": 1238,
+                    "start": 1058,
+                    "end": 1243,
                     "replacementText": "() => {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
                     "line": 32,
                     "column": 11,
@@ -224,8 +224,8 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1071,
-                    "end": 1117,
+                    "start": 1076,
+                    "end": 1122,
                     "replacementText": "let o = {\n    'a': 1,\n    'b': 2\n}",
                     "line": 33,
                     "column": 5,
@@ -255,8 +255,8 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1124,
-                    "end": 1235,
+                    "start": 1129,
+                    "end": 1240,
                     "replacementText": "let o2 = {\n    'c': 3,\n    'd': 4,\n    5: {\n        x1: 10,\n        x2: 20\n    }\n}",
                     "line": 38,
                     "column": 5,
@@ -286,8 +286,8 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 1043,
-                    "end": 1043,
+                    "start": 1048,
+                    "end": 1048,
                     "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    x1: number;\n    x2: number;\n}\n",
                     "line": 41,
                     "column": 12,
@@ -295,8 +295,8 @@
                     "endColumn": 13
                 },
                 {
-                    "start": 1178,
-                    "end": 1228,
+                    "start": 1183,
+                    "end": 1233,
                     "replacementText": "({ x1: 10,\n    x2: 20 } as GeneratedObjectLiteralInterface_2)",
                     "line": 41,
                     "column": 12,
@@ -326,8 +326,8 @@
             "problem": "PrivateIdentifier",
             "autofix": [
                 {
-                    "start": 1299,
-                    "end": 1311,
+                    "start": 1304,
+                    "end": 1316,
                     "replacementText": "private a!: number;",
                     "line": 50,
                     "column": 5,

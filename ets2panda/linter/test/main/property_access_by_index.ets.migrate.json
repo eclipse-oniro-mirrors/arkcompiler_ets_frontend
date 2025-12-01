@@ -475,19 +475,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 181,
-            "column": 1,
-            "endLine": 181,
-            "endColumn": 10,
-            "problem": "LimitedStdLibNoSendableDecorator",
+            "line": 177,
+            "column": 23,
+            "endLine": 177,
+            "endColumn": 44,
+            "problem": "SendableClassInheritance",
             "suggest": "",
-            "rule": "Usage of standard library is restricted(arkts-limited-stdlib-no-sendable-decorator)",
+            "rule": "The inheritance for \"Sendable\" classes is limited (arkts-sendable-class-inheritance)",
             "severity": "ERROR"
         },
         {
-            "line": 197,
+            "line": 192,
             "column": 1,
-            "endLine": 197,
+            "endLine": 192,
             "endColumn": 5,
             "problem": "PropertyAccessByIndex",
             "suggest": "",
@@ -495,9 +495,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 198,
+            "line": 193,
             "column": 1,
-            "endLine": 198,
+            "endLine": 193,
             "endColumn": 7,
             "problem": "PropertyAccessByIndex",
             "suggest": "",
@@ -505,9 +505,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 201,
+            "line": 196,
             "column": 1,
-            "endLine": 201,
+            "endLine": 196,
             "endColumn": 23,
             "problem": "PropertyAccessByIndex",
             "suggest": "",
@@ -515,9 +515,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 213,
+            "line": 208,
             "column": 1,
-            "endLine": 213,
+            "endLine": 208,
             "endColumn": 20,
             "problem": "PropertyAccessByIndex",
             "suggest": "",

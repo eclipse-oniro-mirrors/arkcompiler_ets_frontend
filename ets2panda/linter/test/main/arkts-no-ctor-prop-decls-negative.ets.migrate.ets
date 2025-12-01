@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,12 +60,7 @@ interface GeneratedTypeLiteralInterface_1 {
     x: string;
 }
 class D {
-  public a: number;
-  private b: GeneratedTypeLiteralInterface_1;
-  constructor(a: number, b: GeneratedTypeLiteralInterface_1) {
-    this.a = a;
-    this.b = b;
-  } // not fixable
+  constructor(public a: number, private b: GeneratedTypeLiteralInterface_1) {} // not fixable
 }
 
 class E {
