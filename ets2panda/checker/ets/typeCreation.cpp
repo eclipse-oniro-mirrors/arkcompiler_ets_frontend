@@ -402,7 +402,7 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
             return bigIntObj;
         }
         case GlobalTypeId::ETS_ARRAY_BUILTIN: {
-            if (declNode->AsClassDefinition()->InternalName().Utf8() != compiler::Signatures::ESCOMPAT_ARRAY) {
+            if (declNode->AsClassDefinition()->InternalName().Utf8() != compiler::Signatures::STD_CORE_ARRAY) {
                 return checker->CreateETSObjectType(declNode, flags);
             }
             auto *arrayObj =
@@ -412,7 +412,7 @@ static ETSObjectType *InitializeGlobalBuiltinObjectType(ETSChecker *checker, Glo
         }
         case GlobalTypeId::ETS_READONLY_ARRAY:
             if (declNode->IsClassDefinition() || declNode->AsTSInterfaceDeclaration()->InternalName().Utf8() !=
-                                                     compiler::Signatures::ESCOMPAT_READONLYARRAY) {
+                                                     compiler::Signatures::STD_CORE_READONLYARRAY) {
                 return checker->CreateETSObjectType(declNode, flags);
             }
             return setType(globalId, create(ETSObjectFlags::BUILTIN_READONLY_ARRAY))->AsETSObjectType();

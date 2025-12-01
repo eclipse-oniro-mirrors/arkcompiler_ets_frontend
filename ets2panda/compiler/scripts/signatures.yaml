@@ -190,10 +190,10 @@ defines:
     ref: BUILTIN_RETENTION
   - name: 'Symbol'
     ref: SYMBOL
-  - name: 'escompat.Array'
-    ref: ESCOMPAT_ARRAY
+  - name: 'std.core.Array'
+    ref: STD_CORE_ARRAY
   - name: 'std.core.ReadonlyArray'
-    ref: ESCOMPAT_READONLYARRAY
+    ref: STD_CORE_READONLYARRAY
   - name: 'ByteType.VAL'
     ref: BYTETYPE_VAL
   - name: 'IntType.VAL'
@@ -427,7 +427,7 @@ builtins:
     package: PKG_STD_CORE
     ref: BUILTIN_BIGINT
   - name: Array
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_ARRAY
   - name: AssertionError
     package: PKG_STD_CORE

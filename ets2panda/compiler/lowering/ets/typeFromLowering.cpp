@@ -107,7 +107,7 @@ std::string HandleTypeParameter(ir::Expression *param, checker::ETSChecker *chec
     }
 
     if (source->IsETSArrayType()) {
-        return TypeToString(std::string(compiler::Signatures::ESCOMPAT_ARRAY));
+        return TypeToString(std::string(compiler::Signatures::STD_CORE_ARRAY));
     }
 
     return HandleSpecialTypes(source);
