@@ -165,7 +165,7 @@ export class LogData {
         }
 
         if (this.moreInfo) {
-            errorString += `\nMore Info:\n`;
+            errorString += '\nMore Info:\n';
             for (const [key, value] of Object.entries(this.moreInfo)) {
                 errorString += `  - ${key.toUpperCase()}: ${value}\n`;
             }

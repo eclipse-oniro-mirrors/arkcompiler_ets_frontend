@@ -29,7 +29,7 @@ function formLabelForNode(node: GraphNode<JobInfo>): string {
     return res;
 }
 
-function createNodes(dorGraph: dot.Digraph, graph: Graph<JobInfo>) {
+function createNodes(dorGraph: dot.Digraph, graph: Graph<JobInfo>): void {
     for (const node of graph.nodes) {
         const dotNode = new dot.Node(node.id, {
             [dot.attribute.shape]: 'record',
@@ -41,7 +41,7 @@ function createNodes(dorGraph: dot.Digraph, graph: Graph<JobInfo>) {
     }
 }
 
-function connectNodes(dotGraph: dot.Digraph, graph: Graph<JobInfo>) {
+function connectNodes(dotGraph: dot.Digraph, graph: Graph<JobInfo>): void {
     for (const node of graph.nodes) {
         for (const dependant of node.descendants) {
             const dependantNode = dotGraph.getNode(dependant)!

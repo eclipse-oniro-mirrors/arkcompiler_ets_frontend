@@ -123,7 +123,7 @@ export class DependencyAnalyzer {
         this.statsRecorder = new StatisticsRecorder(
             path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
             buildConfig.recordType,
-            `Dependency analyzer`
+            'Dependency analyzer'
         );
 
         this.clusteredBuild = clusteredBuild;
@@ -276,7 +276,7 @@ export class DependencyAnalyzer {
         });
 
         // Remove dependencies on itself
-        const removeItemIfNecessary = (item: [filePath: string, filePathes: string[]]) => {
+        const removeItemIfNecessary = (item: [filePath: string, filePathes: string[]]): void => {
             const filePath: string = item[0]
             const filePathes: string[] = item[1]
             const index = filePathes.indexOf(filePath)
