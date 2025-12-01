@@ -1,0 +1,178 @@
+{
+    "copyright": [
+        "Copyright (c) 2024-2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 18,
+            "column": 1,
+            "endLine": 18,
+            "endColumn": 15,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 1,
+            "endLine": 19,
+            "endColumn": 16,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 1,
+            "endLine": 20,
+            "endColumn": 21,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 10,
+            "endLine": 24,
+            "endColumn": 23,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 28,
+            "endLine": 28,
+            "endColumn": 42,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 9,
+            "endLine": 31,
+            "endColumn": 12,
+            "problem": "BuiltinNarrowTypes",
+            "suggest": "",
+            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 13,
+            "endLine": 31,
+            "endColumn": 23,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 14,
+            "endLine": 34,
+            "endColumn": 24,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 28,
+            "endLine": 45,
+            "endColumn": 32,
+            "problem": "FunctionBindError",
+            "suggest": "",
+            "rule": "'Function.bind' is not supported (arkts-no-func-bind)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 33,
+            "endLine": 45,
+            "endColumn": 43,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 1,
+            "endLine": 48,
+            "endColumn": 22,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 51,
+            "column": 21,
+            "endLine": 51,
+            "endColumn": 35,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 11,
+            "endLine": 55,
+            "endColumn": 21,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 12,
+            "endLine": 58,
+            "endColumn": 27,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 12,
+            "endLine": 62,
+            "endColumn": 27,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 32,
+            "endLine": 67,
+            "endColumn": 42,
+            "problem": "GlobalThisError",
+            "suggest": "",
+            "rule": "\"globalThis\" is not supported (arkts-no-globalthis)",
+            "severity": "ERROR"
+        }
+    ]
+}

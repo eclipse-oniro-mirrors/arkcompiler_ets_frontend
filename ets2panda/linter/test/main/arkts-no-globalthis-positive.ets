@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,34 @@
  * limitations under the License.
  */
 
-const pi = 3.1416;
 
-function circleArea(r: number): number {
-  foo(globalThis);
-
-  return globalThis.pi * r * r;
+// Using as parameter name
+interface CFE {
+  msg: string;
 }
 
-function foo(x: any): void {
-  console.log(x.pi);
+function foo(globalThis: CFE){
+  globalThis.msg
 }
 
-globalThis.abc = 200;
+// Using as property
+interface Prop {
+  globalThis: number;
+}
 
-const value = globalThis.obj.prop;
+const boo: Prop = { globalThis: 23 }
 
-delete globalThis.property;
+// checking type only
+const text: string = 'text1'
+if(typeof text === 'globalThis'){
+    console.log('It is globalThis')
+}
 
-globalThisprop = 100;
+// Using in String
+const str = 'globalThis.abc'
 
-specialAutofixLib.globalThis.get("pi");
-
-specialAutofixLib.globalThis.set("pi",3.1416);
-
-specialAutofixLib.globalThis;
+// JSDoc comment
+/**
+* @param {typeof globalThis} global
+*/
 

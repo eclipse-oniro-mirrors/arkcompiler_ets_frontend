@@ -24,10 +24,6 @@ namespace H {
     export class G {}
 }
 
-let c = C
-c = C
-let g = H.G
-g = H.G
 
 let ca = C.a
 let cb = C.b
@@ -35,19 +31,6 @@ let cb = C.b
 let cc = new C()
 let gg = new H.G()
 
-function foo1(arg: typeof C) {}
-foo1(C)
-
-function foo2(arg: C) {
-    return C
-}
-
-function foo3(arg: typeof H.G) {}
-foo3(H.G)
-
-function foo4(arg: H.G) {
-    return H.G
-}
 
 class A {}
 interface B {}
@@ -57,7 +40,6 @@ class CC extends A implements I, B {}
 class D {
     constructor(arg: typeof C) {}
 }
-new D(C)
 
 type X = D;
 
@@ -84,15 +66,9 @@ namespace test1 {
 enum Color { WHITE, BLUE, RED };
 let color: Color = Color.RED;
 
-for (let item = 0; item < Object.keys(Color).length; item++) {
-    console.log(item);
-}
-
-foo2(() => C);
 
 export { C as H };
 
-// #14228
 let data = new Select<Object>().from(C).eq('key').query(C); // Ok
 invalid_func(C); // Ok
 let a: any;
@@ -101,7 +77,6 @@ a.foo(C); // Ok
 let col = 'WHITE';
 console.log(Color[col])
 
-// #14184
 namespace NS {
     export enum E {
         A = 'A',
@@ -113,60 +88,12 @@ namespace NS {
 let s: string = 'B';
 let s2: string = NS.E[s];
 
-for (let item = 0; item < Object.keys(NS.E).length; item++) {
-    console.log(item);
-}
-
-/**
- * {@link C} - should not report error
- */
-class JSDocClass {}
 
 function classAsObject(x: any): void {}
 
-classAsObject(Object);
-classAsObject(Function);
 classAsObject(String);
 classAsObject(Boolean);
 classAsObject(Number);
-classAsObject(Math);
-classAsObject(Date);
-classAsObject(RegExp);
-classAsObject(Error);
-classAsObject(EvalError);
-classAsObject(RangeError);
-classAsObject(ReferenceError);
-classAsObject(SyntaxError);
-classAsObject(TypeError);
-classAsObject(URIError);
-classAsObject(AggregateError);
-classAsObject(JSON);
-classAsObject(Array);
-classAsObject(ArrayBuffer);
-classAsObject(DataView);
-classAsObject(Int8Array);
-classAsObject(Uint8Array);
-classAsObject(Uint8ClampedArray);
-classAsObject(Int16Array);
-classAsObject(Uint16Array);
-classAsObject(Int32Array);
-classAsObject(Uint32Array);
-classAsObject(Float32Array);
-classAsObject(Float64Array);
-classAsObject(Map);
-classAsObject(WeakMap);
-classAsObject(Set);
-classAsObject(WeakSet);
-classAsObject(Promise);
-classAsObject(Proxy);
-classAsObject(Symbol);
-classAsObject(SharedArrayBuffer);
-classAsObject(Atomics);
-classAsObject(BigInt);
-classAsObject(BigInt64Array);
-classAsObject(BigUint64Array);
-classAsObject(WeakRef);
-classAsObject(FinalizationRegistry);
 
 const aggrErr = AggregateError([new Error()]);
 const array = Array<number>(10);
@@ -187,16 +114,6 @@ const syntaxErr = SyntaxError('message');
 const typeErr = TypeError('message');
 const uriErr = URIError('message');
 
-let aaa4 = typeof DataView;
-
-let obj = new Object();
-switch (obj) {
-  case Object:
-    console.log('A');
-    break;
-  default:
-    console.log('F');
-}
 
 function parse(type: "number" | "boolean", value: string): number | boolean {
   return type === "number" ? Number(value) : value === "true";

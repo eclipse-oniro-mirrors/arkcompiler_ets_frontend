@@ -1,10 +1,12 @@
 {
     "copyright": [
-        "Copyright (c) 2022-2024 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
+        "",
         "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
         "Unless required by applicable law or agreed to in writing, software",
         "distributed under the License is distributed on an 'AS IS' BASIS,",
         "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
@@ -53,9 +55,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 38,
+            "line": 33,
             "column": 20,
-            "endLine": 38,
+            "endLine": 33,
             "endColumn": 26,
             "problem": "TypeQuery",
             "suggest": "",
@@ -63,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 39,
+            "line": 34,
             "column": 6,
-            "endLine": 39,
+            "endLine": 34,
             "endColumn": 7,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -73,9 +75,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 42,
+            "line": 37,
             "column": 12,
-            "endLine": 42,
+            "endLine": 37,
             "endColumn": 13,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -83,9 +85,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 45,
+            "line": 40,
             "column": 20,
-            "endLine": 45,
+            "endLine": 40,
             "endColumn": 26,
             "problem": "TypeQuery",
             "suggest": "",
@@ -93,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 46,
+            "line": 41,
             "column": 8,
-            "endLine": 46,
+            "endLine": 41,
             "endColumn": 9,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -103,9 +105,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 49,
+            "line": 44,
             "column": 14,
-            "endLine": 49,
+            "endLine": 44,
             "endColumn": 15,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -113,9 +115,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 58,
+            "line": 48,
             "column": 22,
-            "endLine": 58,
+            "endLine": 48,
             "endColumn": 28,
             "problem": "TypeQuery",
             "suggest": "",
@@ -123,9 +125,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 60,
+            "line": 50,
             "column": 7,
-            "endLine": 60,
+            "endLine": 50,
             "endColumn": 8,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -133,9 +135,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 87,
+            "line": 56,
             "column": 39,
-            "endLine": 87,
+            "endLine": 56,
             "endColumn": 44,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -143,9 +145,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 91,
+            "line": 60,
             "column": 12,
-            "endLine": 91,
+            "endLine": 60,
             "endColumn": 13,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -153,29 +155,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 96,
-            "column": 5,
-            "endLine": 96,
-            "endColumn": 59,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 98,
-            "column": 8,
-            "endLine": 98,
-            "endColumn": 11,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 116,
+            "line": 70,
             "column": 42,
-            "endLine": 116,
+            "endLine": 70,
             "endColumn": 43,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -183,9 +165,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 125,
+            "line": 75,
             "column": 27,
-            "endLine": 125,
+            "endLine": 75,
             "endColumn": 30,
             "problem": "AnyType",
             "suggest": "",
@@ -193,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 127,
+            "line": 77,
             "column": 15,
-            "endLine": 127,
+            "endLine": 77,
             "endColumn": 21,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -203,9 +185,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 128,
+            "line": 78,
             "column": 15,
-            "endLine": 128,
+            "endLine": 78,
             "endColumn": 23,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -213,9 +195,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 132,
+            "line": 79,
             "column": 15,
-            "endLine": 132,
+            "endLine": 79,
             "endColumn": 19,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -223,9 +205,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 133,
+            "line": 80,
             "column": 15,
-            "endLine": 133,
+            "endLine": 80,
             "endColumn": 19,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -233,9 +215,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 134,
+            "line": 81,
             "column": 15,
-            "endLine": 134,
+            "endLine": 81,
             "endColumn": 21,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -243,9 +225,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 135,
+            "line": 82,
             "column": 15,
-            "endLine": 135,
+            "endLine": 82,
             "endColumn": 20,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -253,9 +235,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 136,
+            "line": 83,
             "column": 15,
-            "endLine": 136,
+            "endLine": 83,
             "endColumn": 24,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -263,9 +245,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 137,
+            "line": 84,
             "column": 15,
-            "endLine": 137,
+            "endLine": 84,
             "endColumn": 25,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -273,9 +255,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 138,
+            "line": 85,
             "column": 15,
-            "endLine": 138,
+            "endLine": 85,
             "endColumn": 29,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -283,9 +265,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 139,
+            "line": 86,
             "column": 15,
-            "endLine": 139,
+            "endLine": 86,
             "endColumn": 26,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -293,9 +275,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 140,
+            "line": 87,
             "column": 15,
-            "endLine": 140,
+            "endLine": 87,
             "endColumn": 24,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -303,9 +285,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 141,
+            "line": 88,
             "column": 15,
-            "endLine": 141,
+            "endLine": 88,
             "endColumn": 23,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -313,9 +295,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 142,
+            "line": 89,
             "column": 15,
-            "endLine": 142,
+            "endLine": 89,
             "endColumn": 29,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -323,9 +305,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 143,
+            "line": 90,
             "column": 15,
-            "endLine": 143,
+            "endLine": 90,
             "endColumn": 19,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -333,9 +315,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 144,
+            "line": 91,
             "column": 15,
-            "endLine": 144,
+            "endLine": 91,
             "endColumn": 20,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -343,9 +325,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 145,
+            "line": 92,
             "column": 15,
-            "endLine": 145,
+            "endLine": 92,
             "endColumn": 26,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -353,9 +335,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 146,
+            "line": 93,
             "column": 15,
-            "endLine": 146,
+            "endLine": 93,
             "endColumn": 23,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -363,9 +345,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 147,
+            "line": 94,
             "column": 15,
-            "endLine": 147,
+            "endLine": 94,
             "endColumn": 24,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -373,9 +355,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 148,
+            "line": 95,
             "column": 15,
-            "endLine": 148,
+            "endLine": 95,
             "endColumn": 25,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -383,9 +365,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 149,
+            "line": 96,
             "column": 15,
-            "endLine": 149,
+            "endLine": 96,
             "endColumn": 32,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -393,9 +375,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 150,
+            "line": 97,
             "column": 15,
-            "endLine": 150,
+            "endLine": 97,
             "endColumn": 25,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -403,9 +385,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 151,
+            "line": 98,
             "column": 15,
-            "endLine": 151,
+            "endLine": 98,
             "endColumn": 26,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -413,9 +395,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 152,
+            "line": 99,
             "column": 15,
-            "endLine": 152,
+            "endLine": 99,
             "endColumn": 25,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -423,9 +405,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 153,
+            "line": 100,
             "column": 15,
-            "endLine": 153,
+            "endLine": 100,
             "endColumn": 26,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -433,9 +415,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 154,
+            "line": 101,
             "column": 15,
-            "endLine": 154,
+            "endLine": 101,
             "endColumn": 27,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -443,9 +425,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 155,
+            "line": 102,
             "column": 15,
-            "endLine": 155,
+            "endLine": 102,
             "endColumn": 27,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -453,9 +435,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 156,
+            "line": 103,
             "column": 15,
-            "endLine": 156,
+            "endLine": 103,
             "endColumn": 18,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -463,9 +445,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 157,
+            "line": 104,
             "column": 15,
-            "endLine": 157,
+            "endLine": 104,
             "endColumn": 22,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -473,9 +455,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 158,
+            "line": 105,
             "column": 15,
-            "endLine": 158,
+            "endLine": 105,
             "endColumn": 18,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -483,9 +465,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 159,
+            "line": 106,
             "column": 15,
-            "endLine": 159,
+            "endLine": 106,
             "endColumn": 22,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -493,9 +475,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 160,
+            "line": 107,
             "column": 15,
-            "endLine": 160,
+            "endLine": 107,
             "endColumn": 22,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -503,9 +485,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 161,
+            "line": 108,
             "column": 15,
-            "endLine": 161,
+            "endLine": 108,
             "endColumn": 20,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -513,9 +495,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 162,
+            "line": 109,
             "column": 15,
-            "endLine": 162,
+            "endLine": 109,
             "endColumn": 21,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -523,9 +505,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 163,
+            "line": 110,
             "column": 15,
-            "endLine": 163,
+            "endLine": 110,
             "endColumn": 32,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -533,9 +515,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 164,
+            "line": 111,
             "column": 15,
-            "endLine": 164,
+            "endLine": 111,
             "endColumn": 22,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -543,9 +525,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 165,
+            "line": 112,
             "column": 15,
-            "endLine": 165,
+            "endLine": 112,
             "endColumn": 21,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -553,9 +535,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 166,
+            "line": 113,
             "column": 15,
-            "endLine": 166,
+            "endLine": 113,
             "endColumn": 28,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -563,9 +545,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 167,
+            "line": 114,
             "column": 15,
-            "endLine": 167,
+            "endLine": 114,
             "endColumn": 29,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -573,9 +555,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 168,
+            "line": 115,
             "column": 15,
-            "endLine": 168,
+            "endLine": 115,
             "endColumn": 22,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -583,9 +565,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 169,
+            "line": 116,
             "column": 15,
-            "endLine": 169,
+            "endLine": 116,
             "endColumn": 35,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -593,29 +575,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 180,
-            "column": 7,
-            "endLine": 180,
-            "endColumn": 21,
-            "problem": "AnyType",
-            "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 185,
-            "column": 13,
-            "endLine": 185,
-            "endColumn": 30,
-            "problem": "SymbolType",
-            "suggest": "",
-            "rule": "\"Symbol()\" API is not supported (arkts-no-symbol)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 190,
+            "line": 119,
             "column": 19,
-            "endLine": 190,
+            "endLine": 119,
             "endColumn": 27,
             "problem": "ClassAsObject",
             "suggest": "",
@@ -623,9 +585,9 @@
             "severity": "WARNING"
         },
         {
-            "line": 194,
+            "line": 123,
             "column": 8,
-            "endLine": 194,
+            "endLine": 123,
             "endColumn": 14,
             "problem": "ClassAsObject",
             "suggest": "",
