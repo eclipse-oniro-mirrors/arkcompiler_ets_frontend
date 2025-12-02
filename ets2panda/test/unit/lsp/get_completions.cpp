@@ -63,6 +63,45 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 
 namespace {
 
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionMemberKeyWord)
+{
+    std::vector<std::string> files = {"getCompletionsAtPositionMemberKeyWord.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class Person {
+    name: string = '';
+    age: number = 0;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    introduce(name: string, age: number): void {}
+ }
+
+ let p: Person = new Person("ab", 18);
+ p.int
+ p.in
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset1 = 262;  // p.int
+    size_t const offset2 = 268;  // p.in
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res1 = lspApi->getCompletionsAtPosition(ctx, offset1);
+    auto res2 = lspApi->getCompletionsAtPosition(ctx, offset2);
+    auto expectedEntries1 = std::vector<CompletionEntry> {CompletionEntry(
+        "introduce", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "introduce()")};
+    AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
+    AssertCompletionsContainAndNotContainEntries(res2.GetEntries(), expectedEntries1, {});
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionParamMember)
 {
     std::vector<std::string> files = {"getCompletionsAtPositionParamMember.ets"};
