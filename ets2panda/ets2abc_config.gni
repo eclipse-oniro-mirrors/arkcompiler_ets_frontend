@@ -62,11 +62,16 @@ template("ets2abc_gen_abc") {
     deps = extra_dependencies
     deps += ets2abc_build_deps
 
+    extra_args = ""
+    if (defined(invoker.arktsconfig)) {
+      extra_args += " --arktsconfig "+ rebase_path(invoker.arktsconfig)
+    }
+
     args = [
       "--script-file",
       rebase_path("${ets2abc_build_path}/es2panda"),
       "--script-args",
-      "--output " + invoker.dst_file + " --opt-level=0" + " " + invoker.src_ets,
+      "--output " + invoker.dst_file + " --opt-level=0" + extra_args + " " + invoker.src_ets,
       "--env-path",
       rebase_path("${ets2abc_out_root}/arkcompiler/runtime_core/") + ":" +
           rebase_path("${ets2abc_out_root}/arkcompiler/ets_frontend/") + ":" +
