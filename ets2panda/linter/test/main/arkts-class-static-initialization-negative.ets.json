@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 67,
+            "line": 61,
             "column": 18,
-            "endLine": 67,
+            "endLine": 61,
             "endColumn": 19,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 82,
             "column": 36,
-            "endLine": 88,
+            "endLine": 82,
             "endColumn": 37,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 94,
+            "line": 88,
             "column": 37,
-            "endLine": 94,
+            "endLine": 88,
             "endColumn": 38,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 95,
+            "line": 89,
             "column": 37,
-            "endLine": 95,
+            "endLine": 89,
             "endColumn": 38,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 97,
+            "line": 91,
             "column": 15,
-            "endLine": 97,
+            "endLine": 91,
             "endColumn": 16,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 115,
+            "line": 109,
             "column": 37,
-            "endLine": 115,
+            "endLine": 109,
             "endColumn": 71,
             "problem": "IntersectionType",
             "suggest": "",
@@ -75,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 115,
+            "line": 109,
             "column": 37,
-            "endLine": 115,
+            "endLine": 109,
             "endColumn": 38,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -85,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 115,
+            "line": 109,
             "column": 56,
-            "endLine": 115,
+            "endLine": 109,
             "endColumn": 57,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -95,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 140,
+            "line": 134,
             "column": 43,
-            "endLine": 140,
+            "endLine": 134,
             "endColumn": 44,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -105,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 141,
+            "line": 135,
             "column": 46,
-            "endLine": 141,
+            "endLine": 135,
             "endColumn": 47,
             "problem": "ObjectTypeLiteral",
             "suggest": "",
@@ -115,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 170,
+            "line": 164,
             "column": 32,
-            "endLine": 170,
+            "endLine": 164,
             "endColumn": 39,
             "problem": "UnknownType",
             "suggest": "",
@@ -125,9 +125,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 171,
+            "line": 165,
             "column": 28,
-            "endLine": 171,
+            "endLine": 165,
             "endColumn": 31,
             "problem": "AnyType",
             "suggest": "",
@@ -135,9 +135,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 147,
+            "line": 141,
             "column": 3,
-            "endLine": 147,
+            "endLine": 141,
             "endColumn": 5,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'id' has no initializer and is not definitely assigned in the constructor.",
@@ -145,9 +145,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 148,
+            "line": 142,
             "column": 3,
-            "endLine": 148,
+            "endLine": 142,
             "endColumn": 7,
             "problem": "StrictDiagnostic",
             "suggest": "Property 'name' has no initializer and is not definitely assigned in the constructor.",

@@ -1,0 +1,88 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 219,
+            "column": 28,
+            "endLine": 219,
+            "endColumn": 48,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 226,
+            "column": 6,
+            "endLine": 226,
+            "endColumn": 26,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 233,
+            "column": 4,
+            "endLine": 233,
+            "endColumn": 24,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 238,
+            "column": 21,
+            "endLine": 238,
+            "endColumn": 41,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 248,
+            "column": 17,
+            "endLine": 248,
+            "endColumn": 18,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 249,
+            "column": 28,
+            "endLine": 249,
+            "endColumn": 48,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 252,
+            "column": 32,
+            "endLine": 252,
+            "endColumn": 52,
+            "problem": "SendableAsExpr",
+            "suggest": "",
+            "rule": "Casting \"Non-sendable\" data to \"Sendable\" type is not allowed (arkts-sendable-as-expr)",
+            "severity": "ERROR"
+        }
+    ]
+}

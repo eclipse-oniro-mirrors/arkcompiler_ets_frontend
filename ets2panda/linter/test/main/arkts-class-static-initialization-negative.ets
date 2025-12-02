@@ -25,19 +25,13 @@ class C {
   static g: G
 }
 
-const c = new C();
-
 class D {
-  static a: A | undefined = undefined
   static g: G;
 }
 
 class F {
-  static a: A 
-  static g: G | undefined = undefined;
+  static a: A
 }
-
-const f = new F();
 
 @Entry
 @Component
@@ -170,7 +164,6 @@ class SpecialTypes {
   static uninitializedUnknown: unknown;
   static uninitializedAny: any;
 }
-
 
 class Test1 {
   static count: string | undefined;
