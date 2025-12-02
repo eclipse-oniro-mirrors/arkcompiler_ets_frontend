@@ -1,0 +1,11 @@
+export declare class Base {
+    constructor();
+}
+export declare class Sub1 extends Base {
+    public foo(a: number): string;
+    constructor();
+}
+export declare class Sub2 extends Base {
+    public foo(a: number): string;
+    constructor();
+}
