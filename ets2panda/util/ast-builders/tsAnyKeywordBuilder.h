@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSAnyKeywordBuilder : public AstBuilder<TSAnyKeyword> {
 public:
-    explicit TSAnyKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSAnyKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSAnyKeyword *Build()
     {

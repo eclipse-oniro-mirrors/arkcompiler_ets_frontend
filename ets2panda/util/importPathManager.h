@@ -226,7 +226,7 @@ public:
 
 private:
     const parser::ETSParser *parser_;
-    ark::ArenaAllocator *const allocator_;
+    ArenaAllocator *const allocator_;
     const std::shared_ptr<ArkTsConfig> &arktsConfig_;
     util::StringView absoluteEtsPath_;
     const std::string &stdLib_;

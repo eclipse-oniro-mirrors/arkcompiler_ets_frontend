@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TaggedTemplateExpressionBuilder : public AstBuilder<TaggedTemplateExpression> {
 public:
-    explicit TaggedTemplateExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TaggedTemplateExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TaggedTemplateExpressionBuilder &SetTag(Expression *tag)
     {

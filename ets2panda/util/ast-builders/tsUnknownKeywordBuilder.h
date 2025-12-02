@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSUnknownKeywordBuilder : public AstBuilder<TSUnknownKeyword> {
 public:
-    explicit TSUnknownKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSUnknownKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSUnknownKeyword *Build()
     {

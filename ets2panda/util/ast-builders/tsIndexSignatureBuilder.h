@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSIndexSignatureBuilder : public AstBuilder<TSIndexSignature> {
 public:
-    explicit TSIndexSignatureBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSIndexSignatureBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSIndexSignatureBuilder &SetParam(Expression *param)
     {

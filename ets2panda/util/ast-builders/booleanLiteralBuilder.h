@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class BooleanLiteralBuilder : public AstBuilder<ir::BooleanLiteral> {
 public:
-    explicit BooleanLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit BooleanLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     BooleanLiteralBuilder &SetValue(bool val)
     {

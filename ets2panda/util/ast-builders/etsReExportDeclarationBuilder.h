@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSReExportDeclarationBuilder : public AstBuilder<ir::ETSReExportDeclaration> {
 public:
-    explicit ETSReExportDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSReExportDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSReExportDeclarationBuilder &SetETSImportDeclaration(ETSImportDeclaration *etsImportDeclarations)
     {

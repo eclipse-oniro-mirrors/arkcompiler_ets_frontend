@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeOperatorBuilder : public AstBuilder<TSTypeOperator> {
 public:
-    explicit TSTypeOperatorBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypeOperatorBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypeOperatorBuilder &SetType(TypeNode *type)
     {

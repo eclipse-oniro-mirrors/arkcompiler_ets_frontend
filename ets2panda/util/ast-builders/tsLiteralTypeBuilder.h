@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSLiteralTypeBuilder : public AstBuilder<TSLiteralType> {
 public:
-    explicit TSLiteralTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSLiteralTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSLiteralTypeBuilder &SetFunctionSignature(Expression *literal)
     {

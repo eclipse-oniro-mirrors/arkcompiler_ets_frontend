@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSClassImplementsBuilder : public AstBuilder<ir::TSClassImplements> {
 public:
-    explicit TSClassImplementsBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSClassImplementsBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSClassImplementsBuilder &SetExpression(Expression *expression)
     {

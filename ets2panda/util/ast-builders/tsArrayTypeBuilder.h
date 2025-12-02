@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSArrayTypeBuilder : public AstBuilder<TSArrayType> {
 public:
-    explicit TSArrayTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSArrayTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSArrayTypeBuilder &SetExpression(TypeNode *elementType)
     {

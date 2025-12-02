@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class YieldExpressionBuilder : public AstBuilder<ir::YieldExpression> {
 public:
-    explicit YieldExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit YieldExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     YieldExpressionBuilder &SetArgument(Expression *argument)
     {

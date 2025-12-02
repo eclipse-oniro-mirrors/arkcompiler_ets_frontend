@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class UnaryExpressionBuilder : public AstBuilder<ir::UnaryExpression> {
 public:
-    explicit UnaryExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit UnaryExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     UnaryExpressionBuilder &SetOperator(lexer::TokenType op)
     {

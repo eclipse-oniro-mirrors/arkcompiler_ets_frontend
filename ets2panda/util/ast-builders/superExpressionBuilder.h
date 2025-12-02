@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class SuperExpressionBuilder : public AstBuilder<ir::SuperExpression> {
 public:
-    explicit SuperExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit SuperExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     SuperExpression *Build()
     {

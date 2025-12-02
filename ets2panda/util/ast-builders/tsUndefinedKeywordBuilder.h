@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSUndefinedKeywordBuilder : public AstBuilder<TSUndefinedKeyword> {
 public:
-    explicit TSUndefinedKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSUndefinedKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSUndefinedKeyword *Build()
     {

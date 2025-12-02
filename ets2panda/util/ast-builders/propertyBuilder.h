@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class PropertyBuilder : public AstBuilder<ir::Property> {
 public:
-    explicit PropertyBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit PropertyBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     PropertyBuilder &SetKind(PropertyKind kind)
     {

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSUndefinedTypeBuilder : public AstBuilder<ETSUndefinedType> {
 public:
-    explicit ETSUndefinedTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSUndefinedTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSUndefinedType *Build()
     {

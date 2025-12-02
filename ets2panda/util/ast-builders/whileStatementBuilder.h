@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class WhileStatementBuilder : public AstBuilder<ir::WhileStatement> {
 public:
-    explicit WhileStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit WhileStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     WhileStatementBuilder &SetTest(Expression *test)
     {

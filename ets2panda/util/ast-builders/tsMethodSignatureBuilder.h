@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSMethodSignatureBuilder : public AstBuilder<TSMethodSignature> {
 public:
-    explicit TSMethodSignatureBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSMethodSignatureBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSMethodSignatureBuilder &SetFunctionSignature(ir::FunctionSignature *signature)
     {

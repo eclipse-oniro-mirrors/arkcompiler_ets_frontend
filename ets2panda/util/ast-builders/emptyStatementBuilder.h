@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class EmptyStatementBuilder : public AstBuilder<ir::EmptyStatement> {
 public:
-    explicit EmptyStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit EmptyStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     EmptyStatement *Build()
     {

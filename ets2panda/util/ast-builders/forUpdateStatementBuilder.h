@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ForUpdateStatementBuilder : public AstBuilder<ir::ForUpdateStatement> {
 public:
-    explicit ForUpdateStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ForUpdateStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ForUpdateStatementBuilder &SetInit(AstNode *init)
     {

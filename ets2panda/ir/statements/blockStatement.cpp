@@ -22,7 +22,6 @@
 #include "checker/ETSchecker.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 void BlockStatement::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)

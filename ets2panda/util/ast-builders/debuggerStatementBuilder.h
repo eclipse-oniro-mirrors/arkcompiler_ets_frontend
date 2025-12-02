@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class DebuggerStatementBuilder : public AstBuilder<ir::DebuggerStatement> {
 public:
-    explicit DebuggerStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit DebuggerStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     DebuggerStatement *Build()
     {

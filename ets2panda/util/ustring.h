@@ -17,7 +17,7 @@
 #define ES2PANDA_UTIL_INCLUDE_USTRING_H
 
 #include "util/es2pandaMacros.h"
-#include "libarkbase/utils/arena_containers.h"
+#include "util/eheap.h"
 
 #include <cstddef>
 #include <limits>

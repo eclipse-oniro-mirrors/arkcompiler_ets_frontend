@@ -19,7 +19,6 @@
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/phase.h"
 #include "libarkbase/os/file.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "parser/program/program.h"
 #include "util/eheap.h"
 #include "util/options.h"

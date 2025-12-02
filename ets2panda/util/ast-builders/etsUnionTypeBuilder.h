@@ -24,9 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSUnionTypeBuilder : public AstBuilder<ETSUnionType> {
 public:
-    explicit ETSUnionTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator), types_(allocator->Adapter())
-    {
-    }
+    explicit ETSUnionTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), types_(allocator->Adapter()) {}
 
     ETSUnionTypeBuilder &AddType(ir::TypeNode *type)
     {

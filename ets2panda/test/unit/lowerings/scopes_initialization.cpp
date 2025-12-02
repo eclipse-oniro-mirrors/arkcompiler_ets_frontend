@@ -31,7 +31,7 @@ public:
 
     ScopesInitPhaseTest() : allocator_(EHeap::NewAllocator()), nodeGen_(allocator_.get()) {}
 
-    ark::ArenaAllocator *Allocator()
+    ArenaAllocator *Allocator()
     {
         return allocator_.get();
     }
@@ -45,7 +45,7 @@ public:
     NO_MOVE_SEMANTIC(ScopesInitPhaseTest);
 
 private:
-    std::unique_ptr<ark::ArenaAllocator> allocator_;
+    std::unique_ptr<ArenaAllocator> allocator_;
     gtests::NodeGenerator nodeGen_;
 };
 

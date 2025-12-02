@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSConditionalTypeBuilder : public AstBuilder<TSConditionalType> {
 public:
-    explicit TSConditionalTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSConditionalTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSConditionalTypeBuilder &SetCheckType(Expression *checkType)
     {

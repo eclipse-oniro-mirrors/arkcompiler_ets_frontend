@@ -25,7 +25,7 @@ namespace ark::es2panda::ir {
 
 class AwaitExpressionBuilder : public AstBuilder<ir::AwaitExpression> {
 public:
-    explicit AwaitExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit AwaitExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     AwaitExpressionBuilder &SetArgument(Expression *arg)
     {

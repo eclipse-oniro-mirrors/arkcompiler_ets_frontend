@@ -23,7 +23,7 @@ namespace ark::es2panda::ir {
 
 class TSQualifiedNameBuilder : public AstBuilder<ir::TSQualifiedName> {
 public:
-    explicit TSQualifiedNameBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSQualifiedNameBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSQualifiedNameBuilder &SetLeft(Expression *left)
     {

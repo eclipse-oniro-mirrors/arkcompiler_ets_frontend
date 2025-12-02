@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSNullKeywordBuilder : public AstBuilder<TSNullKeyword> {
 public:
-    explicit TSNullKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSNullKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSNullKeyword *Build()
     {

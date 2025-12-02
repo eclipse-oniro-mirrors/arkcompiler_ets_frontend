@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSNamedTupleMemberBuilder : public AstBuilder<TSNamedTupleMember> {
 public:
-    explicit TSNamedTupleMemberBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSNamedTupleMemberBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSNamedTupleMemberBuilder &SetLabel(Expression *label)
     {

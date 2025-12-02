@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class NumberLiteralBuilder : public AstBuilder<ir::NumberLiteral> {
 public:
-    explicit NumberLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit NumberLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     NumberLiteralBuilder &SetValue(lexer::Number const value)
     {

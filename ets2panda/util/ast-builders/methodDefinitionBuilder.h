@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class MethodDefinitionBuilder : public AstBuilder<ir::MethodDefinition> {
 public:
-    explicit MethodDefinitionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit MethodDefinitionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     MethodDefinitionBuilder &SetMethodDefinitionKind(MethodDefinitionKind const kind)
     {

@@ -19,7 +19,6 @@
 #include "util/ustring.h"
 #include "util/options.h"
 
-#include "libarkbase/utils/arena_containers.h"
 #include "libarkfile/debug_info_extractor.h"
 #include "libarkfile/file.h"
 

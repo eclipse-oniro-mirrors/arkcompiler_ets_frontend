@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeAssertionBuilder : public AstBuilder<TSTypeAssertion> {
 public:
-    explicit TSTypeAssertionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypeAssertionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypeAssertionBuilder &SetExpression(Expression *expression)
     {

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ExportSpecifierBuilder : public AstBuilder<ir::ExportSpecifier> {
 public:
-    explicit ExportSpecifierBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ExportSpecifierBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ExportSpecifierBuilder &SetLocal(Identifier *local)
     {

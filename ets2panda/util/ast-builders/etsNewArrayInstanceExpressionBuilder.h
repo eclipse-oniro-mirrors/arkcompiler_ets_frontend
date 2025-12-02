@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSNewArrayInstanceExpressionBuilder : public AstBuilder<ETSNewArrayInstanceExpression> {
 public:
-    explicit ETSNewArrayInstanceExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSNewArrayInstanceExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSNewArrayInstanceExpressionBuilder &SetTypeReference(TypeNode *typeReference)
     {

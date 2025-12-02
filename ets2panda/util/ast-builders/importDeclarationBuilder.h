@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ImportDeclarationBuilder : public AstBuilder<ir::ImportDeclaration> {
 public:
-    explicit ImportDeclarationBuilder(ark::ArenaAllocator *allocator)
+    explicit ImportDeclarationBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), specifiers_(allocator->Adapter())
     {
     }

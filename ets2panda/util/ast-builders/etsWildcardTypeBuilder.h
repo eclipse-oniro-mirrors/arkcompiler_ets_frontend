@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSWildcardTypeBuilder : public AstBuilder<ETSWildcardType> {
 public:
-    explicit ETSWildcardTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSWildcardTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSWildcardTypeBuilder &SetETSTypeReference(ir::ETSTypeReference *typeReference)
     {

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class CatchClauseBuilder : public AstBuilder<ir::CatchClause> {
 public:
-    explicit CatchClauseBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit CatchClauseBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     CatchClauseBuilder &SetParam(Expression *param)
     {
