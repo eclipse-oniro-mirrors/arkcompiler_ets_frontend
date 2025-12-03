@@ -298,10 +298,6 @@ static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *type
     if (typeArgument->IsTypeError()) {
         return true;
     }
-    // NOTE(vpukhov): #19701 void refactoring
-    if (typeArgument->IsETSVoidType()) {
-        typeArgument = checker->GlobalETSUndefinedType();
-    }
     ES2PANDA_ASSERT(ETSChecker::IsReferenceType(typeArgument));
     auto constraint = typeParam->GetConstraintType()->Substitute(checker->Relation(), substitution);
     return checker->Relation()->IsSupertypeOf(constraint, typeArgument);
