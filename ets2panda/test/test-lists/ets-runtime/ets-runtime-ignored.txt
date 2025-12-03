@@ -127,3 +127,6 @@ readonly_array/readonly_array_arg.ets
 readonly_array/readonly_array_field.ets
 readonly_array/readonly_array_var.ets
 finallyClauseThrow.ets
+
+#31690 to review after merge
+namespace_tests/namespace_import_type_test/namespace_import.ets
