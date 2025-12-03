@@ -358,16 +358,15 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
     }
 }
 
-static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *interfaceDecl)
+static bool AllMethodsHaveBody(ir::TSInterfaceDeclaration *interfaceDecl)
 {
-    if (auto const *const type = interfaceDecl->TsType();
-        type != nullptr && (type->AsETSObjectType()->IsGradual() || type->IsTypeError())) {
-        return false;
-    }
+    ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
+
     for (auto it : interfaceDecl->Body()->Body()) {
         if (it->IsOverloadDeclaration()) {
             continue;
         }
+
         ES2PANDA_ASSERT(it->IsMethodDefinition());
         auto methodDef = it->AsMethodDefinition();
         ES2PANDA_ASSERT(methodDef->Function());
@@ -375,12 +374,34 @@ static bool CheckInterfaceShouldGenerateAnonClass(ir::TSInterfaceDeclaration *in
             !methodDef->Function()->IsSetter()) {
             return false;
         }
+
         for (auto const *const overload : methodDef->Overloads()) {
             ES2PANDA_ASSERT(overload->Function());
             if (!overload->Function()->HasBody() && !overload->Function()->IsGetter() &&
                 !overload->Function()->IsSetter()) {
                 return false;
             }
+        }
+    }
+
+    return true;
+}
+
+static bool CheckInterfaceShouldGenerateAnonClass(checker::ETSChecker *checker,
+                                                  ir::TSInterfaceDeclaration *interfaceDecl)
+{
+    checker::Type const *const interfaceType = interfaceDecl->Check(checker);
+    if (interfaceType == nullptr || interfaceType->IsTypeError() || interfaceType->AsETSObjectType()->IsGradual()) {
+        return false;
+    }
+
+    if (!AllMethodsHaveBody(interfaceDecl)) {
+        return false;
+    }
+
+    for (auto const *type : interfaceType->AsETSObjectType()->Interfaces()) {
+        if (!AllMethodsHaveBody(type->GetDeclNode()->AsTSInterfaceDeclaration())) {
+            return false;
         }
     }
 
@@ -551,14 +572,9 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
                                                                                       : checker->GlobalTypeError();
 }
 
-static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
-                                               ir::ObjectExpression *objectExpr)
+static bool CheckInterface(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
+                           ir::ObjectExpression *objectExpr)
 {
-    // NOTE(vpukhov): 31391: some interface types still have no type set in the BuildBasicInterfaceProperties
-    if (interfaceDecl->TsType() != nullptr && interfaceDecl->TsType()->AsETSObjectType()->IsGradual()) {
-        return false;
-    }
-
     //  Lambda checks if any method defined in object literal overrides empty method declared in interface.
     auto const checkOverriding = [checker, objectExpr](ir::ScriptFunction *function) -> bool {
         if (function->HasBody() || function->IsGetter() || function->IsSetter()) {
@@ -590,6 +606,8 @@ static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir:
         return false;
     };
 
+    ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
+
     for (auto it : interfaceDecl->Body()->Body()) {
         if (it->IsOverloadDeclaration()) {
             continue;
@@ -602,6 +620,27 @@ static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir:
             if (!checkOverriding(overload->Function())) {
                 return false;
             }
+        }
+    }
+
+    return true;
+}
+
+static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
+                                               ir::ObjectExpression *objectExpr)
+{
+    checker::Type const *const interfaceType = interfaceDecl->Check(checker);
+    if (interfaceType == nullptr || interfaceType->IsTypeError() || interfaceType->AsETSObjectType()->IsGradual()) {
+        return false;
+    }
+
+    if (!CheckInterface(checker, interfaceDecl, objectExpr)) {
+        return false;
+    }
+
+    for (auto const *type : interfaceType->AsETSObjectType()->Interfaces()) {
+        if (!CheckInterface(checker, type->GetDeclNode()->AsTSInterfaceDeclaration(), objectExpr)) {
+            return false;
         }
     }
 
@@ -625,7 +664,7 @@ static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::
         }
         // because of lazy checker auxilary classes can be no created here
         interfaceDecl->Check(checker);
-        if (CheckInterfaceShouldGenerateAnonClass(interfaceDecl)) {
+        if (CheckInterfaceShouldGenerateAnonClass(checker, interfaceDecl)) {
             return GenerateAnonClassFromInterface(ctx, interfaceDecl);
         }
     }
@@ -714,17 +753,17 @@ static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *class
 }
 
 static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *program,
-                                   std::unordered_set<ir::AstNode *> *requiredTypes)
+                                   std::unordered_set<ir::AstNode *> &requiredTypes)
 {
     auto const cmode = ctx->config->options->GetCompilationMode();
     bool isLocal = program == ctx->parserProgram || cmode == CompilationMode::GEN_STD_LIB ||
                    (cmode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE && program->IsGenAbcForExternal());
 
-    auto const isRequired = [requiredTypes, isLocal](checker::ETSObjectType *type) {
+    auto const isRequired = [&requiredTypes, isLocal](checker::ETSObjectType *type) {
         if (isLocal && (type->GetDeclNode()->IsExported() || type->GetDeclNode()->IsDefaultExported())) {
             return true;
         }
-        return requiredTypes->find(type->GetDeclNode()) != requiredTypes->end();
+        return requiredTypes.find(type->GetDeclNode()) != requiredTypes.end();
     };
 
     program->Ast()->IterateRecursivelyPostorder([ctx, program, isRequired](ir::AstNode *ast) -> void {
@@ -733,7 +772,7 @@ static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *pr
         }
         if (ast->IsTSInterfaceDeclaration() &&
             isRequired(ast->AsTSInterfaceDeclaration()->TsType()->AsETSObjectType()) &&
-            CheckInterfaceShouldGenerateAnonClass(ast->AsTSInterfaceDeclaration())) {
+            CheckInterfaceShouldGenerateAnonClass(ctx->GetChecker()->AsETSChecker(), ast->AsTSInterfaceDeclaration())) {
             GenerateAnonClassFromInterface(ctx, ast->AsTSInterfaceDeclaration());
         } else if (ast->IsClassDefinition() && ast != program->GlobalClass() &&
                    ast->AsClassDefinition()->IsAbstract() &&
@@ -762,7 +801,7 @@ static void TraverseObjectLiteralExpressions(parser::Program *program, F const &
 
 bool InterfaceObjectLiteralLowering::Perform(public_lib::Context *ctx, parser::Program *program)
 {
-    std::unordered_set<ir::AstNode *> requiredTypes;
+    std::unordered_set<ir::AstNode *> requiredTypes {};
 
     ForEachCompiledProgram(ctx, [&requiredTypes](parser::Program *prog) {
         TraverseObjectLiteralExpressions(prog, [&requiredTypes](ir::ObjectExpression *expr) {
@@ -783,14 +822,14 @@ bool InterfaceObjectLiteralLowering::Perform(public_lib::Context *ctx, parser::P
             varbinder->ResetTopScope(extProg->GlobalScope());
             varbinder->SetRecordTable(varbinder->GetExternalRecordTable().at(extProg));
             varbinder->SetProgram(extProg);
-            TransfromInterfaceDecl(ctx, extProg, &requiredTypes);
+            TransfromInterfaceDecl(ctx, extProg, requiredTypes);
             varbinder->SetProgram(savedProgram);
             varbinder->SetRecordTable(savedRecordTable);
             varbinder->ResetTopScope(savedTopScope);
         }
     }
 
-    TransfromInterfaceDecl(ctx, program, &requiredTypes);
+    TransfromInterfaceDecl(ctx, program, requiredTypes);
 
     ForEachCompiledProgram(ctx, [ctx, &requiredTypes](parser::Program *prog) {
         TraverseObjectLiteralExpressions(prog, [ctx, &requiredTypes](ir::ObjectExpression *expr) {
