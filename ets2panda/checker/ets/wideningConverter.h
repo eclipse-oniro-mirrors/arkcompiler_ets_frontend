@@ -26,10 +26,6 @@ public:
     explicit WideningConverter(ETSChecker *checker, TypeRelation *relation, Type *target, Type *source)
         : TypeConverter(checker, relation, target, source)
     {
-        if (!Relation()->ApplyWidening()) {
-            return;
-        }
-
         ApplyGlobalWidening();
     }
 
@@ -74,39 +70,6 @@ private:
     {
         if (!Source()->HasTypeFlag(flag)) {
             return;
-        }
-
-        if (!Relation()->OnlyCheckWidening()) {
-            ES2PANDA_ASSERT(Relation()->GetNode());
-            switch (ETSChecker::ETSChecker::ETSType(Source())) {
-                case TypeFlag::BYTE: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalByteBuiltinType());
-                    break;
-                }
-                case TypeFlag::SHORT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalShortBuiltinType());
-                    break;
-                }
-                case TypeFlag::INT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalIntBuiltinType());
-                    break;
-                }
-                case TypeFlag::LONG: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalLongBuiltinType());
-                    break;
-                }
-                case TypeFlag::FLOAT: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalFloatBuiltinType());
-                    break;
-                }
-                case TypeFlag::DOUBLE: {
-                    Relation()->GetNode()->SetTsType(Checker()->GlobalDoubleBuiltinType());
-                    break;
-                }
-                default: {
-                    return;
-                }
-            }
         }
 
         Relation()->Result(true);

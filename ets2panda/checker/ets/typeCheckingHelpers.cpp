@@ -1376,16 +1376,12 @@ Type const *ETSChecker::MaybeUnboxType(Type const *type) const
 
 void ETSChecker::CheckUnboxedTypeWidenable(TypeRelation *relation, Type *target, Type *self)
 {
-    checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(relation, TypeRelationFlag::ONLY_CHECK_WIDENING);
     // NOTE: vpukhov. handle union type
     auto unboxedType = MaybeUnboxInRelation(target);
     if (unboxedType == nullptr) {
         return;
     }
     WideningConverter(this, relation, unboxedType, self);
-    if (!relation->IsTrue()) {
-        relation->Result(relation->IsAssignableTo(self, unboxedType));
-    }
 }
 
 void ETSChecker::CheckUnboxedTypesAssignable(TypeRelation *relation, Type *source, Type *target)
@@ -1402,9 +1398,8 @@ void ETSChecker::CheckBoxedSourceTypeAssignable(TypeRelation *relation, Type *so
 {
     ES2PANDA_ASSERT(relation != nullptr);
     checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(
-        relation, (relation->ApplyWidening() ? TypeRelationFlag::WIDENING : TypeRelationFlag::NONE) |
-                      (relation->OnlyCheckBoxingUnboxing() ? TypeRelationFlag::ONLY_CHECK_BOXING_UNBOXING
-                                                           : TypeRelationFlag::NONE));
+        relation,
+        (relation->OnlyCheckBoxingUnboxing() ? TypeRelationFlag::ONLY_CHECK_BOXING_UNBOXING : TypeRelationFlag::NONE));
 
     auto *boxedSourceType = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(source);
     if (boxedSourceType == nullptr) {
@@ -1428,7 +1423,7 @@ void ETSChecker::CheckUnboxedSourceTypeWithWideningAssignable(TypeRelation *rela
         return;
     }
     relation->IsAssignableTo(unboxedSourceType, target);
-    if (!relation->IsTrue() && relation->ApplyWidening()) {
+    if (!relation->IsTrue()) {
         relation->GetChecker()->AsETSChecker()->CheckUnboxedTypeWidenable(relation, target, unboxedSourceType);
     }
 }
