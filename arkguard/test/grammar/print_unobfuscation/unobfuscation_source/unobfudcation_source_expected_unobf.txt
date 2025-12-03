@@ -5,6 +5,7 @@
     "conf": "same as the user-configured kept name",
     "struct": "same as the ArkUI struct property",
     "strProp": "same as the string property",
+    "objectProp": "same as the object property",
     "exported": "same as the exported names and properties",
     "enum": "same as the members in the enum"
   },

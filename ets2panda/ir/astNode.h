@@ -29,6 +29,10 @@ namespace ark::es2panda::public_lib {
 struct Context;
 }  // namespace ark::es2panda::public_lib
 
+namespace ark::es2panda::public_lib {
+struct Context;
+}  // namespace ark::es2panda::public_lib
+
 namespace ark::es2panda::compiler {
 class PandaGen;
 class ETSGen;

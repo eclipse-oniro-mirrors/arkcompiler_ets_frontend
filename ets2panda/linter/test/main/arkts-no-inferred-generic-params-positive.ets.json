@@ -13,5 +13,46 @@
       "See the License for the specific language governing permissions and",
       "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 51,
+            "column": 9,
+            "endLine": 51,
+            "endColumn": 20,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 9,
+            "endLine": 52,
+            "endColumn": 20,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 5,
+            "endLine": 60,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 5,
+            "endLine": 64,
+            "endColumn": 10,
+            "problem": "StrictDiagnostic",
+            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
+            "severity": "ERROR"
+        }
+    ]
 }

@@ -123,7 +123,8 @@ export interface FileContent {
  * │   │   ├── propertyNames: Set<string>
  * │   │   └── globalNames: Set<string>
  * │   ├── enumProperties: Set<string>
- * │   └── stringProperties: Set<string>
+ * │   ├── stringProperties: Set<string>
+ * |   ├── objectProperties?: Set<string>
  * │   └── arkUIKeepInfo: KeepInfo
  * │       ├── propertyNames: Set<string>
  * │       └── globalNames: Set<string>
@@ -140,6 +141,7 @@ export interface FileKeepInfo {
   exported: KeepInfo; // Exported names and properties.
   enumProperties: Set<string>; // Enum properties.
   stringProperties: Set<string>; // String properties.
+  objectProperties?: Set<string>; // Collect object properties.
   arkUIKeepInfo?: KeepInfo; // Collecting classes and members
 }
 
@@ -189,8 +191,8 @@ export interface ProjectWhiteListJsonData {
 export let projectWhiteListManager: ProjectWhiteListManager | undefined;
 
 // Initialize projectWhiteListManager
-export function initProjectWhiteListManager(cachePath: string, isIncremental: boolean, enableAtKeep: boolean): void {
-  projectWhiteListManager = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep);
+export function initProjectWhiteListManager(cachePath: string, isIncremental: boolean, enableAtKeep: boolean, keepObjectProperty: boolean): void {
+  projectWhiteListManager = new ProjectWhiteListManager(cachePath, isIncremental, enableAtKeep, keepObjectProperty);
 }
 
 // Clear projectWhiteListManager
@@ -205,6 +207,9 @@ export function clearProjectWhiteListManager(): void {
 export class ProjectWhiteListManager {
   // If atKeep is enabled
   private enableAtKeep: boolean;
+
+  // If keepObjectProps is enabled
+  private keepObjectProperty: boolean;
 
   // Cache path for file white lists
   private fileWhiteListsCachePath: string;
@@ -228,6 +233,10 @@ export class ProjectWhiteListManager {
     return this.enableAtKeep;
   }
 
+  public getKeepObjectProperty(): boolean {
+    return this.keepObjectProperty;
+  }
+
   public getFileWhiteListsCachePath(): string {
     return this.fileWhiteListsCachePath;
   }
@@ -248,14 +257,16 @@ export class ProjectWhiteListManager {
     return this.fileWhiteListMap;
   }
 
-  constructor(cachePath: string, isIncremental: boolean, enableAtKeep: boolean) {
+  constructor(cachePath: string, isIncremental: boolean, enableAtKeep: boolean, keepObjectProperty: boolean) {
     this.fileWhiteListsCachePath = path.join(cachePath, FILE_WHITE_LISTS);
     this.projectWhiteListCachePath = path.join(cachePath, PROJECT_WHITE_LIST);
     this.isIncremental = isIncremental;
     this.enableAtKeep = enableAtKeep;
     this.fileWhiteListMap = new Map();
+    this.keepObjectProperty = keepObjectProperty;
   }
 
+  // The default data structure in the fileWhiteLists file (a static list not collected by the obfuscation switch).
   private createDefaultFileKeepInfo(): FileKeepInfo {
     return {
       structProperties: new Set<string>(),
@@ -281,19 +292,25 @@ export class ProjectWhiteListManager {
 
   // Create one fileWhilteList object, with keepSymbol & keepAsConsumer if atKeep is enabled
   public createFileWhiteList(): FileWhiteList {
-    const fileKeepInfo = this.enableAtKeep
-      ? {
-          keepSymbol: {
-            propertyNames: new Set<string>(),
-            globalNames: new Set<string>(),
-          },
-          keepAsConsumer: {
-            propertyNames: new Set<string>(),
-            globalNames: new Set<string>(),
-          },
-          ...this.createDefaultFileKeepInfo(),
-        }
-      : this.createDefaultFileKeepInfo();
+    const fileKeepInfo = this.enableAtKeep ?
+      {
+        keepSymbol: {
+          propertyNames: new Set<string>(),
+          globalNames: new Set<string>(),
+        },
+        keepAsConsumer: {
+          propertyNames: new Set<string>(),
+          globalNames: new Set<string>(),
+        },
+        // Conditionally include objectProperties when keepObjectProps is enabled
+        ...(this.keepObjectProperty ? { objectProperties: new Set<string>() } : {}),
+        ...this.createDefaultFileKeepInfo()
+      } :
+      {
+        // Include objectProperties if keepObjectProps is enabled (if atKeep is not enabled)
+        ...(this.keepObjectProperty ? { objectProperties: new Set<string>() } : {}),
+        ...this.createDefaultFileKeepInfo()
+      }
     return {
       fileKeepInfo,
       fileReservedInfo: this.createDefaultFileReservedInfo(),
@@ -339,6 +356,7 @@ export class ProjectWhiteListManager {
           },
           enumProperties: arrayToSet(parsed[key].fileKeepInfo.enumProperties),
           stringProperties: arrayToSet(parsed[key].fileKeepInfo.stringProperties),
+          objectProperties: parsed[key].fileKeepInfo.objectProperties ? arrayToSet(parsed[key].fileKeepInfo.objectProperties) : undefined,
           arkUIKeepInfo: parsed[key].fileKeepInfo.arkUIKeepInfo
             ? {
                 propertyNames: arrayToSet(parsed[key].fileKeepInfo.arkUIKeepInfo.propertyNames),
@@ -385,6 +403,7 @@ export class ProjectWhiteListManager {
           },
           enumProperties: setToArray(value.fileKeepInfo.enumProperties),
           stringProperties: setToArray(value.fileKeepInfo.stringProperties),
+          objectProperties: value.fileKeepInfo.objectProperties ? setToArray(value.fileKeepInfo.objectProperties) : undefined,
           arkUIKeepInfo: value.fileKeepInfo.arkUIKeepInfo
             ? {
                 propertyNames: setToArray(value.fileKeepInfo.arkUIKeepInfo.propertyNames),
@@ -509,6 +528,11 @@ export class ProjectWhiteListManager {
         projectKeepInfo.propertyNames.add(propertyName);
       });
 
+      // Collect objectProperties
+      fileWhiteList.fileKeepInfo.objectProperties?.forEach((propertyName) => {
+        projectKeepInfo.propertyNames.add(propertyName);
+      });
+
       // Collect arkUIKeepInfo
       fileWhiteList.fileKeepInfo.arkUIKeepInfo?.globalNames.forEach((globalName) => {
         projectKeepInfo.globalNames.add(globalName);
@@ -579,6 +603,9 @@ export class ProjectWhiteListManager {
       addToSet(UnobfuscationCollections.reservedExportName, fileWhiteList.fileKeepInfo.exported.globalNames);
       addToSet(UnobfuscationCollections.reservedExportNameAndProp, fileWhiteList.fileKeepInfo.exported.propertyNames);
       addToSet(UnobfuscationCollections.reservedStrProp, fileWhiteList.fileKeepInfo.stringProperties);
+      if (this.keepObjectProperty) {
+        addToSet(UnobfuscationCollections.reservedObjProp, fileWhiteList.fileKeepInfo.objectProperties);
+      }
       if (fileWhiteList.fileKeepInfo.arkUIKeepInfo) {
         addToSet(AtIntentCollections.propertyNames, fileWhiteList.fileKeepInfo.arkUIKeepInfo.propertyNames);
         addToSet(AtIntentCollections.globalNames, fileWhiteList.fileKeepInfo.arkUIKeepInfo.globalNames);

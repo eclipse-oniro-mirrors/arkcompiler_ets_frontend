@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,7 +136,7 @@ describe('unit test for OhsUtil.ts', function () {
     beforeEach(() => {
       stringPropsSet.clear();
       let cachePath = 'test/ut/utils/obfuscation';
-      initProjectWhiteListManager(cachePath, false, false);
+      initProjectWhiteListManager(cachePath, false, false, false);
       projectWhiteListManager?.setCurrentCollector('demo.ts');
     });
 
@@ -315,6 +315,171 @@ describe('unit test for OhsUtil.ts', function () {
         expect(propertySet.has('key')).to.be.true;
         expect(propertySet.has('objKey')).to.be.true;
       });
+
+      // Test for Nested Object Literals
+      it('should recursively process nested ObjectLiteralExpression', () => {
+        // Create deeply nested object structure
+        const deepNestedObj = ts.factory.createObjectLiteralExpression([
+          ts.factory.createPropertyAssignment('deepKey', ts.factory.createStringLiteral('deepValue'))
+        ]);
+
+        const nestedObj = ts.factory.createObjectLiteralExpression([
+          ts.factory.createPropertyAssignment('nestedKey', ts.factory.createStringLiteral('nestedValue')),
+          ts.factory.createPropertyAssignment('anotherNestedKey', deepNestedObj)
+        ]);
+
+        const rootProperties = [
+          ts.factory.createPropertyAssignment('rootKey', nestedObj),
+          ts.factory.createPropertyAssignment('simpleKey', ts.factory.createStringLiteral('simpleValue'))
+        ];
+
+        const objNode = ts.factory.createObjectLiteralExpression(rootProperties);
+        const propertySet = new Set<string>();
+
+        getObjectProperties(objNode, propertySet);
+
+        // Verify properties at all levels are collected
+        expect(propertySet.has('rootKey')).to.be.true;
+        expect(propertySet.has('nestedKey')).to.be.true;
+        expect(propertySet.has('anotherNestedKey')).to.be.true;
+        expect(propertySet.has('deepKey')).to.be.true;
+        expect(propertySet.has('simpleKey')).to.be.true;
+      });
+
+      // Class Declaration Test
+      it('should process ClassDeclaration initializer and call getClassProperties', () => {
+        const classDeclaration = ts.factory.createClassDeclaration(
+          [ts.factory.createToken(ts.SyntaxKind.ExportKeyword)],
+          'TestClass',
+          undefined,
+          undefined,
+          []
+        );
+
+        const properties = [
+          ts.factory.createPropertyAssignment('classProperty', classDeclaration as any as ts.Expression)
+        ];
+
+        const objNode = ts.factory.createObjectLiteralExpression(properties);
+        const propertySet = new Set<string>();
+
+        getObjectProperties(objNode, propertySet);
+
+        expect(propertySet.has('classProperty')).to.be.true;
+      });
+
+      // Enum Declaration Test
+      it('should process EnumDeclaration initializer and call getEnumProperties', () => {
+        // Create a mock enum declaration
+        const enumDeclaration = ts.factory.createEnumDeclaration(
+          [ts.factory.createToken(ts.SyntaxKind.ExportKeyword)],
+          'TestEnum',
+          [
+            ts.factory.createEnumMember('ENUM_VALUE_1', ts.factory.createStringLiteral('value1')),
+            ts.factory.createEnumMember('ENUM_VALUE_2', ts.factory.createNumericLiteral('2'))
+          ]
+        );
+        
+        const properties = [
+          ts.factory.createPropertyAssignment('enumProperty', enumDeclaration as any as ts.Expression)
+        ];
+        
+        const objNode = ts.factory.createObjectLiteralExpression(properties);
+        const propertySet = new Set<string>();
+        
+        getObjectProperties(objNode, propertySet);
+        
+        // Verify property names are collected
+        expect(propertySet.has('enumProperty')).to.be.true;
+      });
+
+      // Mixed Type Test
+      it('should handle mixed initializer types correctly', () => {
+        // Create nested object
+        const nestedObj = ts.factory.createObjectLiteralExpression([
+          ts.factory.createPropertyAssignment('nestedObjKey', ts.factory.createStringLiteral('nestedValue'))
+        ]);
+        
+        // Create class declaration
+        const classDecl = ts.factory.createClassDeclaration(
+          undefined,
+          'MixedClass',
+          undefined,
+          undefined,
+          []
+        );
+        
+        // Create enum declaration
+        const enumDecl = ts.factory.createEnumDeclaration(
+          undefined,
+          'MixedEnum',
+          [ts.factory.createEnumMember('MIXED_ENUM_VALUE', ts.factory.createStringLiteral('enumVal'))]
+        );
+        
+        const properties = [
+          ts.factory.createPropertyAssignment('objectProperty', nestedObj),
+          ts.factory.createPropertyAssignment('classProperty', classDecl as any as ts.Expression),
+          ts.factory.createPropertyAssignment('enumProperty', enumDecl as any as ts.Expression),
+          ts.factory.createPropertyAssignment('simpleProperty', ts.factory.createStringLiteral('simpleValue'))
+        ];
+        
+        const objNode = ts.factory.createObjectLiteralExpression(properties);
+        const propertySet = new Set<string>();
+        
+        getObjectProperties(objNode, propertySet);
+        
+        // Verify all direct property names are collected
+        expect(propertySet.has('objectProperty')).to.be.true;
+        expect(propertySet.has('classProperty')).to.be.true;
+        expect(propertySet.has('enumProperty')).to.be.true;
+        expect(propertySet.has('simpleProperty')).to.be.true;
+        
+        // Verify nested object properties are also collected
+        expect(propertySet.has('nestedObjKey')).to.be.true;
+      });
+
+      // Edge Case Test - Empty Nested Structures
+      it('should handle empty nested structures gracefully', () => {
+        const emptyObject = ts.factory.createObjectLiteralExpression([]);
+        const emptyClass = ts.factory.createClassDeclaration(undefined, 'EmptyClass', undefined, undefined, []);
+        const emptyEnum = ts.factory.createEnumDeclaration(undefined, 'EmptyEnum', []);
+        
+        const properties = [
+          ts.factory.createPropertyAssignment('emptyObject', emptyObject),
+          ts.factory.createPropertyAssignment('emptyClass', emptyClass as any as ts.Expression),
+          ts.factory.createPropertyAssignment('emptyEnum', emptyEnum as any as ts.Expression)
+        ];
+        
+        const objNode = ts.factory.createObjectLiteralExpression(properties);
+        const propertySet = new Set<string>();
+        
+        getObjectProperties(objNode, propertySet);
+        
+        // Verify property names are collected even when nested structures are empty
+        expect(propertySet.has('emptyObject')).to.be.true;
+        expect(propertySet.has('emptyClass')).to.be.true;
+        expect(propertySet.has('emptyEnum')).to.be.true;
+      });
+
+      // Test return statement to ensure subsequent logic is not executed
+      it('should return early after processing ObjectLiteralExpression and not process other types', () => {
+        // Create an object literal containing objects that trigger returns
+        const nestedObj = ts.factory.createObjectLiteralExpression([
+          ts.factory.createPropertyAssignment('nestedKey', ts.factory.createStringLiteral('nestedValue'))
+        ]);
+        
+        const properties = [
+          ts.factory.createPropertyAssignment('testKey', nestedObj)
+        ];
+        
+        const objNode = ts.factory.createObjectLiteralExpression(properties);
+        const propertySet = new Set<string>();
+
+        getObjectProperties(objNode, propertySet);
+        
+        expect(propertySet.has('testKey')).to.be.true;
+        expect(propertySet.has('nestedKey')).to.be.true;
+      });
     })
 
     describe('test for getViewPUClassProperties function', function () {
@@ -329,7 +494,7 @@ describe('unit test for OhsUtil.ts', function () {
         let cachePath = 'test/ut/utils/obfuscation';
         const sourceFile: ts.SourceFile = ts.createSourceFile('demo.ts', fileContent, ts.ScriptTarget.ES2015, true);
         UnobfuscationCollections.reservedStruct.clear();
-        initProjectWhiteListManager(cachePath, false, false);
+        initProjectWhiteListManager(cachePath, false, false, false);
         projectWhiteListManager?.setCurrentCollector('demo.ts');
         getViewPUClassProperties(sourceFile.statements[0] as ts.ClassDeclaration);
         expect(UnobfuscationCollections.reservedStruct.has("name1")).to.be.true;

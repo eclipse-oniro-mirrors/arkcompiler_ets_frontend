@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 import {
   forEachChild,
   isBinaryExpression,
-  isCallExpression,
   isClassDeclaration,
   isComputedPropertyName,
   isConstructorDeclaration,
@@ -24,13 +23,11 @@ import {
   isIdentifier,
   isObjectLiteralExpression,
   isParameter,
-  isPropertyAccessExpression,
   isPropertyAssignment,
   isPropertyDeclaration,
   isStructDeclaration,
   isStringLiteral,
   isTypeLiteralNode,
-  isVariableStatement,
   SyntaxKind,
   isExpressionStatement,
   isClassExpression,
@@ -38,12 +35,8 @@ import {
   isGetAccessor,
   isSetAccessor,
   isShorthandPropertyAssignment,
-  isSpreadAssignment,
   isMethodDeclaration,
-  isGetAccessorDeclaration,
-  isAccessor,
   isTypeNode,
-  isLiteralTypeNode,
   isUnionTypeNode,
 } from 'typescript';
 
@@ -55,7 +48,6 @@ import type {
   Expression,
   GetAccessorDeclaration,
   HeritageClause,
-  Identifier,
   IndexedAccessTypeNode,
   InterfaceDeclaration,
   LiteralTypeNode,
@@ -67,8 +59,6 @@ import type {
   PropertyAssignment,
   PropertyName,
   SetAccessorDeclaration,
-  ShorthandPropertyAssignment,
-  Statement,
   StringLiteral,
   StructDeclaration,
   TypeAliasDeclaration
@@ -80,6 +70,11 @@ import { addToSet, FileWhiteList, projectWhiteListManager } from './ProjectColle
 import { NodeUtils } from './NodeUtils';
 
 export const stringPropsSet: Set<string> = new Set();
+/**
+ * Tht object properties set is a temporary collections for collecting property names and string property names in objects
+ *  during the project scanning process.
+ */
+export const objectPropsSet: Set<string> = new Set();
 /**
  * The struct properties may be initialized in other files, but the properties in the struct definition are not obfuscated.
  * So the whitelist of struct properties is collected during the project scanning process.

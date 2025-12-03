@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ArkObfuscator, blockPrinter, renameIdentifierModule } from '../ArkObfuscator';
+import { ArkObfuscator, blockPrinter } from '../ArkObfuscator';
 import { collectResevedFileNameInIDEConfig, MergedConfig, ObConfigResolver, readNameCache } from './ConfigResolver';
 import { type IOptions } from '../configs/IOptions';
 import type { HvigorErrorInfo } from '../common/type';
@@ -116,6 +116,7 @@ function initArkGuardConfig(
       mTopLevel: mergedObConfig.options.enableToplevelObfuscation,
       mReservedToplevelNames: mergedObConfig.reservedGlobalNames,
       mKeepParameterNames: mergedObConfig.options.keepParameterNames,
+      mKeepObjectProperty: mergedObConfig.options.keepObjectProps,
       mUniversalReservedProperties: mergedObConfig.universalReservedPropertyNames,
       mUniversalReservedToplevelNames: mergedObConfig.universalReservedGlobalNames,
       mEnableAtKeep: mergedObConfig.options.enableAtKeep

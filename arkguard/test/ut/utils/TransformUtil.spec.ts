@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -179,6 +179,7 @@ describe('test for TransformUtil', function () {
       UnobfuscationCollections.reservedStruct.add('isInPropertyWhitelist');
       UnobfuscationCollections.reservedExportNameAndProp.add('isInPropertyWhitelist');
       UnobfuscationCollections.reservedStrProp.add('isInPropertyWhitelist');
+      UnobfuscationCollections.reservedObjProp.add('isInPropertyWhitelist');
       UnobfuscationCollections.reservedEnum.add('isInPropertyWhitelist');
       PropCollections.reservedProperties.add('isInPropertyWhitelist');
 

@@ -143,7 +143,6 @@ public:
     {
         auto *const ins = Alloc<T>(node, std::forward<Args>(args)...);
         Run(ins, rangeStart, argCount);
-        ins->SetIsRangeInst();
         ins->SetDevirtual();
     }
 

@@ -36,3 +36,24 @@ struct MyStruct {
 
 let person = {"name": "abc"};
 person["age"] = 22;
+
+let myObjectProp = 'myObjectProp';
+const MyObjectPropertyObj = {
+  myObjectProp,
+  myObjectProp1: 'Alice',
+  myObjectProp2: {
+    'myObjectProp3': 'additional data',
+    'myObjectProp4': {
+      myObjectProp5: {
+        myObjectProp6: 'value',
+        'myObjectProp7': {
+          myObjectProp8: {
+            myObjectProp9: 'value',
+            'myObjectProp10': 'value'
+          }
+        }
+      }
+    },
+    ['myObjectProp11']: 'myObjectProp11'
+  }
+};

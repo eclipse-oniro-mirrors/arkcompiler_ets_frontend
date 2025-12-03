@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +60,6 @@ import {
   IDENTIFIER_CACHE,
   MEM_METHOD_CACHE
 } from './utils/NameCacheUtil';
-import { ListUtil } from './utils/ListUtil';
 import { needReadApiInfo, readProjectPropertiesByCollectedPaths } from './common/ApiReader';
 import type { ReseverdSetForArkguard } from './common/ApiReader';
 import { ApiExtractor } from './common/ApiExtractor';
@@ -263,6 +262,10 @@ export class ArkObfuscator {
       UnobfuscationCollections.reservedStrProp = properties.stringPropertySet;
     }
 
+    if (properties.objectPropertySet && properties.objectPropertySet.size > 0) {
+      UnobfuscationCollections.reservedObjProp = properties.objectPropertySet;
+    }
+
     if (properties.exportNameAndPropSet && properties.exportNameAndPropSet.size > 0) {
       UnobfuscationCollections.reservedExportNameAndProp = properties.exportNameAndPropSet;
     }
@@ -396,7 +399,11 @@ export class ArkObfuscator {
     }
 
     if (cachePath) {
-      this.initIncrementalCache(cachePath, !!this.mCustomProfiles.mNameObfuscation.mEnableAtKeep);
+      this.initIncrementalCache(
+        cachePath,
+        !!this.mCustomProfiles.mNameObfuscation.mEnableAtKeep,
+        !!this.mCustomProfiles.mNameObfuscation.mKeepObjectProperty
+      );
     }
 
     return true;
@@ -420,14 +427,14 @@ export class ArkObfuscator {
   /**
    * Init incremental cache according to cachePath
    */
-  private initIncrementalCache(cachePath: string, enableAtKeep: boolean): void {
+  private initIncrementalCache(cachePath: string, enableAtKeep: boolean, keepObjectProperty: boolean): void {
     this.filePathManager = new FilePathManager(cachePath);
 
     this.isIncremental = this.filePathManager.isIncremental();
 
     this.fileContentManager = new FileContentManager(cachePath, this.isIncremental);
 
-    initProjectWhiteListManager(cachePath, this.isIncremental, enableAtKeep);
+    initProjectWhiteListManager(cachePath, this.isIncremental, enableAtKeep, keepObjectProperty);
   }
 
   /**
