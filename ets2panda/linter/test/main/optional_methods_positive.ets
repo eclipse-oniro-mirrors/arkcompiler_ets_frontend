@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,24 @@
  * limitations under the License.
  */
 
-let a1: bigint = 0xBAD3n
-let a2: bigint = 0o777n
-let a3: bigint = 0b101n
-let a3: bigint = 123n
+class X {
+  foo() {}
+  private bar(num: number): number {
+    return num + 1;
+  }
+  public buzz(): string {
+    return 'test';
+  }
+  protected test1(): void {}
+  public static test2(): boolean {
+    return true;
+  }
+}
+
+interface Y {
+  foo():void;
+  bar(num: number): number;
+  buzz(): string;
+  test1(): void;
+  test2(): boolean;
+}
