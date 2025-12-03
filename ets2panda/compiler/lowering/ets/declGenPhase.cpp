@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,12 +19,16 @@
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/util.h"
 #include "ir/ets/etsPackageDeclaration.h"
+#include "util/helpers.h"
+#include "util/path.h"
+#include "util/importPathManager.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::compiler {
 
 constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
-
-static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, const std::string &decls)
+constexpr std::string_view DECLARATION_STRING {"declaration"};
+static bool GenerateAnnotation(public_lib::Context *ctx, parser::Program *program, const std::string &decls)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *phaseManager = ctx->phaseManager;
@@ -39,12 +43,11 @@ static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, const s
 
     auto flags = ir::ModifierFlags::ANNOTATION_USAGE;
     ArenaVector<ir::AstNode *> properties(checker->Allocator()->Adapter());
-    auto *singleParamName =
-        checker->AllocNode<ir::Identifier>(compiler::Signatures::ANNOTATION_KEY_VALUE, checker->Allocator());
+    auto *valueParamName = checker->AllocNode<ir::Identifier>(DECLARATION_STRING, checker->Allocator());
     auto *declarationLiteral = checker->AllocNode<ir::StringLiteral>(declaration->c_str());
-    auto *declarationProp = checker->AllocNode<ir::ClassProperty>(singleParamName, declarationLiteral, nullptr, flags,
-                                                                  checker->Allocator(), false);
-    properties.push_back(declarationProp);
+    auto *valueProp = checker->AllocNode<ir::ClassProperty>(valueParamName, declarationLiteral, nullptr, flags,
+                                                            checker->Allocator(), false);
+    properties.push_back(valueProp);
 
     auto *annotationUsage = checker->AllocNode<ir::AnnotationUsage>(annoUsageIdent, std::move(properties));
     annotationUsage->AddModifier(flags);
@@ -55,6 +58,20 @@ static bool EmitDecl(public_lib::Context *ctx, parser::Program *program, const s
     return true;
 }
 
+static bool CallDeclgen(public_lib::Context *ctx, const ArenaVector<parser::Program *> &programs)
+{
+    ir::Declgen dg {ctx};
+    ir::SrcDumper dumper {&dg};
+    for (const auto *program : programs) {
+        program->Ast()->Dump(&dumper);
+    }
+    dumper.GetDeclgen()->Run();
+    std::string res = "'use static'\n";
+    dg.DumpImports(res);
+    res += dumper.Str();
+    return GenerateAnnotation(ctx, programs[0], res);
+}
+
 static bool HandleGenStdlib(public_lib::Context *ctx, parser::Program *program)
 {
     if (!program->FileName().Is("etsstdlib")) {
@@ -63,17 +80,7 @@ static bool HandleGenStdlib(public_lib::Context *ctx, parser::Program *program)
     }
 
     for (const auto &[moduleName, extPrograms] : program->ExternalSources()) {
-        ir::Declgen dg {ctx};
-        ir::SrcDumper dumper {&dg};
-        for (const auto *extProg : extPrograms) {
-            extProg->Ast()->Dump(&dumper);
-        }
-        dumper.GetDeclgen()->Run();
-
-        std::string res = "'use static'\n";
-        dg.DumpImports(res);
-        res += dumper.Str();
-        EmitDecl(ctx, extPrograms[0], res);
+        CallDeclgen(ctx, extPrograms);
     }
     return true;
 }
@@ -88,7 +95,14 @@ bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *p
         return true;
     }
 
-    EmitDecl(ctx, program, program->Ast()->DumpDecl(ctx));
+    const auto &sourceFilePath = program->AbsoluteName().Utf8();
+    if (sourceFilePath.empty()) {
+        return true;
+    }
+
+    auto programs = ArenaVector<parser::Program *> {program->Allocator()->Adapter()};
+    programs.push_back(program);
+    CallDeclgen(ctx, programs);
 
     return true;
 }

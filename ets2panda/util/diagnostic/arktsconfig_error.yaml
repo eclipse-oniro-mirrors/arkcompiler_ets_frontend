@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -76,6 +76,10 @@ arkts_config_error:
 - name: NO_FILE
   id: 14
   message: No such file {}
+
+- name: NO_MAIN_FILE
+  id: 20
+  message: Entry file for binary dependency {} is not specified 
 
 - name: UNRESOLVABLE_CONFIG_PATH
   id: 1

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -107,7 +107,6 @@ public:
         std::string_view resolvedSource {};
         std::string_view declPath {};
         std::string_view ohmUrl {};
-        std::string_view declText {};
         // NOLINTEND(misc-non-private-member-variables-in-classes)
 
         bool HasSpecifiedDeclPath() const
@@ -212,10 +211,11 @@ private:
     void TryMatchDynamicResolvedPath(ResolvedPathRes &result) const;
     StringView GetRealPath(StringView path) const;
     bool DeclarationIsInCache(ImportMetadata &importData, bool isStdlib);
-    void ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata &importData,
-                                                   const std::string_view &externalModuleImportData);
-    void ProcessExternalLibraryImportSimple(ImportMetadata &importData);
-    void ProcessExternalLibraryImport(ImportMetadata &importData);
+    void ProcessExternalLibraryImportFromEtsstdlibAbc(ImportMetadata &importData,
+                                                      const std::string_view &externalModuleImportData);
+    void ProcessExternalLibraryImport(ImportMetadata &importData, std::string importPath);
+    void ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, std::string importPath);
+    void ProcessAbcFile(std::string abcFilePath);
     std::string_view TryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
 public:
@@ -238,6 +238,8 @@ private:
     bool isDynamic_ = false;
     std::atomic<bool> cacheCanBeUpdated_ {true};
     std::shared_mutex m_ {};
+    std::unordered_set<std::string> processedAbcFiles_;
+    std::unordered_map<std::string, std::string> FileToModuleName_;
 };
 
 }  // namespace ark::es2panda::util

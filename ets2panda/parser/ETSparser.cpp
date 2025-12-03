@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -439,18 +439,14 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
 
         auto preservedLang = GetContext().SetLanguage(data.lang);
 
-        if (data.IsExternalBinaryImport()) {
-            ParseParseListElement(*notParsedElement, data.declText, directImportsFromMainSource, &programs);
-        } else {
-            auto declaration = GetDeclarationSource(std::string {parseCandidate});
-            if (!declaration.has_value()) {
-                GetContext().SetLanguage(preservedLang);
-                notParsedElement = findNotParsed();
-                continue;
-            }
-
-            ParseParseListElement(*notParsedElement, *declaration, directImportsFromMainSource, &programs);
+        auto declaration = GetDeclarationSource(std::string {parseCandidate});
+        if (!declaration.has_value()) {
+            GetContext().SetLanguage(preservedLang);
+            notParsedElement = findNotParsed();
+            continue;
         }
+
+        ParseParseListElement(*notParsedElement, *declaration, directImportsFromMainSource, &programs);
 
         GetContext().SetLanguage(preservedLang);
 
