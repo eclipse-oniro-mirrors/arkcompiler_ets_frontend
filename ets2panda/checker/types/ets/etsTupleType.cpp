@@ -161,13 +161,10 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
             return;
         }
 
-        const SavedTypeRelationFlagsContext savedFlagsCtx(
-            relation, TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_WIDENING);
-
         const bool elementsAssignable =
             std::all_of(GetTupleTypesList().begin(), GetTupleTypesList().end(),
                         [&relation, &arrayTarget](auto *const tupleTypeAtIdx) {
-                            return relation->IsAssignableTo(tupleTypeAtIdx, arrayTarget->ElementType());
+                            return relation->IsSupertypeOf(arrayTarget->ElementType(), tupleTypeAtIdx);
                         });
 
         relation->Result(elementsAssignable);
@@ -181,10 +178,10 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
     }
 
     for (TupleSizeType idx = 0; idx < GetTupleSize(); ++idx) {
-        const SavedTypeRelationFlagsContext savedFlagsCtx(
-            relation, TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_WIDENING);
+        const SavedTypeRelationFlagsContext savedFlagsCtx(relation,
+                                                          TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING);
 
-        if (!relation->IsAssignableTo(tupleTarget->GetTypeAtIndex(idx), GetTypeAtIndex(idx))) {
+        if (!relation->IsSupertypeOf(GetTypeAtIndex(idx), tupleTarget->GetTypeAtIndex(idx))) {
             return;
         }
     }
