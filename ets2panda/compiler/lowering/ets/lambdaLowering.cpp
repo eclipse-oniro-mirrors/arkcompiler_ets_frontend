@@ -1735,7 +1735,6 @@ static ir::AstNode *InsertInvokeCall(public_lib::Context *ctx, ir::CallExpressio
 {
     auto *allocator = ctx->allocator;
     auto *checker = ctx->GetChecker()->AsETSChecker();
-    auto *varBinder = checker->VarBinder()->AsETSBinder();
 
     auto *oldCallee = call->Callee();
     auto *oldType = checker->GetApparentType(oldCallee->TsType());
@@ -1768,17 +1767,6 @@ static ir::AstNode *InsertInvokeCall(public_lib::Context *ctx, ir::CallExpressio
 
     call->SetCallee(newCallee);
     call->SetSignature(callSig);
-
-    /* NOTE(gogabr): argument types may have been spoiled by widening/narrowing conversions.
-       Repair them here.
-       In the future, make sure those conversions behave appropriately.
-    */
-    for (auto *arg : call->Arguments()) {
-        if (arg->IsSpreadElement()) {
-            continue;
-        }
-        CheckLoweredNode(varBinder, checker, arg);
-    }
 
     return TransformTupleSpread(ctx, call);
 }
