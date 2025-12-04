@@ -360,8 +360,8 @@ TEST_F(LspGetDefTests, DisableLoweringTest2)
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
     initializer.DestroyContext(ctx);
     std::string expectedFileName = filePaths[0];
-    size_t const expectedStart = 0;
-    size_t const expectedLength = 0;
+    size_t const expectedStart = 14;
+    size_t const expectedLength = 3;
     ASSERT_EQ(result.fileName, expectedFileName);
     ASSERT_EQ(result.start, expectedStart);
     ASSERT_EQ(result.length, expectedLength);
