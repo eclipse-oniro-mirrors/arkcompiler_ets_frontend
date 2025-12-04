@@ -272,7 +272,7 @@ using EcmaLdevalbindings = EcmaDisabled;
 using EcmaDirecteval = EcmaDisabled;
 #endif
 
-PandaGen::PandaGen(ArenaAllocator *const allocator, RegSpiller *const spiller, public_lib::Context *const context,
+PandaGen::PandaGen(SArenaAllocator *const allocator, RegSpiller *const spiller, public_lib::Context *const context,
                    std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile)
     : CodeGen(allocator, spiller, context, toCompile)
 {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -242,7 +242,7 @@ public:
     NO_MOVE_SEMANTIC(ETSCatchContext);
     ~ETSCatchContext() = default;
 
-    ArenaVector<const CatchTable *> GetETSCatchTable() const
+    SArenaVector<const CatchTable *> GetETSCatchTable() const
     {
         return catchTables_;
     }
@@ -256,25 +256,25 @@ public:
     CatchTable *AddNewCathTable(util::StringView assemblerType, LabelPair tryLabelPair);
 
 protected:
-    explicit ETSCatchContext(CodeGen *cg, ArenaAllocator *allocator)
+    explicit ETSCatchContext(CodeGen *cg, SArenaAllocator *allocator)
         : DynamicContext(cg, {}), catchTables_(allocator->Adapter())
     {
     }
 
 private:
-    ArenaVector<const CatchTable *> catchTables_;
+    SArenaVector<const CatchTable *> catchTables_;
 };
 
 class ETSTryContext : public ETSCatchContext {
 public:
-    explicit ETSTryContext(CodeGen *cg, ArenaAllocator *allocator, const ir::TryStatement *tryStmt,
+    explicit ETSTryContext(CodeGen *cg, SArenaAllocator *allocator, const ir::TryStatement *tryStmt,
                            bool hasFinalizer = true)
         : ETSCatchContext(cg, allocator), tryStmt_(tryStmt), hasFinalizer_(hasFinalizer)
 
     {
     }
 
-    explicit ETSTryContext(CodeGen *cg, ArenaAllocator *allocator) : ETSCatchContext(cg, allocator) {}
+    explicit ETSTryContext(CodeGen *cg, SArenaAllocator *allocator) : ETSCatchContext(cg, allocator) {}
 
     NO_COPY_SEMANTIC(ETSTryContext);
     NO_MOVE_SEMANTIC(ETSTryContext);

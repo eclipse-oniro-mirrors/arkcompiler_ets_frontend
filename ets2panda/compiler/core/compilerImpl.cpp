@@ -89,7 +89,7 @@ static public_lib::Context::CodeGenCb MakeCompileJob()
             }
         }
         RegSpiller regSpiller;
-        auto allocator = EHeap::CreateAllocator();
+        auto allocator = EHeap::CreateScopedAllocator();
         AstCompiler astcompiler;
         compiler::SetPhaseManager(context->phaseManager);
         CodeGen cg(&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astcompiler));

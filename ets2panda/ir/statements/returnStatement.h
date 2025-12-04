@@ -88,8 +88,8 @@ public:
     ReturnStatement *Clone(ArenaAllocator *const allocator, AstNode *const parent) override;
 
 private:
-    Expression *argument_ {};
-    checker::Type *returnType_ {};
+    EPtr<Expression> argument_ {};
+    EPtr<checker::Type> returnType_ {};
 };
 }  // namespace ark::es2panda::ir
 

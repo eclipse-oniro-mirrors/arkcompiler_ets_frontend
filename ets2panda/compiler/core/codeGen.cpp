@@ -27,12 +27,12 @@
 
 namespace ark::es2panda::compiler {
 
-ArenaAllocator *CodeGen::Allocator() const noexcept
+SArenaAllocator *CodeGen::Allocator() const noexcept
 {
     return allocator_;
 }
 
-const ArenaVector<CatchTable *> &CodeGen::CatchList() const noexcept
+const SArenaVector<CatchTable *> &CodeGen::CatchList() const noexcept
 {
     return catchList_;
 }
@@ -52,12 +52,12 @@ const ir::AstNode *CodeGen::RootNode() const noexcept
     return rootNode_;
 }
 
-ArenaList<IRNode *> &CodeGen::Insns() noexcept
+SArenaList<IRNode *> &CodeGen::Insns() noexcept
 {
     return insns_;
 }
 
-const ArenaList<IRNode *> &CodeGen::Insns() const noexcept
+const SArenaList<IRNode *> &CodeGen::Insns() const noexcept
 {
     return insns_;
 }

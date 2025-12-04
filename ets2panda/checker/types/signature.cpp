@@ -61,7 +61,7 @@ Signature *Signature::Substitute(TypeRelation *relation, const Substitution *sub
     }
 
     if (signatureInfo_->restVar != nullptr) {
-        auto *newRestVar = signatureInfo_->restVar;
+        auto *newRestVar = &*signatureInfo_->restVar;
         auto *newRestType = signatureInfo_->restVar->TsType()->Substitute(relation, substitution);
         if (newRestType != signatureInfo_->restVar->TsType()) {
             anyChange = true;

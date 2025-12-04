@@ -146,8 +146,8 @@ void ETSCompiler::Compile(const ir::ETSNewArrayInstanceExpression *expr) const
 
         if (expr->Signature() != nullptr) {
             const compiler::TargetTypeContext ttctx2(etsg, elementType);
-            static const ArenaVector<ir::Expression *> ARGUMENTS(GetCodeGen()->Allocator()->Adapter());
-            etsg->InitObject(expr, expr->Signature(), ARGUMENTS);
+            ArenaVector<ir::Expression *> arguments(checker->Allocator()->Adapter());
+            etsg->InitObject(expr, expr->Signature(), arguments);
         } else {
             etsg->LoadAccumulatorPoison(expr, elementType);
         }
@@ -983,12 +983,13 @@ void ETSCompiler::Compile(const ir::ObjectExpression *expr) const
     compiler::RegScope rs {etsg};
     compiler::VReg objReg = etsg->AllocReg();
 
-    auto *signatureInfo = etsg->Allocator()->New<checker::SignatureInfo>(etsg->Allocator());
-    auto *createObjSig = etsg->Allocator()->New<checker::Signature>(signatureInfo, nullptr, nullptr);
+    auto alloc = const_cast<checker::ETSChecker *>(etsg->Checker())->Allocator();  // #31970
+    auto *signatureInfo = alloc->New<checker::SignatureInfo>(alloc);
+    auto *createObjSig = alloc->New<checker::Signature>(signatureInfo, nullptr, nullptr);
     createObjSig->SetInternalName(compiler::Signatures::BUILTIN_JSRUNTIME_CREATE_OBJECT);
     compiler::VReg dummyReg = compiler::VReg::RegStart();
     etsg->CallDynamic(ETSGen::CallDynamicData {expr, dummyReg, dummyReg}, createObjSig,
-                      ArenaVector<ir::Expression *>(etsg->Allocator()->Adapter()));
+                      ArenaVector<ir::Expression *>(alloc->Adapter()));
 
     etsg->SetAccumulatorType(expr->TsType());
     etsg->StoreAccumulator(expr, objReg);

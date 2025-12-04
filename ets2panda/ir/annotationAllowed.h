@@ -224,7 +224,7 @@ protected:
 
 private:
     friend class SizeOfNodeTest;
-    ArenaVector<AnnotationUsage *> *annotations_ = nullptr;
+    EPtr<ArenaVector<AnnotationUsage *>> annotations_ = nullptr;
 
     static inline ArenaAllocator *allocator_ = nullptr;
     static inline ArenaVector<AnnotationUsage *> *emptyAnnotations_ = nullptr;

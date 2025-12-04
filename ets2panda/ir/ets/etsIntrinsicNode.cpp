@@ -216,7 +216,10 @@ public:
             etsg->EmitLdaType(intrin, intrin->Arguments()[0]->AsStringLiteral()->Str());
             return;
         }
-        etsg->EmitLdaType(intrin, intrin->Arguments()[0]->TsType()->ToAssemblerTypeWithRankView(etsg->Allocator()));
+
+        auto str = intrin->Arguments()[0]->TsType()->ToAssemblerTypeWithRank();
+        auto alloc = etsg->Allocator();
+        etsg->EmitLdaType(intrin, util::StringView(std::string_view(*alloc->New<SArenaString>(str, alloc->Adapter()))));
     }
 };
 

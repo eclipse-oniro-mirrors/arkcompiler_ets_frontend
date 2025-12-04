@@ -20,7 +20,7 @@ namespace ark::es2panda::lexer {
 
 % allTokens = Tokens::tokens + Keywords::keywords
 
-enum class TokenType {
+enum class TokenType : uint8_t {
     EOS,
 
     LITERAL_IDENT,

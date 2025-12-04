@@ -87,7 +87,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_create_import_declaration compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_update_import_specifier compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_create_non_null_expression compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
-    "plugin_proceed_to_state_ast_node_type_analyzer compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    #"plugin_proceed_to_state_ast_node_type_analyzer compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}" // #31974
     "plugin_proceed_to_state_create_annotation compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_update_class compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_new_expression compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"

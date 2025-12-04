@@ -28,7 +28,7 @@ namespace ark::es2panda::ir {
 class Expression;
 class ScriptFunction;
 
-enum class MethodDefinitionKind {
+enum class MethodDefinitionKind : uint8_t {
     NONE,
     CONSTRUCTOR,
     METHOD,
@@ -62,10 +62,10 @@ public:
                               ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
                               bool const isComputed)
         : ClassElement(AstNodeType::METHOD_DEFINITION, key, value, modifiers, allocator, isComputed),
-          kind_(kind),
           overloads_(allocator->Adapter()),
           baseOverloadMethod_(nullptr),
-          asyncPairMethod_(nullptr)
+          asyncPairMethod_(nullptr),
+          kind_(kind)
     {
         InitHistory();
     }
@@ -75,10 +75,10 @@ public:
                               ModifierFlags const modifiers, [[maybe_unused]] ArenaAllocator *const allocator,
                               bool const isComputed, AstNodeHistory *history)
         : ClassElement(AstNodeType::METHOD_DEFINITION, key, value, modifiers, allocator, isComputed),
-          kind_(kind),
           overloads_(allocator->Adapter()),
           baseOverloadMethod_(nullptr),
-          asyncPairMethod_(nullptr)
+          asyncPairMethod_(nullptr),
+          kind_(kind)
     {
         if (history != nullptr) {
             SetHistoryInternal(history);
@@ -256,17 +256,17 @@ private:
     bool FilterForDeclGen() const;
 
     friend class SizeOfNodeTest;
-    bool isDefault_ = false;
-    MethodDefinitionKind kind_;
     // Overloads are stored like in an 1:N fashion.
     // The very firstly processed method becomes the base(1) and the others tied into it as overloads(N).
     OverloadsT overloads_;
     // Base overload method points at the first overload of the overloads.
-    MethodDefinition *baseOverloadMethod_;
+    EPtr<MethodDefinition> baseOverloadMethod_;
     // Pair method points at the original async method in case of an implement method and vice versa an implement
     // method's point at the async method
-    MethodDefinition *asyncPairMethod_;
+    EPtr<MethodDefinition> asyncPairMethod_;
     OverloadInfo overloadInfo_;
+    MethodDefinitionKind kind_;
+    bool isDefault_ = false;
 };
 }  // namespace ark::es2panda::ir
 

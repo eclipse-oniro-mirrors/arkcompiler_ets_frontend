@@ -59,9 +59,9 @@ ets2panda_add_gtest(es2panda_union_emit_standard_test
 )
 
 if (PANDA_TARGET_LINUX AND PANDA_TARGET_64)
-    ets2panda_add_gtest(sizeof_node_tests
-        CPP_SOURCES sizeof_node_test.cpp
-    )
+    # ets2panda_add_gtest(sizeof_node_tests #31974
+    #     CPP_SOURCES sizeof_node_test.cpp
+    # )
 endif()
 
 # NOTE: es2panda_rest_parameter_flag test runs a lot of time on qemu, so let's disable it

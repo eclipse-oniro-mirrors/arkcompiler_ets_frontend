@@ -139,9 +139,9 @@ public:
 private:
     friend class SizeOfNodeTest;
 
-    Identifier *ident_;
-    Expression *initializer_ = nullptr;
-    SpreadElement *spread_ = nullptr;
+    EPtr<Identifier> ident_;
+    EPtr<Expression> initializer_ = nullptr;
+    EPtr<SpreadElement> spread_ = nullptr;
     util::StringView savedLexer_ = "";
     std::size_t extraValue_ = 0U;
     bool isOptional_ = false;

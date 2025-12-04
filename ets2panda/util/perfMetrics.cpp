@@ -18,6 +18,7 @@
 #include "libarkbase/utils/logger.h"
 #include "libarkbase/utils/type_converter.h"
 #include "libarkbase/mem/mem.h"
+#include "util/eheap.h"
 #include <chrono>
 #include <mutex>
 #include <forward_list>
@@ -50,6 +51,16 @@ static int64_t PerfMetricsGetTimeNS()
 #endif
 }
 
+static int64_t PerfMetricsGetEHeapSize()
+{
+    return EHeap::AllocatedSize();
+}
+
+static int64_t PerfMetricsGetEHeapFreedSize()
+{
+    return EHeap::FreedSize();
+}
+
 class PerfMetricValue {
 public:
     static PerfMetricValue Zero()
@@ -61,7 +72,10 @@ public:
     {
         PerfMetricValue st;
         st.time_ = PerfMetricsGetTimeNS();
-        st.mem_ = PerfMetricsGetMaxRSS();
+        st.maxrss_ = PerfMetricsGetMaxRSS();
+        st.eheapSz_ = PerfMetricsGetEHeapSize();
+        st.eheapFreedSz_ = PerfMetricsGetEHeapFreedSize();
+
         return st;
     }
 
@@ -77,9 +91,19 @@ public:
         return time_;
     }
 
-    int64_t GetMemorySize() const
+    int64_t GetMaxRSS() const
     {
-        return mem_;
+        return maxrss_;
+    }
+
+    int64_t GetEHeapSize() const
+    {
+        return eheapSz_;
+    }
+
+    int64_t GetEHeapFreedSize() const
+    {
+        return eheapFreedSz_;
     }
 
     DEFAULT_COPY_SEMANTIC(PerfMetricValue);
@@ -94,12 +118,16 @@ private:
         int mult = sum ? 1 : -1;
         PerfMetricValue res;
         res.time_ = st1.time_ + mult * st2.time_;
-        res.mem_ = st1.mem_ + mult * st2.mem_;
+        res.maxrss_ = st1.maxrss_ + mult * st2.maxrss_;
+        res.eheapSz_ = st1.eheapSz_ + mult * st2.eheapSz_;
+        res.eheapFreedSz_ = st1.eheapFreedSz_ + mult * st2.eheapFreedSz_;
         return res;
     }
 
     int64_t time_ {};
-    int64_t mem_ {};
+    int64_t maxrss_ {};
+    int64_t eheapSz_ {};
+    int64_t eheapFreedSz_ {};
 };
 
 class PerfMetricRecord {
@@ -225,13 +253,22 @@ static void DumpPerfMetricRecord(std::stringstream &ss, PerfMetricRecord const *
         return ss;
     };
 
+    auto const memoryMetric = [&metric](std::string_view name, int64_t mem) {
+        auto memUnit = ark::helpers::MemoryConverter(mem);
+        metric(name, 10U) << (std::to_string(static_cast<size_t>(memUnit.GetDoubleValue())) +
+                              std::string(memUnit.GetLiteral()));
+    };
+
     auto const &stats = rec->GetStats();
     // NOLINTBEGIN(readability-magic-numbers)
     ss << ":" << std::left << std::setw(50U) << rec->GetName() << ": ";
+
     metric("time", 10U) << PrettyTimeNs(stats.GetTimeNanoseconds());
-    auto memValue = ark::helpers::MemoryConverter(stats.GetMemorySize());
-    metric("mem", 10U) << (std::to_string(static_cast<size_t>(memValue.GetDoubleValue())) +
-                           std::string(memValue.GetLiteral()));
+
+    memoryMetric("maxrss", stats.GetMaxRSS());
+    memoryMetric("eheap", stats.GetEHeapSize());
+    memoryMetric("eheap-freed", stats.GetEHeapFreedSize());
+
     if (rec->GetMaxNesting() > 1) {
         metric("nesting", 6U) << rec->GetMaxNesting();
     }

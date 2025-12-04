@@ -62,12 +62,18 @@ static inline bool IsWidePrimitiveType(checker::Type const *type)
     return type->IsLongType() || type->IsDoubleType();
 }
 
-ETSGen::ETSGen(ArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
+ETSGen::ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile) noexcept
     : CodeGen(allocator, spiller, context, toCompile),
       containingObjectType_(util::Helpers::GetContainingObjectType(RootNode()))
 {
     ETSFunction::Compile(this);
+}
+
+static util::StringView MakeView(ETSGen const *etsg, std::string const &str)
+{
+    auto alloc = etsg->Allocator();
+    return util::StringView(std::string_view(*alloc->New<SArenaString>(str, alloc->Adapter())));
 }
 
 void ETSGen::SetAccumulatorType(const checker::Type *type)
@@ -1937,9 +1943,11 @@ void ETSGen::HandlePossiblyNullishEquality(const ir::AstNode *node, VReg lhs, VR
     SetAccumulatorType(nullptr);
 }
 
-static std::optional<std::pair<checker::Type const *, util::StringView>> SelectLooseObjComparator(
-    checker::ETSChecker *checker, checker::Type *lhs, checker::Type *rhs, ETSEmitter *emitter)
+static std::optional<std::pair<checker::Type const *, util::StringView>> SelectLooseObjComparator(ETSGen *etsg,
+                                                                                                  checker::Type *lhs,
+                                                                                                  checker::Type *rhs)
 {
+    auto checker = const_cast<checker::ETSChecker *>(etsg->Checker());
     auto alhs = checker->GetApparentType(checker->GetNonNullishType(lhs));
     auto arhs = checker->GetApparentType(checker->GetNonNullishType(rhs));
     ES2PANDA_ASSERT(alhs != nullptr && arhs != nullptr);
@@ -1957,9 +1965,8 @@ static std::optional<std::pair<checker::Type const *, util::StringView>> SelectL
         return std::nullopt;
     }
     // NOTE(vpukhov): emit faster code
-    auto methodSig = util::UString(emitter->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:std.core.Object;u1;",
-                                   checker->Allocator())
-                         .View();
+    auto methodSig =
+        MakeView(etsg, etsg->Emitter()->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:std.core.Object;u1;");
     return std::make_pair(checker->GetNonConstantType(obj), methodSig);
 }
 
@@ -2024,10 +2031,9 @@ void ETSGen::RefEqualityLoose(const ir::AstNode *node, VReg lhs, VReg rhs, Label
         HandleDefinitelyNullishEquality<IS_STRICT>(node, lhs, rhs, ifFalse);
     } else if (auto spec = SelectLooseObjComparator(  // try to select specific type
                                                       // CC-OFFNXT(G.FMT.06-CPP) project code style
-                   const_cast<checker::ETSChecker *>(Checker()), const_cast<checker::Type *>(ltype),
-                   const_cast<checker::Type *>(rtype),  // CC-OFF(G.FMT.02) project code style
-                   Emitter());
-               spec.has_value()) {  // CC-OFF(G.FMT.02-CPP) project code style
+                   this, const_cast<checker::Type *>(ltype),
+                   const_cast<checker::Type *>(rtype));  // CC-OFF(G.FMT.02) project code style
+               spec.has_value()) {                       // CC-OFF(G.FMT.02-CPP) project code style
         auto ifTrue = AllocLabel();
         if (ltype->PossiblyETSNullish() || rtype->PossiblyETSNullish()) {
             HandlePossiblyNullishEquality<IS_STRICT>(node, lhs, rhs, ifFalse, ifTrue);
@@ -2701,7 +2707,7 @@ void ETSGen::StoreArrayElement(const ir::AstNode *node, VReg objectReg, VReg ind
 
 util::StringView ETSGen::GetTupleMemberNameForIndex(const std::size_t index) const
 {
-    return util::UString("$" + std::to_string(index), Allocator()).View();
+    return MakeView(this, "$" + std::to_string(index));
 }
 
 void ETSGen::LoadTupleElement(const ir::AstNode *node, VReg objectReg, const checker::Type *elementType,
@@ -2863,8 +2869,7 @@ util::StringView ETSGen::ToAssemblerType(const es2panda::checker::Type *type) co
     std::stringstream ss;
     type->ToAssemblerTypeWithRank(ss);
     auto const str = ss.str();
-    Emitter()->AddDependence(str);
-    return util::UString(str, Allocator()).View();
+    return MakeView(this, Emitter()->AddDependence(str));
 }
 
 template <typename T>

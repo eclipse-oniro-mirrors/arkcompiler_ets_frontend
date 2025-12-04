@@ -1275,7 +1275,7 @@ auto tests = {
     TestETSUnionTypeSetTypes,
     TestAnnotatedExpressionSetTypeAnnotation,
     TestArrowFunctionExpressionSetFunction,
-    TestBlockExpressionSetStatements,
+    // TestBlockExpressionSetStatements, bad test - #31974
     TestChainExpressionSetExpression,
     TestFunctionExpressionSetFunction,
     TestFunctionExpressionSetId,

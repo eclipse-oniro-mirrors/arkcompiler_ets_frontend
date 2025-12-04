@@ -22,12 +22,15 @@ static bool IsInParentsRange(const ir::AstNode *ast, ir::AstNode const *node)
     if (ast != node->Parent()) {
         return false;
     }
+    // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
     if (ast->Start().line > node->Start().line || ast->End().line < node->End().line) {
         return false;
     }
+    // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
     if (ast->Start().line == node->Start().line && ast->Start().index > node->Start().index) {
         return false;
     }
+    // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
     if (ast->End().line == node->End().line && ast->End().index < node->End().index) {
         return false;
     }

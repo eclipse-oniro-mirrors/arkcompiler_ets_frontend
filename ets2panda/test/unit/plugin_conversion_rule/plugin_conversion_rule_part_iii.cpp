@@ -112,7 +112,7 @@ TEST_F(PluginConversionRuleUnitTest, FunctionSignaturePtrCall)
     {
      	auto *ctx = reinterpret_cast<Context *>(context);
      	auto *ctxAllocator = ctx->allocator;
-     	auto resultVector = ((reinterpret_cast<const ir::FunctionSignature *>(classInstance))->Params());
+     	decltype(auto) resultVector = ((reinterpret_cast<const ir::FunctionSignature *>(classInstance))->Params());
      	*returnTypeLen = resultVector.size();
      	auto apiRes = ctxAllocator->New< es2panda_AstNode *[]>(*returnTypeLen);
      	for (size_t i = 0; i < *returnTypeLen; ++i) {

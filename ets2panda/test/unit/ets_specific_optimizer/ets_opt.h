@@ -50,8 +50,8 @@ public:
 
         // NOLINTNEXTLINE(readability-magic-numbers)
         es2panda::EHeap::Initialize();
-        allocator_ = es2panda::EHeap::NewAllocator().release();
-        localAllocator_ = es2panda::EHeap::NewAllocator().release();
+        allocator_ = es2panda::EHeap::NewScopedAllocator().release();
+        localAllocator_ = es2panda::EHeap::NewScopedAllocator().release();
         builder_ = new compiler::IrConstructor();
 
         Logger::InitializeStdLogging(Logger::Level::ERROR,
@@ -70,11 +70,11 @@ public:
     NO_COPY_SEMANTIC(EtsOptTest);
     NO_MOVE_SEMANTIC(EtsOptTest);
 
-    ArenaAllocator *GetAllocator()
+    ark::ArenaAllocator *GetAllocator()
     {
         return allocator_;
     }
-    ArenaAllocator *GetLocalAllocator()
+    ark::ArenaAllocator *GetLocalAllocator()
     {
         return localAllocator_;
     }
@@ -111,8 +111,8 @@ protected:
     compiler::IrConstructor *builder_;
 
 private:
-    ArenaAllocator *allocator_;
-    ArenaAllocator *localAllocator_;
+    ark::ArenaAllocator *allocator_;
+    ark::ArenaAllocator *localAllocator_;
     compiler::Graph *graph_ {nullptr};
 };
 

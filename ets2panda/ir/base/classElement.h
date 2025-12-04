@@ -104,10 +104,10 @@ protected:
 
 protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
-    Expression *key_;
-    Expression *value_;
+    EPtr<Expression> key_;
+    EPtr<Expression> value_;
+    EPtr<TSEnumMember> enumMember_ {};
     bool isComputed_;
-    TSEnumMember *enumMember_ {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 }  // namespace ark::es2panda::ir

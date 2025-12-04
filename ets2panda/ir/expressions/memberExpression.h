@@ -38,7 +38,7 @@ inline constexpr char const PREDEFINED_METHOD[] = "The special predefined method
 
 using ENUMBITOPS_OPERATORS;
 
-enum class MemberExpressionKind : uint32_t {
+enum class MemberExpressionKind : uint8_t {
     NONE = 0,
     ELEMENT_ACCESS = 1U << 0U,
     PROPERTY_ACCESS = 1U << 1U,
@@ -259,14 +259,14 @@ private:
 
     void LoadRhs(compiler::PandaGen *pg) const;
 
-    Expression *object_ = nullptr;
-    Expression *property_ = nullptr;
+    EPtr<Expression> object_ = nullptr;
+    EPtr<Expression> property_ = nullptr;
     MemberExpressionKind kind_;
     bool computed_;
     bool ignoreBox_ {false};
-    checker::Type *uncheckedType_ {};
-    checker::ETSObjectType *objType_ {};
-    checker::ETSFunctionType *extensionAccessorType_ {};
+    EPtr<checker::Type> uncheckedType_ {};
+    EPtr<checker::ETSObjectType> objType_ {};
+    EPtr<checker::ETSFunctionType> extensionAccessorType_ {};
 };
 }  // namespace ark::es2panda::ir
 
