@@ -48,4 +48,4 @@ class C5<T> {
 class A5 {
   v: number = 0
 }
-let b5: C5<A5> = new C5<A5>(); // Should pass: Generic types match exactly: C5<A5> = C5<A5>```
+let b5: C5<A5> = new C5<A5>(); // Should pass: Generic types match exactly: C5<A5> = C5<A5>

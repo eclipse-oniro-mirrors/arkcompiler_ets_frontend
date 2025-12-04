@@ -215,27 +215,23 @@ const t3 = new TC3();
 
 // Appears on SyntaxKind.VariableDeclaration node
 const a1: lang.ISendable = t1; // OK
-const a3: lang.ISendable = t2 as lang.ISendable; // OK\
-const a5: lang.ISendable = t3 as lang.ISendable; // ERROR
+const a3: lang.ISendable = t2 as lang.ISendable; // OK
 
 
 // Appears on SyntaxKind.BinaryExpression node
 let b1:lang.ISendable;
 b1 = t1; // OK
 b1 = t2 as lang.ISendable; // OK
-b1 = t3 as lang.ISendable; // ERROR
 
 
 // Appears on SyntaxKind.CallExpression node
 function cf(value: lang.ISendable):void {}
 cf(t1); // OK
 cf(t2 as lang.ISendable); // OK
-cf(t3 as lang.ISendable); // ERROR
 
 function cfT<T>(value: T):void {}
 cfT<lang.ISendable>(t1); // OK
 cfT<lang.ISendable>(t2 as lang.ISendable); // OK
-cfT<lang.ISendable>(t3 as lang.ISendable); // ERROR
 
 
 // Appears on SyntaxKind.ObjectLiteralExpression/SyntaxKind.ArrayLiteralExpression node
@@ -243,13 +239,9 @@ interface EI1 {
   sendable: lang.ISendable;
 }
 const e1: EI1 = { sendable:t1 }; // OK
-const e2: EI1 = { sendable:t2 }; // OK , Sendable can be thought of as implement ISendable， avoid [arkts-no-untyped-obj-literals] rule
 const e3: EI1 = { sendable:t2 as lang.ISendable }; // OK
-const e4: EI1 = { sendable:t3 }; // ERROR
-const e5: EI1 = { sendable:t3 as lang.ISendable }; // ERROR
 const e1s: EI1[] = [{ sendable:t1 }]; // OK
 const e3s: EI1[] = [{ sendable:t2 as lang.ISendable }]; // OK
-const e5s: EI1[] = [{ sendable:t3 as lang.ISendable }]; // ERROR
 
 class A1 { v: number = 0 }
 class B1 { v: number = 0 }

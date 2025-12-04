@@ -13,5 +13,16 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 38,
+            "column": 3,
+            "endLine": 38,
+            "endColumn": 19,
+            "problem": "UseConcurrentDeprecated",
+            "suggest": "",
+            "rule": "\"use concurrent\" is not supported (arkts-limited-stdlib-no-use-concurrent)",
+            "severity": "ERROR"
+        }
+    ]
 }

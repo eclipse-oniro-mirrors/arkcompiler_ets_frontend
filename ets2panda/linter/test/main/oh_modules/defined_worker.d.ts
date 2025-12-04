@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-import worker, { ErrorEvent, MessageEvents, ThreadWorkerGlobalScope } from './@ohos.worker';
-export { worker, ErrorEvent, MessageEvents, ThreadWorkerGlobalScope }
-export { collections } from './@arkts.collections';
-export { utils } from './@arkts.utils';
-export { taskpool } from './@ohos.taskpool';
-export { ArkTSUtils } from './@arkts.utils';
-export { process } from './@ohos.process';
+export namespace worker {
+    class ThreadWorker {
+        constructor(scriptURL: string);
+        postMessage(message: Object): void;
+        postMessageWithSharedSendable(message: Object, transfer?: ArrayBuffer[]): void;
+        terminate(): void;
+    }
+}

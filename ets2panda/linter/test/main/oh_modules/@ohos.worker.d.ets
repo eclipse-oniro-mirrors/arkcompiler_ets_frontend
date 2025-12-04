@@ -13,16 +13,37 @@
  * limitations under the License.
  */
 
-export namespace worker {
-  export class ThreadWorker {
+declare namespace worker {
+  class ThreadWorker {
     constructor(scriptURL: string, options?: WorkerOptions);
     postMessage(message: any, transfer?: Transferable[]): void;
     terminate(): void;
     on(type: string, listener: (data: any) => void): void;
   }
 
-  export interface WorkerOptions {
+  interface WorkerOptions {
     type?: "classic" | "module";
     name?: string;
   }
+
+  const workerPort: ThreadWorkerGlobalScope;
 }
+
+export interface ThreadWorkerGlobalScope {
+  onmessage?: (this: ThreadWorkerGlobalScope, ev: MessageEvents) => void;
+  onmessageerror?: (this: ThreadWorkerGlobalScope, ev: MessageEvents) => void;
+  onerror?: (ev: ErrorEvent) => void;
+}
+
+export interface MessageEvents {
+  readonly data: any;
+}
+export interface ErrorEvent {
+  readonly message: string;
+  readonly filename: string;
+  readonly lineno: number;
+  readonly colno: number;
+  readonly error: Object;
+}
+
+export default worker;
