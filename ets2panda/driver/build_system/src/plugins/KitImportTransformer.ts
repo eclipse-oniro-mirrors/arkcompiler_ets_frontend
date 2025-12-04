@@ -152,7 +152,7 @@ export class KitImportTransformer {
             const importDecl = this.arkts.factory.createImportDeclaration(
                 this.arkts.factory.createStringLiteral(source),
                 specifiers,
-                this.arkts.Es2pandaImportKinds.IMPORT_KINDS_VALUE,
+                this.arkts.Es2pandaImportKinds.IMPORT_KINDS_ALL,
                 this.program,
                 this.arkts.Es2pandaImportFlags.IMPORT_FLAGS_NONE
             );

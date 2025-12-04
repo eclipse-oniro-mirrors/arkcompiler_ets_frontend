@@ -52,7 +52,7 @@ export const arktsMock: Partial<ArkTS> = {
         createStringLiteral: jest.fn((s) => ({ str: s })),
     },
     Es2pandaImportKinds: {
-        IMPORT_KINDS_VALUE: 0,
+      IMPORT_KINDS_ALL: 0,
     },
     Es2pandaImportFlags: {
         IMPORT_FLAGS_NONE: 0,

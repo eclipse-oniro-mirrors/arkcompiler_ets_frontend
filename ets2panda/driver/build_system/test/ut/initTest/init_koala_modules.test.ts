@@ -23,7 +23,7 @@ const fakeKoalaModule = {
     },
 };
 
-jest.mock('/mock/build/path/build-tools/koala-wrapper/build/lib/es2panda', () => fakeKoalaModule, { virtual: true });
+jest.mock('/mock/build/path/build-tools/libarkts/build/lib/es2panda', () => fakeKoalaModule, { virtual: true });
 
 describe('initKoalaModules', () => {
     let buildConfig: BuildConfig;
