@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_ETS_AWAITED_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_ETS_AWAITED_TYPE_H
 
-#include "checker/types/ets/etsTypeParameter.h"
 #include "checker/types/type.h"
 
 namespace ark::es2panda::checker {
@@ -50,6 +49,7 @@ public:
 
     void CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag) override;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void ToAssemblerType(std::stringstream &ss) const override;
     void ToDebugInfoType(std::stringstream &ss) const override;

@@ -31,6 +31,7 @@ public:
         ES2PANDA_ASSERT(promiseType->TypeArguments().size() == 1);
     }
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;

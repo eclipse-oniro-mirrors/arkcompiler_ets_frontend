@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-#include "checker/ETSchecker.h"
 #include "etsAwaitedType.h"
+
+#include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
 void ETSAwaitedType::ToString(std::stringstream &ss, bool precise) const
@@ -105,4 +106,10 @@ void ETSAwaitedType::CheckVarianceRecursively(TypeRelation *relation, VarianceFl
     relation->CheckVarianceRecursively(GetUnderlying(),
                                        relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
 }
+
+void ETSAwaitedType::Iterate(const TypeTraverser &func) const
+{
+    func(tparam_);
+}
+
 }  // namespace ark::es2panda::checker

@@ -15,11 +15,7 @@
 
 #include "etsTypeAliasType.h"
 
-#include "varbinder/variable.h"
 #include "checker/ETSchecker.h"
-#include "checker/ets/conversion.h"
-#include "checker/types/typeRelation.h"
-#include "checker/types/globalTypesHolder.h"
 
 namespace ark::es2panda::checker {
 
@@ -300,6 +296,15 @@ Type *ETSTypeAliasType::Substitute(TypeRelation *relation, const Substitution *s
     }
 
     return copiedType;
+}
+
+void ETSTypeAliasType::Iterate(const TypeTraverser &func) const
+{
+    func(targetType_);
+
+    for (auto const *const type : typeArguments_) {
+        func(type);
+    }
 }
 
 }  // namespace ark::es2panda::checker

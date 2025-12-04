@@ -14,7 +14,6 @@
  */
 
 #include "etsResizableArrayType.h"
-#include "etsUnionType.h"
 
 namespace ark::es2panda::checker {
 
@@ -35,6 +34,11 @@ void ETSResizableArrayType::ToString(std::stringstream &ss, [[maybe_unused]] boo
         ElementType()->ToString(ss, precise);
         ss << ">";
     }
+}
+
+void ETSResizableArrayType::Iterate(const TypeTraverser &func) const
+{
+    func(element_);
 }
 
 }  // namespace ark::es2panda::checker

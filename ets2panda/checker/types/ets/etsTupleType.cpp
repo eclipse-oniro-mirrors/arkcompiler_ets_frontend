@@ -17,7 +17,6 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "ir/ets/etsTuple.h"
 
 namespace ark::es2panda::checker {
 void ETSTupleType::ToString(std::stringstream &ss, bool precise) const
@@ -212,6 +211,13 @@ void ETSTupleType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag
 {
     for (auto const &ctype : typeList_) {
         relation->CheckVarianceRecursively(ctype, relation->TransferVariant(varianceFlag, VarianceFlag::INVARIANT));
+    }
+}
+
+void ETSTupleType::Iterate(const TypeTraverser &func) const
+{
+    for (auto const *const type : typeList_) {
+        func(type);
     }
 }
 

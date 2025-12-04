@@ -14,8 +14,7 @@
  */
 
 #include "etsTypeParameter.h"
-#include "ir/expressions/identifier.h"
-#include "ir/ts/tsTypeParameter.h"
+
 #include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
@@ -178,5 +177,11 @@ ETSTypeParameter *ETSTypeParameter::GetOriginal() const
 util::StringView const &ETSTypeParameter::Name() const noexcept
 {
     return GetDeclNode()->Name()->Name();
+}
+
+void ETSTypeParameter::Iterate(const TypeTraverser &func) const
+{
+    func(constraint_);
+    func(default_);
 }
 }  // namespace ark::es2panda::checker

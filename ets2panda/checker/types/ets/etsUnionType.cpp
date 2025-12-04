@@ -14,11 +14,9 @@
  */
 
 #include <numeric>
-#include "etsObjectType.h"
+
 #include "etsUnionType.h"
 #include "checker/ets/conversion.h"
-#include "checker/types/ets/etsTupleType.h"
-#include "checker/types/globalTypesHolder.h"
 #include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
@@ -519,6 +517,13 @@ bool ETSUnionType::IsOverlapWith(TypeRelation *relation, Type const *type) const
         }
     }
     return false;
+}
+
+void ETSUnionType::Iterate(const TypeTraverser &func) const
+{
+    for (auto const *type : ConstituentTypes()) {
+        func(type);
+    }
 }
 
 }  // namespace ark::es2panda::checker
