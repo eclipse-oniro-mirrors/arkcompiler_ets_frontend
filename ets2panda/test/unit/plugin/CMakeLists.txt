@@ -133,6 +133,7 @@ set(PLUGIN_TESTS
     "pugin_proceed_to_state_test_overload_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_recheck_optimize_test recheck_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "pugin_proceed_to_state_async_func_source_range compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_lower_phase compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS
