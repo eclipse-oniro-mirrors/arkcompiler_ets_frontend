@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if(NOT PANDA_REGRESSION_TESTS)
+if(NOT PANDA_REGRESSION_TESTS OR NOT PANDA_WITH_ETS)
     return()
 endif()
 
@@ -28,32 +28,25 @@ add_custom_target(path_getter
     DEPENDS ${GEN_INCLUDE_DIR}/path_getter.h)
 add_dependencies(panda_gen_files path_getter)
 
-# NOTE(@srokashevich, #29191): enable with asan after fix
-if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
-    panda_add_gtest(
-            TEST_GROUP es2panda_gtests
-            STASH_LIST ets_stash_list
-            NAME es2panda_depanalyz_tests
-            SOURCES
-                test.cpp
-            LIBRARIES
-                es2panda-public
-                es2panda-lib
-                arkassembler
-                dependency_analyzer_lib
-            INCLUDE_DIRS
-                ${ES2PANDA_PATH}
-                ${ES2PANDA_BINARY_ROOT}
-                ${GEN_INCLUDE_DIR}
-            SANITIZERS
-                ${PANDA_SANITIZERS_LIST}
-            DEPS_TARGETS
-                etsstdlib
-    )
+panda_add_gtest(
+        TEST_GROUP es2panda_gtests
+        STASH_LIST ets_stash_list
+        NAME es2panda_depanalyz_tests
+        SOURCES
+            test.cpp
+        LIBRARIES
+            es2panda-public
+            es2panda-lib
+            arkassembler
+            dependency_analyzer_lib
+        INCLUDE_DIRS
+            ${ES2PANDA_PATH}
+            ${ES2PANDA_BINARY_ROOT}
+            ${GEN_INCLUDE_DIR}
+        SANITIZERS
+            ${PANDA_SANITIZERS_LIST}
+        DEPS_TARGETS
+            etsstdlib
+)
 
-    add_dependencies(es2panda_depanalyz_tests path_getter)
-endif()
-
-if(NOT PANDA_WITH_ETS)
-    return()
-endif()
+add_dependencies(es2panda_depanalyz_tests path_getter)

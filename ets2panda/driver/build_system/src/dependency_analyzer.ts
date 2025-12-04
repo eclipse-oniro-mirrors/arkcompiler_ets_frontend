@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -328,13 +328,15 @@ export class DependencyAnalyzer {
                 },
                 type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
             });
-
-            for (const dependency of dependencyMap.dependencies[file]) {
-                node.predecessors.add(computeHash(dependency));
+            if (dependencyMap.dependencies[file]) {
+                for (const dependency of dependencyMap.dependencies[file]) {
+                    node.predecessors.add(computeHash(dependency));
+                }
             }
-
-            for (const dependant of dependencyMap.dependants[file]) {
-                node.descendants.add(computeHash(dependant));
+            if (dependencyMap.dependants[file]) {
+                for (const dependant of dependencyMap.dependants[file]) {
+                    node.descendants.add(computeHash(dependant));
+                }
             }
             dependencyGraphNodes.push(node);
         }
@@ -389,7 +391,7 @@ export class DependencyAnalyzer {
             let mainModule = Array.from(moduleInfos.values()).find((module) => module.isMainModule)!
             this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
             const nodeIds: string[] = Graph.topologicalSort(dependencyGraph);
-            while(nodeIds.length > 0) {
+            while (nodeIds.length > 0) {
                 let cluster = dependencyGraph.getNodeById(nodeIds.shift()!);
                 cluster.data.fileInfo.arktsConfig = mainModule.arktsConfigFile;
                 cluster.data.fileInfo.moduleName = mainModule.packageName;

@@ -36,6 +36,7 @@ Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
       etsnolintCollection_(allocator_->Adapter()),
       cfg_(allocator_->New<compiler::CFG>(allocator_)),
+      fileDependencies_(allocator_->Adapter()),
       varbinders_(allocator_->Adapter()),
       checkers_(allocator_->Adapter())
 {
@@ -203,6 +204,11 @@ Program::~Program()  // NOLINT(modernize-use-equals-default)
 compiler::CFG *Program::GetCFG()
 {
     return cfg_;
+}
+
+void Program::AddFileDependencies(const util::StringView &file, const util::StringView &depFile)
+{
+    fileDependencies_[file].insert(depFile);
 }
 
 ir::ClassDefinition *Program::GlobalClass()

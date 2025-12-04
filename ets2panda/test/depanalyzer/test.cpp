@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,12 +14,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <vector>
 
 #include "driver/dependency_analyzer/dep_analyzer.h"
-#include "libarkbase/macros.h"
 #include "path_getter.h"
-#include "libarkbase/os/filesystem.h"
 
 namespace {
 
@@ -34,39 +31,27 @@ public:
     {
         std::string binPath = test::utils::DepAnalyzerTestsBinPathGet();
         std::string testPath = test::utils::DepAnalyzerTestsPathGet(testFolderNum, 1);
-        options_ = {binPath.c_str(), testPath.c_str()};
 
-        depAnalyzer_.AnalyzeDeps(optionsSize_, options_.data());
+        depAnalyzer_.AnalyzeDeps(binPath, "", {testPath});
     }
 
-    void GetExpectedAns(std::vector<std::string> &expected, size_t testFolderNum, size_t testFileCounter)
+    const std::unordered_set<std::string> &GetTestSourcePaths() const
     {
-        for (size_t i = 1; i < testFileCounter + 1; ++i) {
-            std::string expPath = test::utils::DepAnalyzerTestsPathGet(testFolderNum, i);
-            expected.push_back(ark::os::GetAbsolutePath(expPath));
-        }
+        return depAnalyzer_.GetAlreadyProcessedFiles();
     }
 
-    const std::vector<std::string> &GetTestSourcePaths()
+    const std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependencies() const
     {
-        return depAnalyzer_.GetSourcePaths();
+        return depAnalyzer_.GetDirectDependencies();
     }
 
-    std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependencies()
+    const std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependants() const
     {
-        return depAnalyzer_.GetFileDirectDependencies();
-    }
-
-    std::unordered_map<std::string, std::unordered_set<std::string>> &GetTestFileDirectDependants()
-    {
-        return depAnalyzer_.GetFileDirectDependants();
+        return depAnalyzer_.GetDirectDependants();
     }
 
 private:
     DepAnalyzer depAnalyzer_;
-
-    const size_t optionsSize_ = 2;
-    std::vector<const char *> options_ = {};
 };
 
 TEST_F(DepAnalyzerTest, Subtestv1)
@@ -76,8 +61,6 @@ TEST_F(DepAnalyzerTest, Subtestv1)
     std::unordered_map<std::string, std::unordered_set<std::string>> dependenciesExpected;
     std::unordered_map<std::string, std::unordered_set<std::string>> dependentsExpected;
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(1, 1);
-    dependenciesExpected[file1] = {};
-    dependentsExpected[file1] = {};
     ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);
 }
@@ -96,7 +79,6 @@ TEST_F(DepAnalyzerTest, Subtestv2)
     dependenciesExpected[file2] = {file3};
     dependenciesExpected[file3] = {file2, file4};
     dependenciesExpected[file4] = {file2};
-    dependentsExpected[file1] = {};
     dependentsExpected[file2] = {file3, file4, file1};
     dependentsExpected[file3] = {file2};
     dependentsExpected[file4] = {file3};
@@ -113,7 +95,6 @@ TEST_F(DepAnalyzerTest, Subtestv3)
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(3, 1);
     std::string file2 = test::utils::DepAnalyzerTestsPathGet(3, 2);
     dependenciesExpected[file1] = {file2};
-    dependentsExpected[file1] = {};
     dependentsExpected[file2] = {file1};
     ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);
@@ -128,7 +109,6 @@ TEST_F(DepAnalyzerTest, Subtestv4)
     std::string file1 = test::utils::DepAnalyzerTestsPathGet(4, 1);
     std::string file2 = test::utils::DepAnalyzerTestsPathGet(4, 2);
     dependenciesExpected[file1] = {file2};
-    dependentsExpected[file1] = {};
     dependentsExpected[file2] = {file1};
     ASSERT(GetTestFileDirectDependencies() == dependenciesExpected);
     ASSERT(GetTestFileDirectDependants() == dependentsExpected);

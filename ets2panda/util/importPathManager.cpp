@@ -599,7 +599,7 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         return ImportMetadata {util::ImportFlags::NONE, Language::Id::COUNT, ERROR_LITERAL};
     }
 
-    globalProgram_->AddFileDependencies(std::string(curModulePath), std::string(resolvedImportPath));
+    globalProgram_->AddFileDependencies(curModulePath, util::StringView(resolvedImportPath));
 
     ImportMetadata importData {importFlags};
     importData.resolvedSource = resolvedImportPath;
@@ -611,7 +611,7 @@ ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser
         importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
     }
 
-    if (!parser_->HasParserStatus(parser::ParserStatus::DEPENDENCY_ANALYZER_MODE)) {
+    if (!parser_->GetContext().IsDependencyAnalyzerMode()) {
         importData.resolvedSource = TryImportFromDeclarationCache(importData.resolvedSource);
     }
 

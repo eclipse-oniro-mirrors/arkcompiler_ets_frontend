@@ -1149,7 +1149,7 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *co
 {
     auto importProgram = records[0];
     const auto &globalBindings = importProgram->GlobalScope()->Bindings();
-    auto selectMap = importProgram->VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
+    const auto &selectMap = importProgram->VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto selectMap2 = selectMap.find(import->ResolvedSource());
     if (selectMap2 != selectMap.end()) {
         auto item1 = std::find_if(selectMap2->second.begin(), selectMap2->second.end(), isDefaultExported);

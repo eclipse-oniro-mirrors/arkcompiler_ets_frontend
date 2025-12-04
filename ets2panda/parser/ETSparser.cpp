@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,7 +136,7 @@ void ETSParser::ParseProgram(ScriptKind kind)
     }
 
     ir::ETSModule *script;
-    if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) == 0) {
+    if (!GetContext().IsDependencyAnalyzerMode()) {
         script = ParseETSGlobalScript(startLoc, statements);
     } else {
         script = ParseImportsAndReExportOnly(startLoc, statements);
@@ -293,9 +293,7 @@ void ETSParser::AddDirectImportsToDirectExternalSources(
     }
 
     auto name = newProg->ModuleName();
-    if (GetProgram()->DirectExternalSources().count(name) == 0) {
-        GetProgram()->DirectExternalSources().try_emplace(name, Allocator()->Adapter());
-    }
+    GetProgram()->DirectExternalSources().try_emplace(name, Allocator()->Adapter());
     auto &dirExternal = GetProgram()->DirectExternalSources().at(name);
     for (auto &prog : dirExternal) {
         if (CheckDupAndReplace(prog, newProg)) {
@@ -311,13 +309,6 @@ void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &
                                       std::vector<Program *> *programs)
 {
     const auto &importData = parseListElem.importData;
-
-    // Returns if already visited in dep_analyzer
-    if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) != 0U &&
-        Context()->depAnalyzer != nullptr &&
-        Context()->depAnalyzer->GetFileDirectDependencies().count(std::string {importData.resolvedSource}) > 0) {
-        return;
-    }
 
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
     ES2PANDA_ASSERT(!extSrc.empty());
@@ -424,8 +415,18 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
     auto notParsedElement = findNotParsed();
     while (notParsedElement != parseList.end()) {
         notParsedElement->isParsed = true;
-
         const auto &data = notParsedElement->importData;
+
+        // Check if already visited in dep_analyzer
+        if (GetContext().IsDependencyAnalyzerMode()) {
+            const auto *depAnalyzer = Context()->depAnalyzer;
+            ES2PANDA_ASSERT(depAnalyzer != nullptr);
+            if (depAnalyzer->GetAlreadyProcessedFiles().count(std::string {data.resolvedSource}) > 0) {
+                notParsedElement = findNotParsed();
+                continue;
+            }
+        }
+
         if (data.declPath.empty() || TryMergeFromCache(data)) {
             notParsedElement = findNotParsed();
             continue;
@@ -502,7 +503,7 @@ parser::Program *ETSParser::ParseSource(const SourceFile &sourceFile)
         }
         SavedParserContext contextAfterParseDecl(this, GetContext().Status() |= ParserStatus::IN_PACKAGE);
     }
-    if ((GetContext().Status() & parser::ParserStatus::DEPENDENCY_ANALYZER_MODE) == 0) {
+    if (!GetContext().IsDependencyAnalyzerMode()) {
         script = ParseETSGlobalScript(startLoc, statements);
     } else {
         script = ParseImportsAndReExportOnly(startLoc, statements);
