@@ -102,6 +102,7 @@ interface mainFileCache {
   fileContent: string;
   fileConfig: Config;
   fileContext: KNativePointer;
+  fileHash: string;
 }
 
 export class Lsp {
@@ -166,6 +167,10 @@ export class Lsp {
     if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
       return;
     }
+    const hash = createHash(fileContent.newDoc);
+    if (this.filesMap.get(fileName)?.fileHash === hash) {
+      return;
+    }
     if (this.filesMap.has(fileName)) {
       this.deleteFromFilesMap(fileName);
     }
@@ -173,7 +178,7 @@ export class Lsp {
     if (!cfg || !ctx) {
       return;
     }
-    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx });
+    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx, fileHash: hash});
   }
 
   deleteFromFilesMap(fileName: string): void {
