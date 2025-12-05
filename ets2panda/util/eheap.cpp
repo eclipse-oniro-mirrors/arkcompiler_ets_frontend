@@ -75,45 +75,114 @@ void EHeap::ForceFinalizeEHeapSpace()
     FinalizeEHeapSpace();
 }
 
-[[nodiscard]] __attribute__((returns_nonnull)) void *EHeap::Alloc(size_t sz)
-{
-    return gEHeapSpace->Alloc(sz);
-}
-
 [[noreturn]] __attribute__((noinline)) void EHeap::OOMAction()
 {
     std::cerr << "es2panda heap is out of memory, aborting" << std::endl;
-    ES2PANDA_UNREACHABLE();
+    std::abort();
 }
+
+#ifdef _WIN32
+
+[[noreturn]] static void MappingFailureAction(char const *msg)
+{
+    std::cerr << msg << ", code=" << GetLastError() << std::endl;
+    std::abort();
+}
+
+static void *ReserveMapping(size_t size)
+{
+    void *mem = VirtualAlloc(nullptr, size, MEM_RESERVE, PAGE_READWRITE);
+    if (mem == nullptr) {
+        MappingFailureAction("Failed to reserve heap mapping");
+    }
+    return mem;
+}
+
+static void CommitMapping(void *mem, size_t size)
+{
+    if (UNLIKELY(VirtualAlloc(mem, size, MEM_COMMIT, PAGE_READWRITE) == nullptr)) {
+        MappingFailureAction("Failed to commit heap mapping");
+    }
+}
+
+static void ReleaseMapping(void *mem, size_t size)
+{
+    (void)size;
+    [[maybe_unused]] auto res = VirtualFree(mem, 0, MEM_RELEASE);
+    ES2PANDA_ASSERT(res != 0);
+}
+
+#else
+
+[[noreturn]] static void MappingFailureAction(char const *msg)
+{
+    perror(msg);
+    std::abort();
+}
+
+static void *ReserveMapping(size_t size)
+{
+    void *mem = mmap(nullptr, size, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+    if (mem == MAP_FAILED) {
+        MappingFailureAction("Failed to reserve heap mapping");
+    }
+    return mem;
+}
+
+static void CommitMapping(void *mem, size_t size)
+{
+    if (UNLIKELY(mprotect(mem, size, PROT_READ | PROT_WRITE) < 0)) {
+        MappingFailureAction("Failed to commit heap mapping");
+    }
+}
+
+static void ReleaseMapping(void *mem, size_t size)
+{
+    [[maybe_unused]] int res = munmap(mem, size);
+    ES2PANDA_ASSERT(res == 0);
+}
+
+#endif
 
 EHeap::EHeapSpace::EHeapSpace(size_t size) : bufferSize_(size)
 {
-#ifndef _WIN32
-    buffer_ = mmap(nullptr, bufferSize_, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
-    if (buffer_ == MAP_FAILED) {
-        EHeap::OOMAction();
-    }
-#else
-    buffer_ = VirtualAlloc(nullptr, bufferSize_, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-    if (buffer_ == nullptr) {
-        EHeap::OOMAction();
-    }
-#endif
+    buffer_ = ReserveMapping(bufferSize_);
     current_ = ToUintPtr(buffer_);
     top_ = current_ + bufferSize_;
+    current_committed_ = current_;
 
     ES2PANDA_ASSERT(IsAligned(current_, ALLOC_ALIGNMENT));
 }
 
 EHeap::EHeapSpace::~EHeapSpace()
 {
-#ifndef _WIN32
-    [[maybe_unused]] int res = munmap(buffer_, bufferSize_);
-    ES2PANDA_ASSERT(res != -1);
-#else
-    [[maybe_unused]] auto res = VirtualFree(buffer_, 0, MEM_RELEASE);
-    ES2PANDA_ASSERT(res != 0);
-#endif
+    if (current_committed_ > ToUintPtr(buffer_)) {
+        ASAN_UNPOISON_MEMORY_REGION(buffer_, current_committed_ - ToUintPtr(buffer_));
+    }
+    ReleaseMapping(buffer_, bufferSize_);
+}
+
+[[nodiscard]] __attribute__((returns_nonnull)) void *EHeap::EHeapSpace::Alloc(size_t sz)
+{
+    constexpr size_t COMMIT_GRANNULARITY = 256_KB;
+    static_assert(COMMIT_GRANNULARITY >= PAGE_SIZE);
+
+    uintptr_t updCurrent = current_ + AlignUp(sz, ALLOC_ALIGNMENT);
+    if (UNLIKELY(updCurrent > current_committed_)) {
+        if (UNLIKELY(updCurrent > top_)) {
+            OOMAction();
+            ES2PANDA_UNREACHABLE();
+        }
+        uintptr_t updComitted = std::min(RoundUp(updCurrent, COMMIT_GRANNULARITY), top_);
+        size_t commitSize = updComitted - current_committed_;
+        CommitMapping(ToVoidPtr(current_committed_), commitSize);
+        ASAN_POISON_MEMORY_REGION(ToVoidPtr(current_committed_), commitSize);
+        current_committed_ = updComitted;
+    }
+    uintptr_t res = current_;
+    current_ = updCurrent;
+    ASAN_UNPOISON_MEMORY_REGION(ToVoidPtr(res), sz);
+    return ToVoidPtr(res);
 }
 
 void EHeap::BrokenEHeapPointerAction(void const *ptr)
