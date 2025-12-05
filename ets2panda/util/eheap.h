@@ -50,7 +50,10 @@ public:
     static SArenaAllocator CreateScopedAllocator();
     static std::unique_ptr<SArenaAllocator> NewScopedAllocator();
 
-    [[nodiscard]] __attribute__((returns_nonnull)) static void *Alloc(size_t sz);
+    [[nodiscard]] __attribute__((returns_nonnull)) static void *Alloc(size_t sz)
+    {
+        return gEHeapSpace->Alloc(sz);
+    }
 
     ALWAYS_INLINE static void Free([[maybe_unused]] void *ptr, [[maybe_unused]] size_t sz)
     {
@@ -141,19 +144,11 @@ private:
         explicit EHeapSpace(size_t size);
         ~EHeapSpace();
 
-        void *Alloc(size_t sz)
-        {
-            uintptr_t updCurrent = current_ + AlignUp(sz, ALLOC_ALIGNMENT);
-            if (UNLIKELY(updCurrent > top_)) {
-                OOMAction();
-            }
-            uintptr_t res = current_;
-            current_ = updCurrent;
-            return reinterpret_cast<void *>(res);
-        }
+        [[nodiscard]] __attribute__((returns_nonnull)) void *Alloc(size_t sz);
 
         ALWAYS_INLINE void Free([[maybe_unused]] void *ptr, size_t sz)
         {
+            ASAN_POISON_MEMORY_REGION(ptr, sz);
             freedSize_ += sz;
         }
 
@@ -164,7 +159,7 @@ private:
 
         ALWAYS_INLINE void AssertInRange(void const *ptr)
         {
-            if (!(ToUintPtr(ptr) >= ToUintPtr(buffer_) && ToUintPtr(ptr) < top_)) {
+            if (!(ToUintPtr(ptr) >= ToUintPtr(buffer_) && ToUintPtr(ptr) < current_)) {
                 BrokenEHeapPointerAction(ptr);
             }
         }
@@ -188,6 +183,7 @@ private:
 
         uintptr_t current_ {};
         uintptr_t top_ {};
+        uintptr_t current_committed_ {};
 
         size_t freedSize_ {};
     };
