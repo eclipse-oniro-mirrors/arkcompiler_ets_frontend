@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  */
 
 #include "relaxedAnyLowering.h"
+#include "generated/signatures.h"
 #include "ir/expressions/memberExpression.h"
 #include "compiler/lowering/util.h"
 
@@ -79,6 +80,10 @@ static ir::Expression *CreateIntrin(public_lib::Context *ctx, std::string_view i
 
 static ir::StringLiteral *IdentifierToLiteral(public_lib::Context *ctx, ir::Identifier *id)
 {
+    if (id->Variable() != nullptr && id->Variable()->Declaration() != nullptr &&
+        id->Variable()->Declaration()->Node()->IsDefaultExported()) {
+        return ctx->Allocator()->New<ir::StringLiteral>(compiler::Signatures::DEFAULT);
+    }
     return ctx->Allocator()->New<ir::StringLiteral>(id->Name());
 }
 
