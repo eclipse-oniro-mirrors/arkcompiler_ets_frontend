@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ function main(): void {
     c[1] = "c"
     arktest.assertEQ(c[0], "b")
     arktest.assertEQ(c[1], "c")
-    let d = [1, 2, 3]
+    let d: number[] = [1, 2, 3]
     d[0] = 2.5
     arktest.assertEQ(d[0], 2.5)
     arktest.assertEQ(d[0] + d[1], 4.5)

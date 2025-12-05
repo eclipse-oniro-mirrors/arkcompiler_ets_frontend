@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-let a = [1, 2, 3]
-a[0] = /* @@ label */"1"
+function foo() {
+    let a = [1, 2.0, 3]
+    let b: float[] = a;
+}
 
-/* @@? 17:1 Error Semantic error ESE0127: No matching indexing signature for $_set(Int, "1") */
-/* @@? 17:3 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
-/* @@? 17:22 Error Semantic error ESE0046: Type '"1"' is not compatible with type 'Int' at index 2 */
+/* @@? 18:22 Error Semantic error ESE0318: Type 'Array<Double>' cannot be assigned to type 'Array<Float>' */
