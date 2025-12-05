@@ -448,7 +448,9 @@ protected:
     virtual ir::MethodDefinition *ParseClassMethod(ClassElementDescriptor *desc,
                                                    const ArenaVector<ir::AstNode *> &properties,
                                                    ir::Expression *propName, lexer::SourcePosition *propEnd);
-    void ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ArenaVector<ir::Expression *> &params);
+    // NOLINTNEXTLINE(google-default-arguments)
+    virtual void ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ir::ScriptFunction *func,
+                                      bool hasReceiver = false);
     virtual void ValidateClassSetter(ClassElementDescriptor *desc, const ArenaVector<ir::AstNode *> &properties,
                                      ir::Expression *propName, ir::ScriptFunction *func);
     virtual void ValidateClassGetter(ClassElementDescriptor *desc, const ArenaVector<ir::AstNode *> &properties,

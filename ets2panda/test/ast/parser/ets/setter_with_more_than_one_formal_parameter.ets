@@ -14,7 +14,7 @@
  */
 
  interface Set {
-    set value(a: int, b: int, c : int)/* @@ label */;
+    set /* @@ label */value(a: int, b: int, c : int);
  }
 
  

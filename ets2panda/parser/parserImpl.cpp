@@ -418,18 +418,21 @@ void ParserImpl::ValidateClassMethodStart(ClassElementDescriptor *desc, [[maybe_
     }
 }
 
-void ParserImpl::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition,
-                                      const ArenaVector<ir::Expression *> &params)
+// NOLINTNEXTLINE(google-default-arguments)
+void ParserImpl::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ir::ScriptFunction *func,
+                                      [[maybe_unused]] bool hasReceiver)
 {
+    const auto &params = func->Params();
     if (methodDefinition == ir::MethodDefinitionKind::SET) {
+        if (func->ReturnTypeAnnotation() != nullptr) {
+            LogError(diagnostic::SETTER_NO_RETURN_TYPE);
+        }
         if (params.size() != 1) {
-            LogError(diagnostic::SETTER_FORMAL_PARAMS);
-        } else if (params[0]->IsETSParameterExpression() && params[0]->AsETSParameterExpression()->IsOptional()) {
-            LogError(diagnostic::SETTER_OPTIONAL_PARAM, {}, params[0]->Start());
+            LogError(diagnostic::SETTER_FORMAL_PARAMS, {}, func->Start());
         }
     } else if (methodDefinition == ir::MethodDefinitionKind::GET) {
         if (!params.empty()) {
-            LogError(diagnostic::GETTER_FORMAL_PARAMS);
+            LogError(diagnostic::GETTER_FORMAL_PARAMS, {}, func->Start());
         }
     }
 }
@@ -438,17 +441,14 @@ void ParserImpl::ValidateClassSetter([[maybe_unused]] ClassElementDescriptor *de
                                      [[maybe_unused]] const ArenaVector<ir::AstNode *> &properties,
                                      [[maybe_unused]] ir::Expression *propName, ir::ScriptFunction *func)
 {
-    ValidateGetterSetter(ir::MethodDefinitionKind::SET, func->Params());
-    if (func->ReturnTypeAnnotation() != nullptr) {
-        LogError(diagnostic::SETTER_NO_RETURN_TYPE);
-    }
+    ValidateGetterSetter(ir::MethodDefinitionKind::SET, func);
 }
 
 void ParserImpl::ValidateClassGetter([[maybe_unused]] ClassElementDescriptor *desc,
                                      [[maybe_unused]] const ArenaVector<ir::AstNode *> &properties,
                                      [[maybe_unused]] ir::Expression *propName, ir::ScriptFunction *func)
 {
-    ValidateGetterSetter(ir::MethodDefinitionKind::GET, func->Params());
+    ValidateGetterSetter(ir::MethodDefinitionKind::GET, func);
 }
 
 ir::MethodDefinition *ParserImpl::ParseClassMethod(ClassElementDescriptor *desc,
@@ -934,10 +934,9 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_FORMAT &&
         lexer_->Lookahead() == static_cast<char32_t>(ARRAY_FORMAT_NODE)) {
         return ParseExpressionsArrayFormatPlaceholder();
-    } else {
-        ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
-                  ParseListOptions::ALLOW_TRAILING_SEP);
     }
+    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
+              ParseListOptions::ALLOW_TRAILING_SEP);
 
     return ArenaVector<ir::Expression *>(params.begin(), params.end(), Allocator()->Adapter());
 }

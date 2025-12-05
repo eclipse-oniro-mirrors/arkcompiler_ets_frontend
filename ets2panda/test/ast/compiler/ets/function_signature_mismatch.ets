@@ -32,5 +32,8 @@ function main() {
     container.returnThisMember();
 }
 
-
+/* @@? 16:1 Error Semantic error ESE0082: Extension function can only defined for class, interface or array. */
 /* @@? 16:33 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 17:12 Error Semantic error ESE0203: Cannot reference 'this' in this context. */
+/* @@? 26:13 Error Semantic error ESE0400: Non-optional property 'returnThisMember' in type 'Container' is missing in object literal. */
+/* @@? 28:23 Error Semantic error ESE0319: Type '((p1: *ERROR_TYPE*) => void)' is not compatible with type '(() => String)' at property 'returnThisMember' */

@@ -1117,7 +1117,11 @@ syntax:
 
 - name: SETTER_OPTIONAL_PARAM
   id: 13534
-  message: "Setter's parameter cannot be optional."
+  message: "Setter cannot have optional parameter."
+
+- name: SETTER_REST_PARAM
+  id: 36775
+  message: "Setter cannot have rest parameter."
 
 - name: SPECIAL_METHOD_CONSTRUCTOR
   id: 149

@@ -167,6 +167,9 @@ private:
     ir::AstNode *CreateClassElement(std::string_view sourceCode, const ArenaVector<ir::AstNode *> &properties,
                                     ir::ClassDefinitionModifiers modifiers);
     ir::TypeNode *CreateTypeAnnotation(TypeAnnotationParsingOptions *options, std::string_view sourceCode);
+    // NOLINTNEXTLINE(google-default-arguments)
+    void ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ir::ScriptFunction *func,
+                              bool hasReceiver = false) override;
     ir::Statement *CreateTopLevelStatement(std::string_view const sourceCode);
 
     //============================================================================================//

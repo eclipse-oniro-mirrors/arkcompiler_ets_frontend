@@ -24,6 +24,6 @@ class int {}
 
 
 /* @@? 17:12 Error Semantic error ESE0086: Getter must return a value */
-/* @@? 18:5 Error Syntax error ESY0058: Getter must not have formal parameters. */
-/* @@? 19:1 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
+/* @@? 17:12 Error Syntax error ESY0058: Getter must not have formal parameters. */
+/* @@? 18:12 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
 /* @@? 23:7 Error Syntax error ESY0295: int is a predefined type, cannot be used as an identifier */

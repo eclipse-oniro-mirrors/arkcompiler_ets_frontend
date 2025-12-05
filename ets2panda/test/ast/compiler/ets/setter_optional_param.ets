@@ -52,33 +52,33 @@ interface I1 {
     set foo9(x: V = 42)
 }
 
-/* @@? 20:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 21:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 22:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
+/* @@? 20:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 21:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 22:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
 /* @@? 22:27 Error Syntax error ESY0132: Not enable default value with default undefined. */
-/* @@? 23:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 24:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 25:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 26:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 27:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 28:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 32:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 33:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 34:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
+/* @@? 23:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 24:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 25:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 26:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 27:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 28:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 32:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 33:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 34:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
 /* @@? 34:34 Error Syntax error ESY0132: Not enable default value with default undefined. */
-/* @@? 35:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 36:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 37:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 38:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 39:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 40:21 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 44:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 45:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 46:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
+/* @@? 35:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 36:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 37:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 38:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 39:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 40:21 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 44:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 45:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 46:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
 /* @@? 46:27 Error Syntax error ESY0132: Not enable default value with default undefined. */
-/* @@? 47:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 48:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 49:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 50:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 51:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
-/* @@? 52:14 Error Syntax error ESY13534: Setter's parameter cannot be optional. */
+/* @@? 47:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 48:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 49:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 50:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 51:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
+/* @@? 52:14 Error Syntax error ESY13534: Setter cannot have optional parameter. */
