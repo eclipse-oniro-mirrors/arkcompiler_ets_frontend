@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ public:
         ark::compiler::g_options.SetCompilerSupportInitObjectInst(true);
 
         // NOLINTNEXTLINE(readability-magic-numbers)
-        es2panda::EHeap::Initialize();
-        allocator_ = es2panda::EHeap::NewScopedAllocator().release();
-        localAllocator_ = es2panda::EHeap::NewScopedAllocator().release();
+        es2panda::ScopedAllocatorsManager::Initialize();
+        allocator_ = es2panda::ScopedAllocatorsManager::NewAllocator().release();
+        localAllocator_ = es2panda::ScopedAllocatorsManager::NewAllocator().release();
         builder_ = new compiler::IrConstructor();
 
         Logger::InitializeStdLogging(Logger::Level::ERROR,
@@ -62,7 +62,7 @@ public:
         delete allocator_;
         delete localAllocator_;
         delete builder_;
-        es2panda::EHeap::Finalize();
+        es2panda::ScopedAllocatorsManager::Finalize();
 
         Logger::Destroy();
     }
@@ -70,11 +70,11 @@ public:
     NO_COPY_SEMANTIC(EtsOptTest);
     NO_MOVE_SEMANTIC(EtsOptTest);
 
-    ark::ArenaAllocator *GetAllocator()
+    es2panda::SArenaAllocator *GetAllocator()
     {
         return allocator_;
     }
-    ark::ArenaAllocator *GetLocalAllocator()
+    es2panda::SArenaAllocator *GetLocalAllocator()
     {
         return localAllocator_;
     }
@@ -111,8 +111,8 @@ protected:
     compiler::IrConstructor *builder_;
 
 private:
-    ark::ArenaAllocator *allocator_;
-    ark::ArenaAllocator *localAllocator_;
+    es2panda::SArenaAllocator *allocator_;
+    es2panda::SArenaAllocator *localAllocator_;
     compiler::Graph *graph_ {nullptr};
 };
 

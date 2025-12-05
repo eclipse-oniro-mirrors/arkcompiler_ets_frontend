@@ -59,7 +59,7 @@ public:
 
     static void SetUpTestCase()
     {
-        ark::es2panda::EHeap::Initialize();
+        ark::es2panda::ScopedAllocatorsManager::Initialize();
     }
 
     checker_alias::ETSChecker *Checker()
@@ -113,7 +113,7 @@ public:
         return [](plib_alias::Context *context, varbinder_alias::FunctionScope *scope,
                   compiler_alias::ProgramElement *programElement) -> void {
             RegSpiller regSpiller;
-            auto allocator = ark::es2panda::EHeap::CreateAllocator();
+            auto allocator = ark::es2panda::ScopedAllocatorsManager::CreateAllocator();
             AstCompiler astcompiler;
             compiler_alias::SetPhaseManager(context->phaseManager);
             CodeGen cg(&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astcompiler));
@@ -246,6 +246,7 @@ public:
     NO_MOVE_SEMANTIC(CheckerTest);
 
 private:
+    ark::es2panda::EHeap::Scope eheapScope_;
     std::unique_ptr<ark::es2panda::ArenaAllocator> allocator_;
     std::unique_ptr<plib_alias::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;

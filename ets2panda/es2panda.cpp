@@ -89,6 +89,8 @@ pandasm::Program *Compiler::Compile(const SourceFile &input, const util::Options
                                     util::DiagnosticEngine &diagnosticEngine, uint32_t parseStatus)
 {
     public_lib::Context context;
+
+    EHeap::Scope eHeapScope;
     auto allocator = EHeap::CreateAllocator();
     context.allocator = &allocator;
 

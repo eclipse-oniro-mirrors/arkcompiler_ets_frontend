@@ -32,11 +32,6 @@ public:
 
     ~Initializer();
 
-    ArenaAllocator *Allocator()
-    {
-        return allocator_;
-    }
-
     es2panda_Context *CreateContext(char const *fileName, es2panda_ContextState state, char const *fileSource = nullptr)
     {
         es2panda_Context *ctx = nullptr;
@@ -127,7 +122,6 @@ public:
 private:
     es2panda_Impl const *impl_;
     es2panda_Config *cfg_;
-    ArenaAllocator *allocator_;
 };
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);

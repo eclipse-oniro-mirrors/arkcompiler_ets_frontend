@@ -27,7 +27,7 @@ public:
 
     static void SetUpTestCase()
     {
-        EHeap::Initialize();
+        ScopedAllocatorsManager::Initialize();
     }
 
     NodeHistoryTest()

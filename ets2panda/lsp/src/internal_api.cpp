@@ -57,12 +57,10 @@ Initializer::Initializer()
     }
     std::array<const char *, 1> argv = {buildDir.c_str()};
     cfg_ = impl_->CreateConfig(argv.size(), argv.data());
-    allocator_ = EHeap::NewAllocator().release();
 }
 
 Initializer::~Initializer()
 {
-    delete allocator_;
     impl_->DestroyConfig(cfg_);
 }
 

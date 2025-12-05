@@ -116,6 +116,8 @@ struct Context {
     void MarkGenAbcForExternal(std::unordered_set<std::string> &genAbcList, public_lib::ExternalSource &extSources);
 
     ConfigImpl *config = nullptr;
+    EHeap::Scope *eheapScope = nullptr;
+
     GlobalContext *globalContext = nullptr;
     std::string sourceFileName;
     std::string input;

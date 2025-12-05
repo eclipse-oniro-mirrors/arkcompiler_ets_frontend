@@ -46,7 +46,7 @@ public:
 
     static void SetUpTestCase()
     {
-        ark::es2panda::EHeap::Initialize();
+        ark::es2panda::ScopedAllocatorsManager::Initialize();
     }
 
     ark::es2panda::ArenaAllocator *Allocator()
@@ -55,6 +55,7 @@ public:
     }
 
 private:
+    ark::es2panda::EHeap::Scope eheapScope_;
     std::unique_ptr<ark::es2panda::ArenaAllocator> allocator_;
     std::unique_ptr<ark::es2panda::compiler::PhaseManager> phaseManager_;
 };

@@ -108,12 +108,12 @@ class ASTDumperTest : public testing::TestWithParam<TestParams> {
 public:
     ASTDumperTest()
     {
-        ark::es2panda::EHeap::Initialize();
+        ark::es2panda::ScopedAllocatorsManager::Initialize();
     }
 
     ~ASTDumperTest() override
     {
-        ark::es2panda::EHeap::Finalize();
+        ark::es2panda::ScopedAllocatorsManager::Finalize();
     };
 
     NO_COPY_SEMANTIC(ASTDumperTest);

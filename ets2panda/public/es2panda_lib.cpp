@@ -218,15 +218,15 @@ __attribute__((unused)) char const *ArenaStrdup(ArenaAllocator *allocator, char 
 
 extern "C" void MemInitialize()
 {
-    if (EHeap::IsInitialized()) {
+    if (ScopedAllocatorsManager::IsInitialized()) {
         return;
     }
-    EHeap::Initialize();
+    ScopedAllocatorsManager::Initialize();
 }
 
 extern "C" void MemFinalize()
 {
-    EHeap::Finalize();
+    ScopedAllocatorsManager::Finalize();
 }
 
 extern "C" es2panda_Config *CreateConfig(int args, char const *const *argv)
@@ -293,7 +293,7 @@ static void CompileJob(public_lib::Context *context, varbinder::FunctionScope *s
         return;
     }
     compiler::StaticRegSpiller regSpiller;
-    auto allocator = EHeap::CreateScopedAllocator();
+    auto allocator = ScopedAllocatorsManager::CreateAllocator();
     compiler::ETSCompiler astCompiler {};
     compiler::ETSGen cg {&allocator, &regSpiller, context, std::make_tuple(scope, programElement, &astCompiler)};
     compiler::ETSFunctionEmitter funcEmitter {&cg, programElement};
@@ -420,6 +420,7 @@ __attribute__((unused)) static es2panda_Context *CreateContext(es2panda_Config *
         }
     } else {
         ir::DisableContextHistory();
+        res->eheapScope = new EHeap::Scope();
         res->allocator = EHeap::NewAllocator().release();
     }
 
@@ -514,6 +515,7 @@ extern __attribute__((unused)) es2panda_Context *CreateContextGenerateAbcForExte
     res->sourceFileName = "";
     res->sourceFile = new SourceFile(res->sourceFileName, res->input, cfg->options->IsModule());
     ir::DisableContextHistory();
+    res->eheapScope = new EHeap::Scope();
     res->allocator = EHeap::NewAllocator().release();
 
     InitializeContext(res);
@@ -671,6 +673,8 @@ extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
         }
         delete ctx->allocator;
         ctx->allocator = nullptr;
+        delete ctx->eheapScope;
+        ctx->eheapScope = nullptr;
     } else {
         ES2PANDA_ASSERT(ctx->globalContext != nullptr);
         for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
