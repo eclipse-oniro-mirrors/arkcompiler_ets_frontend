@@ -30,14 +30,6 @@
 #include "lsp/include/services/text_change/change_tracker.h"
 #include "lsp/include/organize_imports.h"
 
-#if __has_include(<filesystem>)
-#include <filesystem>
-namespace fs = std::filesystem;
-#elif __has_include(<experimental/filesystem>)
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
-#endif
-
 namespace ark::es2panda::lsp {
 
 MoveToNewFileRefactor::MoveToNewFileRefactor()

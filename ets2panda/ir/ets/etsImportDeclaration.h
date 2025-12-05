@@ -92,7 +92,17 @@ public:
         return ImportMetadata().resolvedSource;
     }
 
+    void SetResolvedSource(std::string_view source)
+    {
+        ImportMetadata().resolvedSource = source;
+    }
+
     const util::ImportPathManager::ImportMetadata &ImportMetadata() const
+    {
+        return GetHistoryNode()->AsETSImportDeclaration()->importMetadata_;
+    }
+
+    util::ImportPathManager::ImportMetadata &ImportMetadata()
     {
         return GetHistoryNode()->AsETSImportDeclaration()->importMetadata_;
     }
