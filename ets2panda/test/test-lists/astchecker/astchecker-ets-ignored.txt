@@ -1,19 +1,5 @@
-# Issue: #19440
-ast/parser/ets/iterator_override_next.ets
-
 # Fails with Assertion. Description in Issue #19645
-ast/parser/ets/switch_readonly_member_different_enum_2.ets
 ast/parser/ets/extension_function_tests/extension_function_not_for_class_type.ets
-
-# Issue: #20326
-ast/compiler/ets/readonlyType_6.ets
-ast/parser/ets/class_interface_enum_only_top_level_5.ets
-ast/parser/ets/generics_1.ets
-ast/parser/ets/global_scope_boolean.ets
-ast/parser/ets/global_scope_string.ets
-ast/parser/ets/lexer001.ets
-ast/parser/ets/lexer002.ets
-ast/parser/ets/TypeInferFunc.ets
 
 # Issue: #20639
 ast/parser/ets/extension_function_tests/extension_function_array1.ets
@@ -27,97 +13,26 @@ ast/parser/ets/extension_function_tests/extension_function_array_typealias.ets
 ast/parser/ets/extension_function_tests/extension_function_class.ets
 ast/parser/ets/extension_function_tests/extension_function_class_typealias.ets
 
-# Issue: #20875
-ast/parser/ets/unexpected_token_16.ets
-ast/parser/ets/unexpected_token_17.ets
-ast/parser/ets/unexpected_token_34.ets
-ast/parser/ets/unexpected_token_54.ets
-
-# Issue: #20875
-ast/parser/js/module/import_meta_3.js
-ast/parser/js/unexpected_token_8.js
-
-# Issue: #20876
-ast/parser/js/rest_params_1.js
-
 # Issue #22140
 ast/parser/ets/InvalidLexer.ets
-ast/parser/ts/InvalidLexer.ts
-
-# Issue #22206
-ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
-ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
-
-# Checked only as imported modules. If these files are parsed directly, there will be
-# errors located in other files (import_type_error_in_class.ets/import_type_error_top_level.ets),
-# and such case cannot be checked in astchecker
-ast/parser/ets/import_tests/export_and_import_class.ets
-ast/parser/ets/import_tests/export_and_import_top_level.ets
-
-# Issue: #22951
-ast/compiler/ets/extension_accessor_tests/getterAsMethodCall.ets
-ast/compiler/ets/extension_accessor_tests/setterAsMethodCall.ets
-ast/compiler/ets/lambda_with_receiver_tests/ExtensionFunctypeUncompatible.ets
-ast/compiler/ets/lambda_with_receiver_tests/extensionFuncTypeAsParamsNameDuplicated.ets
-ast/compiler/ets/lambda_with_receiver_tests/extensionFuncTypeAsParamsNameDuplicated2.ets
-
-# Issue: #22951
-ast/parser/ets/this_type_lambda_definition_parameter_invalid.ets
-ast/parser/ets/this_type_lambda_definition_return_invalid.ets
-
-# Issue: #23078
-ast/compiler/ets/readonlyType_5.ets
-
-# Issue: #23068
-ast/parser/ets/InferTypeParamFromParam2.ets
-
-# Issue: #23080
-ast/parser/ets/default_parameters_multi_error.ets
-ast/parser/ets/rest_parameter_03.ets
 
 # Issue: #23074
-# inccorect context of method usage
-ast/compiler/ets/FunctionType1.ets
-ast/compiler/ets/FunctionType8.ets
-# should report return type mismatch
-ast/parser/ets/lambda-type-inference-neg2.ets
 # after the fix the test fails to detect another type error
 ast/parser/ets/unexpected_token_51.ets
-
-
-# Issue: #23134
-# Can't insert "/* TypeError: Postcondition check failed for DefaultParametersLowering */" test directive
-ast/parser/ets/InvalidExpressions.ets
-# falls to post-checker lowerings after type errors are detected!
-ast/parser/ets/lambdaWithWrongOptionalParameter.ets
 
 # Issue: #24253
 ast/compiler/ets/lambda_infer_type/lambda_param_type_cannot_be_determined.ets
 
-# Issue: #24605 incorrect column
-ast/parser/ets/named_types_2.ets
-
-#26324
-ast/parser/ets/partialGenericInterface.ets
-ast/parser/ets/partialGenericInterface_n.ets
-
-
 # No-primitives #24986 [start]
-ast/parser/ets/FixedArray/illegal_union_member_exp.ets
-ast/compiler/ets/same_assembly_overload/callExpr_pos.ets
 ast/compiler/ets/func_as_param.ets
 
 # New error: annotations: expected a constant literal
-ast/parser/ets/annotations_tests/annotationDecl_bad_initializer03.ets
-ast/parser/ets/annotations_tests/annotationDecl_bad_initializer04.ets
-ast/parser/ets/annotations_tests/annotationDecl_bad_initializer05.ets
 ast/compiler/ets/annotation_tests/annotation_as_negative_case.ets
 
 # Expected CTE Variable used before being assigned
 ast/parser/ets/never_assigned6.ets
 
 # Invalid position (0:0) not printed
-ast/compiler/ets/union_string_literals_4.ets
 ast/compiler/ets/MultiPropertyWithSameName.ets
 ast/compiler/ets/objectLiteralInterface3.ets
 
@@ -127,36 +42,10 @@ ast/compiler/ets/import_tests/import_distant_package/master_file.ets
 # Call to ... is ambiguous
 ast/compiler/ets/FixedArray/most_specific_method_with_empty_rest_param.ets
 
-# ABORT_FAIL
-ast/parser/ets/for_of_02.ets
-
 ast/compiler/ets/dynamic-field-declaration.ets
-ast/parser/ets/enum15.ets
-ast/compiler/ets/enum_not_constant_var.ets
 ast/compiler/ets/readonly_array02.ets
-ast/parser/ets/enum_default_negative1.ets
-
-ast/compiler/ets/ambiguous_signature02.ets
-ast/parser/ets/SmartCast_1.ets
-ast/parser/ets/SmartCast_2.ets
-ast/parser/ets/enum28.ets
-ast/parser/ets/multi_typeerror_function_implicit_return_value.ets
-ast/parser/ets/returntype_override_primitive.ets
-ast/parser/ets/switch_num_compare_char_duplicate.ets
 
 # No-primitives #24986 [end]
-
-#26700
-ast/parser/ets/unexpected_token_62.ets
-
-#26984
-ast/parser/ets/primitive_type_method_2.ets
-ast/parser/ets/staticFunctionCallOfObject.ets
-
-# Issue: #27365 Cannot add correct comment to astchecker to see warning with 0:0 position (duplicate export warning)
-ast/compiler/ets/export_type_class_multiple_times.ets
-ast/compiler/ets/export_type_interface_multiple_times.ets
-ast/compiler/ets/import_tests/export_multi_error.ets
 
 # remove decorator
 ast/parser/ts/test_decorator5.ts
@@ -164,10 +53,6 @@ ast/parser/ts/InvalidStatements.ts
 
 ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.eets
 
-#29727
-ast/compiler/ets/first_match/override.ets
-
 #31069
-ast/parser/ets/overload_function_match_neg.ets
 ast/compiler/type_error_test.ets
 ast/parser/ets/super_field.ets
