@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@
 #include "ir/statements/expressionStatement.h"
 
 namespace ark::es2panda::compiler {
+
+static constexpr size_t TEMP_VARIABLE_PAIR_INDEX_INCREMENT = 2;
 
 struct Conversion {
     lexer::TokenType from;
@@ -202,45 +204,123 @@ static std::string GetCastString(ir::Expression *expr)
     return "";
 }
 
+static bool IsSimpleIdentifierOrNamespaceAccess(ir::Expression *expr)
+{
+    if (expr->IsIdentifier() || expr->IsThisExpression() || expr->IsSuperExpression()) {
+        return true;
+    }
+    if (expr->IsMemberExpression()) {
+        auto *memberExpr = expr->AsMemberExpression();
+        return IsSimpleIdentifierOrNamespaceAccess(memberExpr->Object());
+    }
+
+    return false;
+}
+
+static ir::Identifier *CreateTempVarIfNeeded(ir::Expression *expr, ArenaAllocator *allocator,
+                                             std::vector<ir::Expression *> &tempDeclExpressions,
+                                             std::string &tempDeclStr, size_t &counter)
+{
+    auto *tempId = Gensym(allocator);
+    tempDeclStr += "const @@I" + std::to_string(counter) + " = @@E" + std::to_string(counter + 1) + ";\n";
+    tempDeclExpressions.emplace_back(tempId);
+    auto *clonedExpr = expr->Clone(allocator, nullptr)->AsExpression();
+    tempDeclExpressions.emplace_back(clonedExpr);
+    ClearTypesVariablesAndScopes(clonedExpr);
+    counter += TEMP_VARIABLE_PAIR_INDEX_INCREMENT;
+    return tempId;
+}
+
+static void ReplaceExpressionInMember(ir::MemberExpression *expr, ir::Expression *oldExpr, ir::Identifier *tempId,
+                                      bool isProperty, ArenaAllocator *allocator)
+{
+    oldExpr->SetParent(nullptr);
+    if (isProperty) {
+        auto *newPropertyExpr = tempId->Clone(allocator, expr)->AsExpression();
+        expr->SetProperty(newPropertyExpr);
+        newPropertyExpr->SetParent(expr);
+    } else {
+        expr->SetObject(tempId->Clone(allocator, expr)->AsExpression());
+    }
+}
+
+static ir::Expression *GenerateElementAccessLowering(const lexer::TokenType opEqual, ir::MemberExpression *expr,
+                                                     checker::ETSChecker *const checker, parser::ETSParser *parser,
+                                                     ir::Expression *additionalAssignmentExpression)
+{
+    auto *allocator = checker->Allocator();
+    std::vector<ir::Expression *> tempDeclExpressions {};
+    std::string tempDeclStr = "";
+    size_t counter = 1;
+
+    ir::Expression *objectExpr = expr->Object();
+    ir::Expression *propertyExpr = expr->Property();
+
+    if (!IsSimpleIdentifierOrNamespaceAccess(objectExpr)) {
+        ir::Identifier *objectId =
+            CreateTempVarIfNeeded(objectExpr, allocator, tempDeclExpressions, tempDeclStr, counter);
+        ReplaceExpressionInMember(expr, objectExpr, objectId, false, allocator);
+    }
+
+    if (!propertyExpr->IsLiteral() && !IsSimpleIdentifierOrNamespaceAccess(propertyExpr)) {
+        ir::Identifier *propertyId =
+            CreateTempVarIfNeeded(propertyExpr, allocator, tempDeclExpressions, tempDeclStr, counter);
+        ReplaceExpressionInMember(expr, propertyExpr, propertyId, true, allocator);
+    }
+
+    auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, counter);
+    retVec.push_back(additionalAssignmentExpression);
+    retStr += GetCastString(checker, expr, retVec);
+
+    retVec.insert(retVec.begin(), tempDeclExpressions.begin(), tempDeclExpressions.end());
+    retStr = tempDeclStr + retStr;
+
+    return parser->CreateFormattedExpression(retStr, retVec);
+}
+
+static ir::Expression *GeneratePropertyAccessLowering(const lexer::TokenType opEqual, ir::MemberExpression *expr,
+                                                      checker::ETSChecker *const checker, parser::ETSParser *parser,
+                                                      ir::Expression *additionalAssignmentExpression)
+{
+    auto *allocator = checker->Allocator();
+    std::vector<ir::Expression *> tempDeclExpressions {};
+    std::string tempDeclStr = "";
+    size_t counter = 1;
+
+    ir::Expression *objectExpr = expr->Object();
+    if (!IsSimpleIdentifierOrNamespaceAccess(objectExpr)) {
+        ir::Identifier *objectId =
+            CreateTempVarIfNeeded(objectExpr, allocator, tempDeclExpressions, tempDeclStr, counter);
+        ReplaceExpressionInMember(expr, objectExpr, objectId, false, allocator);
+    }
+
+    auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, counter);
+    retVec.push_back(additionalAssignmentExpression);
+    retStr += GetCastString(checker, expr, retVec);
+
+    retVec.insert(retVec.begin(), tempDeclExpressions.begin(), tempDeclExpressions.end());
+    retStr = tempDeclStr + retStr;
+
+    return parser->CreateFormattedExpression(retStr, retVec);
+}
+
 static ir::Expression *GenerateLoweredResultForLoweredAssignment(const lexer::TokenType opEqual,
                                                                  ir::MemberExpression *expr,
                                                                  checker::ETSChecker *const checker,
                                                                  parser::ETSParser *parser,
                                                                  ir::Expression *additionalAssignmentExpression)
 {
-    auto *allocator = checker->Allocator();
     // Generated a formatString for the new lowered assignment expression
     // The formatString will look like this: "A = (A `operation` B) as T"
     // Where A is a member access
     // `operation` is the operation of the assignment like: "+", "-", "*", "/", etc.,
     // B is the right hand side of the assignment
     // T is the type of the left hand side of the assignment
-    if (expr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && !expr->Property()->IsLiteral()) {
-        // Note: support such a situation could be okay: `a[idx++] += someExpr`.
-        // It should be lowered as: `let dummyIdx = (lower result of `idx++`); a[dummyIdx] = a[dummyIdx] + someExpr`;
-        std::vector<ir::Expression *> dummyIndexDeclExpression {};
-        std::string dummyIndexDeclStr = "let @@I1 = @@E2;\n";
-        auto dummyIndex = Gensym(allocator);
-        dummyIndexDeclExpression.emplace_back(dummyIndex);
-        dummyIndexDeclExpression.emplace_back(expr->Property()->Clone(allocator, nullptr)->AsExpression());
-        ClearTypesVariablesAndScopes(dummyIndexDeclExpression[1]);
-
-        // Note: Drop the old property, substitute it with dummyIdx.
-        expr->Property()->SetParent(nullptr);
-        expr->SetProperty(dummyIndex->Clone(allocator, expr));
-        auto [retStr, retVec] =
-            GenerateStringForAssignment(opEqual, expr, allocator, dummyIndexDeclExpression.size() + 1);
-        retVec.push_back(additionalAssignmentExpression);
-        retStr += GetCastString(checker, expr, retVec);
-        retVec.insert(retVec.begin(), dummyIndexDeclExpression.begin(), dummyIndexDeclExpression.end());
-        retStr = dummyIndexDeclStr + retStr;
-        return parser->CreateFormattedExpression(retStr, retVec);
+    if (expr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+        return GenerateElementAccessLowering(opEqual, expr, checker, parser, additionalAssignmentExpression);
     }
 
-    auto [retStr, retVec] = GenerateStringForAssignment(opEqual, expr, allocator, 1);
-    retVec.push_back(additionalAssignmentExpression);
-    retStr += GetCastString(checker, expr, retVec);
-    return parser->CreateFormattedExpression(retStr, retVec);
+    return GeneratePropertyAccessLowering(opEqual, expr, checker, parser, additionalAssignmentExpression);
 }
 
 static ir::Expression *ConstructOpAssignmentResult(public_lib::Context *ctx, ir::AssignmentExpression *assignment)

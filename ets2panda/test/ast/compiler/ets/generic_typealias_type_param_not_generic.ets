@@ -13,12 +13,13 @@
  * limitations under the License.
  */
 
-type X<T extends R, R extends T, U extends T> =U<T<R>>
+type A<T> = T[] //ok
 
-type Y<T extends T> = Y<T>
+type B<T> = A<A<T>> //ok
 
-/* @@? 16:31 Error Semantic error ESE0184: Type parameter 'R' has circular constraint dependency. */
-/* @@? 16:48 Error Semantic error ESE0169: Type 'U' is not generic. */
-/* @@? 16:50 Error Semantic error ESE0169: Type 'T' is not generic. */
-/* @@? 18:1 Error Semantic error ESE0311: Circular type alias reference */
-/* @@? 18:18 Error Semantic error ESE0184: Type parameter 'T' has circular constraint dependency. */
+type X<U, R extends U, T extends U = R> = /* @@ label1 */T</* @@ label2 */R<U>>
+
+
+/* @@@ label1 Error Semantic error ESE0169: Type 'T' is not generic. */
+/* @@@ label2 Error Semantic error ESE0169: Type 'R' is not generic. */
+
