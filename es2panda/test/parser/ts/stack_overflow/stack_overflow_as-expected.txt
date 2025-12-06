@@ -1,1 +1,1 @@
-Error: Too many nested expressions/statemnets/declarations [stack_overflow_as.ts:130:29]
+Error: Transformer stack overflow [stack_overflow_as.ts:18:1]

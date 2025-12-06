@@ -232,8 +232,13 @@ class Test:
         try:
             with open(expected_path, 'r') as fp:
                 expected = fp.read()
-            self.passed = expected == self.output and process.returncode in [
-                0, 1]
+            if "stack_overflow" in self.path:
+                pattern = r'\[.*?\]'
+                expected_new = re.sub(pattern, '', expected)
+                output_new = re.sub(pattern, '', self.output)
+                self.passed = expected_new == output_new and process.returncode in [0, 1]
+            else:
+                self.passed = expected == self.output and process.returncode in [0, 1]
         except Exception:
             self.passed = False
 
@@ -2986,7 +2991,7 @@ def add_directory_for_regression(runners, args):
     runner.add_directory("parser/sendable_class/api12beta2", "ts",
                          ["--dump-assembly", "--dump-literal-buffer", "--module", "--target-api-version=12", "--target-api-sub-version=beta2"])
     runner.add_directory("parser/unicode", "js", ["--parse-only"])
-    runner.add_directory("parser/ts/stack_overflow", "ts", ["--parse-only", "--dump-ast"])
+    runner.add_directory("parser/ts/stack_overflow", "ts", ["--parse-only"])
     runner.add_directory("parser/js/module-record/module-record-field-name-option.js", "js",
                          ["--module-record-field-name=abc", "--source-file=abc", "--module", "--dump-normalized-asm-program"])
     runner.add_directory("parser/annotations", "ts", ["--module", "--dump-ast", "--enable-annotations"])

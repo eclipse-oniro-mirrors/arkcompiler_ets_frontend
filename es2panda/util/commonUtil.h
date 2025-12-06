@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,6 +57,8 @@ constexpr size_t MODULE_NAME_POS = 1U;
 constexpr size_t BUNDLE_NAME_POS = 2U;
 constexpr size_t NORMALIZED_IMPORT_POS = 3U;
 constexpr size_t VERSION_POS = 4U;
+
+constexpr size_t STACK_SIZE_LINUX = 8454144;
 
 std::vector<std::string> Split(const std::string &str, const char delimiter);
 std::string GetStringByVectorElementsWithDelimiter(const std::vector<std::string> &vec, const char delimiter);

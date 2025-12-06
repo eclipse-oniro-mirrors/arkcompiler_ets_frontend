@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,8 +97,10 @@ public:
     [[noreturn]] void ThrowUndeclaredExport(const lexer::SourcePosition &pos, const util::StringView &name);
     [[noreturn]] void ThrowInvalidDstrTarget(const lexer::SourcePosition &pos, const util::StringView &name);
     [[noreturn]] void ThrowInvalidAnnotationDeclaration(const lexer::SourcePosition &pos, const util::StringView &name);
+    [[noreturn]] void ThrowStackOverflow(const lexer::SourcePosition &pos);
 
     void CheckMandatoryArguments(const ir::Identifier *ident);
+    bool CheckStackOverFlow();
 
     template <typename T>
     friend class LexicalScope;
@@ -131,6 +133,11 @@ public:
     void SetProgram(parser::Program *program)
     {
         program_ = program;
+    }
+
+    void SetStackLimit(uintptr_t stackLimit)
+    {
+        stackLimit_ = stackLimit;
     }
 
     ArenaUnorderedMap<util::StringView, int32_t> &GetScopeNames()
@@ -248,6 +255,7 @@ private:
     ScriptExtension extension_;
     bool inSendableClass_ {false};
     bool inSendableFunction_ {false};
+    uintptr_t stackLimit_ {0};
 };
 
 template <typename T>

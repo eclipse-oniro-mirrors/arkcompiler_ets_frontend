@@ -92,6 +92,7 @@
 #include <ir/ts/tsVoidKeyword.h>
 #include <ir/ts/tsNonNullExpression.h>
 #include <lexer/lexer.h>
+#include <os/stackGuard.h>
 
 namespace panda::es2panda::parser {
 
@@ -530,6 +531,8 @@ ir::Expression *ParserImpl::ParseTsTemplateLiteralType(bool throwError)
 ir::Expression *ParserImpl::ParseTsTypeAnnotationElement(ir::Expression *typeAnnotation,
                                                          TypeAnnotationParsingOptions *options)
 {
+    // ParseTsUnionType(), ParseTsIntersectionType(), ParseTsConditionalType()
+    CHECK_PARSER_STACK_OVER_FLOW
     switch (lexer_->GetToken().Type()) {
         case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
             if (*options & (TypeAnnotationParsingOptions::IN_MODIFIER | TypeAnnotationParsingOptions::IN_UNION |
@@ -758,6 +761,9 @@ ir::Expression *ParserImpl::ParseTsConditionalType(ir::Expression *checkType, bo
 
     lexer_->NextToken();  // eat 'extends'
 
+    // ParseTsTypeAnnotation()
+    CHECK_PARSER_STACK_OVER_FLOW
+
     ParserStatus savedStatus = context_.Status();
     context_.Status() |= ParserStatus::IN_EXTENDS;
 
@@ -796,6 +802,8 @@ ir::Expression *ParserImpl::ParseTsConditionalType(ir::Expression *checkType, bo
 
 ir::Expression *ParserImpl::ParseTsTypeAnnotation(TypeAnnotationParsingOptions *options)
 {
+    // ParseTsTypeAnnotationElement() ->  ParseTsTypeAnnotation()
+    CHECK_PARSER_STACK_OVER_FLOW
     ir::Expression *typeAnnotation = nullptr;
 
     while (true) {
@@ -823,6 +831,9 @@ ir::Expression *ParserImpl::ParseTsTypeAnnotation(TypeAnnotationParsingOptions *
 
 ir::Expression *ParserImpl::ParseTsTypeOperatorOrTypeReference(bool throwError)
 {
+    // -> ParseTsTypeAnnotation()
+    CHECK_PARSER_STACK_OVER_FLOW
+
     TypeAnnotationParsingOptions options = throwError ?
         TypeAnnotationParsingOptions::THROW_ERROR : TypeAnnotationParsingOptions::NO_OPTS;
 
@@ -1721,6 +1732,9 @@ ir::TSArrayType *ParserImpl::ParseTsArrayType(ir::Expression *elementType)
 
 ir::TSUnionType *ParserImpl::ParseTsUnionType(ir::Expression *type, bool restrictExtends, bool throwError)
 {
+    // -> ParseTsTypeAnnotation()
+    CHECK_PARSER_STACK_OVER_FLOW
+
     ArenaVector<ir::Expression *> types(Allocator()->Adapter());
     lexer::SourcePosition startLoc;
 
@@ -1768,6 +1782,9 @@ ir::TSUnionType *ParserImpl::ParseTsUnionType(ir::Expression *type, bool restric
 ir::TSIntersectionType *ParserImpl::ParseTsIntersectionType(ir::Expression *type, bool inUnion, bool restrictExtends,
                                                             bool throwError)
 {
+    // -> ParseTsTypeAnnotation()
+    CHECK_PARSER_STACK_OVER_FLOW
+
     ArenaVector<ir::Expression *> types(Allocator()->Adapter());
     lexer::SourcePosition startLoc;
 
@@ -4079,6 +4096,9 @@ ir::ScriptFunction *ParserImpl::ParseFunction(ParserStatus newStatus,
                                               bool isDeclare,
                                               ArenaVector<ir::ParamDecorators> *paramDecorators)
 {
+    // -> ParseFunctionBody() → ParseStatementList()
+    CHECK_PARSER_STACK_OVER_FLOW
+
     FunctionContext functionContext(this, newStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_NEW_TARGET);
 
     FunctionParameterContext funcParamContext(&context_, Binder());
@@ -4540,5 +4560,14 @@ void ParserImpl::RecursiveDepthException()
     lexer::LineIndex index(program_.SourceCode());
     lexer::SourceLocation loc = index.GetLocation(pos);
     throw Error(ErrorType::GENERIC, "Too many nested expressions/statemnets/declarations", loc.line, loc.col);
+}
+
+bool ParserImpl::CheckStackOverFlow()
+{
+    // Get current stack frame
+    if (UNLIKELY(panda::GetCurrentFrameAddress() < StackLimit())) {
+        return true;
+    }
+    return false;
 }
 }  // namespace panda::es2panda::parser
