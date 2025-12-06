@@ -12015,18 +12015,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (constructorParams.length === 0) {
       return true;
     }
-    // If all parameters have default values, it's a default constructor
+    // If all parameters have default values or are optional, it's a default constructor
     if (
       constructorParams.every((param) => {
-        return param.isInitialized;
-      })
-    ) {
-      return true;
-    }
-    // If all parameters are optional, it's a default constructor
-    if (
-      constructorParams.every((param) => {
-        return param.isOptional;
+        return param.isInitialized || param.isOptional;
       })
     ) {
       return true;
