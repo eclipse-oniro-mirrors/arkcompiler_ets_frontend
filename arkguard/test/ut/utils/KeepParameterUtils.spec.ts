@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -340,5 +340,44 @@ describe('Tester Cases for shouldKeepParameter.', function () {
     customConfig['mRenameProperties'] = true;
     const actual = shouldKeepParameter(node, customConfig, mangledSymbolNames, checker);
     assert.strictEqual(actual, false);
+  });
+
+  it('Tester 2-17: When node is setAccessor and setAccessor name is not kept, shouldKeepParameter returns false', function () {
+    let content = `declare class A {
+      constructor(para1: number);
+      set method11(para2: number): void;
+      }`;
+    const ast = ts.createSourceFile(path, content, ts.ScriptTarget.ES2015, true);
+    let method: ts.MethodDeclaration = (ast.statements[0] as ts.ClassDeclaration).members[1] as ts.MethodDeclaration;
+    let node: ts.ParameterDeclaration = method.parameters[0];
+    const checker: ts.TypeChecker = TypeUtils.createChecker(ast);
+    const methodName: ts.Identifier = method.name as ts.Identifier;
+    assert.strictEqual(!!methodName, true);
+    const customConfig: INameObfuscationOption = JSON.parse(JSON.stringify(config));
+    // @ts-ignore
+    customConfig['mRenameProperties'] = true;
+    let mangledSymbolNames: Map<ts.Symbol, MangledSymbolInfo> = new Map<ts.Symbol, MangledSymbolInfo>();
+    const actual = shouldKeepParameter(node, customConfig, mangledSymbolNames, checker);
+    assert.strictEqual(actual, false);
+  });
+
+  it('Tester 2-18: When node is setAccessor and setAccessor name is kept, shouldKeepParameter returns true', function () {
+    let content = `declare class A {
+      constructor(para1: number);
+      set method12(para2: number): void;
+      }`;
+    const ast = ts.createSourceFile(path, content, ts.ScriptTarget.ES2015, true);
+    let method: ts.MethodDeclaration = (ast.statements[0] as ts.ClassDeclaration).members[1] as ts.MethodDeclaration;
+    let node: ts.ParameterDeclaration = method.parameters[0];
+    const checker: ts.TypeChecker = TypeUtils.createChecker(ast);
+    const methodName: ts.Identifier = method.name as ts.Identifier;
+    assert.strictEqual(!!methodName, true);
+    let mangledSymbolNames: Map<ts.Symbol, MangledSymbolInfo> = new Map<ts.Symbol, MangledSymbolInfo>();
+    PropCollections.reservedProperties.add('method12');
+    const customConfig: INameObfuscationOption = JSON.parse(JSON.stringify(config));
+    // @ts-ignore
+    customConfig['mRenameProperties'] = true;
+    const actual = shouldKeepParameter(node, customConfig, mangledSymbolNames, checker);
+    assert.strictEqual(actual, true);
   });
 });
