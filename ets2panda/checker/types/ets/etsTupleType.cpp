@@ -161,13 +161,13 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
             return;
         }
 
-        const bool elementsAssignable =
+        const bool elementsAreSupertypes =
             std::all_of(GetTupleTypesList().begin(), GetTupleTypesList().end(),
                         [&relation, &arrayTarget](auto *const tupleTypeAtIdx) {
                             return relation->IsSupertypeOf(arrayTarget->ElementType(), tupleTypeAtIdx);
                         });
 
-        relation->Result(elementsAssignable);
+        relation->Result(elementsAreSupertypes);
         return;
     }
 
@@ -178,9 +178,6 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
     }
 
     for (TupleSizeType idx = 0; idx < GetTupleSize(); ++idx) {
-        const SavedTypeRelationFlagsContext savedFlagsCtx(relation,
-                                                          TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING);
-
         if (!relation->IsSupertypeOf(GetTypeAtIndex(idx), tupleTarget->GetTypeAtIndex(idx))) {
             return;
         }

@@ -1397,9 +1397,6 @@ void ETSChecker::CheckUnboxedTypesAssignable(TypeRelation *relation, Type *sourc
 void ETSChecker::CheckBoxedSourceTypeAssignable(TypeRelation *relation, Type *source, Type *target)
 {
     ES2PANDA_ASSERT(relation != nullptr);
-    checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(
-        relation,
-        (relation->OnlyCheckBoxingUnboxing() ? TypeRelationFlag::ONLY_CHECK_BOXING_UNBOXING : TypeRelationFlag::NONE));
 
     auto *boxedSourceType = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(source);
     if (boxedSourceType == nullptr) {
