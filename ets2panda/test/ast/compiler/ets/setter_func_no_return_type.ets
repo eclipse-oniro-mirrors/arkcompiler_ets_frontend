@@ -14,21 +14,21 @@
  */
 
 export declare class Class1 {
-    set setX(x: string): string
-/* @@ label */}
+    set setX/* @@ label */(x: string): string
+}
 
 class Class2 {
     x: string = "s"
-    set setX(x: string): string {
+    set setX/* @@ label1 */(x: string): string {
         this.x = x
         return x
     }
-/* @@ label1 */}
+}
 
 class Class3 {
     _f: string = ""
-    set f(x: string): void {this._f = x}
-/* @@ label2 */}
+    set f/* @@ label2 */(x: string): void {this._f = x}
+}
 
 /* @@@ label Error Syntax error ESY0241: Setter must not have return type even if it is void. */
 /* @@@ label1 Error Syntax error ESY0241: Setter must not have return type even if it is void. */

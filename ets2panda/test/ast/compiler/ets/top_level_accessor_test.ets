@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
+set a(...args:number[]){}
+set b(args ?: number) {}
 
-class A {
-    get foo/* @@ label */(this) { return; }
-}
-
-/* @@@ label Error Syntax error ESY0058: Getter must not have formal parameters. */
+/* @@? 16:7 Error Syntax error ESY36775: Setter cannot have rest parameter. */
+/* @@? 17:7 Error Syntax error ESY13534: Setter cannot have optional parameter. */

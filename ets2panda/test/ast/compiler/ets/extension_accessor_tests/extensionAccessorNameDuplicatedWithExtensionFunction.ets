@@ -24,9 +24,10 @@ get name(this: B): string {
     return this.name_;
 }
 
-set name/* @@ label */(this: B, n: string) {
+/* @@ label */ set name(this: B, n: string) {
     this.name_ = n;
 }
 
 
+/* @@? 20:10 Error Semantic error ESE0218: Method cannot use the same name as name accessor property */
 /* @@@ label Error Semantic error ESE0131: Function name with this assembly signature already declared. */

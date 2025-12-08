@@ -21,6 +21,7 @@
 #include "driver/dependency_analyzer/dep_analyzer.h"
 
 #include "parser/parserStatusContext.h"
+#include "util/es2pandaMacros.h"
 #include "util/helpers.h"
 #include "util/language.h"
 #include "util/options.h"
@@ -1828,10 +1829,6 @@ ir::Expression *ETSParser::ParseFunctionReceiver()
         return AllocBrokenExpression(thisLoc);
     }
 
-    if (typeAnnotation->IsBrokenTypeNode()) {
-        return AllocBrokenExpression(thisLoc);
-    }
-
     return CreateParameterThis(typeAnnotation);
 }
 
@@ -2525,6 +2522,40 @@ ir::FunctionDeclaration *ETSParser::ParseFunctionDeclaration(bool canBeAnonymous
     return funcDecl;
 }
 
+void ETSParser::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ir::ScriptFunction *func,
+                                     bool hasReceiver)
+{
+    const auto &params = func->Params();
+    const size_t receiverOffset = hasReceiver ? 1 : 0;
+    if (methodDefinition == ir::MethodDefinitionKind::SET) {
+        if (func->ReturnTypeAnnotation() != nullptr) {
+            LogError(diagnostic::SETTER_NO_RETURN_TYPE, {}, func->Start());
+        }
+        if (params.size() != 1 + receiverOffset) {
+            LogError(hasReceiver ? diagnostic::EXTENSION_SETTER_WRONG_PARAM : diagnostic::SETTER_FORMAL_PARAMS, {},
+                     func->Start());
+            return;
+        }
+        // For ETS, the param type must be ETSParameterExpression.
+        // Otherwise it has been logged error before, no need continue check.
+        if (!params[0 + receiverOffset]->IsETSParameterExpression()) {
+            ES2PANDA_ASSERT(DiagnosticEngine().IsAnyError());
+            return;
+        }
+        auto setterParam = params[0 + receiverOffset]->AsETSParameterExpression();
+        if (setterParam->IsOptional()) {
+            LogError(diagnostic::SETTER_OPTIONAL_PARAM, {}, params[0 + receiverOffset]->Start());
+        } else if (setterParam->Spread() != nullptr) {
+            LogError(diagnostic::SETTER_REST_PARAM, {}, params[0 + receiverOffset]->Start());
+        }
+    } else if (methodDefinition == ir::MethodDefinitionKind::GET) {
+        if (params.size() != receiverOffset) {
+            LogError(hasReceiver ? diagnostic::EXTENSION_GETTER_WRONG_PARAM : diagnostic::GETTER_FORMAL_PARAMS, {},
+                     func->Start());
+        }
+    }
+}
+
 ir::FunctionDeclaration *ETSParser::ParseTopLevelAccessor(ir::ModifierFlags modifiers)
 {
     ES2PANDA_ASSERT(Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_GET ||
@@ -2543,35 +2574,19 @@ ir::FunctionDeclaration *ETSParser::ParseTopLevelAccessor(ir::ModifierFlags modi
     ir::ScriptFunction *func =
         isGetter ? ParseFunction(newStatus | ParserStatus::NEED_RETURN_TYPE) : ParseFunction(newStatus);
     ES2PANDA_ASSERT(func != nullptr);
+    func->SetStart(startLoc);
 
     auto params = func->Params();
     bool hasReceiver = !params.empty() && params[0]->IsETSParameterExpression() &&
                        params[0]->AsETSParameterExpression()->Ident()->IsReceiver();
-    const size_t paramCount = params.size();
-    const size_t getterValidParamCount = hasReceiver ? 1 : 0;
-    const size_t setterValidParamCount = hasReceiver ? 2 : 1;
+
     if (isGetter) {
         func->AddFlag(ir::ScriptFunctionFlags::GETTER);
-        if (!hasReceiver && getterValidParamCount != paramCount) {
-            LogError(diagnostic::GETTER_FORMAL_PARAMS, {}, startLoc);
-        }
-        // Check for extension accessor
-        if (hasReceiver && getterValidParamCount != paramCount) {
-            LogError(diagnostic::EXTENSION_GETTER_WRONG_PARAM, {}, startLoc);
-        }
     } else {
         func->AddFlag(ir::ScriptFunctionFlags::SETTER);
-        if (!hasReceiver && setterValidParamCount != paramCount) {
-            LogError(diagnostic::SETTER_FORMAL_PARAMS, {}, startLoc);
-        }
-        // Check for extension accessor
-        if (hasReceiver && setterValidParamCount != paramCount) {
-            LogError(diagnostic::EXTENSION_SETTER_WRONG_PARAM, {}, startLoc);
-        }
-        if (func->ReturnTypeAnnotation() != nullptr) {
-            LogError(diagnostic::SETTER_NO_RETURN_TYPE, {}, startLoc);
-        }
     }
+
+    ValidateGetterSetter(isGetter ? ir::MethodDefinitionKind::GET : ir::MethodDefinitionKind::SET, func, hasReceiver);
 
     func->SetIdent(funcIdentNode);
 
@@ -2579,7 +2594,6 @@ ir::FunctionDeclaration *ETSParser::ParseTopLevelAccessor(ir::ModifierFlags modi
     ES2PANDA_ASSERT(funcDecl != nullptr);
     funcDecl->SetRange(func->Range());
     func->AddModifier(modifiers);
-    func->SetStart(startLoc);
     return funcDecl;
 }
 

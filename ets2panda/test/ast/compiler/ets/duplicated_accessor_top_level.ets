@@ -19,6 +19,6 @@ get duplicateGetter(): string { return "2" }
 set duplicateSetter(x: number){}
 set duplicateSetter(x: string) {}
 
+/* @@? 17:1 Error Semantic error ESE0130: Function duplicateGetter is already declared. */
 /* @@? 17:5 Error Semantic error ESE0219: Duplicate accessor definition */
-/* @@? 17:20 Error Semantic error ESE0130: Function duplicateGetter is already declared. */
 /* @@? 20:5 Error Semantic error ESE0219: Duplicate accessor definition */
