@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -20,7 +20,7 @@ from typing import List, Dict, Callable
 
 
 TIME_UNITS_NS = {"s": 1e9, "ms": 1e6, "us": 1e3, "ns": 1}
-MEM_UNITS_BYTES = {"MB": 1024**2, "KB": 1024, "B": 1}
+MEM_UNITS_BYTES = {"MB": 1024 ** 2, "KB": 1024, "B": 1}
 ALL_UNITS = {**TIME_UNITS_NS, **MEM_UNITS_BYTES}
 
 
@@ -68,7 +68,7 @@ def parse_perf_file(filepath: Path) -> Dict:
         return {}
 
     data: Dict[str, Dict] = {}
-    line_regex = re.compile(r":@(?P<phase>[\w\/-]+)\s*:\s*time=(?P<time_str>[\d\.\w]+)\s*mem=(?P<mem_str>[\d\.\w]+)")
+    line_regex = re.compile(r":@(?P<phase>[\w\/-]+)\s*:\s*time=(?P<time_str>[\d\.\w]+)\s*maxrss=(?P<mem_str>[\d\.\w]+)")
     for line in filepath.read_text(encoding="utf-8").splitlines():
         match = line_regex.search(line)
         if match:
@@ -79,3 +79,9 @@ def parse_perf_file(filepath: Path) -> Dict:
                 "mem_bytes": parse_metric_value(parts["mem_str"]),
             }
     return data
+
+
+def get_run_count_from_file(filepath: Path) -> int:
+    content = filepath.read_text(encoding="utf-8")
+    match = re.search(r"Averaged over (\d+) runs", content)
+    return int(match.group(1)) if match else 1

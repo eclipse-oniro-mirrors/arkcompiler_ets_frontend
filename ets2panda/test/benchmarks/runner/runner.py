@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -73,7 +73,7 @@ def run_stdlib_benchmark(args: argparse.Namespace, work_dir: Path) -> None:
     try:
         os.makedirs(relative_path_to_cache_dir.resolve(), exist_ok=True)
     except OSError as e:
-        print(f"Error creating cache directory: {e}") 
+        print(f"Error creating cache directory: {e}")
 
     benchmark_runner.run_benchmark_for_file([f"{args.es2panda}"] + es2panda_args, args.runs, new_perf_path)
 

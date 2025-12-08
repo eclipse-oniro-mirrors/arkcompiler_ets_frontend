@@ -57,20 +57,36 @@ You can download artifacts for this job with perf stat.
 test-perf.txt
 ```
 ================ es2panda perf metrics (Averaged over 3 runs) ================
-:@phases                                        :  time=891.00ms      mem=140.00MB
-:@phases/ConstantExpressionLowering             :  time=233.00ms      mem=0.26MB
-:@phases/TopLevelStatements                     :  time=193.00ms      mem=79.00MB
-:@phases/ResolveIdentifiers                     :  time=83.40ms       mem=6.00MB
-:@phases/CheckerPhase                           :  time=78.60ms       mem=19.00MB
+:@phases                                        :  time=891.00ms      maxrss=140.00MB
+:@phases/ConstantExpressionLowering             :  time=233.00ms      maxrss=0.26MB
+:@phases/TopLevelStatements                     :  time=193.00ms      maxrss=79.00MB
+:@phases/ResolveIdentifiers                     :  time=83.40ms       maxrss=6.00MB
+:@phases/CheckerPhase                           :  time=78.60ms       maxrss=19.00MB
 ```
 
 test-report.txt
 ```
 Performance Comparison: 'bench_1-max.txt' vs 'bench_1-current-perf.txt'
 ================================================================================
-:@EmitProgram                                   :  time=+2.90ms (+4.6%)           mem=+0.00MB (+0.0%)
-:@GenerateProgram                               :  time=+4.67ms (+6.7%)           mem=0.00MB (0.0%)
-:@GenerateProgram/OptimizeBytecode              :  time=0.00ms (0.0%)             mem=0.00MB (0.0%)
-:@phases                                        :  time=+22.67ms (+2.6%)          mem=+0.00MB (+0.0%)
-:@phases/AmbientLowering                        :  time=-0.07ms (-0.6%)           mem=0.00MB (0.0%)
+:@EmitProgram                                   :  time=+2.90ms (+4.6%)           maxrss=+0.00MB (+0.0%)
+:@GenerateProgram                               :  time=+4.67ms (+6.7%)           maxrss=0.00MB (0.0%)
+:@GenerateProgram/OptimizeBytecode              :  time=0.00ms (0.0%)             maxrss=0.00MB (0.0%)
+:@phases                                        :  time=+22.67ms (+2.6%)          maxrss=+0.00MB (+0.0%)
+:@phases/AmbientLowering                        :  time=-0.07ms (-0.6%)           maxrss=0.00MB (0.0%)
 ```
+
+# Update `*-max.txt` files.
+To update the static baseline values using multiple runs from CI:
+
+1. Create a PR.
+2. Run runonly for job "es2panda static benchmarks" for 28 job repeats and 1 test repeats.
+3. Download all zip artifacts from these runs into a single directory (e.g. `downloaded_artifacts`).
+4. Run the update script:
+
+```bash
+python3 <ets_frontend>/ets2panda/test/benchmarks/runner/update_static_values.py \
+  --test-dir=<static_core>/tools/es2panda/test/benchmarks \
+  --zips-from-ci=./downloaded_artifacts
+```
+
+The script will unpack the archives, find all `*-current-perf.txt` files, aggregate the metrics across all runs, and overwrite the corresponding `*-max.txt` files.

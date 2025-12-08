@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -86,7 +86,7 @@ def save_averaged_results(averaged_metrics: List, output_path: Path, runs: int) 
         phase_str = f":@{metric['phase']}"
         time_str = format_time_ms(float(metric["avg_time_ns"]))
         mem_str = format_mem_mb(float(metric["avg_mem_bytes"]))
-        lines.append(f"{phase_str:<{max_phase_len + 3}}:  time={time_str:<12}  mem={mem_str:<12}")
+        lines.append(f"{phase_str:<{max_phase_len + 3}}:  time={time_str:<12}  maxrss={mem_str:<12}")
 
     output_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"\n✅ Averaged results saved to: {output_path}")
