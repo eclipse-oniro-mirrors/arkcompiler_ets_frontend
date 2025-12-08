@@ -203,8 +203,10 @@ bool ArkTsConfig::ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap
 
     for (size_t keyIdx = 0; keyIdx < paths->get()->GetSize(); ++keyIdx) {
         auto &key = paths->get()->GetKeyByIndex(keyIdx);
-        if (pathsMap.count(key) == 0U) {
-            pathsMap.insert({key, {}});
+
+        auto iter = pathsMap.find(key);
+        if (iter == pathsMap.end()) {
+            iter = pathsMap.emplace(key, PathsMap::mapped_type {}).first;
         }
 
         auto values = paths->get()->GetValue<JsonObject::ArrayT>(key);
@@ -218,7 +220,7 @@ bool ArkTsConfig::ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap
 
         for (auto &v : *values) {
             auto p = *v.Get<JsonObject::StringT>();
-            pathsMap[key].emplace_back(MakeAbsolute(p, baseUrl));
+            iter->second.emplace_back(MakeAbsolute(p, baseUrl));
         }
     }
 
