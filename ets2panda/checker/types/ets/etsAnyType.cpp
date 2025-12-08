@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,7 @@ void ETSAnyType::AssignmentTarget(TypeRelation *relation, Type *source)
         return;
     }
 
-    if (relation->ApplyBoxing()) {
-        relation->Result(true);
-    }
+    relation->Result(true);
 }
 
 bool ETSAnyType::AssignmentSource(TypeRelation *relation, Type *target)
@@ -61,12 +59,10 @@ void ETSAnyType::Cast(TypeRelation *relation, Type *target)
         return;
     }
 
-    if (relation->ApplyUnboxing()) {
-        auto *const boxedTarget = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(target);
-        ES2PANDA_ASSERT(boxedTarget != nullptr);
-        conversion::Unboxing(relation, boxedTarget->AsETSObjectType());
-        relation->Result(true);
-    }
+    auto *const boxedTarget = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(target);
+    ES2PANDA_ASSERT(boxedTarget != nullptr);
+    conversion::Unboxing(relation, boxedTarget->AsETSObjectType());
+    relation->Result(true);
 }
 
 void ETSAnyType::CastTarget(TypeRelation *relation, [[maybe_unused]] Type *source)

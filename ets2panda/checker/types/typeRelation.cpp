@@ -138,7 +138,8 @@ bool TypeRelation::IsAssignableTo(Type *source, Type *target)
     }
 
     result_ = CacheLookup(source, target, checker_->AssignableResults(), RelationType::ASSIGNABLE);
-    if (result_ == RelationResult::CACHE_MISS) {
+    // NOTE(gogabr): Enum types may lead to GENERATE_VALUE_OF flag marking, so need to disregard cache
+    if (result_ == RelationResult::CACHE_MISS || source->IsETSEnumType()) {
         // NOTE: we support assigning T to Readonly<T>, but do not support assigning Readonly<T> to T
         // more details in spec
         ES2PANDA_ASSERT(source != nullptr);
