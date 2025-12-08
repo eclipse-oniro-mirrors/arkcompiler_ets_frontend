@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,4 +47,4 @@ function main() {
 
 /* @@? 26:17 Error Syntax error ESY0062: Object pattern can't contain methods. */
 /* @@? 43:5 Error Semantic error ESE0143: Unresolved reference assertEQ */
-/* @@? 44:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 44:5 Error Semantic error ESE0143: Unresolved reference assertEQ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@ class D{
     strB = (new StringBuilder).append('{ ').append(strB.toString()).append(' }')       
 }
 
-/* @@? 17:52 Error Syntax error ESY0234: Property or signature expected. */
+/* @@? 17:12 Error Semantic error ESE0127: No matching call signature for append(...) */
+/* @@? 17:52 Error Semantic error ESE0145: Property 'strB' must be accessed through 'this' */

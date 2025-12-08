@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -485,10 +485,12 @@ private:
 
 class SignatureMatchContext {
 public:
-    explicit SignatureMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, bool isLogError = true)
+    explicit SignatureMatchContext(Checker *checker, util::DiagnosticType diagnosticKind,
+                                   const lexer::SourceRange &range, bool isLogError = true)
         : diagnosticEngine_(checker->DiagnosticEngine()),
           diagnosticCheckpoint_(),
           diagnosticKind_(diagnosticKind),
+          range_(range),
           isLogError_(isLogError)
     {
         diagnosticCheckpoint_ = diagnosticEngine_.Save();
@@ -497,8 +499,30 @@ public:
     bool ValidSignatureMatchStatus()
     {
         std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
-        return diagnosticCheckpoint_[diagnosticKind_] == diagnosticCheckpoint[diagnosticKind_];
+        const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
+        const size_t savedErrorCnt = diagnosticCheckpoint_[diagnosticKind_];
+
+        if (savedErrorCnt == currentErrorCnt) {
+            return true;
+        }
+
+        const util::DiagnosticStorage &currentErrorLog = diagnosticEngine_.GetDiagnosticStorage(diagnosticKind_);
+        bool allErrorsOutsideRange = true;
+        for (size_t idx = savedErrorCnt; idx < currentErrorCnt; ++idx) {
+            if (IsErrorInRange(*(currentErrorLog[idx]))) {
+                allErrorsOutsideRange = false;
+                break;
+            }
+        }
+        if (allErrorsOutsideRange) {
+            return true;
+        }
+
+        return false;
     }
+
+    void CheckErrorInRange();
+    bool IsErrorInRange(const util::DiagnosticBase &errorLog) const;
 
     ~SignatureMatchContext()
     {
@@ -506,7 +530,11 @@ public:
             return;
         }
 
+        CheckErrorInRange();
         diagnosticEngine_.Rollback(diagnosticCheckpoint_);
+        for (auto validLog : validUpdatedDiagnostics_) {
+            diagnosticEngine_.InsertLog(std::move(validLog));
+        }
     }
 
     NO_COPY_SEMANTIC(SignatureMatchContext);
@@ -516,7 +544,9 @@ private:
     util::DiagnosticEngine &diagnosticEngine_;
     std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint_;
     util::DiagnosticType diagnosticKind_;
+    const lexer::SourceRange &range_;
     bool isLogError_;
+    util::DiagnosticStorage validUpdatedDiagnostics_;
 };
 
 class SignatureCollectContext {

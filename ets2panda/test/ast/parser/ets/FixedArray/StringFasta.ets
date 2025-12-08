@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -123,17 +123,40 @@ function main(): void {
 }
 
 /* @@? 18:18 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
+/* @@? 18:18 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 18:46 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
 /* @@? 19:22 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
+/* @@? 19:22 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 19:50 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
 /* @@? 21:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 22:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 23:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 24:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 25:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 26:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 27:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 28:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 29:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 30:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 31:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 32:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 33:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 34:9 Error Semantic error ESE0143: Unresolved reference IUB */
+/* @@? 35:9 Error Semantic error ESE0143: Unresolved reference IUB */
 /* @@? 36:9 Error Semantic error ESE0143: Unresolved reference HomoSap */
+/* @@? 37:9 Error Semantic error ESE0143: Unresolved reference HomoSap */
+/* @@? 38:9 Error Semantic error ESE0143: Unresolved reference HomoSap */
+/* @@? 39:9 Error Semantic error ESE0143: Unresolved reference HomoSap */
 /* @@? 41:26 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 47:13 Error Semantic error ESE0173: Static property 'last' must be accessed through it's class 'Random' */
+/* @@? 47:21 Error Semantic error ESE0173: Static property 'last' must be accessed through it's class 'Random' */
 /* @@? 47:28 Error Semantic error ESE0173: Static property 'A' must be accessed through it's class 'Random' */
 /* @@? 47:32 Error Semantic error ESE0173: Static property 'C' must be accessed through it's class 'Random' */
 /* @@? 47:37 Error Semantic error ESE0173: Static property 'M' must be accessed through it's class 'Random' */
+/* @@? 48:26 Error Semantic error ESE0173: Static property 'last' must be accessed through it's class 'Random' */
+/* @@? 48:33 Error Semantic error ESE0173: Static property 'M' must be accessed through it's class 'Random' */
 /* @@? 52:35 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
+/* @@? 52:35 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 53:27 Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Char' */
 /* @@? 54:26 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
 /* @@? 54:57 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */
@@ -142,6 +165,7 @@ function main(): void {
 /* @@? 77:33 Error Semantic error ESE0002: Type 'Int' has no call signatures. */
 /* @@? 78:24 Error Semantic error ESE0002: Type 'Int' has no call signatures. */
 /* @@? 84:41 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
+/* @@? 84:41 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 86:9 Error Semantic error ESE0173: Static property 'makeCumulative' must be accessed through it's class 'StringFasta' */
 /* @@? 94:34 Error Semantic error ESE0173: Static property 'Random' must be accessed through it's class 'StringFasta' */
 /* @@? 95:34 Error Semantic error ESE0371: Cannot find type 'HashMap'. */
@@ -149,5 +173,5 @@ function main(): void {
 /* @@? 103:20 Error Semantic error ESE0002: Type 'Int' has no call signatures. */
 /* @@? 112:16 Error Semantic error ESE0173: Static property 'fastaRepeat' must be accessed through it's class 'StringFasta' */
 /* @@? 113:16 Error Semantic error ESE0173: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
-/* @@? 114:16 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 114:16 Error Semantic error ESE0173: Static property 'fastaRandom' must be accessed through it's class 'StringFasta' */
 /* @@? 116:36 Error Semantic error ESE0207: 'expected' is a static property of 'StringFasta' */

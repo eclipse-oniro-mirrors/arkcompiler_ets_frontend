@@ -13,15 +13,16 @@
  * limitations under the License.
  */
 
-const mustChecks: Array<Function> = new Array<Function>();
+function ov(x: int) { }
+function ov(s: string) { }
 
-function mustCallArgSize() {
-    mustChecks.push(() => {
-        xf(){
-
-        }
-    });
+class C {
+    getInt(): int { return 77 }
+    bad = ouch
 }
 
-/* @@? 19:5 Error Semantic error ESE0127: No matching call signature for push((() => void)) */
-/* @@? 20:9 Error Semantic error ESE0143: Unresolved reference xf */
+function main() {
+    ov((new C).getInt())
+}
+
+/* @@? 21:11 Error Semantic error ESE0143: Unresolved reference ouch */

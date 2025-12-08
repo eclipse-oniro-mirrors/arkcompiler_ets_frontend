@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 - Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 - Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2616,6 +2616,8 @@ std::vector<ResolveResult *> ETSChecker::ValidateAccessor(ir::MemberExpression *
             LogError(diagnostic::NOT_EXPORTED,
                      {memberExpr->Property()->AsIdentifier()->Name(), memberExpr->ObjType()->Name()},
                      memberExpr->Property()->Start());
+            memberExpr->SetTsType(GlobalTypeError());
+            return {};
         }
     }
 

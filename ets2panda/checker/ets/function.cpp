@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2428,7 +2428,7 @@ static void ThrowOverloadMismatch(ETSChecker *checker, util::StringView callName
 
 static Signature *ValidateOrderSignature(
     ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+    const ArenaVector<ir::Expression *> &arguments, const lexer::SourceRange &range,
     const std::vector<bool> &argTypeInferenceRequired);
 
 static util::StringView GetInvocationTargetName(const ir::Expression *expr)
@@ -2464,7 +2464,7 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
         }
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         auto *concreteSig = ValidateOrderSignature(this, std::make_tuple(sig, typeArguments, validateFlags), arguments,
-                                                   pos, argTypeInferenceRequired);
+                                                   expr->Range(), argTypeInferenceRequired);
         if (concreteSig == nullptr) {
             CleanArgumentsInformation(arguments);
             continue;
@@ -2493,32 +2493,52 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
     return nullptr;
 }
 
+static lexer::SourceRange BuildArgumentsRange(const ArenaVector<ir::Expression *> &arguments,
+                                              const lexer::SourceRange &range)
+{
+    lexer::SourceRange argumentsRange = lexer::SourceRange();
+    argumentsRange.SetProgram(range.start.Program());
+
+    if (!arguments.empty()) {
+        argumentsRange.start.line = arguments[0]->Range().start.line;
+        argumentsRange.start.index = arguments[0]->Range().start.index;
+        argumentsRange.end.line = arguments.back()->Range().end.line;
+        argumentsRange.end.index = arguments.back()->Range().end.index;
+    } else {
+        argumentsRange = range;
+    }
+
+    return argumentsRange;
+}
+
 static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature *substitutedSig,
                                                  const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
                                                  const std::vector<bool> &argTypeInferenceRequired);
 
 static Signature *ValidateOrderSignature(
     ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
-    const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+    const ArenaVector<ir::Expression *> &arguments, const lexer::SourceRange &range,
     const std::vector<bool> &argTypeInferenceRequired)
 {
     auto [baseSignature, typeArguments, flags] = info;
     // In case of overloads, it is necessary to iterate through the compatible signatures again,
     // setting the boxing/unboxing flag for the arguments if needed.
     // So handle substitution arguments only in the case of unique function or collecting signature phase.
-    Signature *const signature = MaybeSubstituteTypeParameters(checker, info, arguments, pos);
+    Signature *const signature = MaybeSubstituteTypeParameters(checker, info, arguments, range.start);
     if (signature == nullptr) {
         return nullptr;
     }
 
+    lexer::SourceRange argumentsRange = BuildArgumentsRange(arguments, range);
+
     // When process first match, if current signature is not matched, do not log TypeError
-    SignatureMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC,
+    SignatureMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC, argumentsRange,
                                                 (flags & TypeRelationFlag::NO_THROW) == 0);
 
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
 
-    if (!ValidateRestParameter(checker, signature, arguments, pos, flags)) {
+    if (!ValidateRestParameter(checker, signature, arguments, range.start, flags)) {
         return nullptr;
     }
 

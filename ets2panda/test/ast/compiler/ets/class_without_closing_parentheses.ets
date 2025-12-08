@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,13 +29,15 @@ export default class TreeMap<K, V> implements ReadonlyTreeMap<K, V> {
 
 /* @@? 16:47 Error Semantic error ESE0371: Cannot find type 'ReadonlyTreeMap'. */
 /* @@? 16:47 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 16:47 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 18:39 Error Semantic error ESE0371: Cannot find type 'TreeMapEntry'. */
+/* @@? 18:39 Error Semantic error ESE0169: Type '*ERROR_TYPE*' is not generic. */
 /* @@? 19:9 Error Syntax error ESY0227: Unexpected token 'export'. */
 /* @@? 19:16 Error Syntax error ESY0227: Unexpected token 'default'. */
-/* @@? 19:24 Error Syntax error ESY0227: Unexpected token 'namespace'. */
 /* @@? 19:24 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 21:15 Error Semantic error ESE0351: Variable 'buffer' has already been declared. */
+/* @@? 19:24 Error Syntax error ESY0227: Unexpected token 'namespace'. */
 /* @@? 21:15 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 24:13 Error Semantic error ESE0127: No matching call signature for set(Int, length[i]) */
-/* @@? 24:32 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 26:20 Error Semantic error ESE0158: Namespace 'buffer' cannot be used as a type. */
+/* @@? 21:15 Error Semantic error ESE0351: Variable 'buffer' has already been declared. */
+/* @@? 21:24 Error Semantic error ESE0127: No matching construct signature for std.core.ArrayBuffer(length) */
+/* @@? 21:40 Error Semantic error ESE0143: Unresolved reference length */
+/* @@? 23:29 Error Semantic error ESE0143: Unresolved reference length */
