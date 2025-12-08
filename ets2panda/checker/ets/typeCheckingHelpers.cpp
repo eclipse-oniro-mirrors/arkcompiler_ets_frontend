@@ -1516,9 +1516,14 @@ void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::Overl
     for (auto *overloadedName : node->OverloadedList()) {
         if (overloadedName->IsMemberExpression()) {
             overloadedName->Check(checker);
-            overloadedName->SetVariable(overloadedName->AsMemberExpression()->Property()->Variable());
+            auto *var = overloadedName->AsMemberExpression()->Property()->Variable();
+            overloadedName->SetVariable(var);
+            if (var != nullptr) {
+                checker->LogError(diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE, {}, overloadedName->Start());
+            }
         } else if (overloadedName->IsIdentifier()) {
             ir::Identifier *ident = overloadedName->AsIdentifier();
+            auto *functionScope = node->Parent()->Scope();
 
             Type *classType = node->Parent()->AsClassDefinition()->TsType();
             ES2PANDA_ASSERT(classType->IsETSObjectType());
@@ -1536,6 +1541,13 @@ void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::Overl
 
             ident->SetTsType(variable->TsType());
             ident->SetVariable(variable);
+
+            varbinder::Scope *identScope =
+                variable->Declaration() != nullptr ? variable->Declaration()->Node()->Parent()->Scope() : nullptr;
+
+            if (functionScope != identScope) {
+                checker->LogError(diagnostic::OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE, {}, overloadedName->Start());
+            }
 
             if (!CheckOverloadedName(checker, node, overloadedName)) {
                 continue;

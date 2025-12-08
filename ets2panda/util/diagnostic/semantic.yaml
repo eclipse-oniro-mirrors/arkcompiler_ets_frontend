@@ -1076,6 +1076,10 @@ semantic:
   id: 107
   message: "Bad operand type, the types of the operands must be numeric type."
 
+- name: OVERLOADED_FUNCS_MUST_BE_IN_SAME_SCOPE
+  id: 503573
+  message: "All overloaded functions must be declared in the same module or namespace scope."
+
 - name: OVERLOADED_MAIN
   id: 373
   message: "Main overload is not enabled"
