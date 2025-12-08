@@ -33,8 +33,8 @@ class B {
     }
 }
 
+/* @@? 18:10 Error SyntaxError: Getter must not have formal parameters. */
 /* @@? 18:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
-/* @@? 21:5 Error SyntaxError: Getter must not have formal parameters. */
+/* @@? 21:10 Error SyntaxError: Setter must have exactly one formal parameter. */
 /* @@? 21:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
-/* @@? 24:1 Error SyntaxError: Setter must have exactly one formal parameter. */
 /* @@? 31:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */

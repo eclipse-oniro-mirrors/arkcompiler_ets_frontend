@@ -13,20 +13,10 @@
  * limitations under the License.
  */
 
-let i = 0
+class A {}
 
-class A{
-    set p(){
-        i+=1
-    }
+set a(this: A, ...args:number[]){}
+set b(this: A, args ?: number) {}
 
-    get p():number {
-        return this.p
-    }
-}
-
-function foo(p:Partial<A>){}
-
-/* @@? 19:10 Error SyntaxError: Setter must have exactly one formal parameter. */
-/* @@? 23:5 Error TypeError: Function p is already declared. */
-/* @@? 24:21 Error Warning: Reading the value of the property inside its getter may lead to an endless loop. */
+/* @@? 18:16 Error SyntaxError: Setter cannot have rest parameter. */
+/* @@? 19:16 Error SyntaxError: Setter cannot have optional parameter. */

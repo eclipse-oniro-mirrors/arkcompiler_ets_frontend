@@ -15,6 +15,13 @@
 
 
 class A {
+<<<<<<< HEAD
     get foo(this) { return; }
 /* @@ label */}
 /* @@@ label Error SyntaxError: Getter must not have formal parameters.  */
+=======
+    get foo/* @@ label */(this) { return; }
+}
+
+/* @@@ label Error Syntax error ESY0058: Getter must not have formal parameters. */
+>>>>>>> 41ef81614 (Add missing cte for invalid setter)

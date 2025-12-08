@@ -16,10 +16,10 @@
 class Apple {
     private _color: int;
 
-    set color(c: int): int {
+    set color/* @@ label */(c: int): int {
         this._color = 10;
     }
-/* @@ label */}
+}
 
 function main(): void {
     let apple: Apple = new Apple();
