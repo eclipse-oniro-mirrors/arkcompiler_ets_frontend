@@ -72,14 +72,19 @@ void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &ran
 
 ir::AstNode *RefineSourceRanges(ir::AstNode *node)
 {
-    auto const isDummyLoc = [](lexer::SourceRange const &range, ir::AstNode *ast) {
-        return (range.start.index == 0 && range.start.line == 0) || (range.end.index < range.start.index) ||
-               (range.start.index < ast->Parent()->Start().index) || (range.end.index > ast->Parent()->End().index) ||
+    auto const isInvalidRange = [](lexer::SourceRange const &range) {
+        return (range.start.index == 0 && range.start.line == 0 && range.end.index == 0 && range.end.line == 0) ||
+               (range.end.index < range.start.index);
+    };
+
+    auto const isDummyLoc = [isInvalidRange](lexer::SourceRange const &range, ir::AstNode *ast) {
+        return isInvalidRange(range) || (range.start.index < ast->Parent()->Start().index) ||
+               (range.end.index > ast->Parent()->End().index) ||
                (ast->IsMethodDefinition() && !ast->AsMethodDefinition()->Overloads().empty());
     };
 
-    auto const refine = [isDummyLoc](ir::AstNode *ast) {
-        if (ast->Parent() != nullptr && isDummyLoc(ast->Range(), ast)) {
+    auto const refine = [isDummyLoc, isInvalidRange](ir::AstNode *ast) {
+        if (ast->Parent() != nullptr && isDummyLoc(ast->Range(), ast) && !isInvalidRange(ast->Parent()->Range())) {
             ast->SetRange(ast->Parent()->Range());
         }
     };
