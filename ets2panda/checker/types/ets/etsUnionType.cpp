@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,10 +188,6 @@ void ETSUnionType::RelationTarget(TypeRelation *relation, Type *source, RelFN co
     auto *const refsource = checker->MaybeBoxType(source);
 
     relation->Result(false);
-
-    if (refsource != source && !relation->ApplyBoxing()) {
-        return;
-    }
 
     if (AnyOfConstituentTypes([relation, refsource, relFn](auto *t) { return relFn(relation, refsource, t); })) {
         relation->Result(true);
