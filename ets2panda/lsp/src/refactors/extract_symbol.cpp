@@ -129,6 +129,7 @@ ExtractSymbolRefactor::ExtractSymbolRefactor()
 {
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.kind));
     AddKind(std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.kind));
+    AddKind(std::string(EXTRACT_VARIABLE_ACTION_GLOBAL.kind));
 
     AddKind(std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.kind));
     AddKind(std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.kind));
@@ -407,7 +408,7 @@ bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::strin
 
 bool IsVariableExtractionAction(const std::string &actionName)
 {
-    return actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.kind;
+    return actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name;
 }
 
 bool IsConstantExtractionInClassAction(const std::string &actionName)
@@ -778,88 +779,84 @@ bool IsClassMethodContext(ir::AstNode *node)
 
 static bool IsEncloseVarConstBreak(ir::AstNode *parent)
 {
-    return parent != nullptr && (parent->IsBlockStatement() || parent->IsProgram() || parent->IsClassDeclaration());
+    return parent != nullptr && parent->IsBlockStatement();
 }
 
 static bool IsGlobalBreak(ir::AstNode *parent)
 {
-    return parent != nullptr && parent->IsProgram();
+    return parent != nullptr &&
+           (parent->IsETSModule() || (parent->IsClassDefinition() && parent->AsClassDefinition()->IsGlobal()));
+}
+
+static bool IsClassBreak(ir::AstNode *parent)
+{
+    return parent != nullptr && parent->IsClassDeclaration();
 }
 
 static void AdjustStatementForGlobalIfClass(ir::AstNode *&statement, ir::AstNode *node)
 {
-    if (node != nullptr && node->IsClassDeclaration()) {
-        auto *cls = node->AsClassDeclaration();
-        if (!cls->Definition()->Body().empty()) {
-            statement = cls->Definition()->Body().at(0);
-        }
-    }
-}
-void GetFirstNodeWithoutImport(ir::AstNode *parent, ir::AstNode *&statement)
-{
-    if (!parent->IsClassDeclaration()) {
-        return;
-    }
-
-    auto nodeListToFirsElement = parent->AsClassDeclaration()->Definition()->Body();
-    for (auto ndx : nodeListToFirsElement) {
-        if (!ndx->IsImportSpecifier() && !ndx->IsImportDeclaration()) {
-            statement = ndx;
-            return;
+    if (node != nullptr && node->IsClassDefinition()) {
+        auto *cls = node->AsClassDefinition();
+        if (!cls->Body().empty()) {
+            statement = cls->Body().at(0);
         }
     }
 }
 
-size_t FindTopLevelInsertionPos(public_lib::Context *context, ir::AstNode *target, const std::string &actionName)
+static ir::AstNode *FindBreakPosition(ir::AstNode *target, bool (*breakCondition)(ir::AstNode *))
 {
-    ir::AstNode *statement = nullptr;
-
     for (ir::AstNode *node = target; node != nullptr; node = node->Parent()) {
-        if (!node->IsStatement()) {
-            continue;
-        }
-        statement = node;
-        ir::AstNode *parent = node->Parent();
-        if (actionName == std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.name) ||
-            actionName == std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.name)) {
-            if (IsEncloseVarConstBreak(parent)) {
-                break;
-            }
-            continue;
-        }
-        if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) ||
-            actionName == std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.name)) {
-            if (IsGlobalBreak(parent)) {
-                GetFirstNodeWithoutImport(parent, statement);
-                break;
-            }
-            continue;
-        }
-        if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name) ||
-            actionName == std::string(EXTRACT_CONSTANT_ACTION_CLASS.name)) {
-            if (IsGlobalBreak(parent)) {
-                AdjustStatementForGlobalIfClass(statement, node);
-                break;
-            }
-            continue;
+        if (breakCondition(node->Parent())) {
+            return node;
         }
     }
+    return nullptr;
+}
 
-    if (statement == nullptr) {
+static ir::AstNode *FindClassBreakPosition(ir::AstNode *target)
+{
+    for (ir::AstNode *node = target; node != nullptr; node = node->Parent()) {
+        if (IsClassBreak(node->Parent())) {
+            ir::AstNode *insertPosNode = node;
+            AdjustStatementForGlobalIfClass(insertPosNode, node);
+            return insertPosNode;
+        }
+    }
+    return nullptr;
+}
+
+size_t FindInsertionPos(public_lib::Context *context, ir::AstNode *target, const std::string &actionName)
+{
+    ir::AstNode *insertPosNode = nullptr;
+    if (actionName == std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.name) ||
+        actionName == std::string(EXTRACT_CONSTANT_ACTION_ENCLOSE.name)) {
+        insertPosNode = FindBreakPosition(target, IsEncloseVarConstBreak);
+    }
+    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name) ||
+        actionName == std::string(EXTRACT_CONSTANT_ACTION_GLOBAL.name) ||
+        actionName == std::string(EXTRACT_VARIABLE_ACTION_GLOBAL.name)) {
+        insertPosNode = FindBreakPosition(target, IsGlobalBreak);
+    }
+    if (actionName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name) ||
+        actionName == std::string(EXTRACT_CONSTANT_ACTION_CLASS.name)) {
+        insertPosNode = FindClassBreakPosition(target);
+    }
+    if (insertPosNode == nullptr) {
         return 0;
     }
 
-    if (statement->Start().line == 0 || statement->Start().index == 0) {
-        return statement->Start().index;
+    if (insertPosNode->Start().line == 0 || insertPosNode->Start().index == 0) {
+        return insertPosNode->Start().index;
     }
-    return LineColToPos(context, statement->Start().line, statement->Start().index);
+    return LineColToPos(context, insertPosNode->Start().line, insertPosNode->Start().index);
 }
+
 TextRange GetVarAndFunctionPosToWriteNode(const RefactorContext &context, const std::string &actionName)
 {
     auto start = context.span.pos;
     auto startedNode = GetTouchingToken(context.context, start, false);
     auto ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    const auto startPos = FindTopLevelInsertionPos(ctx, startedNode, actionName);
+    const auto startPos = FindInsertionPos(ctx, startedNode, actionName);
     return {startPos, startPos};
 }
 
@@ -1100,10 +1097,10 @@ static bool IsInsideExtractionRange(const ir::AstNode *node, TextRange positions
     return node->Start().index >= positions.pos && node->End().index <= positions.end;
 }
 
-static bool HasEnclosingFunction(ir::AstNode *node)
+static bool HasEncloseScope(ir::AstNode *node)
 {
     for (; node != nullptr; node = node->Parent()) {
-        if (node->IsFunctionDeclaration() || node->IsFunctionExpression() || node->IsArrowFunctionExpression()) {
+        if (node->IsBlockStatement() || node->IsArrowFunctionExpression()) {
             return true;
         }
     }
@@ -1124,6 +1121,8 @@ static void AddExtractVariableActions(std::vector<RefactorAction> &actions, bool
     if (isEncloseScopeAvailable) {
         AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_ENCLOSE);
         AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_ENCLOSE);
+    } else {
+        AddRefactorAction(actions, EXTRACT_VARIABLE_ACTION_GLOBAL);
     }
     if (hasClassScope) {
         AddRefactorAction(actions, EXTRACT_CONSTANT_ACTION_CLASS);
@@ -1145,7 +1144,7 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
         return actions;
     }
 
-    const bool hasScope = HasEnclosingFunction(node);
+    const bool hasScope = HasEncloseScope(node);
     const bool hasClassScope = IsClassMethodContext(node);
 
     if (node->IsExpression() || node->IsFunctionExpression() || node->IsArrowFunctionExpression() ||
@@ -1163,9 +1162,11 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
 ir::AstNode *FindRefactor(const RefactorContext &context, const std::string &actionName)
 {
     if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
-        actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_CONSTANT_ACTION_CLASS.name) {
+        actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_CONSTANT_ACTION_CLASS.name ||
+        actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name) {
         return FindExtractedVals(context);
     }
+
     if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         return FindExtractedFunction(context);
     }
@@ -1413,9 +1414,8 @@ std::unique_ptr<RefactorEditInfo> ExtractSymbolRefactor::GetEditsForAction(const
     }
     RefactorEditInfo refactor;
     if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name ||
-        actionName == EXTRACT_CONSTANT_ACTION_CLASS.name) {
-        refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
-    } else if (actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name) {
+        actionName == EXTRACT_CONSTANT_ACTION_CLASS.name || actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name ||
+        actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name) {
         refactor = GetRefactorEditsToExtractVals(context, extractedText, actionName);
     } else if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name || actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
         refactor = GetRefactorEditsToExtractFunction(context, actionName);
