@@ -13,16 +13,7 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 20,
-            "column": 14,
-            "endLine": 20,
-            "endColumn": 15,
-            "problem": "ObjectLiteralNoContextType",
-            "suggest": "",
-            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        }
-    ]
+    "mode": {
+      "arkts2": ""
+    }
 }

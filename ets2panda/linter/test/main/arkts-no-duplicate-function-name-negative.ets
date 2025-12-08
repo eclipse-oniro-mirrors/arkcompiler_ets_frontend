@@ -13,18 +13,47 @@
  * limitations under the License.
  */
 
-namespace A {
+namespace ATest {
+  function foo() {}
+
+  namespace BTest {
+    function foo() {}
+    function foo() {} // Duplicate function name
+  }
+
+  function foo() {} // Duplicate function name
+}
+
+
+namespace Ax {
    function foo1(): void {}
 }
 
-namespace B {
-    namespace A {
+namespace Ax {
+   function foo1(): void {} // Duplicate function name
+}
+
+namespace Atest {
+   function foo1(): void {}
+}
+
+namespace Btest {
+    namespace Atest {
         function foo1(): void {}
     }
 
     function foo2(): void {}
 }
 
-namespace B {
-    function foo2(): void {}
+namespace Btest {
+    function foo2(): void {} // Duplicate function name
+}
+
+namespace Root {
+  namespace Level1 {
+    namespace Level2 {
+      function compute() {}
+      function compute() {} // Duplicate function name
+    }
+  }
 }

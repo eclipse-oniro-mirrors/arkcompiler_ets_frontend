@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 
-namespace A {
-  function foo() {} // OK
+const map: Map<string,string> = new Map<string, string>();
 
-  namespace B {
-    function foo() {} // OK
-    function foo() {} // ERROR
-  }
+for (let key in map) {
+    console.log(key)
+}
 
-  function foo() {} // ERROR
+for (let value of map) {
+    console.log(value);
 }

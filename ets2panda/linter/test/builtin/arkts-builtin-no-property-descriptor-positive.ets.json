@@ -15,33 +15,23 @@
     ],
     "result": [
         {
-            "line": 17,
-            "column": 3,
-            "endLine": 17,
-            "endColumn": 33,
-            "problem": "TsOverload",
+            "line": 16,
+            "column": 10,
+            "endLine": 16,
+            "endColumn": 17,
+            "problem": "LimitedReturnTypeInference",
             "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
         },
         {
-            "line": 18,
-            "column": 3,
-            "endLine": 18,
-            "endColumn": 33,
-            "problem": "TsOverload",
+            "line": 20,
+            "column": 10,
+            "endLine": 20,
+            "endColumn": 17,
+            "problem": "LimitedReturnTypeInference",
             "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 3,
-            "endLine": 19,
-            "endColumn": 36,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
         }
     ]

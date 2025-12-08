@@ -435,9 +435,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 55,
             "column": 1,
-            "endLine": 57,
+            "endLine": 55,
             "endColumn": 32,
             "problem": "InterfaceMerging",
             "suggest": "",
@@ -445,9 +445,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 61,
+            "line": 57,
             "column": 5,
-            "endLine": 61,
+            "endLine": 57,
             "endColumn": 7,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
@@ -455,9 +455,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 61,
+            "line": 57,
             "column": 9,
-            "endLine": 61,
+            "endLine": 57,
             "endColumn": 27,
             "problem": "NoPropertyDescriptor",
             "suggest": "",
@@ -465,9 +465,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 61,
+            "line": 57,
             "column": 30,
-            "endLine": 61,
+            "endLine": 57,
             "endColumn": 31,
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",

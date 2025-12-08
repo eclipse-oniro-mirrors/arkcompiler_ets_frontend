@@ -52,10 +52,6 @@ let desc: MyTypedPropertyDescriptor<number> = {
     writable: true
 };
 
-interface APropertyDescriptor {}
-interface PropertyDescriptorA {}
 interface PropertyDescriptor {}
 
-let a1: APropertyDescriptor = {}
-let a2: PropertyDescriptorA = {}
 let a3: PropertyDescriptor = {}
