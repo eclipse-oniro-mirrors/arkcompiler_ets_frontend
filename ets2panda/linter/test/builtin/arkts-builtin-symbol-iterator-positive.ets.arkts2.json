@@ -15,23 +15,13 @@
     ],
     "result": [
         {
-            "line": 21,
-            "column": 4,
-            "endLine": 21,
-            "endColumn": 28,
-            "problem": "NoDuplicateFunctionName",
+            "line": 18,
+            "column": 14,
+            "endLine": 18,
+            "endColumn": 16,
+            "problem": "ForInStatement",
             "suggest": "",
-            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 29,
-            "column": 4,
-            "endLine": 29,
-            "endColumn": 28,
-            "problem": "NoDuplicateFunctionName",
-            "suggest": "",
-            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "rule": "\"for .. in\" is not supported (arkts-no-for-in)",
             "severity": "ERROR"
         }
     ]

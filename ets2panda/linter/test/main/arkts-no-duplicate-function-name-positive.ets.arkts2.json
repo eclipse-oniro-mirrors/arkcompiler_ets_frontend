@@ -13,16 +13,5 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 29,
-            "column": 5,
-            "endLine": 29,
-            "endColumn": 29,
-            "problem": "NoDuplicateFunctionName",
-            "suggest": "",
-            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        }
-    ]
+    "result": []
 }

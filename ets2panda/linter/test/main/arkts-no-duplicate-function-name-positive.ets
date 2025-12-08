@@ -13,10 +13,32 @@
  * limitations under the License.
  */
 
-namespace A {
-  function foo(x: number): void; // OK, but have arkts-no-ts-overload
-  function foo(x: string): void; // OK, but have arkts-no-ts-overload
-  function foo(x: boolean): void {} // OK, but have arkts-no-ts-overload
+namespace ATest {
+  function foo() {}
+
+  namespace BTest {
+    function foo() {}
+    function foo1() {}
+  }
+
+  function foo2() {}
+}
+
+
+namespace Ax {
+   function foo1(): void {}
+}
+
+namespace Ax {
+   function foo2(): void {}
+}
+
+namespace Cx {
+   function foo2(): void {}
+}
+
+namespace Cx {
+   function foo3(): void {}
 }
 
 namespace B {
@@ -72,4 +94,27 @@ namespace I {
 }
 
 
+namespace Atest {
+   function foo1(): void {}
+}
 
+namespace Btest {
+    namespace Atest {
+        function foo1(): void {}
+    }
+
+    function foo2(): void {}
+}
+
+namespace Btest {
+    function foo3(): void {}
+}
+
+namespace Root {
+  namespace Level1 {
+    namespace Level2 {
+      function compute() {}
+      function compute2() {}
+    }
+  }
+}

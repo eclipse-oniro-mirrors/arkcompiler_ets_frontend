@@ -13,26 +13,8 @@
  * limitations under the License.
  */
 
-namespace A {
-   function foo1(): void {}
-}
+let map: Map<string, string> = new Map<string, string>();
+let iterFromReflect = Reflect.get(map, Symbol.iterator); // Symbol.iterator not allowed
+let iterFromProp = map[Symbol.iterator](); // Symbol.iterator not allowed
 
-namespace A {
-   function foo1(): void {} // ERROR
-}
-
-namespace B {
-   function foo2(): void {}
-}
-
-namespace B {
-   function foo2(): void {} // ERROR
-}
-
-namespace C {
-   function foo3(): void {}
-}
-
-namespace C {
-   function foo4(): void {} // ERROR
-}
+let symbolIter = Symbol.iterator; // Symbol.iterator not allowed.

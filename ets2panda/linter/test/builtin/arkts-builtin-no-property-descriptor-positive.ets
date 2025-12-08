@@ -13,8 +13,23 @@
  * limitations under the License.
  */
 
-let map: Map<string, string> = new Map<string, string>();
-let iterFromReflect = Reflect.get(map, Symbol.iterator);
-let iterFromProp = map[Symbol.iterator]();
+function createP() {
+    return PropertyDescriptor();
+}
 
-let symbolIter = Symbol.iterator;
+function createT() {
+    return TypedPropertyDescriptor()<string>;
+}
+
+const a = 'PropertyDescriptor';
+const b = 'TypedPropertyDescriptor';
+
+type MyPropertyDescriptor = PropertyDescriptor;
+type MyTypedPropertyDescriptor<T> = TypedPropertyDescriptor<T>;
+
+
+interface APropertyDescriptor {}
+interface PropertyDescriptorA {}
+
+let a1: APropertyDescriptor = {}
+let a2: PropertyDescriptorA = {}
