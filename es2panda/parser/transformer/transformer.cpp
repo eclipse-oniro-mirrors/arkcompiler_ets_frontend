@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,6 +84,12 @@ ir::AstNode *Transformer::VisitTSNodes(ir::AstNode *parent)
     if (!parent) {
         return nullptr;
     }
+    CHECK_NOT_NULL(Binder());
+    if (UNLIKELY(Binder()->CheckStackOverFlow())) {
+        ThrowStackOverflow(parent->Start());
+        return nullptr;
+    }
+
     parent->UpdateSelf([this](auto *childNode) { return VisitTSNode(childNode); }, Binder());
     return parent;
 }
@@ -185,6 +191,11 @@ binder::Scope *Transformer::FindExportVariableInTsModuleScope(util::StringView n
 ir::UpdateNodes Transformer::VisitTSNode(ir::AstNode *childNode)
 {
     ASSERT(childNode != nullptr);
+    CHECK_NOT_NULL(Binder());
+    if (UNLIKELY(Binder()->CheckStackOverFlow())) {
+        ThrowStackOverflow(childNode->Start());
+        return nullptr;
+    }
     switch (childNode->Type()) {
         case ir::AstNodeType::IDENTIFIER: {
             auto *ident = childNode->AsIdentifier();
@@ -2847,6 +2858,13 @@ void Transformer::RemoveDefaultLocalExportEntry()
 {
     auto *moduleRecord = GetSourceTextModuleRecord();
     moduleRecord->RemoveDefaultLocalExportEntry();
+}
+
+void Transformer::ThrowStackOverflow(const lexer::SourcePosition &pos)
+{
+    lexer::LineIndex index(program_->SourceCode());
+    lexer::SourceLocation loc = index.GetLocation(pos);
+    throw Error(ErrorType::GENERIC, "Transformer stack overflow", loc.line, loc.col);
 }
 
 }  // namespace panda::es2panda::parser

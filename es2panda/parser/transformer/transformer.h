@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 
 #include "binder/binder.h"
 #include "binder/scope.h"
+#include "lexer/token/sourceLocation.h"
 #include "ir/astNode.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/methodDefinition.h"
@@ -242,6 +243,7 @@ private:
     void ResetParentScope(ir::UpdateNodes res, binder::Scope *parentScope) const;
     void ResetParentScopeForAstNodes(const ir::AstNode *parent, binder::Scope *parentScope) const;
     void ResetParentScopeForAstNode(ir::AstNode *childNode, binder::Scope *parentScope) const;
+    void ThrowStackOverflow(const lexer::SourcePosition &pos);
 
     template <typename T>
     ir::UpdateNodes VisitExportClassDeclaration(T *node);

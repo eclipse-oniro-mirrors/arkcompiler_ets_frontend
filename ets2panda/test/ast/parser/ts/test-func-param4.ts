@@ -15,7 +15,7 @@
 
 
 class A {
-    get foo(this) { return; }
-/* @@ label */}
+    get foo/* @@ label */(this) { return; }
+}
 
 /* @@@ label Error Syntax error ESY0058: Getter must not have formal parameters. */

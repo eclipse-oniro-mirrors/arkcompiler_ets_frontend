@@ -50,6 +50,7 @@
 #include "ir/ts/tsSignatureDeclaration.h"
 #include "ir/ts/tsTypeParameterDeclaration.h"
 #include "ir/ts/tsTypeParameterInstantiation.h"
+#include "os/stackGuard.h"
 #include "util/concurrent.h"
 
 namespace panda::es2panda::binder {
@@ -114,6 +115,21 @@ void Binder::ThrowInvalidAnnotationDeclaration(const lexer::SourcePosition &pos,
     std::stringstream ss;
     ss << "Invalid annotation declaration: " << name;
     throw Error(ErrorType::SYNTAX, ss.str(), loc.line, loc.col);
+}
+
+void Binder::ThrowStackOverflow(const lexer::SourcePosition &pos)
+{
+    lexer::LineIndex index(program_->SourceCode());
+    lexer::SourceLocation loc = index.GetLocation(pos);
+    throw Error(ErrorType::GENERIC, "Resolve reference stack overflow", loc.line, loc.col);
+}
+
+bool Binder::CheckStackOverFlow()
+{
+    if (UNLIKELY(panda::GetCurrentFrameAddress() < stackLimit_)) {
+        return true;
+    }
+    return false;
 }
 
 void Binder::CheckMandatoryArguments(const ir::Identifier *ident)
@@ -697,6 +713,10 @@ void Binder::BuildCatchClause(ir::CatchClause *catchClauseStmt)
 
 void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
 {
+    if (UNLIKELY(CheckStackOverFlow())) {
+        ThrowStackOverflow(childNode->Start());
+        return;
+    }
     childNode->SetParent(parent);
 
     ClassTdz classTdz(parent, childNode, scope_);
@@ -974,6 +994,10 @@ void Binder::ResolveReference(const ir::AstNode *parent, ir::AstNode *childNode)
 }
 void Binder::ResolveReferences(const ir::AstNode *parent)
 {
+    if (UNLIKELY(CheckStackOverFlow())) {
+        ThrowStackOverflow(parent->Start());
+        return;
+    }
     parent->Iterate([this, parent](auto *childNode) { ResolveReference(parent, childNode); });
 }
 

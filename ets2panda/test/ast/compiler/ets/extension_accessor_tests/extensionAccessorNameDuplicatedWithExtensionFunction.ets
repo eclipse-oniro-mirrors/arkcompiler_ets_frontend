@@ -24,7 +24,7 @@ get name(this: B): string {
     return this.name_;
 }
 
-set name/* @@ label */(this: B, n: string) {
+/* @@ label */ set name(this: B, n: string) {
     this.name_ = n;
 }
 

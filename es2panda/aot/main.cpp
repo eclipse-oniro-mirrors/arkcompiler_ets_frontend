@@ -26,6 +26,9 @@
 #ifdef OHOS_PLATFORM
 #include <malloc.h>
 #endif
+#if defined(PANDA_TARGET_OHOS) || defined(PANDA_TARGET_LINUX)
+#include <sys/resource.h>
+#endif
 
 namespace panda::es2panda::aot {
 using mem::MemConfig;
@@ -354,8 +357,34 @@ int Run(int argc, const char **argv)
 }
 }  // namespace panda::es2panda::aot
 
+#if defined(PANDA_TARGET_OHOS) || defined(PANDA_TARGET_LINUX)
+void IncreaseStackLimit(size_t stackLimit)
+{
+    struct rlimit rlim;
+    if (getrlimit(RLIMIT_STACK, &rlim) != 0) {
+        std::cerr << "Getrlimit failed: " << strerror(errno) << std::endl;
+        return;
+    }
+    if (rlim.rlim_cur >= stackLimit) {
+        return;
+    }
+    rlim.rlim_cur = stackLimit;
+    if (stackLimit > rlim.rlim_max) {
+        rlim.rlim_max = stackLimit;
+    }
+
+    if (setrlimit(RLIMIT_STACK, &rlim) != 0) {
+        std::cerr << "Warnning: Setrlimit failed, " << strerror(errno) << ". Please run command line 'ulimit - s 8256'"
+                  << " in terminal can eliminate this issue." << std::endl;
+    }
+}
+#endif
+
 int main(int argc, const char **argv)
 {
+#if defined(PANDA_TARGET_OHOS) || defined(PANDA_TARGET_LINUX)
+    IncreaseStackLimit(panda::es2panda::util::STACK_SIZE_LINUX);
+#endif
 // Enable tcache for malloc, resolve the global lock competition caused by multi-threaded scenarios.
 #ifdef OHOS_PLATFORM
     mallopt(M_OHOS_CONFIG, M_TCACHE_PERFORMANCE_MODE);

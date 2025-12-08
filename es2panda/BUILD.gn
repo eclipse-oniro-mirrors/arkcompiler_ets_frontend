@@ -591,7 +591,13 @@ ohos_executable("es2panda") {
   # The default stack size of the Windows platform is 1024 kb, which might lead to stack overflow.
   # Here is to set the stack size of es2abc.exe to 10M, which is the default value for Linux platform.
   if (is_mingw) {
-    ldflags += [ "-Wl,--stack,10485760" ]
+    ldflags += [ "-Wl,--stack,10551296" ]
+  }
+  # Increases stack size to accommodate stack overflow protection gaps while maintaining backward
+  # compatibility with the original stack layout. Stack size must be multiple of segment alignment (16KB). Therefore, 
+  # increase the stack space by 64K.
+  if (is_mac) {
+    ldflags += [ "-Wl,-stack_size,0x810000" ]
   }
 
   output_name = "es2abc"

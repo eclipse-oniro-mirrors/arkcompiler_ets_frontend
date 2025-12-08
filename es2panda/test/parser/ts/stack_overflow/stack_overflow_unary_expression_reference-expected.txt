@@ -1,0 +1,1 @@
+Error: Resolve reference stack overflow [stack_overflow_unary_expression_reference.ts:203:49]

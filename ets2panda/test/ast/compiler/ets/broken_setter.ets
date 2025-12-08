@@ -27,6 +27,6 @@ class A{
 
 function foo(p:Partial<A>){}
 
-/* @@? 23:5 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
-/* @@? 23:5 Error Semantic error ESE0130: Function p is already declared. */
-/* @@? 24:21 Warning Warning W0023: Reading the value of the property inside its getter may lead to an endless loop. */
+/* @@? 19:10 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@? 23:5 Error TypeError: Function p is already declared. */
+/* @@? 24:21 Error Warning: Reading the value of the property inside its getter may lead to an endless loop. */

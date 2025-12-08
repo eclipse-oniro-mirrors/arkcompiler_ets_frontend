@@ -29,7 +29,7 @@ import {
     ABC_SUFFIX,
     CLUSTER_FILES_TRESHOLD,
     ENABLE_DECL_CACHE,
-    ENABLE_CLUSTERS,
+    ENABLE_CLUSTERS
 } from './pre_define';
 
 import {

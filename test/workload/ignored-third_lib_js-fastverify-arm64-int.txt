@@ -17,3 +17,6 @@ jBox2d_test
 
 #27789
 mathjs_test
+
+#29254
+xslt_processor_test

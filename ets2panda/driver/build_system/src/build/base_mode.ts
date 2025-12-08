@@ -25,13 +25,15 @@ import {
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
     CLUSTER_FILES_TRESHOLD,
+    DECL_ETS_SUFFIX,
+    MERGED_INTERMEDIATE_FILE,
     ENABLE_CLUSTERS,
     DEFAULT_WORKER_NUMS
 } from '../pre_define';
 import {
     ensurePathExists,
     isMac,
-    checkDependencyModuleInfoCorrectness,
+    checkDependencyModuleInfoCorrectness
 } from '../util/utils';
 import {
     Logger,
@@ -92,6 +94,7 @@ export abstract class BaseMode {
     private entryFiles: Set<string>;
     private fileToModule: Map<string, ModuleInfo>;
     private moduleInfos: Map<string, ModuleInfo>;
+    private abcFiles: Set<string>;
     protected mergedAbcFile: string;
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
@@ -104,6 +107,7 @@ export abstract class BaseMode {
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
         this.logger = Logger.getInstance();
+        this.abcFiles = new Set<string>();
         this.moduleType = buildConfig.moduleType;
 
         this.statsRecorder = new StatisticsRecorder(
@@ -310,10 +314,37 @@ export abstract class BaseMode {
         return !errOccurred;
     }
 
-    private mergeAbcFiles(abcFiles: string[]): void {
-        let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
-        let linkerInputContent: string = abcFiles.join(os.EOL);
+    private collectAbcFileFromByteCodeHar(): void {
+        // the abc of the dependent bytecode har needs to be included when compiling hsp/hap
+        // but it's not required when compiling har
+        if (this.buildConfig.moduleType === OHOS_MODULE_TYPE.HAR) {
+            return;
+        }
+        for (const [packageName, moduleInfo] of this.moduleInfos) {
+            if (!(moduleInfo.moduleType === OHOS_MODULE_TYPE.HAR && moduleInfo.byteCodeHar)) {
+                continue;
+            }
+            if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
+                continue;
+            }
+            if (!moduleInfo.abcPath) {
+                const logData = LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_ABC_FILE_MISSING_IN_BCHAR, `abc file not found in bytecode har ${packageName}. `);
+                this.logger.printError(logData);
+                continue;
+            }
+            if (!fs.existsSync(moduleInfo.abcPath)) {
+                const logData = LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_ABC_FILE_NOT_EXIST_IN_BCHAR, `${moduleInfo.abcPath} does not exist. `);
+                this.logger.printErrorAndExit(logData);
+            }
+            this.abcFiles.add(moduleInfo.abcPath);
+        }
+    }
 
+    private mergeAbcFiles(outPuts: string[] = []): void {
+        this.collectAbcFileFromByteCodeHar();
+        let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
+        let allFiles: string[] = outPuts.concat(Array.from(this.abcFiles));
+        let linkerInputContent: string = allFiles.join(os.EOL);
         fs.writeFileSync(linkerInputFile, linkerInputContent);
         let abcLinkerCmd = ['"' + this.abcLinkerPath + '"']
         abcLinkerCmd.push('--strip-unused');
@@ -527,6 +558,9 @@ export abstract class BaseMode {
                 )
             );
         });
+        if (!this.buildConfig.enableDeclgenEts2Ts) {
+            this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX)));
+        }
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
 
@@ -557,9 +591,8 @@ export abstract class BaseMode {
 
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!;
         let entryFile: string = mainModule.entryFile || [...this.entryFiles][0];
-        let outputFile: string = this.mergedAbcFile
         let arktsConfigFile: string = mainModule.arktsConfigFile;
-
+        let intermediateFilePath: string = path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE);
         this.logger.printDebug(`entryFile: ${entryFile}`)
         this.logger.printDebug(`module: ${JSON.stringify(mainModule, null, 1)}`)
         this.logger.printDebug(`arktsConfigFile: ${arktsConfigFile}`)
@@ -572,7 +605,7 @@ export abstract class BaseMode {
             fileList: [...this.entryFiles],
             fileInfo: {
                 input: entryFile,
-                output: outputFile,
+                output: intermediateFilePath,
                 arktsConfig: arktsConfigFile,
                 moduleName: mainModule.packageName,
                 moduleRoot: mainModule.moduleRootPath
@@ -586,6 +619,8 @@ export abstract class BaseMode {
         if (!res) {
             throw new Error('Simultaneous build failed.');
         }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles([intermediateFilePath]);
     }
 
     public async runParallel(): Promise<void> {
