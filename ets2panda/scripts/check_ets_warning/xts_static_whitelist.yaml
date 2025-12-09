@@ -1,0 +1,767 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- IMPROPER_NUMERIC_CAST:
+    warningMessage: '''As'' expression for cast is deprecated for numeric types.'
+    suggestion: numeric as for type conversion is deprecated now and will be TypeError
+      later, you should use toDouble(), toFloat() and toInt() to replace as number,
+      as float and as int
+    fileList:
+      test/xts/acts/ability/ability_runtime/actslastexitreason/actslastexitreasonteststatic:
+        LastExitReasonStatic.test.ets: 2
+      test/xts/acts/arkcompiler/arkts_ani_test_static_group1:
+        CallingInstanceMethods.ets: 4
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_alignRules02_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_alignRules_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_aspectRatio_nowear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_aspectRatio_static:
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_constraintSize_static:
+        ConstraintSizePage.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_default_flex01_static:
+        StepperItemView.ets: 3
+        StepperView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_default_flex02_static:
+        StepperItemView.ets: 3
+        StepperView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_default_focusValue_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_default_nowear_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_default_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex001_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex002_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex003_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex004_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex005_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex006_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex_three01_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex_three_nowear_static:
+        StepperItemView.ets: 3
+        StepperView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex_three_static:
+        StepperItemView.ets: 3
+        StepperView.ets: 3
+        WaterFlowView.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex_two01_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_flex_two_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusControlNowear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusControl_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusOnTouchNowear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusOnTouch_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusableDefault_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusableNowear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_focusable_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_gridSpan_nowear_static:
+        GridSpanPage.ets: 3
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_gridSpan_static:
+        GridSpanPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_groupDefaultFocus_static:
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_height_nowear_static:
+        HeightPage.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_height_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_hitTestBehavior_static:
+        HitTestBehaviorPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_layoutWeight_nowear_static:
+        LayoutWeightPage.ets: 1
+        LayoutWeightPageFlex.ets: 1
+        LayoutWeightPageRow.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_layoutWeight_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_marginLength_nowear_static:
+        MarginPageLength.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_marginLength_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_margin_nowear_static:
+        MarginPage.ets: 1
+        MarginPageLength.ets: 1
+        MarginPageString.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_onDisAppear_nowear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_onDisAppear_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_onVisibleAreaChange_static:
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_padding_nowear_static:
+        PaddingBasePage.ets: 1
+        PaddingBasePageLength.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_padding_static:
+        PaddingBasePageLength.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_position_nowear_static:
+        Utils.ets: 1
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_position_static:
+        Utils.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_responseRegion02_static:
+        Utils.ets: 1
+        ResponseRegionPage.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_responseRegion03_static:
+        Utils.ets: 1
+        ResponseRegionPage.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        WaterFlowView.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_responseRegion_static:
+        Utils.ets: 1
+        ResponseRegionPage.ets: 1
+        StepperView.ets: 4
+        StepperItemView.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_size_static:
+        SizePage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_tabIndex_nowear_static:
+        Utils.ets: 1
+        TabIndexPage.ets: 1
+        WaterFlowView.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_tabIndex_static:
+        Utils.ets: 2
+        TabIndexPage.ets: 1
+        WaterFlowView.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_width_nowear_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_width_static:
+        WidthPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_zIndex_nowear_static:
+        ZIndexPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_common_attrss/ace_ets_component_common_attrss_zIndex_static:
+        ZIndexPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_accessibilityLevel_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_align_static:
+        AlignPage.ets: 1
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_backdropBlur_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_backgroundColor_static:
+        BackgroundColorPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_backgroundImage_static:
+        BackgroundImagePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_blur_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_borderColor_static:
+        BorderColorPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_borderImage_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_borderRadius_static:
+        BorderRadiusPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_borderStyle_static:
+        BorderStylePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_borderWidth_static:
+        BorderWidthPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_border_static:
+        BorderPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_brightness_static:
+        BrightnessPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_clickEffect_static:
+        ClickEffectPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_clip_static:
+        ClipPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_colorBlend_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_contrast_static:
+        ContrastPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_defaultFocus_static:
+        DefaultFocusPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_draggable_static:
+        DraggablePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_enabled_static:
+        EnabledPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_focusOnTouch_static:
+        FocusOnTouchPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_focusable_static:
+        FocusablePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_foregroundColor_static:
+        ForegroundColorPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_grayscale_static:
+        GrayscalePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_groupDefaultFocus_static:
+        GroupDefaultFocusPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_height_static:
+        HeightPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_hitTestBehavior_static:
+        HitTestBehaviorPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_hoverEffect_static:
+        HoverEffectPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_hueRotate_static:
+        HueRotatePage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_invert_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_lightUpEffect_static:
+        LightUpEffectPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_linearGradientBlur_static:
+        LinearGradientBlurPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_linearGradient_static:
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_obscured_static:
+        ObscuredPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_opacity_static:
+        OpacityPage.ets: 3
+        CommonTest.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_overlay_static:
+        OverlayPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_pixelStretchEffect_static:
+        PixelStretchEffectPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_radialGradient_static:
+        RadialGradientPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_renderFit_static:
+        RenderFitPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_renderGroup_static:
+        RenderGroupPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_restoreId_static:
+        RestoreIdPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_rotate_static:
+        RotatePage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_saturate_static:
+        SaturatePage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_scale_static:
+        ScalePage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_sepia_static:
+        SepiaPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_shadow_static:
+        ShadowPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_sphericalEffect_static:
+        SphericalEffectPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_sweepGradient_static:
+        SweepGradientPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_tabIndex_static:
+        TabIndexPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_transform_static:
+        TransformPage.ets: 2
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_translate_static:
+        TranslatePage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_useEffect_static:
+        UseEffectPage.ets: 1
+      test/xts/acts/arkui/ace_ets_component_seven/ace_ets_component_common_seven_attrs_width_static:
+        WidthPage.ets: 1
+      test/xts/acts/arkui/ace_ets_module_noui/ace_ets_module_FrameNode/ace_ets_module_FrameNode_NoWear_api12_static:
+        nodeWaterFlow.ets: 1
+      test/xts/acts/arkui/ace_ets_module_noui/ace_ets_module_StateMangagement/ace_ets_module_StateMangagement_api12_static:
+        ProviderTest0270.test.ets: 3
+      test/xts/acts/arkui/ace_ets_module_noui/ace_ets_module_global/ace_ets_module_global_api11_static:
+        Utils.ets: 1
+        AppStorageJsunit.test.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_XNode/ace_ets_module_XNodeNoWear_api12_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_XNode/ace_ets_module_XNode_api12_static:
+        Utils.ets: 1
+        RELOAD.ets: 1
+        getNumeric.ets: 1
+        commonEventTest1.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_XNode/ace_ets_module_XNode_api15_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_XNode/ace_ets_module_XNode_api16_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_animation/ace_ets_module_animation_api20_static:
+        ParticleEmitter.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsDialog/ace_ets_module_commonAttrsDialog_api12_static:
+        HoverScaleAPITest.ets: 2
+        springBack.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsEvents/ace_ets_module_commonAttrsEvents_api13_static:
+        gestureInterceptionEnhancement.test.ets: 36
+        gestureInterceptionEnhancementCallback.test.ets: 12
+        gestureInterceptionRecognizer.test.ets: 12
+        gestureInterceptionSwiper.test.ets: 16
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsLayout/ace_ets_module_commonAttrsLayout_api11_static:
+        getGridItemRect1.ets: 1
+        getGridItemRect2.ets: 1
+        getGridItemRect3.ets: 1
+        getGridItemRect4.ets: 1
+        getGridItemRect5.ets: 1
+        getGridItemRect6.ets: 1
+        getListItemGroupRect1.ets: 2
+        getListItemGroupRect5.ets: 2
+        getListItemGroupRect6.ets: 2
+        getListItemRect4.ets: 1
+        getListItemRect5.ets: 1
+        comSizeAbilityTest_07.test.ets: 2
+        getListItemGroupRect6.test.ets: 4
+        getListItemRect6.test.ets: 4
+      ? test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsLayout/ace_ets_module_commonAttrsLayout_nowear_api11_static
+      : ChipAction.test.ets: 2
+        ChipAction2.test.ets: 2
+        ChipOnClose.test.ets: 2
+        ChipOnClose2.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsOther/ace_ets_module_commonAttrsOther_api11_static:
+        noBarrierComponents.ets: 1
+        HoverJsunit11.test.ets: 6
+        HoverJsunit17.test.ets: 4
+        HoverJsunit23.test.ets: 6
+        HoverJsunit5.test.ets: 6
+        dymatic.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonAttrsVisual/ace_ets_module_commonAttrsVisual_api11_static:
+        sheetSize1.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api11_static:
+        PanGesture1.test.ets: 4
+        PanGesture2.test.ets: 4
+        PanGesture3.test.ets: 4
+        PanGestureEventJsunit.test.ets: 12
+        SwipeGesture1.test.ets: 8
+        SwipeGesture2.test.ets: 4
+        SwipeGesture3.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api12None_static:
+        SwiperGesture.test.ets: 4
+        PanGestureUpdateTest.test.ets: 4
+        PinchGestureUpdateTest.test.ets: 8
+        RotationGestureUpdateTest.test.ets: 8
+        SwipeGestureExample01Test.test.ets: 5
+        SwipeGestureExample02Test.test.ets: 5
+        SwipeGestureExample03Test.test.ets: 9
+        SwipeGestureTemplateTest.test.ets: 10
+        columnMonopolizeFalse.test.ets: 4
+        gestureParallel.test.ets: 4
+        listMonopolize.test.ets: 2
+        tapGestureAddInterfaceTest.test.ets: 28
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api12_static:
+        PanGesture.test.ets: 4
+        SourceTool.test.ets: 12
+        SwiperGesture.test.ets: 4
+        GestureRecognizerIsValid.test.ets: 8
+        LongPressGestureLongClickMouseTest.test.ets: 2
+        LongPressGestureLongClickTest.test.ets: 2
+        PanGestureExample01Test.test.ets: 4
+        PanGestureExample02Test.test.ets: 4
+        PanGestureExample03Test.test.ets: 8
+        PanGestureExampleTemplateTest.test.ets: 4
+        PinchGestureBasic01Test.test.ets: 8
+        PinchGestureBasic02Test.test.ets: 8
+        RotationGestureBasic01Test.test.ets: 8
+        RotationGestureBasic02Test.test.ets: 8
+        RotationGestureTemplateTest.test.ets: 4
+        SwipeGestureExample01Test.test.ets: 5
+        SwipeGestureExample02Test.test.ets: 5
+        SwipeGestureExample03Test.test.ets: 9
+        TapGestureBasicClickMouseTest.test.ets: 2
+        TapGestureBasicClickTest.test.ets: 2
+        TapGestureBasicDoubleClickMouseTest.test.ets: 2
+        TapGestureBasicDoubleClickTest.test.ets: 2
+        TapGestureTemplateTest.test.ets: 5
+        buttonDragStart.test.ets: 2
+        columnMonopolizeFalse.test.ets: 4
+        dragIsSystem.test.ets: 2
+        gestureParallel.test.ets: 4
+        tapGestureAddInterfaceTest.test.ets: 28
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api14_static:
+        LongPressGestureAllowedTypesTest.test.ets: 12
+        PanGestureAllowedTypesTest.test.ets: 25
+        PinchGestureAllowedTypesTest.test.ets: 8
+        RotationGestureAllowedTypesTest.test.ets: 8
+        SwipeGestureAllowedTypesTest.test.ets: 13
+        TapGestureAllowedTypesTest.test.ets: 12
+        LongPressGestureHandlerAllowedTypesTest.test.ets: 12
+        PinchGestureHandlerAllowedTypesTest.test.ets: 8
+        TapGestureHandlerAllowedTypesTest.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api15_static:
+        Mouse.test.ets: 2
+        PanGesture.test.ets: 16
+        PinchGesture.test.ets: 28
+        RotationGesture.test.ets: 28
+        SwipeGesture.test.ets: 9
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_api18_static:
+        PanRecognizer.test.ets: 4
+        PinchRecognizer.test.ets: 8
+        RotationRecognizer.test.ets: 8
+        SwipeRecognizer.test.ets: 4
+        panGestureOnOff.test.ets: 4
+        onVisiable.test.ets: 8
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_noware_api14_static:
+        PanGestureHandlerAllowedTypesTest.test.ets: 28
+        RotationGestureHandlerAllowedTypesTest.test.ets: 8
+        SwipeGestureHandlerAllowedTypesTest.test.ets: 17
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_commonEvents/ace_ets_module_commonEvents_nowear_api11_static:
+        ComAttr_parentX_parentY_strategy.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/ace_ets_module_dialog_api16_static:
+        subwindowDialog.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/ace_ets_module_dialog_api19_static:
+        selectDividerTest.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/ace_ets_module_dialog_api20_static:
+        keyboardAvoidMode.ets: 3
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/ace_ets_module_dialog_nowear_api11_static:
+        CalendarPickerDialog.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_dialog/ace_ets_module_dialog_nowear_api12_static:
+        DatePickerDialog.test.ets: 2
+        TimePickerDialog.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_draw/ace_ets_module_draw_api13_static:
+        Utils.ets: 1
+        CanvasAttrsTabTest.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_draw/ace_ets_module_draw_api20_static:
+        Utils.ets: 1
+      ? test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_gauge_contentModifier/ace_ets_module_gauge_contentModifier_api12_static
+      : Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/ace_ets_module_imageText_api11_static:
+        SearchTest.ets: 7
+        marqueeUI.ets: 1
+        RichEditorApi.test.ets: 4
+        richEditorApi7.test.ets: 2
+        richEditorApi8.test.ets: 2
+        SearchBottom.test.ets: 2
+        SearchTop.test.ets: 2
+        TextAreaBottom.test.ets: 6
+        TextAreaTop.test.ets: 6
+        TextSelectionMenu.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/ace_ets_module_imageText_api13_static:
+        RichEditorMenuType.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/ace_ets_module_imageText_api16_static:
+        bindSelectionMenuTest.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/ace_ets_module_imageText_nowear_api11_static:
+        RichEditorApi222.test.ets: 4
+        SearchJsunit.test.ets: 10
+        search_center.test.ets: 2
+        search_gesture.test.ets: 2
+        textAreaBC1Jsunit.test.ets: 4
+        textArea_center.test.ets: 6
+        onTextSelectionChange.test.ets: 8
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_imageText/ace_ets_module_imageText_nowear_api15_static:
+        SelectionMenuOptions.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_keyboardShortcut/ace_ets_module_KeyboardShortcut_api12_static:
+        KeyboardShortcut.ets: 1
+      ? test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_layout/ace_ets_module_layout_api11/ace_ets_module_layout_01_api11_static
+      : Grid_Col_Offset_Number.ets: 1
+        Grid_Col_Order_Number.ets: 1
+        Grid_Col_Span_Number.ets: 1
+        stack_zIndex.test.ets: 2
+      ? test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_layout/ace_ets_module_layout_api11/ace_ets_module_layout_04_api11_static
+      : GridRows2.test.ets: 2
+      ? test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_layout/ace_ets_module_layout_api11/ace_ets_module_layout_05_api11_static
+      : GridItemPage.ets: 4
+        Grid_ScrollStartAndStop3.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_loadingProgress/ace_ets_module_loadingProgress_api12_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_modifier_static:
+        GridNestedScroll.test.ets: 4
+        ListNestedScroll.test.ets: 4
+        ScrollEnablePaging.test.ets: 6
+        ScrollNestedScroll.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api11_static:
+        NavigationAttr.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api12_static:
+        MultiNavigation.ets: 2
+        NavigationL04.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api13_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api14_static:
+        Utils.ets: 1
+        NavigationBindToNestedScrollable.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api15_static:
+        Utils.ets: 1
+        CustomTransitionPage.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_api20_static:
+        StepperModifierPage.ets: 3
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_nowear_api11_static:
+        stepper.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_nowear_api12_static:
+        StepperTest1.ets: 1
+        stepperItem.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_navigation/ace_ets_module_navigation_nowear_api18_static:
+        PreferredOrientation.ets: 5
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_observer/ace_ets_module_observer_api12_static:
+        Utils.ets: 1
+        indexTabs.ets: 1
+        observeTab.ets: 1
+        onTabUpdate.ets: 1
+        uiIdUpdate.ets: 1
+        uiTabUpdate.ets: 1
+        idScrollEvent.test.ets: 4
+        observerScroll.test.ets: 4
+        uiScrollEvent.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_observer/ace_ets_module_observer_api20_static:
+        Utils.ets: 1
+        axisHorizontal.test.ets: 4
+        axisVertical.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_performance/ace_ets_module_performance_api18_static:
+        Utils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_api12_static:
+        RatingAdvanced.test.ets: 10
+        XcomponentSlider.test.ets: 22
+        TimePickerAddApi.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_api14_static:
+        onScrollStopTest.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_api16_static:
+        textPickerOnChangeModifier.ets: 1
+        datePickerOnChangeModifier.test.ets: 8
+        textPickerOnChangeModifier.test.ets: 8
+        timePickerOnChangeModifier.test.ets: 8
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_api18_static:
+        textPickerSelectedArea.test.ets: 4
+        timePickerSelectedArea.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_api20_static:
+        textpickerselectedBackgroundStyle.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_nowear_api18_static:
+        textPickerDialogSelectedArea.test.ets: 4
+        timePickerDialogSelectedArea.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_picker/ace_ets_module_picker_nowear_api19_static:
+        MyUtils.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_scroll/ace_ets_module_arcScroll_api18_static:
+        swipeActionArcList.test.ets: 16
+        arcSwiperContent.test.ets: 4
+        arcSwiperEvent.test.ets: 8
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_scroll/ace_ets_module_scroll_nowear_api12_static:
+        onScrollIndexFlow1.test.ets: 2
+        onScrollIndexFlow2.test.ets: 4
+        waterFlow6Jsunit.test.ets: 4
+        waterFlowStart2.test.ets: 2
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_scroll/ace_ets_module_scroll_nowear_api15_static:
+        GridBackToTop.test.ets: 12
+        ListBackToTop.test.ets: 12
+        ScrollBackToTop.test.ets: 12
+        WaterFlowBackToTop.test.ets: 12
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_scroll/ace_ets_module_scroll_nowear_api18_static:
+        setWaterFlowEvent.test.ets: 4
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_scroll/ace_ets_module_swiper_api11_static:
+        SwiperLoop.test.ets: 20
+        SwiperVisibility.test.ets: 5
+        swiper1.test.ets: 8
+        swiper2.test.ets: 4
+        swiperItemSize.test.ets: 4
+        swiperItemVisibility.test.ets: 12
+        swiperDisableSwipeFalse.test.ets: 4
+        swiperDisableSwipeTrue.test.ets: 4
+        swiperItemSpace.test.ets: 8
+        swiperLoopFalse.test.ets: 4
+        swiperMarPad.test.ets: 4
+        swiperMargin.test.ets: 4
+        swiperPadding.test.ets: 4
+        swiperDeleteAdd.test.ets: 10
+        swiperEdge.test.ets: 6
+        swiperGroup.test.ets: 5
+        swiperPage.test.ets: 8
+        swiperTwidth.test.ets: 7
+        swiperightscroll.test.ets: 9
+        swiperleftScroll.test.ets: 6
+        swiperAnimationJsunit.test.ets: 53
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_uicontext/ace_ets_module_uicontext_api12_static:
+        Utils.ets: 1
+        APIgetFrameNodeByUniqueId.ets: 1
+      test/xts/acts/arkui/ace_ets_module_ui/ace_ets_module_uicontext/ace_ets_module_uicontext_api13_static:
+        Utils.ets: 1
+      test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/buffer_standard_test_static:
+        Buffer.test.ets: 2
+        Buffer1.test.ets: 3
+        Buffer2.test.ets: 38
+      test/xts/acts/commonlibrary/ets_utils/utils_static/arkts_static/com_container_standard_static:
+        ArrayList2.test.ets: 14
+        List1.test.ets: 12
+        PlainArray1.test.ets: 3
+        PlainArray2.test.ets: 1
+      test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin001_standard_test_static:
+        DoubleFourthTest.test.ets: 2
+        DoubleThirdTest.test.ets: 2
+        FloatFourthTest.test.ets: 5
+        FloatThirdTest.test.ets: 60
+      test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin002_standard_test_static:
+        IntTest.test.ets: 2
+      test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/builtin003_standard_test_static:
+        ArraySliceSecondTest.test.ets: 130
+        ArrayToLocaleStringSecondTest.test.ets: 18
+        ArrayToReversedTest.test.ets: 38
+        ArrayToSortedSecondTest.test.ets: 52
+        ArrayToSortedTest.test.ets: 48
+        ArrayToSplicedSecondTest.test.ets: 94
+        ArrayToSplicedThirdTest.test.ets: 99
+        ArrayToStringTest.test.ets: 17
+        ArrayUpperBoundSearchTest.test.ets: 60
+        ArrayValuesTest.test.ets: 32
+        ArrayWithSecondTest.test.ets: 32
+        ArrayWithTest.test.ets: 40
+      test/xts/acts/commonlibrary/ets_utils/utils_static/builtin_static/spec_standard_test_static:
+        BuiltinsContinueTest.test.ets: 2
+        BuiltinsForOfTest.test.ets: 2
+        BuiltinsForTest.test.ets: 1
+        BuiltinsSwitchTest.test.ets: 1
+        SequenceRunnerTaskMethodTest.ets: 15
+      test/xts/acts/commonlibrary/ets_utils/utils_static/concurrency_static/eaworker_test_static:
+        EAWorker.test.ets: 3
+      test/xts/acts/commonlibrary/ets_utils/utils_static/concurrency_static/thread_safe_container_test_static:
+        ConcurrentSet.test.ets: 2
+      test/xts/acts/commonlibrary/ets_utils/utils_static/concurrency_static/timer_test_static:
+        Timer.test.ets: 9
+        TimerMemoryTest.test.ets: 3
+        TimerSetIntervalTest.test.ets: 3
+        TaskMethodTest1.ets: 3
+      test/xts/acts/hdf/device_manager/device_manager_noper_static:
+        DeviceManagerNoPermission.test.ets: 1
+      test/xts/acts/multimedia/audio/audio_js_standard/AudioCapturerStatic:
+        '@ohos.multimedia.audio.d.ets': 1
+        AudioCapturer.test.ets: 8
+      test/xts/acts/multimedia/audio/audio_js_standard/AudioRendererEnhanceStatic:
+        GetUnderflowCount.test.ets: 3
+      test/xts/acts/multimedia/drm/drm_js_standard/avPlayerStatic:
+        DrmPlayerAbility.test.ets: 1
+      test/xts/acts/multimedia/image/image_ets_standard/image10bitPixelmapStatic:
+        Image10bitPixelmap.test.ets: 1
+      test/xts/acts/multimedia/image/image_js_standard/imageColorSpaceTransferStatic:
+        ImageColorSpaceTransfer.test.ets: 4
+      test/xts/acts/multimedia/media/media_js_standard/avImageGeneratorStatic:
+        AVImageGeneratorTest.test.ets: 2
+      test/xts/acts/multimedia/media/media_js_standard/avPlayerStatic:
+        AVPlayerLocalTest.test.ets: 1
+        AVPlayerTestBase.test.ets: 2
+        AvPlayerEnumTest.test.ets: 1
+        MediaTestBase.test.ets: 2
+        PreDownLoadTest.test.ets: 2
+      test/xts/acts/multimedia/photoAccess/photoAccessStatic:
+        Common.ets: 1
+      test/xts/acts/notification/ans_standard/actsNotificationManagerSlotTestStatic:
+        ActsNotificationManagerSlotTest.test.ets: 10
+      test/xts/acts/resourceschedule/resourceschedule_standard/backgroundtaskmanager_new_static/shorttimetask_static:
+        ActsShortTimeTaskManagerErrorCodeStaticTest.test.ets: 1
+      test/xts/acts/security/accessTokenTestStatic:
+        AccessTokenStatic.test.ets: 1
+      test/xts/acts/security/cryptoFramework/js_api10_test_oh50_static:
+        SecurityCryptoFwScryptKdf.test.ets: 9
+        SecurityCryptoFwSymEncryptAndDecrypt.test.ets: 11
+        SecurityCryptoHmacSync.test.ets: 2
+        hkdfUtils.ets: 1
+        scryptUtils.ets: 1
+      test/xts/acts/security/requestPermissionOnSettingTestStatic:
+        RequestPermissionOnSettingStaticTest.test.ets: 1
+      test/xts/acts/storage/storagefileiov9jsteststatic:
+        Util.test.ets: 1
+        Watcher.test.ets: 2
+      test/xts/acts/telephony/networkmanager/http/ActsNetworkManagerHttpCacheTestStatic:
+        HttpResponseCache.test.ets: 1
+      test/xts/acts/telephony/telephone/ActsTelephonyCallHasCardTestStatic:
+        TelephonyCallHasCard1Public.test.ets: 1
+      test/xts/acts/telephony/telephone/ActsTelephonySimHasCardTestStatic:
+        Sim4Public.test.ets: 1
+      test/xts/acts/telephony/telephone/ActsTelephonySmsWithCardTestStatic:
+        SmsTextPublic1.test.ets: 1
+        smsTextPublic.test.ets: 1
+      test/xts/acts/telephony/telephonyjstest/ActsRadiostatisticEtsTestStatic:
+        RadioSecondJsunit.test.ets: 1
+      test/xts/acts/web/application_interworking/sending_messages_to_each_other_static:
+        webMessageExt.ets: 13
+      test/xts/acts/window/ActsDisplayTestStatic:
+        DisplayTest.test.ets: 1
