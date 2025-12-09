@@ -166,7 +166,6 @@ test262/data/test_es2021/built-ins/encodeURI/S15.1.3.3_A2.2_T1.js
 test262/data/test_es2021/intl402/default-locale-is-supported.js
 test262/data/test_es2021/intl402/supportedLocalesOf-duplicate-elements-removed.js
 test262/data/test_es2021/intl402/DisplayNames/options-style-toString-abrupt-throws.js
-test262/data/test_es2021/built-ins/ArrayBuffer/prototype/slice/number-conversion.js
 
 #27471
 test262/data/test_es2021/language/expressions/dynamic-import/usage/nested-arrow-assignment-expression-is-call-expression-square-brackets.js
