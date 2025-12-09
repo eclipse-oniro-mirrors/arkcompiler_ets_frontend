@@ -33,6 +33,7 @@ import { compileLintOptions } from '../lib/ts-compiler/Compiler';
 import { processSyncErr, processSyncOut } from '../lib/utils/functions/ProcessWrite';
 import { parseCommandLine } from './CommandLineParser';
 import { getAllLinterRules } from '../lib/utils/functions/ConfiguredRulesProcess';
+import { tryCallGC } from '../lib/utils/functions/GarbageCollectorUtils';
 
 export function run(): void {
   const commandLineArgs = process.argv.slice(2);
@@ -67,10 +68,8 @@ async function runIdeInteractiveMode(cmdOptions: CommandLineOptions): Promise<vo
   cmdOptions.disableStrictDiagnostics = true;
   const timeRecorder = new TimeRecorder();
   const scanTaskRelatedInfo = {} as ScanTaskRelatedInfo;
-  const compileOptions = compileLintOptions(cmdOptions);
   scanTaskRelatedInfo.cmdOptions = cmdOptions;
   scanTaskRelatedInfo.timeRecorder = timeRecorder;
-  scanTaskRelatedInfo.compileOptions = compileOptions;
   await executeScanTask(scanTaskRelatedInfo);
 
   const statisticsReportInPutInfo = scanTaskRelatedInfo.statisticsReportInPutInfo;
@@ -112,9 +111,12 @@ async function executeScanTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): Promis
   scanTaskRelatedInfo.mergedProblems = new Map<string, ProblemInfo[]>();
   if (cmdOptions.linterOptions.arkts2 && cmdOptions.homecheck) {
     await executeHomeCheckTask(scanTaskRelatedInfo);
+    tryCallGC();
   }
 
   if (!cmdOptions.skipLinter) {
+    const compileOptions = compileLintOptions(cmdOptions);
+    scanTaskRelatedInfo.compileOptions = compileOptions;
     executeLintTask(scanTaskRelatedInfo);
   }
 }
@@ -124,6 +126,7 @@ async function executeHomeCheckTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): P
   const { ruleConfigInfo, projectConfigInfo } = getHomeCheckConfigInfo(cmdOptions);
   let migrationTool: MigrationTool | null = new MigrationTool(ruleConfigInfo, projectConfigInfo);
   await migrationTool.buildCheckEntry();
+  tryCallGC();
   scanTaskRelatedInfo.timeRecorder.startScan();
   scanTaskRelatedInfo.timeRecorder.setHomeCheckCountStatus(true);
   const result = await migrationTool.start();
