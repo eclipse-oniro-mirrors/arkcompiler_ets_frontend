@@ -9728,7 +9728,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         }
 
         const autofix = this.autofixer?.removeImport(node, parent);
-        this.incrementCounters(node, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+        this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
 
         return;
       }
@@ -9739,7 +9739,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
 
       const autofix = this.autofixer?.removeNode(importDecl);
-      this.incrementCounters(node, FaultID.LimitedStdLibNoImportConcurrency, autofix);
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
     };
 
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
