@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -640,8 +640,11 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_CHECKED);
     while (auto phase = ctx->phaseManager->NextPhase()) {
         phase->Apply(ctx, ctx->parserProgram);
+        if (ctx->diagnosticEngine->IsAnyError()) {
+            ctx->state = ES2PANDA_STATE_ERROR;
+            return ctx;
+        }
     }
-    ctx->state = !ctx->diagnosticEngine->IsAnyError() ? ES2PANDA_STATE_LOWERED : ES2PANDA_STATE_ERROR;
 
     for (auto &[_, extPrograms] : ctx->parserProgram->ExternalSources()) {
         for (auto &extProgram : extPrograms) {
@@ -653,6 +656,7 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
     if (ctx->isExternal) {
         SaveCache(ctx);
     }
+    ctx->state = ES2PANDA_STATE_LOWERED;
 
     return ctx;
 }

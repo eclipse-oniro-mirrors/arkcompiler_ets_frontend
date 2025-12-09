@@ -1,0 +1,5 @@
+PROCEED TO CHECKED SUCCESS
+PROCEED TO LOWERED ERROR
+
+TypeError: No matching call signature for set("age", "90") [compile.ets:1:1]
+TypeError: Type '"90"' is not compatible with type 'Double' at index 2 [compile.ets:6:5]
