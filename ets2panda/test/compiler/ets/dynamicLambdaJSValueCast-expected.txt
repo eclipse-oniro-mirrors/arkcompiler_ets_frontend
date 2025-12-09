@@ -954,5 +954,5 @@
     }
   }
 }
-TypeError: Type '(x: Int) => Int' cannot be assigned to type 'JSValue' [dynamicLambdaJSValueCast.ets:17:22]
-TypeError: Cannot cast type 'JSValue' to '(x: Int) => Int' [dynamicLambdaJSValueCast.ets:18:31]
+[dynamicLambdaJSValueCast.ets:17:22] Semantic error ESE0318: Type '((p1: Int) => Int)' cannot be assigned to type 'JSValue'
+[dynamicLambdaJSValueCast.ets:18:31] Semantic error ESE0326: Cannot cast type 'JSValue' to '((p1: Int) => Int)'

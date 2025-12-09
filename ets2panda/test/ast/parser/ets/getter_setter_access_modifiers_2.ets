@@ -39,7 +39,8 @@ class Hex extends Core {
     }
 }
 
-/* @@? 33:22 Error TypeError: size(s: Int): void in Hex cannot override size(s: Int): void in Core because overridden method is final.  */
-/* @@? 33:22 Error TypeError: Method size(s: Int): void in Hex not overriding any method  */
-/* @@? 37:22 Error TypeError: size(): Int in Hex cannot override size(): Int in Core because overridden method is final.  */
-/* @@? 37:22 Error TypeError: Method size(): Int in Hex not overriding any method  */
+
+/* @@? 33:22 Error Semantic error ESE0141: size(s: Int): void in Hex cannot override size(s: Int): void in Core because overridden method is final. */
+/* @@? 33:22 Error Semantic error ESE0136: Method size(s: Int): void in Hex not overriding any method */
+/* @@? 37:22 Error Semantic error ESE0141: size(): Int in Hex cannot override size(): Int in Core because overridden method is final. */
+/* @@? 37:22 Error Semantic error ESE0136: Method size(): Int in Hex not overriding any method */

@@ -17,7 +17,8 @@ function hehe(...items: FixedArray<number>/* @@ label */: void /* @@ label1 */{
     console.log("aaaaaaaa")
 }
 
-/* @@? 16:10 Error TypeError: Only abstract or native methods can't have body. */
-/* @@@ label Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@? 16:59 Error SyntaxError: Unexpected token 'void'. */
-/* @@@ label1 Error SyntaxError: Unexpected token '{'. */
+
+/* @@? 16:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@@ label Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@? 16:59 Error Syntax error ESY0227: Unexpected token 'void'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '{'. */

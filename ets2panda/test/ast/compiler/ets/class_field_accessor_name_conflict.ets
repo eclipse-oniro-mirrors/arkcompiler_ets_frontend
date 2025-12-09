@@ -28,4 +28,4 @@ get id(this : Process) : number /* @@ label */{
     return this.id;
 }
 
-/* @@@ label Error TypeError: The extension accessor or extension function 'id' has the same name with field of class Process */
+/* @@@ label Error Semantic error ESE0079: The extension accessor or extension function 'id' has the same name with field of class Process */

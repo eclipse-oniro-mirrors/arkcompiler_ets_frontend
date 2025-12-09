@@ -16,8 +16,9 @@
 class C {
 }
 
-let c: C = /* @@ label */{
-    33: 44,
+let c: C = {
+    /* @@ label */33: 44,
 };
 
-/* @@@ label Error TypeError: key in class composite should be either identifier or string literal  */
+
+/* @@@ label Error Semantic error ESE0073: Key in class composite should be identifier only */

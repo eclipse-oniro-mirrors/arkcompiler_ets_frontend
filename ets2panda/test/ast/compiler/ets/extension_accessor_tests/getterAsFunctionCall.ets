@@ -33,4 +33,5 @@ function main() {
     /* @@ label */name(b);
 }
 
-/* @@@ label Error TypeError: Extension accessor can't be used as a method call or function call.  */
+
+/* @@@ label Error Semantic error ESE0059: Extension accessor can't be used as a method call or function call. */

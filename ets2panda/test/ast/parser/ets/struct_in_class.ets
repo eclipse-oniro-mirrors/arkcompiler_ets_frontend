@@ -21,5 +21,6 @@ class A {
 }
 
 
-/* @@? 18:5 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 18:5 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+
+/* @@? 18:5 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 18:5 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */

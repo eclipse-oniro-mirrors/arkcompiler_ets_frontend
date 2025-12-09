@@ -20,12 +20,13 @@
     console.log("h")
 }
 
-/* @@@ label Error SyntaxError: A try statement should contain either finally clause or at least one catch clause. */
-/* @@@ label1 Error SyntaxError: Expected '{', got 'identification literal'. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@@ label2 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:41 Error SyntaxError: Unexpected token 'Error'. */
-/* @@@ label3 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:63 Error SyntaxError: Unexpected token '{'. */
-/* @@@ label4 Error SyntaxError: Unexpected token '{'. */
-/* @@? 32:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@@ label Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */
+/* @@@ label1 Error Syntax error ESY0230: Expected '{', got 'identification literal'. */
+/* @@@ label2 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:41 Error Syntax error ESY0227: Unexpected token 'Error'. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:63 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label4 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 32:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -18,10 +18,11 @@ abstract /* @@ label */foo/* @@ label1 */(1 /* @@ label2 */> 0/* @@ label3 */) /
 }
 
 
-/* @@@ label Error SyntaxError: Abstract methods can only appear within an abstract class. */
-/* @@@ label1 Error SyntaxError: Expected '{', got '('. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@@ label3 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@@ label4 Error SyntaxError: Unexpected token. */
-/* @@@ label5 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@@ label6 Error SyntaxError: Unexpected token, expected an identifier. */
+
+/* @@@ label6 Error Syntax error ESY0000: Unexpected token, expected an identifier. */
+/* @@@ label Error Syntax error ESY0184: Abstract methods can only appear within an abstract class. */
+/* @@@ label1 Error Syntax error ESY0230: Expected '{', got '('. */
+/* @@@ label2 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@@ label3 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@@ label4 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label5 Error Syntax error ESY0228: Unexpected token, expected ';'. */

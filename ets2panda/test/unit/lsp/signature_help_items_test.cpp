@@ -58,12 +58,14 @@ let a = map.get("a");
     size_t const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
-    LSPAPI const *lspApi = GetImpl();
     size_t const offset = 68;
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
-    auto res = lspApi->getSignatureHelpItems(ctx, offset);
+    const size_t defaultTime = 20;
+    auto invokedReason = ark::es2panda::lsp::SignatureHelpInvokedReason();
+    auto cancellationToken = ark::es2panda::lsp::CancellationToken(defaultTime, nullptr);
+    auto res = ark::es2panda::lsp::GetSignatureHelpItems(ctx, offset, invokedReason, cancellationToken);
     size_t const expectedSize = 2;
     size_t const expectedStart = 62;
     size_t const expectedLength = 12;

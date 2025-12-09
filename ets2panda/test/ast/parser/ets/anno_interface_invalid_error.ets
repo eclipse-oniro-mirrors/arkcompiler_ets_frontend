@@ -45,6 +45,7 @@ class C{
 	public foo() {}
 }
 
-/* @@? 29:4 Error SyntaxError: Missing type annotation for property 'b'. */
-/* @@? 42:11 Error TypeError: Invalid value for annotation field, expected a constant literal. */
-/* @@? 44:16 Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
+
+/* @@? 29:4 Error Syntax error ESY0001: Missing type annotation for property 'b'. */
+/* @@? 42:11 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@? 44:16 Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */

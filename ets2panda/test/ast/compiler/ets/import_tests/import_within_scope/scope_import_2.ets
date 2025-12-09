@@ -19,4 +19,5 @@ function main() {
     }
 }
 
-/* @@? 18:9 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@? 18:9 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

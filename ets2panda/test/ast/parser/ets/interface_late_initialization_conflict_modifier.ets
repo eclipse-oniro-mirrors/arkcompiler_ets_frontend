@@ -17,6 +17,7 @@ interface A {
     f1?!:string
     f2!?:number
 }
-
-/* @@? 17:7 Error SyntaxError: Conflicting modifiers '!' and '?' on field. */
-/* @@? 18:7 Error SyntaxError: Conflicting modifiers '!' and '?' on field. */
+/* @@? 17:7 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 17:7 Error Syntax error ESY0127: Conflicting modifiers '!' and '?' on field. */
+/* @@? 18:7 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 18:7 Error Syntax error ESY0127: Conflicting modifiers '!' and '?' on field. */

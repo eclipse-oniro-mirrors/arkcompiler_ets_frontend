@@ -19,8 +19,9 @@ class C {
 
 let a = new C(12,)
 
-/* @@@ label1 Error SyntaxError: Unexpected token ','. */
-/* @@? 20:9 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 20:9 Error TypeError: No matching construct signature for trailing_comma_2.C(Int) */
-/* @@? 20:9 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 20:9 Error TypeError: No matching construct signature for trailing_comma_2.C(Int) */
+
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 20:9 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
+/* @@? 20:9 Error Semantic error ESE0127: No matching construct signature for trailing_comma_2.C(Int) */
+/* @@? 20:9 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
+/* @@? 20:9 Error Semantic error ESE0127: No matching construct signature for trailing_comma_2.C(Int) */

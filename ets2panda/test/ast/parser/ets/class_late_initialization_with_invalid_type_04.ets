@@ -33,5 +33,5 @@ class E<T> implements A<T>{
     f1!: T // cte
 }
 
-
-/* @@? 33:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 17:7 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 33:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

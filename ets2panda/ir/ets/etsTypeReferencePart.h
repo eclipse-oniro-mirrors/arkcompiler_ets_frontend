@@ -39,7 +39,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE_PART, allocator), name_(name)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -51,7 +51,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE_PART, allocator), name_(name), typeParams_(typeParams), prev_(prev)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -101,7 +101,6 @@ public:
     void Compile(compiler::ETSGen *etsg) const override;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
-    checker::Type *HandlerResultType(checker::ETSChecker *checker, checker::Type *baseType);
     checker::Type *GetType([[maybe_unused]] checker::ETSChecker *checker) override;
     ir::Identifier *GetIdent();
 

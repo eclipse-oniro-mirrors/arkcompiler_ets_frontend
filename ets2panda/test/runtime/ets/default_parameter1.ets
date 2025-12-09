@@ -15,7 +15,7 @@
 
 function main() : void
 {
-    arktest.assertEQ(foo(5), 5);
+    arktest.assertEQ(foo(5), 15);
 }
 
 function foo(a : int) : int

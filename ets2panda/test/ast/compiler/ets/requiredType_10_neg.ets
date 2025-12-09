@@ -25,4 +25,5 @@ function main(): void {
     let req_a: A<B> = {fld: /* @@ label */{}};
 }
 
-/* @@? 21:18 Error TypeError: T in Required<T> must be a class or an interface type. */
+
+/* @@? 21:18 Error Semantic error ESE124644: T in Required<T> must be a class or an interface type. */

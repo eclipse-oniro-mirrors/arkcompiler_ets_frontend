@@ -42,9 +42,10 @@ function main() {
     a.foo(true);
 }
 
-/* @@? 32:23 Error TypeError: Signature fooPrivate(x: String): void is not visible here. */
-/* @@? 32:23 Error TypeError: No matching call signature for foo("abc") */
-/* @@? 40:20 Error TypeError: Signature fooPrivate(x: String): void is not visible here. */
-/* @@? 40:20 Error TypeError: No matching call signature for foo("abc") */
-/* @@? 41:20 Error TypeError: Signature fooProtected(x: Double): void is not visible here. */
-/* @@? 41:20 Error TypeError: No matching call signature for foo(Int) */
+
+/* @@@ label Error Semantic error ESE0139: Signature fooPrivate(x: String): void is not visible here. */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo("abc") */
+/* @@@ label2 Error Semantic error ESE0139: Signature fooPrivate(x: String): void is not visible here. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo("abc") */
+/* @@@ label3 Error Semantic error ESE0139: Signature fooProtected(x: Double): void is not visible here. */
+/* @@@ label3 Error Semantic error ESE0127: No matching call signature for foo(Int) */

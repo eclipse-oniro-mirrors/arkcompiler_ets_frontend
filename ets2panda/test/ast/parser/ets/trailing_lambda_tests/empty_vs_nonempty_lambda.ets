@@ -42,5 +42,5 @@ function testEmptyLambda() {
     };
 }
 
-/* @@? 40:5 Error TypeError: Expected 2 arguments, got 1. */
-/* @@? 40:5 Error TypeError: No matching call signature for check("test") */
+/* @@? 40:5 Error Semantic error ESE0124: Expected 2 arguments, got 1. */
+/* @@? 40:5 Error Semantic error ESE0127: No matching call signature for check("test") */

@@ -20,4 +20,5 @@ f1()
 f2()
 let c: A = new A()
 let c1: A = new a1()
-let c2: A = new a2()
+let c2: A = new a2()/* @@? export_type_several_times_1.ets:21:3 Warning Warning W32596: 'foo' is explicitly used with alias several times */
+/* @@? export_type_several_times_1.ets:23:3 Warning Warning W32596: 'A' is explicitly used with alias several times */

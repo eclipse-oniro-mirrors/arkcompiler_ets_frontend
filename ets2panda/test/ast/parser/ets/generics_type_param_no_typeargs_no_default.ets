@@ -21,6 +21,7 @@ class Base<T> {
 
 class Derived extends Base {}
 
-/* @@? 18:11 Error TypeError: Type 'Base<T>' is generic but type argument were not provided.  */
-/* @@? 22:23 Error TypeError: Type 'Base<T>' is generic but type argument were not provided. */
-/* @@? 22:23 Error TypeError: The super type of 'Derived' class is not extensible. */
+
+/* @@? 18:11 Error Semantic error ESE0170: Type 'Base<T>' is generic but type argument were not provided. */
+/* @@? 22:23 Error Semantic error ESE0170: Type 'Base<T>' is generic but type argument were not provided. */
+/* @@? 22:23 Error Semantic error ESE0176: The super type of 'Derived' class is not extensible. */

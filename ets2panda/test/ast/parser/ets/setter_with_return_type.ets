@@ -25,4 +25,5 @@ interface I{
 class D extends C implements I{
 }
 
-/* @@? 22:9 Error SyntaxError: Setter must not have return type even if it is void.  */
+
+/* @@? 22:9 Error Syntax error ESY0241: Setter must not have return type even if it is void. */

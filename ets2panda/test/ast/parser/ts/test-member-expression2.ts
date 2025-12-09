@@ -17,4 +17,5 @@
 var a = [0, 1, 2, 3, 4];
 a?.[0] /* @@ label */= a?.[0];
 
-/* @@@ label Error SyntaxError: Invalid left-hand side in assignment expression.  */
+
+/* @@@ label Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */

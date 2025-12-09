@@ -286,6 +286,173 @@ public:
     }
 };
 
+struct DocTagInfo {
+private:
+    std::string name_;
+    std::string text_;
+
+public:
+    explicit DocTagInfo(std::string name = "", std::string text = "") : name_ {std::move(name)}, text_ {std::move(text)}
+    {
+    }
+
+    std::string GetName() const
+    {
+        return name_;
+    }
+    std::string GetText() const
+    {
+        return text_;
+    }
+
+    bool operator==(const DocTagInfo &other) const
+    {
+        return name_ == other.name_ && text_ == other.text_;
+    }
+    bool operator!=(const DocTagInfo &other) const
+    {
+        return !(*this == other);
+    }
+};
+
+struct QuickInfo {
+private:
+    std::string kind_;
+    std::string kindModifiers_;
+    TextSpan textSpan_;
+    std::vector<SymbolDisplayPart> displayParts_;
+    std::vector<SymbolDisplayPart> document_;
+    std::vector<DocTagInfo> tags_;
+    std::string fileName_;
+
+public:
+    explicit QuickInfo(std::string kind = "", std::string kindModifiers = "", TextSpan span = TextSpan(0, 0),
+                       std::vector<SymbolDisplayPart> displayParts = {}, std::vector<SymbolDisplayPart> document = {},
+                       std::vector<DocTagInfo> tags = {}, std::string fileName = "")
+        : kind_ {std::move(kind)},
+          kindModifiers_ {std::move(kindModifiers)},
+          textSpan_ {span},
+          displayParts_ {std::move(displayParts)},
+          document_ {std::move(document)},
+          tags_ {std::move(tags)},
+          fileName_ {std::move(fileName)}
+    {
+    }
+
+    std::string GetKind() const
+    {
+        return kind_;
+    }
+    std::string GetKindModifiers() const
+    {
+        return kindModifiers_;
+    }
+    TextSpan GetTextSpan() const
+    {
+        return textSpan_;
+    }
+    std::vector<SymbolDisplayPart> GetDisplayParts() const
+    {
+        return displayParts_;
+    }
+    std::vector<SymbolDisplayPart> GetDocument() const
+    {
+        return document_;
+    }
+    std::vector<DocTagInfo> GetTags() const
+    {
+        return tags_;
+    }
+    std::string GetFileName() const
+    {
+        return fileName_;
+    }
+
+    bool operator==(const QuickInfo &other) const
+    {
+        return kind_ == other.kind_ && kindModifiers_ == other.kindModifiers_ && textSpan_ == other.textSpan_ &&
+               displayParts_ == other.displayParts_ && document_ == other.document_ && tags_ == other.tags_ &&
+               fileName_ == other.fileName_;
+    }
+    bool operator!=(const QuickInfo &other) const
+    {
+        return !(*this == other);
+    }
+};
+
+struct CompletionEntryDetails {
+private:
+    std::string name_;
+    std::string kind_;
+    std::string kindModifiers_;
+    std::vector<SymbolDisplayPart> displayParts_;
+    std::vector<SymbolDisplayPart> document_;
+    std::vector<SymbolDisplayPart> source_;
+    std::vector<SymbolDisplayPart> sourceDisplay_;
+    std::string fileName_;
+
+public:
+    explicit CompletionEntryDetails(std::string name = "", std::string kind = "", std::string kindModifiers = "",
+                                    std::vector<SymbolDisplayPart> displayParts = {},
+                                    std::vector<SymbolDisplayPart> document = {},
+                                    std::vector<SymbolDisplayPart> source = {},
+                                    std::vector<SymbolDisplayPart> sourceDisplay = {}, std::string fileName = "")
+        : name_ {std::move(name)},
+          kind_ {std::move(kind)},
+          kindModifiers_ {std::move(kindModifiers)},
+          displayParts_ {std::move(displayParts)},
+          document_ {std::move(document)},
+          source_ {std::move(source)},
+          sourceDisplay_ {std::move(sourceDisplay)},
+          fileName_ {std::move(fileName)}
+    {
+    }
+
+    std::string GetName() const
+    {
+        return name_;
+    }
+    std::string GetKind() const
+    {
+        return kind_;
+    }
+    std::string GetKindModifiers() const
+    {
+        return kindModifiers_;
+    }
+    std::vector<SymbolDisplayPart> GetDisplayParts() const
+    {
+        return displayParts_;
+    }
+    std::vector<SymbolDisplayPart> GetDocument() const
+    {
+        return document_;
+    }
+    std::vector<SymbolDisplayPart> GetSource() const
+    {
+        return source_;
+    }
+    std::vector<SymbolDisplayPart> GetSourceDisplay() const
+    {
+        return sourceDisplay_;
+    }
+    std::string GetFileName() const
+    {
+        return fileName_;
+    }
+
+    bool operator==(const CompletionEntryDetails &other) const
+    {
+        return name_ == other.name_ && kind_ == other.kind_ && kindModifiers_ == other.kindModifiers_ &&
+               displayParts_ == other.displayParts_ && document_ == other.document_ && source_ == other.source_ &&
+               sourceDisplay_ == other.sourceDisplay_ && fileName_ == other.fileName_;
+    }
+    bool operator!=(const CompletionEntryDetails &other) const
+    {
+        return !(*this == other);
+    }
+};
+
 #ifdef __cplusplus
 }
 #endif

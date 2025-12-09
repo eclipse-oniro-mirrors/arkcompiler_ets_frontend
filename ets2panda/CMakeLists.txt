@@ -53,83 +53,106 @@ else()
     set(DEFAULT_ARKTSCONFIG "${CMAKE_BINARY_DIR}/bin")
 endif()
 file(MAKE_DIRECTORY "${GENERATED_DIR}")
+set(DEFAULT_CACHE_DIR "${CMAKE_BINARY_DIR}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls")
+file(MAKE_DIRECTORY "${DEFAULT_CACHE_DIR}")
 if(PANDA_WITH_ETS)
-  file(WRITE "${GENERATED_DIR}/arktsconfig.json"
-    "{\n"
-      " \"!NOTE!\": \"Generated from ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt\",\n"
-      "\n"
+    function(gen_arktsconfig DST_CONFIG_FILE IS_CONFIG_FOR_SDK_ARTIFACTS)
+        function (write_cfg DST_PATH BASE_URL STDLIB_DECL_DIR SDK_SRC_DIR)
+            message("Generate ${DST_PATH} (calulated 'baseUrl': ${BASE_URL})")
+            file(WRITE "${DST_PATH}"
+            "{\n"
+                " \"!NOTE!\": \"Generated from ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt\",\n"
+                "\n"
+                "  \"compilerOptions\": {\n"
+                "    \"baseUrl\": \"${BASE_URL}\",\n"
+                "    \"cacheDir\": \"${DEFAULT_CACHE_DIR}\",\n"
+                "    \"paths\": {\n"
+                "      \"@ohos.buffer\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.buffer.ets\"],\n"
+                "      \"@ohos.util.ArrayList\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.ArrayList.ets\"],\n"
+                "      \"@ohos.util.Deque\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.Deque.ets\"],\n"
+                "      \"@ohos.util.HashMap\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.HashMap.ets\"],\n"
+                "      \"@ohos.util.HashSet\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.HashSet.ets\"],\n"
+                "      \"@ohos.util.LightWeightMap\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.LightWeightMap.ets\"],\n"
+                "      \"@ohos.util.LightWeightSet\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.LightWeightSet.ets\"],\n"
+                "      \"@ohos.util.LinkedList\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.LinkedList.ets\"],\n"
+                "      \"@ohos.util.List\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.List.ets\"],\n"
+                "      \"@ohos.util.PlainArray\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.PlainArray.ets\"],\n"
+                "      \"@ohos.util.Queue\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.Queue.ets\"],\n"
+                "      \"@ohos.util.Stack\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.Stack.ets\"],\n"
+                "      \"@ohos.util.stream\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.stream.ets\"],\n"
+                "      \"@ohos.util\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.ets\"],\n"
+                "      \"@ohos.util.TreeMap\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.TreeMap.ets\"],\n"
+                "      \"@ohos.util.TreeSet\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.util.TreeSet.ets\"],\n"
+                "      \"@ohos.uri\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.uri.ets\"],\n"
+                "      \"@ohos.url\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.url.ets\"],\n"
+                "      \"@ohos.xml\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.xml.ets\"],\n"
+                "      \"@ohos.base\": [\"${SDK_SRC_DIR}${DELIM}api${DELIM}@ohos.base.ets\"],\n"
+                "      \"@arkts.math.Decimal\": [\"${SDK_SRC_DIR}${DELIM}arkts${DELIM}@arkts.math.Decimal.ets\"],\n"
+                "      \"@arkts.collections\": [\"${SDK_SRC_DIR}${DELIM}arkts${DELIM}@arkts.collections.ets\"],\n"
+                "      \"import_tests\": [\"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/import_tests\"]\n"
+                "    },\n"
+                "    \"dependencies\": {\n"
+                "      \"std/core\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/math\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/math/consts\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/containers\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/interop/js\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/time\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/debug\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/debug/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/testing\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/concurrency\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/annotations\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"std/interop\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"escompat\": { \"path\": \".${DELIM}plugins${DELIM}ets${DELIM}etsstdlib.abc\" },\n"
+                "      \"dynamic_import_tests\": {\"language\": \"js\", \"ohmUrl\": \"dynamic_import_tests\"},\n"
+                "      \"dynamic_import_tests/modules/instanceof\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\"},\n"
+                "      \"dynamic_import_tests/modules/module\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\"}\n"
+                "    }\n"
+                "  }\n"
+                "}\n"
+            )
+        endfunction()
 
-      "  \"compilerOptions\": {\n"
-      "    \"baseUrl\": \"${PANDA_ROOT}\",\n"
-      "    \"paths\": {\n"
-      "      \"@ohos.buffer\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.buffer.ets\"],\n"
-      "      \"@ohos.util.ArrayList\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.ArrayList.ets\"],\n"
-      "      \"@ohos.util.Deque\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Deque.ets\"],\n"
-      "      \"@ohos.util.HashMap\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashMap.ets\"],\n"
-      "      \"@ohos.util.HashSet\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.HashSet.ets\"],\n"
-      "      \"@ohos.util.json\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.json.ets\"],\n"
-      "      \"@ohos.util.LightWeightMap\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightMap.ets\"],\n"
-      "      \"@ohos.util.LightWeightSet\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LightWeightSet.ets\"],\n"
-      "      \"@ohos.util.LinkedList\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.LinkedList.ets\"],\n"
-      "      \"@ohos.util.List\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.List.ets\"],\n"
-      "      \"@ohos.util.PlainArray\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.PlainArray.ets\"],\n"
-      "      \"@ohos.util.Queue\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Queue.ets\"],\n"
-      "      \"@ohos.util.Stack\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.Stack.ets\"],\n"
-      "      \"@ohos.util.stream\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.stream.ets\"],\n"
-      "      \"@ohos.util\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.ets\"],\n"
-      "      \"@ohos.util.TreeMap\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.TreeMap.ets\"],\n"
-      "      \"@ohos.util.TreeSet\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.util.TreeSet.ets\"],\n"
-      "      \"@ohos.uri\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.uri.ets\"],\n"
-      "      \"@ohos.url\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.url.ets\"],\n"
-      "      \"@ohos.xml\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.xml.ets\"],\n"
-      "      \"@ohos.base\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}api${DELIM}@ohos.base.ets\"],\n"
-      "      \"@arkts.math.Decimal\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}arkts${DELIM}@arkts.math.Decimal.ets\"],\n"
-      "      \"@arkts.collections\": [\"${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk${DELIM}arkts${DELIM}@arkts.collections.ets\"],\n"
-      "      \"import_tests\": [\"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/import_tests\"]\n"
-      "    },\n"
-      "    \"dependencies\": {\n"
-      "      \"std/core\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.core.d.ets\" },\n"
-      "      \"std/math\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.math.d.ets\" },\n"
-      "      \"std/math/consts\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.math.consts.d.ets\" },\n"
-      "      \"std/containers\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.containers.d.ets\" },\n"
-      "      \"std/interop/js\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.interop.js.d.ets\" },\n"
-      "      \"std/time\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.time.d.ets\" },\n"
-      "      \"std/debug\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.debug.d.ets\" },\n"
-      "      \"std/debug/concurrency\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.debug.concurrency.d.ets\" },\n"
-      "      \"std/testing\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.testing.d.ets\" },\n"
-      "      \"std/concurrency\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.concurrency.d.ets\" },\n"
-      "      \"std/annotations\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.annotations.d.ets\" },\n"
-      "      \"std/interop\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}std.interop.d.ets\" },\n"
-      "      \"escompat\": { \"path\": \"${PANDA_BINARY_ROOT}${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls${DELIM}escompat.d.ets\" },\n"
-      "      \"dynamic_import_tests\": {\"language\": \"js\", \"ohmUrl\": \"dynamic_import_tests\"},\n"
-      "      \"dynamic_import_tests/modules/instanceof\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/instanceof.ets\"},\n"
-      "      \"dynamic_import_tests/modules/module\": {\"language\": \"js\", \"path\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\", \"ohmUrl\": \"${CMAKE_CURRENT_SOURCE_DIR}/test/parser/ets/dynamic_import_tests/modules/module.ets\"}\n"
-      "    }\n"
-      "  }\n"
-      "}\n"
-  )
-  MESSAGE("Generated default arktsconfig to ${GENERATED_DIR}/arktsconfig.json")
-  file(COPY "${GENERATED_DIR}/arktsconfig.json" DESTINATION "${DEFAULT_ARKTSCONFIG}/")
-  file(COPY "${GENERATED_DIR}/arktsconfig.json" DESTINATION "${CMAKE_BINARY_DIR}/bin")
-  file(COPY "${GENERATED_DIR}/arktsconfig.json" DESTINATION "${CMAKE_BINARY_DIR}/bin-gtests")
+        if (IS_CONFIG_FOR_SDK_ARTIFACTS)
+            # Generate specific arktsconfig for SDK-build, which is expected to be used from unpacked artifacts,
+            # but not directly from the build tree.
+            #
+            # There, 'baseUrl' tries to point from 'arktsconfig.json' near 'es2panda' inside sdk artifacts to
+            # packed ets-stdlib and ets-sdk.
+            #
+            # For instance, in the following scenario 'baseUrl' will try to point to 'sdk_root':
+            # ./sdk_root/linux_host_tools/bin/arktsconfig.json
+            # ./sdk_root/linux_host_tools/bin/es2panda
+            # ./sdk_root/linux_host_tools/bin/...
+            # ./sdk_root/ets/stdlib/decls/...
+            # ./sdk_root/ets/sdk/...
+            set(BASE_URL "..${DELIM}..${DELIM}")
+
+            # With such assumptions on 'baseUrl', ets-stdlib and ets-sdk will be the following:
+            set(STDLIB_DECL_DIR ".${DELIM}ets${DELIM}stdlib${DELIM}decls")
+            set(SDK_SRC_DIR ".${DELIM}ets${DELIM}sdk")
+            write_cfg(${DST_CONFIG_FILE} ${BASE_URL} ${STDLIB_DECL_DIR} ${SDK_SRC_DIR})
+        else()
+            get_filename_component(DST_DIR ${DST_CONFIG_FILE} DIRECTORY)
+            cmake_path(RELATIVE_PATH CMAKE_BINARY_DIR BASE_DIRECTORY ${DST_DIR} OUTPUT_VARIABLE RELATIVE_BASEURL)
+            set(BASE_URL "${RELATIVE_BASEURL}")
+            set(STDLIB_DECL_DIR ".${DELIM}plugins${DELIM}ets${DELIM}stdlib${DELIM}decls")
+            set(SDK_SRC_DIR "${STATIC_CORE}${DELIM}plugins${DELIM}ets${DELIM}sdk")
+            write_cfg(${DST_CONFIG_FILE} ${BASE_URL} ${STDLIB_DECL_DIR} ${SDK_SRC_DIR})
+        endif()
+    endfunction()
+
+    if (PANDA_SDK_BUILD)
+        # SDK build requires default 'bin/arktsconfig' to be present in the build tree as it runs ninja etssdk,
+        # so arktsconfig that should be delivered is separated:
+        gen_arktsconfig(${CMAKE_BINARY_DIR}/bin/arktsconfig_to_deliver.json TRUE)
+    endif()
+    gen_arktsconfig(${CMAKE_BINARY_DIR}/bin/arktsconfig.json FALSE)
+    gen_arktsconfig(${CMAKE_BINARY_DIR}/bin-gtests/arktsconfig.json FALSE)
+    gen_arktsconfig(${DEFAULT_ARKTSCONFIG}/arktsconfig.json FALSE)
+    gen_arktsconfig(${GENERATED_DIR}/arktsconfig.json FALSE)
 endif()
-
-# add check for PANDA_PRODUCT_BUILD after normal version tracking will be implemented
-execute_process(
-  COMMAND date "+%Y-%m-%d_%H:%M:%S"
-  OUTPUT_VARIABLE CURRENT_DATE
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-execute_process(
-  COMMAND git rev-parse HEAD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  OUTPUT_VARIABLE LAST_COMMIT_HASH
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-add_definitions(-DES2PANDA_DATE="${CURRENT_DATE}")
-add_definitions(-DES2PANDA_HASH="${LAST_COMMIT_HASH}")
-
 
 add_custom_command(
   OUTPUT ${GENERATED_STAMP}
@@ -303,12 +326,13 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/expressionLambdaLowering.cpp
   compiler/lowering/ets/extensionAccessorLowering.cpp
   compiler/lowering/ets/genericBridgesLowering.cpp
-  compiler/lowering/ets/gradualTypeNarrowing.cpp
   compiler/lowering/ets/arrayLiteralLowering.cpp
   compiler/lowering/ets/boxingForLocals.cpp
   compiler/lowering/ets/capturedVariables.cpp
   compiler/lowering/ets/cfgBuilderPhase.cpp
+  compiler/lowering/ets/destructuringPhase.cpp
   compiler/lowering/ets/constantExpressionLowering.cpp
+  compiler/lowering/ets/classFromExpressionLowering.cpp
   compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp
   compiler/lowering/ets/declareOverloadLowering.cpp
   compiler/lowering/ets/declGenPhase.cpp
@@ -329,7 +353,9 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/ambientLowering.cpp
   compiler/lowering/ets/asyncMethodLowering.cpp
   compiler/lowering/ets/bigintLowering.cpp
+  compiler/lowering/ets/binaryExpressionLowering.cpp
   compiler/lowering/ets/recordLowering.cpp
+  compiler/lowering/ets/relaxedAnyLowering.cpp
   compiler/lowering/ets/resizableArrayLowering.cpp
   compiler/lowering/ets/restArgsLowering.cpp
   compiler/lowering/ets/unionLowering.cpp
@@ -459,8 +485,11 @@ set(ES2PANDA_LIB_SRC
   ir/as/namedType.cpp
   ir/as/prefixAssertionExpression.cpp
   ir/ets/etsClassLiteral.cpp
+  ir/ets/etsDestructuring.cpp
   ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsFunctionType.cpp
+  ir/ets/etsGenericInstantiatedNode.cpp
+  ir/ets/etsIntrinsicNode.cpp
   ir/ets/etsKeyofType.cpp
   ir/ets/etsNewArrayInstanceExpression.cpp
   ir/ets/etsNewClassInstanceExpression.cpp
@@ -609,7 +638,6 @@ set(ES2PANDA_LIB_SRC
   checker/types/type.cpp
   checker/types/typeRelation.cpp
   checker/types/globalTypesHolder.cpp
-  checker/types/gradualType.cpp
   checker/types/ets/byteType.cpp
   checker/types/ets/charType.cpp
   checker/types/ets/doubleType.cpp
@@ -635,6 +663,8 @@ set(ES2PANDA_LIB_SRC
   checker/types/ets/etsTypeAliasType.cpp
   checker/types/ets/etsTypeParameter.cpp
   checker/types/ets/etsPartialTypeParameter.cpp
+  checker/types/ets/etsReturnTypeUtilityType.cpp
+  checker/types/ets/etsAwaitedType.cpp
   checker/types/ets/etsUnionType.cpp
   checker/types/ets/etsVoidType.cpp
   checker/types/ets/wildcardType.cpp

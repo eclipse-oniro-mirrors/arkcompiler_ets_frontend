@@ -17,4 +17,5 @@ const obj = {
     /* @@ label */+: 1
 };
 
-/* @@@ label Error SyntaxError: Unexpected token. */
+
+/* @@@ label Error Syntax error ESY0016: Unexpected token. */

@@ -17,4 +17,5 @@ class A {
     final /* @@ label */public foo(): void {}
 }
 
-/* @@@ label Error SyntaxError: Access modifier must precede field and method modifiers.  */
+
+/* @@@ label Error Syntax error ESY0120: Access modifier must precede field and method modifiers. */

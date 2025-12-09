@@ -15,12 +15,15 @@
 
 #include "util.h"
 
+#include "checker/checkerContext.h"
+#include "checker/types/globalTypesHolder.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "ir/expressions/identifier.h"
 #include "checker/checker.h"
 #include "checker/ETSAnalyzer.h"
-#include "checker/types/gradualType.h"
 #include "parser/JsdocHelper.h"
+#include "util/ustring.h"
+#include "varbinder/varbinder.h"
 
 namespace ark::es2panda::compiler {
 
@@ -39,6 +42,32 @@ varbinder::Scope *NearestScope(const ir::AstNode *ast)
     return ast == nullptr ? nullptr : ast->Scope();
 }
 
+// Returns ArenaVector of ClassScopes from `findFrom` scope to common one with `base` scope, except ETSGLOBAL
+std::vector<varbinder::ClassScope *> DiffClassScopes(varbinder::Scope *base, varbinder::Scope *findFrom)
+{
+    ES2PANDA_ASSERT(base != nullptr && findFrom != nullptr);
+
+    auto result = std::vector<varbinder::ClassScope *> {};
+    auto baseScopes = std::set<varbinder::Scope *> {};
+
+    for (varbinder::Scope *currentScope = base; currentScope != nullptr && !currentScope->IsGlobalScope();
+         currentScope = currentScope->Parent()) {
+        baseScopes.insert(currentScope);
+    }
+
+    for (varbinder::Scope *currentScope = findFrom;
+         baseScopes.find(currentScope) == baseScopes.end() && !currentScope->IsGlobalScope();
+         currentScope = currentScope->Parent()) {
+        if (currentScope->IsClassScope() && currentScope->AsClassScope()->Node() != nullptr &&
+            currentScope->AsClassScope()->Node()->IsClassDefinition() &&
+            !currentScope->AsClassScope()->Node()->AsClassDefinition()->IsGlobal()) {
+            result.push_back(currentScope->AsClassScope());
+        }
+    }
+
+    return result;
+}
+
 checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast)
 {
     ast = util::Helpers::FindAncestorGivenByType(ast, ir::AstNodeType::CLASS_DEFINITION);
@@ -51,7 +80,7 @@ ir::Identifier *Gensym(ArenaAllocator *const allocator)
     return allocator->New<ir::Identifier>(s.View(), allocator);
 }
 
-util::UString GenName(ArenaAllocator *const allocator)
+std::string GenName()
 {
     static std::size_t gensymCounter = 0U;
     static std::mutex gensymCounterMutex {};
@@ -60,7 +89,12 @@ util::UString GenName(ArenaAllocator *const allocator)
         std::lock_guard lock(gensymCounterMutex);
         individualGensym = ++gensymCounter;
     }
-    return util::UString {std::string(GENSYM_CORE) + std::to_string(individualGensym), allocator};
+    return std::string(GENSYM_CORE) + std::to_string(individualGensym);
+}
+
+util::UString GenName(ArenaAllocator *const allocator)
+{
+    return util::UString {GenName(), allocator};
 }
 
 void SetSourceRangesRecursively(ir::AstNode *node, const lexer::SourceRange &range)
@@ -110,7 +144,7 @@ void ClearTypesVariablesAndScopes(ir::AstNode *node) noexcept
         if (nn->IsIdentifier()) {
             nn->AsIdentifier()->SetVariable(nullptr);
         }
-        if (!nn->IsETSTypeReference()) {
+        if (!nn->IsETSTypeReference() && !nn->IsLabelledStatement()) {
             nn->Iterate([&](ir::AstNode *child) { doNode(child); });
         }
     };
@@ -162,22 +196,12 @@ static bool IsGeneratedForUtilityType(ir::AstNode const *ast)
 {
     if (ast->IsClassDeclaration()) {
         auto &name = ast->AsClassDeclaration()->Definition()->Ident()->Name();
-        return name.EndsWith(checker::PARTIAL_CLASS_SUFFIX);
+        return name.StartsWith(checker::PARTIAL_CLASS_PREFIX);
     }
     if (ast->IsTSInterfaceDeclaration()) {
         auto &name = ast->AsTSInterfaceDeclaration()->Id()->Name();
-        return name.EndsWith(checker::PARTIAL_CLASS_SUFFIX);
+        return name.StartsWith(checker::PARTIAL_CLASS_PREFIX);
     }
-    return false;
-}
-
-static bool IsGeneratedDynamicClass(ir::AstNode const *ast)
-{
-    if (ast->IsClassDeclaration()) {
-        auto &name = ast->AsClassDeclaration()->Definition()->Ident()->Name();
-        return name.Is(Signatures::JSNEW_CLASS) || name.Is(Signatures::JSCALL_CLASS);
-    }
-
     return false;
 }
 
@@ -191,7 +215,7 @@ static void ClearHelper(parser::Program *prog)
     stmts.erase(std::remove_if(stmts.begin(), stmts.end(),
         [](ir::AstNode *ast) -> bool {
             return !ast->HasAstNodeFlags(ir::AstNodeFlags::NOCLEANUP) ||
-                IsGeneratedForUtilityType(ast) || IsGeneratedDynamicClass(ast);
+                IsGeneratedForUtilityType(ast);
         }),
         stmts.end());
     // clang-format on
@@ -235,14 +259,218 @@ varbinder::Scope *Rebind(PhaseManager *phaseManager, varbinder::ETSBinder *varBi
     return scope;
 }
 
-void HandleExternalProgram(varbinder::ETSBinder *newVarbinder, parser::Program *program)
+static void CollectDirectExtSources(parser::Program *globalProg, parser::Program *program,
+                                    std::map<std::string, parser::Program *> &progsFromPath)
+{
+    auto &directSources = program->DirectExternalSources();
+    for (const auto &fileDepends : globalProg->GetFileDependencies()[program->SourceFilePath().Mutf8()]) {
+        if (progsFromPath.find(fileDepends) == progsFromPath.end()) {
+            continue;
+        }
+        util::StringView fileDependsV(fileDepends);
+        if (directSources.find(fileDependsV) == directSources.end()) {
+            auto arena = ArenaVector<parser::Program *>(program->Allocator()->Adapter());
+            directSources.emplace(fileDependsV, arena);
+        }
+        auto &arena = directSources.at(fileDependsV);
+        arena.emplace_back(progsFromPath[fileDepends]);
+    }
+}
+
+class RecheckGraph {
+public:
+    class Node {
+    public:
+        explicit Node(parser::Program *prog) : prog_(prog) {}
+
+        std::set<Node *> &ImportedNodes()
+        {
+            return importedNodes_;
+        }
+        std::set<Node *> &NodesImportedBy()
+        {
+            return nodesImportedBy_;
+        }
+        parser::Program *Prog() const
+        {
+            return prog_;
+        }
+
+    private:
+        std::set<Node *> importedNodes_;
+        std::set<Node *> nodesImportedBy_;
+        parser::Program *prog_;
+    };
+
+    std::map<parser::Program *, Node> &Programs()
+    {
+        return programs_;
+    }
+    std::set<Node *> &FoundModifiedProgs()
+    {
+        return foundModifiedProgs_;
+    }
+
+private:
+    std::map<parser::Program *, Node> programs_ {};
+    std::set<Node *> foundModifiedProgs_ {};
+};
+
+static RecheckGraph::Node *RecheckGraphCreatorHelper(parser::Program *globalProg, parser::Program *program,
+                                                     std::map<std::string, parser::Program *> &progsFromPath,
+                                                     RecheckGraph *graph)
+{
+    if (graph->Programs().find(program) != graph->Programs().end()) {
+        return &graph->Programs().at(program);
+    }
+    graph->Programs().emplace(program, RecheckGraph::Node(program));
+    auto node = &graph->Programs().at(program);
+    if (program->DirectExternalSources().empty()) {
+        CollectDirectExtSources(globalProg, program, progsFromPath);
+    }
+
+    auto RunOnSources = [&](auto &sources) {
+        for (auto [_, program_list] : sources) {
+            for (auto prog : program_list) {
+                RecheckGraph::Node *importedNode = nullptr;
+                importedNode = RecheckGraphCreatorHelper(globalProg, prog, progsFromPath, graph);
+                node->ImportedNodes().emplace(importedNode);
+                importedNode->NodesImportedBy().emplace(node);
+            }
+        }
+    };
+    RunOnSources(program->DirectExternalSources());
+    RunOnSources(program->ExternalSources());
+
+    if (program->IsProgramModified()) {
+        graph->FoundModifiedProgs().emplace(node);
+    }
+    program->DirectExternalSources().clear();
+    return node;
+}
+
+static void MarkModifiedRecursively(RecheckGraph::Node *node)
+{
+    if (node->Prog()->IsProgramModified()) {
+        return;
+    }
+    node->Prog()->SetProgramModified(true);
+    for (auto importedBy : node->NodesImportedBy()) {
+        MarkModifiedRecursively(importedBy);
+    }
+}
+
+static bool ExtendModifiedFlagOnDependentPrograms(parser::Program *globalProg, parser::Program *program)
+{
+    std::map<std::string, parser::Program *> progsFromPath;
+    progsFromPath[program->SourceFilePath().Mutf8()] = program;
+
+    for (auto [_, program_list] : program->ExternalSources()) {
+        for (auto prog : program_list) {
+            progsFromPath.emplace(prog->SourceFilePath().Mutf8(), prog);
+        }
+    }
+    RecheckGraph graph;
+    RecheckGraphCreatorHelper(globalProg, program, progsFromPath, &graph);
+
+    for (auto node : graph.FoundModifiedProgs()) {
+        if (node->Prog()->IsProgramModified()) {
+            node->Prog()->SetProgramModified(false);
+            MarkModifiedRecursively(node);
+        }
+    }
+
+    return program->IsProgramModified();
+}
+
+using SavedVarbindersAndCheckers = std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>>;
+static SavedVarbindersAndCheckers SaveExternalVarbindersAndCheckers(parser::Program *program,
+                                                                    std::set<varbinder::VarBinder *> &savedVarBinders)
+{
+    std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>> varbindersCheckers;
+    for (auto [_, program_list] : program->ExternalSources()) {
+        for (auto prog : program_list) {
+            if (!prog->IsASTLowered() && prog->IsProgramModified()) {
+                continue;
+            }
+            savedVarBinders.insert(prog->VarBinder());
+            varbindersCheckers[prog].first = prog->VarBinder();
+            varbindersCheckers[prog].second = prog->Checker();
+        }
+    }
+    return varbindersCheckers;
+}
+
+static void HandleExternalProgram(
+    varbinder::ETSBinder *newVarbinder, parser::Program *program,
+    std::map<parser::Program *, std::pair<varbinder::VarBinder *, checker::Checker *>> varbinders)
 {
     for (auto [_, program_list] : program->ExternalSources()) {
         for (auto prog : program_list) {
-            if (!prog->IsASTLowered()) {
+            if (!prog->IsASTLowered() && prog->IsProgramModified()) {
                 ClearHelper(prog);
                 prog->PushVarBinder(newVarbinder);
+                continue;
             }
+            prog->PushVarBinder(varbinders.at(prog).first);
+            prog->PushChecker(varbinders.at(prog).second);
+        }
+    }
+}
+
+static void RecheckProgram(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, parser::Program *program)
+{
+    auto ctx = varBinder->GetContext();
+    if (!ExtendModifiedFlagOnDependentPrograms(ctx->parserProgram, program)) {
+        return;
+    }
+    checker::GlobalTypesHolder *globalTypesHolder = nullptr;
+    for (auto [_, program_list] : program->ExternalSources()) {
+        if (auto prog = program_list.front(); !prog->IsProgramModified() || prog->IsASTLowered()) {
+            globalTypesHolder = prog->Checker()->GetGlobalTypesHolder();
+            break;
+        }
+    }
+    std::set<varbinder::VarBinder *> savedVarBinders {};
+    auto varbindersCheckers = SaveExternalVarbindersAndCheckers(program, savedVarBinders);
+    phaseManager->SetCurrentPhaseId(0);
+
+    auto newVarbinder = new varbinder::ETSBinder(ctx->allocator);
+    newVarbinder->SetProgram(program);
+    newVarbinder->SetContext(ctx);
+    program->PushVarBinder(newVarbinder);
+    varBinder->CopyTo(newVarbinder);
+    HandleExternalProgram(newVarbinder, program, varbindersCheckers);
+
+    ClearHelper(program);
+
+    auto newChecker = ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine);
+    auto analyzer = ctx->allocator->New<checker::ETSAnalyzer>(newChecker);
+
+    ctx->PushAnalyzer(analyzer);
+    newChecker->SetAnalyzer(analyzer);
+    newChecker->Initialize(newVarbinder);
+    ctx->PushChecker(newChecker);
+    if (globalTypesHolder != nullptr) {
+        newChecker->SetGlobalTypesHolder(globalTypesHolder);
+    }
+
+    for (auto *savedVarBinder : savedVarBinders) {
+        for (auto func : savedVarBinder->Functions()) {
+            if (func->Node()->Program() != nullptr && !func->Node()->Program()->IsProgramModified()) {
+                newVarbinder->Functions().push_back(func);
+            }
+        }
+    }
+
+    for (auto *phase : phaseManager->RecheckPhases()) {
+        phase->Apply(ctx, program);
+    }
+    phaseManager->SetCurrentPhaseIdToAfterCheck();
+    for (auto [_, program_list] : program->ExternalSources()) {
+        for (auto prog : program_list) {
+            prog->PushVarBinder(newVarbinder);
+            prog->PushChecker(newChecker);
         }
     }
 }
@@ -253,39 +481,7 @@ void Recheck(PhaseManager *phaseManager, varbinder::ETSBinder *varBinder, checke
 {
     RefineSourceRanges(node);
     if (node->IsProgram()) {
-        auto ctx = varBinder->GetContext();
-        phaseManager->SetCurrentPhaseId(0);
-        auto program = node->AsETSModule()->Program();
-
-        auto newVarbinder = ctx->allocator->New<varbinder::ETSBinder>(ctx->allocator);
-        newVarbinder->SetProgram(program);
-        newVarbinder->SetContext(ctx);
-        program->PushVarBinder(newVarbinder);
-        varBinder->CopyTo(newVarbinder);
-        HandleExternalProgram(newVarbinder, program);
-
-        ClearHelper(program);
-
-        auto newChecker =
-            ctx->allocator->New<checker::ETSChecker>(ctx->allocator, *ctx->diagnosticEngine, ctx->allocator);
-        auto analyzer = ctx->allocator->New<checker::ETSAnalyzer>(newChecker);
-
-        ctx->PushAnalyzer(analyzer);
-        newChecker->SetAnalyzer(analyzer);
-        newChecker->Initialize(newVarbinder);
-        ctx->PushChecker(newChecker);
-        for (auto [_, program_list] : program->ExternalSources()) {
-            if (auto prog = program_list.front(); prog->IsASTLowered()) {
-                newChecker->SetGlobalTypesHolder(prog->Checker()->GetGlobalTypesHolder());
-                break;
-            }
-        }
-
-        for (auto *phase : phaseManager->RecheckPhases()) {
-            phase->Apply(ctx, program);
-        }
-        phaseManager->SetCurrentPhaseIdToAfterCheck();
-        return;
+        return RecheckProgram(phaseManager, varBinder, node->AsETSModule()->Program());
     }
 
     auto *scope = Rebind(phaseManager, varBinder, node);
@@ -324,6 +520,13 @@ std::optional<std::string> GetNameOfDeclaration(const ir::AstNode *node)
             return std::string(node->AsClassProperty()->Id()->Name().Utf8());
         case ir::AstNodeType::TS_INTERFACE_DECLARATION:
             return std::string(node->AsTSInterfaceDeclaration()->Id()->Name().Utf8());
+        case ir::AstNodeType::VARIABLE_DECLARATION:
+            if (node->AsVariableDeclaration()->Declarators()[0]->Id()->IsIdentifier()) {
+                ir::Identifier *ident = node->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier();
+                return std::string(ident->Name().Utf8());
+            } else {
+                return std::nullopt;
+            }
         default:
             return std::nullopt;
     }
@@ -393,11 +596,8 @@ void CheckLoweredNode(varbinder::ETSBinder *varBinder, checker::ETSChecker *chec
         newStatus |= checker::CheckerStatus::IN_EXTENSION_ACCESSOR_CHECK;
     }
 
-    auto classType = containingClass == nullptr ? nullptr
-                     : containingClass->TsType()->IsGradualType()
-                         ? containingClass->TsType()->AsGradualType()->GetBaseType()->AsETSObjectType()
-                         : containingClass->TsType()->AsETSObjectType();
-    auto checkerCtx = checker::SavedCheckerContext(checker, newStatus, classType);
+    auto checkerCtx = checker::SavedCheckerContext(
+        checker, newStatus, containingClass == nullptr ? nullptr : containingClass->TsType()->AsETSObjectType());
     auto scopeCtx = checker::ScopeContext(checker, scope);
 
     node->Check(checker);

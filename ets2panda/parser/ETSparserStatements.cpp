@@ -21,7 +21,7 @@
 #include "util/errorRecovery.h"
 #include "util/helpers.h"
 #include "util/importPathManager.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/lexer.h"
@@ -189,8 +189,7 @@ ir::Statement *ETSParser::ParseTopLevelDeclStatement(StatementParsingFlags flags
     }
 
     ir::Statement *result = nullptr;
-    auto token = Lexer()->GetToken();
-    switch (token.Type()) {
+    switch (Lexer()->GetToken().Type()) {
         case lexer::TokenType::KEYW_FUNCTION: {
             result = ParseFunctionDeclaration(false, memberModifiers);
             ES2PANDA_ASSERT(result != nullptr);

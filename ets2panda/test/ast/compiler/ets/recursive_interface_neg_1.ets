@@ -16,4 +16,4 @@ interface A<T extends A<T>>{}
 interface D{}
 interface B extends A/* @@ label */<D>{}
 
-/* @@@ label Error TypeError: Type argument 'D' should be a subtype of 'A<D>'-constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A<D>' constraint */

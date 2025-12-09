@@ -18,8 +18,9 @@ class A {
     static static_foo_in_A() : void {}
 
     static bar_in_A(arg: A) : void {
-        A./* @@ label */foo_in_A()
+        A.foo_in_A()
     }
 }
 
-/* @@@ label Error TypeError: 'foo_in_A' is an instance property of 'A'  */
+
+/* @@? 21:11 Error Semantic error ESE0208: 'foo_in_A' is an instance property of 'A' */

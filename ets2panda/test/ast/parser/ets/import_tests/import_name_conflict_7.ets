@@ -18,4 +18,5 @@ import {foo} from /* @@ label */"import_tests/packages/subpackage-1";
 class foo{};
 
 //Throw error: Variable 'foo' is already defined.
-/* @@@ label Error TypeError: Variable 'foo' is already defined with different type.  */
+
+/* @@@ label Error Semantic error ESE0350: Variable 'foo' is already defined with different type. */

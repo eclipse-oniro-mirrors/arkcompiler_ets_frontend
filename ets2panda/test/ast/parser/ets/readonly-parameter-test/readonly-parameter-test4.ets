@@ -19,5 +19,6 @@ function foo (p: int[]) {
 let x: readonly int[] = []
 /* @@ label */foo(/* @@ label1 */x)
 
-/* @@@ label Error TypeError: No matching call signature for foo(ReadonlyArray<Int>) */
-/* @@@ label1 Error TypeError: Type 'ReadonlyArray<Int>' is not compatible with type 'Array<Int>' at index 1 */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(ReadonlyArray<Int>) */
+/* @@@ label1 Error Semantic error ESE0046: Type 'ReadonlyArray<Int>' is not compatible with type 'Array<Int>' at index 1 */

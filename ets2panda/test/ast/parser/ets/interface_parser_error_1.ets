@@ -32,32 +32,33 @@ class A implements I {
 function mdin() {    let a = new A();
     ass
 
-/* @@? 16:4 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 16:4 Error TypeError: Unresolved reference Geit */
-/* @@? 16:9 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:2 Error TypeError: Unresolved reference t */
-/* @@? 17:4 Error SyntaxError: Unexpected token '{'. */
-/* @@? 17:5 Error TypeError: Unresolved reference name */
-/* @@? 17:11 Error SyntaxError: Unexpected token ':'. */
-/* @@? 19:1 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@? 20:5 Error SyntaxError: Identifier expected. */
-/* @@? 20:14 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:14 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:16 Error SyntaxError: Identifier expected. */
-/* @@? 20:16 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 21:1 Error SyntaxError: Identifier expected. */
-/* @@? 22:1 Error TypeError: Unresolved reference inter */
-/* @@? 24:1 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@? 26:19 Error SyntaxError: Unexpected token '�ls'. */
-/* @@? 26:19 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 27:5 Error SyntaxError: Unexpected token 'A'. */
-/* @@? 27:7 Error SyntaxError: Unexpected token '{'. */
-/* @@? 28:5 Error SyntaxError: Identifier expected, got 'constructor'. */
-/* @@? 28:5 Error SyntaxError: Hard keyword 'constructor' cannot be used as identifier */
-/* @@? 28:16 Error SyntaxError: Invalid annotation name. */
-/* @@? 28:19 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 29:18 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 31:2 Error SyntaxError: Unexpected token '*'. */
-/* @@? 32:1 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 64:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 16:4 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 16:4 Error Semantic error ESE0143: Unresolved reference Geit */
+/* @@? 16:9 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 17:2 Error Semantic error ESE0143: Unresolved reference t */
+/* @@? 17:4 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 17:5 Error Semantic error ESE0143: Unresolved reference name */
+/* @@? 17:11 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 19:1 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@? 20:5 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:14 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:14 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 20:16 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:16 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:16 Error Syntax error ESY0224: Identifier expected, got 'boolean'. */
+/* @@? 21:1 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 22:1 Error Semantic error ESE0143: Unresolved reference inter */
+/* @@? 24:1 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@? 26:19 Error Syntax error ESY0227: Unexpected token '�ls'. */
+/* @@? 26:19 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 27:5 Error Syntax error ESY0227: Unexpected token 'A'. */
+/* @@? 27:7 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 28:5 Error Syntax error ESY0224: Identifier expected, got 'constructor'. */
+/* @@? 28:5 Error Syntax error ESY0316: Hard keyword 'constructor' cannot be used as identifier */
+/* @@? 28:16 Error Syntax error ESY0329: Invalid annotation name. */
+/* @@? 28:19 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 29:18 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 31:2 Error Syntax error ESY0227: Unexpected token '*'. */
+/* @@? 32:1 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 64:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

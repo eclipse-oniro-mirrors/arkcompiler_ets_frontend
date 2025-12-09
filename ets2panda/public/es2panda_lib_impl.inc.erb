@@ -227,6 +227,12 @@ extern "C" <%= classData.constructor_type().lib_type_to_str()
 <%= constructor["args"]&.map { |arg|  if arg.lib_args_to_str.strip() != "" then
 ", " + "[[maybe_unused]] " + arg.lib_args_to_str end }&.join("") %>)
 {
+{
+    auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(original)->Program());
+    if(prog != nullptr) {
+        prog->SetProgramModified(true);
+    }
+}
 % constructor["args"]&.each do |arg|
     <%= arg.lib_cast["expression"] %>
 % end
@@ -258,7 +264,12 @@ extern "C" <%= classData.constructor_type().lib_type_to_str()
     }
     auto oriOverloads = e2pOriginal->AsMethodDefinition()->Overloads();
     newE2pNode->AsMethodDefinition()->SetOverloads(std::move(oriOverloads));
-    
+
+% end
+% if className == "AssignmentExpression"
+    if (e2pOriginal->AsAssignmentExpression()->IsIgnoreConstAssign()) {
+        newE2pNode->SetIgnoreConstAssign();
+    }
 % end
 % if className == "AssignmentExpression"
     if (e2pOriginal->AsAssignmentExpression()->IsIgnoreConstAssign()) {
@@ -281,6 +292,14 @@ then ", " + classData.call_cast["call_var_str"] end %><%=
 method_info["args"]&.map { |arg| if arg.lib_args_to_str.strip() != "" then
 ", " + "[[maybe_unused]] " + arg.lib_args_to_str end}&.join("") %>/*return_args:*/<%= method_info["return_arg_to_str"] %>)
 {
+% if method_info['get_modifier'] == 'set' && classData.updater_allowed()
+{
+    auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(<%= classData.call_cast['call_var']['name'] %>)->Program());
+    if (prog != nullptr) {
+        prog->SetProgramModified(true);
+    }
+}
+% end
 % method_info["args"]&.each do |arg|
     <%= arg.lib_cast["expression"] %>
 % end

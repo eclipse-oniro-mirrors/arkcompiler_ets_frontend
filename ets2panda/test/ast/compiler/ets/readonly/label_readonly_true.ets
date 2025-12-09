@@ -16,9 +16,9 @@
 WE: readonly true;
 let: readonly;
 
-/* @@? 16:5 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 16:5 Error TypeError: Unresolved reference readonly */
-/* @@? 16:14 Error SyntaxError: Unexpected token 'true'. */
-/* @@? 17:4 Error SyntaxError: Identifier expected, got ':'. */
-/* @@? 17:6 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? 17:6 Error SyntaxError: Unexpected token 'readonly'. */
+/* @@? 16:5 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 16:5 Error Semantic error ESE0143: Unresolved reference readonly */
+/* @@? 16:14 Error Syntax error ESY0227: Unexpected token 'true'. */
+/* @@? 17:4 Error Syntax error ESY0224: Identifier expected, got ':'. */
+/* @@? 17:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 17:6 Error Syntax error ESY0227: Unexpected token 'readonly'. */

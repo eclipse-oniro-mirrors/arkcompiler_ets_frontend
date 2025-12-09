@@ -14,7 +14,7 @@
  */
 
 #include "program.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "public/public.h"
 
 #include "compiler/core/CFG.h"
@@ -36,7 +36,6 @@ Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
       etsnolintCollection_(allocator_->Adapter()),
       cfg_(allocator_->New<compiler::CFG>(allocator_)),
-      functionScopes_(allocator_->Adapter()),
       varbinders_(allocator_->Adapter()),
       checkers_(allocator_->Adapter())
 {
@@ -45,7 +44,7 @@ Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
 
 void Program::PushVarBinder(varbinder::VarBinder *varbinder)
 {
-    varbinders_.insert({compiler::GetPhaseManager()->GetCurrentMajor(), varbinder});
+    varbinders_.insert_or_assign(compiler::GetPhaseManager()->GetCurrentMajor(), varbinder);
 }
 
 const varbinder::VarBinder *Program::VarBinder() const
@@ -65,6 +64,10 @@ checker::Checker *Program::Checker()
 
 void Program::PushChecker(checker::Checker *checker)
 {
+    if (checkers_.size() > static_cast<size_t>(compiler::GetPhaseManager()->GetCurrentMajor())) {
+        checkers_.at(compiler::GetPhaseManager()->GetCurrentMajor()) = checker;
+        return;
+    }
     checkers_.push_back(checker);
 }
 
@@ -129,19 +132,30 @@ void Program::SetPackageInfo(const util::StringView &name, util::ModuleKind kind
     moduleInfo_.kind = kind;
 }
 
-// NOTE(vpukhov): part of ongoing design
+// NOTE(vpukhov): #31581: the flags should be set by the build system
 void Program::MaybeTransformToDeclarationModule()
 {
     ES2PANDA_ASSERT(ast_ != nullptr);
     if (IsPackage() || ast_->Statements().empty()) {
         return;
     }
+    bool hasLocalDefs = false;
     for (auto stmt : ast_->Statements()) {
+        if (stmt->IsETSImportDeclaration()) {
+            continue;
+        }
+        // The existing logic is as follows:
+        // * if module is empty, it is not a declaration module
+        // * if there is any local non-declare definition in the module, it is not a declaration module
+        // * otherwise, it is a declaration module
+        hasLocalDefs = true;
         if (!(stmt->IsDeclare() || stmt->IsTSTypeAliasDeclaration())) {
             return;
         }
     }
-    moduleInfo_.kind = util::ModuleKind::DECLARATION;
+    if (hasLocalDefs) {
+        moduleInfo_.isDeclarationModule = true;
+    }
 }
 
 void Program::AddNodeToETSNolintCollection(const ir::AstNode *node, const std::set<ETSWarnings> &warningsCollection)
@@ -161,35 +175,19 @@ bool Program::NodeContainsETSNolint(const ir::AstNode *node, ETSWarnings warning
     return nodeEtsnolints->second.find(warning) != nodeEtsnolints->second.end();
 }
 
-void Program::SetFlag(ProgramFlags flag)
-{
-    ES2PANDA_ASSERT(VarBinder() != nullptr && VarBinder()->GetContext() != nullptr);
-    auto compilingState = VarBinder()->GetContext()->compilingState;
-    if (compilingState == public_lib::CompilingState::MULTI_COMPILING_INIT ||
-        compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        programFlags_ |= flag;
-    }
-}
-
-bool Program::GetFlag(ProgramFlags flag) const
-{
-    return (programFlags_ & flag) != 0U;
-}
-
 void Program::SetASTChecked()
 {
-    programFlags_ |= ProgramFlags::AST_CHECKED;
+    isAstChecked_ = true;
 }
 
 void Program::RemoveAstChecked()
 {
-    programFlags_ &= ~ProgramFlags::AST_CHECKED;
+    isAstChecked_ = false;
 }
 
 bool Program::IsASTChecked()
 {
-    return ((programFlags_ & ProgramFlags::AST_CHECKED) != 0U) ||
-           ((programFlags_ & ProgramFlags::AST_CHECK_PROCESSED) != 0U);
+    return isAstChecked_;
 }
 
 Program::~Program()  // NOLINT(modernize-use-equals-default)

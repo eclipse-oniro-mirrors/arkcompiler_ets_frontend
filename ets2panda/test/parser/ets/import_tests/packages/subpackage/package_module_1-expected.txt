@@ -76,7 +76,7 @@
           },
           "end": {
             "line": 16,
-            "column": 42,
+            "column": 41,
             "program": "package_module_1.ets"
           }
         }

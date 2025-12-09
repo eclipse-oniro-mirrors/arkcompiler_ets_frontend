@@ -16,7 +16,8 @@
 let a: Array<string>>>=2
 let b: Array<string>>=2
 
-/* @@? 16:21 Error SyntaxError: Unexpected token '>>='.  */
-/* @@? 16:24 Error SyntaxError: Unexpected token '2'.  */
-/* @@? 17:21 Error SyntaxError: Unexpected token '>='.  */
-/* @@? 17:23 Error SyntaxError: Unexpected token '2'.  */
+
+/* @@? 16:21 Error Syntax error ESY0227: Unexpected token '>>='. */
+/* @@? 16:24 Error Syntax error ESY0227: Unexpected token '2'. */
+/* @@? 17:21 Error Syntax error ESY0227: Unexpected token '>='. */
+/* @@? 17:23 Error Syntax error ESY0227: Unexpected token '2'. */

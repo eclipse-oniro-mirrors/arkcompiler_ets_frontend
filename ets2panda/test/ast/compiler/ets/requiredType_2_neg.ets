@@ -22,4 +22,5 @@ function main(): void {
     req_b.fld = /* @@ label */undefined;
 }
 
-/* @@@ label Error TypeError: Type 'undefined' cannot be assigned to type 'Double'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'undefined' cannot be assigned to type 'Double' */

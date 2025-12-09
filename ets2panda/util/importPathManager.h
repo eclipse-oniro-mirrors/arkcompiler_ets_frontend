@@ -16,6 +16,8 @@
 #ifndef ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 #define ES2PANDA_UTIL_IMPORT_PATH_MANAGER_H
 
+#include <shared_mutex>
+
 #include "language.h"
 #if defined PANDA_TARGET_MOBILE
 #define USE_UNIX_SYSCALL
@@ -56,17 +58,19 @@ class StringLiteral;
 
 namespace ark::es2panda::parser {
 class ParserContext;
+class ETSParser;
 }  // namespace ark::es2panda::parser
 
 namespace ark::es2panda::util {
 
-enum class ModuleKind { MODULE, DECLARATION, PACKAGE };
+enum class ModuleKind { MODULE, PACKAGE };
 
 struct ModuleInfo {
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     StringView moduleName {};
     StringView modulePrefix {};
     ModuleKind kind {};
+    bool isDeclarationModule {};
     // NOTE(dkofanov): Should be refactored and aligned with 'ModuleKind' and
     // 'Program::MaybeTransformToDeclarationModule'.
     bool isDeclForDynamicStaticInterop {};
@@ -79,6 +83,23 @@ public:
     static constexpr auto DUMMY_PATH = "dummy_path";  // CC-OFF(G.NAM.03-CPP) project code style
     static constexpr std::string_view ANNOTATION_MODULE_DECLARATION =
         "Lstd/annotations/ModuleDeclaration;";  // CC-OFF(G.NAM.03-CPP) project code style
+    static constexpr std::string_view ETS_SUFFIX = ".ets";
+    static constexpr std::string_view D_ETS_SUFFIX = ".d.ets";
+    static constexpr std::string_view CACHE_SUFFIX = ".etscache";
+    static constexpr std::string_view ABC_SUFFIX = ".abc";
+    static constexpr std::string_view ETSSTDLIB_ABC_SUFFIX = "etsstdlib.abc";
+
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr size_t extensionsSize = 9;
+    // declaration file must follow source file according to spec
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr std::array<std::string_view, extensionsSize> supportedExtensions = {
+        ETS_SUFFIX, D_ETS_SUFFIX, CACHE_SUFFIX, ABC_SUFFIX, ".sts", ".d.sts", ".ts", ".d.ts", ".js"};
+    // source file must follow declaration file so that extension "best match" will succeed
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr std::array<std::string_view, extensionsSize> supportedExtensionsInversed = {
+        D_ETS_SUFFIX, ETS_SUFFIX, CACHE_SUFFIX, ABC_SUFFIX, ".d.sts", ".sts", ".d.ts", ".ts", ".js"};
+
     struct ImportMetadata {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
         ImportFlags importFlags {};
@@ -119,18 +140,7 @@ public:
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
 
-    ImportPathManager(ark::ArenaAllocator *allocator, const util::Options &options, parser::Program *globalProgram,
-                      util::DiagnosticEngine &diagnosticEngine)
-        : allocator_(allocator),
-          arktsConfig_(options.ArkTSConfig()),
-          absoluteEtsPath_(
-              options.GetEtsPath().empty() ? "" : util::Path(options.GetEtsPath(), allocator_).GetAbsolutePath()),
-          stdLib_(options.GetStdlib()),
-          parseList_(allocator->Adapter()),
-          globalProgram_(globalProgram),
-          diagnosticEngine_ {diagnosticEngine}
-    {
-    }
+    explicit ImportPathManager(const parser::ETSParser *parser);
 
     NO_COPY_SEMANTIC(ImportPathManager);
     NO_MOVE_SEMANTIC(ImportPathManager);
@@ -152,6 +162,7 @@ public:
         parseList_.clear();
     }
 
+    static std::string TruncateFileExtension(std::string path, bool &hasExtension);
     util::StringView FormModuleName(const util::Path &path, const lexer::SourcePosition &srcPos);
     ImportMetadata GatherImportMetadata(parser::Program *program, ImportFlags importFlags,
                                         ir::StringLiteral *importPath);
@@ -161,7 +172,6 @@ public:
     util::StringView ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const;
 
     void MarkAsParsed(std::string_view path) noexcept;
-    static std::string TruncateFileExtension(std::string path, bool &hasExtension);
     util::StringView FormRelativePath(const util::Path &path);
     std::shared_ptr<const ArkTsConfig> ArkTSConfig() const
     {
@@ -169,7 +179,18 @@ public:
     }
 
 private:
-    // std::string FormRelativeModuleName(std::string relPath);
+    void SetCacheCannotBeUpdated()
+    {
+        // Atomic with release order reason: other threads should see correct value
+        cacheCanBeUpdated_.store(false, std::memory_order_release);
+    }
+
+    bool GetCacheCanBeUpdated()
+    {
+        // Atomic with relaxed order reason: read of field
+        return cacheCanBeUpdated_.load(std::memory_order_relaxed);
+    }
+
     util::StringView FormModuleNameSolelyByAbsolutePath(const util::Path &path);
     util::StringView FormModuleName(const util::Path &path);
 
@@ -187,8 +208,14 @@ private:
     std::string_view DirOrDirWithIndexFile(StringView dir) const;
     ResolvedPathRes AppendExtensionOrIndexFileIfOmitted(StringView basePath) const;
     std::string TryMatchDependencies(std::string_view fixedPath) const;
-    std::string TryResolvePath(std::string_view fixedPath) const;
+    ResolvedPathRes TryResolvePath(std::string_view fixedPath) const;
+    void TryMatchStaticResolvedPath(ResolvedPathRes &result) const;
+    void TryMatchDynamicResolvedPath(ResolvedPathRes &result) const;
     StringView GetRealPath(StringView path) const;
+    bool DeclarationIsInCache(ImportMetadata &importData, bool isStdlib);
+    void ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata &importData,
+                                                   const std::string_view &externalModuleImportData);
+    void ProcessExternalLibraryImportSimple(ImportMetadata &importData);
     void ProcessExternalLibraryImport(ImportMetadata &importData);
     std::string_view TryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
@@ -199,16 +226,19 @@ public:
 #endif
 
 private:
+    const parser::ETSParser *parser_;
     ark::ArenaAllocator *const allocator_;
-    std::shared_ptr<ArkTsConfig> const arktsConfig_;
-    std::string absoluteEtsPath_;
-    std::string stdLib_;
+    const std::shared_ptr<ArkTsConfig> &arktsConfig_;
+    util::StringView absoluteEtsPath_;
+    const std::string &stdLib_;
     ArenaVector<ParseInfo> parseList_;
-    parser::Program *globalProgram_;
+    parser::Program *const globalProgram_;
     util::DiagnosticEngine &diagnosticEngine_;
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
+    std::atomic<bool> cacheCanBeUpdated_ {true};
+    std::shared_mutex m_ {};
 };
 
 }  // namespace ark::es2panda::util

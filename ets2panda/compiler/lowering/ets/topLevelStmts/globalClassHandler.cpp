@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2025 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,20 +33,29 @@
 #include "ir/statements/expressionStatement.h"
 #include "util/helpers.h"
 #include "util/ustring.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "generated/diagnostic.h"
 
 namespace ark::es2panda::compiler {
 
 using util::NodeAllocator;
 
-void GlobalClassHandler::AddStaticBlockToClass(ir::AstNode *node)
+void GlobalClassHandler::AddStaticBlockToClass(ir::ClassDefinition *classDef)
 {
-    if (node->IsClassDefinition() && !node->AsClassDefinition()->IsDeclare()) {
-        auto classDef = node->AsClassDefinition();
-        if (auto staticBlock = CreateStaticBlock(classDef); staticBlock != nullptr) {
-            classDef->EmplaceBody(staticBlock);  // NOTE(vpukhov): inserted to end for some reason
-            staticBlock->SetParent(classDef);
+    if (classDef->AsClassDefinition()->IsDeclare()) {
+        return;
+    }
+    if (auto staticBlock = CreateStaticBlock(classDef); staticBlock != nullptr) {
+        classDef->EmplaceBody(staticBlock);  // NOTE(vpukhov): inserted to end for some reason
+        staticBlock->SetParent(classDef);
+    }
+}
+
+void GlobalClassHandler::SetupClassStaticBlocksInModule(ir::ETSModule *module)
+{
+    for (auto *statement : module->StatementsForUpdates()) {
+        if (statement->IsClassDeclaration()) {
+            AddStaticBlockToClass(statement->AsClassDeclaration()->Definition());
         }
     }
 }
@@ -141,14 +150,12 @@ void GlobalClassHandler::CollectExportedClasses(parser::Program *program, ir::Cl
     auto globalClass = program->GlobalClass();
     bool foundExport = false;
     // Add ETSGLOBAL to Module in case of export let a = 10
-    std::function<void(ir::AstNode *)> findExportInGlobal = [&findExportInGlobal, &foundExport](ir::AstNode *node) {
-        if (node->IsExported()) {
+    for (auto &p : globalClass->Body()) {
+        if (p->IsExported()) {
             foundExport = true;
-            return;
+            break;
         }
-        node->Iterate(findExportInGlobal);
-    };
-    globalClass->Iterate(findExportInGlobal);
+    }
     if (foundExport) {
         auto globalClassDecl = globalClass->Parent()->AsClassDeclaration();
         classDef->AddToExportedClasses(globalClassDecl);
@@ -265,6 +272,10 @@ ArenaVector<ir::Statement *> GlobalClassHandler::TransformNamespaces(ArenaVector
 
 void GlobalClassHandler::TransformBrokenNamespace(ir::AstNode *node)
 {
+    if (!parser_->Context()->diagnosticEngine->IsAnyError()) {
+        return;
+    }
+
     node->TransformChildrenRecursively(
         // clang-format off
         // CC-OFFNXT(G.FMT.14-CPP) project code style
@@ -289,10 +300,10 @@ ir::ClassDeclaration *GlobalClassHandler::TransformNamespace(ir::ETSModule *ns)
     ArenaVector<GlobalStmts> immediateInitializers(allocator_->Adapter());
     ArenaVector<GlobalStmts> initializerBlock(allocator_->Adapter());
     ArenaVector<ir::ETSModule *> namespaces(allocator_->Adapter());
+
+    SetupClassStaticBlocksInModule(ns);
+
     auto &body = ns->StatementsForUpdates();
-    for (auto *statement : body) {
-        statement->Iterate([this](ir::AstNode *node) { AddStaticBlockToClass(node); });
-    }
     auto stmts = CollectProgramGlobalStatements(body, globalClass, ns);
     immediateInitializers.emplace_back(GlobalStmts {globalProgram_, std::move(stmts.immediateInit)});
     for (auto &initBlock : stmts.initializerBlocks) {
@@ -377,7 +388,7 @@ void GlobalClassHandler::SetupGlobalClass(const ArenaVector<parser::Program *> &
     ArenaVector<ir::ETSModule *> namespaces(allocator_->Adapter());
 
     for (auto const program : programs) {
-        program->Ast()->IterateRecursively([this](ir::AstNode *node) { AddStaticBlockToClass(node); });
+        SetupClassStaticBlocksInModule(program->Ast()->AsETSModule());
         auto &body = program->Ast()->StatementsForUpdates();
         auto stmts = CollectProgramGlobalStatements(body, globalClass, program->Ast());
         auto end = std::remove_if(body.begin(), body.end(), [&namespaces](ir::AstNode *node) {

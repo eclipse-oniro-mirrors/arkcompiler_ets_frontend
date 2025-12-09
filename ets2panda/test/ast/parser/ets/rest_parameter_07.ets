@@ -19,4 +19,4 @@ function sum(...numbers: [number, number, number]): number {
 
 /* @@ label1 */sum(10, 20, /* @@ label2 */"one")
 
-/* @@? 20:16 Error TypeError: No matching call signature for sum(Int, Int, "one") */
+/* @@? 20:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, "one") */

@@ -37,9 +37,9 @@ function main() {
     nameTop = 1;
 }
 
-/* @@? 29:24 Error TypeError: Type 'String' cannot be assigned to type 'Int' */
-/* @@? 31:15 Error TypeError: Type 'String' cannot be assigned to type 'Int' */
-/* @@? 32:16 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
-/* @@? 34:25 Error TypeError: Type 'String' cannot be assigned to type 'Int' */
-/* @@? 36:16 Error TypeError: Type 'String' cannot be assigned to type 'Int' */
-/* @@? 37:15 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 29:24 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
+/* @@? 31:15 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
+/* @@? 32:16 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 34:25 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
+/* @@? 36:16 Error Semantic error ESE0318: Type 'String' cannot be assigned to type 'Int' */
+/* @@? 37:15 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

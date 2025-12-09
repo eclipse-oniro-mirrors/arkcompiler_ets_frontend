@@ -19,5 +19,6 @@ import * as Test from "import_tests/packages";
 
 let x = foo(dbl /* double based signature */);
 
-/* @@? 20:9 Error TypeError: Unresolved reference foo */
-/* @@? 20:9 Error TypeError: This expression is not callable. */
+
+/* @@? 20:9 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 20:9 Error Semantic error ESE0289: This expression is not callable. */

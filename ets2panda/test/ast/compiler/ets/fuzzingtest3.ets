@@ -14,11 +14,13 @@
  */
 
 // the test case is from fuzzer.
-/* @@? 24:1 Error TypeError: Unresolved reference abcdefghijklmnopqrstuvwxyzABC */
-/* @@? 24:30 Error SyntaxError: Unexpected token '`'. */
-/* @@? 24:30 Error SyntaxError: Unexpected token, expected '`'. */
-/* @@? 24:31 Error SyntaxError: Unterminated string. */
-/* @@? 24:31 Error SyntaxError: Unexpected token, expected '${' or '`' */
-/* @@? 24:31 Error SyntaxError: Unexpected token, expected '`'. */
+
+
+/* @@? 26:1 Error Semantic error ESE0143: Unresolved reference abcdefghijklmnopqrstuvwxyzABC */
+/* @@? 26:30 Error Syntax error ESY0227: Unexpected token '`'. */
+/* @@? 26:30 Error Syntax error ESY0228: Unexpected token, expected '`'. */
+/* @@? 26:31 Error Syntax error ESY0253: Unterminated string. */
+/* @@? 26:31 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
+/* @@? 26:31 Error Syntax error ESY0228: Unexpected token, expected '`'. */
 
 abcdefghijklmnopqrstuvwxyzABC`DEF\n�

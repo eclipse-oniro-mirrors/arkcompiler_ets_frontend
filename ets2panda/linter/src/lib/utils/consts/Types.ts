@@ -12,26 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { ClassDeclaration } from 'typescript';
+import type { Type, ClassDeclaration } from 'typescript';
 
 export enum ExtendedIdentifierType {
   UNKNOWN,
-  CLASS,
-  ERROR
+  CLASS
 }
 
 export type ExtendedIdentifierInfo =
   | {
-    type: ExtendedIdentifierType.UNKNOWN | ExtendedIdentifierType.ERROR;
+    type: ExtendedIdentifierType.UNKNOWN;
   }
   | { type: ExtendedIdentifierType.CLASS; decl: ClassDeclaration };
 
 export type ConstructorParameter = {
   name: string;
   isOptional: boolean;
-  type: string;
+  typeString: string;
+  type: Type;
+  isInitialized: boolean;
 };
 
 export type ParameterName = string;
 
 export type BaseClassConstructorInfo = Set<ConstructorParameter[]> | undefined;
+
+type TupleOrArray = 'tuple' | 'array';
+export type AliasedArrayTypeCore = {
+  type: TupleOrArray;
+  isUnion: boolean;
+  types: string[];
+};

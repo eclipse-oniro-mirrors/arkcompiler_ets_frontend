@@ -28,14 +28,14 @@ import {
 @Component
 struct MyCard {
   private cardStyle1: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor('#ffffff');
-    instance.borderRadius(8);
-  };
+    instance.backgroundColor('#ffffff')
+    instance.borderRadius(8)
+    };
 
   public cardStyle2: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor('#ffffff');
-    instance.borderRadius(8);
-  };
+    instance.backgroundColor('#ffffff')
+    instance.borderRadius(8)
+    };
 
   build() {
     Column() {

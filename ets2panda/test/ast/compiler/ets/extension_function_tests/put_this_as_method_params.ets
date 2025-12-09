@@ -20,4 +20,5 @@ class Banana {
 
 }
 
-/* @@@ label Error SyntaxError: Unexpected 'this' keyword in non-receiver context.  */
+
+/* @@@ label Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */

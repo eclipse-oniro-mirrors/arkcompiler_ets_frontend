@@ -48,12 +48,13 @@ class B {
     }
 }
 
-/* @@? 17:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 18:9 Error TypeError: Unresolved reference dfdfsfdf */
-/* @@? 20:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 23:20 Error TypeError: Unresolved reference foo */
-/* @@? 27:11 Error TypeError: Property 'getInstance' does not exist on type 'B' */
-/* @@? 36:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 38:13 Error SyntaxError: Field type annotation expected. */
-/* @@? 39:20 Error TypeError: This expression is not callable. */
-/* @@? 43:11 Error TypeError: Property 'getInstance' does not exist on type 'B' */
+
+/* @@? 17:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 18:9 Error Semantic error ESE0143: Unresolved reference dfdfsfdf */
+/* @@? 20:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 23:20 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 27:11 Error Semantic error ESE0087: Property 'getInstance' does not exist on type 'B' */
+/* @@? 36:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 38:13 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 39:20 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 43:11 Error Semantic error ESE0087: Property 'getInstance' does not exist on type 'B' */

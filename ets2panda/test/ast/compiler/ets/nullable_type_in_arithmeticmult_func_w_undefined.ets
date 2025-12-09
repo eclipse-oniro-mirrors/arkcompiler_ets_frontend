@@ -21,4 +21,5 @@ function main() {
     let result = foo(undefined, undefined);
 }
 
-/* @@@ label Error TypeError: Bad operand type: multiple types left in the normalized union type (Int|undefined). Unions are not allowed in binary expressions except equality.  */
+
+/* @@@ label Error Semantic error ESE0106: Bad operand type: multiple types left in the normalized union type (Int|undefined). Unions are not allowed in binary expressions except equality. */

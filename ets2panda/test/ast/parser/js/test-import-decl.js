@@ -23,5 +23,6 @@ import a from /* @@ label */"bar"/* @@ label1 */;
 import {c, d as e, f } from "bar"
 import "foobar";
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'from'.  */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected string literal.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@@ label1 Error Syntax error ESY0151: Unexpected token, expected string literal. */

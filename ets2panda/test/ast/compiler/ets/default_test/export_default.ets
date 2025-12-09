@@ -16,11 +16,6 @@
 const val = 100;
 export { val as default };
 
-export { default } from '.'; 
+export { default } from '../default_export/export_default1';
 
-/* @@? 19:8 Error TypeError: Only one default export is allowed in a module  */
-/* @@? 19:18 Error SyntaxError: Unexpected token, expected 'as'.  */
-/* @@? 19:18 Error SyntaxError: Unexpected token '}'.  */
-/* @@? 19:20 Error SyntaxError: Cannot find name 'from' to export.  */
-/* @@? 19:20 Error SyntaxError: Cannot find name 'gensym%%_anonymous_const' to export.  */
-/* @@? 19:25 Error SyntaxError: Unexpected token, expected ',' or '}'.  */
+/* @@? 19:8 Error Semantic error ESE0374: Only one default export is allowed in a module */

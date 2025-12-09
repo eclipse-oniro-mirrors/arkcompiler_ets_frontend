@@ -31,5 +31,6 @@ function foa(b: B): void {
 	/* @@ label */foo(/* @@ label1 */b);
 }
 
-/* @@@ label1 Error TypeError: Type 'B' is not compatible with type 'Partial<A>' at index 1 */
-/* @@@ label Error TypeError: No matching call signature for foo(B) */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(B) */
+/* @@@ label1 Error Semantic error ESE0046: Type 'B' is not compatible with type 'Partial<A>' at index 1 */

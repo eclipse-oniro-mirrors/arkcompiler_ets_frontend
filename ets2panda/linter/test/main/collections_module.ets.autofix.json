@@ -16,67 +16,10 @@
     "result": [
         {
             "line": 18,
-            "column": 10,
-            "endLine": 18,
-            "endColumn": 41,
-            "problem": "LimitedStdLibNoImportConcurrency",
-            "autofix": [
-                {
-                    "start": 669,
-                    "end": 751,
-                    "replacementText": "",
-                    "line": 18,
-                    "column": 10,
-                    "endLine": 18,
-                    "endColumn": 41
-                },
-                {
-                    "start": 1074,
-                    "end": 1090,
-                    "replacementText": "collections",
-                    "line": 18,
-                    "column": 10,
-                    "endLine": 18,
-                    "endColumn": 41
-                },
-                {
-                    "start": 1189,
-                    "end": 1205,
-                    "replacementText": "collections",
-                    "line": 18,
-                    "column": 10,
-                    "endLine": 18,
-                    "endColumn": 41
-                },
-                {
-                    "start": 1244,
-                    "end": 1260,
-                    "replacementText": "collections",
-                    "line": 18,
-                    "column": 10,
-                    "endLine": 18,
-                    "endColumn": 41
-                },
-                {
-                    "start": 1281,
-                    "end": 1297,
-                    "replacementText": "collections",
-                    "line": 18,
-                    "column": 10,
-                    "endLine": 18,
-                    "endColumn": 41
-                }
-            ],
-            "suggest": "",
-            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
             "column": 25,
             "endLine": 18,
             "endColumn": 41,
-            "problem": "NoNeedStdLibSendableContainer",
+            "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
                     "start": 669,
@@ -89,7 +32,7 @@
                 }
             ],
             "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
             "severity": "ERROR"
         },
         {
@@ -127,7 +70,7 @@
             "column": 25,
             "endLine": 20,
             "endColumn": 39,
-            "problem": "NoNeedStdLibSendableContainer",
+            "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
                     "start": 753,
@@ -140,7 +83,7 @@
                 }
             ],
             "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
             "severity": "ERROR"
         },
         {

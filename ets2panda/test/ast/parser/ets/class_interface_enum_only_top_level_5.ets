@@ -18,4 +18,5 @@ function main() : void
   /* @@ label */enum Color { Red, Green, Blue }
 }
 
-/* @@@ label Error SyntaxError: Local enum declaration support is not yet implemented.  */
+
+/* @@@ label Error Syntax error ESY0040: Illegal start of ENUM expression. */

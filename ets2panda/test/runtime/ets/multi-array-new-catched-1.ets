@@ -17,12 +17,14 @@ function main(): void {
   let A: Array<number> = new Array<number>();
   let a: FixedArray<FixedArray<FixedArray<Number>>>;
 
-  let catched = false;
-  try {
-    a = new Number[A.length + 2.][4][A.length + 3.00001];
-  } catch (e: TypeError) {
-    catched = true;
-  }
+   let catched = false;
+   try {
+     a = new Number[A.length + 2.][4][A.length + 3.00001];
+   } catch (e) {
+    if (e instanceof TypeError) {
+      catched = true;
+    }
+   }
 
   arktest.assertTrue(catched)
 }

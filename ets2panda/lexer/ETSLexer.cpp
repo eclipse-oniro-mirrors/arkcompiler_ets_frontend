@@ -104,22 +104,6 @@ bool ETSLexer::CheckUtf16Compatible(char32_t cp) const
     return true;
 }
 
-void ETSLexer::ScanAsteriskPunctuator()
-{
-    GetToken().type_ = TokenType::PUNCTUATOR_MULTIPLY;
-
-    switch (Iterator().Peek()) {
-        case LEX_CHAR_EQUALS: {
-            GetToken().type_ = TokenType::PUNCTUATOR_MULTIPLY_EQUAL;
-            Iterator().Forward(1);
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-}
-
 void ETSLexer::ConvertNumber(NumberFlags const flags)
 {
     GetToken().number_ = lexer::Number(GetToken().src_, flags);

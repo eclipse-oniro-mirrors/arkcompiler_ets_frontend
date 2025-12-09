@@ -16,16 +16,6 @@
     "result": [
         {
             "line": 29,
-            "column": 7,
-            "endLine": 30,
-            "endColumn": 8,
-            "problem": "ObjectLiteralProperty",
-            "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 29,
             "column": 23,
             "endLine": 29,
             "endColumn": 30,
@@ -39,9 +29,9 @@
             "column": 23,
             "endLine": 29,
             "endColumn": 30,
-            "problem": "AnyType",
+            "problem": "ParameterType",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
             "severity": "ERROR"
         },
         {

@@ -26,4 +26,5 @@ function main(): int {
 	return 0;
 }
 
-/* @@@ label Warning Warning: Possible fall-through into case  */
+
+/* @@@ label Warning Warning W0020: Possible fall-through into case */

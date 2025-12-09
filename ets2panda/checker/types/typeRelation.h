@@ -286,6 +286,9 @@ public:
         instantiationRecursionMap_.erase(type);
     }
 
+    [[nodiscard]] bool CheckTypeParameterConstraints(ArenaVector<Type *> const &typeParameters1,
+                                                     ArenaVector<Type *> const &typeParameters2);
+
     //  NOTE: special overloading to be used mainly in ETSCompiler where types and nodes are 'const'.
     //  Unfortunately now we cannot have only a single method with 'const Types *' because it affects
     //  a lot of non-const references... :(((

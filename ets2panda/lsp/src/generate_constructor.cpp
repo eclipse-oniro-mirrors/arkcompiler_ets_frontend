@@ -185,7 +185,7 @@ void GetParameterListAndFunctionBody(std::string &parameterList, std::string &fu
     std::vector<std::string> strVec = {};
     for (auto propertyNode : nodeList) {
         auto nodeName = GetIdentifierName(propertyNode);
-        auto propertyName = FilterSubstring(nodeName, "<property>");
+        auto propertyName = FilterSubstring(nodeName, "%%property-");
         ark::es2panda::ir::TypeNode *typeAnnotation = nullptr;
         if (propertyNode->IsETSParameterExpression()) {
             typeAnnotation = propertyNode->AsETSParameterExpression()->TypeAnnotation();

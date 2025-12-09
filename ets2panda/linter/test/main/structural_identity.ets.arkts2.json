@@ -525,6 +525,96 @@
             "severity": "ERROR"
         },
         {
+            "line": 387,
+            "column": 3,
+            "endLine": 387,
+            "endColumn": 17,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 388,
+            "column": 3,
+            "endLine": 388,
+            "endColumn": 17,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 389,
+            "column": 3,
+            "endLine": 389,
+            "endColumn": 18,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 413,
+            "column": 3,
+            "endLine": 413,
+            "endColumn": 13,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 414,
+            "column": 3,
+            "endLine": 414,
+            "endColumn": 21,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 415,
+            "column": 3,
+            "endLine": 415,
+            "endColumn": 21,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 439,
+            "column": 3,
+            "endLine": 439,
+            "endColumn": 17,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 440,
+            "column": 3,
+            "endLine": 440,
+            "endColumn": 17,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 441,
+            "column": 3,
+            "endLine": 441,
+            "endColumn": 18,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 451,
             "column": 3,
             "endLine": 451,
@@ -565,6 +655,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 464,
+            "column": 3,
+            "endLine": 464,
+            "endColumn": 22,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 465,
             "column": 3,
             "endLine": 465,
@@ -572,6 +672,16 @@
             "problem": "StructuralIdentity",
             "suggest": "",
             "rule": "Structural typing is not supported (arkts-no-structural-typing)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 465,
+            "column": 3,
+            "endLine": 465,
+            "endColumn": 17,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
         },
         {
@@ -865,16 +975,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 574,
-            "column": 44,
-            "endLine": 574,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 575,
             "column": 44,
             "endLine": 575,
@@ -882,36 +982,6 @@
             "problem": "StructuralIdentity",
             "suggest": "",
             "rule": "Structural typing is not supported (arkts-no-structural-typing)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 575,
-            "column": 44,
-            "endLine": 575,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 576,
-            "column": 38,
-            "endLine": 576,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 577,
-            "column": 38,
-            "endLine": 577,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -925,26 +995,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 578,
-            "column": 38,
-            "endLine": 578,
-            "endColumn": 43,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 579,
-            "column": 44,
-            "endLine": 579,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
-            "severity": "ERROR"
-        },
-        {
             "line": 580,
             "column": 44,
             "endLine": 580,
@@ -952,16 +1002,6 @@
             "problem": "StructuralIdentity",
             "suggest": "",
             "rule": "Structural typing is not supported (arkts-no-structural-typing)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 580,
-            "column": 44,
-            "endLine": 580,
-            "endColumn": 49,
-            "problem": "NoTsLikeSmartType",
-            "suggest": "",
-            "rule": "Smart type differences (arkts-no-ts-like-smart-type)",
             "severity": "ERROR"
         },
         {
@@ -1282,6 +1322,16 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 698,
+            "column": 25,
+            "endLine": 698,
+            "endColumn": 53,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
         }
     ]

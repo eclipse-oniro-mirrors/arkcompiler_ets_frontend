@@ -35,5 +35,6 @@ function main(){
     a.foo111([123,123,123]);
 }
 
-/* @@? 32:5 Error TypeError: No matching call signature for foo111(Array<String|Int>) */
-/* @@? 33:5 Error TypeError: No matching call signature for foo111(Array<String|Boolean>) */
+
+/* @@? 32:5 Error Semantic error ESE0127: No matching call signature for foo111(Array<String|Int>) */
+/* @@? 33:5 Error Semantic error ESE0127: No matching call signature for foo111(Array<String|Boolean>) */

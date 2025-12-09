@@ -49,6 +49,7 @@ class A extends B {
   }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@? 16:33 Error TypeError: Overloaded method is used as value */
-/* @@? 47:12 Error TypeError: Property 'b' does not exist on type 'C' */
+
+/* @@? 16:33 Error Semantic error ESE0307: Overloaded method is used as value */
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 47:12 Error Semantic error ESE0087: Property 'b' does not exist on type 'C' */

@@ -22,8 +22,8 @@
 #include "evaluate/proxyProgramsCache.h"
 #include "evaluate/entityDeclarator-inl.h"
 
-#include "libpandafile/class_data_accessor.h"
-#include "libpandafile/file-inl.h"
+#include "libarkfile/class_data_accessor.h"
+#include "libarkfile/file-inl.h"
 
 namespace ark::es2panda::evaluate {
 
@@ -108,7 +108,7 @@ ir::ETSTypeReference *DebugInfoDeserializer::ResolveInheritanceChainImpl(util::S
     auto *checker = debugInfoPlugin_.GetIrCheckHelper()->GetChecker();
 
     // List starting from the most derived to the base class.
-    ArenaVector<ChainEntryInfo> chainEntryList(checker->Allocator()->Adapter());
+    std::vector<ChainEntryInfo> chainEntryList {};
     auto alreadyCreatedSuperClassName = CollectChainInfo(chainEntryList, abcSuperName, debugInfo);
 
     ir::ETSTypeReference *superClass = nullptr;
@@ -136,7 +136,7 @@ ir::ETSTypeReference *DebugInfoDeserializer::ResolveInheritanceChainImpl(util::S
     return superClass;
 }
 
-util::StringView DebugInfoDeserializer::CollectChainInfo(ArenaVector<ChainEntryInfo> &chainEntryList,
+util::StringView DebugInfoDeserializer::CollectChainInfo(std::vector<ChainEntryInfo> &chainEntryList,
                                                          util::StringView abcSuperName, FileDebugInfo *debugInfo)
 {
     ES2PANDA_ASSERT(debugInfo != nullptr);

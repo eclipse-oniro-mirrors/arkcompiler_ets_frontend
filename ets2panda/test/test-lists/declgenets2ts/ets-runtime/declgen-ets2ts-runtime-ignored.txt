@@ -14,13 +14,17 @@ first_match/ctor_need_fix_bytecode.ets
 overload_declaration/constructor_overload_sig_with_ref_type.ets
 #FailKind.ABORT_FAIL - 2 tests:
 type_param_in_union.ets
-first_match/ctor_need_fix_bytecode.ets
-overload_declaration/constructor_overload_sig_with_ref_type.ets
-#FailKind.ABORT_FAIL - 2 tests:
-type_param_in_union.ets
 mypackage/implicit_package_import_2.ets
 #FailKind.TSC_FAIL - 21 tests:
+InterfacePrivateMethod.ets
+InterfaceWithDefaultFunction1.ets
+overload_declaration/InterfacePrivateMethod2.ets
+this_override.ets
+trailing_lambda_and_optional_parameterets7.ets
+trailing_lambda_and_optional_parameterets8.ets
+trailing_lambda_and_optional_parameterets9.ets
 ClassNewInstance.ets
+classFromCall.ets
 Enum7.ets
 GenericBridges_01.ets
 GenericBridges_02.ets
@@ -38,30 +42,25 @@ multisource_inheritance.ets
 as_string.ets
 function_type_with_receiver/extensionFunctionType_return_this.ets
 forOfCustomIterator3.ets
-too_many_async.ets
-defaultExportObjectLiteral_exp.ets
-forOfCustomIterator3.ets
 fuzz/too_many_async.ets
 typeAlias_2.ets
 Multiline_string.ets
 Multiline_string_escape_char.ets
 run_ok_without_semicolon.ets
 async_lambda_return_type_test.ets
-fuzz/class_body_interface.ets
+fuzz/invalid_rest_param_await.ets
 fuzz/repeated_del.ets
-fuzz/create_partial.ets
-namespace_class_decl.ets
+fuzz/class_body_interface.ets
+return_type_utility_1.ets
+return_type_utility_2.ets
+abstract_method_override.ets
 import_namespaces.ets
 
-#30971
-non_null_number_as_index.ets
+#31593 TSC Fail
+generic_bridges_1.ets
 
-#31069
-first_match2/same_name.ets
-first_match2/same_name3.ets
-first_match2/same_name4.ets
-first_match2/static_same_name.ets
-first_match2/static_same_name3.ets
+#30364 TSC Fail
+array_const_anno.ets
 
 #30577 TSC Fail
 re_export_default/reexport1.ets
@@ -80,3 +79,10 @@ ns_getter_setter_outside.ets
 ns_getter_setter_outside1.ets
 primitive_accessor.ets
 top_level_getter_setter.ets
+
+#31069
+first_match2/same_name.ets
+first_match2/same_name3.ets
+first_match2/same_name4.ets
+first_match2/static_same_name.ets
+first_match2/static_same_name3.ets

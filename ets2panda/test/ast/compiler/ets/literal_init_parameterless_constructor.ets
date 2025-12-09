@@ -27,4 +27,4 @@ function main(): void {
 }
 
 
- /* @@? 26:14 Error TypeError: Type C has no parameterless constructor. Initialization with literals is not supported if the type has no parameterless constructor. Declare the parameterless constructor explicitly or remove parametered constructors! */
+ /* @@? 26:14 Error Semantic error ESE0291: Type C has no parameterless constructor. Initialization with literals is not supported if the type has no parameterless constructor. Declare the parameterless constructor explicitly or remove parametered constructors! */

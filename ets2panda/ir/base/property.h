@@ -66,7 +66,7 @@ public:
     {
         key_ = key;
 
-        if (key) {
+        if (key != nullptr) {
             key->SetParent(this);
         }
     }
@@ -81,9 +81,26 @@ public:
         return value_;
     }
 
+    void SetValue(Expression *value) noexcept
+    {
+        if (Value() == value) {
+            return;
+        }
+
+        if (value != nullptr) {
+            value->SetParent(this);
+        }
+        this->value_ = value;
+    }
+
     [[nodiscard]] PropertyKind Kind() const noexcept
     {
         return kind_;
+    }
+
+    void SetKind(PropertyKind kind) noexcept
+    {
+        kind_ = kind;
     }
 
     [[nodiscard]] bool IsMethod() const noexcept
@@ -114,7 +131,6 @@ public:
     [[nodiscard]] Property *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     bool ConvertibleToPatternProperty();
-    ValidationInfo ValidateExpression();
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;

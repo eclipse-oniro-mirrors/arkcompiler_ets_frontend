@@ -39,7 +39,7 @@ struct NavRouterExample {
 class Test implements NavRouterInterface {//error
   public (): NavRouterAttribute;//error
   public (value: RouteInfo): NavRouterAttribute;//error *2
-  public (value?: RouteInfo): NavRouterAttribute|void {//error*2 
+  public (value?: RouteInfo): NavRouterAttribute|void {//error*2
     const attribute: NavRouterAttribute|undefined = undefined;//error
   }
 }

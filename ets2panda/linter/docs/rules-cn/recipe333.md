@@ -1,8 +1,8 @@
 ### ArkTS1.2转换js对象类型
 
-**规则：** arkts-interop-js2s-convert-js-type
+**规则：** `arkts-interop-js2s-convert-js-type`
 
-**级别：** error
+ArkTS1.2使用ESValue接口转换js对象类型。
 
 **ArkTS1.1**
 ```typescript

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { KNativePointer, KNativePointer as KPtr } from './InteropTypes';
+import { KNativePointer as KPtr } from './InteropTypes';
 import { global } from './global';
 import { throwError } from './utils';
 import { passString, passStringArray, unpackString } from './private';
@@ -71,14 +71,13 @@ export class Config extends ArktsObject {
     return `Config (peer = ${this.peer}, path = ${this.path})`;
   }
 
-  static create(input: string[], fpath: string, pandaLibPath: string = '', isEditingMode: boolean = false): Config {
+  static create(input: string[], fpath: string = '', pandaLibPath: string = '', isEditingMode: boolean = false): Config {
     if (isEditingMode) {
       let cfg = global.es2pandaPublic._CreateConfig(input.length, passStringArray(input), pandaLibPath);
       return new Config(cfg, fpath);
     }
     if (!global.configIsInitialized()) {
       let cfg = global.es2panda._CreateConfig(input.length, passStringArray(input), pandaLibPath);
-      global.config = cfg;
       return new Config(cfg, fpath);
     } else {
       return new Config(global.config, fpath);
@@ -99,22 +98,27 @@ export class Context extends ArktsObject {
     if (!global.configIsInitialized()) {
       throwError(`Config not initialized`);
     }
-    return new Context(
-      global.es2panda._CreateContextFromString(global.config, passString(source), passString(global.filePath))
-    );
+    let ctx = global.es2panda._CreateContextFromString(global.config, passString(source), passString(global.filePath));
+     return new Context(ctx);
   }
 
   static createFromStringWithHistory(source: string): Context {
     if (!global.configIsInitialized()) {
       throwError(`Config not initialized`);
     }
-    return new Context(
-      global.es2panda._CreateContextFromStringWithHistory(
-        global.config,
-        passString(source),
-        passString(global.filePath)
-      )
+    let ctx = global.es2panda._CreateContextFromStringWithHistory(
+      global.config,
+      passString(source),
+      passString(global.filePath)
     );
+     return new Context(ctx);
+  }
+
+  static createContextGenerateAbcForExternalSourceFiles(
+     filenames: string[]
+  ): Context {
+     let ctx = global.es2panda._CreateContextGenerateAbcForExternalSourceFiles(global.config, filenames.length, passStringArray(filenames));
+     return new Context(ctx);
   }
 
   static lspCreateFromString(source: string, filePath: string, cfg: Config): KPtr {
@@ -128,7 +132,7 @@ export class Context extends ArktsObject {
     source: string,
     filePath: string,
     cfg: Config,
-    globalContextPtr: KNativePointer,
+    globalContextPtr: KPtr,
     isExternal: boolean
   ): KPtr {
     if (cfg === undefined) {
@@ -142,8 +146,17 @@ export class Context extends ArktsObject {
       isExternal
     );
   }
+
+  get program(): Program {
+      return new Program(global.es2panda._ContextProgram(this.peer));
+  }
 }
 
+export class Program extends ArktsObject {
+    constructor(peer: KPtr) {
+        super(peer);
+    }
+}
 // ProjectConfig begins
 export interface PluginsConfig {
   [pluginName: string]: string;
@@ -165,10 +178,10 @@ export interface PathConfig {
   cacheDir?: string;
   externalApiPath?: string;
   aceModuleJsonPath?: string;
+  interopApiPath?: string;
 }
 
 export interface DeclgenConfig {
-  enableDeclgenEts2Ts: boolean;
   declgenV1OutPath?: string;
   declgenBridgeCodePath?: string;
 }
@@ -176,6 +189,8 @@ export interface DeclgenConfig {
 export interface BuildConfig extends DeclgenConfig, ModuleConfig, PathConfig {
   plugins: PluginsConfig;
   compileFiles: string[];
+  depModuleCompileFiles: string[];
+  sdkAliasConfigPath?: string;
 }
 // ProjectConfig ends
 
@@ -186,6 +201,7 @@ export interface ModuleInfo {
   entryFile: string;
   arktsConfigFile: string;
   compileFiles: string[];
+  depModuleCompileFiles: string[];
   declgenV1OutPath: string | undefined;
   declgenBridgeCodePath: string | undefined;
   staticDepModuleInfos: string[];
@@ -193,6 +209,7 @@ export interface ModuleInfo {
   language: string;
   dependencies?: string[];
   declFilesPath?: string;
+  sdkAliasConfigPath?: string;
 }
 
 export interface Job {
@@ -209,7 +226,7 @@ export interface JobInfo {
   id: string;
   filePath: string;
   arktsConfigFile: string;
-  globalContextPtr: KNativePointer;
+  globalContextPtr: KPtr;
   buildConfig: BuildConfig;
   isValid: boolean;
 }
@@ -228,4 +245,132 @@ export interface TextDocumentChangeInfo {
   rangeStart?: number;
   rangeEnd?: number;
   updateText?: string;
+}
+
+export enum AstNodeType {
+  ANNOTATION_DECLARATION = 1,
+  ANNOTATION_USAGE = 2,
+  AWAIT_EXPRESSION = 4,
+  CALL_EXPRESSION = 10,
+  CLASS_DEFINITION = 14,
+  CLASS_DECLARATION = 15,
+  CLASS_PROPERTY = 17,
+  EMPTY_STATEMENT = 25,
+  EXPORT_DEFAULT_DECLARATION = 27,
+  EXPORT_NAMED_DECLARATION = 28,
+  EXPORT_SPECIFIER = 29,
+  EXPRESSION_STATEMENT = 30,
+  FUNCTION_EXPRESSION = 35,
+  IDENTIFIER = 36,
+  IMPORT_DECLARATION = 39,
+  IMPORT_DEFAULT_SPECIFIER = 41,
+  IMPORT_NAMESPACE_SPECIFIER = 42,
+  IMPORT_SPECIFIER = 43,
+  MEMBER_EXPRESSION = 45,
+  METHOD_DEFINITION = 47,
+  PROPERTY = 56,
+  REEXPORT_STATEMENT = 58,
+  RETURN_STATEMENT = 59,
+  SCRIPT_FUNCTION = 60,
+  ETS_STRING_LITERAL_TYPE = 67,
+  ETS_FUNCTION_TYPE = 69,
+  ETS_TYPE_REFERENCE = 74,
+  ETS_KEYOF_TYPE = 77,
+  ETS_NEW_CLASS_INSTANCE_EXPRESSION = 80,
+  ETS_IMPORT_DECLARATION = 81,
+  ETS_PARAMETER_EXPRESSION = 82,
+  SUPER_EXPRESSION = 85,
+  STRUCT_DECLARATION = 86,
+  TS_ENUM_DECLARATION = 89,
+  TS_ENUM_MEMBER = 90,
+  TS_TYPE_PARAMETER = 120,
+  TS_FUNCTION_TYPE = 127,
+  TS_MODULE_DECLARATION = 125,
+  TS_TYPE_ALIAS_DECLARATION = 129,
+  TS_TYPE_REFERENCE = 130,
+  TS_INTERFACE_DECLARATION = 133,
+  TS_CLASS_IMPLEMENTS = 141,
+  VARIABLE_DECLARATION = 152,
+  VARIABLE_DECLARATOR = 153,
+  SPREAD_ELEMENT = 165,
+  UNKNOWN
+}
+
+export const astNodeTypeMap = new Map<string, AstNodeType>([
+  ['IDENTIFIER', AstNodeType.IDENTIFIER],
+  ['CLASS_DEFINITION', AstNodeType.CLASS_DEFINITION],
+  ['ANNOTATION_DECLARATION', AstNodeType.ANNOTATION_DECLARATION],
+  ['ANNOTATION_USAGE', AstNodeType.ANNOTATION_USAGE],
+  ['AWAIT_EXPRESSION', AstNodeType.AWAIT_EXPRESSION],
+  ['CALL_EXPRESSION', AstNodeType.CALL_EXPRESSION],
+  ['CLASS_DECLARATION', AstNodeType.CLASS_DECLARATION],
+  ['CLASS_PROPERTY', AstNodeType.CLASS_PROPERTY],
+  ['EMPTY_STATEMENT', AstNodeType.EMPTY_STATEMENT],
+  ['EXPORT_DEFAULT_DECLARATION', AstNodeType.EXPORT_DEFAULT_DECLARATION],
+  ['EXPORT_NAMED_DECLARATION', AstNodeType.EXPORT_NAMED_DECLARATION],
+  ['EXPORT_SPECIFIER', AstNodeType.EXPORT_SPECIFIER],
+  ['EXPRESSION_STATEMENT', AstNodeType.EXPRESSION_STATEMENT],
+  ['FUNCTION_EXPRESSION', AstNodeType.FUNCTION_EXPRESSION],
+  ['IMPORT_DECLARATION', AstNodeType.IMPORT_DECLARATION],
+  ['IMPORT_DEFAULT_SPECIFIER', AstNodeType.IMPORT_DEFAULT_SPECIFIER],
+  ['IMPORT_NAMESPACE_SPECIFIER', AstNodeType.IMPORT_NAMESPACE_SPECIFIER],
+  ['IMPORT_SPECIFIER', AstNodeType.IMPORT_SPECIFIER],
+  ['MEMBER_EXPRESSION', AstNodeType.MEMBER_EXPRESSION],
+  ['METHOD_DEFINITION', AstNodeType.METHOD_DEFINITION],
+  ['PROPERTY', AstNodeType.PROPERTY],
+  ['REEXPORT_STATEMENT', AstNodeType.REEXPORT_STATEMENT],
+  ['RETURN_STATEMENT', AstNodeType.RETURN_STATEMENT],
+  ['SCRIPT_FUNCTION', AstNodeType.SCRIPT_FUNCTION],
+  ['ETS_STRING_LITERAL_TYPE', AstNodeType.ETS_STRING_LITERAL_TYPE],
+  ['ETS_FUNCTION_TYPE', AstNodeType.ETS_FUNCTION_TYPE],
+  ['ETS_TYPE_REFERENCE', AstNodeType.ETS_TYPE_REFERENCE],
+  ['ETS_KEYOF_TYPE', AstNodeType.ETS_KEYOF_TYPE],
+  ['ETS_NEW_CLASS_INSTANCE_EXPRESSION', AstNodeType.ETS_NEW_CLASS_INSTANCE_EXPRESSION],
+  ['ETS_IMPORT_DECLARATION', AstNodeType.ETS_IMPORT_DECLARATION],
+  ['ETS_PARAMETER_EXPRESSION', AstNodeType.ETS_PARAMETER_EXPRESSION],
+  ['SUPER_EXPRESSION', AstNodeType.SUPER_EXPRESSION],
+  ['STRUCT_DECLARATION', AstNodeType.STRUCT_DECLARATION],
+  ['TS_ENUM_DECLARATION', AstNodeType.TS_ENUM_DECLARATION],
+  ['TS_ENUM_MEMBER', AstNodeType.TS_ENUM_MEMBER],
+  ['TS_TYPE_PARAMETER', AstNodeType.TS_TYPE_PARAMETER],
+  ['TS_FUNCTION_TYPE', AstNodeType.TS_FUNCTION_TYPE],
+  ['TS_MODULE_DECLARATION', AstNodeType.TS_MODULE_DECLARATION],
+  ['TS_TYPE_ALIAS_DECLARATION', AstNodeType.TS_TYPE_ALIAS_DECLARATION],
+  ['TS_TYPE_REFERENCE', AstNodeType.TS_TYPE_REFERENCE],
+  ['TS_INTERFACE_DECLARATION', AstNodeType.TS_INTERFACE_DECLARATION],
+  ['TS_CLASS_IMPLEMENTS', AstNodeType.TS_CLASS_IMPLEMENTS],
+  ['VARIABLE_DECLARATION', AstNodeType.VARIABLE_DECLARATION],
+  ['VARIABLE_DECLARATOR', AstNodeType.VARIABLE_DECLARATOR],
+  ['SPREAD_ELEMENT', AstNodeType.SPREAD_ELEMENT]
+]);
+
+export interface NodeInfo {
+  name: string;
+  kind: AstNodeType;
+}
+
+export interface AliasConfig {
+  originalAPIName: string;
+  isStatic: boolean;
+}
+
+export abstract class AstNode extends ArktsObject {
+    protected constructor(peer: KPtr) {
+        if (peer === null) {
+            throwError(`attempted to create AstNode from nullptr`);
+        }
+        super(peer);
+    }
+}
+
+export class EtsScript extends AstNode {
+    constructor(peer: KPtr) {
+        super(peer);
+    }
+
+    static fromContext(): EtsScript {
+        let ctx = global.es2panda._ProgramAst(global.context, global.es2panda._ContextProgram(global.context))
+        let etsScript = new EtsScript(ctx);
+        return etsScript;
+    }
 }

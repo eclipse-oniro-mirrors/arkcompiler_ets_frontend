@@ -20,4 +20,5 @@
 
  let a: int = E.FIRST
 
- /* @@? 16:2 Error TypeError: Type 'Long' cannot be assigned to type 'Int' */
+ 
+/* @@? 16:2 Error Semantic error ESE0318: Type 'Long' cannot be assigned to type 'Int' */

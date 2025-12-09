@@ -17,7 +17,7 @@
  * Can not moved into ast/compiler while #19557 isn't resolved
  */
 
-declare enum AmbientColor  { Yellow }
+export declare enum AmbientColor  { Yellow }
 
 export enum Color {
     Red, Blue = 42, Green

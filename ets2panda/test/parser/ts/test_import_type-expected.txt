@@ -487,7 +487,7 @@
                   },
                   "end": {
                     "line": 24,
-                    "column": 35,
+                    "column": 34,
                     "program": "test_import_type.ts"
                   }
                 }

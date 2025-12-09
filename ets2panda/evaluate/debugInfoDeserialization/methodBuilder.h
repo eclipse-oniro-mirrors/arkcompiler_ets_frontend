@@ -19,7 +19,7 @@
 #include "util/ustring.h"
 #include "ir/astNodeFlags.h"
 #include "generated/signatures.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::panda_file {
 class ClassDataAccessor;

@@ -17,4 +17,5 @@ class Fruit {}
 
 function price(this/* @@label */) {}
 
-/* @@@ label Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation.  */
+
+/* @@@ label Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */

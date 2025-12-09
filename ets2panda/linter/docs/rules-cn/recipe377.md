@@ -1,10 +1,20 @@
 ## 非十进制bigint字面量
 
-**规则：**`arkts-only-support-decimal-bigint-literal`
+**规则：** `arkts-only-support-decimal-bigint-literal`
 
-**级别：error**
+**规则解释：**
 
- 当前暂不支持非十进制bigint字面量，通过迁移工具提示开发者修改源码，不提供自动修复能力。
+ArkTS1.2暂不支持非十进制bigint字面量。
+
+**变更原因：**
+
+语言层面暂不支持。
+
+**适配建议：**
+
+开发者自行替换为BigInt()函数。
+
+**示例：**
 
 **ArkTS1.1**
 

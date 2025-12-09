@@ -18,8 +18,9 @@ function main():void{
     console.log("not hehe")
 }
 
-/* @@? 15:10 Error SyntaxError: Expected 'as', got 'number literal'. */
-/* @@? 15:10 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 15:16 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 15:21 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 15:26 Error SyntaxError: Unexpected token 'import_tests/packages'. */
+
+/* @@? 15:10 Error Syntax error ESY0230: Expected 'as', got 'number literal'. */
+/* @@? 15:10 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 15:16 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 15:21 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 15:26 Error Syntax error ESY0227: Unexpected token 'import_tests/packages'. */

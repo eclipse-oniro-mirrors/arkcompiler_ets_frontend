@@ -20,4 +20,5 @@ function test0(): A<int> {
     return /* @@ label */a;
 }
 
-/* @@@ label Error TypeError: Type 'A<Int>|null' is not compatible with the enclosing method's return type 'A<Int>'  */
+
+/* @@@ label Error Semantic error ESE0091: Type 'A<Int>|null' is not compatible with the enclosing method's return type 'A<Int>' */

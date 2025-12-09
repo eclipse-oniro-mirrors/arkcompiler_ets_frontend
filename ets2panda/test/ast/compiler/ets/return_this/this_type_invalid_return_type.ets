@@ -19,4 +19,5 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: Only extension function or a class method can return 'this'  */
+
+/* @@@ label Error Semantic error ESE0031: Only extension function or a class method can return 'this' */

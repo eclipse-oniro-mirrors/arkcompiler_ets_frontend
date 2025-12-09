@@ -22,8 +22,6 @@ function main() {
     let mc = new TH<number, string, boolean>
 }
 
-/* @@? 17:23 Error SyntaxError: Rest parameter should be either array or tuple type. */
-/* @@? 17:38 Error TypeError: Static members cannot reference class type parameters 'B' */
-/* @@? 17:38 Error TypeError: Cannot find type 'B'. */
-/* @@? 17:41 Error TypeError: Static members cannot reference class type parameters 'C' */
-/* @@? 17:41 Error TypeError: Cannot find type 'C'. */
+/* @@? 16:19 Error Semantic error ESE0127: No matching call signature for restMethod(...) */
+/* @@? 17:38 Error Semantic error ESE0371: Cannot find type 'B'. */
+/* @@? 17:41 Error Semantic error ESE0371: Cannot find type 'C'. */

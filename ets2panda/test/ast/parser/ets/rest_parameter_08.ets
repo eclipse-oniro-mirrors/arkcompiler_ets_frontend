@@ -22,7 +22,7 @@ function sum(a: int, ...numbers: [number, number, number]): number {
 /* @@ label3 */sum(11,12,13)
 /* @@ label4 */sum(11,12,13,15,16)
 
-/* @@? 20:16 Error TypeError: No matching call signature for sum() */
-/* @@? 21:16 Error TypeError: No matching call signature for sum(Int) */
-/* @@? 22:16 Error TypeError: No matching call signature for sum(Int, Int, Int) */
-/* @@? 23:16 Error TypeError: No matching call signature for sum(Int, Int, Int, Int, Int) */
+/* @@? 20:16 Error Semantic error ESE0127: No matching call signature for sum() */
+/* @@? 21:16 Error Semantic error ESE0127: No matching call signature for sum(Int) */
+/* @@? 22:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int) */
+/* @@? 23:16 Error Semantic error ESE0127: No matching call signature for sum(Int, Int, Int, Int, Int) */

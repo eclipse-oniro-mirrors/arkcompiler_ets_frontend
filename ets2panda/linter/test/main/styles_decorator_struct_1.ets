@@ -17,6 +17,7 @@
 struct MyCard1 {
   @Styles
   cardStyle1() {
+    // comment here
     .backgroundColor('#ffffff')
     .borderRadius(8)
   }
@@ -38,13 +39,14 @@ struct MyCard2 {
       color: this.getColor(),
       width: this.getWidth()
     })
+    // comment here
     .backgroundColor('#ffffff')
   }
-  
+
   private getColor(): Color {
     return Color.Red
   }
-  
+
   private getWidth(): number {
     return 10
   }

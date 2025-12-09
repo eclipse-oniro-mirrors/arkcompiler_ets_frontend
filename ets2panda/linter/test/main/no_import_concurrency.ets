@@ -27,7 +27,7 @@ import process from '@ohos.process';
 import aaa from '@ohos.taskpool'
 import aaaa from '@arkts.collections';
 import utils from './oh_modules/@arkts.utils'
-import { ArkTSUtils } from './oh_modules/@kit.ArkTS';
+import { ArkTSUtils, collections } from './oh_modules/@kit.ArkTS';
 
 aaa.getTaskPoolInfo()
 
@@ -44,3 +44,22 @@ fooAs.getFoo();
 
 let lock1: utils.locks.AsyncLock = utils.locks.AsyncLock.request('lock1');
 let lock2 = new ArkTSUtils.locks.AsyncLock();
+
+let aa:ArkTSUtils.locks.AsyncLock= new ArkTSUtils.locks.AsyncLock()
+let lock_: ArkTSUtils.locks.AsyncLock = new ArkTSUtils.locks.AsyncLock();
+let lock: ArkTSUtils.locks.AsyncLock = ArkTSUtils.locks.AsyncLock.request("lock_1");
+let state: ArkTSUtils.locks.AsyncLockState = ArkTSUtils.locks.AsyncLock.query('queryTestLock');
+let held: ArkTSUtils.locks.AsyncLockInfo[] = state.held
+let state2 = ArkTSUtils.locks.AsyncLock.queryAll();
+lock.lockAsync(async () => {
+}, ArkTSUtils.locks.AsyncLockMode.SHARED);
+lock.lockAsync(async () => {
+}, ArkTSUtils.locks.AsyncLockMode.EXCLUSIVE);
+let s: ArkTSUtils.locks.AbortSignal<string> = { aborted: false, reason: 'Aborted' };
+let options = new ArkTSUtils.locks.AsyncLockOptions<string>();
+options.isAvailable = false;
+options.signal = s;
+let conditionVariable = new ArkTSUtils.locks.ConditionVariable();
+let conditionVariable1 = ArkTSUtils.locks.ConditionVariable.request("conditionName");
+
+let pro = new ArkTSUtils.SendableLruCache<number, number>();

@@ -25,10 +25,12 @@ function foo(flag: boolean): int {
     if (flag) {
       throw new Error();
     }
-  } catch(ex: NullPointerError) {
-    z = 2;
   } catch(ex) {
-    w = undefined;
+    if (ex instanceof NullPointerError) {
+      z = 2;
+    } else {
+      w = undefined;
+    }
   }
 
   return x + y! + z + w!;

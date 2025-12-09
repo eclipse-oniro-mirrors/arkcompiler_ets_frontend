@@ -17,4 +17,5 @@ function main(i : int[], ii : int): void {
     return;
 }
 
-/* @@? 16:10 Error TypeError: 0 or 1 argument are allowed  */
+
+/* @@? 16:10 Error Semantic error ESE0133: 0 or 1 argument are allowed */

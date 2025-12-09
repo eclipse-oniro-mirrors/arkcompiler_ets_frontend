@@ -30,26 +30,27 @@ interface I {
 // This should be the last test to show the absent of the '}'.
 
 
-/* @@? 16:21 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 16:21 Error SyntaxError: Identifier expected. */
-/* @@? 16:21 Error TypeError: Interface expected here. */
-/* @@? 16:23 Error SyntaxError: Identifier expected. */
-/* @@? 16:23 Error TypeError: Interface expected here. */
-/* @@? 18:1 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 18:1 Error TypeError: Variable 'C' has already been declared. */
-/* @@? 18:23 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:25 Error SyntaxError: Identifier expected. */
-/* @@? 20:1 Error TypeError: Variable 'C' has already been declared. */
-/* @@? 20:1 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 20:21 Error SyntaxError: Identifier expected. */
-/* @@? 22:20 Error SyntaxError: Implements clause can not be empty. */
-/* @@? 24:7 Error TypeError: Variable 'A' has already been declared. */
-/* @@? 24:7 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 24:21 Error SyntaxError: Expected '{', got ','. */
-/* @@? 24:21 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 24:23 Error SyntaxError: Unexpected token '{'. */
-/* @@? 26:13 Error SyntaxError: Interface declaration cannot have 'implements' clause. */
-/* @@? 28:1 Error TypeError: Variable 'I' has already been declared. */
-/* @@? 28:1 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 29:5 Error SyntaxError: 'override' modifier cannot appear in interfaces. */
-/* @@? 56:1 Error SyntaxError: Unexpected token, expected '}'. */
+
+/* @@? 16:21 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 16:21 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 16:21 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 16:23 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 16:23 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 18:1 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 18:1 Error Semantic error ESE0351: Variable 'C' has already been declared. */
+/* @@? 18:23 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:25 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:1 Error Semantic error ESE0351: Variable 'C' has already been declared. */
+/* @@? 20:1 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 20:21 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 22:20 Error Syntax error ESY0185: Implements clause can not be empty. */
+/* @@? 24:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
+/* @@? 24:7 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 24:21 Error Syntax error ESY0230: Expected '{', got ','. */
+/* @@? 24:21 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 24:23 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 26:13 Error Syntax error ESY0177: Interface declaration cannot have 'implements' clause. */
+/* @@? 28:1 Error Semantic error ESE0351: Variable 'I' has already been declared. */
+/* @@? 28:1 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 29:5 Error Syntax error ESY0189: 'override' modifier cannot appear in interfaces. */
+/* @@? 56:76 Error Syntax error ESY0228: Unexpected token, expected '}'. */

@@ -100,6 +100,8 @@ public:
         return offset_;
     }
 
+    std::string ToStringUniqueNumber() const;
+
 private:
     std::string file_;
     size_t line_ {};

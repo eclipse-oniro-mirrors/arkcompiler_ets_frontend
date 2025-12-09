@@ -73,7 +73,15 @@ void NumberLiteral::Dump(ir::SrcDumper *dumper) const
             return;
         }
     }
-    dumper->Add(std::string(number_.Str()));
+
+    if (IsGrouped()) {
+        dumper->Add('(');
+        dumper->Add(number_.Str().Utf8());
+        dumper->Add(')');
+        return;
+    }
+
+    dumper->Add(number_.Str().Utf8());
 }
 
 void NumberLiteral::Compile(compiler::PandaGen *pg) const

@@ -23,15 +23,15 @@ function fn(i: I) {
     return new i("hello")
 }
 
-/* @@? 19:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 19:5 Error SyntaxError: Constructor signatures are not supported in interfaces, use methods instead! */
-/* @@? 19:10 Error TypeError: Cannot find type 's'. */
-/* @@? 19:11 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 19:11 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 19:19 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 19:20 Error SyntaxError: Invalid Type. */
-/* @@? 19:20 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 19:20 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:1 Error SyntaxError: Invalid Type. */
-/* @@? 23:16 Error TypeError: Cannot find type 'i'. */
-/* @@? 23:16 Error TypeError: Invalid type reference. */
+
+/* @@? 19:5 Error Syntax error ESY0224: Identifier expected, got 'new'. */
+/* @@? 19:5 Error Syntax error ESY81515: Constructor signatures are not supported in interfaces, use methods instead! */
+/* @@? 19:10 Error Semantic error ESE0371: Cannot find type 's'. */
+/* @@? 19:11 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 19:11 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 19:19 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 19:20 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 19:20 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 19:20 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 20:1 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 23:16 Error Semantic error ESE0371: Cannot find type 'i'. */

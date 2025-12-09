@@ -19,5 +19,6 @@ class Base {
     overload foo{ fo, fo2 }
 }
 
-/* @@? 19:19 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 19:23 Error TypeError: overloaded name must refer to an accessible method. */
+
+/* @@? 19:19 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 19:23 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */

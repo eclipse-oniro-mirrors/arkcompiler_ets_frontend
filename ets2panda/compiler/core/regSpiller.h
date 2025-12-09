@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,6 +56,32 @@ public:
     [[nodiscard]] CodeGen *GetCodeGen() const noexcept;
     [[nodiscard]] std::pair<SpillInfo, const checker::Type *> New() noexcept;
     void Adjust(const std::unordered_set<VReg> &regs) noexcept;
+    bool HasSpill() const
+    {
+        return hasSpill_;
+    }
+
+    void SetHasSpill()
+    {
+        hasSpill_ = true;
+    }
+
+    uint32_t GetSpillRegCount() const
+    {
+        return spillRegs_;
+    }
+
+    void UpdateSpillRegCount(uint32_t arg)
+    {
+        spillRegs_ = std::max(spillRegs_, arg);
+    }
+
+    void ResetSpill()
+    {
+        spillRegs_ = 0;
+        hasSpill_ = false;
+        spillIndex_ = 0;
+    }
 
 protected:
     void SetCodeGen(CodeGen &cg) noexcept;
@@ -65,6 +91,8 @@ protected:
 private:
     CodeGen *cg_ {};
     std::uint32_t spillIndex_ {0};
+    uint32_t spillRegs_ = 0;
+    bool hasSpill_ = false;
 };
 
 class DynamicRegSpiller final : public RegSpiller {

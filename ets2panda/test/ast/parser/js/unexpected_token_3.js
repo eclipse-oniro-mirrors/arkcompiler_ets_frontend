@@ -15,11 +15,10 @@
 
 (...a*b+c)/(d)-e;
 
-/* @@? 16:6 Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@? 16:6 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 16:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 16:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 16:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 16:12 Error SyntaxError: Unterminated RegExp. */
-/* @@? 16:18 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:18 Error SyntaxError: Unexpected token 'end of stream'. */
+
+/* @@? 16:6 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@? 16:6 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 16:12 Error Syntax error ESY0260: Unterminated RegExp. */
+/* @@? 16:18 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:18 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

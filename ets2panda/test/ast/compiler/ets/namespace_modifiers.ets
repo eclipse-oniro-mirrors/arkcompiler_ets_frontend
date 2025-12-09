@@ -41,9 +41,10 @@ namespace M {
     }
 }
 
-/* @@? 18:18 Error SyntaxError: Unexpected token 'const'. */
-/* @@? 23:14 Error SyntaxError: Unexpected token 'const'. */
-/* @@? 27:5 Error TypeError: Unresolved reference readonly */
-/* @@? 27:14 Error SyntaxError: Unexpected token 'R'. */
-/* @@? 27:14 Error TypeError: Unresolved reference R */
-/* @@? 27:16 Error SyntaxError: 'readonly' type modifier is only permitted on resizable array and tuple types. */
+
+/* @@? 18:18 Error Syntax error ESY0227: Unexpected token 'const'. */
+/* @@? 23:14 Error Syntax error ESY0227: Unexpected token 'const'. */
+/* @@? 27:5 Error Semantic error ESE0143: Unresolved reference readonly */
+/* @@? 27:14 Error Syntax error ESY0227: Unexpected token 'R'. */
+/* @@? 27:14 Error Semantic error ESE0143: Unresolved reference R */
+/* @@? 27:16 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */

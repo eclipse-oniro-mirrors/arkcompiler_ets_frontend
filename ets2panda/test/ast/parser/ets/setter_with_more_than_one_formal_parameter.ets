@@ -17,5 +17,6 @@
     set /* @@ label */value(a: int, b: int, c : int);
  }
 
- /* @@@ label Error SyntaxError: Setter must have exactly one formal parameter. */
-/* @@? 1:3 Error TypeError: Class 'Set' is already defined with different type. */
+ 
+/* @@? 1:3 Error Semantic error ESE0350: Class 'Set' is already defined with different type. */
+/* @@@ label Error Syntax error ESY0063: Setter must have exactly one formal parameter. */

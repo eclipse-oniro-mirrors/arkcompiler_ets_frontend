@@ -18,4 +18,5 @@ function main(){
     mix = /* @@ label */new Object();
 }
 
-/* @@@ label Error TypeError: Type 'Object' cannot be assigned to type 'undefined|null'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Object' cannot be assigned to type 'undefined|null' */

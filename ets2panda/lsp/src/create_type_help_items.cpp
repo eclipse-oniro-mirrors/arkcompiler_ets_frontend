@@ -16,7 +16,7 @@
 #include "create_type_help_items.h"
 #include <iostream>
 #include <string>
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::lsp {
 

@@ -25,23 +25,123 @@
             "severity": "ERROR"
         },
         {
-            "line": 41,
-            "column": 1,
-            "endLine": 41,
-            "endColumn": 6,
-            "problem": "GenericCallNoTypeArgs",
+            "line": 46,
+            "column": 5,
+            "endLine": 46,
+            "endColumn": 28,
+            "problem": "AnyType",
             "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {
-            "line": 42,
-            "column": 1,
-            "endLine": 42,
-            "endColumn": 6,
-            "problem": "GenericCallNoTypeArgs",
+            "line": 46,
+            "column": 17,
+            "endLine": 46,
+            "endColumn": 26,
+            "problem": "DynamicCtorCall",
             "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 23,
+            "endLine": 48,
+            "endColumn": 32,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 28,
+            "endLine": 49,
+            "endColumn": 37,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 5,
+            "endLine": 53,
+            "endColumn": 34,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 5,
+            "endLine": 59,
+            "endColumn": 45,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 19,
+            "endLine": 59,
+            "endColumn": 35,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 5,
+            "endLine": 62,
+            "endColumn": 48,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 29,
+            "endLine": 62,
+            "endColumn": 46,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 5,
+            "endLine": 63,
+            "endColumn": 68,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 5,
+            "endLine": 65,
+            "endColumn": 49,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 15,
+            "endLine": 65,
+            "endColumn": 31,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         },
         {

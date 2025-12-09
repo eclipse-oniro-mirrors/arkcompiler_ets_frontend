@@ -14,9 +14,10 @@
  */
 
 function readImage(path: string) { }
-    readImage./* @@ label */sync = (path: string) => {
+    readImage.sync = (path: string) => {
     let contents = 1;
     return contents;
 }
 
-/* @@@ label Error TypeError: Property 'sync' does not exist on type 'Function'  */
+
+/* @@? 17:15 Error Semantic error ESE0087: Property 'sync' does not exist on type 'Function' */

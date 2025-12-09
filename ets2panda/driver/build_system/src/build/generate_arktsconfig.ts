@@ -36,6 +36,7 @@ import {
 } from '../util/utils';
 import {
     AliasConfig,
+    CompilerOptions,
     ArkTSConfigObject,
     BuildConfig,
     DependencyItem,
@@ -49,20 +50,21 @@ import {
     LANGUAGE_VERSION,
     SYSTEM_SDK_PATH_FROM_SDK,
     sdkConfigPrefix,
+    ENABLE_DECL_CACHE
 } from '../pre_define';
 
 export class ArkTSConfig {
     object: ArkTSConfigObject;
 
-    constructor(moduleInfo: ModuleInfo, cacheDir: string) {
+    constructor(moduleInfo: ModuleInfo, cacheDir: string, projectRootPath: string) {
         this.object = {
             compilerOptions: {
                 package: moduleInfo.packageName,
                 baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
                 paths: {},
                 dependencies: {},
-                cacheDir: path.resolve(cacheDir, moduleInfo.packageName),
-                rootDir: path.resolve(moduleInfo.moduleRootPath),
+                cacheDir: ENABLE_DECL_CACHE ? cacheDir : '',
+                projectRootPath: projectRootPath,
             }
         };
     }
@@ -100,7 +102,7 @@ export class ArkTSConfig {
         });
     }
 
-    public get compilerOptions() {
+    public get compilerOptions(): CompilerOptions {
         return this.object.compilerOptions;
     }
 
@@ -159,15 +161,15 @@ export class ArkTSConfigGenerator {
         this.initPathInfo();
     }
 
-    public get aliasConfig() {
+    public get aliasConfig(): Record<string, Record<string, AliasConfig>> {
         return this.buildConfig.aliasConfig
     }
 
-    public get dynamicSDKPaths() {
+    public get dynamicSDKPaths(): Set<string> {
         return this.buildConfig.interopSDKPaths;
     }
 
-    public get externalApiPaths() {
+    public get externalApiPaths(): string[] {
         return this.buildConfig.externalApiPaths;
     }
 
@@ -239,7 +241,7 @@ export class ArkTSConfigGenerator {
         arktsconfig.addPathMappings(this.systemPathSection);
         // NOTE: workaround
         // NOTE: to be refactored
-        if (moduleInfo.language == LANGUAGE_VERSION.ARKTS_1_1) {
+        if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
             return
         }
 
@@ -251,7 +253,6 @@ export class ArkTSConfigGenerator {
             });
         }
 
-        // this.getAllFilesToPathSection(moduleInfo, arktsconfig);
         this.logger.printDebug(`Collected path section: ${JSON.stringify(arktsconfig.compilerOptions.paths, null, 1)}`)
     }
 
@@ -263,13 +264,9 @@ export class ArkTSConfigGenerator {
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
             if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_DYNAMIC_MODULE_DECL_FILE_NOT_FOUND,
-                        `Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
-                        `, but decl file not found on path ${depModuleInfo.declFilesPath}`
-                    )
-                );
+                this.logger.printWarn(`Module ${moduleInfo.packageName} depends on dynamic module ${depModuleInfo.packageName}` +
+                    `, but decl file not found on path ${depModuleInfo.declFilesPath}`);
+                return;
             }
 
             const declFilesObject = JSON.parse(fs.readFileSync(depModuleInfo.declFilesPath, 'utf-8'));
@@ -280,6 +277,7 @@ export class ArkTSConfigGenerator {
                 const depItem: DependencyItem = {
                     language: 'js',
                     path: files[file].declPath,
+                    sourceFilePath: files[file].filePath,
                     ohmUrl: files[file].ohmUrl
                 };
 
@@ -313,7 +311,7 @@ export class ArkTSConfigGenerator {
                 )
             );
         }
-        let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath);
+        let arktsConfig: ArkTSConfig = new ArkTSConfig(moduleInfo, this.buildConfig.cachePath, this.buildConfig.projectRootPath);
         this.arktsconfigs.set(moduleInfo.packageName, arktsConfig);
         this.addPathSection(moduleInfo, arktsConfig);
 
@@ -323,8 +321,8 @@ export class ArkTSConfigGenerator {
 
         this.processAlias(arktsConfig);
 
-        if (moduleInfo.frameworkMode) {
-            arktsConfig.useEmptyPackage = moduleInfo.useEmptyPackage ?? false;
+        if (this.buildConfig.frameworkMode) {
+            arktsConfig.useEmptyPackage = this.buildConfig.useEmptyPackage ?? false;
         }
 
         ensurePathExists(moduleInfo.arktsConfigFile);
@@ -494,17 +492,18 @@ export class ArkTSConfigGenerator {
         moduleInfo: ModuleInfo,
         arktsConfig: ArkTSConfig
     ): void {
-        const moduleRoot: string = path.posix.join(moduleInfo.moduleRootPath, '/');
+        const moduleRoot = toUnixPath(moduleInfo.moduleRootPath) + '/';
 
         for (const file of this.buildConfig.compileFiles) {
-            const unixFilePath: string = path.posix.normalize(file);
+            const unixFilePath: string = toUnixPath(file);
 
             if (!isSubPathOf(unixFilePath, moduleRoot)) {
                 continue;
             }
 
-            let relativePath = path.posix.relative(moduleRoot, unixFilePath)
-            const keyWithoutExtension = relativePath.replace(/\.[^/.]+$/, '');
+            let relativePath = unixFilePath.substring(moduleRoot.length);
+            // remove extension and if it is declaration file, remove .d too
+            const keyWithoutExtension = relativePath.replace(/\.(?:d\.)?[^/.]+$/, '');
 
             const pathKey = `${moduleInfo.packageName}/${keyWithoutExtension}`;
             arktsConfig.addPathMappings({ [pathKey]: [file] });

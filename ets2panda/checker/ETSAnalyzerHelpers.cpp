@@ -16,6 +16,7 @@
 #include "ETSAnalyzerHelpers.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/typeError.h"
+#include "util/diagnostic.h"
 
 namespace ark::es2panda::checker {
 
@@ -315,7 +316,7 @@ void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scri
                                    const lexer::SourcePosition &position,
                                    [[maybe_unused]] const std::string &methodName)
 {
-    const auto *returnType = scriptFunc->Signature()->ReturnType()->MaybeBaseTypeOfGradualType();
+    const auto *returnType = scriptFunc->Signature()->ReturnType();
 
     if (returnType->IsETSTypeParameter()) {
         returnType = checker->GetApparentType(returnType->AsETSTypeParameter()->GetConstraintType());
@@ -347,13 +348,15 @@ static void SwitchMethodCallToFunctionCall(checker::ETSChecker *checker, ir::Cal
     expr->SetCallee(memberExpr->Property());
     memberExpr->Property()->AsIdentifier()->SetParent(expr);
     expr->Arguments()[0]->SetParent(expr);
+    auto scopeCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), expr->EnclosingScope(expr));
     checker->HandleUpdatedCallExpressionNode(expr);
     // Set TsType for new Callee(original member expression's Object)
     expr->Callee()->Check(checker);
 }
 
 checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
-                                                 ir::CallExpression *expr)
+                                                 ir::CallExpression *expr,
+                                                 [[maybe_unused]] const TypeRelationFlag reportFlag)
 {
     // We have to ways to call ExtensionFunction `function foo(this: A, ...)`:
     // 1. Make ExtensionFunction as FunctionCall: `foo(a,...);`
@@ -381,10 +384,10 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
 }
 
 checker::Signature *ResolveCallForClassMethod(checker::ETSExtensionFuncHelperType *type, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr)
+                                              ir::CallExpression *expr,
+                                              [[maybe_unused]] const TypeRelationFlag reportFlag)
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
-
     auto signature = checker->FirstMatchSignatures(type->ClassMethodType()->CallSignatures(), expr);
     if (signature != nullptr) {
         auto *memberExpr = expr->Callee()->AsMemberExpression();
@@ -403,18 +406,19 @@ checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::E
     // For allCallSignatures in ClassMethodType, temporarily insert the dummyReceiver into their signatureInfo,
     // otherwise we can't get the most suitable classMethod signature if all the extensionFunction signature mismatched.
     ArenaVector<Signature *> signatures(checker->ProgramAllocator()->Adapter());
-    signatures.insert(signatures.end(), type->ClassMethodType()->CallSignatures().begin(),
-                      type->ClassMethodType()->CallSignatures().end());
-    signatures.insert(signatures.end(), type->ExtensionMethodType()->CallSignatures().begin(),
-                      type->ExtensionMethodType()->CallSignatures().end());
+    auto const &classMethodSignatures = type->ClassMethodType()->CallSignatures();
+    auto const &extensionMethodSignatures = type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow();
+
+    signatures.insert(signatures.end(), classMethodSignatures.cbegin(), classMethodSignatures.cend());
+    signatures.insert(signatures.end(), extensionMethodSignatures.cbegin(), extensionMethodSignatures.cend());
 
     auto *memberExpr = expr->Callee()->AsMemberExpression();
     auto *dummyReceiver = memberExpr->Object();
-    auto *dummyReceiverVar = type->ExtensionMethodType()->CallSignatures()[0]->Params()[0];
+    auto *dummyReceiverVar = extensionMethodSignatures[0]->Params()[0];
     expr->Arguments().insert(expr->Arguments().begin(), dummyReceiver);
     const bool typeParamsNeeded = dummyReceiverVar->TsType()->IsETSObjectType();
 
-    for (auto *methodCallSig : type->ClassMethodType()->CallSignatures()) {
+    for (auto *methodCallSig : classMethodSignatures) {
         methodCallSig->GetSignatureInfo()->minArgCount++;
         auto &paramsVar = methodCallSig->Params();
         paramsVar.insert(paramsVar.begin(), dummyReceiverVar);
@@ -429,7 +433,7 @@ checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::E
 
     auto *signature = checker->FirstMatchSignatures(signatures, expr);
 
-    for (auto *methodCallSig : type->ClassMethodType()->CallSignatures()) {
+    for (auto *methodCallSig : classMethodSignatures) {
         methodCallSig->GetSignatureInfo()->minArgCount--;
         auto &paramsVar = methodCallSig->Params();
         paramsVar.erase(paramsVar.begin());
@@ -460,6 +464,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
     auto *calleeObj = expr->Callee()->AsMemberExpression()->Object();
+    ERROR_SANITY_CHECK(checker, calleeObj->TsType()->IsETSObjectType(), return nullptr);
     bool isCalleeObjETSGlobal = calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->IsClassDefinition() &&
                                 calleeObj->TsType()->AsETSObjectType()->GetDeclNode()->AsClassDefinition()->IsGlobal();
     // for callExpr `a.foo`, there are 3 situations:
@@ -469,18 +474,20 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
     Signature *signature = nullptr;
     if (checker->IsTypeIdenticalTo(checker->Context().ContainingClass(), calleeObj->TsType()) || isCalleeObjETSGlobal) {
         // When called `a.foo` in `a.anotherFunc`, we should find signature through private or protected method firstly.
-        signature = ResolveCallForClassMethod(type, checker, expr);
+        signature = ResolveCallForClassMethod(type, checker, expr, checker::TypeRelationFlag::NO_THROW);
         if (signature != nullptr) {
+            UpdateDeclarationFromSignature(checker, expr, signature);
             return signature;
         }
     }
 
     signature = GetMostSpecificSigFromExtensionFuncAndClassMethod(type, checker, expr);
     if (signature == nullptr) {
-        checker->ThrowSignatureMismatch(type->ExtensionMethodType()->CallSignatures(), expr->Arguments(), expr->Start(),
-                                        "call");
+        checker->ThrowSignatureMismatch(type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow(), expr->Arguments(),
+                                        expr->Start(), "call");
     }
 
+    UpdateDeclarationFromSignature(checker, expr, signature);
     return signature;
 }
 
@@ -534,7 +541,7 @@ void SetTsTypeForUnaryExpression(ETSChecker *checker, ir::UnaryExpression *expr,
                 break;
             }
             auto exprType = expr->SetTsType(checker->SelectGlobalIntegerTypeForNumeric(operandType));
-            if (!expr->Argument()->TsType()->IsETSIntEnumType()) {
+            if (!expr->Argument()->TsType()->IsETSNumericEnumType()) {
                 expr->Argument()->SetTsType(exprType);
             }
             break;
@@ -606,14 +613,6 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc)
 {
-    if (funcReturnType->IsETSVoidType() || funcReturnType == checker->GlobalVoidType()) {
-        if (argumentType != checker->GlobalVoidType()) {
-            checker->LogError(diagnostic::UNEXPECTED_VALUE_RETURN, {}, stArgument->Start());
-            return false;
-        }
-        return true;
-    }
-
     if (containingFunc->IsAsyncFunc() && funcReturnType->IsETSObjectType() &&
         funcReturnType->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
         auto promiseArg = funcReturnType->AsETSObjectType()->TypeArguments()[0];
@@ -636,6 +635,18 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
     return true;
 }
 
+bool HasSingleReturnStatement(const ir::AstNode *node)
+{
+    auto count = 0;
+    node->Iterate([&count](const ir::AstNode *child) {
+        if (child->IsReturnStatement()) {
+            count++;
+        }
+        count += HasSingleReturnStatement(child) ? 1 : 0;
+    });
+    return count == 1;
+}
+
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument)
 {
     //  First (or single) return statement in the function:
@@ -655,7 +666,13 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
     ```
     */
 
-    containingFunc->Signature()->SetReturnType(funcReturnType);
+    if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal() &&
+        HasSingleReturnStatement(containingFunc->Body())) {
+        auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType);
+        containingFunc->Signature()->SetReturnType(returnType->PromiseType());
+    } else {
+        containingFunc->Signature()->SetReturnType(funcReturnType);
+    }
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
     containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
     checker->VarBinder()->AsETSBinder()->BuildFunctionName(containingFunc);
@@ -729,7 +746,7 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
         relation->SetNode(stArgument);
 
         if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {
-            checker->ResolveReturnStatement(funcReturnType, argumentType, containingFunc, st);
+            checker->ResolveReturnStatement(checker, funcReturnType, argumentType, containingFunc, st);
         }
 
         relation->SetNode(nullptr);
@@ -799,5 +816,42 @@ std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr)
     return {false, false};
 }
 // NOLINTEND(readability-else-after-return)
+
+void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature)
+{
+    if (signature == nullptr) {
+        return;
+    }
+
+    ir::AstNode *callIdentifier = expr->Callee();
+    while (callIdentifier != nullptr && callIdentifier->IsMemberExpression()) {
+        callIdentifier = callIdentifier->AsMemberExpression()->Property();
+    }
+    if (callIdentifier == nullptr || !callIdentifier->IsIdentifier()) {
+        return;
+    }
+
+    auto signatureVar = callIdentifier->Variable();
+    if (signatureVar == nullptr || !signatureVar->HasFlag(varbinder::VariableFlags::METHOD) ||
+        !signature->HasFunction() || signature->Function()->IsDynamic()) {
+        return;
+    }
+
+    auto sigName = signature->Function()->Id()->Name();
+    if (callIdentifier->AsIdentifier()->Name() != sigName) {
+        return;
+    }
+
+    ir::AstNode *declNode = signature->Function();
+    while (!declNode->IsMethodDefinition()) {
+        declNode = declNode->Parent();
+    }
+    auto allocator = checker->ProgramAllocator();
+    auto newDecl = allocator->New<varbinder::FunctionDecl>(allocator, sigName, declNode);
+    auto newVar = allocator->New<varbinder::LocalVariable>(newDecl, varbinder::VariableFlags::METHOD |
+                                                                        varbinder::VariableFlags::SYNTHETIC);
+    newVar->SetTsType(declNode->AsMethodDefinition()->TsType()->Clone(checker));
+    callIdentifier->SetVariable(newVar);
+}
 
 }  // namespace ark::es2panda::checker

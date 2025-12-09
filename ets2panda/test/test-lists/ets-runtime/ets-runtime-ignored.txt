@@ -16,9 +16,6 @@ nullCoalesc.ets
 #11104
 unboxing.ets
 
-#27863
-UncheckedCasts.ets
-
 #11326
 GenericsTest.ets
 
@@ -49,10 +46,6 @@ type_param_in_union.ets
 n_overrideWithNullable.ets
 nullableType.ets
 
-#Issue 17949
-#SyntaxError: Cannot find type 'C'.
-
-#Issue 21065
 #21065
 implementsClassPropertyUnionType1.ets
 implementsClassPropertyUnionType2.ets
@@ -61,7 +54,7 @@ implementsClassPropertyUnionType2.ets
 override_for_partial_02.ets
 optional_field.ets
 
-#22384
+#24214
 Object-type-in-binary-logical-expression.ets
 trailing-lambda.ets
 BitwiseOperationsOnFloat.ets
@@ -69,11 +62,8 @@ RecursiveTypeAlias11.ets
 conversionFloatIntLong.ets
 inallyCatchExecutedNormally.ets
 
-#Issue 48215
 #48215
 lambda_with_receiver/lambda_with_receiver_generics_return_this_rotate.ets
-lambda_with_receiver/lambda_with_receiver_return_this3.ets
-lambda_with_receiver/lambda_with_receiver_generics_return_this.ets
 lambda_with_receiver/lambda_with_receiver_trailing_in_class_method_return_this_rotate.ets
 lambda_with_receiver/lambda_with_receiver_trailing_in_function_return_this_rotate.ets
 
@@ -89,6 +79,7 @@ Override-4.ets
 # Arrays of primitives used interchangeably with arrays of reference (in generics and forOf)
 GenericArray_1.ets
 array-object.ets
+async_lambda_return_type_test.ets
 
 #HEAD FILE NO NEED TO RUN
 import_self_head_tests/B/test.d.ets
@@ -112,12 +103,9 @@ union_generic_class.ets
 inferTypeLambda_14.ets
 
 enum_const_variable.ets
-enumConstExpression.ets
 local_enum03.ets
 overload-primitive-and-object.ets
 finallyTryAbruptedByReturn.ets
-Recursive_Parameter_2.ets
-Recursive_Parameter_3.ets
 
 # No-primitives #24986 [end]
 

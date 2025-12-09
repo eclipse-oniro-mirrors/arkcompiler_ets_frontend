@@ -439,73 +439,12 @@
                               }
                             },
                             "alternate": {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "StringLiteral",
-                                "value": "default",
-                                "loc": {
-                                  "start": {
-                                    "line": 16,
-                                    "column": 38,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  },
-                                  "end": {
-                                    "line": 16,
-                                    "column": 47,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  }
-                                }
-                              },
-                              "typeAnnotation": {
-                                "type": "ETSTypeReference",
-                                "part": {
-                                  "type": "ETSTypeReferencePart",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "string",
-                                    "loc": {
-                                      "start": {
-                                        "line": 16,
-                                        "column": 29,
-                                        "program": "default_parameter_implicitly_typed_return_void.ets"
-                                      },
-                                      "end": {
-                                        "line": 16,
-                                        "column": 35,
-                                        "program": "default_parameter_implicitly_typed_return_void.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 16,
-                                      "column": 29,
-                                      "program": "default_parameter_implicitly_typed_return_void.ets"
-                                    },
-                                    "end": {
-                                      "line": 16,
-                                      "column": 35,
-                                      "program": "default_parameter_implicitly_typed_return_void.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 16,
-                                    "column": 29,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  },
-                                  "end": {
-                                    "line": 16,
-                                    "column": 35,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  }
-                                }
-                              },
+                              "type": "StringLiteral",
+                              "value": "default",
                               "loc": {
                                 "start": {
                                   "line": 16,
-                                  "column": 25,
+                                  "column": 38,
                                   "program": "default_parameter_implicitly_typed_return_void.ets"
                                 },
                                 "end": {
@@ -690,73 +629,12 @@
                               }
                             },
                             "alternate": {
-                              "type": "TSAsExpression",
-                              "expression": {
-                                "type": "StringLiteral",
-                                "value": "another",
-                                "loc": {
-                                  "start": {
-                                    "line": 16,
-                                    "column": 61,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  },
-                                  "end": {
-                                    "line": 16,
-                                    "column": 70,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  }
-                                }
-                              },
-                              "typeAnnotation": {
-                                "type": "ETSTypeReference",
-                                "part": {
-                                  "type": "ETSTypeReferencePart",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "string",
-                                    "loc": {
-                                      "start": {
-                                        "line": 16,
-                                        "column": 52,
-                                        "program": "default_parameter_implicitly_typed_return_void.ets"
-                                      },
-                                      "end": {
-                                        "line": 16,
-                                        "column": 58,
-                                        "program": "default_parameter_implicitly_typed_return_void.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 16,
-                                      "column": 52,
-                                      "program": "default_parameter_implicitly_typed_return_void.ets"
-                                    },
-                                    "end": {
-                                      "line": 16,
-                                      "column": 58,
-                                      "program": "default_parameter_implicitly_typed_return_void.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 16,
-                                    "column": 52,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  },
-                                  "end": {
-                                    "line": 16,
-                                    "column": 58,
-                                    "program": "default_parameter_implicitly_typed_return_void.ets"
-                                  }
-                                }
-                              },
+                              "type": "StringLiteral",
+                              "value": "another",
                               "loc": {
                                 "start": {
                                   "line": 16,
-                                  "column": 49,
+                                  "column": 61,
                                   "program": "default_parameter_implicitly_typed_return_void.ets"
                                 },
                                 "end": {

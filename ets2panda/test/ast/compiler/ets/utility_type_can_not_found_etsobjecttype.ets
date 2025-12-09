@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-type BaseObject = Record<string, any>;
+type BaseObject = Record<string, xny>;
 
 class X<T extends BaseObject> {
   x: T;
@@ -25,6 +25,7 @@ class X<T extends BaseObject> {
   }
 }
 
-/* @@? 16:34 Error TypeError: Cannot find type 'any'. */
-/* @@? 21:29 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 23:14 Error TypeError: Target type for class composite needs to be an object type, found 'T' */
+
+/* @@? 16:34 Error Semantic error ESE0371: Cannot find type 'xny'. */
+/* @@? 21:29 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 23:14 Error Semantic error ESE0063: Target type for class composite needs to be an object type, found 'T' */

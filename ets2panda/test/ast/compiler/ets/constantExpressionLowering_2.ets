@@ -17,7 +17,7 @@ enum CCCCCCCCC {}
 
 CCCCCCCCC[foo()].foo();
 
-/* @@? 18:1 Error TypeError: No matching indexing signature for $_get(...) */
-/* @@? 18:11 Error TypeError: Unresolved reference foo */
-/* @@? 18:11 Error TypeError: This expression is not callable. */
-/* @@? 18:11 Error TypeError: Cannot find index access method with the required signature. */
+/* @@? 18:1 Error Semantic error ESE0127: No matching indexing signature for $_get(...) */
+/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 18:11 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 18:11 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

@@ -80,6 +80,188 @@
 #include "parserImpl.h"
 
 namespace ark::es2panda::parser {
+
+static ir::ValidationInfo ValidateExpression(ir::ArrayExpression *arrExpr);
+static ir::ValidationInfo ValidateExpression(ir::ObjectExpression *objExpr);
+static ir::ValidationInfo ValidateExpression(ir::SpreadElement *spreadElement);
+
+static ir::ValidationInfo ValidateExpression(ir::Identifier *ident)
+{
+    if ((ident->IdFlags() & ir::IdentifierFlags::OPTIONAL) != 0U) {
+        return {diagnostic::UNEXPECTED_QUESTIONMARK.Message(), ident->Start()};
+    }
+
+    if (ident->TypeAnnotation() != nullptr) {
+        return {diagnostic::UNEXPECTED_TOKEN.Message(), ident->TypeAnnotation()->Start()};
+    }
+
+    ir::ValidationInfo info;
+    return info;
+}
+
+static ir::ValidationInfo ValidateExpression(ir::Property *prop)
+{
+    ir::ValidationInfo info;
+
+    if (!prop->IsComputed() && !prop->IsMethod() && !prop->IsAccessor() && !prop->IsShorthand()) {
+        bool currentIsProto = false;
+
+        if (prop->Key()->IsIdentifier()) {
+            currentIsProto = prop->Key()->AsIdentifier()->Name().Is("__proto__");
+        } else if (prop->Key()->IsStringLiteral()) {
+            currentIsProto = prop->Key()->AsStringLiteral()->Str().Is("__proto__");
+        }
+
+        if (currentIsProto) {
+            prop->SetKind(ir::PropertyKind::PROTO);
+        }
+    }
+
+    if (prop->Value() != nullptr) {
+        if (prop->Value()->IsAssignmentPattern()) {
+            return {diagnostic::INVALID_SHORTHAND_PROPERTY_INITIALIZER.Message(), prop->Value()->Start()};
+        }
+
+        if (prop->Value()->IsObjectExpression()) {
+            info = ValidateExpression(prop->Value()->AsObjectExpression());
+        } else if (prop->Value()->IsArrayExpression()) {
+            info = ValidateExpression(prop->Value()->AsArrayExpression());
+        }
+    }
+
+    return info;
+}
+
+static std::pair<ir::ValidationInfo, bool> ValidateProperty(ir::Property *prop, bool &foundProto)
+{
+    ir::ValidationInfo info = ValidateExpression(prop);
+    if (prop->Kind() == ir::PropertyKind::PROTO) {
+        if (foundProto) {
+            return {{diagnostic::DUPLICATE_PROTO_FIELDS.Message(), prop->Key()->Start()}, true};
+        }
+
+        foundProto = true;
+    }
+
+    return {info, false};
+}
+
+static ir::ValidationInfo ValidateExpression(ir::ObjectExpression *objExpr)
+{
+    if (objExpr->IsOptional()) {
+        return {diagnostic::UNEXPECTED_QUESTIONMARK.Message(), objExpr->Start()};
+    }
+
+    if (objExpr->TypeAnnotation() != nullptr) {
+        return {diagnostic::UNEXPECTED_TOKEN.Message(), objExpr->TypeAnnotation()->Start()};
+    }
+
+    ir::ValidationInfo info;
+    bool foundProto = false;
+
+    for (auto *it : objExpr->Properties()) {
+        switch (it->Type()) {
+            case ir::AstNodeType::OBJECT_EXPRESSION:
+            case ir::AstNodeType::ARRAY_EXPRESSION: {
+                return {diagnostic::UNEXPECTED_TOKEN.Message(), it->Start()};
+            }
+            case ir::AstNodeType::SPREAD_ELEMENT: {
+                info = ValidateExpression(it->AsSpreadElement());
+                break;
+            }
+            case ir::AstNodeType::PROPERTY: {
+                auto *prop = it->AsProperty();
+                bool ret = false;
+                std::tie(info, ret) = ValidateProperty(prop, foundProto);
+                if (ret) {
+                    return info;
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        if (info.Fail()) {
+            break;
+        }
+    }
+
+    return info;
+}
+
+static ir::ValidationInfo ValidateExpression(ir::SpreadElement *spreadElement)
+{
+    ir::ValidationInfo info;
+
+    switch (spreadElement->Argument()->Type()) {
+        case ir::AstNodeType::OBJECT_EXPRESSION: {
+            info = ValidateExpression(spreadElement->Argument()->AsObjectExpression());
+            break;
+        }
+        case ir::AstNodeType::ARRAY_EXPRESSION: {
+            info = ValidateExpression(spreadElement->Argument()->AsArrayExpression());
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+
+    return info;
+}
+
+static ir::ValidationInfo ValidateExpression(ir::ArrayExpression *arrExpr)
+{
+    if (arrExpr->IsOptional()) {
+        return {diagnostic::UNEXPECTED_QUESTIONMARK.Message(), arrExpr->Start()};
+    }
+
+    if (arrExpr->TypeAnnotation() != nullptr) {
+        return {diagnostic::UNEXPECTED_TOKEN.Message(), arrExpr->TypeAnnotation()->Start()};
+    }
+
+    ir::ValidationInfo info;
+
+    for (auto *it : arrExpr->Elements()) {
+        switch (it->Type()) {
+            case ir::AstNodeType::OBJECT_EXPRESSION: {
+                info = ValidateExpression(it->AsObjectExpression());
+                break;
+            }
+            case ir::AstNodeType::ARRAY_EXPRESSION: {
+                info = ValidateExpression(it->AsArrayExpression());
+                break;
+            }
+            case ir::AstNodeType::ASSIGNMENT_EXPRESSION: {
+                auto *assignmentExpr = it->AsAssignmentExpression();
+
+                if (assignmentExpr->Left()->IsArrayExpression()) {
+                    info = ValidateExpression(assignmentExpr->Left()->AsArrayExpression());
+                } else if (assignmentExpr->Left()->IsObjectExpression()) {
+                    info = ValidateExpression(assignmentExpr->Left()->AsObjectExpression());
+                }
+
+                break;
+            }
+            case ir::AstNodeType::SPREAD_ELEMENT: {
+                info = ValidateExpression(it->AsSpreadElement());
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
+        if (info.Fail()) {
+            break;
+        }
+    }
+
+    return info;
+}
+
 ir::YieldExpression *ParserImpl::ParseYieldExpression()
 {
     ES2PANDA_ASSERT(lexer_->GetToken().Type() == lexer::TokenType::KEYW_YIELD);
@@ -182,7 +364,7 @@ ir::ArrayExpression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags
     lexer::SourcePosition endLoc;
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_SQUARE_BRACKET, lexer::NextTokenFlags::NONE,
-        [this, inPattern, startLoc, allowOmitted, &elements, &trailingComma]() {
+        [this, inPattern, startLoc, allowOmitted, &elements, &trailingComma](bool &) {
             if (allowOmitted && lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_COMMA) {
                 auto *omitted = AllocNode<ir::OmittedExpression>();
                 omitted->SetRange(lexer_->GetToken().Loc());
@@ -204,7 +386,7 @@ ir::ArrayExpression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags
             trailingComma = ParseArrayExpressionRightBracketHelper(containsRest, startLoc);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto nodeType = inPattern ? ir::AstNodeType::ARRAY_PATTERN : ir::AstNodeType::ARRAY_EXPRESSION;
     auto *arrayExpressionNode =
@@ -233,7 +415,7 @@ void ParserImpl::ParseArrayExpressionErrorCheck(ir::ArrayExpression *arrayExpres
             !arrayExpressionNode->ConvertibleToArrayPattern()) {
             LogError(diagnostic::INVALID_LEFT_SIDE_ARRAY_DESTRUCTURING, {}, arrayExpressionNode->Start());
         } else if (!inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-            ir::ValidationInfo info = arrayExpressionNode->ValidateExpression();
+            ir::ValidationInfo info = ValidateExpression(arrayExpressionNode);
             if (info.Fail()) {
                 LogSyntaxError(info.msg.Utf8(), info.pos);
             }
@@ -507,7 +689,7 @@ void ParserImpl::ValidateParenthesizedExpression(ir::Expression *lhsExpression)
 {
     switch (lhsExpression->Type()) {
         case ir::AstNodeType::IDENTIFIER: {
-            auto info = lhsExpression->AsIdentifier()->ValidateExpression();
+            auto info = ValidateExpression(lhsExpression->AsIdentifier());
             if (info.Fail()) {
                 LogSyntaxError(info.msg.Utf8(), info.pos);
             }
@@ -517,14 +699,14 @@ void ParserImpl::ValidateParenthesizedExpression(ir::Expression *lhsExpression)
             break;
         }
         case ir::AstNodeType::ARRAY_EXPRESSION: {
-            auto info = lhsExpression->AsArrayExpression()->ValidateExpression();
+            auto info = ValidateExpression(lhsExpression->AsArrayExpression());
             if (info.Fail()) {
                 LogSyntaxError(info.msg.Utf8(), info.pos);
             }
             break;
         }
         case ir::AstNodeType::OBJECT_EXPRESSION: {
-            auto info = lhsExpression->AsObjectExpression()->ValidateExpression();
+            auto info = ValidateExpression(lhsExpression->AsObjectExpression());
             if (info.Fail()) {
                 LogSyntaxError(info.msg.Utf8(), info.pos);
             }
@@ -598,13 +780,12 @@ ir::Expression *ParserImpl::ParseAssignmentExpression(ir::Expression *lhsExpress
             conditionalExpr->SetRange({lhsExpression->Start(), alternate->End()});
             return conditionalExpr;
         }
-        case lexer::TokenType::PUNCTUATOR_ARROW: {
+        case lexer::TokenType::PUNCTUATOR_ARROW:
             if (lexer_->GetToken().NewLine()) {
                 LogError(diagnostic::EXPECTED_EXPRESSION_GOT_ARROW);
             }
 
             return ParseArrowFunctionExpression(lhsExpression, nullptr, nullptr, false);
-        }
         case lexer::TokenType::PUNCTUATOR_SUBSTITUTION: {
             ValidateAssignmentTarget(flags, lhsExpression);
 
@@ -612,17 +793,12 @@ ir::Expression *ParserImpl::ParseAssignmentExpression(ir::Expression *lhsExpress
             ir::Expression *assignmentExpression = ParseExpression(CarryPatternFlags(flags));
             return CreateBinaryAssignmentExpression(assignmentExpression, lhsExpression, tokenType);
         }
-        case lexer::TokenType::KEYW_AS: {
+        case lexer::TokenType::KEYW_AS:
             if (auto asExpression = ParsePotentialAsExpression(lhsExpression); asExpression != nullptr) {
                 return ParseAssignmentExpression(asExpression);
             }
             break;
-        }
         default: {
-            if (tokenType == lexer::TokenType::LITERAL_IDENT &&
-                lexer_->GetToken().KeywordType() == lexer::TokenType::KEYW_INSTANCEOF) {
-                tokenType = lexer::TokenType::KEYW_INSTANCEOF;
-            }
             auto expression = ParseAssignmentBinaryExpression(tokenType, lhsExpression, flags);
             if (expression == nullptr) {
                 expression = ParseAssignmentEqualExpression(tokenType, lhsExpression, flags);
@@ -675,7 +851,7 @@ ir::Expression *ParserImpl::ParseAssignmentBinaryExpression(const lexer::TokenTy
         case lexer::TokenType::PUNCTUATOR_MOD:
         case lexer::TokenType::KEYW_INSTANCEOF:
         case lexer::TokenType::PUNCTUATOR_EXPONENTIATION: {
-            return ParseAssignmentExpression(ParseBinaryExpression(lhsExpression, tokenType));
+            return ParseAssignmentExpression(ParseBinaryExpression(lhsExpression));
         }
         default:
             break;
@@ -812,7 +988,7 @@ ir::Expression *ParserImpl::ParseNewExpression()
     // parse argument part of NewExpression
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE,
-        [this, &arguments]() {
+        [this, &arguments](bool &) {
             ir::Expression *argument = nullptr;
 
             if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
@@ -823,7 +999,7 @@ ir::Expression *ParserImpl::ParseNewExpression()
             arguments.push_back(argument);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto *newExprNode = AllocNode<ir::NewExpression>(callee, std::move(arguments));
     ES2PANDA_ASSERT(newExprNode != nullptr);
@@ -1323,8 +1499,9 @@ static ir::Expression *FindAndAmendChildExpression(ir::Expression *expression, c
     return shouldBeAmended ? expression : parentExpression;
 }
 
-ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left, const lexer::TokenType operatorType)
+ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left, ExpressionParseFlags flags)
 {
+    lexer::TokenType operatorType = lexer_->GetToken().Type();
     ES2PANDA_ASSERT(lexer::Token::IsBinaryToken(operatorType));
 
     if (operatorType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION) {
@@ -1335,7 +1512,19 @@ ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left, const le
 
     lexer_->NextToken();
 
+    ExpressionParseFlags newFlags = ExpressionParseFlags::DISALLOW_YIELD;
+    if ((operatorType == lexer::TokenType::KEYW_INSTANCEOF) || ((flags & ExpressionParseFlags::INSTANCEOF) != 0)) {
+        newFlags |= ExpressionParseFlags::INSTANCEOF;
+    }
+
     ir::Expression *rightExpr = ParseExpressionOrTypeAnnotation(operatorType, ExpressionParseFlags::DISALLOW_YIELD);
+
+    // NOTE(rsipka): 'in' operator is not supported but parsed the expression above for more detailed error reporting
+    if (operatorType == lexer::TokenType::KEYW_IN && !IsInOperatorTypeSupported()) {
+        LogError(diagnostic::UNSUPPORTED_IN_OPERATOR_TYPE);
+        return AllocBrokenExpression(lexer::SourceRange {left->Start(), rightExpr->End()});
+    }
+
     ir::ConditionalExpression *conditionalExpr = nullptr;
     if (rightExpr->IsConditionalExpression() && !rightExpr->IsGrouped()) {
         conditionalExpr = rightExpr->AsConditionalExpression();
@@ -1381,7 +1570,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseCallExpressionArguments(bool &tra
     } else {
         ParseList(
             lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE,
-            [this, &trailingComma, &arguments]() {
+            [this, &trailingComma, &arguments](bool &) {
                 trailingComma = false;
                 ir::Expression *argument {};
                 if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD) {
@@ -1396,7 +1585,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseCallExpressionArguments(bool &tra
                 }
                 return true;
             },
-            &endLoc, true);
+            &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
     }
 
     return arguments;
@@ -1491,6 +1680,7 @@ ir::Expression *ParserImpl::ParseOptionalChain(ir::Expression *leftSideExpr)
     if (tokenType == lexer::TokenType::PUNCTUATOR_BACK_TICK ||
         lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_BACK_TICK) {
         LogError(diagnostic::TAGGED_TEMPLATE_LITERALS_IN_OPTIONALCHAIN);
+        return AllocBrokenExpression(lexer_->GetToken().Loc());
     }
 
     return returnExpression;
@@ -1607,9 +1797,15 @@ ir::MemberExpression *ParserImpl::ParsePrivatePropertyAccess(ir::Expression *pri
     return memberExpr;
 }
 
-ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExpr, bool isOptional)
+ir::MemberExpression *ParserImpl::ParsePropertyAccess(ir::Expression *primaryExpr, lexer::SourcePosition periodPos,
+                                                      bool isOptional)
 {
     ir::Identifier *ident = ExpectIdentifier(true);
+    if (ident->IsBrokenExpression()) {
+        // set the end of '.' as broken token
+        ident->SetRange({periodPos, periodPos});
+    }
+    ident->SetRange({periodPos, ident->Range().end});
     if (program_->Extension() == util::gen::extension::ETS && ident->Name().Is("prototype")) {
         LogError(diagnostic::PROTOTYPE_ACCESS);
     }
@@ -1698,13 +1894,14 @@ ir::Expression *ParserImpl::ParsePostPrimaryExpressionDot(ir::Expression *return
             return ParseOptionalChain(returnExpression);
         }
         case lexer::TokenType::PUNCTUATOR_PERIOD: {
+            auto periodPos = Lexer()->GetToken().End();
             lexer_->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);  // eat period
 
             if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_HASH_MARK) {
                 return ParsePrivatePropertyAccess(returnExpression);
             }
 
-            return ParsePropertyAccess(returnExpression);
+            return ParsePropertyAccess(returnExpression, periodPos);
         }
         default: {
             return nullptr;
@@ -2086,13 +2283,13 @@ ir::Expression *ParserImpl::ParsePropertyKey(ExpressionParseFlags flags)
     }
 }
 
-ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyKind, const ParserStatus *methodStatus,
+ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind propertyKind, const ParserStatus methodStatus,
                                                ExpressionParseFlags flags)
 {
-    bool isMethod = (*methodStatus & ParserStatus::FUNCTION) != 0;
-    bool inPattern = (flags & ExpressionParseFlags::MUST_BE_PATTERN) != 0;
+    bool isMethod = (methodStatus & ParserStatus::FUNCTION) != 0U;
+    bool inPattern = (flags & ExpressionParseFlags::MUST_BE_PATTERN) != 0U;
 
-    if (!isMethod && !ir::Property::IsAccessorKind(*propertyKind)) {
+    if (!isMethod && !ir::Property::IsAccessorKind(propertyKind)) {
         // If the actual property is not getter/setter nor method, the following
         // token must be ':'
         if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_COLON) {
@@ -2118,9 +2315,9 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
         LogError(diagnostic::OBJECT_PATTER_CONTAIN_METHODS);
     }
 
-    ParserStatus newStatus = *methodStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_SUPER;
+    ParserStatus newStatus = methodStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_SUPER;
 
-    if (*propertyKind != ir::PropertyKind::SET) {
+    if (propertyKind != ir::PropertyKind::SET) {
         newStatus |= ParserStatus::NEED_RETURN_TYPE;
     }
 
@@ -2134,11 +2331,11 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
     ES2PANDA_ASSERT(value != nullptr);
     value->SetRange(methodDefinitonNode->Range());
 
-    if (*propertyKind == ir::PropertyKind::SET && paramsSize != 1) {
+    if (propertyKind == ir::PropertyKind::SET && paramsSize != 1) {
         LogError(diagnostic::SETTER_FORMAL_PARAMS);
     }
 
-    if (*propertyKind == ir::PropertyKind::GET && paramsSize != 0) {
+    if (propertyKind == ir::PropertyKind::GET && paramsSize != 0) {
         LogError(diagnostic::GETTER_FORMAL_PARAMS);
     }
 
@@ -2146,7 +2343,7 @@ ir::Expression *ParserImpl::ParsePropertyValue(const ir::PropertyKind *propertyK
 }
 
 // NOLINTNEXTLINE(google-default-arguments)
-ir::Expression *ParserImpl::ParsePropertyDefinition([[maybe_unused]] ExpressionParseFlags flags)
+ir::Expression *ParserImpl::ParsePropertyDefinition(ExpressionParseFlags const flags)
 {
     ir::PropertyKind propertyKind = ir::PropertyKind::INIT;
     ParserStatus methodStatus = ParserStatus::NO_OPTS;
@@ -2180,7 +2377,7 @@ ir::Expression *ParserImpl::ParsePropertyDefinition([[maybe_unused]] ExpressionP
         LogError(diagnostic::UNEXPECTED_ID);
     }
 
-    ir::Expression *value = ParsePropertyValue(&propertyKind, &methodStatus, flags);
+    ir::Expression *value = ParsePropertyValue(propertyKind, methodStatus, flags);
     ES2PANDA_ASSERT(value != nullptr);
     lexer::SourcePosition end = value->End();
 
@@ -2275,7 +2472,7 @@ ir::ObjectExpression *ParserImpl::ParseObjectExpression(ExpressionParseFlags fla
             !objectExpression->ConvertibleToObjectPattern()) {
             LogError(diagnostic::INVALID_LEFT_SIDE_ARRAY_DESTRUCTURING, {}, objectExpression->Start());
         } else if (!inPattern && lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-            ir::ValidationInfo info = objectExpression->ValidateExpression();
+            ir::ValidationInfo info = ValidateExpression(objectExpression);
             if (info.Fail()) {
                 LogSyntaxError(info.msg.Utf8(), info.pos);
             }
@@ -2461,4 +2658,5 @@ ir::FunctionExpression *ParserImpl::ParseFunctionExpression(ParserStatus newStat
 
     return funcExpr;
 }
+
 }  // namespace ark::es2panda::parser

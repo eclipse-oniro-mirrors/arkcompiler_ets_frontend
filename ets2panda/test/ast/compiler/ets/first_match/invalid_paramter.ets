@@ -33,5 +33,6 @@ function main() {
     a.foo111(new A(), new A(), new A())
 }
 
-/* @@? 27:34 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 27:40 Error TypeError: overloaded name must refer to an accessible method. */
+
+/* @@? 27:34 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 27:40 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */

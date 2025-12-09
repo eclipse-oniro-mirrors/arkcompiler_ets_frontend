@@ -127,7 +127,7 @@ export default tseslint.config(
       '@stylistic/eol-last': ['error', 'always'],
       '@stylistic/no-confusing-arrow': 'error',
       '@stylistic/no-floating-decimal': 'error',
-      '@/func-call-spacing': ['error', 'never'],
+      '@stylistic/function-call-spacing': ['error', 'never'],
       '@stylistic/function-call-argument-newline': ['error', 'consistent'],
       '@stylistic/function-paren-newline': ['error', 'consistent'],
       '@stylistic/generator-star-spacing': ['error', { before: true, after: false }],
@@ -197,7 +197,16 @@ export default tseslint.config(
       '@stylistic/nonblock-statement-body-position': ['error', 'beside'],
       '@stylistic/object-curly-newline': ['error', { consistent: true }],
       '@stylistic/object-curly-spacing': ['error', 'always'],
-      '@stylistic/operator-linebreak': ['error', 'after'],
+      '@stylistic/operator-linebreak': [
+        'error',
+        'after',
+        {
+          overrides: {
+            '|': 'ignore',
+            '&': 'ignore'
+          }
+        }
+      ],
       // disable due to conflict with required rule 'lines-around-comment'
       '@stylistic/padded-blocks': 'off',
       '@stylistic/quotes': ['error', 'single'],
@@ -206,7 +215,15 @@ export default tseslint.config(
       '@stylistic/semi-spacing': ['error', { before: false, after: true }],
       '@stylistic/semi-style': ['error', 'last'],
       '@stylistic/space-before-blocks': ['error', 'always'],
-      '@stylistic/space-before-function-paren': ['error', 'never'],
+      '@stylistic/space-before-function-paren': [
+        'error',
+        {
+          anonymous: 'always',
+          named: 'never',
+          asyncArrow: 'always',
+          catch: 'always'
+        }
+      ],
       '@stylistic/space-in-parens': ['error', 'never'],
       '@stylistic/space-infix-ops': ['error'],
       '@stylistic/space-unary-ops': ['error', { words: true, nonwords: false, overrides: {} }],

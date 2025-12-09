@@ -12,13 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace ns1{
-    export let num = 1
-}
-
-
 namespace ns2{
     export let num = 2
 }
 
-export {ns1 as default, ns2 as ns}
+export {ns2 as ns}

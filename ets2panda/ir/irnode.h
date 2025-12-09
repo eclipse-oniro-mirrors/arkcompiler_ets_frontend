@@ -22,7 +22,7 @@
 #include "lexer/token/sourceLocation.h"
 #include "util/es2pandaMacros.h"
 #include "util/ustring.h"
-#include "utils/span.h"
+#include "libarkbase/utils/span.h"
 
 #include <cstdint>
 #include <list>
@@ -46,7 +46,8 @@ enum class OperandKind {
     IMM,
     ID,
     STRING_ID,
-    LABEL
+    LABEL,
+    NONE
 };
 
 enum class OperandType {
@@ -144,6 +145,17 @@ public:
     }
 
     static constexpr auto MAX_REG_OPERAND = 5;
+    virtual OperandType GetOperandRegType([[maybe_unused]] size_t idx) const = 0;
+    virtual OperandType GetParamTypeAt(size_t idx) const
+    {
+        return GetOperandRegType(idx);
+    }
+    virtual uint32_t GetRegLimit() const noexcept = 0;
+    virtual OperandKind GetOperandRegKind(size_t idx) const = 0;
+    virtual bool FirstArgIsThis() const noexcept
+    {
+        return false;
+    }
 
     virtual Formats GetFormats() const = 0;
     virtual size_t Registers([[maybe_unused]] std::array<VReg *, MAX_REG_OPERAND> *regs) = 0;
@@ -161,9 +173,33 @@ public:
         isDevirtual_ = true;
     }
 
+    // for non-range ins, realRegCount_ is the number of non-dummy regs contained in the ins
+    // for range ins, realRegCount_ is the number of regs contained in the ins and range regs
+    uint32_t GetRealRegCount() const
+    {
+        return realRegCount_;
+    }
+
+    void SetRealRegCount(uint32_t s)
+    {
+        realRegCount_ = s;
+    }
+
+    bool IsRangeInst() const
+    {
+        return isRange_;
+    }
+
+    void SetIsRangeInst()
+    {
+        isRange_ = true;
+    }
+
 private:
     const ir::AstNode *node_;
     bool isDevirtual_ = false;
+    uint32_t realRegCount_ = 0;
+    bool isRange_ = false;
 };
 }  // namespace ark::es2panda::compiler
 

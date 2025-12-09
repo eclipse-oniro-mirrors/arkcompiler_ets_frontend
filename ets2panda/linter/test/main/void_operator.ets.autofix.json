@@ -534,8 +534,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1184,
-                    "end": 1229,
+                    "start": 1182,
+                    "end": 1227,
                     "replacementText": "(() => {\n    (function () {\n        console.log('foo');\n    });\n    return undefined;\n})()",
                     "line": 61,
                     "column": 3,
@@ -555,8 +555,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1189,
-                    "end": 1229,
+                    "start": 1187,
+                    "end": 1227,
                     "replacementText": "(() => {\n    console.log('foo');\n})",
                     "line": 61,
                     "column": 8,
@@ -576,8 +576,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1234,
-                    "end": 1288,
+                    "start": 1232,
+                    "end": 1286,
                     "replacementText": "(() => {\n    (function localFun() {\n        console.log('foo');\n    });\n    return undefined;\n})()",
                     "line": 65,
                     "column": 3,
@@ -597,8 +597,8 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1239,
-                    "end": 1288,
+                    "start": 1237,
+                    "end": 1286,
                     "replacementText": "(() => {\n    console.log('foo');\n})",
                     "line": 65,
                     "column": 8,
@@ -618,8 +618,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1295,
-                    "end": 1308,
+                    "start": 1291,
+                    "end": 1304,
                     "replacementText": "(() => {\n    (class {\n    });\n    return undefined;\n})()",
                     "line": 69,
                     "column": 3,
@@ -649,8 +649,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1313,
-                    "end": 1336,
+                    "start": 1309,
+                    "end": 1332,
                     "replacementText": "(() => {\n    (class localClass {\n    });\n    return undefined;\n})()",
                     "line": 71,
                     "column": 3,
@@ -670,6 +670,37 @@
             "problem": "ClassExpression",
             "suggest": "",
             "rule": "Class literals are not supported (arkts-no-class-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 19,
+            "endLine": 75,
+            "endColumn": 23,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1397,
+                    "end": 1404,
+                    "replacementText": "(() => {\n          (0);\n          return undefined;\n        })()",
+                    "line": 75,
+                    "column": 19,
+                    "endLine": 75,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 10,
+            "endLine": 74,
+            "endColumn": 13,
+            "problem": "StrictDiagnostic",
+            "suggest": "Not all code paths return a value.",
+            "rule": "Not all code paths return a value.",
             "severity": "ERROR"
         }
     ]

@@ -15,5 +15,6 @@
 
 #a
 
-/* @@? 20:1 Error SyntaxError: Unexpected private identifier. */
-/* @@? 20:1 Error SyntaxError: Unexpected token 'end of stream'. */
+
+/* @@? 20:78 Error Syntax error ESY0047: Unexpected private identifier. */
+/* @@? 20:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

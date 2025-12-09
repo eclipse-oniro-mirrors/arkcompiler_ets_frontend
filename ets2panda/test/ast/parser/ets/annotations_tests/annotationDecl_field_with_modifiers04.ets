@@ -18,5 +18,6 @@
 }
 
 
-/* @@? 16:5 Error SyntaxError: Annotation property can not have access modifiers.  */
 
+
+/* @@? 16:5 Error Syntax error ESY0024: Annotation property can not have access modifiers. */

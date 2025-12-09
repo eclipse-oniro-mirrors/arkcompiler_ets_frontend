@@ -19,7 +19,6 @@
 #include "checker/types/type.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsUnionType.h"
-#include "checker/types/gradualType.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/ets/etsModule.h"
 #include "parser/program/program.h"
@@ -55,8 +54,7 @@ bool IsBooleanType(const ir::AstNode *ast)
         return false;
     }
 
-    auto type =
-        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
+    auto type = typedAst->TsType();
     if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
         return type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_BOOLEAN);
     }
@@ -79,8 +77,7 @@ bool IsValidTypeForBinaryOp(const ir::AstNode *ast, bool isBitwise)
         return false;
     }
 
-    auto type =
-        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
+    auto type = typedAst->TsType();
     if (IsBooleanType(ast)) {
         return isBitwise;
     }
@@ -115,8 +112,7 @@ bool IsStringType(const ir::AstNode *ast)
         return false;
     }
 
-    auto type =
-        typedAst->TsType()->IsGradualType() ? typedAst->TsType()->AsGradualType()->GetBaseType() : typedAst->TsType();
+    auto type = typedAst->TsType();
     if (type->HasTypeFlag(checker::TypeFlag::ETS_OBJECT)) {
         return type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::STRING) ||
                type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_STRING);
@@ -155,9 +151,7 @@ const checker::Type *GetClassDefinitionType(const ir::AstNode *ast)
     if (!tmpNode->IsClassDefinition()) {
         return nullptr;
     }
-    auto *classDefinition = tmpNode->AsClassDefinition();
-    return classDefinition->TsType()->IsGradualType() ? classDefinition->TsType()->AsGradualType()->GetBaseType()
-                                                      : classDefinition->TsType();
+    return tmpNode->AsClassDefinition()->TsType();
 }
 
 const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast)
@@ -169,10 +163,7 @@ const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast)
     if (!tmpNode->IsTSInterfaceDeclaration()) {
         return nullptr;
     }
-    auto *tsInterfaceDeclaration = tmpNode->AsTSInterfaceDeclaration();
-    return tsInterfaceDeclaration->TsType()->IsGradualType()
-               ? tsInterfaceDeclaration->TsType()->AsGradualType()->GetBaseType()
-               : tsInterfaceDeclaration->TsType();
+    return tmpNode->AsTSInterfaceDeclaration()->TsType();
 }
 
 bool ValidateMethodAccessForClass(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,

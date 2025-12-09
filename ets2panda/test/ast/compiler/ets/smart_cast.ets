@@ -24,5 +24,6 @@ function baz(p: "Double") {
     let s: "Object" = p != undefined ? p : "Double"// should be cte
 }
 
-/* @@? 24:23 Error TypeError: Type '"Double"' cannot be assigned to type '"Object"' */
 
+
+/* @@? 24:23 Error Semantic error ESE0318: Type '"Double"' cannot be assigned to type '"Object"' */

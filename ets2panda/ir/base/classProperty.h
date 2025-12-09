@@ -79,6 +79,7 @@ public:
 
     void Dump(ir::AstDumper *dumper) const override;
     void Dump(ir::SrcDumper *dumper) const override;
+    void ForceDump(ir::SrcDumper *dumper) const;
     void Compile(compiler::PandaGen *pg) const override;
     void Compile(compiler::ETSGen *etsg) const override;
     checker::Type *Check(checker::TSChecker *checker) override;

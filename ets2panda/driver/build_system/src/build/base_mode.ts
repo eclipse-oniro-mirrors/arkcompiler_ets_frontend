@@ -17,93 +17,88 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
-import { initKoalaModules } from '../init/init_koala_modules';
 
+import { Ets2panda } from '../util/ets2panda'
 import {
-    ABC_SUFFIX,
     ARKTSCONFIG_JSON_FILE,
-    DECL_ETS_SUFFIX,
-    DECL_TS_SUFFIX,
     LANGUAGE_VERSION,
     LINKER_INPUT_FILE,
     MERGED_ABC_FILE,
-    STATIC_RECORD_FILE,
-    STATIC_RECORD_FILE_CONTENT,
-    TS_SUFFIX,
-    DECL_FILE_MAP_NAME
+    CLUSTER_FILES_TRESHOLD,
+    DECL_ETS_SUFFIX,
+    MERGED_INTERMEDIATE_FILE,
+    ENABLE_CLUSTERS,
+    DEFAULT_WORKER_NUMS
 } from '../pre_define';
 import {
-    changeDeclgenFileExtension,
-    changeFileExtension,
-    createFileIfNotExists,
     ensurePathExists,
     isMac,
-    isMixCompileProject,
-    checkDependencyModuleInfoCorrectness,
-    formEts2pandaCmd,
+    checkDependencyModuleInfoCorrectness
 } from '../util/utils';
 import {
-    PluginDriver,
-    PluginHook
-} from '../plugins/plugins_driver';
-import {
     Logger,
-    LogDataFactory
+    LogDataFactory,
 } from '../logger';
 import { DependencyAnalyzer } from '../dependency_analyzer';
 import { ErrorCode, DriverError } from '../util/error';
 import {
     BuildConfig,
     BUILD_MODE,
-    CompileFileInfo,
     DependencyModuleConfig,
     ModuleInfo,
     ProcessCompileTask,
+    ProcessDeclgenV1Task,
     CompileJobInfo,
     CompileJobType,
-    JobInfo,
-    DeclFileInfo
+    DeclgenV1JobInfo,
+    ES2PANDA_MODE,
+    OHOS_MODULE_TYPE
 } from '../types';
 import {
     ArkTSConfigGenerator
 } from './generate_arktsconfig';
-import { KitImportTransformer } from '../plugins/KitImportTransformer';
 import {
     BS_PERF_FILE_NAME,
-    CompileSingleData,
-    RECORDE_COMPILE_NODE,
-    RECORDE_MODULE_NODE,
-    RECORDE_RUN_NODE
-} from '../util/record_time_mem';
+    StatisticsRecorder,
+} from '../util/statsRecorder';
 import {
     handleCompileProcessWorkerExit,
     handleDeclgenWorkerExit
 } from '../util/worker_exit_handler';
 import {
-    WorkerInfo,
+    DriverProcessFactory,
     TaskManager,
-    DriverProcess,
-    DriverThread
 } from '../util/TaskManager';
+import { Graph, GraphNode } from '../util/graph';
 
-import { dotGraphDump } from '../util/dotGraphDump'
+enum BuildSystemEvent {
+    COLLECT_MODULES = 'Collect module infos',
+    GEN_CONFIGS = 'Generate arktsconfigs for modules',
+    PROCESS_ENTRY_FILES = 'Process entry files',
+    BACKWARD_COMPAT = 'Backward compatibility stuff',
+    DEPENDENCY_ANALYZER = 'Dependency analyzer',
+    RUN_SIMULTANEOUS = 'Run simultaneous',
+    RUN_PARALLEL = 'Run parallel',
+    RUN_SEQUENTIAL = 'Run sequential',
+    RUN_LINKER = 'Run linker',
+    DECLGEN_V1_SEQUENTIAL = 'Generate v1 declaration files (sequential)',
+    DECLGEN_V1_PARALLEL = 'Generate v1 declaration files (parallel)',
+}
+
+function formEvent(event: BuildSystemEvent): string {
+    return '[Build system] ' + event;
+}
 
 export abstract class BaseMode {
     private buildConfig: BuildConfig;
-    public entryFiles: Set<string>;
-    public fileToModule: Map<string, ModuleInfo>;
-    public moduleInfos: Map<string, ModuleInfo>;
-    public mergedAbcFile: string;
-    public logger: Logger;
-    public depAnalyzer: DependencyAnalyzer;
-    public abcFiles: Set<string>;
-    public jobs: Record<string, CompileJobInfo>;
-    public jobQueue: CompileJobInfo[];
-    public completedJobQueue: CompileJobInfo[];
-    // NOTE: should be Ets2panda Wrapper Module
-    // NOTE: to be refactored
-    public koalaModule: any;
-    public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
+    private entryFiles: Set<string>;
+    private fileToModule: Map<string, ModuleInfo>;
+    private moduleInfos: Map<string, ModuleInfo>;
+    private abcFiles: Set<string>;
+    protected mergedAbcFile: string;
+    protected logger: Logger;
+    protected readonly statsRecorder: StatisticsRecorder;
+    private readonly moduleType: OHOS_MODULE_TYPE;
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -112,218 +107,81 @@ export abstract class BaseMode {
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
         this.logger = Logger.getInstance();
-        this.depAnalyzer = new DependencyAnalyzer(this.buildConfig);
         this.abcFiles = new Set<string>();
-        this.jobs = {};
-        this.jobQueue = [];
-        this.completedJobQueue = [];
-        this.koalaModule = initKoalaModules(buildConfig)
+        this.moduleType = buildConfig.moduleType;
+
+        this.statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            this.recordType,
+            `Build system with mode: ${this.es2pandaMode}`
+        );
 
         this.processBuildConfig();
+        this.statsRecorder.record(formEvent(BuildSystemEvent.BACKWARD_COMPAT));
         this.backwardCompatibilityWorkaroundStub()
-        this.loadDeclFileMap();
     }
 
-
-    public loadDeclFileMap(): void {
-        const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
-        if (!fs.existsSync(declMapFile)) {
-            return;
-        }
-
-        try {
-            const content = fs.readFileSync(declMapFile, 'utf-8');
-            const data: Record<string, DeclFileInfo> = JSON.parse(content);
-
-            for (const [key, value] of Object.entries(data)) {
-                this.declFileMap.set(key, value);
-            }
-        } catch (error) {
-            this.logger.printInfo('Failed to load decl file map, will create new one.');
-        }
-    }
-
-
-    public saveDeclFileMap(): void {
-        const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
-        const data: Record<string, DeclFileInfo> = {};
-
-        this.declFileMap.forEach((value, key) => {
-            data[key] = value;
-        });
-
-        ensurePathExists(declMapFile);
-        fs.writeFileSync(declMapFile, JSON.stringify(data, null, 2));
-    }
-
-
-    public updateDeclFileMap(fileInfo: CompileFileInfo): void {
-        const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
-
-        try {
-
-            const declStat = fs.statSync(declEtsOutputPath);
-            const glueCodeStat = fs.statSync(glueCodeOutputPath);
-
-            this.declFileMap.set(fileInfo.inputFilePath, {
-                delFilePath: declEtsOutputPath,
-                declLastModified: declStat.mtimeMs,
-                glueCodeFilePath: glueCodeOutputPath,
-                glueCodeLastModified: glueCodeStat.mtimeMs,
-                sourceFilePath: fileInfo.inputFilePath
-            });
-
-            this.logger.printInfo(`Updated decl file map for ${fileInfo.inputFilePath} with timestamp: ${declStat.mtimeMs}`);
-        } catch (error) {
-            this.logger.printInfo(`Failed to update decl file map for ${fileInfo.inputFilePath}`);
-        }
-    }
-
-
-    public getOutputFilePaths(fileInfo: CompileFileInfo): { declEtsOutputPath: string, glueCodeOutputPath: string } {
-        const moduleInfo: ModuleInfo = this.moduleInfos.get(fileInfo.inputFilePath)!;
-        const filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, fileInfo.inputFilePath);
-
-        const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenV1OutPath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            DECL_ETS_SUFFIX
-        );
-        const glueCodeOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenBridgeCodePath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            TS_SUFFIX
-        );
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(glueCodeOutputPath);
-
-        return { declEtsOutputPath, glueCodeOutputPath };
-    }
-
-    public needsBackup(fileInfo: CompileFileInfo): { needsDeclBackup: boolean; needsGlueCodeBackup: boolean } {
-        const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
-
-        let needsDeclBackup = false;
-        let needsGlueCodeBackup = false;
-
-        try {
-            const declInfo = this.declFileMap.get(fileInfo.inputFilePath);
-
-            if (declInfo && fs.existsSync(declEtsOutputPath)) {
-                const declModified = fs.statSync(declEtsOutputPath).mtimeMs;
-                if (declModified !== declInfo.declLastModified) {
-                    needsDeclBackup = true;
-                }
-            }
-
-            if (declInfo && fs.existsSync(glueCodeOutputPath)) {
-                const glueCodeModified = fs.statSync(glueCodeOutputPath).mtimeMs;
-                if (declInfo.glueCodeLastModified && glueCodeModified !== declInfo.glueCodeLastModified) {
-                    needsGlueCodeBackup = true;
-                }
-            }
-        } catch (error) {
-            needsDeclBackup = true;
-            needsGlueCodeBackup = true;
-        }
-
-        return { needsDeclBackup, needsGlueCodeBackup };
-    }
-
-    public backupFiles(fileInfo: CompileFileInfo, backupDecl: boolean = true, backupGlueCode: boolean = true): void {
-        const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(fileInfo);
-
-        if (backupDecl && fs.existsSync(declEtsOutputPath)) {
-            const delEtsbackupPath = `${declEtsOutputPath}.backup`;
-            fs.copyFileSync(declEtsOutputPath, delEtsbackupPath);
-        }
-
-        if (backupGlueCode && fs.existsSync(glueCodeOutputPath)) {
-            const glueCodeBackupPath = `${glueCodeOutputPath}.backup`;
-            fs.copyFileSync(glueCodeOutputPath, glueCodeBackupPath);
-        }
-    }
-
-
-    public preprocessBackupForParallel(): void {
-        this.logger.printInfo('Starting backup preprocessing for parallel generation');
-
-
-        this.completedJobQueue.forEach((jobInfo: CompileJobInfo) => {
-            try {
-                const backupNeeds = this.needsBackup(jobInfo.compileFileInfo);
-
-                if (backupNeeds.needsDeclBackup || backupNeeds.needsGlueCodeBackup) {
-                    // 使用统一的备份方法
-                    this.backupFiles(jobInfo.compileFileInfo);
-                }
-            } catch (error) {
-                this.logger.printInfo(`Backup preprocessing failed for ${jobInfo.compileFileInfo.inputFilePath}: ${error}`);
-            }
-        });
-    }
-
-
-
-    public get abcLinkerPath() {
+    public get abcLinkerPath(): string | undefined {
         return this.buildConfig.abcLinkerPath
     }
 
-    public get hasMainModule() {
+    public get hasMainModule(): boolean {
         return this.buildConfig.hasMainModule
     }
 
-    public get useEmptyPackage() {
+    public get useEmptyPackage(): boolean {
         return this.buildConfig.useEmptyPackage ?? false
     }
 
-    public get frameworkMode() {
+    public get frameworkMode(): boolean {
         return this.buildConfig.frameworkMode ?? false
     }
 
-    public get genDeclAnnotations() {
+    public get genDeclAnnotations(): boolean {
         return this.buildConfig.genDeclAnnotations ?? true
     }
 
-    public get skipDeclCheck() {
+    public get skipDeclCheck(): boolean {
         return this.buildConfig.skipDeclCheck ?? true;
     }
 
-    public get es2pandaMode() {
+    public get es2pandaMode(): ES2PANDA_MODE {
         return this.buildConfig.es2pandaMode
     }
 
-    public get es2pandaDepGraphDotDump() {
-        return this.buildConfig.es2pandaDepGraphDotDump
+    public get dumpDependencyGraph(): boolean | undefined {
+        return this.buildConfig.dumpDependencyGraph
     }
 
-    public get entryFile() {
+    public get entryFile(): string {
         return this.buildConfig.entryFile;
     }
 
-    public get mainPackageName() {
+    public get mainPackageName(): string {
         return this.buildConfig.packageName;
     }
 
-    public get mainModuleRootPath() {
+    public get mainModuleRootPath(): string {
         return this.buildConfig.moduleRootPath;
     }
 
-    public get mainModuleType() {
+    public get mainModuleType(): string {
         return this.buildConfig.moduleType;
     }
 
-    public get outputDir() {
+    public get outputDir(): string {
         return this.buildConfig.loaderOutPath;
     }
 
-    public get cacheDir() {
+    public get cacheDir(): string {
         return this.buildConfig.cachePath;
     }
 
-    public get dependencyModuleList() {
+    public get dependencyModuleList(): DependencyModuleConfig[] {
         return this.buildConfig.dependencyModuleList;
     }
 
-    public get enableDeclgenEts2Ts() {
+    public get enableDeclgenEts2Ts(): boolean {
         return this.buildConfig.enableDeclgenEts2Ts;
     }
 
@@ -335,11 +193,11 @@ export abstract class BaseMode {
         this.buildConfig.isBuildConfigModified = modified;
     }
 
-    public get byteCodeHar() {
+    public get byteCodeHar(): boolean | undefined {
         return this.buildConfig.byteCodeHar;
     }
 
-    public get mainSourceRoots() {
+    public get mainSourceRoots(): string[] {
         return this.buildConfig.sourceRoots;
     }
 
@@ -355,222 +213,138 @@ export abstract class BaseMode {
         return this.buildConfig.declgenBridgeCodePath;
     }
 
-    public get isDebug() {
+    public get isDebug(): boolean {
         return this.buildConfig.buildMode === BUILD_MODE.DEBUG;
     }
 
-    private compile(job: CompileJobInfo) {
-        let errorStatus = false;
-        this.logger.printDebug("compile START")
-        this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
-
-        const { inputFilePath, outputFilePath }: CompileFileInfo = job.compileFileInfo;
-        const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
-        ensurePathExists(outputDeclFilePath);
-
-        const source = fs.readFileSync(inputFilePath, 'utf-8');
-
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job, this.isDebug)
-        this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
-
-        const { arkts, arktsGlobal } = this.koalaModule;
-
-        try {
-            arktsGlobal.filePath = inputFilePath;
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createFromString(source);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printDebug('es2panda proceedToState parsed');
-            let ast = arkts.EtsScript.fromContext();
-            if (this.buildConfig.aliasConfig && Object.keys(this.buildConfig.aliasConfig).length > 0) {
-                // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
-                this.logger.printDebug('Transforming import statements with alias config');
-                let transformAst = new KitImportTransformer(
-                    arkts,
-                    arktsGlobal.compilerContext.program,
-                    this.buildConfig.buildSdkPath,
-                    this.buildConfig.aliasConfig
-                ).transform(ast);
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
-            } else {
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            }
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
-
-            if (job.type & CompileJobType.DECL) {
-                // Generate 1.2 declaration files(a temporary solution while binary import not pushed)
-                arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
-                this.logger.printDebug("compile FINISH [DECL]")
-            }
-            if (job.type & CompileJobType.ABC) {
-                ast = arkts.EtsScript.fromContext();
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-                PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
-
-                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-                this.logger.printInfo('es2panda bin generated');
-                this.logger.printDebug("compile FINISH [ABC]")
-            }
-        } catch (error) {
-            errorStatus = true;
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                        'Compile abc files failed.',
-                        error.message,
-                        inputFilePath
-                    )
-                );
-            }
-        } finally {
-            PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-            if (!errorStatus) {
-                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            }
-            arkts.destroyConfig(arktsGlobal.config);
-        }
+    public get dumpPerf(): boolean | undefined {
+        return this.buildConfig.dumpPerf;
     }
 
+    public get recordType(): 'OFF' | 'ON' | undefined {
+        return this.buildConfig.recordType
+    }
+
+    private compile(id: string, job: CompileJobInfo): boolean {
+        job.type = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : job.type;
+        const ets2panda = Ets2panda.getInstance();
+        let errOccurred = false;
+        ets2panda.initalize();
+        try {
+            ets2panda.compile(id, job, this.isDebug)
+        } catch (error) {
+            if (error instanceof DriverError) {
+                this.logger.printError(error.logData);
+                errOccurred = true;
+            }
+        } finally {
+            ets2panda.finalize()
+        }
+
+        return !errOccurred;
+    }
 
     public async run(): Promise<void> {
-        this.jobs = this.depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-        if (this.es2pandaDepGraphDotDump) {
-            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(this.jobs), 'utf-8')
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const allOutputs: string[] = [];
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
+        if (!buildGraph.hasNodes()) {
+            this.logger.printWarn('Nothing to compile. Exiting...')
+            return;
         }
 
-        this.initCompileQueues();
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SEQUENTIAL));
 
-        while (this.haveQueuedJobs()) {
-            let job: CompileJobInfo = this.consumeJob()!
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
+
+        let success: boolean = true;
+        const tasks: { id: string, job: CompileJobInfo }[] = Graph.topologicalSort(buildGraph)
+            .map((nodeId) => { return buildGraph.getNodeById(nodeId); })
+            .map((node) => { return { id: node.id, job: node.data }; })
+
+        while (tasks.length > 0) {
+            const task = tasks.shift()!;
+            const job = task.job;
+            const id = task.id;
             if (job.fileList.length > 1) {
                 // Compile cycle simultaneous
-                this.logger.printDebug("Compiling cycle....")
+                this.logger.printDebug('Compiling cycle....')
                 this.logger.printDebug(`file list: \n${job.fileList.join('\n')}`)
-                this.compileSimultaneous(job)
+                const res = this.compileSimultaneous(id, job)
+                success = res && success;
             } else {
-                this.compile(job)
+                const res = this.compile(id, job)
+                success = res && success;
             }
-            this.dispatchNextJob(job)
         }
-        if (this.completedJobQueue.length > 0) {
-            this.mergeAbcFiles();
+
+        Ets2panda.destroyInstance();
+
+        if (!success) {
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                'One or more errors occured.'
+            );
+            this.logger.printError(logData);
+            throw new Error('Run failed.');
         }
+
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles(allOutputs);
     }
 
-    public compileSimultaneous(job: CompileJobInfo): void {
-        let errorStatus = false;
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_PARSE);
-
-        this.logger.printDebug(`job ${JSON.stringify(job, null, 1)}`)
-
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job, this.isDebug, true)
-        this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
-
-        let { arkts, arktsGlobal } = this.koalaModule;
+    private compileSimultaneous(id: string, job: CompileJobInfo): boolean {
+        job.type = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : job.type;
+        const ets2panda = Ets2panda.getInstance(this.buildConfig);
+        ets2panda.initalize();
+        let errOccurred = false;
         try {
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createContextGenerateAbcForExternalSourceFiles(job.fileList);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState parsed');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_PARSE, RECORDE_COMPILE_NODE.PROCEED_PARSE);
-
-            let ast = arkts.EtsScript.fromContext();
-
-            if (this.buildConfig.aliasConfig && Object.keys(this.buildConfig.aliasConfig).length > 0) {
-                // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
-                this.logger.printInfo('Transforming import statements with alias config');
-                let transformAst = new KitImportTransformer(
-                    arkts,
-                    arktsGlobal.compilerContext.program,
-                    this.buildConfig.buildSdkPath,
-                    this.buildConfig.aliasConfig
-                ).transform(ast);
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
-            } else {
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            }
-
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-            this.logger.printInfo('plugin parsed finished');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PROCEED_CHECK, RECORDE_COMPILE_NODE.PLUGIN_PARSE);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-            this.logger.printInfo('es2panda proceedToState checked');
-            compileSingleData.record(RECORDE_COMPILE_NODE.PLUGIN_CHECK, RECORDE_COMPILE_NODE.PROCEED_CHECK);
-
-            // NOTE: workaround to build arkoala arkui
-            // NOTE: to be refactored
-            if (job.type & CompileJobType.DECL) {
-                for (const file of job.fileList) {
-                    const module = this.fileToModule.get(file)!
-                    const declEtsOutputPath: string = changeFileExtension(
-                        path.resolve(this.cacheDir, module.packageName,
-                            path.relative(module.moduleRootPath, file)
-                        ),
-                        DECL_ETS_SUFFIX
-                    )
-
-                    ensurePathExists(declEtsOutputPath);
-
-                    arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
-                }
-            }
-
-            if (job.type & CompileJobType.ABC) {
-                ast = arkts.EtsScript.fromContext();
-                PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-                PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-                this.logger.printInfo('plugin checked finished');
-                compileSingleData.record(RECORDE_COMPILE_NODE.BIN_GENERATE, RECORDE_COMPILE_NODE.PLUGIN_CHECK);
-
-                arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-                this.logger.printInfo('es2panda bin generated');
-                compileSingleData.record(RECORDE_COMPILE_NODE.CFG_DESTROY, RECORDE_COMPILE_NODE.BIN_GENERATE);
-            }
+            ets2panda.compileSimultaneous(id, job, this.isDebug, this.dumpPerf)
         } catch (error) {
-            errorStatus = true;
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                        'Compile abc files failed.',
-                        error.message,
-                        job.compileFileInfo.inputFilePath
-                    )
-                );
+            if (error instanceof DriverError) {
+                this.logger.printError(error.logData);
+                errOccurred = true;
             }
         } finally {
-            if (!errorStatus) {
-                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+            ets2panda.finalize()
+        }
+
+        return !errOccurred;
+    }
+
+    private collectAbcFileFromByteCodeHar(): void {
+        // the abc of the dependent bytecode har needs to be included when compiling hsp/hap
+        // but it's not required when compiling har
+        if (this.buildConfig.moduleType === OHOS_MODULE_TYPE.HAR) {
+            return;
+        }
+        for (const [packageName, moduleInfo] of this.moduleInfos) {
+            if (!(moduleInfo.moduleType === OHOS_MODULE_TYPE.HAR && moduleInfo.byteCodeHar)) {
+                continue;
             }
-            PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-            arkts.destroyConfig(arktsGlobal.config);
-            compileSingleData.record(RECORDE_COMPILE_NODE.END, RECORDE_COMPILE_NODE.CFG_DESTROY);
-            compileSingleData.writeSumSingle(path.resolve());
+            if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
+                continue;
+            }
+            if (!moduleInfo.abcPath) {
+                const logData = LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_ABC_FILE_MISSING_IN_BCHAR, `abc file not found in bytecode har ${packageName}. `);
+                this.logger.printError(logData);
+                continue;
+            }
+            if (!fs.existsSync(moduleInfo.abcPath)) {
+                const logData = LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_ABC_FILE_NOT_EXIST_IN_BCHAR, `${moduleInfo.abcPath} does not exist. `);
+                this.logger.printErrorAndExit(logData);
+            }
+            this.abcFiles.add(moduleInfo.abcPath);
         }
     }
 
-    private mergeAbcFiles(): void {
+    private mergeAbcFiles(outPuts: string[] = []): void {
+        this.collectAbcFileFromByteCodeHar();
         let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
-        let linkerInputContent: string = '';
-        this.completedJobQueue.forEach((job: CompileJobInfo) => {
-            if (job.compileFileInfo.outputFilePath.endsWith(ABC_SUFFIX)) {
-                linkerInputContent += job.compileFileInfo.outputFilePath + os.EOL;
-            }
-        })
-
+        let allFiles: string[] = outPuts.concat(Array.from(this.abcFiles));
+        let linkerInputContent: string = allFiles.join(os.EOL);
         fs.writeFileSync(linkerInputFile, linkerInputContent);
         let abcLinkerCmd = ['"' + this.abcLinkerPath + '"']
         abcLinkerCmd.push('--strip-unused');
@@ -585,19 +359,18 @@ export abstract class BaseMode {
             abcLinkerCmdStr = loadLibrary + ' ' + abcLinkerCmdStr;
         }
         this.logger.printDebug(abcLinkerCmdStr);
-
         ensurePathExists(this.mergedAbcFile);
         try {
             child_process.execSync(abcLinkerCmdStr).toString();
         } catch (error) {
             if (error instanceof Error) {
-                throw new DriverError(
+                const logData =
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_LINK_ABC_FAIL,
                         'Link abc files failed.',
                         error.message
-                    )
-                );
+                    );
+                this.logger.printError(logData);
             }
         }
     }
@@ -707,7 +480,6 @@ export abstract class BaseMode {
             if (this.moduleInfos.has(dependency.packageName)) {
                 return;
             }
-
             // NOTE: workaround
             // NOTE: to be refactored
             const getNormalizedEntryFile = (dependency: DependencyModuleConfig): string => {
@@ -744,24 +516,26 @@ export abstract class BaseMode {
     }
 
     protected getMainModuleInfo(): ModuleInfo {
+        const mainModuleInfo = this.dependencyModuleList.find((module) =>
+            module.packageName === this.mainPackageName
+        );
         return {
             isMainModule: true,
             packageName: this.mainPackageName,
-            moduleRootPath: this.mainModuleRootPath,
-            moduleType: this.mainModuleType,
+            moduleRootPath: mainModuleInfo?.modulePath ?? this.mainModuleRootPath,
+            moduleType: mainModuleInfo?.moduleType ?? this.moduleType,
             sourceRoots: this.mainSourceRoots,
-            // NOTE: workaround. (entryFile is almost always undefined)
-            // NOTE: to be refactored
             entryFile: this.entryFile ?? '',
             arktsConfigFile: path.resolve(this.cacheDir, this.mainPackageName, ARKTSCONFIG_JSON_FILE),
             dynamicDependencyModules: new Map<string, ModuleInfo>(),
             staticDependencyModules: new Map<string, ModuleInfo>(),
-            declgenV1OutPath: this.declgenV1OutPath,
-            declgenV2OutPath: this.declgenV2OutPath,
-            declgenBridgeCodePath: this.declgenBridgeCodePath,
+            declgenV1OutPath: mainModuleInfo?.declgenV1OutPath ?? this.declgenV1OutPath,
+            declgenV2OutPath: mainModuleInfo?.declgenV2OutPath ?? this.declgenV2OutPath,
+            declgenBridgeCodePath: mainModuleInfo?.declgenBridgeCodePath ?? this.declgenBridgeCodePath,
             byteCodeHar: this.byteCodeHar,
-            language: LANGUAGE_VERSION.ARKTS_1_2,
-            dependencies: []
+            language: mainModuleInfo?.language ?? LANGUAGE_VERSION.ARKTS_1_2,
+            declFilesPath: mainModuleInfo?.declFilesPath,
+            dependencies: mainModuleInfo?.dependencies ?? []
         };
     }
 
@@ -784,142 +558,128 @@ export abstract class BaseMode {
                 )
             );
         });
+        if (!this.buildConfig.enableDeclgenEts2Ts) {
+            this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX)));
+        }
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
 
-
     protected processBuildConfig(): void {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_MODULE_NODE.COLLECT_INFO);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
         this.logger.printDebug(`ModuleInfos: ${JSON.stringify([...this.moduleInfos], null, 1)}`)
-        compileSingleData.record(RECORDE_MODULE_NODE.GEN_CONFIG, RECORDE_MODULE_NODE.COLLECT_INFO);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_CONFIGS));
         this.generateArkTSConfigForModules();
-        compileSingleData.record(RECORDE_MODULE_NODE.CLT_FILES, RECORDE_MODULE_NODE.GEN_CONFIG);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.PROCESS_ENTRY_FILES));
         this.processEntryFiles();
-        compileSingleData.record(RECORDE_MODULE_NODE.END, RECORDE_MODULE_NODE.CLT_FILES);
-        compileSingleData.writeSumSingle(path.resolve());
     }
 
-    protected backwardCompatibilityWorkaroundStub() {
+    protected backwardCompatibilityWorkaroundStub(): void {
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!
         // NOTE: workaround (just to add entryFile to mainModule)
         // NOTE: to be refactored
-        if (Object.keys(this.jobs).length == 0) {
-            const mainModuleFileList: string[] = [...this.fileToModule.entries()].filter(([_, module]: [string, ModuleInfo]) => {
-                return module.isMainModule
-            }).map(([file, _]: [string, ModuleInfo]) => { return file })
-            mainModule.entryFile = mainModuleFileList[0]
-        } else {
-            mainModule.entryFile = Object.entries(this.jobs).filter(([_, job]: [string, JobInfo]) => {
-                return job.jobDependants.length == 0
-            })[0][1].fileList[0]
-        }
+        const mainModuleFileList: string[] = [...this.fileToModule.entries()].filter(([_, module]: [string, ModuleInfo]) => {
+            return module.isMainModule
+        }).map(([file, _]: [string, ModuleInfo]) => { return file })
+        mainModule.entryFile = mainModuleFileList[0]
+
         this.logger.printDebug(`mainModule entryFile: ${mainModule.entryFile}`)
     }
 
     public async runSimultaneous(): Promise<void> {
-        let compileSingleData = new CompileSingleData(path.join(path.resolve(), BS_PERF_FILE_NAME));
-        compileSingleData.record(RECORDE_RUN_NODE.GEN_MODULE);
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SIMULTANEOUS));
 
-        const mainModule: ModuleInfo | undefined = this.moduleInfos.get(this.mainPackageName)
-
-        // NOTE: workaround (main module entry file problem)
-        // NOTE: to be refactored
-        let entryFile: string;
-        let module: ModuleInfo;
-        if (!mainModule || !mainModule.entryFile) {
-            entryFile = [...this.entryFiles][0]
-            module = this.fileToModule.get(entryFile)!
-        } else {
-            entryFile = mainModule.entryFile
-            module = mainModule
-        }
-
-        let outputFile: string = this.mergedAbcFile
-        ensurePathExists(outputFile)
-
-        let arktsConfigFile: string = module.arktsConfigFile;
-
+        const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!;
+        let entryFile: string = mainModule.entryFile || [...this.entryFiles][0];
+        let arktsConfigFile: string = mainModule.arktsConfigFile;
+        let intermediateFilePath: string = path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE);
         this.logger.printDebug(`entryFile: ${entryFile}`)
-        this.logger.printDebug(`module: ${JSON.stringify(module, null, 1)}`)
+        this.logger.printDebug(`module: ${JSON.stringify(mainModule, null, 1)}`)
         this.logger.printDebug(`arktsConfigFile: ${arktsConfigFile}`)
 
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
         // We do not need any queues just compile a bunch of files
         // Ets2panda will build it simultaneous
-        this.compileSimultaneous({
-            id: outputFile,
+        let res = this.compileSimultaneous('SimultaneousBuildId', {
             fileList: [...this.entryFiles],
-            jobDependencies: [],
-            jobDependants: [],
-            compileFileInfo: {
-                inputFilePath: entryFile,
-                outputFilePath: outputFile,
-                arktsConfigFile: arktsConfigFile
+            fileInfo: {
+                input: entryFile,
+                output: intermediateFilePath,
+                arktsConfig: arktsConfigFile,
+                moduleName: mainModule.packageName,
+                moduleRoot: mainModule.moduleRootPath
+            },
+            declgenConfig: {
+                output: mainModule.declgenV2OutPath!
             },
             type: CompileJobType.ABC
         });
-        compileSingleData.record(RECORDE_RUN_NODE.END, RECORDE_RUN_NODE.COMPILE_FILES);
-        compileSingleData.writeSumSingle(path.resolve());
+        Ets2panda.destroyInstance();
+        if (!res) {
+            throw new Error('Simultaneous build failed.');
+        }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles([intermediateFilePath]);
     }
 
     public async runParallel(): Promise<void> {
-        // NOTE: TBD
-        throw new DriverError(
-            LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                'Parallel mode is currently unavailable.'
-            )
-        )
-    }
-
-    private addJobToQueue(job: CompileJobInfo): void {
-        if (this.jobQueue.some((queuedJob: JobInfo) => queuedJob.id === job.id)) {
-            this.logger.printWarn(`Detected job duplication: job.id == ${job.id}`)
+        if (ENABLE_CLUSTERS && this.entryFiles.size <= CLUSTER_FILES_TRESHOLD) {
+            await this.runSimultaneous();
+            return;
+        }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const allOutputs: string[] = [];
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
+        if (!buildGraph.hasNodes()) {
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 
-        this.logger.printDebug(`Added Job ${JSON.stringify(job, null, 1)} to the queue`)
-        this.jobQueue.push(job);
-    }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_PARALLEL));
 
-    private initCompileQueues(): void {
-        Object.values(this.jobs).forEach((job: CompileJobInfo) => {
-            if (job.jobDependencies.length === 0) {
-                this.addJobToQueue(job);
+        const taskManager = new TaskManager<ProcessCompileTask>(handleCompileProcessWorkerExit, false, DEFAULT_WORKER_NUMS);
+        const workerFactory = new DriverProcessFactory(
+            path.resolve(__dirname, 'compile_process_worker.js'),
+            ['process child:' + __filename],
+            {
+                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
             }
-        });
-    }
+        );
+        taskManager.startWorkers(workerFactory);
 
-    private dispatchNextJob(completedJob: CompileJobInfo) {
-        let completedJobId = completedJob.id;
-        this.logger.printDebug(`Removed Job ${completedJobId} from the queue`)
-        completedJob.jobDependants.forEach((dependantJobId: string) => {
-            const depJob: CompileJobInfo = this.jobs[dependantJobId];
-            const depIndex = depJob.jobDependencies.indexOf(completedJobId);
-            if (depIndex !== -1) {
-                depJob.jobDependencies.splice(depIndex, 1);
-                if (depJob.jobDependencies.length === 0) {
-                    this.addJobToQueue(depJob);
-                } else {
-                    this.logger.printDebug(`Job ${depJob.id} still have dependencies ${JSON.stringify(depJob.jobDependencies, null, 1)}`)
-                }
-            }
-        });
-        this.completedJobQueue.push(completedJob)
-    }
+        const newNodes: GraphNode<ProcessCompileTask>[] = [];
+        for (const node of buildGraph.nodes) {
+            const newType = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : node.data.type;
+            newNodes.push({
+                id: node.id,
+                data: {
+                    ...node.data,
+                    type: newType,
+                    buildConfig: this.buildConfig
+                },
+                predecessors: node.predecessors,
+                descendants: node.descendants,
+            })
+        }
+        const newGraph: Graph<ProcessCompileTask> = Graph.createGraphFromNodes(newNodes);
 
-    private haveQueuedJobs(): boolean {
-        return (this.jobQueue.length > 0);
-    }
+        taskManager.buildGraph = newGraph;
+        taskManager.initTaskQueue();
+        const res = await taskManager.finish();
 
-    private consumeJob(): CompileJobInfo | null {
-        if (this.jobQueue.length == 0) {
-            this.logger.printDebug("Job queue is empty!")
-            return null;
+        if (!res) {
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                'One or more errors occured.'
+            );
+            this.logger.printError(logData);
+            throw new Error('Parallel run failed.');
         }
 
-        return this.jobQueue.shift()!
+        this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+        this.mergeAbcFiles(allOutputs);
     }
 
     public async runConcurrent(): Promise<void> {
@@ -932,278 +692,111 @@ export abstract class BaseMode {
         )
     }
 
-    public async generateDeclaration(): Promise<void> {
-        this.loadDeclFileMap();
-        this.preprocessBackupForParallel();
+    private declgenV1(job: CompileJobInfo): boolean {
+        let module = this.fileToModule.get(job.fileInfo.input)!;
+        let declgenV1OutPath: string = module.declgenV1OutPath!;
+        let declgenBridgeCodePath: string = module.declgenBridgeCodePath!;
+        let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
 
-        this.jobs = this.depAnalyzer.collectJobs(this.entryFiles, this.fileToModule, this.moduleInfos);
-        this.initCompileQueues();
-
-        while (this.haveQueuedJobs()) {
-            let job: CompileJobInfo = this.consumeJob()!
-            this.declgen(job)
-            this.dispatchNextJob(job)
-        }
-        this.completedJobQueue.forEach((jobInfo: CompileJobInfo) => {
-            this.updateDeclFileMap(jobInfo.compileFileInfo);
-        });
-        this.saveDeclFileMap();
-    }
-
-    private declgen(jobInfo: CompileJobInfo): void {
-        let errorStatus = false;
-        const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
-        const source = fs.readFileSync(inputFilePath, 'utf8');
-        const moduleInfo: ModuleInfo = this.fileToModule.get(inputFilePath)!;
-        const filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, inputFilePath);
-        const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenV1OutPath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            DECL_ETS_SUFFIX
-        );
-        const etsOutputPath: string = changeDeclgenFileExtension(
-            path.join(moduleInfo.declgenBridgeCodePath as string, moduleInfo.packageName, filePathFromModuleRoot),
-            TS_SUFFIX
-        );
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(etsOutputPath);
-
-        let { arkts, arktsGlobal } = this.koalaModule;
-
+        let result = true;
+        const ets2panda = Ets2panda.getInstance();
+        ets2panda.initalize();
         try {
-            const staticRecordPath = path.join(
-                moduleInfo.declgenV1OutPath as string,
-                STATIC_RECORD_FILE
-            )
-            const declEtsOutputDir = path.dirname(declEtsOutputPath);
-            const staticRecordRelativePath = changeFileExtension(
-                path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
-                "",
-                DECL_TS_SUFFIX
-            );
-            createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
-
-            let ets2pandaCmd = formEts2pandaCmd(jobInfo)
-            this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
-
-            arktsGlobal.filePath = inputFilePath;
-            arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
-            PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, this.skipDeclCheck);
-
-            let ast = arkts.EtsScript.fromContext();
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-
-            arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer, this.skipDeclCheck);
-
-            ast = arkts.EtsScript.fromContext();
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(ast);
-            PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-
-            arkts.generateTsDeclarationsFromContext(
-                declEtsOutputPath,
-                etsOutputPath,
-                false,
-                false,
-                staticRecordRelativePath,
-                this.genDeclAnnotations
-            ); // Generate 1.0 declaration files & 1.0 glue code
-            this.logger.printInfo('declaration files generated');
+            ets2panda.declgenV1(declgenJob, this.skipDeclCheck, this.genDeclAnnotations)
         } catch (error) {
-            errorStatus = true;
-            if (error instanceof Error) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-                        'Generate declaration files failed.',
-                        error.message,
-                        inputFilePath
-                    )
-                );
-            }
+            // Report the error, do not crash the declgen process
+            const err = error as DriverError
+            this.logger.printError(err.logData)
+            result = false;
         } finally {
-            if (!errorStatus) {
-                arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
-            }
-            arkts.destroyConfig(arktsGlobal.config);
+            ets2panda.finalize()
         }
+        return result;
     }
 
-    // NOTE: to be refactored
-    /*
-    protected collectAbcFileFromByteCodeHar(): void {
-        // the abc of the dependent bytecode har needs to be included When compiling hsp/hap
-        // but it's not required when compiling har
-        if (this.buildConfig.moduleType === OHOS_MODULE_TYPE.HAR) {
-            return;
-        }
-        for (const [packageName, moduleInfo] of this.moduleInfos) {
-            if (!(moduleInfo.moduleType === OHOS_MODULE_TYPE.HAR && moduleInfo.byteCodeHar)) {
-                continue;
-            }
-            if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
-                continue;
-            }
-            if (!moduleInfo.abcPath) {
-                const logData: LogData = LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ABC_FILE_MISSING_IN_BCHAR,
-                    `abc file not found in bytecode har ${packageName}. `
-                );
-                this.logger.printError(logData);
-                continue;
-            }
-            if (!fs.existsSync(moduleInfo.abcPath)) {
-                const logData: LogData = LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_ABC_FILE_NOT_EXIST_IN_BCHAR,
-                    `${moduleInfo.abcPath} does not exist. `
-                );
-                this.logger.printErrorAndExit(logData);
-            }
-            this.abcFiles.add(moduleInfo.abcPath);
-        }
-    }
 
-    public async generateDeclarationParallell(): Promise<void> {
-        this.processBuildConfig();
-
-        const taskManager = new TaskManager<CompileTask>(handleCompileWorkerExit);
-
-        try {
-            taskManager.startWorkers(DriverProcess, path.resolve(__dirname, 'declgen_worker.js'));
-
-            const taskPromises = Array.from(this.fileToModule.values()).map(task =>
-                taskManager.submitTask({
-                    fileInfo: task,
-                    buildConfig: this.getSerializableConfig() as BuildConfig,
-                    moduleInfos: Array.from(this.moduleInfos.entries())
-                })
-            );
-
-            await Promise.all(taskPromises);
-
-            this.logger.printInfo('All declaration generation tasks complete.');
-        } catch (error) {
-            this.logger.printError(LogDataFactory.newInstance(
-                ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
-                `Generate declaration files failed.\n${(error as Error)?.message || error}`
-            ));
-        } finally {
-            await taskManager.shutdown();
-        }
-    }
-
-    private assignTaskToIdleWorker(workerInfo: WorkerInfo, processingJobs: Set<string>, serializableConfig: Object, globalContextPtr: KPointer): void {
-
-        let jobInfo = this.consumeJob();
-        if (!jobInfo) {
+    public async generateDeclarationV1(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
+        if (!buildGraph.hasNodes()) {
+            this.logger.printWarn('Nothing to compile. Exiting...')
             return;
         }
 
-        processingJobs.add(jobInfo.id);
-        workerInfo.worker.send('ASSIGN_TASK', jobInfo);
-        workerInfo.isIdle = false;
-    }
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DECLGEN_V1_SEQUENTIAL));
 
-    private checkAllTasksDone(workerPool: WorkerInfo[]): boolean {
-        if (this.jobQueue.length === 0) {
-            for (let i = 0; i < workerPool.length; i++) {
-                if (!workerPool[i].isIdle) {
-                    return false;
-                }
-            }
-            return true;
+        const jobs: CompileJobInfo[] = Graph.topologicalSort(buildGraph)
+            .map((nodeId: string) => { return buildGraph.getNodeById(nodeId); })
+            .map((node) => { return node.data; });
+
+        // Just to init
+        Ets2panda.getInstance(this.buildConfig)
+
+        let success: boolean = true;
+        while (jobs.length > 0) {
+            let job: CompileJobInfo = jobs.shift()!;
+            const res: boolean = this.declgenV1(job)
+            success = res && success;
         }
-        return false;
-    }
 
-    private processAfterCompile(config: KPointer, globalContext: KPointer): void {
+        Ets2panda.destroyInstance();
 
-        let arktsGlobal = this.koalaModule.arktsGlobal;
-        let arkts = this.koalaModule.arkts;
-
-        arktsGlobal.es2panda._DestroyGlobalContext(globalContext);
-        arkts.destroyConfig(config);
-        arktsGlobal.es2panda._MemFinalize();
-
-        this.mergeAbcFiles();
-    }
-
-    CC-OFFNXT(huge_depth)
-    private async invokeWorkers(processingJobs: Set<string>, workers: DriverThread[]): Promise<void> {
-      return new Promise<void>((resolve) => {
-        const numWorkers = 1;
-
-        let files: string[] = [];
-
-        Object.entries(this.jobs).forEach(([key, job]) => {
-          for (let i = 0; i < job.fileList.length; i++) {
-            files.push(job.fileList[i]);
-          }
-        });
-
-        let arkts = this.buildConfig.arkts;
-        let fileInfo = this.fileToModule.values().next().value!;
-
-        let ets2pandaCmd: string[] = [
-          '_',
-          '--extension',
-          'ets',
-          '--arktsconfig',
-          fileInfo.arktsConfigFile,
-          '--output',
-          fileInfo.inputFilePath,
-        ];
-
-        if (this.isDebug) {
-          ets2pandaCmd.push('--debug-info');
-          ets2pandaCmd.push('--opt-level=0');
+        if (!success) {
+            throw new DriverError(
+                LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    'One or more errors occured.'
+                )
+            );
         }
-        ets2pandaCmd.push(fileInfo.inputFilePath);
-
-        arkts.MemInitialize();
-
-        let config = arkts.Config.create(ets2pandaCmd).peer;
-
-        let globalContextPtr = arkts.CreateGlobalContext(config, files, files.length, false);
-        const serializableConfig = this.getSerializableConfig();
-
-        const workerPool: WorkerInfo[] = [];
-        for (let i = 0; i < numWorkers; i++) {
-          const worker = new DriverThread(
-            path.resolve(__dirname, 'compile_thread_worker.js'),
-            { workerData: { workerId: i } }
-          );
-
-          workers.push(worker);
-          workerPool.push({ worker, id: i, isIdle: true, isKilled: false  });
-          this.assignTaskToIdleWorker(workerPool[i], processingJobs, serializableConfig, globalContextPtr);
-          worker.on('message', (msg) => {
-            if (msg.type === 'TASK_FINISH') {
-              const workerInfo = workerPool.find(w => w.worker === worker);
-              if (workerInfo) {
-                workerInfo.isIdle = true;
-              }
-              const jobId = msg.jobId;
-              finishedJob.push(jobId);
-              processingJobs.delete(jobId);
-              const completedJob = this.jobs[jobId];
-              this.completeJob(completedJob);
-              for (let j = 0; j < workerPool.length; j++) {
-                if (workerPool[j].isIdle) {
-                  this.assignTaskToIdleWorker(workerPool[j], processingJobs, serializableConfig, globalContextPtr);
-                }
-              }
-            }
-            if (this.checkAllTasksDone(workerPool)) {
-              workers.forEach(worker => worker.send('EXIT'));
-              this.processAfterCompile(config, globalContextPtr);
-              resolve();
-            }
-          });
-        }
-      });
     }
-    */
+
+    public async generateDeclarationV1Parallel(): Promise<void> {
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
+        const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
+        if (!buildGraph.hasNodes()) {
+            this.logger.printWarn('Nothing to compile. Exiting...')
+            return;
+        }
+
+        this.statsRecorder.record(formEvent(BuildSystemEvent.DECLGEN_V1_PARALLEL));
+
+        const taskManager = new TaskManager<ProcessDeclgenV1Task>(handleDeclgenWorkerExit, true);
+        const workerFactory = new DriverProcessFactory(
+            path.resolve(__dirname, 'declgen_process_worker.js'),
+            ['process child:' + __filename],
+            {
+                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
+            }
+        );
+        taskManager.startWorkers(workerFactory);
+
+        const newNodes: GraphNode<ProcessDeclgenV1Task>[] = [];
+        for (const node of buildGraph.nodes) {
+            const module = this.fileToModule.get(node.data.fileList[0]!)!
+            const declgenV1OutPath: string = module.declgenV1OutPath!
+            const declgenBridgeCodePath: string = module.declgenBridgeCodePath!
+            newNodes.push({
+                id: node.id,
+                data: {
+                    ...node.data,
+                    declgenConfig: {
+                        output: declgenV1OutPath,
+                        bridgeCode: declgenBridgeCodePath
+                    },
+                    buildConfig: this.buildConfig
+                },
+                predecessors: node.predecessors,
+                descendants: node.descendants,
+            })
+        }
+        const newGraph: Graph<ProcessDeclgenV1Task> = Graph.createGraphFromNodes(newNodes);
+
+        taskManager.buildGraph = newGraph;
+        taskManager.initTaskQueue();
+        // Ignore the result
+        await taskManager.finish();
+    }
 }

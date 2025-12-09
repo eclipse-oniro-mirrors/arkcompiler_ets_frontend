@@ -15,4 +15,4 @@
 
 initModule()
 
-/* @@? 16:1 Error SyntaxError: initModule() only accept string literal as argument. */
+/* @@? 16:1 Error Syntax error ESY0321: initModule() only accept string literal as argument. */

@@ -17,8 +17,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as JSON5 from 'json5';
 import { BuildConfig, PathConfig } from '../common/types';
-import { DEFAULT_CACHE_DIR, EXTERNAL_API_PATH_FROM_SDK, LANGUAGE_VERSION } from '../common/preDefine';
+import {
+  DEFAULT_CACHE_DIR,
+  EXTERNAL_API_PATH_FROM_SDK,
+  INTEROP_API_PATH_FROM_SDK,
+  LANGUAGE_VERSION
+} from '../common/preDefine';
 import { getFileLanguageVersion } from '../common/utils';
+import { logger } from './logger';
 
 export interface ModuleDescriptor {
   name: string;
@@ -26,6 +32,7 @@ export interface ModuleDescriptor {
   srcPath: string;
   arktsversion?: string;
   aceModuleJsonPath?: string;
+  sdkAliasConfigPath?: string;
 }
 
 interface Json5Object {
@@ -42,53 +49,14 @@ interface Json5Object {
   };
 }
 
-function removeTrailingCommas(jsonString: string): string {
-  return jsonString.replace(/,\s*([}\]])/g, '$1');
-}
-
 function parseJson5(filePath: string): Json5Object {
   try {
     const rawContent = fs.readFileSync(filePath, 'utf8');
-    const cleanedContent = removeTrailingCommas(rawContent);
-    return JSON5.parse(cleanedContent) as Json5Object;
+    return JSON5.parse(rawContent) as Json5Object;
   } catch (error) {
-    console.error(`Error parsing ${filePath}:`, error);
+    logger.error(`Error parsing ${filePath}:`, error);
     return {} as Json5Object;
   }
-}
-
-function getModuleTypeFromConfig(modulePath: string): string {
-  const moduleConfigPath = path.join(modulePath, 'src/main/module.json5');
-  if (fs.existsSync(moduleConfigPath)) {
-    try {
-      const moduleData = parseJson5(moduleConfigPath);
-      return moduleData.module?.type || 'har';
-    } catch (error) {
-      console.error(`Error parsing ${moduleConfigPath}:`, error);
-    }
-  }
-  return 'har';
-}
-
-function getModulesFromBuildProfile(buildProfilePath: string): ModuleDescriptor[] {
-  if (!fs.existsSync(buildProfilePath)) {
-    console.error('Error: build-profile.json5 not found');
-    process.exit(1);
-  }
-
-  const buildProfile = parseJson5(buildProfilePath);
-  const modules = buildProfile.modules || [];
-
-  return modules.map((module: { name: string; srcPath: string; arktsversion?: string }) => {
-    const moduleSrcPath = path.resolve(path.dirname(buildProfilePath), module.srcPath);
-    const arktsversion = module.arktsversion || '1.1';
-    return {
-      name: module.name,
-      moduleType: getModuleTypeFromConfig(moduleSrcPath),
-      srcPath: moduleSrcPath,
-      arktsversion
-    };
-  });
 }
 
 function getEtsFiles(modulePath: string): string[] {
@@ -143,11 +111,12 @@ function getModuleDependencies(modulePath: string, visited = new Set<string>()):
 
     try {
       const packageData = parseJson5(packageFilePath);
+      // Temp solution only support 'file:' until third-party using in 1.2
       return Object.entries(packageData.dependencies || {})
-        .map(([_, depPath]) => (depPath as string).replace('file:', ''))
-        .map((depPath) => path.resolve(modulePath, depPath));
+        .filter(([_, depPath]) => depPath.startsWith('file:'))
+        .map(([_, depPath]) => path.resolve(modulePath, depPath.replace('file:', '')));
     } catch (error) {
-      console.error(`Error parsing ${packageFilePath}:`, error);
+      logger.error(`Error parsing ${packageFilePath}:`, error);
       return [];
     }
   };
@@ -160,9 +129,11 @@ function createMapEntryForPlugin(buildSdkPath: string, pluginName: string): stri
   return path.join(buildSdkPath, 'build-tools', 'ui-plugins', 'lib', pluginName, 'index');
 }
 
-function createPluginMap(buildSdkPath: string): Record<string, string> {
-  let pluginMap: Record<string, string> = {};
-  const pluginList: string[] = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+const DEFAULT_PLUGIN_LIST = ['ui-syntax-plugins', 'ui-plugins', 'memo-plugins'];
+
+function createPluginMap(buildSdkPath: string, pluginList: string[] = DEFAULT_PLUGIN_LIST): Record<string, string> {
+  const pluginMap: Record<string, string> = {};
+
   for (const plugin of pluginList) {
     pluginMap[plugin] = createMapEntryForPlugin(buildSdkPath, plugin);
   }
@@ -197,37 +168,28 @@ function getModuleLanguageVersion(compileFiles: Set<string>): string {
 
 export function generateBuildConfigs(
   pathConfig: PathConfig,
-  modules?: ModuleDescriptor[]
+  modules: ModuleDescriptor[],
+  plugins?: string[]
 ): Record<string, BuildConfig> {
   const allBuildConfigs: Record<string, BuildConfig> = {};
-
-  if (!modules) {
-    const buildProfilePath = path.join(pathConfig.projectPath, 'build-profile.json5');
-    modules = getModulesFromBuildProfile(buildProfilePath);
-  }
-
   const definedModules = modules;
-
-  const enableDeclgen: Map<string, boolean> = new Map(modules.map((module) => [module.name, false]));
+  const pluginMap = createPluginMap(pathConfig.buildSdkPath, plugins);
 
   for (const module of definedModules) {
     const modulePath = module.srcPath;
     const compileFiles = new Set(getEtsFiles(modulePath));
-    const pluginMap = createPluginMap(pathConfig.buildSdkPath);
 
     // Get recursive dependencies
+    const depModuleCompileFiles = new Set<string>();
     const dependencies = getModuleDependencies(modulePath);
     for (const depPath of dependencies) {
-      getEtsFiles(depPath).forEach((file) => compileFiles.add(file));
-      const depModule = definedModules.find((m) => m.srcPath === depPath);
-      if (module.arktsversion === '1.1' && depModule?.arktsversion === '1.2') {
-        enableDeclgen.set(depModule.name, true);
-      }
+      getEtsFiles(depPath).forEach((file) => depModuleCompileFiles.add(file));
     }
     let languageVersion = getModuleLanguageVersion(compileFiles);
     allBuildConfigs[module.name] = {
       plugins: pluginMap,
       compileFiles: Array.from(compileFiles),
+      depModuleCompileFiles: Array.from(depModuleCompileFiles),
       packageName: module.name,
       moduleType: module.moduleType,
       moduleRootPath: modulePath,
@@ -238,32 +200,47 @@ export function generateBuildConfigs(
       externalApiPath: pathConfig.externalApiPath
         ? pathConfig.externalApiPath
         : path.resolve(pathConfig.buildSdkPath, EXTERNAL_API_PATH_FROM_SDK),
+      interopApiPath: pathConfig.interopApiPath
+        ? pathConfig.interopApiPath
+        : path.resolve(pathConfig.buildSdkPath, INTEROP_API_PATH_FROM_SDK),
       cacheDir:
         pathConfig.cacheDir !== undefined ? pathConfig.cacheDir : path.join(pathConfig.projectPath, DEFAULT_CACHE_DIR),
-      enableDeclgenEts2Ts: false,
       declFilesPath:
-        languageVersion === LANGUAGE_VERSION.ARKTS_1_1
-          ? path.join(pathConfig.declgenOutDir, 'static', module.name, 'decl-fileInfo.json')
+        languageVersion !== LANGUAGE_VERSION.ARKTS_1_2
+          ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'dynamic', 'decl-fileInfo.json')
           : undefined,
-      dependencies: dependencies.map((dep) => {
-        const depModule = definedModules.find((m) => m.srcPath === dep);
-        return depModule!.name;
-      })
+      declgenV1OutPath:
+        languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
+          ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static')
+          : undefined,
+      declgenBridgeCodePath:
+        languageVersion !== LANGUAGE_VERSION.ARKTS_1_1
+          ? path.join(pathConfig.declgenOutDir, module.name, 'declgen', 'static', 'declgenBridgeCode')
+          : undefined,
+      dependencies: processDependencies(module.name, dependencies, definedModules),
+      sdkAliasConfigPath: module.sdkAliasConfigPath ? module.sdkAliasConfigPath : undefined
     };
     addPluginPathConfigs(allBuildConfigs[module.name], module);
   }
-  Object.entries(allBuildConfigs).forEach(([key, config]) => {
-    if (enableDeclgen.get(key) === true) {
-      config.enableDeclgenEts2Ts = true;
-      config.declgenV1OutPath = path.join(pathConfig.declgenOutDir, 'dynamic', key, 'declgenV1');
-      config.declgenBridgeCodePath = path.join(pathConfig.declgenOutDir, 'dynamic', key, 'declgenBridgeCode');
-      if (!fs.existsSync(config.declgenV1OutPath)) {
-        fs.mkdirSync(config.declgenV1OutPath, { recursive: true });
-      }
-      if (!fs.existsSync(config.declgenBridgeCodePath)) {
-        fs.mkdirSync(config.declgenBridgeCodePath, { recursive: true });
-      }
+  return allBuildConfigs;
+}
+
+function processDependencies(
+  currentModule: string,
+  dependencies: string[],
+  definedModules: ModuleDescriptor[]
+): string[] {
+  const moduleMap = new Map<string, ModuleDescriptor>();
+  definedModules.forEach((module) => {
+    moduleMap.set(module.srcPath, module);
+  });
+
+  const result: string[] = [];
+  dependencies.forEach((dep) => {
+    const depModule = moduleMap.get(dep);
+    if (depModule && depModule.name !== currentModule) {
+      result.push(depModule.name);
     }
   });
-  return allBuildConfigs;
+  return result;
 }

@@ -17,5 +17,6 @@ class A {
     static final /* @@ label */foo(): void {}
 }
 
-/* @@@ label Error TypeError: Invalid method modifier(s): a final method can't have abstract or static modifier.  */
-/* @@@ label Error TypeError: Invalid method modifier(s): a static method can't have abstract, final or override modifier.  */
+
+/* @@@ label Error Semantic error ESE0048: Invalid method modifier(s): a final method can't have abstract or static modifier. */
+/* @@@ label Error Semantic error ESE0077: Invalid method modifier(s): a static method can't have abstract, final or override modifier. */

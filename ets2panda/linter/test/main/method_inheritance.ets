@@ -295,7 +295,7 @@ abstract class Child14 extends Parent{
 }
 
 abstract class Child2 extends Parent{
-  foo(): void {  //error
+  foo(): void {  //legal
 
   }
 }
@@ -306,11 +306,11 @@ abstract class Child3 extends Parent{
 }
 
 class Child17 extends Parent{
-  foo(){  //error???
+  foo(){  //legal
   }
 }
 abstract class Child18 extends Parent{
-  foo(){  //error???
+  foo(){  //legal
   }
 }
 
@@ -346,7 +346,7 @@ abstract class Child4 extends Parent1{
 
 class CCC {}
 class BBB extends AAA {
-  test(): CCC {
+  test(): CCC { //error
     return new CCC();
   }
 }
@@ -370,5 +370,14 @@ abstract class Test1 {
 class Test2 extends Test1 {
   test(params: Map<string, Object>): void { // no Error
 
+  }
+}
+
+abstract class BaseVM{
+  public abstract sendEvent();
+}
+
+class AboutVM extends BaseVM{
+  sendEvent() {
   }
 }

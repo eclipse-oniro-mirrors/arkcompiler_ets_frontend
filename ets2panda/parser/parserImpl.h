@@ -36,6 +36,7 @@ enum class NextTokenFlags : uint32_t;
 namespace ark::es2panda::util {
 class Options;
 class SourcePositionHelper;
+class ImportPathManager;
 }  // namespace ark::es2panda::util
 
 namespace ark::es2panda::public_lib {
@@ -66,7 +67,14 @@ enum class TypeAnnotationParsingOptions : uint32_t {
     POTENTIAL_NEW_ARRAY = 1U << 16U,
     ANNOTATION_NOT_ALLOW = 1U << 17U,
     INSTANCEOF = 1U << 18U,
-    TYPE_ALIAS_CONTEXT = 1U << 19U
+    TYPE_ALIAS_CONTEXT = 1U << 19U,
+    IGNORE_KEYW_KEYOF = 1U << 20U
+};
+
+enum class ParseListOptions : uint32_t {
+    NO_OPT = 0U,
+    ALLOW_TRAILING_SEP = 1U << 0U,
+    ALLOW_TYPE_KEYWORD = 1U << 1U,
 };
 
 class ParserImpl {
@@ -111,6 +119,11 @@ public:
         GetContext().Status() |= status;
     }
 
+    bool HasParserStatus(ParserStatus status) const noexcept
+    {
+        return (GetContext().Status() & status) != 0;
+    }
+
     lexer::SourcePosition GetPositionForDiagnostic() const;
 
     void SetContext(public_lib::Context *ctx)
@@ -140,7 +153,7 @@ protected:
     ir::Property *ParseShorthandProperty(const lexer::LexerPosition *startPos);
     void ParseGeneratorPropertyModifier(ExpressionParseFlags flags, ParserStatus *methodStatus);
     bool ParsePropertyModifiers(ExpressionParseFlags flags, ir::PropertyKind *propertyKind, ParserStatus *methodStatus);
-    ir::Expression *ParsePropertyValue(const ir::PropertyKind *propertyKind, const ParserStatus *methodStatus,
+    ir::Expression *ParsePropertyValue(ir::PropertyKind propertyKind, ParserStatus methodStatus,
                                        ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS);
     void ParsePropertyEndErrorHendler();
     bool ParsePropertyEnd();
@@ -148,7 +161,8 @@ protected:
     // ExpressionParser.Cpp
 
     ir::Expression *ParseKeywordExpression();
-    ir::Expression *ParseBinaryExpression(ir::Expression *left, const lexer::TokenType operatorType);
+    ir::Expression *ParseBinaryExpression(ir::Expression *left,
+                                          ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS);
     void ValidateUpdateExpression(ir::Expression *returnExpression, bool isChainExpression);
     ir::Expression *ParseMemberExpression(bool ignoreCallExpression = false,
                                           ExpressionParseFlags flags = ExpressionParseFlags::NO_OPTS);
@@ -166,6 +180,10 @@ protected:
     virtual void ParseTrailingBlock([[maybe_unused]] ir::CallExpression *callExpr) {}
     ir::Expression *CreateBinaryAssignmentExpression(ir::Expression *assignmentExpression,
                                                      ir::Expression *lhsExpression, lexer::TokenType tokenType);
+    virtual bool IsInOperatorTypeSupported() const
+    {
+        return true;
+    }
 
     // StatementParser.Cpp
 
@@ -199,6 +217,7 @@ protected:
     friend class lexer::RegExpParser;
     friend class util::SourcePositionHelper;
     friend class JsdocHelper;
+    friend class util::ImportPathManager;
 
     void LogExpectedToken(lexer::TokenType tokenType);
     void LogUnexpectedToken(lexer::TokenType tokenType);
@@ -300,7 +319,8 @@ protected:
     ir::SuperExpression *ParseSuperExpression();
     ir::MemberExpression *ParseElementAccess(ir::Expression *primaryExpr, bool isOptional = false);
     ir::MemberExpression *ParsePrivatePropertyAccess(ir::Expression *primaryExpr);
-    ir::MemberExpression *ParsePropertyAccess(ir::Expression *primaryExpr, bool isOptional = false);
+    ir::MemberExpression *ParsePropertyAccess(ir::Expression *primaryExpr, lexer::SourcePosition periodPos,
+                                              bool isOptional = false);
     void CreateAmendedBinaryExpression(ir::Expression *left, ir::Expression *right, lexer::TokenType operatorType);
 
     // StatementParser
@@ -582,9 +602,11 @@ protected:
         return classId_;
     }
 
+    bool TryEatTypeKeyword();
     bool ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
-                   const std::function<bool()> &parseElement, lexer::SourcePosition *sourceEnd = nullptr,
-                   bool allowTrailingSep = false);
+                   const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
+                   lexer::SourcePosition *sourceEnd = nullptr,
+                   ParseListOptions parseListOptions = ParseListOptions::NO_OPT);
 
     RecursiveContext &RecursiveCtx()
     {
@@ -607,6 +629,10 @@ private:
 
 template <>
 struct enumbitops::IsAllowedType<ark::es2panda::parser::TypeAnnotationParsingOptions> : std::true_type {
+};
+
+template <>
+struct enumbitops::IsAllowedType<ark::es2panda::parser::ParseListOptions> : std::true_type {
 };
 
 #endif

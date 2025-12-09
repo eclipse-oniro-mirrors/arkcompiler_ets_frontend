@@ -64,10 +64,6 @@ ir::Identifier *ETSTypeReference::BaseName() const
         return baseName->AsIdentifier();
     }
 
-    if (baseName->IsIdentifier()) {
-        return baseName->AsIdentifier();
-    }
-
     if (baseName->IsTSQualifiedName()) {
         ir::TSQualifiedName *iter = baseName->AsTSQualifiedName();
 
@@ -134,6 +130,37 @@ checker::VerifiedType ETSTypeReference::Check(checker::ETSChecker *checker)
 {
     return {this, checker->GetAnalyzer()->Check(this)};
 }
+
+static checker::Type *HandleUnsafeVarianceModifier(checker::ETSChecker *checker, checker::Type *baseType,
+                                                   const ir::AnnotationUsage *annotation)
+{
+    if (baseType->IsETSTypeParameter() &&
+        annotation->GetBaseName()->Name().Is(compiler::Signatures::ANNO_UNSAFE_VARIANCE)) {
+        auto *const annotatedType =
+            baseType->Instantiate(checker->Allocator(), checker->Relation(), checker->GetGlobalTypesHolder())
+                ->AsETSTypeParameter();
+        annotatedType->SetAllowUnsafeVariance(true);
+        return annotatedType;
+    }
+
+    return baseType;
+}
+
+checker::Type *ETSTypeReference::HandleTypeRefAnnotations(checker::ETSChecker *checker, checker::Type *originalType)
+{
+    if (!HasAnnotations()) {
+        return originalType;
+    }
+
+    auto *annotatedType = originalType;
+
+    for (auto *anno : Annotations()) {
+        annotatedType = HandleUnsafeVarianceModifier(checker, originalType, anno);
+    }
+
+    return annotatedType;
+}
+
 checker::Type *ETSTypeReference::GetType(checker::ETSChecker *checker)
 {
     if (TsType() != nullptr) {
@@ -143,6 +170,9 @@ checker::Type *ETSTypeReference::GetType(checker::ETSChecker *checker)
     if (IsReadonlyType()) {
         type = checker->GetReadonlyType(type);
     }
+
+    type = HandleTypeRefAnnotations(checker, type);
+
     return SetTsType(type);
 }
 
@@ -162,7 +192,7 @@ ETSTypeReference *ETSTypeReference::Clone(ArenaAllocator *const allocator, AstNo
         partClone->SetParent(clone);
     }
 
-    clone->flags_ = Modifiers();
+    clone->AddModifier(Modifiers());
 
     if (parent != nullptr) {
         clone->SetParent(parent);

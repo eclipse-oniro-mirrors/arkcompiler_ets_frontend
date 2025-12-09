@@ -16,5 +16,5 @@
 function func(fn:(x:int)=>string){}
 func((x)=>1)
 
-/* @@? 17:1 Error TypeError: No matching call signature for func(((p1: Int) => String)) */
-/* @@? 17:11 Error TypeError: Type 'Int' is not compatible with the enclosing method's return type 'String' */
+
+/* @@? 17:11 Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'String' */

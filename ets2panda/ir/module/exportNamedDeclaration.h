@@ -51,7 +51,12 @@ public:
         return source_;
     }
 
-    const ArenaVector<ExportSpecifier *> &Specifiers() const
+    [[nodiscard]] const ArenaVector<ExportSpecifier *> &Specifiers() const noexcept
+    {
+        return specifiers_;
+    }
+
+    [[nodiscard]] ArenaVector<ExportSpecifier *> &Specifiers() noexcept
     {
         return specifiers_;
     }
@@ -74,6 +79,8 @@ public:
     {
         v->Accept(this);
     }
+
+    [[nodiscard]] bool HasDumpData(bool hasDefaultExport) const noexcept;
 
 private:
     StringLiteral *source_ {};

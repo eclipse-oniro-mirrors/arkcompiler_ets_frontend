@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_UTIL_DOUBLE_LINKED_LIST_H
 #define ES2PANDA_UTIL_DOUBLE_LINKED_LIST_H
 
-#include "mem/arena_allocator.h"
+#include "libarkbase/mem/arena_allocator.h"
 
 namespace ark::es2panda::util {
 

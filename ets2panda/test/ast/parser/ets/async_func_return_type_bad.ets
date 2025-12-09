@@ -17,4 +17,5 @@ async function foo(): Promise<int> {
     return /* @@ label */"abc";
 }
 
-/* @@@ label Error TypeError: Type '"abc"' is not compatible with the enclosing method's return type 'Promise<Int> | Int'  */
+
+/* @@@ label Error Semantic error ESE0091: Type '"abc"' is not compatible with the enclosing method's return type 'Promise<Int> | Int' */

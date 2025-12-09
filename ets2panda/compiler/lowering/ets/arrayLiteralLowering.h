@@ -22,7 +22,7 @@
 #include "ir/ets/etsNewArrayInstanceExpression.h"
 #include "ir/ts/tsArrayType.h"
 #include "parser/ETSparser.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {

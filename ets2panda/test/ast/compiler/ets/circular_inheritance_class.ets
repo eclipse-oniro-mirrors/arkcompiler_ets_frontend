@@ -30,5 +30,6 @@ class C extends A {
     }
 }
 
-/* @@? 16:7 Error TypeError: Cyclic inheritance involving A.   */
 
+
+/* @@? 16:7 Error Semantic error ESE0310: Cyclic inheritance involving A. */

@@ -21,4 +21,5 @@ class A {
 
 function foo(this: A, f: (this: A) => void) /* @@ label1 */{}
 
-/* @@@ label1 Error TypeError: The extension function 'foo' has the same name with public method in class A  */
+
+/* @@@ label1 Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class A */

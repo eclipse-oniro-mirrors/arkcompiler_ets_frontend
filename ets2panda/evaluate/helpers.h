@@ -21,11 +21,11 @@
 #include "ir/astNodeFlags.h"
 #include "varbinder/ETSBinder.h"
 
-#include "libpandafile/field_data_accessor.h"
-#include "libpandafile/method_data_accessor.h"
-#include "libpandafile/class_data_accessor.h"
-#include "libpandafile/file.h"
-#include "type.h"
+#include "libarkfile/field_data_accessor.h"
+#include "libarkfile/method_data_accessor.h"
+#include "libarkfile/class_data_accessor.h"
+#include "libarkfile/file.h"
+#include <libarkfile/include/type.h>
 
 #include <optional>
 #include <string>

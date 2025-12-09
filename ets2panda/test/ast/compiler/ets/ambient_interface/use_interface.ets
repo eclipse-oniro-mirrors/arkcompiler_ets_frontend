@@ -23,4 +23,5 @@ class B {
   }
 }
 
-/* @@@ label Error TypeError: Property 'a' might not have been initialized.  */
+
+/* @@@ label Error Semantic error ESE0280: Property 'a' might not have been initialized. */

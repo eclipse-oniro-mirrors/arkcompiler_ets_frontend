@@ -18,4 +18,5 @@ class Foo {
     private get /* @@ label */5() { return }
     set 5(k) { }
 }
-/* @@@ label Error SyntaxError: A get accessor must be at least as accessible as the setter.  */
+
+/* @@@ label Error Syntax error ESY0205: A get accessor must be at least as accessible as the setter. */

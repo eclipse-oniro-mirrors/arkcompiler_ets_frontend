@@ -28,4 +28,5 @@ interface B {
 interface C extends A, B {
 }
 
-/* @@? 28:1 Error TypeError: Method 'foo' is declared in A and B interfaces.  */
+
+/* @@? 28:1 Error Semantic error ESE0187: Method 'foo' is declared in A and B interfaces. */

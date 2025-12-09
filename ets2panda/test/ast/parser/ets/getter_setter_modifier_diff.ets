@@ -18,4 +18,5 @@ class A {
     final get foo/* @@ label */(): int {}
 }
 
-/* @@@ label Error TypeError: Getter and setter methods must have the same accessor modifiers  */
+
+/* @@@ label Error Semantic error ESE0220: Getter and setter methods must have the same accessor modifiers */

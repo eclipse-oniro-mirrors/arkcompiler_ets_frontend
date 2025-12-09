@@ -16,5 +16,6 @@
 
 var a: { new a()}
 
-/* @@? 17:14 Error SyntaxError: Unexpected token, expected ','.  */
-/* @@? 17:14 Error SyntaxError: Unexpected token in property key  */
+
+/* @@? 17:14 Error Syntax error ESY0000: Unexpected token in property key */
+/* @@? 17:14 Error Syntax error ESY0228: Unexpected token, expected ','. */

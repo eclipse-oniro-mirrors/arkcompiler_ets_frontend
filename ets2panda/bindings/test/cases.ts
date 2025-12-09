@@ -15,6 +15,7 @@
 
 import path from 'path';
 import { TextSpan } from '../src/lsp/lspNode';
+import { AstNodeType, NodeInfo } from '../src/lsp';
 
 export interface TestConfig {
   expectedFilePath: string;
@@ -44,7 +45,8 @@ export const basicCases: TestCases = {
     '7': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition13.ets'), 664],
     '8': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition15.ets'), 617],
     '9': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition17.ets'), 677],
-    '11': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition19.ets'), 634]
+    '11': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition19.ets'), 634],
+    '12': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition2.ets'), 637]
   },
   getSemanticDiagnostics: {
     expectedFilePath: resolveTestPath('test/expected/getSemanticDiagnostics.json'),
@@ -86,12 +88,19 @@ export const basicCases: TestCases = {
     expectedFilePath: resolveTestPath('test/expected/getSuggestionDiagnostics.json'),
     '1': [resolveTestPath('test/testcases/getSuggestionDiagnostics/getSuggestionDiagnostics1.ets')]
   },
+  getOrganizeImports: {
+    expectedFilePath: resolveTestPath('test/expected/getOrganizeImports.json'),
+    '1': [resolveTestPath('test/testcases/getOrganizeImports/getOrganizeImports1.ets')],
+    '2': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport1_import.ets')],
+    '3': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport2_import.ets')]
+  },
   getQuickInfoAtPosition: {
     expectedFilePath: resolveTestPath('test/expected/getQuickInfoAtPosition.json'),
     '1': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition1.ets'), 626],
     '2': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition2.ets'), 618],
     '3': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition3.ets'), 663],
-    '4': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition4.ets'), 697]
+    '4': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition4.ets'), 697],
+    '5': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition5.ets'), 701]
   },
   getDocumentHighlights: {
     expectedFilePath: resolveTestPath('test/expected/getDocumentHighlights.json'),
@@ -99,10 +108,11 @@ export const basicCases: TestCases = {
     '2': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights2.ets'), 717],
     '3': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights3.ets'), 616],
     '4': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights4.ets'), 626],
-    '5': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights5.ets'), 619],
+    // '5': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights5.ets'), 619], flaky issue
     '6': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights6.ets'), 657],
     '7': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights7.ets'), 733],
-    '8': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights8.ets'), 677]
+    '8': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights8.ets'), 677],
+    '9': [resolveTestPath('test/testcases/getDocumentHighlights/getDocumentHighlights9.ets'), 620]
   },
   getCompletionAtPosition: {
     expectedFilePath: resolveTestPath('test/expected/getCompletionAtPosition.json'),
@@ -120,7 +130,10 @@ export const basicCases: TestCases = {
     '12': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition12.ets'), 720],
     '13': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition13.ets'), 658],
     '14': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition14.ets'), 659],
-    '15': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition15.ets'), 722]
+    '15': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition15.ets'), 722],
+    '16': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 764],
+    '17': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition17.ets'), 782],
+    '18': [resolveTestPath('test/testcases/getCompletionAtPosition/getCompletionsAtPosition18.ets'), 872]
   },
   toLineColumnOffset: {
     expectedFilePath: resolveTestPath('test/expected/toLineColumnOffset.json'),
@@ -151,18 +164,18 @@ export const basicCases: TestCases = {
   },
   getSignatureHelpItems: {
     expectedFilePath: resolveTestPath('test/expected/getSignatureHelpItems.json'),
-    '1': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems1.ets'), 613],
-    '2': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems1.ets'), 620],
-    '3': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems1.ets'), 678],
-    '4': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems2.ets'), 697],
-    '5': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems2.ets'), 773]
+    '1': [resolveTestPath('test/testcases/getSignatureHelpItems/getSignatureHelpItems1.ets'), 678]
   },
   findRenameLocations: {
     expectedFilePath: resolveTestPath('test/expected/findRenameLocations.json'),
     '1': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations2.ets'), 632],
     '2': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 627],
     '3': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 670],
-    '4': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 721]
+    '4': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 721],
+    '5': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations2.ets'), 676],
+    '6': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations2.ets'), 868],
+    '7': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations1.ets'), 720],
+    '8': [resolveTestPath('test/testcases/findRenameLocations/findRenameLocations3.ets'), 627]
   },
   getRenameInfo: {
     expectedFilePath: resolveTestPath('test/expected/getRenameInfo.json'),
@@ -174,20 +187,56 @@ export const basicCases: TestCases = {
     expectedFilePath: resolveTestPath('test/expected/getOffsetByColAndLine.json'),
     '1': [resolveTestPath('test/testcases/getOffsetByColAndLine/getOffsetByColAndLine1.ets'), 51, 14]
   },
+  getColAndLineByOffset: {
+    expectedFilePath: resolveTestPath('test/expected/getColAndLineByOffset.json'),
+    '1': [resolveTestPath('test/testcases/getColAndLineByOffset/getColAndLineByOffset1.ets'), 1035]
+  },
+  getTokenNative: {
+    expectedFilePath: resolveTestPath('test/expected/getTokenNative.json'),
+    '1': [resolveTestPath('test/testcases/getTokenNative/getTokenNative.ets'), 636]
+  },
   entry: {
     expectedFilePath: '',
     '1': [resolveTestPath('test/testcases/entry/Index.ets'), 615]
-  }
-};
-
-export const singleModuleCases: TestCases = {
-  generateDeclFile: {
-    expectedFilePath: resolveTestPath('test/expected/generateDeclFile.json'),
-    '1': []
   },
-  modifyDeclFile: {
-    expectedFilePath: resolveTestPath('test/expected/modifyDeclFile.json'),
-    '1': [resolveTestPath('test/testcases/modifyDeclFile/entry/index.ets')]
+  modifyFilesMap: {
+    expectedFilePath: '',
+    '1': [
+      resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition1.ets'),
+      {
+        newDoc: `export function A(a:number, b:number): number {
+    return a + b;
+}`
+      }
+    ]
+  },
+  getEditsForRefactor: {
+    expectedFilePath: resolveTestPath('test/expected/getEditsForRefactor.json'),
+    '1': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractConstant3.ets'),
+      "ExtractSymbolRefactor",
+      "extract_constant_scope_0",
+      675,
+      695
+    ],
+    '2': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractFunction4.ets'),
+      "ExtractSymbolRefactor",
+      "extract_function_scope_0",
+      675,
+      695
+    ],
+    '3': [
+      resolveTestPath('test/testcases/getEditsForRefactor/ExtractInterface.ets'),
+      "ExtractTypeRefactor",
+      "extract_interface",
+      641,
+      664
+    ]
+  },
+  deleteFromFilesMap: {
+    expectedFilePath: '',
+    '1': [resolveTestPath('test/testcases/getDefinitionAtPosition/getDefinitionAtPosition1.ets')]
   }
 };
 

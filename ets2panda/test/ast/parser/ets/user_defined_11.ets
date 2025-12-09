@@ -17,4 +17,5 @@ class /* @@ label */number{
   a : string = "15";
 }
 
-/* @@? 16:21 Error SyntaxError: number is a predefined type, cannot be used as an identifier */
+
+/* @@@ label Error Syntax error ESY0295: number is a predefined type, cannot be used as an identifier */

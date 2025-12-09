@@ -17,6 +17,4 @@ function foo() {
     let s = "2".concat(s).concat("4");
 }
 
-/* @@? 17:13 Error TypeError: Circular call function */
-/* @@? 17:13 Error TypeError: No matching call signature for concat(s) */
-/* @@? 17:24 Error TypeError: Variable 's' is accessed before it's initialization. */
+/* @@? 17:24 Error Semantic error ESE0365: Variable 's' is accessed before it's initialization. */

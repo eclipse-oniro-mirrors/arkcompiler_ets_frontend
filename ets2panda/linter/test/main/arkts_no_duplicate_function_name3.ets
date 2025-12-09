@@ -24,7 +24,7 @@ namespace B {
 }
 
 namespace B {
-  class MyClass {} // ERROR
+  class MyClass {} // REPORT NO ERROR
 }
 
 namespace C {
@@ -32,7 +32,7 @@ namespace C {
 }
 
 namespace C {
-  let myVar: number = 42; // ERROR
+  let myVar: number = 42; // REPORT NO ERROR
 }
 
 namespace D {
@@ -44,7 +44,7 @@ namespace F {
 }
 
 namespace F {
-  interface MyInterface {} // ERROR
+  interface MyInterface {} // REPORT NO ERROR
 }
 
 namespace G {
@@ -52,7 +52,7 @@ namespace G {
 }
 
 namespace G {
-  enum MyEnum { A, B, C } // ERROR
+  enum MyEnum { A, B, C } // REPORT NO ERROR
 }
 
 namespace H {
@@ -68,7 +68,7 @@ namespace I {
 }
 
 namespace I {
-  let b: number = 3, c: number = 4; // ERROR
+  let b: number = 3, c: number = 4; // REPORT NO ERROR
 }
 
 

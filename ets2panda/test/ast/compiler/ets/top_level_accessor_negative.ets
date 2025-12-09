@@ -23,8 +23,8 @@ set setterWithReturnType(x: number): void {}
 
 get getterWithParam(x: number): number { return x }
 
-/* @@? 16:12 Error TypeError: Native and Declare methods should have explicit return type. */
-/* @@? 18:37 Error TypeError: Native, Abstract and Declare methods cannot have body. */
-/* @@? 20:5 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 22:1 Error SyntaxError: Setter must not have return type even if it is void. */
-/* @@? 24:1 Error SyntaxError: Getter must not have formal parameters. */
+/* @@? 16:12 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */
+/* @@? 18:37 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
+/* @@? 20:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 22:1 Error Syntax error ESY0241: Setter must not have return type even if it is void. */
+/* @@? 24:1 Error Syntax error ESY0058: Getter must not have formal parameters. */

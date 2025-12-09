@@ -26,15 +26,15 @@
 }
 
 //  // @Message for 'Int' and @Anno2 for 'String'
-let unionType1: @Message() Int| @Anno2 'String'
+let unionType1: @Message() Int| @Anno2() 'String'
 
 // @Message for 'Int | String' and @Anno2 for 'String'
-let unionType2: @Message (Int| @Anno2() String)
+let unionType2: @Message() (Int| @Anno2() String)
 
 // @Message for 'Int | String' and @Anno2 for 'Int'
-let unionType3: @Message() (@Anno2 Int| String)
+let unionType3: @Message() (@Anno2() Int| String)
 
 // @Message for 'Int | String', @Anno1 for 'Int' and @Anno2 for 'String'
-let unionType4: @Message (@Anno1 Int| @Anno2() String)
+let unionType4: @Message() (@Anno1() Int| @Anno2() String)
 
 function main(){}

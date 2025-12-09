@@ -17,4 +17,4 @@
     return 1.2;
 }
 
-/* @@? 16:54 Error TypeError: The extension function 'valueOf' has the same name with public method in class Double */
+/* @@? 16:54 Error Semantic error ESE0081: The extension function 'valueOf' has the same name with public method in class Double */

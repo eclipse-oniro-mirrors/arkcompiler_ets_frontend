@@ -26,5 +26,6 @@ function main(): void {
     foo<string, string>()
 }
 
-/* @@@ label Error TypeError: Variable 'u' is used before being assigned.  */
-/* @@@ label1 Error TypeError: Variable 'v' is used before being assigned.  */
+
+/* @@@ label Error Semantic error ESE0375: Variable 'u' is used before being assigned. */
+/* @@@ label1 Error Semantic error ESE0375: Variable 'v' is used before being assigned. */

@@ -21,8 +21,9 @@ class A{
     x : int
 }
 
-/* @@? 20:12 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 20:12 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 20:12 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 20:28 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 20:31 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? 20:12 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 20:12 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 20:12 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 20:28 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 20:31 Error Syntax error ESY0227: Unexpected token ')'. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 
 var a = {foo : {bar : {baz : 5}}};
 var b: number;
-b = a.foo.bar./* @@ label */bad;
+b = a.foo.bar.bad;
 
-/* @@@ label Error TypeError: Property bad does not exist on this type.  */
+
+/* @@? 19:15 Error Semantic error ESE0000: Property bad does not exist on this type. */

@@ -23,5 +23,5 @@ function main() {
     A()
 }
 
-/* @@? 23:5 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 23:5 Error TypeError: No matching call signature for $_instantiate((() => A)) */
+/* @@? 23:5 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
+/* @@? 23:5 Error Semantic error ESE0127: No matching call signature for $_instantiate((() => A)) */

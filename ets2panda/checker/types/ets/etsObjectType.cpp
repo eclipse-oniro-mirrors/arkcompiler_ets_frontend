@@ -17,18 +17,21 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "checker/types/globalTypesHolder.h"
-#include "checker/types/ets/etsAsyncFuncReturnType.h"
-#include "checker/types/ets/etsEnumType.h"
 #include "compiler/lowering/phase.h"
-#include "ir/statements/annotationDeclaration.h"
 
 namespace ark::es2panda::checker {
 
+void ETSObjectType::Iterate(const PropertyTraverser &cb) const
+{
+    ForEachAllOwnProperties(cb);
+    ForEachAllNonOwnProperties(cb);
+}
+
 void ETSObjectType::AddInterface(ETSObjectType *interfaceType)
 {
-    if (std::find(interfaces_.begin(), interfaces_.end(), interfaceType) == interfaces_.end()) {
-        interfaces_.push_back(interfaceType);
+    EnsureInterfacesInitialized();
+    if (std::find(interfaces_->begin(), interfaces_->end(), interfaceType) == interfaces_->end()) {
+        interfaces_->emplace_back(interfaceType);
         CacheSupertypeTransitive(interfaceType);
     }
 }
@@ -44,11 +47,13 @@ void ETSObjectType::SetSuperType(ETSObjectType *super)
 
 void ETSObjectType::CacheSupertypeTransitive(ETSObjectType *type)
 {
+    EnsureTransitiveSupertypesInitialized();
     auto const insertType = [this](ETSObjectType *t) {
-        return transitiveSupertypes_.insert(t->GetOriginalBaseType()).second;
+        return transitiveSupertypes_->insert(t->GetOriginalBaseType()).second;
     };
     if (insertType(type)) {
-        for (auto &t : type->transitiveSupertypes_) {
+        type->EnsureTransitiveSupertypesInitialized();
+        for (auto &t : *type->transitiveSupertypes_) {
             insertType(t);
         }
     }
@@ -110,7 +115,8 @@ varbinder::LocalVariable *ETSObjectType::GetProperty(util::StringView name, Prop
 
     if (((flags & PropertySearchFlags::SEARCH_INSTANCE) != 0 || (flags & PropertySearchFlags::SEARCH_STATIC) == 0) &&
         (flags & PropertySearchFlags::SEARCH_IN_INTERFACES) != 0) {
-        for (auto *interface : interfaces_) {
+        EnsureInterfacesInitialized();
+        for (auto *interface : *interfaces_) {
             if (auto res = interface->GetProperty(name, flags); res != nullptr) {
                 return res;
             }
@@ -246,8 +252,9 @@ varbinder::LocalVariable *ETSObjectType::CreateSyntheticVarFromEverySignature(co
     // Since both "first match" and "best match" exist at present, overloadDeclarationCall is temporarily used. After
     // "best match" removed, this marking needs to be removed.
     auto *overloadDeclaration = SearchFieldsDecls(name, UpdateOverloadDeclarationSearchFlags(flags));
-    bool overloadDeclarationCall = overloadDeclaration != nullptr;
-    PropertySearchFlags syntheticFlags = overloadDeclarationCall ? UpdateOverloadDeclarationSearchFlags(flags) : flags;
+    SignatureCollectContext sigCtx {GetRelation()->GetChecker()->AsETSChecker(), overloadDeclaration, true};
+    PropertySearchFlags syntheticFlags =
+        sigCtx.IsOverloadDeclarationCall() ? UpdateOverloadDeclarationSearchFlags(flags) : flags;
 
     varbinder::LocalVariable *functionalInterface = CollectSignaturesForSyntheticType(signatures, name, syntheticFlags);
     // #22952: the called function *always* returns nullptr
@@ -258,11 +265,7 @@ varbinder::LocalVariable *ETSObjectType::CreateSyntheticVarFromEverySignature(co
         return nullptr;
     }
 
-    varbinder::VariableFlags varianceFlag =
-        overloadDeclarationCall ? varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::METHOD |
-                                      varbinder::VariableFlags::OVERLOAD
-                                : varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::METHOD;
-    varbinder::LocalVariable *res = allocator_->New<varbinder::LocalVariable>(varianceFlag);
+    varbinder::LocalVariable *res = sigCtx.CreateSyntheticVar(allocator_);
 
     ETSFunctionType *funcType = CreateMethodTypeForProp(name);
     ES2PANDA_ASSERT(funcType != nullptr);
@@ -272,10 +275,6 @@ varbinder::LocalVariable *ETSObjectType::CreateSyntheticVarFromEverySignature(co
     ES2PANDA_ASSERT(res != nullptr);
     res->SetTsType(funcType);
     funcType->SetVariable(res);
-
-    if (overloadDeclarationCall) {
-        res->Reset(overloadDeclaration->Declaration(), res->Flags());
-    }
 
     UpdateDeclarationForGetterSetter(res, funcType, flags);
 
@@ -344,6 +343,8 @@ void ETSObjectType::AddSignatureFromOverload(std::vector<Signature *> &signature
     if (overloadDeclaration->Id()->IsErrorPlaceHolder()) {
         return;
     }
+
+    SignatureCollectContext sigCtx {GetRelation()->GetChecker()->AsETSChecker(), found};
 
     if (overloadDeclaration->IsConstructorOverloadDeclaration()) {
         return AddSignatureFromConstructor(signatures, found);
@@ -422,6 +423,32 @@ varbinder::LocalVariable *ETSObjectType::CollectSignaturesForSyntheticType(std::
     }
 
     return nullptr;
+}
+
+void ETSObjectType::ForEachAllOwnProperties(const PropertyTraverser &cb) const
+{
+    EnsurePropertiesInstantiated();
+    for (size_t i = 0; i < static_cast<size_t>(PropertyType::COUNT); ++i) {
+        if (properties_[i] != nullptr) {
+            PropertyMap &map = *properties_[i];
+            for (const auto &[_, prop] : map) {
+                (void)_;
+                cb(prop);
+            }
+        }
+    }
+}
+
+void ETSObjectType::ForEachAllNonOwnProperties(const PropertyTraverser &cb) const
+{
+    if (superType_ != nullptr) {
+        superType_->Iterate(cb);
+    }
+
+    EnsureInterfacesInitialized();
+    for (const auto *interface : *interfaces_) {
+        interface->Iterate(cb);
+    }
 }
 
 std::vector<varbinder::LocalVariable *> ETSObjectType::GetAllProperties() const
@@ -518,11 +545,45 @@ std::vector<varbinder::LocalVariable *> ETSObjectType::Fields() const
     return fields;
 }
 
+std::vector<const varbinder::LocalVariable *> ETSObjectType::ForeignProperties() const
+{
+    std::vector<const varbinder::LocalVariable *> foreignProps;
+
+    // spec 9.3: all names in static and, separately, non-static class declaration scopes must be unique.
+    std::unordered_set<util::StringView> ownInstanceProps;
+    std::unordered_set<util::StringView> ownStaticProps;
+
+    EnsurePropertiesInstantiated();
+    ownInstanceProps.reserve(static_cast<size_t>(PropertyType::COUNT));
+    ownStaticProps.reserve(static_cast<size_t>(PropertyType::COUNT));
+
+    ForEachAllOwnProperties([&](const varbinder::LocalVariable *prop) {
+        if (prop->HasFlag(varbinder::VariableFlags::STATIC)) {
+            ownStaticProps.insert(prop->Name());
+        } else {
+            ownInstanceProps.insert(prop->Name());
+        }
+    });
+    ForEachAllNonOwnProperties([&](const varbinder::LocalVariable *var) {
+        if (var->HasFlag(varbinder::VariableFlags::STATIC)) {
+            if (ownStaticProps.find(var->Name()) == ownStaticProps.end()) {
+                foreignProps.push_back(var);
+            }
+        } else {
+            if (ownInstanceProps.find(var->Name()) == ownInstanceProps.end()) {
+                foreignProps.push_back(var);
+            }
+        }
+    });
+
+    return foreignProps;
+}
+
 void ETSObjectType::ToString(std::stringstream &ss, bool precise) const
 {
     if (IsPartial()) {
         ss << "Partial" << compiler::Signatures::GENERIC_BEGIN;
-        baseType_->ToString(ss, precise);
+        ss << util::NameMangler::GetInstance()->GetOriginalClassNameFromPartial(name_.Mutf8());
         ss << compiler::Signatures::GENERIC_END;
         return;
     }
@@ -563,7 +624,8 @@ void ETSObjectType::SubstitutePartialTypes(TypeRelation *relation, Type *other)
     if ((baseType_->IsGeneric() || baseType_->IsETSTypeParameter()) && effectiveSubstitution_ != nullptr) {
         auto subst = ETSChecker::ArenaSubstitutionToSubstitution(effectiveSubstitution_);
         if (auto *newBaseType = baseType_->Substitute(relation, &subst);
-            newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, baseType_)) {
+            newBaseType->IsETSObjectType() && !relation->IsIdenticalTo(newBaseType, this) &&
+            !relation->IsIdenticalTo(newBaseType, baseType_)) {
             baseType_ = newBaseType->AsETSObjectType();
         }
     }
@@ -628,6 +690,10 @@ void ETSObjectType::Identical(TypeRelation *relation, Type *other)
 
     if (HasTypeFlag(TypeFlag::READONLY) != other->HasTypeFlag(TypeFlag::READONLY)) {
         relation->Result(false);
+        return;
+    }
+
+    if (relation->IgnoreTypeParameters()) {
         return;
     }
 
@@ -840,11 +906,6 @@ void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
-    if (target->IsGradualType()) {
-        relation->Result(true);
-        return;
-    }
-
     if (CastNumericObject(relation, target)) {
         return;
     }
@@ -888,7 +949,7 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
     relation->Result(false);
     auto const checker = relation->GetChecker()->AsETSChecker();
 
-    if (source->HasTypeFlag(TypeFlag::READONLY)) {
+    if (source->HasTypeFlag(TypeFlag::READONLY) && !IsGlobalETSObjectType()) {
         relation->Result(false);
         return;
     }
@@ -902,6 +963,10 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
     }
 
     auto const sourceObj = source->AsETSObjectType();
+    if (IsGradual() != sourceObj->IsGradual()) {
+        relation->Result(false);
+        return;
+    }
     // #23072 - superType_ of the current object is not intialized in recursive generics
     if (GetConstOriginalBaseType() == checker->GlobalETSObjectType()) {  // Fastpath, all objects are subtypes of Object
         relation->Result(true);
@@ -928,7 +993,8 @@ void ETSObjectType::IsSupertypeOf(TypeRelation *relation, Type *source)
 void ETSObjectType::IsSubtypeOf(TypeRelation *relation, Type *target)
 {
     if (target->IsETSObjectType()) {
-        auto &transitives = transitiveSupertypes_;
+        EnsureTransitiveSupertypesInitialized();
+        auto &transitives = *transitiveSupertypes_;
         if (transitives.find(target->AsETSObjectType()->GetOriginalBaseType()) == transitives.end()) {
             relation->Result(false);
             return;
@@ -1062,10 +1128,11 @@ varbinder::LocalVariable *ETSObjectType::CopyProperty(varbinder::LocalVariable *
     return copiedProp;
 }
 
-Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *relation,
+Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *const relation,
                                  GlobalTypesHolder *const globalTypes)
 {
-    relation = relation_;
+    EnsurePropertiesInstantiated();
+
     auto *const checker = relation->GetChecker()->AsETSChecker();
     std::lock_guard guard {*checker->Mutex()};
     auto *const base = GetOriginalBaseType();
@@ -1073,30 +1140,48 @@ Type *ETSObjectType::Instantiate(ArenaAllocator *const allocator, TypeRelation *
     if (!relation->IsAtTypeDepthLimit(base)) {
         return this;
     }
+
     relation->IncreaseTypeRecursionCount(base);
 
     auto *const copiedType = checker->CreateETSObjectType(declNode_, flags_);
+    copiedType->SetRelation(relation);
+
     ES2PANDA_ASSERT(copiedType->internalName_ == internalName_);
     ES2PANDA_ASSERT(copiedType->name_ == name_);
     ES2PANDA_ASSERT(copiedType != nullptr);
+
     copiedType->typeFlags_ = typeFlags_;
     copiedType->RemoveObjectFlag(ETSObjectFlags::INCOMPLETE_INSTANTIATION | ETSObjectFlags::CHECKED_INVOKE_LEGITIMACY);
+
     copiedType->SetVariable(variable_);
     copiedType->SetSuperType(superType_);
-
-    for (auto *const it : interfaces_) {
-        copiedType->AddInterface(it);
-    }
-
-    ArenaVector<Type *> typeArgs(allocator->Adapter());
-    for (auto *const typeArgument : TypeArguments()) {
-        typeArgs.emplace_back(typeArgument->Instantiate(allocator, relation, globalTypes));
-    }
-    copiedType->SetTypeArguments(std::move(typeArgs));
     copiedType->SetBaseType(this);
-    copiedType->propertiesInstantiated_ = false;
-    copiedType->relation_ = relation;
-    copiedType->effectiveSubstitution_ = nullptr;
+    copiedType->SetEnclosingType(enclosingType_);
+
+    if (interfaces_ != nullptr && !interfaces_->empty()) {
+        for (auto *const it : *interfaces_) {
+            copiedType->AddInterface(it);
+        }
+    }
+
+    if (reExports_ != nullptr && !reExports_->empty()) {
+        for (auto *const it : *reExports_) {
+            copiedType->AddReExports(it);
+        }
+    }
+
+    if (reExportAlias_ != nullptr && !reExportAlias_->empty()) {
+        for (auto const &item : *reExportAlias_) {
+            copiedType->AddReExportAlias(item.first, item.second);
+        }
+    }
+
+    if (!typeArguments_.empty()) {
+        for (auto *const typeArgument : typeArguments_) {
+            copiedType->typeArguments_.emplace_back(typeArgument->Instantiate(allocator, relation, globalTypes));
+        }
+    }
+    copiedType->effectiveSubstitution_ = effectiveSubstitution_;
 
     relation->DecreaseTypeRecursionCount(base);
 
@@ -1260,37 +1345,6 @@ static util::StringView GetHashFromSubstitution(const Substitution *substitution
     return util::UString(ss.str(), allocator).View();
 }
 
-static std::pair<util::StringView, util::StringView> GetObjectTypeDeclNames(ir::AstNode *node)
-{
-    if (node->IsClassDefinition()) {
-        return {node->AsClassDefinition()->Ident()->Name(), node->AsClassDefinition()->InternalName()};
-    }
-    if (node->IsTSInterfaceDeclaration()) {
-        return {node->AsTSInterfaceDeclaration()->Id()->Name(), node->AsTSInterfaceDeclaration()->InternalName()};
-    }
-    return {node->AsAnnotationDeclaration()->GetBaseName()->Name(), node->AsAnnotationDeclaration()->InternalName()};
-}
-
-ETSObjectType *ETSObjectType::CreateETSObjectType(ir::AstNode *declNode, ETSObjectFlags flags)
-{
-    auto const [name, internalName] = GetObjectTypeDeclNames(declNode);
-
-    if (declNode->IsClassDefinition() && (declNode->AsClassDefinition()->IsEnumTransformed())) {
-        if (declNode->AsClassDefinition()->IsIntEnumTransformed()) {
-            return Allocator()->New<ETSIntEnumType>(Allocator(), name, internalName, declNode, GetRelation());
-        }
-        ES2PANDA_ASSERT(declNode->AsClassDefinition()->IsStringEnumTransformed());
-        return Allocator()->New<ETSStringEnumType>(Allocator(), name, internalName, declNode, GetRelation());
-    }
-    if (internalName == compiler::Signatures::BUILTIN_ARRAY) {
-        return Allocator()->New<ETSResizableArrayType>(Allocator(), name,
-                                                       std::make_tuple(declNode, flags, GetRelation()));
-    }
-
-    return Allocator()->New<ETSObjectType>(Allocator(), name, internalName,
-                                           std::make_tuple(declNode, flags, GetRelation()));
-}
-
 // #22951: remove isExtensionFunctionType flag
 ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitution *substitution, bool cache,
                                          bool isExtensionFunctionType)
@@ -1323,7 +1377,8 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
     }
     relation->IncreaseTypeRecursionCount(base);
 
-    auto *const copiedType = CreateETSObjectType(declNode_, flags_);
+    auto checker = relation->GetChecker()->AsETSChecker();
+    auto const copiedType = checker->CreateETSObjectType(declNode_, flags_, {{Allocator(), GetRelation()}});
     SetCopiedTypeProperties(relation, copiedType, std::move(newTypeArgs), base);
     if (isExtensionFunctionType) {
         copiedType->AddObjectFlag(checker::ETSObjectFlags::EXTENSION_FUNCTION);
@@ -1337,7 +1392,8 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
     if (superType_ != nullptr) {
         copiedType->SetSuperType(superType_->Substitute(relation, substitution)->AsETSObjectType());
     }
-    for (auto *itf : interfaces_) {
+    EnsureInterfacesInitialized();
+    for (auto *itf : *interfaces_) {
         auto *newItf = itf->Substitute(relation, substitution)->AsETSObjectType();
         copiedType->AddInterface(newItf);
     }
@@ -1365,8 +1421,7 @@ ETSObjectType *ETSObjectType::SubstituteArguments(TypeRelation *relation, ArenaV
     ES2PANDA_ASSERT(typeArguments_.size() == arguments.size());
 
     for (size_t ix = 0; ix < typeArguments_.size(); ix++) {
-        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(),
-                             checker->MaybeBoxType(arguments[ix]->MaybeBaseTypeOfGradualType()));
+        substitution.emplace(typeArguments_[ix]->AsETSTypeParameter(), checker->MaybeBoxType(arguments[ix]));
     }
 
     return Substitute(relation, &substitution);
@@ -1389,11 +1444,23 @@ void ETSObjectType::CheckAndInstantiateProperties() const
         return;
     }
 
-    TypeStackElement tse {checker, this, {{diagnostic::CYCLIC_INHERITANCE, {this->Name()}}}, declNode->Start()};
+    TypeStackElement tse {checker, this, {{diagnostic::CIRCULAR_DEPENDENCY, {this->Name()}}}, declNode->Start()};
     if (tse.HasTypeError()) {
         return;
     }
     InstantiateProperties();
+}
+
+template <typename MapFn>
+void ETSObjectType::CopyPropertyGroup(PropertyType type, MapFn &&mapFn, const Substitution &subst) const
+{
+    auto &srcMap = (baseType_->*mapFn)();
+    for (auto const &[_, prop] : srcMap) {
+        (void)_;
+        auto *copied = CopyPropertyWithTypeArguments(prop, relation_, &subst);
+        EnsurePropertyMapInitialized(type);
+        properties_[static_cast<size_t>(type)]->emplace(prop->Name(), copied);
+    }
 }
 
 void ETSObjectType::InstantiateProperties() const
@@ -1418,41 +1485,12 @@ void ETSObjectType::InstantiateProperties() const
         constructSignatures_.push_back(newSig);
     }
 
-    for (auto const &[_, prop] : baseType_->InstanceFields()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_FIELD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticFields()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_FIELD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->InstanceMethods()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_METHOD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticMethods()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_METHOD)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->InstanceDecls()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::INSTANCE_DECL)].emplace(prop->Name(), copiedProp);
-    }
-
-    for (auto const &[_, prop] : baseType_->StaticDecls()) {
-        (void)_;
-        auto *copiedProp = CopyPropertyWithTypeArguments(prop, relation_, &subst);
-        properties_[static_cast<size_t>(PropertyType::STATIC_DECL)].emplace(prop->Name(), copiedProp);
-    }
+    CopyPropertyGroup(PropertyType::INSTANCE_FIELD, &ETSObjectType::InstanceFields, subst);
+    CopyPropertyGroup(PropertyType::STATIC_FIELD, &ETSObjectType::StaticFields, subst);
+    CopyPropertyGroup(PropertyType::INSTANCE_METHOD, &ETSObjectType::InstanceMethods, subst);
+    CopyPropertyGroup(PropertyType::STATIC_METHOD, &ETSObjectType::StaticMethods, subst);
+    CopyPropertyGroup(PropertyType::INSTANCE_DECL, &ETSObjectType::InstanceDecls, subst);
+    CopyPropertyGroup(PropertyType::STATIC_DECL, &ETSObjectType::StaticDecls, subst);
 }
 
 std::string ETSObjectType::NameToDescriptor(util::StringView name)
@@ -1504,20 +1542,23 @@ std::uint32_t ETSObjectType::GetPrecedence(checker::ETSChecker *checker, ETSObje
 }
 void ETSObjectType::AddReExports(ETSObjectType *reExport)
 {
-    if (std::find(reExports_.begin(), reExports_.end(), reExport) == reExports_.end()) {
-        reExports_.push_back(reExport);
+    EnsureReExportsInitialized();
+    if (std::find(reExports_->begin(), reExports_->end(), reExport) == reExports_->end()) {
+        reExports_->push_back(reExport);
     }
 }
 
 void ETSObjectType::AddReExportAlias(util::StringView const &value, util::StringView const &key)
 {
-    reExportAlias_.insert({key, value});
+    EnsureReExportAliasInitialized();
+    reExportAlias_->insert({key, value});
 }
 
 util::StringView ETSObjectType::GetReExportAliasValue(util::StringView const &key) const
 {
-    auto ret = reExportAlias_.find(key);
-    if (reExportAlias_.end() == ret) {
+    EnsureReExportAliasInitialized();
+    auto ret = reExportAlias_->find(key);
+    if (reExportAlias_->end() == ret) {
         return key;
     }
     return ret->second;
@@ -1525,29 +1566,39 @@ util::StringView ETSObjectType::GetReExportAliasValue(util::StringView const &ke
 
 bool ETSObjectType::IsReExportHaveAliasValue(util::StringView const &key) const
 {
-    return std::any_of(reExportAlias_.begin(), reExportAlias_.end(),
+    EnsureReExportAliasInitialized();
+    return std::any_of(reExportAlias_->begin(), reExportAlias_->end(),
                        [&](const auto &val) { return val.second == key; });
 }
 
 const ArenaVector<ETSObjectType *> &ETSObjectType::ReExports() const
 {
-    return reExports_;
+    EnsureReExportsInitialized();
+    return *reExports_;
+}
+
+util::StringView ETSObjectType::AssemblerName() const
+{
+    if (IsGradual()) {
+        return "std.core.Object";  // "{Ustd.core.Object,std.core.JSValue}"
+    }
+    return internalName_;
 }
 
 void ETSObjectType::ToAssemblerType([[maybe_unused]] std::stringstream &ss) const
 {
-    ss << internalName_;
+    ss << AssemblerName();
 }
 
 void ETSObjectType::ToDebugInfoType(std::stringstream &ss) const
 {
-    ss << NameToDescriptor(internalName_);
+    ss << NameToDescriptor(AssemblerName());
 }
 
 void ETSObjectType::ToDebugInfoSignatureType(std::stringstream &ss) const
 {
     ss << compiler::Signatures::GENERIC_BEGIN;
-    ss << internalName_;
+    ss << AssemblerName();
     ss << compiler::Signatures::GENERIC_END;
 }
 

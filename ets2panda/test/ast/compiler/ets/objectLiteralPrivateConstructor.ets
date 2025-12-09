@@ -19,4 +19,5 @@ class C {
 
 let c: C = /* @@ label */{};
 
-/* @@@ label Error TypeError: Signature constructor(): void is not visible here.  */
+
+/* @@@ label Error Semantic error ESE0139: Signature constructor(): void is not visible here. */

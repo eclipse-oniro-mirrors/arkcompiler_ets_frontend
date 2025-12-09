@@ -20,4 +20,5 @@ const e = f + 1;
 const f = g + 1;
 const g = b + 1;
 
-/* @@? 17:7 Error TypeError: Circular dependency detected for identifier: c */
+
+/* @@? 17:7 Error Semantic error ESE0308: Circular dependency detected for identifier: c */

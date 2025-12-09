@@ -15,6 +15,7 @@
 
 export /* @@ label1 */as /* @@ label2 */namespace mathLib {}
 
-/* @@@ label1 Error SyntaxError: Universal module definitions are not supported, please use ordinary import/export syntax instead. */
-/* @@@ label1 Error SyntaxError: Unexpected token 'as'. */
-/* @@@ label2 Error SyntaxError: Unexpected token 'namespace'. */
+
+/* @@@ label1 Error Syntax error ESY114179: Universal module definitions are not supported, please use ordinary import/export syntax instead. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token 'as'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'namespace'. */

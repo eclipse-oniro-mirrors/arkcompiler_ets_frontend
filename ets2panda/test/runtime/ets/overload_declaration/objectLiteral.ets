@@ -43,7 +43,7 @@ overload test{ test1, test2 }
 
 function main(): int {
     let c: C = { // variable definition
-        "x": 7,
+        x: 7,
         s: "sss",
     };
     test(c, 0, 7, "sss", 0)

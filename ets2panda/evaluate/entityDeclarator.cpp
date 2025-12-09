@@ -85,7 +85,7 @@ ir::ETSImportDeclaration *EntityDeclarator::CreateIrImport(util::StringView path
     auto *imported = checker->AllocNode<ir::Identifier>(classImportedName, allocator);
     auto *spec = checker->AllocNode<ir::ImportSpecifier>(imported, local);
     ArenaVector<ir::AstNode *> specifiers(1, spec, allocator->Adapter());
-
+    // NOLINTNEXTLINE (performance-move-const-arg)
     return checker->AllocNode<ir::ETSImportDeclaration>(source, std::move(importMetadata), std::move(specifiers));
 }
 

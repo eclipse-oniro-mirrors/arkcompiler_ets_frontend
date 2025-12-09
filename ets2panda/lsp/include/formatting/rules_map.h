@@ -16,13 +16,14 @@
 #ifndef RULES_MAP_H
 #define RULES_MAP_H
 
-#include <functional>
+#include <cstdint>
 #include <vector>
 #include "rules.h"
 
 namespace ark::es2panda::lsp {
 
 using RulesMap = std::function<std::vector<RuleSpec>(const FormattingContext &)>;
+const lexer::TokenType LAST_TOKEN = lexer::TokenType::KEYW_YIELD;
 
 class RulesMapCache {
 public:
@@ -34,12 +35,19 @@ public:
     NO_COPY_SEMANTIC(RulesMapCache);
     NO_MOVE_SEMANTIC(RulesMapCache);
 
-private:
     RulesMapCache() = default;
 
     static RulesMap rulesMap_;
 
     static RulesMap CreateRulesMap(const std::vector<RuleSpec> &ruleSpec);
+
+    static int GetInsertionIndex(uint32_t bitmap, uint32_t shift);
+    static int IncreaseInsertionIndex(uint32_t bitmap, uint32_t shift);
+    static void AddRule(std::vector<RuleSpec> &ruleSpecs, RuleSpec &ruleSpec, bool specificTokens,
+                        unsigned int &bitmap);
+    static RuleAction GetRuleActionExclusion(RuleAction ruleAction);
+    static int GetRuleBucketIndex(lexer::TokenType left, lexer::TokenType right);
+    static std::unordered_map<int, std::vector<RuleSpec>> BuildMap(const std::vector<RuleSpec> &ruleSpecs);
 };
 
 }  // namespace ark::es2panda::lsp

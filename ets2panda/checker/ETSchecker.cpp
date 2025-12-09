@@ -26,7 +26,7 @@
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/statements/blockStatement.h"
 #include "types/type.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/ETSBinder.h"
 #include "parser/program/program.h"
 #include "checker/ets/aliveAnalyzer.h"
@@ -40,56 +40,62 @@
 
 namespace ark::es2panda::checker {
 
+void ETSChecker::ReputCheckerDataProgram(ETSChecker *eChecker)
+{
+    if (!HasStatus(CheckerStatus::BUILTINS_INITIALIZED)) {
+        SetGlobalTypesHolder(eChecker->GetGlobalTypesHolder());
+        AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
+    }
+
+    if (auto it = readdedChecker_.find(eChecker); it != readdedChecker_.end()) {
+        return;
+    }
+    readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
+    auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
+    for (auto &[key, value] : *computedAbstractMapToCopy) {
+        if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+            return;
+        }
+        auto &[v1, v2] = value;
+        ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
+        ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
+        newV1.assign(v1.cbegin(), v1.cend());
+        newV2.insert(v2.cbegin(), v2.cend());
+        GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+    }
+
+    auto &globalArraySigs = eChecker->globalArraySignatures_;
+    globalArraySignatures_.insert(globalArraySigs.cbegin(), globalArraySigs.cend());
+
+    auto &apparentTypes = eChecker->apparentTypes_;
+    apparentTypes_.insert(apparentTypes.cbegin(), apparentTypes.cend());
+
+    auto &objectInstantiationMap = eChecker->objectInstantiationMap_;
+    for (auto &[key, value] : objectInstantiationMap) {
+        if (objectInstantiationMap_.find(key) == objectInstantiationMap_.end()) {
+            objectInstantiationMap_.insert(objectInstantiationMap.cbegin(), objectInstantiationMap.cend());
+        }
+    }
+
+    auto &invokeToArrowSignatures = eChecker->invokeToArrowSignatures_;
+    invokeToArrowSignatures_.insert(invokeToArrowSignatures.cbegin(), invokeToArrowSignatures.cend());
+    auto &arrowToFuncInterfaces = eChecker->arrowToFuncInterfaces_;
+    arrowToFuncInterfaces_.insert(arrowToFuncInterfaces.cbegin(), arrowToFuncInterfaces.cend());
+    auto unionAssemblerTypes = eChecker->unionAssemblerTypes_;
+    unionAssemblerTypes_.insert(unionAssemblerTypes.cbegin(), unionAssemblerTypes.cend());
+}
+
 void ETSChecker::ReputCheckerData()
 {
     readdedChecker_.insert(this);
     for (auto &[_, extPrograms] : Program()->ExternalSources()) {
         (void)_;
-        auto *extProg = extPrograms.front();
-        if (!extProg->IsASTLowered()) {
-            continue;
-        }
-        auto eChecker = extProg->Checker()->AsETSChecker();
-
-        if (!HasStatus(CheckerStatus::BUILTINS_INITIALIZED)) {
-            SetGlobalTypesHolder(eChecker->GetGlobalTypesHolder());
-            AddStatus(CheckerStatus::BUILTINS_INITIALIZED);
-        }
-
-        if (auto it = readdedChecker_.find(eChecker); it != readdedChecker_.end()) {
-            continue;
-        }
-        readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
-        auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
-        for (auto &[key, value] : *computedAbstractMapToCopy) {
-            if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+        for (auto *extProg : extPrograms) {
+            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
                 continue;
             }
-            auto &[v1, v2] = value;
-            ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
-            ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
-            newV1.assign(v1.cbegin(), v1.cend());
-            newV2.insert(v2.cbegin(), v2.cend());
-            GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+            ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
-
-        auto &globalArraySigs = eChecker->globalArraySignatures_;
-        globalArraySignatures_.insert(globalArraySigs.cbegin(), globalArraySigs.cend());
-
-        auto &apparentTypes = eChecker->apparentTypes_;
-        apparentTypes_.insert(apparentTypes.cbegin(), apparentTypes.cend());
-
-        auto &objectInstantiationMap = eChecker->objectInstantiationMap_;
-        for (auto &[key, value] : objectInstantiationMap) {
-            if (objectInstantiationMap_.find(key) == objectInstantiationMap_.end()) {
-                objectInstantiationMap_.insert(objectInstantiationMap.cbegin(), objectInstantiationMap.cend());
-            }
-        }
-
-        auto &invokeToArrowSignatures = eChecker->invokeToArrowSignatures_;
-        invokeToArrowSignatures_.insert(invokeToArrowSignatures.cbegin(), invokeToArrowSignatures.cend());
-        auto &arrowToFuncInterfaces = eChecker->arrowToFuncInterfaces_;
-        arrowToFuncInterfaces_.insert(arrowToFuncInterfaces.cbegin(), arrowToFuncInterfaces.cend());
     }
 }
 
@@ -114,7 +120,8 @@ static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signat
 
 void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties)
 {
-    std::set<util::StringView> names;
+    std::set<util::StringView> fieldNames {};
+    std::set<util::StringView> methodNames {};
 
     for (auto property : properties) {
         if (!property->IsProperty()) {
@@ -128,10 +135,19 @@ void ETSChecker::CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &pro
 
         // number kind only used here
         auto propName = propKey->IsIdentifier() ? propKey->AsIdentifier()->Name() : propKey->AsStringLiteral()->Str();
-        if (names.find(propName) != names.end()) {
+        if (fieldNames.find(propName) != fieldNames.end()) {
             LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
         }
-        names.insert(propName);
+
+        // Method names can duplicate because of possible overloading
+        if (!propertyDecl->Value()->IsArrowFunctionExpression()) {
+            if (methodNames.find(propName) != methodNames.end()) {
+                LogError(diagnostic::OBJ_LIT_PROPERTY_REDECLARATION, {}, property->Start());
+            }
+            fieldNames.insert(propName);
+        } else {
+            methodNames.insert(propName);
+        }
     }
 }
 
@@ -149,7 +165,6 @@ static constexpr std::string_view BUILTINS_TO_INIT[] = {
     compiler::Signatures::BUILTIN_OBJECT_CLASS,
     compiler::Signatures::BUILTIN_STRING_CLASS,
     compiler::Signatures::BUILTIN_BIGINT_CLASS,
-    compiler::Signatures::BUILTIN_EXCEPTION_CLASS,
     compiler::Signatures::BUILTIN_ERROR_CLASS,
     compiler::Signatures::BUILTIN_TYPE_CLASS,
     compiler::Signatures::BUILTIN_PROMISE_CLASS,
@@ -322,6 +337,7 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     if (options.IsParseOnly()) {
         return false;
     }
+    permitRelaxedAny_ = options.IsPermitRelaxedAny();
 
     auto *etsBinder = varbinder->AsETSBinder();
     InitializeBuiltins(etsBinder);
@@ -377,7 +393,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     for (auto &[_, extPrograms] : program->ExternalSources()) {
         (void)_;
         for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered()) {
+            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
                 extProg->PushChecker(this);
                 auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
                 varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);
@@ -388,17 +404,21 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
                 CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
                 VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
                 VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
+                extProg->SetProgramModified(false);
             }
         }
     }
 
     ES2PANDA_ASSERT(Program()->Ast()->IsProgram());
 
-    Program()->Ast()->Check(this);
-
-    if (runAnalysis && !IsAnyError()) {
-        AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
-        AssignAnalyzer(this).Analyze(Program()->Ast());
+    if (runAnalysis) {
+        Program()->Ast()->Check(this);
+        if (!IsAnyError()) {
+            AliveAnalyzer aliveAnalyzer(Program()->Ast(), this);
+            AssignAnalyzer(this).Analyze(Program()->Ast());
+        }
+    } else if (!VarBinder()->GetContext()->lazyCheck) {
+        Program()->Ast()->Check(this);
     }
 
     ES2PANDA_ASSERT(VarBinder()->AsETSBinder()->GetExternalRecordTable().find(program)->second);
@@ -432,7 +452,7 @@ bool ETSChecker::IsClassStaticMethod(checker::ETSObjectType *objType, checker::S
 [[nodiscard]] TypeFlag ETSChecker::TypeKind(const Type *const type) noexcept
 {
     // These types were not present in the ETS_TYPE list. Some of them are omitted intentionally, other are just bugs
-    static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_INT_ENUM |
+    static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_NUMERIC_ENUM |
                                      TypeFlag::ETS_STRING_ENUM | TypeFlag::READONLY | TypeFlag::BIGINT_LITERAL |
                                      TypeFlag::ETS_TYPE_ALIAS | TypeFlag::TYPE_ERROR;
 
@@ -616,11 +636,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinTypeType() const
     return AsETSObjectType(&GlobalTypesHolder::GlobalTypeBuiltinType);
 }
 
-ETSObjectType *ETSChecker::GlobalBuiltinExceptionType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalExceptionBuiltinType);
-}
-
 ETSObjectType *ETSChecker::GlobalBuiltinErrorType() const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalErrorBuiltinType);
@@ -641,16 +656,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinFunctionType() const
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType);
 }
 
-ETSObjectType *ETSChecker::GlobalBuiltinJSRuntimeType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalJSRuntimeBuiltinType);
-}
-
-ETSObjectType *ETSChecker::GlobalBuiltinJSValueType() const
-{
-    return AsETSObjectType(&GlobalTypesHolder::GlobalJSValueBuiltinType);
-}
-
 ETSObjectType *ETSChecker::GlobalBuiltinFunctionType(size_t nargs, bool hasRest) const
 {
     return AsETSObjectType(&GlobalTypesHolder::GlobalFunctionBuiltinType, nargs, hasRest);
@@ -669,14 +674,6 @@ ETSObjectType *ETSChecker::GlobalBuiltinTupleType(size_t nargs) const
 size_t ETSChecker::GlobalBuiltinFunctionTypeVariadicThreshold() const
 {
     return GetGlobalTypesHolder()->VariadicFunctionTypeThreshold();
-}
-
-ETSObjectType *ETSChecker::GlobalBuiltinDynamicType(Language lang) const
-{
-    if (lang.GetId() == Language::Id::JS) {
-        return GlobalBuiltinJSValueType();
-    }
-    return nullptr;
 }
 
 ETSObjectType *ETSChecker::GlobalBuiltinBoxType(Type *contents)
@@ -805,6 +802,22 @@ Signature *ETSChecker::FindExtensionGetterInMap(util::StringView name, ETSObject
 void ETSChecker::InsertExtensionSetterToMap(util::StringView name, ETSObjectType *type, Signature *sig)
 {
     GetGlobalTypesHolder()->InsertExtensionSetterToMap(name, type, sig);
+}
+
+bool ETSChecker::HasParameterlessConstructor(checker::Type *type)
+{
+    if (!type->IsETSObjectType()) {
+        return false;
+    }
+
+    auto *objType = type->AsETSObjectType();
+    for (auto *ctorSig : objType->ConstructSignatures()) {
+        if (ctorSig != nullptr && ctorSig->Params().empty() && !ctorSig->HasRestParameter()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void ETSChecker::InsertExtensionGetterToMap(util::StringView name, ETSObjectType *type, Signature *sig)

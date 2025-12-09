@@ -15,5 +15,6 @@
 // Int[1,2,3,4,5]
 let a: number = new Int[1
 
-/* @@? 16:17 Error TypeError: Type 'Array<Int>' cannot be assigned to type 'Double' */
-/* @@? 20:1 Error SyntaxError: Expected ']', got 'end of stream'. */
+
+/* @@? 16:17 Error Semantic error ESE0318: Type 'Array<Int>' cannot be assigned to type 'Double' */
+/* @@? 20:79 Error Syntax error ESY0230: Expected ']', got 'end of stream'. */

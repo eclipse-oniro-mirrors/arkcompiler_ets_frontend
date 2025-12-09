@@ -23,4 +23,5 @@ function main(): void {
     let req_b: Required<B> = /* @@ label */{fld: 3.0, fld2: 5.0};
 }
 
-/* @@@ label Error TypeError: Class property 'fld3' needs to be initialized for Required<B>.  */
+
+/* @@@ label Error Semantic error ESE0226: Class property 'fld3' needs to be initialized for Required<B>. */

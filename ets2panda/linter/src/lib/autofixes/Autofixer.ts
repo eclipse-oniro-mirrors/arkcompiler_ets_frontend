@@ -69,9 +69,9 @@ import {
   IS_INSTANCE_OF
 } from '../utils/consts/InteropAPI';
 import path from 'node:path';
-import { isStdLibrarySymbol } from '../utils/functions/IsStdLibrary';
 import { propertyAccessReplacements, identifierReplacements } from '../utils/consts/DeprecatedApi';
 import { ARKTS_COLLECTIONS_MODULE, BIT_VECTOR } from '../utils/consts/CollectionsAPI';
+import { ON_KEY_EVENT } from '../utils/consts/OverloadCommon';
 
 const UNDEFINED_NAME = 'undefined';
 
@@ -2687,7 +2687,12 @@ export class Autofixer {
       undefined
     );
 
-    const text = this.printer.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
+    let text = this.printer.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
+    const ancestor = ts.findAncestor(voidExpr, ts.isIfStatement);
+    if (ancestor) {
+      const startPos = this.sourceFile.getLineAndCharacterOfPosition(voidExpr.parent.getStart()).character;
+      text = this.adjustIndentation(text, startPos);
+    }
     return [{ start: voidExpr.getStart(), end: voidExpr.getEnd(), replacementText: text }];
   }
 
@@ -2785,60 +2790,6 @@ export class Autofixer {
       pattern = literalText.slice(1, lastSlashIndex);
     }
     return { pattern, flag };
-  }
-
-  /*
-   * "unsafe" (result is not common subset) autofixes
-   */
-
-  // to use special lib functions it's need to import it
-  static SPECIAL_LIB_NAME = 'specialAutofixLib';
-
-  // autofix for '**', '**=' operations and 'math.pow()' call
-  fixExponent(exponentNode: ts.Node): Autofix[] | undefined {
-    let autofix: Autofix[] = [];
-    let replaceText: Autofix = { replacementText: '', start: 0, end: 0 };
-
-    // ts.BinaryExpression
-    let callArgs: ts.Expression[] | undefined;
-    if (exponentNode.kind === ts.SyntaxKind.CallExpression) {
-      callArgs = [...(exponentNode as ts.CallExpression).arguments];
-    } else if (exponentNode.kind === ts.SyntaxKind.BinaryExpression) {
-      callArgs = [(exponentNode as ts.BinaryExpression).left, (exponentNode as ts.BinaryExpression).right];
-    } else {
-      // if we get here - it was an error!
-      return undefined;
-    }
-
-    const newCall = ts.factory.createCallExpression(
-      ts.factory.createPropertyAccessExpression(
-        ts.factory.createIdentifier('Math'),
-        ts.factory.createIdentifier('pow')
-      ),
-      undefined,
-      callArgs
-    );
-
-    if (
-      exponentNode.kind === ts.SyntaxKind.BinaryExpression &&
-      (exponentNode as ts.BinaryExpression).operatorToken.kind === ts.SyntaxKind.AsteriskAsteriskEqualsToken
-    ) {
-      const newAssignment = ts.factory.createAssignment((exponentNode as ts.BinaryExpression).left, newCall);
-      replaceText = {
-        replacementText: this.printer.printNode(ts.EmitHint.Unspecified, newAssignment, exponentNode.getSourceFile()),
-        start: exponentNode.getStart(),
-        end: exponentNode.getEnd()
-      };
-    } else {
-      replaceText = {
-        replacementText: this.printer.printNode(ts.EmitHint.Unspecified, newCall, exponentNode.getSourceFile()),
-        start: exponentNode.getStart(),
-        end: exponentNode.getEnd()
-      };
-    }
-
-    autofix = [replaceText];
-    return autofix;
   }
 
   fixNativeBidirectionalBinding(
@@ -2941,7 +2892,7 @@ export class Autofixer {
     const statements = block?.statements;
     Autofixer.getParamsAndValues(statements, parameters, values);
     const returnStatement = ts.factory.createReturnStatement(ts.factory.createThis());
-    const newBlock = Autofixer.createBlock(parameters, values, ts.factory.createThis(), returnStatement);
+    const newBlock = Autofixer.createBlock(parameters, values, ts.factory.createThis(), block, returnStatement);
     const componentName = extendDecorator.expression.arguments[0]?.getText();
     if (!componentName) {
       return undefined;
@@ -3160,7 +3111,7 @@ export class Autofixer {
     typeParameters: ts.TypeParameterDeclaration[] | undefined,
     paramDecl: ts.ParameterDeclaration,
     returnType: ts.TypeNode,
-    block: ts.Block
+    block?: ts.Block
   ): ts.FunctionDeclaration {
     return ts.factory.createFunctionDeclaration(
       undefined,
@@ -3177,6 +3128,7 @@ export class Autofixer {
     parameters: ts.MemberName[],
     values: ts.Expression[][],
     arg: ts.Expression,
+    block?: ts.Block,
     returnStatement?: ts.Statement
   ): ts.Block {
     const statements: ts.Statement[] = [];
@@ -3191,8 +3143,10 @@ export class Autofixer {
     if (returnStatement) {
       statements.push(returnStatement);
     }
-    const block = ts.factory.createBlock(statements, true);
-    return block;
+    if (!block) {
+      return ts.factory.createBlock(statements, true);
+    }
+    return ts.factory.updateBlock(block, statements);
   }
 
   private static traverseNodes(node: ts.Node, parameters: ts.MemberName[], values: ts.Expression[][]): void {
@@ -3877,11 +3831,7 @@ export class Autofixer {
     needImport: Set<string>
   ): Autofix[] | undefined {
     const block = funcDecl.body;
-    const parameters: ts.MemberName[] = [];
-    const values: ts.Expression[][] = [];
-    const statements = block?.statements;
-    Autofixer.getParamsAndValues(statements, parameters, values);
-    const newBlock = Autofixer.createBlock(parameters, values, ts.factory.createIdentifier(INSTANCE_IDENTIFIER));
+
     const parameDecl = ts.factory.createParameterDeclaration(
       undefined,
       undefined,
@@ -3890,11 +3840,17 @@ export class Autofixer {
       ts.factory.createTypeReferenceNode(ts.factory.createIdentifier(COMMON_METHOD_IDENTIFIER), undefined),
       undefined
     );
+    const updatedBlockText = Autofixer.getUpdatedBlock(block);
+
     const returnType = ts.factory.createKeywordTypeNode(ts.SyntaxKind.VoidKeyword);
-    const newFuncDecl = Autofixer.createFunctionDeclaration(funcDecl, undefined, parameDecl, returnType, newBlock);
+    const newFuncDecl = Autofixer.createFunctionDeclaration(funcDecl, undefined, parameDecl, returnType);
     needImport.add(COMMON_METHOD_IDENTIFIER);
-    const text = this.printer.printNode(ts.EmitHint.Unspecified, newFuncDecl, funcDecl.getSourceFile());
-    const autofix = [{ start: funcDecl.getStart(), end: funcDecl.getEnd(), replacementText: text }];
+    const text = this.printer.
+      printNode(ts.EmitHint.Unspecified, newFuncDecl, funcDecl.getSourceFile()).
+      trim().
+      replace(';', '');
+    const replacementText = `${text}${updatedBlockText}`;
+    const autofix = [{ start: funcDecl.getStart(), end: funcDecl.getEnd(), replacementText }];
     this.addAutofixFromCalls(calls, autofix, funcDecl.name as ts.Identifier);
     return autofix;
   }
@@ -3905,15 +3861,13 @@ export class Autofixer {
     needImport: Set<string>
   ): Autofix[] | undefined {
     const block = methodDecl.body;
-    const parameters: ts.MemberName[] = [];
-    const values: ts.Expression[][] = [];
-    const statements = block?.statements;
     const type = ts.factory.createTypeReferenceNode(
       ts.factory.createIdentifier(CustomInterfaceName.CustomStyles),
       undefined
     );
-    Autofixer.getParamsAndValues(statements, parameters, values);
-    const newBlock = Autofixer.createBlock(parameters, values, ts.factory.createIdentifier(INSTANCE_IDENTIFIER));
+
+    const updatedBlockText = Autofixer.getUpdatedBlock(block);
+    const newBlock = ts.factory.createBlock([]);
     const parameDecl = ts.factory.createParameterDeclaration(
       undefined,
       undefined,
@@ -3936,8 +3890,10 @@ export class Autofixer {
     const expr = ts.factory.createPropertyDeclaration(newModifiers, methodDecl.name, undefined, type, arrowFunc);
     needImport.add(COMMON_METHOD_IDENTIFIER);
     let text = this.printer.printNode(ts.EmitHint.Unspecified, expr, methodDecl.getSourceFile());
+    text = text.replace(' { }', updatedBlockText);
     const startPos = this.sourceFile.getLineAndCharacterOfPosition(methodDecl.getStart()).character;
     text = this.adjustIndentation(text, startPos);
+
     const autofix = [{ start: methodDecl.getStart(), end: methodDecl.getEnd(), replacementText: text }];
     const argument = ts.factory.createPropertyAccessExpression(
       ts.factory.createThis(),
@@ -3945,6 +3901,30 @@ export class Autofixer {
     );
     this.addAutofixFromCalls(calls, autofix, argument);
     return autofix;
+  }
+
+  private static getUpdatedBlock(block: ts.Block | undefined): string {
+    if (!block) {
+      return '';
+    }
+
+    const accessExpression = / \./gi;
+    const onKeyEventParsedBlock = Autofixer.updateOnKeyEvent(block.getFullText());
+    return onKeyEventParsedBlock.replace(accessExpression, ` ${INSTANCE_IDENTIFIER}.`).replace(');', ')');
+  }
+
+  private static updateOnKeyEvent(functionBody: string): string {
+    const keyEventSplit = functionBody.split(ON_KEY_EVENT);
+    if (keyEventSplit.length < 2) {
+      return functionBody;
+    }
+    const header = keyEventSplit.shift();
+    const onKeyPart = keyEventSplit.join(ON_KEY_EVENT);
+    const updatedKeyEventBody = onKeyPart.replace(
+      '}',
+      `${' '.repeat(INDENT_STEP)}return true;\n\t${' '.repeat(INDENT_STEP)}}`
+    );
+    return `${header}${ON_KEY_EVENT}${updatedKeyEventBody}`;
   }
 
   private adjustIndentation(text: string, startPos: number, indentLastLine = false): string {
@@ -3959,6 +3939,7 @@ export class Autofixer {
     const indentBase = startPos - (currentIndent - INDENT_STEP);
 
     const middleLines = lines.slice(1, -1).map((line) => {
+      const indentBase = startPos - (currentIndent - INDENT_STEP);
       if (indentBase > 0) {
         return ' '.repeat(indentBase) + line;
       }
@@ -4856,37 +4837,13 @@ export class Autofixer {
     );
   }
 
-  private fixGenericCallNoTypeArgsWithContextualType(
-    node: ts.NewExpression | ts.CallExpression
-  ): Autofix[] | undefined {
-    const contextualType = this.typeChecker.getContextualType(node);
-    if (!contextualType) {
-      return undefined;
-    }
-
-    const typeArgs = this.getTypeArgumentsFromType(contextualType);
-    if (typeArgs.length === 0) {
-      return undefined;
-    }
-    const reference = typeArgs.map((arg) => {
-      return ts.factory.createTypeReferenceNode(this.typeChecker.typeToStringForLinter(arg));
-    });
-    return this.generateGenericTypeArgumentsAutofix(node, reference);
-  }
-
-  fixGenericCallNoTypeArgs(node: ts.NewExpression | ts.CallExpression): Autofix[] | undefined {
+  fixGenericCallNoTypeArgs(node: ts.NewExpression): Autofix[] | undefined {
     const typeNode = this.getTypeNodeForNewExpression(node);
     if (!typeNode) {
-      return this.fixGenericCallNoTypeArgsWithContextualType(node);
+      return undefined;
     }
-    let nodeExpressionText = node.expression.getText();
-    if (ts.isCallExpression(node)) {
-      const returnTypeText = this.getReturnTypeFromMethodDeclaration(node);
-      if (!returnTypeText) {
-        return undefined;
-      }
-      nodeExpressionText = returnTypeText;
-    }
+    const nodeExpressionText = node.expression.getText();
+
     if (ts.isUnionTypeNode(typeNode)) {
       return this.fixGenericCallNoTypeArgsForUnionType(node, typeNode, nodeExpressionText);
     }
@@ -4904,122 +4861,6 @@ export class Autofixer {
     }
     const insertPos = node.expression.getEnd();
     return [{ start: insertPos, end: insertPos, replacementText: typeArgsText }];
-  }
-
-  fixGenericCallNoTypeArgsForUnknown(node: ts.CallExpression): Autofix[] | undefined {
-    if (ts.isPropertyAccessExpression(node.parent)) {
-      const insertPos = node.expression.getEnd();
-      return [{ start: insertPos, end: insertPos, replacementText: '<Any>' }];
-    }
-
-    const typeNode = this.getTypeNodeForNewExpression(node);
-    if (!typeNode) {
-      return undefined;
-    }
-
-    const nodeExpressionText = ts.isVariableDeclaration(node.parent) ?
-      this.getReturnTypeFromMethodDeclaration(node) ?? node.expression.getText() :
-      node.expression.getText();
-
-    if (ts.isUnionTypeNode(typeNode)) {
-      const targetTypeRef = typeNode.types.find((t): t is ts.TypeReferenceNode => {
-        return ts.isTypeReferenceNode(t) && t.typeName.getText() === nodeExpressionText;
-      });
-      if (!targetTypeRef) {
-        return undefined;
-      }
-      return this.createFixWithTypeArgs(node, targetTypeRef.typeArguments);
-    }
-
-    if (ts.isTypeReferenceNode(typeNode) && typeNode.typeName.getText() === nodeExpressionText) {
-      return this.createFixWithTypeArgs(node, typeNode.typeArguments);
-    }
-
-    return undefined;
-  }
-
-  private createFixWithTypeArgs(
-    node: ts.CallExpression,
-    typeArguments: ts.NodeArray<ts.TypeNode> | undefined
-  ): Autofix[] | undefined {
-    const typeArgsText = this.printGenericCallTypeArgs(node.getSourceFile(), typeArguments);
-    return typeArgsText ?
-      [
-        {
-          start: node.expression.getEnd(),
-          end: node.expression.getEnd(),
-          replacementText: typeArgsText
-        }
-      ] :
-      undefined;
-  }
-
-  getReturnTypeFromMethodDeclaration(node: ts.CallExpression): string | undefined {
-    if (ts.isPropertyAccessExpression(node.expression)) {
-      const propertyAccess = node.expression;
-      const methodName = propertyAccess.name.text;
-      const receiver = propertyAccess.expression;
-      const receiverType = this.typeChecker.getTypeAtLocation(receiver);
-      const methodSymbol = this.typeChecker.getPropertyOfType(receiverType, methodName);
-
-      if (!methodSymbol) {
-        return undefined;
-      }
-      const methodDecl = methodSymbol.declarations?.[0] as ts.MethodSignature;
-      if (!methodDecl.type || !ts.isTypeReferenceNode(methodDecl.type) && !ts.isUnionTypeNode(methodDecl.type)) {
-        return undefined;
-      }
-      if (ts.isTypeReferenceNode(methodDecl.type)) {
-        return methodDecl.type.typeName.getText();
-      }
-      if (ts.isUnionTypeNode(methodDecl.type)) {
-        const typeNode = this.getTypeNodeForNewExpression(node);
-        if (!typeNode) {
-          return undefined;
-        }
-        const targetTypeName = this.getTargetTypeName(typeNode, methodDecl.type);
-
-        if (ts.isUnionTypeNode(typeNode)) {
-          return targetTypeName;
-        }
-        const targetTypeNode = methodDecl.type.types.find((type) => {
-          return ts.isTypeReferenceNode(type) && type.typeName.getText() === targetTypeName;
-        }) as ts.TypeReferenceNode;
-        if (!targetTypeNode) {
-          return undefined;
-        }
-        return targetTypeNode.typeName.getText();
-      }
-    }
-    return undefined;
-  }
-
-  private getTargetTypeName(typeNode: ts.TypeNode, methodDeclType: ts.UnionTypeNode): string | undefined {
-    if (ts.isTypeReferenceNode(typeNode)) {
-      return typeNode.typeName.getText();
-    }
-
-    if (!ts.isUnionTypeNode(typeNode)) {
-      return undefined;
-    }
-
-    const hasGenericType = methodDeclType.types.some((type) => {
-      return this.isGenericTypeParameter(type);
-    });
-    const typeNames = new Set(typeNode.types.map(Autofixer.getTypeName).filter(Boolean));
-
-    const candidateNames = hasGenericType ?
-      typeNode.types.map(Autofixer.getTypeName) :
-      methodDeclType.types.map(Autofixer.getTypeName);
-    const targetTypeName = candidateNames.find((name) => {
-      return name && name !== 'undefined' && (hasGenericType || typeNames.has(name));
-    });
-    return targetTypeName;
-  }
-
-  private isGenericTypeParameter(type: ts.TypeNode): boolean {
-    const getType = this.typeChecker.getTypeFromTypeNode(type);
-    return getType.isTypeParameter();
   }
 
   private static getTypeName(type: ts.TypeNode): string {
@@ -5087,13 +4928,6 @@ export class Autofixer {
     typeArg: ts.TypeNode | readonly ts.Node[] | undefined
   ): string | undefined {
     if (Array.isArray(typeArg)) {
-      if (
-        typeArg.some((arg) => {
-          return !this.isTypeArgumentAccessible(sourceFile, arg as ts.TypeNode);
-        })
-      ) {
-        return undefined;
-      }
       return `<${typeArg.
         map((arg) => {
           ts.setEmitFlags(arg, ts.EmitFlags.SingleLine);
@@ -5101,91 +4935,27 @@ export class Autofixer {
         }).
         join(', ')}>`;
     }
-    if (!typeArg || !this.isTypeArgumentAccessible(sourceFile, typeArg as ts.TypeNode)) {
+    if (!typeArg) {
       return undefined;
     }
     ts.setEmitFlags(typeArg as ts.TypeNode, ts.EmitFlags.SingleLine);
     return `<${this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, typeArg as ts.TypeNode, sourceFile)}>`;
   }
 
-  private isTypeArgumentAccessible(sourceFile: ts.SourceFile, arg: ts.TypeNode): boolean {
-    const type = this.typeChecker.getTypeFromTypeNode(arg);
-    const symbol = type.symbol || type.aliasSymbol;
-    const decl = TsUtils.getDeclaration(symbol);
-    const fileName = decl?.getSourceFile().fileName;
-    const isStdLib = isStdLibrarySymbol(symbol);
-    const isMatchPathOnSourceAndDecl = decl && path.normalize(sourceFile.fileName) === path.normalize(fileName!);
-    if (!decl || isMatchPathOnSourceAndDecl || isStdLib) {
-      return true;
-    }
-    let result = false;
-    ts.forEachChild(sourceFile, (node) => {
-      if (ts.isImportDeclaration(node)) {
-        if (node.importClause?.namedBindings && ts.isNamedImports(node.importClause.namedBindings)) {
-          node.importClause.namedBindings.elements.some((element) => {
-            result = this.isTypeArgImport(arg, element.name, symbol);
-            return result;
-          });
-        }
-        if (node.importClause?.name) {
-          result = this.isTypeArgImport(arg, node.importClause.name, symbol);
-        }
-      }
-      return result;
-    });
-    return result;
-  }
-
-  private isTypeArgImport(arg: ts.Node, importName: ts.Identifier, typeArgSym: ts.Symbol): boolean {
-    if (arg.getText() !== importName.text) {
-      return false;
-    }
-    const importSym = this.utils.trueSymbolAtLocation(importName);
-    return importSym === typeArgSym;
-  }
-
-  private generateGenericTypeArgumentsAutofix(
-    node: ts.NewExpression | ts.CallExpression,
-    typeArgs: ts.TypeReferenceNode[]
-  ): Autofix[] | undefined {
-    const srcFile = node.getSourceFile();
-    const identifier = node.expression;
-    const hasValidArgs = typeArgs.some((arg) => {
-      return arg?.typeName && ts.isIdentifier(arg.typeName);
-    });
-    if (!hasValidArgs) {
-      return undefined;
-    }
-    const hasAnyType = typeArgs.some((arg) => {
-      return ts.isIdentifier(arg?.typeName) && arg.typeName.text === 'any';
-    });
-    if (hasAnyType) {
-      return undefined;
-    }
-    const typeArgsText = this.printGenericCallTypeArgs(srcFile, typeArgs);
-    if (!typeArgsText) {
-      return undefined;
-    }
-    return [{ start: identifier.getEnd(), end: identifier.getEnd(), replacementText: typeArgsText }];
-  }
-
-  private getTypeArgumentsFromType(type: ts.Type): ts.Type[] {
-    const typeReference = this.utils.getNonNullableType(type) as ts.TypeReference;
-    if (typeReference.typeArguments) {
-      return [...typeReference.typeArguments];
-    }
-    return [];
-  }
-
-  private getTypeNodeForNewExpression(node: ts.NewExpression | ts.CallExpression): ts.TypeNode | undefined {
+  private getTypeNodeForNewExpression(node: ts.NewExpression): ts.TypeNode | undefined {
     if (ts.isVariableDeclaration(node.parent) || ts.isPropertyDeclaration(node.parent)) {
       return node.parent.type;
     } else if (ts.isBinaryExpression(node.parent)) {
       return this.utils.getDeclarationTypeNode(node.parent.left);
     } else if (ts.isReturnStatement(node.parent) && ts.isBlock(node.parent.parent)) {
-      const funcNode = node.parent.parent.parent;
-      const isFunc = ts.isFunctionDeclaration(funcNode) || ts.isMethodDeclaration(funcNode);
-      if (!isFunc || !funcNode.type) {
+      let funcNode = node.parent.parent.parent;
+      while (!ts.isFunctionLike(funcNode)) {
+        if (!funcNode.parent) {
+          return undefined;
+        }
+        funcNode = funcNode.parent;
+      }
+      if (!funcNode.type) {
         return undefined;
       }
 
@@ -5451,19 +5221,24 @@ export class Autofixer {
 
   private static createUIContextAccess(methodName: string): ts.PropertyAccessExpression {
     return ts.factory.createPropertyAccessExpression(
-      ts.factory.createNonNullExpression(ts.factory.createCallExpression(
-        ts.factory.createPropertyAccessExpression(
-          ts.factory.createIdentifier(UI_CONTEXT),
-          ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
-        ),
-        undefined,
-        []
-      )),
+      ts.factory.createNonNullExpression(
+        ts.factory.createCallExpression(
+          ts.factory.createPropertyAccessExpression(
+            ts.factory.createIdentifier(UI_CONTEXT),
+            ts.factory.createIdentifier(GET_FOCUSED_UI_CONTEXT)
+          ),
+          undefined,
+          []
+        )
+      ),
       ts.factory.createIdentifier(methodName)
     );
   }
 
-  fixSpecialDeprecatedApiForCallExpression(callExpr: ts.CallExpression | ts.EtsComponentExpression, name: ts.Identifier): Autofix[] | undefined {
+  fixSpecialDeprecatedApiForCallExpression(
+    callExpr: ts.CallExpression | ts.EtsComponentExpression,
+    name: ts.Identifier
+  ): Autofix[] | undefined {
     if (name.getText() !== 'clip' || !ts.isNewExpression(callExpr.arguments[0])) {
       return undefined;
     }
@@ -5660,7 +5435,11 @@ export class Autofixer {
     );
 
     const newCall = ts.factory.createCallExpression(newPropAccess, callExpr.typeArguments, newArgs);
-    const replacementText = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, newCall, callExpr.getSourceFile());
+    const replacementText = this.nonCommentPrinter.printNode(
+      ts.EmitHint.Unspecified,
+      newCall,
+      callExpr.getSourceFile()
+    );
     return [{ start: callExpr.getStart(), end: callExpr.getEnd(), replacementText: replacementText }];
   }
 }

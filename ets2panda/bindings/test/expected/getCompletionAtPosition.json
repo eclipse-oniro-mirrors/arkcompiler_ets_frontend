@@ -3,14 +3,14 @@
     {
       "name": "num1",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "num1()",
       "kind": 3,
       "data": null
     },
     {
       "name": "num2",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "num2()",
       "kind": 3,
       "data": null
     }
@@ -19,21 +19,21 @@
     {
       "name": "aaa",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "aaa",
       "kind": 6,
       "data": null
     },
     {
       "name": "abb",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "abb",
       "kind": 21,
       "data": null
     },
     {
       "name": "axx",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "axx()",
       "kind": 3,
       "data": null
     }
@@ -42,28 +42,28 @@
     {
       "name": "baa",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "baa",
       "kind": 6,
       "data": null
     },
     {
       "name": "bbb",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "bbb",
       "kind": 6,
       "data": null
     },
     {
       "name": "bcc",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "bcc",
       "kind": 6,
       "data": null
     },
     {
       "name": "bxx",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "bxx()",
       "kind": 3,
       "data": null
     }
@@ -72,21 +72,21 @@
     {
       "name": "baa",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "baa",
       "kind": 6,
       "data": null
     },
     {
       "name": "bbb",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "bbb",
       "kind": 6,
       "data": null
     },
     {
       "name": "bxx",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "bxx()",
       "kind": 3,
       "data": null
     }
@@ -95,7 +95,7 @@
     {
       "name": "myProp",
       "sortText": "14",
-      "insertText": "",
+      "insertText": "myProp",
       "kind": 10,
       "data": null
     }
@@ -104,7 +104,7 @@
     {
       "name": "classInSpace",
       "sortText": "13",
-      "insertText": "",
+      "insertText": "classInSpace",
       "kind": 7,
       "data": null
     }
@@ -113,7 +113,7 @@
     {
       "name": "Red",
       "sortText": "13",
-      "insertText": "",
+      "insertText": "Red",
       "kind": 20,
       "data": null
     }
@@ -123,7 +123,7 @@
     {
       "name": "number",
       "sortText": "15",
-      "insertText": "",
+      "insertText": "number",
       "kind": 14,
       "data": null
     }
@@ -132,7 +132,7 @@
     {
       "name": "classInSpace",
       "sortText": "13",
-      "insertText": "",
+      "insertText": "classInSpace",
       "kind": 7,
       "data": null
     }
@@ -141,14 +141,14 @@
     {
       "name": "Blue",
       "sortText": "13",
-      "insertText": "",
+      "insertText": "Blue",
       "kind": 20,
       "data": null
     },
     {
       "name": "Red",
       "sortText": "13",
-      "insertText": "",
+      "insertText": "Red",
       "kind": 20,
       "data": null
     }
@@ -157,14 +157,14 @@
     {
       "name": "myProp",
       "sortText": "14",
-      "insertText": "",
+      "insertText": "myProp",
       "kind": 10,
       "data": null
     },
     {
       "name": "prop",
       "sortText": "14",
-      "insertText": "",
+      "insertText": "prop",
       "kind": 10,
       "data": null
     }
@@ -173,7 +173,7 @@
     {
       "name": "key",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "key",
       "kind": 2,
       "data": null
     }
@@ -182,7 +182,7 @@
     {
       "name": "key",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "key",
       "kind": 2,
       "data": null
     }
@@ -191,28 +191,90 @@
     {
       "name": "isEmpty",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "isEmpty()",
       "kind": 2,
       "data": null
     },
     {
       "name": "peek",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "peek()",
       "kind": 2,
       "data": null
     },
     {
       "name": "pop",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "pop()",
       "kind": 2,
       "data": null
     },
     {
       "name": "push",
       "sortText": "17",
-      "insertText": "",
+      "insertText": "push()",
+      "kind": 2,
+      "data": null
+    }
+  ],
+  "16": [
+    {
+      "name": "Entry",
+      "sortText": "15",
+      "insertText": "Entry",
+      "kind": 27,
+      "data": null
+    },
+    {
+      "name": "Entry2",
+      "sortText": "15",
+      "insertText": "Entry2",
+      "kind": 27,
+      "data": null
+    }
+  ],
+  "17": [
+    {
+      "name": "Entry",
+      "sortText": "15",
+      "insertText": "Entry",
+      "kind": 27,
+      "data": null
+    },
+    {
+      "name": "Entry2",
+      "sortText": "15",
+      "insertText": "Entry2",
+      "kind": 27,
+      "data": null
+    },
+    {
+      "name": "TestAnnotation",
+      "sortText": "15",
+      "insertText": "TestAnnotation",
+      "kind": 27,
+      "data": null
+    }
+  ],
+  "18": [
+    {
+      "name": "name",
+      "sortText": "14",
+      "insertText": "name",
+      "kind": 10,
+      "data": null
+    },
+    {
+      "name": "age",
+      "sortText": "14",
+      "insertText": "age",
+      "kind": 10,
+      "data": null
+    },
+    {
+      "name": "introduce",
+      "sortText": "17",
+      "insertText": "introduce()",
       "kind": 2,
       "data": null
     }

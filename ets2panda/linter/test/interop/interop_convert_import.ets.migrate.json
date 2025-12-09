@@ -75,6 +75,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 30,
+            "column": 9,
+            "endLine": 30,
+            "endColumn": 30,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 35,
             "column": 8,
             "endLine": 35,

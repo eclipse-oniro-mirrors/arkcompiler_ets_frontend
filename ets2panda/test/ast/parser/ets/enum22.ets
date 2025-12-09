@@ -17,4 +17,5 @@ enum duplicateKeysStringCase {
     Gray = "#ff808080",
     /* @@ label */Gray = "#ff808080"
 }
-/* @@@ label Error TypeError: Variable 'Gray' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'Gray' has already been declared. */

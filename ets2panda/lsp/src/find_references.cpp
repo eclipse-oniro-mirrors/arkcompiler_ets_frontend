@@ -167,18 +167,12 @@ std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(es2panda_Context *co
         return false;
     };
 
-    // Search an ast
-    auto search = [&cb](ark::es2panda::parser::Program *program) -> void {
-        if (program == nullptr) {
-            return;
-        }
-        auto ast = program->Ast();
-        ast->FindChild(cb);
-    };
-
-    // Search the file
+    auto ast = ctx->parserProgram->Ast();
+    if (ast == nullptr) {
+        return res;
+    }
     pprogram = ctx->parserProgram;
-    search(pprogram);
+    ast->FindChild(cb);
 
     return res;
 }
@@ -254,10 +248,7 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
         if (tkn->IsCancellationRequested()) {
             return res;
         }
-        auto refList = ::FindReferences(fc, tokenLocationId, tokenName);
-        for (const auto &entry : refList) {
-            res.insert(entry);
-        }
+        res.merge(::FindReferences(fc, tokenLocationId, tokenName));
     }
 
     return res;

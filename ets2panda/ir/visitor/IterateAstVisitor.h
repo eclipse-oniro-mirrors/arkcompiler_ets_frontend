@@ -22,6 +22,7 @@
 #include "ir/expressions/blockExpression.h"
 #include "ir/ets/etsIntrinsicNode.h"
 #include "ir/ets/etsUnionType.h"
+#include "ir/ets/etsDestructuring.h"
 #include "ir/ets/etsStringLiteralType.h"
 #include "ir/ets/etsTuple.h"
 #include "ir/ets/etsNeverType.h"

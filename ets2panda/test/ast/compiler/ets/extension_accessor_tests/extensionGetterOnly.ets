@@ -20,12 +20,13 @@ class A {
 get field(this: A): int {
     return this.field_;
 }
-new A()./* @@ label1 */field = 1;
-new A()./* @@ label2 */field += 1;
-new A()./* @@ label3 */field++;
-++new A()./* @@ label4 */field;
+new A().field = 1;
+new A().field += 1;
+new A().field++;
+++new A().field;
 
-/* @@@ label1 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label2 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label3 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label4 Error TypeError: Cannot assign to this property because it is readonly. */
+
+/* @@? 23:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 25:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 26:11 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

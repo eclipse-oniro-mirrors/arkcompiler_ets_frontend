@@ -20,8 +20,8 @@ class A extends MySpace{}
 class B implements MySpace{}
 type C = MySpace
 
-/* @@? 19:17 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 19:17 Error TypeError: The super type of 'A' class is not extensible. */
-/* @@? 20:20 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */ 
-/* @@? 20:20 Error TypeError: Interface expected here. */
-/* @@? 21:10 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */ 
+ /* @@? 19:17 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 19:17 Error Semantic error ESE0176: The super type of 'A' class is not extensible. */
+/* @@? 20:20 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */
+/* @@? 20:20 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 21:10 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

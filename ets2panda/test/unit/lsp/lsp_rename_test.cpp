@@ -546,3 +546,32 @@ TEST_F(LspRenameInfoTests, GetRenameInfo1)
     ASSERT_EQ(consoleRenameInfo.GetLocalizedErrorMessage(), "You cannot rename this element");
     initializer.DestroyContext(ctx);
 }
+
+TEST_F(LspRenameInfoTests, GetInterfaceRenameInfo1)
+{
+    const std::string fileContent = R"(
+console.log("Hello World");
+interface Person {
+  name: string;
+  age: number;
+}
+
+let p1: Person = {name:"John", age:123};
+
+console.log(p1.name);
+console.log(p1.age);
+)";
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx =
+        initializer.CreateContext("GetInterfaceRenameInfo1.ets", ES2PANDA_STATE_CHECKED, fileContent.c_str());
+    auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
+    auto consoleNode = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
+        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "console";
+    });
+    auto consoleDecl = consoleNode->Variable()->Declaration()->Node();
+    std::string pandaLibPath = GetPandalibPath(consoleDecl);
+    LSPAPI const *lspApi = GetImpl();
+    auto result = lspApi->getRenameInfo(ctx, fileContent.find("name)"), const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result));
+    initializer.DestroyContext(ctx);
+}

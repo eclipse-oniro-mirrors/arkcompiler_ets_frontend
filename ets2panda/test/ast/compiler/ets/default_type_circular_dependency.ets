@@ -17,12 +17,13 @@ class Racer {
     stat<Int = Racer.f()>;
 }
 
-/* @@? 17:9 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:16 Error TypeError: Default type of type parameter has circular dependency. */
-/* @@? 17:22 Error TypeError: 'f' type does not exist. */
-/* @@? 17:23 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 17:24 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 17:25 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:25 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 17:25 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:25 Error SyntaxError: Unexpected token '>'. */
+
+/* @@? 17:9 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:16 Error Semantic error ESE0398: Default type of type parameter has circular dependency. */
+/* @@? 17:22 Error Semantic error ESE0070: 'f' type does not exist. */
+/* @@? 17:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 17:24 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 17:25 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:25 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:25 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:25 Error Syntax error ESY0227: Unexpected token '>'. */

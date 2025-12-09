@@ -40,4 +40,5 @@ final class C4 extends C3 {
   override a(): void {};
 }
 
-/* @@@ label Error TypeError: Only abstract or native methods can't have body.  */
+
+/* @@@ label Error Semantic error ESE0017: Only abstract or native methods can't have body. */

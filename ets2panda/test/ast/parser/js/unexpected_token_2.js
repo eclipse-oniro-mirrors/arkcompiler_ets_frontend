@@ -15,4 +15,5 @@
 
 !(!(((a || b)));
 
-/* @@? 16:16 Error SyntaxError: Expected ')', got ';'. */
+
+/* @@? 16:16 Error Syntax error ESY0230: Expected ')', got ';'. */

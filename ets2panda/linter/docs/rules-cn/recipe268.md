@@ -1,8 +1,8 @@
 ### ArkTS1.2对js对象进行条件判断
 
-**规则：** arkts-interop-js2s-condition-judgment
+**规则：** `arkts-interop-js2s-condition-judgment`
 
-**级别：** error
+ArkTS1.2对js对象进行条件判断时，使用ESValue接口转换为boolean后再判断。
 
 **ArkTS1.1**
 ```typescript

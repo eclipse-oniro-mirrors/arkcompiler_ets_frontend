@@ -1,0 +1,39 @@
+{
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2/file1.ets"
+    ],
+    "packageName": "library",
+    "moduleType": "har",
+    "buildType": "build",
+    "buildMode": "Debug",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/demo_file1.2_file1.1_file1.1",
+    "sourceRoots": [
+        "./"
+    ],
+    "bundleName": "com.example.myapplication",
+    "loaderOutPath": "./dist",
+    "cachePath": "./dist/cache",
+    "enableDeclgenEts2Ts": false,
+    "declgenV1OutPath": "./dist/declgen/decl_ets",
+    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+    "compileSdkVersion":20,
+    "compatibleSdkVersion": 20,
+    "dependentModuleList": [
+        {
+            "language": "hybrid",
+            "packageName": "library",
+            "moduleType": "har",
+            "moduleName": "library",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2",
+            "declFilePath": "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2/decl-fileInfo.json",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": []
+        }
+    ],
+    "entryFile": [
+        "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2/file1.ets"
+    ]
+}

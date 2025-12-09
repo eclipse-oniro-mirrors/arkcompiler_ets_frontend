@@ -227,3 +227,23 @@ class Counter {
     };
   }
 }
+
+class C {
+  a: number;
+  constructor(a: number) {
+    this.a = a;
+  }
+  get x() {
+    return this.a;
+  }
+  set x(a:number) {
+    this.a = a;
+  }
+}
+let a = new C(1);
+let b = new C(2);
+console.log(Reflect.get<C, string>(a, "x")); // BuiltinNarrowTypes
+console.log(Reflect.get<C, string>(a, "x", b)); // BuiltinNarrowTypes
+
+let a = new Array(1,2,3)
+Reflect.set<Array, number>(a, 0, 2) // BuiltinNarrowTypes

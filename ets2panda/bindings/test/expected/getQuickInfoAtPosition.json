@@ -162,5 +162,28 @@
         "kind": "returnType"
       }
     ]
+  },
+  "5": {
+    "kind": "struct",
+    "kindModifier": "final",
+    "textSpan": {
+      "start": 699,
+      "length": 5
+    },
+    "fileName": "getQuickInfoAtPosition5.ets",
+    "displayParts": [
+      {
+        "text": "struct",
+        "kind": "keyword"
+      },
+      {
+        "text": " ",
+        "kind": "space"
+      },
+      {
+        "text": "Index",
+        "kind": "structName"
+      }
+    ]
   }
 }

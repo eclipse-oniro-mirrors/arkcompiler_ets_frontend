@@ -314,3 +314,9 @@ function main(): int {
     }
     return 1;
 }
+
+/* @@? 41:19 Error Semantic error ESE0318: Type 'Byte' cannot be assigned to type 'Char' */
+/* @@? 117:19 Error Semantic error ESE0318: Type 'Char' cannot be assigned to type 'Int' */
+/* @@? 118:19 Error Semantic error ESE0318: Type 'Char' cannot be assigned to type 'Long' */
+/* @@? 119:19 Error Semantic error ESE0318: Type 'Char' cannot be assigned to type 'Float' */
+/* @@? 120:19 Error Semantic error ESE0318: Type 'Char' cannot be assigned to type 'Double' */

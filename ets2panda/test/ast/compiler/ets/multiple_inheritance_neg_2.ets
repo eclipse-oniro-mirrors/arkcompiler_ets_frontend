@@ -24,5 +24,6 @@ class B extends A{
 }
 
 
-/* @@? 20:17 Error TypeError: Cannot inherit from class A, because method foo is inherited with a different declaration type */
 
+
+/* @@? 20:17 Error Semantic error ESE0216: Cannot inherit from class A, because method foo is inherited with a different declaration type */

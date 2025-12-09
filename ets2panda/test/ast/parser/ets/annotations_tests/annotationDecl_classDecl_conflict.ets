@@ -16,5 +16,6 @@
 @interface MyAnno {}
 class /* @@ label */MyAnno {}
 
-/* @@@ label Error TypeError: Variable 'MyAnno' has already been declared. */
-/* @@@ label Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase!  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'MyAnno' has already been declared. */
+/* @@@ label Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */

@@ -25,6 +25,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include "ir/astNode.h"
 #include "line_column_offset.h"
 #include "public/es2panda_lib.h"
 #include "cancellation_token.h"
@@ -36,11 +37,11 @@
 #include "completions.h"
 #include "refactors/refactor_types.h"
 #include "applicable_refactors.h"
+#include "get_edits_for_refactor.h"
 #include "rename.h"
 #include "todo_comments.h"
 #include "types.h"
 #include "formatting/formatting_settings.h"
-#include "user_preferences.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -233,173 +234,6 @@ typedef struct DocumentHighlightsReferences {
     std::vector<DocumentHighlights> documentHighlights_;
 } DocumentHighlightsReferences;
 
-struct DocTagInfo {
-private:
-    std::string name_;
-    std::string text_;
-
-public:
-    explicit DocTagInfo(std::string name = "", std::string text = "") : name_ {std::move(name)}, text_ {std::move(text)}
-    {
-    }
-
-    std::string GetName() const
-    {
-        return name_;
-    }
-    std::string GetText() const
-    {
-        return text_;
-    }
-
-    bool operator==(const DocTagInfo &other) const
-    {
-        return name_ == other.name_ && text_ == other.text_;
-    }
-    bool operator!=(const DocTagInfo &other) const
-    {
-        return !(*this == other);
-    }
-};
-
-struct QuickInfo {
-private:
-    std::string kind_;
-    std::string kindModifiers_;
-    TextSpan textSpan_;
-    std::vector<SymbolDisplayPart> displayParts_;
-    std::vector<SymbolDisplayPart> document_;
-    std::vector<DocTagInfo> tags_;
-    std::string fileName_;
-
-public:
-    explicit QuickInfo(std::string kind = "", std::string kindModifiers = "", TextSpan span = TextSpan(0, 0),
-                       std::vector<SymbolDisplayPart> displayParts = {}, std::vector<SymbolDisplayPart> document = {},
-                       std::vector<DocTagInfo> tags = {}, std::string fileName = "")
-        : kind_ {std::move(kind)},
-          kindModifiers_ {std::move(kindModifiers)},
-          textSpan_ {span},
-          displayParts_ {std::move(displayParts)},
-          document_ {std::move(document)},
-          tags_ {std::move(tags)},
-          fileName_ {std::move(fileName)}
-    {
-    }
-
-    std::string GetKind() const
-    {
-        return kind_;
-    }
-    std::string GetKindModifiers() const
-    {
-        return kindModifiers_;
-    }
-    TextSpan GetTextSpan() const
-    {
-        return textSpan_;
-    }
-    std::vector<SymbolDisplayPart> GetDisplayParts() const
-    {
-        return displayParts_;
-    }
-    std::vector<SymbolDisplayPart> GetDocument() const
-    {
-        return document_;
-    }
-    std::vector<DocTagInfo> GetTags() const
-    {
-        return tags_;
-    }
-    std::string GetFileName() const
-    {
-        return fileName_;
-    }
-
-    bool operator==(const QuickInfo &other) const
-    {
-        return kind_ == other.kind_ && kindModifiers_ == other.kindModifiers_ && textSpan_ == other.textSpan_ &&
-               displayParts_ == other.displayParts_ && document_ == other.document_ && tags_ == other.tags_ &&
-               fileName_ == other.fileName_;
-    }
-    bool operator!=(const QuickInfo &other) const
-    {
-        return !(*this == other);
-    }
-};
-
-struct CompletionEntryDetails {
-private:
-    std::string name_;
-    std::string kind_;
-    std::string kindModifiers_;
-    std::vector<SymbolDisplayPart> displayParts_;
-    std::vector<SymbolDisplayPart> document_;
-    std::vector<SymbolDisplayPart> source_;
-    std::vector<SymbolDisplayPart> sourceDisplay_;
-    std::string fileName_;
-
-public:
-    explicit CompletionEntryDetails(std::string name = "", std::string kind = "", std::string kindModifiers = "",
-                                    std::vector<SymbolDisplayPart> displayParts = {},
-                                    std::vector<SymbolDisplayPart> document = {},
-                                    std::vector<SymbolDisplayPart> source = {},
-                                    std::vector<SymbolDisplayPart> sourceDisplay = {}, std::string fileName = "")
-        : name_ {std::move(name)},
-          kind_ {std::move(kind)},
-          kindModifiers_ {std::move(kindModifiers)},
-          displayParts_ {std::move(displayParts)},
-          document_ {std::move(document)},
-          source_ {std::move(source)},
-          sourceDisplay_ {std::move(sourceDisplay)},
-          fileName_ {std::move(fileName)}
-    {
-    }
-
-    std::string GetName() const
-    {
-        return name_;
-    }
-    std::string GetKind() const
-    {
-        return kind_;
-    }
-    std::string GetKindModifiers() const
-    {
-        return kindModifiers_;
-    }
-    std::vector<SymbolDisplayPart> GetDisplayParts() const
-    {
-        return displayParts_;
-    }
-    std::vector<SymbolDisplayPart> GetDocument() const
-    {
-        return document_;
-    }
-    std::vector<SymbolDisplayPart> GetSource() const
-    {
-        return source_;
-    }
-    std::vector<SymbolDisplayPart> GetSourceDisplay() const
-    {
-        return sourceDisplay_;
-    }
-    std::string GetFileName() const
-    {
-        return fileName_;
-    }
-
-    bool operator==(const CompletionEntryDetails &other) const
-    {
-        return name_ == other.name_ && kind_ == other.kind_ && kindModifiers_ == other.kindModifiers_ &&
-               displayParts_ == other.displayParts_ && document_ == other.document_ && source_ == other.source_ &&
-               sourceDisplay_ == other.sourceDisplay_ && fileName_ == other.fileName_;
-    }
-    bool operator!=(const CompletionEntryDetails &other) const
-    {
-        return !(*this == other);
-    }
-};
-
 typedef struct FileDiagnostic {
     es2panda_AstNode *node;
     Diagnostic diagnostic;
@@ -491,11 +325,25 @@ struct CodeFixOptions {
     ark::es2panda::lsp::UserPreferences preferences;
 };
 
+struct NodeInfo {
+    NodeInfo(std::string n, ark::es2panda::ir::AstNodeType k) : name(n), kind(k) {}
+    std::string name;
+    ark::es2panda::ir::AstNodeType kind;
+};
+
+struct TokenTypeInfo {
+    std::string name;
+    std::string type;
+    TokenTypeInfo(std::string n, std::string t) : name(n), type(t) {}
+};
+
 typedef struct LSPAPI {
     DefinitionInfo (*getDefinitionAtPosition)(es2panda_Context *context, size_t position);
     std::vector<ark::es2panda::lsp::ApplicableRefactorInfo> (*getApplicableRefactors)(es2panda_Context *context,
-                                                                                      const char *kind,
-                                                                                      size_t position);
+                                                                                      const char *kind, size_t startPos,
+                                                                                      size_t endPos);
+    std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> (*getEditsForRefactor)(
+        const ark::es2panda::lsp::RefactorContext &, const std::string &refactorName, const std::string &actionName);
     DefinitionInfo (*getImplementationAtPosition)(es2panda_Context *context, size_t position);
     bool (*isPackageModule)(es2panda_Context *context);
     ark::es2panda::lsp::CompletionEntryKind (*getAliasScriptElementKind)(es2panda_Context *context, size_t position);
@@ -521,6 +369,9 @@ typedef struct LSPAPI {
     DocumentHighlightsReferences (*getDocumentHighlights)(es2panda_Context *context, size_t position);
     std::vector<ark::es2panda::lsp::RenameLocation> (*findRenameLocations)(
         const std::vector<es2panda_Context *> &fileContexts, es2panda_Context *context, size_t position);
+    std::set<ark::es2panda::lsp::RenameLocation> (*findRenameLocationsInCurrentFile)(es2panda_Context *context,
+                                                                                     size_t position);
+    bool (*needsCrossFileRename)(es2panda_Context *context, size_t position);
     std::vector<ark::es2panda::lsp::RenameLocation> (*findRenameLocationsWithCancellationToken)(
         ark::es2panda::lsp::CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
         es2panda_Context *context, size_t position);
@@ -545,13 +396,22 @@ typedef struct LSPAPI {
         ark::es2panda::lsp::CancellationToken *cancellationToken);
     InlayHintList (*provideInlayHints)(es2panda_Context *context, const TextSpan *span);
     SignatureHelpItems (*getSignatureHelpItems)(es2panda_Context *context, size_t position);
-    size_t (*getOffsetByColAndLine)(es2panda_Context *context, size_t line, size_t column);
+    size_t (*getOffsetByColAndLine)(const std::string &sourceCode, size_t line, size_t column);
+    std::pair<size_t, size_t> (*getColAndLineByOffset)(const std::string &sourceCode, size_t offset);
     std::vector<CodeFixActionInfo> (*getCodeFixesAtPosition)(es2panda_Context *context, size_t start_position,
                                                              size_t end_position, std::vector<int> &errorCodes,
                                                              CodeFixOptions &codeFixOptions);
     CombinedCodeActionsInfo (*getCombinedCodeFix)(const char *fileName, const std::string &fixId,
                                                   CodeFixOptions &codeFixOptions);
     TextSpan *(*GetNameOrDottedNameSpan)(es2panda_Context *context, int startPos);
+    es2panda_AstNode *(*getProgramAst)(es2panda_Context *context);
+    std::vector<NodeInfo> (*getNodeInfosByDefinitionData)(es2panda_Context *context, size_t position);
+    es2panda_AstNode *(*getClassDefinition)(es2panda_AstNode *astNode, const std::string &nodeName);
+    es2panda_AstNode *(*getIdentifier)(es2panda_AstNode *astNode, const std::string &nodeName);
+    DefinitionInfo (*getDefinitionDataFromNode)(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos);
+    ark::es2panda::lsp::RenameLocation (*findRenameLocationsFromNode)(es2panda_Context *context,
+                                                                      const std::vector<NodeInfo *> &nodeInfos);
+    TokenTypeInfo (*getTokenTypes)(es2panda_Context *context, size_t offset);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

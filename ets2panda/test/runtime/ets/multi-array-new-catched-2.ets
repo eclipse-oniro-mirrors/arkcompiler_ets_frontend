@@ -23,8 +23,10 @@ function main(): void {
    let catched = false;
    try {
      a = new Number[baz()][4][A.length + 3.0000];
-   } catch (e: TypeError) {
-     catched = true;
+   } catch (e) {
+    if (e instanceof TypeError) {
+      catched = true;
+    }
    }
 
    arktest.assertTrue(catched)

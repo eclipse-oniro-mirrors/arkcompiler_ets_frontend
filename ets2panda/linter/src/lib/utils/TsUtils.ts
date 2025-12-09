@@ -917,10 +917,10 @@ export class TsUtils {
 
   skipCheckForArrayBufferLike(lhsType: string | ts.Type, rhsType: string | ts.Type): boolean {
     const lhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToStringForLinter(lhsType)
+      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToString(lhsType)
     );
     const rhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToStringForLinter(rhsType)
+      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToString(rhsType)
     );
     return !!this.options.arkts2 && lhsIsArrayBufferLike && rhsIsArrayBufferLike;
   }
@@ -3246,7 +3246,7 @@ export class TsUtils {
   }
 
   isSendableTypeAlias(type: ts.Type): boolean {
-    const decl = this.getTypsAliasOriginalDecl(type);
+    const decl = this.getTypeAliasOriginalDecl(type);
     return !!decl && TsUtils.hasSendableDecorator(decl);
   }
 
@@ -3260,12 +3260,12 @@ export class TsUtils {
   }
 
   isNonSendableFunctionTypeAlias(type: ts.Type): boolean {
-    const decl = this.getTypsAliasOriginalDecl(type);
+    const decl = this.getTypeAliasOriginalDecl(type);
     return !!decl && ts.isFunctionTypeNode(decl.type) && !TsUtils.hasSendableDecorator(decl);
   }
 
   // If the alias refers to another alias, the search continues
-  private getTypsAliasOriginalDecl(type: ts.Type): ts.TypeAliasDeclaration | undefined {
+  getTypeAliasOriginalDecl(type: ts.Type): ts.TypeAliasDeclaration | undefined {
     if (!type.aliasSymbol) {
       return undefined;
     }
@@ -3276,7 +3276,7 @@ export class TsUtils {
     if (ts.isTypeReferenceNode(decl.type)) {
       const targetType = this.tsTypeChecker.getTypeAtLocation(decl.type.typeName);
       if (targetType.aliasSymbol && targetType.aliasSymbol.getFlags() & ts.SymbolFlags.TypeAlias) {
-        return this.getTypsAliasOriginalDecl(targetType);
+        return this.getTypeAliasOriginalDecl(targetType);
       }
     }
     return decl;
@@ -4005,5 +4005,35 @@ export class TsUtils {
       return expr.name?.text ?? defaultName;
     }
     return defaultName;
+  }
+
+  static isGlobalVariable(sym: ts.Symbol): boolean {
+    const declaration = TsUtils.getDeclaration(sym);
+    if (!declaration) {
+      return false;
+    }
+    let current = declaration as ts.Node;
+    while (current.parent) {
+      if (ts.isSourceFile(current.parent)) {
+        return true;
+      }
+      if (
+        ts.isFunctionLike(current.parent) ||
+        ts.isClassDeclaration(current.parent) ||
+        ts.isModuleDeclaration(current.parent) ||
+        ts.isStructDeclaration(current.parent)
+      ) {
+        return false;
+      }
+      current = current.parent;
+    }
+    return false;
+  }
+
+  static isWrittenAsFloat(constVal: string | number): boolean {
+    return constVal.toString().trim().
+      includes('.') || constVal.toString().trim().
+      toLowerCase().
+      includes('e');
   }
 }

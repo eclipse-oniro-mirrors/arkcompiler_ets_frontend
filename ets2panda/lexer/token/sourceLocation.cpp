@@ -101,6 +101,49 @@ SourceLocation LineIndex::GetLocation(SourcePosition pos) const noexcept
     return SourceLocation(line + 1, col + 1, pos.Program());
 }
 
+std::pair<size_t, size_t> LineIndex::GetLocation(size_t offset) const noexcept
+{
+    if (entries_.empty() || offset == 0) {
+        return {1, 1};
+    }
+
+    size_t line = 0;
+    size_t left = 0;
+    size_t right = entries_.size();
+
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (entries_[mid].lineStart <= offset) {
+            line = mid;
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    if (line >= entries_.size()) {
+        return {entries_.size() + 1, 1};
+    }
+
+    const auto &entry = entries_[line];
+    size_t remainingOffset = offset - entry.lineStart;
+    size_t col = 0;
+
+    for (const auto &range : entry.ranges) {
+        size_t rangeBytes = range.cnt * range.byteSize;
+
+        if (remainingOffset < rangeBytes) {
+            col += remainingOffset / range.byteSize;
+            break;
+        }
+
+        col += range.cnt;
+        remainingOffset -= rangeBytes;
+    }
+
+    return {line + 1, col + 1};
+}
+
 size_t LineIndex::GetOffset(SourceLocation loc) const noexcept
 {
     ES2PANDA_ASSERT(loc.line != 0);

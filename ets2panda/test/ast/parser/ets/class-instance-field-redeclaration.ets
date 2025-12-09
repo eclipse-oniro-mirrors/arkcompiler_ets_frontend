@@ -18,4 +18,5 @@ class C {
     /* @@ label */foo: int = 20;
 }
 
-/* @@@ label Error TypeError: Variable 'foo' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'foo' has already been declared. */

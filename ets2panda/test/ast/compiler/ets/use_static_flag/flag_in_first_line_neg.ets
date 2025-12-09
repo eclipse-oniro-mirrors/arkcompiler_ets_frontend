@@ -16,4 +16,5 @@
 
 import { A as A } from "./export1.ets"
 
-/* @@? 17:1 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@? 17:1 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

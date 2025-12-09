@@ -17,7 +17,7 @@
 #define ES2PANDA_COMPILER_LOWERING_LAZY_IMPORT_OBJECT_H
 
 #include "compiler/lowering/phase.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::compiler {
 

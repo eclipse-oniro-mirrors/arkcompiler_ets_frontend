@@ -18,5 +18,6 @@ function a(): void {
     /* @@ label2 */@a
 /* @@ label */}
 
-/* @@@ label Error SyntaxError: Unexpected token '}'.  */
-/* @@@ label2 Error SyntaxError: Decorators are not valid here */
+
+/* @@@ label2 Error Syntax error ESY0000: Decorators are not valid here */
+/* @@@ label Error Syntax error ESY0227: Unexpected token '}'. */

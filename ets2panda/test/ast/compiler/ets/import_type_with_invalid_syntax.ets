@@ -19,6 +19,8 @@ let a = new A();
 class C implements B {};
 let c = new C()
 
-/* @@@ label1 Error SyntaxError: Unexpected token, expected 'as'.  */
-/* @@? 16:35 Error TypeError: Class 'C' is already defined. */
-/* @@? export_type.ets:1:1 Error TypeError: Function main is already declared. */
+
+/* @@? export_type.ets:1:1 Error Semantic error ESE0130: Function main is already declared. */
+
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected 'as'. */
+/* @@? import_type_with_invalid_syntax.ets:16:35 Error Semantic error ESE0349: Class 'C' is already defined. */

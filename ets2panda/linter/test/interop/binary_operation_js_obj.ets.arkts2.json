@@ -165,16 +165,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 23,
-            "column": 3,
-            "endLine": 23,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 1,
             "endLine": 25,
@@ -235,26 +225,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
-            "column": 3,
-            "endLine": 27,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
-            "column": 3,
-            "endLine": 33,
-            "endColumn": 5,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 35,
             "column": 11,
             "endLine": 35,
@@ -262,16 +232,6 @@
             "problem": "ObjectLiteralNoContextType",
             "suggest": "",
             "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 4,
-            "endLine": 41,
-            "endColumn": 6,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
             "severity": "ERROR"
         },
         {

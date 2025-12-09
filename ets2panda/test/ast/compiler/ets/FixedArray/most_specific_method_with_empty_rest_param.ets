@@ -26,3 +26,5 @@ function main() {
     let c: C = new C()
     c.met()
 }
+/* @@? 27:5 Error Semantic error ESE0129: Call to `met` is ambiguous  */
+/* @@? 27:5 Error Semantic error ESE0126: Reference to met is ambiguous */

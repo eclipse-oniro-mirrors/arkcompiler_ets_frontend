@@ -1,8 +1,8 @@
 export declare interface I0 {
-    I0Method(a: string): string;
+    I0Method?(a: string): string;
 }
 export declare interface I1 {
-    I1Method(a: number): number;
+    I1Method?(a: number): number;
 }
 export declare class Base {
     public get a(): number;

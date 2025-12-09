@@ -17,6 +17,7 @@ interface K {}
 
 interface J impleents K {}
 
-/* @@? 18:13 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 18:25 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 18:26 Error SyntaxError: Invalid Type. */
+
+/* @@? 18:13 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 18:25 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 18:26 Error Syntax error ESY0138: Invalid Type. */

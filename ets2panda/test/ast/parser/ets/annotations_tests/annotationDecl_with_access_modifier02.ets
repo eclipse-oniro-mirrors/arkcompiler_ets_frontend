@@ -16,6 +16,7 @@ private @interface MyAnno {
     testProperty1: string
 }
 
-/* @@? 15:1 Error SyntaxError: Annotation declaration can not have access modifier. */
-/* @@? 15:1 Error SyntaxError: Unexpected token 'private'. */
-/* @@? 15:9 Error SyntaxError: Unexpected token '@'. */
+
+/* @@? 15:1 Error Syntax error ESY0210: Annotation declaration can not have access modifier. */
+/* @@? 15:1 Error Syntax error ESY0227: Unexpected token 'private'. */
+/* @@? 15:9 Error Syntax error ESY0227: Unexpected token '@'. */

@@ -18,8 +18,6 @@
 #include "checker/TSchecker.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
-#include "ir/astDump.h"
-#include "ir/srcDump.h"
 
 namespace ark::es2panda::ir {
 void ExportSpecifier::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
@@ -50,12 +48,19 @@ void ExportSpecifier::Dump(ir::SrcDumper *dumper) const
 {
     if (GetConstantExpression() != nullptr) {
         GetConstantExpression()->Dump(dumper);
-        dumper->Add("as default");
+        dumper->Add(" as default");
+        return;
+    }
+
+    if (IsDefaultExport()) {
+        if (!dumper->HasDefaultExport()) {
+            exported_->Dump(dumper);
+            dumper->Add(" as default");
+        }
         return;
     }
 
     exported_->Dump(dumper);
-
     if (local_ != nullptr) {
         dumper->Add(" as ");
         local_->Dump(dumper);

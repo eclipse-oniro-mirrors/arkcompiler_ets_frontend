@@ -21,11 +21,11 @@ function main() {
     let f: Float = b
     let d: Double = b
     let c: Char = b
-    arktest.assertEQ(s.unboxed(), 1.0)
-    arktest.assertEQ(i.unboxed(), 1.0)
-    arktest.assertEQ(l.unboxed(), 1.0)
-    arktest.assertEQ(f.unboxed(), 1.0)
-    arktest.assertEQ(d.unboxed(), 1.0)
-    arktest.assertEQ(c.unboxed(), 1.0)
+    arktest.assertEQ(s, 1.0)
+    arktest.assertEQ(i, 1.0)
+    arktest.assertEQ(l, 1.0)
+    arktest.assertEQ(f, 1.0)
+    arktest.assertEQ(d, 1.0)
+    arktest.assertEQ(c, 1.0)
 }
 

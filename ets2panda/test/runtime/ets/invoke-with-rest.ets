@@ -14,10 +14,10 @@
  */
 
 class A<T> {
-    x: FixedArray<NullishType>
+    x: FixedArray<Any>
     constructor(x: T) {
-        this.x = new NullishType[1]
-        this.x[0] = x as NullishType
+        this.x = new Any[1]
+        this.x[0] = x as Any
     }
 
     static $_invoke<T>(first: T, ...items: T[]): A<T> {

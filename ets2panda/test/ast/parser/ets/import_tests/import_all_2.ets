@@ -16,7 +16,8 @@
 import * as all from "import_tests/modules/default_export";
 
 function main(): void {
-    all./* @@ label */DefaultExportedFunc();
+    all.DefaultExportedFunc();
 }
 
-/* @@@ label Error TypeError: Property 'DefaultExportedFunc' does not exist on type 'default_export'  */
+
+/* @@? 19:9 Error Semantic error ESE0087: Property 'DefaultExportedFunc' does not exist on type 'default_export' */

@@ -20,4 +20,5 @@ function main(): void {
     let a: my_type = new Int();
 }
 
-/* @@? 20:12 Error TypeError: Type alias declaration is generic, but too few type arguments were provided */
+
+/* @@? 20:12 Error Semantic error ESE0155: Type alias declaration is generic, but too few type arguments were provided */

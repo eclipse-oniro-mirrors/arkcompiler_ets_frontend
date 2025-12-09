@@ -22,7 +22,7 @@
 #include "ir/srcDump.h"
 #include "ir/typeNode.h"
 #include "ir/expressions/identifier.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 

@@ -1,0 +1,15 @@
+@Component
+export declare class UIComponent {
+    @State
+    public a: string;
+    @Trace
+    public b: string;
+    @Link
+    public num: number;
+    constructor();
+}
+export declare interface IState {
+    @State
+    num: string;
+    var: number;
+}

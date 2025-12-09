@@ -66,8 +66,8 @@ public:
 
     void CheckFunctionAnnotations(pandasm::Program *program)
     {
-        const std::string getter = "A.<get>x:i32;";
-        const std::string setter = "A.<set>x:i32;void;";
+        const std::string getter = "A.%%get-x:i32;";
+        const std::string setter = "A.%%set-x:i32;void;";
         const std::string funcName = "A.foo:void;";
         const AnnotationMap expectedFuncAnnotations1 = {
             {"Anno",

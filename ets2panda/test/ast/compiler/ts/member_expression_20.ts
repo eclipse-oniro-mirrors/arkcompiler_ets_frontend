@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,5 @@ var a = {foo : {bar : {baz : 5}}};
 var b: boolean;
 /* @@ label */b = a?.foo?.bar?.baz;
 
-/* @@@ label Error TypeError: Type 'number' is not assignable to type 'boolean'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type 'number' is not assignable to type 'boolean'. */

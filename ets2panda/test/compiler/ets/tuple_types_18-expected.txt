@@ -41,8 +41,8 @@
           "program": "tuple_types_18.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 17,
+          "column": 14,
           "program": "tuple_types_18.ets"
         }
       }
@@ -213,8 +213,8 @@
           "program": "tuple_types_18.ets"
         },
         "end": {
-          "line": 20,
-          "column": 9,
+          "line": 18,
+          "column": 35,
           "program": "tuple_types_18.ets"
         }
       }

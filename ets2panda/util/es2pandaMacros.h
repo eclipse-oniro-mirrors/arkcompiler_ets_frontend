@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_UTIL_ES2PANDA_MACROS_H
 #define ES2PANDA_UTIL_ES2PANDA_MACROS_H
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "lexer/token/sourceLocation.h"
 
 namespace ark::es2panda::parser {

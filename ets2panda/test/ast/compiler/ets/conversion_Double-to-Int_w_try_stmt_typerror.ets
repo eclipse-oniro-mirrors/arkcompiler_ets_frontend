@@ -21,5 +21,6 @@ function getD(d : double): Int {
 
 function main(): void { }
 
-/* @@@ label Error TypeError: Type 'Double' is not compatible with the enclosing method's return type 'Int'  */
-/* @@@ label1 Error TypeError: Type 'Double' is not compatible with the enclosing method's return type 'Int'  */
+
+/* @@@ label Error Semantic error ESE0091: Type 'Double' is not compatible with the enclosing method's return type 'Int' */
+/* @@@ label1 Error Semantic error ESE0091: Type 'Double' is not compatible with the enclosing method's return type 'Int' */

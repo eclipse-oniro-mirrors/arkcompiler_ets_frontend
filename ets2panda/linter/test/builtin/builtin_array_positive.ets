@@ -23,3 +23,27 @@ let concatArray = array.concat(array1, array2);
 let arr3: collections.Array<string> = new collections.Array('a', 'b', 'c', 'd');
 let result: boolean = collections.Array.isArray(arr3);
 console.info(result + '');
+
+
+class C{
+  a: number=1;
+}
+let a = new C()
+Reflect.has(a, "a") // no error
+Reflect.has(a, false) // error
+
+let a: PropertyKey = "a"; // no error
+
+let a = new Number('true') // no error
+let b = new Number(1) // no error
+let c = new Number(1n) // no error
+let d = new Number() // no error
+
+let num = new Object(1) // no error
+
+let array:Array = new Array() // no error
+
+Number.isFinite(1)  //no error
+Number.isInteger(1) //no error
+Number.isNaN(1) //no error
+Number.isSafeInteger(1) //no error

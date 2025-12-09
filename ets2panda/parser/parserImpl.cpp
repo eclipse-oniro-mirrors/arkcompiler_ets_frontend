@@ -901,7 +901,7 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
 
     ArenaVector<ir::Expression *> params(Allocator()->Adapter());
 
-    auto parseFunc = [this, &params]() {
+    auto parseFunc = [this, &params](bool &) {
         ir::Expression *parameter = ParseFunctionParameter();
         if (parameter == nullptr) {
             return false;
@@ -935,7 +935,8 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
         lexer_->Lookahead() == static_cast<char32_t>(ARRAY_FORMAT_NODE)) {
         return ParseExpressionsArrayFormatPlaceholder();
     }
-    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr, true);
+    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
+              ParseListOptions::ALLOW_TRAILING_SEP);
 
     return params;
 }
@@ -964,6 +965,11 @@ std::tuple<bool, ir::BlockStatement *, lexer::SourcePosition, bool> ParserImpl::
 FunctionSignature ParserImpl::ParseFunctionSignature(ParserStatus status)
 {
     ir::TSTypeParameterDeclaration *typeParamDecl = ParseFunctionTypeParameters();
+
+    // Check if constructor has type parameters
+    if ((status & ParserStatus::CONSTRUCTOR_FUNCTION) != 0 && typeParamDecl != nullptr) {
+        LogError(diagnostic::CONSTRUCTOR_TYPE_PARAMETERS);
+    }
 
     if (lexer_->GetToken().Type() != lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS) {
         auto parameter = (status & ParserStatus::ARROW_FUNCTION) != 0 ? ParseFunctionParameter() : nullptr;
@@ -1098,7 +1104,8 @@ void ParserImpl::ValidateAssignmentTarget(ExpressionParseFlags flags, ir::Expres
 {
     switch (node->Type()) {
         case ir::AstNodeType::ARRAY_PATTERN:
-        case ir::AstNodeType::OBJECT_PATTERN: {
+        case ir::AstNodeType::OBJECT_PATTERN:
+        case ir::AstNodeType::ETS_DESTRUCTURING: {
             break;
         }
         case ir::AstNodeType::ARRAY_EXPRESSION:
@@ -1488,16 +1495,49 @@ bool ParserImpl::CheckModuleAsModifier()
     return true;
 }
 
+bool ParserImpl::TryEatTypeKeyword()
+{
+    bool res = false;
+    auto posBeforeType = Lexer()->Save();
+    lexer::LexerPosition posAfterType = posBeforeType;
+    if (Lexer()->TryEatTokenKeyword(lexer::TokenType::KEYW_TYPE)) {
+        posAfterType = Lexer()->Save();
+        res = (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT ||
+               Lexer()->GetToken().Type() == lexer::TokenType::KEYW_DEFAULT ||
+               Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_MULTIPLY ||
+               Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE);
+        if (Lexer()->GetToken().KeywordType() == lexer::TokenType::KEYW_FROM) {
+            Lexer()->NextToken();
+            if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_STRING) {
+                res = false;
+            }
+        }
+    }
+
+    if (res) {
+        Lexer()->Rewind(posAfterType);
+    } else {
+        Lexer()->Rewind(posBeforeType);
+    }
+    return res;
+}
+
 bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
-                           const std::function<bool()> &parseElement, lexer::SourcePosition *sourceEnd,
-                           bool allowTrailingSep)
+                           const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
+                           lexer::SourcePosition *sourceEnd, ParseListOptions parseListOptions)
 {
     bool success = true;
+    bool allowTypeKeyword = (parseListOptions & ParseListOptions::ALLOW_TYPE_KEYWORD) != 0U;
     auto sep = lexer::TokenType::PUNCTUATOR_COMMA;
+    bool typeKeywordOnSpecifier = false;
     while (Lexer()->GetToken().Type() != termToken && Lexer()->GetToken().Type() != lexer::TokenType::EOS) {
         // ErrorRecursionGuard is not feasible because we can break without consuming any tokens
+        if (allowTypeKeyword && TryEatTypeKeyword()) {
+            typeKeywordOnSpecifier = true;
+            continue;
+        }
         auto savedPos = lexer_->Save();
-        auto elemSuccess = parseElement();
+        auto elemSuccess = parseElement(typeKeywordOnSpecifier);
         bool hasSep = false;
         if (Lexer()->GetToken().Type() == sep) {
             Lexer()->NextToken(flags);
@@ -1512,7 +1552,7 @@ bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::Nex
             continue;
         }
         if (termToken == Lexer()->GetToken().Type() || (!termToken.has_value() && !hasSep)) {
-            if (hasSep && !allowTrailingSep) {
+            if (hasSep && (parseListOptions & ParseListOptions::ALLOW_TRAILING_SEP) == 0U) {
                 LogError(diagnostic::TRAILING_COMMA_NOT_ALLOWED);
             }
             break;

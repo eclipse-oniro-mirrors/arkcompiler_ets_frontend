@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-function test(a: number, b: string): void {
-    console.log(a);
+function add(a: number, b: number): number {
+    return a + b;
 }
-test(1, "test");
+add()

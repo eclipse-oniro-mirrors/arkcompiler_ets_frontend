@@ -29,7 +29,7 @@ import type { ScanTaskRelatedInfo } from '../lib/statistics/scan/ScanTaskRelated
 import { StatisticsReportInPutInfo } from '../lib/statistics/scan/StatisticsReportInPutInfo';
 import { TimeRecorder } from '../lib/statistics/scan/TimeRecorder';
 import { logStatistics } from '../lib/statistics/StatisticsLogger';
-import { compileLintOptions, getEtsLoaderPath } from '../lib/ts-compiler/Compiler';
+import { compileLintOptions } from '../lib/ts-compiler/Compiler';
 import { processSyncErr, processSyncOut } from '../lib/utils/functions/ProcessWrite';
 import { parseCommandLine } from './CommandLineParser';
 import { getAllLinterRules } from '../lib/utils/functions/ConfiguredRulesProcess';
@@ -157,12 +157,7 @@ function executeLintTask(scanTaskRelatedInfo: ScanTaskRelatedInfo): void {
   if (!scanTaskRelatedInfo.timeRecorder.getHomeCheckCountStatus()) {
     scanTaskRelatedInfo.timeRecorder.startScan();
   }
-  const result = lint(
-    compileOptions,
-    scanTaskRelatedInfo.timeRecorder,
-    getEtsLoaderPath(compileOptions),
-    homeCheckResult
-  );
+  const result = lint(compileOptions, scanTaskRelatedInfo.timeRecorder, homeCheckResult);
   for (const [filePath, problems] of result.problemsInfos) {
     statistic.accumulateRuleNumbers(
       problems,
@@ -186,14 +181,14 @@ function mergeLintProblems(
   }
   let filteredProblems = problems;
   mergedProblems.get(filePath)!.push(...filteredProblems);
+  for (const file of mergedProblems.keys()) {
+    const totalProblems = mergedProblems.get(file);
 
-  if (cmdOptions.scanWholeProjectInHomecheck) {
-    for (const file of mergedProblems.keys()) {
+    if (totalProblems === undefined) {
+      continue;
+    }
+    if (cmdOptions.scanWholeProjectInHomecheck) {
       if (cmdOptions.inputFiles.includes(file)) {
-        continue;
-      }
-      const totalProblems = mergedProblems.get(file);
-      if (totalProblems === undefined) {
         continue;
       }
       filteredProblems = totalProblems.filter((problem) => {
@@ -204,6 +199,21 @@ function mergeLintProblems(
       } else {
         mergedProblems.delete(file);
       }
+      continue;
+    }
+
+    filteredProblems = totalProblems.filter((problem) => {
+      return (
+        !problem.rule.includes('s2d') &&
+        !problem.rule.includes('d2s') &&
+        !problem.rule.includes('js2s') &&
+        !problem.rule.includes('ts2s')
+      );
+    });
+    if (filteredProblems.length > 0) {
+      mergedProblems.set(file, filteredProblems);
+    } else {
+      mergedProblems.delete(file);
     }
   }
 }

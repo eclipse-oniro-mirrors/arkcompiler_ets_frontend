@@ -16,4 +16,4 @@
 
 var a: (a: number, b?: number) => number;
 var /* @@ label */a: (a: number, b: number) => number;
-/* @@@ label Error TypeError: Subsequent variable declaration must have the same type. Variable 'a' must be of type '(p1: number, p2?: number) => number', but here has type '(p1: number, p2: number) => number'.  */
+/* @@@ label Error Semantic error ESE0316: Subsequent variable declaration must have the same type. Variable 'a' must be of type '(p1: number, p2?: number) => number', but here has type '(p1: number, p2: number) => number'. */

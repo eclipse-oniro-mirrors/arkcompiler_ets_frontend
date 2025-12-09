@@ -64,8 +64,7 @@ using ArgRange = std::pair<uint32_t, uint32_t>;
 
 class Checker {
 public:
-    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine,
-                     ThreadSafeArenaAllocator *programAllocator = nullptr);
+    explicit Checker(ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine);
     virtual ~Checker() = default;
 
     NO_COPY_SEMANTIC(Checker);
@@ -234,9 +233,10 @@ public:
 
     virtual void CleanUp();
 
+    // legacy API, use Allocator() instead
     [[nodiscard]] ThreadSafeArenaAllocator *ProgramAllocator()
     {
-        return programAllocator_ == nullptr ? allocator_ : programAllocator_;
+        return allocator_;
     }
 
     bool IsDeclForDynamicStaticInterop() const;
@@ -247,7 +247,6 @@ protected:
 
 private:
     ThreadSafeArenaAllocator *allocator_;
-    ThreadSafeArenaAllocator *programAllocator_ {nullptr};
     CheckerContext context_;
     GlobalTypesHolder *globalTypes_ {nullptr};
     TypeRelation *relation_;
@@ -518,6 +517,52 @@ private:
     std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint_;
     util::DiagnosticType diagnosticKind_;
     bool isLogError_;
+};
+
+class SignatureCollectContext {
+public:
+    explicit SignatureCollectContext(Checker *checker, varbinder::LocalVariable *overloadDeclaration,
+                                     bool isCreateSyntheticVar = false)
+        : checker_(checker), isCreateSyntheticVar_(isCreateSyntheticVar)
+    {
+        preOverloadDeclaration_ = checker_->Context().ContainingOverloadDeclaration() != nullptr
+                                      ? checker_->Context().ContainingOverloadDeclaration()->AsLocalVariable()
+                                      : nullptr;
+        checker_->Context().SetContainingOverloadDeclaration(overloadDeclaration);
+    }
+
+    bool IsOverloadDeclarationCall()
+    {
+        return checker_->Context().ContainingOverloadDeclaration() != nullptr;
+    }
+
+    varbinder::LocalVariable *CreateSyntheticVar(ThreadSafeArenaAllocator *const allocator)
+    {
+        varbinder::VariableFlags variableFlags =
+            IsOverloadDeclarationCall() ? varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::METHOD |
+                                              varbinder::VariableFlags::OVERLOAD
+                                        : varbinder::VariableFlags::SYNTHETIC | varbinder::VariableFlags::METHOD;
+        varbinder::LocalVariable *syntheticVar = allocator->New<varbinder::LocalVariable>(variableFlags);
+        return syntheticVar;
+    }
+
+    ~SignatureCollectContext()
+    {
+        if (isCreateSyntheticVar_ && syntheticVar_ != nullptr) {
+            syntheticVar_->Reset(checker_->Context().ContainingOverloadDeclaration()->Declaration(),
+                                 syntheticVar_->Flags());
+            checker_->Context().SetContainingOverloadDeclaration(preOverloadDeclaration_);
+        }
+    }
+
+    NO_COPY_SEMANTIC(SignatureCollectContext);
+    NO_MOVE_SEMANTIC(SignatureCollectContext);
+
+private:
+    Checker *checker_;
+    bool isCreateSyntheticVar_;
+    varbinder::LocalVariable *preOverloadDeclaration_;
+    varbinder::LocalVariable *syntheticVar_ = nullptr;
 };
 
 }  // namespace ark::es2panda::checker

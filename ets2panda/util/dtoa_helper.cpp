@@ -14,8 +14,8 @@
  */
 
 #include "dtoa_helper.h"
-#include "macros.h"
-#include "globals.h"
+#include "libarkbase/macros.h"
+#include "libarkbase/globals.h"
 
 // Almost copy of ets_runtime/ecmascript/base/dtoa_helper.cpp
 namespace ark::es2panda::util {

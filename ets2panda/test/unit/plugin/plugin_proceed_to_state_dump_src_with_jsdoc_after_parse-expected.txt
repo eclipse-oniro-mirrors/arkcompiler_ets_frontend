@@ -33,7 +33,7 @@ export { PI as PI, E as E } from "std/math/consts";
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-export { jsdocVal2 as jsdocVal2 }
+export { jsdocVal2 as default }
 /**
  * ==== export Annotation jsdoc ====
  * @param1 preStr { p } behindStr
@@ -302,5 +302,6 @@ const jsdocVal1: string = "ssss"
  * @param1 {} behindStr
  * @param2 preStr { p }
 */
-overload jsDocFunc{jsDocFunc1, jsDocFunc2, jsDocFunc3};
+overload jsDocFunc{ jsDocFunc1, jsDocFunc2, jsDocFunc3 };
+
 

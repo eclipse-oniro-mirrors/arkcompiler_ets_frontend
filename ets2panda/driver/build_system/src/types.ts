@@ -35,6 +35,13 @@ export enum OHOS_MODULE_TYPE {
     HAR = 'har',
 }
 
+export enum WorkerMessageType {
+    DECL_GENERATED = 'DECL_GENERATED',
+    ABC_COMPILED = 'ABC_COMPILED',
+    ERROR_OCCURED = 'ERROR_OCCURED',
+    ASSIGN_TASK = 'ASSIGN_TASK'
+}
+
 // ProjectConfig begins
 export interface PluginsConfig {
     [pluginName: string]: string;
@@ -50,8 +57,9 @@ export interface BuildBaseConfig {
     es2pandaMode: ES2PANDA_MODE;
     hasMainModule: boolean;
     isBuildConfigModified?: boolean;
-    recordType?: RECORD_TYPE;
-    es2pandaDepGraphDotDump?: boolean;
+    recordType?: 'OFF' | 'ON';
+    dumpDependencyGraph?: boolean;
+    dumpPerf?: boolean;
 }
 
 export interface ArkTSGlobal {
@@ -88,9 +96,9 @@ export interface ArkTS {
     generateStaticDeclarationsFromContext: Function;
     destroyConfig: Function;
     Es2pandaContextState: typeof Es2pandaContextState;
-    MemInitialize: Function;
-    MemFinalize: Function;
-    CreateGlobalContext: Function;
+    memInitialize: Function;
+    memFinalize: Function;
+    createGlobalContext: Function;
     AstNode: AstNode;
     ETSImportDeclaration: ETSImportDeclaration;
     isEtsScript: Function;
@@ -169,7 +177,7 @@ export interface FrameworkConfig {
 export interface DeclgenConfig {
     enableDeclgenEts2Ts: boolean;
     declgenV1OutPath?: string;
-    declgenV2OutPath?: string;
+    declgenV2OutPath: string;
     declgenBridgeCodePath?: string;
     skipDeclCheck?: boolean;
     continueOnError?: boolean;
@@ -209,12 +217,6 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
 }
 // ProjectConfig ends
 
-export interface CompileFileInfo {
-    inputFilePath: string;
-    outputFilePath: string;
-    arktsConfigFile: string;
-};
-
 export interface ModuleInfo {
     isMainModule: boolean;
     packageName: string;
@@ -243,7 +245,7 @@ export type SetupClusterOptions = {
     execArgs?: string[];
 };
 
-export type KPointer = number | bigint;
+export type KPointer = Uint8Array | number | bigint;
 
 export interface AliasConfig {
     originalAPIName: string;
@@ -284,10 +286,10 @@ export enum Es2pandaImportFlags {
 }
 
 export enum ES2PANDA_MODE {
-    RUN_PARALLEL = "parallel",
-    RUN_CONCURRENT = "concurrent",
-    RUN_SIMULTANEOUS = "simultaneous",
-    RUN = "sequential"
+    RUN_PARALLEL = 'parallel',
+    RUN_CONCURRENT = 'concurrent',
+    RUN_SIMULTANEOUS = 'simultaneous',
+    RUN = 'sequential'
 };
 
 export interface DynamicFileContext {
@@ -303,53 +305,67 @@ export interface DependencyItem {
     language: string,
     path: string,
     ohmUrl: string,
+    sourceFilePath?: string,
     alias?: string[]
 }
 
+export interface CompilerOptions {
+    package: string;
+    baseUrl: string;
+    paths: Record<string, string[]>;
+    dependencies: Record<string, DependencyItem>;
+    useEmptyPackage?: boolean;
+    projectRootPath?: string;
+    cacheDir?: string;
+}
+
 export interface ArkTSConfigObject {
-    compilerOptions: {
-        package: string,
-        baseUrl: string,
-        paths: Record<string, string[]>;
-        dependencies: Record<string, DependencyItem>;
-        useEmptyPackage?: boolean;
-        rootDir?: string,
-        cacheDir?: string,
-    }
+    compilerOptions: CompilerOptions;
 };
 
-export interface CompileTask {
-    job: CompileJobInfo;
-}
-
-export interface ProcessCompileTask extends CompileTask {
-    buildConfig: BuildConfig;
-}
-
 export interface JobInfo {
-    id: string;
+    fileInfo: FileInfo,
+    // In case of simultaneous mode
     fileList: string[];
-    jobDependencies: string[];
-    jobDependants: string[];
 }
+
+export interface FileInfo {
+    input: string;
+    output: string;
+    arktsConfig: string;
+    moduleName: string;
+    moduleRoot: string;
+};
 
 export enum CompileJobType {
-    NONE        = 0x00,
-    DECL        = 0x01,
-    ABC         = 0x10,
-    DECL_ABC    = 0x11
+    NONE        = 0b00,
+    DECL        = 0b01,
+    ABC         = 0b10,
+    DECL_ABC    = 0b11
 }
 
 export interface CompileJobInfo extends JobInfo {
-    compileFileInfo: CompileFileInfo,
+    declgenConfig: DeclgenV2JobConfig;
     type: CompileJobType
 }
 
-//add
-export interface DeclFileInfo {
-  delFilePath: string;
-  declLastModified: number;    
-  glueCodeFilePath: string; 
-  glueCodeLastModified: number;
-  sourceFilePath:string;
-  }
+export interface ProcessCompileTask extends CompileJobInfo {
+    buildConfig: BuildConfig;
+}
+
+export interface DeclgenV1JobConfig {
+    output: string;
+    bridgeCode: string;
+}
+
+export interface DeclgenV2JobConfig {
+    output: string;
+}
+
+export interface DeclgenV1JobInfo extends JobInfo {
+    declgenConfig: DeclgenV1JobConfig
+}
+
+export interface ProcessDeclgenV1Task extends DeclgenV1JobInfo {
+    buildConfig: BuildConfig;
+}

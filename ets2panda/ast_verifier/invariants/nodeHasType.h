@@ -18,6 +18,7 @@
 
 #include "ast_verifier/invariantBase.h"
 #include "checker/types/type.h"
+#include "checker/types/ets/etsEnumType.h"
 
 namespace ark::es2panda::compiler::ast_verifier {
 
@@ -32,6 +33,8 @@ private:
     class ExceptionsMatcher;
 
     friend class NoPrimitiveTypes;
+
+    friend class EnumHasCorrectType;
 };
 
 class NoPrimitiveTypes : public InvariantBase<VerifierInvariants::NO_PRIMITIVE_TYPES, NodeHasType> {
@@ -60,6 +63,14 @@ public:
 private:
     bool numberLoweringOccurred_ {false};
 };
+
+class EnumHasCorrectType : public InvariantBase<VerifierInvariants::ENUM_HAS_CORRECT_TYPE, NodeHasType> {
+public:
+    using Base::Base;
+
+    [[nodiscard]] CheckResult operator()(const ir::AstNode *ast);
+};
+
 }  // namespace ark::es2panda::compiler::ast_verifier
 
 #endif  // ES2PANDA_COMPILER_CORE_AST_VERIFIER_INVARIANTS_NODEHASTYPE_H

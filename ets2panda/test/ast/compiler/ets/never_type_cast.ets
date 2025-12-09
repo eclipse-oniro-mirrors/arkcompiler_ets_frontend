@@ -24,4 +24,5 @@ function foo() {
 }
 foo();
 
-/* @@? 21:17 Error TypeError: Cannot cast type 'Boolean' to 'String|Double|null' */
+
+/* @@? 21:17 Error Semantic error ESE0326: Cannot cast type 'Boolean' to 'String|Double|null' */

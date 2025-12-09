@@ -17,12 +17,13 @@
 @interface Anno{}
 
 // annotations for function type
-let func: @Anno @Anno (a: @Anno @Anno string) => @Anno @Anno Int
-let foo: @Anno @Anno (a?: @Anno @Anno string) => @Anno @Anno Int
+let func: @Anno() @Anno() (a: @Anno() @Anno() string) => @Anno() @Anno() Int
+let foo: @Anno() @Anno() (a?: @Anno() @Anno() string) => @Anno() @Anno() Int
 
-/* @@? 20:18 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 20:34 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 20:57 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 21:17 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 21:57 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 21:34 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+
+/* @@? 20:20 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 20:40 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 20:67 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 21:19 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 21:40 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 21:67 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

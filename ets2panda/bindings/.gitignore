@@ -6,3 +6,5 @@ tsconfig.tsbuildinfo
 ets/
 ets2panda
 .idea/
+public.node
+ts_bindings.node

@@ -34,5 +34,5 @@ function main(): void {
     i.xyz();
 }
 
-/* @@? 34:5 Error TypeError: Signature xyz(): Int is not visible here. */
-/* @@? 34:5 Error TypeError: No matching call signature for xyz() */
+/* @@? 34:5 Error Semantic error ESE0139: Signature xyz(): Int is not visible here. */
+/* @@? 34:5 Error Semantic error ESE0127: No matching call signature for xyz() */

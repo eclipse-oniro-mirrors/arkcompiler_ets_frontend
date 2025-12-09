@@ -497,4 +497,4 @@
     }
   }
 }
-TypeError: Cannot use type 'void' as value.  [ConditionalExpressionCallVoidNeg.ets:20:17]
+[ConditionalExpressionCallVoidNeg.ets:20:17] Semantic error ESE0078: Cannot use type 'void' as value.

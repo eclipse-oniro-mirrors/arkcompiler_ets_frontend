@@ -176,16 +176,17 @@ def clean_env(source_path):
 def aa_copy_lib_files(options):
     aa_path = os.path.join(options.source_path, 'arkanalyzer')
     source_file_1 = os.path.join(aa_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es5.d.ts')
-    dest_path = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal')
-    copy_files(source_file_1, dest_path, True)
+    dest_path_1 = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal', 'lib.es5.d.ts')
+    copy_files(source_file_1, dest_path_1, True)
     source_file_2 = os.path.join(aa_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es2015.collection.d.ts')
-    copy_files(source_file_2, dest_path, True)
+    dest_path_2 = os.path.join(aa_path, 'builtIn', 'typescript', 'api', '@internal', 'lib.es2015.collection.d.ts')
+    copy_files(source_file_2, dest_path_2, True)
 
 
 def hc_copy_lib_files(options):
     hc_path = os.path.join(options.source_path, 'homecheck')
     source_file = os.path.join(hc_path, 'node_modules', 'ohos-typescript', 'lib', 'lib.es5.d.ts')
-    dest_path = os.path.join(hc_path, 'resources', 'internalSdk', '@internal')
+    dest_path = os.path.join(hc_path, 'resources', 'internalSdk', '@internal', 'lib.es5.d.ts')
     copy_files(source_file, dest_path, True)
 
 

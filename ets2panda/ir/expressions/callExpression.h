@@ -166,8 +166,6 @@ public:
         return callee_->IsThisExpression() || callee_->IsSuperExpression();
     }
 
-    bool IsDynamicCall() const noexcept;
-
     [[nodiscard]] CallExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;

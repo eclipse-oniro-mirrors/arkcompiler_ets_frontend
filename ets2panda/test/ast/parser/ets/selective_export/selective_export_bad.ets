@@ -19,4 +19,5 @@ function bar(): int {
     return 1;
 }
 
-/* @@@ label Error SyntaxError: Cannot find name 'foo' to export.  */
+
+/* @@@ label Error Syntax error ESY0279: Cannot find name 'foo' to export. */

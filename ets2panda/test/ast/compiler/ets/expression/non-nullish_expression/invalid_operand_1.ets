@@ -17,4 +17,4 @@ function foo(x: null) {
     return x!
 }
 
-/* @@? 17:12 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
+/* @@? 17:12 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */

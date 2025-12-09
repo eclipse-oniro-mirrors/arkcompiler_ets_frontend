@@ -15,4 +15,5 @@
 
 
 declare /* @@ label */a = 5;
-/* @@@ label Error SyntaxError: Unexpected token 'a'.  */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'a'. */

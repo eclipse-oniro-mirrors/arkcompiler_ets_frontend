@@ -20,8 +20,5 @@ flags: [module]
 export { a as 6, c} from "foo"
 
 
-/* @@? 20:15 Error SyntaxError: Unexpected token, expected an identifier.  */
-/* @@? 1:1 Node {
-    "type": "Program"
-}  *//* @@? 20:15 Error SyntaxError: Unexpected token, expected an identifier.  */
-/* @@? 20:15 Error SyntaxError: Unexpected token, expected an identifier.  */
+
+/* @@? 20:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */

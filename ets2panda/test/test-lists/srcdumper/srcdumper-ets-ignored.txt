@@ -91,7 +91,10 @@ runtime/ets/labeledStatement.ets
 runtime/ets/namespace_tests/namespace_import_type_test/namespace_export.ets
 runtime/ets/newArrayCreationUnionType.ets
 parser/ets/dynamic_import_tests/modules/module.ets
+parser/ets/import_tests/import_several_2.ets
+parser/ets/import_tests/import_several_7.ets
 
+ast/parser/ets/export_empty_block.ets
 
 # FailKind.ES2PANDA_FAIL
 compiler/ets/abstractNewClassInstanceExpression.ets
@@ -101,28 +104,24 @@ runtime/ets/type_param_in_union.ets
 runtime/ets/StringFasta.ets
 runtime/ets/struct-identifier.ets
 runtime/ets/struct-init2.ets
-runtime/ets/too_many_call_expr.ets
-runtime/ets/too_many_async.ets
-runtime/ets/too_many_await.ets
-runtime/ets/too_many_left_brace.ets
-runtime/ets/too_many_left_square_brackets.ets
-runtime/ets/too_many_new_expr.ets
-runtime/ets/too_many_minus.ets
-runtime/ets/too_many_plus.ets
-runtime/ets/too_many_plus_1.ets
-runtime/ets/too_many_tilde.ets
-runtime/ets/too_many_exclamation_mark.ets
-runtime/ets/fuzz/too_many_call_expr.ets
-runtime/ets/too_many_token.ets
+runtime/ets/fuzz/invalid_rest_param_await.ets
+runtime/ets/fuzz/empty_variable.ets
+runtime/ets/fuzz/signature_info_param.ets
+runtime/ets/fuzz/too_many_minus.ets
+runtime/ets/fuzz/too_many_plus.ets
+runtime/ets/fuzz/too_many_plus_1.ets
+runtime/ets/fuzz/too_many_tilde.ets
+runtime/ets/fuzz/too_many_exclamation_mark.ets
 runtime/ets/fuzz/too_many_async.ets
 runtime/ets/fuzz/too_many_await.ets
+runtime/ets/fuzz/too_many_call_expr.ets
 runtime/ets/fuzz/too_many_left_brace.ets
 runtime/ets/fuzz/too_many_left_square_brackets.ets
 runtime/ets/fuzz/too_many_new_expr.ets
+runtime/ets/fuzz/too_many_token.ets
+runtime/ets/fuzz/repeated_del.ets
 runtime/ets/fuzz/too_many_expression.ets
 runtime/ets/fuzz/class_body_interface.ets
-runtime/ets/fuzz/repeated_del.ets
-runtime/ets/fuzz/create_partial.ets
 ast/compiler/ets/DeclareIndexerTest.ets
 ast/parser/ets/import_tests/import_class_with_static_field/import_class_with_static_field.ets
 
@@ -155,9 +154,6 @@ runtime/ets/class_implements_interface_import.ets
 # #21051 should be log warnings, but there aren't
 ast/compiler/ets/not_initialized_variable/import_types.ets
 
-#Issue 22182
-ast/compiler/ets/implicit_package_import/package_test_5/package_module_1.sts
-
 #import tests, not test cases(path problem)
 ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test1_1.ets
@@ -183,7 +179,17 @@ ast/compiler/ets/import_export/external_export.ets
 ast/compiler/ets/import_export/test1_1.ets
 ast/compiler/ets/import_export/test2_1.ets
 ast/compiler/ets/import_export/test3_1.ets
+ast/compiler/ets/namespace_import/namespace_export2.ets
 runtime/ets/import_namespaces.ets
-ast/compiler/ets/import_tests/selective_export_tests/import_same_type_form_alias_1.ets
-ast/compiler/ets/import_tests/selective_export_tests/import_same_type_form_alias_2.ets
-ast/compiler/ets/import_export/test3_1.ets
+
+#Issue 30577
+runtime/ets/re_export_default/reexport1.ets
+runtime/ets/re_export_default/reexport2.ets
+
+ast/parser/ets/object_literal_withfunc.ets
+runtime/ets/interfaceObjectLiteral_01.ets
+runtime/ets/interfaceObjectLiteral_02.ets
+runtime/ets/interfaceObjectLiteral_03.ets
+
+#31069
+type_error_test.ets

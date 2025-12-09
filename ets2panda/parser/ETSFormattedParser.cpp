@@ -135,7 +135,7 @@ ir::Identifier *ETSParser::ParseIdentifierFormatPlaceholder(std::optional<Parser
     if (!nodeFormat.has_value()) {
         if (insertingNodes_.empty()) {
             LogError(diagnostic::INSERT_NODE_ABSENT, {}, Lexer()->GetToken().Start());
-            return nullptr;
+            return AllocBrokenExpression(Lexer()->GetToken().Loc());
         }
 
         nodeFormat = GetFormatPlaceholderType();
@@ -323,6 +323,18 @@ ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sour
     return CreateFormattedExpression(sourceCode, insertingNodes);
 }
 
+ir::Expression *ETSParser::CreateFormattedExpression(std::string_view const sourceCode,
+                                                     std::vector<ir::Expression *> &args)
+{
+    std::vector<ir::AstNode *> insertingNodes {};
+    insertingNodes.reserve(args.size());
+    for (auto it : args) {
+        ProcessFormattedArg(insertingNodes, it);
+    }
+
+    return CreateFormattedExpression(sourceCode, insertingNodes);
+}
+
 ir::Statement *ETSParser::CreateFormattedStatement(std::string_view const sourceCode,
                                                    std::vector<ir::AstNode *> &insertingNodes)
 {
@@ -478,7 +490,7 @@ ir::Statement *ETSParser::CreateClassDeclaration(std::string_view sourceCode, bo
         }
         default: {
             LogUnexpectedToken(Lexer()->GetToken());
-            return nullptr;
+            return AllocBrokenStatement(lexer->GetToken().Start());
         }
     }
 }
@@ -493,7 +505,7 @@ ir::MethodDefinition *ETSParser::CreateConstructorDefinition(ir::ModifierFlags m
     Lexer()->NextToken();
 
     if (IsClassMethodModifier(Lexer()->GetToken().Type())) {
-        modifiers |= ParseClassMethodModifiers(false);
+        ParseClassMethodModifiers(modifiers);
     }
 
     if (Lexer()->GetToken().Type() != lexer::TokenType::KEYW_CONSTRUCTOR) {

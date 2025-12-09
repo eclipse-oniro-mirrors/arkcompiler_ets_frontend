@@ -46,7 +46,6 @@ public:
 
     uint32_t Rank() const override;
     void Identical(TypeRelation *relation, Type *other) override;
-    bool AssignmentSource(TypeRelation *relation, Type *target) override;
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
     void Cast(TypeRelation *relation, Type *target) override;
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;

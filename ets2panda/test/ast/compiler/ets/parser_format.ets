@@ -17,9 +17,9 @@ declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare struct MainProg2 {
     @@Stave
 }
 
-/* @@? 16:1 Error TypeError: Unresolved reference declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare */
-/* @@? 16:39 Error SyntaxError: Unexpected token 'struct'. */
-/* @@? 16:39 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 17:5 Error SyntaxError: There is no any node to insert at the placeholder position. */
-/* @@? 17:5 Error SyntaxError: Unexpected token '@@'. */
-/* @@? 17:12 Error SyntaxError: Field type annotation expected. */
+
+/* @@? 16:1 Error Semantic error ESE0143: Unresolved reference declaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaare */
+/* @@? 16:39 Error Syntax error ESY0227: Unexpected token 'struct'. */
+/* @@? 16:39 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 17:5 Error Syntax error ESY0010: There is no any node to insert at the placeholder position. */
+/* @@? 17:12 Error Syntax error ESY0121: Field type annotation expected. */

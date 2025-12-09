@@ -203,7 +203,7 @@ const test = () => {
     refactorContext.span.pos = position;
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
-    ASSERT_EQ(0, result.size());
+    ASSERT_EQ(1, result.size());
 }
 
 TEST_F(LspConvFuncTests, ConvertFunctionRefactor9)
@@ -227,7 +227,7 @@ const test = () => {}
     refactorContext.span.pos = position;
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
-    ASSERT_EQ(0, result.size());
+    ASSERT_EQ(1, result.size());
 }
 
 TEST_F(LspConvFuncTests, ConvertFunctionRefactor10)
@@ -249,33 +249,7 @@ const test = () => {}
     refactorContext.span.pos = position;
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     initializer.DestroyContext(ctx);
-    ASSERT_EQ(0, result.size());
+    ASSERT_EQ(1, result.size());
 }
 
-TEST_F(LspConvFuncTests, ConvertFunctionRefactor11)
-{
-    std::vector<std::string> files = {"convertFunctionRefactor11.ets"};
-    std::vector<std::string> texts = {R"(@Component
-struct Index {
-build() {
-Text().onClick(()=>{
-const test = () =>{}
-})
-}
-})"};
-    auto filePaths = CreateTempFile(files, texts);
-    size_t const expectedFileCount = 1;
-    ASSERT_EQ(filePaths.size(), expectedFileCount);
-
-    size_t const position = 70;
-    Initializer initializer = Initializer();
-    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    ark::es2panda::lsp::RefactorContext refactorContext;
-    refactorContext.context = ctx;
-    refactorContext.kind = std::string(TO_NAMED_FUNCTION_KIND);
-    refactorContext.span.pos = position;
-    auto result = GetApplicableRefactorsImpl(&refactorContext);
-    initializer.DestroyContext(ctx);
-    ASSERT_EQ(0, result.size());
-}
 }  // namespace

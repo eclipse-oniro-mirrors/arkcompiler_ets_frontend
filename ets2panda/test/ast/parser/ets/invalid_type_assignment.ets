@@ -20,7 +20,5 @@ flags: [dynamic-ast]
     type Point = { x: number; y: number };
     type AxeX = Point['x'];
 
-/* @@? 20:18 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 21:23 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 21:23 Error SyntaxError: Unexpected token ']'. */
-/* @@? 21:26 Error SyntaxError: Unexpected token ']'. */
+/* @@? 20:18 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 21:22 Error Syntax error ESY49888: Indexed access types are not supported, use type name instead! */

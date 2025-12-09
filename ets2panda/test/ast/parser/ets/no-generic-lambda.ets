@@ -19,7 +19,8 @@ let bar = <T extends U, U>() => { }
 foo<number>(1.0);
 bar<Int, Object>();
 
-/* @@? 16:11 Error SyntaxError: Generic lambda expressions are not supported. */
-/* @@? 17:11 Error SyntaxError: Generic lambda expressions are not supported. */
-/* @@? 19:1 Error TypeError: This expression is not callable. */
-/* @@? 20:1 Error TypeError: This expression is not callable. */
+
+/* @@? 16:11 Error Syntax error ESY12842: Generic lambda expressions are not supported. */
+/* @@? 17:11 Error Syntax error ESY12842: Generic lambda expressions are not supported. */
+/* @@? 19:1 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 20:1 Error Semantic error ESE0289: This expression is not callable. */

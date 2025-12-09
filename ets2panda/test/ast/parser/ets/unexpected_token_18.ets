@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-try {} catch (e: number) /* @@ label */}
+try {} catch (e) /* @@ label */}
 
-/* @@? 16:15 Error TypeError: Argument must be an instance of 'Exception' or 'Error' */
-/* @@@ label Error SyntaxError: Expected '{', got '}'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '{', got '}'. */

@@ -17,4 +17,5 @@
 class Foo {
     readonly /* @@ label */static a = "foo";
 }
-/* @@@ label Error SyntaxError: Unexpected modifier.  */
+
+/* @@@ label Error Syntax error ESY0153: Unexpected modifier. */

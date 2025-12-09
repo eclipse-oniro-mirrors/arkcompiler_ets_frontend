@@ -15,7 +15,8 @@
 
 import m /* @@ label1 */= /* @@ label2 */require("mod")
 
-/* @@@ label1 Error SyntaxError: Importing by 'require' and 'import' assignment is not supported, use 'import * as ... from ...' form instead! */
-/* @@@ label1 Error SyntaxError: Unexpected token '='. */
-/* @@@ label2 Error SyntaxError: Unexpected token 'require'. */
-/* @@@ label2 Error TypeError: Unresolved reference require */
+
+/* @@@ label1 Error Syntax error ESY0312: Importing by 'require' and 'import' assignment is not supported, use 'import * as ... from ...' form instead! */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'require'. */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference require */

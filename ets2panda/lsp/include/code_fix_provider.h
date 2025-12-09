@@ -21,17 +21,18 @@
 #include <unordered_map>
 #include "services/text_change/change_tracker.h"
 #include "code_fixes/code_fix_types.h"
+#include "generated/code_fix_register.h"
 #include "es2panda.h"
 
 namespace ark::es2panda::lsp {
-
+using ark::es2panda::lsp::codefixes::DiagnosticCode;
 class CodeFixProvider {
 private:
-    std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> errorCodeToFixes_;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<CodeFixRegistration>>> errorCodeToFixes_;
     std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> fixIdToRegistration_;
 
 public:
-    std::unordered_map<std::string, std::shared_ptr<CodeFixRegistration>> GetErrorCodeToFixes() const
+    std::unordered_map<std::string, std::vector<std::shared_ptr<CodeFixRegistration>>> GetErrorCodeToFixes() const
     {
         return errorCodeToFixes_;
     }
@@ -44,16 +45,15 @@ public:
     static CodeFixProvider &Instance();
 
     std::string FormatWithArgs(const std::string &text);
-    std::string DiagnosticToString(const DiagnosticAndArguments &diag);
+    std::string DiagnosticToString(const codefixes::DiagnosticCode &diag);
     CodeFixAction CreateCodeFixActionWorker(std::string &fixName, std::string &description,
                                             std::vector<FileTextChanges> &changes, std::string &fixId,
                                             std::string &fixAllDescription, std::vector<CodeActionCommand> command);
 
     CodeFixAction CreateCodeFixActionWithoutFixAll(std::string &fixName, std::vector<FileTextChanges> &changes,
-                                                   DiagnosticAndArguments &description);
+                                                   DiagnosticCode &diagCode);
     CodeFixAction CreateCodeFixAction(std::string fixName, std::vector<FileTextChanges> changes,
-                                      DiagnosticAndArguments &description, std::string fixId,
-                                      DiagnosticAndArguments &fixAllDescription,
+                                      DiagnosticCode diagCode, std::string fixId,
                                       std::vector<CodeActionCommand> &command);
     std::string GetFileName(const std::string &filePath);
     std::vector<std::string> GetSupportedErrorCodes();

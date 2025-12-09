@@ -18,5 +18,4 @@ enum Fraction: customInt {
     B = 2
 }
 
-
-/* @@? 16:26 Error SyntaxError: Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal types, not annotations. */
+/* @@? 17:9 Error Syntax error ESY0327: Unsupported enum type annotation. Supported enum types are: integral types, floating point types and string.*/

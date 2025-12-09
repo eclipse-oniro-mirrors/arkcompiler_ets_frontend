@@ -15,8 +15,9 @@
 
 import { foo, bar } /* @@ label */kjfjf /* @@ label1 */988 /* @@ label2 */from /* @@ label3 */"./import_tests/modules/module"
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@@ label2 Error SyntaxError: Unexpected token 'from'. */
-/* @@? 16:75 Error TypeError: Unresolved reference from */
-/* @@@ label3 Error SyntaxError: Unexpected token './import_tests/modules/module'. */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@@ label1 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'from'. */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference from */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token './import_tests/modules/module'. */

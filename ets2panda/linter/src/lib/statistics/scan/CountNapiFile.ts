@@ -15,6 +15,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { runWithIOLimit, mapWithLimit } from './IoLimiter';
 import { Logger } from '../../Logger';
 import type { NapiFileStatisticInfo } from './NapiFileStatisticInfo';
 
@@ -35,60 +36,51 @@ function removeComments(content: string): string {
   return content.replace(MULTI_LINE_COMMENT_REGEX, '').replace(SINGLE_LINE_COMMENT_REGEX, '');
 }
 
-async function countLines(filePath: string): Promise<number> {
-  try {
-    const content = await fs.promises.readFile(filePath, 'utf-8');
-    const contentWithoutComments = removeComments(content);
-    const validLines = contentWithoutComments.split('\n').filter((line) => {
-      return line.trim();
-    });
-    return validLines.length;
-  } catch (e) {
-    Logger.error(`Error reading ${filePath}: ${e}`);
-    return 0;
-  }
+function countLinesFromContent(content: string): number {
+  const contentWithoutComments = removeComments(content);
+  const validLines = contentWithoutComments.split('\n').filter((line) => {
+    return line.trim();
+  });
+  return validLines.length;
 }
 
-async function countNapiLines(filePath: string): Promise<number> {
-  try {
-    const content = await fs.promises.readFile(filePath, 'utf-8');
-    const lines = content.split('\n');
-    const napiLines = new Set<string>();
+function countNapiLinesFromContent(content: string): number {
+  const lines = content.split('\n');
+  const napiLines = new Set<string>();
 
-    for (const line of lines) {
-      if (line.toLowerCase().includes('napi')) {
-        napiLines.add(line);
-      }
+  for (const line of lines) {
+    if (line.toLowerCase().includes('napi')) {
+      napiLines.add(line);
     }
-
-    return napiLines.size;
-  } catch (e) {
-    Logger.error(`Error reading ${filePath}: ${e}`);
-    return 0;
   }
+
+  return napiLines.size;
 }
 
 async function analyzeDirectoryAsync(directory: string): Promise<NapiFileStatisticInfo> {
   const dirQueue: string[] = [directory];
   const allResults: NapiFileStatisticInfo[] = [];
+  const MAX_CONCURRENT_FILES = 32;
 
   while (dirQueue.length > 0) {
     const currentDir = dirQueue.shift()!;
-    const entries = await fs.promises.readdir(currentDir, { withFileTypes: true });
-    const fileResults = await Promise.all(
-      entries.
-        map((entry) => {
-          const fullPath = path.join(currentDir, entry.name);
-          if (entry.isDirectory()) {
-            dirQueue.push(fullPath);
-            return null;
-          } else if (isTargetFile(entry.name)) {
-            return processFile(fullPath);
-          }
-          return null;
-        }).
-        filter(Boolean) as Promise<NapiFileStatisticInfo>[]
-    );
+    const entries = await runWithIOLimit(() => {
+      return fs.promises.readdir(currentDir, { withFileTypes: true });
+    });
+
+    const filesToProcess: string[] = [];
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        dirQueue.push(fullPath);
+      } else if (isTargetFile(entry.name)) {
+        filesToProcess.push(fullPath);
+      }
+    }
+
+    const fileResults = await mapWithLimit(filesToProcess, MAX_CONCURRENT_FILES, async (filePath) => {
+      return processFile(filePath);
+    });
     allResults.push(...fileResults);
   }
 
@@ -117,8 +109,13 @@ async function processFile(filePath: string): Promise<NapiFileStatisticInfo> {
   };
 
   try {
-    const [lines, napiCount] = await Promise.all([countLines(filePath), countNapiLines(filePath)]);
-
+    const content = await runWithIOLimit(() => {
+      return fs.promises.readFile(filePath, 'utf-8');
+    });
+    const [lines, napiCount] = await Promise.all([
+      Promise.resolve(countLinesFromContent(content)),
+      Promise.resolve(countNapiLinesFromContent(content))
+    ]);
     result.totalLines = lines;
     if (napiCount > 0) {
       result.napiFiles = 1;
@@ -139,7 +136,9 @@ function isTargetFile(filename: string): boolean {
 
 export async function countNapiFiles(directory: string): Promise<NapiFileStatisticInfo> {
   try {
-    const stat = await fs.promises.stat(directory);
+    const stat = await runWithIOLimit(() => {
+      return fs.promises.stat(directory);
+    });
     if (!stat.isDirectory()) {
       Logger.error('The provided path is not a directory!');
       return DEFAULT_STATISTICS;

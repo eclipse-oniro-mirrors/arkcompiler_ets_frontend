@@ -30,4 +30,5 @@ a.instance_method ()
 
 function main() {}
 
-/* @@@ label Error TypeError: Cannot call abstract method!  */
+
+/* @@@ label Error Semantic error ESE0026: Cannot call abstract method! */

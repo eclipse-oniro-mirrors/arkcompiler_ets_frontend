@@ -17,4 +17,4 @@ enum duplicateKeysNumCase {
     Red = 1,
     /* @@ label */Red = 1
 }
-/* @@@ label Error TypeError: Variable 'Red' has already been declared.  */
+/* @@@ label Error Semantic error ESE0351: Variable 'Red' has already been declared. */

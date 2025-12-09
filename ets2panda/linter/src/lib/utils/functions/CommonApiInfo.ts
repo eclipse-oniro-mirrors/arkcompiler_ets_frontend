@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,4 +44,8 @@ export function collectCommonApiInfo(tsProgram: ts.Program): void {
 }
 export function getCommonApiInfoMap(): Set<ts.MethodDeclaration> | undefined {
   return commonApiInfoMap.size > 0 ? commonApiInfoMap : undefined;
+}
+
+export function clearCommonApiInfoCache(): void {
+  commonApiInfoMap.clear();
 }

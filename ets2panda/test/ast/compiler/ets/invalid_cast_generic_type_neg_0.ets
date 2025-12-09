@@ -17,4 +17,5 @@ function foo<T>() {
     let x = 1 as T;                 
 }
 
-/* @@? 17:13 Error TypeError: Cannot cast type 'Int' to 'T'  */
+
+/* @@? 17:13 Error Semantic error ESE0326: Cannot cast type 'Int' to 'T' */

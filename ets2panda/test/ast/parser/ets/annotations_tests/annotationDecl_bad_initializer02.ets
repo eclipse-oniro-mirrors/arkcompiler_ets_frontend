@@ -18,5 +18,6 @@
 }
 
 
-/* @@@ label Error TypeError: Unresolved reference a  */
-/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference a */
+/* @@@ label Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

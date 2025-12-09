@@ -24,7 +24,8 @@ class array_type  {
     }
 }
 
-/* @@@ label Error TypeError: Property 'a' might not have been initialized.  */
-/* @@@ label1 Error TypeError: Property 'f' might not have been initialized.  */
-/* @@@ label2 Error TypeError: Function with a non void return type must return a value.  */
-/* @@@ label3 Error TypeError: Function with a non void return type must return a value.  */
+
+/* @@@ label Error Semantic error ESE0280: Property 'a' might not have been initialized. */
+/* @@@ label1 Error Semantic error ESE0280: Property 'f' might not have been initialized. */
+/* @@@ label2 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label3 Error Semantic error ESE0103: Function with a non void return type must return a value. */

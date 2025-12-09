@@ -21,4 +21,4 @@ function A(a: string) {
   }
 }
 
-/* @@@ label Error TypeError: Unresolved reference c */
+/* @@@ label Error Semantic error ESE0143: Unresolved reference c */

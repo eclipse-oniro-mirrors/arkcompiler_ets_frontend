@@ -129,7 +129,7 @@ static std::string UpdateStatementToAccessPropertyOrElement(const ir::MemberExpr
     return statement;
 }
 
-static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateNestedMemberAccess(
+static std::tuple<std::string, std::vector<ir::Expression *>> GenerateNestedMemberAccess(
     ir::MemberExpression *expr, ArenaAllocator *const allocator, size_t counter = 1)
 {
     // Generate a formatString and a vector of expressions(same order as the format string)
@@ -138,7 +138,7 @@ static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateNestedMemb
     // If "[", then after the number there will be a "]".
     // Where N is the number of nested member accesses (N == newAssignmentExpressions.size())
     auto member = expr->Object();
-    ArenaVector<ir::Expression *> newAssignmentExpressions(allocator->Adapter());
+    std::vector<ir::Expression *> newAssignmentExpressions {};
     newAssignmentExpressions.push_back(expr->Property());
 
     while (member->IsMemberExpression()) {
@@ -165,7 +165,7 @@ static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateNestedMemb
     return {newAssignmentStatements, newAssignmentExpressions};
 }
 
-static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateStringForAssignment(
+static std::tuple<std::string, std::vector<ir::Expression *>> GenerateStringForAssignment(
     const lexer::TokenType opEqual, ir::MemberExpression *expr, ArenaAllocator *const allocator, size_t counter)
 {
     // Note: Handle "A `opAssign` B" to "A = (A `operation` B) as T"
@@ -181,7 +181,7 @@ static std::tuple<std::string, ArenaVector<ir::Expression *>> GenerateStringForA
     return {retStr, retVec};
 }
 
-static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *expr, ArenaVector<ir::Expression *> &vec)
+static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *expr, std::vector<ir::Expression *> &vec)
 {
     auto type = expr->TsType();
     if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
@@ -191,6 +191,15 @@ static std::string GetCastString(checker::ETSChecker *checker, ir::Expression *e
     vec.push_back(CreateProxyTypeNode(checker, expr));
 
     return " as @@T" + std::to_string(vec.size());
+}
+
+static std::string GetCastString(ir::Expression *expr)
+{
+    auto type = expr->TsType();
+    if (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) {
+        return ".to" + type->ToString() + "()";
+    }
+    return "";
 }
 
 static ir::Expression *GenerateLoweredResultForLoweredAssignment(const lexer::TokenType opEqual,
@@ -209,7 +218,7 @@ static ir::Expression *GenerateLoweredResultForLoweredAssignment(const lexer::To
     if (expr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && !expr->Property()->IsLiteral()) {
         // Note: support such a situation could be okay: `a[idx++] += someExpr`.
         // It should be lowered as: `let dummyIdx = (lower result of `idx++`); a[dummyIdx] = a[dummyIdx] + someExpr`;
-        ArenaVector<ir::Expression *> dummyIndexDeclExpression(allocator->Adapter());
+        std::vector<ir::Expression *> dummyIndexDeclExpression {};
         std::string dummyIndexDeclStr = "let @@I1 = @@E2;\n";
         auto dummyIndex = Gensym(allocator);
         dummyIndexDeclExpression.emplace_back(dummyIndex);
@@ -252,7 +261,7 @@ static ir::Expression *ConstructOpAssignmentResult(public_lib::Context *ctx, ir:
     if (left->IsIdentifier()) {
         std::string formatString =
             "@@I1 = (@@I2 " + std::string(lexer::TokenToString(CombinedOpToOp(opEqual))) + " (@@E3))";
-        ArenaVector<ir::Expression *> retVec(allocator->Adapter());
+        std::vector<ir::Expression *> retVec {};
         retVec.push_back(GetClone(allocator, left->AsIdentifier()));
         retVec.push_back(GetClone(allocator, left->AsIdentifier()));
         retVec.push_back(right);
@@ -372,7 +381,8 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     if (upd->IsPrefix()) {
         argInfo.newAssignmentStatements += "const @@I7 = (" + GenFormatForExpression(argument, 8U, 9U) +
                                            (argument->IsTSNonNullExpression() ? "!" : "") + opSign + " 1" + suffix +
-                                           ").to" + argument->TsType()->ToString() + "();";
+                                           ")" + GetCastString(argument) + ";\n";
+
         argInfo.newAssignmentStatements += GenFormatForExpression(argument, 10U, 11U) + " = @@I12; @@I13";
         return parser->CreateFormattedExpression(
             argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2,
@@ -382,10 +392,11 @@ static ir::Expression *ConstructUpdateResult(public_lib::Context *ctx, ir::Updat
     }
 
     // upd is postfix
-    argInfo.newAssignmentStatements +=
-        "const @@I7 = " + GenFormatForExpression(argument, 8, 9) + (argument->IsTSNonNullExpression() ? "!" : "") +
-        ".to" + argument->TsType()->ToString() + "();" + GenFormatForExpression(argument, 10U, 11U) + " = (@@I12 " +
-        opSign + " 1" + suffix + ").to" + argument->TsType()->ToString() + "(); @@I13;";
+    argInfo.newAssignmentStatements += "const @@I7 = " + GenFormatForExpression(argument, 8, 9) +
+                                       (argument->IsTSNonNullExpression() ? "!" : "") + GetCastString(argument) + ";" +
+                                       GenFormatForExpression(argument, 10U, 11U) + " = (@@I12 " + opSign + " 1" +
+                                       suffix + ")" + GetCastString(argument) + "; @@I13\n;";
+
     return parser->CreateFormattedExpression(
         argInfo.newAssignmentStatements, argInfo.id1, argInfo.object, argInfo.objType, argInfo.id2, argInfo.property,
         argInfo.propType, argInfo.id3, GetClone(allocator, argInfo.id1), GetClone(allocator, argInfo.id2),

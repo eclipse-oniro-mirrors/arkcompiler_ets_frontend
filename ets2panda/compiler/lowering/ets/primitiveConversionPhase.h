@@ -28,7 +28,6 @@ public:
     }
 
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
-    //    bool PostconditionForModule(public_lib::Context *ctx, const parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

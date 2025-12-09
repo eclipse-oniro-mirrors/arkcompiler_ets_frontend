@@ -296,9 +296,9 @@ void ETSLReference::SetValueComputed(const ir::MemberExpression *memberExpr) con
     }
 
     if (objectType->IsETSTupleType()) {
-        ES2PANDA_ASSERT(memberExpr->GetTupleIndexValue().has_value());
+        ES2PANDA_ASSERT(memberExpr->GetTupleIndexValue(etsg_->Checker()).has_value());
 
-        std::size_t indexValue = *memberExpr->GetTupleIndexValue();
+        std::size_t indexValue = *memberExpr->GetTupleIndexValue(etsg_->Checker());
         etsg_->StoreTupleElement(Node(), baseReg_, objectType->AsETSTupleType()->GetTypeAtIndex(indexValue),
                                  indexValue);
         return;

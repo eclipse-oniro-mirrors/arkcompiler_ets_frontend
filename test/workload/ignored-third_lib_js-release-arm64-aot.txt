@@ -1,4 +1,1 @@
 # Known failures list for third_lib_js - release-arm64-aot
-
-#27985
-pathToRegexp_test

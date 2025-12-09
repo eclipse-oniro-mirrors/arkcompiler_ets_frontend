@@ -17,4 +17,5 @@ class /* @@ label */bigint{
   a : string = "15";
 }
 
-/* @@@ label Error SyntaxError: bigint is a predefined type, cannot be used as an identifier */
+
+/* @@@ label Error Syntax error ESY0295: bigint is a predefined type, cannot be used as an identifier */

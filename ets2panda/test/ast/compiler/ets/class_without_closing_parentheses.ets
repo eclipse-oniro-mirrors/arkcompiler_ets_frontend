@@ -27,16 +27,15 @@ export default class TreeMap<K, V> implements ReadonlyTreeMap<K, V> {
     }
 }
 
-/* @@? 16:47 Error TypeError: Cannot find type 'ReadonlyTreeMap'. */
-/* @@? 16:47 Error TypeError: Interface expected here. */
-/* @@? 18:39 Error TypeError: Cannot find type 'TreeMapEntry'. */
-/* @@? 19:9 Error SyntaxError: Unexpected token 'export'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token 'default'. */
-/* @@? 19:24 Error SyntaxError: Unexpected token 'namespace'. */
-/* @@? 19:24 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
-/* @@? 21:15 Error TypeError: Variable 'buffer' has already been declared. */
-/* @@? 21:15 Error TypeError: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
-/* @@? 24:13 Error TypeError: No matching call signature for set(Int, length[i]) */
-/* @@? 24:32 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 26:20 Error TypeError: Namespace 'buffer' cannot be used as a type. */
-/* @@? 26:20 Error TypeError: Invalid type reference. */
+/* @@? 16:47 Error Semantic error ESE0371: Cannot find type 'ReadonlyTreeMap'. */
+/* @@? 16:47 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 18:39 Error Semantic error ESE0371: Cannot find type 'TreeMapEntry'. */
+/* @@? 19:9 Error Syntax error ESY0227: Unexpected token 'export'. */
+/* @@? 19:16 Error Syntax error ESY0227: Unexpected token 'default'. */
+/* @@? 19:24 Error Syntax error ESY0227: Unexpected token 'namespace'. */
+/* @@? 19:24 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */
+/* @@? 21:15 Error Semantic error ESE0351: Variable 'buffer' has already been declared. */
+/* @@? 21:15 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 24:13 Error Semantic error ESE0127: No matching call signature for set(Int, length[i]) */
+/* @@? 24:32 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 26:20 Error Semantic error ESE0158: Namespace 'buffer' cannot be used as a type. */

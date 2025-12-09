@@ -21,4 +21,5 @@ let a = new A();
 let show = @Anno()@/* @@ label */Anno(this: A): string => {
     return "Hello," + this.name;
 }
-/* @@? 21:34 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+
+/* @@@ label Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

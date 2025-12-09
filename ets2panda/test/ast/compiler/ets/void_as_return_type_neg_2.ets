@@ -20,4 +20,4 @@ async function foo():Promise<int>{
     return test<void>()
 }
 
-/* @@? 20:12 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Promise<Int> | Int' */
+/* @@? 20:12 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Promise<Int> | Int' */

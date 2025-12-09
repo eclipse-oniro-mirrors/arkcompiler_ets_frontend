@@ -15,10 +15,11 @@
 
 class G /* @@ label */T/* @@ label1 */, S /* @@ label2 */extends T/* @@ label3 */> /* @@ label4 */{}
 
-/* @@@ label Error SyntaxError: Expected '{', got 'identification literal'.  */
-/* @@@ label1 Error SyntaxError: Unexpected token ','.  */
-/* @@? 16:42 Error SyntaxError: Field type annotation expected.  */
-/* @@@ label2 Error SyntaxError: Unexpected token 'extends'.  */
-/* @@? 16:67 Error SyntaxError:  Field type annotation expected.  */
-/* @@@ label3 Error SyntaxError: Unexpected token '>'.  */
-/* @@@ label4 Error SyntaxError: Unexpected token '{'.  */
+
+/* @@@ label Error Syntax error ESY0230: Expected '{', got 'identification literal'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:42 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'extends'. */
+/* @@? 16:67 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@@ label4 Error Syntax error ESY0227: Unexpected token '{'. */

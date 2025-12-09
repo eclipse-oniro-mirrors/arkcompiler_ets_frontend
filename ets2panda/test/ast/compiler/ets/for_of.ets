@@ -15,4 +15,4 @@
 
 for(let of; ;){ }
 
-/* @@? for_of.ets:16:9 Error SyntaxError: Variable must be initialized or it's type must be declared. */
+/* @@? 16:9 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

@@ -21,4 +21,5 @@ function main(): void {
     }
 }
 
-/* @@? 19:17 Error SyntaxError: Comma operator is supported only in 'for' loops. */
+
+/* @@? 19:17 Error Syntax error ESY133681: Comma operator is supported only in 'for' loops. */

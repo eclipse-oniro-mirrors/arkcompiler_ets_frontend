@@ -1960,6 +1960,157 @@
           "program": "instanceof_x_dyndecl.ets"
         }
       }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
+          "name": "A",
+          "loc": {
+            "start": {
+              "line": 23,
+              "column": 7,
+              "program": "instanceof_x_dyndecl.ets"
+            },
+            "end": {
+              "line": 23,
+              "column": 8,
+              "program": "instanceof_x_dyndecl.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "constructor",
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                }
+              }
+            },
+            "kind": "constructor",
+            "static": false,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "constructor",
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    },
+                    "end": {
+                      "line": 23,
+                      "column": 10,
+                      "program": "instanceof_x_dyndecl.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_dyndecl.ets"
+                  },
+                  "end": {
+                    "line": 23,
+                    "column": 10,
+                    "program": "instanceof_x_dyndecl.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                },
+                "end": {
+                  "line": 23,
+                  "column": 10,
+                  "program": "instanceof_x_dyndecl.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": null
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 23,
+            "column": 9,
+            "program": "instanceof_x_dyndecl.ets"
+          },
+          "end": {
+            "line": 25,
+            "column": 9,
+            "program": "instanceof_x_dyndecl.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 1,
+          "program": "instanceof_x_dyndecl.ets"
+        },
+        "end": {
+          "line": 25,
+          "column": 9,
+          "program": "instanceof_x_dyndecl.ets"
+        }
+      }
     }
   ],
   "loc": {
@@ -1975,5 +2126,5 @@
     }
   }
 }
-TypeError: Cannot find import: dynamic_import_tests [instanceof_x_dyndecl.ets:20:24]
-TypeError: Cannot find type 'AValue'. [instanceof_x_dyndecl.ets:37:26]
+[instanceof_x_dyndecl.ets:20:24] Semantic error ESE0360: Cannot find import: dynamic_import_tests
+[instanceof_x_dyndecl.ets:37:26] Semantic error ESE0371: Cannot find type 'AValue'.

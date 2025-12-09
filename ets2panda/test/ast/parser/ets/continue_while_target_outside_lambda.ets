@@ -29,4 +29,5 @@ function main(): void {
     }
 }
 
-/* @@? 26:17 Error TypeError: Continue or break target can't be outside the function */
+
+/* @@? 26:17 Error Semantic error ESE49316: Continue or break target can't be outside the function */

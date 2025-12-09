@@ -16,6 +16,6 @@
 import * as ns from "./eitest_import_all_2_ne"
 const f: ns.qw.Root.Foo = {x:10}
 
-/* @@? eitest_import_all_1_ne.ets:17:13 Error TypeError: 'qw' type does not exist. */
-/* @@? eitest_import_all_1_ne.ets:17:16 Error TypeError: 'Root' type does not exist. */
-/* @@? eitest_import_all_1_ne.ets:17:21 Error TypeError: 'Foo' type does not exist. */
+/* @@? 17:13 Error Semantic error ESE0070: 'qw' type does not exist. */
+/* @@? 17:16 Error Semantic error ESE0070: 'Root' type does not exist. */
+/* @@? 17:21 Error Semantic error ESE0070: 'Foo' type does not exist. */

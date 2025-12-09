@@ -51,11 +51,15 @@ endfunction()
 set(NODE_VERSION "v18.13.0")
 set(DISTRO "linux-x64")
 
-execute_process(COMMAND ${PANDA_ROOT}/scripts/install-third-party --node
-        WORKING_DIRECTORY ${PANDA_ROOT}
-        RESULT_VARIABLE NODEJS_DOWNLOAD_OK)
-if (NOT NODEJS_DOWNLOAD_OK EQUAL 0)
-    message(FATAL_ERROR "Unable to install required nodejs dependencies")
+set(NODE_INSTALL_DIR ${PANDA_ROOT}/third_party/nodejs/node-${NODE_VERSION}-${DISTRO})
+
+if(NOT EXISTS ${NODE_INSTALL_DIR})
+    execute_process(COMMAND ${PANDA_ROOT}/scripts/install-third-party --node
+            WORKING_DIRECTORY ${PANDA_ROOT}
+            RESULT_VARIABLE NODEJS_DOWNLOAD_OK)
+    if (NOT NODEJS_DOWNLOAD_OK EQUAL 0)
+        message(FATAL_ERROR "Unable to install required nodejs dependencies")
+    endif()
 endif()
 
 set(NODE_THIRD_PARTY_SOURCES_DIR ${PANDA_THIRD_PARTY_SOURCES_DIR}/nodejs)
@@ -67,15 +71,14 @@ set(NAPI_BINDINGS_LIB "ts_bindings")
 set(BINDINGS_NAPI_SRC
   ./src/common-interop.cpp
   ./src/convertors-napi.cpp
-  ./src/callback-resource.cpp
   ./src/lsp.cpp
+  ./src/common.cpp
+  ./src/bridges.cpp
 )
 
 # PUBLIC arkbase es2panda-lib es2panda-public
 # PRIVATE arkbytecodeopt
 set(ES2PANDA_LIBS
-  es2panda-lib
-  es2panda-public
   es2panda_lsp
 )
 
@@ -116,3 +119,12 @@ panda_target_compile_options(${NAPI_BINDINGS_LIB}
 panda_add_sanitizers(TARGET ${NAPI_BINDINGS_LIB} 
   SANITIZERS ${PANDA_SANITIZERS_LIST}
 )
+
+get_target_property(is_imported ${NAPI_BINDINGS_LIB} IMPORTED)
+if(NOT is_imported)
+  set(DESTINATION_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../${NAPI_BINDINGS_LIB}.node)
+
+  add_custom_command(TARGET ${NAPI_BINDINGS_LIB} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${NAPI_BINDINGS_LIB}> ${DESTINATION_PATH}
+  )
+endif()

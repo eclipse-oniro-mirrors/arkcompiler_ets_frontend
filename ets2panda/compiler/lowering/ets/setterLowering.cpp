@@ -20,22 +20,21 @@
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 namespace ark::es2panda::compiler {
 
-// This lowering transforms setter calls, to preserve the parameter value, so it can be passed after that.
-// The transformation can be written like this
-// Original code
+// This lowering transforms setter calls and indexable object set calls, to preserve the parameter value, so it can be
+// passed after that. The transformation can be written like this Original code
 // ----------------
-// <lhs> = <rhs> // where <lhs> is a setter property
+// <lhs> = <rhs> // where <lhs> is a setter property or a set call on an indexable object
 // ----------------
 // Transformed
 // ----------------
-// const gensym = <rhs>;
-// <lhs> = gensym;
+// const gensym: <rhs_type>;
+// <lhs> = gensym := <rhs> ; // the whole rhs is is block expression here, to not introduce a new chained assignment
 // gensym;
 // ----------------
 // The main purpose of the modification is to support cases like this
 // (x, y are simple variables; c.x is a setter property)
 // x = c.x = y
-static bool IsSetterCall(const ir::Expression *const expr)
+static bool IsSetterCallOrSetExpression(const ir::Expression *const expr)
 {
     if (!expr->IsMemberExpression() && !expr->IsIdentifier()) {
         return false;
@@ -43,13 +42,23 @@ static bool IsSetterCall(const ir::Expression *const expr)
 
     auto *const variable = expr->IsMemberExpression() ? expr->AsMemberExpression()->Property()->Variable()
                                                       : expr->AsIdentifier()->Variable();
-    if (!checker::ETSChecker::IsVariableGetterSetter(variable)) {
-        return false;
+    if (checker::ETSChecker::IsVariableGetterSetter(variable)) {
+        ES2PANDA_ASSERT(variable != nullptr && variable->TsType() != nullptr);
+        return variable->TsType()->HasTypeFlag(checker::TypeFlag::SETTER);
     }
 
-    ES2PANDA_ASSERT(variable != nullptr && variable->TsType() != nullptr);
+    if (expr->IsIdentifier()) {
+        return false;
+    }
+    const auto *memberExpr = expr->AsMemberExpression();
+    // We are already checking the left side of an assignment expression, so the condition below will only match for
+    // set expressions, but not get expressions
+    const auto isSetExpression = [](const ir::MemberExpression *const possibleSetExpr) {
+        return possibleSetExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
+               possibleSetExpr->ObjType() != nullptr;
+    };
 
-    return variable->TsType()->HasTypeFlag(checker::TypeFlag::SETTER);
+    return isSetExpression(memberExpr);
 }
 
 static ir::Expression *TransformSetterCall(public_lib::Context *ctx,
@@ -58,24 +67,27 @@ static ir::Expression *TransformSetterCall(public_lib::Context *ctx,
     auto *const allocator = ctx->Allocator();
     auto *const parser = ctx->parser->AsETSParser();
 
-    ir::Identifier *gensym1 = Gensym(allocator);
-    auto *gensymType = ctx->AllocNode<ir::OpaqueTypeNode>(assignmentExpression->Right()->TsType(), allocator);
+    ir::Identifier *gensymValue = Gensym(allocator);
+    auto *gensymValueType = ctx->AllocNode<ir::OpaqueTypeNode>(assignmentExpression->Right()->TsType(), allocator);
+
+    auto *setGensymAndEvalValue = parser->CreateFormattedExpression(
+        "@@I1 = @@E2", gensymValue->Clone(allocator, nullptr), assignmentExpression->Right());
 
     std::stringstream ss;
-    ss << "const @@I1: @@T2 = @@E3;";
-    ss << "@@E4 = @@I5;";
-    ss << "(@@I6);";
+    ss << "let @@I1: @@T2;";
+    ss << "@@E3 = @@E4;";
+    ss << "(@@I5);";
 
-    return parser->CreateFormattedExpression(ss.str(), gensym1, gensymType, assignmentExpression->Right(),
-                                             assignmentExpression->Left(), gensym1->Clone(allocator, nullptr),
-                                             gensym1->Clone(allocator, nullptr));
+    return parser->CreateFormattedExpression(ss.str(), gensymValue, gensymValueType, assignmentExpression->Left(),
+                                             setGensymAndEvalValue, gensymValue->Clone(allocator, nullptr));
 }
 
 bool SetterLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         [ctx](ir::AstNode *const node) {
-            if (!node->IsAssignmentExpression() || !IsSetterCall(node->AsAssignmentExpression()->Left())) {
+            if (!node->IsAssignmentExpression() ||
+                !IsSetterCallOrSetExpression(node->AsAssignmentExpression()->Left())) {
                 return node;
             }
 

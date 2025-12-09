@@ -27,4 +27,5 @@
     testProperty4: number
 }
 
-/* @@@ label Error TypeError: Variable 'MyAnno' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'MyAnno' has already been declared. */

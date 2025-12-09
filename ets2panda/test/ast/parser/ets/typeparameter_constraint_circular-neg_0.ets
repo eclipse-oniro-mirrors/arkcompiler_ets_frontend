@@ -14,4 +14,5 @@
  */
 
  function foo<T extends /* @@ label */T>() {}
-/* @@@ label Error TypeError: Type parameter 'T' has circular constraint dependency.  */
+
+/* @@@ label Error Semantic error ESE0184: Type parameter 'T' has circular constraint dependency. */

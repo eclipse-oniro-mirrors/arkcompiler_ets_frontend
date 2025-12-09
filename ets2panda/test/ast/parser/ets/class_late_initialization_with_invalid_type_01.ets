@@ -20,7 +20,7 @@ class A {
     f4!: number | null
 }
 
-/* @@? 17:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 18:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 19:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
-/* @@? 20:10 Error TypeError: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 17:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 18:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 19:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */
+/* @@? 20:10 Error Semantic error ESE0376: Late-initialized field cannot be nullish types or possibly nullish types. */

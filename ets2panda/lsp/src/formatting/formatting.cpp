@@ -24,15 +24,10 @@
 namespace ark::es2panda::lsp {
 
 // NOLINTNEXTLINE
-bool TokenMatch(std::vector<TokenRange> &tokenRanges, lexer::TokenType tokenType)
+bool TokenMatch(TokenRange &tokenRange, lexer::TokenType tokenType)
 {
-    for (auto &range : tokenRanges) {
-        auto &tokens = range.GetTokens();
-        if (tokens.empty() || std::find(tokens.begin(), tokens.end(), tokenType) != tokens.end()) {
-            return true;
-        }
-    }
-    return false;
+    auto &tokens = tokenRange.GetTokens();
+    return tokens.empty() || std::find(tokens.begin(), tokens.end(), tokenType) != tokens.end();
 }
 
 void ApplyInsertSpace(RuleAction action, const TextSpan &span, std::vector<TextChange> &changes)

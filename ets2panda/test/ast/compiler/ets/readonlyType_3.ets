@@ -20,5 +20,6 @@ class A {
     }
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly field fld  */
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned.  */
+
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */
+/* @@@ label Error Semantic error ESE4002: Cannot assign to a readonly field fld */

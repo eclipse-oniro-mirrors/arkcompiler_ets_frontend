@@ -21,17 +21,39 @@ warning:
   id: 16
   message: "Cannot assign to '{}' because it is a read-only property."
 
+
+- name: AWAIT_IN_NON_ASYNC_DEPRECATED
+  id: 173979
+  message: "Await in non-aysnc function is deprecated, please move it to async function."
+
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."
+
+- name: CLASS_COMPOSITE_KEY_USE_STRING
+  id: 98268
+  message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
+
+- name: DUPLICATE_ALIAS
+  id: 32596
+  message: "'{}' is explicitly used with alias several times"
 
 - name: DUPLICATE_EXPORT_ALIASES
   id: 73
   message: "Duplicated export aliases for '{}'."
 
+
+- name: DUPLICATE_IMPORT
+  id: 125428
+  message: "'{}' has already imported"
+
 - name: DUPLICATE_SIGS
   id: 12
   message: "Detect duplicate signatures, use '{}{}' to replace"
+
+- name: EMPTY_EXPORT_SPECIFIER_LIST
+  id: 3614
+  message: "Nothing is exported."
 
 - name: ENUM_DEPRECATED_CAST
   id: 30
@@ -85,6 +107,10 @@ warning:
   id: 17
   message: "{} '{}' might already have been assigned."
 
+- name: MULTI_CATCH_DEPRECATED
+  id: 33781
+  message: "The catch statement with type annotation is deprecated, use catch(e)."
+
 - name: NO_OHMURL
   id: 11
   message: "'ohmUrl' for module '{}' wasn't specified"
@@ -97,6 +123,10 @@ warning:
   id: 3
   message: "Prohibit top-level statements."
 
+- name: PROMISE_NO_MATCHING_SIG
+  id: 49710
+  message: "No matching signature found for Promise.then/catch: {}"
+
 - name: REPLACE_ASYNC_FUNCTION_WITH_COROUTINE
   id: 5
   message: "Replace asynchronous function with coroutine."
@@ -104,6 +134,10 @@ warning:
 - name: REPLACE_LAMBDA_FUNCTION_WITH_REGULAR_FUNCTION
   id: 6
   message: "Replace the lambda function with a regular function."
+
+- name: REWRITE_OUTPUT_IN_CLI
+  id: 77069
+  message: "Output presented in config, used from cli args"
 
 - name: SETTER_LOOP
   id: 24
@@ -117,12 +151,20 @@ warning:
   id: 2
   message: "Suggest 'final' modifier for method."
 
+- name: THIS_IN_FIELD_INITIALIZER
+  id: 10
+  message: "The instance field initializer expression cannot use the this."
+
 - name: UNREACHABLE_STMT
   id: 26
   message: "Unreachable statement."
+  code_fix_ids: [FixUnreachableCode]
+
+- name: USED_TYPE_IS_NOT_EXPORTED
+  id: 11567
+  message: "Type '{}' used in export declaration(s) is not exported."
 
 graveyard:
-- 10
 - 18
 - 19
 - 27

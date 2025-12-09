@@ -24,4 +24,4 @@ function main(): void {
     f(0);
 }
 
-/* @@? 18:14 Error TypeError: Switch case type 'undefined' is not comparable to discriminant type 'int' */
+/* @@? 18:14 Error Semantic error ESE0262: Switch case type 'undefined' is not comparable to discriminant type 'int' */

@@ -25,5 +25,5 @@ class Derived extends Base {
     }
 }
 
-/* @@? 23:17 Error TypeError: foo(): Object in Derived cannot override foo(): Base in Base because overriding return type is not compatible with the other return type.  */
-/* @@? 23:17 Error TypeError: Method foo(): Object in Derived not overriding any method  */
+/* @@? 23:17 Error Semantic error ESE0141: foo(): Object in Derived cannot override foo(): Base in Base because overriding return type is not compatible with the other return type. */
+/* @@? 23:17 Error Semantic error ESE0136: Method foo(): Object in Derived not overriding any method */

@@ -23,4 +23,4 @@ export function atomicTask() {
     return Atomics.load(shareArray, 0);
 }
 
-/* @@? 21:5 Error TypeError: No matching call signature for add(shareArray, Int, Int) */
+/* @@? 21:5 Error Semantic error ESE0127: No matching call signature for add(shareArray, Int, Int) */

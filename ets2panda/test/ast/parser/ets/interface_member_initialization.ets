@@ -22,7 +22,8 @@ function main()
     
 }
 
-/* @@? 17:14 Error SyntaxError: Interface member initialization is prohibited. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 17:17 Error SyntaxError: Identifier expected. */
+
+/* @@? 17:14 Error Syntax error ESY0180: Interface member initialization is prohibited. */
+/* @@? 17:16 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:16 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 17:17 Error Syntax error ESY0122: Identifier expected. */

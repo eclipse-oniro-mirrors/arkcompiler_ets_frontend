@@ -26,4 +26,5 @@ function foo(): void {
     a_class.mmeb = /* @@ label */undefined;
 }
 
-/* @@@ label Error TypeError: Type 'undefined' cannot be assigned to type 'Double'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'undefined' cannot be assigned to type 'Double' */

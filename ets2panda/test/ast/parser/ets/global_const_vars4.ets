@@ -27,4 +27,5 @@ class ABC {
     public main(): void {}
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly field date  */
+
+/* @@@ label Error Semantic error ESE4002: Cannot assign to a readonly field date */

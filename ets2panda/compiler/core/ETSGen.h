@@ -50,12 +50,13 @@ public:
     [[nodiscard]] const checker::Type *GetAccumulatorType() const;
     void CompileAndCheck(const ir::Expression *expr);
 
-    [[nodiscard]] VReg StoreException(const ir::AstNode *node);
+    [[nodiscard]] VReg StoreError(const ir::AstNode *node);
     void ApplyConversionAndStoreAccumulator(const ir::AstNode *node, VReg vreg, const checker::Type *targetType);
     void StoreAccumulator(const ir::AstNode *node, VReg vreg);
     void LoadAccumulator(const ir::AstNode *node, VReg vreg);
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, VReg vd, VReg vs) override;
     [[nodiscard]] IRNode *AllocMov(const ir::AstNode *node, OutVReg vd, VReg vs) override;
+    [[nodiscard]] IRNode *AllocSpillMov(const ir::AstNode *node, VReg vd, VReg vs, OperandType type) override;
     void MoveVreg(const ir::AstNode *node, VReg vd, VReg vs);
 
     [[nodiscard]] checker::Type const *TypeForVar(varbinder::Variable const *var) const noexcept override;
@@ -90,8 +91,6 @@ public:
     void LoadPropertyByName(const ir::AstNode *node, VReg objReg,
                             checker::ETSChecker::NamedAccessMeta const &fieldMeta);
 
-    void LoadUndefinedDynamic(const ir::AstNode *node, Language lang);
-
     void LoadThis(const ir::AstNode *node);
     [[nodiscard]] VReg GetThisReg() const;
 
@@ -99,11 +98,9 @@ public:
     void EmitReturnVoid(const ir::AstNode *node);
     void ReturnAcc(const ir::AstNode *node);
 
-    void BranchIfIsInstance(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void BranchIfIsInstanceUnion(const ir::AstNode *node, VReg srcReg, const checker::Type *target, Label *ifTrue);
     void IsInstance(const ir::AstNode *node, VReg srcReg, checker::Type const *target);
-    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target,
-                                     bool isUndef = false);
+    void EmitFailedTypeCastException(const ir::AstNode *node, const VReg src, checker::Type const *target);
 
     void EmitNullcheck([[maybe_unused]] const ir::AstNode *node)
     {
@@ -284,9 +281,6 @@ public:
     void CastToInt(const ir::AstNode *node);
     void CastToReftype(const ir::AstNode *node, const checker::Type *targetType, bool unchecked);
 
-    void InternalIsInstance(const ir::AstNode *node, const checker::Type *target);
-    void InternalCheckCast(const ir::AstNode *node, const checker::Type *target);
-    void EmitAnyCheckCast(const ir::AstNode *node, const checker::Type *target);
     void CheckedReferenceNarrowing(const ir::AstNode *node, const checker::Type *target);
     void GuardUncheckedType(const ir::AstNode *node, const checker::Type *unchecked, const checker::Type *target);
 
@@ -305,7 +299,6 @@ public:
     {
         CallImpl<InitobjShort, Initobj, InitobjRange>(node, signature, arguments);
     }
-
     bool IsDevirtualizedSignature(const checker::Signature *signature)
     {
         ES2PANDA_ASSERT(signature != nullptr && !signature->HasSignatureFlag(checker::SignatureFlags::STATIC));
@@ -331,9 +324,40 @@ public:
 #endif  // PANDA_WITH_ETS
     }
 
-    void EmitAnyIsInstance(const ir::AstNode *node, VReg objReg)
+    void EmitAnyLdbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
     {
-        Sa().Emit<AnyIsinstance>(node, objReg);
+        Ra().Emit<AnyLdbyname>(node, objReg, prop);
+    }
+
+    void EmitAnyStbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
+    {
+        Ra().Emit<AnyStbyname>(node, objReg, prop);
+    }
+
+    void EmitAnyLdbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        LoadAccumulator(node, propReg);  // a simplification for the instruction format handling
+        Ra().Emit<AnyLdbyidx>(node, objectReg);
+    }
+
+    void EmitAnyStbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyStbyidx>(node, objectReg, propReg);
+    }
+
+    void EmitAnyLdbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyLdbyval>(node, objectReg, propReg);
+    }
+
+    void EmitAnyStbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
+    {
+        Ra().Emit<AnyStbyval>(node, objectReg, propReg);
+    }
+
+    void EmitAnyIsinstance(const ir::AstNode *node, VReg typeReg)
+    {
+        Ra().Emit<AnyIsinstance>(node, typeReg);
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,
@@ -450,18 +474,18 @@ public:
         CallDynamicImpl<CallShort, Call, CallRange>(data, param3, signature, arguments);
     }
 
-    void CallAnyNew(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyNew(const ir::AstNode *const node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         CallAnyImpl<AnyCallNew0, AnyCallNewShort, AnyCallNewRange>(node, arguments, athis);
     }
 
-    void CallAnyThis(const ir::AstNode *const node, const ir::Identifier *ident,
-                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyThis(const ir::AstNode *const node, util::StringView prop,
+                     const Span<ir::Expression const *const> arguments, const VReg athis)
     {
-        CallAnyImpl<AnyCallThis0, AnyCallThisShort, AnyCallThisRange>(node, ident, arguments, athis);
+        CallAnyImpl<AnyCallThis0, AnyCallThisShort, AnyCallThisRange>(node, prop, arguments, athis);
     }
 
-    void CallAny(const ir::AstNode *const node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAny(const ir::AstNode *const node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         CallAnyImpl<AnyCall0, AnyCallShort, AnyCallRange>(node, arguments, athis);
     }
@@ -501,9 +525,6 @@ private:
     void UnaryTilde(const ir::AstNode *node);
 
     util::StringView ToAssemblerType(const es2panda::checker::Type *type) const;
-    void TestIsInstanceType(const ir::AstNode *const node, std::tuple<Label *, Label *> label,
-                            checker::Type const *target, const VReg srcReg, bool acceptNull);
-    void CheckedReferenceNarrowingObject(const ir::AstNode *node, const checker::Type *target);
 
     template <bool IS_SRTICT = false>
     void HandleDefinitelyNullishEquality(const ir::AstNode *node, VReg lhs, VReg rhs, Label *ifFalse);
@@ -844,20 +865,19 @@ private:
     ApplyConversionAndStoreAccumulator(arguments[idx], arg##idx, paramType##idx)
 
     template <typename Zero, typename Short, typename Range>
-    void CallAnyImpl(const ir::AstNode *node, const ir::Identifier *ident,
-                     const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyImpl(const ir::AstNode *node, util::StringView prop, const Span<ir::Expression const *const> arguments,
+                     const VReg athis)
     {
-        ES2PANDA_ASSERT(ident != nullptr);
         RegScope rs(this);
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, ident->Name(), athis);
+                Ra().Emit<Zero>(node, prop, athis);
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, ident->Name(), athis, arg0);
+                Ra().Emit<Short>(node, prop, athis, arg0);
                 break;
             }
             default: {
@@ -866,13 +886,13 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), ident->Name(), athis, argStart, arguments.size());
+                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size());
             }
         }
     }
 
     template <typename Zero, typename Short, typename Range>
-    void CallAnyImpl(const ir::AstNode *node, const ArenaVector<ir::Expression *> &arguments, const VReg athis)
+    void CallAnyImpl(const ir::AstNode *node, const Span<ir::Expression const *const> arguments, const VReg athis)
     {
         RegScope rs(this);
 

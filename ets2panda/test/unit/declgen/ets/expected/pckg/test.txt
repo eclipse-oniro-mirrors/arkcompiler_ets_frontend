@@ -1,0 +1,11 @@
+'use static'
+
+export declare class Cl {
+
+  public prop: number;
+  foo(): void;
+
+  constructor();
+
+}
+

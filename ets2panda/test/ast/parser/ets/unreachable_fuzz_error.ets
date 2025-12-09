@@ -19,14 +19,15 @@
         arktest.assert(y[0] == 1)
         arktest.assert(y[1] == 2)
     
-classtext: string, reviver: ((key: string, value: NullishType) => NullishType) | undefined, type: Type
+classtext: string, reviver: ((key: string, value: Any) => Any) | undefined, type: Type
 
-/* @@? 16:13 Error TypeError: Unresolved reference z */
-/* @@? 22:12 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 22:18 Error SyntaxError: Unexpected token ','. */
-/* @@? 22:20 Error SyntaxError: Unexpected token 'reviver'. */
-/* @@? 22:29 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 22:91 Error SyntaxError: Unexpected token ','. */
-/* @@? 22:93 Error SyntaxError: Unexpected token 'type'. */
-/* @@? 22:99 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 33:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 16:13 Error Semantic error ESE0143: Unresolved reference z */
+/* @@? 22:12 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 22:18 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 22:20 Error Syntax error ESY0227: Unexpected token 'reviver'. */
+/* @@? 22:29 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 22:75 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 22:77 Error Syntax error ESY0227: Unexpected token 'type'. */
+/* @@? 22:83 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 33:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

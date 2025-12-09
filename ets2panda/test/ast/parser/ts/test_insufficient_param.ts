@@ -15,4 +15,5 @@
 
 async (()=> {}, a) /* @@ label */=> expression;
 
-/* @@@ label Error SyntaxError: Insufficient formal parameter in arrow function. */
+
+/* @@@ label Error Syntax error ESY0064: Insufficient formal parameter in arrow function. */

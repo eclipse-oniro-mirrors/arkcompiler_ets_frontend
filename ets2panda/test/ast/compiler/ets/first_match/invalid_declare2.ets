@@ -17,10 +17,11 @@ class A{
     overload * you thMMMMMMMMdSTICKER,
 }
 
-/* @@? 17:14 Error SyntaxError: Identifier expected, got '*'. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 17:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:16 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 17:20 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 17:38 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:38 Error SyntaxError: Unexpected token ','. */
+
+/* @@? 17:14 Error Syntax error ESY0224: Identifier expected, got '*'. */
+/* @@? 17:16 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 17:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:16 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 17:20 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 17:38 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:38 Error Syntax error ESY0227: Unexpected token ','. */

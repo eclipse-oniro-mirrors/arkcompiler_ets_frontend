@@ -116,6 +116,7 @@ libes2panda_sources = [
   "checker/types/ets/etsAnyType.cpp",
   "checker/types/ets/etsArrayType.cpp",
   "checker/types/ets/etsAsyncFuncReturnType.cpp",
+  "checker/types/ets/etsAwaitedType.cpp",
   "checker/types/ets/etsBigIntType.cpp",
   "checker/types/ets/etsBooleanType.cpp",
   "checker/types/ets/etsEnumType.cpp",
@@ -128,6 +129,7 @@ libes2panda_sources = [
   "checker/types/ets/etsPartialTypeParameter.cpp",
   "checker/types/ets/etsReadonlyType.cpp",
   "checker/types/ets/etsResizableArrayType.cpp",
+  "checker/types/ets/etsReturnTypeUtilityType.cpp",
   "checker/types/ets/etsStringType.cpp",
   "checker/types/ets/etsTupleType.cpp",
   "checker/types/ets/etsTypeAliasType.cpp",
@@ -140,7 +142,6 @@ libes2panda_sources = [
   "checker/types/ets/shortType.cpp",
   "checker/types/ets/wildcardType.cpp",
   "checker/types/globalTypesHolder.cpp",
-  "checker/types/gradualType.cpp",
   "checker/types/signature.cpp",
   "checker/types/ts/anyType.cpp",
   "checker/types/ts/arrayType.cpp",
@@ -221,10 +222,13 @@ libes2panda_sources = [
   "compiler/lowering/ets/arrayLiteralLowering.cpp",
   "compiler/lowering/ets/asyncMethodLowering.cpp",
   "compiler/lowering/ets/bigintLowering.cpp",
+  "compiler/lowering/ets/binaryExpressionLowering.cpp",
   "compiler/lowering/ets/boxingForLocals.cpp",
   "compiler/lowering/ets/capturedVariables.cpp",
   "compiler/lowering/ets/cfgBuilderPhase.cpp",
+  "compiler/lowering/ets/destructuringPhase.cpp",
   "compiler/lowering/ets/constantExpressionLowering.cpp",
+  "compiler/lowering/ets/classFromExpressionLowering.cpp",
   "compiler/lowering/ets/convertPrimitiveCastMethodCall.cpp",
   "compiler/lowering/ets/declGenPhase.cpp",
   "compiler/lowering/ets/declareOverloadLowering.cpp",
@@ -239,7 +243,6 @@ libes2panda_sources = [
   "compiler/lowering/ets/expressionLambdaLowering.cpp",
   "compiler/lowering/ets/extensionAccessorLowering.cpp",
   "compiler/lowering/ets/genericBridgesLowering.cpp",
-  "compiler/lowering/ets/gradualTypeNarrowing.cpp",
   "compiler/lowering/ets/initModuleLowering.cpp",
   "compiler/lowering/ets/insertOptionalParametersAnnotation.cpp",
   "compiler/lowering/ets/interfaceObjectLiteralLowering.cpp",
@@ -258,6 +261,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/primitiveConversionPhase.cpp",
   "compiler/lowering/ets/promiseVoid.cpp",
   "compiler/lowering/ets/recordLowering.cpp",
+  "compiler/lowering/ets/relaxedAnyLowering.cpp",
   "compiler/lowering/ets/resizableArrayLowering.cpp",
   "compiler/lowering/ets/restArgsLowering.cpp",
   "compiler/lowering/ets/restTupleLowering.cpp",
@@ -318,7 +322,9 @@ libes2panda_sources = [
   "ir/base/tsSignatureDeclaration.cpp",
   "ir/brokenTypeNode.cpp",
   "ir/ets/etsClassLiteral.cpp",
+  "ir/ets/etsDestructuring.cpp",
   "ir/ets/etsFunctionType.cpp",
+  "ir/ets/etsGenericInstantiatedNode.cpp",
   "ir/ets/etsIntrinsicNode.cpp",
   "ir/ets/etsKeyofType.cpp",
   "ir/ets/etsModule.cpp",
@@ -655,6 +661,7 @@ HEADERS_TO_BE_PARSED = [
   "ir/ets/etsPackageDeclaration.h",
   "ir/expressions/literals/regExpLiteral.h",
   "ir/ets/etsNewArrayInstanceExpression.h",
+  "ir/ets/etsGenericInstantiatedNode.h",
   "checker/types/ets/etsVoidType.h",
   "ir/base/metaProperty.h",
   "checker/types/type.h",
@@ -730,6 +737,7 @@ HEADERS_TO_BE_PARSED = [
   "ir/base/decorator.h",
   "checker/types/globalTypesHolder.h",
   "ir/ets/etsClassLiteral.h",
+  "ir/ets/etsDestructuring.h",
   "ir/ts/tsTypeAliasDeclaration.h",
   "ir/ts/tsNonNullExpression.h",
   "ir/ts/tsTypeLiteral.h",
@@ -934,6 +942,7 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/checker/types/typeFlag.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsPackageDeclaration.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsImportDeclaration.yaml",
+  "$LIBGEN_DIR/gen/headers/ir/ets/etsGenericInstantiatedNode.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsStructDeclaration.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ts/tsModuleBlock.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsNewArrayInstanceExpression.yaml",
@@ -999,6 +1008,7 @@ ES2PANDA_API_GENERATED = [
   "$LIBGEN_DIR/gen/headers/checker/types/ts/types.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ets/floatType.yaml",
   "$LIBGEN_DIR/gen/headers/ir/ets/etsClassLiteral.yaml",
+  "$LIBGEN_DIR/gen/headers/ir/ets/etsDestructuring.yaml",
   "$LIBGEN_DIR/gen/headers/ir/irnode.yaml",
   "$LIBGEN_DIR/gen/headers/ir/statements/breakStatement.yaml",
   "$LIBGEN_DIR/gen/headers/checker/types/ets/byteType.yaml",
@@ -1139,6 +1149,17 @@ config("libes2panda_config") {
     "-fexceptions",
     "-Werror=shadow",
   ]
+
+  if (!is_debug && !is_mac) {
+    cflags_cc += [
+      "-flto=thin",
+      "-O3",
+    ]
+    ldflags = [
+      "-flto=thin",
+      "-O3",
+    ]
+  }
 }
 
 if ((defined(ark_standalone_build) && ark_standalone_build) ||
@@ -1155,8 +1176,8 @@ if ((defined(ark_standalone_build) && ark_standalone_build) ||
 if (ark_standalone_build || ark_static_standalone_build) {
   libes2panda_configs += [
     "$ark_root/assembler:arkassembler_public_config",
-    "$ark_root/libpandabase:arkbase_public_config",
-    "$ark_root/libpandafile:arkfile_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
+    "$ark_root/libarkfile:arkfile_public_config",
   ]
 }
 
@@ -1168,8 +1189,8 @@ libes2panda_configs += [
 if (ark_standalone_build || ark_static_standalone_build) {
   libes2panda_public_configs += [
     "$ark_root/assembler:arkassembler_public_config",
-    "$ark_root/libpandabase:arkbase_public_config",
-    "$ark_root/libpandafile:arkfile_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
+    "$ark_root/libarkfile:arkfile_public_config",
     "$ark_root/bytecode_optimizer:bytecodeopt_public_config",
     "$ark_root/runtime:arkruntime_public_config",
     "$ark_root/compiler:arkcompiler_public_config",
@@ -1236,6 +1257,7 @@ ohos_source_set("libes2panda_frontend_static") {
 }
 
 ohos_shared_library("libes2panda_public") {
+  configs = [ ":libes2panda_config" ]
   deps = [ ":libes2panda_public_frontend_static" ]
   if (is_mingw || is_win) {
     output_extension = "dll"
@@ -1299,8 +1321,8 @@ ohos_source_set("libes2panda_public_frontend_static") {
       "$ark_root/assembler:libarktsassembler",
       "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
       "$ark_root/compiler:libarktscompiler",
-      "$ark_root/libpandabase:libarktsbase",
-      "$ark_root/libpandafile:libarktsfile",
+      "$ark_root/libarkfile:libarktsfile",
+      "$ark_root/libarkbase:libarktsbase",
     ]
   } else {
     external_deps += [

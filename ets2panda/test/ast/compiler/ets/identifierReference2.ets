@@ -15,4 +15,5 @@
 
 let a:(a: int, b: int) => void = max;
 
-/* @@? 16:34 Error TypeError: Overloaded method is used as value  */
+
+/* @@? 16:34 Error Semantic error ESE0307: Overloaded method is used as value */

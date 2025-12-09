@@ -18,4 +18,5 @@ class A {
     foo() { /* @@ label */bar(); }
 }
 
-/* @@@ label Error TypeError: Static property 'bar' must be accessed through it's class 'A'  */
+
+/* @@@ label Error Semantic error ESE0173: Static property 'bar' must be accessed through it's class 'A' */

@@ -17,14 +17,13 @@
 #define ES2PANDA_PARSER_INCLUDE_PROGRAM_H
 
 #include "util/es2pandaMacros.h"
-#include "mem/pool_manager.h"
-#include "os/filesystem.h"
+#include "libarkbase/mem/pool_manager.h"
+#include "libarkbase/os/filesystem.h"
 #include "util/ustring.h"
 #include "util/path.h"
 #include "util/importPathManager.h"
 #include "varbinder/varbinder.h"
 #include <lexer/token/sourceLocation.h>
-#include "util/enumbitops.h"
 
 #include <set>
 #include <ir/statements/blockStatement.h>
@@ -53,21 +52,6 @@ enum class ScriptKind { SCRIPT, MODULE, STDLIB, GENEXTERNAL };
 constexpr uint32_t POISON_VALUE {0x12346789};
 #endif
 
-using ENUMBITOPS_OPERATORS;
-
-enum class ProgramFlags : uint32_t {
-    NONE = 0U,
-    AST_CHECKED = 1U << 0U,
-    AST_CHECK_PROCESSED = 1U << 1U,
-    AST_ENUM_LOWERED = 1U << 2U,
-    AST_BOXED_TYPE_LOWERED = 1U << 3U,
-    AST_CONSTANT_EXPRESSION_LOWERED = 1U << 5U,
-    AST_STRING_CONSTANT_LOWERED = 1U << 6U,
-    AST_IDENTIFIER_ANALYZED = 1U << 7U,
-    AST_HAS_SCOPES_INITIALIZED = 1U << 8U,
-    AST_HAS_OPTIONAL_PARAMETER_ANNOTATION = 1U << 9U,
-};
-
 class Program {
 public:
     using ExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<Program *>>;
@@ -76,12 +60,9 @@ public:
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
     template <typename T>
-    static Program NewProgram(ArenaAllocator *allocator, varbinder::VarBinder *varBinder = nullptr)
+    static Program NewProgram(ArenaAllocator *allocator, varbinder::VarBinder *varBinder)
     {
-        if (varBinder == nullptr) {
-            auto *vb = allocator->New<T>(allocator);
-            return Program(allocator, vb);
-        }
+        ES2PANDA_ASSERT(varBinder != nullptr);
         return Program(allocator, varBinder);
     }
 
@@ -273,14 +254,14 @@ public:
         return moduleInfo_.kind == util::ModuleKind::MODULE;
     }
 
-    bool IsDeclarationModule() const
-    {
-        return moduleInfo_.kind == util::ModuleKind::DECLARATION;
-    }
-
     bool IsPackage() const
     {
         return moduleInfo_.kind == util::ModuleKind::PACKAGE;
+    }
+
+    bool IsDeclarationModule() const
+    {
+        return moduleInfo_.isDeclarationModule;
     }
 
     bool IsDeclForDynamicStaticInterop() const
@@ -288,8 +269,6 @@ public:
         return moduleInfo_.isDeclForDynamicStaticInterop;
     }
 
-    void SetFlag(ProgramFlags flag);
-    bool GetFlag(ProgramFlags flag) const;
     void SetASTChecked();
     void RemoveAstChecked();
     bool IsASTChecked();
@@ -302,6 +281,16 @@ public:
     bool IsASTLowered() const
     {
         return isASTlowered_;
+    }
+
+    void SetProgramModified(bool isModified)
+    {
+        isModified_ = isModified;
+    }
+
+    bool IsProgramModified() const
+    {
+        return isModified_;
     }
 
     bool IsStdLib() const
@@ -349,21 +338,6 @@ public:
     compiler::CFG *GetCFG();
     const compiler::CFG *GetCFG() const;
 
-    [[nodiscard]] const ArenaVector<varbinder::FunctionScope *> &Functions() const noexcept
-    {
-        return functionScopes_;
-    }
-
-    [[nodiscard]] ArenaVector<varbinder::FunctionScope *> &Functions() noexcept
-    {
-        return functionScopes_;
-    }
-
-    void AddToFunctionScopes(varbinder::FunctionScope *funcScope)
-    {
-        functionScopes_.push_back(funcScope);
-    }
-
     std::unordered_map<std::string, std::unordered_set<std::string>> &GetFileDependencies()
     {
         return fileDependencies_;
@@ -375,6 +349,11 @@ public:
             fileDependencies_[file] = std::unordered_set<std::string>();
         }
         fileDependencies_[file].insert(depFile);
+    }
+
+    ArenaMap<int32_t, varbinder::VarBinder *> &VarBinders()
+    {
+        return varbinders_;
     }
 
 private:
@@ -392,6 +371,7 @@ private:
     DirectExternalSource directExternalSources_;
     ScriptKind kind_ {};
     bool isASTlowered_ {};
+    bool isModified_ {true};
     bool genAbcForExternalSource_ {false};
     ScriptExtension extension_ {};
     ETSNolintsCollectionMap etsnolintCollection_;
@@ -399,7 +379,6 @@ private:
 
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
-    ArenaVector<varbinder::FunctionScope *> functionScopes_;
     std::unordered_map<std::string, std::unordered_set<std::string>> fileDependencies_;
 
 private:
@@ -408,16 +387,8 @@ private:
 #ifndef NDEBUG
     uint32_t poisonValue_ {POISON_VALUE};
 #endif
-    ProgramFlags programFlags_ {};
+    bool isAstChecked_ {false};
 };
 }  // namespace ark::es2panda::parser
-
-namespace enumbitops {
-
-template <>
-struct IsAllowedType<ark::es2panda::parser::ProgramFlags> : std::true_type {
-};
-
-}  // namespace enumbitops
 
 #endif

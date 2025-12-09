@@ -19,4 +19,4 @@ function foo({ a, b: { t = "foo" } = { t: 3 }, d: [e = {}, f = 6] = [3, ["foo", 
 }
 
 /* @@ label */foo + 5;
-/* @@@ label Error TypeError: operator + cannot be applied to types (p1?: { a: boolean; b?: { t: number; }; d?: [number, [string, string]]; }) => void and number  */
+/* @@@ label Error Semantic error ESE0000: operator + cannot be applied to types (p1?: { a: boolean; b?: { t: number; }; d?: [number, [string, string]]; }) => void and number */

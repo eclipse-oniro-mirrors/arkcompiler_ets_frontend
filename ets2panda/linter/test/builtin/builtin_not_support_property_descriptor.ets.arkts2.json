@@ -175,6 +175,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 27,
+            "column": 3,
+            "endLine": 27,
+            "endColumn": 35,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
             "line": 28,
             "column": 7,
             "endLine": 28,
@@ -182,6 +192,16 @@
             "problem": "ParameterType",
             "suggest": "",
             "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 3,
+            "endLine": 28,
+            "endColumn": 32,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
             "severity": "ERROR"
         },
         {
@@ -355,6 +375,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 48,
+            "column": 5,
+            "endLine": 48,
+            "endColumn": 41,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
             "line": 49,
             "column": 9,
             "endLine": 49,
@@ -362,6 +392,16 @@
             "problem": "ParameterType",
             "suggest": "",
             "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 5,
+            "endLine": 49,
+            "endColumn": 34,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
             "severity": "ERROR"
         },
         {
@@ -392,16 +432,6 @@
             "problem": "NoPropertyDescriptor",
             "suggest": "",
             "rule": "Not support propertydescriptor (arkts-builtin-no-property-descriptor)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 57,
-            "column": 11,
-            "endLine": 57,
-            "endColumn": 29,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {

@@ -26,5 +26,5 @@ function main() {
     NS1.name = '1'
 }
 
-/* @@? 25:8 Error TypeError: 'name' is not exported in 'NS' */
-/* @@? 26:9 Error TypeError: 'name' is not exported in 'NS1' */
+/* @@? 25:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */
+/* @@? 26:9 Error Semantic error ESE0206: 'name' is not exported in 'NS1' */

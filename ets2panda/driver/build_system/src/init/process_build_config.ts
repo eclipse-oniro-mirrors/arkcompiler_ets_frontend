@@ -21,7 +21,6 @@ import {
     isMac,
     isWindows,
 } from '../util/utils';
-import { PluginDriver } from '../plugins/plugins_driver';
 import {
     API,
     ARKTS,
@@ -49,15 +48,9 @@ export function initBuildConfig(projectConfig: BuildConfig): BuildConfig {
     };
     let buildSdkPath: string = buildConfig.buildSdkPath as string;
     buildConfig.pandaSdkPath = buildConfig.pandaSdkPath ?? path.resolve(buildSdkPath, PANDA_SDK_PATH_FROM_SDK);
-    /**
-     * ets2panda guys require remove debug param
-     * it contain some bugs.
-     */
-    buildConfig.buildMode = BUILD_MODE.RELEASE;
     checkCacheProjectConfig(buildConfig);
     initPlatformSpecificConfig(buildConfig);
     initBuildEnv(buildConfig);
-    PluginDriver.getInstance().initPlugins(buildConfig);
     initAliasConfig(buildConfig);
     initInteropSDKInfo(buildConfig);
     return buildConfig;
@@ -101,8 +94,14 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
     }
 
     if (isMac() || isLinux()) {
-        buildConfig.abcLinkerPath = path.join(pandaSdkPath, 'bin', 'ark_link');
-        buildConfig.dependencyAnalyzerPath = path.join(pandaSdkPath, 'bin', 'dependency_analyzer');
+        if (process.env.BUILD_DIR !== undefined) {
+            buildConfig.abcLinkerPath = path.join(process.env.BUILD_DIR, 'bin', 'ark_link')
+            buildConfig.dependencyAnalyzerPath = path.join(process.env.BUILD_DIR, 'bin', 'dependency_analyzer');
+
+        } else {
+            buildConfig.abcLinkerPath = path.join(pandaSdkPath, 'bin', 'ark_link');
+            buildConfig.dependencyAnalyzerPath = path.join(pandaSdkPath, 'bin', 'dependency_analyzer');
+        }
     }
 
     if (!buildConfig.enableDeclgenEts2Ts && !fs.existsSync(buildConfig.abcLinkerPath as string)) {
@@ -179,9 +178,9 @@ function initAliasConfig(buildConfig: BuildConfig): void {
 function initInteropSDKInfo(buildConfig: BuildConfig): void {
     buildConfig.interopSDKPaths = new Set<string>();
 
-    const basePaths = buildConfig.interopApiPaths?.length
-        ? buildConfig.interopApiPaths
-        : [path.resolve(buildConfig.buildSdkPath as string, '../dynamic/build-tools/interop')];
+  const basePaths = buildConfig.interopApiPaths?.length
+    ? buildConfig.interopApiPaths
+    : [path.resolve(buildConfig.buildSdkPath as string, '../dynamic/build-tools/interop')];
 
     for (const basePath of basePaths) {
         /**

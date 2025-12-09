@@ -1,8 +1,8 @@
 ### ArkTS1.2遍历js对象
 
-**规则：** arkts-interop-js2s-traverse-js-instance
+**规则：** `arkts-interop-js2s-traverse-js-instance`
 
-**级别：** error
+ArkTS1.2遍历js对象时，使用ESValue接口访问索引和属性。
 
 **ArkTS1.1**
 ```typescript

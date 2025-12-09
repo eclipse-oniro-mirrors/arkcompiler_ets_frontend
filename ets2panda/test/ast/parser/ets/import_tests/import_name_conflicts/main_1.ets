@@ -18,6 +18,3 @@ import {foo_2 as foo} from "./imported_module_2.ets"
 
 
 function main() : void {}
-
-// NOTE(kaskov): Add more precise error, when will be suggestions
-/* @@? imported_module_2.ets:27:8 Error TypeError: Function foo_1 is already declared. */

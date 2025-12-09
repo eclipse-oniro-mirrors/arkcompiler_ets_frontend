@@ -17,5 +17,6 @@ function toString(this: double[]) /* @@ label */{
     return "ext-func"
 }
 
-/* @@? 16:49 Error TypeError: The extension function 'toString' has the same name with public method in class Array */
-/* @@? 16:49 Error TypeError: The extension function 'toString' has the same name with public method in class Object */
+
+/* @@@ label Error Semantic error ESE0081: The extension function 'toString' has the same name with public method in class Array */
+/* @@@ label Error Semantic error ESE0081: The extension function 'toString' has the same name with public method in class Object */

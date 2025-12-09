@@ -24,7 +24,7 @@
 
 #include "get_class_property_info.h"
 #include "compiler/lowering/util.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 namespace ark::es2panda::lsp {
 
@@ -72,7 +72,7 @@ void CollectClassProperties(const ir::AstNode *classNode, std::vector<FieldsInfo
 
         std::string name = GetIdentifierName(property);
 
-        constexpr auto K_PROPERTY_PREFIX = "<property>";
+        constexpr auto K_PROPERTY_PREFIX = "%%property-";
         constexpr std::size_t K_PROPERTY_PREFIX_LENGTH = std::char_traits<char>::length(K_PROPERTY_PREFIX);
         if (name.size() >= K_PROPERTY_PREFIX_LENGTH &&
             name.compare(0, K_PROPERTY_PREFIX_LENGTH, K_PROPERTY_PREFIX) == 0) {

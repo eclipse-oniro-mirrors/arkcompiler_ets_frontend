@@ -14,7 +14,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "public/es2panda_lib.h"
 #include "test/utils/panda_executable_path_getter.h"
 #include "test/utils/ast_verifier_test.h"

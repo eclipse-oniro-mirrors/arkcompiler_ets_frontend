@@ -22,4 +22,4 @@ class C {
 
 /* @@ label */(new C()).foo()
 
-/* @@? 23:15 Error TypeError: No matching call signature for foo() */
+/* @@? 23:15 Error Semantic error ESE0127: No matching call signature for foo() */

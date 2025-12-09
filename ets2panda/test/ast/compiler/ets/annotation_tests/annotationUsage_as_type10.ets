@@ -18,5 +18,4 @@
 
 let a = 1 instanceof MyAnno
 
-/* @@? 19:22 Error TypeError: Annotations cannot be used as a type.  */
-/* @@? 19:22 Error TypeError: Annotations cannot be used as a type.  */
+/* @@? 19:22 Error Semantic error ESE0159: Annotations cannot be used as a type. */

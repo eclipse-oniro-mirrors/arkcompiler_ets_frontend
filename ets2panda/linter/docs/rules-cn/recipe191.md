@@ -1,8 +1,6 @@
 ## 内存默认共享，不提供ASON
 
-**规则：** arkts-no-need-stdlib-ason
-
-**级别：** error
+**规则：** `arkts-no-need-stdlib-ason`
 
 新增对象天然共享特性，不再依赖Sendable特性，ASON.stringify()方法调用可直接更改为JSON.stringify()，且删除ArkTSUtils.前缀。
 

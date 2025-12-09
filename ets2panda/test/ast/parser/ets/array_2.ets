@@ -15,7 +15,8 @@
 
 let c: Double[] = [0.33 /* @@ label */0.66 0.99]
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@@ label Error SyntaxError: Unexpected token '0.66'. */
-/* @@? 16:44 Error SyntaxError: Unexpected token '0.99'. */
-/* @@? 16:48 Error SyntaxError: Unexpected token ']'. */
+
+/* @@@ label Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token '0.66'. */
+/* @@? 16:44 Error Syntax error ESY0227: Unexpected token '0.99'. */
+/* @@? 16:48 Error Syntax error ESY0227: Unexpected token ']'. */

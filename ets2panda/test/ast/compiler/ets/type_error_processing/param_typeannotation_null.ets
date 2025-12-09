@@ -20,4 +20,5 @@ interface inter <T>{
 
 function foo(i: Partial<inter<String>>): void {}
 
-/* @@? 18:17 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
+
+/* @@? 18:17 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

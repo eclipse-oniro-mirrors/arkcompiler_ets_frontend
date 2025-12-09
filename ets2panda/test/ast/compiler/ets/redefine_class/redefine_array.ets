@@ -23,4 +23,4 @@ export class Array<T> {
     a: T
 }
 
-/* @@? 1:3 Error TypeError: Class 'Array' is already defined. */
+/* @@? 1:3 Error Semantic error ESE0349: Class 'Array' is already defined. */

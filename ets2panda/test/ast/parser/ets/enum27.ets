@@ -22,5 +22,7 @@ enum Date {
     Day = /* @@ label1 */Date.now()
 }
 
-/* @@@ label Error TypeError: Class 'Date' is already defined with different type. */
-/* @@@ label1 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+
+
+/* @@@ label Error Semantic error ESE0350: Class 'Date' is already defined with different type. */
+/* @@@ label1 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

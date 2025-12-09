@@ -66,4 +66,5 @@ function main(): void {
   }
 }
 
-/* @@? 26:10 Warning Warning: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
+
+/* @@? 26:10 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */

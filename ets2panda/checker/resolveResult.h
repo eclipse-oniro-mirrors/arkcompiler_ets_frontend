@@ -17,15 +17,6 @@
 #define ES2PANDA_CHECKER_RESOLVE_RESULT_H
 
 namespace ark::es2panda::checker {
-enum class OverrideErrorCode {
-    NO_ERROR,
-    OVERRIDDEN_FINAL,
-    INCOMPATIBLE_RETURN,
-    INCOMPATIBLE_TYPEPARAM,
-    OVERRIDDEN_WEAKER,
-    OVERRIDDEN_INTERNAL,
-    ABSTRACT_OVERRIDES_CONCRETE,
-};
 
 enum class ResolvedKind {
     PROPERTY,

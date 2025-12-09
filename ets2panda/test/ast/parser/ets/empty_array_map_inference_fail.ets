@@ -21,9 +21,10 @@
   return x+1; 
 });
 
-/* @@? 16:2 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
-/* @@? 20:1 Error TypeError: Can't resolve array type */
-/* @@? 20:8 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
-/* @@? 20:18 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
 
 
+
+/* @@? 16:2 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
+/* @@? 20:1 Error Semantic error ESE0301: Can't resolve array type */
+/* @@? 20:8 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
+/* @@? 20:18 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

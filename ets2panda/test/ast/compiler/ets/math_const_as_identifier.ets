@@ -23,9 +23,10 @@ function foo1() {
     let undefined
 };
 
-/* @@? 21:9 Error TypeError: Variable 'NaN' has already been declared. */
-/* @@? 22:9 Error TypeError: Variable 'Infinity' has already been declared. */
-/* @@? 22:20 Error TypeError: Unresolved reference test */
-/* @@? 23:9 Error SyntaxError: Hard keyword 'undefined' cannot be used as identifier */
-/* @@? 23:9 Error SyntaxError: Identifier expected, got 'undefined'. */
-/* @@? 24:1 Error SyntaxError: Variable must be initialized or it's type must be declared. */
+
+/* @@? 21:9 Error Semantic error ESE0351: Variable 'NaN' has already been declared. */
+/* @@? 22:9 Error Semantic error ESE0351: Variable 'Infinity' has already been declared. */
+/* @@? 22:20 Error Semantic error ESE0143: Unresolved reference test */
+/* @@? 23:9 Error Syntax error ESY0316: Hard keyword 'undefined' cannot be used as identifier */
+/* @@? 23:9 Error Syntax error ESY0224: Identifier expected, got 'undefined'. */
+/* @@? 24:1 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

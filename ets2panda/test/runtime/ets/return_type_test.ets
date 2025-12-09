@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-function test() {
+function test(): Promise<void> {
     let pro = new Promise<void>((resolve) => {
         resolve(undefined);
     });

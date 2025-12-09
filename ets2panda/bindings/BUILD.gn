@@ -32,6 +32,8 @@ shared_library("ts_bindings") {
     "./native/src/common-interop.cpp",
     "./native/src/convertors-napi.cpp",
     "./native/src/lsp.cpp",
+    "./native/src/common.cpp",
+    "./native/src/bridges.cpp",
   ]
   if ((defined(ark_standalone_build) && ark_standalone_build) ||
       (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
@@ -45,14 +47,13 @@ shared_library("ts_bindings") {
     "$ark_root/assembler:arkassembler_public_config",
     "../:libes2panda_public_config",
     "../:libes2panda_config",
-    "$ark_root/libpandabase:arkbase_public_config",
-    "$ark_root/libpandafile:arkfile_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
+    "$ark_root/libarkfile:arkfile_public_config",
   ]
 
   deps = [
-    "../:libes2panda_frontend_static",
-    "../:libes2panda_public_frontend_static",
     "../lsp:libes2panda_lsp_static",
+    "../:libes2panda_frontend_static"
   ]
 
   include_dirs = [
@@ -206,8 +207,8 @@ shared_library("public") {
     "$ark_root/assembler:arkassembler_public_config",
     "../:libes2panda_public_config",
     "../:libes2panda_config",
-    "$ark_root/libpandabase:arkbase_public_config",
-    "$ark_root/libpandafile:arkfile_public_config",
+    "$ark_root/libarkbase:arkbase_public_config",
+    "$ark_root/libarkfile:arkfile_public_config",
   ]
 
   include_dirs = [
@@ -223,6 +224,7 @@ shared_library("public") {
 
   if (ark_standalone_build) {
     deps += [ "$ark_third_party_root/bounds_checking_function:libsec_shared" ]
+    include_dirs += [ "//third_party/node/src" ]
   } else {
     external_deps = [ sdk_libc_secshared_dep ]
   }

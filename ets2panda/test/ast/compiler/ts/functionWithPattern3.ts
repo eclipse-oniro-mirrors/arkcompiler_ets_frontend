@@ -19,4 +19,4 @@ function foo({ x: { asd }, y: { t = 6, r = "foo" } = { t: "foo" } }) {
 }
 
 /* @@ label */foo + 5;
-/* @@@ label Error TypeError: operator + cannot be applied to types (p1: { x?: { asd: any; }; y?: { t: string; }; }) => void and number  */
+/* @@@ label Error Semantic error ESE0000: operator + cannot be applied to types (p1: { x?: { asd: any; }; y?: { t: string; }; }) => void and number */

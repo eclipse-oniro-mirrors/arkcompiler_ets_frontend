@@ -11,7 +11,7 @@
     "declaration": true,
     "noEmitOnError": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "removeComments": false,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",

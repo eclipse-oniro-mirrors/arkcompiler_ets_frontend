@@ -28,4 +28,5 @@ function IfWithString(val: U) {
     return /* @@ label */val['kind'] === 'B'
 }
 
-/* @@@ label Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@@ label Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

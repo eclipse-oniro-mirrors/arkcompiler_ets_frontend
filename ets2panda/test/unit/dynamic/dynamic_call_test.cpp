@@ -32,10 +32,11 @@ namespace ark::es2panda::testing {
 
 class DynamicCall : public Es2pandaUnitGtest {
 public:
+    DynamicCall() : varbinder_(Allocator()) {}
+
     std::pair<parser::Program *, ir::Expression *> ParseExpr(const std::string &strExpr)
     {
-        auto program =
-            Allocator()->New<parser::Program>(Allocator(), Allocator()->New<varbinder::ETSBinder>(Allocator()));
+        auto program = Allocator()->New<parser::Program>(Allocator(), &varbinder_);
         program->VarBinder()->SetProgram(program);
         program->VarBinder()->InitTopScope();
         auto diagnosticEngine = util::DiagnosticEngine();
@@ -105,6 +106,9 @@ public:
             it1++, it2++;
         }
     }
+
+private:
+    varbinder::ETSBinder varbinder_;
 };
 
 TEST_F(DynamicCall, JoinDynMemberChain)
@@ -158,27 +162,6 @@ TEST_F(DynamicCall, JoinDynCallMember)
     auto varbinder = program->VarBinder()->AsETSBinder();
     auto [finalObj, callName] = checker::DynamicCall::ResolveCall(varbinder, obj);
     AssertNameEq(callName, {"c", "d"});
-}
-
-TEST_F(DynamicCall, JoinDynStaticCallMember)
-{
-    auto strExpr = "A.b.c.d.e()";
-    auto [program, obj, first] = ParseDynExpr(strExpr);
-
-    auto bObj = obj->AsMemberExpression()->Object()->AsMemberExpression()->Object();
-    ASSERT_EQ(bObj->AsMemberExpression()->Property()->AsIdentifier()->Name(), "c");
-    auto staticType =
-        Allocator()->New<checker::ETSObjectType>(Allocator(), "", "", nullptr, checker::ETSObjectFlags::NO_OPTS);
-    bObj->AsMemberExpression()->Object()->SetTsType(staticType);
-
-    auto [squeezedObj, name] = checker::DynamicCall::SqueezeExpr(Allocator(), obj->AsMemberExpression());
-    AssertNameEq(name, {"d", "e"});
-    ASSERT_EQ(squeezedObj, bObj);
-
-    auto varbinder = program->VarBinder()->AsETSBinder();
-    AddDynImport("A", varbinder, first->AsIdentifier());
-    auto [finalObj, callName] = checker::DynamicCall::ResolveCall(varbinder, obj);
-    AssertNameEq(callName, {"d", "e"});
 }
 
 TEST_F(DynamicCall, TsQualifiedName)

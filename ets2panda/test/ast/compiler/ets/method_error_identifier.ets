@@ -20,11 +20,11 @@ class BindFuncExpr {
     callback1 = callback1 || function () { }
 }
 
-/* @@? 16:1 Error SyntaxError: Unexpected token 'void'. */
-/* @@? 16:6 Error SyntaxError: Unexpected token 'function'. */
-/* @@? 16:15 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:5 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 19:21 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
-/* @@? 20:5 Error TypeError: Variable 'callback1' has already been declared. */
-/* @@? 20:17 Error TypeError: Unresolved reference callback1 */
-/* @@? 20:30 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
+
+/* @@? 16:1 Error Syntax error ESY0227: Unexpected token 'void'. */
+/* @@? 16:6 Error Syntax error ESY0227: Unexpected token 'function'. */
+/* @@? 16:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:5 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 19:21 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
+/* @@? 20:5 Error Semantic error ESE0351: Variable 'callback1' has already been declared. */
+/* @@? 20:30 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */

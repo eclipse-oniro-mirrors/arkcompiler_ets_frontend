@@ -25,4 +25,5 @@ foo(1,2)
 foo(1.1)
 
 
-/* @@? 23:5 Error TypeError: Variable 'b' is used before being assigned. */
+
+/* @@? 23:5 Error Semantic error ESE0375: Variable 'b' is used before being assigned. */

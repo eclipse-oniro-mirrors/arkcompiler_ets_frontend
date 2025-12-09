@@ -16,19 +16,10 @@
 #include "srcDump.h"
 #include "public/public.h"
 
-#include <ir/astNode.h>
-#include <ir/base/classDefinition.h>
-#include <ir/base/classProperty.h>
-#include <ir/ts/tsEnumDeclaration.h>
-#include <ir/ts/tsInterfaceDeclaration.h>
-#include <ir/ts/tsTypeAliasDeclaration.h>
-#include <checker/types/type.h>
-
-#include <public/public.h>
-
 #include "util/helpers.h"
-#include <cmath>
-#include <iostream>
+#include "public/public.h"
+#include "varbinder/ETSBinder.h"
+
 namespace ark::es2panda::ir {
 
 SrcDumper::SrcDumper(Declgen *dg) : dg_(dg) {}
@@ -53,14 +44,14 @@ void SrcDumper::DecrIndent()
 // NOTE: `num` argument is unsed, should be deleted once bindings are no longer hardcoded (never?)
 void SrcDumper::Endl([[maybe_unused]] size_t num)
 {
-    ss_ << std::endl;
+    ss_ << '\n';
     ss_ << indent_;
 }
 
 static bool OnlySpaces(const std::string &s)
 {
     for (char c : s) {
-        if (!std::isspace(c)) {
+        if (std::isspace(c) == 0) {
             return false;
         }
     }
@@ -99,9 +90,14 @@ std::string SrcDumper::Str() const
     return ss_.str();
 }
 
-void SrcDumper::Add(const std::string &str)
+void SrcDumper::Add(std::string_view const str)
 {
     ss_ << str;
+}
+
+void SrcDumper::Add(char const ch)
+{
+    ss_ << ch;
 }
 
 void SrcDumper::Add(int8_t i)
@@ -169,6 +165,39 @@ void SrcDumper::DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode)
     }
 }
 
+void SrcDumper::SetDefaultExport() noexcept
+{
+    hasDefaultExport_ = true;
+}
+
+bool SrcDumper::HasDefaultExport() const noexcept
+{
+    return IsDeclgen() && hasDefaultExport_;
+}
+
+void SrcDumper::DumpExports()
+{
+    if (dg_ == nullptr) {
+        return;
+    }
+    auto *varbinder = dg_->GetCtx()->GetChecker()->VarBinder();
+    if (!varbinder->IsETSBinder()) {
+        return;
+    }
+    auto const &exportMap = varbinder->AsETSBinder()->GetSelectiveExportAliasMultimap();
+    if (auto const it = exportMap.find(dg_->GetCtx()->sourceFile->filePath);
+        it != exportMap.cend() && !it->second.empty()) {
+        for (auto const &[_, data] : it->second) {
+            if (data.second->IsExportNamedDeclaration() &&
+                data.second->AsExportNamedDeclaration()->HasDumpData(HasDefaultExport())) {
+                ss_ << '\n';
+                data.second->Dump(this);
+                ss_ << ';';
+            }
+        }
+    }
+}
+
 struct PostDumper {
     explicit PostDumper(SrcDumper *dumper) : dumper_ {dumper} {}
 
@@ -207,18 +236,18 @@ struct PostDumper {
             dumper_->GetDeclgen()->TryDeclareAmbientContext(dumper_);
             dumper_->Add("namespace " + ns->Ident()->Name().Mutf8() + " {");
         }
-        dumper_->Add("\n");
+        dumper_->Add('\n');
         return nsChain.size();
     }
 
     void DestroyNamespaces(size_t namespacesCount)
     {
         std::string nsClose(namespacesCount, '}');
-        nsClose.append("\n");
+        nsClose += '\n';
         dumper_->Add(nsClose);
     }
 
-    void operator()([[maybe_unused]] std::monostate)
+    void operator()([[maybe_unused]] std::monostate /*unused*/)
     {
         ES2PANDA_UNREACHABLE();
     }
@@ -286,13 +315,14 @@ static std::string DumpImplicitImportsOfSpecifier(Declgen *dg, ImportSpecifier *
     return res;
 }
 
-std::string Declgen::DumpImports()
+void Declgen::DumpImports(std::string &res)
 {
-    std::string res;
-    for (auto i : imports_) {
-        res += i->DumpEtsSrc();  // Instead, 'DumpImport' should be called when it will be fixed.
+    if (!imports_.empty()) {
+        res += '\n';
+        for (auto const *import : imports_) {
+            res += import->DumpEtsSrc();  // Instead, 'DumpImport' should be called when it will be fixed.
+        }
     }
-    return res;
 }
 
 void Declgen::DumpNode(SrcDumper *dumper, const std::string &key)

@@ -17,4 +17,5 @@ function toString(this: FixedArray<double>) /* @@ label */{
     return "ext-func"
 }
 
-/* @@@ label Error TypeError: The extension function 'toString' has the same name with public method in class Object  */
+
+/* @@@ label Error Semantic error ESE0081: The extension function 'toString' has the same name with public method in class Object */

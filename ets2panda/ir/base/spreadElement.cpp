@@ -39,27 +39,6 @@ SpreadElement *SpreadElement::Clone(ArenaAllocator *const allocator, AstNode *co
     return clone;
 }
 
-ValidationInfo SpreadElement::ValidateExpression()
-{
-    ValidationInfo info;
-
-    switch (argument_->Type()) {
-        case AstNodeType::OBJECT_EXPRESSION: {
-            info = argument_->AsObjectExpression()->ValidateExpression();
-            break;
-        }
-        case AstNodeType::ARRAY_EXPRESSION: {
-            info = argument_->AsArrayExpression()->ValidateExpression();
-            break;
-        }
-        default: {
-            break;
-        }
-    }
-
-    return info;
-}
-
 bool SpreadElement::ConvertibleToRest(bool isDeclaration, bool allowPattern)
 {
     bool convResult = true;
@@ -118,7 +97,7 @@ void SpreadElement::Iterate(const NodeTraverser &cb) const
 
 void SpreadElement::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", (type_ == AstNodeType::SPREAD_ELEMENT) ? "SpreadElement" : "RestElement"},
+    dumper->Add({{"type", (Type() == AstNodeType::SPREAD_ELEMENT) ? "SpreadElement" : "RestElement"},
                  {"argument", argument_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())}});
 }

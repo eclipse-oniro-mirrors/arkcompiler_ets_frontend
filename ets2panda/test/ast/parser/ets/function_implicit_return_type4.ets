@@ -22,5 +22,6 @@ final class B extends A {
   public override fn(): int { return 42; }
 }
 
-/* @@? 22:21 Error TypeError: fn(): Int in B cannot override fn(): void in A because overriding return type is not compatible with the other return type.  */
-/* @@? 22:21 Error TypeError: Method fn(): Int in B not overriding any method  */
+
+/* @@? 22:21 Error Semantic error ESE0141: fn(): Int in B cannot override fn(): void in A because overriding return type is not compatible with the other return type. */
+/* @@? 22:21 Error Semantic error ESE0136: Method fn(): Int in B not overriding any method */

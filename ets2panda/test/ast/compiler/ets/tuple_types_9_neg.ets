@@ -19,8 +19,9 @@ function main(): void {
     let b: [number, string, Int] = /* @@ label */a;
 }
 
-/* @@? 18:29 Error SyntaxError: Invalid Type. */
-/* @@? 18:29 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 18:29 Error SyntaxError: Unexpected token '...'. */
-/* @@? 18:32 Error SyntaxError: Unexpected token 'Int'. */
-/* @@? 18:37 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 18:29 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 18:29 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 18:29 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 18:32 Error Syntax error ESY0227: Unexpected token 'Int'. */
+/* @@? 18:37 Error Syntax error ESY0227: Unexpected token ']'. */

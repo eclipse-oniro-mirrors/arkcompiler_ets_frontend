@@ -27,4 +27,5 @@ function foo1(x : A | B) {
     }
 }
 
-/* @@? 25:9 Error TypeError: Member type must be the same for all union objects. */
+
+/* @@? 25:9 Error Semantic error ESE0244: Member type must be the same for all union objects. */

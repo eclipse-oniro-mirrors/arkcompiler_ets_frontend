@@ -21,29 +21,15 @@
     "declgenV1OutPath": "./dist/declgen/decl_ets",
     "declgenBridgeCodePath": "./dist/declgen/ets",
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
     "dependencyModuleList": [
-        {
-            "packageName": "entry",
-            "moduleName": "entry",
-            "moduleType": "feature",
-            "modulePath": "${absolute_path_to_build_system}/test/demo_hap/entry",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/demo_hap/entry",
-            "dependencies": [
-                "harA",
-                "harB"
-            ],
-            "language": "1.2"
-        },
         {
             "packageName": "harA",
             "moduleName": "harA",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/demo_hap/harA",
             "sourceRoots": ["./"],
-            "entryFile": "${absolute_path_to_build_system}/test/demo_hap/harA/index.ets",
+            "entryFile": "index.ets",
             "language": "1.2",
             "dependencies": [
                 "harB"
@@ -54,10 +40,8 @@
             "moduleName": "harB",
             "moduleType": "har",
             "modulePath": "${absolute_path_to_build_system}/test/demo_hap/harB",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/demo_hap/harB/index.ets",
+            "sourceRoots": ["./"],
+            "entryFile": "index.ets",
             "language": "1.2"
         }
     ]

@@ -48,7 +48,7 @@ public:
           declarators_(std::move(declarators))
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

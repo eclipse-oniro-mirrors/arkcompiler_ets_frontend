@@ -19,4 +19,5 @@ function main(){
     let a :CLASS_A = new CLASS_A()
 }
 
-/* @@? 16:23 Error TypeError: Use the default import syntax to import a default exported element */
+
+/* @@? 16:23 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */

@@ -16,8 +16,13 @@
 export class type_cast {
     private i1: int = 34;
     private d: double = 3.7;
-    private i2: int = this.d.toInt();
+    private i2: int;
     protected c: char = c'c';
-    protected b: byte = this.c.toByte();
-    f: float = this.d.toFloat();
+    protected b: byte;
+    f: float;
+    constructor() {
+        this.i2 = this.d.toInt();
+        this.b = this.c.toByte();
+        this.f = this.d.toFloat();
+    }
 }

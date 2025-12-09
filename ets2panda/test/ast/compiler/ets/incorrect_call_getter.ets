@@ -30,8 +30,8 @@ export class ConM implements inter {
     }
 }
 
-/* @@? 22:10 Error TypeError: 'The special predefined method '$_get' shouldn't have void return type. */
-/* @@? 25:36 Error TypeError: ConM is not abstract and does not override abstract method gett(k: Double): Double in inter */
-/* @@? 29:9 Error TypeError: No matching indexing signature for $_get(((p1: Double) => Double)) */
-/* @@? 29:22 Error TypeError: Type '((p1: Double) => Double)' is not compatible with type 'Double' at index 1 */
-/* @@? 29:22 Error TypeError: Cannot find index access method with the required signature. */
+/* @@? 22:10 Error Semantic error ESE0093: 'The special predefined method '$_get' shouldn't have void return type. */
+/* @@? 25:36 Error Semantic error ESE0190: ConM is not abstract and does not override abstract method gett(k: Double): Double in inter */
+/* @@? 29:9 Error Semantic error ESE0127: No matching indexing signature for $_get(((p1: Double) => Double)) */
+/* @@? 29:22 Error Semantic error ESE0046: Type '((p1: Double) => Double)' is not compatible with type 'Double' at index 1 */
+/* @@? 29:22 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

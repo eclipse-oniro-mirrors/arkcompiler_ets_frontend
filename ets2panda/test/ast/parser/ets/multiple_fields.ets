@@ -17,4 +17,5 @@ class C {
   x: int/* @@ label1 */, y: int;
 }
 
-/* @@@ label1 Error SyntaxError: Unexpected token ','.  */
+
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token ','. */

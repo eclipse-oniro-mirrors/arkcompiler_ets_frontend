@@ -241,7 +241,7 @@
         },
         "end": {
           "line": 24,
-          "column": 38,
+          "column": 37,
           "program": "exports.ets"
         }
       }

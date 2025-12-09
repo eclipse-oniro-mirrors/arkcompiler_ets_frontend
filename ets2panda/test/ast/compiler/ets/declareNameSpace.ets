@@ -24,5 +24,6 @@ declare namespace A {
 }
 
 
-/* @@@ label Error TypeError: Variable 'c' has already been declared. */
 
+
+/* @@@ label Error Semantic error ESE0351: Variable 'c' has already been declared. */

@@ -18,8 +18,8 @@
 #include "generated/signatures.h"
 #include "evaluate/helpers.h"
 
-#include "libpandafile/class_data_accessor-inl.h"
-#include "libpandafile/file-inl.h"
+#include "libarkfile/class_data_accessor-inl.h"
+#include "libarkfile/file-inl.h"
 
 namespace ark::es2panda::evaluate {
 

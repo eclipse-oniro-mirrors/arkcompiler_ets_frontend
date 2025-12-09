@@ -17,9 +17,10 @@ final class TypeCreateCtx {
     internal static native getObjectArrayForCCtor(ctxPtr: long): FixedArray<Objectuted under the getTypeDescFromPointer(ctxItemPtr:long):RuntimeTypeDescriptor
 }
 
-/* @@? 17:66 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 17:88 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 17:88 Error SyntaxError: Unexpected token '>'. */
-/* @@? 17:97 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:120 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:138 Error TypeError: Cannot find type 'RuntimeTypeDescriptor'. */
+
+/* @@? 17:66 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 17:88 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 17:88 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 17:97 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:120 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:138 Error Semantic error ESE0371: Cannot find type 'RuntimeTypeDescriptor'. */

@@ -15,4 +15,4 @@
 
 let a = number[][]
 
-/* @@? 16:17 Error TypeError: 'Array<Array<number>>' only refers to a type, but is being used as a value here.  */
+/* @@? 16:9 Error Syntax error ESY0227: Unexpected token 'number'. */

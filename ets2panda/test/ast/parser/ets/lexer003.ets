@@ -13,12 +13,11 @@
  * limitations under the License.
  */
 
-/* @@? 24:1 Error SyntaxError: Unexpected token, expected '`'. */
-/* @@? 24:4 Error TypeError: Unresolved reference message */
-/* @@? 24:15 Error SyntaxError: Unterminated string. */
-/* @@? 24:19 Error SyntaxError: Unterminated string. */
-/* @@? 24:19 Error SyntaxError: Unexpected token, expected '${' or '`' */
-/* @@? 24:19 Error SyntaxError: Unexpected token, expected '`'. */
-/* @@? 24:19 Error SyntaxError: Expected '}', got 'end of stream'. */
 
-`${message ?? 'ver
+
+`${message ?? 'ver/* @@? 18:4 Error Semantic error ESE0143: Unresolved reference message */
+/* @@? 18:15 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 22:83 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 22:83 Error Syntax error ESY0253: Unterminated string. */
+/* @@? 22:83 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
+/* @@? 22:83 Error Syntax error ESY0228: Unexpected token, expected '`'. */

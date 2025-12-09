@@ -22,4 +22,4 @@ namespace NS2 {
     export let constant = NS1.value; // Error: Circular dependency
 }
 
-/* @@? 18:16 Error TypeError: Circular dependency detected for identifier: value  */
+/* @@? 18:16 Error Semantic error ESE0308: Circular dependency detected for identifier: value */

@@ -15,5 +15,5 @@
 import {foo} from './async_import_4'
 let prop: int = foo<number>()
 
-/* @@? 16:17 Error TypeError: Cannot use type 'void' as value. */
-/* @@? 16:17 Error TypeError: Type 'void' cannot be assigned to type 'Int' */
+/* @@? 16:17 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+/* @@? 16:17 Error Semantic error ESE0318: Type 'void' cannot be assigned to type 'Int' */

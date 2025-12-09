@@ -18,9 +18,9 @@
 #include "checker/ETSchecker.h"
 #include "ir/statements/classDeclaration.h"
 #include "ir/expressions/identifier.h"
-#include "libpandafile/class_data_accessor-inl.h"
-#include "libpandafile/file-inl.h"
-#include "libpandafile/method_data_accessor.h"
+#include "libarkfile/class_data_accessor-inl.h"
+#include "libarkfile/file-inl.h"
+#include "libarkfile/method_data_accessor.h"
 #include "evaluate/helpers.h"
 #include "evaluate/debugInfoDeserialization/methodBuilder.h"
 

@@ -16,7 +16,7 @@
 export declare const byte_1: byte = -127 as byte, byte_2: byte = 126 as byte;
 export declare const byte_12: byte = -127 + 1, byte_22: byte = 126 - 1;
 export declare const byte_13: byte = Byte.MIN_VALUE, byte_23: byte = 126;
-export declare const byte_14: byte = new Byte().unboxed()
+export declare const byte_14: byte = new Byte().toByte()
 export declare const int_1 = 1 + 2 + 3 + 4
 const v = 42
 export declare const int_12 = v
@@ -43,24 +43,25 @@ declare const x31 = 0x5
 declare const x41 = 0b101
 declare const x51 = "abc"
 
-/* @@? 16:37 Error TypeError: Initializers are not allowed in ambient contexts: byte_1 */
-/* @@? 16:66 Error TypeError: Initializers are not allowed in ambient contexts: byte_2 */
-/* @@? 17:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_12 */
-/* @@? 17:38 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 17:64 Error TypeError: Type 'Int' cannot be assigned to type 'Byte' */
-/* @@? 17:64 Error TypeError: Initializers are not allowed in ambient contexts: byte_22 */
-/* @@? 18:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_13 */
-/* @@? 18:70 Error TypeError: Initializers are not allowed in ambient contexts: byte_23 */
-/* @@? 19:38 Error TypeError: Initializers are not allowed in ambient contexts: byte_14 */
-/* @@? 24:36 Error TypeError: Initializers are not allowed in ambient contexts: int_16 */
-/* @@? 26:39 Error TypeError: Initializers are not allowed in ambient contexts: int_18 */
-/* @@? 27:25 Error TypeError: Initializers are not allowed in ambient contexts: x1 */
-/* @@? 28:25 Error TypeError: Initializers are not allowed in ambient contexts: x2 */
-/* @@? 29:27 Error TypeError: Initializers are not allowed in ambient contexts: y1 */
-/* @@? 30:28 Error TypeError: Initializers are not allowed in ambient contexts: y2 */
-/* @@? 31:25 Error TypeError: Initializers are not allowed in ambient contexts: x3 */
-/* @@? 32:25 Error TypeError: Initializers are not allowed in ambient contexts: x4 */
-/* @@? 33:28 Error TypeError: Initializers are not allowed in ambient contexts: x5 */
-/* @@? 34:27 Error TypeError: Initializers are not allowed in ambient contexts: x6 */
-/* @@? 35:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x7 */
-/* @@? 36:20 Error TypeError: A 'const' initializer in an ambient context must be a string or numeric literal: x8 */
+
+/* @@? 16:37 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_1 */
+/* @@? 16:66 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_2 */
+/* @@? 17:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_12 */
+/* @@? 17:38 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
+/* @@? 17:64 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Byte' */
+/* @@? 17:64 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_22 */
+/* @@? 18:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_13 */
+/* @@? 18:70 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_23 */
+/* @@? 19:38 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: byte_14 */
+/* @@? 24:36 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_16 */
+/* @@? 26:39 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: int_18 */
+/* @@? 27:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x1 */
+/* @@? 28:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x2 */
+/* @@? 29:27 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: y1 */
+/* @@? 30:28 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: y2 */
+/* @@? 31:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x3 */
+/* @@? 32:25 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x4 */
+/* @@? 33:28 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x5 */
+/* @@? 34:27 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x6 */
+/* @@? 35:20 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: x7 */
+/* @@? 36:20 Error Semantic error ESE0175: A 'const' initializer in an ambient context must be a string or numeric literal: x8 */

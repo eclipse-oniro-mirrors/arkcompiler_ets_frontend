@@ -16,4 +16,5 @@
 
 cl\u0061ss;
 
-/* @@? 17:1 Error SyntaxError: Escape sequences are not allowed in keyword. */
+
+/* @@? 17:1 Error Syntax error ESY0271: Escape sequences are not allowed in keyword. */

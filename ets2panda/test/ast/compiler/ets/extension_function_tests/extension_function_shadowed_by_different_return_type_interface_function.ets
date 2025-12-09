@@ -33,4 +33,5 @@ function foo(this:Banana, id2: int, k2: String): int/* @@ label */{
     return 2;
 }
 
-/* @@@ label Error TypeError: The extension function 'foo' has the same name with public method in class Yellow  */
+
+/* @@@ label Error Semantic error ESE0081: The extension function 'foo' has the same name with public method in class Yellow */

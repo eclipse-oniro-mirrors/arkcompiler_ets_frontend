@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 108,
+            "line": 110,
             "column": 18,
-            "endLine": 116,
+            "endLine": 118,
             "endColumn": 6,
             "problem": "LimitedReturnTypeInference",
             "suggest": "",

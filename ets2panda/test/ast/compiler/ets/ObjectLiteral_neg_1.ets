@@ -35,6 +35,3 @@ const router:RouterT = {
     }
 }
 
-
-
-/* @@? 32:5 Error TypeError: Method 'back' cannot be used as a key of object literal. */

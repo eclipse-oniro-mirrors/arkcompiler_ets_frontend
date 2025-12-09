@@ -18,6 +18,7 @@ import * as path from 'path';
 import { ARKTSCONFIG_JSON_FILE, LANGUAGE_VERSION } from '../common/preDefine';
 import { BuildConfig, ModuleInfo } from '../common/types';
 import { ArkTSConfigGenerator } from '../common/arkTSConfigGenerator';
+import { logger } from './logger';
 
 function collectDepModuleInfos(moduleInfo: ModuleInfo, allBuildConfig: Record<string, BuildConfig>): void {
   let dynamicDepModules: string[] = [];
@@ -26,9 +27,14 @@ function collectDepModuleInfos(moduleInfo: ModuleInfo, allBuildConfig: Record<st
   if (moduleInfo.dependencies) {
     moduleInfo.dependencies.forEach((moduleName: string) => {
       let depModule = allBuildConfig[moduleName];
-      depModule.language === LANGUAGE_VERSION.ARKTS_1_2
-        ? staticDepModules.push(depModule.packageName)
-        : dynamicDepModules.push(depModule.packageName);
+      if (depModule.language === LANGUAGE_VERSION.ARKTS_1_2) {
+        staticDepModules.push(depModule.packageName);
+      } else if (depModule.language === LANGUAGE_VERSION.ARKTS_1_1) {
+        dynamicDepModules.push(depModule.packageName);
+      } else {
+        staticDepModules.push(depModule.packageName);
+        dynamicDepModules.push(depModule.packageName);
+      }
     });
   }
   moduleInfo.dynamicDepModuleInfos = dynamicDepModules;
@@ -45,9 +51,6 @@ function collectModuleInfos(allBuildConfig: Record<string, BuildConfig>): Record
 }
 
 export function generateModuleInfo(allBuildConfig: Record<string, BuildConfig>, buildConfig: BuildConfig): ModuleInfo {
-  if (!buildConfig.packageName || !buildConfig.moduleRootPath) {
-    console.error('Main buildConfig info from hvigor is not correct.');
-  }
   let moduleInfo: ModuleInfo = {
     packageName: buildConfig.packageName,
     moduleRootPath: buildConfig.moduleRootPath,
@@ -55,13 +58,15 @@ export function generateModuleInfo(allBuildConfig: Record<string, BuildConfig>, 
     entryFile: buildConfig.packageName !== 'entry' ? path.join(buildConfig.moduleRootPath, 'Index.ets') : '',
     arktsConfigFile: path.resolve(buildConfig.cacheDir!, buildConfig.packageName, ARKTSCONFIG_JSON_FILE),
     compileFiles: buildConfig.compileFiles,
+    depModuleCompileFiles: buildConfig.depModuleCompileFiles,
     declgenV1OutPath: buildConfig.declgenV1OutPath,
     declgenBridgeCodePath: buildConfig.declgenBridgeCodePath,
     staticDepModuleInfos: [],
     dynamicDepModuleInfos: [],
     language: buildConfig.language,
     dependencies: buildConfig.dependencies,
-    declFilesPath: buildConfig.declFilesPath
+    declFilesPath: buildConfig.declFilesPath,
+    sdkAliasConfigPath: buildConfig.sdkAliasConfigPath ? buildConfig.sdkAliasConfigPath : undefined
   };
   collectDepModuleInfos(moduleInfo, allBuildConfig);
   return moduleInfo;
@@ -69,10 +74,10 @@ export function generateModuleInfo(allBuildConfig: Record<string, BuildConfig>, 
 
 export function generateArkTsConfigs(allBuildConfig: Record<string, BuildConfig>): Record<string, ModuleInfo> {
   let moduleInfos: Record<string, ModuleInfo> = collectModuleInfos(allBuildConfig);
-  Object.keys(moduleInfos).forEach((filePath: string) => {
-    let packageName = moduleInfos[filePath].packageName;
-    let generator = ArkTSConfigGenerator.getGenerator(allBuildConfig[packageName], moduleInfos);
-    generator.writeArkTSConfigFile(moduleInfos[filePath]);
+  Object.keys(moduleInfos).forEach((packageName: string) => {
+    let buildConfig = allBuildConfig[packageName];
+    let generator = ArkTSConfigGenerator.getGenerator(buildConfig, moduleInfos);
+    generator.writeArkTSConfigFile(moduleInfos[packageName]);
   });
   let fileToModuleInfo: Record<string, ModuleInfo> = {};
   Object.values(moduleInfos).forEach((moduleInfo: ModuleInfo) => {

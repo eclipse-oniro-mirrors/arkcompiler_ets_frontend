@@ -24,7 +24,6 @@
 :@phases/InsertOptionalParametersAnnotation     :  time=17.38ms       mem=0.74MB      
 :@phases/AmbientLowering                        :  time=17.22ms       mem=0.00MB      
 :@phases/ExpressionLambdaConstruction           :  time=17.15ms       mem=0.00MB      
-:@phases/GradualTypeNarrowing                   :  time=16.99ms       mem=1.88MB      
 :@phases/DefaultParametersInConstructorLowering :  time=16.67ms       mem=0.52MB      
 :@phases/ObjectIndexLowering                    :  time=3.65ms        mem=0.71MB      
 :@phases/CreateGenericBridges                   :  time=3.36ms        mem=0.00MB      

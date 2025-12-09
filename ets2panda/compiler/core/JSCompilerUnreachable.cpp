@@ -123,6 +123,11 @@ void JSCompiler::Compile([[maybe_unused]] const ir::ETSImportDeclaration *node) 
     ES2PANDA_UNREACHABLE();
 }
 
+void JSCompiler::Compile([[maybe_unused]] const ir::ETSGenericInstantiatedNode *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 void JSCompiler::Compile([[maybe_unused]] const ir::ETSReExportDeclaration *node) const
 {
     ES2PANDA_UNREACHABLE();
@@ -204,6 +209,11 @@ void JSCompiler::Compile([[maybe_unused]] const ir::ETSUnionType *node) const
 }
 
 void JSCompiler::Compile([[maybe_unused]] const ir::ETSKeyofType *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
+void JSCompiler::Compile([[maybe_unused]] const ir::ETSDestructuring *expr) const
 {
     ES2PANDA_UNREACHABLE();
 }

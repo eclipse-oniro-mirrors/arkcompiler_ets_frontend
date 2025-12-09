@@ -1,8 +1,8 @@
 ### ArkTS1.2导入js文件
 
-**规则：** arkts-interop-js2s-import-js
+**规则：** `arkts-interop-js2s-import-js`
 
-**级别：** error
+ArkTS1.2使用ESValue接口动态导入js模块和调用接口。
 
 **ArkTS1.1**
 ```typescript

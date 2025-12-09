@@ -24,7 +24,7 @@
                 {
                     "start": 641,
                     "end": 730,
-                    "replacementText": "private cardStyle1: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor('#ffffff');\n    instance.borderRadius(8);\n  };",
+                    "replacementText": "private cardStyle1: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor('#ffffff')\n    instance.borderRadius(8)\n    };",
                     "line": 19,
                     "column": 3,
                     "endLine": 23,
@@ -54,7 +54,7 @@
                 {
                     "start": 734,
                     "end": 822,
-                    "replacementText": "public cardStyle2: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor('#ffffff');\n    instance.borderRadius(8);\n  };",
+                    "replacementText": "public cardStyle2: CustomStyles = (instance: CommonMethod): void => {\n    instance.backgroundColor('#ffffff')\n    instance.borderRadius(8)\n    };",
                     "line": 25,
                     "column": 3,
                     "endLine": 29,

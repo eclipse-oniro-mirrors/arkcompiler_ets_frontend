@@ -20,4 +20,5 @@ function narrowing_reference_test(): void {
   let A_ = new A();
   let B_ = /* @@ label */A_ as B;
 }
-/* @@@ label Error TypeError: Cannot cast type 'A' to 'B'  */
+
+/* @@@ label Error Semantic error ESE0326: Cannot cast type 'A' to 'B' */

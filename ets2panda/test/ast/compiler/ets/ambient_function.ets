@@ -24,5 +24,5 @@ function main() {
   capset(...(a1 ?? a2));
 }
 
-/* @@? 21:1 Error TypeError: Method declaration `capset` must all ambient or non-ambient */
-/* @@? 24:3 Error TypeError: This expression is not callable. */
+
+/* @@? 21:1 Error Semantic error ESE0399: Method declaration `capset` must all ambient or non-ambient */

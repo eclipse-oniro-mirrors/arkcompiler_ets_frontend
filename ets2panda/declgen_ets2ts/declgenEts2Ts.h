@@ -17,8 +17,10 @@
 #define ES2PANDA_DECLGEN_ETS2TS_H
 
 #include "checker/ETSchecker.h"
-#include "os/file.h"
-#include "utils/arena_containers.h"
+#include "compiler/lowering/phase.h"
+#include "libarkbase/os/file.h"
+#include "libarkbase/utils/arena_containers.h"
+#include "parser/program/program.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include "isolatedDeclgenChecker.h"
@@ -33,6 +35,7 @@ struct DeclgenOptions {
     std::string outputDeclEts;
     std::string outputEts;
     std::string recordFile;
+    bool genAnnotations = true;
 };
 
 // Consume program after checker stage and generate out_path typescript file with declarations
@@ -72,6 +75,7 @@ public:
     bool Generate();
     void GenImportDeclarations();
     void GenExportNamedDeclarations();
+    void GenInitModuleGlueCode();
     void GenImportRecordDeclarations(const std::string &source);
 
     std::string GetDtsOutput() const
@@ -194,6 +198,7 @@ private:
     void PrepareClassDeclaration(const ir::ClassDefinition *classDef);
     bool ShouldSkipMethodDeclaration(const ir::MethodDefinition *methodDef);
     bool ShouldSkipClassDeclaration(const std::string_view &className) const;
+    bool HasUIAnnotation(const ir::ClassProperty *classProp) const;
     void HandleClassDeclarationTypeInfo(const ir::ClassDefinition *classDef, const std::string_view &className);
     void HandleClassInherit(const ir::Expression *expr);
     void ProcessClassBody(const ir::ClassDefinition *classDef);
@@ -201,6 +206,7 @@ private:
     void ProcessParameterName(varbinder::LocalVariable *param);
     void ProcessFuncParameter(varbinder::LocalVariable *param);
     void ProcessFuncParameters(const checker::Signature *sig);
+    void GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef);
     void ProcessClassPropertyType(const ir::ClassProperty *classProp);
     std::vector<ir::AstNode *> FilterValidImportSpecifiers(const ArenaVector<ir::AstNode *> &specifiers);
     std::vector<ir::AstNode *> FilterValidExportSpecifiers(const ArenaVector<ir::ExportSpecifier *> &specifiers);

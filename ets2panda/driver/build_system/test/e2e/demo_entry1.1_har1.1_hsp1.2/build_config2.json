@@ -16,35 +16,8 @@
     "declgenV2OutPath": "./dist/declgen/decl_ets2",
     "declgenBridgeCodePath": "./dist/declgen/ets",
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
     "dependencyModuleList": [
-        {
-            "packageName": "entry",
-            "moduleName": "entry",
-            "moduleType": "feature",
-            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/entry",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/entry",
-            "language": "1.1",
-            "dependencies": [
-                "harA"
-            ]
-        },
-        {
-            "packageName": "harA",
-            "moduleName": "harA",
-            "moduleType": "har",
-            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/harA",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.1_hsp1.2/harA/index.ets",
-            "language": "1.1",
-            "dependencies": [
-                "hspA"
-            ]
-        },
         {
             "packageName": "hspA",
             "moduleName": "hspA",

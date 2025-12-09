@@ -34,6 +34,7 @@ bb = /* @@ label1 */db;
 bb = /* @@ label2 */dd;
 bd = /* @@ label3 */db;
 
-/* @@@ label1 Error TypeError: Type '(p1: Derived) => Base' cannot be assigned to type '(p1: Base) => Base'  */
-/* @@@ label2 Error TypeError: Type '(p1: Derived) => Derived' cannot be assigned to type '(p1: Base) => Base'  */
-/* @@@ label3 Error TypeError: Type '(p1: Derived) => Base' cannot be assigned to type '(p1: Base) => Derived'  */
+
+/* @@@ label1 Error Semantic error ESE0318: Type '((p1: Derived) => Base)' cannot be assigned to type '((p1: Base) => Base)' */
+/* @@@ label2 Error Semantic error ESE0318: Type '((p1: Derived) => Derived)' cannot be assigned to type '((p1: Base) => Base)' */
+/* @@@ label3 Error Semantic error ESE0318: Type '((p1: Derived) => Base)' cannot be assigned to type '((p1: Base) => Derived)' */

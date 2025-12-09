@@ -29,12 +29,13 @@ class /* @@ label3 */77 {}
 
 class /* @@ label4 */{/* @@ label5 */}
 
-/* @@? 17:19 Error SyntaxError: Unexpected token 'function'. */
-/* @@? 21:20 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 22:20 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 24:17 Error TypeError: Type '"abc"' cannot be assigned to type 'Double' */
-/* @@? 28:22 Error SyntaxError: Number, string or computed value property name '77' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 28:22 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 30:22 Error SyntaxError: Identifier expected, got '{'. */
-/* @@? 30:38 Error SyntaxError: Expected '{', got '}'. */
-/* @@? 41:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'function'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 24:17 Error Semantic error ESE0318: Type '"abc"' cannot be assigned to type 'Double' */
+/* @@@ label3 Error Syntax error ESY0315: Number, string or computed value property name '77' is not allowed, use classes to access data by property names that are identifiers */
+/* @@@ label3 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@@ label4 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@@ label5 Error Syntax error ESY0230: Expected '{', got '}'. */
+/* @@? 41:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -19,7 +19,6 @@
     "arkts-no-void-operator",
     "arkts-no-ts-overload",
     "arkts-limited-literal-types",
-    "arkts-no-exponent-op",
     "arkts-no-debugger",
     "arkts-no-arguments-obj",
     "arkts-no-tagged-templates",
@@ -55,6 +54,7 @@
     "arkts-numeric-bigint-compare",
     "arkts-only-support-decimal-bigint-literal",
     "arkts-unsupport-operator",
+    "arkts-subclass-must-call-super-constructor-with-args",
     "arkts-no-duplicate-function-name"
   ],
   "interop": [
@@ -134,7 +134,6 @@
     "sdk-constructor-funcs",
     "sdk-no-literal-as-property-name",
     "sdk-no-decl-with-duplicate-name",
-    "sdk-type-query",
     "sdk-ability-asynchronous-lifecycle",
     "sdk-ability-lifecycle-monitor",
     "sdk-api-static-overload"

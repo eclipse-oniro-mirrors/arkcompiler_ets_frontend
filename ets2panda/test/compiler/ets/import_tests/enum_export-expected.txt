@@ -10,12 +10,12 @@
           "loc": {
             "start": {
               "line": 20,
-              "column": 14,
+              "column": 21,
               "program": "enum_export.ets"
             },
             "end": {
               "line": 20,
-              "column": 26,
+              "column": 33,
               "program": "enum_export.ets"
             }
           }
@@ -30,12 +30,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -48,12 +48,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -62,12 +62,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -75,12 +75,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -88,12 +88,12 @@
           "loc": {
             "start": {
               "line": 20,
-              "column": 9,
+              "column": 16,
               "program": "enum_export.ets"
             },
             "end": {
               "line": 20,
-              "column": 9,
+              "column": 16,
               "program": "enum_export.ets"
             }
           }
@@ -108,12 +108,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -129,12 +129,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -143,12 +143,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -161,12 +161,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -186,12 +186,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -210,12 +210,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -223,12 +223,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -236,12 +236,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -256,12 +256,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -269,12 +269,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -282,12 +282,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -299,12 +299,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -312,12 +312,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -325,12 +325,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -339,12 +339,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -357,12 +357,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 30,
+                  "column": 37,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 36,
+                  "column": 43,
                   "program": "enum_export.ets"
                 }
               }
@@ -379,12 +379,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -392,12 +392,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -405,12 +405,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -422,12 +422,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -438,12 +438,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -452,12 +452,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 36,
+                  "column": 43,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 36,
+                  "column": 43,
                   "program": "enum_export.ets"
                 }
               }
@@ -478,12 +478,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -491,12 +491,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -504,12 +504,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -518,12 +518,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 30,
+                "column": 37,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 36,
+                "column": 43,
                 "program": "enum_export.ets"
               }
             }
@@ -536,12 +536,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -555,12 +555,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -569,12 +569,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -597,12 +597,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -610,12 +610,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -623,12 +623,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -637,12 +637,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -651,12 +651,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -669,12 +669,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -688,12 +688,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -702,12 +702,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -725,12 +725,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -739,12 +739,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -753,12 +753,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -771,12 +771,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -790,12 +790,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -804,12 +804,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -832,12 +832,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -845,12 +845,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -858,12 +858,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -872,12 +872,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -886,12 +886,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -904,12 +904,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -925,12 +925,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 14,
+                        "column": 21,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 26,
+                        "column": 33,
                         "program": "enum_export.ets"
                       }
                     }
@@ -941,12 +941,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 30,
+                        "column": 37,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 36,
+                        "column": 43,
                         "program": "enum_export.ets"
                       }
                     }
@@ -956,12 +956,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -970,12 +970,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -998,12 +998,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1011,12 +1011,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1024,12 +1024,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1038,12 +1038,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1052,12 +1052,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1070,12 +1070,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1095,12 +1095,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1119,12 +1119,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1132,12 +1132,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1145,12 +1145,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1159,12 +1159,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1172,12 +1172,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1186,12 +1186,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1204,12 +1204,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1229,12 +1229,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1258,12 +1258,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 9,
+                                "column": 16,
                                 "program": "enum_export.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 9,
+                                "column": 16,
                                 "program": "enum_export.ets"
                               }
                             }
@@ -1271,12 +1271,12 @@
                           "loc": {
                             "start": {
                               "line": 20,
-                              "column": 9,
+                              "column": 16,
                               "program": "enum_export.ets"
                             },
                             "end": {
                               "line": 20,
-                              "column": 9,
+                              "column": 16,
                               "program": "enum_export.ets"
                             }
                           }
@@ -1284,12 +1284,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -1297,12 +1297,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1310,12 +1310,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1331,12 +1331,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1344,12 +1344,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1357,12 +1357,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1371,12 +1371,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1384,12 +1384,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1398,12 +1398,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1416,12 +1416,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1441,12 +1441,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1465,12 +1465,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -1478,12 +1478,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1491,12 +1491,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1512,12 +1512,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1525,12 +1525,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1538,12 +1538,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1552,12 +1552,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1565,12 +1565,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1579,12 +1579,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1597,12 +1597,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1622,12 +1622,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1641,12 +1641,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1655,12 +1655,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1668,12 +1668,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1682,12 +1682,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1700,12 +1700,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1725,12 +1725,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1749,12 +1749,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1762,12 +1762,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1775,12 +1775,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1789,12 +1789,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1802,12 +1802,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1816,12 +1816,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1834,12 +1834,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1859,12 +1859,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1885,12 +1885,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -1898,12 +1898,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -1911,12 +1911,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -1925,12 +1925,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -1939,12 +1939,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -1952,12 +1952,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -1966,12 +1966,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -1984,12 +1984,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -2009,12 +2009,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -2028,12 +2028,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -2042,12 +2042,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -2055,12 +2055,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -2069,12 +2069,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -2087,12 +2087,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -2112,12 +2112,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -2141,12 +2141,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 9,
+                                "column": 16,
                                 "program": "enum_export.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 9,
+                                "column": 16,
                                 "program": "enum_export.ets"
                               }
                             }
@@ -2154,12 +2154,12 @@
                           "loc": {
                             "start": {
                               "line": 20,
-                              "column": 9,
+                              "column": 16,
                               "program": "enum_export.ets"
                             },
                             "end": {
                               "line": 20,
-                              "column": 9,
+                              "column": 16,
                               "program": "enum_export.ets"
                             }
                           }
@@ -2167,12 +2167,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 16,
                             "program": "enum_export.ets"
                           }
                         }
@@ -2180,12 +2180,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -2193,12 +2193,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -2214,12 +2214,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 9,
+                          "column": 16,
                           "program": "enum_export.ets"
                         }
                       }
@@ -2227,12 +2227,12 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 9,
+                        "column": 16,
                         "program": "enum_export.ets"
                       }
                     }
@@ -2240,12 +2240,12 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 9,
+                      "column": 16,
                       "program": "enum_export.ets"
                     }
                   }
@@ -2254,12 +2254,12 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   },
                   "end": {
                     "line": 20,
-                    "column": 9,
+                    "column": 16,
                     "program": "enum_export.ets"
                   }
                 }
@@ -2267,12 +2267,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 9,
+                  "column": 16,
                   "program": "enum_export.ets"
                 }
               }
@@ -2281,12 +2281,12 @@
             "loc": {
               "start": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               },
               "end": {
                 "line": 20,
-                "column": 9,
+                "column": 16,
                 "program": "enum_export.ets"
               }
             }
@@ -2295,12 +2295,12 @@
         "loc": {
           "start": {
             "line": 20,
-            "column": 9,
+            "column": 16,
             "program": "enum_export.ets"
           },
           "end": {
             "line": 20,
-            "column": 9,
+            "column": 16,
             "program": "enum_export.ets"
           }
         }
@@ -2308,12 +2308,12 @@
       "loc": {
         "start": {
           "line": 20,
-          "column": 9,
+          "column": 16,
           "program": "enum_export.ets"
         },
         "end": {
           "line": 20,
-          "column": 38,
+          "column": 45,
           "program": "enum_export.ets"
         }
       }
@@ -4671,8 +4671,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Color",
+                                    "loc": {
+                                      "start": {
+                                        "line": 22,
+                                        "column": 13,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 22,
+                                        "column": 18,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#NamesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 22,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 22,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 22,
@@ -4716,7 +4814,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -4734,74 +4832,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Color",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 13,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 18,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#NamesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 22,
@@ -4830,7 +4862,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",
@@ -5448,8 +5480,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Color",
+                                    "loc": {
+                                      "start": {
+                                        "line": 22,
+                                        "column": 13,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 22,
+                                        "column": 18,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#ValuesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 22,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 22,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 22,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 22,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 22,
@@ -5493,7 +5623,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -5511,74 +5641,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Color",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 13,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 18,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#ValuesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 22,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 22,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 22,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 22,
@@ -5607,7 +5671,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",
@@ -9354,8 +9418,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Commands",
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 13,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 21,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#NamesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -9399,7 +9561,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -9417,74 +9579,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Commands",
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 13,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 21,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#NamesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 26,
@@ -9513,7 +9609,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",
@@ -10162,8 +10258,106 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 0,
+                              "type": "BinaryExpression",
+                              "operator": "-",
+                              "left": {
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "Commands",
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 13,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 21,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "#StringValuesArray",
+                                    "loc": {
+                                      "start": {
+                                        "line": 26,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      },
+                                      "end": {
+                                        "line": 26,
+                                        "column": 8,
+                                        "program": "enum_export.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "length",
+                                  "loc": {
+                                    "start": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    },
+                                    "end": {
+                                      "line": 26,
+                                      "column": 8,
+                                      "program": "enum_export.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
+                              "right": {
+                                "type": "NumberLiteral",
+                                "value": 1,
+                                "loc": {
+                                  "start": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 8,
+                                    "program": "enum_export.ets"
+                                  }
+                                }
+                              },
                               "loc": {
                                 "start": {
                                   "line": 26,
@@ -10207,7 +10401,7 @@
                       },
                       "test": {
                         "type": "BinaryExpression",
-                        "operator": "<",
+                        "operator": ">=",
                         "left": {
                           "type": "Identifier",
                           "name": "i",
@@ -10225,74 +10419,8 @@
                           }
                         },
                         "right": {
-                          "type": "MemberExpression",
-                          "object": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "Commands",
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 13,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 21,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "#StringValuesArray",
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 8,
-                                  "program": "enum_export.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "property": {
-                            "type": "Identifier",
-                            "name": "length",
-                            "loc": {
-                              "start": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              },
-                              "end": {
-                                "line": 26,
-                                "column": 8,
-                                "program": "enum_export.ets"
-                              }
-                            }
-                          },
-                          "computed": false,
-                          "optional": false,
+                          "type": "NumberLiteral",
+                          "value": 0,
                           "loc": {
                             "start": {
                               "line": 26,
@@ -10321,7 +10449,7 @@
                       },
                       "update": {
                         "type": "UpdateExpression",
-                        "operator": "++",
+                        "operator": "--",
                         "prefix": true,
                         "argument": {
                           "type": "Identifier",

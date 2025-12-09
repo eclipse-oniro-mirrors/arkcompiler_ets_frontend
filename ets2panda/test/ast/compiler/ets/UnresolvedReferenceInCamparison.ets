@@ -18,6 +18,7 @@ function main() : void {
     /* @@ label2 */hehe
 }
 
-/* @@@ label Error TypeError: Unresolved reference a  */
-/* @@@ label1 Error TypeError: Unresolved reference b  */
-/* @@@ label2 Error TypeError: Unresolved reference hehe  */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference a */
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference b */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference hehe */

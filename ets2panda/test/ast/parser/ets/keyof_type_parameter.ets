@@ -30,6 +30,7 @@ function main():void{
     getProperty1<A>(a,"method1")
 }
 
-/* @@@ label1 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
-/* @@@ label2 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
-/* @@@ label3 Error TypeError: The `keyof` keyword can only be used for class or interface type.  */
+
+/* @@@ label1 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@@ label2 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@@ label3 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */

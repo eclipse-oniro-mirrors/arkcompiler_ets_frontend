@@ -250,7 +250,6 @@ cookBookTag[193] = '"void" operator is not supported (arkts-no-void-operator)';
 cookBookTag[198] = 'Class TS overloading is not supported(arkts-no-ts-overload)';
 cookBookTag[199] = 'Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)';
 cookBookTag[202] = 'Literal types are restricted(arkts-limited-literal-types)';
-cookBookTag[203] = 'exponent opartions "**" and "**=" are disabled (arkts-no-exponent-op)';
 cookBookTag[206] = '"debugger" is not supported (arkts-no-debugger)';
 cookBookTag[207] = 'Special arguments object inside functions are not supported (arkts-no-arguments-obj)';
 cookBookTag[208] = 'Tagged templates are not supported (arkts-no-tagged-templates)';
@@ -339,7 +338,7 @@ cookBookTag[313] = 'Constructor types are not supported - use lambda functions i
 cookBookTag[314] =
   'Object property names must be valid identifiers.Single-quoted and hyphenated properties are not supported. (sdk-no-literal-as-property-name)';
 cookBookTag[315] = 'API path have changed - please update your imports accordingly (sdk-no-decl-with-duplicate-name)';
-cookBookTag[316] = 'Using typeof as a type is not allowed in this API (sdk-type-query)';
+cookBookTag[316] = '';
 cookBookTag[317] = '"use shared" is not supported (arkts-limited-stdlib-no-use-shared)';
 cookBookTag[318] = '"use concurrent" is not supported (arkts-limited-stdlib-no-use-concurrent)';
 cookBookTag[319] =

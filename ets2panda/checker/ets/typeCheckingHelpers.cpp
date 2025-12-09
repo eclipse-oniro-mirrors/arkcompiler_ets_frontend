@@ -14,9 +14,9 @@
  */
 
 #include "checker/checker.h"
+#include "checker/checkerContext.h"
 #include "checker/ets/wideningConverter.h"
 #include "checker/types/globalTypesHolder.h"
-#include "checker/types/gradualType.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
 #include "ir/base/catchClause.h"
@@ -74,7 +74,11 @@ void ETSChecker::CheckTruthinessOfType(ir::Expression *expr)
 
 bool ETSChecker::CheckNonNullish(ir::Expression const *expr)
 {
-    if (!expr->TsType()->PossiblyETSNullish()) {
+    if (!expr->TsType()->PossiblyETSNullish() || expr->TsType()->IsETSRelaxedAnyType()) {
+        return true;
+    }
+
+    if (expr->TsType()->IsETSPartialTypeParameter()) {
         return true;
     }
 
@@ -92,10 +96,6 @@ bool ETSChecker::CheckNonNullish(ir::Expression const *expr)
 
 Type *ETSChecker::GetNonNullishType(Type *type)
 {
-    if (type->IsGradualType()) {
-        return CreateGradualType(GetNonNullishType(type->AsGradualType()->GetBaseType()),
-                                 type->AsGradualType()->Language());
-    }
     if (type->DefinitelyNotETSNullish()) {
         return type;
     }
@@ -214,8 +214,7 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
     ArenaVector<Type *> nullishTypes(ProgramAllocator()->Adapter());
     ArenaVector<Type *> notNullishTypes(ProgramAllocator()->Adapter());
 
-    for (auto *ctype : type->AsETSUnionType()->ConstituentTypes()) {
-        auto constituentType = ctype->MaybeBaseTypeOfGradualType();
+    for (auto *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
         if (constituentType->IsETSUndefinedType() || constituentType->IsETSNullType()) {
             nullishTypes.push_back(constituentType);
         } else {
@@ -237,9 +236,6 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
 template <typename Pred, typename Trv>
 static bool MatchConstituentOrConstraint(const Type *type, Pred const &pred, Trv const &trv)
 {
-    if (type->IsGradualType()) {
-        return MatchConstituentOrConstraint(type->AsGradualType()->GetBaseType(), pred, trv);
-    }
     auto const traverse = [&pred, &trv](const Type *ttype) {
         return MatchConstituentOrConstraint<Pred, Trv>(ttype, pred, trv);
     };
@@ -378,6 +374,11 @@ bool Type::IsETSMethodType() const
     return HasTypeFlag(TypeFlag::ETS_METHOD);
 }
 
+bool Type::IsETSRelaxedAnyType() const
+{
+    return IsETSAnyType() && AsETSAnyType()->IsRelaxed();
+}
+
 [[maybe_unused]] static bool IsSaneETSReferenceType(Type const *type)
 {
     static constexpr TypeFlag ETS_SANE_REFERENCE_TYPE =
@@ -385,7 +386,7 @@ bool Type::IsETSMethodType() const
         TypeFlag::ETS_TYPE_PARAMETER | TypeFlag::WILDCARD | TypeFlag::ETS_NONNULLISH |
         TypeFlag::ETS_REQUIRED_TYPE_PARAMETER | TypeFlag::ETS_ANY | TypeFlag::ETS_NEVER | TypeFlag::ETS_UNION |
         TypeFlag::ETS_ARRAY | TypeFlag::FUNCTION | TypeFlag::ETS_PARTIAL_TYPE_PARAMETER | TypeFlag::ETS_TUPLE |
-        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::GRADUAL_TYPE;
+        TypeFlag::ETS_ENUM | TypeFlag::ETS_READONLY | TypeFlag::ETS_AWAITED | TypeFlag::ETS_RETURN_TYPE_UTILITY;
 
     // Issues
     if (type->IsETSVoidType()) {  // NOTE(vpukhov): #19701 void refactoring
@@ -420,11 +421,6 @@ bool Type::IsETSReferenceType() const
 bool Type::IsETSUnboxableObject() const
 {
     return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE);
-}
-
-bool ETSChecker::IsConstantExpression(ir::Expression *expr, Type *type)
-{
-    return (type->HasTypeFlag(TypeFlag::CONSTANT) && (expr->IsIdentifier() || expr->IsMemberExpression()));
 }
 
 Type *ETSChecker::GetNonConstantType(Type *type)
@@ -531,38 +527,36 @@ Type *ETSChecker::CreateSyntheticTypeFromOverload(varbinder::Variable *const var
     return syntheticFunctionType;
 }
 
-void ETSChecker::IterateInVariableContext(varbinder::Variable *const var)
+SavedCheckerContext ETSChecker::CreateSavedCheckerContext(varbinder::Variable *const var)
 {
     // Before computing the given variables type, we have to make a new checker context frame so that the checking is
     // done in the proper context, and have to enter the scope where the given variable is declared, so reference
     // resolution works properly
-    auto *iter = var->Declaration()->Node()->Parent();
-    while (iter != nullptr) {
+    auto constexpr STATUS = CheckerStatus::NO_OPTS;
+    for (auto *iter = var->Declaration()->Node()->Parent(); iter != nullptr; iter = iter->Parent()) {
         if (iter->IsMethodDefinition()) {
             auto *methodDef = iter->AsMethodDefinition();
             ES2PANDA_ASSERT(methodDef->TsType());
             auto *func = methodDef->Function();
             ES2PANDA_ASSERT(func != nullptr);
-            Context().SetContainingSignature(func->Signature());
-        } else if (iter->IsClassDefinition()) {
+            return SavedCheckerContext(this, STATUS, nullptr, func->Signature());
+        }
+        if (iter->IsClassDefinition()) {
             auto *classDef = iter->AsClassDefinition();
             Type *containingClass {};
-
             if (classDef->TsType() == nullptr) {
-                containingClass = BuildBasicClassProperties(classDef)->MaybeBaseTypeOfGradualType();
+                containingClass = BuildBasicClassProperties(classDef);
                 ResolveDeclaredMembersOfObject(containingClass);
             } else {
-                containingClass = classDef->TsType()->MaybeBaseTypeOfGradualType()->AsETSObjectType();
+                containingClass = classDef->TsType()->AsETSObjectType();
             }
-
             ES2PANDA_ASSERT(classDef->TsType());
             if (!containingClass->IsTypeError()) {
-                Context().SetContainingClass(containingClass->AsETSObjectType());
+                return SavedCheckerContext(this, STATUS, containingClass->AsETSObjectType());
             }
         }
-
-        iter = iter->Parent();
     }
+    return SavedCheckerContext(this, STATUS);
 }
 
 static Type *GetTypeFromVarLikeVariableDeclaration(ETSChecker *checker, varbinder::Variable *const var)
@@ -651,9 +645,8 @@ Type *ETSChecker::GetTypeOfVariable(varbinder::Variable *const var)
         return var->TsType();
     }
 
-    checker::SavedCheckerContext savedContext(this, CheckerStatus::NO_OPTS);
+    checker::SavedCheckerContext savedContext = CreateSavedCheckerContext(var);
     checker::ScopeContext scopeCtx(this, var->GetScope());
-    IterateInVariableContext(var);
 
     return GetTypeFromVariableDeclaration(var);
 }
@@ -806,6 +799,12 @@ bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *t
 
         return true;
     };
+
+    if (typeAliasNode->TypeAnnotation()->IsETSFunctionType() &&
+        typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->IsETSTypeReference()) {
+        isAllowedRerursiveType &= typeAliasDeclarationCheck(
+            typeAliasNode->TypeAnnotation()->AsETSFunctionType()->ReturnType()->AsETSTypeReference()->Part());
+    }
 
     if (typeAliasNode->TypeAnnotation()->IsETSTypeReference()) {
         isAllowedRerursiveType &=
@@ -1444,205 +1443,6 @@ void ETSChecker::CheckUnboxedSourceTypeWithWideningAssignable(TypeRelation *rela
     }
 }
 
-// #22952: optional arrow leftovers
-bool ETSChecker::CheckLambdaAssignable(ir::Expression *param, ir::ScriptFunction *lambda)
-{
-    ES2PANDA_ASSERT(param->IsETSParameterExpression());
-    ir::AstNode *typeAnn = param->AsETSParameterExpression()->Ident()->TypeAnnotation();
-    if (typeAnn == nullptr) {
-        return false;
-    }
-    if (typeAnn->IsETSTypeReference() && !typeAnn->AsETSTypeReference()->TsType()->IsETSArrayType()) {
-        typeAnn = util::Helpers::DerefETSTypeReference(typeAnn);
-    }
-
-    if (!typeAnn->IsETSFunctionType()) {
-        // the surrounding function is made so we can *bypass* the typecheck in the "inference" context,
-        // however the body of the function has to be checked in any case
-        if (typeAnn->IsETSUnionType()) {
-            return CheckLambdaAssignableUnion(typeAnn, lambda);
-        }
-
-        Type *paramType = param->AsETSParameterExpression()->Ident()->TsType();
-        if (Relation()->IsSupertypeOf(paramType, GlobalBuiltinFunctionType())) {
-            lambda->Parent()->Check(this);
-            return true;
-        }
-        return false;
-    }
-
-    ir::ETSFunctionType *calleeType = typeAnn->AsETSFunctionType();
-    return lambda->Params().size() <= calleeType->Params().size();
-}
-
-bool ETSChecker::CheckLambdaInfer(ir::AstNode *typeAnnotation, ir::ArrowFunctionExpression *const arrowFuncExpr,
-                                  Type *const subParameterType)
-{
-    if (typeAnnotation->IsETSTypeReference()) {
-        typeAnnotation = util::Helpers::DerefETSTypeReference(typeAnnotation);
-    }
-
-    if (!typeAnnotation->IsETSFunctionType()) {
-        return false;
-    }
-
-    ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-    auto calleeType = typeAnnotation->AsETSFunctionType();
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    InferTypesForLambda(lambda, calleeType, subParameterType->AsETSFunctionType()->ArrowSignature());
-
-    return true;
-}
-
-bool ETSChecker::CheckLambdaTypeAnnotation(ir::ETSParameterExpression *param,
-                                           ir::ArrowFunctionExpression *const arrowFuncExpr, Type *const parameterType,
-                                           TypeRelationFlag flags)
-{
-    ir::AstNode *typeAnnotation = param->Ident()->TypeAnnotation();
-    if (typeAnnotation->IsETSTypeReference()) {
-        typeAnnotation = util::Helpers::DerefETSTypeReference(typeAnnotation);
-    }
-    auto checkInvocable = [&arrowFuncExpr, &parameterType, this](TypeRelationFlag functionFlags) {
-        Type *const argumentType = arrowFuncExpr->Check(this);
-        functionFlags |= TypeRelationFlag::NO_THROW;
-
-        checker::InvocationContext invocationCtx(Relation(), arrowFuncExpr, argumentType, parameterType,
-                                                 arrowFuncExpr->Start(), std::nullopt, functionFlags);
-        return invocationCtx.IsInvocable();
-    };
-
-    //  process `single` type as usual.
-    if (!typeAnnotation->IsETSUnionType()) {
-        // #22952: infer optional parameter heuristics
-        auto nonNullishParam = param->IsOptional() ? GetNonNullishType(parameterType) : parameterType;
-        ES2PANDA_ASSERT(nonNullishParam != nullptr);
-        if (!nonNullishParam->IsETSFunctionType()) {
-            arrowFuncExpr->Check(this);
-            return true;
-        }
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        return CheckLambdaInfer(typeAnnotation, arrowFuncExpr, nonNullishParam) && checkInvocable(flags);
-    }
-
-    // Preserve actual lambda types
-    ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-    ArenaVector<ir::TypeNode *> lambdaParamTypes {ProgramAllocator()->Adapter()};
-    for (auto *const lambdaParam : lambda->Params()) {
-        lambdaParamTypes.emplace_back(lambdaParam->AsETSParameterExpression()->Ident()->TypeAnnotation());
-    }
-    auto *const lambdaReturnTypeAnnotation = lambda->ReturnTypeAnnotation();
-
-    if (!parameterType->IsETSUnionType() || parameterType->AsETSUnionType()->ConstituentTypes().size() !=
-                                                typeAnnotation->AsETSUnionType()->Types().size()) {
-        Type *const argumentType = arrowFuncExpr->Check(this);
-        return Relation()->IsSupertypeOf(parameterType, argumentType);
-    }
-
-    const auto typeAnnsOfUnion = typeAnnotation->AsETSUnionType()->Types();
-    const auto typeParamOfUnion = parameterType->AsETSUnionType()->ConstituentTypes();
-    for (size_t ix = 0; ix < typeAnnsOfUnion.size(); ++ix) {
-        auto *typeNode = typeAnnsOfUnion[ix];
-        auto *paramNode = typeParamOfUnion[ix];
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        if (CheckLambdaInfer(typeNode, arrowFuncExpr, paramNode) && checkInvocable(flags)) {
-            return true;
-        }
-
-        //  Restore inferring lambda types:
-        for (std::size_t i = 0U; i < lambda->Params().size(); ++i) {
-            if (lambdaParamTypes[i] == nullptr) {
-                lambda->Params()[i]->AsETSParameterExpression()->Ident()->SetTsTypeAnnotation(nullptr);
-            }
-        }
-        if (lambdaReturnTypeAnnotation == nullptr) {
-            lambda->SetReturnTypeAnnotation(nullptr);
-        }
-    }
-
-    return false;
-}
-
-bool ETSChecker::ResolveLambdaArgumentType(Signature *signature, ir::Expression *argument, size_t paramPosition,
-                                           size_t argumentPosition, TypeRelationFlag resolutionFlags)
-{
-    if (!argument->IsArrowFunctionExpression()) {
-        return true;
-    }
-
-    auto arrowFuncExpr = argument->AsArrowFunctionExpression();
-    bool typeValid = true;
-    ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-    // Note: (Issue27688) if lambda is trailing lambda transferred, it must be in recheck.
-    // its type was cleared before the check, so here we need recheck it.
-    if (!NeedTypeInference(lambda) && !lambda->IsTrailingLambda()) {
-        return typeValid;
-    }
-
-    arrowFuncExpr->SetTsType(nullptr);
-    auto *const param =
-        signature->GetSignatureInfo()->params[paramPosition]->Declaration()->Node()->AsETSParameterExpression();
-    Type *const parameterType = signature->Params()[paramPosition]->TsType();
-
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    bool rc = CheckLambdaTypeAnnotation(param, arrowFuncExpr, parameterType, resolutionFlags);
-    if (!rc) {
-        if ((resolutionFlags & TypeRelationFlag::NO_THROW) == 0) {
-            Type *const argumentType = arrowFuncExpr->Check(this);
-            LogError(diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, parameterType, argumentPosition + 1},
-                     arrowFuncExpr->Start());
-        }
-        rc = false;
-    } else if ((lambda->Signature() != nullptr) && !lambda->HasReturnStatement()) {
-        //  Need to check void return type here if there are no return statement(s) in the body.
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        if (!AssignmentContext(Relation(), ProgramAllocNode<ir::Identifier>(ProgramAllocator()), GlobalVoidType(),
-                               lambda->Signature()->ReturnType(), lambda->Start(), std::nullopt,
-                               checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW)
-                 .IsAssignable()) {  // CC-OFF(G.FMT.02-CPP) project code style
-            LogError(diagnostic::ARROW_TYPE_MISMATCH, {GlobalVoidType(), lambda->Signature()->ReturnType()},
-                     lambda->Body()->Start());
-            rc = false;
-        }
-    }
-
-    typeValid &= rc;
-
-    return typeValid;
-}
-
-bool ETSChecker::TrailingLambdaTypeInference(Signature *signature, const ArenaVector<ir::Expression *> &arguments)
-{
-    if (arguments.empty() || signature->GetSignatureInfo()->params.empty()) {
-        return false;
-    }
-    ES2PANDA_ASSERT(arguments.back()->IsArrowFunctionExpression());
-    const size_t lastParamPos = signature->GetSignatureInfo()->params.size() - 1;
-    const size_t lastArgPos = arguments.size() - 1;
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return ResolveLambdaArgumentType(signature, arguments.back(), lastParamPos, lastArgPos, TypeRelationFlag::NONE);
-}
-
-bool ETSChecker::TypeInference(Signature *signature, const ArenaVector<ir::Expression *> &arguments,
-                               TypeRelationFlag inferenceFlags)
-{
-    bool typeConsistent = true;
-    auto const argumentCount = arguments.size();
-    auto const minArity = std::min(signature->ArgCount(), argumentCount);
-
-    for (size_t idx = 0U; idx < minArity; ++idx) {
-        auto const &argument = arguments[idx];
-
-        if (idx == argumentCount - 1 && (inferenceFlags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0) {
-            continue;
-        }
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        const bool valid = ResolveLambdaArgumentType(signature, argument, idx, idx, inferenceFlags);
-        typeConsistent &= valid;
-    }
-
-    return typeConsistent;
-}
-
 // #22951 requires complete refactoring
 bool ETSChecker::IsExtensionETSFunctionType(const checker::Type *type)
 {
@@ -1745,7 +1545,7 @@ void ETSChecker::CheckFunctionOverloadDeclaration(ETSChecker *checker, ir::Overl
 
             PropertySearchFlags searchFlags = PropertySearchFlags::SEARCH_METHOD | PropertySearchFlags::SEARCH_IN_BASE |
                                               PropertySearchFlags::SEARCH_IN_INTERFACES |
-                                              PropertySearchFlags::IS_GETTER;
+                                              PropertySearchFlags::IS_GETTER | PropertySearchFlags::IGNORE_OVERLOAD;
             auto *variable =
                 checker->ResolveOverloadReference(ident->AsIdentifier(), classType->AsETSObjectType(), searchFlags);
             if (variable == nullptr) {

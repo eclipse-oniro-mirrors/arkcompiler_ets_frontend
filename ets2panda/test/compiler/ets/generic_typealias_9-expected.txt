@@ -183,8 +183,8 @@
           "program": "generic_typealias_9.ets"
         },
         "end": {
-          "line": 17,
-          "column": 9,
+          "line": 15,
+          "column": 53,
           "program": "generic_typealias_9.ets"
         }
       }

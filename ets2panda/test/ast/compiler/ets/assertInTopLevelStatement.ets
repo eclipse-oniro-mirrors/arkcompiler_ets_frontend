@@ -27,4 +27,3 @@ let promise2 = promise1.catch((value: string): string => {
     arktest.assertEQ(result, "hello");
     return "bye";
 })
-

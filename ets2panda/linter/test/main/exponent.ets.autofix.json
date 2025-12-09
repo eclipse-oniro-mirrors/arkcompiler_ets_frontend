@@ -25,48 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 11,
-            "endLine": 19,
-            "endColumn": 13,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "Math.pow(5, 2)",
-                    "start": 656,
-                    "end": 662,
-                    "line": 19,
-                    "column": 11,
-                    "endLine": 19,
-                    "endColumn": 13
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 3,
-            "endLine": 22,
-            "endColumn": 6,
-            "problem": "ExponentOp",
-            "autofix": [
-                {
-                    "replacementText": "k = Math.pow(k, 2)",
-                    "start": 681,
-                    "end": 688,
-                    "line": 22,
-                    "column": 3,
-                    "endLine": 22,
-                    "endColumn": 6
-                }
-            ],
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 5,
             "endLine": 25,

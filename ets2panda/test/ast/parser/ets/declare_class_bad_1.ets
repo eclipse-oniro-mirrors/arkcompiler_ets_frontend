@@ -18,6 +18,7 @@ declare class A {
     /* @@ label */foo(p: string): double;
 }
 
-/* @@@ label Error SyntaxError: Initializers are not allowed in ambient contexts.  */
-/* @@? 17:18 Error TypeError: Initializers are not allowed in ambient contexts: f1 */
-/* @@? 17:18 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
+
+/* @@? 17:18 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: f1 */
+/* @@? 17:18 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@@ label Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */

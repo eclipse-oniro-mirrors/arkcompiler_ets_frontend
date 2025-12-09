@@ -19,7 +19,7 @@ flags: [dynamic-ast]
 
 import { A, I, Animal } from "dynamic_import_tests/modules/module"
 
-let a = /* @@ label */new Animal() // CTE
+let a = new Animal() // CTE
 
 class Bird extends Animal /* @@ label1 */{ // OK
     move(): void { }
@@ -33,10 +33,10 @@ class C extends A /* @@ label2 */{
 let c = new C()
 c.f1 // ok
 C.f2 // ok
-c./* @@ label3 */f3 // cte
+c.f3 // cte
 c.foo(123) // ok
 C.bar() // ok
-c./* @@ label4 */foa() //cte
+c.foa() //cte
 
 class C1 implements I /* @@ label5 */{ // ok
     s: string
@@ -50,16 +50,16 @@ class C1 implements I /* @@ label5 */{ // ok
 
 function foo(i: I) {
     i.s // ok
-    i./* @@ label6 */n // cte
+    i.n // cte
     i.f1("") // ok
-    i./* @@ label7 */f3() // cte
+    i.f3() // cte
 }
 
-/* @@@ label Error TypeError: Animal is abstract therefore cannot be instantiated. */
-/* @@@ label1 Error TypeError: class Bird can not extends class Animal which is from dynamic declaration file. */
-/* @@@ label2 Error TypeError: class C can not extends class A which is from dynamic declaration file. */
-/* @@@ label3 Error TypeError: Property 'f3' does not exist on type 'C' */
-/* @@@ label4 Error TypeError: Property 'foa' does not exist on type 'C' */
-/* @@@ label5 Error TypeError: class C1 can not implements interface I which is from dynamic declaration file. */
-/* @@@ label6 Error TypeError: Property 'n' does not exist on type 'I' */
-/* @@@ label7 Error TypeError: Property 'f3' does not exist on type 'I' */
+/* @@? 22:9 Error Semantic error ESE0052: Animal is abstract therefore cannot be instantiated. */
+/* @@? 24:27 Error Semantic error ESE24143: class Bird can not extends class Animal which is from dynamic declaration file. */
+/* @@? 28:19 Error Semantic error ESE24143: class C can not extends class A which is from dynamic declaration file. */
+/* @@? 36:3 Error Semantic error ESE0087: Property 'f3' does not exist on type 'C' */
+/* @@? 39:3 Error Semantic error ESE0087: Property 'foa' does not exist on type 'C' */
+/* @@? 41:23 Error Semantic error ESE24143: class C1 can not implements interface I which is from dynamic declaration file. */
+/* @@? 53:7 Error Semantic error ESE0087: Property 'n' does not exist on type 'I' */
+/* @@? 55:7 Error Semantic error ESE0087: Property 'f3' does not exist on type 'I' */

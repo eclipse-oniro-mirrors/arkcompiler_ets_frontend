@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "Fatal error F0022: Failed to emit binary data: 'ets/annotation/Module' is already defined.\n",
+    "stderr": ""
+}

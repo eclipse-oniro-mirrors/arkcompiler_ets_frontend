@@ -31,7 +31,8 @@ public:
 
     [[nodiscard]] bool HasAnnotations() const noexcept
     {
-        return annotations_ != nullptr && !annotations_->empty();
+        auto *node = AstNode::GetHistoryNodeAs<AnnotationAllowed<T>>();
+        return node->annotations_ != nullptr && !node->annotations_->empty();
     }
 
     void EmplaceAnnotation(AnnotationUsage *source)

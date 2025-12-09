@@ -193,7 +193,7 @@
                             "loc": {
                               "start": {
                                 "line": 19,
-                                "column": 26,
+                                "column": 15,
                                 "program": "tryDefaultCatches.ets"
                               },
                               "end": {
@@ -206,52 +206,6 @@
                           "param": {
                             "type": "Identifier",
                             "name": "e",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Exception",
-                                  "loc": {
-                                    "start": {
-                                      "line": 19,
-                                      "column": 15,
-                                      "program": "tryDefaultCatches.ets"
-                                    },
-                                    "end": {
-                                      "line": 19,
-                                      "column": 24,
-                                      "program": "tryDefaultCatches.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 19,
-                                    "column": 15,
-                                    "program": "tryDefaultCatches.ets"
-                                  },
-                                  "end": {
-                                    "line": 19,
-                                    "column": 24,
-                                    "program": "tryDefaultCatches.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 19,
-                                  "column": 15,
-                                  "program": "tryDefaultCatches.ets"
-                                },
-                                "end": {
-                                  "line": 19,
-                                  "column": 24,
-                                  "program": "tryDefaultCatches.ets"
-                                }
-                              }
-                            },
                             "loc": {
                               "start": {
                                 "line": 19,
@@ -277,53 +231,6 @@
                               "program": "tryDefaultCatches.ets"
                             }
                           }
-                        },
-                        {
-                          "type": "CatchClause",
-                          "body": {
-                            "type": "BlockStatement",
-                            "statements": [],
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 15,
-                                "program": "tryDefaultCatches.ets"
-                              },
-                              "end": {
-                                "line": 23,
-                                "column": 4,
-                                "program": "tryDefaultCatches.ets"
-                              }
-                            }
-                          },
-                          "param": {
-                            "type": "Identifier",
-                            "name": "e",
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 12,
-                                "program": "tryDefaultCatches.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 13,
-                                "program": "tryDefaultCatches.ets"
-                              }
-                            }
-                          },
-                          "loc": {
-                            "start": {
-                              "line": 21,
-                              "column": 5,
-                              "program": "tryDefaultCatches.ets"
-                            },
-                            "end": {
-                              "line": 23,
-                              "column": 4,
-                              "program": "tryDefaultCatches.ets"
-                            }
-                          }
                         }
                       ],
                       "finalizer": null,
@@ -334,7 +241,7 @@
                           "program": "tryDefaultCatches.ets"
                         },
                         "end": {
-                          "line": 23,
+                          "line": 21,
                           "column": 4,
                           "program": "tryDefaultCatches.ets"
                         }
@@ -348,7 +255,7 @@
                       "program": "tryDefaultCatches.ets"
                     },
                     "end": {
-                      "line": 24,
+                      "line": 22,
                       "column": 2,
                       "program": "tryDefaultCatches.ets"
                     }
@@ -361,7 +268,7 @@
                     "program": "tryDefaultCatches.ets"
                   },
                   "end": {
-                    "line": 24,
+                    "line": 22,
                     "column": 2,
                     "program": "tryDefaultCatches.ets"
                   }
@@ -374,7 +281,7 @@
                   "program": "tryDefaultCatches.ets"
                 },
                 "end": {
-                  "line": 24,
+                  "line": 22,
                   "column": 2,
                   "program": "tryDefaultCatches.ets"
                 }
@@ -388,7 +295,7 @@
                 "program": "tryDefaultCatches.ets"
               },
               "end": {
-                "line": 24,
+                "line": 22,
                 "column": 2,
                 "program": "tryDefaultCatches.ets"
               }
@@ -429,7 +336,7 @@
       "program": "tryDefaultCatches.ets"
     },
     "end": {
-      "line": 25,
+      "line": 23,
       "column": 1,
       "program": "tryDefaultCatches.ets"
     }

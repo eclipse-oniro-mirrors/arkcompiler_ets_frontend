@@ -17,4 +17,5 @@ class A {
   constructor() 
 }
 
-/* @@? 17:14 Error TypeError: Only abstract or native methods can't have body.  */
+
+/* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */

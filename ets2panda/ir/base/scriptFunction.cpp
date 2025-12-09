@@ -20,8 +20,8 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "mem/arena_allocator.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 
@@ -173,7 +173,7 @@ ScriptFunction::ScriptFunction(ArenaAllocator *allocator, ScriptFunctionData &&d
         typeParams->SetParent(this);
     }
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }
@@ -378,6 +378,10 @@ void ScriptFunction::DumpBody(ir::SrcDumper *dumper) const
             dumper->Endl();
         }
         dumper->Add("}");
+    } else if (body_->IsObjectExpression()) {
+        dumper->Add(" (");
+        body_->Dump(dumper);
+        dumper->Add(")");
     } else {
         dumper->Add(" ");
         body_->Dump(dumper);

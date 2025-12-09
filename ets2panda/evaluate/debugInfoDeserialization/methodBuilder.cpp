@@ -15,9 +15,9 @@
 
 #include "evaluate/debugInfoDeserialization/methodBuilder.h"
 #include "checker/ETSchecker.h"
-#include "libpandafile/file-inl.h"
-#include "libpandafile/method_data_accessor-inl.h"
-#include "libpandafile/proto_data_accessor-inl.h"
+#include "libarkfile/file-inl.h"
+#include "libarkfile/method_data_accessor-inl.h"
+#include "libarkfile/proto_data_accessor-inl.h"
 #include "evaluate/helpers.h"
 
 namespace ark::es2panda::evaluate {

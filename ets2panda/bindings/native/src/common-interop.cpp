@@ -20,8 +20,6 @@
 #include <map>
 #include <securec.h>
 
-// NOLINTBEGIN
-
 #ifdef TS_INTEROP_MODULE
 #undef TS_INTEROP_MODULE
 #endif
@@ -31,6 +29,7 @@
 #include "convertors-napi.h"
 #include "common-interop.h"
 
+// NOLINTBEGIN(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 #if TS_INTEROP_PROFILER
 #include "profiler.h"
 
@@ -43,34 +42,33 @@ using std::string;
 // Callback dispatcher MOVED to convertors-napi.cc.
 // Let's keep platform-specific parts of the code together
 
-typedef void (*HoldT)(KInt);
+using HoldT = void (*)(KInt);
 
 KInt impl_getTypeOfVariant(KNativePointer varPtr)
 {
     auto *var = reinterpret_cast<std::variant<int, std::string> *>(varPtr);
     if (std::get_if<int>(var) != nullptr) {
         return 0;
-    } else {
-        return 1;
     }
+    return 1;
 }
 TS_INTEROP_1(getTypeOfVariant, KInt, KNativePointer)
 
-KNativePointer impl_getStringFromVariant(KNativePointer varPtr)
+KNativePointer impl_GetStringFromVariant(KNativePointer varPtr)
 {
     auto *var = reinterpret_cast<std::variant<int, std::string> *>(varPtr);
     auto *res = new std::string(*std::get_if<std::string>(var));
     return res;
 }
-TS_INTEROP_1(getStringFromVariant, KNativePointer, KNativePointer)
+TS_INTEROP_1(GetStringFromVariant, KNativePointer, KNativePointer)
 
-KInt impl_getIntFromVariant(KNativePointer varPtr)
+KInt impl_GetIntFromVariant(KNativePointer varPtr)
 {
     auto *var = reinterpret_cast<std::variant<int, std::string> *>(varPtr);
     auto res = *std::get_if<int>(var);
     return res;
 }
-TS_INTEROP_1(getIntFromVariant, KInt, KNativePointer)
+TS_INTEROP_1(GetIntFromVariant, KInt, KNativePointer)
 
 KInteropBuffer impl_MaterializeBuffer(KNativePointer data, KLong length, KInt resourceId, KNativePointer holdPtr,
                                       KNativePointer releasePtr)
@@ -106,25 +104,25 @@ TS_INTEROP_V3(StringData, KNativePointer, KByte *, KUInt)
 
 KNativePointer impl_StringMake(const KStringPtr &str)
 {
-    return new string(str.c_str());
+    return new string(str.CStr());
 }
 TS_INTEROP_1(StringMake, KNativePointer, KStringPtr)
 
 // For slow runtimes w/o fast encoders.
 KInt impl_ManagedStringWrite(const KStringPtr &str, KByte *buffer, KInt offset)
 {
-    memcpy_s(buffer + offset, str.length() + 1, str.c_str(), str.length() + 1);
-    return str.length() + 1;
+    memcpy_s(buffer + offset, str.Length() + 1, str.CStr(), str.Length() + 1);
+    return str.Length() + 1;
 }
 TS_INTEROP_3(ManagedStringWrite, KInt, KStringPtr, KByte *, KInt)
 
-void stringFinalizer(string *ptr)
+void StringFinalizer(string *ptr)
 {
     delete ptr;
 }
 KNativePointer impl_GetStringFinalizer()
 {
-    return fnPtr<string>(stringFinalizer);
+    return FnPtr<string>(StringFinalizer);
 }
 TS_INTEROP_0(GetStringFinalizer, KNativePointer)
 
@@ -152,7 +150,11 @@ TS_INTEROP_2(GetPtrVectorElement, KNativePointer, KNativePointer, KInt)
 
 inline KUInt UnpackUInt(const KByte *bytes)
 {
-    return (bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24));
+    const KUInt oneByte = 8U;
+    const KUInt twoByte = 16U;
+    const KUInt threeByte = 24U;
+    return (static_cast<KUInt>(bytes[0]) | (static_cast<KUInt>(bytes[1]) << oneByte) |
+            (static_cast<KUInt>(bytes[2]) << twoByte) | (static_cast<KUInt>(bytes[3]) << threeByte));
 }
 
 std::vector<KStringPtr> MakeStringVector(KStringArray strArray)
@@ -165,7 +167,7 @@ std::vector<KStringPtr> MakeStringVector(KStringArray strArray)
     size_t offset = sizeof(KUInt);
     for (KUInt i = 0; i < arraySize; ++i) {
         int len = UnpackUInt(strArray + offset);
-        res[i].assign((const char *)(strArray + offset + sizeof(KUInt)), len);
+        res[i].Assign(reinterpret_cast<const char *>(strArray + offset + sizeof(KUInt)), len);
         offset += len + sizeof(KUInt);
     }
     return res;
@@ -175,25 +177,24 @@ std::vector<KStringPtr> MakeStringVector(KNativePointerArray arr, KInt length)
 {
     if (arr == nullptr) {
         return std::vector<KStringPtr>(0);
-    } else {
-        std::vector<KStringPtr> res(length);
-        char **strings = reinterpret_cast<char **>(arr);
-        for (KInt i = 0; i < length; ++i) {
-            const char *str = reinterpret_cast<const char *>(strings[i]);
-            res[i].assign(str);
-        }
-        return res;
     }
+    std::vector<KStringPtr> res(length);
+    char **strings = reinterpret_cast<char **>(arr);
+    for (KInt i = 0; i < length; ++i) {
+        const char *str = reinterpret_cast<const char *>(strings[i]);
+        res[i].Assign(str);
+    }
+    return res;
 }
 
-typedef KInt (*LoadVirtualMachine_t)(KInt vmKind, const char *classPath, const char *libraryPath,
+using LoadVirtualMachineT = KInt (*)(KInt vmKind, const char *classPath, const char *libraryPath,
                                      void *currentVMContext);
-typedef KNativePointer (*StartApplication_t)(const char *appUrl, const char *appParams);
-typedef KBoolean (*RunApplication_t)(const KInt arg0, const KInt arg1);
-typedef void (*EmitEventT)(const KInt type, const KInt target, const KInt arg0, const KInt arg1);
+using StartApplicationT = KNativePointer (*)(const char *appUrl, const char *appParams);
+using RunApplicationT = KBoolean (*)(const KInt arg0, const KInt arg1);
+using EmitEventT = void (*)(const KInt type, const KInt target, const KInt arg0, const KInt arg1);
 
 static CallbackCallert g_callbackCaller = nullptr;
-void setCallbackCaller(CallbackCallert callbackCaller)
+void SetCallbackCaller(CallbackCallert callbackCaller)
 {
     g_callbackCaller = callbackCaller;
 }
@@ -207,14 +208,14 @@ void impl_CallCallback(KInt callbackKind, KByte *args, KInt argsSize)
 TS_INTEROP_V3(CallCallback, KInt, KByte *, KInt)
 
 static CallbackCallerSynct g_callbackCallerSync = nullptr;
-void setCallbackCallerSync(CallbackCallerSynct callbackCallerSync)
+void SetCallbackCallerSync(CallbackCallerSynct callbackCallerSync)
 {
     g_callbackCallerSync = callbackCallerSync;
 }
 
 void impl_CallCallbackSync(KVMContext vmContext, KInt callbackKind, KByte *args, KInt argsSize)
 {
-    if (g_callbackCallerSync) {
+    if (g_callbackCallerSync != nullptr) {
         g_callbackCallerSync(vmContext, callbackKind, args, argsSize);
     }
 }
@@ -232,9 +233,13 @@ void impl_CallCallbackResourceReleaser(KNativePointer releaser, KInt resourceId)
 }
 TS_INTEROP_V2(CallCallbackResourceReleaser, KNativePointer, KInt)
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+
 // CC-OFFNXT(G.EXP.01) false positive
 #define __QUOTE(x) #x
 #define QUOTE(x) __QUOTE(x)
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #ifndef INTEROP_LIBRARY_NAME
 #error "INTEROP_LIBRARY_NAME must be defined"
@@ -242,76 +247,79 @@ TS_INTEROP_V2(CallCallbackResourceReleaser, KNativePointer, KInt)
 
 void impl_NativeLog(const KStringPtr &str)
 {
-    fprintf(stdout, "%s: %s\n", QUOTE(INTEROP_LIBRARY_NAME), str.c_str());
-    fflush(stdout);
+    std::cout << QUOTE(INTEROP_LIBRARY_NAME) << ": " << str.CStr() << std::endl;
 }
 TS_INTEROP_V1(NativeLog, KStringPtr)
 
-int32_t callCallback(KVMContext context, int32_t methodId, uint8_t *argsData, int32_t argsLength)
+int32_t CallCallback(KVMContext context, int32_t methodId, uint8_t *argsData, int32_t argsLength)
 {
     TS_INTEROP_CALL_INT(context, methodId, argsLength, argsData);
     return 0;
 }
 
-void resolveDeferred(KVMDeferred *deferred, [[maybe_unused]] uint8_t *argsData, [[maybe_unused]] int32_t argsLength)
+void ResolveDeferred(KVMDeferred *deferred, [[maybe_unused]] uint8_t *argsData, [[maybe_unused]] int32_t argsLength)
 {
-    napi_acquire_threadsafe_function((napi_threadsafe_function)deferred->handler);
-    auto status =
-        napi_call_threadsafe_function((napi_threadsafe_function)deferred->handler, deferred, napi_tsfn_nonblocking);
-    if (status != napi_ok)
-        LOGE("cannot call thread-safe function; status=%d", status);
-    napi_release_threadsafe_function((napi_threadsafe_function)deferred->handler, napi_tsfn_release);
+    napi_acquire_threadsafe_function(static_cast<napi_threadsafe_function>(deferred->handler));
+    auto status = napi_call_threadsafe_function(static_cast<napi_threadsafe_function>(deferred->handler), deferred,
+                                                napi_tsfn_nonblocking);
+    if (status != napi_ok) {
+        LogE("cannot call thread-safe function; status=", status);
+    }
+    napi_release_threadsafe_function(static_cast<napi_threadsafe_function>(deferred->handler), napi_tsfn_release);
 }
 
-void rejectDeferred(KVMDeferred *deferred, [[maybe_unused]] const char *message)
+void RejectDeferred(KVMDeferred *deferred, [[maybe_unused]] const char *message)
 {
-    napi_release_threadsafe_function((napi_threadsafe_function)deferred->handler, napi_tsfn_release);
+    napi_release_threadsafe_function(static_cast<napi_threadsafe_function>(deferred->handler), napi_tsfn_release);
     delete deferred;
 }
 
-void resolveDeferredImpl(napi_env env, [[maybe_unused]] napi_value js_callback, KVMDeferred *deferred,
+void ResolveDeferredImpl(napi_env env, [[maybe_unused]] napi_value jsCallback, KVMDeferred *deferred,
                          [[maybe_unused]] void *data)
 {
     napi_value undefined = nullptr;
     napi_get_undefined(env, &undefined);
-    auto status = napi_resolve_deferred(env, (napi_deferred)deferred->context, undefined);
-    if (status != napi_ok)
-        LOGE("cannot resolve deferred; status=%d", status);
+    auto status = napi_resolve_deferred(env, reinterpret_cast<napi_deferred>(deferred->context), undefined);
+    if (status != napi_ok) {
+        LogE("cannot resolve deferred; status=", status);
+    }
     delete deferred;
 }
 
-[[maybe_unused]] static void releaseDeferred(KVMDeferred *deferred)
+[[maybe_unused]] static void ReleaseDeferred(KVMDeferred *deferred)
 {
     delete deferred;
 }
 
 KVMDeferred *CreateDeferred(KVMContext vmContext, KVMObjectHandle *promiseHandle)
 {
-    KVMDeferred *deferred = new KVMDeferred();
-    deferred->resolve = resolveDeferred;
-    deferred->reject = rejectDeferred;
+    auto *deferred = new KVMDeferred();
+    deferred->resolve = ResolveDeferred;
+    deferred->reject = RejectDeferred;
     // NOTE(khil): mb move\remove to interop!
-    napi_env env = (napi_env)vmContext;
+    auto env = reinterpret_cast<napi_env>(vmContext);
     napi_value promise;
     napi_value resourceName;
     size_t napiStrLen = 5;
     napi_create_string_utf8(env, "Async", napiStrLen, &resourceName);
-    auto status = napi_create_promise(env, (napi_deferred *)&deferred->context, &promise);
-    if (status != napi_ok)
-        LOGE("cannot make a promise; status=%d", status);
+    auto status = napi_create_promise(env, reinterpret_cast<napi_deferred *>(&deferred->context), &promise);
+    if (status != napi_ok) {
+        LogE("cannot make a promise; status=", status);
+    }
     status = napi_create_threadsafe_function(env, nullptr, nullptr, resourceName, 0, 1, nullptr, nullptr, deferred,
-                                             (napi_threadsafe_function_call_js)resolveDeferredImpl,
-                                             (napi_threadsafe_function *)&deferred->handler);
-    if (status != napi_ok)
-        LOGE("cannot make threadsafe function; status=%d", status);
-    *promiseHandle = (KVMObjectHandle)promise;
+                                             reinterpret_cast<napi_threadsafe_function_call_js>(ResolveDeferredImpl),
+                                             reinterpret_cast<napi_threadsafe_function *>(&deferred->handler));
+    if (status != napi_ok) {
+        LogE("cannot make threadsafe function; status=", status);
+    }
+    *promiseHandle = reinterpret_cast<KVMObjectHandle>(promise);
     return deferred;
 }
 
 // Allocate, so CTX versions.
 KStringPtr impl_Utf8ToString([[maybe_unused]] KVMContext vmContext, KByte *data, KInt offset, KInt length)
 {
-    KStringPtr result((const char *)(data + offset), length, false);
+    KStringPtr result(reinterpret_cast<const char *>(data + offset), length, false);
     return result;
 }
 TS_INTEROP_CTX_3(Utf8ToString, KStringPtr, KByte *, KInt, KInt)
@@ -328,9 +336,9 @@ KInteropReturnBuffer impl_RawReturnData([[maybe_unused]] KVMContext vmContext, K
 {
     void *data = new int8_t[v1];
     memset_s(data, v2, v1, v2);
-    KInteropReturnBuffer buffer = {v1, data, [](KNativePointer ptr, KInt) { delete[](int8_t *) ptr; }};
+    KInteropReturnBuffer buffer = {v1, data,
+                                   [](KNativePointer ptr, KInt) { delete[] reinterpret_cast<int8_t *>(ptr); }};
     return buffer;
 }
 TS_INTEROP_CTX_2(RawReturnData, KInteropReturnBuffer, KInt, KInt)
-
-// NOLINTEND
+// NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic)

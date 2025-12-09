@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,5 @@ interface A {
     [x: string]: boolean,
     /* @@ label */a: string;
 }
-/* @@@ label Error TypeError: Property 'a' of type 'string' is not assignable to string index type 'boolean'.  */
+
+/* @@@ label Error Semantic error ESE0327: Property 'a' of type 'string' is not assignable to string index type 'boolean'. */

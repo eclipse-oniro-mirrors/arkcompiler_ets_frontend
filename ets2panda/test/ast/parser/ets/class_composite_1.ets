@@ -17,5 +17,6 @@ function main() : void {
     let x : boolean = {y: false}.y
 }
 
-/* @@? 17:9 Error TypeError: Class composite must be constructed separately before referring their members. */
-/* @@? 17:23 Error TypeError: need to specify target type for class composite */
+
+/* @@? 17:9 Error Semantic error ESE0151: Class composite must be constructed separately before referring their members. */
+/* @@? 17:23 Error Semantic error ESE0062: need to specify target type for class composite */

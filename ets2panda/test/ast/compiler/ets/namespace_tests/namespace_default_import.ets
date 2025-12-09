@@ -17,4 +17,4 @@ import A from "./src03"
 
 A.foo()
 
-/* @@? 18:3 Error TypeError: 'foo' is not exported in 'A'  */
+/* @@? 18:3 Error Semantic error ESE0206: 'foo' is not exported in 'A' */

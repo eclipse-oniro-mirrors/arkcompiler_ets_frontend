@@ -24,7 +24,8 @@ function main() : void {
     let x2 = 1, y2 = 2
 }
 
-/* @@? 19:1 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 19:1 Error TypeError: This expression is not callable.  */
-/* @@? 23:5 Error TypeError: Annotation missing '@' symbol before annotation name.  */
-/* @@? 23:5 Error TypeError: This expression is not callable.  */
+
+/* @@? 19:1 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 19:1 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 23:5 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */
+/* @@? 23:5 Error Semantic error ESE0289: This expression is not callable. */

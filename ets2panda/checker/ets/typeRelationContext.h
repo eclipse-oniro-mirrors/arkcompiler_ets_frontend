@@ -17,6 +17,8 @@
 #define ES2PANDA_COMPILER_CHECKER_ETS_TYPE_RELATION_CONTEXT_H
 
 #include "checker/ETSchecker.h"
+#include "checker/types/typeRelation.h"
+#include "ir/expression.h"
 
 namespace ark::es2panda::checker {
 class ETSChecker;
@@ -122,6 +124,7 @@ public:
             if ((initialFlags & TypeRelationFlag::NO_THROW) == 0) {
                 relation->RaiseError(diag->kind, diag->params, pos);
             }
+            hasError_ = true;
             return;
         }
 
@@ -133,9 +136,15 @@ public:
         return invocable_;
     }
 
+    bool HasError() const
+    {
+        return hasError_;
+    }
+
 private:
     TypeRelationFlag flags_ = TypeRelationFlag::NONE;
     bool invocable_ {false};
+    bool hasError_ {false};
 };
 
 class ConstraintCheckScope {
@@ -209,6 +218,25 @@ private:
 
     ETSChecker *checker_;
     Type *result_ {};
+};
+
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
+class TypeRelationContext {
+public:
+    TypeRelationContext(ETSChecker *checker, ir::Expression *node, TypeRelationFlag flags) : checker_(checker)
+    {
+        checker_->Relation()->SetNode(node);
+        checker_->Relation()->SetFlags(flags);
+    }
+
+    ~TypeRelationContext()
+    {
+        checker_->Relation()->SetNode(nullptr);
+        checker_->Relation()->SetFlags(TypeRelationFlag::NONE);
+    }
+
+private:
+    ETSChecker *checker_;
 };
 
 }  // namespace ark::es2panda::checker

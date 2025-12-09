@@ -1,0 +1,44 @@
+{
+    "1": [
+        {
+            "fileName": "ExtractConstant3.ets",
+            "textChanges": [
+                {
+                    "span": {
+                        "start": 675,
+                        "length": 10
+                    },
+                    "newText": "const EXTRACTED_VAL = \"x + y = \";"
+                }
+            ]
+        }
+    ],
+    "2": [
+        {
+            "fileName": "ExtractFunction4.ets",
+            "textChanges": [
+                {
+                    "span": {
+                        "start": 675,
+                        "length": 20
+                    },
+                    "newText": "function extractedFunction1() {\n    return \"x + y = \" + (x + y);\n}\n\n"
+                }
+            ]
+        }
+    ],
+    "3": [
+        {
+            "fileName": "ExtractInterface.ets",
+            "textChanges": [
+                {
+                    "span": {
+                        "start": 640,
+                        "length": 24
+                    },
+                    "newText": "interface ExtractedInterface { a: number; b: string }\n\n"
+                }
+            ]
+        }
+    ]
+}

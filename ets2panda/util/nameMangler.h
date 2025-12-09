@@ -18,9 +18,11 @@
 
 #include <string>
 #include "ustring.h"
-#include <mutex>
 
 namespace ark::es2panda::util {
+
+inline constexpr auto *LAMBDA_CLASS_PREFIX = "%%lambda-";
+
 class NameMangler {
 public:
     enum LangFeatureType {
@@ -47,6 +49,8 @@ public:
     std::string CreateMangledNameForUnionProperty(const std::string &propTypeName);
     std::string CreateMangledNameForAnnotation(const std::string &baseName, const std::string &annotationName);
     std::string AppendToAnnotationName(const std::string &annotationName, const std::string &secondPart);
+
+    std::string GetOriginalClassNameFromPartial(const std::string &partialName);
 
 private:
     NameMangler() = default;

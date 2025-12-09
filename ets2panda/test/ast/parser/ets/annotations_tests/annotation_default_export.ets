@@ -15,4 +15,5 @@
 
 export default @/* @@ label */interface MyAnno {}
 
-/* @@@ label Error SyntaxError: Can not export annotation default.  */
+
+/* @@@ label Error Syntax error ESY0042: Can not export annotation default. */

@@ -20,4 +20,5 @@ function Point(): int {
 }
 
 //Throw error: Class already declared.
-/* @@@ label Error TypeError: Class 'Point' is already defined with different type.  */
+
+/* @@@ label Error Semantic error ESE0350: Class 'Point' is already defined with different type. */

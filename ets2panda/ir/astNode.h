@@ -23,6 +23,11 @@
 #include "ir/visitor/AstVisitor.h"
 #include "lexer/token/sourceLocation.h"
 #include "util/es2pandaMacros.h"
+#include "libarkbase/utils/bit_field.h"
+
+namespace ark::es2panda::public_lib {
+struct Context;
+}  // namespace ark::es2panda::public_lib
 
 namespace ark::es2panda::public_lib {
 struct Context;
@@ -139,8 +144,18 @@ AST_NODE_REINTERPRET_MAPPING(DECLARE_CLASSES)
 
 class AstNode {
 public:
+#ifndef NDEBUG
     explicit AstNode(AstNodeType type) : type_(type) {};
     explicit AstNode(AstNodeType type, ModifierFlags flags) : flags_(flags), type_(type) {};
+#else
+    explicit AstNode(AstNodeType type)
+        : bitFields_(FlagsField::Encode(0) | AstNodeFlagsField::Encode(0) |
+                     TypeField::Encode(static_cast<uint64_t>(type))) {};
+    explicit AstNode(AstNodeType type, ModifierFlags flags)
+        : bitFields_(FlagsField::Encode(static_cast<uint64_t>(flags)) | AstNodeFlagsField::Encode(0) |
+                     TypeField::Encode(static_cast<uint64_t>(type))) {};
+#endif
+
     virtual ~AstNode() = default;
 
     AstNode() = delete;
@@ -152,27 +167,28 @@ public:
     }
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define DECLARE_IS_CHECKS(nodeType, className)                                                   \
-    bool Is##className() const                                                                   \
-    {                                                                                            \
-        /* CC-OFFNXT(G.PRE.02) name part*/                                                       \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */     \
-        return GetHistoryNode()->type_ == AstNodeType::nodeType; /* CC-OFF(G.PRE.02) name part*/ \
+#define DECLARE_IS_CHECKS(nodeType, className)                                               \
+    bool Is##className() const                                                               \
+    {                                                                                        \
+        /* CC-OFFNXT(G.PRE.02) name part*/                                                   \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
+        return Type() == AstNodeType::nodeType; /* CC-OFF(G.PRE.02) name part*/              \
     }
     AST_NODE_MAPPING(DECLARE_IS_CHECKS)
 #undef DECLARE_IS_CHECKS
 
+/* CC-OFFNXT(G.PRE.06) solid logic */
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define DECLARE_IS_CHECKS(nodeType1, nodeType2, baseClass, reinterpretClass)                      \
-    bool Is##baseClass() const                                                                    \
-    {                                                                                             \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */      \
-        return GetHistoryNode()->type_ == AstNodeType::nodeType1; /* CC-OFF(G.PRE.02) name part*/ \
-    }                                                                                             \
-    bool Is##reinterpretClass() const                                                             \
-    {                                                                                             \
-        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */      \
-        return GetHistoryNode()->type_ == AstNodeType::nodeType2; /* CC-OFF(G.PRE.02) name part*/ \
+#define DECLARE_IS_CHECKS(nodeType1, nodeType2, baseClass, reinterpretClass)                 \
+    bool Is##baseClass() const                                                               \
+    {                                                                                        \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
+        return Type() == AstNodeType::nodeType1; /* CC-OFF(G.PRE.02) name part*/             \
+    }                                                                                        \
+    bool Is##reinterpretClass() const                                                        \
+    {                                                                                        \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed */ \
+        return Type() == AstNodeType::nodeType2; /* CC-OFF(G.PRE.02) name part*/             \
     }
     AST_NODE_REINTERPRET_MAPPING(DECLARE_IS_CHECKS)
 #undef DECLARE_IS_CHECKS
@@ -334,7 +350,11 @@ public:
 
     [[nodiscard]] AstNodeType Type() const noexcept
     {
+#ifndef NDEBUG
         return GetHistoryNode()->type_;
+#else
+        return static_cast<AstNodeType>(TypeField::Decode(GetHistoryNode()->bitFields_));
+#endif
     }
 
     [[nodiscard]] AstNode *Parent() noexcept
@@ -490,18 +510,45 @@ public:
 
     [[nodiscard]] ModifierFlags Modifiers() noexcept
     {
+#ifndef NDEBUG
         return GetHistoryNode()->flags_;
+#else
+        return static_cast<ModifierFlags>(FlagsField::Decode(GetHistoryNode()->bitFields_));
+#endif
     }
 
     [[nodiscard]] ModifierFlags Modifiers() const noexcept
     {
+#ifndef NDEBUG
         return GetHistoryNode()->flags_;
+#else
+        return static_cast<ModifierFlags>(FlagsField::Decode(GetHistoryNode()->bitFields_));
+#endif
     }
 
     [[nodiscard]] bool HasExportAlias() const noexcept;
+
+    [[nodiscard]] AstNodeFlags Flags() noexcept
+    {
+#ifndef NDEBUG
+        return GetHistoryNode()->astNodeFlags_;
+#else
+        return static_cast<AstNodeFlags>(AstNodeFlagsField::Decode(GetHistoryNode()->bitFields_));
+#endif
+    }
+
+    [[nodiscard]] AstNodeFlags Flags() const noexcept
+    {
+#ifndef NDEBUG
+        return GetHistoryNode()->astNodeFlags_;
+#else
+        return static_cast<AstNodeFlags>(AstNodeFlagsField::Decode(GetHistoryNode()->bitFields_));
+#endif
+    }
+#ifndef NDEBUG
     // CC-OFFNXT(G.PRE.06) solid logic
     // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define DECLARE_FLAG_OPERATIONS(flag_type, member_name)                                     \
+#define DECLARE_BITFIELD_FLAG_OPERATIONS(flag_type, member_name)                            \
     void Set##flag_type(flag_type flags) const noexcept                                     \
     {                                                                                       \
         if (GetHistoryNode()->member_name != flags) {                                       \
@@ -533,9 +580,53 @@ public:
             GetOrCreateHistoryNode()->member_name &= ~flag;                                 \
         }                                                                                   \
     }
+    // Use macro to generate AstNodeFlags operations
+    DECLARE_BITFIELD_FLAG_OPERATIONS(AstNodeFlags, astNodeFlags_);
+#undef DECLARE_BITFIELD_FLAG_OPERATIONS
+#else
+    // CC-OFFNXT(G.PRE.06) solid logic
+    // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define DECLARE_BITFIELD_FLAG_OPERATIONS(flag_type, member_name)                                                \
+    void Set##flag_type(flag_type flag) const noexcept                                                          \
+    {                                                                                                           \
+        if (static_cast<flag_type>(AstNodeFlagsField::Decode(GetHistoryNode()->member_name)) != flag) {         \
+            AstNodeFlagsField::Set(static_cast<uint64_t>(flag), &(GetOrCreateHistoryNode()->member_name));      \
+        }                                                                                                       \
+    }                                                                                                           \
+                                                                                                                \
+    void Add##flag_type(flag_type flag) const noexcept                                                          \
+    {                                                                                                           \
+        if (!All(static_cast<flag_type>(AstNodeFlagsField::Decode(GetHistoryNode()->member_name)), flag)) {     \
+            AstNodeFlagsField::Set(AstNodeFlagsField::Decode(GetOrCreateHistoryNode()->member_name) |           \
+                                       static_cast<uint64_t>(flag),                                             \
+                                   &(GetOrCreateHistoryNode()->member_name));                                   \
+        }                                                                                                       \
+    }                                                                                                           \
+                                                                                                                \
+    [[nodiscard]] flag_type Get##flag_type() const noexcept                                                     \
+    {                                                                                                           \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/                     \
+        return static_cast<flag_type>(AstNodeFlagsField::Decode(GetHistoryNode()->member_name));                \
+    }                                                                                                           \
+                                                                                                                \
+    bool Has##flag_type(flag_type flag) const noexcept                                                          \
+    {                                                                                                           \
+        /* CC-OFFNXT(G.PRE.05) The macro is used to generate a function. Return is needed*/                     \
+        return (static_cast<flag_type>(AstNodeFlagsField::Decode(GetHistoryNode()->member_name)) & flag) != 0U; \
+    }                                                                                                           \
+    void Remove##flag_type(flag_type flag) const noexcept                                                       \
+    {                                                                                                           \
+        if (Any(static_cast<flag_type>(AstNodeFlagsField::Decode(GetHistoryNode()->member_name)), flag)) {      \
+            AstNodeFlagsField::Set(AstNodeFlagsField::Decode(GetOrCreateHistoryNode()->member_name) &           \
+                                       ~static_cast<uint64_t>(flag),                                            \
+                                   &(GetOrCreateHistoryNode()->member_name));                                   \
+        }                                                                                                       \
+    }
 
-    DECLARE_FLAG_OPERATIONS(AstNodeFlags, astNodeFlags_);
-#undef DECLARE_FLAG_OPERATIONS
+    // Use macro to generate AstNodeFlags operations
+    DECLARE_BITFIELD_FLAG_OPERATIONS(AstNodeFlags, bitFields_)
+#undef DECLARE_BITFIELD_FLAG_OPERATIONS
+#endif
 
     ir::ClassElement *AsClassElement();
     const ir::ClassElement *AsClassElement() const;
@@ -702,6 +793,7 @@ public:
 
     AstNode *ShallowClone(ArenaAllocator *allocator);
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     bool IsValidInCurrentPhase() const;
 
     AstNode *GetHistoryNode() const
@@ -713,6 +805,22 @@ public:
     }
 
     AstNode *GetOrCreateHistoryNode() const;
+#else
+    ALWAYS_INLINE bool IsValidInCurrentPhase() const
+    {
+        return true;
+    }
+
+    ALWAYS_INLINE AstNode *GetHistoryNode() const
+    {
+        return const_cast<AstNode *>(this);
+    }
+
+    ALWAYS_INLINE AstNode *GetOrCreateHistoryNode() const
+    {
+        return const_cast<AstNode *>(this);
+    }
+#endif
 
     virtual void CleanCheckInformation();
 
@@ -726,14 +834,47 @@ protected:
     void SetType(AstNodeType const type) noexcept
     {
         if (Type() != type) {
+#ifndef NDEBUG
             GetOrCreateHistoryNode()->type_ = type;
+#else
+            TypeField::Set(static_cast<uint64_t>(type), &(GetOrCreateHistoryNode()->bitFields_));
+#endif
         }
     }
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     void InitHistory();
     bool HistoryInitialized() const;
-
     AstNode *GetFromExistingHistory() const;
+
+    ALWAYS_INLINE void SetHistoryInternal([[maybe_unused]] AstNodeHistory *history)
+    {
+        history_ = history;
+    }
+
+    ALWAYS_INLINE AstNodeHistory *GetHistoryInternal()
+    {
+        return history_;
+    }
+#else
+    ALWAYS_INLINE void InitHistory() const {}
+    ALWAYS_INLINE bool HistoryInitialized() const
+    {
+        return false;
+    }
+
+    AstNode *GetFromExistingHistory() const
+    {
+        return nullptr;
+    }
+
+    ALWAYS_INLINE void SetHistoryInternal([[maybe_unused]] AstNodeHistory *history) const {}
+
+    ALWAYS_INLINE AstNodeHistory *GetHistoryInternal() const
+    {
+        return nullptr;
+    }
+#endif
 
     template <typename T>
     T *GetHistoryNodeAs() const
@@ -750,19 +891,30 @@ protected:
     friend class SizeOfNodeTest;
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     AstNode *parent_ {};
-    AstNodeHistory *history_ {nullptr};
     lexer::CompressedSourceRange range_ {};
+#ifndef NDEBUG
     ModifierFlags flags_ {};
     mutable AstNodeFlags astNodeFlags_ {};
     AstNodeType type_;
+#else
+    uint64_t bitFields_ {0};
+    // CC-OFFNXT(G.CNS.02)  8 represents for bits per byte
+    using FlagsField = BitField<uint64_t, 0, sizeof(ModifierFlags) * 8>;
+    // CC-OFFNXT(G.CNS.02)  8 represents for bits per byte
+    using AstNodeFlagsField = FlagsField::NextField<uint64_t, sizeof(AstNodeFlags) * 8>;
+    // CC-OFFNXT(G.CNS.02)  8 represents for bits per byte
+    using TypeField = AstNodeFlagsField::NextField<uint64_t, sizeof(AstNodeType) * 8>;
+#endif
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 
 private:
-    compiler::PhaseId GetFirstCreated() const;
     AstNode &operator=(const AstNode &) = default;
 
     varbinder::Variable *variable_ {};
     AstNode *originalNode_ = nullptr;
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
+    AstNodeHistory *history_ {nullptr};
+#endif
 };
 
 template <typename T>

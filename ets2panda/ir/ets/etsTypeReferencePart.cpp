@@ -148,13 +148,9 @@ static checker::Type *HandlePartialType(checker::ETSChecker *const checker, ETST
     if (baseType != nullptr && baseType->IsETSObjectType() && !baseType->AsETSObjectType()->TypeArguments().empty()) {
         // we treat Partial<A<T,D>> class as a different copy from A<T,D> now,
         // but not a generic type param for Partial<>
-        if (ref->TypeParams() != nullptr) {
-            for (auto &typeRef : ref->TypeParams()->Params()) {
-                checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(),
-                                                  typeRef->AsETSTypeReference()->Part()->TypeParams(), ref->Start());
-                baseType = ctx.Result();
-            }
-        }
+        ArenaVector<checker::Type *> typeArgTypes(baseType->AsETSObjectType()->TypeArguments());
+        checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), std::move(typeArgTypes), ref->Start());
+        baseType = ctx.Result();
     }
     return baseType;
 }
@@ -164,6 +160,13 @@ static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const che
     auto const ident = ref->GetIdent();
     if (ident->Name() == compiler::Signatures::ANY_TYPE_NAME) {
         return checker->GlobalETSAnyType();
+    }
+    if (ident->Name() == compiler::Signatures::ANY) {
+        if (!checker->IsRelaxedAnyTypeAnnotationAllowed()) {
+            checker->LogError(diagnostic::ANY_TYPE_ANNOTATION_FORBIDDEN, {}, ident->Start());
+            return checker->GlobalTypeError();
+        }
+        return checker->GetGlobalTypesHolder()->GlobalETSRelaxedAnyType();
     }
     if (ident->Name() == compiler::Signatures::UNDEFINED) {
         return checker->GlobalETSUndefinedType();
@@ -176,7 +179,9 @@ static checker::Type *CheckPredefinedBuiltinTypes(checker::ETSChecker *const che
     }
 
     if (ident->Name() == compiler::Signatures::READONLY_TYPE_NAME ||
-        ident->Name() == compiler::Signatures::REQUIRED_TYPE_NAME) {
+        ident->Name() == compiler::Signatures::REQUIRED_TYPE_NAME ||
+        ident->Name() == compiler::Signatures::AWAITED_TYPE_NAME ||
+        ident->Name() == compiler::Signatures::RETURN_TYPE_TYPE_NAME) {
         return checker->HandleUtilityTypeParameterNode(ref->TypeParams(), ident);
     }
     if (ident->Name() == compiler::Signatures::PARTIAL_TYPE_NAME) {
@@ -249,20 +254,6 @@ checker::Type *ETSTypeReferencePart::HandleInternalTypes(checker::ETSChecker *co
 
     return nullptr;
 }
-checker::Type *ETSTypeReferencePart::HandlerResultType(checker::ETSChecker *checker, checker::Type *baseType)
-{
-    if (checker->IsDeclForDynamicStaticInterop() && baseType->IsETSTypeParameter()) {
-        return checker->CreateGradualType(baseType);
-    }
-    if (baseType->IsGradualType()) {
-        return checker->CreateGradualType(HandlerResultType(checker, baseType->MaybeBaseTypeOfGradualType()));
-    }
-    if (baseType->IsETSObjectType()) {
-        checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), TypeParams(), Start());
-        return ctx.Result();
-    }
-    return baseType;
-}
 
 checker::Type *ETSTypeReferencePart::GetType(checker::ETSChecker *checker)
 {
@@ -283,7 +274,12 @@ checker::Type *ETSTypeReferencePart::GetType(checker::ETSChecker *checker)
         if (TsType() == nullptr) {
             checker::Type *baseType = checker->GetReferencedTypeBase(name);
             ES2PANDA_ASSERT(baseType != nullptr);
-            SetTsType(HandlerResultType(checker, baseType));
+            if (baseType->IsETSObjectType()) {
+                checker::InstantiationContext ctx(checker, baseType->AsETSObjectType(), TypeParams(), Start());
+                SetTsType(ctx.Result());
+            } else {
+                SetTsType(baseType);
+            }
         }
     } else {
         checker::Type *baseType = Previous()->GetType(checker);

@@ -343,6 +343,26 @@
             "suggest": "",
             "rule": "Class literals are not supported (arkts-no-class-literals)",
             "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 19,
+            "endLine": 75,
+            "endColumn": 23,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 10,
+            "endLine": 74,
+            "endColumn": 13,
+            "problem": "StrictDiagnostic",
+            "suggest": "Not all code paths return a value.",
+            "rule": "Not all code paths return a value.",
+            "severity": "ERROR"
         }
     ]
 }

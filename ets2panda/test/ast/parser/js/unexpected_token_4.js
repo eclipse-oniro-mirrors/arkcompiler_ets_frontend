@@ -17,4 +17,5 @@
 /* @@? 1:1 Node {
     "type": "Program"
 }  */
-/* @@? 16:7 Error SyntaxError: Unexpected token, expected '=>'.  */
+
+/* @@? 16:7 Error Syntax error ESY0228: Unexpected token, expected '=>'. */

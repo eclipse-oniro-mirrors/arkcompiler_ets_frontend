@@ -22,7 +22,7 @@ class A {
 function main(): int{
     let c1: A = new A();
     let helpbyte: Byte = new Byte(1 as byte);
-    if (c1.func(helpbyte) != "of Int") {
+    if (c1.func(helpbyte) != "of Double") {
         return 1;
     }
     return 0;

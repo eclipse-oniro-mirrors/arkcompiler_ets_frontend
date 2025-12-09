@@ -17,4 +17,5 @@
 interface G<T, U extends V, V extends /* @@ label */FunctioN> {}
 
 
-/* @@@ label Error TypeError: Cannot find type 'FunctioN'.  */
+
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'FunctioN'. */

@@ -1,8 +1,8 @@
 ### ArkTS1.2处理js非常规异常
 
-**规则：** arkts-interop-js2s-js-exception
+**规则：** `arkts-interop-js2s-js-exception`
 
-**级别：** error
+ArkTS1.2只能catch Error实例，针对非常规的js异常对象，交互时会被包装到ESError中，通过getValue()方法可以获取包装了原始异常对象的ESValue实例。
 
 **ArkTS1.1**
 ```typescript

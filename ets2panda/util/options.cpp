@@ -17,8 +17,8 @@
 #include "util/diagnostic.h"
 #include "util/diagnosticEngine.h"
 #include "util/ustring.h"
-#include "os/filesystem.h"
-#include "utils/pandargs.h"
+#include "libarkbase/os/filesystem.h"
+#include "libarkbase/utils/pandargs.h"
 #include "arktsconfig.h"
 #include "generated/diagnostic.h"
 
@@ -293,6 +293,9 @@ void Options::InitCompilerOptions()
 
 void Options::InitializeWarnings()
 {
+    if (WasSetEtsWarningsBasePath()) {
+        diagnosticEngine_.SetBasePath(GetEtsWarningsBasePath());
+    }
     std::array<bool, ETSWarnings::COUNT> warningSet {};
     ES2PANDA_ASSERT(ETSWarnings::LAST < ETSWarnings::COUNT);
 
@@ -336,14 +339,11 @@ bool Options::DetermineExtension()
         return true;
     }
     std::string sourceFileExtension = SourceFileName().substr(SourceFileName().find_last_of('.') + 1);
-#ifdef ENABLE_AFTER_21192
-    // NOTE(mkaskov): Enable after #21192
     if (!SourceFileName().empty() && WasSetExtension() && gen::Options::GetExtension() != sourceFileExtension) {
-        diagnosticEngine_.LogDiagnostic(
-            diagnostic::EXTENSION_MISMATCH,
-            {std::string_view(sourceFileExtension), std::string_view(gen::Options::GetExtension())});
+        diagnosticEngine_.LogDiagnostic(diagnostic::EXTENSION_MISMATCH,
+                                        DiagnosticMessageParams {std::string_view(sourceFileExtension),
+                                                                 std::string_view(gen::Options::GetExtension())});
     }
-#endif  // ENABLE_AFTER_21192
     // Note: the file suffix `.ets` is a valid suffix for compiler, which is equivalent to `.ets`
     sourceFileExtension = sourceFileExtension == "ets" ? "ets" : sourceFileExtension;
     auto tempExtension = WasSetExtension() ? gen::Options::GetExtension() : sourceFileExtension;

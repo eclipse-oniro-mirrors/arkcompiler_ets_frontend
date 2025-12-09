@@ -25,4 +25,5 @@ function name(this: Fruit) {
     console.println("this is extension function 2");
 }
 
-/* @@@ label Error TypeError: Function name is already declared.  */
+
+/* @@@ label Error Semantic error ESE0130: Function name is already declared. */

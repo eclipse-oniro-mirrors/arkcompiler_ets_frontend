@@ -18,6 +18,7 @@
 
 #include "lsp/include/code_fixes/code_fix_types.h"
 #include "public/es2panda_lib.h"
+#include "lsp/include/services/text_change/change_tracker.h"
 
 namespace ark::es2panda::lsp {
 
@@ -26,13 +27,14 @@ public:
     FixClassNotImplementingInheritedMembers();
 
     std::vector<CodeFixAction> GetCodeActions(const CodeFixContext &context) override;
-
     CombinedCodeActions GetAllCodeActions(const CodeFixAllContext &codeFixAll) override;
 
-    TextChange MakeTextChange(es2panda_Context *context, size_t offset);
+private:
+    void MakeTextChangeForNotImplementedMembers(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos);
     std::string MakeNewText(ir::AstNode *node);
     std::string MakeMethodSignature(ir::AstNode *node);
     ir::AstNode *GetSuperClassDefinition(ir::AstNode *node);
+    std::vector<FileTextChanges> GetCodeActionsForAbstractMissingMembers(const CodeFixContext &context);
 };
 
 }  // namespace ark::es2panda::lsp

@@ -14,7 +14,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "test/utils/ast_verifier_test.h"
 
 using CheckerTest = test::utils::AstVerifierTest;

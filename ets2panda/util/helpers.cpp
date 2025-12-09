@@ -19,6 +19,7 @@
 #include "checker/ETSchecker.h"
 
 #include "parser/program/program.h"
+#include "util/ustring.h"
 #include "varbinder/privateBinding.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/token/letters.h"
@@ -51,7 +52,8 @@
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/ts/tsEnumDeclaration.h"
 
-#include "utils/utf.h"
+#include "libarkbase/os/file.h"
+#include "libarkbase/utils/utf.h"
 
 namespace ark::es2panda::util {
 // Helpers
@@ -242,6 +244,25 @@ const checker::ETSObjectType *Helpers::GetContainingObjectType(const ir::AstNode
     return nullptr;
 }
 
+// NOLINTNEXTLINE(readability-const-return-type)
+const util::StringView Helpers::GetContainingObjectName(const ir::AstNode *node)
+{
+    const auto *iter = node;
+
+    while (iter != nullptr) {
+        if (iter->IsClassDefinition()) {
+            return iter->AsClassDefinition()->Ident()->Name();
+        }
+
+        if (iter->IsTSInterfaceDeclaration()) {
+            return iter->AsTSInterfaceDeclaration()->Id()->Name();
+        }
+        iter = iter->Parent();
+    }
+
+    return nullptr;
+}
+
 const ir::ClassDefinition *Helpers::GetContainingClassDefinition(const ir::AstNode *node)
 {
     const auto *iter = node;
@@ -333,7 +354,7 @@ const ir::ScriptFunction *Helpers::GetContainingFunction(const ir::AstNode *node
     return nullptr;
 }
 
-const ir::ClassDefinition *Helpers::GetClassDefiniton(const ir::ScriptFunction *node)
+const ir::ClassDefinition *Helpers::GetClassDefinition(const ir::ScriptFunction *node)
 {
     ES2PANDA_ASSERT(node->IsConstructor());
     ES2PANDA_ASSERT(node->Parent()->IsFunctionExpression());
@@ -403,6 +424,21 @@ compiler::Literal Helpers::ToConstantLiteral(const ir::Expression *expr)
     return compiler::Literal();
 }
 
+bool Helpers::IsErrorPlaceHolder(ir::Identifier const *const ident, bool const isNull) noexcept
+{
+    return !isNull ? ident != nullptr && ident->IsErrorPlaceHolder() : ident == nullptr || ident->IsErrorPlaceHolder();
+}
+
+bool Helpers::IsGlobalClass(ir::AstNode const *node) noexcept
+{
+    return node != nullptr && node->IsClassDefinition() && node->AsClassDefinition()->IsGlobal();
+}
+
+bool Helpers::IsETSMethodType(checker::Type const *type) noexcept
+{
+    return type != nullptr && type->IsETSMethodType();
+}
+
 bool Helpers::IsBindingPattern(const ir::AstNode *node)
 {
     return node->IsArrayPattern() || node->IsObjectPattern();
@@ -460,7 +496,7 @@ std::vector<ir::Identifier *> Helpers::CollectBindingNames(varbinder::VarBinder 
 }
 
 void Helpers::CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specifiers,
-                                const ir::ImportSpecifier *specifier, const std::string &fileName)
+                                const ir::ImportSpecifier *specifier, DiagnosticEngine &diagnosticEngine)
 {
     auto newIdentName = specifier->Imported()->Name();
     auto newAliasName = specifier->Local()->Name();
@@ -470,18 +506,15 @@ void Helpers::CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specif
         auto savedIdentName = it->Imported()->Name();
         auto savedAliasName = it->Local()->Name();
         if (savedIdentName == savedAliasName && savedAliasName == newIdentName) {
-            message << "Warning: '" << newIdentName << "' has already imported ";
+            diagnosticEngine.LogDiagnostic(diagnostic::DUPLICATE_IMPORT, DiagnosticMessageParams {newIdentName},
+                                           specifier->Start());
             break;
         }
         if (savedIdentName == newIdentName && newAliasName != savedAliasName) {
-            message << "Warning: '" << newIdentName << "' is explicitly used with alias several times ";
+            diagnosticEngine.LogDiagnostic(diagnostic::DUPLICATE_ALIAS, DiagnosticMessageParams {newIdentName},
+                                           specifier->Start());
             break;
         }
-    }
-
-    if (message.rdbuf()->in_avail() > 0) {
-        std::cerr << message.str() << "[" << fileName.c_str() << ":" << specifier->Start().line << ":"
-                  << specifier->Start().index << "]" << std::endl;
     }
 }
 
@@ -835,7 +868,9 @@ ir::AstNode *Helpers::DerefETSTypeReference(ir::AstNode *node)
             return node;
         }
         auto *var = name->AsIdentifier()->Variable();
-        ES2PANDA_ASSERT(var != nullptr);
+        if (var == nullptr) {
+            return node;
+        }
         auto *declNode = var->Declaration()->Node();
         if (!declNode->IsTSTypeAliasDeclaration()) {
             return declNode;
@@ -859,6 +894,67 @@ bool Helpers::IsGlobalVar(const ark::es2panda::varbinder::Variable *var)
 {
     return var->Declaration()->Node()->IsClassDeclaration() &&
            var->Declaration()->Node()->AsClassDeclaration()->Definition()->IsGlobal();
+}
+
+void Helpers::CheckValidFileName(const util::StringView &fileName, util::DiagnosticEngine &diagnosticEngine)
+{
+    auto fileNameStr = fileName.Mutf8();
+    if (fileNameStr.find(':') != std::string_view::npos) {
+        util::DiagnosticMessageParams diagParams = {std::move(fileNameStr)};
+        diagnosticEngine.LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
+    }
+}
+
+std::vector<std::string> Helpers::Split(const std::string &str, const char delimiter)
+{
+    std::vector<std::string> items;
+
+    size_t start = 0;
+    size_t pos = str.find(delimiter);
+    while (pos != std::string::npos) {
+        std::string item = str.substr(start, pos - start);
+        items.emplace_back(item);
+        start = pos + 1;
+        pos = str.find(delimiter, start);
+    }
+    std::string tail = str.substr(start);
+    items.emplace_back(tail);
+
+    return items;
+}
+
+/*
+    it is better to use std::filesystem::relative()
+    but using std::filesystem::relative() in xts_static CI pipeline is disallowed
+    and there is no relative() in std::experimental::filesystem
+*/
+std::string Helpers::CalcRelativePath(const std::string &target, const std::string &base)
+{
+    std::string targetPath = ark::os::GetAbsolutePath(target);
+    std::string basePath = ark::os::GetAbsolutePath(base);
+    // if path doesn't exist, then ark::os::GetAbsolutePath() will return empty string
+    if (targetPath.empty() || basePath.empty()) {
+        return "";
+    }
+    auto delim = ark::os::file::File::GetPathDelim();
+    ES2PANDA_ASSERT(delim.length() == 1);
+    auto delimChar = delim[0];
+
+    std::string ret;
+    auto targetPathVec = Split(targetPath, delimChar);
+    auto basePathVec = Split(basePath, delimChar);
+
+    auto mismatched = std::mismatch(targetPathVec.begin(), targetPathVec.end(), basePathVec.begin(), basePathVec.end());
+    if (mismatched.first == targetPathVec.end() && mismatched.second == basePathVec.end()) {
+        return ".";
+    }
+    for (auto itBase = mismatched.second; itBase != basePathVec.end(); ++itBase) {
+        ret += "../";
+    }
+    for (auto itP = mismatched.first; itP != targetPathVec.end(); ++itP) {
+        ret += *itP + "/";
+    }
+    return ret;
 }
 
 }  // namespace ark::es2panda::util

@@ -35,4 +35,5 @@ function foo<T extends AAA>(a: T) {
     return /* @@ label1 */a.foo()
 }
 
-/* @@@ label1 Error TypeError: Overload declaration cannot be called by union. */
+
+/* @@@ label1 Error Semantic error ESE0391: Overload declaration cannot be called by union. */

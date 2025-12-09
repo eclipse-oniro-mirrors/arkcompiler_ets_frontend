@@ -19,8 +19,9 @@ enum InvalidInitTypeEnum {
   Blue
 }
 
-/* @@? 18:13 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 18:13 Error TypeError: Unresolved reference b7 */
-/* @@? 18:15 Error SyntaxError: Unexpected token ','. */
-/* @@? 19:3 Error TypeError: Unresolved reference Blue */
-/* @@? 20:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 18:13 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 18:13 Error Semantic error ESE0143: Unresolved reference b7 */
+/* @@? 18:15 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 19:3 Error Semantic error ESE0143: Unresolved reference Blue */
+/* @@? 20:1 Error Syntax error ESY0227: Unexpected token '}'. */

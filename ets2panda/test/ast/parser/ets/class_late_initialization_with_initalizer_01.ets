@@ -16,4 +16,5 @@
 class A {
     f!: string = "abc"
 }
-/* @@? 17:6 Error SyntaxError: Late-initialized field cannot have default value. */
+
+/* @@? 17:6 Error Syntax error ESY0304: Late-initialized field cannot have default value. */

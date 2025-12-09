@@ -19,7 +19,8 @@ class Base {
     overload { foo1, foo2 }
 }
 
-/* @@? 19:14 Error SyntaxError: Identifier expected, got '{'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 19:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 19:16 Error TypeError: overloaded name must refer to an accessible method. */
+
+/* @@? 19:14 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 19:16 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 19:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:16 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */

@@ -40,31 +40,27 @@ class Test {
 }
 
 class Test2 {
-    foo1(a: string, b: TestEnum1): string {
+    foo(a: string, b: TestEnum1): string {
         return "invoke1"
     }
-    foo2(a: number, b: TestEnum2): string {
+    foo(a: number, b: TestEnum2): string {
         return "invoke2"
     }
-    foo3(a: string | number, b: TestEnum1 | TestEnum2): string {
+    foo(a: string | number, b: TestEnum1 | TestEnum2): string {
         return "invoke3"
     }
-
-    overload foo{ foo1, foo2, foo3 }
 }
 
 class Test3 {
-    foo1(a: string): string {
+    foo(a: string): string {
         return "invoke1"
     }
-    foo2(a: number): string {
+    foo(a: number): string {
         return "invoke2"
     }
-    foo3(a: string | number): string {
+    foo(a: string | number): string {
         return "invoke3"
     }
-
-    overload foo{ foo1, foo2, foo3 }
 }
 
 function main() {

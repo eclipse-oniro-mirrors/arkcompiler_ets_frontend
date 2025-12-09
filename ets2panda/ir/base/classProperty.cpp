@@ -99,29 +99,30 @@ void ClassProperty::Dump(ir::AstDumper *dumper) const
 void ClassProperty::DumpModifiers(ir::SrcDumper *dumper) const
 {
     ES2PANDA_ASSERT(key_);
+    if (Parent() != nullptr) {
+        if (compiler::HasGlobalClassParent(this)) {
+            if (IsExported()) {
+                dumper->Add("export ");
+            }
+            if (dumper->IsDeclgen()) {
+                dumper->Add("declare ");
+            }
+            if (IsConst()) {
+                dumper->Add("const ");
+            } else {
+                dumper->Add("let ");
+            }
+            return;
+        }
 
-    if (compiler::HasGlobalClassParent(this)) {
-        if (IsExported()) {
-            dumper->Add("export ");
-        }
-        if (dumper->IsDeclgen()) {
-            dumper->Add("declare ");
-        }
-        if (IsConst()) {
-            dumper->Add("const ");
-        } else {
-            dumper->Add("let ");
-        }
-        return;
-    }
-
-    if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
-        if (IsPrivate()) {
-            dumper->Add("private ");
-        } else if (IsProtected()) {
-            dumper->Add("protected ");
-        } else {
-            dumper->Add("public ");
+        if (Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal()) {
+            if (IsPrivate()) {
+                dumper->Add("private ");
+            } else if (IsProtected()) {
+                dumper->Add("protected ");
+            } else {
+                dumper->Add("public ");
+            }
         }
     }
 
@@ -171,6 +172,20 @@ void ClassProperty::DumpCheckerTypeForDeclGen(ir::SrcDumper *dumper) const
     }
 
     dumper->Add(": ");
+
+    if (TsType()->Variable() != nullptr) {
+        ES2PANDA_ASSERT(TsType()->Variable()->Declaration() != nullptr &&
+                        TsType()->Variable()->Declaration()->Node() != nullptr &&
+                        TsType()->Variable()->Declaration()->Node()->Scope() != nullptr);
+        varbinder::Scope *tsTypeParentScope = TsType()->Variable()->Declaration()->Node()->Scope()->Parent();
+        auto scopes = compiler::DiffClassScopes(compiler::NearestScope(this), tsTypeParentScope);
+
+        std::stringstream namespaces;
+        for (auto it = scopes.rbegin(); it != scopes.rend(); ++it) {
+            namespaces << (*it)->Node()->AsClassDefinition()->Ident()->Name() << ".";
+        }
+        dumper->Add(namespaces.str());
+    }
     dumper->GetDeclgen()->Dump(dumper, TsType());
 }
 
@@ -209,13 +224,20 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     bool isNamespaceTransformed =
         Parent()->IsClassDefinition() && Parent()->AsClassDefinition()->IsNamespaceTransformed();
     // For declgen dump only if explicitly marked as export or it is public property of class (not namespace or module)
-    if (dumper->IsDeclgen() && !(IsExported() || IsDefaultExported() || (!isNamespaceTransformed && IsPublic()))) {
+    if (dumper->IsDeclgen() && !(IsExported() || IsDefaultExported() || (!isNamespaceTransformed && !IsPrivate()))) {
         return;
     }
     if (dumper->IsDeclgen() && RegisterUnexportedForDeclGen(dumper)) {
         return;
     }
+    ForceDump(dumper);
+}
+
+// Dump the node without any precondition in declgen
+void ClassProperty::ForceDump(ir::SrcDumper *dumper) const
+{
     dumper->DumpJsdocBeforeTargetNode(this);
+
     DumpPrefix(dumper);
 
     if (Key() != nullptr) {
@@ -238,7 +260,7 @@ void ClassProperty::Dump(ir::SrcDumper *dumper) const
     }
 
     if (value_ != nullptr) {
-        if (!dumper->IsDeclgen() || Parent()->IsAnnotationDeclaration()) {
+        if (!dumper->IsDeclgen() || (Parent() != nullptr && Parent()->IsAnnotationDeclaration())) {
             dumper->Add(" = ");
             Value()->Dump(dumper);
         }

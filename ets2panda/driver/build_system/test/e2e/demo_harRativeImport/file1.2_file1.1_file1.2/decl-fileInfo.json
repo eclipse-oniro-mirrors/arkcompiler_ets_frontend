@@ -1,0 +1,13 @@
+{
+    "packageName": "library",
+    "files": {
+        "file2": {
+            "declPath": "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2/file2.d.ets",
+            "ohmUrl": "@normalized:N&undefined&&library/file2&"
+        },
+        "file3": {
+            "declPath": "${absolute_path_to_build_system}/test/e2e/demo_harRativeImport/file1.2_file1.1_file1.2/file3.d.ets",
+            "ohmUrl": "@normalized:N&undefined&&library/file3&"
+        }
+    }
+}

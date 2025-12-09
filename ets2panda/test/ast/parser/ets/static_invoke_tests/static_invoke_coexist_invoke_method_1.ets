@@ -25,4 +25,5 @@ class B extends A /* @@ label */{
     }
 }
 
-/* @@@ label Error TypeError: Static $_invoke method and static $_instantiate method both exist in class/interface B is not allowed.  */
+
+/* @@@ label Error Semantic error ESE0221: Static $_invoke method and static $_instantiate method both exist in class/interface B is not allowed. */

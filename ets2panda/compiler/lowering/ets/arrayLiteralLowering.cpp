@@ -24,7 +24,7 @@
 #include "lexer/token/number.h"
 #include "util/es2pandaMacros.h"
 #include "checker/ETSchecker.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::compiler {
 
@@ -55,11 +55,18 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         newStmts.emplace_back(lengthSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
-        ss << "@@I8[@@I9] = new @@T10() }";
+
+        if (checker_->HasParameterlessConstructor(eleType)) {
+            ss << "@@I8[@@I9] = new @@T10();";
+        } else {
+            ss << "let restArgs = new Array<Any>(0);";
+            ss << "@@I8[@@I9] = new @@T10(restArgs);";
+        }
         newStmts.emplace_back(arraySymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
         ES2PANDA_ASSERT(typeNode != nullptr);
         newStmts.emplace_back(typeNode->Clone(Allocator(), nullptr));
+        ss << "}";
     } else {
         ArenaVector<ir::Statement *> emptyStatement(Allocator()->Adapter());
         return emptyStatement;
@@ -89,27 +96,36 @@ ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayE
     auto *arrayType = literalArrayType->AsETSResizableArrayType()->ElementType();
     std::vector<ir::AstNode *> newStmts;
     std::stringstream ss;
-    auto *genSymIdent = Gensym(Allocator());
-    auto *genSymIdent2 = Gensym(Allocator());
+    ir::Identifier *genSymIdent = Gensym(Allocator());
+    ir::Identifier *genSymIdent2 = nullptr;
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
-    // ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    // ss << "Array.from<@@T4>(@@I5);";
-    ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-    ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
-    ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
-    ss << "@@I11;";
-    newStmts.emplace_back(genSymIdent);
-    newStmts.emplace_back(type);
-    newStmts.emplace_back(literalArray);
-    literalArray->SetTsType(nullptr);
-    newStmts.emplace_back(genSymIdent2);
-    newStmts.emplace_back(type->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(type->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
-    newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+    // NOTE(frontend):follow-up #30648
+    if (literalArray->Elements().empty()) {
+        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(0);";
+        ss << "@@I4;";
+        newStmts.emplace_back(genSymIdent);
+        newStmts.emplace_back(type);
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+    } else {
+        genSymIdent2 = Gensym(Allocator());
+        ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
+        ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
+        ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
+        ss << "@@I11;";
+        newStmts.emplace_back(genSymIdent);
+        newStmts.emplace_back(type);
+        newStmts.emplace_back(literalArray);
+        literalArray->SetTsType(nullptr);
+        newStmts.emplace_back(genSymIdent2);
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(type->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
+        newStmts.emplace_back(genSymIdent2->Clone(Allocator(), nullptr));
+    }
 
     auto *parent = literalArray->Parent();
     auto *loweringResult = parser_->CreateFormattedExpression(ss.str(), newStmts);
@@ -135,7 +151,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
     auto *genSymIdent = Gensym(Allocator());
 
     std::stringstream ss;
-    ss << "let @@I1 = new Array<@@T2>(@@E3.toDouble());";
+    ss << "let @@I1 = new Array<@@T2>(@@E3.toInt());";
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *dimension = newExpr->Dimension()->Clone(Allocator(), nullptr);
     newStmts.emplace_back(genSymIdent);
@@ -173,7 +189,7 @@ ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVec
         ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
 
     std::string creationTemplate =
-        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toDouble()); @@E9 = @@I10}";
+        "for (let @@I1 = 0; @@I2 < @@I3; @@I4 = @@I5 + 1) { let @@I6 = new Array<@@T7>(@@E8.toInt()); @@E9 = @@I10}";
     ir::Statement *forUpdateStmt = parser_->CreateFormattedStatement(
         creationTemplate, genSymIdent, genSymIdent->Clone(Allocator(), nullptr),
         lastDimIdent->Clone(Allocator(), nullptr), genSymIdent->Clone(Allocator(), nullptr),
@@ -223,7 +239,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     auto arrayType = newExpr->TsType()->AsETSResizableArrayType()->ElementType();
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     auto *genSymIdent = Gensym(Allocator());
-    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toDouble())";
+    std::string newArray = "let @@I1 = new Array<@@T2>(@@I3.toInt())";
     auto idents = TransformDimVectorToIdentVector(newExpr->Dimensions(), statements);
     auto newArraystatement =
         parser_->CreateFormattedStatements(newArray, genSymIdent, type, idents[0]->Clone(Allocator(), nullptr));

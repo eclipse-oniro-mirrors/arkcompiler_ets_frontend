@@ -15,5 +15,6 @@
 
 
 1__1
-/* @@? 17:1 Error SyntaxError: Invalid numeric separator. */
-/* @@? 17:1 Error SyntaxError: Numeric separators are not allowed at the end of numeric literals. */
+
+/* @@? 17:1 Error Syntax error ESY0254: Invalid numeric separator. */
+/* @@? 17:1 Error Syntax error ESY0250: Numeric separators are not allowed at the end of numeric literals. */

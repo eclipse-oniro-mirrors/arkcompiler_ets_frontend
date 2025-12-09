@@ -57,7 +57,7 @@ function foo() {
 
   let b = [1, 2, 3];
   void console.log(b.filter(x => x % 2 !== 0));
-  
+
   void function() {
     console.log('foo');
   };
@@ -65,8 +65,14 @@ function foo() {
   void function localFun() {
     console.log('foo');
   };
-  
+
   void class {};
 
   void class localClass{};
+}
+
+function bar(value: string | undefined) {
+    if (value === void(0)) {
+        return ''
+    }
 }

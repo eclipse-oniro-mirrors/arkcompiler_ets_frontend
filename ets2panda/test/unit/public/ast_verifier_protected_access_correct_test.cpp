@@ -25,7 +25,10 @@ TEST_F(ASTVerifierTest, ProtectedAccessTestCorrect)
             public a: int = 1;
         }
         class B extends A {
-            public b: int = this.a;
+            public b: int;
+            constructor() {
+                this.b = this.a;
+            }
         }
     )";
     CONTEXT(ES2PANDA_STATE_CHECKED, text, "dummy.ets")

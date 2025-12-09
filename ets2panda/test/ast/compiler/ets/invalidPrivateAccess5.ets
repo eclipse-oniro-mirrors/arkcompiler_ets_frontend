@@ -27,9 +27,9 @@ class Outer {
     }
 }
 
-/* @@? 17:19 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 21:20 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 24:13 Error TypeError: Signature a(): void is not visible here. */
-/* @@? 24:13 Error TypeError: No matching call signature for a() */
-/* @@? 25:13 Error TypeError: Signature a(): void is not visible here. */
-/* @@? 25:13 Error TypeError: No matching call signature for a() */
+/* @@? 17:19 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 21:20 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 24:13 Error Semantic error ESE0139: Signature a(): void is not visible here. */
+/* @@? 24:13 Error Semantic error ESE0127: No matching call signature for a() */
+/* @@? 25:13 Error Semantic error ESE0139: Signature a(): void is not visible here. */
+/* @@? 25:13 Error Semantic error ESE0127: No matching call signature for a() */
