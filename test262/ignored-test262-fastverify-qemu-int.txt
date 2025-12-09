@@ -187,10 +187,3 @@ test262/data/test_es2021/built-ins/Object/create/15.2.3.5-4-194.js
 test262/data/test_es2021/built-ins/global/S10.2.3_A1.2_T3.js
 test262/data/test_es2021/built-ins/GeneratorPrototype/return/try-catch-following-catch.js
 test262/data/test_es2021/built-ins/TypedArray/prototype/slice/BigInt/speciesctor-get-ctor-returns-throws.js
-
-#31093
-test262/data/test_es2021/language/expressions/arrow-function/syntax/arrowparameters-cover-includes-rest-concisebody-functionbody.js
-test262/data/test_es2021/built-ins/Array/prototype/reduce/15.4.4.21-8-b-iii-1-25.js
-
-#31531
-test262/data/test_es2021/language/expressions/async-generator/yield-star-next-not-callable-symbol-throw.js
