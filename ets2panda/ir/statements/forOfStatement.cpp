@@ -160,7 +160,9 @@ checker::Type *ForOfStatement::CheckIteratorMethodForObject(checker::ETSChecker 
         checker->LogError(diagnostic::MISSING_ITERATOR_METHOD, {}, position);
         return checker->GlobalTypeError();
     }
-
+    if (method->TsType() != nullptr && method->TsType()->IsETSFunctionType()) {
+        sourceType = method->TsType()->AsETSFunctionType()->CallSignatures()[0]->Owner();
+    }
     ArenaVector<Expression *> arguments {checker->Allocator()->Adapter()};
     auto &signatures = checker->GetTypeOfVariable(method)->AsETSFunctionType()->CallSignatures();
     checker::Signature *signature =
