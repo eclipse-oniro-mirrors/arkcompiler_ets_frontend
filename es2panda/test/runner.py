@@ -49,7 +49,7 @@ def prepare_tsc_testcases(test_root):
         if (path.isdir(ohos_third_party_tsc)):
             return path.abspath(ohos_third_party_tsc)
         subprocess.run(
-            f"git clone https://gitee.com/openharmony/third_party_typescript.git {third_party_tsc}",
+            f"git clone https://gitcode.com/openharmony/third_party_typescript.git {third_party_tsc}",
             shell=True,
             stdout=subprocess.DEVNULL,
         )
