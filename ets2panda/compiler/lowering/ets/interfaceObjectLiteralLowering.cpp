@@ -17,6 +17,7 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
+#include "checker/types/typeRelation.h"
 #include "compiler/lowering/util.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 
@@ -440,49 +441,75 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
     }
 }
 
-static bool AllMethodsHaveBody(ir::TSInterfaceDeclaration *interfaceDecl)
+using InterfaceMethod = std::tuple<util::StringView, checker::Signature *, bool>;
+using InterfaceMethods = std::vector<InterfaceMethod>;
+
+static void MethodsHaveBody(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
+                            InterfaceMethods &methods)
 {
     ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
 
-    for (auto it : interfaceDecl->Body()->Body()) {
-        if (it->IsOverloadDeclaration()) {
+    //  Collect all the methods declared in interface and check if it has default implementation somewhere
+    auto const addMethod = [&methods, relation](ir::ScriptFunction const *const function) -> void {
+        auto const &name = function->Id()->Name();
+        auto *const signature = const_cast<checker::Signature *>(function->Signature());
+        auto const hasBody = function->HasBody();
+
+        auto const it = std::find_if(
+            methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
+                return std::get<0U>(item) == name && relation->SignatureIsSupertypeOf(std::get<1U>(item), signature);
+            });
+        if (it == methods.end()) {
+            methods.emplace_back(name, signature, hasBody);
+        } else if (hasBody) {
+            std::get<2U>(*it) = true;
+        }
+    };
+
+    for (auto const *const node : interfaceDecl->Body()->Body()) {
+        if (node->IsOverloadDeclaration()) {
             continue;
         }
 
-        ES2PANDA_ASSERT(it->IsMethodDefinition());
-        auto methodDef = it->AsMethodDefinition();
+        ES2PANDA_ASSERT(node->IsMethodDefinition());
+        auto methodDef = node->AsMethodDefinition();
         ES2PANDA_ASSERT(methodDef->Function());
-        if (!methodDef->Function()->HasBody() && !methodDef->Function()->IsGetter() &&
-            !methodDef->Function()->IsSetter()) {
-            return false;
+        if (!methodDef->Function()->IsGetterOrSetter()) {
+            addMethod(methodDef->Function());
         }
 
         for (auto const *const overload : methodDef->Overloads()) {
             ES2PANDA_ASSERT(overload->Function());
-            if (!overload->Function()->HasBody() && !overload->Function()->IsGetter() &&
-                !overload->Function()->IsSetter()) {
-                return false;
+            if (!overload->Function()->IsGetterOrSetter()) {
+                addMethod(overload->Function());
             }
         }
     }
-
-    return true;
 }
 
 static bool CheckInterfaceShouldGenerateAnonClass(checker::ETSChecker *checker,
                                                   ir::TSInterfaceDeclaration *interfaceDecl)
 {
-    checker::Type const *const interfaceType = interfaceDecl->Check(checker);
-    if (interfaceType == nullptr || interfaceType->IsTypeError() || interfaceType->AsETSObjectType()->IsGradual()) {
+    InterfaceMethods methods {};
+
+    // Iterate through all the implemented interfaces
+    auto const checkMethods = [&methods, checker](auto &&self, checker::ETSObjectType const *interfaceType) -> void {
+        MethodsHaveBody(checker->Relation(), interfaceType->GetDeclNode()->AsTSInterfaceDeclaration(), methods);
+
+        for (auto const *type : interfaceType->Interfaces()) {
+            self(self, type);
+        }
+    };
+
+    checker::Type const *const iType = interfaceDecl->Check(checker);
+    if (iType == nullptr || !iType->IsETSObjectType() || iType->AsETSObjectType()->IsGradual()) {
         return false;
     }
 
-    if (!AllMethodsHaveBody(interfaceDecl)) {
-        return false;
-    }
+    checkMethods(checkMethods, iType->AsETSObjectType());
 
-    for (auto const *type : interfaceType->AsETSObjectType()->Interfaces()) {
-        if (!AllMethodsHaveBody(type->GetDeclNode()->AsTSInterfaceDeclaration())) {
+    for (auto const &[_1, _2, hasBody] : methods) {
+        if (!hasBody) {
             return false;
         }
     }
@@ -654,13 +681,28 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
                                                                                       : checker->GlobalTypeError();
 }
 
-static bool CheckInterface(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
-                           ir::ObjectExpression *objectExpr)
+static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
+                           ir::ObjectExpression *objectExpr, InterfaceMethods &methods)
 {
     //  Lambda checks if any method defined in object literal overrides empty method declared in interface.
-    auto const checkOverriding = [checker, objectExpr](ir::ScriptFunction *function) -> bool {
-        if (function->HasBody() || function->IsGetter() || function->IsSetter()) {
-            return true;
+    auto const checkOverriding = [&methods, objectExpr, relation](ir::ScriptFunction const *const function) -> void {
+        auto const &name = function->Id()->Name();
+        auto *const signature = const_cast<checker::Signature *>(function->Signature());
+        auto const hasBody = function->HasBody();
+
+        InterfaceMethods::iterator it = std::find_if(
+            methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
+                return std::get<0U>(item) == name && relation->SignatureIsSupertypeOf(std::get<1U>(item), signature);
+            });
+        if (it == methods.end()) {
+            methods.emplace_back(name, signature, hasBody);
+            it = std::prev(methods.end());
+        } else if (hasBody) {
+            std::get<2U>(*it) = true;
+        }
+
+        if (std::get<2U>(*it)) {
+            return;
         }
 
         for (ir::Expression *propExpr : objectExpr->Properties()) {
@@ -669,59 +711,63 @@ static bool CheckInterface(checker::ETSChecker *checker, ir::TSInterfaceDeclarat
             }
 
             if (auto const *const key = propExpr->AsProperty()->Key();
-                !key->IsIdentifier() || !key->AsIdentifier()->Name().Is(function->Id()->Name().Utf8())) {
+                !key->IsIdentifier() || !key->AsIdentifier()->Name().Is(name.Utf8())) {
                 continue;
             }
 
-            checker::SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(),
-                                                                 checker::TypeRelationFlag::OVERRIDING_CONTEXT);
+            checker::SavedTypeRelationFlagsContext savedCtx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
             checker::Type *const valueType = propExpr->AsProperty()->Value()->TsType();
-            if (!valueType->IsETSArrowType() ||
-                !checker->Relation()->SignatureIsSupertypeOf(
-                    function->Signature(), valueType->AsETSFunctionType()->CallSignaturesOfMethodOrArrow()[0U])) {
-                continue;
+            if (valueType->IsETSArrowType() &&
+                relation->SignatureIsSupertypeOf(signature, valueType->AsETSFunctionType()->ArrowSignature())) {
+                std::get<2U>(*it) = true;
             }
-
-            return true;
         }
-
-        return false;
     };
 
     ES2PANDA_ASSERT(interfaceDecl->Body() != nullptr);
-
-    for (auto it : interfaceDecl->Body()->Body()) {
-        if (it->IsOverloadDeclaration()) {
+    for (auto const *const node : interfaceDecl->Body()->Body()) {
+        if (node->IsOverloadDeclaration()) {
             continue;
         }
-        auto methodDef = it->AsMethodDefinition();
-        if (!checkOverriding(methodDef->Function())) {
-            return false;
+
+        auto methodDef = node->AsMethodDefinition();
+        if (!methodDef->Function()->IsGetterOrSetter()) {
+            checkOverriding(methodDef->Function());
         }
-        for (auto *const overload : methodDef->Overloads()) {
-            if (!checkOverriding(overload->Function())) {
-                return false;
+
+        for (auto const *const overload : methodDef->Overloads()) {
+            if (!overload->Function()->IsGetterOrSetter()) {
+                checkOverriding(overload->Function());
             }
         }
     }
-
-    return true;
 }
 
 static bool CheckInterfaceCanGenerateAnonClass(checker::ETSChecker *checker, ir::TSInterfaceDeclaration *interfaceDecl,
                                                ir::ObjectExpression *objectExpr)
 {
-    checker::Type const *const interfaceType = interfaceDecl->Check(checker);
-    if (interfaceType == nullptr || interfaceType->IsTypeError() || interfaceType->AsETSObjectType()->IsGradual()) {
+    InterfaceMethods methods {};
+
+    // Iterate through all the implemented interfaces
+    auto const checkMethods = [&methods, objectExpr, checker](auto &&self,
+                                                              checker::ETSObjectType const *interfaceType) -> void {
+        CheckInterface(checker->Relation(), interfaceType->GetDeclNode()->AsTSInterfaceDeclaration(), objectExpr,
+                       methods);
+
+        for (auto const *type : interfaceType->Interfaces()) {
+            self(self, type);
+        }
+    };
+
+    checker::Type const *const iType = interfaceDecl->Check(checker);
+    if (iType == nullptr || !iType->IsETSObjectType() || iType->AsETSObjectType()->IsGradual()) {
         return false;
     }
 
-    if (!CheckInterface(checker, interfaceDecl, objectExpr)) {
-        return false;
-    }
+    checkMethods(checkMethods, iType->AsETSObjectType());
 
-    for (auto const *type : interfaceType->AsETSObjectType()->Interfaces()) {
-        if (!CheckInterface(checker, type->GetDeclNode()->AsTSInterfaceDeclaration(), objectExpr)) {
+    for (auto const &[_1, _2, hasBody] : methods) {
+        if (!hasBody) {
             return false;
         }
     }
