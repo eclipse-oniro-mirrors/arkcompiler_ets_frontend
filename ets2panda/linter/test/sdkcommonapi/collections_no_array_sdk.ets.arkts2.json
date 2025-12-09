@@ -19,9 +19,9 @@
             "column": 8,
             "endLine": 15,
             "endColumn": 19,
-            "problem": "LimitedStdLibNoImportConcurrency",
+            "problem": "NoNeedStdLibSendableContainer",
             "suggest": "",
-            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
