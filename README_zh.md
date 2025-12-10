@@ -11,7 +11,7 @@
 
 ets_frontend组件是方舟运行时子系统的前端工具，结合ace-ets2bundle组件，支持将ets文件转换为方舟字节码文件。
 
-更多信息请参考：[方舟运行时子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/ARK-Runtime-Subsystem-zh.md)
+更多信息请参考：[方舟运行时子系统](https://gitcode.com/openharmony/docs/blob/master/zh-cn/readme/ARK-Runtime-Subsystem-zh.md)
 
 **ets_frontend组件架构图**
 
@@ -207,12 +207,12 @@ $ ./es2abc [options] file.js
 </tbody>
 </table>
 
-更多使用说明请参考：[方舟运行时使用指南](https://gitee.com/openharmony/arkcompiler_ets_runtime/blob/master/docs/README_zh.md)
+更多使用说明请参考：[方舟运行时使用指南](https://gitcode.com/openharmony/arkcompiler_ets_runtime/blob/master/docs/README_zh.md)
 
 ## 相关仓<a name="section1371113476307"></a>
 
-[arkcompiler\_runtime\_core](https://gitee.com/openharmony/arkcompiler_runtime_core)
+[arkcompiler\_runtime\_core](https://gitcode.com/openharmony/arkcompiler_runtime_core)
 
-[arkcompiler\_ets\_runtime](https://gitee.com/openharmony/arkcompiler_ets_runtime)
+[arkcompiler\_ets\_runtime](https://gitcode.com/openharmony/arkcompiler_ets_runtime)
 
-**[arkcompiler\_ets\_frontend](https://gitee.com/openharmony/arkcompiler_ets_frontend)**
+**[arkcompiler\_ets\_frontend](https://gitcode.com/openharmony/arkcompiler_ets_frontend)**

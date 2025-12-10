@@ -11,7 +11,7 @@
 
 ets_frontend is a front-end tool in the ARK Runtime Subsystem. Combined with the ace-ets2bundle component, it supports converting ETS files into ARK bytecode files.
 
-For more information, see: [ARK Runtime Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/ARK-Runtime-Subsystem.md).
+For more information, see: [ARK Runtime Subsystem](https://gitcode.com/openharmony/docs/blob/master/en/readme/ARK-Runtime-Subsystem.md).
 
 **ets_frontend architecture**
 
@@ -208,12 +208,12 @@ Specifies the path of the output file.</p>
 </table>
 
 
-For more information, please see: [ARK-Runtime-Usage-Guide](https://gitee.com/openharmony/arkcompiler_ets_runtime/blob/master/docs/README.md).
+For more information, please see: [ARK-Runtime-Usage-Guide](https://gitcode.com/openharmony/arkcompiler_ets_runtime/blob/master/docs/README.md).
 
 ## Repositories Involved<a name="section1371113476307"></a>
 
-[arkcompiler\_runtime\_core](https://gitee.com/openharmony/arkcompiler_runtime_core)
+[arkcompiler\_runtime\_core](https://gitcode.com/openharmony/arkcompiler_runtime_core)
 
-[arkcompiler\_ets\_runtime](https://gitee.com/openharmony/arkcompiler_ets_runtime)
+[arkcompiler\_ets\_runtime](https://gitcode.com/openharmony/arkcompiler_ets_runtime)
 
-**[arkcompiler\_ets\_frontend](https://gitee.com/openharmony/arkcompiler_ets_frontend)**
+**[arkcompiler\_ets\_frontend](https://gitcode.com/openharmony/arkcompiler_ets_frontend)**
