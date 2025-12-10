@@ -29,9 +29,9 @@
             "column": 23,
             "endLine": 29,
             "endColumn": 30,
-            "problem": "ParameterType",
+            "problem": "AnyType",
             "suggest": "",
-            "rule": "Type of parameter must be defined explicitly (arkts-require-func-arg-type)",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
         },
         {

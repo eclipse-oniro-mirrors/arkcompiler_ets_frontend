@@ -293,7 +293,8 @@ export function buildParameters(params: ts.NodeArray<ParameterDeclaration>, arkI
 
         // initializer
         if (parameter.initializer) {
-            //TODO?
+            // For param with initializer, it is actually optional param. The cfgBuilder will do the last initializer things.
+            methodParameter.setOptional(true);
         }
 
         // dotDotDotToken

@@ -156,3 +156,12 @@ class AB10{
 
 class BB10 extends AB10 { // no err
 }
+
+class AB11{
+  constructor(i:number = 1, j?:number) {
+
+  }
+}
+
+class BB11 extends AB11 { // no err
+}

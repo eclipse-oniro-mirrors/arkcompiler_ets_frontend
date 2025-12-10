@@ -1658,6 +1658,7 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!local.getName().startsWith(TEMP_LOCAL_PREFIX)) {
             return;
         }
+
         const decl = local.getDeclaringStmt();
         if (decl === null) {
             return;
@@ -2843,20 +2844,22 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private handleGlobalLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>): void {
-        if (local.getDeclaringStmt() === null) {
-            const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
-            if (globals && globals.get(local.getName())) {
-                const global = globals.get(local.getName());
-                if (global instanceof GlobalRef) {
-                    const newLocal = global.getRef();
-                    if (newLocal instanceof Local) {
-                        hasChecked.set(newLocal, { 
-                            issueReason: IssueReason.UsedWithOtherType, 
-                            numberCategory: NumberCategory.number 
-                        });
-                    }
-                } 
-            }
+        if (local.getDeclaringStmt() !== null) {
+            return;
+        }
+
+        const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
+        const global = globals?.get(local.getName());
+
+        if (!(global instanceof GlobalRef)) {
+            return;
+        }
+        const newLocal = global.getRef();
+        if (newLocal instanceof Local) {
+            hasChecked.set(newLocal, {
+                issueReason: IssueReason.UsedWithOtherType,
+                numberCategory: NumberCategory.number
+            });
         }
     }
 }

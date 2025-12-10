@@ -33,56 +33,6 @@
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
-        },
-        {
-            "line": 55,
-            "column": 27,
-            "endLine": 55,
-            "endColumn": 31,
-            "problem": "DynamicCtorCall",
-            "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 58,
-            "column": 9,
-            "endLine": 58,
-            "endColumn": 20,
-            "problem": "StrictDiagnostic",
-            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
-            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 59,
-            "column": 9,
-            "endLine": 59,
-            "endColumn": 20,
-            "problem": "StrictDiagnostic",
-            "suggest": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
-            "rule": "Type 'IMonitorValue<string> | undefined' is not assignable to type 'IMonitorValue<string>'.\n  Type 'undefined' is not assignable to type 'IMonitorValue<string>'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 67,
-            "column": 5,
-            "endLine": 67,
-            "endColumn": 10,
-            "problem": "StrictDiagnostic",
-            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
-            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 71,
-            "column": 5,
-            "endLine": 71,
-            "endColumn": 10,
-            "problem": "StrictDiagnostic",
-            "suggest": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
-            "rule": "Type 'SubscribedAbstractProperty<number> | undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.\n  Type 'undefined' is not assignable to type 'SubscribedAbstractProperty<number>'.",
-            "severity": "ERROR"
         }
     ]
 }

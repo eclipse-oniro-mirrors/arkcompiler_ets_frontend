@@ -190,7 +190,8 @@ function executeLinter(linterInputInfo: LinterInputInfo): LintRunResult {
       processCmdProgressBar(cmdProgressInfo, fileCount);
       processIdeProgressBar(
         { migrationInfo: migrationInfo, currentSrcFile: srcFile, srcFiles: srcFiles, options: options },
-        fileCount
+        fileCount,
+        cmdProgressInfo.cmdProgressBar
       );
     }
   }
@@ -201,7 +202,11 @@ function executeLinter(linterInputInfo: LinterInputInfo): LintRunResult {
   };
 }
 
-export function processIdeProgressBar(progressBarInfo: ProgressBarInfo, fileCount: number): void {
+export function processIdeProgressBar(
+  progressBarInfo: ProgressBarInfo,
+  fileCount: number,
+  cmdProgressBar: FixedLineProgressBar
+): void {
   const { currentSrcFile, srcFiles, options } = progressBarInfo;
 
   const isMigrationStep = options.migratorMode && progressBarInfo.migrationInfo;
@@ -211,10 +216,18 @@ export function processIdeProgressBar(progressBarInfo: ProgressBarInfo, fileCoun
     ` ${progressBarInfo.migrationInfo!.currentPass + 1} / ${progressBarInfo.migrationInfo!.maxPasses}` :
     '';
 
-  const progressRatio = fileCount / srcFiles.length;
-  const displayContent = `currentFile: ${currentSrcFile.fileName}, ${phasePrefix}${migrationPhase}`;
-  process.stderr.write('\x1B[1F\x1B[0G');
+  const progressRatio = srcFiles.length > 0 ? fileCount / srcFiles.length : 0;
+  const displayContent = `currentFile: ${currentSrcFile ? currentSrcFile.fileName : 'N/A'}, ${phasePrefix}${migrationPhase}`;
+
+  const displayInfo = cmdProgressBar.getDisplayInfo();
+
+  process.stderr.write('\x1B7');
+
+  const linesToMove = displayInfo.totalReserved - displayInfo.ideLine;
+  process.stderr.write(`\x1B[${linesToMove}A`);
+
   process.stderr.write('\x1B[2K');
+
   processSyncErr(
     JSON.stringify({
       content: displayContent,
@@ -222,7 +235,8 @@ export function processIdeProgressBar(progressBarInfo: ProgressBarInfo, fileCoun
       indicator: progressRatio
     }) + '\n'
   );
-  process.stderr.write('\x1B[1E');
+
+  process.stderr.write('\x1B8');
 }
 
 function migrate(
@@ -288,7 +302,7 @@ function filterLinterProblemsWithAutofixConfig(
     const needToFix: ProblemInfo[] = problems.filter((problem) => {
       return autofixRuleConfigTags.has(problem.ruleTag);
     });
-    if (needToFix.length > 0) {
+    if (needToFix.length >= 0) {
       needToBeFixedProblemsInfos.set(filePath, needToFix);
     }
   }

@@ -1,5 +1,6 @@
 {
   "ArkTS": [
+    "arkts-identifiers-as-prop-names",
     "arkts-no-ctor-prop-decls",
     "arkts-no-structural-typing",
     "arkts-no-inferred-generic-params",

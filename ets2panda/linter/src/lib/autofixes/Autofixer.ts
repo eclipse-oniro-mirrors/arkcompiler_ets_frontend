@@ -2687,7 +2687,7 @@ export class Autofixer {
       undefined
     );
 
-    let text = this.printer.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
+    let text = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
     const ancestor = ts.findAncestor(voidExpr, ts.isIfStatement);
     if (ancestor) {
       const startPos = this.sourceFile.getLineAndCharacterOfPosition(voidExpr.parent.getStart()).character;
@@ -3950,11 +3950,7 @@ export class Autofixer {
     return [firstLine, ...middleLines, lastLine].join(this.getNewLine());
   }
 
-  private addAutofixFromCalls(
-    calls: ts.Identifier[],
-    autofix: Autofix[],
-    argument: ts.Expression
-  ): void {
+  private addAutofixFromCalls(calls: ts.Identifier[], autofix: Autofix[], argument: ts.Expression): void {
     calls.forEach((call) => {
       const callExpr = ts.factory.createCallExpression(
         ts.factory.createIdentifier(APPLY_STYLES_IDENTIFIER),

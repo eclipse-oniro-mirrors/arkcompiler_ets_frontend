@@ -475,16 +475,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 99,
-            "column": 21,
-            "endLine": 99,
-            "endColumn": 28,
-            "problem": "BuiltinNarrowTypes",
-            "suggest": "",
-            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
             "line": 100,
             "column": 9,
             "endLine": 100,

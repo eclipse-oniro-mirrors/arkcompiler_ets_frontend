@@ -917,10 +917,10 @@ export class TsUtils {
 
   skipCheckForArrayBufferLike(lhsType: string | ts.Type, rhsType: string | ts.Type): boolean {
     const lhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToString(lhsType)
+      typeof lhsType === 'string' ? lhsType : this.tsTypeChecker.typeToStringForLinter(lhsType)
     );
     const rhsIsArrayBufferLike = TsUtils.isArrayBufferType(
-      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToString(rhsType)
+      typeof rhsType === 'string' ? rhsType : this.tsTypeChecker.typeToStringForLinter(rhsType)
     );
     return !!this.options.arkts2 && lhsIsArrayBufferLike && rhsIsArrayBufferLike;
   }

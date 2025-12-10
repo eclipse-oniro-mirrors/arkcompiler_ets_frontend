@@ -173,3 +173,13 @@ export enum DeviceTypes12 {
 export class A{
   public static a= DeviceTypes12["2IN1"]
 }
+
+class TestKeywords {
+  "number" = 1    //error
+  "string" = 'a'  //error
+}
+
+enum TestKeywordsEnum {
+  "const" = 'const',    //error
+  "as" = 'as'  //error
+}
