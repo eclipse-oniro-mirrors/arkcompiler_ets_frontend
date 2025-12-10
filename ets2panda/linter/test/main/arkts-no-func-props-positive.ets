@@ -13,38 +13,91 @@
  * limitations under the License.
  */
 
-function foo() {}
-console.log(foo.name)
-
-
-class T {
+// Definition field in calss
+export class T1 {
   static foo(path: string): void {
-    console.log(path);
+    console.info(path);
   }
 
   static baz: number = 2;
 }
-T.foo("example");
-console.log(T.baz);
 
+T1.foo("example");
+console.info(`baz value: ${T1.baz}`);
 
-class Logger {
-  static level = "debug";
+// Normal function: definition by using function keyword
+function foo(path: string): void {
+  console.log(path);
+}
+console.info(`foo.name: ${foo.name}`);
 
-  static log(message: string) {
-    console.log(message);
+// Arrow function: assignment Scenarios
+const arrowFunc = (path: string) => {
+  console.log(path);
+};
+console.info(`arrowFunc.name: ${arrowFunc.name}`);
+
+// Arrow function: Anonymous Scenarios
+((x : number) => x).name;
+
+// Class Method
+class A {
+  foo3(path: string): void {
   }
 }
-Logger.log("test");
-console.log(Logger.level);
 
+let a : A = new A();
+const classMethod = a.foo3;
+console.info(`classMethod.name: ${classMethod.name}`);
 
-class Counter {
-  static count = 0;
+// Interface Method
+interface L {
+  foo1(par: number, par1: string): void;
+}
 
-  static increment() {
-    Counter.count += 1;
-    return Counter.count;
+class MyClass implements L {
+  foo1(par: number, par1: string): void {
   }
 }
-console.log(Counter.increment());
+
+let obj: L = new MyClass();
+const interfaceMethod = obj.foo1
+interfaceMethod.name;
+console.info(`interfaceMethod.name: ${interfaceMethod.name}`);
+
+// Std 'Function' type
+const stdFunc: Function  = (path: string) => {
+  console.log(path);
+};
+console.info(`stdFunc.name: ${stdFunc.name}`);
+
+// Functional type
+type FuncType = (path: string) => string;
+let ft: FuncType = (path: string): string => {
+  return path + ': foo.bar';
+};
+console.info(`ft.name: ${ft.name}`);
+
+// Functional type alias
+type FT2 = FuncType;
+let ft2: FT2 = (path: string): string => {
+  return path + ': foo.bar';
+};
+console.info(`ft2.name: ${ft2.name}`);
+
+//Exported Function
+export function validate(data: string): boolean {
+ return data.length > 0;
+}
+console.info(`Exported Function.name: ${validate.name}`);
+
+
+// Static Method
+class MathUtils {
+  static square(x: number): number {
+    return x * x;
+  }
+}
+
+const staticMethod = MathUtils.square;
+console.info(`staticMethod.name: ${staticMethod.name}`);
