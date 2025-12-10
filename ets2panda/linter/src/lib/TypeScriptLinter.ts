@@ -2537,13 +2537,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
   }
 
-  private handleInfinityIdentifier(node: ts.PrefixUnaryExpression): void {
-    const identifier = node.operand;
-    if (identifier.getText() === STRINGLITERAL_INFINITY && node.operator === ts.SyntaxKind.TildeToken) {
-      this.incrementCounters(node, FaultID.PrefixUnaryInfinity);
-    }
-  }
-
   private handleBinaryExpression(node: ts.Node): void {
     const tsBinaryExpr = node as ts.BinaryExpression;
     const tsLhsExpr = tsBinaryExpr.left;
