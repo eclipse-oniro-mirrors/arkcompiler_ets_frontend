@@ -16,3 +16,6 @@ dayjs_test
 
 #26457
 memory-cache_test
+
+#29254
+xslt_processor_test
