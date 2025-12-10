@@ -20,12 +20,12 @@ class Banana extends Fruit {
 
 }
 
-function name(this: Banana): int {
-    return 2;
-}
-
 function name(this: Fruit): int {
     return 1;
+}
+
+function name(this: Banana): int {
+    return 2;
 }
 
 function asFuncCall() {

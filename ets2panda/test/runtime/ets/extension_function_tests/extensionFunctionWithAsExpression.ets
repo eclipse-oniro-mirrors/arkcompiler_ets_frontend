@@ -15,14 +15,14 @@
 
 interface Fruit {}
 
+function foo(this:Fruit): int {
+    return 1;
+}
+
 class Banana implements Fruit {}
 
 function foo(this:Banana):int {
     return 2
-}
-
-function foo(this:Fruit): int {
-    return 1;
 }
 
 function asFuncCall() {

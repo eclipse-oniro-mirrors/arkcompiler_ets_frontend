@@ -811,12 +811,8 @@ bool ETSChecker::SetPreferredTypeForExpression(ir::Expression *expr, ir::TypeNod
     }
     if (init->IsConditionalExpression() && annotationType != nullptr) {
         auto *conditionalExpr = init->AsConditionalExpression();
-        if (!conditionalExpr->Consequent()->IsLiteral()) {
-            conditionalExpr->Consequent()->SetPreferredType(annotationType);
-        }
-        if (!conditionalExpr->Alternate()->IsLiteral()) {
-            conditionalExpr->Alternate()->SetPreferredType(annotationType);
-        }
+        conditionalExpr->Consequent()->SetPreferredType(annotationType);
+        conditionalExpr->Alternate()->SetPreferredType(annotationType);
     }
 
     if (typeAnnotation != nullptr && init->IsArrowFunctionExpression()) {

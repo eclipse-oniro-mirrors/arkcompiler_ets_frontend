@@ -26,6 +26,7 @@
 #include "checker/types/ets/etsAwaitedType.h"
 #include "checker/types/ets/etsReturnTypeUtilityType.h"
 #include "compiler/lowering/util.h"
+#include "checker/types/typeError.h"
 #include "util/nameMangler.h"
 
 namespace ark::es2panda::checker {
@@ -867,7 +868,7 @@ void ETSChecker::CreatePartialTypeInterfaceMethods(ir::TSInterfaceDeclaration *c
             accessor->SetParent(*it);
             accessor->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD);
         } else {
-            ES2PANDA_ASSERT_POS((*it)->AsMethodDefinition()->Function()->IsSetter(), (*it)->Start());
+            ERROR_SANITY_CHECK(this, (*it)->AsMethodDefinition()->Function()->IsSetter(), return void());
             auto setter = (*it)->AsMethodDefinition();
             accessor->AddOverload(setter);
             setter->SetParent(accessor);

@@ -17,6 +17,11 @@ class A {
     xstate: string = "";
 }
 
+get x(this: A): string {
+    return this.xstate + "A";
+}
+set x(this: A, v: string) { this.xstate = "A" + v }
+
 class B extends A {}
 
 get x(this: B): string {
@@ -25,11 +30,6 @@ get x(this: B): string {
 set x(this: B, v: string) { 
     this.xstate = "B" + v
 }
-
-get x(this: A): string { 
-    return this.xstate + "A";
-}
-set x(this: A, v: string) { this.xstate = "A" + v }
 
 function main() {
     let b = new B();
