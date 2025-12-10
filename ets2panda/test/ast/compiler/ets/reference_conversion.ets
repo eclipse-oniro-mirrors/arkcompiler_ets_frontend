@@ -18,13 +18,13 @@ import A C, X as D} from 'z';
 interface D {
     f : nuted
 
-/* @@? 16:10 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 16:11 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 16:13 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 16:13 Error TypeError: Cannot cast type '"*ERROR_LITERAL*"' to 'D' */
-/* @@? 16:19 Error SyntaxError: Unexpected token '}'. */
-/* @@? 16:21 Error SyntaxError: Unexpected token 'from'. */
-/* @@? 16:21 Error TypeError: Unresolved reference from */
-/* @@? 16:26 Error SyntaxError: Unexpected token 'z'. */
-/* @@? 19:9 Error TypeError: Cannot find type 'nuted'. */
-/* @@? 31:1 Error SyntaxError: Unexpected token, expected '}'. */
+/* @@? 16:10 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 16:11 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 16:13 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 16:13 Error Semantic error ESE0326: Cannot cast type '"*ERROR_LITERAL*"' to 'D' */
+/* @@? 16:19 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 16:21 Error Syntax error ESY0227: Unexpected token 'from'. */
+/* @@? 16:21 Error Semantic error ESE0143: Unresolved reference from */
+/* @@? 16:26 Error Syntax error ESY0227: Unexpected token 'z'. */
+/* @@? 19:9 Error Semantic error ESE0371: Cannot find type 'nuted'. */
+/* @@? 31:1 Error Syntax error ESY0228: Unexpected token, expected '}'. */

@@ -32,7 +32,6 @@ class A implements I {
 function mdin() {    let a = new A();
     ass
 
-
 /* @@? 16:4 Error Syntax error ESY0038: Label must be followed by a loop statement. */
 /* @@? 16:4 Error Semantic error ESE0143: Unresolved reference Geit */
 /* @@? 16:9 Error Syntax error ESY0227: Unexpected token '{'. */
@@ -61,4 +60,4 @@ function mdin() {    let a = new A();
 /* @@? 29:18 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 31:2 Error Syntax error ESY0227: Unexpected token '*'. */
 /* @@? 32:1 Error Syntax error ESY0135: Nested functions are not allowed. */
-/* @@? 64:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 64:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

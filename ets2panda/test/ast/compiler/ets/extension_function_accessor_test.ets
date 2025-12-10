@@ -18,5 +18,5 @@ class A {}
 set a(this: A, ...args:number[]){}
 set b(this: A, args ?: number) {}
 
-/* @@? 18:16 Error SyntaxError: Setter cannot have rest parameter. */
-/* @@? 19:16 Error SyntaxError: Setter cannot have optional parameter. */
+/* @@? 18:16 Error Syntax error ESY36775: Setter cannot have rest parameter. */
+/* @@? 19:16 Error Syntax error ESY13534: Setter cannot have optional parameter. */

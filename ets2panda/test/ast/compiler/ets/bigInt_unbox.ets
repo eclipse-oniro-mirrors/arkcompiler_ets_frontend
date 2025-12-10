@@ -17,6 +17,6 @@ function checker(id_main: int) {
   return (id_main != id_current) ? 0 : 1n's{
 }
 
-/* @@? 17:22 Error TypeError: Unresolved reference id_current */
-/* @@? 17:42 Error SyntaxError: Newline is not allowed in strings */
-/* @@? 17:42 Error SyntaxError: Unexpected token 's{'. */
+/* @@? 17:22 Error Semantic error ESE0143: Unresolved reference id_current */
+/* @@? 17:42 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 17:42 Error Syntax error ESY0227: Unexpected token 's{'. */

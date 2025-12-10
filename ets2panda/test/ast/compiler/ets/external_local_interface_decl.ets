@@ -21,5 +21,5 @@ export function foo() {
     let a:A = {s:""}
 }
 
-/* @@? 17:5 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@? 21:11 Error TypeError: Cannot find type 'A'. */
+/* @@? 17:5 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@? 21:11 Error Semantic error ESE0371: Cannot find type 'A'. */

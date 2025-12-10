@@ -21,26 +21,26 @@ interface Preferences {
     delenager.Preferences.Core yncCallback): void;
 }
 
-/* @@? 16:9 Error TypeError: Cyclic inheritance involving D. */
-/* @@? 17:5 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:9 Error TypeError: Cannot find type 'W'. */
-/* @@? 17:23 Error TypeError: 'f9' type does not exist. */
-/* @@? 17:25 Error SyntaxError: Unexpected token '-'. */
-/* @@? 17:26 Error SyntaxError: Unexpected token '2'. */
-/* @@? 17:27 Error SyntaxError: Newline is not allowed in strings */
-/* @@? 17:27 Error SyntaxError: Unexpected token ';'. */
-/* @@? 19:1 Error TypeError: Cyclic inheritance involving Preferences. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:24 Error SyntaxError: Identifier expected. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:24 Error SyntaxError: Identifier expected. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:24 Error SyntaxError: Identifier expected. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:24 Error SyntaxError: Identifier expected. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 20:24 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 20:24 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 20:24 Error TypeError: 'Core' type does not exist. */
+/* @@? 16:9 Error Semantic error ESE0308: Circular dependency detected for identifier: D */
+/* @@? 17:5 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:9 Error Semantic error ESE0371: Cannot find type 'W'. */
+/* @@? 17:23 Error Semantic error ESE0070: 'f9' type does not exist. */
+/* @@? 17:25 Error Syntax error ESY0227: Unexpected token '-'. */
+/* @@? 17:26 Error Syntax error ESY0227: Unexpected token '2'. */
+/* @@? 17:27 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 17:27 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 19:1 Error Semantic error ESE0308: Circular dependency detected for identifier: Preferences */
+/* @@? 20:24 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 20:24 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:24 Error Syntax error ESY0224: Identifier expected, got 'void'. */
+/* @@? 20:24 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:24 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:24 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:24 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:24 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 20:24 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:24 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 20:24 Error Syntax error ESY0224: Identifier expected, got 'identification literal'. */
+/* @@? 20:24 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 20:24 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 20:24 Error Semantic error ESE0070: 'Core' type does not exist. */

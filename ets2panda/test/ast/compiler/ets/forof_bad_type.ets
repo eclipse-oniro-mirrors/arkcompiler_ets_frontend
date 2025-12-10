@@ -25,4 +25,4 @@ new A<number>().bar().a.foo((x) => {
     }
 })
 
-/* @@? 18:27 Error TypeError: Cannot find type 'Tadad'. */
+/* @@? 18:27 Error Semantic error ESE0371: Cannot find type 'Tadad'. */

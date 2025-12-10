@@ -15,7 +15,6 @@
 
 let arr = new Array<Number/* @@ label */;
 
-
 /* @@? 16:15 Error Semantic error ESE0170: Type 'Array<T>' is generic but type argument were not provided. */
-/* @@@ label Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 21:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 16:41 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 21:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

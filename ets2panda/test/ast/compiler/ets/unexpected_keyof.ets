@@ -15,17 +15,16 @@
 
 export function foo<T eStends keyof A,P extends keyof B[T]>
 
-/* @@? 16:17 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 16:23 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 16:31 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 16:38 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 16:41 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 16:41 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 16:41 Error SyntaxError: Unexpected token 'extends'. */
-/* @@? 16:49 Error SyntaxError: Unexpected token 'keyof'. */
-/* @@? 16:49 Error TypeError: Unresolved reference keyof */
-/* @@? 16:55 Error SyntaxError: Unexpected token 'B'. */
-/* @@? 16:55 Error TypeError: Unresolved reference B */
-/* @@? 16:55 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 16:57 Error SyntaxError: Unexpected token, expected ']'. */
-/* @@? 31:69 Error SyntaxError: Unexpected token 'end of stream'. */
+/* @@? 16:17 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 16:23 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 16:31 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 16:38 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:41 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:41 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 16:41 Error Syntax error ESY0227: Unexpected token 'extends'. */
+/* @@? 16:49 Error Syntax error ESY0227: Unexpected token 'keyof'. */
+/* @@? 16:49 Error Semantic error ESE0143: Unresolved reference keyof */
+/* @@? 16:55 Error Syntax error ESY0227: Unexpected token 'B'. */
+/* @@? 16:55 Error Semantic error ESE0143: Unresolved reference B */
+/* @@? 16:55 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 30:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

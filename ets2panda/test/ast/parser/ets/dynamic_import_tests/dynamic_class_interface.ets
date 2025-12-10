@@ -56,10 +56,10 @@ function foo(i: I) {
 }
 
 /* @@? 22:9 Error Semantic error ESE0052: Animal is abstract therefore cannot be instantiated. */
-/* @@? 24:27 Error Semantic error ESE24143: class Bird can not extends class Animal which is from dynamic declaration file. */
-/* @@? 28:19 Error Semantic error ESE24143: class C can not extends class A which is from dynamic declaration file. */
+/* @@? 24:42 Error Semantic error ESE24143: class Bird can not extends class Animal which is from dynamic declaration file. */
+/* @@? 28:34 Error Semantic error ESE24143: class C can not extends class A which is from dynamic declaration file. */
 /* @@? 36:3 Error Semantic error ESE0087: Property 'f3' does not exist on type 'C' */
 /* @@? 39:3 Error Semantic error ESE0087: Property 'foa' does not exist on type 'C' */
-/* @@? 41:23 Error Semantic error ESE24143: class C1 can not implements interface I which is from dynamic declaration file. */
+/* @@? 41:38 Error Semantic error ESE24143: class C1 can not implements interface I which is from dynamic declaration file. */
 /* @@? 53:7 Error Semantic error ESE0087: Property 'n' does not exist on type 'I' */
 /* @@? 55:7 Error Semantic error ESE0087: Property 'f3' does not exist on type 'I' */

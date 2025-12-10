@@ -21,7 +21,5 @@ class A<CTE> {
 
 arktest.assertEQ(A.bypass(1), 1)
 
-/* @@? 17:25 Error TypeError: Static members cannot reference class type parameters 'CTE' */
-/* @@? 17:25 Error TypeError: Cannot find type 'CTE'. */
-/* @@? 17:31 Error TypeError: Static members cannot reference class type parameters 'CTE' */
-/* @@? 17:31 Error TypeError: Cannot find type 'CTE'. */
+/* @@? 22:18 Error Semantic error ESE0127: No matching call signature for bypass(Int) */
+/* @@? 22:27 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'CTE' at index 1 */

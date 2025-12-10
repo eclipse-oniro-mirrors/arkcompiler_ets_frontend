@@ -26,34 +26,34 @@ export default class HashMap<K, V> implements ReadonlyHashMap<K, V> {
 }
 
 
-/* @@? 20:69 Error TypeError: HashMap is not abstract and does not override abstract method forEach(callbackFn: ((p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => void)): void in ReadonlyHashMap */
-/* @@? 21:12 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 21:17 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 21:17 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 21:17 Error SyntaxError: Unexpected token '.'. */
-/* @@? 21:22 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:23 Error SyntaxError: Unexpected token '==='. */
-/* @@? 21:41 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:41 Error SyntaxError: Unexpected token '.'. */
-/* @@? 21:62 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:62 Error SyntaxError: Unexpected token ')'. */
-/* @@? 21:63 Error SyntaxError: Unexpected token ':'. */
-/* @@? 21:65 Error SyntaxError: void is a predefined type, cannot be used as an identifier */
-/* @@? 21:70 Error SyntaxError: Unexpected token '{'. */
-/* @@? 22:9 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 22:13 Error SyntaxError: Unexpected token '.'. */
-/* @@? 22:21 Error SyntaxError: Field type annotation expected. */
-/* @@? 22:21 Error SyntaxError: Unexpected token '.'. */
-/* @@? 22:30 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 22:30 Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */
-/* @@? 22:30 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 22:30 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 22:49 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 22:52 Error SyntaxError: Unexpected token '{'. */
-/* @@? 23:23 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 23:29 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 23:34 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 23:40 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 24:10 Error SyntaxError: Unexpected token ')'. */
-/* @@? 25:5 Error SyntaxError: Unexpected token '}'. */
-/* @@? 26:1 Error SyntaxError: Unexpected token '}'. */
+/* @@? 20:69 Error Semantic error ESE0190: HashMap is not abstract and does not override abstract method forEach(callbackFn: ((p1: V, p2: K, p3: ReadonlyHashMap<K,V>) => void)): void in ReadonlyHashMap */
+/* @@? 21:12 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 21:17 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 21:17 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 21:17 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 21:22 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:23 Error Syntax error ESY0227: Unexpected token '==='. */
+/* @@? 21:41 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:41 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 21:62 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:62 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:63 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 21:65 Error Syntax error ESY0295: void is a predefined type, cannot be used as an identifier */
+/* @@? 21:70 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 22:9 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 22:13 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 22:21 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 22:21 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 22:30 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 22:30 Error Syntax error ESY103145: Call signatures in object types are not supported. Use '$_invoke' method instead. */
+/* @@? 22:30 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 22:30 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 22:49 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:52 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 23:23 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 23:29 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 23:34 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 23:40 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 24:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 25:5 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 26:1 Error Syntax error ESY0227: Unexpected token '}'. */
