@@ -1594,8 +1594,12 @@ SignatureInfo *ETSChecker::ComposeSignatureInfo(ir::TSTypeParameterDeclaration *
     }
 
     for (auto *const p : params) {
-        if (!p->IsETSParameterExpression() ||
-            !AppendSignatureInfoParam(this, signatureInfo, p->AsETSParameterExpression())) {  // #23134
+        if (!p->IsETSParameterExpression()) {
+            ES2PANDA_ASSERT(IsAnyError());
+            return nullptr;
+        }
+        CheckAnnotations(p->AsETSParameterExpression());
+        if (!AppendSignatureInfoParam(this, signatureInfo, p->AsETSParameterExpression())) {  // #23134
             ES2PANDA_ASSERT(IsAnyError());
             return nullptr;
         }

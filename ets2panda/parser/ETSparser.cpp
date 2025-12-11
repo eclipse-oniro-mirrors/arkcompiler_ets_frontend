@@ -1478,7 +1478,7 @@ bool ETSParser::IsDefaultExport()
     return false;
 }
 
-bool TypedParser::IsPrimitiveType(const lexer::TokenType &tokenType)
+bool ETSParser::IsPrimitiveType(const lexer::TokenType &tokenType)
 {
     switch (tokenType) {
         case lexer::TokenType::KEYW_BIGINT:

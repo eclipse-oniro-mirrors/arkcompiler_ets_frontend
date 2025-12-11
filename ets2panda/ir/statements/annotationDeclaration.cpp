@@ -175,6 +175,7 @@ void AnnotationDeclaration::CopyTo(AstNode *other) const
     otherImpl->expr_ = expr_;
     otherImpl->properties_ = properties_;
     otherImpl->policy_ = policy_;
+    otherImpl->targets_ = targets_;
 
     AnnotationAllowed<Statement>::CopyTo(other);
 }

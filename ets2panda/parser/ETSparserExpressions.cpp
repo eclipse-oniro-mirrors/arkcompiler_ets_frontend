@@ -482,18 +482,21 @@ bool IsPunctuartorSpecialCharacter(lexer::TokenType tokenType)
 }
 
 // This function was created to reduce the size of `EatArrowFunctionParams`.
-bool TypedParser::IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType)
+bool ETSParser::IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType)
 {
     return (tokenType == lexer::TokenType::LITERAL_IDENT || IsPrimitiveType(tokenType) ||
             tokenType == lexer::TokenType::PUNCTUATOR_PERIOD_PERIOD_PERIOD || tokenType == lexer::TokenType::KEYW_THIS);
 }
 
-bool TypedParser::EatArrowFunctionParams(lexer::Lexer *lexer)
+bool ETSParser::EatArrowFunctionParams(lexer::Lexer *lexer)
 {
     ES2PANDA_ASSERT(lexer->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
     lexer->NextToken();
-    auto tokenType = lexer->GetToken().Type();
+    if (Lexer()->TryEatTokenType(lexer::TokenType::PUNCTUATOR_AT)) {
+        ParseAnnotations(false);
+    }
 
+    auto tokenType = lexer->GetToken().Type();
     size_t openBrackets = 1;
     bool expectIdentifier = true;
     while (tokenType != lexer::TokenType::EOS && openBrackets > 0) {
@@ -515,6 +518,11 @@ bool TypedParser::EatArrowFunctionParams(lexer::Lexer *lexer)
             case lexer::TokenType::PUNCTUATOR_SEMI_COLON:
             case lexer::TokenType::PUNCTUATOR_BACK_TICK:
                 return false;
+            case lexer::TokenType::PUNCTUATOR_AT:
+                Lexer()->NextToken();
+                ParseAnnotations(false);
+                tokenType = lexer->GetToken().Type();
+                continue;
             default:
                 if (!expectIdentifier) {
                     break;

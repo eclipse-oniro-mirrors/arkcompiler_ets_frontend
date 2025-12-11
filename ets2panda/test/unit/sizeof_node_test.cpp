@@ -558,7 +558,8 @@ size_t SizeOfNodeTest::SizeOf<AnnotationDeclaration>()
         sizeof(node->scope_) +
         sizeof(node->expr_) +
         sizeof(node->properties_) +
-        Align(sizeof(node->policy_));
+        Align(sizeof(node->policy_)) +
+        sizeof(node->targets_);
     // clang-format on
 }
 
