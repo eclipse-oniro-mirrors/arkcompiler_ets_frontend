@@ -15,19 +15,9 @@
     ],
     "result": [
         {
-            "line": 46,
-            "column": 12,
-            "endLine": 46,
-            "endColumn": 29,
-            "problem": "CreatingPrimitiveTypes",
-            "suggest": "",
-            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 47,
+            "line": 45,
             "column": 13,
-            "endLine": 47,
+            "endLine": 45,
             "endColumn": 31,
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
@@ -35,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 47,
+            "line": 45,
             "column": 17,
-            "endLine": 47,
+            "endLine": 45,
             "endColumn": 24,
             "problem": "BuiltinNewCtor",
             "suggest": "",
@@ -45,19 +35,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 48,
+            "line": 46,
             "column": 12,
-            "endLine": 48,
-            "endColumn": 29,
+            "endLine": 46,
+            "endColumn": 26,
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
             "severity": "ERROR"
         },
         {
-            "line": 48,
+            "line": 47,
             "column": 16,
-            "endLine": 48,
+            "endLine": 47,
             "endColumn": 22,
             "problem": "BuiltinNewCtor",
             "suggest": "",
@@ -65,19 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 49,
+            "line": 85,
             "column": 16,
-            "endLine": 49,
-            "endColumn": 22,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 86,
-            "column": 16,
-            "endLine": 86,
+            "endLine": 85,
             "endColumn": 23,
             "problem": "BuiltinNewCtor",
             "suggest": "",

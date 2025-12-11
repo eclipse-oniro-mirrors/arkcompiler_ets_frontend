@@ -13,58 +13,44 @@
  * limitations under the License.
  */
 
-/*
- * Should report (arkts-no-sparse-array)
- */
+// Example 1: Basic usage (not given type)
+let b = []; // The array type needs to be deduced from the context.
 
+// Example 2: Omitted elements are not supported in arrays.
 let a = [1, , , 3];
-let b = [];
 
-let d = Promise.race<number>([]);
-let e = Promise.all<number>([]);
-let f = Promise.allSettled<number>([]);
-let g = Promise.any<number>([]);
-let h = Promise.resolve<number[]>([]);
-
+// Example 3: Promise methods -  Can't resolve array type
 let d1 = Promise.race([]);
 let e1 = Promise.all([]);
 let f1 = Promise.allSettled([]);
 let g1 = Promise.any([]);
 let h1 = Promise.resolve([]);
 
-let bigInt64 = new BigInt64Array([]);
-let bigUint64 = new BigUint64Array([]);
-let floast64 = new Float64Array([]);
-let float32 = new Float32Array([]);
-let int32 = new Int32Array([]);
-let int64 = new Int16Array([]);
-let int8 = new Int8Array([]);
-let uint32 = new Uint32Array([]);
-let uint64 = new Uint16Array([]);
-let uint8 = new Uint8Array([]);
-let uint8Clamped = new Uint8ClampedArray([]);
-
-let str1 = new String([]);
+// Example 4: new array object - Can't resolve array type
 let bool1 = new Boolean([]);
 let num1 = new Number([]);
 let obj1 = new Object([]);
 
+// Example 5: Weakset Usage - Can't resolve array type for has, add, delete
 let set1 = new WeakSet<object>();
 set1.has([]);
 set1.add([]);
 set1.delete([]);
 
+// Example 6: WeakMap Usage - Can't resolve array type for has, set, delete, get
 let map1 = new WeakMap<object, string>();
 map1.has([]);
 map1.set([], "");
 map1.delete([]);
 map1.get([]);
 
+// Example 7: Set array Usage - Can't resolve array type for has, add, delete
 let set2 = new Set<object>();
 set2.has([]);
 set2.add([]);
 set2.delete([]);
 
+// Example 8: Map Usage - Can't resolve array type for has, set, delete, get
 let map2 = new Map<object, string>();
 map2.has([]);
 map2.set([], "");

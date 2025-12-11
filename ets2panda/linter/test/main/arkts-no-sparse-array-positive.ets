@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-/*
- * Shouldn't report (arkts-no-sparse-array)
- */
-
 let c: number[] = [];
+
+let b = [1, undefined, undefined, 2];
 
 let i = Promise.race<number>([1.0]);
 let j = Promise.all<number>([2.0]);
@@ -31,8 +29,8 @@ let k1 = Promise.allSettled([3]);
 let l1 = Promise.any([4]);
 let m1 = Promise.resolve([5]);
 
-let bigInt64 = new BigInt64Array([1.0]);
-let bigUint64 = new BigUint64Array([1.0]);
+let bigInt64 = new BigInt64Array([1n]);
+let bigUint64 = new BigUint64Array([1n]);
 let floast64 = new Float64Array([1.0]);
 let float32 = new Float32Array([1.0]);
 let int32 = new Int32Array([1.0]);
@@ -43,10 +41,10 @@ let uint64 = new Uint16Array([1.0]);
 let uint8 = new Uint8Array([1.0]);
 let uint8Clamped = new Uint8ClampedArray([1.0]);
 
-let str1 = new String(['1']);
+let str2: Array<string> = new Array<string>();
 let bool1 = new Boolean(['1']);
-let num1 = new Number(['1']);
-let obj1 = new Object(['1']);
+let num1 = new Number(10);
+let obj1 = new Object();
 
 function foo(arr: number[]) {
     return;
@@ -80,11 +78,13 @@ foo5<number>([]);
 
 let set1 = new WeakSet<object>();
 set1.has(['1']);
+set1.add([] as string[])
 set1.add(['1']);
 set1.delete(['1']);
 
 let map1 = new WeakMap<object, string>();
 map1.has(['1']);
+map1.set([] as string[], "")
 map1.set(['1'], "");
 map1.delete(['1']);
 map1.get(['1']);
@@ -92,10 +92,15 @@ map1.get(['1']);
 let set2 = new Set<object>();
 set2.has(['1']);
 set2.add(['1']);
+set1.add([] as string[])
 set2.delete(['1']);
 
 let map2 = new Map<object, string>();
 map2.has(['1']);
 map2.set(['1'], "");
+map2.set([] as string[], "")
 map2.delete(['1']);
 map2.get(['1']);
+
+let set3 = new Set<number[]>();
+set1.add([1, 2, 3])

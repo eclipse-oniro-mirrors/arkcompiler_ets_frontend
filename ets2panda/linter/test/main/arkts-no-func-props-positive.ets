@@ -13,68 +13,38 @@
  * limitations under the License.
  */
 
-class ObjectDefinitions {
-  ObjectDefinitions() {
-  }
-
-  static definition1() {
-    // Only primitives.
-    const id: number = 5;
-    const offset: number = 10;
-
-    // Accessing a property.
-    return id + offset;
-  }
-
-  static definition2() {
-    // Array of strings.
-    const calculateValues = ['a', 'b', 'c'];
-    // Returning array length.
-    return calculateValues.length;
-  }
-}
-
-class ConstantUsage {
-  ConstantUsage() {
-  }
-
-  static usage1() {
-    // Simple constant assignment.
-    const message: string = "Complete";
-    let result = message;
-    return result;
-  }
-
-  static usage2() {
-    // Defining a simple data object.
-    const status: number = 200;
-    // Returning a property value.
-    return status;
-  }
-}
-
-class SimpleExpressions {
-  SimpleExpressions() {
-  }
-
-  static scope1() {
-    let multiplier = 2;
-    // Simple arithmetic expression.
-    let input: number = 7;
-    return input * multiplier;
-  }
-
-  static scope2() {
-    let active = true;
-    let count = 5;
-    // Logical expression.
-    if (active && count > 0) {
-      return 'Valid';
-    }
-    return 'Invalid';
-  }
-}
-
 function foo() {}
-
 console.log(foo.name)
+
+
+class T {
+  static foo(path: string): void {
+    console.log(path);
+  }
+
+  static baz: number = 2;
+}
+T.foo("example");
+console.log(T.baz);
+
+
+class Logger {
+  static level = "debug";
+
+  static log(message: string) {
+    console.log(message);
+  }
+}
+Logger.log("test");
+console.log(Logger.level);
+
+
+class Counter {
+  static count = 0;
+
+  static increment() {
+    Counter.count += 1;
+    return Counter.count;
+  }
+}
+console.log(Counter.increment());
