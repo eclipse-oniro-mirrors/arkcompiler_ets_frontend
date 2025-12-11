@@ -181,7 +181,7 @@ export abstract class BaseMode {
 
 
     public getOutputFilePaths(fileInfo: CompileFileInfo): { declEtsOutputPath: string, glueCodeOutputPath: string } {
-        const moduleInfo: ModuleInfo = this.moduleInfos.get(fileInfo.inputFilePath)!;
+        const moduleInfo: ModuleInfo = this.fileToModule.get(fileInfo.inputFilePath)!;
         const filePathFromModuleRoot: string = path.relative(moduleInfo.moduleRootPath, fileInfo.inputFilePath);
 
         const declEtsOutputPath: string = changeDeclgenFileExtension(
