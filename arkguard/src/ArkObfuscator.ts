@@ -355,6 +355,7 @@ export class ArkObfuscator {
 
     handleReservedConfig(config, 'mRenameFileName', 'mReservedFileNames', 'mUniversalReservedFileNames');
     handleReservedConfig(config, 'mRemoveDeclarationComments', 'mReservedComments', 'mUniversalReservedComments', 'mEnable');
+    handleReservedConfig(config, 'mRemoveNoSideEffectsCalls', 'mRemovedCallNames', 'mUniversalRemovedCallNames', undefined, false);
     this.mCustomProfiles = config;
 
     if (this.mCustomProfiles.mCompact) {

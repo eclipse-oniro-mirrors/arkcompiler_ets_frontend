@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,13 +26,15 @@ import {
   isPropertyAccessExpression,
   isSourceFile,
   setParentRecursive,
-  visitEachChild
+  visitEachChild,
+  getOriginalNode
 } from 'typescript';
 
 import type {
   Block,
   CaseClause,
   DefaultClause,
+  Expression,
   LeftHandSideExpression,
   ModuleBlock,
   Node,
@@ -50,6 +52,7 @@ import {TransformerOrder} from '../TransformPlugin';
 import { NodeUtils } from '../../utils/NodeUtils';
 import { ArkObfuscator, performancePrinter } from '../../ArkObfuscator';
 import { EventList, endSingleFileEvent, startSingleFileEvent } from '../../utils/PrinterUtils';
+import { isMatchWildcard } from '../../utils/TransformUtil';
 import { MemoryDottingDefine } from '../../utils/MemoryDottingDefine';
 
 namespace secharmony {
@@ -60,9 +63,15 @@ namespace secharmony {
   };
 
   export function createDisableConsoleFactory(option: IOptions): TransformerFactory<Node> | null {
-    if (!option.mDisableConsole) {
+    if (!option.mDisableConsole &&
+      !option.mRemoveNoSideEffectsCalls?.mRemovedCallNames?.length &&
+      !option.mRemoveNoSideEffectsCalls?.mUniversalRemovedCallNames?.length) {
       return null;
     }
+
+    const removedCallNamesForQuickCheck = !!option.mRemoveNoSideEffectsCalls?.mRemovedCallNames?.length ?
+      new Set(option.mRemoveNoSideEffectsCalls.mRemovedCallNames) :
+      new Set();
 
     return disableConsoleFactory;
 
@@ -115,7 +124,7 @@ namespace secharmony {
       function deleteConsoleStatement(statements: NodeArray<Statement>): Statement[] {
         const reservedStatements: Statement[] = [];
         statements.forEach((child) => {
-          if (!isSimpleConsoleStatement(child)) {
+          if (!isStatementToRemove(child)) {
             reservedStatements.push(child);
           }
         });
@@ -123,7 +132,9 @@ namespace secharmony {
         return reservedStatements;
       }
 
-      function isSimpleConsoleStatement(node: Statement): boolean {
+      function isStatementToRemove(statement: Statement): boolean {
+        let node: Node = getOriginalNode(statement);
+
         if (!isExpressionStatement(node)) {
           return false;
         }
@@ -137,19 +148,59 @@ namespace secharmony {
           return false;
         }
 
-        if (isPropertyAccessExpression(expressionCalled) && expressionCalled.expression) {
-          if (isIdentifier(expressionCalled.expression) && expressionCalled.expression.text === 'console') {
+        if (option.mDisableConsole && isSimpleConsoleExpression(expressionCalled)) {
+          return true;
+        }
+
+        if ((!!option.mRemoveNoSideEffectsCalls?.mRemovedCallNames?.length ||
+          !!option.mRemoveNoSideEffectsCalls?.mUniversalRemovedCallNames?.length) &&
+          isMatchedNoSideEffectsCallsExpression(expressionCalled)) {
+          return true;
+        }
+
+        return false;
+      }
+
+      function isSimpleConsoleExpression(callExpression: Expression): boolean {
+        if (isPropertyAccessExpression(callExpression) && callExpression.expression) {
+          if (isIdentifier(callExpression.expression) && callExpression.expression.text === 'console') {
             return true;
           }
         }
 
-        if (isElementAccessExpression(expressionCalled) && expressionCalled.expression) {
-          if (isIdentifier(expressionCalled.expression) && expressionCalled.expression.text === 'console') {
+        if (isElementAccessExpression(callExpression) && callExpression.expression) {
+          if (isIdentifier(callExpression.expression) && callExpression.expression.text === 'console') {
             return true;
           }
         }
 
         return false;
+      }
+
+      function isMatchedNoSideEffectsCallsExpression(callExpression: Expression): boolean {
+        if (isPropertyOrElementAccessChain(callExpression)) {
+          let accessExpressionText: string = callExpression.getText();
+          return isInRemoveNoSideEffectsCalls(accessExpressionText);
+        }
+
+        return false;
+      }
+
+      function isPropertyOrElementAccessChain(accessExpression: Expression): boolean {
+        let currentExpression = accessExpression;
+        while (!isIdentifier(currentExpression)) {
+          if ((isPropertyAccessExpression(currentExpression) || isElementAccessExpression(currentExpression)) && currentExpression.expression) {
+            currentExpression = currentExpression.expression;
+          } else {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function isInRemoveNoSideEffectsCalls(callName: string): boolean {
+        return removedCallNamesForQuickCheck.has(callName) ||
+          isMatchWildcard(option.mRemoveNoSideEffectsCalls.mUniversalRemovedCallNames, callName);
       }
     }
   }

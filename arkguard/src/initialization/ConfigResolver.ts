@@ -62,6 +62,7 @@ enum OptionType {
   ENABLE_ATKEEP,
   COMPACT,
   REMOVE_LOG,
+  REMOVE_NOSIDEEFFECTS_CALLS,
   REMOVE_COMMENTS,
   PRINT_NAMECACHE,
   PRINT_KEPT_NAMES,
@@ -125,6 +126,7 @@ class ObOptions {
   keepParameterNames: boolean = false;
   stripNotCompiledModuleName: boolean = false;
   keepObjectProps: boolean = false;
+  removeNoSideEffectsCalls: string[] = [];
 
   mergeObOptions(other: ObOptions): void {
     this.disableObfuscation = this.disableObfuscation || other.disableObfuscation;
@@ -154,6 +156,8 @@ class ObOptions {
     if (other.applyNameCache.length > 0) {
       this.applyNameCache = other.applyNameCache;
     }
+
+    this.removeNoSideEffectsCalls.push(...other.removeNoSideEffectsCalls);
   }
 }
 export const ObOptionsForTest = ObOptions;
@@ -191,6 +195,7 @@ export class MergedConfig {
   }
 
   sortAndDeduplicate(): void {
+    this.options.removeNoSideEffectsCalls = sortAndDeduplicateStringArr(this.options.removeNoSideEffectsCalls);
     this.reservedPropertyNames = sortAndDeduplicateStringArr(this.reservedPropertyNames);
     this.reservedGlobalNames = sortAndDeduplicateStringArr(this.reservedGlobalNames);
     this.reservedFileNames = sortAndDeduplicateStringArr(this.reservedFileNames);
@@ -401,6 +406,7 @@ export class ObConfigResolver {
   static readonly REMOVE_COMMENTS = '-remove-comments';
   static readonly COMPACT = '-compact';
   static readonly REMOVE_LOG = '-remove-log';
+  static readonly REMOVE_NOSIDEEFFECTS_CALLS = '-remove-nosideeffects-calls';
   static readonly PRINT_NAMECACHE = '-print-namecache';
   static readonly PRINT_KEPT_NAMES = '-print-kept-names';
   static readonly APPLY_NAMECACHE = '-apply-namecache';
@@ -425,6 +431,92 @@ export class ObConfigResolver {
     ['compact', ObConfigResolver.COMPACT],
     ['removeLog', ObConfigResolver.REMOVE_LOG],
   ]);
+
+  static readonly optionsCollection = [
+    ObConfigResolver.KEEP, 
+    ObConfigResolver.KEEP_DTS, 
+    ObConfigResolver.KEEP_GLOBAL_NAME, 
+    ObConfigResolver.KEEP_PROPERTY_NAME, 
+    ObConfigResolver.KEEP_FILE_NAME, 
+    ObConfigResolver.KEEP_COMMENTS,
+    ObConfigResolver.DISABLE_OBFUSCATION,
+    ObConfigResolver.ENABLE_PROPERTY_OBFUSCATION,
+    ObConfigResolver.ENABLE_STRING_PROPERTY_OBFUSCATION,
+    ObConfigResolver.ENABLE_TOPLEVEL_OBFUSCATION,
+    ObConfigResolver.ENABLE_FILENAME_OBFUSCATION,
+    ObConfigResolver.ENABLE_EXPORT_OBFUSCATION,
+    ObConfigResolver.ENABLE_LIB_OBFUSCATION_OPTIONS,
+    ObConfigResolver.ENABLE_ATKEEP,
+    ObConfigResolver.REMOVE_COMMENTS,
+    ObConfigResolver.COMPACT,
+    ObConfigResolver.REMOVE_LOG,
+    ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS,
+    ObConfigResolver.PRINT_NAMECACHE,
+    ObConfigResolver.PRINT_KEPT_NAMES,
+    ObConfigResolver.APPLY_NAMECACHE,
+    ObConfigResolver.ENABLE_BYTECODE_OBFUSCATION,
+    ObConfigResolver.ENABLE_BYTECODE_OBFUSCATION_DEBUGGING,
+    ObConfigResolver.ENABLE_BYTECODE_OBFUSCATION_ENHANCED,
+    ObConfigResolver.ENABLE_BYTECODE_OBFUSCATION_ARKUI,
+    ObConfigResolver.EXTRA_OPTIONS,
+    ObConfigResolver.STRIP_LANGUAGE_DEFAULT,
+    ObConfigResolver.STRIP_SYSTEM_API_ARGS,
+    ObConfigResolver.KEEP_PARAMETER_NAMES,
+    ObConfigResolver.STRIP_NOT_COMPILED_MODULE_NAME,
+    ObConfigResolver.KEEP_OBJECT_PROPS
+  ];
+
+  /** 
+   * Find the nearest option including delimiters from the given index, and return the position of the first delimiter.
+   * @param data The string to find the nearest option.
+   * @param options The options to search for in the data.
+   * @param position The index to begin searching.
+   */
+  private findNearestOption(data: string, options: string[], position: number): number {
+    let nearestOptionPos: number = data.length;
+    options.forEach((option) => {
+      let index = data.indexOf(option, position);
+      if (index !== -1 && index < nearestOptionPos) {
+        nearestOptionPos = index;
+      }
+    });
+
+    const delimiters = /[',\t \n\r]/;
+    for (let i = nearestOptionPos - 1; i >= position; i--) {
+      if (!delimiters.test(data[i])) {
+        break;
+      }
+      nearestOptionPos = i;
+    }
+    return nearestOptionPos;
+  }
+
+  public findNearestOptionForTest(data: string, options: string[], position: number): number {
+    return this.findNearestOption(data, options, position);
+  }
+
+  private parseConfigs(data: string): string[] {
+    let dataAllowLessDelimiters: string = '';
+    let dataAllowMoreDelimiters: string = '';
+    let position: number = 0;
+    const getTargetOption = (current: number): number => {
+      return data.indexOf(ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS, current);
+    }
+
+    for (let start = getTargetOption(position); start !== -1; start = getTargetOption(position)) {
+      let next = start + ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length;
+      let end = this.findNearestOption(data, ObConfigResolver.optionsCollection, next);
+      dataAllowLessDelimiters += data.slice(start, end) + ' ';
+      dataAllowMoreDelimiters += data.slice(position, start);
+      position = end;
+    }
+    dataAllowMoreDelimiters += data.slice(position, data.length);
+
+    const tokens = dataAllowMoreDelimiters.split(/[',\t \n\r]/).filter((item) => item !== '');
+    const otherTokens = dataAllowLessDelimiters.split(/[,\t \n\r]/).filter((item) => item !== '');
+    tokens.push(...otherTokens);
+    return tokens;
+  }
 
   private getTokenType(token: string): OptionType {
     switch (token) {
@@ -468,6 +560,8 @@ export class ObConfigResolver {
         return OptionType.COMPACT;
       case ObConfigResolver.REMOVE_LOG:
         return OptionType.REMOVE_LOG;
+      case ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS:
+        return OptionType.REMOVE_NOSIDEEFFECTS_CALLS;
       case ObConfigResolver.PRINT_NAMECACHE:
         return OptionType.PRINT_NAMECACHE;
       case ObConfigResolver.PRINT_KEPT_NAMES:
@@ -499,7 +593,7 @@ export class ObConfigResolver {
 
   private handleConfigContent(data: string, configs: MergedConfig, configPath: string): void {
     data = this.removeComments(data);
-    const tokens = data.split(/[',', '\t', ' ', '\n', '\r\n']/).filter((item) => item !== '');
+    const tokens: string[] = this.parseConfigs(data);
     let type: OptionType = OptionType.NONE;
     let extraOptionType: OptionType = OptionType.NONE;
     let tokenType: OptionType;
@@ -613,6 +707,7 @@ export class ObConfigResolver {
         case OptionType.KEEP_COMMENTS:
         case OptionType.PRINT_NAMECACHE:
         case OptionType.APPLY_NAMECACHE:
+        case OptionType.REMOVE_NOSIDEEFFECTS_CALLS:
           type = tokenType;
           extraOptionType = OptionType.NONE;
           continue;
@@ -667,6 +762,10 @@ export class ObConfigResolver {
           this.determineNameCachePath(absNameCachePath, configPath);
           configs.options.applyNameCache = absNameCachePath;
           type = OptionType.NONE;
+          continue;
+        }
+        case OptionType.REMOVE_NOSIDEEFFECTS_CALLS: {
+          configs.options.removeNoSideEffectsCalls.push(token); 
           continue;
         }
         default:

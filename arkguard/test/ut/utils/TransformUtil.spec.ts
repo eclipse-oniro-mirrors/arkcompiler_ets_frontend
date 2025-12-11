@@ -22,6 +22,7 @@ import {
   isInPropertyWhitelist,
   isInTopLevelWhitelist,
   isMatchWildcard,
+  handleReservedConfig,
   recordHistoryUnobfuscatedNames,
   separateUniversalReservedItem,
   wildcardTransformer
@@ -33,6 +34,7 @@ import {
   UnobfuscationCollections
 } from '../../../src/utils/CommonCollections';
 import secharmony from '../../../src/transformers/rename/RenameIdentifierTransformer';
+import { IOptions } from '../../../src/configs/IOptions';
 
 describe('test for TransformUtil', function () {
   let sourceFile: ts.SourceFile;
@@ -113,6 +115,40 @@ describe('test for TransformUtil', function () {
     it('The item can not match wildcard characters', function () {
       let result: boolean = isMatchWildcard([/foo/, /bar/, /baz/], 'abc');
       assert.isFalse(result);
+    });
+  });
+
+  describe('test for function handleReservedConfig', function () {
+    it('should separate arrays and not affect UnobfuscationCollections', function () {
+      let universalRemovedCall = "class[\"property?\"]*";
+      let universalRemovedCallRegx = wildcardTransformer(universalRemovedCall);
+      let universalRemovedCallRegExp = new RegExp(`^${universalRemovedCallRegx}$`);
+      let config: IOptions = {
+        "mRemoveNoSideEffectsCalls": {
+          "mRemovedCallNames": ["class.method", universalRemovedCall],
+          "mUniversalRemovedCallNames": []
+        }
+      }
+      handleReservedConfig(config, 'mRemoveNoSideEffectsCalls', 'mRemovedCallNames', 'mUniversalRemovedCallNames', undefined, false);
+
+      assert.deepStrictEqual(config.mRemoveNoSideEffectsCalls?.mRemovedCallNames, ['class.method']);
+      assert.deepStrictEqual(config.mRemoveNoSideEffectsCalls?.mUniversalRemovedCallNames, [universalRemovedCallRegExp]);
+
+      assert.deepStrictEqual(UnobfuscationCollections.reservedSdkApiForProp, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedSdkApiForGlobal, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedSdkApiForLocal, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedStruct, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedLangForProperty, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedLangForTopLevel, new Set(['__global', 'default']));
+      assert.deepStrictEqual(UnobfuscationCollections.reservedExportName, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedExportNameAndProp, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedStrProp, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedEnum, new Set());
+      assert.deepStrictEqual(UnobfuscationCollections.unobfuscatedPropMap, new Map());
+      assert.deepStrictEqual(UnobfuscationCollections.unobfuscatedNamesMap, new Map());
+      assert.deepStrictEqual(UnobfuscationCollections.reservedWildcardMap, new Map());
+
+      UnobfuscationCollections.clear();
     });
   });
 

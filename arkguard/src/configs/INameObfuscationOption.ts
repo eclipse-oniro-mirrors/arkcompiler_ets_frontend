@@ -68,6 +68,13 @@ export interface IDeclarationCommentOption {
   mUniversalReservedComments?: RegExp[]
 }
 
+export interface ICallNameOption {
+
+  mRemovedCallNames: string[],
+
+  mUniversalRemovedCallNames?: RegExp[]
+}
+
 export enum OhmUrlStatus {
   NONE,
   AT_BUNDLE,

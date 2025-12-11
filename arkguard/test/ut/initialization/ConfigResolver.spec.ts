@@ -122,12 +122,14 @@ describe('test for ConfigResolve', function() {
         config1.reservedGlobalNames = ['global1'];
         config1.keepComments = ['comment1'];
         config1.excludePathSet.add('path1');
+        config1.options.removeNoSideEffectsCalls = ['class.method1'];
 
         const config2 = new MergedConfig();
         config2.reservedPropertyNames = ['prop2'];
         config2.reservedGlobalNames = ['global2'];
         config2.keepComments = ['comment2'];
         config2.excludePathSet.add('path2');
+        config2.options.removeNoSideEffectsCalls = ['class[\'method2\']'];
 
         config1.mergeAllRules(config2);
 
@@ -135,6 +137,7 @@ describe('test for ConfigResolve', function() {
         expect(config1.reservedGlobalNames).to.deep.equal(['global1', 'global2']);
         expect(config1.keepComments).to.deep.equal(['comment1', 'comment2']);
         expect(config1.excludePathSet).to.deep.equal(new Set(['path1', 'path2']));
+        expect(config1.options.removeNoSideEffectsCalls).to.deep.equal(['class.method1', 'class[\'method2\']']);
       });
 
       it('merge options in MergeConfig', () => {
@@ -168,12 +171,14 @@ describe('test for ConfigResolve', function() {
       config.reservedPropertyNames = ['prop2', 'prop1', 'prop1'];
       config.reservedGlobalNames = ['global2', 'global1', 'global1'];
       config.keepComments = ['comment2', 'comment1', 'comment1'];
+      config.options.removeNoSideEffectsCalls = ['class1.method', 'class2[\"property1\"]*', 'class2[\"property2\"].method',  'class1.method'];
 
       config.sortAndDeduplicate();
 
       expect(config.reservedPropertyNames).to.deep.equal(['prop1', 'prop2']);
       expect(config.reservedGlobalNames).to.deep.equal(['global1', 'global2']);
       expect(config.keepComments).to.deep.equal(['comment1', 'comment2']);
+      expect(config.options.removeNoSideEffectsCalls).to.deep.equal(['class1.method', 'class2[\"property1\"]*', 'class2[\"property2\"].method']);
     });
 
     it('should serialize merged config correctly', () => {
@@ -709,6 +714,66 @@ describe('test for ConfigResolve', function() {
       });
     });
 
+    describe('findNearestOption', () => {
+      it('should correctly find the nearest option separated by single quote from the give position', () => {
+        const data1 = '-remove-nosideeffects-calls class.method\'\t\t-remove-nosideeffects-calls';
+        const index1 = newObConfigResolver.findNearestOptionForTest(data1, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data1[index1]).to.equal('\'');
+
+        const data2 = '-remove-nosideeffects-calls class.method\'\t\t';
+        const index2 = newObConfigResolver.findNearestOptionForTest(data2, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data2[index2]).to.equal('\'');
+        
+      });
+
+      it('should correctly find the nearest option separated by space from the give position', () => {
+        const data1 = '-remove-nosideeffects-calls class.method \t\t-remove-nosideeffects-calls';
+        const index1 = newObConfigResolver.findNearestOptionForTest(data1, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data1[index1]).to.equal(' ');
+
+        const data2 = '-remove-nosideeffects-calls class.method \t\t';
+        const index2 = newObConfigResolver.findNearestOptionForTest(data2, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data2[index2]).to.equal(' ');
+  
+      });
+
+      it('should correctly find the nearest option separated by line break from the give position', () => {
+        const data1 = '-remove-nosideeffects-calls\r\n\nclass.method\r\n\n-remove-nosideeffects-calls';
+        const index1 = newObConfigResolver.findNearestOptionForTest(data1, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data1[index1]).to.equal('\r');
+
+        const data2 = '-remove-nosideeffects-calls\r\n\nclass.method\r\n\n';
+        const index2 = newObConfigResolver.findNearestOptionForTest(data2, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+         expect(data2[index2]).to.equal('\r');
+      });
+
+      it('should correctly find the nearest option separated by tab from the give position', () => {
+        const data1 = '-remove-nosideeffects-calls class.method\t\'\'-remove-nosideeffects-calls';
+        const index1 = newObConfigResolver.findNearestOptionForTest(data1, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data1[index1]).to.equal('\t');
+
+        const data2 = '-remove-nosideeffects-calls class.method\t\'\'';
+        const index2 = newObConfigResolver.findNearestOptionForTest(data2, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data2[index2]).to.equal('\t');
+      });
+
+      it('should correctly find the nearest option separated by comma from the give position', () => {
+        const data1 = '-remove-nosideeffects-calls class.method,\'\'-remove-nosideeffects-calls';
+        const index1 = newObConfigResolver.findNearestOptionForTest(data1, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data1[index1]).to.equal(',');
+
+        const data2 = '-remove-nosideeffects-calls class.method,\'\'';
+        const index2 = newObConfigResolver.findNearestOptionForTest(data2, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(data2[index2]).to.equal(',');
+      });
+
+      it("should correctly find the nearest option from the give position", () => {
+        const data = '-remove-nosideeffects-calls class.method';
+        const index = newObConfigResolver.findNearestOptionForTest(data, ObConfigResolver.optionsCollection, ObConfigResolver.REMOVE_NOSIDEEFFECTS_CALLS.length);
+        expect(index).to.equal(data.length);
+      });
+    });
+
     describe('getTokenType', () => {
       it('should return the correct OptionType for each token', () => {
         const tokens = [
@@ -805,6 +870,10 @@ describe('test for ConfigResolve', function() {
           -print-namecache obfuscation-template.txt,
           -print-kept-names,
           -apply-namecache obfuscation-template.txt
+          -remove-nosideeffects-calls,
+          class.method,
+          class['property?']*,
+          function
         `;
 
         newObConfigResolver.handleConfigContentForTest(data, configs, configPath);
@@ -823,9 +892,10 @@ describe('test for ConfigResolve', function() {
         expect(configs.options.stripLanguageDefault).to.be.true;
         expect(configs.options.stripSystemApiArgs).to.be.true;
         expect(configs.options.keepParameterNames).to.be.true;
+        expect(configs.options.removeNoSideEffectsCalls).to.deep.equal(['class.method', 'class[\'property?\']*', 'function']);
       });
 
-      it('should handle config content correctly when diffenent combinations use line break splitting', () => {
+      it('should handle config content correctly when different combinations use line break splitting', () => {
         const configs: MergedConfig = new MergedConfig();
         configs.options = new ObOptionsForTest();
 
@@ -844,7 +914,7 @@ describe('test for ConfigResolve', function() {
         expect(configs.options.stripSystemApiArgs).to.be.true;
       });
 
-      it('should handle config content correctly when diffenent combinations use line break splitting', () => {
+      it('should handle config content correctly when different combinations use line break splitting', () => {
         const configs: MergedConfig = new MergedConfig();
         configs.options = new ObOptionsForTest();
 
@@ -861,7 +931,7 @@ describe('test for ConfigResolve', function() {
         expect(configs.options.stripSystemApiArgs).to.be.true;
       });
 
-      it('should handle config content correctly when diffenent combinations use space separation', () => {
+      it('should handle config content correctly when different combinations use space separation', () => {
         const configs: MergedConfig = new MergedConfig();
         configs.options = new ObOptionsForTest();
 
@@ -875,6 +945,26 @@ describe('test for ConfigResolve', function() {
 
         expect(configs.options.stripLanguageDefault).to.be.true;
         expect(configs.options.stripSystemApiArgs).to.be.true;
+      });
+
+      it('should handle config content correctly when different combinations use single quote', () => {
+        const configs: MergedConfig = new MergedConfig();
+        configs.options = new ObOptionsForTest();
+
+        const configPath = './test/testData/obfuscation/keepDts/obfuscation-template.txt';
+        const data = `
+          #This is a comment
+          -enable-property-obfuscation'-remove-nosideeffects-calls class['property?']*'-enable-toplevel-obfuscation'
+          -enable-filename-obfuscation'-enable-export-obfuscation'-remove-nosideeffects-calls class.method
+        `;
+
+        newObConfigResolver.handleConfigContentForTest(data, configs, configPath);
+
+        expect(configs.options.enablePropertyObfuscation).to.be.true;
+        expect(configs.options.enableToplevelObfuscation).to.be.true;
+        expect(configs.options.enableFileNameObfuscation).to.be.true;
+        expect(configs.options.enableExportObfuscation).to.be.true;
+        expect(configs.options.removeNoSideEffectsCalls).to.deep.equal([ 'class[\'property?\']*','class.method']);
       });
 
       it('should handle config content correctly when diffenent combinations only use one "-extra-options"', () => {
@@ -1273,7 +1363,8 @@ describe('test for ConfigResolve', function() {
       config2.reservedGlobalNames = ['global2'];
       config2.keepComments = ['comment2'];
       config2.excludePathSet.add('path2');
-  
+      config2.options.removeNoSideEffectsCalls = ['class2.method'];
+
       const projectConfig = {
         obfuscationOptions: { option1: 'value1' },
         compileHar: false
@@ -1292,6 +1383,7 @@ describe('test for ConfigResolve', function() {
       expect(res.reservedGlobalNames).to.deep.equal(['global2']);
       expect(res.keepComments).to.deep.equal(['comment2']);
       expect(res.excludePathSet).to.deep.equal(new Set(['path2']));
+      expect(res.options.removeNoSideEffectsCalls).to.deep.equal(['class2.method']);
     });
 
     it('should merge only keep configs', () => {
@@ -1308,7 +1400,8 @@ describe('test for ConfigResolve', function() {
       config2.reservedGlobalNames = ['global2'];
       config2.keepComments = ['comment2'];
       config2.excludePathSet.add('path2');
-  
+      config2.options.removeNoSideEffectsCalls = ['class2.method'];
+
       const projectConfig = {
         obfuscationOptions: { option1: 'value1' },
         compileHar: false
@@ -1327,6 +1420,7 @@ describe('test for ConfigResolve', function() {
       expect(res.reservedGlobalNames).to.deep.equal(['global2']);
       expect(res.keepComments).to.deep.equal(['comment2']);
       expect(res.excludePathSet).to.deep.equal(new Set(['path2']));
+      expect(res.options.removeNoSideEffectsCalls).to.deep.equal([]);
     });
   });
 
@@ -1345,7 +1439,8 @@ describe('test for ConfigResolve', function() {
       config2.reservedGlobalNames = ['global2'];
       config2.keepComments = ['comment2'];
       config2.excludePathSet.add('path2');
-  
+      config2.options.removeNoSideEffectsCalls = ['class2.method'];
+
       const projectConfig = {
         obfuscationOptions: { option1: 'value1' },
         compileHar: true
@@ -1378,11 +1473,13 @@ describe('test for ConfigResolve', function() {
       expect(res.indexOf('global2') !== -1).to.be.true;
       expect(res.indexOf('-keep-property-name') !== -1).to.be.true;
       expect(res.indexOf('prop2') !== -1).to.be.true;
-      
+      expect(res.indexOf('-remove-nosideeffects-calls') === -1).to.be.true;
+      expect(res.indexOf('class2.method') === -1).to.be.true;
+
       fs.unlinkSync(sourceObConfig.exportRulePath);
     });
 
-    it('should merge all configs: compileHar is false', () => {
+    it('should not merge all configs: compileHar is false', () => {
       const config1 = new MergedConfig();
       config1.options.enableLibObfuscationOptions = false;
   
@@ -1396,7 +1493,8 @@ describe('test for ConfigResolve', function() {
       config2.reservedGlobalNames = ['global2'];
       config2.keepComments = ['comment2'];
       config2.excludePathSet.add('path2');
-  
+      config2.options.removeNoSideEffectsCalls = ['class2.method'];
+
       const projectConfig = {
         obfuscationOptions: { option1: 'value1' },
         compileHar: false
@@ -1419,7 +1517,6 @@ describe('test for ConfigResolve', function() {
       newObConfigResolver.genConsumerConfigFilesForTest(sourceObConfig, config1, config2);
 
       let res: string = fs.readFileSync(sourceObConfig.exportRulePath, 'utf-8');
-
       expect(res.indexOf('-enable-lib-obfuscation-options') === -1).to.be.true;
       expect(res.indexOf('-enable-property-obfuscation') === -1).to.be.true;
       expect(res.indexOf('-enable-string-property-obfuscation') === -1).to.be.true;
@@ -1430,7 +1527,9 @@ describe('test for ConfigResolve', function() {
       expect(res.indexOf('global2') === -1).to.be.true;
       expect(res.indexOf('-keep-property-name') === -1).to.be.true;
       expect(res.indexOf('prop2') === -1).to.be.true;
-      
+      expect(res.indexOf('-remove-nosideeffects-calls') === -1).to.be.true;
+      expect(res.indexOf('class2.method') === -1).to.be.true;
+
       fs.unlinkSync(sourceObConfig.exportRulePath);
     });
   });
