@@ -147,7 +147,9 @@ import {
   COMPONENTV2_DECORATOR_NAME,
   ENTRY_STORAGE,
   ENTRY_USE_SHARED_STORAGE,
-  globalDepreApis
+  globalDepreApis,
+  UIUtilsDeprecatedFunctionName,
+  UI_UTILS
 } from './utils/consts/ArkuiConstants';
 import { arkuiImportList } from './utils/consts/ArkuiImportList';
 import type { IdentifierAndArguments, ForbiddenAPICheckResult } from './utils/consts/InteropAPI';
@@ -6148,6 +6150,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handlePromiseTupleGeneric(callExpr);
     this.isSelectOfArkUI(callExpr, callSignature);
     this.handleTupleGeneric(callExpr);
+    this.handleUIUtilsDeprecatedFunction(callExpr);
   }
 
   private isSelectOfArkUI(callExpr: ts.CallExpression, signature: ts.Signature | undefined): void {
@@ -16252,5 +16255,23 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const apiName = method.name.getText();
     const errorMsg: string = `The ArkUI interface "${apiName}" is deprecated (arkui-deprecated-interface)`;
     this.incrementCounters(method.name, FaultID.NoDeprecatedApi, undefined, errorMsg);
+  }
+
+  private handleUIUtilsDeprecatedFunction(callExpr: ts.CallExpression): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    if (ts.isPropertyAccessExpression(callExpr.expression)) {
+      const objectName = callExpr.expression.expression.getText();
+      const methodName = callExpr.expression.name.getText();
+      if (objectName === UI_UTILS && 
+        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility || methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)) {
+        if (callExpr.arguments.length === 1) {
+            const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
+            this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
+        }
+      }
+    }
   }
 }

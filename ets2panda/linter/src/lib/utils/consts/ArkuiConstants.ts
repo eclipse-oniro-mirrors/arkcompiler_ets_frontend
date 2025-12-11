@@ -66,6 +66,11 @@ export enum BuilderNodeFunctionName {
   Update = 'update'
 }
 
+export enum UIUtilsDeprecatedFunctionName {
+  EnableV2Compatibility = 'enableV2Compatibility',
+  MakeV1Observed = "makeV1Observed"
+}
+
 export const observedDecoratorName: Set<string> = new Set([
   'State',
   'Prop',
@@ -197,3 +202,4 @@ export const USE_STATIC_STATEMENT = 'use static';
 export const GET_CONTEXT = 'getContext';
 export const UI_CONTEXT = 'UIContext';
 export const GET_FOCUSED_UI_CONTEXT = 'getFocusedUIContext';
+export const UI_UTILS = 'UIUtils';

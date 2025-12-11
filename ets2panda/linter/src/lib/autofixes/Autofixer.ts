@@ -5404,6 +5404,18 @@ export class Autofixer {
     return [{ start: stmt.getEnd(), end: stmt.getEnd(), replacementText: text }];
   }
 
+  static removeUIUtilsDeprecatedApiForCallExpression(callExpr: ts.CallExpression): Autofix[] {
+    const argument = callExpr.arguments[0];
+    const argumentText = argument.getText();
+    return [
+      {
+        start: callExpr.getStart(),
+        end: callExpr.getEnd(),
+        replacementText: argumentText
+      }
+    ];
+  }
+
   fixDeprecatedApiForCallExpression(
     callExpr: ts.CallExpression | ts.EtsComponentExpression,
     parentName: string | undefined

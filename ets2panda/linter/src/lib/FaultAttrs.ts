@@ -315,3 +315,4 @@ faultsAttrs[FaultID.InstanceOfFunction] = new FaultAttributes(411);
 faultsAttrs[FaultID.unfixedTuple] = new FaultAttributes(412);
 faultsAttrs[FaultID.SuperInStaticContext] = new FaultAttributes(413);
 faultsAttrs[FaultID.SdkApiStaticOverload] = new FaultAttributes(414);
+faultsAttrs[FaultID.EnableV2CompatibilityFunctionNotSupported] = new FaultAttributes(415);

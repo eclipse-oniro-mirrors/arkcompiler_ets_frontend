@@ -108,6 +108,7 @@
     "arkui-no-localstorageprop-decorator",
     "arkui-no-prop-function",
     "arkui-no-setandprop-function",
+    "arkui-no-enableV2Compatibility-and-makeV1Observed-function",
     "arkui-prop-need-call-method-for-deep-copy",
     "arkui-no-localbuilder-decorator",
     "arkui-statestyles-block-need-arrow-func",
