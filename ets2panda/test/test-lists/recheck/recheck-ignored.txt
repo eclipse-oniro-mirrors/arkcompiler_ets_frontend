@@ -112,3 +112,5 @@ runtime/ets/non_null_number_as_index.ets
 
 #Issue #30577
 runtime/ets/re_export_default/import_reexport3.ets
+#32155
+ast/compiler/ets/annotation_new.ets

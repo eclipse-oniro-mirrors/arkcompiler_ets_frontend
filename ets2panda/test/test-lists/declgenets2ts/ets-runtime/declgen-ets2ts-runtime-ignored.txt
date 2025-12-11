@@ -50,6 +50,7 @@ run_ok_without_semicolon.ets
 async_lambda_return_type_test.ets
 fuzz/invalid_rest_param_await.ets
 fuzz/repeated_del.ets
+fuzz/create_partial.ets
 fuzz/class_body_interface.ets
 return_type_utility_1.ets
 return_type_utility_2.ets

@@ -177,3 +177,5 @@ ast/compiler/ets/nagative_trailingLambda_abort.ets
 ast/parser/ets/overload_function_match_neg.ets
 ast/compiler/type_error_test.ets
 ast/parser/ets/super_field.ets
+#32155
+ast/compiler/ets/annotation_new.ets

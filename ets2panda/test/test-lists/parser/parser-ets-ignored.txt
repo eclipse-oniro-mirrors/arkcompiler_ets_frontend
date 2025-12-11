@@ -10,3 +10,5 @@ parser/as/test_object_literal.ts
 parser/as/test_type_annotation.ts
 parser/ts/test_decorator.ts
 parser/ts/test_decorator3.ts
+#32155
+ast/compiler/ets/annotation_new.ets
