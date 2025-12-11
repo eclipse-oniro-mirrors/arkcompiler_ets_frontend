@@ -44,7 +44,7 @@ function main(): void {
   let const_str: String = 'str' + c'a';
   arktest.assertEQ(const_str, "stra")
 
-  arktest.assertEQ(concatenate_float('x', 1.0 as float, "y"), "x1y")
+  arktest.assertEQ(concatenate_float('x', 1.0f, "y"), "x1y")
 
   concatenate_compile_time();
 }

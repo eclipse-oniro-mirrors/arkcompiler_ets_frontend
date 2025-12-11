@@ -59,7 +59,7 @@ function main(): void {
   arktest.assertEQ(Char.toFloat(f), 61441.0)
   arktest.assertEQ(Char.toLong(f), 61441)            // 61441 == 0x000000000000F001
   arktest.assertEQ(Char.toInt(f), 61441)             // 61441 == 0x0000F001
-  arktest.assertEQ(Char.toShort(f), 0xf001 as short) // -4095 == 0xF001
+  arktest.assertEQ(Char.toShort(f), (0xf001).toShort()) // -4095 == 0xF001
   arktest.assertEQ(Char.toShort(f), -4095)
 
   let g : byte = -128;

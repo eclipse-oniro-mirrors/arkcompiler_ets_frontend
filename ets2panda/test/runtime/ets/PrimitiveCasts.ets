@@ -65,13 +65,13 @@ function main() {
     arktest.assertEQ(f.toByte(),  2 as byte)
     arktest.assertEQ(f.toShort(), 2 as short)
     arktest.assertEQ(f.toInt(),   2 as int)
-    arktest.assertEQ(f.toLong(),  2.0 as long)
-    arktest.assertEQ(f.toDouble(),2.71f as double)
+    arktest.assertEQ(f.toLong(),  (2.0).toLong())
+    arktest.assertEQ(f.toDouble(), 2.71f as double)
 
     // double
     arktest.assertEQ(d.toByte(),  3 as byte)
     arktest.assertEQ(d.toShort(), 3 as short)
     arktest.assertEQ(d.toInt(),   3 as int)
-    arktest.assertEQ(d.toLong(),  3.0 as long)
+    arktest.assertEQ(d.toLong(),  (3.0).toLong())
     arktest.assertEQ(d.toFloat(), 3.14f)
 }
