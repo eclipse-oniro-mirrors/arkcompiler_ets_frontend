@@ -1201,6 +1201,9 @@ export class NumericSemanticCheck implements BaseChecker {
 
     private isNumberConstantActuallyFloat(constant: NumberConstant): boolean {
         const valueStr = constant.getValue().toLowerCase();
+        if (this.isScientificStr(valueStr)) {
+            return true;
+        }
         if (valueStr.includes('.') && !valueStr.includes('e')) {
             // 数字字面量非科学计数的写法，并且有小数点，则一定是浮点数，1.0也认为是float
             return true;
@@ -1213,6 +1216,11 @@ export class NumericSemanticCheck implements BaseChecker {
         return !Number.isInteger(num);
     }
 
+    private  isScientificStr(str: string): boolean {
+        const scientificRegex =
+            /^[+-]?(?:\d+\.?\d*|\.\d+)[eE][+-]?\d+$/;
+        return scientificRegex.test(str);
+    }
     // 判断number constant是否为1.0、2.0这种可以转成1、2的整型形式
     private isFloatActuallyInt(constant: NumberConstant): boolean {
         const parts = constant.getValue().split('.');
