@@ -1096,6 +1096,10 @@ semantic:
   id: 391
   message: "Overload declaration cannot be called by union."
 
+- name: OVERLOAD_MUST_ALSO_BE_EXPORTED
+  id: 456
+  message: "The overload function must be exported along because the overload alias is exported."
+
 - name: OVERLOAD_MUST_BOTH_CONSTRUCT
   id: 388
   message: "The overload alias and the overloaded method must either both be constructors or both be non-constructors."

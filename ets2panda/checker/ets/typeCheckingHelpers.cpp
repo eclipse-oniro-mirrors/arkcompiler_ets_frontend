@@ -1501,6 +1501,12 @@ static bool CheckAccessModifierForOverloadDeclaration(ETSChecker *const checker,
         return false;
     }
 
+    if ((overLoadAliasFlags & ir::ModifierFlags::EXPORT) != 0 &&
+        (((overLoadAliasFlags ^ overloadedMethodFlags) & (ir::ModifierFlags::EXPORT)) != 0)) {
+        checker->LogError(diagnostic::OVERLOAD_MUST_ALSO_BE_EXPORTED, {}, pos);
+        return false;
+    }
+
     return true;
 }
 

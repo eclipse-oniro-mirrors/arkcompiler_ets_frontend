@@ -21,14 +21,6 @@ class A {
     overload foo{ foo1, foo2 }
 }
 
-namespace NS {
-    native function foo1(x: number): void;
-    export function foo2(x: string) {
-        return "invoke2"
-    }
-    export overload foo{ foo1, foo2 }
-}
-
 native function foo1(x: number): void;
 function foo2(x: string) {
     return "invoke3"
@@ -38,6 +30,5 @@ overload foo{ foo1, foo2 }
 function main() {
     let a = new A();
     arktest.assertEQ(a.foo("abc"), "invoke1");
-    arktest.assertEQ(NS.foo("abc"), "invoke2");
     arktest.assertEQ(foo("abc"), "invoke3");
 }

@@ -13,18 +13,13 @@
  * limitations under the License.
  */
 
-namespace NS {
-    export function foo1(a: number) {
-        return "invoke1";
-    }
+export function foo1() { }
+function foo2() { }
 
-    export function foo2(a: string) {
-        return "invoke2";
-    }
+overload bar1 {foo1}
+overload bar2 {foo1, foo2}
+export overload bar3 { /* @@ label1 */foo2 }
+export overload bar4 { foo1, /* @@ label2 */foo2 }
 
-    export overload overloadfoo{ foo1, foo2 }
-}
-
-function main() {
-    arktest.assertEQ(NS.overloadfoo(1), "invoke1");
-}
+/* @@@ label1 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
+/* @@@ label2 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
