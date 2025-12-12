@@ -4629,7 +4629,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private isTypeSameOrWider(baseType: ts.Type, derivedType: ts.Type): boolean {
-    if (this.tsTypeChecker.typeToStringForLinter(baseType) === this.tsTypeChecker.typeToStringForLinter(derivedType)) {
+    if (
+      this.tsTypeChecker.typeToStringForLinter(baseType).toLowerCase() ===
+      this.tsTypeChecker.typeToStringForLinter(derivedType).toLowerCase()
+    ) {
       return true;
     }
 
