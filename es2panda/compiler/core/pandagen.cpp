@@ -35,6 +35,19 @@
 namespace panda::es2panda::compiler {
 
 // PandaGen
+static panda::panda_file::FunctionKind GetMethodKind(const ir::ScriptFunction *func)
+{
+    if (func->IsAsync()) {
+        if (func->IsGenerator()) {
+            return panda::panda_file::FunctionKind::ASYNC_GENERATOR_FUNCTION;
+        }
+        return panda::panda_file::FunctionKind::ASYNC_FUNCTION;
+    }
+    if (func->IsGenerator()) {
+        return panda::panda_file::FunctionKind::GENERATOR_FUNCTION;
+    }
+    return panda::panda_file::FunctionKind::NONE;
+}
 
 void PandaGen::SetFunctionKind()
 {
@@ -51,9 +64,7 @@ void PandaGen::SetFunctionKind()
     }
 
     if (func->IsMethod()) {
-        if (func->IsAsync()) {
-            funcKind_ = panda::panda_file::FunctionKind::ASYNC_FUNCTION;
-        }
+        funcKind_ = GetMethodKind(func);
         return;
     }
 
