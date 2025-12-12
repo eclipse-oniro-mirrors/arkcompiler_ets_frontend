@@ -10346,13 +10346,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 36,
+                  "column": 5,
                   "program": "enum_as_class_member_getValue_call.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 36,
+                  "column": 16,
                   "program": "enum_as_class_member_getValue_call.ets"
                 }
               }
@@ -10371,13 +10371,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 36,
+                      "column": 5,
                       "program": "enum_as_class_member_getValue_call.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 36,
+                      "column": 16,
                       "program": "enum_as_class_member_getValue_call.ets"
                     }
                   }

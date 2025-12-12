@@ -315,13 +315,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 21,
+                  "column": 3,
                   "program": "AccessBinaryTrees.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 21,
+                  "column": 14,
                   "program": "AccessBinaryTrees.ets"
                 }
               }
@@ -340,13 +340,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 3,
                       "program": "AccessBinaryTrees.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 14,
                       "program": "AccessBinaryTrees.ets"
                     }
                   }

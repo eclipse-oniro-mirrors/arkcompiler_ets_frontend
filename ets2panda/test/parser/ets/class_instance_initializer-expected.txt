@@ -168,13 +168,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 12,
                   "program": "class_instance_initializer.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 23,
                   "program": "class_instance_initializer.ets"
                 }
               }
@@ -193,13 +193,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -639,13 +639,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 26,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 26,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -664,13 +664,13 @@
                       "name": "constructor",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 26,
+                          "column": 12,
                           "program": "class_instance_initializer.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 26,
+                          "column": 23,
                           "program": "class_instance_initializer.ets"
                         }
                       }
@@ -1027,13 +1027,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 32,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 32,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -1052,13 +1052,13 @@
                       "name": "constructor",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 32,
+                          "column": 12,
                           "program": "class_instance_initializer.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 32,
+                          "column": 23,
                           "program": "class_instance_initializer.ets"
                         }
                       }
@@ -1835,13 +1835,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 44,
+                  "column": 12,
                   "program": "class_instance_initializer.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 44,
+                  "column": 23,
                   "program": "class_instance_initializer.ets"
                 }
               }
@@ -1860,13 +1860,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 44,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 44,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -2306,13 +2306,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 51,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 51,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -2331,13 +2331,13 @@
                       "name": "constructor",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 51,
+                          "column": 12,
                           "program": "class_instance_initializer.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 51,
+                          "column": 23,
                           "program": "class_instance_initializer.ets"
                         }
                       }
@@ -2694,13 +2694,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 57,
+                      "column": 12,
                       "program": "class_instance_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 57,
+                      "column": 23,
                       "program": "class_instance_initializer.ets"
                     }
                   }
@@ -2719,13 +2719,13 @@
                       "name": "constructor",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 57,
+                          "column": 12,
                           "program": "class_instance_initializer.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 57,
+                          "column": 23,
                           "program": "class_instance_initializer.ets"
                         }
                       }

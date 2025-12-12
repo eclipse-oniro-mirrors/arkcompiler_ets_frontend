@@ -610,7 +610,7 @@
                   },
                   "end": {
                     "line": 20,
-                    "column": 17,
+                    "column": 35,
                     "program": "abstractMethodDeclaredInParentClass.ets"
                   }
                 }
@@ -623,7 +623,7 @@
                 },
                 "end": {
                   "line": 20,
-                  "column": 17,
+                  "column": 35,
                   "program": "abstractMethodDeclaredInParentClass.ets"
                 }
               }
@@ -637,7 +637,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 17,
+                "column": 35,
                 "program": "abstractMethodDeclaredInParentClass.ets"
               }
             }
@@ -1517,7 +1517,7 @@
                   },
                   "end": {
                     "line": 38,
-                    "column": 18,
+                    "column": 32,
                     "program": "abstractMethodDeclaredInParentClass.ets"
                   }
                 }
@@ -1530,7 +1530,7 @@
                 },
                 "end": {
                   "line": 38,
-                  "column": 18,
+                  "column": 32,
                   "program": "abstractMethodDeclaredInParentClass.ets"
                 }
               }
@@ -1544,7 +1544,7 @@
               },
               "end": {
                 "line": 38,
-                "column": 18,
+                "column": 32,
                 "program": "abstractMethodDeclaredInParentClass.ets"
               }
             }

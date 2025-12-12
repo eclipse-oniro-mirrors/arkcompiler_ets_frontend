@@ -93,7 +93,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 22,
+                    "column": 31,
                     "program": "method_modifier_check_8.ets"
                   }
                 }
@@ -106,7 +106,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 22,
+                  "column": 31,
                   "program": "method_modifier_check_8.ets"
                 }
               }
@@ -120,7 +120,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 22,
+                "column": 31,
                 "program": "method_modifier_check_8.ets"
               }
             }

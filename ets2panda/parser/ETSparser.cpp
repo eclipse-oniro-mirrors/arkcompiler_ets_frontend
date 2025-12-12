@@ -537,7 +537,7 @@ ir::ScriptFunction *ETSParser::ParseFunction(ParserStatus newStatus)
     auto [signature, throwMarker] = ParseFunctionSignature(newStatus);
 
     ir::AstNode *body = nullptr;
-    lexer::SourcePosition endLoc = startLoc;
+    lexer::SourcePosition endLoc = Lexer()->GetToken().Start();
     bool isOverload = false;
     bool isArrow = (newStatus & ParserStatus::ARROW_FUNCTION) != 0;
 
@@ -658,9 +658,13 @@ ir::AstNode *ETSParser::ParseInnerConstructorDeclaration(ir::ModifierFlags membe
     Lexer()->TryEatTokenType(lexer::TokenType::KEYW_CONSTRUCTOR);
     memberModifiers |= ir::ModifierFlags::CONSTRUCTOR;
 
-    ir::Identifier *memberName = Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT
-                                     ? ExpectIdentifier(false, true)
-                                     : AllocNode<ir::Identifier>(constructorToken.Ident(), Allocator());
+    ir::Identifier *memberName = nullptr;
+    if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
+        memberName = ExpectIdentifier(false, true);
+    } else {
+        memberName = AllocNode<ir::Identifier>(constructorToken.Ident(), Allocator());
+        memberName->SetRange(constructorToken.Loc());
+    }
 
     auto *classMethod = ParseClassMethodDefinition(memberName, memberModifiers, isDefault);
     ES2PANDA_ASSERT(classMethod != nullptr);

@@ -93,7 +93,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 20,
+                    "column": 28,
                     "program": "native_function_with_return_type.ets"
                   }
                 }
@@ -106,7 +106,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 20,
+                  "column": 28,
                   "program": "native_function_with_return_type.ets"
                 }
               }
@@ -120,7 +120,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 20,
+                "column": 28,
                 "program": "native_function_with_return_type.ets"
               }
             }
