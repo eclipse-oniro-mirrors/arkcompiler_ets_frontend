@@ -1852,23 +1852,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const baseExprType = this.tsTypeChecker.getTypeAtLocation(propertyAccessNode.expression);
-    const baseExprSym = baseExprType.aliasSymbol || baseExprType.getSymbol();
-    const symbolName = baseExprSym ? baseExprSym.name : this.tsTypeChecker.typeToStringForLinter(baseExprType);
+    const propName = propertyAccessNode.name.getText();
+    const type = this.tryToGetUnionType(propertyAccessNode.expression);
 
-    if (!baseExprType.isUnion() || COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(symbolName)) {
+    if (!type?.isUnion()) {
       return;
     }
 
-    const allTypes = baseExprType.types;
-    const propName = propertyAccessNode.name.getText();
-
     // Only keep union members that have the property
-    const typesWithProp = allTypes.filter((type) => {
+    const typesWithProp = type.types.filter((type) => {
       return this.tsUtils.findProperty(type, propName) !== undefined;
     });
 
-    if (typesWithProp.length !== allTypes.length) {
+    if (typesWithProp.length !== type.types.length) {
       // Not all members have this property, nothing to check
       return;
     }
@@ -1888,6 +1884,36 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (distinctPropTypes.size > 1) {
       this.incrementCounters(propertyAccessNode, FaultID.AvoidUnionTypes);
     }
+  }
+
+  private tryToGetUnionType(expression: ts.Expression): ts.Type | null {
+    const exprType = this.tsTypeChecker.getTypeAtLocation(expression);
+    if (exprType.isUnion() && !this.isWhitelistedType(exprType)) {
+      return exprType;
+    }
+
+    return this.getDeclaredUnionType(expression);
+  }
+
+  private getDeclaredUnionType(expression: ts.Expression): ts.Type | null {
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(expression);
+    if (!symbol) { 
+      return null; 
+    }
+
+    const decl = symbol.getDeclarations()?.[0];
+    if (!decl || !ts.isVariableDeclaration(decl) || !decl.type) { 
+      return null; 
+    }
+
+    const type = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
+    return type.isUnion() && !this.isWhitelistedType(type) ? type : null;
+  }
+
+  private isWhitelistedType(type: ts.Type): boolean {
+    const sym = type.aliasSymbol || type.getSymbol();
+    const name = sym ? sym.name : this.tsTypeChecker.typeToStringForLinter(type);
+    return COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(name);
   }
 
   private handleLiteralAsPropertyName(node: ts.PropertyDeclaration | ts.PropertySignature): void {
