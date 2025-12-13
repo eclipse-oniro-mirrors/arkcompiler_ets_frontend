@@ -18,4 +18,5 @@ import {bar} from /* @@ label */"./check_exported_3";
 class bar{};
 
 //Throw error: Function already declared.
-/* @@@ label Error TypeError: Function 'bar' is already defined with different type.  */
+
+/* @@@ label Error Semantic error ESE0350: Function 'bar' is already defined with different type. */

@@ -19,5 +19,5 @@ function main() {
     v[0] = []  // CTE
 }
 
-/* @@? 19:5 Error TypeError: Object type doesn't have proper index access method.  */
-/* @@? 19:12 Error TypeError: Can't resolve array type  */
+/* @@? 19:5 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter  */
+/* @@? 19:12 Error Semantic error ESE0301: Can't resolve array type  */

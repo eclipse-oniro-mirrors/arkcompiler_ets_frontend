@@ -16,8 +16,8 @@
 #ifndef ES2PANDA_EVALUATE_NON_RECURSIVE_IR_CHECKER_H
 #define ES2PANDA_EVALUATE_NON_RECURSIVE_IR_CHECKER_H
 
-#include "mem/arena_allocator.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::checker {
 class ETSChecker;

@@ -17,14 +17,15 @@
 let a: [number, w: number, number,] = [1, 2, 3,];
 let b: [number, /* @@ label */,number, number,] = [1, 2, 3,];
 
-/* @@? 17:17 Error TypeError: Cannot find type 'w'. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:18 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:20 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:20 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:26 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:28 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:28 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:34 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:35 Error SyntaxError: Unexpected token ']'. */
-/* @@@ label Error SyntaxError: Invalid Type. */
+
+/* @@? 17:17 Error Semantic error ESE0371: Cannot find type 'w'. */
+/* @@? 17:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 17:18 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:20 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:20 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:26 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:28 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:28 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:34 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:35 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@@ label Error Syntax error ESY0138: Invalid Type. */

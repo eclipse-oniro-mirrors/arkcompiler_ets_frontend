@@ -19,4 +19,5 @@ declare interface A {
     [index : number]: stringdd
 }
 
-/* @@? 19:5 Error TypeError: Cannot find type 'stringdd'. */
+
+/* @@? 19:5 Error Semantic error ESE0371: Cannot find type 'stringdd'. */

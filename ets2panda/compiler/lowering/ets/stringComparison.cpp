@@ -17,7 +17,7 @@
 #include "stringComparison.h"
 #include "checker/ETSchecker.h"
 #include "parser/parserImpl.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 
@@ -110,8 +110,7 @@ void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *exp
 
 bool StringComparisonLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    checker::ETSChecker *checker = ctx->GetChecker()->AsETSChecker();
-    [[maybe_unused]] ArenaVector<ir::BinaryExpression *> foundNodes(checker->Allocator()->Adapter());
+    [[maybe_unused]] std::vector<ir::BinaryExpression *> foundNodes {};
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     program->Ast()->IterateRecursively([&foundNodes, this](ir::AstNode *ast) -> ir::AstNode * {
         if (IsStringComparison(ast)) {

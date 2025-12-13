@@ -20,7 +20,7 @@
 #include "ir/statements/blockStatement.h"
 #include "ir/statements/variableDeclarator.h"
 #include "ir/statements/variableDeclaration.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "compiler/lowering/phase.h"
 
 #include <gtest/gtest.h>

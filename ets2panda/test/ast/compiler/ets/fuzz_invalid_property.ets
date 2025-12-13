@@ -17,5 +17,4 @@ class D{
     strB = (new StringBuilder).append('{ ').append(strB.toString()).append(' }')       
 }
 
-/* @@? 17:12 Error TypeError: No matching call signature for append(...) */
-/* @@? 17:52 Error TypeError: Unresolved reference strB */
+/* @@? 17:52 Error Syntax error ESY0234: Property or signature expected. */

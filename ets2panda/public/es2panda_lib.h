@@ -275,7 +275,7 @@ struct CAPI_EXPORT es2panda_Impl {
 
     int (*GenerateTsDeclarationsFromContext)(es2panda_Context *context, const char *outputDeclEts,
                                              const char *outputEts, bool exportAll, bool isolated,
-                                             const char *recordFile);
+                                             const char *recordFile, bool genAnnotations);
     void (*InsertETSImportDeclarationAndParse)(es2panda_Context *context, es2panda_Program *program,
                                                es2panda_AstNode *importDeclaration);
     int (*GenerateStaticDeclarationsFromContext)(es2panda_Context *context, const char *outputPath);
@@ -283,6 +283,7 @@ struct CAPI_EXPORT es2panda_Impl {
     void (*InvalidateFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*RemoveFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
     void (*AddFileCache)(es2panda_GlobalContext *globalContext, const char *fileName);
+    void (*FreeCompilerPartMemory)(es2panda_Context *context);
 // COMPARE_MANUAL_CAPI_AND_IDL_END
 // CC-OFFNXT(G.INC.08) project code style
 #include "generated/es2panda_lib/es2panda_lib_decl.inc"

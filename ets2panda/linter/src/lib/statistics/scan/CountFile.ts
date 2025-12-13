@@ -16,6 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
+import { runWithIOLimit, mapWithLimit, FILES_PER_DIR_CONCURRENCY, DIRS_PER_DIR_CONCURRENCY } from './IoLimiter';
 
 // Define file type extensions
 const FILE_TYPES: { [key: string]: string[] } = {
@@ -39,11 +40,11 @@ const COMMENT_REGEX1: { [key: string]: RegExp } = {
 };
 
 const COMMENT_REGEX2: { [key: string]: RegExp } = {
-  'C/C++': /\/\*.*?\*\//gs,
-  JavaScript: /\/\*.*?\*\//gs,
-  TypeScript: /\/\*.*?\*\//gs,
-  ArkTS: /\/\*.*?\*\//gs,
-  'ArkTS Test': /\/\*.*?\*\//gs
+  'C/C++': /\/\*[\s\S]*?\*\//g,
+  JavaScript: /\/\*[\s\S]*?\*\//g,
+  TypeScript: /\/\*[\s\S]*?\*\//g,
+  ArkTS: /\/\*[\s\S]*?\*\//g,
+  'ArkTS Test': /\/\*[\s\S]*?\*\//g
 };
 
 /**
@@ -105,7 +106,9 @@ function mergeAllResults(results: { [key: string]: { fileCount: number; lineCoun
  */
 async function walkDir(dir: string): Promise<{ [key: string]: { fileCount: number; lineCount: number } }> {
   try {
-    const entries = await promisify(fs.readdir)(dir, { withFileTypes: true });
+    const entries = await runWithIOLimit(() => {
+      return promisify(fs.readdir)(dir, { withFileTypes: true });
+    });
     const fileResults = await processFiles(dir, entries);
     const dirResults = await processDirs(dir, entries);
     return mergeAllResults([fileResults, dirResults]);
@@ -122,15 +125,12 @@ async function processFiles(
   dir: string,
   entries: fs.Dirent[]
 ): Promise<{ [key: string]: { fileCount: number; lineCount: number } }> {
-  const fileResults = await Promise.all(
-    entries.
-      filter((entry) => {
-        return entry.isFile();
-      }).
-      map(async(entry) => {
-        return processFileEntry(dir, entry);
-      })
-  );
+  const files = entries.filter((entry) => {
+    return entry.isFile();
+  });
+  const fileResults = await mapWithLimit(files, FILES_PER_DIR_CONCURRENCY, async (entry) => {
+    return processFileEntry(dir, entry);
+  });
   return mergeAllResults(fileResults);
 }
 
@@ -171,11 +171,9 @@ async function processDirs(
   const dirEntries = entries.filter((entry) => {
     return entry.isDirectory();
   });
-  const dirResults = await Promise.all(
-    dirEntries.map((entry) => {
-      return walkDir(path.join(dir, entry.name));
-    })
-  );
+  const dirResults = await mapWithLimit(dirEntries, DIRS_PER_DIR_CONCURRENCY, async (entry) => {
+    return walkDir(path.join(dir, entry.name));
+  });
   return mergeAllResults(dirResults);
 }
 
@@ -203,7 +201,9 @@ export async function countFiles(
   directory: string
 ): Promise<{ [key: string]: { fileCount: number; lineCount: number } }> {
   try {
-    const stats = await promisify(fs.stat)(directory);
+    const stats = await runWithIOLimit(() => {
+      return promisify(fs.stat)(directory);
+    });
     if (stats.isDirectory()) {
       return await analyzeDirectory(directory);
     }

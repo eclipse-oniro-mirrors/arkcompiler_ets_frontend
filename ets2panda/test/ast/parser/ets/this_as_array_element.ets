@@ -14,5 +14,8 @@
  */
 
 class Link {
-    a: Link[] = [this];
+    a: Link[];
+    constructor() {
+        this.a = [this];
+    }
 }

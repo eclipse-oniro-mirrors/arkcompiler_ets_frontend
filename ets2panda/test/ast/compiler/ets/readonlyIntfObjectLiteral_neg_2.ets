@@ -28,4 +28,4 @@ function main() {
 }
 
 
-/* @@? 27:12 Error TypeError: Cannot assign to this property because it is readonly.  */
+/* @@? 27:12 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

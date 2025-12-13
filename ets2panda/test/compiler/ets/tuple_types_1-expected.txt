@@ -735,7 +735,7 @@
         },
         "end": {
           "line": 19,
-          "column": 50,
+          "column": 49,
           "program": "tuple_types_1.ets"
         }
       }
@@ -938,7 +938,7 @@
         },
         "end": {
           "line": 20,
-          "column": 60,
+          "column": 59,
           "program": "tuple_types_1.ets"
         }
       }

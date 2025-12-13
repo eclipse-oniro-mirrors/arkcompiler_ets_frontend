@@ -13,99 +13,111 @@
  * limitations under the License.
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-
 import {
-    changeFileExtension,
-    ensurePathExists,
-    formEts2pandaCmd
-} from '../util/utils';
-import {
-    DECL_ETS_SUFFIX,
-} from '../pre_define';
-import { PluginDriver, PluginHook } from '../plugins/plugins_driver';
-import {
-    BuildConfig,
-    CompileJobInfo,
     BUILD_MODE,
-    OHOS_MODULE_TYPE
+    WorkerMessageType,
+    ProcessCompileTask,
 } from '../types';
-import { initKoalaModules } from '../init/init_koala_modules';
-import { LogDataFactory, Logger, getConsoleLogger } from '../logger';
+import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
-import { KitImportTransformer } from '../plugins/KitImportTransformer'
+import { Ets2panda } from '../util/ets2panda';
 
-process.on('message', (message: {
-    job: CompileJobInfo;
-    buildConfig: BuildConfig;
-}) => {
-    let errorStatus = false;
-    const { job, buildConfig } = message;
 
-    Logger.getInstance(getConsoleLogger);
-    PluginDriver.getInstance().initPlugins(buildConfig);
-    let { arkts, arktsGlobal } = initKoalaModules(buildConfig)
+const logger = Logger.getInstance(getConsoleLogger)
 
-    const isDebug = buildConfig.buildMode === BUILD_MODE.DEBUG;
-    const ets2pandaCmd: string[] = formEts2pandaCmd(job, isDebug)
+function compile(id: string, task: ProcessCompileTask): void {
 
-    const inputFile = job.compileFileInfo.inputFilePath
-    const source = fs.readFileSync(inputFile).toString();
+    const ets2panda = Ets2panda.getInstance(task.buildConfig);
+
+    const declGeneratedCb = (): void => {
+        process.send!({
+            type: WorkerMessageType.DECL_GENERATED,
+            data: {
+                taskId: id,
+            }
+        });
+    }
+
+    const abcCompiledCb = (): void => {
+        process.send!({
+            type: WorkerMessageType.ABC_COMPILED,
+            data: {
+                taskId: id,
+            }
+        });
+    }
 
     try {
-        arktsGlobal.filePath = inputFile;
-        arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-        arktsGlobal.compilerContext = arkts.Context.createFromString(source);
-
-        PluginDriver.getInstance().getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
-
-        arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
-        if (buildConfig.aliasConfig && Object.keys(buildConfig.aliasConfig).length > 0) {
-            // if aliasConfig is set, transform aliasName@kit.xxx to default@ohos.xxx through the plugin
-            let ast = arkts.EtsScript.fromContext();
-            let transformAst = new KitImportTransformer(
-                arkts,
-                arktsGlobal.compilerContext.program,
-                buildConfig.buildSdkPath,
-                buildConfig.aliasConfig
-            ).transform(ast);
-            PluginDriver.getInstance().getPluginContext().setArkTSAst(transformAst);
+        ets2panda.initalize();
+        if (task.fileList.length > 1) {
+            ets2panda.compileSimultaneous(
+                id,
+                task,
+                task.buildConfig.dumpPerf,
+                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
+                declGeneratedCb,
+                abcCompiledCb
+            )
+        } else {
+            ets2panda.compile(
+                id,
+                task,
+                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
+                declGeneratedCb,
+                abcCompiledCb
+            )
         }
-        PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-
-        arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
-        {
-            const filePathFromModuleRoot = path.relative(buildConfig.moduleRootPath, inputFile);
-            const declEtsOutputPath = changeFileExtension(
-                path.join(buildConfig.declgenV2OutPath!, filePathFromModuleRoot),
-                DECL_ETS_SUFFIX
-            );
-            ensurePathExists(declEtsOutputPath);
-            arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
-        }
-        PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
-
-        arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_BIN_GENERATED, arktsGlobal.compilerContext.peer);
-
-        process.send!(job);
     } catch (error) {
-        errorStatus = true;
-        if (error instanceof Error) {
-            throw new DriverError(
-                LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
-                    'Compile abc files failed.',
-                    error.message,
-                    inputFile
-                )
-            );
+        if (error instanceof DriverError) {
+            process.send!({
+                type: WorkerMessageType.ERROR_OCCURED,
+                data: {
+                    taskId: id,
+                    error: error.logData
+                }
+            });
         }
     } finally {
-        if (!errorStatus) {
-            arktsGlobal.es2panda._DestroyContext(arktsGlobal.compilerContext.peer);
+        ets2panda.finalize();
+    }
+
+    Ets2panda.destroyInstance();
+}
+
+process.on('message', (message: {
+    type: WorkerMessageType,
+    data: {
+        taskId: string,
+        payload: ProcessCompileTask
+    }
+}) => {
+    const { type, data } = message;
+    logger.printDebug(`Got message from parent. Type: ${type}`)
+    logger.printDebug(`Got message from parent. payload: ${JSON.stringify(data, null, 1)}`)
+    try {
+        switch (type) {
+            case WorkerMessageType.ASSIGN_TASK:
+                compile(data.taskId, data.payload);
+                break;
+            default:
+                break;
         }
-        PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
-        arkts.destroyConfig(arktsGlobal.config);
+    } catch (error) {
+        logger.printDebug('Error occured');
+        if (error instanceof Error) {
+            let logData: LogData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
+                'Compile abc files failed.',
+                error.message,
+            );
+            process.send!({
+                type: WorkerMessageType.ERROR_OCCURED,
+                data: {
+                    taskId: data.taskId,
+                    error: logData
+                }
+            });
+        }
+        logger.printDebug('Sent the error to the parent');
     }
 });

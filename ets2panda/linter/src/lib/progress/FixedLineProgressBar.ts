@@ -14,184 +14,287 @@
  */
 
 import chalk from 'chalk';
-import * as cliProgress from 'cli-progress';
 import type { CmdProgressInfo } from './CmdProgressInfo';
-import type { ProgressPayload } from './ProgressPayload';
+import type { DisplayInfo } from './DisplayInfo';
 
+const DEFAULT_TERMINAL_ROWS = 24;
+const DEFAULT_TERMINAL_COLUMNS = 80;
+const DEFAULT_BAR_WIDTH = 30;
+const DEFAULT_RESERVED_LINES = 2;
+const MAX_TASK_NAME_LENGTH = 20;
 export class FixedLineProgressBar {
-  private readonly bar: cliProgress.SingleBar;
+  private isActive = false;
   private currentTask: string = '';
   private currentStatus: string = '';
-  private isActive = false;
+  private total: number = 0;
+  private currentProgress: number = 0;
   private lastOutput = '';
-  private static fixedLinePosition = 0;
-  private readonly minBarWidth = 20;
-  private readonly fixedPartsWidth = 40;
-  private resizeListener: (() => void) | null = null;
-  private lastTerminalWidth: number = 0;
+  private hasCompleted = false;
+  private isFirstUpdate = true;
+  private isFirstRender = true;
+  private lastWindowRows = 0;
+  private lastWindowCols = 0;
+  private readonly fixedBarWidth = DEFAULT_BAR_WIDTH;
+  private readonly reservedLines = DEFAULT_RESERVED_LINES;
+  private readonly useColors: boolean;
+
+  private alternateScreenActive = false;
 
   constructor() {
-    this.bar = new cliProgress.SingleBar(
-      {
-        format: (options, params, payload): string => {
-          return this.generateBarString(params.progress, payload);
-        },
-        barCompleteChar: '\u2588',
-        barIncompleteChar: '\u2591',
-        hideCursor: true,
-        clearOnComplete: false,
-        stopOnComplete: true,
-        linewrap: false,
-        forceRedraw: true,
-        autopadding: true,
-        noTTYOutput: true,
-        notTTYSchedule: 0
-      },
-      cliProgress.Presets.shades_grey
-    );
+    this.useColors = process.stderr.isTTY && !process.env.NO_COLOR && process.env.TERM !== 'dumb';
 
-    this.resizeListener = (): void => {
-      if (!this.isActive) {
-        return;
+    if (process.stdout.isTTY) {
+      this.lastWindowRows = process.stdout.rows || DEFAULT_TERMINAL_ROWS;
+      this.lastWindowCols = process.stdout.columns || DEFAULT_TERMINAL_COLUMNS;
+
+      process.stdout.on('resize', () => {
+        this.handleResize();
+      });
+    }
+  }
+
+  private switchToAlternateScreen(): void {
+    if (process.stderr.isTTY && !this.alternateScreenActive) {
+      try {
+        process.stderr.write('\x1B[?1049h');
+        process.stderr.write('\x1B[2J');
+        process.stderr.write('\x1B[1;1H');
+        this.alternateScreenActive = true;
+      } catch (error) {
+        console.error('Error switching to alternate screen:', error);
       }
-      const currentWidth = process.stdout.columns || 80;
-      // Only redraw when width changes by more than 5 characters to avoid excessive refreshes
-      if (Math.abs(currentWidth - this.lastTerminalWidth) > 5) {
-        this.renderToFixedLine();
-        this.lastTerminalWidth = currentWidth;
+    }
+  }
+
+  private switchFromAlternateScreen(): void {
+    if (process.stderr.isTTY && this.alternateScreenActive) {
+      try {
+        process.stderr.write('\x1B[?1049l');
+        this.alternateScreenActive = false;
+      } catch (error) {
+        console.error('Error switching from alternate screen:', error);
       }
-    };
-    process.stdout.on('resize', this.resizeListener);
-    this.lastTerminalWidth = process.stdout.columns || 80;
+    }
   }
 
-  private generateBarString(progress: number, payload: ProgressPayload): string {
-    const terminalWidth = process.stdout.columns || 80;
-    const availableWidth = terminalWidth - this.fixedPartsWidth;
-    const barWidth = Math.max(this.minBarWidth, availableWidth);
-
-    const completedLength = Math.max(0, Math.min(barWidth, Math.floor(progress * barWidth)));
-    const remainingLength = Math.max(0, barWidth - completedLength);
-
-    const completedBar = this.bar.options.barCompleteChar!.repeat(completedLength);
-    const remainingBar = this.bar.options.barIncompleteChar!.repeat(remainingLength);
-    const progressBar = `${completedBar}${remainingBar}`;
-
-    const progressPercent = Math.round(progress * 100);
-    const statusColor =
-      payload.status === 'scanning' ? chalk.blue : payload.status === 'fixing' ? chalk.yellow : chalk.green;
-
-    return `${chalk.bold(payload.task)} ${statusColor(payload.statusText)} [${progressBar}] ${progressPercent}%`;
+  private clearAlternateScreen(): void {
+    if (this.alternateScreenActive) {
+      try {
+        process.stderr.write('\x1B[2J');
+        process.stderr.write('\x1B[1;1H');
+      } catch (error) {
+        console.error('Error clearing alternate screen:', error);
+      }
+    }
   }
 
-  startBar(taskName: string, total: number, initialStatus: 'scanning' | 'fixing'): void {
-    this.isActive = true;
-    this.currentTask = taskName;
-    this.currentStatus = initialStatus;
-    this.lastTerminalWidth = process.stdout.columns || 80;
-
-    this.bar.start(total, 0, {
-      task: `${taskName.padEnd(12)}`,
-      status: initialStatus,
-      statusText: FixedLineProgressBar.getStatusText(initialStatus)
-    });
-
-    this.renderToFixedLine();
-  }
-
-  updateBar(progress: number, status: 'scanning' | 'fixing'): void {
-    if (!this.isActive) {
+  private handleResize(): void {
+    if (!this.isActive || this.hasCompleted) {
       return;
     }
 
-    if (status !== this.currentStatus) {
-      this.currentStatus = status;
-      this.bar.update(progress, {
-        status,
-        statusText: FixedLineProgressBar.getStatusText(status)
-      });
-    } else {
-      this.bar.update(progress);
+    const currentRows = process.stdout.rows || DEFAULT_TERMINAL_ROWS;
+    const currentCols = process.stdout.columns || DEFAULT_TERMINAL_COLUMNS;
+
+    if (currentRows !== this.lastWindowRows || currentCols !== this.lastWindowCols) {
+      this.lastWindowRows = currentRows;
+      this.lastWindowCols = currentCols;
+
+      this.switchToAlternateScreen();
+
+      this.clearAlternateScreen();
+      this.forceRedraw();
+    }
+  }
+
+  private forceRedraw(): void {
+    const content = this.generateContent(this.currentProgress);
+    this.writeToTerminal(content, true);
+  }
+
+  private getStatusText(useColor: boolean = false): string {
+    const statusMap: Record<string, { text: string; color: chalk.Chalk }> = {
+      scanning: { text: 'Scanning...', color: chalk.blue },
+      fixing: { text: 'Fixing...', color: chalk.yellow },
+      completed: { text: 'Completed', color: chalk.green },
+      skipped: { text: 'Skipped', color: chalk.magenta }
+    };
+
+    const statusInfo = statusMap[this.currentStatus] || statusMap.scanning;
+
+    if (useColor && this.useColors) {
+      return statusInfo.color(statusInfo.text);
     }
 
-    this.renderToFixedLine();
+    return statusInfo.text;
+  }
+
+  private generateBarString(progressRatio: number): string {
+    const completed = Math.floor(progressRatio * this.fixedBarWidth);
+    const remaining = this.fixedBarWidth - completed;
+
+    if (this.useColors) {
+      const completedPart = chalk.white('█'.repeat(completed));
+      const remainingPart = chalk.bgGray(' '.repeat(remaining));
+      return completedPart + remainingPart;
+    }
+    const completedPart = '#'.repeat(completed);
+    const remainingPart = '.'.repeat(remaining);
+    return completedPart + remainingPart;
+  }
+
+  private generateContent(progress: number): string {
+    const progressRatio = this.total > 0 ? Math.min(1, progress / this.total) : 0;
+    const percent = Math.round(progressRatio * 100);
+
+    const barString = this.generateBarString(progressRatio);
+    const statusText = this.getStatusText(true);
+
+    let taskName = this.currentTask;
+    if (taskName.length > MAX_TASK_NAME_LENGTH) {
+      taskName = taskName.substring(0, MAX_TASK_NAME_LENGTH - 3) + '...';
+    }
+
+    if (this.useColors) {
+      taskName = chalk.bold(taskName);
+    }
+
+    return `${taskName} ${statusText} [${barString}] ${percent}%`;
+  }
+
+  private writeToTerminal(content: string, clearFirst: boolean = true): void {
+    try {
+      this.switchToAlternateScreen();
+
+      if (this.isFirstRender) {
+        this.clearAlternateScreen();
+        this.isFirstRender = false;
+      }
+
+      process.stderr.write('\x1B[1;1H');
+
+      if (clearFirst) {
+        process.stderr.write('\x1B[2K');
+      }
+
+      process.stderr.write('\r' + content);
+
+      process.stderr.write('\n\x1B[2K');
+
+      process.stderr.write('\n');
+    } catch (error) {
+      console.error('Progress bar write error:', error);
+    }
+  }
+
+  getDisplayInfo(): DisplayInfo {
+    return {
+      cliLine: 0,
+      ideLine: 1,
+      totalReserved: this.reservedLines,
+      inAlternateScreen: this.alternateScreenActive
+    };
+  }
+
+  startBar(taskName: string, total: number, status: 'scanning' | 'fixing'): void {
+    this.hasCompleted = false;
+    this.isActive = true;
+    this.isFirstUpdate = true;
+    this.isFirstRender = true;
+    this.currentTask = taskName;
+    this.currentStatus = status;
+    this.total = total > 0 ? total : 1;
+    this.currentProgress = 0;
+
+    this.switchToAlternateScreen();
+
+    this.updateBar(0, status, true);
+  }
+
+  updateBar(progress: number, status: 'scanning' | 'fixing', forceUpdate: boolean = false): void {
+    if (!this.isActive || this.hasCompleted) {
+      return;
+    }
+
+    this.currentProgress = progress;
+    this.currentStatus = status;
+
+    const content = this.generateContent(progress);
+
+    if (forceUpdate || this.isFirstUpdate || content !== this.lastOutput) {
+      const shouldClear = !this.isFirstUpdate;
+      this.writeToTerminal(content, shouldClear);
+      this.lastOutput = content;
+      this.isFirstUpdate = false;
+    }
   }
 
   completeBar(): void {
-    if (!this.isActive) {
+    if (!this.isActive || this.hasCompleted) {
       return;
     }
 
-    this.bar.update(this.bar.getTotal(), {
-      status: 'completed',
-      statusText: 'Completed'
-    });
+    this.hasCompleted = true;
+    this.currentStatus = 'completed';
 
-    this.renderToFixedLine();
+    const finalProgress = this.total;
+    const content = this.generateContent(finalProgress);
+
+    this.writeToTerminal(content, true);
+
+    process.stderr.write('\n');
+
+    setTimeout(() => {
+      this.switchFromAlternateScreen();
+    }, 100);
+
     this.isActive = false;
+    this.lastOutput = '';
   }
 
   skipBar(): void {
-    if (!this.isActive) {
+    if (!this.isActive || this.hasCompleted) {
       return;
     }
 
-    this.bar.update(0, {
-      status: 'skipped',
-      statusText: 'No files need to be fixed --- skipped'
-    });
+    this.hasCompleted = true;
+    this.currentStatus = 'skipped';
 
-    this.renderToFixedLine();
+    let taskName = this.currentTask;
+    if (taskName.length > MAX_TASK_NAME_LENGTH) {
+      taskName = taskName.substring(0, MAX_TASK_NAME_LENGTH - 3) + '...';
+    }
+
+    if (this.useColors) {
+      taskName = chalk.bold(taskName);
+    }
+
+    const statusText = this.getStatusText(true);
+    const content = `${taskName} ${statusText}`;
+
+    this.writeToTerminal(content, true);
+    process.stderr.write('\n');
+
+    this.switchFromAlternateScreen();
+
     this.isActive = false;
-  }
-
-  private renderToFixedLine(): void {
-    const content = this.bar.lastDrawnString || '';
-
-    FixedLineProgressBar.moveToFixedLine();
-    process.stderr.write('\x1B[2K');
-    process.stderr.write(content);
-    FixedLineProgressBar.restoreCursor();
-
-    this.lastOutput = content;
-    FixedLineProgressBar.fixedLinePosition = 1;
-  }
-
-  static getStatusText(status: string): string {
-    const statusMap: Record<string, string> = {
-      scanning: chalk.blue('Scanning...'),
-      fixing: chalk.yellow('Fixing...'),
-      skipped: chalk.magenta('Skipped'),
-      completed: chalk.green('Completed')
-    };
-    return statusMap[status] || '';
-  }
-
-  static moveToFixedLine(): void {
-    const linesToMove = FixedLineProgressBar.fixedLinePosition;
-    if (linesToMove > 0) {
-      process.stderr.write(`\x1B[${linesToMove}F`);
-    }
-    process.stderr.write('\x1B[0G');
-  }
-
-  static restoreCursor(): void {
-    const linesToMove = FixedLineProgressBar.fixedLinePosition;
-    if (linesToMove > 0) {
-      process.stderr.write(`\x1B[${linesToMove}E`);
-    }
+    this.lastOutput = '';
   }
 
   stop(): void {
     if (this.isActive) {
+      this.hasCompleted = true;
       this.isActive = false;
-      process.stderr.write('\x1B[1F\x1B[0G\x1B[2K');
-    }
 
-    if (this.resizeListener) {
-      process.stdout.off('resize', this.resizeListener);
-      this.resizeListener = null;
+      this.switchFromAlternateScreen();
     }
+  }
+
+  getConfig(): { barWidth: number; useColors: boolean } {
+    return {
+      barWidth: this.fixedBarWidth,
+      useColors: this.useColors
+    };
   }
 }
 
@@ -228,10 +331,7 @@ export function postProcessCmdProgressBar(cmdProgressInfo: CmdProgressInfo): voi
 
   if (srcFiles.length > 0) {
     cmdProgressBar.completeBar();
-
-    process.stderr.write('\n');
   } else {
     cmdProgressBar.skipBar();
-    process.stderr.write('\n');
   }
 }

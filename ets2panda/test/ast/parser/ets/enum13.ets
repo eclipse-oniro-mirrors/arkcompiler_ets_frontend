@@ -24,4 +24,5 @@ function main(): void {
   test(Color.Red);
 }
 
-/* @@? 20:28 Error TypeError: 'valueOf' is an instance property of 'Color'  */
+
+/* @@? 20:28 Error Semantic error ESE0208: 'valueOf' is an instance property of 'Color' */

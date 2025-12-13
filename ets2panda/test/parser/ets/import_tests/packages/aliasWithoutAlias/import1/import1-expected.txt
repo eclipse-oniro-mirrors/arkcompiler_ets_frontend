@@ -106,8 +106,8 @@
             "program": "import1.ets"
           },
           "end": {
-            "line": 18,
-            "column": 7,
+            "line": 16,
+            "column": 56,
             "program": "import1.ets"
           }
         }

@@ -18,4 +18,4 @@ function testCallExpression() {
     callable()
 }
 
-/* @@? 18:5 Error TypeError: This expression is not callable. */
+/* @@? 18:5 Error Semantic error ESE0289: This expression is not callable. */

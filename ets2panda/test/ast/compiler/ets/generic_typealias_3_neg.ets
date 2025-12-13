@@ -20,4 +20,5 @@ function main(): void {
     let a: my_type/* @@ label */<Double> = new Int();
 }
 
-/* @@@ label Error TypeError: Type alias declaration is not generic, but type parameters were provided  */
+
+/* @@@ label Error Semantic error ESE0156: Type alias declaration is not generic, but type parameters were provided */

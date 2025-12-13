@@ -16,7 +16,7 @@
 import { PI } from "std/math/consts";
 
 // readonly expected : double = -1.3524862408537381;
-class Body  {
+export class Body  {
     readonly SOLAR_MASS : double = 4 * PI * PI;
      x : double ;
      y : double ;

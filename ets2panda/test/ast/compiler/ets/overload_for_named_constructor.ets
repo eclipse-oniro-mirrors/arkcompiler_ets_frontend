@@ -23,4 +23,4 @@ function main(){
     new A()
 }
 
-/* @@? 23:5 Error TypeError: No matching construct signature for overload_for_named_constructor.A() */
+/* @@? 23:5 Error Semantic error ESE0127: No matching construct signature for overload_for_named_constructor.A() */

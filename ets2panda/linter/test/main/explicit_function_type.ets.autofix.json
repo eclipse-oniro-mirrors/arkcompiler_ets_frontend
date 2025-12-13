@@ -180,16 +180,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 132,
-            "column": 3,
-            "endLine": 132,
-            "endColumn": 11,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
             "line": 139,
             "column": 3,
             "endLine": 139,
@@ -392,6 +382,27 @@
             "endLine": 184,
             "endColumn": 22,
             "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 3,
+            "endLine": 187,
+            "endColumn": 5,
+            "problem": "ExplicitFunctionType",
+            "autofix": [
+                {
+                    "start": 3946,
+                    "end": 3950,
+                    "replacementText": "a1?.unsafeCall",
+                    "line": 187,
+                    "column": 3,
+                    "endLine": 187,
+                    "endColumn": 5
+                }
+            ],
             "suggest": "",
             "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
             "severity": "ERROR"

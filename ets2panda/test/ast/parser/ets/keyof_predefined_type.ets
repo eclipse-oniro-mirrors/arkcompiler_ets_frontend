@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-function main():void{
-    let c1:keyof byte = /* @@ label1 */"field1"
-    let c2:keyof Int = /* @@ label2 */"field1"
+function main(): void {
+    let c1: keyof byte = /* @@ label1 */"field1"
+    let c2: keyof Int = /* @@ label2 */"field1"
 }
 
-/* @@@ label1 Error TypeError: Type '"field1"' cannot be assigned to type '"toDouble"|"toLong"|"byteValue"|"doubleValue"|"longValue"|"equals"|"isGreaterEqualThan"|"intValue"|"toInt"|"div"|"shortValue"|"isLessThan"|"isLessEqualThan"|"mul"|"sub"|"toString"|"toFloat"|"compareTo"|"isGreaterThan"|"unboxed"|"add"|"toByte"|"floatValue"|"toShort"|"toChar"|"valueOf"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"' */
-/* @@@ label2 Error TypeError: Type '"field1"' cannot be assigned to type '"toDouble"|"toLong"|"byteValue"|"doubleValue"|"longValue"|"equals"|"isGreaterEqualThan"|"intValue"|"toInt"|"div"|"shortValue"|"isLessThan"|"isLessEqualThan"|"mul"|"sub"|"toString"|"toFloat"|"compareTo"|"isGreaterThan"|"unboxed"|"add"|"toByte"|"floatValue"|"toShort"|"toChar"|"valueOf"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"' */
+/* @@@ label1 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toDouble"|"toFloat"|"toLong"|"byteValue"|"doubleValue"|"longValue"|"equals"|"isGreaterEqualThan"|"intValue"|"toInt"|"div"|"isLessEqualThan"|"mul"|"sub"|"toChar"|"toShort"|"toLocaleString"|"toString"|"shortValue"|"isLessThan"|"compareTo"|"isGreaterThan"|"add"|"toByte"|"floatValue"|"valueOf"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"' */
+/* @@@ label2 Error Semantic error ESE0318: Type '"field1"' cannot be assigned to type '"toDouble"|"toFloat"|"toLong"|"byteValue"|"doubleValue"|"longValue"|"equals"|"isGreaterEqualThan"|"intValue"|"toInt"|"div"|"isLessEqualThan"|"mul"|"sub"|"toChar"|"toShort"|"toLocaleString"|"toString"|"shortValue"|"isLessThan"|"compareTo"|"isGreaterThan"|"add"|"toByte"|"floatValue"|"valueOf"|"MIN_VALUE"|"MAX_VALUE"|"BIT_SIZE"|"BYTE_SIZE"' */

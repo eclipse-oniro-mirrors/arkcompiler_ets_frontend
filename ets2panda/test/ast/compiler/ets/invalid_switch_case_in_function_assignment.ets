@@ -19,7 +19,8 @@ let a = foo() {
     }
 }
 
-/* @@? 16:9 Error TypeError: Unresolved reference foo  */
-/* @@? 16:9 Error TypeError: This expression is not callable.  */
-/* @@? 18:9 Error SyntaxError: Unexpected token 'string literal', expected 'case' or 'default'.  */
-/* @@? 18:9 Error SyntaxError: Expected ':', got 'string literal'.  */
+
+/* @@? 16:9 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 16:9 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 18:9 Error Syntax error ESY0231: Unexpected token 'string literal', expected 'case' or 'default'. */
+/* @@? 18:9 Error Syntax error ESY0230: Expected ':', got 'string literal'. */

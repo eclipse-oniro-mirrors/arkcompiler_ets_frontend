@@ -16,4 +16,5 @@
 let x = 0
 x = (++x/* @@ label */, x++)
 
-/* @@@ label Error SyntaxError: Comma operator is supported only in 'for' loops. */
+
+/* @@@ label Error Syntax error ESY133681: Comma operator is supported only in 'for' loops. */

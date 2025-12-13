@@ -21,7 +21,8 @@ class Klass {
 function main(): void {
     let klass: Klass = new Klass();
     let b = klass.b;
-    let a = klass./* @@ label */a;
+    let a = klass.a;
 }
 
-/* @@@ label Error TypeError: Property a is not visible here.  */
+
+/* @@? 24:19 Error Semantic error ESE0293: Property a is not visible here. */

@@ -19,4 +19,5 @@ class C {
 
 let a = new C(12,)
 
-/* @@@ label1 Error SyntaxError: Unexpected token, expected ';'.  */
+
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected ';'. */

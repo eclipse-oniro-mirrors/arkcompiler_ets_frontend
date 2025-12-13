@@ -26,6 +26,7 @@ function main(): int {
   return 0
 }
 
-/* @@@ label Error TypeError: '$_set' is a static property of 'A' */
-/* @@@ label1 Error SyntaxError: Class cannot be used as object. */
-/* @@@ label2 Error TypeError: '$_set' is a static property of 'A' */
+
+/* @@@ label Error Semantic error ESE0207: '$_set' is a static property of 'A' */
+/* @@@ label1 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@@ label2 Error Semantic error ESE0207: '$_set' is a static property of 'A' */

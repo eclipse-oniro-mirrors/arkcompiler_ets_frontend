@@ -66,7 +66,7 @@ ir::Expression *ETSParser::ParseAnnotationName()
         ident = expr->AsIdentifier();
     } else {
         Lexer()->Rewind(save);
-        if (Lexer()->Lookahead() == '.') {
+        if (IS_USAGE && Lexer()->Lookahead() == '.') {
             auto opt = TypeAnnotationParsingOptions::NO_OPTS;
             expr = ParseTypeReference(&opt);
             ES2PANDA_ASSERT(expr != nullptr);
@@ -371,6 +371,9 @@ void ETSParser::ApplyAnnotationsToSpecificNodeType(ir::AstNode *node, ArenaVecto
         case ir::AstNodeType::ANNOTATION_DECLARATION:
             node->AsAnnotationDeclaration()->SetAnnotations(std::move(annotations));
             break;
+        case ir::AstNodeType::TS_ENUM_DECLARATION:
+            node->AsTSEnumDeclaration()->SetAnnotations(std::move(annotations));
+            break;
         default:
             LogError(diagnostic::ANNOTATION_WRONG_DEC, {}, pos);
     }
@@ -422,7 +425,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
         auto *annotationUsage = AllocNode<ir::AnnotationUsage>(expr, std::move(properties));
         annotationUsage->AddModifier(flags);
         annotationUsage->SetRange({startLoc, Lexer()->GetToken().End()});
-
+        annotationUsage->SetHasParameterParen(true);
         ExpectToken(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, true);  // eat ')'
 
         return annotationUsage;
@@ -438,7 +441,7 @@ ir::AnnotationUsage *ETSParser::ParseAnnotationUsage()
 
 bool ETSParser::TryParseAnnotations()
 {
-    ArenaVector<ir::AnnotationUsage *> annotations(Allocator()->Adapter());
+    std::vector<ir::AnnotationUsage *> annotations {};
 
     while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_AT) {
         Lexer()->NextToken();

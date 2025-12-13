@@ -21,4 +21,5 @@ export {
   msg as foo
 }
 
-/* @@? 21:10 Error SyntaxError: The given name 'foo' is already used in another export.  */
+
+/* @@? 21:10 Error Syntax error ESY0281: The given name 'foo' is already used in another export. */

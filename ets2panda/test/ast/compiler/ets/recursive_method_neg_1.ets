@@ -26,4 +26,5 @@ function main(){
     /* @@ label */a_obj.foo<E>(x)
 }
 
-/* @@@ label Error TypeError: No matching call signature for foo(C)  */
+/* @@@ label Error Semantic error ESE0228: Type argument 'E' should be a subtype of 'A<E>' constraint */
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(C) */

@@ -718,7 +718,7 @@
                             "loc": {
                               "start": {
                                 "line": 26,
-                                "column": 30,
+                                "column": 19,
                                 "program": "catch-soft-keyword.ets"
                               },
                               "end": {
@@ -731,52 +731,6 @@
                           "param": {
                             "type": "Identifier",
                             "name": "catch",
-                            "typeAnnotation": {
-                              "type": "ETSTypeReference",
-                              "part": {
-                                "type": "ETSTypeReferencePart",
-                                "name": {
-                                  "type": "Identifier",
-                                  "name": "Exception",
-                                  "loc": {
-                                    "start": {
-                                      "line": 26,
-                                      "column": 19,
-                                      "program": "catch-soft-keyword.ets"
-                                    },
-                                    "end": {
-                                      "line": 26,
-                                      "column": 28,
-                                      "program": "catch-soft-keyword.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 26,
-                                    "column": 19,
-                                    "program": "catch-soft-keyword.ets"
-                                  },
-                                  "end": {
-                                    "line": 26,
-                                    "column": 28,
-                                    "program": "catch-soft-keyword.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 26,
-                                  "column": 19,
-                                  "program": "catch-soft-keyword.ets"
-                                },
-                                "end": {
-                                  "line": 26,
-                                  "column": 28,
-                                  "program": "catch-soft-keyword.ets"
-                                }
-                              }
-                            },
                             "loc": {
                               "start": {
                                 "line": 26,

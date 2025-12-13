@@ -121,7 +121,7 @@ const int: number = 42;
 
 const short: number = 32767;
 
-const Bigint: bigint = 123n;
+const BigInt: bigint = 123n;
 
 const Int: number = 42;
 

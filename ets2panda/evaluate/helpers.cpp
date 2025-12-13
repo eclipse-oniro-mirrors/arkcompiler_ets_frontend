@@ -24,8 +24,8 @@
 #include "ir/typeNode.h"
 
 #include "assembler/assembly-type.h"
-#include "libpandafile/field_data_accessor-inl.h"
-#include "libpandafile/file-inl.h"
+#include "libarkfile/field_data_accessor-inl.h"
+#include "libarkfile/file-inl.h"
 
 #include <algorithm>
 #include <unordered_map>

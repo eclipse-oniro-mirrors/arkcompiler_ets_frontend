@@ -29,6 +29,7 @@ add_subdirectory(lsp)
 add_subdirectory(relative_path)
 add_subdirectory(any_ins_test)
 add_subdirectory(source_file_message)
+add_subdirectory(reg_allocator)
 
 ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp
@@ -38,15 +39,17 @@ ets2panda_add_gtest(es2panda_name_mangling_tests
     CPP_SOURCES name_mangling_test.cpp
 )
 
-# NOTE(@srokashevich, #29195): enable with asan after fix
-if (NOT PANDA_ENABLE_ADDRESS_SANITIZER)
-    ets2panda_add_gtest(es2panda_union_normalization_tests_1
-        CPP_SOURCES union_normalization_test_1.cpp
-    )
-    ets2panda_add_gtest(es2panda_union_normalization_tests_2
-        CPP_SOURCES union_normalization_test_2.cpp
-    )
-endif()
+ets2panda_add_gtest(es2panda_name_mangling_disasm_tests
+    CPP_SOURCES name_mangling_disasm_test.cpp
+)
+
+ets2panda_add_gtest(es2panda_union_normalization_tests_1
+    CPP_SOURCES union_normalization_test_1.cpp
+)
+ets2panda_add_gtest(es2panda_union_normalization_tests_2
+    CPP_SOURCES union_normalization_test_2.cpp
+)
+
 ets2panda_add_gtest(es2panda_globalETSObjectType_tests
     CPP_SOURCES globalETSObjectType_test.cpp
 )

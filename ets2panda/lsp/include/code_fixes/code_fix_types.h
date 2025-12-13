@@ -35,22 +35,6 @@
 
 namespace ark::es2panda::lsp {
 
-enum DiagnosticCategory { WARNING, ERROR, SUGGESTION, MESSAGE };
-
-struct DiagnosticMessage {
-    std::string key;
-    DiagnosticCategory category;
-    size_t code;
-    std::string message;
-    std::string reportsUnnecessary = {};
-    std::string reportsDeprecated = {};
-    bool elidedInCompatabilityPyramid;
-};
-struct DiagnosticAndArguments {
-    DiagnosticMessage message;
-    std::vector<std::string> arguments;
-};
-
 struct CodeAction {
     std::string description;
     std::vector<FileTextChanges> changes;

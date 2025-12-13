@@ -21,7 +21,8 @@ declare class A {
     let a : A = new A();
 }
 
-/* @@@ label Error SyntaxError: An index signature must have a type annotation.  */
-/* @@@ label Error SyntaxError: Expected ':', got '}'.  */
-/* @@@ label Error SyntaxError: Invalid Type.  */
-/* @@@ label Error SyntaxError: Return type of index signature from exported class or interface need to be identifier.  */
+
+/* @@@ label Error Syntax error ESY0020: An index signature must have a type annotation. */
+/* @@@ label Error Syntax error ESY0230: Expected ':', got '}'. */
+/* @@@ label Error Syntax error ESY0138: Invalid Type. */
+/* @@@ label Error Syntax error ESY0021: Return type of index signature from exported class or interface need to be identifier. */

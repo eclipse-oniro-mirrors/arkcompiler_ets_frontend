@@ -15,4 +15,5 @@
 
 import {/* @@ label */InterfaceToAlias} from "./selective_export_interface";
 
-/* @@@ label Error TypeError: Cannot find imported element 'InterfaceToAlias'  */
+
+/* @@@ label Error Semantic error ESE0356: Cannot find imported element 'InterfaceToAlias' */

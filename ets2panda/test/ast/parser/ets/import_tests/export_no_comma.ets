@@ -18,5 +18,6 @@ function foo2(): void {}
 
 export {foo1 /* @@ label */foo2/* @@ label1 */}
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@@ label1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@@ label Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '}'. */

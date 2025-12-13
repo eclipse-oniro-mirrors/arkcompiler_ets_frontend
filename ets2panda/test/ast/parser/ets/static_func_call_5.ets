@@ -21,7 +21,8 @@ class B extends A {}
 
 function main() {
   let bb = new B()
-  bb./* @@ label */foo()
+  bb.foo()
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'B' */
+
+/* @@? 24:6 Error Semantic error ESE0207: 'foo' is a static property of 'B' */

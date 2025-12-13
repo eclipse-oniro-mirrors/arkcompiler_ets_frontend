@@ -17,8 +17,9 @@
     testProperty2/* @@ label1 */: number
 }
 
-/* @@@ label1 Error SyntaxError: Identifier expected, got ':'.  */
-/* @@? 17:35 Error SyntaxError: number is a predefined type, cannot be used as an identifier  */
-/* @@? 18:1 Error SyntaxError: Identifier expected, got '}'.  */
-/* @@? 17:5 Error TypeError: Unresolved reference testProperty2 */
-/* @@? 17:5 Error TypeError: Invalid value for annotation field, expected a constant literal. */
+
+/* @@? 17:5 Error Semantic error ESE0143: Unresolved reference testProperty2 */
+/* @@? 17:5 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@@ label1 Error Syntax error ESY0224: Identifier expected, got ':'. */
+/* @@? 17:35 Error Syntax error ESY0295: number is a predefined type, cannot be used as an identifier */
+/* @@? 18:1 Error Syntax error ESY0224: Identifier expected, got '}'. */

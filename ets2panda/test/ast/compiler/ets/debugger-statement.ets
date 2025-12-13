@@ -22,4 +22,4 @@ function main(): void {
     }
 }
 
-/* @@? 20:9 Error SyntaxError: Debugger statement is not supported! */
+/* @@? 20:9 Error Syntax error ESY0299: Debugger statement is not supported! */

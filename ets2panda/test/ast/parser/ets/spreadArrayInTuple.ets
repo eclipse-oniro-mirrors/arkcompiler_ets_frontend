@@ -20,7 +20,8 @@ function main() {
     let y2: [boolean, int, string] = /* @@ label2 */[true, /* @@ label3 */...x2]
 }
 
-/* @@? 18:43 Error TypeError: Initializer has 1 elements, but tuple requires 2 */
-/* @@? 18:59 Error TypeError: 'Array<Int|String>' cannot be spread in tuple. */
-/* @@? 20:53 Error TypeError: Initializer has 2 elements, but tuple requires 3 */
-/* @@? 20:75 Error TypeError: 'Array<Int|String>' cannot be spread in tuple. */
+
+/* @@@ label Error Semantic error ESE0231: Initializer has 1 elements, but tuple requires 2 */
+/* @@@ label1 Error Semantic error ESE0055: 'Array<Int|String>' cannot be spread in tuple. */
+/* @@@ label2 Error Semantic error ESE0231: Initializer has 2 elements, but tuple requires 3 */
+/* @@@ label3 Error Semantic error ESE0055: 'Array<Int|String>' cannot be spread in tuple. */

@@ -14,4 +14,4 @@
  */
 function foo(p1: boolean, p2?: int, /* @@ label */p3: string) { }
 
-/* @@@ label Error SyntaxError: A required parameter cannot follow an optional parameter. */
+/* @@@ label Error Syntax error ESY0219: A required parameter cannot follow an optional parameter. */

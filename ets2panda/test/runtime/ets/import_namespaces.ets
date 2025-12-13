@@ -30,9 +30,8 @@
 files: ['./export_namespaces.ets']
 ---*/
 
-import default_ns, {ns} from "./export_namespaces"
+import {ns} from "./export_namespaces"
 
 function main(){
-    arktest.assertTrue(default_ns.num == 1)
     arktest.assertTrue(ns.num == 2)
 }

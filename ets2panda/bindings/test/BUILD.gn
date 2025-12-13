@@ -13,7 +13,11 @@
 
 import("//build/version.gni")
 
-action("bindings_test") {
+group("bindings_test") {
+  # deps = [ ":run_test" ]
+}
+
+action("run_test") {
   script = "run_bindings.sh"
   args = [
     rebase_path("./"),

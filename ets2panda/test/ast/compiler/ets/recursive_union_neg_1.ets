@@ -19,4 +19,4 @@ class T<P extends B|D>{}
 class C extends A/* @@ label */<B|D|C>{}
 /* Constraint: B|D|C <: A<B|D|C>, but B is not a subtype of A<B> due to T invariance */
 
-/* @@@ label Error TypeError: Type argument 'B|D|C' should be a subtype of 'A<B|D|C>'-constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'B|D|C' should be a subtype of 'A<B|D|C>' constraint */

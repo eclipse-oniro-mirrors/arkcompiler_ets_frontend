@@ -95,6 +95,7 @@ static int Run(int argc, const char **argv)
         impl->CreateContextFromStringWithHistory(cfg, parserInputCStr, cfgImpl->options->SourceFileName().c_str());
     auto *ctxImpl = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *checker = reinterpret_cast<checker::ETSChecker *>(ctxImpl->GetChecker());
+    ctxImpl->lazyCheck = false;
 
     impl->ProceedToState(ctx, ES2PANDA_STATE_CHECKED);
 

@@ -13,5 +13,56 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": []
+    "result": [
+        {
+            "line": 73,
+            "column": 3,
+            "endLine": 73,
+            "endColumn": 11,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 74,
+            "column": 3,
+            "endLine": 74,
+            "endColumn": 11,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 30,
+            "endLine": 80,
+            "endColumn": 31,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 81,
+            "column": 3,
+            "endLine": 83,
+            "endColumn": 4,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 3,
+            "endLine": 86,
+            "endColumn": 4,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        }
+    ]
 }

@@ -26,4 +26,5 @@ interface J extends K {
 }
 
 
-/* @@@ label Error SyntaxError: 'override' modifier cannot appear in interfaces.  */
+
+/* @@@ label Error Syntax error ESY0189: 'override' modifier cannot appear in interfaces. */

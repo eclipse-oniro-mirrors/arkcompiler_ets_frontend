@@ -20,4 +20,5 @@ class A implements AA{
     static X :int=1;
 }
 
-/* @@? 19:22 Error TypeError: A is not abstract and does not implement getter for X property in AA */
+
+/* @@? 19:22 Error Semantic error ESE0188: A is not abstract and does not implement getter for X property in AA */

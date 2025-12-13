@@ -18,7 +18,8 @@ enum Color2 { Red = /* @@ label1 */Color.Red }
 enum Color3 { Red = /* @@ label2 */Color2.Red }
 enum Color4 { Red = /* @@ label3 */Color3.Red }
 
-/* @@@ label Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@@ label1 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@@ label2 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@@ label3 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+
+/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label1 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label2 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label3 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

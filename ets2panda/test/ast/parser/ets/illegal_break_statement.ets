@@ -27,7 +27,7 @@ function foo2() {
     console.log(a + 5)
 }
 
-/* @@? 18:20 Error SyntaxError: Illegal break statement. */
-/* @@? 18:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 25:20 Error SyntaxError: Illegal break statement. */
-/* @@? 25:20 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 18:20 Error Syntax error ESY0209: Illegal break statement. */
+/* @@? 18:20 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 25:20 Error Syntax error ESY0209: Illegal break statement. */
+/* @@? 25:20 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */

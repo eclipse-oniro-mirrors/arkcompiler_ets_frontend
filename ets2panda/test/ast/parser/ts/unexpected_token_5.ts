@@ -16,5 +16,6 @@
 
 import foo
 
-/* @@? 21:1 Error SyntaxError: Unexpected token, expected 'from'.  */
-/* @@? 21:1 Error SyntaxError: Unexpected token, expected string literal.  */
+
+/* @@? 21:87 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 21:87 Error Syntax error ESY0151: Unexpected token, expected string literal. */

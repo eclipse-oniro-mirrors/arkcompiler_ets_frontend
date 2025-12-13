@@ -26,12 +26,12 @@ function main() {
     let a2 = new A(...nums);
 }
 
-/* @@? 18:16 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 18:31 Error SyntaxError: Rest parameter must be the last formal parameter. */
-/* @@? 18:39 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:41 Error SyntaxError: Unexpected token '{'. */
-/* @@? 19:9 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 19:13 Error SyntaxError: Unexpected token '.'. */
-/* @@? 19:14 Error TypeError: Variable 'fld' has already been declared. */
-/* @@? 19:20 Error TypeError: Unresolved reference p */
-/* @@? 21:1 Error SyntaxError: Unexpected token '}'. */
+/* @@? 18:16 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 18:31 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
+/* @@? 18:39 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 18:41 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 19:9 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 19:13 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 19:14 Error Semantic error ESE0351: Variable 'fld' has already been declared. */
+/* @@? 19:20 Error Semantic error ESE0143: Unresolved reference p */
+/* @@? 21:1 Error Syntax error ESY0227: Unexpected token '}'. */

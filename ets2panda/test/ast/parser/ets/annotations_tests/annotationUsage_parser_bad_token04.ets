@@ -18,7 +18,8 @@
 
 const invalidUsage1 = @Log("value")) ()=>{}
 
-/* @@? 19:24 Error TypeError: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
-/* @@? 19:36 Error SyntaxError: Unexpected token ')'. */
-/* @@? 19:40 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 19:40 Error SyntaxError: Unexpected token. */
+
+/* @@? 19:24 Error Semantic error ESE0005: Annotations without 'SOURCE' cannot be used on lambda expressions, local declarations, or types. */
+/* @@? 19:36 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 19:40 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 19:40 Error Syntax error ESY0016: Unexpected token. */

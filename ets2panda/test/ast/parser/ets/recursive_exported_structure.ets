@@ -88,11 +88,10 @@ const _exported: ExportedType = _exportedStructure;
 
 export default _exported;
 
-/* @@? 26:26 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 61:64 Error SyntaxError: Unexpected token '&'. */
-/* @@? 61:66 Error SyntaxError: Unexpected token '{'. */
-/* @@? 62:12 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 62:12 Error TypeError: Type name 'IndexableType' used in the wrong context */
-/* @@? 66:36 Error TypeError: Interfaces cannot extend classes, only other interfaces. */
-/* @@? 73:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 76:16 Error TypeError: Cannot cast type 'ExportedStructure' to 'Record<String,((() => Double))|Record<String,(() => Double)>>' */
+/* @@? 26:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 61:66 Error Syntax error ESY145527: Intersection types are not supported, use inheritance instead! */
+/* @@? 62:12 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 62:12 Error Semantic error ESE0144: Type name 'IndexableType' used in the wrong context */
+/* @@? 66:36 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 73:6 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 85:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

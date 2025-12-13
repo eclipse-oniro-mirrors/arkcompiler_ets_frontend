@@ -19,4 +19,4 @@ function main(){
     ]
 }
 
-/* @@@ label Error TypeError: Type 'Array<(() => Int)>' cannot be assigned to type '(() => Array<Int>)' */
+/* @@@ label Error Semantic error ESE0318: Type 'Array<(() => Int)>' cannot be assigned to type '(() => Array<Int>)' */

@@ -32,9 +32,13 @@ function main() {
     let x4: Required<I> = /* @@ label4 */{i: 1.9};
 }
 
-/* @@@ label1 Error TypeError: Class property 'k' needs to be initialized for Required<A>.  */
-/* @@@ label2 Error TypeError: Class property 'j' needs to be initialized for Required<A>.  */
-/* @@@ label2 Error TypeError: Class property 'k' needs to be initialized for Required<A>.  */
-/* @@@ label3 Error TypeError: Class property 'k' needs to be initialized for Required<I>.  */
-/* @@@ label4 Error TypeError: Class property 'j' needs to be initialized for Required<I>.  */
-/* @@@ label4 Error TypeError: Class property 'k' needs to be initialized for Required<I>.  */
+
+/* @@@ label1 Error Semantic error ESE0226: Class property 'k' needs to be initialized for Required<A>. */
+/* @@@ label2 Error Semantic error ESE0226: Class property 'j' needs to be initialized for Required<A>. */
+/* @@@ label2 Error Semantic error ESE0226: Class property 'k' needs to be initialized for Required<A>. */
+/* @@@ label3 Error Semantic error ESE0400: Non-optional property 'k' in type 'Required<I>' is missing in object literal. */
+/* @@@ label3 Error Semantic error ESE0226: Class property 'k' needs to be initialized for Required<I>. */
+/* @@@ label4 Error Semantic error ESE0400: Non-optional property 'j' in type 'Required<I>' is missing in object literal. */
+/* @@@ label4 Error Semantic error ESE0400: Non-optional property 'k' in type 'Required<I>' is missing in object literal. */
+/* @@@ label4 Error Semantic error ESE0226: Class property 'j' needs to be initialized for Required<I>. */
+/* @@@ label4 Error Semantic error ESE0226: Class property 'k' needs to be initialized for Required<I>. */

@@ -26,5 +26,5 @@ function main() {
     NS1.name;
 }
 
-/* @@? 25:8 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@? 26:9 Error TypeError: Cannot read from this property because it is writeonly. */
+/* @@? 25:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 26:9 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */

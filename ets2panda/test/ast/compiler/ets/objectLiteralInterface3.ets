@@ -20,4 +20,5 @@ interface I {
 
 let c: I = /* @@ label */{ name: "Alice" };
 
-/* @@@ label Error TypeError: Interface has methods  */
+
+/* @@? 21:5 Error Semantic error ESE0256: Interface has methods */

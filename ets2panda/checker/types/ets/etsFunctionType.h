@@ -48,6 +48,11 @@ public:
         return callSignatures_;
     }
 
+    [[nodiscard]] const ArenaVector<Signature *> &CallSignaturesOfMethodOrArrow() const
+    {
+        return callSignatures_;
+    }
+
     [[nodiscard]] util::StringView Name() const
     {
         ES2PANDA_ASSERT(!IsETSArrowType());

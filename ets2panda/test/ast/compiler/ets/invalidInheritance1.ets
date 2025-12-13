@@ -23,4 +23,5 @@ class B extends /* @@ label */A {
     }
 }
 
-/* @@@ label Error TypeError: Cannot inherit from class A, because method a is inherited with a different declaration type  */
+
+/* @@@ label Error Semantic error ESE0216: Cannot inherit from class A, because method a is inherited with a different declaration type */

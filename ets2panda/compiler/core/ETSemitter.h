@@ -63,6 +63,8 @@ public:
     NO_COPY_SEMANTIC(ETSFunctionEmitter);
     NO_MOVE_SEMANTIC(ETSFunctionEmitter);
 
+    static bool IsEmissionRequired(ir::ScriptFunction *func, parser::Program *globalProgram);
+
 protected:
     pandasm::Function *GenFunctionSignature() override;
 
@@ -74,7 +76,7 @@ protected:
 
 namespace detail {
 class EmitterDependencies;
-}
+}  // namespace detail
 
 class ETSEmitter : public Emitter {
 public:
@@ -92,8 +94,6 @@ public:
     std::string const &AddDependence(std::string const &str);
 
 private:
-    using DynamicCallNamesMap = ArenaMap<const ArenaVector<util::StringView>, uint32_t>;
-
     void EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
     void GenGlobalUnionRecord(util::StringView assemblerType);
@@ -125,7 +125,6 @@ private:
     pandasm::AnnotationData GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef);
     pandasm::AnnotationData GenAnnotationFunctionalReference(const ir::ClassDefinition *classDef);
     pandasm::AnnotationData GenAnnotationInnerClass(const ir::ClassDefinition *classDef, const ir::AstNode *parent);
-    pandasm::AnnotationData GenAnnotationDynamicCall(DynamicCallNamesMap &callNames);
     ir::MethodDefinition *FindAsyncImpl(ir::ScriptFunction *asyncFunc);
     void ProcessArrayExpression(std::string &baseName, LiteralArrayVector &result,
                                 std::vector<pandasm::LiteralArray::Literal> &literals, const ir::Expression *elem);

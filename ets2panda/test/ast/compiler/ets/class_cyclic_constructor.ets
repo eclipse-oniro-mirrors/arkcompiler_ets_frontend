@@ -29,24 +29,23 @@ class A {
     }
 }
 
-/* @@? 23:23 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 24:9 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 24:9 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 24:9 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 24:9 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 24:20 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 24:21 Error SyntaxError: Unexpected token '{'. */
-/* @@? 24:23 Error SyntaxError: Field type annotation expected. */
-/* @@? 24:23 Error SyntaxError: Unexpected token '.'. */
-/* @@? 24:31 Error SyntaxError: Field type annotation expected. */
-/* @@? 24:34 Error SyntaxError: Unexpected token '='. */
-/* @@? 24:36 Error SyntaxError: Unexpected token '{'. */
-/* @@? 24:38 Error TypeError: Unresolved reference caches */
-/* @@? 25:21 Error TypeError: No matching construct signature for class_cyclic_constructor.A(...tuple) */
-/* @@? 25:30 Error TypeError: Unresolved reference tuple */
-/* @@? 26:31 Error TypeError: Property 'bar' does not exist on type 'A' */
-/* @@? 27:5 Error SyntaxError: Unexpected token ')'. */
-/* @@? 27:7 Error SyntaxError: Unexpected token '{'. */
-/* @@? 28:9 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 28:14 Error TypeError: Property 'x' does not exist on type 'ETSGLOBAL' */
-/* @@? 30:1 Error SyntaxError: Unexpected token '}'. */
+/* @@? 23:23 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 24:9 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 24:9 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 24:9 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 24:9 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 24:20 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 24:21 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 24:23 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 24:23 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 24:31 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 24:34 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? 24:36 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 24:38 Error Semantic error ESE0143: Unresolved reference caches */
+/* @@? 25:21 Error Semantic error ESE0127: No matching construct signature for class_cyclic_constructor.A(...tuple) */
+/* @@? 25:30 Error Semantic error ESE0143: Unresolved reference tuple */
+/* @@? 26:31 Error Semantic error ESE0087: Property 'bar' does not exist on type 'A' */
+/* @@? 27:5 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 27:7 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 28:9 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 30:1 Error Syntax error ESY0227: Unexpected token '}'. */

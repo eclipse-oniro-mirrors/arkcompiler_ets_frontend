@@ -21,4 +21,4 @@ function main(): void {
     }
 }
 
-/* @@? 20:12 Error TypeError: Type '((p1: String) => String)' is not compatible with type '((p1: Double) => String)' at index 2  */
+/* @@? 20:12 Error Semantic error ESE0046: Type '((p1: String) => String)' is not compatible with type '((p1: Double) => String)' at index 2 */

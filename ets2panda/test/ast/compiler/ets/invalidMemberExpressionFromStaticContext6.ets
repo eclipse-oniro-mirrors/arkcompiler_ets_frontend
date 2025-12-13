@@ -24,4 +24,5 @@ final class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: 'this' cannot be referenced from a static context  */
+
+/* @@@ label Error Semantic error ESE0202: 'this' cannot be referenced from a static context */

@@ -21,12 +21,9 @@
 #include "gmock/gmock.h"
 
 #include "assembler/assembly-program.h"
-#include "generated/signatures.h"
-#include "mem/mem.h"
-#include "macros.h"
 #include "assembly-function.h"
 #include "assembly-record.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "util/diagnosticEngine.h"
 #include "util/options.h"
 
@@ -43,15 +40,19 @@ inline bool RecordExternalFlag(ark::pandasm::Record const &record)
 }
 
 struct SaveFmtFlags final {
-    explicit SaveFmtFlags(std::ostream &s) : os {s}, oldFlags {s.flags()} {}
+    explicit SaveFmtFlags(std::ostream &s) : os_ {s}, oldFlags_ {s.flags()} {}
     ~SaveFmtFlags()
     {
-        os.setf(oldFlags);
+        os_.setf(oldFlags_);
     }
+    NO_COPY_SEMANTIC(SaveFmtFlags);
+    NO_MOVE_SEMANTIC(SaveFmtFlags);
 
 private:
-    std::ostream &os;
-    std::ios_base::fmtflags oldFlags;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    std::ostream &os_;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    std::ios_base::fmtflags oldFlags_;
 };
 
 }  // namespace
@@ -78,7 +79,7 @@ std::ostream &operator<<(std::ostream &s, const Record &arg)
 
 namespace ark::es2panda::compiler::test {
 
-MATCHER_P(ExternAttribute, flag, "")
+MATCHER_P(ExternAttribute, flag, "")  // NOLINT (misc-non-private-member-variables-in-classes)
 {
     bool value = arg.metadata->GetAttribute("external");
     *result_listener << "'external' attribute is " << value;
@@ -116,16 +117,16 @@ protected:
     void CheckRecordExternalFlag(std::string recordName, bool externFlag = true)
     {
         ASSERT_NE(program_, nullptr);
-        using namespace ::testing;
-        auto const matcher = Contains(Pair(recordName, ExternAttribute(externFlag)));
+        using ::testing::Contains, ::testing::Pair;
+        auto const matcher = Contains(Pair(std::move(recordName), ExternAttribute(externFlag)));
         EXPECT_THAT(program_->recordTable, matcher);
     }
 
     void CheckFunctionExternalFlag(std::string functionName, bool isStatic = false, bool externFlag = true)
     {
         ASSERT_NE(program_, nullptr);
-        using namespace ::testing;
-        auto const matcher = Contains(Pair(functionName, ExternAttribute(externFlag)));
+        using ::testing::Contains, ::testing::Pair;
+        auto const matcher = Contains(Pair(std::move(functionName), ExternAttribute(externFlag)));
         if (isStatic) {
             EXPECT_THAT(program_->functionStaticTable, matcher);
         } else {
@@ -136,8 +137,8 @@ protected:
     void CheckRecordNotExists(std::string name)
     {
         ASSERT_NE(program_, nullptr);
-        using namespace ::testing;
-        EXPECT_THAT(program_->recordTable, Not(Contains(Key(name))));
+        using ::testing::Contains, ::testing::Pair, ::testing::Not, ::testing::Key;
+        EXPECT_THAT(program_->recordTable, Not(Contains(Key(std::move(name)))));
     }
 
 private:

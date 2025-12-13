@@ -16,4 +16,5 @@
 type x = int;
 type /* @@ label */x = double;
 
-/* @@@ label Error TypeError: Variable 'x' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'x' has already been declared. */

@@ -21,5 +21,6 @@ function main() {
     A()
 }
 
-/* @@? 21:5 Error TypeError: No static $_invoke method and static $_instantiate method in A. A() is not allowed.  */
-/* @@? 21:5 Error TypeError: Type 'A' has no call signatures.  */
+
+/* @@? 21:5 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in A. A() is not allowed. */
+/* @@? 21:5 Error Semantic error ESE0002: Type 'A' has no call signatures. */

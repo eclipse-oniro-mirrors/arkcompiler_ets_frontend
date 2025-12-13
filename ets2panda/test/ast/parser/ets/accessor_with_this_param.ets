@@ -33,8 +33,8 @@ class B {
     }
 }
 
-/* @@? 18:10 Error SyntaxError: Getter must not have formal parameters. */
-/* @@? 18:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
-/* @@? 21:10 Error SyntaxError: Setter must have exactly one formal parameter. */
-/* @@? 21:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
-/* @@? 31:11 Error SyntaxError: Unexpected 'this' keyword in non-receiver context. */
+/* @@? 18:10 Error Syntax error ESY0058: Getter must not have formal parameters. */
+/* @@? 18:11 Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */
+/* @@? 21:10 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */
+/* @@? 21:11 Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */
+/* @@? 31:11 Error Syntax error ESY0240: Unexpected 'this' keyword in non-receiver context. */

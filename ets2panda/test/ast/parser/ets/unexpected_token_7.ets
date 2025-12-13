@@ -17,4 +17,5 @@ while /* @@ label */true) {
     console.log("hehehehe")
 }
 
-/* @@@ label Error SyntaxError: Expected '(', got 'true'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got 'true'. */

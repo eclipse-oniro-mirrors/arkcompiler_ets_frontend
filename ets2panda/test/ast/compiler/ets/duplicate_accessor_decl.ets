@@ -16,5 +16,5 @@
 get duplicateGetter(): number { return 1 }
 get duplicateGetter(): string { return "2" }
 
-/* @@? 17:1 Error TypeError: Function duplicateGetter is already declared. */
-/* @@? 17:5 Error TypeError: Duplicate accessor definition */
+/* @@? 17:1 Error Semantic error ESE0130: Function duplicateGetter is already declared. */
+/* @@? 17:5 Error Semantic error ESE0219: Duplicate accessor definition */

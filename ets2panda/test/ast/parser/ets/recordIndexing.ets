@@ -22,7 +22,8 @@
 
     console.log(x[/* @@ label */0])
  }
-/* @@? 23:5 Error TypeError: No matching call signature for log(x[0]) */
-/* @@? 23:17 Error TypeError: No matching indexing signature for $_get(Int) */
-/* @@? 23:33 Error TypeError: Type 'Int' is not compatible with type 'String' at index 1 */
-/* @@? 23:33 Error TypeError: Cannot find index access method with the required signature. */
+
+/* @@? 23:5 Error Semantic error ESE0127: No matching call signature for log(x[0]) */
+/* @@? 23:17 Error Semantic error ESE0127: No matching indexing signature for $_get(Int) */
+/* @@? 23:33 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'String' at index 1 */
+/* @@? 23:33 Error Semantic error ESE0251: Cannot find index access method with the required signature. */

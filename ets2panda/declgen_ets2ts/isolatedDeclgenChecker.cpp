@@ -16,8 +16,8 @@
 #include "isolatedDeclgenChecker.h"
 
 #include "es2panda.h"
-#include "clang.h"
-#include "utils/logger.h"
+#include "libarkbase/clang.h"
+#include "libarkbase/utils/logger.h"
 
 namespace ark::es2panda::declgen {
 using AstNodePtr = ir::AstNode *;

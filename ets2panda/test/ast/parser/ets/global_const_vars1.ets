@@ -18,4 +18,5 @@ const a: int;
 
 function main(): void {}
 
-/* @@? 17:8 Error TypeError: Missing initializer in const declaration  */
+
+/* @@? 17:8 Error Semantic error ESE0363: Missing initializer in const declaration */

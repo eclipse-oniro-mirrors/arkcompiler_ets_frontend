@@ -19,4 +19,3 @@ function main() {
     /* @@ label */foo((value) => {})
 }
 
-/* @@@ label Error TypeError: No matching call signature for foo((p1: *ERROR_TYPE*) => void)  */

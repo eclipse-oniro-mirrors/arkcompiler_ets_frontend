@@ -22,5 +22,6 @@ function bar(): void {
   }
 }
 
-/* @@? 17:3 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@? 20:3 Error SyntaxError: Illegal start of CLASS expression. */
+
+/* @@? 17:3 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@? 20:3 Error Syntax error ESY0040: Illegal start of CLASS expression. */

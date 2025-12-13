@@ -17,4 +17,5 @@ async function foo():Promise<void>{
     return void;
 }
 
-/* @@? 17:12 Error SyntaxError: Unexpected token 'void'. */
+
+/* @@? 17:12 Error Syntax error ESY0227: Unexpected token 'void'. */

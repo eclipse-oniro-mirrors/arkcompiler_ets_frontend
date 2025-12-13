@@ -19,4 +19,5 @@ async function foo(arg: number): str {
     return "";
 }
 
-/* @@? 18:16 Error TypeError: Return type of async function must be 'Promise'.  */
+
+/* @@? 18:16 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */

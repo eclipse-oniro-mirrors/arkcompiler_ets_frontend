@@ -18,7 +18,4 @@
 }
 let x = [1, 2, 3].map(identity)[0];
 
-/* @@? 19:9 Error TypeError: No matching call signature for map((<A>(p1: A) => A)) */
-/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 19:9 Error TypeError: No matching call signature for map((<A>(p1: A) => A)) */
-/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 19:23 Error Semantic error ESE655063: Generic function identity requires explicit type arguments when used as a value. */

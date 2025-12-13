@@ -17,3 +17,10 @@ enum Percentage {
     A = 0.45,
     B = 0.55
 }
+
+const c: long = 2147483648;
+enum Enum: int {
+    A = c
+}
+
+/* @@? 23:9 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

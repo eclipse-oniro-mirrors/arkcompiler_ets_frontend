@@ -42,10 +42,11 @@ static {
     var_tobe_shadowed = 2;
 }
 
-/* @@? P3.ets:29:14 Error SyntaxError: Missing initialization for const package property */
-/* @@? P3.ets:29:18 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? P3.ets:30:30 Error SyntaxError: Non-constant initializer of Package should be apply in Initializer Block. */
-/* @@? P3.ets:31:14 Error TypeError: Cannot reassign constant c_nn2 */
-/* @@? P3.ets:33:1 Error SyntaxError: Invalid package toplevel statement */
-/* @@? P3.ets:34:1 Error SyntaxError: Invalid package toplevel statement */
-/* @@? P3.ets:39:14 Error SyntaxError: Missing initialization for const package property */
+
+/* @@? 29:14 Error Syntax error ESY0294: Missing initialization for const package property */
+/* @@? 29:18 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 30:30 Error Syntax error ESY0288: Non-constant initializer of Package should be apply in Initializer Block. */
+/* @@? 31:14 Error Semantic error ESE0297: Cannot reassign constant c_nn2 */
+/* @@? 33:1 Error Syntax error ESY0291: Invalid package toplevel statement */
+/* @@? 34:1 Error Syntax error ESY0291: Invalid package toplevel statement */
+/* @@? 39:14 Error Syntax error ESY0294: Missing initialization for const package property */

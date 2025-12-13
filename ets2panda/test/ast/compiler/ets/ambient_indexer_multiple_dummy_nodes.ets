@@ -23,4 +23,5 @@ declare namespace JSX {
 	}
 }
 
-/* @@? 20:30 Error TypeError: Only one index signature is allowed in a class or interface. */
+
+/* @@? 20:30 Error Semantic error ESE0000: Only one index signature is allowed in a class or interface. */

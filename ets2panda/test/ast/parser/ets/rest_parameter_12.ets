@@ -24,6 +24,6 @@ class C {
 /* @@ label2 */C.foo(new A<Long>)
 /* @@ label3 */C.foo(new A<Long>, new B<Error>, new B<Error>)
 
-/* @@? 23:16 Error TypeError: No matching call signature for foo() */
-/* @@? 24:16 Error TypeError: No matching call signature for foo(A<Long>) */
-/* @@? 25:16 Error TypeError: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */
+/* @@? 23:16 Error Semantic error ESE0127: No matching call signature for foo() */
+/* @@? 24:16 Error Semantic error ESE0127: No matching call signature for foo(A<Long>) */
+/* @@? 25:16 Error Semantic error ESE0127: No matching call signature for foo(A<Long>, B<Error>, B<Error>) */

@@ -948,5 +948,5 @@
     }
   }
 }
-TypeError: No matching call signature for apply(...) [func-ref-private.ets:24:8]
-TypeError: Private method is used as value [func-ref-private.ets:24:19]
+[func-ref-private.ets:24:8] Semantic error ESE0127: No matching call signature for apply(...)
+[func-ref-private.ets:24:19] Semantic error ESE0306: Private method is used as value

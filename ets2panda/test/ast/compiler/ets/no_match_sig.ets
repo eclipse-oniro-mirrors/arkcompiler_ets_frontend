@@ -31,4 +31,4 @@ function foo3(a: number, b: number, c?: number) {
 
 overload foo{ foo1, foo2, foo3 }
 
-/* @@? 17:5 Error TypeError: No matching call signature for foo() */
+/* @@? 17:5 Error Semantic error ESE0127: No matching call signature for foo() */

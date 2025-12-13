@@ -34,5 +34,5 @@ function main(): void {
     });
 }
 
-/* @@? 20:15 Error TypeError: Function foo with this assembly signature already declared. */
-/* @@? 32:5 Error TypeError: No matching call signature for foo(((p1: Double, p2: String) => Boolean)) */
+/* @@? 20:15 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
+/* @@? 32:5 Error Semantic error ESE0127: No matching call signature for foo(((p1: Double, p2: String) => Boolean)) */

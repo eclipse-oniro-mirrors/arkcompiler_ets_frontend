@@ -18,4 +18,5 @@ function main(): void {
     let a: [number] = /* @@ label */[1, 2];
 }
 
-/* @@@ label Error TypeError: Initializer has 2 elements, but tuple requires 1  */
+
+/* @@@ label Error Semantic error ESE0231: Initializer has 2 elements, but tuple requires 1 */

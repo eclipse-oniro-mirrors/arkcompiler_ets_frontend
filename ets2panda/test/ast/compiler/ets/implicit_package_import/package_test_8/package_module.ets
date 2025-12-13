@@ -19,3 +19,4 @@ package subpackage_a;
 
 export let myvar: number = 8;
 export let myvar2: number = 9;
+

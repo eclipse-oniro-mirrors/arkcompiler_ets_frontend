@@ -16,7 +16,7 @@
 #include <cstdlib>
 #include <windows.h>
 #include "node_api.h"
-#include <macros.h>
+#include <libarkbase/macros.h>
 
 #define NAPI_CDECL __cdecl
 
@@ -149,11 +149,11 @@ NAPI_EXTERN napi_status NAPI_CDECL napi_is_typedarray(napi_env env, napi_value v
 }
 
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
-NAPI_EXTERN napi_status NAPI_CDECL napi_add_finalizer(napi_env env, napi_value js_object, void *finalize_data,
-                                                      napi_finalize finalize_cb, void *finalize_hint, napi_ref *result)
+NAPI_EXTERN napi_status NAPI_CDECL napi_add_finalizer(napi_env env, napi_value js_object, void *FinalizeData,
+                                                      napi_finalize finalize_cb, void *FinalizeHint, napi_ref *result)
 {
     LoadNapiFunctions();
-    return p_napi_add_finalizer(env, js_object, finalize_data, finalize_cb, finalize_hint, result);
+    return p_napi_add_finalizer(env, js_object, FinalizeData, finalize_cb, FinalizeHint, result);
 }
 
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
@@ -403,10 +403,10 @@ NAPI_EXTERN napi_status NAPI_CDECL napi_create_int32(napi_env env, int32_t value
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
 NAPI_EXTERN napi_status NAPI_CDECL napi_create_external_arraybuffer(napi_env env, void *external_data,
                                                                     size_t byte_length, napi_finalize finalize_cb,
-                                                                    void *finalize_hint, napi_value *result)
+                                                                    void *FinalizeHint, napi_value *result)
 {
     LoadNapiFunctions();
-    return p_napi_create_external_arraybuffer(env, external_data, byte_length, finalize_cb, finalize_hint, result);
+    return p_napi_create_external_arraybuffer(env, external_data, byte_length, finalize_cb, FinalizeHint, result);
 }
 
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
@@ -469,12 +469,12 @@ NAPI_EXTERN napi_status NAPI_CDECL napi_reject_deferred(napi_env env, napi_defer
 // CC-OFFNXT(G.FUN.01, huge_method) solid logic
 NAPI_EXTERN napi_status NAPI_CDECL napi_create_threadsafe_function(
     napi_env env, napi_value func, napi_value async_resource, napi_value async_resource_name, size_t max_queue_size,
-    size_t initial_thread_count, void *thread_finalize_data, napi_finalize thread_finalize_cb, void *context,
+    size_t initial_thread_count, void *thread_FinalizeData, napi_finalize thread_finalize_cb, void *context,
     napi_threadsafe_function_call_js call_js_cb, napi_threadsafe_function *result)
 {
     LoadNapiFunctions();
     return p_napi_create_threadsafe_function(env, func, async_resource, async_resource_name, max_queue_size,
-                                             initial_thread_count, thread_finalize_data, thread_finalize_cb, context,
+                                             initial_thread_count, thread_FinalizeData, thread_finalize_cb, context,
                                              call_js_cb, result);
 }
 

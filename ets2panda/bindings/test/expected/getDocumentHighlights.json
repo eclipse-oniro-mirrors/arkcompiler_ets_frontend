@@ -346,5 +346,38 @@
         ]
       }
     ]
+  },
+  "9": {
+    "documentHighlights": [
+      {
+        "fileName": "getDocumentHighlights9.ets",
+        "highlightSpans": [
+          {
+            "fileName": "getDocumentHighlights9.ets",
+            "textSpan": {
+              "start": 618,
+              "length": 4
+            },
+            "contextSpan": {
+              "start": 0,
+              "length": 0
+            },
+            "kind": 2
+          },
+          {
+            "fileName": "getDocumentHighlights9.ets",
+            "textSpan": {
+              "start": 655,
+              "length": 4
+            },
+            "contextSpan": {
+              "start": 0,
+              "length": 0
+            },
+            "kind": 2
+          }
+        ]
+      }
+    ]
   }
 }

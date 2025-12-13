@@ -20,4 +20,5 @@
 @MyAnno({testProperty1: "123", testProperty2/* @@ label */})
 class A{}
 
-/* @@@ label Error SyntaxError: Invalid argument passed to 'testProperty2'.  */
+
+/* @@@ label Error Syntax error ESY0026: Invalid argument passed to 'testProperty2'. */

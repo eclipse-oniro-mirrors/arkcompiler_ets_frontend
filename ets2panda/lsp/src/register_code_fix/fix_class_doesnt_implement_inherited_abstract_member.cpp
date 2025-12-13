@@ -16,6 +16,7 @@
 #include "code_fix_provider.h"
 #include "code_fixes/code_fix_types.h"
 #include "compiler/lowering/util.h"
+#include "generated/code_fix_register.h"
 #include "internal_api.h"
 #include "ir/astNode.h"
 #include "ir/base/classDefinition.h"
@@ -27,6 +28,14 @@
 #include <vector>
 
 namespace ark::es2panda::lsp {
+using codefixes::FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS;
+
+FixClassNotImplementingInheritedMembers::FixClassNotImplementingInheritedMembers()
+{
+    auto errorCodes = FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS.GetSupportedCodeNumbers();
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
+    SetFixIds({FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS.GetFixId().data()});
+}
 
 ir::AstNode *FixClassNotImplementingInheritedMembers::GetSuperClassDefinition(ir::AstNode *node)
 {
@@ -67,16 +76,18 @@ std::string FixClassNotImplementingInheritedMembers::MakeNewText(ir::AstNode *no
     return newText;
 }
 
-TextChange FixClassNotImplementingInheritedMembers::MakeTextChange(es2panda_Context *context, size_t offset)
+void FixClassNotImplementingInheritedMembers::MakeTextChangeForNotImplementedMembers(ChangeTracker &changeTracker,
+                                                                                     es2panda_Context *context,
+                                                                                     size_t pos)
 {
     TextChange res {{0, 0}, ""};
     if (context == nullptr) {
-        return res;
+        return;
     }
 
-    auto targetNode = GetTouchingToken(context, offset, false);
+    auto targetNode = GetTouchingToken(context, pos, false);
     if (targetNode == nullptr) {
-        return res;
+        return;
     }
 
     while (targetNode->Parent() != nullptr) {
@@ -87,11 +98,11 @@ TextChange FixClassNotImplementingInheritedMembers::MakeTextChange(es2panda_Cont
         targetNode = targetNode->Parent();
     }
     if (!targetNode->IsIdentifier()) {
-        return res;
+        return;
     }
     auto targetDecl = compiler::DeclarationFromIdentifier(targetNode->AsIdentifier());
     if (targetDecl == nullptr || !targetDecl->IsClassDefinition()) {
-        return res;
+        return;
     }
 
     auto targetClassBodys = targetDecl->AsClassDefinition()->Body();
@@ -103,7 +114,7 @@ TextChange FixClassNotImplementingInheritedMembers::MakeTextChange(es2panda_Cont
 
     auto superClassDecl = GetSuperClassDefinition(targetDecl);
     if (superClassDecl == nullptr || !superClassDecl->IsClassDefinition()) {
-        return res;
+        return;
     }
     auto superClassBodys = superClassDecl->AsClassDefinition()->Body();
     for (const auto &method : superClassBodys) {
@@ -115,61 +126,56 @@ TextChange FixClassNotImplementingInheritedMembers::MakeTextChange(es2panda_Cont
             res.newText += MakeNewText(method);
         }
     }
-    return res;
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    changeTracker.ReplaceRangeWithText(ctx->sourceFile, {res.span.start, res.span.start + res.span.length},
+                                       res.newText);
 }
 
-const int G_FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS = 1006;
-
-FixClassNotImplementingInheritedMembers::FixClassNotImplementingInheritedMembers()
+std::vector<FileTextChanges> FixClassNotImplementingInheritedMembers::GetCodeActionsForAbstractMissingMembers(
+    const CodeFixContext &context)
 {
-    const char *fixClassNotImplementingInheritedMembersId = "FixClassNotImplementingInheritedMembers";
-    SetErrorCodes({G_FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS});
-    SetFixIds({fixClassNotImplementingInheritedMembersId});
+    TextChangesContext textChangesContext = {context.host, context.formatContext, context.preferences};
+
+    auto fileTextChanges = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
+        MakeTextChangeForNotImplementedMembers(tracker, context.context, context.span.start);
+    });
+
+    return fileTextChanges;
 }
 
 std::vector<CodeFixAction> FixClassNotImplementingInheritedMembers::GetCodeActions(const CodeFixContext &context)
 {
-    std::vector<CodeFixAction> returnedActions;
-    if (context.span.length == 0) {
-        return returnedActions;
+    std::vector<CodeFixAction> actions;
+    auto changes = GetCodeActionsForAbstractMissingMembers(context);
+    if (!changes.empty()) {
+        CodeFixAction fix;
+        fix.fixName = FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS.GetFixId().data();
+        fix.description = "Add missing inherited abstract members";
+        fix.fixAllDescription = "Add missing all inherited abstract members";
+        fix.changes = changes;
+        fix.fixId = FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS.GetFixId().data();
+        actions.push_back(std::move(fix));
     }
-    std::vector<TextChange> textChanges;
-    auto ctx = reinterpret_cast<public_lib::Context *>(context.context);
-    const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
-    for (const auto &diagnostic : diagnostics) {
-        auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
-        auto offset =
-            index.GetOffset(lexer::SourceLocation(diagnostic->Line(), diagnostic->Offset(), ctx->parserProgram));
-        size_t end = context.span.start + context.span.length;
-        if (offset < context.span.start || offset >= end) {
-            break;
-        }
-        textChanges.push_back(MakeTextChange(context.context, offset));
-    }
-    CodeFixAction codeAction;
-    codeAction.changes.emplace_back(std::string(ctx->parserProgram->SourceFilePath()), textChanges);
-    codeAction.fixId = "FixClassNotImplementingInheritedMembers";
-    returnedActions.push_back(codeAction);
-    return returnedActions;
+
+    return actions;
 }
 
 CombinedCodeActions FixClassNotImplementingInheritedMembers::GetAllCodeActions(const CodeFixAllContext &codeFixAll)
 {
-    CombinedCodeActions combinedCodeActions;
-    std::vector<TextChange> textChanges;
-    auto ctx = reinterpret_cast<public_lib::Context *>(codeFixAll.context);
-    const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
-    for (const auto &diagnostic : diagnostics) {
-        auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
-        auto offset =
-            index.GetOffset(lexer::SourceLocation(diagnostic->Line(), diagnostic->Offset(), ctx->parserProgram));
-        textChanges.push_back(MakeTextChange(codeFixAll.context, offset));
-    }
-    combinedCodeActions.changes.emplace_back(std::string(ctx->parserProgram->SourceFilePath()), textChanges);
-    return combinedCodeActions;
+    CodeFixProvider provider;
+    auto changes = provider.CodeFixAll(
+        codeFixAll, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+            MakeTextChangeForNotImplementedMembers(tracker, codeFixAll.context, diag.GetStart());
+        });
+
+    CombinedCodeActions combined;
+    combined.changes = std::move(changes.changes);
+    combined.commands = std::move(changes.commands);
+    return combined;
 }
-// NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
+
+// NOLINTNEXTLINE
 AutoCodeFixRegister<FixClassNotImplementingInheritedMembers> g_fixClassNotImplementingInheritedMembers(
-    "FixClassNotImplementingInheritedMembers");
+    FIX_CLASS_NOT_IMPLEMENTING_INHERITED_MEMBERS.GetFixId().data());
 
 }  // namespace ark::es2panda::lsp

@@ -18,11 +18,63 @@
 #include <ctime>
 #include <string>
 
+#include "compiler/lowering/util.h"
 #include "find_rename_locations.h"
 #include "find_references.h"
+#include "internal_api.h"
 #include "public/public.h"
 
 namespace ark::es2panda::lsp {
+
+bool IsImported(ir::AstNode *node)
+{
+    if (node == nullptr || !node->IsIdentifier()) {
+        return false;
+    }
+    auto parent = node->Parent();
+    if (parent == nullptr) {
+        return false;
+    }
+    return parent->IsImportSpecifier();
+}
+
+bool NeedsCrossFileRename(es2panda_Context *context, size_t position)
+{
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto touchingToken = GetTouchingToken(context, position, false);
+    if (touchingToken == nullptr || !touchingToken->IsIdentifier()) {
+        return false;
+    }
+    auto decl = compiler::DeclarationFromIdentifier(touchingToken->AsIdentifier());
+    if (decl == nullptr || decl->Range().start.Program() == nullptr) {
+        return false;
+    }
+    auto declFilePath = decl->Range().start.Program()->SourceFilePath();
+    if (!declFilePath.Is(ctx->sourceFile->filePath)) {  // the declaration is in a different file
+        auto parent = touchingToken->Parent();
+        if (parent != nullptr && parent->IsMemberExpression()) {
+            auto property = parent->AsMemberExpression()->Property();
+            if (property != nullptr && compiler::DeclarationFromIdentifier(property->AsIdentifier()) == decl) {
+                return true;
+            }
+        }
+    } else {  // the declaration is in the same file
+        auto isExported = [](ir::AstNode *node) {
+            return node != nullptr && (node->IsExported() || node->IsDefaultExported() || node->IsExportedType());
+        };
+        auto exported = isExported(decl);
+        if (exported) {
+            return true;
+        }
+        if (decl->IsMethodDefinition() && decl->Parent() != nullptr && decl->Parent()->IsClassDefinition()) {
+            return decl->IsPublic() && isExported(decl->Parent());
+        }
+        if (decl->IsClassProperty()) {
+            return decl->IsPublic() && isExported(decl->Parent());
+        }
+    }
+    return false;
+}
 
 std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
                                              const std::vector<es2panda_Context *> &fileContexts,
@@ -31,40 +83,35 @@ std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
     auto references = FindReferences(tkn, fileContexts, context, position);
     std::set<RenameLocation> res;
 
-    for (auto ref : references) {
-        auto fileIt = std::find_if(fileContexts.begin(), fileContexts.end(), [&ref](es2panda_Context *fileContext) {
-            auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(fileContext);
-            return ctx->sourceFile->filePath == ref.filePath;
-        });
-        if (fileIt == fileContexts.end()) {
-            std::cout << "Error: Could not find " << ref.filePath << " in list!\n";
-            continue;
-        }
-        auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(*fileIt);
-        std::string source = std::string {ctx->sourceFile->source};
-        // Get prefix and suffix texts
-        std::string prefix;
-        {
-            auto end = source.begin() + ref.start;
-            auto beg = end;
-            while (beg > source.begin() && *(beg - 1) != '\n') {
-                --beg;
-            }
-            prefix = std::string {beg, end};
-        }
-        // Suffix
-        std::string suffix;
-        {
-            auto beg = source.begin() + ref.end;
-            auto end = beg;
-            while (end < source.end() && *end != '\n') {
-                ++end;
-            }
-            suffix = std::string {beg, end};
-        }
-        res.insert(RenameLocation {ref.filePath, ref.start, ref.end, ref.line, prefix, suffix});
+    for (const auto &ref : references) {
+        res.emplace(ref.filePath, ref.start, ref.end, ref.line);
     }
 
+    return res;
+}
+
+std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn, es2panda_Context *context, size_t position)
+{
+    auto references = FindReferences(tkn, {context}, context, position);
+    std::set<RenameLocation> res;
+    if (references.empty()) {
+        return res;
+    }
+    auto it = references.cbegin();
+    if (auto touchingToken = GetTouchingToken(context, it->start, false); IsImported(touchingToken)) {
+        auto importSpecifier = touchingToken->Parent()->AsImportSpecifier();
+        if (!(importSpecifier->Local()->Range() != importSpecifier->Imported()->Range())) {
+            // this case: `import { SourceFile } from 'module';`
+            // rename result: `import { SourceFile as sf } from 'module';`
+            // so we need to add the prefix text `SourceFile as`
+            res.emplace(it->filePath, it->start, it->end, it->line,
+                        std::string(touchingToken->AsIdentifier()->Name()) + " as ");
+            ++it;
+        }
+    }
+    for (; it != references.end(); ++it) {
+        res.emplace(it->filePath, it->start, it->end, it->line);
+    }
     return res;
 }
 
@@ -74,5 +121,12 @@ std::set<RenameLocation> FindRenameLocations(const std::vector<es2panda_Context 
     time_t tmp = 0;
     CancellationToken cancellationToken {tmp, nullptr};
     return FindRenameLocations(&cancellationToken, fileContexts, context, position);
+}
+
+std::set<RenameLocation> FindRenameLocationsInCurrentFile(es2panda_Context *context, size_t position)
+{
+    time_t tmp = 0;
+    CancellationToken cancellationToken {tmp, nullptr};
+    return FindRenameLocations(&cancellationToken, context, position);
 }
 }  // namespace ark::es2panda::lsp

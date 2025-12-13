@@ -19,5 +19,5 @@ function foo<T extends Record<string, A>>(record: Record<string, Partial<T>>){
 
 foo({})
 
-/* @@? 16:39 Error TypeError: Cannot find type 'A'. */
-/* @@? 16:73 Error TypeError: T in Partial<T> must be a class or an interface type. */
+/* @@? 16:39 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 16:73 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

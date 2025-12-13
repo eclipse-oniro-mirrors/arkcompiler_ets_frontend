@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-function main() {
+async function foo() {
     try {
         await import("hello")
             .then((m: JSValue): null => null)
-            .catch((a: object | null | undefined): never => {
+            .catch((a): never => {
                 throw a as Error
             })
-    } catch (e: Error) {
-        arktest.assertEQ(e.message, "Dynamic import is not supported")
+    } catch (e) {
+        arktest.assertEQ((e as Error).message, "Dynamic import is not supported")
         return
     }
     arktest.assertTrue(!"nothing was thrown")
 }
 
-/* @@? 18:15 Error SyntaxError: Unexpected token 'import'. */
-/* @@? 18:15 Error TypeError: 'await' expressions require Promise object as argument. */
+/* @@? 18:9 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 18:15 Error Syntax error ESY0227: Unexpected token 'import'. */

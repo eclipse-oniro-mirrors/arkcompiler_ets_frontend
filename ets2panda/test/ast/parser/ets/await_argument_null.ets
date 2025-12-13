@@ -14,9 +14,11 @@
  */
 
 async function foo(): Promise<Object> {
-    let obj: Object = await /* @@ label */null;
+    let obj: Object = /* @@ label */await null;
     return /* @@ label1 */null;
 }
 
-/* @@@ label Error TypeError: 'await' expressions require Promise object as argument.  */
-/* @@@ label1 Error TypeError: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object> | Object'  */
+
+/* @@@ label Error Semantic error ESE0303: Type 'null' can not be awaited, it is not a Promise. */
+/* @@@ label Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Object' */
+/* @@@ label1 Error Semantic error ESE0091: Type 'null' is not compatible with the enclosing method's return type 'Promise<Object> | Object' */

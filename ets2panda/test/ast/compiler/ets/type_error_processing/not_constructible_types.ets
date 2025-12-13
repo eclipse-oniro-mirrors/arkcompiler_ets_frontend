@@ -28,12 +28,13 @@ WeakSet [12] = new undefined()
 // *NOTE* error has printed twice, that is known issue #20560
 
 
-/* @@? 16:9 Error TypeError: Type 'null' is not constructible. */
-/* @@? 17:1 Error TypeError: Type 'null' is not constructible. */
-/* @@? 18:1 Error TypeError: Type 'undefined' is not constructible. */
-/* @@? 19:1 Error TypeError: Type 'never' is not constructible. */
-/* @@? 20:1 Error TypeError: This expression is not constructible. */
-/* @@? 23:1 Error TypeError: The union type is not constructible. */
-/* @@? 26:1 Error TypeError: Object type doesn't have proper index access method. */
-/* @@? 26:1 Error SyntaxError: Class cannot be used as object. */
-/* @@? 26:16 Error TypeError: Type 'undefined' is not constructible. */
+
+/* @@? 16:9 Error Semantic error ESE0290: Type 'null' is not constructible. */
+/* @@? 17:1 Error Semantic error ESE0290: Type 'null' is not constructible. */
+/* @@? 18:1 Error Semantic error ESE0290: Type 'undefined' is not constructible. */
+/* @@? 19:1 Error Semantic error ESE0290: Type 'never' is not constructible. */
+/* @@? 20:1 Error Semantic error ESE0292: This expression is not constructible. */
+/* @@? 23:1 Error Semantic error ESE0300: The union type is not constructible. */
+/* @@? 26:1 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 26:1 Error Semantic error ESE0250: Object type doesn't have proper index access method. */
+/* @@? 26:16 Error Semantic error ESE0290: Type 'undefined' is not constructible. */

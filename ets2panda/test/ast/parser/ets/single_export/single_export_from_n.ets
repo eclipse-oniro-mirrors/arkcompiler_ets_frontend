@@ -12,7 +12,8 @@
 
 export a /* @@ label */from /* @@ label1 */"./type"
 
-/* @@? 13:8 Error SyntaxError: Cannot find name 'a' to export. */
-/* @@? 13:24 Error SyntaxError: Unexpected token 'from'. */
-/* @@? 13:24 Error TypeError: Unresolved reference from */
-/* @@? 13:44 Error SyntaxError: Unexpected token './type'. */
+
+/* @@? 13:8 Error Syntax error ESY0279: Cannot find name 'a' to export. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'from'. */
+/* @@@ label Error Semantic error ESE0143: Unresolved reference from */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token './type'. */

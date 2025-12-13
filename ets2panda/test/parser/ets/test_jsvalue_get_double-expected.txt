@@ -304,4 +304,4 @@
     }
   }
 }
-TypeError: Type 'JSValue' cannot be assigned to type 'Double' [test_jsvalue_get_double.ets:17:21]
+[test_jsvalue_get_double.ets:17:21] Semantic error ESE0318: Type 'JSValue' cannot be assigned to type 'Double'

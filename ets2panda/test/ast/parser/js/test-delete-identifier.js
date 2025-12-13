@@ -16,4 +16,5 @@
 
 var a;
 delete a/* @@ label */;
-/* @@@ label Error SyntaxError: Deleting local variable in strict mode.  */
+
+/* @@@ label Error Syntax error ESY0050: Deleting local variable in strict mode. */

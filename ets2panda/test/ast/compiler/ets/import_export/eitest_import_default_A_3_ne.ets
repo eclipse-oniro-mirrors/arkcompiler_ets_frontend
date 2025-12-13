@@ -19,4 +19,4 @@ function main(){
     let a :A = new A()
 }
 
-/* @@? 16:17 Error TypeError: Use the default import syntax to import a default exported element */
+/* @@? 16:17 Error Semantic error ESE0353: Use the default import syntax to import a default exported element */

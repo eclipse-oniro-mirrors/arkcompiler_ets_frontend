@@ -36,5 +36,9 @@ function main(): void {
   instance.cb(1, 2);
 }
 
-/* @@? 36:3 Error TypeError: Expected 1 arguments, got 2.  */
-/* @@? 36:3 Error TypeError: No matching call signature for (int, int)  */
+
+/* @@? 22:34 Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@? 30:26 Warning Warning W0010: The instance field initializer expression cannot use the this. */
+/* @@? 30:31 Error Semantic error ESE0307: Overloaded method is used as value */
+/* @@? 36:3 Error Semantic error ESE0124: Expected 1 arguments, got 2. */
+/* @@? 36:3 Error Semantic error ESE0127: No matching call signature for (Int, Int) */

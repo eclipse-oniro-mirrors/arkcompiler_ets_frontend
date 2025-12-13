@@ -17,7 +17,6 @@
 }
 
 
-/* @@@ label Error SyntaxError: Unexpected token 'static'.  */
-/* @@@ label1 Error SyntaxError: Unexpected token '@'. */
-/* @@? 15:38 Error SyntaxError: Annotations can only be declared at the top level. */
-/* @@? 15:38 Error SyntaxError: Illegal start of INTERFACE expression. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'static'. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '@'. */

@@ -16,10 +16,7 @@
 #ifndef ES2PANDA_COMPILER_ENUM_PRE_CHECK_LOWERING_H
 #define ES2PANDA_COMPILER_ENUM_PRE_CHECK_LOWERING_H
 
-#include <string>
-#include <string_view>
 #include "compiler/lowering/phase.h"
-#include "checker/ETSchecker.h"
 
 namespace ark::es2panda::compiler {
 
@@ -38,7 +35,7 @@ public:
     static constexpr std::string_view ORDINAL_NAME {"#ordinal"};
     static constexpr auto ORDINAL_TYPE {ir::PrimitiveType::INT};
 
-    enum EnumType { NOT_SPECIFIED = 0, INT = 1, LONG = 2, DOUBLE = 3, STRING = 4 };
+    enum EnumType { NOT_SPECIFIED = 0, INT = 1, LONG = 2, DOUBLE = 3, FLOAT = 4, BYTE = 5, SHORT = 6, STRING = 7 };
 
     struct DeclarationFlags {
         // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
@@ -83,8 +80,8 @@ private:
 
     // clang-format off
     template <EnumLoweringPhase::EnumType TYPE_NODE>
-    bool CheckEnumMemberType(const ArenaVector<ir::AstNode *> &enumMembers, bool &hasLoggedError,
-                             bool &hasLongLiteral);
+    bool CheckEnumMemberType(const ArenaVector<ir::AstNode *> &enumMembers, bool &hasLoggedError, bool isAnnoted,
+                             bool *hasLongLiteral = nullptr);
     // clang-format on
 
     [[nodiscard]] ir::ScriptFunction *MakeFunction(FunctionInfo &&functionInfo);
@@ -93,42 +90,42 @@ private:
     ir::ClassProperty *CreateOrdinalField(ir::ClassDefinition *const enumClass);
     ir::MemberExpression *CreateOrdinalAccessExpression();
     void CreateCCtorForEnumClass(ir::ClassDefinition *const enumClass);
-    void CreateCtorForEnumClass(ir::ClassDefinition *const enumClass, EnumType enumType);
-    ir::ScriptFunction *CreateFunctionForCtorOfEnumClass(ir::ClassDefinition *const enumClass, EnumType enumType);
+    void CreateCtorForEnumClass(ir::ClassDefinition *const enumClass, ir::TypeNode *enumType);
+    ir::ScriptFunction *CreateFunctionForCtorOfEnumClass(ir::ClassDefinition *const enumClass, ir::TypeNode *enumType);
 
     void ProcessEnumClassDeclaration(ir::TSEnumDeclaration *const enumDecl, const DeclarationFlags &flags,
                                      ir::ClassDeclaration *enumClassDecl);
-    template <ir::PrimitiveType TYPE>
-    ir::ClassDeclaration *CreateEnumIntClassFromEnumDeclaration(ir::TSEnumDeclaration *const enumDecl,
-                                                                const DeclarationFlags flags);
-    template <ir::PrimitiveType TYPE>
-    ir::ClassDeclaration *CreateEnumFloatClassFromEnumDeclaration(ir::TSEnumDeclaration *const enumDecl,
-                                                                  const DeclarationFlags flags);
-    ir::ClassDeclaration *CreateEnumStringClassFromEnumDeclaration(ir::TSEnumDeclaration *const enumDecl,
-                                                                   const DeclarationFlags flags);
+    template <EnumType>
+    ir::ClassDeclaration *CreateEnumNumericClassFromEnumDeclaration(ir::TSEnumDeclaration *const enumDecl,
+                                                                    const DeclarationFlags flags);
+
     static void AppendParentNames(util::UString &qualifiedName, const ir::AstNode *const node);
     template <typename ElementMaker>
     [[nodiscard]] ir::Identifier *MakeArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass,
                                             const util::StringView &name, ir::TypeNode *const typeAnnotation,
                                             ElementMaker &&elementMaker);
+
+    ir::TypeNode *CreateType(EnumLoweringPhase::EnumType enumType, ir::TSEnumDeclaration *enumDecl,
+                             ir::ClassDefinition *parent);
+
     void CreateEnumItemFields(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass,
                               EnumType enumType);
     ir::Identifier *CreateEnumNamesArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
     template <ir::PrimitiveType TYPE>
-    ir::Identifier *CreateEnumValuesArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
+    ir::Identifier *CreateEnumValuesArray(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
     ir::Identifier *CreateEnumStringValuesArray(const ir::TSEnumDeclaration *const enumDecl,
                                                 ir::ClassDefinition *enumClass);
     ir::Identifier *CreateEnumItemsArray(const ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *enumClass);
     void CreateEnumToStringMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
                                   ir::Identifier *const stringValuesArrayIdent);
-    void CreateEnumValueOfMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
+    void CreateEnumValueOfMethod(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *const enumClass,
                                  ir::Identifier *const valuesArrayIdent,
                                  std::optional<ir::PrimitiveType> primitiveType);
     void CreateEnumGetNameMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
                                  ir::Identifier *const namesArrayIdent);
     void CreateEnumGetValueOfMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
                                     ir::Identifier *const namesArrayIdent, ir::Identifier *const itemsArrayIdent);
-    void CreateEnumFromValueMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,
+    void CreateEnumFromValueMethod(ir::TSEnumDeclaration *const enumDecl, ir::ClassDefinition *const enumClass,
                                    ir::Identifier *const valuesArrayIdent, ir::Identifier *const itemsArrayIdent,
                                    std::optional<ir::PrimitiveType> primitiveType);
     void CreateEnumValuesMethod(ir::TSEnumDeclaration const *const enumDecl, ir::ClassDefinition *const enumClass,

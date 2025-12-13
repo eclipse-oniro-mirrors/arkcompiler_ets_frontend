@@ -21,4 +21,4 @@ function main() {
     let a : A = new A();
 }
 
-/* @@? 17:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 17:6 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */

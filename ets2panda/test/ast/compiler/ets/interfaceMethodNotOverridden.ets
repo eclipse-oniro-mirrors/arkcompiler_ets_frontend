@@ -23,4 +23,5 @@ class B implements A /* @@ label */{
     }
 }
 
-/* @@@ label Error TypeError: B is not abstract and does not override abstract method foo(): void in A  */
+
+/* @@@ label Error Semantic error ESE0190: B is not abstract and does not override abstract method foo(): void in A */

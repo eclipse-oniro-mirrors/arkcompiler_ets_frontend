@@ -19,4 +19,4 @@ let g:((y:A<int>) => A<int>|null)|null = /* @@ label */(y:A<String>): A<String>|
     return y;
 }
 
-/* @@@ label Error TypeError: Type '((p1: A<String>) => A<String>|null)' cannot be assigned to type '(((p1: A<Int>) => A<Int>|null))|null'  */
+/* @@@ label Error Semantic error ESE0318: Type '((p1: A<String>) => A<String>|null)' cannot be assigned to type '(((p1: A<Int>) => A<Int>|null))|null' */

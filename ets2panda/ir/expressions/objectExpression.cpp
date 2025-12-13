@@ -45,65 +45,6 @@ ObjectExpression *ObjectExpression::Clone(ArenaAllocator *const allocator, AstNo
     return clone;
 }
 
-static std::pair<ValidationInfo, bool> ValidateProperty(Property *prop, bool &foundProto)
-{
-    ValidationInfo info = prop->ValidateExpression();
-    if (prop->Kind() == PropertyKind::PROTO) {
-        if (foundProto) {
-            return {{"Duplicate __proto__ fields are not allowed in object literals", prop->Key()->Start()}, true};
-        }
-
-        foundProto = true;
-    }
-
-    return {info, false};
-}
-
-ValidationInfo ObjectExpression::ValidateExpression()
-{
-    if (optional_) {
-        return {"Unexpected token '?'.", Start()};
-    }
-
-    if (TypeAnnotation() != nullptr) {
-        return {"Unexpected token.", TypeAnnotation()->Start()};
-    }
-
-    ValidationInfo info;
-    bool foundProto = false;
-
-    for (auto *it : properties_) {
-        switch (it->Type()) {
-            case AstNodeType::OBJECT_EXPRESSION:
-            case AstNodeType::ARRAY_EXPRESSION: {
-                return {"Unexpected token.", it->Start()};
-            }
-            case AstNodeType::SPREAD_ELEMENT: {
-                info = it->AsSpreadElement()->ValidateExpression();
-                break;
-            }
-            case AstNodeType::PROPERTY: {
-                auto *prop = it->AsProperty();
-                bool ret = false;
-                std::tie(info, ret) = ValidateProperty(prop, foundProto);
-                if (ret) {
-                    return info;
-                }
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
-        if (info.Fail()) {
-            break;
-        }
-    }
-
-    return info;
-}
-
 bool ObjectExpression::ConvertibleToObjectPattern()
 {
     // NOTE: rsipka. throw more precise messages in case of false results
@@ -168,6 +109,13 @@ void ObjectExpression::SetOptional(bool optional)
     optional_ = optional;
 }
 
+bool ObjectExpression::HasMethodDefinition() const noexcept
+{
+    return std::any_of(properties_.cbegin(), properties_.cend(), [](Expression *expr) -> bool {
+        return expr->IsProperty() && util::Helpers::IsETSMethodType(expr->TsType());
+    });
+}
+
 void ObjectExpression::TransformChildren(const NodeTransformer &cb, std::string_view transformationName)
 {
     for (auto *&it : VectorIterationGuard(properties_)) {
@@ -198,7 +146,7 @@ void ObjectExpression::Iterate(const NodeTraverser &cb) const
 
 void ObjectExpression::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", (type_ == AstNodeType::OBJECT_EXPRESSION) ? "ObjectExpression" : "ObjectPattern"},
+    dumper->Add({{"type", (Type() == AstNodeType::OBJECT_EXPRESSION) ? "ObjectExpression" : "ObjectPattern"},
                  {"properties", properties_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});

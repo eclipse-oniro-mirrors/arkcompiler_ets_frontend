@@ -25,4 +25,5 @@ function foo(): void {
     /* @@ label */a.foo2();
 }
 
-/* @@@ label Error TypeError: Cannot call readonly type methods.  */
+
+/* @@@ label Error Semantic error ESE0027: Cannot call readonly type methods. */

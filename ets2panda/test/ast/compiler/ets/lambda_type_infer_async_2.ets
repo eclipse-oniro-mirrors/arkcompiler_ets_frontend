@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-function main() {
+async function foo() {
     const p = Promise.resolve(null);
 
     const result = await p.then(obj => {
@@ -22,4 +22,5 @@ function main() {
     });
 }
 
-/* @@? 20:23 Error TypeError: Value is possibly nullish. */
+
+/* @@? 20:23 Error Semantic error ESE0010: Value is possibly nullish. */

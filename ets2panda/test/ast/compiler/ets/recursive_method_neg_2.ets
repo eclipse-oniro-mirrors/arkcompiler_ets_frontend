@@ -24,5 +24,6 @@ function main(){
     let a_obj = new A<C>()
     /* @@ label */a_obj.foo<C>(/* @@ label1 */y) 
 }
-/* @@@ label1 Error TypeError: Type 'D' is not compatible with type 'C' at index 1  */
-/* @@@ label Error TypeError: No matching call signature for foo(D)  */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for foo(D) */
+/* @@@ label1 Error Semantic error ESE0046: Type 'D' is not compatible with type 'C' at index 1 */

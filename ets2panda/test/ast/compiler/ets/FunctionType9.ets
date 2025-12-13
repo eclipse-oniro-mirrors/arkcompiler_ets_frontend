@@ -19,12 +19,16 @@ class A {
 
   }
 
-  private cb: (a: int) => void = this.foo;
+  private cb: (a: int) => void;
+  constructor () {
+    this.cb = this.foo;
+  }
 }
 
 function main(): void {
   let instance = new A();
-  instance./* @@ label */cb(1);
+  instance.cb(1);
 }
 
-/* @@@ label Error TypeError: Property cb is not visible here.  */
+
+/* @@? 30:12 Error Semantic error ESE0293: Property cb is not visible here. */

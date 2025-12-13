@@ -21,8 +21,8 @@ function main(): void {
   }
   arktest.assertTrue(a != null)
 }
-/* @@? 18:5 Error SyntaxError: Illegal start of CLASS expression. */
-/* @@? 19:12 Error TypeError: Cannot find type 'A'. */
-/* @@? 19:20 Error TypeError: Cannot find type 'A'. */
-/* @@? 22:3 Error TypeError: No matching call signature for assertTrue(Boolean) */
-/* @@? 22:22 Error TypeError: Unresolved reference a */
+
+/* @@? 18:5 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 22:22 Error Semantic error ESE0143: Unresolved reference a */

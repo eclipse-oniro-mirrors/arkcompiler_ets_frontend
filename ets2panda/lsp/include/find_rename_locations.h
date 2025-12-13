@@ -30,8 +30,19 @@ struct RenameLocation {
     size_t start = 0;
     size_t end = 0;
     size_t line = 0;
-    std::string prefixText;
-    std::string suffixText;
+    std::optional<std::string> prefixText = std::nullopt;
+    std::optional<std::string> suffixText = std::nullopt;
+    RenameLocation() = default;
+    RenameLocation(std::string file, size_t s, size_t e, size_t l, std::optional<std::string> prefix = std::nullopt,
+                   std::optional<std::string> suffix = std::nullopt)
+        : fileName(std::move(file)),
+          start(s),
+          end(e),
+          line(l),
+          prefixText(std::move(prefix)),
+          suffixText(std::move(suffix))
+    {
+    }
 
     bool operator<(const RenameLocation &other) const
     {
@@ -41,12 +52,15 @@ struct RenameLocation {
 };
 // NOLINTEND(misc-non-private-member-variables-in-classes)
 
+bool NeedsCrossFileRename(es2panda_Context *context, size_t position);
+
 std::set<RenameLocation> FindRenameLocations(CancellationToken *tkn,
                                              const std::vector<es2panda_Context *> &fileContexts,
                                              es2panda_Context *context, size_t position);
 
 std::set<RenameLocation> FindRenameLocations(const std::vector<es2panda_Context *> &fileContexts,
                                              es2panda_Context *context, size_t position);
+std::set<RenameLocation> FindRenameLocationsInCurrentFile(es2panda_Context *context, size_t position);
 
 }  // namespace ark::es2panda::lsp
 

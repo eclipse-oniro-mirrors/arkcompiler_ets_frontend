@@ -18,4 +18,5 @@ export class A<T> {}
 export declare function foo(a:A<number>):void
 export declare function foo(a:A<string>):number {}
 
-/* @@? 19:49 Error TypeError: Native, Abstract and Declare methods cannot have body.  */
+
+/* @@? 19:49 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

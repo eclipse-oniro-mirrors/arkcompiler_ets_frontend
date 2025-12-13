@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@
 declare class Foo {
     private static a = /* @@ label */3;
 }
-/* @@@ label Error SyntaxError: Initializers are not allowed in ambient contexts.  */
+
+/* @@@ label Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */

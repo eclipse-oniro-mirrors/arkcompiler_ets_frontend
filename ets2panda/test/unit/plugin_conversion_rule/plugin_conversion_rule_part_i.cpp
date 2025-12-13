@@ -427,11 +427,11 @@ es2panda_AstNode *classInstance/*return_args:*/)
 TEST_F(PluginConversionRuleUnitTest, AstNodePtrInputParameterAndMethodCall)
 {
     std::string targetCAPI {R"(
-    extern "C" void AstNodeSetParent([[maybe_unused]] es2panda_Context *context, es2panda_AstNode *classInstance,
-[[maybe_unused]] es2panda_AstNode *parent/*return_args:*/)
+    extern "C" void AstNodeSetParent([[maybe_unused]] es2panda_Context *context,
+    es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_AstNode *parent/*return_args:*/)
     {
         auto *parentE2p = reinterpret_cast<ir::AstNode *>(parent);
-        ((reinterpret_cast<ir::AstNode *>(classInstance))->SetParent(parentE2p));
+        ((reinterpret_cast< ir::AstNode *>(classInstance))->SetParent(parentE2p));
     }
     )"};
 

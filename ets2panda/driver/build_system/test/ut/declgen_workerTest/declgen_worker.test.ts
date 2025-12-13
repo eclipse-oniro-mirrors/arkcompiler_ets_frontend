@@ -199,7 +199,6 @@ describe('declgen_worker', () => {
         expect(require('../../../src/util/utils').ensurePathExists).toHaveBeenCalledTimes(2);
         expect(fakeArkts.Config.create).toHaveBeenCalled();
         expect(fakeArkts.Context.createFromStringWithHistory).toHaveBeenCalled();
-        expect(fakeArkts.Context.createFromStringWithHistory).toHaveBeenCalled();
         expect(fakeArkts.proceedToState).toHaveBeenCalledWith(1, 'peer', true);
         expect(fakeArkts.proceedToState).toHaveBeenCalledWith(2, 'peer', true);
         expect(fakeArkts.EtsScript.fromContext).toHaveBeenCalled();

@@ -22,4 +22,5 @@ class A {
   }
 }
 
-/* @@@ label Error TypeError: Return statement with expression isn't allowed in constructor.  */
+
+/* @@@ label Error Semantic error ESE0033: Return statement with expression isn't allowed in constructor. */

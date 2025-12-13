@@ -20,4 +20,5 @@ const _innerFunc = (arg: { x: number } | undefined): number => {
     return arg.x;
 };
 
-/* @@? 16:26 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+
+/* @@? 16:26 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */

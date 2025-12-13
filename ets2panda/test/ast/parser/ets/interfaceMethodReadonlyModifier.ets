@@ -17,8 +17,8 @@ interface I {
     readonly foo()
 }
 
-/* @@? 17:17 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 17:18 Error SyntaxError: Invalid Type. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 18:1 Error SyntaxError: Identifier expected. */
+/* @@? 17:17 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 17:18 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 17:18 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:18 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 18:1 Error Syntax error ESY0122: Identifier expected. */

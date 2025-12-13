@@ -19,12 +19,12 @@
 #include "public/es2panda_lib.h"
 #include "dynamic-loader.h"
 
+// NOLINTNEXTLINE(misc-unused-using-decls)
+using std::string, std::cout, std::endl;
+
+static es2panda_Impl const *g_impl = nullptr;
+
 // NOLINTBEGIN
-
-using std::string, std::cout, std::endl, std::vector;
-
-static es2panda_Impl const *impl = nullptr;
-
 #ifdef _WIN32
 #include <windows.h>
 #define PLUGIN_DIR "windows_host_tools"
@@ -42,72 +42,94 @@ static es2panda_Impl const *impl = nullptr;
 #define LIB_PREFIX "lib"
 #define LIB_SUFFIX ".so"
 #endif
+// NOLINTEND
 
-const char *LIB_ES2PANDA_PUBLIC = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
+constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
+constexpr const char *G_LIB_ES2_PANDA_PUBLIC = LIB_PREFIX "es2panda-public" LIB_SUFFIX;
 
 void *FindLibrary()
 {
-    std::string libraryName;
+    std::string basePath;
     char *envValue = getenv("PANDA_SDK_PATH");
-    if (envValue) {
-        libraryName = string(envValue) + ("/" PLUGIN_DIR "/lib/") + LIB_ES2PANDA_PUBLIC;
+    if (envValue != nullptr) {
+        basePath = std::string(envValue) + "/" + PLUGIN_DIR + "/lib/";
     } else {
-        if (g_pandaLibPath == "") {
-            libraryName = LIB_ES2PANDA_PUBLIC;
+        char *envBuildPath = getenv("BUILD_DIR");
+        if (!g_pandaLibPath.empty()) {
+            basePath = g_pandaLibPath + "/";
+        } else if (envBuildPath != nullptr) {
+            basePath = std::string(envBuildPath) + "/lib/";
         } else {
-            libraryName = g_pandaLibPath + "/" + LIB_ES2PANDA_PUBLIC;
+            basePath = "";
         }
     }
-    return LoadLibrary(libraryName);
+
+    std::string libraryName = basePath + G_LIB_ES2_PANDA_PUBLIC_OHOS;
+    void *library = LoadLibrary(libraryName);
+    if (library != nullptr) {
+        return library;
+    }
+
+    std::string altLibraryName = basePath + G_LIB_ES2_PANDA_PUBLIC;
+    library = LoadLibrary(altLibraryName);
+    if (library != nullptr) {
+        return library;
+    }
+
+    return nullptr;
 }
 
 const es2panda_Impl *GetPublicImpl()
 {
-    if (impl) {
-        return impl;
+    if (g_impl != nullptr) {
+        return g_impl;
     }
     auto library = FindLibrary();
-    if (!library) {
-        std::cout << "Cannot find " << LIB_ES2PANDA_PUBLIC << endl;
+    if (library == nullptr) {
+        std::cout << "Cannot find " << G_LIB_ES2_PANDA_PUBLIC << endl;
     }
     auto symbol = FindSymbol(library, "es2panda_GetImpl");
-    if (!symbol) {
+    if (symbol == nullptr) {
         std::cout << "Cannot find Impl Entry point" << endl;
     }
-    impl = reinterpret_cast<es2panda_Impl *(*)(int)>(symbol)(ES2PANDA_LIB_VERSION);
-    return impl;
+    g_impl = reinterpret_cast<es2panda_Impl *(*)(int)>(symbol)(ES2PANDA_LIB_VERSION);
+    return g_impl;
 }
 
 std::string GetString(KStringPtr ptr)
 {
-    return ptr.data();
+    return ptr.Data();
 }
 
-char *GetStringCopy(KStringPtr &ptr)
-{
-    return strdup(ptr.c_str());
-}
-
+// NOLINTBEGIN
 inline KUInt UnpackUInt(const KByte *bytes)
 {
-    return (bytes[0] | (bytes[1] << 8U) | (bytes[2U] << 16U) | (bytes[3U] << 24U));
+    const KUInt oneByte = 8U;
+    const KUInt twoByte = 16U;
+    const KUInt threeByte = 24U;
+    return (static_cast<KUInt>(bytes[0]) | (static_cast<KUInt>(bytes[1]) << oneByte) |
+            (static_cast<KUInt>(bytes[twoByte / oneByte]) << twoByte) |
+            (static_cast<KUInt>(bytes[threeByte / oneByte]) << threeByte));
 }
+// NOLINTEND
 
 inline std::string_view GetStringView(KStringPtr &ptr)
 {
-    return std::string_view(ptr.c_str(), static_cast<size_t>(ptr.length()));
+    return std::string_view(ptr.CStr(), static_cast<size_t>(ptr.Length()));
 }
 
 KNativePointer impl_CreateConfig(KInt argc, KStringArray argvPtr, KStringPtr &pandaLibPath)
 {
-    const std::size_t HEADER_LEN = 4;
+    const std::size_t headerLen = 4;
     g_pandaLibPath = GetStringView(pandaLibPath);
+
     const char **argv = new const char *[static_cast<unsigned int>(argc)];
-    std::size_t position = HEADER_LEN;
+    std::size_t position = headerLen;
     std::size_t strLen;
     for (std::size_t i = 0; i < static_cast<std::size_t>(argc); ++i) {
         strLen = UnpackUInt(argvPtr + position);
-        position += HEADER_LEN;
+        position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         argv[i] = strdup(std::string(reinterpret_cast<const char *>(argvPtr + position), strLen).c_str());
         position += strLen;
     }
@@ -131,12 +153,18 @@ KNativePointer impl_DestroyContext(KNativePointer contextPtr)
 }
 TS_INTEROP_1(DestroyContext, KNativePointer, KNativePointer)
 
-void impl_MemInitialize(KStringPtr &pandaLibPath)
+void impl_MemInitialize()
+{
+    GetPublicImpl()->MemInitialize();
+}
+TS_INTEROP_V0(MemInitialize)
+
+void impl_MemInitializeWithPath(KStringPtr &pandaLibPath)
 {
     g_pandaLibPath = GetStringView(pandaLibPath);
     GetPublicImpl()->MemInitialize();
 }
-TS_INTEROP_V1(MemInitialize, KStringPtr)
+TS_INTEROP_V1(MemInitializeWithPath, KStringPtr)
 
 void impl_MemFinalize()
 {
@@ -158,6 +186,7 @@ KNativePointer impl_CreateGlobalContext(KNativePointer configPtr, KStringArray e
     for (std::size_t i = 0; i < static_cast<std::size_t>(fileNum); ++i) {
         strLen = UnpackUInt(externalFileListPtr + position);
         position += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         externalFileList[i] =
             strdup(std::string(reinterpret_cast<const char *>(externalFileListPtr + position), strLen).c_str());
         position += strLen;
@@ -180,8 +209,8 @@ KNativePointer impl_CreateCacheContextFromString(KNativePointer configPtr, KStri
 {
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
-    return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.data(), filenamePtr.data(), context,
-                                                         isExternal);
+    return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.Data(), filenamePtr.Data(), context,
+                                                         isExternal != 0);
 }
 TS_INTEROP_5(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
              KBoolean)
@@ -189,21 +218,20 @@ TS_INTEROP_5(CreateCacheContextFromString, KNativePointer, KNativePointer, KStri
 void impl_RemoveFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
 {
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
-    return GetPublicImpl()->RemoveFileCache(context, filenamePtr.data());
+    return GetPublicImpl()->RemoveFileCache(context, filenamePtr.Data());
 }
 TS_INTEROP_V2(RemoveFileCache, KNativePointer, KStringPtr)
 
 void impl_AddFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
 {
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
-    return GetPublicImpl()->AddFileCache(context, filenamePtr.data());
+    return GetPublicImpl()->AddFileCache(context, filenamePtr.Data());
 }
 TS_INTEROP_V2(AddFileCache, KNativePointer, KStringPtr)
 
 void impl_InvalidateFileCache(KNativePointer globalContextPtr, KStringPtr &filenamePtr)
 {
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContextPtr);
-    return GetPublicImpl()->InvalidateFileCache(context, filenamePtr.data());
+    return GetPublicImpl()->InvalidateFileCache(context, filenamePtr.Data());
 }
 TS_INTEROP_V2(InvalidateFileCache, KNativePointer, KStringPtr)
-// NOLINTEND

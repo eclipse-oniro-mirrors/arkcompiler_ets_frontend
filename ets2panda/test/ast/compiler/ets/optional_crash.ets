@@ -17,5 +17,5 @@ class A {
     foo(a?)
 }
 
-/* @@? 17:8 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:11 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
+/* @@? 17:8 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:11 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

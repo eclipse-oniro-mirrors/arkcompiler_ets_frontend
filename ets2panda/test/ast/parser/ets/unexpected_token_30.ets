@@ -19,6 +19,7 @@ function main(): void {
     }
 }
 
-/* @@? 17:23 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 17:27 Error TypeError: Variable 'i' is accessed before it's initialization. */
-/* @@@ label Error SyntaxError: Expected ';', got ')'. */
+
+/* @@? 17:23 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 17:27 Error Semantic error ESE0365: Variable 'i' is accessed before it's initialization. */
+/* @@@ label Error Syntax error ESY0230: Expected ';', got ')'. */

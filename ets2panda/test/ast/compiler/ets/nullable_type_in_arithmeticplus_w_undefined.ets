@@ -19,4 +19,5 @@
     let result = /* @@ label */a + b;
 }
 
-/* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric type, enum or String.  */
+
+/* @@@ label Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */

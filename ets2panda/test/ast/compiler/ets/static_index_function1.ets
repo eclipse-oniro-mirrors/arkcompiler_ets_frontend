@@ -21,13 +21,14 @@ class A {
 
 function main() {
     let a = new A()
-    let b = a./* @@ label */$_get('a')
+    let b = a.$_get('a')
     let c = A.$_get('a')
-    let d = a[/* @@ label1 */'a']
-    let e = /* @@ label2 */A[/* @@ label3 */'a']
+    let d = a['a']
+    let e = A['a']
 }
 
-/* @@@ label Error TypeError: '$_get' is a static property of 'A' */
-/* @@@ label1 Error TypeError: '$_get' is a static property of 'A' */
-/* @@@ label2 Error SyntaxError: Class cannot be used as object. */
-/* @@@ label3 Error TypeError: '$_get' is a static property of 'A' */
+
+/* @@? 24:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
+/* @@? 26:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
+/* @@? 27:13 Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@? 27:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */

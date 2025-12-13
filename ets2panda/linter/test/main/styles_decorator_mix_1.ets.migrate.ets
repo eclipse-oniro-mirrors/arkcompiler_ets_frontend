@@ -25,7 +25,7 @@ import {
 } from '@kit.ArkUI';
 
 function NormalStyles(instance: CommonMethod): void {
-    instance.backgroundColor(Color.Blue);
+    instance.backgroundColor(Color.Blue)
 }
 
 @Entry
@@ -36,8 +36,12 @@ struct MyButton1 {
   content: () => void;
 
   PressedStyles: CustomStyles = (instance: CommonMethod): void => {
-    instance.backgroundColor(Color.Green);
-  };
+    instance.backgroundColor(Color.Green)
+    instance.onKeyEvent(() => {
+      console.log("key pressed")
+      return true;
+	  })
+    };
 
   build() {
     Button("MyButton1") {
@@ -58,6 +62,14 @@ struct MyButton2 {
   @BuilderParam
   @Require
   content: () => void;
+
+  PressedStyles: CustomStyles = (instance: CommonMethod): void => {
+    instance.backgroundColor(Color.Green)
+    instance.onKeyEvent(() => {
+      this.onKeyEvent()
+      return true;
+	  })
+    };
 
   build() {
     Button("MyButton2") {

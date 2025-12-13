@@ -234,12 +234,12 @@ void ETSTryContext::EmitFinalizer(
 
     etsg->SetLabel(tryStmt_, finalizerTable->LabelSet().CatchBegin());
 
-    compiler::VReg exception = etsg->StoreException(tryStmt_);
+    compiler::VReg error = etsg->StoreError(tryStmt_);
     // Third compile of the finaly clause, executed if the statement executed abruptly
     tryStmt_->FinallyBlock()->Compile(etsg);
 
-    etsg->LoadAccumulator(tryStmt_, exception);
-    etsg->EmitThrow(tryStmt_, exception);
+    etsg->LoadAccumulator(tryStmt_, error);
+    etsg->EmitThrow(tryStmt_, error);
 
     etsg->SetLabel(tryStmt_, finalizerTable->LabelSet().CatchEnd());
 }

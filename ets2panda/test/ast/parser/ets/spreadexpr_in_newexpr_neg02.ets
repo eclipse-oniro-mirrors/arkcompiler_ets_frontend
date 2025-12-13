@@ -26,4 +26,5 @@ function main() {
     let a2 = new A(1, 1.0, ...nums);
 }
 
-/* @@@ label Error SyntaxError: Both optional and rest parameters are not allowed in function's parameter list.  */
+
+/* @@@ label Error Syntax error ESY0015: Both optional and rest parameters are not allowed in function's parameter list. */

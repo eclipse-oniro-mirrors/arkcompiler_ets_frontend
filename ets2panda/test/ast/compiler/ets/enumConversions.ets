@@ -31,5 +31,6 @@ function foo(e: E, i: int) {
 //   e = 10 // CTE, 10 is out of range
 }
 
-/* @@? 26:7 Warning Warning: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. */
-/* @@? 28:7 Warning Warning: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. */
+
+/* @@? 26:7 Warning Warning W0030: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. */
+/* @@? 28:7 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. */

@@ -89,6 +89,7 @@ import { WarnInfo } from '../../utils/common/Utils';
 import { SdkUtils } from '../../utils/common/SDKUtils';
 import { ClassCategory } from 'arkanalyzer/lib/core/model/ArkClass';
 import { ArkAwaitExpr } from 'arkanalyzer/lib/core/base/Expr';
+import { COLON, QUESTION_MARK, ENDS_WITH_EQUALS, UNDEFINED_PART } from '../../utils/common/ArrayIndexConstants';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'NumericSemanticCheck');
 const gMetaData: BaseMetaData = {
@@ -96,6 +97,8 @@ const gMetaData: BaseMetaData = {
     ruleDocPath: '',
     description: '',
 };
+
+const INT32_BOUNDARY: number = 0x80000000;
 
 enum NumberCategory {
     int = 'int',
@@ -522,6 +525,10 @@ export class NumericSemanticCheck implements BaseChecker {
 
         if (rightOp instanceof NumberConstant && !this.isNumberConstantActuallyFloat(rightOp)) {
             // 整型字面量直接赋值给左值，判断左值在生命周期内是否仅作为int使用，并且判断左值是否继续赋值给其他变量，其他变量是否也可以定义为int
+            if (Number(rightOp.getValue()) >= INT32_BOUNDARY) {
+                // 不考虑int32范围外的情况，此处为int32边界值
+                return;
+            }
             this.checkAllLocalsAroundLocal(stmt, leftOp, res, NumberCategory.int);
         } else if (rightOp instanceof AbstractExpr) {
             // 整型字面量作为表达式的一部分，在赋值语句右边出现
@@ -564,6 +571,12 @@ export class NumericSemanticCheck implements BaseChecker {
             this.addIssueReport(RuleCategory.ArrayIndex, NumberCategory.number, IssueReason.ActuallyIntConstant, true, stmt, index);
             return;
         }
+        if (index instanceof Local){
+            const isParameter = (index as Local).getDeclaringStmt();
+            if (isParameter instanceof ArkAssignStmt && this.isFromParameter(isParameter)){
+                return;
+            }
+        }
         const issueReason = this.checkValueOnlyUsedAsIntLong(stmt, index, res, NumberCategory.int);
         if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
             // 若index原先非int，则获取的数组元素应该是undefined，不可以对其进行强转int，否则对原始代码的语义有修改
@@ -574,7 +587,9 @@ export class NumericSemanticCheck implements BaseChecker {
                 return;
             }
             const declaringStmt = local.getDeclaringStmt();
-            if (declaringStmt !== null) {
+            if (declaringStmt instanceof ArkAssignStmt && declaringStmt.getRightOp() instanceof ArkParameterRef && !Utils.isNearlyNumberType(local.getType())) {
+                this.addIssueReport(RuleCategory.ArrayIndex, issueInfo.numberCategory, issueInfo.issueReason, false, declaringStmt, local);
+            } else if (declaringStmt !== null) {
                 this.addIssueReport(RuleCategory.ArrayIndex, issueInfo.numberCategory, issueInfo.issueReason, true, declaringStmt, local);
             }
         });
@@ -1191,8 +1206,8 @@ export class NumericSemanticCheck implements BaseChecker {
             return true;
         }
         const num = Number(constant.getValue());
-        if (isNaN(num)) {
-            // 超大数字字面量转换后是NaN，按照number处理
+        if (isNaN(num) || num > INT32_BOUNDARY) {
+            // 超大数字字面量转换后是NaN，或超出Int32范围的，按照number处理
             return true;
         }
         return !Number.isInteger(num);
@@ -1380,7 +1395,12 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         if (stmt instanceof ArkReturnStmt) {
             // return语句，local作为返回值，若为同步函数则不会影响其值的变化，不会导致int被重新赋值为number使用，若为异步函数则一定为number
-            if (stmt.getCfg().getDeclaringMethod().containsModifier(ModifierType.ASYNC)) {
+            const method = stmt.getCfg().getDeclaringMethod();
+            if (method.containsModifier(ModifierType.ASYNC)) {
+                return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
+            }
+            if (method.getOuterMethod()?.containsModifier(ModifierType.ASYNC)) {
+                // 对于存在嵌套场景的异步函数，返回值也为number
                 return { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number };
             }
             return { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory };
@@ -1536,6 +1556,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 if (op1 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op1)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op1);
                 } else if (op1 instanceof Local) {
+                    this.handleGlobalLocal(stmt, op1, hasChecked);
                     hasChecked.set(op1, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                     // 对于 enum.A / enum.B的场景，需要将第一个enum.A修复成enum.A.valueOf().toDouble()
                     if (op1.getName().startsWith(TEMP_LOCAL_PREFIX) && op1.getType() instanceof EnumValueType) {
@@ -1547,6 +1568,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 if (op2 instanceof NumberConstant && !this.isNumberConstantActuallyFloat(op2)) {
                     this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
                 } else if (op2 instanceof Local) {
+                    this.handleGlobalLocal(stmt, op2, hasChecked);
                     hasChecked.set(op2, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                     if (!fixedEnumOp2Number && op2.getName().startsWith(TEMP_LOCAL_PREFIX) && op2.getType() instanceof EnumValueType) {
                         this.addIssueReport(RuleCategory.NumericLiteral, NumberCategory.number, IssueReason.UsedWithOtherType, true, stmt, op2);
@@ -1636,6 +1658,7 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!local.getName().startsWith(TEMP_LOCAL_PREFIX)) {
             return;
         }
+
         const decl = local.getDeclaringStmt();
         if (decl === null) {
             return;
@@ -1644,9 +1667,10 @@ export class NumericSemanticCheck implements BaseChecker {
         if (!this.isArkAssignStmt(decl)) {
             return;
         }
-        const assignStmt = decl as ArkAssignStmt;
 
+        const assignStmt = decl as ArkAssignStmt;
         const rightSide = assignStmt.getRightOp();
+
         if (!this.isArkNormalBinopExpr(rightSide)) {
             return;
         }
@@ -2229,12 +2253,31 @@ export class NumericSemanticCheck implements BaseChecker {
             if (issueReason !== IssueReason.OnlyUsedAsIntLong) {
                 return true;
             }
-            if (issueCategory !== NumberCategory.long && numberCategory === NumberCategory.long) {
-                // 删除掉之前的修复为int的，用本次即将add的新的issue替代
-                this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+            if (numberCategory === NumberCategory.long) {
+                if (issueCategory === NumberCategory.int) {
+                    // 删除掉之前的修复为int的，用本次即将add的新的issue替代
+                    this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+                    return false;
+                }
+                if (issueCategory === NumberCategory.number || issueCategory === NumberCategory.long) {
+                    return true;
+                }
+                // 其他情况理论上不存在，按照不冲突处理，正常写入新的告警
                 return false;
-            } else {
-                // 已有的issue已经足够进行自动修复处理，无需重复添加
+            }
+            if (numberCategory === NumberCategory.number) {
+                if (issueCategory === NumberCategory.int || issueCategory === NumberCategory.long) {
+                    // 删除掉之前的修复为int或long的，用本次即将add的新的issue替代
+                    this.issuesMap.delete(this.getIssuesMapKey(currentIssue.defect.mergeKey));
+                    return false;
+                }
+                if (issueCategory === NumberCategory.number) {
+                    return true;
+                }
+                // 其他情况理论上不存在，按照不冲突处理，正常写入新的告警
+                return false;
+            }
+            if (numberCategory === NumberCategory.int) {
                 return true;
             }
         }
@@ -2489,7 +2532,7 @@ export class NumericSemanticCheck implements BaseChecker {
         }
 
         // 场景1：变量或函数入参，无类型注解的场景，直接在localString后面添加': int'，同时考虑可选参数即'?:'
-        if (!restString.trimStart().startsWith(':') && !restString.trimStart().startsWith('?')) {
+        if (!restString.trimStart().startsWith(COLON) && !restString.trimStart().startsWith(QUESTION_MARK)) {
             let ruleFix = new RuleFix();
             ruleFix.range = localRange;
             const localString = FixUtils.getSourceWithRange(sourceFile, ruleFix.range);
@@ -2497,7 +2540,10 @@ export class NumericSemanticCheck implements BaseChecker {
                 logger.error('Failed to getting text of the fix range info when generating auto fix info.');
                 return null;
             }
-            ruleFix.text = isOptional ? `${localString}: ${numberCategory} | undefined` : `${localString}: ${numberCategory}`;
+            ruleFix.text = isOptional ? `${localString}: ${numberCategory}${UNDEFINED_PART}` : `${localString}: ${numberCategory}`;
+            if (restString.trimStart().startsWith(ENDS_WITH_EQUALS)) {
+                ruleFix.text = `(${ruleFix.text})`;
+            }
             return ruleFix;
         }
         // 场景2：变量或函数入参，有类型注解的场景，需要将类型注解替换成新的类型，同时考虑可选参数即'?:'
@@ -2761,7 +2807,7 @@ export class NumericSemanticCheck implements BaseChecker {
                     return null;
                 }
                 const valueStr = value.getValue();
-                ruleFix.text = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);;
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForIntLiteral(valueStr);
             } else {
                 // 场景2：对enum.A这样的枚举类型进行自动修复成enum.A.valueOf().toDouble()
                 const valueStr = FixUtils.getSourceWithRange(sourceFile, range);
@@ -2769,7 +2815,7 @@ export class NumericSemanticCheck implements BaseChecker {
                     logger.error('Failed to getting enum source code with range info.');
                     return null;
                 }
-                ruleFix.text = NumericSemanticCheck.CreateFixTextForEnumValue(valueStr);;
+                ruleFix.text = NumericSemanticCheck.CreateFixTextForEnumValue(valueStr);
             }
             return ruleFix;
         }
@@ -2795,5 +2841,25 @@ export class NumericSemanticCheck implements BaseChecker {
     private static IsNotDecimalNumber(value: string): boolean {
         const loweredValue = value.toLowerCase();
         return loweredValue.startsWith('0b') || loweredValue.startsWith('0x') || loweredValue.startsWith('0o') || loweredValue.includes('e');
+    }
+
+    private handleGlobalLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>): void {
+        if (local.getDeclaringStmt() !== null) {
+            return;
+        }
+
+        const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
+        const global = globals?.get(local.getName());
+
+        if (!(global instanceof GlobalRef)) {
+            return;
+        }
+        const newLocal = global.getRef();
+        if (newLocal instanceof Local) {
+            hasChecked.set(newLocal, {
+                issueReason: IssueReason.UsedWithOtherType,
+                numberCategory: NumberCategory.number
+            });
+        }
     }
 }

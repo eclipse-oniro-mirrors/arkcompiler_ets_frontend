@@ -15,19 +15,19 @@
 
 function main(): void {
   try {
-    throw new Exception()
+    throw new Error()
   } catch (e) {
     try {}
     catch (e) {}
     finally {
       try {
-        throw new Exception()
+        throw new Error()
       } catch (e) {}
     }
   }
   finally {
     try {
-      throw new Exception()
+      throw new Error()
     } catch (e) {}
   }
 }

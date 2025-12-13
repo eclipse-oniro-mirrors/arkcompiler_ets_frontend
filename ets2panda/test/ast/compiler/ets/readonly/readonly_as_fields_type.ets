@@ -19,8 +19,9 @@ class A {
     c: readonly /* @@ A_c */1;
 }    
     
-/* @@@ A_a Error SyntaxError: Invalid Type. */
-/* @@@ A_b Error SyntaxError: Invalid Type. */
-/* @@@ A_b Error SyntaxError: Unexpected token 'false'. */
-/* @@@ A_c Error SyntaxError: Invalid Type. */
-/* @@@ A_c Error SyntaxError: Unexpected token '1'. */
+
+/* @@@ A_a Error Syntax error ESY0138: Invalid Type. */
+/* @@@ A_b Error Syntax error ESY0138: Invalid Type. */
+/* @@@ A_b Error Syntax error ESY0227: Unexpected token 'false'. */
+/* @@@ A_c Error Syntax error ESY0138: Invalid Type. */
+/* @@@ A_c Error Syntax error ESY0227: Unexpected token '1'. */

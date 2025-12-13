@@ -17,4 +17,5 @@ class A {
     toLocaleString = () => {}
 }
 
-/* @@? 16:7 Error TypeError: Cannot inherit from class Object, because field toLocaleString is inherited with a different declaration type  */
+
+/* @@? 16:7 Error Semantic error ESE0216: Cannot inherit from class Object, because field toLocaleString is inherited with a different declaration type */

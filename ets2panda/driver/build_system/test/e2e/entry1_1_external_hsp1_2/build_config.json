@@ -19,20 +19,6 @@
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "dependencyModuleList": [
         {
-            "packageName": "entry",
-            "moduleName": "entry",
-            "moduleType": "feature",
-            "modulePath": "${absolute_path_to_build_system}/test/e2e/entry1_1_external_hsp1_2/entry",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/e2e/entry1_1_external_hsp1_2/entry",
-            "language": "1.1",
-            "dependencies": [
-                "hsp1_2"
-            ]
-        },
-        {
             "packageName": "hsp1_2",
             "moduleName": "hsp1_2",
             "moduleType": "shared",

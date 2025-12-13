@@ -1,0 +1,363 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 16,
+            "column": 8,
+            "endLine": 16,
+            "endColumn": 16,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 610,
+                    "end": 648,
+                    "replacementText": "",
+                    "line": 16,
+                    "column": 8,
+                    "endLine": 16,
+                    "endColumn": 16
+                },
+                {
+                    "start": 855,
+                    "end": 863,
+                    "replacementText": "taskpool",
+                    "line": 16,
+                    "column": 8,
+                    "endLine": 16,
+                    "endColumn": 16
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 8,
+            "endLine": 17,
+            "endColumn": 10,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 649,
+                    "end": 681,
+                    "replacementText": "",
+                    "line": 17,
+                    "column": 8,
+                    "endLine": 17,
+                    "endColumn": 10
+                },
+                {
+                    "start": 879,
+                    "end": 881,
+                    "replacementText": "taskpool",
+                    "line": 17,
+                    "column": 8,
+                    "endLine": 17,
+                    "endColumn": 10
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 8,
+            "endLine": 18,
+            "endColumn": 18,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 682,
+                    "end": 720,
+                    "replacementText": "",
+                    "line": 18,
+                    "column": 8,
+                    "endLine": 18,
+                    "endColumn": 18
+                },
+                {
+                    "start": 1266,
+                    "end": 1276,
+                    "replacementText": "ArkTSUtils",
+                    "line": 18,
+                    "column": 8,
+                    "endLine": 18,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 8,
+            "endLine": 19,
+            "endColumn": 10,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 721,
+                    "end": 751,
+                    "replacementText": "",
+                    "line": 19,
+                    "column": 8,
+                    "endLine": 19,
+                    "endColumn": 10
+                },
+                {
+                    "start": 1327,
+                    "end": 1329,
+                    "replacementText": "ArkTSUtils",
+                    "line": 19,
+                    "column": 8,
+                    "endLine": 19,
+                    "endColumn": 10
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 8,
+            "endLine": 20,
+            "endColumn": 15,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 8,
+            "endLine": 21,
+            "endColumn": 10,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 789,
+                    "end": 820,
+                    "replacementText": "",
+                    "line": 21,
+                    "column": 8,
+                    "endLine": 21,
+                    "endColumn": 10
+                },
+                {
+                    "start": 909,
+                    "end": 911,
+                    "replacementText": "process",
+                    "line": 21,
+                    "column": 8,
+                    "endLine": 21,
+                    "endColumn": 10
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 5,
+            "endLine": 26,
+            "endColumn": 36,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 42,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 11,
+            "endLine": 28,
+            "endColumn": 21,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 986,
+                    "end": 1012,
+                    "replacementText": "AsyncLock",
+                    "line": 28,
+                    "column": 11,
+                    "endLine": 28,
+                    "endColumn": 21
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 44,
+            "endLine": 28,
+            "endColumn": 70,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 44,
+            "endLine": 28,
+            "endColumn": 54,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 1019,
+                    "end": 1045,
+                    "replacementText": "AsyncLock",
+                    "line": 28,
+                    "column": 44,
+                    "endLine": 28,
+                    "endColumn": 54
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 37,
+            "endLine": 29,
+            "endColumn": 55,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 10,
+            "endLine": 30,
+            "endColumn": 20,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 1114,
+                    "end": 1140,
+                    "replacementText": "AsyncLock",
+                    "line": 30,
+                    "column": 10,
+                    "endLine": 30,
+                    "endColumn": 20
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 39,
+            "endLine": 30,
+            "endColumn": 49,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 1143,
+                    "end": 1169,
+                    "replacementText": "AsyncLock",
+                    "line": 30,
+                    "column": 39,
+                    "endLine": 30,
+                    "endColumn": 49
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 5,
+            "endLine": 32,
+            "endColumn": 60,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 15,
+            "endLine": 32,
+            "endColumn": 42,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 15,
+            "endLine": 32,
+            "endColumn": 25,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "autofix": [
+                {
+                    "start": 1266,
+                    "end": 1293,
+                    "replacementText": "SendableLruCache",
+                    "line": 32,
+                    "column": 15,
+                    "endLine": 32,
+                    "endColumn": 25
+                }
+            ],
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 5,
+            "endLine": 33,
+            "endColumn": 53,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 16,
+            "endLine": 33,
+            "endColumn": 35,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        }
+    ]
+}

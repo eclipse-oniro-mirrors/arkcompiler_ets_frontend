@@ -197,7 +197,7 @@ void Function::IterateOverElements(const ArenaVector<ir::AstNode *> &elements, P
 
 void Function::CompileInstanceFields(PandaGen *pg, const ir::ScriptFunction *decl)
 {
-    const auto klass = util::Helpers::GetClassDefiniton(decl);
+    const auto klass = util::Helpers::GetClassDefinition(decl);
     const auto &elements = klass->Body();
 
     RegScope rs(pg);
@@ -227,7 +227,7 @@ static void CompileFunction(PandaGen *pg)
 {
     const auto *decl = pg->RootNode()->AsScriptFunction();
 
-    if (decl->IsConstructor() && (util::Helpers::GetClassDefiniton(decl)->Super() == nullptr)) {
+    if (decl->IsConstructor() && (util::Helpers::GetClassDefinition(decl)->Super() == nullptr)) {
         Function::CompileInstanceFields(pg, decl);
     }
 
@@ -278,6 +278,7 @@ void Function::Compile(PandaGen *pg)
         }
     }
 
+    pg->FinalizeRegAllocation();
     pg->SortCatchTables();
 }
 }  // namespace ark::es2panda::compiler

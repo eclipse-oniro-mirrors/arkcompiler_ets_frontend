@@ -32,14 +32,3 @@ const AddByte = /*@@ AddByte */ BYTE_MIN + BYTE_MIN;
 // Negation is allowed since parser treats -128 as -(128). 
 const NegInt = -INT_MIN;
 const NegByte = -BYTE_MIN;
-
-/* @@@ DivInt Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ ModInt Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ MulInt Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ SubInt Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ AddInt Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ DivByte Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ ModByte Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ MulByte Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ SubByte Error TypeError: Arithmetic operation causes an overflow. */
-/* @@@ AddByte Error TypeError: Arithmetic operation causes an overflow. */

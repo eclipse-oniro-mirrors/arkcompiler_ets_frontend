@@ -339,7 +339,7 @@ void ClassDefinition::DumpGlobalClass(ir::SrcDumper *dumper) const
         }
     }
     for (auto elem : Body()) {
-        if (elem->IsMethodDefinition()) {
+        if (elem->IsMethodDefinition() || elem->IsOverloadDeclaration()) {
             elem->Dump(dumper);
             dumper->Endl();
         }
@@ -390,6 +390,7 @@ void ClassDefinition::DumpPrefix(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     } else if (IsDefaultExported()) {
         dumper->Add("export default ");
+        dumper->SetDefaultExport();
     }
 
     if (dumper->IsDeclgen()) {
@@ -505,7 +506,7 @@ ClassDefinition *ClassDefinition::Construct(ArenaAllocator *allocator)
 {
     ArenaVector<AstNode *> body {allocator->Adapter()};
     return allocator->New<ClassDefinition>(allocator, nullptr, std::move(body), ClassDefinitionModifiers::NONE,
-                                           ModifierFlags::NONE, Language::Id::COUNT, history_);
+                                           ModifierFlags::NONE, Language::Id::COUNT, GetHistoryInternal());
 }
 
 void ClassDefinition::CopyTo(AstNode *other) const

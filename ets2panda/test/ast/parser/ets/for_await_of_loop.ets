@@ -17,8 +17,7 @@ for await (let k: int /* @@ label1 */= 0; /* @@ label2 */k < d.length; k++) {
     this.$_set_unsafe(k + 1, d[k])
 }
 
-/* @@? 16:38 Error SyntaxError: for-await-of loop variable declaration may not have an initializer. */
-/* @@? 16:58 Error SyntaxError: Unexpected token 'k'. */
-/* @@? 16:62 Error TypeError: Unresolved reference d */
-/* @@? 17:5 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 17:10 Error TypeError: Property '$_set_unsafe' does not exist on type 'ETSGLOBAL' */
+/* @@? 16:38 Error Syntax error ESY0097: for-await-of loop variable declaration may not have an initializer. */
+/* @@? 16:58 Error Syntax error ESY0227: Unexpected token 'k'. */
+/* @@? 16:62 Error Semantic error ESE0143: Unresolved reference d */
+/* @@? 17:5 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */

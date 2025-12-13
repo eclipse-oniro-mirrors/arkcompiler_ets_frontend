@@ -31,11 +31,17 @@ public:
     */
     static constexpr int DIAGNOSTIC_CODE_MULTIPLIER = 1000;
 
-    constexpr DiagnosticCode(util::DiagnosticType type, int id) : type_(type), id_(id) {}
+    constexpr DiagnosticCode(util::DiagnosticType type, int id, std::string_view message)
+        : type_(type), id_(id), message_(message) {}
 
     constexpr int GetCodeNumber() const
     {
         return (static_cast<int>(type_) * DIAGNOSTIC_CODE_MULTIPLIER + id_);
+    }
+
+    constexpr std::string_view GetMessage() const
+    {
+        return message_;
     }
 
     constexpr bool operator==(const DiagnosticCode &other) const
@@ -51,6 +57,7 @@ public:
 private:
     util::DiagnosticType type_;
     int id_;
+    std::string_view message_;
 };
 
 template <size_t N>
@@ -89,7 +96,7 @@ private:
 static constexpr CodeFixKind<<%= diag_vec.size %>> <%= code_fix_id.snakecase.upcase %> {
     std::array<DiagnosticCode, <%= diag_vec.size %>> {
 %   diag_vec.each_with_index do |diag, index|
-    DiagnosticCode(util::DiagnosticType::<%= diag.type.to_s.upcase %>, <%= diag.id %>)<%= ',' unless index == diag_vec.size - 1 %>
+    DiagnosticCode(util::DiagnosticType::<%= diag.type.to_s.upcase %>, <%= diag.id %>, "<%= diag.message %>")<%= ',' unless index == diag_vec.size - 1 %>
 %   end
     },
     "<%= code_fix_id %>"

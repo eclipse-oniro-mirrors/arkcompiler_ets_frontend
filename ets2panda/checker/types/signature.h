@@ -274,6 +274,11 @@ public:
         return signatureInfo_->restVar != nullptr;
     }
 
+    void SetRestVar(varbinder::LocalVariable *restVar)
+    {
+        signatureInfo_->restVar = restVar;
+    }
+
     [[nodiscard]] bool IsFinal() const noexcept
     {
         return HasSignatureFlag(SignatureFlags::FINAL);
@@ -293,7 +298,8 @@ public:
 
     [[nodiscard]] util::StringView InternalName() const;
 
-    [[nodiscard]] Signature *Copy(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes);
+    [[nodiscard]] Signature *Copy(ArenaAllocator *allocator, TypeRelation *relation,
+                                  GlobalTypesHolder *globalTypes) const;
     [[nodiscard]] Signature *Substitute(TypeRelation *relation, const Substitution *substitution);
 
     void ToString(std::stringstream &ss, const varbinder::Variable *variable, bool printAsMethod = false,

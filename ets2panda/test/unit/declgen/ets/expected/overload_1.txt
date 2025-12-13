@@ -1,0 +1,19 @@
+'use static'
+
+export declare function fun1(x: int): string;
+
+export declare function fun2(x: string): string;
+
+export declare overload fun{ fun1, fun2 };
+
+export declare class C {
+  foo1(x: int): string;
+
+  foo2(x: string): string;
+
+  public overload foo{ foo1, foo2 };
+
+  constructor();
+
+}
+

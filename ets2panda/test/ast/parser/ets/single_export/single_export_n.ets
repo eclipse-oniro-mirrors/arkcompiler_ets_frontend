@@ -18,5 +18,6 @@ export v,m
 let v = 1
 let m = 2
 
-/* @@? 16:9 Error SyntaxError: Unexpected token ','. */
-/* @@? 16:10 Error SyntaxError: Unexpected token 'm'. */
+
+/* @@? 16:9 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'm'. */

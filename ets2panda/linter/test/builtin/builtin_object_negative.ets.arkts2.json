@@ -25,16 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 16,
-            "column": 18,
-            "endLine": 16,
-            "endColumn": 24,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 17,
             "column": 1,
             "endLine": 17,
@@ -52,16 +42,6 @@
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 19,
-            "column": 8,
-            "endLine": 19,
-            "endColumn": 16,
-            "problem": "BuiltinNarrowTypes",
-            "suggest": "",
-            "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
             "severity": "ERROR"
         },
         {
@@ -172,26 +152,6 @@
             "problem": "CreatingPrimitiveTypes",
             "suggest": "",
             "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 43,
-            "column": 5,
-            "endLine": 43,
-            "endColumn": 11,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 44,
-            "column": 1,
-            "endLine": 44,
-            "endColumn": 7,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
             "severity": "ERROR"
         },
         {

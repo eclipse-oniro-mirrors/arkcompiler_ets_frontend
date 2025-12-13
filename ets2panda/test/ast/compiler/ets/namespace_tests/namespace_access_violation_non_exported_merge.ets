@@ -26,4 +26,4 @@ namespace A.B {
 
 A.B.bar(); // Error: 'bar()' cannot be accessed
 
-/* @@? 27:5 Error TypeError: 'bar' is not exported in 'B'  */
+/* @@? 27:5 Error Semantic error ESE0206: 'bar' is not exported in 'B' */

@@ -16,14 +16,15 @@
 
 let a: [number, FixedArray<...number>, number] = [1, 2, 3];
 
-/* @@? 17:17 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 17:28 Error SyntaxError: Invalid Type. */
-/* @@? 17:28 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 17:28 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:28 Error SyntaxError: Unexpected token '>'. */
-/* @@? 17:31 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:31 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:38 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:40 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:40 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:46 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 17:17 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 17:28 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 17:28 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 17:28 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 17:28 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 17:31 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:31 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:38 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:40 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:40 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:46 Error Syntax error ESY0227: Unexpected token ']'. */

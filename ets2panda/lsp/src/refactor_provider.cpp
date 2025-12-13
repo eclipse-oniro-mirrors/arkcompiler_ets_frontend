@@ -47,11 +47,13 @@ std::vector<ApplicableRefactorInfo> RefactorProvider::GetApplicableRefactors(con
 
     for (const auto &[name, refactor] : refactors_) {
         auto result = refactor->GetAvailableActions(context);
-        if (!result.name.empty()) {
-            applicable.push_back(result);
+        // NOLINTNEXTLINE(modernize-loop-convert)
+        for (size_t i = 0; i < result.size(); i++) {
+            if (!result[i].name.empty()) {
+                applicable.push_back(result[i]);
+            }
         }
     }
-
     return applicable;
 }
 

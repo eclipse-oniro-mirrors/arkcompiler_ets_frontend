@@ -17,7 +17,7 @@
 #include <ostream>
 #include <string>
 #include <unordered_map>
-#include "os/library_loader.h"
+#include "libarkbase/os/library_loader.h"
 #include "public/es2panda_lib.h"
 #include "util.h"
 

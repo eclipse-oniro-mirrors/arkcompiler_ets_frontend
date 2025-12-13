@@ -23,4 +23,5 @@ function main(): void {
 	}
 }
 
-/* @@@ label Error TypeError: Switch case type 'int' is not comparable to discriminant type 'Color'  */
+
+/* @@@ label Error Semantic error ESE0262: Switch case type 'int' is not comparable to discriminant type 'Color' */

@@ -36,6 +36,6 @@ function generic<T extends I>(t: Partial<T>): boolean {
 function main() {
     // Test that {i: 1} is accepted as Partial<CI>
     generic<CI>({i: 1});
+}
 
-/* @@? 32:41 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 41:70 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 32:41 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

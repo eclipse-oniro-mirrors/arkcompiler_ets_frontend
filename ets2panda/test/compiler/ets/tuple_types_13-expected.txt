@@ -182,7 +182,7 @@
         },
         "end": {
           "line": 16,
-          "column": 45,
+          "column": 44,
           "program": "tuple_types_13.ets"
         }
       }

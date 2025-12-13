@@ -19,4 +19,5 @@ enum Fruit { size = 4 };
     return 1;
 }
 
-/* @@@ label Error TypeError: Extension function can only defined for class, interface or array.  */
+
+/* @@@ label Error Semantic error ESE0082: Extension function can only defined for class, interface or array. */

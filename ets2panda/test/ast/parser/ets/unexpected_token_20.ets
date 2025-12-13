@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-try {} catch /* @@ label */e: number) {} finally {}
+try {} catch /* @@ label */e) {} finally {}
 
-/* @@@ label Error SyntaxError: Expected '(', got 'identification literal'. */
-/* @@? 16:28 Error TypeError: Argument must be an instance of 'Exception' or 'Error' */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got 'identification literal'. */

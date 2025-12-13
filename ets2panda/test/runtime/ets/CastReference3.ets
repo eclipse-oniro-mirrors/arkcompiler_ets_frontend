@@ -45,10 +45,10 @@ function main() {
     try {
       let As: FixedArray<A> = new A[1];
       let Bs = As as FixedArray<B>;
-    } catch (e: ClassCastError) {
-      caught = true;
     } catch (e) {
-      arktest.assertTrue(false)
+      if (e instanceof ClassCastError) {
+        caught = true;
+      }
     }
     arktest.assertTrue(caught)
   }

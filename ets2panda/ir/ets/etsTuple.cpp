@@ -110,7 +110,7 @@ checker::Type *ETSTuple::GetType(checker::ETSChecker *const checker)
 
     bool isTypeError = false;
     for (auto *const typeAnnotation : GetTupleTypeAnnotationsList()) {
-        auto *const checkedType = typeAnnotation->GetType(checker);
+        auto checkedType = typeAnnotation->Check(checker);
         if (!isTypeError && checkedType->IsTypeError()) {
             isTypeError = true;
         }
@@ -137,7 +137,7 @@ ETSTuple *ETSTuple::Clone(ArenaAllocator *const allocator, AstNode *const parent
     auto *const clone = allocator->New<ETSTuple>(allocator, size_);
     ES2PANDA_ASSERT(clone != nullptr);
 
-    clone->AddModifier(flags_);
+    clone->AddModifier(Modifiers());
 
     if (parent != nullptr) {
         clone->SetParent(parent);

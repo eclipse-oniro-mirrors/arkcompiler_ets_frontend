@@ -23,5 +23,8 @@ declare namespace MySpace{
     authorName: string = "Jima"
 }
 
-/* @@? 23:26 Error TypeError: The initial value does not match the expected value.  */
-/* @@? 23:5 Error TypeError: Initializer for field 'authorName' does not match the expected definition in the ambient annotation 'ClassAuthor'.  */
+/* @@? 16:19 Error Semantic error ESE0351: Variable 'MySpace' has already been declared. */
+/* @@? 16:19 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
+/* @@? 22:19 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 22:32 Error Syntax error ESY0001: Missing type annotation for property 'ClassAuthor'. */
+/* @@? 22:32 Error Syntax error ESY0224: Identifier expected, got '{'. */

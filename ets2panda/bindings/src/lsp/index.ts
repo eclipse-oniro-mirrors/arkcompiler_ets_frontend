@@ -25,5 +25,5 @@ export {
   LspQuickInfo,
   LspSymbolDisplayPart
 } from './lspNode';
-export type { ModuleDescriptor } from './generateBuildConfig';
-export type { PathConfig, TextDocumentChangeInfo } from '../common/types';
+export { ModuleDescriptor } from './generateBuildConfig';
+export { PathConfig, TextDocumentChangeInfo, AstNodeType, NodeInfo } from '../common/types';

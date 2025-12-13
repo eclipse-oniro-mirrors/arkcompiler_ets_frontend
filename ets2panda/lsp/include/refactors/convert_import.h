@@ -33,7 +33,7 @@ constexpr RefactorActionView TO_DEFAULT_IMPORT_ACTION {"Convert named imports to
 class ConvertImportRefactor : public Refactor {
 public:
     ConvertImportRefactor();
-    ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const override;
+    std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;
 };

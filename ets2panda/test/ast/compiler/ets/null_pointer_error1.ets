@@ -23,4 +23,4 @@ function mustCallArgSize() {
     });
 }
 
-/* @@? 19:5 Error TypeError: No matching call signature for push((() => void)) */
+/* @@? 20:9 Error Semantic error ESE0365: Variable 'xf' is accessed before it's initialization. */

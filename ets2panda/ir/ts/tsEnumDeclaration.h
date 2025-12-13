@@ -17,6 +17,7 @@
 #define ES2PANDA_IR_TS_ENUM_DECLARATION_H
 
 #include "ir/statement.h"
+#include "ir/annotationAllowed.h"
 #include "ir/statements/annotationUsage.h"
 #include "varbinder/scope.h"
 
@@ -28,7 +29,7 @@ namespace ark::es2panda::ir {
 class Identifier;
 class TSEnumMember;
 
-class TSEnumDeclaration : public TypedStatement {
+class TSEnumDeclaration : public AnnotationAllowed<TypedStatement> {
 public:
     // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
     struct ConstructorFlags {
@@ -40,9 +41,9 @@ public:
 
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(nullptr),
+          typeAnnotation_(nullptr),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -59,9 +60,9 @@ public:
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, ir::TypeNode *typeNode,
                                Language lang)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(typeNode),
+          typeAnnotation_(typeNode),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -79,9 +80,9 @@ public:
     explicit TSEnumDeclaration([[maybe_unused]] ArenaAllocator *allocator, Identifier *key,
                                ArenaVector<AstNode *> &&members, ConstructorFlags &&flags, Language lang,
                                AstNodeHistory *history)
-        : TypedStatement(AstNodeType::TS_ENUM_DECLARATION),
+        : AnnotationAllowed<TypedStatement>(AstNodeType::TS_ENUM_DECLARATION, allocator),
           key_(key),
-          typeNode_(nullptr),
+          typeAnnotation_(nullptr),
           members_(std::move(members)),
           isConst_(flags.isConst),
           lang_(lang)
@@ -93,7 +94,7 @@ public:
             AddModifier(ModifierFlags::DECLARE);
         }
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -123,11 +124,6 @@ public:
     const Identifier *Key() const
     {
         return GetHistoryNodeAs<TSEnumDeclaration>()->key_;
-    }
-
-    TypeNode *TypeNodes()
-    {
-        return typeNode_;
     }
 
     Identifier *Key()
@@ -164,6 +160,16 @@ public:
         return GetHistoryNodeAs<TSEnumDeclaration>()->lang_;
     }
 
+    [[nodiscard]] TypeNode *TypeAnnotation() noexcept
+    {
+        return GetHistoryNodeAs<TSEnumDeclaration>()->typeAnnotation_;
+    }
+
+    [[nodiscard]] const TypeNode *TypeAnnotation() const noexcept
+    {
+        return GetHistoryNodeAs<TSEnumDeclaration>()->typeAnnotation_;
+    }
+
     static varbinder::EnumMemberResult EvaluateEnumMember(checker::TSChecker *checker, varbinder::EnumVariable *enumVar,
                                                           const ir::AstNode *expr);
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -194,7 +200,7 @@ private:
 
     varbinder::LocalScope *scope_ {nullptr};
     Identifier *key_;
-    ir::TypeNode *typeNode_;
+    ir::TypeNode *typeAnnotation_;
     ArenaVector<AstNode *> members_;
     util::StringView internalName_;
     ir::ClassDefinition *boxedClass_ {nullptr};

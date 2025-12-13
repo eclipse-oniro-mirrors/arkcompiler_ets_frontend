@@ -183,7 +183,7 @@ interface es2panda_Impl {
 
     parser.Program ContextProgram(es2panda_Context context);
     String ExternalSourceName(es2panda_ExternalSource e_source);
-    sequence<parser.Program> ExternalSourcePrograms(es2panda_ExternalSource e_source, sequence<u32> len_p);
+    sequence<parser.Program> ExternalSourcePrograms(es2panda_ExternalSource e_source);
 
     void AstNodeForEach(ir.AstNode ast, AstNodeForEachFunction func, VoidPtr arg);
     String NumberLiteralStrConst(es2panda_Context context, ir.AstNode classInstance);
@@ -227,13 +227,15 @@ interface es2panda_Impl {
     sequence<ir.AstNode> AllDeclarationsByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromProgram(es2panda_Context ctx, parser.Program program, String name);
     i32 GenerateTsDeclarationsFromContext(es2panda_Context ctx, String outputDeclEts, String outputEts,
-                                          boolean exportAll, boolean isolated, String recordFile);
+                                          boolean exportAll, boolean isolated, String recordFile,
+                                          boolean genAnnotations);
     void InsertETSImportDeclarationAndParse(es2panda_Context context, parser.Program program,
                                             ir.ETSImportDeclaration node);
     i32 GenerateStaticDeclarationsFromContext(es2panda_Context context, String outputPath);
     void InvalidateFileCache(es2panda_GlobalContext globalContext, String fileName);
     void RemoveFileCache(es2panda_GlobalContext globalContext, String fileName);
     void AddFileCache(es2panda_GlobalContext globalContext, String fileName);
+    void FreeCompilerPartMemory(es2panda_Context context);
 // COMPARE_MANUAL_CAPI_AND_IDL_END
 
 % Es2pandaLibApi::ast_nodes&.each do |ast_node|

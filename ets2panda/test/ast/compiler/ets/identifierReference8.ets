@@ -25,4 +25,5 @@ class A {
   }
 }
 
-/* @@? 24:5 Error TypeError: Bad operand type, the types of the operands must be numeric type, enum or String.  */
+
+/* @@? 24:5 Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */

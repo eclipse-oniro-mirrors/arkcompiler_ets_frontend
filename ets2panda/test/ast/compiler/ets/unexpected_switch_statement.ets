@@ -22,9 +22,9 @@ switch(a) {
     }
 
 
-/* @@? 18:5 Error SyntaxError: Unexpected token 'identification literal', expected 'case' or 'default'. */
-/* @@? 18:5 Error SyntaxError: Expected ':', got 'identification literal'. */
-/* @@? 18:6 Error SyntaxError: Newline is not allowed in strings */
-/* @@? 18:6 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:8 Error SyntaxError: Unexpected token 'try'. */
-/* @@? 18:8 Error SyntaxError: A try statement should contain either finally clause or at least one catch clause. */
+/* @@? 18:5 Error Syntax error ESY0231: Unexpected token 'identification literal', expected 'case' or 'default'. */
+/* @@? 18:5 Error Syntax error ESY0230: Expected ':', got 'identification literal'. */
+/* @@? 18:6 Error Syntax error ESY0265: Newline is not allowed in strings */
+/* @@? 18:6 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:8 Error Syntax error ESY0227: Unexpected token 'try'. */
+/* @@? 18:8 Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */

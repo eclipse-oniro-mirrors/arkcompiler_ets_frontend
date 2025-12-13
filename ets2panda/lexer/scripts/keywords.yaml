@@ -29,8 +29,8 @@ keywords:
 
   - name: 'any'
     token: KEYW_ANY
-    keyword_like: [ts]
-    flags: [reserved_type_name]
+    keyword_like: [ts, ets]
+    flags: [reserved_type_name, definable_type_name]
 
   - name: 'Any'
     token: KEYW_BUILTIN_ANY
@@ -297,8 +297,7 @@ keywords:
 
   - name: 'in'
     token: KEYW_IN
-    keyword: [as, js, ts]
-    keyword_like: [ets]
+    keyword: [as, js, ets, ts]
     flags: [binary]
 
   - name: 'infer'
@@ -312,8 +311,7 @@ keywords:
 
   - name: 'instanceof'
     token: KEYW_INSTANCEOF
-    keyword: [as, js, ts]
-    keyword_like: [ets]
+    keyword: [as, js, ets, ts]
     flags: [binary]
 
   - name: 'int'
@@ -398,11 +396,10 @@ keywords:
     keyword_like: [ets, ts]
     flags: [definable_type_name, predefined_type]
 
-  # issue 25066
-  # - name: 'Number'
-  #   token: KEYW_BUILTIN_NUMBER
-  #   keyword_like: [ets]
-  #   flags:  [predefined_type]
+  - name: 'Number'
+    token: KEYW_BUILTIN_NUMBER
+    keyword_like: [ets]
+    flags:  [predefined_type]
 
   - name: 'object'
     token: KEYW_OBJECT
@@ -532,7 +529,6 @@ keywords:
   - name: 'type'
     token: KEYW_TYPE
     keyword_like: [ets, js, ts]
-    flags: [definable_type_name]
 
   - name: 'typeof'
     token: KEYW_TYPEOF
@@ -593,6 +589,7 @@ keywords:
   - name: 'with'
     token: KEYW_WITH
     keyword: [js, ts]
+    keyword_like: [ets]
 
   - name: 'yield'
     token: KEYW_YIELD

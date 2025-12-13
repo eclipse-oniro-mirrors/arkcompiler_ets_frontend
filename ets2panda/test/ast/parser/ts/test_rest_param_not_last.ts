@@ -14,4 +14,5 @@
  */
 const /* @@ label */[...rest, x] = [1, 2, 3];
 
-/* @@@ label Error SyntaxError: Rest parameter must be the last formal parameter. */
+
+/* @@@ label Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */

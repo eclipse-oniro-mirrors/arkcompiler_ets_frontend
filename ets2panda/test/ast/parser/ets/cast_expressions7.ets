@@ -27,6 +27,6 @@ function main(): void {
   let long_a: long[] = int_a as long[];
 }
 
-/* @@? 21:16 Error TypeError: Cannot cast type 'Array<B>' to 'Array<A>' */
-/* @@? 22:17 Error TypeError: Cannot cast type 'Array<A>' to 'Array<B>' */
-/* @@? 27:24 Error TypeError: Cannot cast type 'Array<Int>' to 'Array<Long>' */
+/* @@? 21:16 Error Semantic error ESE0326: Cannot cast type 'Array<B>' to 'Array<A>' */
+/* @@? 22:17 Error Semantic error ESE0326: Cannot cast type 'Array<A>' to 'Array<B>' */
+/* @@? 27:24 Error Semantic error ESE0326: Cannot cast type 'Array<Int>' to 'Array<Long>' */

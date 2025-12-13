@@ -15,4 +15,4 @@
 
 class A {b5 : boolean = /* @@ label1 */7;}
 
-/* @@@ label1 Error TypeError: Type 'Int' cannot be assigned to type 'Boolean'  */
+/* @@@ label1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'Boolean' */

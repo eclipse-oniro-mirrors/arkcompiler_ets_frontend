@@ -24,4 +24,5 @@ function main()
     array = /* @@ label */new Bad();
 }
 
-/* @@? 24:27 Error TypeError: Type 'Bad' cannot be assigned to type 'Array<Int|Double|String>' */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Bad' cannot be assigned to type 'Array<Int|Double|String>' */

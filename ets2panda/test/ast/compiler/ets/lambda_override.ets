@@ -20,5 +20,6 @@ class bbb extends aaa {
     /* @@ label1 */x: ()=>string
 }
 
-/* @@@ label Error TypeError: Property 'x' might not have been initialized.  */
-/* @@@ label1 Error TypeError: Property 'x' might not have been initialized.  */
+
+/* @@@ label Error Semantic error ESE0280: Property 'x' might not have been initialized. */
+/* @@@ label1 Error Semantic error ESE0280: Property 'x' might not have been initialized. */

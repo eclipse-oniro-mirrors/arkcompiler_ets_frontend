@@ -5,6 +5,12 @@
 % def get_format_name(mnemonic)
 %   return "#{mnemonic.gsub('.', '_').upcase}" + "_FORMATS"
 % end
+% def get_reg_limit_name(mnemonic)
+%   return "#{mnemonic.gsub('.', '_').upcase}" + "_REG_LIMIT"
+% end
+% def get_operand_reg_kind_name(mnemonic)
+%   return "#{mnemonic.gsub('.', '_').upcase}" + "_OPERAND_REG_KIND"
+% end
 /**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +33,11 @@
 
 #include "ir/irnode.h"
 #include "generated/formats.h"
+#include "generated/signatures.h"
+
+#include "assembly-function.h"
 #include "assembly-ins.h"
+#include "assembly-type.h"
 
 namespace ark::es2panda::compiler {
 class Label : public IRNode {
@@ -61,6 +71,21 @@ public:
         return 0;
     }
 
+    OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override
+    {
+        return OperandType::NONE;
+    }
+
+    uint32_t GetRegLimit() const noexcept override
+    {
+        return 0U;
+    }
+
+    OperandKind GetOperandRegKind([[maybe_unused]] size_t idx) const override
+    {
+        return LABEL_OPERAND_REG_KIND[idx];
+    }
+
     void Transform(pandasm::Ins *ins, [[maybe_unused]] ProgramElement *programElement,
                    [[maybe_unused]] uint32_t totalRegs) const override
     {
@@ -71,6 +96,86 @@ public:
 private:
     std::string id_;
 };
+
+static bool IsAccessor(const std::string &calleeInternalName)
+{
+    auto methodEndPos = calleeInternalName.find(Signatures::MANGLE_BEGIN);
+    if (methodEndPos == std::string::npos) {
+        return false;
+    }
+    auto pos = calleeInternalName.rfind(Signatures::METHOD_SEPARATOR, methodEndPos);
+    if (pos == std::string::npos) {
+        return false;
+    }
+    auto methodBeginPos = pos + 1;
+    // case 1. getter: "xxx.%%get-PropName:PropType;"  name start with '%%get-'
+    auto checkGetterPos = calleeInternalName.find(Signatures::GETTER_METHOD_BEGIN, methodBeginPos);
+    if (checkGetterPos == methodBeginPos) {
+        return true;
+    }
+    // case 2. setter: "xxx.%%set-PropName:PropType;void;"  name start with '%%set-'
+    auto checkSetterPos = calleeInternalName.find(Signatures::SETTER_METHOD_BEGIN, methodBeginPos);
+    if (checkSetterPos == methodBeginPos) {
+        return true;
+    }
+
+    // case 3. indexed getter: "xxx.$_get:ValueType;"  name is '$_get'
+    // case 4. indexed setter: "xxx.$_set:IndexType;ValueType;void;"  name is '$_set'
+    ES2PANDA_ASSERT(Signatures::GET_INDEX_METHOD.length() == Signatures::SET_INDEX_METHOD.length());
+    const auto indexMethodLen = Signatures::GET_INDEX_METHOD.length();
+    if (methodEndPos != methodBeginPos + indexMethodLen) {
+        return false;
+    }
+    auto methodName = calleeInternalName.substr(methodBeginPos, indexMethodLen);
+    return methodName == Signatures::GET_INDEX_METHOD || methodName == Signatures::SET_INDEX_METHOD;
+}
+
+static OperandType GetOperandRegTypeForNormalCall(const std::string &calleeInternalName, size_t argIdx)
+{
+    const std::string &str = calleeInternalName;
+    auto pos = str.find(Signatures::MANGLE_BEGIN);
+    ES2PANDA_ASSERT(pos != std::string::npos);
+    for (size_t i = 0; i < argIdx; ++i) {
+        pos = str.find(Signatures::MANGLE_SEPARATOR, pos + 1);
+        ES2PANDA_ASSERT(pos != std::string::npos);
+    }
+    auto end = str.find(Signatures::MANGLE_SEPARATOR, pos + 1);
+    ES2PANDA_ASSERT(end != std::string::npos);
+    ES2PANDA_ASSERT(end > pos + 1);
+    auto argTypeName = str.substr(pos + 1, end - pos - 1);
+    auto argType = ark::pandasm::Type::FromName(argTypeName);
+    if (argType.IsPrim32()) {
+        return OperandType::B32;
+    }
+    if (argType.IsPrim64()) {
+        return OperandType::B64;
+    }
+    return OperandType::REF;
+}
+
+static OperandType GetOperandRegTypeForAccessor(const std::string &calleeInternalName, size_t argIdx,
+                                                bool hadCalculatedThis)
+{
+    // the first arg may be the omitted 'this', but it may calculated in `GetOperandRegType`
+    // do not calculate twice.
+    ES2PANDA_ASSERT(IsAccessor(calleeInternalName));
+    if (argIdx == 0 && !hadCalculatedThis) {
+        return OperandType::REF;
+    }
+
+    ES2PANDA_ASSERT(hadCalculatedThis || argIdx > 0);
+    argIdx = hadCalculatedThis ? argIdx : argIdx - 1;
+    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
+}
+
+static OperandType GetOperandRegTypeForCall(const std::string &calleeInternalName, size_t argIdx,
+                                            bool hadCalculatedThis = false)
+{
+    if (IsAccessor(calleeInternalName)) {  // in such cases method signatures lacks the first arg 'this'
+        return GetOperandRegTypeForAccessor(calleeInternalName, argIdx, hadCalculatedThis);
+    }
+    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
+}
 
 // NOLINTBEGIN(readability-identifier-naming)
 % def insn2node(insn)
@@ -88,6 +193,7 @@ private:
 %       param_name = name
 %       if operand.reg?
 %         param_name = "#{name}#{op_map['reg'].size}"
+%         op_map['reg_type'].push(["#{param_name}_", operand.type])
 %         op_map['reg'].push("#{param_name}_")
 %         op_map['dreg'].push(["#{param_name}_", operand.type]) if operand.dst?
 %         op_map['dreg'].push([nil, nil]) unless operand.dst?
@@ -172,12 +278,72 @@ public:
 % for reg, type in op_map['dreg']
 %   if reg
         (*regs)[<%= reg_cnt %>] = {&<%= reg %>, OperandType::<%= type_to_enum(type) %>};
-%   elsif
+%   else
         (*regs)[<%= reg_cnt %>] = {nullptr, OperandType::NONE};
 %   end
 %   reg_cnt+=1;
 % end
         return <%= reg_cnt %>;
+    }
+
+% def type_to_mov_kind(type)
+%   return 'REF' if type == 'ref'
+%   return 'REF' if type.include? '[]'
+%   return 'B64' if type == 'i64' || type == 'u64' || type == 'f64' || type == 'b64'
+%   return 'ANY' if type == 'any'
+%   return 'B32' if type == 'u1' || type == 'u2' || type == 'u4' ||    \
+%                   type == 'i8' || type == 'u8' || type == 'b8' ||    \
+%                   type == 'i16' || type == 'u16' || type == 'b16' || \
+%                   type == 'i32' || type == 'u32' || type == 'f32' || type == 'b32'
+%   return 'NONE' if type == 'top'
+%   raise "invalid reg type #{type}"
+% end
+%
+    OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override {
+% if insn.mnemonic.start_with?('call.virt')
+        if (idx == 0) {
+            return OperandType::REF;
+        }
+        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx - 1, true);
+
+% elsif insn.mnemonic.start_with?('call.acc')
+        {
+            size_t argIdx = (idx >= static_cast<size_t>(imm0_)) ? idx + 1 : idx;
+            return GetOperandRegTypeForCall(string_id_.Mutf8(), argIdx);
+        }
+
+% elsif insn.properties.any? { |prop| prop.include?('method_id') }  # 从 method_id 解析
+        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx);
+% elsif insn.mnemonic.start_with?('any.') && insn.mnemonic.end_with?('.range') # any.x.range always have operand type REG
+        ES2PANDA_ASSERT(imm0_ >= 0);
+        ES2PANDA_ASSERT(idx < static_cast<size_t>(imm0_));
+        return OperandType::REF;
+% else # get operand type from reg type defined in isa.yaml
+        switch (idx) { // NOLINT(hicpp-multiway-paths-covered)
+% i = 0
+% for reg, type in op_map['reg_type']
+            case <%= i %>: {
+                return OperandType::<%= type_to_mov_kind(type) %>;
+            }
+% i+=1
+% end
+            default: {
+                ES2PANDA_UNREACHABLE();
+                break;
+            }
+        }
+        return OperandType::NONE;
+% end
+    }
+
+    uint32_t GetRegLimit() const noexcept override
+    {
+        return <%= get_reg_limit_name(insn.mnemonic) %>;
+    }
+
+    OperandKind GetOperandRegKind(size_t idx) const override
+    {
+        return <%= get_operand_reg_kind_name(insn.mnemonic) %>[idx];
     }
 
     void Transform(pandasm::Ins *ins, [[maybe_unused]] ProgramElement *programElement,

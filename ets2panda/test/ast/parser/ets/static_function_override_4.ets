@@ -21,4 +21,5 @@ class BClass extends AClass {
     override bar/* @@ label */(): void {}
 }
 
-/* @@@ label Error TypeError: Method bar(): void in BClass not overriding any method  */
+
+/* @@@ label Error Semantic error ESE0136: Method bar(): void in BClass not overriding any method */

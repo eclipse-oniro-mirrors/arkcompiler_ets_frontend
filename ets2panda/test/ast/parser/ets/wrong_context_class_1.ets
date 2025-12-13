@@ -22,5 +22,6 @@ function main()
     /* @@ label */a = /* @@ label1 */5
 }
 
-/* @@@ label Error SyntaxError: Class cannot be used as object. */
-/* @@@ label1 Error TypeError: Type 'Int' cannot be assigned to type 'a' */
+
+/* @@@ label Error Syntax error ESY0318: Class cannot be used as object. */
+/* @@@ label1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'a' */

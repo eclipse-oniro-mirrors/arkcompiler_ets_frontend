@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -153,15 +153,16 @@ export const LIMITED_STD_API = new Map<string | undefined, LimitedStdLibApiEntry
 ]);
 
 export const MODULE_IMPORTS: Record<string, string[]> = {
-  '@kit.ArkTS': ['taskpool', 'ArkTSUtils', 'process', 'collections'],
+  '@kit.ArkTS': ['taskpool', 'ArkTSUtils', 'process'],
   '@ohos.process': ['process'],
   '@ohos.taskpool': ['taskpool'],
-  '@arkts.utils': ['ArkTSUtils'],
-  '@arkts.collections': ['collections']
+  '@arkts.utils': ['ArkTSUtils']
 };
 
 export const ARKTSUTILS_MODULES = ['@arkts.utils', '@ohos.process', '@kit.ArkTS'];
 export const ARKTSUTILS_LOCKS_MEMBER = 'locks';
+export const ARKTSUTILS_LITERAL = 'ArkTSUtils';
+export const LRU_SENDABLE_CACHE_LITERAL = 'SendableLruCache';
 
 export const OBJECT_PUBLIC_API_METHOD_SIGNATURES = new Map<string, string>([
   ['toString', '(): string'],

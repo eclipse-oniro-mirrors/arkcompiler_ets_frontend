@@ -15,8 +15,8 @@
 
 #include <cstdint>
 #include <memory>
-#include "macros.h"
-#include "os/file.h"
+#include "libarkbase/macros.h"
+#include "libarkbase/os/file.h"
 #include "public/es2panda_lib.h"
 #include "util.h"
 #include "parser/program/program.h"

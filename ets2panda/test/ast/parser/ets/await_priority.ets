@@ -14,8 +14,7 @@
  */
  
 function main(){
-	await test();
-	
+	test();
 }
 
 async function test() {

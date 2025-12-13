@@ -1,10 +1,20 @@
 ## 不支持tagged templates
 
-**规则：**`arkts-no-tagged-templates`
+**规则：** `arkts-no-tagged-templates`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2规范函数调用方式，支持字符串相加的用法，不支持Tagged templates（标签模板字符串）。
+ArkTS1.2不支持Tagged templates（标签模板字符串）。
+
+**变更原因：**
+
+ArkTS1.2规范函数调用方式，支持字符串相加，但不支持Tagged templates（标签模板字符串）。
+
+**适配建议：**
+
+改为函数调用和字符串加法。
+
+**示例：**
 
 **ArkTS1.1**
 

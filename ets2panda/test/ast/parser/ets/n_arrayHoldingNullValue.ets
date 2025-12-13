@@ -18,5 +18,6 @@ function main(): void {
     let d: char[] = /* @@ label1 */null;
 }
 
-/* @@? 17:38 Error TypeError: Type 'null' cannot be assigned to type 'Array<Float>' */
-/* @@? 18:36 Error TypeError: Type 'null' cannot be assigned to type 'Array<Char>' */
+
+/* @@@ label Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Array<Float>' */
+/* @@@ label1 Error Semantic error ESE0318: Type 'null' cannot be assigned to type 'Array<Char>' */

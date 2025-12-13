@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_LEXER_TOKEN_SOURCE_LOCATION_H
 #define ES2PANDA_LEXER_TOKEN_SOURCE_LOCATION_H
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -207,6 +207,7 @@ public:
     ~LineIndex() = default;
 
     SourceLocation GetLocation(SourcePosition pos) const noexcept;
+    std::pair<size_t, size_t> GetLocation(size_t offset) const noexcept;
     size_t GetOffset(SourceLocation loc) const noexcept;
 
 private:

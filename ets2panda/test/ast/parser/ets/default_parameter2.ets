@@ -28,4 +28,4 @@ function foo(a : int) : int
     return a;
 }
 
-/* @@? 18:19 Error TypeError: No matching call signature for foo() */
+/* @@? 18:19 Error Semantic error ESE0127: No matching call signature for foo() */

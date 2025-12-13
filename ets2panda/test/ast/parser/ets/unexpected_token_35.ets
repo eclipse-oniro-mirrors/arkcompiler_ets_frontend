@@ -25,9 +25,10 @@ let sector: float
   };
 }
 
-/* @@? 21:5 Error TypeError: type Float has no property named radius */
-/* @@? 23:19 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 23:20 Error SyntaxError: Unexpected token. */
-/* @@? 23:21 Error SyntaxError: Unexpected token ','. */
-/* @@? 24:16 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 26:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 21:5 Error Semantic error ESE0065: type Float has no property named radius */
+/* @@? 23:19 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 23:20 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 23:21 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 24:16 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 26:1 Error Syntax error ESY0227: Unexpected token '}'. */

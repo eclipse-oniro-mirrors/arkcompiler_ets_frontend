@@ -17,4 +17,5 @@ class A {
     native override foo/* @@ label */() : void;
 }
 
-/* @@@ label Error TypeError: Method foo(): void in A not overriding any method  */
+
+/* @@@ label Error Semantic error ESE0136: Method foo(): void in A not overriding any method */

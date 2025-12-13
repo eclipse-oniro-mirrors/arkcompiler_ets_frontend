@@ -25,4 +25,5 @@ class A {
   }
 }
 
-/* @@? 24:5 Error TypeError: Class methods cannot be overwritten.  */
+
+/* @@? 24:5 Error Semantic error ESE0394: Class methods cannot be overwritten. */

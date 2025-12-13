@@ -22,6 +22,8 @@
 @ClassAuthor
 function main() {}
 
-/* @@? 16:12 Error TypeError: Cannot find type 'AnnoSrc'. */
-/* @@? 16:20 Error TypeError: 'ClassAuthor' type does not exist. */
-/* @@? 17:29 Error SyntaxError: Invalid value for annotation field, expected a constant literal. */
+/* @@? 16:19 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 16:32 Error Syntax error ESY0001: Missing type annotation for property 'ClassAuthor'. */
+/* @@? 16:32 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 17:29 Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */
+/* @@? 22:2 Error Semantic error ESE0371: Cannot find type 'ClassAuthor'. */

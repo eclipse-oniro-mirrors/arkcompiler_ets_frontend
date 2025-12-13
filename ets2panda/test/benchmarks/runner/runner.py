@@ -15,6 +15,7 @@
 
 
 import sys
+import os
 from pathlib import Path
 import argparse
 from arg_parser import parse_arguments, check_arguments
@@ -65,6 +66,14 @@ def run_stdlib_benchmark(args: argparse.Namespace, work_dir: Path) -> None:
         "etsstdlib",
         f"--arktsconfig={arktsconfig}",
     ]
+
+    directory_name = f"{args.es2panda}"
+    directory_name = directory_name.replace("bin/es2panda", "") + "plugins/ets/stdlib/decls"
+    relative_path_to_cache_dir = Path(directory_name)
+    try:
+        os.makedirs(relative_path_to_cache_dir.resolve(), exist_ok=True)
+    except OSError as e:
+        print(f"Error creating cache directory: {e}") 
 
     benchmark_runner.run_benchmark_for_file([f"{args.es2panda}"] + es2panda_args, args.runs, new_perf_path)
 

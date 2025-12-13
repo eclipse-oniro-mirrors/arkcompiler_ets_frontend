@@ -24,6 +24,7 @@ import {
 } from './Es2pandaNativeModule';
 import { Es2pandaNativeModule as GeneratedEs2pandaNativeModule } from '../generated/Es2pandaNativeModule';
 import { initInterop, InteropNativeModule, initPublicInterop } from './InteropNativeModule';
+import type { Context } from './types';
 
 // CC-OFFNXT(G.NAM.01) project code style
 export class global {
@@ -41,7 +42,7 @@ export class global {
     return global._config ?? throwError('Global.config not initialized');
   }
 
-  public static destroyCfg(): void {
+  public static resetConfig() {
     global._config = undefined;
   }
 
@@ -49,12 +50,16 @@ export class global {
     return global._config !== undefined;
   }
 
-  private static _context?: KNativePointer;
-  public static set context(context: KNativePointer) {
-    global._context = context;
-  }
+  // TODO: rename to contextPeer
   public static get context(): KNativePointer {
-    return global._context ?? throwError('Global.context not initialized');
+    return global.compilerContext?.peer ?? throwError('Global.context not initialized')
+  }
+
+  // unsafe - could be undefined
+  public static compilerContext: Context | undefined
+
+  public static clearContext(): void {
+     this.compilerContext = undefined;
   }
 
   private static _es2panda: Es2pandaNativeModule | undefined = undefined;

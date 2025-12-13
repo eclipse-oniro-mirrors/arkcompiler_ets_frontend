@@ -18,16 +18,17 @@ for await (/* @@ label1 */;/* @@ label2 */;/* @@ label3 */i < /* @@ label4 */cou
 }
 for (let i? /* @@ label11 */: Number = 1;;)  { break; }
 
-/* @@@ label1 Error SyntaxError: Unexpected token ';'. */
-/* @@@ label2 Error SyntaxError: Unexpected token ';'. */
-/* @@@ label3 Error TypeError: Unresolved reference i */
-/* @@@ label4 Error TypeError: Unresolved reference count */
-/* @@@ label5 Error SyntaxError: Expected ')', got ';'. */
-/* @@@ label6 Error SyntaxError: Unexpected token ')'. */
-/* @@@ label7 Error SyntaxError: Unexpected token '{'. */
-/* @@@ label8 Error TypeError: Unresolved reference result */
-/* @@@ label9 Error TypeError: Unresolved reference p */
-/* @@@ label9 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@@ label10 Error TypeError: Unresolved reference a */
-/* @@@ label10 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@@ label11 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@@ label3 Error Semantic error ESE0143: Unresolved reference i */
+/* @@@ label4 Error Semantic error ESE0143: Unresolved reference count */
+/* @@@ label5 Error Syntax error ESY0230: Expected ')', got ';'. */
+/* @@@ label6 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@@ label7 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label8 Error Semantic error ESE0143: Unresolved reference result */
+/* @@@ label9 Error Semantic error ESE0143: Unresolved reference p */
+/* @@@ label9 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@@ label10 Error Semantic error ESE0143: Unresolved reference a */
+/* @@@ label10 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@@ label11 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */

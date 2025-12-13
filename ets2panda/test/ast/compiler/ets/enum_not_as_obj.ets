@@ -16,6 +16,6 @@ enum Colorset {Red, Green,Blue};
 const result = JSON.stringify(Colorset);
 console.log("Hello",result);
 
-/* @@? 15:1 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 16:16 Error TypeError: No matching call signature for stringify(Colorset) */
-/* @@? 16:31 Error TypeError: Class or interface or enum 'Colorset' cannot be used as object */
+/* @@? 15:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 16:16 Error Semantic error ESE0127: No matching call signature for stringify(Colorset) */
+/* @@? 16:31 Error Semantic error ESE154289: Enum 'Colorset' cannot be used as object */

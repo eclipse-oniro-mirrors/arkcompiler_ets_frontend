@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,12 +33,6 @@ public:
 
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
     bool PostconditionForModule(public_lib::Context *ctx, const parser::Program *program) override;
-
-private:
-    ir::Expression *ProcessIndexGetAccess(parser::ETSParser *parser, checker::ETSChecker *checker,
-                                          ir::MemberExpression *memberExpression) const;
-    ir::Expression *ProcessIndexSetAccess(parser::ETSParser *parser, checker::ETSChecker *checker,
-                                          ir::AssignmentExpression *assignmentExpression) const;
 };
 
 }  // namespace ark::es2panda::compiler

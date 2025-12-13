@@ -17,7 +17,7 @@
 #define ES2PANDA_UTIL_INCLUDE_ETS_NEW_CLASS_INSTANCE_EXPRESSION_BUILDER
 
 #include "ir/ets/etsNewClassInstanceExpression.h"
-#include "mem/arena_allocator.h"
+#include "libarkbase/mem/arena_allocator.h"
 #include "astBuilder.h"
 
 namespace ark::es2panda::ir {

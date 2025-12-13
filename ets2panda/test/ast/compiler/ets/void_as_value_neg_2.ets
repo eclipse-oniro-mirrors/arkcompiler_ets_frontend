@@ -13,4 +13,5 @@
  * limitations under the License.
  */
 let x: /* @@ label */void
-/* @@@ label Error TypeError: 'void' used as type annotation.  */
+
+/* @@@ label Error Semantic error ESE0232: 'void' used as type annotation. */

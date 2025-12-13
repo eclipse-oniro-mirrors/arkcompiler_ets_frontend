@@ -514,4 +514,149 @@ TEST_F(LspClassChangeTracker, InsertExportModifier_BasicTest)
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LspClassChangeTracker, DeleteNode_InnerIdentifierDeletesWholeVarDecl)
+{
+    const char *source = R"(
+function f() {
+    let a = 42;
+}
+)";
+    ark::es2panda::lsp::Initializer initializer;
+    es2panda_Context *ctx =
+        initializer.CreateContext("deleteNode_InnerIdentifierDeletesWholeVarDecl.ets", ES2PANDA_STATE_CHECKED, source);
+    auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    auto *ast = context->parserProgram->Ast();
+    auto *sourceFile = context->sourceFile;
+    ASSERT_TRUE(ast != nullptr);
+    ark::es2panda::ir::AstNode *aIdent = nullptr;
+    ark::es2panda::ir::AstNode *varDecl = nullptr;
+    ast->FindChild([&](ark::es2panda::ir::AstNode *node) {
+        if (aIdent == nullptr && node->IsIdentifier() && node->AsIdentifier()->Name() == "a") {
+            aIdent = node;
+        }
+        if (varDecl == nullptr && node->IsVariableDeclaration()) {
+            varDecl = node;
+        }
+        return false;
+    });
+
+    ASSERT_TRUE(aIdent != nullptr);
+    ASSERT_TRUE(varDecl != nullptr);
+    auto tracker = GetTracker();
+    tracker.DeleteNode(ctx, sourceFile, aIdent);
+    const auto &changes = tracker.GetChangeList();
+    ASSERT_EQ(changes.size(), 1U);
+    const auto &rem = std::get<ark::es2panda::lsp::RemoveNode>(changes[0]);
+    EXPECT_EQ(rem.kind, ark::es2panda::lsp::ChangeKind::REMOVE);
+    EXPECT_EQ(rem.range.pos, varDecl->Start().index);
+    EXPECT_EQ(rem.range.end, varDecl->End().index);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspClassChangeTracker, DeleteNodeRange_InnerNodesExpandAcrossStatements)
+{
+    const char *source = R"(
+function f() {
+    let a = 1;
+    let b = 2;
+    let c = 3;
+}
+)";
+    ark::es2panda::lsp::Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext("deleteNodeRange_InnerNodesExpandAcrossStatements.ets",
+                                                      ES2PANDA_STATE_CHECKED, source);
+    auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    auto *ast = context->parserProgram->Ast();
+
+    ASSERT_TRUE(ast != nullptr);
+
+    ark::es2panda::ir::AstNode *aIdent = nullptr;
+    ark::es2panda::ir::AstNode *cIdent = nullptr;
+    ark::es2panda::ir::AstNode *aDecl = nullptr;
+    ark::es2panda::ir::AstNode *cDecl = nullptr;
+
+    ast->FindChild([&](ark::es2panda::ir::AstNode *node) {
+        if (node->IsVariableDeclaration()) {
+            const auto name = node->AsVariableDeclaration()->Declarators()[0]->Id()->AsIdentifier()->Name();
+            if (name == "a") {
+                aDecl = node;
+            }
+            if (name == "c") {
+                cDecl = node;
+            }
+        }
+        if (node->IsIdentifier() && node->AsIdentifier()->Name() == "a") {
+            aIdent = node;
+        }
+        if (node->IsIdentifier() && node->AsIdentifier()->Name() == "c") {
+            cIdent = node;
+        }
+        return false;
+    });
+
+    ASSERT_TRUE(aIdent != nullptr);
+    ASSERT_TRUE(cIdent != nullptr);
+    ASSERT_TRUE(aDecl != nullptr);
+    ASSERT_TRUE(cDecl != nullptr);
+
+    auto tracker = GetTracker();
+    tracker.DeleteNodeRange(ctx, aIdent, cIdent);
+
+    const auto &changes = tracker.GetChangeList();
+    ASSERT_EQ(changes.size(), 1U);
+
+    const auto &rem = std::get<ark::es2panda::lsp::RemoveNode>(changes[0]);
+    EXPECT_EQ(rem.kind, ark::es2panda::lsp::ChangeKind::REMOVE);
+    EXPECT_EQ(rem.range.pos, aDecl->Start().index);
+    EXPECT_EQ(rem.range.end, cDecl->End().index);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspClassChangeTracker, DeleteNode_FromPropertyKeyDeletesWholeProperty)
+{
+    const char *source = R"(
+const obj = {
+    foo: 1,
+    bar: 2
+};
+)";
+    ark::es2panda::lsp::Initializer initializer;
+    es2panda_Context *ctx =
+        initializer.CreateContext("deleteNode_FromPropertyKeyDeletesWholeProperty.ets", ES2PANDA_STATE_CHECKED, source);
+    auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+    auto *ast = context->parserProgram->Ast();
+    auto *sourceFile = context->sourceFile;
+    ASSERT_NE(ast, nullptr);
+    ark::es2panda::ir::AstNode *fooKey = nullptr;
+    ark::es2panda::ir::AstNode *fooProp = nullptr;
+    ast->FindChild([&](ark::es2panda::ir::AstNode *node) {
+        if (!node->IsProperty()) {
+            return false;
+        }
+        const auto *key = node->AsProperty()->Key();
+        if (key == nullptr || !key->IsIdentifier()) {
+            return false;
+        }
+        const auto *id = key->AsIdentifier();
+        if (id->Name() != "foo") {
+            return false;
+        }
+        fooProp = node;
+        fooKey = const_cast<ark::es2panda::ir::Identifier *>(id);
+        return true;
+    });
+    ASSERT_NE(fooKey, nullptr);
+    ASSERT_NE(fooProp, nullptr);
+    auto tracker = GetTracker();
+    tracker.DeleteNode(ctx, sourceFile, fooKey);
+    const auto &changes = tracker.GetChangeList();
+    ASSERT_EQ(changes.size(), 1U);
+    const auto &rem = std::get<ark::es2panda::lsp::RemoveNode>(changes[0]);
+    EXPECT_EQ(rem.kind, ark::es2panda::lsp::ChangeKind::REMOVE);
+    EXPECT_EQ(rem.range.pos, fooProp->Start().index);
+    EXPECT_EQ(rem.range.end, fooProp->End().index);
+
+    initializer.DestroyContext(ctx);
+}
 }  // namespace

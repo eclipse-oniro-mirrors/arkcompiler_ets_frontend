@@ -61,14 +61,15 @@ class C<T> {
   }
 }
 
-/* @@? 20:28 Error SyntaxError: Invalid right-hand side in 'instanceof' expression. */
-/* @@? 36:22 Error SyntaxError: Invalid right-hand side in 'instanceof' expression. */
-/* @@? 43:22 Error SyntaxError: Invalid right-hand side in 'instanceof' expression. */
-/* @@? 50:27 Error SyntaxError: Invalid right-hand side in 'instanceof' expression. */
-/* @@? 50:31 Error SyntaxError: Expected ')', got '.'. */
-/* @@? 50:31 Error SyntaxError: Unexpected token '.'. */
-/* @@? 50:32 Error SyntaxError: Unexpected token 'b'. */
-/* @@? 50:32 Error TypeError: Property 'b' must be accessed through 'this' */
-/* @@? 50:33 Error SyntaxError: Unexpected token ')'. */
-/* @@? 50:35 Error SyntaxError: Unexpected token '{'. */
-/* @@? 57:22 Error SyntaxError: Invalid right-hand side in 'instanceof' expression. */
+
+/* @@? 20:28 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 36:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 43:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 50:27 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */
+/* @@? 50:31 Error Syntax error ESY0230: Expected ')', got '.'. */
+/* @@? 50:31 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 50:32 Error Syntax error ESY0227: Unexpected token 'b'. */
+/* @@? 50:32 Error Semantic error ESE0145: Property 'b' must be accessed through 'this' */
+/* @@? 50:33 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 50:35 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 57:22 Error Syntax error ESY0130: Invalid right-hand side in 'instanceof' expression. */

@@ -1,8 +1,8 @@
 ### ArkTS1.1创建ArkTS1.2对象字面量
 
-**规则：** arkts-interop-s2d-object-literal
+**规则：** `arkts-interop-s2d-object-literal`
 
-**级别：** error
+ArkTS1.1的对象字面量是动态对象，不是真正的标注类型，所以ArkTS1.1中使用构造函数创建ArkTS1.2对象字面量。
 
 **ArkTS1.1**
 ```typescript

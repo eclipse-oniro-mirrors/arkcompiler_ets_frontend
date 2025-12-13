@@ -21,4 +21,5 @@ class C {
     overload foo { /* @@label1 */B.foo1 }
 }
 
-/* @@@ label1 Error SyntaxError: The overloaded method name in class/interface method overload declaration must be identifier. */
+
+/* @@@ label1 Error Syntax error ESY0324: The overloaded method name in class/interface method overload declaration must be identifier. */

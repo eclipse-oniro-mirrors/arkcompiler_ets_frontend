@@ -26,4 +26,5 @@ B.NonNullable<Object>(new Object())
 
 class NonNullable{}
 
-/* @@? 27:7 Error SyntaxError: Cannot be used as user-defined type. */
+
+/* @@? 27:7 Error Syntax error ESY0145: Cannot be used as user-defined type. */

@@ -33,6 +33,7 @@ interface C {
 
 interface D extends A, B, C {}
 
-/* @@? 34:1 Error TypeError: Method 'foo' is declared in A and B interfaces.  */
-/* @@? 34:1 Error TypeError: Method 'foo' is declared in A and C interfaces.  */
-/* @@? 34:1 Error TypeError: Method 'foo' is declared in B and C interfaces.  */
+
+/* @@? 34:1 Error Semantic error ESE0187: Method 'foo' is declared in A and B interfaces. */
+/* @@? 34:1 Error Semantic error ESE0187: Method 'foo' is declared in A and C interfaces. */
+/* @@? 34:1 Error Semantic error ESE0187: Method 'foo' is declared in B and C interfaces. */

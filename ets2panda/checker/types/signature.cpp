@@ -112,12 +112,12 @@ void Signature::ToAssemblerType(std::stringstream &ss) const
     ss << compiler::Signatures::MANGLE_SEPARATOR;
 }
 
-Signature *Signature::Copy(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes)
+Signature *Signature::Copy(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) const
 {
     SignatureInfo *copiedInfo = allocator->New<SignatureInfo>(signatureInfo_, allocator);
     ES2PANDA_ASSERT(copiedInfo != nullptr);
     for (size_t idx = 0U; idx < signatureInfo_->params.size(); ++idx) {
-        auto *const paramType = signatureInfo_->params[idx]->TsType()->MaybeBaseTypeOfGradualType();
+        auto *const paramType = signatureInfo_->params[idx]->TsType();
         if (paramType->HasTypeFlag(TypeFlag::GENERIC) && paramType->IsETSObjectType()) {
             copiedInfo->params[idx]->SetTsType(paramType->Instantiate(allocator, relation, globalTypes));
             auto originalTypeArgs = paramType->AsETSObjectType()->GetOriginalBaseType()->TypeArguments();
@@ -217,17 +217,25 @@ static bool MethodSignaturesAreCompatible(TypeRelation *relation, bool checkIden
         return false;
     }
 
-    auto const areCompatible = [relation, checkIdentical](Type *superT, Type *subT) {
+    auto *checker = relation->GetChecker()->IsETSChecker() ? relation->GetChecker()->AsETSChecker() : nullptr;
+
+    auto const areCompatible = [relation, checker, checkIdentical](Type *superT, Type *subT) -> bool {
+        if (checker != nullptr) {
+            superT = checker->MaybeBoxType(superT);
+            subT = checker->MaybeBoxType(subT);
+        }
         return checkIdentical ? relation->IsIdenticalTo(superT, subT) : relation->IsSupertypeOf(superT, subT);
     };
     if (!relation->NoReturnTypeCheck() && !areCompatible(super->ReturnType(), sub->ReturnType())) {
         return false;
     }
+
     for (size_t idx = 0; idx < sub->ArgCount(); ++idx) {
         if (!areCompatible(sub->Params()[idx]->TsType(), super->Params()[idx]->TsType())) {
             return false;
         }
     }
+
     return !sub->HasRestParameter() || relation->IsIdenticalTo(sub->RestVar()->TsType(), super->RestVar()->TsType());
 }
 

@@ -17,4 +17,5 @@ abstract class Foo {
     abstract async /* @@ label */foo(): Promise<void>;
 }
 
-/* @@@ label Error SyntaxError: Abstract method cannot be async.  */
+
+/* @@@ label Error Syntax error ESY0118: Abstract method cannot be async. */

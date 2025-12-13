@@ -22,5 +22,5 @@ function foo2 (x: int, y: int = 0, ...r: int[]): int {
   return 4;
 }
 
-/* @@? 16:28 Error SyntaxError: Required parameter follows default parameter(s).  */
-/* @@? 21:10 Error SyntaxError: Both optional and rest parameters are not allowed in function's parameter list.  */
+
+/* @@? 16:28 Error Syntax error ESY0219: A required parameter cannot follow an optional parameter. */

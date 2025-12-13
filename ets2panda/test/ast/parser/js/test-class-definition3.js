@@ -20,4 +20,5 @@ class B extends A {
     super/* @@ label */();
   }
 }
-/* @@@ label Error SyntaxError: Unexpected super keyword.  */
+
+/* @@@ label Error Syntax error ESY0061: Unexpected super keyword. */

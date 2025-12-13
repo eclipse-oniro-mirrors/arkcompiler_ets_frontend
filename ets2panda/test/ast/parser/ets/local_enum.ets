@@ -37,12 +37,13 @@ interface I{
    enum E {E1}
 }
 
-/* @@? 17:3 Error SyntaxError: Illegal start of ENUM expression. */
-/* @@? 21:3 Error SyntaxError: Illegal start of ENUM expression. */
-/* @@? 24:5 Error SyntaxError: Illegal start of ENUM expression. */
-/* @@? 29:3 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 32:5 Error SyntaxError: Illegal start of ENUM expression. */
-/* @@? 37:4 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 37:11 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 37:12 Error TypeError: Cannot find type 'E1'. */
-/* @@? 38:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:3 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 21:3 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 24:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 29:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 32:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 37:4 Error Syntax error ESY0224: Identifier expected, got 'enum'. */
+/* @@? 37:11 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 37:12 Error Semantic error ESE0371: Cannot find type 'E1'. */
+/* @@? 38:1 Error Syntax error ESY0227: Unexpected token '}'. */

@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_COMPILER_LOWERING_PHASE_H
 #define ES2PANDA_COMPILER_LOWERING_PHASE_H
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "parser/program/program.h"
 #include "public/public.h"
 #include "phase_id.h"
@@ -97,6 +97,9 @@ class PhaseForBodies : public Phase {
         return true;
     }
 };
+
+// A helper for phases relying on "stdlib" and "simultaneous" compilation modes
+void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb);
 
 class PhaseManager {
 public:

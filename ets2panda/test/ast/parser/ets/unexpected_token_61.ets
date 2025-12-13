@@ -19,5 +19,6 @@ function main(): void {
     }
 }
 
-/* @@@ label Error TypeError: Cannot assign to a constant variable i */
-/* @@@ label1 Error SyntaxError: Expected ';', got 'identification literal'. */
+
+/* @@@ label1 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
+/* @@@ label Error Semantic error ESE4001: Cannot assign to a constant variable i */

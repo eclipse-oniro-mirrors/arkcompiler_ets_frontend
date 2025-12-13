@@ -211,7 +211,7 @@
                                         "type": "ETSTypeReferencePart",
                                         "name": {
                                           "type": "Identifier",
-                                          "name": "Exception",
+                                          "name": "Error",
                                           "loc": {
                                             "start": {
                                               "line": 19,
@@ -220,7 +220,7 @@
                                             },
                                             "end": {
                                               "line": 19,
-                                              "column": 32,
+                                              "column": 28,
                                               "program": "throwInCatchClause3.ets"
                                             }
                                           }
@@ -233,7 +233,7 @@
                                           },
                                           "end": {
                                             "line": 19,
-                                            "column": 32,
+                                            "column": 28,
                                             "program": "throwInCatchClause3.ets"
                                           }
                                         }
@@ -246,7 +246,7 @@
                                         },
                                         "end": {
                                           "line": 19,
-                                          "column": 32,
+                                          "column": 28,
                                           "program": "throwInCatchClause3.ets"
                                         }
                                       }
@@ -260,7 +260,7 @@
                                       },
                                       "end": {
                                         "line": 19,
-                                        "column": 35,
+                                        "column": 31,
                                         "program": "throwInCatchClause3.ets"
                                       }
                                     }
@@ -273,7 +273,7 @@
                                     },
                                     "end": {
                                       "line": 19,
-                                      "column": 35,
+                                      "column": 31,
                                       "program": "throwInCatchClause3.ets"
                                     }
                                   }
@@ -324,7 +324,7 @@
                                             "type": "ETSTypeReferencePart",
                                             "name": {
                                               "type": "Identifier",
-                                              "name": "Exception",
+                                              "name": "Error",
                                               "loc": {
                                                 "start": {
                                                   "line": 21,
@@ -333,7 +333,7 @@
                                                 },
                                                 "end": {
                                                   "line": 21,
-                                                  "column": 33,
+                                                  "column": 29,
                                                   "program": "throwInCatchClause3.ets"
                                                 }
                                               }
@@ -346,7 +346,7 @@
                                               },
                                               "end": {
                                                 "line": 21,
-                                                "column": 33,
+                                                "column": 29,
                                                 "program": "throwInCatchClause3.ets"
                                               }
                                             }
@@ -359,7 +359,7 @@
                                             },
                                             "end": {
                                               "line": 21,
-                                              "column": 33,
+                                              "column": 29,
                                               "program": "throwInCatchClause3.ets"
                                             }
                                           }
@@ -372,7 +372,7 @@
                                           },
                                           "end": {
                                             "line": 21,
-                                            "column": 33,
+                                            "column": 29,
                                             "program": "throwInCatchClause3.ets"
                                           }
                                         }
@@ -385,7 +385,7 @@
                                         },
                                         "end": {
                                           "line": 21,
-                                          "column": 34,
+                                          "column": 30,
                                           "program": "throwInCatchClause3.ets"
                                         }
                                       }

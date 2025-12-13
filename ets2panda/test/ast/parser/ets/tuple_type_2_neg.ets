@@ -16,11 +16,12 @@
 
 let a: [number, ...number[], number] = [1, 2, 3];
 
-/* @@? 17:17 Error SyntaxError: Invalid Type. */
-/* @@? 17:17 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:17 Error SyntaxError: Unexpected token '...'. */
-/* @@? 17:20 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:28 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:30 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 17:30 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 17:36 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 17:17 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 17:17 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 17:17 Error Syntax error ESY0227: Unexpected token '...'. */
+/* @@? 17:20 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:28 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:30 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 17:30 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 17:36 Error Syntax error ESY0227: Unexpected token ']'. */

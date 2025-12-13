@@ -16,6 +16,7 @@
 #ifndef FORMATTING_CONTEXT_H
 #define FORMATTING_CONTEXT_H
 
+#include "formatting_settings.h"
 #include "ir/astNode.h"
 #include "lexer/token/token.h"
 #include <string>
@@ -31,6 +32,7 @@ public:
     void SetNextToken(const lexer::Token &token);
     void SetCurrentTokenParent(ir::AstNode *node);
     void SetNextTokenParent(ir::AstNode *node);
+    void SetOptions(const FormatCodeSettings &options);
 
     const lexer::Token &GetCurrentToken() const;
     const lexer::Token &GetPreviousToken() const;
@@ -39,6 +41,7 @@ public:
     ir::AstNode *GetNextTokenParent() const;
     const std::string &GetSourceText() const;
     const lexer::SourceRange &GetCurrentTokenSpan() const;
+    const FormatCodeSettings &GetOptions() const;
 
     bool ContextNodeBlockIsOnOneLine() const;
     bool TokensAreOnSameLine() const;
@@ -53,6 +56,7 @@ private:
     ir::AstNode *currentTokenParent_ {nullptr};
     ir::AstNode *nextTokenParent_ {nullptr};
     lexer::SourceRange currentTokenSpan_;
+    FormatCodeSettings options_;
 };
 
 }  // namespace ark::es2panda::lsp

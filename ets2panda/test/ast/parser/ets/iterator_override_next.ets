@@ -17,5 +17,8 @@ class CLterator implements Iterator <string> /* @@ label */{
     next(): Iterator<string> {}
 }
 
-/* @@@ label Error TypeError: CLterator is not abstract and does not override abstract method next(): IteratorResult<String> in Iterator  */
 
+
+/* @@@ label Error Semantic error ESE0190: CLterator is not abstract and does not override abstract method next(): IteratorResult<String> in Iterator */
+/* @@? 17:9 Error Semantic error ESE0141: next(): Iterator<String> in CLterator cannot override next(): IteratorResult<String> in Iterator<T> because overriding return type is not compatible with the other return type. */
+/* @@? 17:9 Error Semantic error ESE0136: Method next(): Iterator<String> in CLterator not overriding any method */

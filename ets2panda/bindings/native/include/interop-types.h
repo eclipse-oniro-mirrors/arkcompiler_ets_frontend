@@ -17,10 +17,9 @@
 #define INTEROP_TYPES_H_
 
 #include <cstdint>
+#include <array>
 
-// NOLINTBEGIN
-
-typedef enum InteropTag {
+enum InteropTag {
     INTEROP_TAG_UNDEFINED = 101,
     INTEROP_TAG_INT32 = 102,
     INTEROP_TAG_FLOAT32 = 103,
@@ -28,9 +27,9 @@ typedef enum InteropTag {
     INTEROP_TAG_LENGTH = 105,
     INTEROP_TAG_RESOURCE = 106,
     INTEROP_TAG_OBJECT = 107,
-} InteropTag;
+};
 
-typedef enum InteropRuntimeType {
+enum InteropRuntimeType {
     INTEROP_RUNTIME_UNEXPECTED = -1,
     INTEROP_RUNTIME_NUMBER = 1,
     INTEROP_RUNTIME_STRING = 2,
@@ -41,103 +40,103 @@ typedef enum InteropRuntimeType {
     INTEROP_RUNTIME_FUNCTION = 7,
     INTEROP_RUNTIME_SYMBOL = 8,
     INTEROP_RUNTIME_MATERIALIZED = 9,
-} InteropRuntimeType;
+};
 
-typedef float InteropFloat32;
-typedef double InteropFloat64;
-typedef int32_t InteropInt32;
-typedef unsigned int InteropUInt32;
-typedef int64_t InteropInt64;
-typedef int8_t InteropInt8;
-typedef uint8_t InteropUInt8;
-typedef int64_t InteropDate;
-typedef int8_t InteropBoolean;
-typedef const char *InteropCharPtr;
-typedef void *InteropNativePointer;
+using InteropFloat32 = float;
+using InteropFloat64 = double;
+using InteropInt32 = int32_t;
+using InteropUInt32 = unsigned int;
+using InteropInt64 = int64_t;
+using InteropInt8 = int8_t;
+using InteropUInt8 = uint8_t;
+using InteropDate = int64_t;
+using InteropBoolean = int8_t;
+using InteropCharPtr = const char *;
+using InteropNativePointer = void *;
 
 struct InteropVMContextRaw;
-typedef struct InteropVMContextRaw *InteropVMContext;
+using InteropVMContext = InteropVMContextRaw *;
 struct InteropPipelineContextRaw;
-typedef struct InteropPipelineContextRaw *InteropPipelineContext;
+using InteropPipelineContext = InteropPipelineContextRaw *;
 struct InteropVMObjectRaw;
-typedef struct InteropVMObjectRaw *InteropVMObject;
+using InteropVMObject = InteropVMObjectRaw *;
 struct InteropNode;
-typedef struct InteropNode *InteropNodeHandle;
-typedef struct InteropDeferred {
+using InteropNodeHandle = InteropNode *;
+struct InteropDeferred {
     void *handler;
     void *context;
     void (*resolve)(struct InteropDeferred *thiz, uint8_t *data, int32_t length);
     void (*reject)(struct InteropDeferred *thiz, const char *message);
-} InteropDeferred;
+};
 
 // Binary layout of InteropString must match that of KStringPtrImpl.
-typedef struct InteropString {
+struct InteropString {
     const char *chars;
     InteropInt32 length;
-} InteropString;
+};
 
-typedef struct InteropEmpty {
+struct InteropEmpty {
     InteropInt32 dummy;  // Empty structs are forbidden in C.
-} InteropEmpty;
+};
 
-typedef struct InteropNumber {
+struct InteropNumber {
     InteropInt8 tag;
     union {
         InteropFloat32 f32;
         InteropInt32 i32;
     };
-} InteropNumber;
+};
 
 // Binary layout of InteropLength must match that of KLength.
-typedef struct InteropLength {
+struct InteropLength {
     InteropInt8 type;
     InteropFloat32 value;
     InteropInt32 unit;
     InteropInt32 resource;
-} InteropLength;
+};
 
-typedef struct InteropCustomObject {
-    char kind[20];
+const int G_INTEROP_CUSTOM_OBJECT_KIND_SIZE = 20;
+const int G_UNION_CAPACITY32 = 4;
+struct InteropCustomObject {
+    std::array<char, G_INTEROP_CUSTOM_OBJECT_KIND_SIZE> kind;
     InteropInt32 id;
     // Data of custom object.
     union {
-        InteropInt32 ints[4];
-        InteropFloat32 floats[4];
-        void *pointers[4];
+        std::array<InteropInt32, G_UNION_CAPACITY32> ints;
+        std::array<InteropFloat32, G_UNION_CAPACITY32> floats;
+        std::array<void *, G_UNION_CAPACITY32> pointers;
         InteropString string;
     };
-} InteropCustomObject;
+};
 
-typedef struct InteropUndefined {
+struct InteropUndefined {
     InteropInt32 dummy;  // Empty structs are forbidden in C.
-} InteropUndefined;
+};
 
-typedef struct InteropVoid {
+struct InteropVoid {
     InteropInt32 dummy;  // Empty structs are forbidden in C.
-} InteropVoid;
+};
 
-typedef struct InteropFunction {
+struct InteropFunction {
     InteropInt32 id;
-} InteropFunction;
-typedef InteropFunction InteropCallback;
-typedef InteropFunction InteropErrorCallback;
+};
+using InteropCallback = InteropFunction;
+using InteropErrorCallback = InteropFunction;
 
-typedef struct InteropMaterialized {
+struct InteropMaterialized {
     InteropNativePointer ptr;
-} InteropMaterialized;
+};
 
-typedef struct InteropCallbackResource {
+struct InteropCallbackResource {
     InteropInt32 resourceId;
     void (*hold)(InteropInt32 resourceId);
     void (*release)(InteropInt32 resourceId);
-} InteropCallbackResource;
+};
 
-typedef struct InteropBuffer {
+struct InteropBuffer {
     InteropCallbackResource resource;
     InteropNativePointer data;
     InteropInt64 length;
-} InteropBuffer;
-
-// NOLINTEND
+};
 
 #endif  // INTEROP_TYPES_H_

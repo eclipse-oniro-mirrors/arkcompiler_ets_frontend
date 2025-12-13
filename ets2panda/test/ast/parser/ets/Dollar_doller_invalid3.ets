@@ -23,5 +23,5 @@ class A {
     }
 }
 
-/* @@? 22:9 Error TypeError: No matching call signature for component_fun($$this.$$a$aa$$, $$this.$$b$bb$$, $$this.$$c$cc$$) */
-/* @@? 22:28 Error TypeError: Unresolved reference $$this */
+
+/* @@? 22:28 Error Semantic error ESE0143: Unresolved reference $$this */

@@ -17,20 +17,20 @@ type Loop<T, U extends Loop<T, U>> = {
     [P in keyof T]: U[P] extends boolean ? number : string;
 };
 
-/* @@? 16:24 Error TypeError: Circular type alias reference */
-/* @@? 16:38 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 17:6 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 17:10 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:16 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:18 Error SyntaxError: Unexpected token ']'. */
-/* @@? 17:18 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:19 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:22 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:23 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 17:24 Error SyntaxError: Unexpected token ']'. */
-/* @@? 17:26 Error SyntaxError: Unexpected token 'extends'. */
-/* @@? 17:34 Error SyntaxError: boolean is a predefined type, cannot be used as an identifier */
-/* @@? 17:42 Error SyntaxError: Unexpected token '?'. */
-/* @@? 17:44 Error SyntaxError: number is a predefined type, cannot be used as an identifier */
-/* @@? 17:51 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:53 Error SyntaxError: string is a predefined type, cannot be used as an identifier */
+/* @@? 16:24 Error Semantic error ESE0311: Circular type alias reference */
+/* @@? 16:38 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 17:6 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 17:8 Error Syntax error ESY0227: Unexpected token 'in'. */
+/* @@? 17:16 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:18 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 17:18 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:19 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:22 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:23 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 17:24 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 17:26 Error Syntax error ESY0227: Unexpected token 'extends'. */
+/* @@? 17:34 Error Syntax error ESY0295: boolean is a predefined type, cannot be used as an identifier */
+/* @@? 17:42 Error Syntax error ESY0227: Unexpected token '?'. */
+/* @@? 17:44 Error Syntax error ESY0295: number is a predefined type, cannot be used as an identifier */
+/* @@? 17:51 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:53 Error Syntax error ESY0295: string is a predefined type, cannot be used as an identifier */

@@ -20,5 +20,6 @@ let str2:String = "use static"
 import {A as A} from "../export1.ets"
 import {B as B} from "../export2.ets"
 
-/* @@? 20:1 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
-/* @@? 21:1 Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@? 20:1 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+/* @@? 21:1 Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

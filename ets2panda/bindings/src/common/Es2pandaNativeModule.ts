@@ -83,8 +83,15 @@ export class Es2pandaNativeModule {
     outputEts: String,
     exportAll: KBoolean,
     isolated: KBoolean,
-    recordFile: String
-  ): KPtr {
+    recordFile: String,
+    genAnnotations: KBoolean
+  ): KInt {
+    throw new Error('Not implemented');
+  }
+  _CreateContextGenerateAbcForExternalSourceFiles(configPtr: KPtr, fileNamesCount: KInt, filenames: string[] | Uint8Array): KPtr {
+    throw new Error('Not implemented');
+  }
+  _GenerateStaticDeclarationsFromContext(context: KPtr, filename: String): KPtr {
     throw new Error('Not implemented');
   }
   _CreateContextFromFile(config: KPtr, filename: String): KPtr {
@@ -93,19 +100,18 @@ export class Es2pandaNativeModule {
   _DestroyContext(context: KPtr): void {
     throw new Error('Not implemented');
   }
-  _ProceedToState(context: KPtr, state: number): void {
+  _ProceedToState(context: KPtr, state: number): KPtr {
     throw new Error('Not implemented');
   }
   _ContextProgram(context: KPtr): KPtr {
     throw new Error('Not implemented');
   }
-  _ProgramAst(program: KPtr): KPtr {
+  _ProgramAst(context: KPtr, program: KPtr): KPtr {
     throw new Error('Not implemented');
   }
   _CheckerStartChecker(context: KPtr): KBoolean {
     throw new Error('Not implemented');
   }
-
   _IsProgram(context: KPtr, node: KPtr): KBoolean {
     throw new Error('Not implemented');
   }
@@ -375,7 +381,7 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getApplicableRefactors(context: KNativePointer, kind: String, position: KInt): KPtr {
+  _getApplicableRefactors(context: KNativePointer, kind: String, startPos: KInt, endPos: KInt): KPtr {
     throw new Error('Not implemented');
   }
 
@@ -459,11 +465,11 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
-  _getFileNameFromDef(ptr: KNativePointer): KPtr {
+  _GetFileNameFromDef(ptr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
 
-  _getStartFromDef(ptr: KPtr): KInt {
+  _GetStartFromDef(ptr: KPtr): KInt {
     throw new Error('Not implemented');
   }
 
@@ -627,6 +633,14 @@ export class Es2pandaNativeModule {
   }
 
   _getTextSpan(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getSourceLocationLine(ptr: KNativePointer): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _getSourceLocationColumn(ptr: KNativePointer): KInt {
     throw new Error('Not implemented');
   }
 
@@ -828,7 +842,15 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _renameLocationHasPrefixText(ptr: KPtr): KBoolean {
+    throw new Error('Not implemented');
+  }
+
   _getRenameLocationPrefixText(ptr: KPtr): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _renameLocationHasSuffixText(ptr: KPtr): KBoolean {
     throw new Error('Not implemented');
   }
 
@@ -837,6 +859,14 @@ export class Es2pandaNativeModule {
   }
 
   _findRenameLocations(argc: KInt, fileContexts: Uint8Array, context: KNativePointer, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _findRenameLocationsInCurrentFile(context: KNativePointer, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _needsCrossFileRename(context: KNativePointer, position: KInt): KBoolean {
     throw new Error('Not implemented');
   }
 
@@ -940,15 +970,35 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _getEditsForRefactor(
+      ctx: KPtr,
+      refactorName: string,
+      actionName: string,
+      start: number,
+      end: number,
+      userPrefsPtr?: KPtr | 0,
+      formattingSettings?: KPtr | 0
+  ): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _getSignatureHelpItems(context: KPtr, position: KInt): KPtr {
     throw new Error('Not implemented');
   }
 
-  _getOffsetByColAndLine(context: KPtr, line: KInt, column: KInt): KInt {
+  _getOffsetByColAndLine(sourceCode: String, line: KInt, column: KInt): KInt {
     throw new Error('Not implemented');
   }
 
-  _MemInitialize(pandaLibPath: KStringPtr): void {
+  _getColAndLineByOffset(sourceCode: String, offset: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _MemInitialize(): void {
+    throw new Error('Not implemented');
+  }
+
+  _MemInitializeWithPath(pandaLibPath: KStringPtr): void {
     throw new Error('Not implemented');
   }
 
@@ -974,6 +1024,15 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _CreateCacheContextFromFile(
+    config: KPtr,
+    filename: String,
+    globalContext: KPtr,
+    isExternal: boolean
+  ): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _RemoveFileCache(globalContextPtr: KPtr, filename: String): void {
     throw new Error('Not implemented');
   }
@@ -983,6 +1042,54 @@ export class Es2pandaNativeModule {
   }
 
   _InvalidateFileCache(globalContextPtr: KPtr, filename: String): void {
+    throw new Error('Not implemented');
+  }
+
+  _getNameByNodeInfo(nodeInfo: KPtr): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getKindByNodeInfo(nodeInfo: KPtr): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getNodeInfosByDefinitionData(context: KPtr, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _CreateNodeInfoPtr(nodeName: String, nodeKind: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getProgramAst(context: KPtr): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getClassDefinition(astNode: KPtr, nodeName: String): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getDefinitionDataFromNode(context: KPtr, nodeInfoPtrs: Uint8Array, arraySize: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _findRenameLocationsFromNode(context: KPtr, nodeInfoPtrs: Uint8Array, arraySize: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getIdentifier(astNode: KPtr, nodeName: String): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getTokenTypes(context: KNativePointer, position: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _GetNameFromTypeInfo(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _GetTypeFromTypeInfo(ptr: KNativePointer): KPtr {
     throw new Error('Not implemented');
   }
 }

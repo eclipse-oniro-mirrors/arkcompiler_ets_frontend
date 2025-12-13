@@ -19,4 +19,5 @@ export namespace MergeSpace {
    export function foo() { return "string"; }
 }
 
-/* @@? namespace_access_violation_merge_conflicts.ets:18:12 Error TypeError: Function foo is already declared.  */
+
+/* @@? namespace_access_violation_merge_conflicts.ets:18:12 Error Semantic error ESE0130: Function foo is already declared. */

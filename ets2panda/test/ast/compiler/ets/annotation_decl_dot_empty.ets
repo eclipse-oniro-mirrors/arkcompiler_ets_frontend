@@ -17,5 +17,6 @@
 {
 }
 
-/* @@? 16:12 Error SyntaxError: Invalid annotation name. */
-/* @@? 17:1 Error SyntaxError: Identifier expected. */
+/* @@? 16:19 Error Syntax error ESY0230: Expected '{', got '.'. */
+/* @@? 17:1 Error Syntax error ESY0224: Identifier expected, got '{'. */
+/* @@? 18:1 Error Syntax error ESY0224: Identifier expected, got '}'. */

@@ -17,4 +17,5 @@
     testProperty2: number
 }
 
-/* @@@ label Error SyntaxError: Identifier expected, got ','.  */
+
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got ','. */

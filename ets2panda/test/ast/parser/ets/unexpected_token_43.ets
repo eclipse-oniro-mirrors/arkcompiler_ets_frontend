@@ -15,9 +15,10 @@
 
 let v2 = `--- ${y + abc /* @@ label */${y} = ${ n*2 }!`/* @@ label1 */} ---`;`
 
-/* @@? 16:17 Error TypeError: Unresolved reference y */
-/* @@? 16:21 Error TypeError: Unresolved reference abc */
-/* @@@ label Error SyntaxError: Expected '}', got 'identification literal'. */
-/* @@? 16:49 Error TypeError: Unresolved reference n */
-/* @@@ label1 Error SyntaxError: Unexpected token '}'. */
-/* @@? 16:71 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+
+/* @@? 16:17 Error Semantic error ESE0143: Unresolved reference y */
+/* @@? 16:21 Error Semantic error ESE0143: Unresolved reference abc */
+/* @@@ label Error Syntax error ESY0230: Expected '}', got 'identification literal'. */
+/* @@? 16:49 Error Semantic error ESE0143: Unresolved reference n */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@@ label1 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */

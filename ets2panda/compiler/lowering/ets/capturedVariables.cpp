@@ -39,6 +39,9 @@ static void AddScopes(ir::AstNode *node, std::set<varbinder::Scope *> &scopes) n
 
 static varbinder::Variable *FindVariable(ir::Identifier *ident, std::set<varbinder::Scope *> const &scopes) noexcept
 {
+    if (ident->IsErrorPlaceHolder()) {
+        return nullptr;
+    }
     auto *var = ident->Variable();
     //  NOTE! For some unknown reasons :) variables exist in scope collections but are not set to identifiers after
     //        'varbinder->IdentifierAnalysis()' pass. Probably need to be investigated and fixed sometimes...

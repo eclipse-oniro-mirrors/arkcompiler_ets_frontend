@@ -15,4 +15,4 @@
 
 import {nn3, nn4} from "./P1"
 
-/* @@? P1_1.ets:20:5 Error SyntaxError: static block cannot apply to multi-files for one package */
+/* @@? P1_1.ets:20:5 Error Syntax error ESY0289: static block cannot apply to multi-files for one package */

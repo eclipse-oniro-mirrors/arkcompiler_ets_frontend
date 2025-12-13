@@ -15,4 +15,5 @@
 
 const a: Char[] = new Char[n = 10];
 
-/* @@? 16:28 Error TypeError: Unresolved reference n */
+
+/* @@? 16:28 Error Semantic error ESE0143: Unresolved reference n */

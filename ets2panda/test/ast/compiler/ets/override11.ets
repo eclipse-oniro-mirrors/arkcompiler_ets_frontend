@@ -21,5 +21,6 @@ class B extends A<Object> {
   override fn(t: int): void { }
 }
 
-/* @@? 21:14 Error TypeError: fn(t: Int): void in B cannot override fn(t: Int): Int in A<T> because overriding return type is not compatible with the other return type.  */
-/* @@? 21:14 Error TypeError: Method fn(t: Int): void in B not overriding any method  */
+
+/* @@? 21:14 Error Semantic error ESE0141: fn(t: Int): void in B cannot override fn(t: Int): Int in A<T> because overriding return type is not compatible with the other return type. */
+/* @@? 21:14 Error Semantic error ESE0136: Method fn(t: Int): void in B not overriding any method */

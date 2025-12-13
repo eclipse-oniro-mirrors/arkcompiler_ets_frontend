@@ -45,7 +45,7 @@ TEST_F(TestNameMangling, asyncNameGen)
     EXPECT_EQ(mangledName, expectedResult);
 }
 
-/* TEST_F(TestNameMangling, getterNameGen)
+TEST_F(TestNameMangling, getterNameGen)
 {
     std::string mangledName = GetMangler()->CreateMangledNameByTypeAndName(NameMangler::LangFeatureType::GET, "myProp");
     std::string expectedResult = "%%get-myProp";
@@ -77,7 +77,7 @@ TEST_F(TestNameMangling, setterNameGen)
     std::string expectedResult = "%%set-myProp";
 
     EXPECT_EQ(mangledName, expectedResult);
-} */
+}
 
 TEST_F(TestNameMangling, lambdaInvokeNameGen)
 {

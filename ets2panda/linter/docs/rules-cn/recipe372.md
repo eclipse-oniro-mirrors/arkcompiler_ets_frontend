@@ -1,41 +1,46 @@
-## 不支持编译阶段根据PromiseSettledResult的status值确定其实际类型
+## 智能类型差异
 
-**规则：** arkts-not-support-PromiseSettledResult-smartcast
+**规则：** `arkts-no-ts-like-smart-type`
 
-**级别：** error
+**规则解释：**
 
-arkts1.2中不支持对类的成员变量进行智能转换（智能类型差异arkts-no-ts-like-smart-type）。
+在ArkTS1.2中，线程共享对象在做[智能转换](#智能转换)时会表现的与ArkTS1.1不一致。
 
-**智能转换：** 编译器会在某些场景下（如instanceof、null检查、上下文推导等）识别出对象的具体类型，自动将变量转换为相应类型，而无需手动转换。
+**变更原因：**
+
+在ArkTS1.2中，由于线程共享对象在多线程中使用，编译器在做类型推导和分析时需要考虑并发场景下变量类型/值的变化。
+
+**适配建议：**
+
+线程共享对象要通过局部变量进行[智能转换](#智能转换)。
+
+**示例：**
 
 **ArkTS1.1**
+
 ```typescript
-let f1 = Promise.resolve<string>('fulfilled 1');
-Promise.allSettled<string>([f1])
-  .then((results: PromiseSettledResult<string>[]) => {
-    results.forEach((result: PromiseSettledResult<string>) => {
-      if (result.status === 'fulfilled') {
-        console.log(`${result.value} `);
-      } else {
-        console.log(`${result.reason.message} `);
-      }
-    });
-  })
+class AA {
+  public static instance?: number;
+  getInstance(): number {
+    if (!AA.instance) {
+      return 0;
+    }
+    return AA.instance;
+  }
+}
 ```
 
 **ArkTS1.2**
+
 ```typescript
-let f1 = Promise.resolve<string>('fulfilled 1');
-Promise.allSettled<string>([f1])
-  .then((results: PromiseSettledResult<string>[]) => {
-    results.forEach((result: PromiseSettledResult<string>) => {
-      if (result.status === 'fulfilled') {
-          let result1 = result as PromiseFulfilledResult<string>;
-          console.log(result1.value);
-            } else {
-             let result1 = result as PromiseRejectedResult;
-             console.log(result1.reason.message);
-            }
-      });
-   })
+class AA {
+  public static instance?: number;
+  getInstance(): number {
+    let a = AA.instance     // 需通过局部变量进行类型转换。
+    if (!a) {
+      return 0;
+    }
+    return a;
+  }
+}
 ```

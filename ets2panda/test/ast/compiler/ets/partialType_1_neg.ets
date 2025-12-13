@@ -28,4 +28,5 @@ function foo(): void {
 	let fld_1: Partial<A> = /* @@ label */new A(); // CTE
 }
 
-/* @@@ label Error TypeError: Type 'A' cannot be assigned to type 'Partial<A>'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'Partial<A>' */

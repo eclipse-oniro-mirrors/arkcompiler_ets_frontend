@@ -15,5 +15,6 @@
 
 function sum(...numbers: number = 0): number {}
 
-/* @@? 16:35 Error SyntaxError: Rest parameter cannot have the default value. */
-/* @@? 16:36 Error SyntaxError: Identifier is needed here. */
+
+/* @@? 16:35 Error Syntax error ESY0192: Rest parameter cannot have the default value. */
+/* @@? 16:36 Error Syntax error ESY0131: Identifier is needed here. */

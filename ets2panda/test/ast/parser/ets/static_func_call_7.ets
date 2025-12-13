@@ -19,8 +19,9 @@ class A {
 
 class B extends A {
   public bar(): void {
-    super./* @@ label */foo();
+    super.foo();
   }
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'A' */
+
+/* @@? 22:11 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

@@ -15,9 +15,10 @@
 
 import {foo flt} from "import_tests/packages";
 
-/* @@? 16:13 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 16:13 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 16:16 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 16:18 Error SyntaxError: Unexpected token 'from'. */
-/* @@? 16:18 Error TypeError: Unresolved reference from */
-/* @@? 16:23 Error SyntaxError: Unexpected token 'import_tests/packages'. */
+
+/* @@? 16:13 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 16:13 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 16:16 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 16:18 Error Syntax error ESY0227: Unexpected token 'from'. */
+/* @@? 16:18 Error Semantic error ESE0143: Unresolved reference from */
+/* @@? 16:23 Error Syntax error ESY0227: Unexpected token 'import_tests/packages'. */

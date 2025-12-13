@@ -21,4 +21,5 @@ target: while(true) {
     }
 }
 
-/* @@? 19:13 Error TypeError: Continue or break target can't be outside the function */
+
+/* @@? 19:13 Error Semantic error ESE49316: Continue or break target can't be outside the function */

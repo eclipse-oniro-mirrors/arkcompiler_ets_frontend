@@ -20,4 +20,5 @@ class Door {
     }
 }
 
-/* @@@ label1 Error TypeError: Native, Abstract and Declare methods cannot have body. */
+
+/* @@@ label1 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

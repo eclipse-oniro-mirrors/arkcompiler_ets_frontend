@@ -19,4 +19,5 @@ function main(): void {
     }
 }
 
-/* @@@ label1 Error SyntaxError: Expected ';', got 'identification literal'. */
+
+/* @@@ label1 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */

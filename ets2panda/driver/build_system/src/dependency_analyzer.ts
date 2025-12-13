@@ -23,15 +23,18 @@ import {
     DEP_ANALYZER_DIR,
     DEP_ANALYZER_INPUT_FILE,
     DEP_ANALYZER_OUTPUT_FILE,
-    DECL_ETS_SUFFIX,
+    MERGED_CLUSTER_FILE,
+    FILE_HASH_CACHE,
+    ETSCACHE_SUFFIX,
     ABC_SUFFIX,
-    MERGED_CYCLE_FILE,
-    FILE_HASH_CACHE
+    CLUSTER_FILES_TRESHOLD,
+    ENABLE_DECL_CACHE,
+    ENABLE_CLUSTERS
 } from './pre_define';
 
 import {
     changeFileExtension,
-    shouldBeCompiled,
+    shouldBeUpdated,
     updateFileHash,
     ensureDirExists,
     ensurePathExists,
@@ -50,13 +53,24 @@ import {
     LogDataFactory
 } from './logger';
 
+import {
+    BS_PERF_FILE_NAME,
+    StatisticsRecorder,
+    RecordEvent
+} from './util/statsRecorder'
+
 import { ErrorCode, DriverError } from './util/error';
 
 import { ArkTSConfigGenerator, ArkTSConfig } from './build/generate_arktsconfig';
 
 import { computeHash } from './util/utils'
 
+import { Graph, GraphNode } from './util/graph';
+
+import { dotGraphDump } from './util/dotGraphDump';
+
 import cloneDeep from 'lodash.clonedeep'
+
 
 export interface DependencyFileMap {
     dependants: {
@@ -67,6 +81,19 @@ export interface DependencyFileMap {
     }
 }
 
+enum DepAnalyzerEvent {
+    GEN_DEPENDENCY_MAP = 'Generate dependency map (spawn exec tool)',
+    CREATE_GRAPH = 'Create graph',
+    COLLAPSE_CYCLES = 'Collapse cycles in graph',
+    FILTER_GRAPH = 'Filter jobs to build',
+    CLUSTER_GRAPH = 'Merge jobs into clusters',
+    SAVE_HASH = 'Save source files\' hashes'
+}
+
+function formEvent(event: DepAnalyzerEvent): string {
+    return '[Dependency analyzer] ' + event;
+}
+
 export class DependencyAnalyzer {
 
     private readonly logger: Logger;
@@ -74,10 +101,13 @@ export class DependencyAnalyzer {
     private readonly outputDir: string;
     private readonly cacheDir: string;
     private readonly hashCacheFile: string;
+    private readonly statsRecorder: StatisticsRecorder;
+    private readonly dumpGraph: boolean = false;
+    private readonly clusteredBuild: boolean = false;
     private entryFiles: Set<string>;
     private filesHashCache: Record<string, string>;
 
-    constructor(buildConfig: BuildConfig) {
+    constructor(buildConfig: BuildConfig, clusteredBuild: boolean = ENABLE_CLUSTERS) {
         this.logger = Logger.getInstance();
 
         this.entryFiles = new Set<string>(buildConfig.compileFiles);
@@ -90,6 +120,14 @@ export class DependencyAnalyzer {
         this.hashCacheFile = path.resolve(buildConfig.cachePath, FILE_HASH_CACHE);
         this.filesHashCache = this.loadHashCache();
 
+        this.statsRecorder = new StatisticsRecorder(
+            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
+            buildConfig.recordType,
+            `Dependency analyzer`
+        );
+
+        this.clusteredBuild = clusteredBuild;
+        this.dumpGraph = buildConfig.dumpDependencyGraph ?? false;
     }
 
     private loadHashCache(): Record<string, string> {
@@ -143,7 +181,8 @@ export class DependencyAnalyzer {
     }
 
     private formExecCmd(input: string, output: string, config: string): string {
-        let cmd = [path.resolve(this.binPath)];
+        let cmd = [];
+        cmd.push('"' + path.resolve(this.binPath) + '"');
         cmd.push('@' + '"' + input + '"');
         cmd.push('--arktsconfig=' + '"' + config + '"');
         cmd.push('--output=' + '"' + output + '"');
@@ -186,13 +225,17 @@ export class DependencyAnalyzer {
         return resDependencyMap;
     }
 
+    private get mergedArktsConfigPath(): string {
+        return path.join(this.outputDir, ARKTSCONFIG_JSON_FILE);
+    }
+
     private generateDependencyMap(
         entryFiles: Set<string>,
         modules: Array<ModuleInfo>
     ): DependencyFileMap {
         const inputFile: string = path.join(this.outputDir, DEP_ANALYZER_INPUT_FILE);
         const outputFile: string = path.join(this.outputDir, DEP_ANALYZER_OUTPUT_FILE);
-        const arktsConfigPath: string = path.join(this.outputDir, ARKTSCONFIG_JSON_FILE);
+        const arktsConfigPath: string = this.mergedArktsConfigPath;
 
         let depAnalyzerInputFileContent: string = Array.from(entryFiles).join(os.EOL);
         fs.writeFileSync(inputFile, depAnalyzerInputFileContent);
@@ -232,340 +275,209 @@ export class DependencyAnalyzer {
             }
         });
 
-        this.logger.printDebug(`fill dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
+        // Remove dependencies on itself
+        const removeItemIfNecessary = (item: [filePath: string, filePathes: string[]]) => {
+            const filePath: string = item[0]
+            const filePathes: string[] = item[1]
+            const index = filePathes.indexOf(filePath)
+            if (index > -1) {
+                filePathes.splice(index, 1)
+            }
+        }
+        Object.entries(fullDependencyMap.dependants).forEach(removeItemIfNecessary)
+        Object.entries(fullDependencyMap.dependencies).forEach(removeItemIfNecessary)
+
+        this.logger.printDebug(`full dependency map: ${JSON.stringify(fullDependencyMap, null, 1)}`)
         return this.filterDependencyMap(fullDependencyMap, entryFiles);
     }
 
-    public findStronglyConnectedComponents(fileMap: DependencyFileMap): Map<string, Set<string>> {
-        const adjacencyList: Record<string, string[]> = {};
-        const reverseAdjacencyList: Record<string, string[]> = {};
-        const allNodes = new Set<string>();
-
-        for (const node in fileMap.dependencies) {
-            allNodes.add(node);
-            fileMap.dependencies[node].forEach(dep => allNodes.add(dep));
-        }
-        for (const node in fileMap.dependants) {
-            allNodes.add(node);
-            fileMap.dependants[node].forEach(dep => allNodes.add(dep));
-        }
-
-        allNodes.forEach(node => {
-            adjacencyList[node] = fileMap.dependencies[node] || [];
-            reverseAdjacencyList[node] = fileMap.dependants[node] || [];
-        });
-
-        const visited = new Set<string>();
-        const order: string[] = [];
-
-        function dfs(node: string): void {
-            visited.add(node);
-            for (const neighbor of adjacencyList[node]) {
-                if (!visited.has(neighbor)) {
-                    dfs(neighbor);
-                }
-            }
-            order.push(node);
-        }
-
-        allNodes.forEach(node => {
-            if (!visited.has(node)) {
-                dfs(node);
-            }
-        });
-
-        visited.clear();
-        const components = new Map<string, Set<string>>();
-
-        function reverseDfs(node: string, component: Set<string>): void {
-            visited.add(node);
-            component.add(node);
-            for (const neighbor of reverseAdjacencyList[node]) {
-                if (!visited.has(neighbor)) {
-                    reverseDfs(neighbor, component);
-                }
-            }
-        }
-
-        for (let i = order.length - 1; i >= 0; i--) {
-            const node = order[i];
-            if (!visited.has(node)) {
-                const component = new Set<string>();
-                reverseDfs(node, component);
-                if (component.size > 1) {
-                    const sortedFiles = Array.from(component).sort();
-                    const componentId = computeHash(sortedFiles.join('|'));
-                    components.set(componentId, component);
-                }
-            }
-        }
-
-        this.logger.printDebug(`Found components: ${JSON.stringify([...components], null, 1)}`)
-        return components;
-    }
-
-    private verifyModuleCyclicDependency(files: string[], fileToModule: Map<string, ModuleInfo>) {
-        const modules = files.map((file: string) => {
-            const module = fileToModule.get(file)
-            if (!module) {
-                throw new DriverError(
-                    LogDataFactory.newInstance(
-                        ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
-                        `Failed to find module for file ${file}.`,
-                    )
-                )
-            }
-            return module
-        })
-        const set = new Set(modules.map((module: ModuleInfo) => module.packageName))
-        if (set.size > 1) {
-            throw new DriverError(
-                LogDataFactory.newInstance(
-                    ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
-                    'Cyclic dependency between modules found.',
-                    "Module cycle: " + Array.from(set).join(" <---> ")
-                )
-            )
-        }
-    }
-
-    private createCycleJob(
-        jobs: Record<string, CompileJobInfo>,
-        cycle: Set<string>,
-        cycleId: string,
-        dependencyMap: DependencyFileMap,
-        fileToCycle: Map<string, string>,
-        fileToModule: Map<string, ModuleInfo>
-    ) {
-        const cycleFileList = Array.from(cycle)
-        const cycleDependencies = cycleFileList.map(
-            (file: string) => this.collectJobDependencies(file, dependencyMap, fileToCycle)
-        ).reduce((acc: Set<string>, curr: Set<string>) => new Set([...acc, ...curr]))
-
-        const cycleDependants: Set<string> = cycleFileList.map(
-            (file: string) => this.collectJobDependants(file, dependencyMap, fileToCycle)
-        ).reduce((acc: Set<string>, curr: Set<string>) => new Set([...acc, ...curr]))
-
-        const inputFile = cycleFileList[0];
-        const outputFile = path.resolve(this.cacheDir, "cycles", cycleId, MERGED_CYCLE_FILE);
-        ensurePathExists(outputFile);
-        const module: ModuleInfo = fileToModule.get(inputFile)!
-        const arktsConfigFile = module.arktsConfigFile
-
-        jobs[cycleId] = {
-            id: cycleId,
-            fileList: cycleFileList,
-            jobDependencies: Array.from(cycleDependencies),
-            jobDependants: Array.from(cycleDependants),
-            compileFileInfo: {
-                inputFilePath: inputFile,
-                outputFilePath: outputFile,
-                arktsConfigFile: arktsConfigFile
-            },
-            type: CompileJobType.DECL_ABC
-        }
-        this.logger.printDebug(`Created job for cycle: ${JSON.stringify(jobs[cycleId], null, 1)}`)
-    }
-
-    private filterCollectedJobs(jobs: Record<string, CompileJobInfo>): Record<string, CompileJobInfo> {
-        let filteredJobs: Record<string, CompileJobInfo> = {}
-
-        const addJobRecursively = (jobId: string) => {
-            const job: CompileJobInfo = jobs[jobId];
-            filteredJobs[jobId] = job;
-            for (const dependant of job.jobDependants) {
-                addJobRecursively(dependant);
-            }
-        }
-
-        const skipJob = (jobId: string) => {
-            const job: CompileJobInfo = jobs[jobId];
-            job.jobDependants.forEach((dependantId: string) => {
-                let dependant = jobs[dependantId]
-                dependant.jobDependencies = dependant.jobDependencies.filter((dependency: string) => dependency != jobId)
-            })
-        }
-
-        for (const [jobId, jobInfo] of Object.entries(jobs)) {
-
-            if (filteredJobs[jobId]) {
-                // Already added this job
-                continue;
-            }
-
-            if (jobInfo.fileList.length > 1) {
-                let shouldCompile: boolean = false;
-                for (const file of jobInfo.fileList) {
-                    shouldCompile = updateFileHash(file, this.filesHashCache) || shouldCompile
-                }
-
-                if (!shouldCompile) {
-                    this.logger.printDebug(`Skipping cycle ${jobId} compilation`)
-
-                    skipJob(jobId);
-                    continue;
-                }
-
-                // For now compile do not generate decl files for cycles
-                jobInfo.type &= CompileJobType.ABC;
-            } else {
-                const inputFilePath = jobInfo.compileFileInfo.inputFilePath;
-                const outputFilePath = jobInfo.compileFileInfo.outputFilePath;
-                const outputDeclFilePath = changeFileExtension(outputFilePath, DECL_ETS_SUFFIX)
-                ensurePathExists(outputDeclFilePath);
-
-                const hashChanged: boolean = updateFileHash(inputFilePath, this.filesHashCache)
-                const compileAbc: boolean = hashChanged || shouldBeCompiled(inputFilePath, outputFilePath)
-                const genDecl: boolean = hashChanged || shouldBeCompiled(inputFilePath, outputDeclFilePath)
-
-                if (!compileAbc && !genDecl) {
-                    this.logger.printDebug(`Skipping file ${inputFilePath} compilation`)
-
-                    skipJob(jobId);
-                    continue;
-                }
-
-                jobInfo.type &= CompileJobType.NONE;
-
-                if (genDecl) {
-                    jobInfo.type |= CompileJobType.DECL;
-                }
-
-                if (compileAbc) {
-                    jobInfo.type |= CompileJobType.ABC;
-                }
-            }
-
-            addJobRecursively(jobId);
-        }
-
-        return filteredJobs;
-    }
-
-    public collectJobs(
+    public getGraph(
         entryFiles: Set<string>,
         fileToModule: Map<string, ModuleInfo>,
-        moduleInfos: Map<string, ModuleInfo>
-    ): Record<string, CompileJobInfo> {
-        let jobs: Record<string, CompileJobInfo> = {};
+        moduleInfos: Map<string, ModuleInfo>,
+        outputs: string[]
+    ): Graph<CompileJobInfo> {
 
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.GEN_DEPENDENCY_MAP));
         const dependencyMap: DependencyFileMap =
             this.generateDependencyMap(entryFiles, Array.from(moduleInfos.values()));
 
-        const stronglyConnectedComponents: Map<string, Set<string>> = this.findStronglyConnectedComponents(dependencyMap);
-        const fileToCycleMap: Map<string, string> = new Map<string, string>();
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.CREATE_GRAPH));
 
-        // First iterate to check Module Cyclic Dependencies and fill fileToCycleMap
-        stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
-            this.verifyModuleCyclicDependency(Array.from(component), fileToModule);
-            component.forEach((file) => {
-                fileToCycleMap.set(file, componentId);
-            });
-        });
-        this.logger.printDebug(`Found stronglyConnectedComponents: ${JSON.stringify([...stronglyConnectedComponents], null, 1)}`)
-        this.logger.printDebug(`fileToCycleMap: ${JSON.stringify([...fileToCycleMap], null, 1)}`)
-
-        // Second iterate to create jobs to compile cycles
-        stronglyConnectedComponents.forEach((component: Set<string>, componentId: string) => {
-            this.createCycleJob(jobs, component, componentId, dependencyMap, fileToCycleMap, fileToModule)
-        });
-
-        entryFiles.forEach((file: string) => {
-            const isInCycle: boolean = fileToCycleMap.has(file)
-            const jobDependencies: Set<string> = this.collectJobDependencies(file, dependencyMap, fileToCycleMap);
-            const jobDependants: Set<string> = this.collectJobDependants(file, dependencyMap, fileToCycleMap);
-
-            if (isInCycle) {
-                return;
-            }
-
-            const jobId: string = this.getJobId(file)
-
+        const dependencyGraphNodes: GraphNode<CompileJobInfo>[] = [];
+        for (const file of entryFiles) {
             const module: ModuleInfo = fileToModule.get(file)!
-            const outputFile = path.resolve(this.cacheDir, module.packageName,
+            const output: string = path.resolve(
+                this.cacheDir, module.packageName,
                 changeFileExtension(
                     path.relative(module.moduleRootPath, file),
                     ABC_SUFFIX
                 )
-            )
-            ensurePathExists(outputFile);
-            const arktsConfigFile: string = module.arktsConfigFile
-
-            jobs[jobId] = {
-                id: jobId,
-                fileList: [file],
-                jobDependencies: [...jobDependencies],
-                jobDependants: [...jobDependants],
-                compileFileInfo: {
-                    inputFilePath: file,
-                    outputFilePath: outputFile,
-                    arktsConfigFile: arktsConfigFile
+            );
+            const node = new GraphNode<CompileJobInfo>(computeHash(file), {
+                fileInfo: {
+                    input: file,
+                    output: output,
+                    arktsConfig: module.arktsConfigFile,
+                    moduleName: module.packageName,
+                    moduleRoot: module.moduleRootPath,
                 },
-                type: CompileJobType.DECL_ABC
+                fileList: [file],
+                declgenConfig: {
+                    output: module.declgenV2OutPath!
+                },
+                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
+            });
+
+            for (const dependency of dependencyMap.dependencies[file]) {
+                node.predecessors.add(computeHash(dependency));
             }
-            this.logger.printDebug(`Created Abc job: ${JSON.stringify(jobs[jobId], null, 1)}`)
+
+            for (const dependant of dependencyMap.dependants[file]) {
+                node.descendants.add(computeHash(dependant));
+            }
+            dependencyGraphNodes.push(node);
+        }
+
+        const dependencyGraph: Graph<CompileJobInfo> = Graph.createGraphFromNodes(dependencyGraphNodes);
+        dependencyGraph.verify();
+        if (this.dumpGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.dot'), dotGraphDump(dependencyGraph), 'utf-8');
+        }
+
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.COLLAPSE_CYCLES));
+        const dataMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
+            const outputAbc = path.resolve(
+                this.cacheDir, 'clusters', computeHash([lhs.id, rhs.id].join('|')), MERGED_CLUSTER_FILE,
+            );
+            return {
+                fileInfo: {
+                    // In clusters this field is meaningless
+                    input: lhs.data.fileInfo.input,
+                    output: outputAbc,
+                    arktsConfig: lhs.data.fileInfo.arktsConfig,
+                    moduleName: lhs.data.fileInfo.moduleName,
+                    moduleRoot: lhs.data.fileInfo.moduleRoot,
+                },
+                fileList: [...lhs.data.fileList, ...rhs.data.fileList],
+                declgenConfig: {
+                    output: lhs.data.declgenConfig.output
+                },
+                type: ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC
+            }
+        };
+        const cycleMerger = (lhs: GraphNode<CompileJobInfo>, rhs: GraphNode<CompileJobInfo>): CompileJobInfo => {
+            if ((lhs.data.fileInfo.moduleName !== rhs.data.fileInfo.moduleName) ||
+                (lhs.data.fileInfo.moduleRoot !== rhs.data.fileInfo.moduleRoot)) {
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_DEPENDENCY_ANALYZE_FAIL,
+                        'Cyclic dependency between modules found.',
+                        `Module cycle: ${lhs.data.fileInfo.moduleName} <---> ${rhs.data.fileInfo.moduleName}`)
+                )
+            }
+            return dataMerger(lhs, rhs);
+        }
+        Graph.collapseCycles(dependencyGraph, cycleMerger);
+
+        dependencyGraph.verify();
+        if (this.dumpGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.collapsed.dot'), dotGraphDump(dependencyGraph), 'utf-8');
+        }
+
+        if (this.clusteredBuild) {
+            let mainModule = Array.from(moduleInfos.values()).find((module) => module.isMainModule)!
+            this.statsRecorder.record(formEvent(DepAnalyzerEvent.CLUSTER_GRAPH));
+            const nodeIds: string[] = Graph.topologicalSort(dependencyGraph);
+            while(nodeIds.length > 0) {
+                let cluster = dependencyGraph.getNodeById(nodeIds.shift()!);
+                cluster.data.fileInfo.arktsConfig = mainModule.arktsConfigFile;
+                cluster.data.fileInfo.moduleName = mainModule.packageName;
+                cluster.data.fileInfo.moduleRoot = mainModule.moduleRootPath;
+                for (let counter = 0; counter < CLUSTER_FILES_TRESHOLD - 1 && nodeIds.length > 0; counter++) {
+                    let nodeToMerge = dependencyGraph.getNodeById(nodeIds.shift()!);
+                    cluster = dependencyGraph.mergeNodes(cluster, nodeToMerge, dataMerger);
+                }
+            }
+
+            dependencyGraph.verify();
+            if (this.dumpGraph) {
+                fs.writeFileSync(path.resolve(this.cacheDir, 'graph.clustered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
+            }
+        }
+
+        // NOTE: some workaround to gather all outputs
+        // NOTE: likely to be refactored
+        dependencyGraph.nodes.forEach((node: GraphNode<CompileJobInfo>) => {
+            outputs.push(node.data.fileInfo.output);
         });
 
-        jobs = this.filterCollectedJobs(jobs);
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.FILTER_GRAPH));
+        this.filterGraph(dependencyGraph);
+
+        dependencyGraph.verify();
+        if (this.dumpGraph) {
+            fs.writeFileSync(path.resolve(this.cacheDir, 'graph.filtered.dot'), dotGraphDump(dependencyGraph), 'utf-8');
+        }
+
+
+        this.statsRecorder.record(formEvent(DepAnalyzerEvent.SAVE_HASH));
         this.saveHashCache();
-        this.logger.printDebug(`Collected jobs: ${JSON.stringify(jobs, null, 1)}`)
+        this.statsRecorder.record(RecordEvent.END);
+        this.statsRecorder.writeSumSingle();
 
-        return jobs;
+        return dependencyGraph;
     }
 
-    private collectJobDependencies(
-        file: string,
-        dependencyMap: DependencyFileMap,
-        fileToCycleMap: Map<string, string>
-    ): Set<string> {
-        const fileDependencies = dependencyMap.dependencies[file]
-
-        let dependencySet: Set<string> = new Set<string>();
-        fileDependencies.forEach((dependency) => {
-            if (!fileToCycleMap.has(dependency)) {
-                dependencySet.add(this.getJobId(dependency));
-                return;
+    private filterGraph(graph: Graph<CompileJobInfo>): void {
+        for (const nodeId of Graph.topologicalSort(graph)) {
+            const node = graph.getNodeById(nodeId);
+            if (node.predecessors.size !== 0) {
+                // Still has dependencies, so do not remove the node
+                // Update file hashes
+                node.data.fileList.map((file: string) => updateFileHash(file, this.filesHashCache));
+                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
+                continue;
             }
-            const dependencyCycle: string = fileToCycleMap.get(dependency)!
 
-            if (fileToCycleMap.has(file)) {
-                const fileCycle: string = fileToCycleMap.get(file)!
-                if (fileCycle == dependencyCycle) {
-                    return;
+            if (node.data.fileList.length > 1) {
+                let shouldBeCompiled: boolean = false;
+                for (const file of node.data.fileList) {
+                    shouldBeCompiled = updateFileHash(file, this.filesHashCache) ||
+                        shouldBeUpdated(file, node.data.fileInfo.output) ||
+                        shouldBeCompiled
                 }
-            }
-            dependencySet.add(dependencyCycle);
-        });
-        return dependencySet;
-    }
 
-    private collectJobDependants(
-        file: string,
-        dependencyMap: DependencyFileMap,
-        fileToCycleMap: Map<string, string>
-    ): Set<string> {
-        const fileDependants = dependencyMap.dependants[file]
-        let dependantSet: Set<string> = new Set<string>();
-
-        fileDependants.forEach((dependant) => {
-            if (!fileToCycleMap.has(dependant)) {
-                dependantSet.add(this.getJobId(dependant));
-                return;
-            }
-            const dependantCycle: string = fileToCycleMap.get(dependant)!
-
-            if (fileToCycleMap.has(file)) {
-                const fileCycle: string = fileToCycleMap.get(file)!
-                if (fileCycle == dependantCycle) {
-                    return;
+                if (!shouldBeCompiled) {
+                    this.logger.printDebug(`Skipping cluster ${node.id} compilation`);
+                    graph.removeNode(node);
                 }
-            }
-            dependantSet.add(dependantCycle)
-        });
-        return dependantSet;
-    }
 
-    private getJobId(file: string): string {
-        return computeHash(file);
+                node.data.type = ENABLE_DECL_CACHE ? CompileJobType.DECL_ABC : CompileJobType.ABC;
+                continue;
+            }
+
+            const input = node.data.fileInfo.input;
+            const outputAbc = node.data.fileInfo.output;
+            const outputDecl = changeFileExtension(outputAbc, ETSCACHE_SUFFIX);
+
+            const hashChanged: boolean = updateFileHash(input, this.filesHashCache);
+            const genDecl: boolean = hashChanged || shouldBeUpdated(input, outputDecl);
+            const compileAbc: boolean = hashChanged || shouldBeUpdated(input, outputAbc);
+
+            if (!compileAbc && !genDecl) {
+                this.logger.printDebug(`Skipping file ${input} compilation`)
+                graph.removeNode(node);
+            }
+
+            node.data.type &= CompileJobType.NONE;
+            if (genDecl && ENABLE_DECL_CACHE) {
+                node.data.type |= CompileJobType.DECL;
+            }
+
+            if (compileAbc) {
+                node.data.type |= CompileJobType.ABC;
+            }
+        }
     }
 }

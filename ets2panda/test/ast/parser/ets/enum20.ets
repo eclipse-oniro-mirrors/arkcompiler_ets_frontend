@@ -16,13 +16,14 @@
 enum Color { Red, Green = -100, Blue, White = 0x00 }
 
 function main(): void {
-  let red = Color.Red./* @@ label */ordinal();
-  let green = Color.Green./* @@ label1 */ordinal();
-  let blue = Color.Blue./* @@ label2 */ordinal();	
-  let white = Color.White./* @@ label3 */ordinal();
+  let red = Color.Red.ordinal();
+  let green = Color.Green.ordinal();
+  let blue = Color.Blue.ordinal();	
+  let white = Color.White.ordinal();
 }
 
-/* @@@ label Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label1 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label2 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
-/* @@@ label3 Error TypeError: Property 'ordinal' does not exist on type 'Color'  */
+
+/* @@? 19:23 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@? 20:27 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@? 21:25 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */
+/* @@? 22:27 Error Semantic error ESE0087: Property 'ordinal' does not exist on type 'Color' */

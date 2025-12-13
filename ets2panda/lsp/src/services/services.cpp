@@ -35,7 +35,7 @@ std::vector<Location> GetImplementationLocationAtPosition(es2panda_Context *cont
     // So this section should be updated after the implementation of vector returning
     // function.
 
-    auto implementationList = ArenaVector<ir::AstNode *>(ctx->allocator->Adapter());
+    auto implementationList = std::vector<ir::AstNode *> {};
     auto declInfo = GetDefinitionAtPositionImpl(context, (size_t)position);
     auto implementation = declInfo.first;
     if (implementation != nullptr && IsValidImplementation(implementation)) {

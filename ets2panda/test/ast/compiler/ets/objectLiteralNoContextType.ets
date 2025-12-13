@@ -15,4 +15,5 @@
 
 let /* @@ label */x = {};
 
-/* @@@ label Error TypeError: Cannot infer type for x because class composite needs an explicit target type  */
+
+/* @@@ label Error Semantic error ESE0174: Cannot infer type for x because class composite needs an explicit target type */

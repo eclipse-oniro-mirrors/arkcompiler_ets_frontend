@@ -20,4 +20,5 @@ function main() {
 }
 
 
-/* @@? 19:23 Error TypeError: Spread expression can be applied only to array or tuple type, but 'Object|null|undefined' is provided */
+
+/* @@? 19:23 Error Semantic error ESE0049: Spread expression can be applied only to array or tuple type, but 'Object|null|undefined' is provided */

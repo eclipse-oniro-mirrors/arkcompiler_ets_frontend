@@ -16,12 +16,15 @@
 function foo(): int {
     try {
         return 0;
-    } catch (e: ArithmeticError) {
-        return 1;
-        /* @@ label */let a = 2; // unreachable statement
-    } catch (e: ClassCastError) {
-        return 2;
+    } catch (e) {
+        if (e instanceof ArithmeticError) {
+            return 1;
+            /* @@ label */let a = 2; // unreachable statement
+        } else  {
+            return 2;
+        }
     }
 }
 
-/* @@@ label Warning Warning: Unreachable statement.  */
+
+/* @@@ label Warning Warning W0026: Unreachable statement. */

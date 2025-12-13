@@ -31,6 +31,6 @@ function test5(call: ErrorCallBack3<Object>) { } // should be ok because the sec
 
 function test6(call: ErrorCallBack3) { } // should be error
 
-/* @@? 24:22 Error TypeError: Type alias declaration is generic, but too few type arguments were provided */
-/* @@? 26:36 Error TypeError: Expected at least 2 type arguments, but got 1. */
-/* @@? 32:22 Error TypeError: Type alias declaration is generic, but too few type arguments were provided */
+/* @@? 24:22 Error Semantic error ESE0155: Type alias declaration is generic, but too few type arguments were provided */
+/* @@? 26:36 Error Semantic error ESE0274: Expected at least 2 type arguments, but got 1. */
+/* @@? 32:22 Error Semantic error ESE0155: Type alias declaration is generic, but too few type arguments were provided */

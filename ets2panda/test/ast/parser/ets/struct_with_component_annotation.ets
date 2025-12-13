@@ -25,5 +25,6 @@ struct A {
 }
 
 
-/* @@? 22:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 20:2 Error TypeError: Cannot find type 'Component'. */
+
+/* @@? 20:2 Error Semantic error ESE0371: Cannot find type 'Component'. */
+/* @@? 22:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */

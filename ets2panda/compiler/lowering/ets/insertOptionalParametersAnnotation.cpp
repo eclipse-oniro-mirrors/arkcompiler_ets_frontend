@@ -111,14 +111,8 @@ bool InsertOptionalParametersAnnotation::PerformForModule(public_lib::Context *c
         return true;
     }
 
-    if (program->GetFlag(parser::ProgramFlags::AST_HAS_OPTIONAL_PARAMETER_ANNOTATION)) {
-        return true;
-    }
-
     program->Ast()->IterateRecursivelyPostorder(
         [ctx](ir::AstNode *node) -> void { TryInsertDefaultAnnotation(ctx, node); });
-
-    program->SetFlag(parser::ProgramFlags::AST_HAS_OPTIONAL_PARAMETER_ANNOTATION);
 
     return true;
 }

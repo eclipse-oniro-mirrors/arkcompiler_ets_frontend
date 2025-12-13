@@ -17,6 +17,7 @@ interface I {
     private private foo()
 }
 
-/* @@? 17:13 Error SyntaxError: Identifier expected. */
-/* @@? 17:13 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:24 Error SyntaxError: Private interface methods must have body. */
+
+/* @@? 17:13 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 17:13 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:24 Error Syntax error ESY0032: Private interface methods must have body. */

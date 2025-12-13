@@ -17,11 +17,11 @@ class A {
     field: string = "A"
 }
 
-class Test {
+class Test<T> {
     foo(a: string): string {
         return "invoke1"
     }
-    foo<T1>(a: T1): string {
+    foo<T1 = T>(a: T1): string {
         return "invoke2"
     }
     foo<T1, T2>(a: T1, b: T2): string {
@@ -30,7 +30,7 @@ class Test {
 }
 
 function main() {
-    let a: Test= new Test();
+    let a: Test<A> = new Test<A>();
     arktest.assertEQ(a.foo(new A()), "invoke2");
     arktest.assertEQ(a.foo<number>(10), "invoke2");
     arktest.assertEQ(a.foo<number, string>(10, "abc"), "invoke3");

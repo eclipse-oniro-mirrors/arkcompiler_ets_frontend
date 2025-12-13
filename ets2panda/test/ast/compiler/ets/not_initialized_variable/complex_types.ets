@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-enum Car {
+export enum Car {
     big,
     small
 }
 
-class Animal {
+export class Animal {
     public age = 0
 }
 
-interface Plug {}
+export interface Plug {}
 
 // There is default value
 export let car: Car
@@ -35,8 +35,9 @@ export let plug: Plug
 
 console.log(car, animal, mutant, jsvalue, plug)
 
-/* @@? 36:13 Error TypeError: Variable 'car' is used before being assigned. */
-/* @@? 36:18 Error TypeError: Variable 'animal' is used before being assigned. */
-/* @@? 36:26 Error TypeError: Variable 'mutant' is used before being assigned. */
-/* @@? 36:34 Error TypeError: Variable 'jsvalue' is used before being assigned. */
-/* @@? 36:43 Error TypeError: Variable 'plug' is used before being assigned. */
+
+/* @@? 36:13 Error Semantic error ESE0375: Variable 'car' is used before being assigned. */
+/* @@? 36:18 Error Semantic error ESE0375: Variable 'animal' is used before being assigned. */
+/* @@? 36:26 Error Semantic error ESE0375: Variable 'mutant' is used before being assigned. */
+/* @@? 36:34 Error Semantic error ESE0375: Variable 'jsvalue' is used before being assigned. */
+/* @@? 36:43 Error Semantic error ESE0375: Variable 'plug' is used before being assigned. */

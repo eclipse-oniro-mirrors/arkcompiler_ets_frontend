@@ -40,5 +40,6 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Enum switch case must be unqualified name of an enum constant  */
-/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant  */
+
+/* @@@ label Error Semantic error ESE0334: Enum switch case must be unqualified name of an enum constant */
+/* @@@ label1 Error Semantic error ESE0334: Enum switch case must be unqualified name of an enum constant */

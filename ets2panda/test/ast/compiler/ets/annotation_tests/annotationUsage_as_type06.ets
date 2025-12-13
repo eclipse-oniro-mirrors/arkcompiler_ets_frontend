@@ -21,10 +21,7 @@ function foo2(): /* @@ label1 */MyAnno {}
 
 foo1(new /* @@ label2 */MyAnno())
 
-/* @@? 19:31 Error TypeError: Annotations cannot be used as a type. */
-/* @@? 20:33 Error TypeError: Annotations cannot be used as a type. */
-/* @@? 22:1 Error TypeError: No matching call signature for foo1(...) */
-/* @@? 22:25 Error TypeError: Annotations cannot be used as a type. */
-/* @@? 22:25 Error TypeError: Invalid type reference. */
-/* @@? 22:25 Error TypeError: Annotations cannot be used as a type. */
-/* @@? 22:25 Error TypeError: Invalid type reference. */
+
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label2 Error Semantic error ESE0159: Annotations cannot be used as a type. */

@@ -27,16 +27,15 @@ public:
         : allocator_(std::make_unique<ark::ThreadSafeArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true)),
           publicContext_ {std::make_unique<public_lib::Context>()},
           phaseManager_ {ScriptExtension::ETS, Allocator()},
-          program_ {parser::Program::NewProgram<varbinder::ETSBinder>(Allocator())},
+          varbinder_(allocator_.get()),
+          program_ {parser::Program::NewProgram<varbinder::ETSBinder>(Allocator(), &varbinder_)},
           checker_ {Allocator(), diagnosticEngine_}
     {
     }
 
     ~UnionNormalizationTest() override
     {
-        if (publicContext_->phaseManager != nullptr) {
-            delete publicContext_->phaseManager;
-        }
+        delete publicContext_->phaseManager;
     }
 
     static void SetUpTestCase()
@@ -171,6 +170,7 @@ private:
     std::unique_ptr<ark::ThreadSafeArenaAllocator> allocator_;
     std::unique_ptr<public_lib::Context> publicContext_;
     ark::es2panda::compiler::PhaseManager phaseManager_;
+    varbinder::ETSBinder varbinder_;
     parser::Program program_;
     util::DiagnosticEngine diagnosticEngine_;
     checker::ETSChecker checker_;

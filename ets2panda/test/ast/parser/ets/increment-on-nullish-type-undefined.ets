@@ -17,5 +17,6 @@
   a!++;
  }
 
- /* @@? 17:3 Warning Warning: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */
- /* @@? 17:3 Error TypeError: Type 'Double' cannot be assigned to type 'undefined' */
+ 
+/* @@? 17:3 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'undefined' */
+/* @@? 17:3 Warning Warning W0014: Bad operand type, the operand of the non-nullish expression is 'null' or 'undefined'. */

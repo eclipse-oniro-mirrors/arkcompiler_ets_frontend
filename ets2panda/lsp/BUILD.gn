@@ -35,7 +35,11 @@ group("lsp_packages") {
     deps = [ ":libes2panda_lsp" ]
   }
   if (bindings_build_enable) {
-    deps = [ "../bindings:ts_bindings" ]
+    deps = [
+      "../:libes2panda_public",
+      "../bindings:public",
+      "../bindings:ts_bindings",
+    ]
   }
 }
 
@@ -65,35 +69,60 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/formatting/formatting_settings.cpp",
     "src/formatting/rules.cpp",
     "src/formatting/rules_map.cpp",
+    "src/formatting/smart_indenter.cpp",
     "src/generate_constructor.cpp",
     "src/get_adjusted_location.cpp",
     "src/get_class_property_info.cpp",
     "src/get_definition_and_bound_span.cpp",
+    "src/get_edits_for_refactor.cpp",
     "src/get_name_or_dotted_name_span.cpp",
+    "src/get_node.cpp",
     "src/get_safe_delete_info.cpp",
+    "src/get_signature.cpp",
     "src/inlay_hints.cpp",
     "src/internal_api.cpp",
     "src/isolated_declaration.cpp",
     "src/line_column_offset.cpp",
     "src/navigate_to.cpp",
+    "src/node_matchers.cpp",
     "src/organize_imports.cpp",
     "src/quick_info.cpp",
     "src/refactor_provider.cpp",
+    "src/refactors/convert_arrow_braces.cpp",
     "src/refactors/convert_chain.cpp",
-    "src/refactors/convert_export.cpp",
     "src/refactors/convert_function.cpp",
+    "src/refactors/convert_function_to_class.cpp",
     "src/refactors/convert_import.cpp",
+    "src/refactors/convert_overload_list.cpp",
+    "src/refactors/convert_params_to_object.cpp",
     "src/refactors/convert_template.cpp",
+    "src/refactors/extract_symbol.cpp",
+    "src/refactors/extract_type.cpp",
+    "src/refactors/generate_constructor.cpp",
+    "src/refactors/generate_getters_and_setters.cpp",
+    "src/refactors/generate_override_methods.cpp",
+    "src/refactors/infer_function_return_type.cpp",
+    "src/refactors/move_to_new_file.cpp",
     "src/refactors/refactor_types.cpp",
     "src/references.cpp",
+    "src/register_code_fix/add_local_variable.cpp",
     "src/register_code_fix/add_missing_declare_property.cpp",
     "src/register_code_fix/add_missing_new_operator.cpp",
+    "src/register_code_fix/add_name_to_nameless_parameter.cpp",
+    "src/register_code_fix/constructor_for_derived_need_super_call.cpp",
     "src/register_code_fix/convert_const_to_let.cpp",
+    "src/register_code_fix/fix_add_function_return_statement.cpp",
     "src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp",
-    "src/register_code_fix/fix_expected_comma.cpp",
+    "src/register_code_fix/fix_class_incorrectly_implements_interface.cpp",
+    "src/register_code_fix/fix_class_super_must_precede_this_access.cpp",
+    "src/register_code_fix/fix_extends_interface_becomes_implements.cpp",
+    "src/register_code_fix/fix_import_non_exported_member.cpp",
     "src/register_code_fix/fix_missing_call_parantheses.cpp",
     "src/register_code_fix/fix_nan_equality.cpp",
+    "src/register_code_fix/fix_property_assignment.cpp",
+    "src/register_code_fix/fix_remove_override_modifier.cpp",
     "src/register_code_fix/fix_return_type_in_async_function.cpp",
+    "src/register_code_fix/fix_unreachable_code.cpp",
     "src/register_code_fix/forgotten_this_property_access.cpp",
     "src/register_code_fix/import_fixes.cpp",
     "src/register_code_fix/remove_accidental_call_parentheses.cpp",
@@ -112,18 +141,20 @@ ohos_source_set("libes2panda_lsp_static") {
   ]
   if ((defined(ark_standalone_build) && ark_standalone_build) ||
       (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
-    configs = [ "$ark_root:ark_config" ]
+    configs = [
+      "$ark_root:ark_config",
+      "$ark_root/assembler:arkassembler_public_config",
+      "$ark_root/libarkbase:arkbase_public_config",
+      "$ark_root/libarkfile:arkfile_public_config",
+    ]
   } else {
     configs = [
       "//build/config/components/runtime_core/static_core:ark_common_config",
     ]
   }
   configs += [
-    "$ark_root/assembler:arkassembler_public_config",
     "../:libes2panda_public_config",
     "../:libes2panda_config",
-    "$ark_root/libpandabase:arkbase_public_config",
-    "$ark_root/libpandafile:arkfile_public_config",
     ":libes2panda_lsp_config",
   ]
 
@@ -134,7 +165,10 @@ ohos_source_set("libes2panda_lsp_static") {
   ]
 
   external_deps = [
+    "runtime_core:assembler_headers",
     "runtime_core:libarktsbytecodeopt_package",
+    "runtime_core:libpandabase_headers",
+    "runtime_core:libpandafile_headers",
     sdk_libc_secshared_dep,
   ]
   part_name = "ets_frontend"

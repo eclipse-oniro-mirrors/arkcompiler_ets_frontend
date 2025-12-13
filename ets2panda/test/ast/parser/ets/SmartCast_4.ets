@@ -25,4 +25,5 @@ function main() {
   }	
 }
 
-/* @@@ label Error TypeError: Type 'Double|String|undefined' cannot be assigned to type 'String'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Double|String|undefined' cannot be assigned to type 'String' */

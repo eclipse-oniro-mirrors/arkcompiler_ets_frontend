@@ -15,6 +15,7 @@
 
 while(true) function a (){};
 
-/* @@? 16:13 Error SyntaxError: Nested functions are not allowed. */
-/* @@? 16:13 Error SyntaxError: Lexical declaration is not allowed in single statement context. */
-/* @@? 16:28 Error SyntaxError: Missing body in while statement */
+
+/* @@? 16:13 Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@? 16:13 Error Syntax error ESY0175: Lexical declaration is not allowed in single statement context. */
+/* @@? 16:28 Error Syntax error ESY0300: Missing body in while statement */

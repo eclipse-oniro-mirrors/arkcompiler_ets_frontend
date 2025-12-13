@@ -16,6 +16,6 @@
 @ns.Anno<()=>void>
 class A{}
 
-/* @@? 16:2 Error TypeError: Cannot find type 'ns'. */
-/* @@? 16:5 Error TypeError: 'Anno' type does not exist. */
-/* @@? 16:5 Error TypeError: 'Anno' is not an annotation. */
+/* @@? 16:2 Error Semantic error ESE0371: Cannot find type 'ns'. */
+/* @@? 16:5 Error Semantic error ESE0070: 'Anno' type does not exist. */
+/* @@? 16:5 Error Semantic error ESE0067: 'Anno' is not an annotation. */

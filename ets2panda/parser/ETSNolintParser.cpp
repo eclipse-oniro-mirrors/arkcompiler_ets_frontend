@@ -14,11 +14,17 @@
  */
 
 #include "ETSNolintParser.h"
+#include "public/public.h"
 
 namespace ark::es2panda::parser {
 ETSNolintParser::ETSNolintParser(ParserImpl *mainParser) : parser_(mainParser)
 {
     line_ = parser_->Lexer()->Line();
+}
+
+static bool WarningCollectionEnabled(public_lib::Context *ctx)
+{
+    return !ctx->config->options->GetEtsWarningCollection().empty();
 }
 
 void ETSNolintParser::SetStartPos()
@@ -32,6 +38,10 @@ void ETSNolintParser::SetStartPos()
 
 void ETSNolintParser::CollectETSNolints()
 {
+    if (!WarningCollectionEnabled(parser_->ctx_)) {
+        return;
+    }
+
     SetStartPos();
     char32_t cp = PeekSymbol();
 
@@ -71,6 +81,10 @@ void ETSNolintParser::CollectETSNolints()
 
 void ETSNolintParser::ApplyETSNolintsToStatements(ArenaVector<ir::Statement *> &statements) const
 {
+    if (!WarningCollectionEnabled(parser_->ctx_)) {
+        return;
+    }
+
     for (auto *it : statements) {
         ApplyETSNolintsToNodesRecursively(it);
     }

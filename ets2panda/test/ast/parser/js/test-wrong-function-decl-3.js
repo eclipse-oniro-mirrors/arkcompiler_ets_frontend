@@ -18,5 +18,6 @@ function f(p1, p2, p3) {
   a[;
 }
 
-/* @@? 18:5 Error SyntaxError: Unexpected token ';'. */
-/* @@? 18:5 Error SyntaxError: Unexpected token, expected ']'. */
+
+/* @@? 18:5 Error Syntax error ESY0227: Unexpected token ';'. */
+/* @@? 18:5 Error Syntax error ESY0228: Unexpected token, expected ']'. */

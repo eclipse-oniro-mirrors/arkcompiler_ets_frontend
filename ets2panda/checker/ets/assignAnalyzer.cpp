@@ -20,6 +20,7 @@
 #include "ir/base/classStaticBlock.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
+#include "ir/ets/etsDestructuring.h"
 #include "ir/statements/classDeclaration.h"
 #include "ir/statements/variableDeclaration.h"
 #include "ir/statements/doWhileStatement.h"
@@ -57,7 +58,6 @@
 #include "varbinder/scope.h"
 #include "varbinder/declaration.h"
 #include "checker/ETSchecker.h"
-#include "checker/types/gradualType.h"
 #include "ir/base/catchClause.h"
 #include "parser/program/program.h"
 #include "checker/types/ts/objectType.h"
@@ -98,7 +98,7 @@ static std::string Capitalize(const util::StringView &str)
     return ret;
 }
 
-AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker), varDecls_(), nodeIdMap_(), foundErrors_() {}
+AssignAnalyzer::AssignAnalyzer(ETSChecker *checker) : checker_(checker) {}
 
 void AssignAnalyzer::Analyze(const ir::AstNode *node)
 {
@@ -966,7 +966,12 @@ static bool IsIdentOrThisDotIdent(const ir::AstNode *node)
 
 void AssignAnalyzer::AnalyzeAssignExpr(const ir::AssignmentExpression *assignExpr)
 {
-    if (!IsIdentOrThisDotIdent(assignExpr->Left())) {
+    if (assignExpr->Left()->IsETSDestructuring()) {
+        auto *dstrNode = assignExpr->Left()->AsETSDestructuring();
+        for (auto *elem : dstrNode->Elements()) {
+            LetInit(elem);
+        }
+    } else if (!IsIdentOrThisDotIdent(assignExpr->Left())) {
         AnalyzeExpr(assignExpr->Left());
     }
 
@@ -1230,8 +1235,8 @@ static const ir::AstNode *CheckInterfaceProp(const ark::es2panda::ir::AstNode *c
                                              const ir::ClassDefinition *classDef)
 {
     util::StringView methodName = node->AsMethodDefinition()->Key()->AsIdentifier()->Name();
-    // the property from interface should start with <property> to distinguish from its getter/setter.
-    std::string interfaceProp = std::string("<property>") + std::string(methodName.Utf8());
+    // the property from interface should start with %%property- to distinguish from its getter/setter.
+    std::string interfaceProp = std::string("%%property-") + std::string(methodName.Utf8());
     for (const auto it : classDef->Body()) {
         // Check if there is corresponding class property in the same class.
         if (it->IsClassProperty() && !it->IsStatic()) {
@@ -1291,13 +1296,27 @@ static bool IsDefaultValueType(const Type *type, bool isNonReadonlyField)
     if (type == nullptr) {
         return false;
     }
-    if (type->IsGradualType()) {
-        return IsDefaultValueType(type->AsGradualType()->GetBaseType(), isNonReadonlyField);
+
+    if (type->IsETSPrimitiveType()) {
+        ES2PANDA_UNREACHABLE();
     }
-    return (type->IsETSPrimitiveType() || (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive()) ||
-            type->IsETSNeverType() || type->IsETSUndefinedType() || type->IsETSNullType() ||
-            (type->PossiblyETSUndefined() && (!type->HasTypeFlag(checker::TypeFlag::GENERIC) ||
-                                              (isNonReadonlyField && !CHECK_GENERIC_NON_READONLY_PROPERTIES))));
+
+    bool boxedPrimitive = (type->IsETSObjectType() && type->AsETSObjectType()->IsBoxedPrimitive());
+    bool nullOrUndefined = type->IsETSUndefinedType() || type->IsETSNullType();
+    if (boxedPrimitive || nullOrUndefined) {
+        return true;
+    }
+
+    if (type->PossiblyETSUndefined()) {
+        if (!type->HasTypeFlag(checker::TypeFlag::GENERIC)) {
+            return true;
+        }
+        if (!CHECK_GENERIC_NON_READONLY_PROPERTIES && isNonReadonlyField) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool AssignAnalyzer::VariableHasDefaultValue(const ir::AstNode *node)

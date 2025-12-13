@@ -33,4 +33,5 @@ function main() {
     /* @@ label */b.name("test");
 }
 
-/* @@@ label Error TypeError: Type 'String' has no call signatures.  */
+
+/* @@@ label Error Semantic error ESE0059: Extension accessor can't be used as a method call or function call. */

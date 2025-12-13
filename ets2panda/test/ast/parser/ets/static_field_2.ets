@@ -16,6 +16,6 @@
 class A {
   static bar : number = 2;
 }
-(new A() as A)./* @@ label */bar
+(new A() as A).bar
 
-/* @@@ label Error TypeError: 'bar' is a static property of 'A' */
+/* @@? 19:16 Error Semantic error ESE0207: 'bar' is a static property of 'A' */

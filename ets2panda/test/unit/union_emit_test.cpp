@@ -23,7 +23,6 @@
 #include "assembly-function.h"
 #include "assembly-program.h"
 
-#include "gmock/gmock.h"
 #include "test/utils/asm_test.h"
 
 namespace ark::pandasm {
@@ -254,12 +253,8 @@ TEST_F(UnionAsmTest, union_test_generic_checkcast)
 
     CheckInsInFunction("dummy.ETSGLOBAL.test1:dummy.X;{Ustd.core.Double,std.core.String};",
                        "checkcast {Ustd.core.Double,std.core.String}", true);
-    CheckInsInFunction("dummy.ETSGLOBAL.test1:dummy.X;{Ustd.core.Double,std.core.String};",
-                       "std.core.Runtime.failedTypeCastException", true);
     CheckInsInFunction("dummy.ETSGLOBAL.test2:dummy.X;{Ustd.core.Double,std.core.String};",
                        "checkcast {Ustd.core.Double,std.core.String}", true);
-    CheckInsInFunction("dummy.ETSGLOBAL.test2:dummy.X;{Ustd.core.Double,std.core.String};",
-                       "std.core.Runtime.failedTypeCastException", true);
 }
 
 TEST_F(UnionAsmTest, union_test_as)
@@ -270,7 +265,6 @@ TEST_F(UnionAsmTest, union_test_as)
 
     CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "checkcast {Ustd.core.Double,std.core.String}",
                        true);
-    CheckInsInFunction("dummy.ETSGLOBAL.test1:std.core.String;void;", "std.core.Runtime.failedTypeCastException", true);
 }
 
 TEST_F(UnionAsmTest, union_null_object)

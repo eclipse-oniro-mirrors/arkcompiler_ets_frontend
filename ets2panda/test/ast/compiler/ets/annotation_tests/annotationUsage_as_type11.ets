@@ -18,4 +18,5 @@
 
 let a = MyAnno.a
 
-/* @@? 19:9 Error TypeError: Annotation missing '@' symbol before annotation name. */
+
+/* @@? 19:9 Error Semantic error ESE0230: Annotation missing '@' symbol before annotation name. */

@@ -18,4 +18,5 @@ import {flt as floatingPointNumber} from /* @@ label */"import_tests/packages";
 
 // Throw error because floatingPointNumber is for multiple value.
 
-/* @@@ label Error TypeError: Variable 'floatingPointNumber' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Variable 'floatingPointNumber' is already defined. */

@@ -64,14 +64,15 @@
     _(TypeFlag::ETS_TYPE_PARAMETER, ETSTypeParameter)                  \
     _(TypeFlag::ETS_NONNULLISH, ETSNonNullishType)                     \
     _(TypeFlag::ETS_READONLY, ETSReadonlyType)                         \
-    _(TypeFlag::ETS_INT_ENUM, ETSIntEnumType)                          \
+    _(TypeFlag::ETS_AWAITED, ETSAwaitedType)                           \
+    _(TypeFlag::ETS_RETURN_TYPE_UTILITY, ETSReturnTypeUtilityType)     \
+    _(TypeFlag::ETS_NUMERIC_ENUM, ETSNumericEnumType)                  \
     _(TypeFlag::ETS_STRING_ENUM, ETSStringEnumType)                    \
     _(TypeFlag::ETS_ENUM, ETSEnumType)                                 \
     _(TypeFlag::ETS_EXTENSION_FUNC_HELPER, ETSExtensionFuncHelperType) \
     _(TypeFlag::ETS_TUPLE, ETSTupleType)                               \
     _(TypeFlag::ETS_PARTIAL_TYPE_PARAMETER, ETSPartialTypeParameter)   \
     _(TypeFlag::TYPE_ERROR, TypeError)                                 \
-    _(TypeFlag::GRADUAL_TYPE, GradualType)                             \
     _(TypeFlag::ETS_TYPE_ALIAS, ETSTypeAliasType)
 
 #define OBJECT_TYPE_MAPPING(_)                                \

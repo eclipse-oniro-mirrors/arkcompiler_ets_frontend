@@ -25,4 +25,5 @@
     testProperty2: number
 }
 
-/* @@? 22:2 Error TypeError: Only standard annotations are allowed to be applied on annotations.  */
+
+/* @@? 22:2 Error Semantic error ESE0006: Only standard annotations are allowed to be applied on annotations. */

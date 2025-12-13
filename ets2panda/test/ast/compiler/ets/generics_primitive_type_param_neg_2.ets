@@ -17,12 +17,13 @@ class A<T> {
     public value: T;
 }
 
-class B {}
+class B { }
 
 function main(): void {
     let a_B: A<B> = new A<B>();
     a_B.value = new B();
-    a_B.value./* @@ label */unboxed();
+    a_B.value.unboxed();
 }
 
-/* @@@ label Error TypeError: Property 'unboxed' does not exist on type 'B'  */
+
+/* @@? 25:15 Error Semantic error ESE0087: Property 'unboxed' does not exist on type 'B' */

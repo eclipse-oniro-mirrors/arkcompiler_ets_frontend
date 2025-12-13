@@ -15,7 +15,8 @@
 
 declare const type typeA = int;
 
-/* @@? 16:20 Error SyntaxError: Variable must be initialized or it's type must be declared.  */
-/* @@? 16:20 Error SyntaxError: Unexpected token 'typeA'.  */
-/* @@? 16:20 Error TypeError: Unresolved reference typeA  */
-/* @@? 16:28 Error SyntaxError: Unexpected token 'int'. */
+
+/* @@? 16:20 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 16:20 Error Syntax error ESY0227: Unexpected token 'typeA'. */
+/* @@? 16:20 Error Semantic error ESE0143: Unresolved reference typeA */
+/* @@? 16:28 Error Syntax error ESY0227: Unexpected token 'int'. */

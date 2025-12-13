@@ -25,4 +25,5 @@ function bar(value:A){
     const x = /* @@ label */foo<A>(value)
 }
 
-/* @@@ label Error TypeError: Cannot use type 'void' as value.   */
+
+/* @@@ label Error Semantic error ESE0078: Cannot use type 'void' as value. */

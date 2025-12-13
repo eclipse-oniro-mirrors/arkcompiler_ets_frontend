@@ -34,15 +34,13 @@ function main() {
     let n = new Partial<Partial>()
 }
 
-/* @@? 16:16 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
-/* @@? 20:16 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
-/* @@? 24:15 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
-/* @@? 29:13 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
-/* @@? 30:13 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
-/* @@? 31:13 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
-/* @@? 32:17 Error TypeError: Invalid type reference. */
-/* @@? 32:26 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
-/* @@? 33:17 Error TypeError: Invalid type reference. */
-/* @@? 33:26 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
-/* @@? 34:17 Error TypeError: Invalid type reference. */
-/* @@? 34:25 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
+
+/* @@? 16:16 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 20:16 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 24:15 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
+/* @@? 29:13 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 30:13 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 31:13 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
+/* @@? 32:26 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 33:26 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 34:25 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */

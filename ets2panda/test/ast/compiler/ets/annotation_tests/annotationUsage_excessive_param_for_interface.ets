@@ -26,6 +26,7 @@ interface itf {
     x : int
 }
 
-/* @@? 21:2 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
-/* @@? 23:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
-/* @@? 25:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
+
+/* @@? 21:2 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@? 23:6 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@? 25:6 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */

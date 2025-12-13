@@ -17,4 +17,5 @@ declare namespace A{
     declare function foo(): void
 }
 
-/* @@? 17:5 Error SyntaxError: A 'declare' modifier cannot be used in an already ambient context. */
+
+/* @@? 17:5 Error Syntax error ESY0104: A 'declare' modifier cannot be used in an already ambient context. */

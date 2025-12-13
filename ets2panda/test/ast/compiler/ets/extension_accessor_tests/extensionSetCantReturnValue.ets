@@ -21,4 +21,5 @@ class A{
     return this.field_
 }
 
-/* @@@ label Error SyntaxError: Setter must not have return type even if it is void.  */
+
+/* @@@ label Error Syntax error ESY0241: Setter must not have return type even if it is void. */

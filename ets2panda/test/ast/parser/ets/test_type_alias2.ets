@@ -15,4 +15,5 @@
 
 type bar /* @@ label */number;
 
-/* @@@ label Error SyntaxError: Expected '=', got 'identification literal'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '=', got 'identification literal'. */

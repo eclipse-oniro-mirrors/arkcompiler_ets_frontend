@@ -34,7 +34,7 @@ constexpr size_t METHOD_POS = 23;
 constexpr size_t VARIABLE_POS = 5;
 constexpr size_t MEMBER_POS = 28;
 constexpr size_t TYPE_PARAM_POS = 7;
-constexpr size_t ARRAY_TYPE_POS = 25;
+constexpr size_t ARRAY_TYPE_POS = 24;
 constexpr size_t HERITAGE_POS = 45;
 constexpr size_t EXPRESSION_POS = 9;
 constexpr size_t IMPORT_POS = 7;
@@ -60,7 +60,7 @@ let z = x;
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *varNode = ark::es2panda::lsp::GetTouchingPropertyName(ctx, VARIABLE_POS);
     ASSERT_NE(varNode, nullptr);
-    auto adjustedVar = ark::es2panda::lsp::GetAdjustedLocation(varNode, true, context->allocator);
+    auto adjustedVar = ark::es2panda::lsp::GetAdjustedLocation(varNode, context->allocator);
     ASSERT_TRUE(adjustedVar.has_value());
     EXPECT_TRUE((*adjustedVar)->IsIdentifier());
     EXPECT_EQ((*adjustedVar)->AsIdentifier()->Name(), "x");
@@ -232,7 +232,7 @@ TEST_F(LspGetAdjustedLocation, GetAdjustedLocationForNestedScopeTest)
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *globalVar = ark::es2panda::lsp::GetTouchingPropertyName(ctx, VARIABLE_POS);
     if (globalVar != nullptr) {
-        auto adjustedGlobal = ark::es2panda::lsp::GetAdjustedLocation(globalVar, true, context->allocator);
+        auto adjustedGlobal = ark::es2panda::lsp::GetAdjustedLocation(globalVar, context->allocator);
         if (adjustedGlobal.has_value()) {
             EXPECT_TRUE((*adjustedGlobal)->IsIdentifier());
             EXPECT_EQ((*adjustedGlobal)->AsIdentifier()->Name(), "x");
@@ -240,7 +240,7 @@ TEST_F(LspGetAdjustedLocation, GetAdjustedLocationForNestedScopeTest)
     }
     auto *memberVar = ark::es2panda::lsp::GetTouchingPropertyName(ctx, MEMBER_POS);
     if (memberVar != nullptr) {
-        auto adjustedMember = ark::es2panda::lsp::GetAdjustedLocation(memberVar, true, context->allocator);
+        auto adjustedMember = ark::es2panda::lsp::GetAdjustedLocation(memberVar, context->allocator);
         if (adjustedMember.has_value()) {
             EXPECT_TRUE((*adjustedMember)->IsIdentifier());
             EXPECT_EQ((*adjustedMember)->AsIdentifier()->Name(), "x");
@@ -263,7 +263,7 @@ let instance = new MyClass();
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *node = ark::es2panda::lsp::GetTouchingPropertyName(ctx, IMPORT_POS);
     ASSERT_NE(node, nullptr);
-    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, true, context->allocator);
+    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, context->allocator);
     ASSERT_TRUE(adjusted.has_value());
     EXPECT_TRUE((*adjusted)->IsIdentifier());
     EXPECT_EQ((*adjusted)->AsIdentifier()->Name(), "MyClass");
@@ -284,7 +284,7 @@ let instance = new MyClass();
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *node = ark::es2panda::lsp::GetTouchingPropertyName(ctx, EXPORT_POS);
     ASSERT_NE(node, nullptr);
-    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, true, context->allocator);
+    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, context->allocator);
     ASSERT_TRUE(adjusted.has_value());
     EXPECT_TRUE((*adjusted)->IsIdentifier());
     EXPECT_EQ((*adjusted)->AsIdentifier()->Name(), "MyClass");
@@ -303,7 +303,7 @@ class ChildClass extends BaseClass {}
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *node = ark::es2panda::lsp::GetTouchingPropertyName(ctx, HERITAGE_POS);
     ASSERT_NE(node, nullptr);
-    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, true, context->allocator);
+    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, context->allocator);
     ASSERT_TRUE(adjusted.has_value());
     EXPECT_TRUE((*adjusted)->IsIdentifier());
     EXPECT_EQ((*adjusted)->AsIdentifier()->Name(), "BaseClass");
@@ -322,7 +322,7 @@ let variable: MyType;
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *node = ark::es2panda::lsp::GetTouchingPropertyName(ctx, TYPE_PARAM_POS);
     ASSERT_NE(node, nullptr);
-    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, true, context->allocator);
+    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, context->allocator);
     ASSERT_TRUE(adjusted.has_value());
     EXPECT_TRUE((*adjusted)->IsIdentifier());
     EXPECT_EQ((*adjusted)->AsIdentifier()->Name(), "MyType");
@@ -359,7 +359,7 @@ let x = (((42)));
     auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
     auto *node = ark::es2panda::lsp::GetTouchingPropertyName(ctx, VARIABLE_POS);
     ASSERT_NE(node, nullptr);
-    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, true, context->allocator);
+    auto adjusted = ark::es2panda::lsp::GetAdjustedLocation(node, context->allocator);
     ASSERT_TRUE(adjusted.has_value());
     EXPECT_TRUE((*adjusted)->IsIdentifier());
     EXPECT_EQ((*adjusted)->AsIdentifier()->Name(), "x");

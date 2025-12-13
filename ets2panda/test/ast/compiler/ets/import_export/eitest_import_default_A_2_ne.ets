@@ -19,6 +19,6 @@ function main(){
     let a :B = new B()
 }
 
-/* @@? 16:17 Error TypeError: Cannot find imported element 'B' */
-/* @@? 19:12 Error TypeError: Cannot find type 'B'. */
-/* @@? 19:20 Error TypeError: Cannot find type 'B'. */
+/* @@? 16:17 Error Semantic error ESE0356: Cannot find imported element 'B' */
+/* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'B'. */
+/* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'B'. */

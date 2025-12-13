@@ -24,5 +24,6 @@ enum ColorC {
     Green = /* @@ label1 */ColorB.Green
 }
 
-/* @@? 20:27 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 24:28 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+
+/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label1 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

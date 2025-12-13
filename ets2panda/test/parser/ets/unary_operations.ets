@@ -15,13 +15,24 @@
 
 export class unary_operations  {
     private a: int = 3;
-    private pref1: int = +this.a;
-    private pref2: int = -this.a;
-    private pref3: int = ++this.a;
-    private pref4: int = --this.a;
-    private pref5: int = ~this.a;
-    private b: boolean = false;
-    private pref6: boolean = !this.b;
-    private post1: int = this.a++;
-    private post2: int = this.a--;
+    private pref1: int;
+    private pref2: int;
+    private pref3: int;
+    private pref4: int;
+    private pref5: int;
+    private b: boolean;
+    private pref6: boolean;
+    private post1: int;
+    private post2: int;
+    constructor() {
+        this.pref1 = +this.a;
+        this.pref2 = -this.a;
+        this.pref3 = ++this.a;
+        this.pref4 = --this.a;
+        this.pref5 = ~this.a;
+        this.b = false;
+        this.pref6 = !this.b;
+        this.post1 = this.a++;
+        this.post2 = this.a--;
+    }
 }

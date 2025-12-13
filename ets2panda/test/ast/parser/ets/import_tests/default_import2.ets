@@ -15,4 +15,5 @@
 
 import default_imported from /* @@ label */"import_tests/modules/missing_default_export";
 
-/* @@@ label Error TypeError: Cannot find default imported element in the target  */
+
+/* @@@ label Error Semantic error ESE0358: Cannot find default imported element in the target */

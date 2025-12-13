@@ -15,10 +15,11 @@
 
 function main(): void {
     try {
-        throw new Exception();
+        throw new Error();
     } catch (/* @@ label */^) {
         //Do something.
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected an identifier. */
+
+/* @@@ label Error Syntax error ESY0112: Unexpected token, expected an identifier. */

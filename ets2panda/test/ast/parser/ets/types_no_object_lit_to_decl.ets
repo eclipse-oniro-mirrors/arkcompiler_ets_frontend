@@ -15,5 +15,6 @@
 
 let o: /* @@ label */{ x: number/* @@ label2 */, y: number } = { x: 2, y: 3 }
 
-/* @@@ label Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@@ label2 Error SyntaxError: Unexpected token ','. */
+
+/* @@@ label Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token ','. */

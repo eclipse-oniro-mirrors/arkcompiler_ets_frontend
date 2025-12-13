@@ -78,17 +78,29 @@ set(ES2PANDA_LSP_SRC
   ./src/find_references.cpp
   ./src/refactors/refactor_types.cpp
   ./src/applicable_refactors.cpp
+  ./src/get_edits_for_refactor.cpp
   ./src/refactor_provider.cpp
+  ./src/refactors/convert_arrow_braces.cpp
   ./src/refactors/convert_chain.cpp
-  ./src/refactors/convert_export.cpp
   ./src/refactors/convert_function.cpp
+  ./src/refactors/convert_function_to_class.cpp
   ./src/refactors/convert_import.cpp
+  ./src/refactors/generate_override_methods.cpp
+  ./src/refactors/convert_overload_list.cpp
+  ./src/refactors/convert_params_to_object.cpp
+  ./src/refactors/move_to_new_file.cpp
   ./src/refactors/convert_template.cpp
+  ./src/refactors/extract_type.cpp
+  ./src/refactors/generate_constructor.cpp
+  ./src/refactors/generate_getters_and_setters.cpp
+  ./src/refactors/infer_function_return_type.cpp
+  ./src/refactors/extract_symbol.cpp
   ./src/formatting/formatting_context.cpp
   ./src/formatting/formatting_settings.cpp
   ./src/formatting/formatting.cpp
   ./src/formatting/rules_map.cpp
   ./src/formatting/rules.cpp
+  ./src/formatting/smart_indenter.cpp
   ./src/string_completions.cpp
   ./src/rename.cpp
   ./src/generate_constructor.cpp
@@ -110,19 +122,33 @@ set(ES2PANDA_LSP_SRC
   ./src/types.cpp
   ./src/navigate_to.cpp
   ./src/code_fix_provider.cpp
+  ./src/register_code_fix/add_local_variable.cpp
   ./src/register_code_fix/add_missing_new_operator.cpp
   ./src/register_code_fix/fix_class_doesnt_implement_inherited_abstract_member.cpp
-  ./src/register_code_fix/fix_expected_comma.cpp
+  ./src/register_code_fix/fix_extends_interface_becomes_implements.cpp
+  ./src/register_code_fix/fix_class_super_must_precede_this_access.cpp
+  ./src/register_code_fix/fix_property_assignment.cpp
   ./src/register_code_fix/fix_return_type_in_async_function.cpp
+  ./src/register_code_fix/add_name_to_nameless_parameter.cpp
   ./src/register_code_fix/add_missing_declare_property.cpp
   ./src/register_code_fix/convert_const_to_let.cpp
+  ./src/register_code_fix/constructor_for_derived_need_super_call.cpp
   ./src/register_code_fix/fix_missing_call_parantheses.cpp
+  ./src/register_code_fix/fix_import_non_exported_member.cpp
   ./src/register_code_fix/fix_nan_equality.cpp
   ./src/register_code_fix/forgotten_this_property_access.cpp
   ./src/register_code_fix/import_fixes.cpp
   ./src/register_code_fix/remove_accidental_call_parentheses.cpp
+  ./src/register_code_fix/fix_remove_override_modifier.cpp
+  ./src/register_code_fix/fix_add_function_return_statement.cpp
   ./src/register_code_fix/ui_plugin_suggest.cpp
+  ./src/register_code_fix/fix_spelling.cpp
+  ./src/register_code_fix/fix_class_incorrectly_implements_interface.cpp
+  ./src/get_signature.cpp
+  ./src/register_code_fix/fix_unreachable_code.cpp
   ./src/get_name_or_dotted_name_span.cpp
+  ./src/get_node.cpp
+  ./src/node_matchers.cpp
 )
 
 panda_frontend_add_library(${LSP_LIB} SHARED ${ES2PANDA_LSP_SRC})
@@ -146,3 +172,4 @@ panda_target_link_libraries(${LSP_LIB}
 
 panda_add_sanitizers(TARGET ${LSP_LIB} SANITIZERS
   ${PANDA_SANITIZERS_LIST})
+

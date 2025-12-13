@@ -20,4 +20,5 @@ function foo() {
 }
 foo().a = 1;
 
-/* @@@ label Error SyntaxError: Invalid left-hand side in 'For[In/Of]Statement'.  */
+
+/* @@@ label Error Syntax error ESY0167: Invalid left-hand side in 'For[In/Of]Statement'. */

@@ -19,4 +19,5 @@ class A<T> {
   }
 }
 
-/* @@? 18:12 Error TypeError: Type 'T' is not compatible with the enclosing method's return type 'NonNullable<T>' */
+
+/* @@? 18:12 Error Semantic error ESE0091: Type 'T' is not compatible with the enclosing method's return type 'NonNullable<T>' */

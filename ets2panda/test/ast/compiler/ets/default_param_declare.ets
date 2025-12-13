@@ -17,5 +17,6 @@ declare class A{
     foo(/* @@ label1 */a:number = 1, /* @@ label2 */b:int = 2):void
 }
 
-/* @@@ label1 Error SyntaxError: A parameter initializer is only allowed in a function or constructor implementation. */
-/* @@@ label2 Error SyntaxError: A parameter initializer is only allowed in a function or constructor implementation. */
+
+/* @@@ label1 Error Syntax error ESY0328: A parameter initializer is only allowed in a function or constructor implementation. */
+/* @@@ label2 Error Syntax error ESY0328: A parameter initializer is only allowed in a function or constructor implementation. */

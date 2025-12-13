@@ -16,12 +16,13 @@
 class C {
   constructor(x: number, y: string);
   constructor(s: string);
-  constructor(xs: any, y?: any) {}
+  constructor(xs: xny, y?: xny) {}
 }
 let c = new C(10, 'foo');
 
-/* @@? 17:14 Error TypeError: Only abstract or native methods can't have body.  */
-/* @@? 19:3 Error TypeError: No matching call signature for constructor  */
-/* @@? 19:19 Error TypeError: Cannot find type 'any'.  */
-/* @@? 19:28 Error TypeError: Cannot find type 'any'.  */
 
+
+/* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 19:3 Error Semantic error ESE0204: No matching call signature for constructor */
+/* @@? 19:19 Error Semantic error ESE0371: Cannot find type 'xny'. */
+/* @@? 19:28 Error Semantic error ESE0371: Cannot find type 'xny'. */

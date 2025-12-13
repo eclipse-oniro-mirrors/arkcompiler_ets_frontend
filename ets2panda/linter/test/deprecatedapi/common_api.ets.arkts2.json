@@ -215,16 +215,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 68,
-            "column": 17,
-            "endLine": 68,
-            "endColumn": 25,
-            "problem": "SdkTypeQuery",
-            "suggest": "",
-            "rule": "Using typeof as a type is not allowed in this API (sdk-type-query)",
-            "severity": "ERROR"
-        },
-        {
             "line": 78,
             "column": 3,
             "endLine": 78,

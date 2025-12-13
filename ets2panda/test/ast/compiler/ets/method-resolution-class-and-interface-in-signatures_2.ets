@@ -37,4 +37,3 @@ function main(): int {
     let d : string = /* @@ label */foo(new D());
     return 0;
 }
-

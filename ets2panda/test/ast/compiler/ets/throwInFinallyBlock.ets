@@ -16,12 +16,13 @@
 function main(): void {
     try {
         try {
-            throw new Exception();
+            throw new Error();
         } catch (e) {}
         finally /* @@ label */{
-            throw new Exception();
+            throw new Error();
         }
     } catch (e) {}
 }
 
-/* @@@ label Warning Warning: Finally clause cannot complete normally  */
+
+/* @@@ label Warning Warning W0021: Finally clause cannot complete normally */

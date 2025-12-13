@@ -22,5 +22,6 @@ declare type type_utility = Required<Issue>;
 let a : type_utility = {title : "declare type alias test"}
 
 
-/* @@? 22:24 Error TypeError: Class property 'description' needs to be initialized for Required<Issue>.  */
 
+
+/* @@? 22:24 Error Semantic error ESE0226: Class property 'description' needs to be initialized for Required<Issue>. */

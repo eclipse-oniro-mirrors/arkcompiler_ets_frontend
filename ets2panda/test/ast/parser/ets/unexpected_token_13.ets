@@ -15,5 +15,6 @@
 
 import X1/* @@ label */~ from
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'from'.  */
-/* @@? 20:1 Error SyntaxError: Unexpected token, expected string literal.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 20:87 Error Syntax error ESY0151: Unexpected token, expected string literal. */

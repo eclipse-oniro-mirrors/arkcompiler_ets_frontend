@@ -16,8 +16,8 @@ package xgc_ea
 
 const SHARED_OBJECTS_COUNT: testResult, "test20 $2"
 
-/* @@? 17:7 Error SyntaxError: Missing initialization for const package property */
-/* @@? 17:29 Error TypeError: Cannot find type 'testResult'. */
-/* @@? 17:41 Error SyntaxError: Identifier expected, got 'string literal'. */
-/* @@? 17:41 Error SyntaxError: Number, string or computed value property name 'test20 $2' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 23:95 Error SyntaxError: Variable must be initialized or it's type must be declared. */
+/* @@? 17:7 Error Syntax error ESY0294: Missing initialization for const package property */
+/* @@? 17:29 Error Semantic error ESE0371: Cannot find type 'testResult'. */
+/* @@? 17:41 Error Syntax error ESY0315: Number, string or computed value property name 'test20 $2' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 17:41 Error Syntax error ESY0224: Identifier expected, got 'string literal'. */
+/* @@? 23:105 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */

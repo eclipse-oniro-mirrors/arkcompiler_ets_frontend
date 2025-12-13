@@ -28,7 +28,7 @@ class FixRemoveAccidentalCallParentheses : public CodeFixRegistration {
 public:
     FixRemoveAccidentalCallParentheses();
     std::vector<CodeFixAction> GetCodeActions(const CodeFixContext &context) override;
-    CombinedCodeActions GetAllCodeActions(const CodeFixAllContext &codeFixAll) override;
+    CombinedCodeActions GetAllCodeActions(const CodeFixAllContext &ctx) override;
     static std::vector<FileTextChanges> GetCodeActionsToFix(const CodeFixContext &context);
 
 private:

@@ -28,7 +28,7 @@ function main() {
     console.println(/* @@label */banana.name(2));
 }
 
-/* @@? 28:5 Error TypeError: No matching call signature for println(...) */
-/* @@? 28:34 Error TypeError: Signature name(=t: Banana, id: Int): Int is not visible here. */
-/* @@? 28:34 Error TypeError: No matching call signature for name(Banana, Int) */
-/* @@? 28:34 Error TypeError: No matching call signature for name(Int) */
+/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for println(...) */
+/* @@? 28:34 Error Semantic error ESE0139: Signature name(=t: Banana, id: Int): Int is not visible here. */
+/* @@? 28:34 Error Semantic error ESE0127: No matching call signature for name(Banana, Int) */
+/* @@? 28:34 Error Semantic error ESE0127: No matching call signature for name(Int) */

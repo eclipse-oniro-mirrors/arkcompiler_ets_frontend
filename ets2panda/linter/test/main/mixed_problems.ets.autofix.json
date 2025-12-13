@@ -1,0 +1,353 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 5,
+            "endLine": 17,
+            "endColumn": 30,
+            "problem": "DestructuringDeclaration",
+            "autofix": [
+                {
+                    "replacementText": "GeneratedDestructObj_1",
+                    "start": 663,
+                    "end": 671,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 30
+                },
+                {
+                    "replacementText": "\nlet a = GeneratedDestructObj_1.a;\nlet b = GeneratedDestructObj_1.b;\n",
+                    "start": 689,
+                    "end": 689,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 30
+                }
+            ],
+            "suggest": "",
+            "rule": "Destructuring variable declarations are not supported (arkts-no-destruct-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 16,
+            "endLine": 17,
+            "endColumn": 17,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 5,
+            "endLine": 26,
+            "endColumn": 2,
+            "problem": "DestructuringDeclaration",
+            "autofix": [
+                {
+                    "replacementText": "GeneratedDestructObj_2",
+                    "start": 764,
+                    "end": 774,
+                    "line": 20,
+                    "column": 5,
+                    "endLine": 26,
+                    "endColumn": 2
+                },
+                {
+                    "replacementText": "\nlet a2 = GeneratedDestructObj_2.a2;\nlet b2 = GeneratedDestructObj_2.b2;\n",
+                    "start": 869,
+                    "end": 869,
+                    "line": 20,
+                    "column": 5,
+                    "endLine": 26,
+                    "endColumn": 2
+                }
+            ],
+            "suggest": "",
+            "rule": "Destructuring variable declarations are not supported (arkts-no-destruct-decls)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 18,
+            "endLine": 20,
+            "endColumn": 19,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 9,
+            "endLine": 22,
+            "endColumn": 10,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 10,
+            "endLine": 25,
+            "endColumn": 11,
+            "problem": "ObjectTypeLiteral",
+            "autofix": [
+                {
+                    "start": 760,
+                    "end": 760,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    c2: number;\n    d2: string;\n}\n",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
+                },
+                {
+                    "start": 840,
+                    "end": 866,
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 17,
+            "endLine": 29,
+            "endColumn": 19,
+            "problem": "InOperator",
+            "suggest": "",
+            "rule": "\"in\" operator is not supported (arkts-no-in)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 20,
+            "endLine": 29,
+            "endColumn": 21,
+            "problem": "ObjectLiteralNoContextType",
+            "autofix": [
+                {
+                    "start": 913,
+                    "end": 913,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 29,
+                    "column": 20,
+                    "endLine": 29,
+                    "endColumn": 21
+                },
+                {
+                    "start": 932,
+                    "end": 946,
+                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)",
+                    "line": 29,
+                    "column": 20,
+                    "endLine": 29,
+                    "endColumn": 21
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 1,
+            "endLine": 32,
+            "endColumn": 4,
+            "problem": "VarDeclaration",
+            "autofix": [
+                {
+                    "start": 1043,
+                    "end": 1238,
+                    "replacementText": "let fun = function () {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
+                    "line": 32,
+                    "column": 1,
+                    "endLine": 32,
+                    "endColumn": 4
+                }
+            ],
+            "suggest": "",
+            "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 32,
+            "column": 11,
+            "endLine": 46,
+            "endColumn": 2,
+            "problem": "FunctionExpression",
+            "autofix": [
+                {
+                    "start": 1053,
+                    "end": 1238,
+                    "replacementText": "() => {\n    var o = {\n        'a': 1,\n        'b': 2\n    };\n    var o2 = {\n        'c': 3,\n        'd': 4,\n        5: {\n            x1: 10,\n            x2: 20\n        }\n    };\n}",
+                    "line": 32,
+                    "column": 11,
+                    "endLine": 46,
+                    "endColumn": 2
+                }
+            ],
+            "suggest": "",
+            "rule": "Use arrow functions instead of function expressions (arkts-no-func-expressions)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 5,
+            "endLine": 33,
+            "endColumn": 8,
+            "problem": "VarDeclaration",
+            "autofix": [
+                {
+                    "start": 1071,
+                    "end": 1117,
+                    "replacementText": "let o = {\n    'a': 1,\n    'b': 2\n}",
+                    "line": 33,
+                    "column": 5,
+                    "endLine": 33,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 13,
+            "endLine": 33,
+            "endColumn": 14,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 5,
+            "endLine": 38,
+            "endColumn": 8,
+            "problem": "VarDeclaration",
+            "autofix": [
+                {
+                    "start": 1124,
+                    "end": 1235,
+                    "replacementText": "let o2 = {\n    'c': 3,\n    'd': 4,\n    5: {\n        x1: 10,\n        x2: 20\n    }\n}",
+                    "line": 38,
+                    "column": 5,
+                    "endLine": 38,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "Use \"let\" instead of \"var\" (arkts-no-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 14,
+            "endLine": 38,
+            "endColumn": 15,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 12,
+            "endLine": 41,
+            "endColumn": 13,
+            "problem": "ObjectLiteralNoContextType",
+            "autofix": [
+                {
+                    "start": 1043,
+                    "end": 1043,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    x1: number;\n    x2: number;\n}\n",
+                    "line": 41,
+                    "column": 12,
+                    "endLine": 41,
+                    "endColumn": 13
+                },
+                {
+                    "start": 1178,
+                    "end": 1228,
+                    "replacementText": "({ x1: 10,\n    x2: 20 } as GeneratedObjectLiteralInterface_2)",
+                    "line": 41,
+                    "column": 12,
+                    "endLine": 41,
+                    "endColumn": 13
+                }
+            ],
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 5,
+            "endLine": 50,
+            "endColumn": 17,
+            "problem": "DefiniteAssignmentError",
+            "suggest": "",
+            "rule": "Definite assignment assertions are not supported (arkts-no-definite-assignment)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 5,
+            "endLine": 50,
+            "endColumn": 7,
+            "problem": "PrivateIdentifier",
+            "autofix": [
+                {
+                    "start": 1299,
+                    "end": 1311,
+                    "replacementText": "private a!: number;",
+                    "line": 50,
+                    "column": 5,
+                    "endLine": 50,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Private \"#\" identifiers are not supported (arkts-no-private-identifiers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 27,
+            "endLine": 54,
+            "endColumn": 18,
+            "problem": "ConstAssertion",
+            "suggest": "",
+            "rule": "\"as const\" assertions are not supported (arkts-no-as-const)",
+            "severity": "ERROR"
+        }
+    ]
+}

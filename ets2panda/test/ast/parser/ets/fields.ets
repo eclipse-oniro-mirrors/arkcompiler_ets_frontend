@@ -27,4 +27,5 @@ class C {
   protected static readonly h = 30;
 }
 
-/* @@@ label Error TypeError: Variable 'f' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'f' has already been declared. */

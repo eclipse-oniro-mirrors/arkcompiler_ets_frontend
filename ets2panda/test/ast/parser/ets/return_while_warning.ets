@@ -19,4 +19,4 @@ function main(): void {
     }
 }
 
-/* @@? 17:19 Warning Warning: Unreachable statement. */
+/* @@? 17:19 Warning Warning W0026: Unreachable statement. */

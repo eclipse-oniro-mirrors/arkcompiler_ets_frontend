@@ -15,19 +15,19 @@
 
 #include <gtest/gtest.h>
 #include <algorithm>
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 #include "assembler/assembly-program.h"
 #include "ir/astDump.h"
 #include "ir/expressions/literals/stringLiteral.h"
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "compiler/compiler_logger.h"
-#include "mem/arena_allocator.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/generateBin.h"
-#include "mem/mem.h"
+#include "libarkbase/mem/mem.h"
 #include "test/utils/panda_executable_path_getter.h"
 #include "test/utils/asm_test.h"
 

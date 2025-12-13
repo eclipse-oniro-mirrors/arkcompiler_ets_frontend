@@ -16,8 +16,7 @@
 function main(): void {
     try {
         //Exception occures here.
-    } catch (/* @@ label */e: Object) {
+    } catch (e) {
         //Do something.
     }
 }
-/* @@@ label Error TypeError: Argument must be an instance of 'Exception' or 'Error'  */

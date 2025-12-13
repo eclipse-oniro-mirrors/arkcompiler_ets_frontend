@@ -19,7 +19,7 @@ async function asyncFunc(): Promise<boolean> {
     return true;
 }
 
-function callAsyncLambda(): void {
+async function callAsyncLambda() {
     let is_call_async_lambda: boolean = false;
 
     let async_lambda: asyncLambda = async ): Promise<void> => {
@@ -36,7 +36,7 @@ function main(): void {
     callAsyncLambda();
 }
 
-/* @@? 25:43 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 25:43 Error TypeError: Type '((p1: Promise<void>) => Promise<void>)' cannot be assigned to type '(() => Promise<void>)' */
-/* @@? 25:44 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 25:60 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+/* @@? 25:43 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 25:43 Error Semantic error ESE0318: Type '((p1: Promise<void>) => Promise<void>)' cannot be assigned to type '(() => Promise<void>)' */
+/* @@? 25:44 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 25:60 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

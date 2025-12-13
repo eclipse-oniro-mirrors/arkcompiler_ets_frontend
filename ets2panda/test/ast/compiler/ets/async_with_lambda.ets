@@ -17,7 +17,7 @@ function foo<T>(a: (arg: T) => Promise<T>): Promise<void> {
     return (async (): Promise<void> => {
         const result = await Promise.resolve<T | undefined>(undefined);
         if (result !== undefined) {
-            await a(result);
+            await a(result as T);
         } else {
             await a(undefined as T);
         }

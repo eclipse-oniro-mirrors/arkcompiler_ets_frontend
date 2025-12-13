@@ -61,12 +61,13 @@ function main(){
     NS.overloadfoo3("abc");
 }
 
-/* @@? 49:8 Error TypeError: 'foo1' is not exported in 'NS' */
-/* @@? 50:8 Error TypeError: 'foo2' is not exported in 'NS' */
-/* @@? 52:8 Error TypeError: 'foo4' is not exported in 'NS' */
-/* @@? 54:5 Error TypeError: 'foo1' is not exported in 'NS' */
-/* @@? 55:5 Error TypeError: 'foo2' is not exported in 'NS' */
-/* @@? 58:5 Error TypeError: 'foo4' is not exported in 'NS' */
-/* @@? 60:8 Error TypeError: 'overloadfoo3' is not exported in 'NS' */
-/* @@? 61:5 Error TypeError: 'foo6' is not exported in 'NS' */
-/* @@? 61:8 Error TypeError: 'overloadfoo3' is not exported in 'NS' */
+
+/* @@? 49:8 Error Semantic error ESE0206: 'foo1' is not exported in 'NS' */
+/* @@? 50:8 Error Semantic error ESE0206: 'foo2' is not exported in 'NS' */
+/* @@? 52:8 Error Semantic error ESE0206: 'foo4' is not exported in 'NS' */
+/* @@? 54:5 Error Semantic error ESE0206: 'foo1' is not exported in 'NS' */
+/* @@? 55:5 Error Semantic error ESE0206: 'foo2' is not exported in 'NS' */
+/* @@? 58:5 Error Semantic error ESE0206: 'foo4' is not exported in 'NS' */
+/* @@? 60:8 Error Semantic error ESE0206: 'overloadfoo3' is not exported in 'NS' */
+/* @@? 61:5 Error Semantic error ESE0206: 'foo6' is not exported in 'NS' */
+/* @@? 61:8 Error Semantic error ESE0206: 'overloadfoo3' is not exported in 'NS' */

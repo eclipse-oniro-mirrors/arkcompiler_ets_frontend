@@ -44,7 +44,8 @@ function main() {
     let c : C = new C(b)
     let d : D = new D(c)
 
-    d.c.b.a./* @@ label */foo()
+    d.c.b.a.foo()
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'A' */
+
+/* @@? 47:13 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

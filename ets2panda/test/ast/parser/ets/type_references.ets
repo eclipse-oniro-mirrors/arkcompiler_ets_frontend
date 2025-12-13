@@ -18,6 +18,7 @@ type B = short;
 let x: G<A, B> // OK
 let y: G<{a:String}, B> // Error
 
-/* @@? 18:8 Error TypeError: Cannot find type 'G'. */
-/* @@? 19:8 Error TypeError: Cannot find type 'G'. */
-/* @@? 19:10 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+
+/* @@? 18:8 Error Semantic error ESE0371: Cannot find type 'G'. */
+/* @@? 19:8 Error Semantic error ESE0371: Cannot find type 'G'. */
+/* @@? 19:10 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */

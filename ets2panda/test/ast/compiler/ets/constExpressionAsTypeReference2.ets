@@ -20,5 +20,6 @@ class A {
 const constExpr = new A
 let variable: constExpr.constField = 42
 
-/* @@? 21:15 Error TypeError: Cannot find type 'constExpr'. */
-/* @@? 21:25 Error TypeError: 'constField' type does not exist. */
+
+/* @@? 21:15 Error Semantic error ESE0371: Cannot find type 'constExpr'. */
+/* @@? 21:25 Error Semantic error ESE0070: 'constField' type does not exist. */

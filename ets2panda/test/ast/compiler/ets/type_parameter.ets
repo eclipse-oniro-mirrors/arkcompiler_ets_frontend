@@ -17,6 +17,7 @@ type foo<T  = T>
 
 let a : foo<number> = 1;
 
-/* @@? 16:15 Error TypeError: Type Parameter T should be defined before use. */
-/* @@? 18:1 Error SyntaxError: Expected '=', got 'let'. */
-/* @@? 18:1 Error SyntaxError: Invalid Type. */
+
+/* @@? 16:15 Error Semantic error ESE0183: Type Parameter T should be defined before use. */
+/* @@? 18:1 Error Syntax error ESY0230: Expected '=', got 'let'. */
+/* @@? 18:1 Error Syntax error ESY0138: Invalid Type. */

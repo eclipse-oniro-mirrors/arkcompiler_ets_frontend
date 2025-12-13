@@ -21,6 +21,7 @@ namespace B {
   namespace C {}  // CTE
 }
 
-/* @@? 17:1 Error SyntaxError: Unable to merge namespaces 'A', because their modifiers are different.  */
-/* @@? 21:3 Error SyntaxError: Unable to merge namespaces 'C', because their modifiers are different.  */
 
+
+/* @@? 17:1 Error Syntax error ESY0006: Unable to merge namespaces 'A', because their modifiers are different. */
+/* @@? 21:3 Error Syntax error ESY0006: Unable to merge namespaces 'C', because their modifiers are different. */

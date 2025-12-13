@@ -16,4 +16,5 @@
 const constExpr = "123"
 let variable: constExpr = 42
 
-/* @@? 17:15 Error TypeError: Cannot find type 'constExpr'. */
+
+/* @@? 17:15 Error Semantic error ESE0371: Cannot find type 'constExpr'. */

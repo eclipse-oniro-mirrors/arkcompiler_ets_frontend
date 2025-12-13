@@ -17,4 +17,5 @@ function main(/* @@ label */i : FixedArray<int>): void {
     return;
 }
 
-/* @@? 16:29 Error TypeError: Only 'FixedArray<string>' type argument is allowed. */
+
+/* @@@ label Error Semantic error ESE0135: Only 'FixedArray<string>' type argument is allowed. */

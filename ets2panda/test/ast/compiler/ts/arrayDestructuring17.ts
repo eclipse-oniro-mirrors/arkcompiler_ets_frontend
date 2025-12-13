@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,5 @@ function a(a: number, b: string): [number, string] {
 }
 
 var /* @@ label */[b, c, d] = a(1, "bar");
-/* @@@ label Error TypeError: Tuple type [number, string] of length 2 has no element at index 2.  */
+
+/* @@@ label Error Semantic error ESE0000: Tuple type [number, string] of length 2 has no element at index 2. */

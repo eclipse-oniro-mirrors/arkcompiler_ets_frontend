@@ -20,21 +20,21 @@ class A{
     foo(){}
 }
 
-/* @@? 16:22 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:22 Error SyntaxError: Number, string or computed value property name '1' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:22 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:22 Error SyntaxError: Number, string or computed value property name '1' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:22 Error TypeError: Indexed signatures are not allowed. Use arrays instead! */
-/* @@? 16:23 Error SyntaxError: Identifier expected, got ','. */
-/* @@? 16:24 Error SyntaxError: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:24 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:24 Error SyntaxError: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:24 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:25 Error SyntaxError: Identifier expected, got ','. */
-/* @@? 16:26 Error SyntaxError: Number, string or computed value property name '3' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:26 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:26 Error SyntaxError: Number, string or computed value property name '3' is not allowed, use classes to access data by property names that are identifiers */
-/* @@? 16:26 Error SyntaxError: Identifier expected, got 'number literal'. */
-/* @@? 16:27 Error SyntaxError: Identifier expected, got ']'. */
-/* @@? 16:28 Error SyntaxError: Identifier expected, got '}'. */
-/* @@? 19:6 Error TypeError: Annotation 'MyValue' requires multiple fields to be specified. */
+/* @@? 16:22 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:22 Error Syntax error ESY0315: Number, string or computed value property name '1' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:22 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:22 Error Syntax error ESY0315: Number, string or computed value property name '1' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:22 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@? 16:23 Error Syntax error ESY0224: Identifier expected, got ','. */
+/* @@? 16:24 Error Syntax error ESY0315: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:24 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:24 Error Syntax error ESY0315: Number, string or computed value property name '2' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:24 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:25 Error Syntax error ESY0224: Identifier expected, got ','. */
+/* @@? 16:26 Error Syntax error ESY0315: Number, string or computed value property name '3' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:26 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:26 Error Syntax error ESY0315: Number, string or computed value property name '3' is not allowed, use classes to access data by property names that are identifiers */
+/* @@? 16:26 Error Syntax error ESY0224: Identifier expected, got 'number literal'. */
+/* @@? 16:27 Error Syntax error ESY0224: Identifier expected, got ']'. */
+/* @@? 16:28 Error Syntax error ESY0224: Identifier expected, got '}'. */
+/* @@? 19:6 Error Semantic error ESE0043: Annotation 'MyValue' requires multiple fields to be specified. */

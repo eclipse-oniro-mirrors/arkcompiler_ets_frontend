@@ -17,4 +17,5 @@ function main(): char {
     /* @@ label */return c'a';
 }
 
-/* @@@ label Error TypeError: Bad return type, main enable only void or int type.  */
+
+/* @@@ label Error Semantic error ESE0088: Bad return type, main enable only void or int type. */

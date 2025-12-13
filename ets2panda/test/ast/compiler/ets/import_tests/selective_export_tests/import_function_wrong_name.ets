@@ -15,4 +15,5 @@
 
 import {/* @@ label */test_func} from "./selective_export_function"
 
-/* @@@ label Error TypeError: Cannot find imported element 'test_func'  */
+
+/* @@@ label Error Semantic error ESE0356: Cannot find imported element 'test_func' */

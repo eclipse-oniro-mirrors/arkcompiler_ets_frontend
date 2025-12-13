@@ -18,7 +18,7 @@
 
 #include <gtest/gtest.h>
 
-#include "macros.h"
+#include "libarkbase/macros.h"
 
 #include "test/utils/plugin_conversion_rule_test.h"
 

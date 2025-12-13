@@ -20,6 +20,7 @@ interface A {
     }
 }
 
-/* @@? 17:5 Error TypeError: Function color is already declared. */
-/* @@? 18:9 Error TypeError: Variable 'color' has already been declared. */
-/* @@? 18:14 Error SyntaxError: Getter and setter methods must be abstracts in the interface body. */
+
+/* @@? 17:5 Error Semantic error ESE0130: Function color is already declared. */
+/* @@? 18:9 Error Semantic error ESE0351: Variable 'color' has already been declared. */
+/* @@? 18:14 Error Syntax error ESY0031: Getter and setter methods must be abstracts in the interface body. */

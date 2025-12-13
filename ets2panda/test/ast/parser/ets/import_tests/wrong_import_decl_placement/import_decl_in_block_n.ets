@@ -17,4 +17,5 @@ function main(): void {
   /* @@ err */import {testFunc} from "./export"
 }
 
-/* @@@ err Error SyntaxError: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */
+
+/* @@@ err Error Syntax error ESY0226: Import declarations can only be used on the top level and before any other declaration, top level statement or directive. */

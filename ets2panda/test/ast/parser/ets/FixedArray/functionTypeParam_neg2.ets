@@ -23,14 +23,20 @@ declare class Environment {
     static foo7(props1: {key:string, value:int}[], props2: FixedArray<int>): void;
 }
 
-/* @@? 17:23 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 18:25 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 19:25 Error SyntaxError: Invalid Type. */
-/* @@? 21:20 Error SyntaxError: Invalid Type. */
-/* @@? 21:28 Error SyntaxError: Invalid Type. */
-/* @@? 21:37 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 21:37 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 21:37 Error SyntaxError: Invalid Type. */
-/* @@? 22:20 Error SyntaxError: Invalid Type. */
-/* @@? 23:25 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 23:36 Error SyntaxError: Unexpected token ','. */
+
+/* @@? 17:23 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 18:25 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 19:25 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:16 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */
+/* @@? 21:20 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:28 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:37 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 21:39 Error Syntax error ESY0227: Unexpected token '--'. */
+/* @@? 21:41 Error Syntax error ESY0227: Unexpected token '-'. */
+/* @@? 21:42 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 21:43 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:44 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 21:45 Error Syntax error ESY0295: void is a predefined type, cannot be used as an identifier */
+/* @@? 22:20 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 23:25 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 23:36 Error Syntax error ESY0227: Unexpected token ','. */

@@ -105,12 +105,24 @@ ir::AstNode *GetContextualTypeNode(ir::AstNode *node)
         if (node->Parent()->Type() == ir::AstNodeType::CLASS_PROPERTY) {
             auto propertyObj = node->Parent()->AsClassElement();
             auto type = propertyObj->TsType();
+            // note: There should not be a null pointer here.
+            // This is a temporary workaround to avoid null pointer issues.
+            // A proper fix may require modifying the checker-related code in issue 30716.
+            if ((type->Variable() == nullptr) || (type->Variable()->Declaration() == nullptr)) {
+                return nullptr;
+            }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
             return contextualTypeNode;
         }
         if (node->Parent()->Type() == ir::AstNodeType::ASSIGNMENT_EXPRESSION) {
             auto propertyObj = node->Parent()->AsAssignmentExpression();
             auto type = propertyObj->TsType();
+            // note: There should not be a null pointer here.
+            // This is a temporary workaround to avoid null pointer issues.
+            // A proper fix may require modifying the checker-related code in issue 30716.
+            if ((type->Variable() == nullptr) || (type->Variable()->Declaration() == nullptr)) {
+                return nullptr;
+            }
             auto contextualTypeNode = type->Variable()->Declaration()->Node();
             return contextualTypeNode;
         }
@@ -645,7 +657,7 @@ std::vector<SymbolDisplayPart> CreateDisplayForClass(ir::AstNode *node)
             displayParts.emplace_back(CreateKeyword("namespace"));
             displayParts.emplace_back(CreateSpace());
             displayParts.emplace_back(CreateNamespace(GetNameFromClassDefinition(node)));
-        } else if (node->Parent()->IsETSStructDeclaration()) {
+        } else if (node->AsClassDefinition()->IsFromStruct() || node->Parent()->IsETSStructDeclaration()) {
             displayParts.emplace_back(CreateKeyword("struct"));
             displayParts.emplace_back(CreateSpace());
             displayParts.emplace_back(SignatureCreateStructName(GetNameFromClassDefinition(node)));
@@ -769,8 +781,13 @@ std::vector<SymbolDisplayPart> CreateDisplayOfReturnType(ark::es2panda::ir::Type
     }
     if (returnType->Type() == ir::AstNodeType::ETS_TYPE_REFERENCE) {
         auto part = returnType->AsETSTypeReference()->Part()->AsETSTypeReferencePart();
-        auto typeName = part->Name()->AsIdentifier()->Name();
-        displayParts.emplace_back(CreateReturnType(std::string(typeName)));
+        auto nameNode = part->Name();
+        if (nameNode->IsIdentifier()) {
+            auto typeName = part->Name()->AsIdentifier()->Name();
+            displayParts.emplace_back(CreateReturnType(std::string(typeName)));
+        } else if (nameNode->IsTSQualifiedName()) {
+            displayParts.emplace_back(CreateReturnType(std::string(nameNode->AsTSQualifiedName()->Name())));
+        }
     }
     if (returnType->Type() == ir::AstNodeType::ETS_UNION_TYPE) {
         auto unionType = returnType->AsETSUnionType();
@@ -1237,7 +1254,7 @@ QuickInfo GetQuickInfo(ir::AstNode *node, ir::AstNode *containerNode, ir::AstNod
         if (compiler::ClassDefinitionIsEnumTransformed(node->Parent())) {
             auto enumDecl = node->Parent()->AsClassDefinition()->OrigEnumDecl()->AsTSEnumDeclaration();
             auto enumMember = GetEnumMemberByName(enumDecl, node->AsClassProperty()->Key()->AsIdentifier()->Name());
-            if (enumMember) {
+            if (enumMember != nullptr) {
                 displayParts = CreateDisplayForEnumMember(enumMember);
             }
         } else {

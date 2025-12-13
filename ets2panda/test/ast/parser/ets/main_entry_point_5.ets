@@ -21,5 +21,6 @@ function /* @@ label */main(i : string[]): void {
     return;
 }
 
-/* @@? 20:24 Error TypeError: Main overload is not enabled */
-/* @@? 20:29 Error TypeError: Only 'FixedArray<string>' type argument is allowed. */
+
+/* @@@ label Error Semantic error ESE0373: Main overload is not enabled */
+/* @@? 20:29 Error Semantic error ESE0135: Only 'FixedArray<string>' type argument is allowed. */

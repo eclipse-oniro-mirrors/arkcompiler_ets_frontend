@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-function reject(error: Object): void {
+function reject(error: Error): void {
 }
 
 function main(): void {
     let fn: () => void = (): void => {
         try {
-        } catch (error: Exception) {
+        } catch (error) {
             reject(error);
         }
     }

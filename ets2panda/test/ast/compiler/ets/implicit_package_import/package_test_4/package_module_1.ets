@@ -18,5 +18,6 @@ import {myvar} from "./package_module_2"
 
 // compiling this file will fail with import from it's own package
 
-/* @@? 17:1 Error SyntaxError: Package module cannot import from a file in it's own package. */
-/* @@? 17:21 Error TypeError: Cannot find import: ./package_module_2 */
+
+/* @@? 17:1 Error Syntax error ESY0003: Package module cannot import from a file in it's own package. */
+/* @@? 17:21 Error Semantic error ESE0360: Cannot find import: ./package_module_2 */

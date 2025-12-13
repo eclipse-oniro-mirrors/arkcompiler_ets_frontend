@@ -55,17 +55,25 @@ void OverloadDeclaration::Dump(ir::AstDumper *dumper) const
 {
     dumper->Add({{"type", "OverloadDeclaration"},
                  {"key", key_},
-                 {"optional", AstDumper::Optional(AstDumper::ModifierToString(flags_))},
+                 {"optional", AstDumper::Optional(AstDumper::ModifierToString(Modifiers()))},
                  {"static", IsStatic()},
                  {"overloadedList", overloadedList_}});
 }
 
 void OverloadDeclaration::DumpModifier(ir::SrcDumper *dumper) const
 {
-    if (compiler::HasGlobalClassParent(this) && !dumper->IsDeclgen()) {
+    if (compiler::HasGlobalClassParent(this) || Parent()->IsETSModule()) {
         if (IsExported()) {
             dumper->Add("export ");
+        } else if (IsDefaultExported()) {
+            dumper->Add("export default ");
         }
+    }
+
+    if (dumper->IsDeclgen()) {
+        dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
+    } else if (IsDeclare() && (compiler::HasGlobalClassParent(this) || Parent()->IsETSModule())) {
+        dumper->Add("declare ");
     }
 
     if (Parent() != nullptr && Parent()->IsClassDefinition() && !Parent()->AsClassDefinition()->IsLocal() &&
@@ -94,14 +102,14 @@ void OverloadDeclaration::Dump(ir::SrcDumper *dumper) const
     DumpModifier(dumper);
     dumper->Add("overload ");
     dumper->Add(IsConstructor() ? "constructor " : key_->AsIdentifier()->Name().Mutf8());
-    dumper->Add("{");
+    dumper->Add("{ ");
     for (size_t i = 0; i < overloadedList_.size(); i++) {
         if (i != 0) {
             dumper->Add(", ");
         }
         overloadedList_[i]->Dump(dumper);
     }
-    dumper->Add("};");
+    dumper->Add(" };\n");
 }
 
 void OverloadDeclaration::Compile([[maybe_unused]] compiler::PandaGen *pg) const {}

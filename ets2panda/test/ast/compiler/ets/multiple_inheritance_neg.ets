@@ -25,5 +25,6 @@ class B extends A{
 }
 
 
-/* @@? 23:17 Error TypeError: Cannot inherit from class A, because field callback is inherited with a different declaration type */
 
+
+/* @@? 23:17 Error Semantic error ESE0216: Cannot inherit from class A, because field callback is inherited with a different declaration type */

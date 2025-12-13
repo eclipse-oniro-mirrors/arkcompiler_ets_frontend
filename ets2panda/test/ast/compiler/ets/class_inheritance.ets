@@ -21,5 +21,5 @@ class BBB extends AAA {
     objectProp = {name: 'Jone', age: 30};
 }
 
-/* @@? 17:5 Error TypeError: Cannot infer type for objectProp because class composite needs an explicit target type  */
-/* @@? 21:5 Error TypeError: Cannot infer type for objectProp because class composite needs an explicit target type  */
+/* @@? 17:5 Error Semantic error ESE0174: Cannot infer type for objectProp because class composite needs an explicit target type */
+/* @@? 21:5 Error Semantic error ESE0174: Cannot infer type for objectProp because class composite needs an explicit target type */

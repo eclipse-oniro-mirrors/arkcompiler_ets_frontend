@@ -52,7 +52,7 @@ bool ExpressionLambdaConstructionPhase::PerformForModule(public_lib::Context *ct
 {
     program->Ast()->TransformChildrenRecursively(
         [ctx](ir::AstNode *const node) -> AstNodePtr {
-            if (node->IsArrowFunctionExpression() &&
+            if (node->IsArrowFunctionExpression() && node->AsArrowFunctionExpression()->Function()->HasBody() &&
                 node->AsArrowFunctionExpression()->Function()->Body()->IsExpression()) {
                 return ConvertExpression(ctx, node->AsArrowFunctionExpression());
             }
@@ -68,7 +68,7 @@ bool ExpressionLambdaConstructionPhase::PostconditionForModule([[maybe_unused]] 
                                                                const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *node) {
-        return node->IsArrowFunctionExpression() &&
+        return node->IsArrowFunctionExpression() && node->AsArrowFunctionExpression()->Function()->HasBody() &&
                node->AsArrowFunctionExpression()->Function()->Body()->IsExpression();
     });
 }

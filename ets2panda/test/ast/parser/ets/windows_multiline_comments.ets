@@ -20,4 +20,5 @@ file with CR LF line endings
 */
 a
 
-/* @@? 21:1 Error TypeError: Unresolved reference a  */
+
+/* @@? 21:1 Error Semantic error ESE0143: Unresolved reference a */

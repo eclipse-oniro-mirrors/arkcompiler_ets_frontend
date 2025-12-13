@@ -18,5 +18,5 @@ namespace A {
     set b(args ?: number) {}
 }
 
-/* @@? 17:11 Error SyntaxError: Setter cannot have rest parameter. */
-/* @@? 18:11 Error SyntaxError: Setter cannot have optional parameter. */
+/* @@? 17:11 Error Syntax error ESY36775: Setter cannot have rest parameter. */
+/* @@? 18:11 Error Syntax error ESY13534: Setter cannot have optional parameter. */

@@ -18,4 +18,5 @@ function main(): void {
   return;
 }
 
-/* @@@ label Error TypeError: Type 'Double' cannot be assigned to type 'Int'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Int' */

@@ -25,5 +25,6 @@ class Base2 {
     async overload foo {fooNumber, /* @@ label2 */fooString }
 }
 
-/* @@@ label1 Error TypeError: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
-/* @@@ label2 Error TypeError: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
+
+/* @@@ label1 Error Semantic error ESE0387: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */
+/* @@@ label2 Error Semantic error ESE0387: Overload alias and overloaded method name must have exactly the same modifiers (static, async). */

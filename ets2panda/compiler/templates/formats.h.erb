@@ -4,8 +4,14 @@
 % def get_format_item_name(mnemonic, index)
 %   return "#{mnemonic.gsub('.', '_').upcase}" + "_FORMAT_ITEMS_" + index.to_s
 % end
+% def get_reg_limit_name(mnemonic)
+%   return "#{mnemonic.gsub('.', '_').upcase}" + "_REG_LIMIT"
+% end
+% def get_operand_reg_kind_name(mnemonic)
+%   return "#{mnemonic.gsub('.', '_').upcase}" + "_OPERAND_REG_KIND"
+% end
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,14 +56,44 @@ namespace ark::es2panda::compiler {
 %  end
 % end
 %
+% def get_operand_reg_kind(op)
+%   if op.reg?
+%     if op.src? and op.dst?
+%       return "OperandKind::SRC_DST_VREG"
+%     elsif op.src?
+%       return "OperandKind::SRC_VREG"
+%     elsif op.dst?
+%       return "OperandKind::DST_VREG"
+%     end
+%   else
+%     return nil
+%   end
+% end
+%
+% def get_reg_limit_for_format(fmt)
+%   limit_arr = fmt.operands.select {|op| op.reg?}.map {|op| op.width}
+%   return limit_arr.length == 0 ? 0 : limit_arr.max
+% end
+%
+% def make_operand_reg_kind(fmt)
+%   operand_reg_kind = fmt.operands.select {|op| op.reg?}.map{|op| "#{get_operand_reg_kind(op)}"}
+%   return operand_reg_kind
+% end
+%
 % def make_format(fmt, insn)
 %   operands = fmt.operands.map {|op| "{#{get_operand_kind(op, insn)}, #{op.width}}"}
 %   return operands
 % end
 %
+constexpr std::array<OperandKind, 0> LABEL_OPERAND_REG_KIND = { };
+%
 % Panda::instructions.group_by(&:mnemonic).each do |mnemonic, group|
 % insn = group.first
 % formats = group.map {|i| make_format(i,insn) }
+% reg_limit_widths = group.map {|i| get_reg_limit_for_format(i)}
+% reg_limit = reg_limit_widths.length == 0 ? 0 : 1 << reg_limit_widths.max
+% operand_reg_kind_arr = group.map {|i| make_operand_reg_kind(i) }
+% operand_reg_kind = operand_reg_kind_arr.length == 0 ? [] : operand_reg_kind_arr[0]
 % empty = false
 % formats.each.with_index do |fmt, index|
 %   if fmt.length != 0
@@ -78,6 +114,8 @@ constexpr std::array<const Format, <%= formats.length %>> <%= get_format_name(mn
 %
 }};
 %   end
+constexpr uint32_t <%= get_reg_limit_name(mnemonic) %> = <%= reg_limit %>;
+constexpr std::array<OperandKind, <%= operand_reg_kind.length %>> <%= get_operand_reg_kind_name(mnemonic) %> = { <%= operand_reg_kind.length == 0 ? "" : operand_reg_kind.join(", ") %> };
 % end
 }  // namespace ark::es2panda::compiler
 

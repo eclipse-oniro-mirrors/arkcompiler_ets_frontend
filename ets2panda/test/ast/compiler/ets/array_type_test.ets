@@ -22,4 +22,5 @@ function hee(opt: Options): [string, number, boolean] {
     return menuList;
 }
 
-/* @@? 21:63 Error TypeError: Initializer has 0 elements, but tuple requires 3 */
+
+/* @@? 21:63 Error Semantic error ESE0231: Initializer has 0 elements, but tuple requires 3 */

@@ -16,5 +16,6 @@
 
 function function1(is: number | string): asserts is is number /* @@ label */{ /* @@ label1 */return };
 
-/* @@@ label Error SyntaxError: Unexpected token '{'. */
-/* @@@ label1 Error SyntaxError: return keyword should be used in function body. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@@ label1 Error Syntax error ESY0163: return keyword should be used in function body. */

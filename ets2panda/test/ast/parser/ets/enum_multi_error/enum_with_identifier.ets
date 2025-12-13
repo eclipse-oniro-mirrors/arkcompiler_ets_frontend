@@ -15,6 +15,6 @@
 
 enum a
 
-/* @@@ label Error SyntaxError: Unexpected token, expected '{'. */
-/* @@@ label Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label */
+
+/* @@ label *//* @@? 20:79 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 20:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

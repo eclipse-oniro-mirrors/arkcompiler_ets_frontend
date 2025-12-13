@@ -21,5 +21,5 @@ function main() {
     age = "1"
 }
 
-/* @@? 20:5 Error TypeError: Cannot read from this property because it is writeonly. */
-/* @@? 21:5 Error TypeError: Cannot assign to this property because it is readonly. */
+/* @@? 20:5 Error Semantic error ESE0211: Cannot read from this property because it is writeonly. */
+/* @@? 21:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

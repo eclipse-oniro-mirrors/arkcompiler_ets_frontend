@@ -116,12 +116,16 @@ function main() {
     try {
         new DTree<string | number>().up();
         arktest.assertTrue(false)
-    } catch (e: NullPointerError) { }
+    } catch (e) {
+        if (!(e instanceof NullPointerError)) {
+            throw e;
+        }
+     }
     testb();
     try {
         testf(123);
         arktest.assertTrue(false)
-    } catch (e: NullPointerError) { }
+    } catch (e) { }
     arktest.assertTrue((testcond() instanceof Int) && (testcond() == 1))
 
     foo(123);

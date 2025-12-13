@@ -45,7 +45,7 @@ public:
         : TypedStatement(elementType, modifiers), key_(key), value_(value), isComputed_(isComputed)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

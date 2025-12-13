@@ -19,5 +19,5 @@
 
 @ClassAuthor (x: 1) => x * 2;
 
-/* @@? 20:2 Error TypeError: Cannot find type 'ClassAuthor'. */
-/* @@? 20:18 Error SyntaxError: Invalid Type. */
+/* @@? 20:2 Error Semantic error ESE0371: Cannot find type 'ClassAuthor'. */
+/* @@? 20:18 Error Syntax error ESY0138: Invalid Type. */

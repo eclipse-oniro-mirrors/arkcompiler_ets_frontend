@@ -27,5 +27,6 @@ function main() : void {
     let x2 = 1, y2 = "abc"
 }
 
-/* @@? 22:2 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
-/* @@? 26:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined.  */
+
+/* @@? 22:2 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@? 26:6 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */

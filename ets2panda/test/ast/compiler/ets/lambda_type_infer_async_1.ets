@@ -19,4 +19,5 @@ p.then(obj => {
     const result = typeof obj?.prop;
 });
 
-/* @@? 19:27 Error TypeError: Value is possibly nullish. */
+
+/* @@? 19:27 Error Semantic error ESE0010: Value is possibly nullish. */

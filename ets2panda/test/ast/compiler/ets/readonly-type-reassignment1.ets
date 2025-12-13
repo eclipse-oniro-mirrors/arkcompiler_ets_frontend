@@ -33,4 +33,5 @@ function main() {
   /* @@ label */z.j = "new str"
 }
 
-/* @@@ label Error TypeError: The 'Readonly' property cannot be reassigned. */
+
+/* @@@ label Error Semantic error ESE0338: The 'Readonly' property cannot be reassigned. */

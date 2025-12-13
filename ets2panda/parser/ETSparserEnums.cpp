@@ -22,7 +22,7 @@
 #include "parser/parserStatusContext.h"
 #include "util/helpers.h"
 #include "util/language.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/ETSBinder.h"
 #include "lexer/lexer.h"
@@ -160,22 +160,7 @@ ir::TSEnumDeclaration *ETSParser::ParseEnumMembers(ir::Identifier *const key, co
         Lexer()->NextToken();  // eat ':'
         TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::REPORT_ERROR;
         typeAnnotation = ParseTypeAnnotation(&options);
-
-        // According to a comment on ETSparser.cpp:1598, compiler can't process ": string" correctly.
-        // ParseTypeAnnotation reads ": string" as literal so it's not supported here for now.
-        auto startPos = Lexer()->GetToken().Start();
-        if (!typeAnnotation->IsETSPrimitiveType()) {
-            LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
-            typeAnnotation = nullptr;
-        } else {
-            ir::PrimitiveType primitiveType = typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType();
-            if (primitiveType != ir::PrimitiveType::INT && primitiveType != ir::PrimitiveType::LONG &&
-                primitiveType != ir::PrimitiveType::DOUBLE) {
-                // Issue: #26024 Numeric support for enum
-                LogError(diagnostic::UNSUPPORTED_ENUM_TYPE, {}, startPos);
-                typeAnnotation = nullptr;
-            }
-        }
+        typeAnnotation->SetRange({Lexer()->GetToken().Start(), Lexer()->GetToken().End()});
     }
 
     Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);  // eat '{'
@@ -246,7 +231,7 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
     ir::Expression *currentNumberExpr = AllocNode<ir::NumberLiteral>(lexer::Number(0));
 
     // Lambda to parse enum member (maybe with initializer)
-    auto const parseMember = [this, &members, &currentNumberExpr]() {
+    auto const parseMember = [this, &members, &currentNumberExpr](bool &) {
         auto *const ident = ExpectIdentifier(false, true);
 
         ir::Expression *ordinal;
@@ -285,7 +270,7 @@ lexer::SourcePosition ETSParser::ParseEnumMember(ArenaVector<ir::AstNode *> &mem
 
     lexer::SourcePosition enumEnd;
     ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT, parseMember, &enumEnd,
-              true);
+              ParseListOptions::ALLOW_TRAILING_SEP);
     return enumEnd;
 }
 

@@ -38,13 +38,14 @@ for (const v2 of vStr) {
     const leftTest = v1 << v0;
 }
 
-/* @@? 29:21 Error TypeError: Bad operand type, the types of the operands must be numeric type, enum or String. */
-/* @@? 30:21 Error TypeError: Bad operand type, the types of the operands must be numeric type, enum or String. */
-/* @@? 31:21 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 32:21 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 33:21 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 34:23 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 35:24 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 36:24 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 37:23 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
-/* @@? 38:22 Error TypeError: Bad operand type, the types of the operands must be numeric type. */
+
+/* @@? 29:21 Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */
+/* @@? 30:21 Error Semantic error ESE0108: Bad operand type, the types of the operands must be numeric type, enum or String. */
+/* @@? 31:21 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 32:21 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 33:21 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 34:23 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 35:24 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 36:24 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 37:23 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */
+/* @@? 38:22 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */

@@ -51,7 +51,7 @@ namespace test::utils {
 
 namespace literals {
 
-inline ::ark::panda_file::LiteralTag operator""_LT(unsigned long long value)
+inline ::ark::panda_file::LiteralTag operator""_LT(unsigned long long value)  // NOLINT
 {
     return ::ark::panda_file::LiteralTag(value);
 }
@@ -61,22 +61,22 @@ inline ::ark::pandasm::LiteralArray LA(::ark::pandasm::LiteralArray::LiteralVect
     return ::ark::pandasm::LiteralArray {std::move(value)};
 }
 
-inline uint8_t operator""_U8(unsigned long long value)
+inline uint8_t operator""_U8(unsigned long long value)  // NOLINT
 {
     return uint8_t(value);
 }
 
-inline uint16_t operator""_U16(unsigned long long value)
+inline uint16_t operator""_U16(unsigned long long value)  // NOLINT
 {
     return uint16_t(value);
 }
 
-inline uint32_t operator""_U32(unsigned long long value)
+inline uint32_t operator""_U32(unsigned long long value)  // NOLINT
 {
     return uint32_t(value);
 }
 
-inline uint64_t operator""_U64(unsigned long long value)
+inline uint64_t operator""_U64(unsigned long long value)  // NOLINT
 {
     return uint64_t(value);
 }

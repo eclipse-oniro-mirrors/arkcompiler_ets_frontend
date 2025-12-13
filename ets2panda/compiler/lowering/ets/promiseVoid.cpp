@@ -15,6 +15,7 @@
 
 #include "promiseVoid.h"
 #include "checker/ETSchecker.h"
+#include "ir/expressions/literals/undefinedLiteral.h"
 
 namespace ark::es2panda::compiler {
 ir::BlockStatement *PromiseVoidInferencePhase::HandleAsyncScriptFunctionBody(public_lib::Context *ctx,
@@ -27,9 +28,9 @@ ir::BlockStatement *PromiseVoidInferencePhase::HandleAsyncScriptFunctionBody(pub
                 auto *returnStmt = ast->AsReturnStatement();
                 const auto *arg = returnStmt->Argument();
                 if (arg == nullptr) {
-                    auto *voidId = ctx->AllocNode<ir::Identifier>(compiler::Signatures::UNDEFINED, ctx->Allocator());
+                    auto *voidId = ctx->AllocNode<ir::UndefinedLiteral>();
                     const auto &returnLoc = returnStmt->Range();
-                    voidId->SetRange({returnLoc.end, returnLoc.end});
+                    voidId->SetRange(returnLoc);
                     returnStmt->SetArgument(voidId);
                 }
             }

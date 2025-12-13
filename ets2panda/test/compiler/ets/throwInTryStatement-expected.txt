@@ -103,7 +103,7 @@
                                   "type": "ETSTypeReferencePart",
                                   "name": {
                                     "type": "Identifier",
-                                    "name": "Exception",
+                                    "name": "Error",
                                     "loc": {
                                       "start": {
                                         "line": 18,
@@ -112,7 +112,7 @@
                                       },
                                       "end": {
                                         "line": 18,
-                                        "column": 24,
+                                        "column": 20,
                                         "program": "throwInTryStatement.ets"
                                       }
                                     }
@@ -125,7 +125,7 @@
                                     },
                                     "end": {
                                       "line": 18,
-                                      "column": 24,
+                                      "column": 20,
                                       "program": "throwInTryStatement.ets"
                                     }
                                   }
@@ -138,7 +138,7 @@
                                   },
                                   "end": {
                                     "line": 18,
-                                    "column": 24,
+                                    "column": 20,
                                     "program": "throwInTryStatement.ets"
                                   }
                                 }
@@ -152,7 +152,7 @@
                                 },
                                 "end": {
                                   "line": 18,
-                                  "column": 27,
+                                  "column": 23,
                                   "program": "throwInTryStatement.ets"
                                 }
                               }
@@ -165,7 +165,7 @@
                               },
                               "end": {
                                 "line": 18,
-                                "column": 27,
+                                "column": 23,
                                 "program": "throwInTryStatement.ets"
                               }
                             }

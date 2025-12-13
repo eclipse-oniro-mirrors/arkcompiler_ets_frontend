@@ -17,6 +17,6 @@ let a: number[] = [1.0, 2.0, 3.0]
 for (let i /* @@ label */in a) {
 }
 
-/* @@@ label Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@@ label Error SyntaxError: 'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays
-    and iterable objects. */
+
+/* @@@ label Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@@ label Error Syntax error ESY6987: 'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays and iterable objects. */

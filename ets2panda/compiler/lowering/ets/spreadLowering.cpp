@@ -386,10 +386,10 @@ bool SpreadConstructionPhase::PerformForModule(public_lib::Context *ctx, parser:
                 // NOTE: this blockExpression is a kind of formatted-dummy code, which is invisible to users,
                 //       so, its source range should be same as the original code([element1, element2, ...spreadExpr])
                 blockExpression->SetRange(node->Range());
+                Recheck(ctx->phaseManager, varbinder, checker, blockExpression);
                 for (auto st : blockExpression->Statements()) {
                     SetSourceRangesRecursively(st, node->Range());
                 }
-                Recheck(ctx->phaseManager, varbinder, checker, blockExpression);
 
                 return blockExpression;
             }

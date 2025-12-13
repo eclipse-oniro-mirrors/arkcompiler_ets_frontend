@@ -14,7 +14,7 @@
  */
 
 #include "etsModule.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 
@@ -28,6 +28,7 @@ void ETSModule::Dump(ir::SrcDumper *dumper) const
 
         if (IsDefaultExported()) {
             dumper->Add("export default ");
+            dumper->SetDefaultExport();
         }
 
         if (IsDeclare() && !(parent_ != nullptr && parent_->IsDeclare())) {

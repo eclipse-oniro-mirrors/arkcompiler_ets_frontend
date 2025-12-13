@@ -34,7 +34,7 @@ void OmittedExpression::Dump(ir::AstDumper *dumper) const
 
 void OmittedExpression::Dump(ir::SrcDumper *dumper) const
 {
-    dumper->Add("OmittedExpression");
+    dumper->Add(" ");
 }
 
 void OmittedExpression::Compile(compiler::PandaGen *pg) const

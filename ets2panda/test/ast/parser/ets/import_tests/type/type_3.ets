@@ -19,4 +19,5 @@ class TestClass {}
 export {foo}
 export type {TestClass as foo}
 
-/* @@? 20:14 Error SyntaxError: Cannot export two different names with the same export alias name 'foo'. */
+
+/* @@? 20:14 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo'. */

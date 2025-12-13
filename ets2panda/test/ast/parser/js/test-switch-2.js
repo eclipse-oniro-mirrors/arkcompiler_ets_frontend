@@ -18,8 +18,8 @@ switch /* @@ label */{
 
 }
 
-/* @@@ label Error SyntaxError: Expected '(', got '{'. */
-/* @@@ label1 Error SyntaxError: Expected ')', got 'end of stream'. */
-/* @@@ label1 Error SyntaxError: Expected '{', got 'end of stream'. */
-/* @@@ label1 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label1 */
+
+/* @@ label1 *//* @@@ label Error Syntax error ESY0230: Expected '(', got '{'. */
+/* @@? 25:79 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 25:79 Error Syntax error ESY0230: Expected '{', got 'end of stream'. */
+/* @@? 25:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

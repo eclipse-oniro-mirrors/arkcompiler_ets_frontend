@@ -42,7 +42,7 @@
         },
         "end": {
           "line": 16,
-          "column": 14,
+          "column": 13,
           "program": "test_type_alias9.ets"
         }
       }
@@ -214,7 +214,7 @@
         },
         "end": {
           "line": 17,
-          "column": 26,
+          "column": 25,
           "program": "test_type_alias9.ets"
         }
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,5 @@ a = "foo";
 var b: any;
 /* @@ label */a instanceof b;
 
-/* @@@ label Error TypeError: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter.  */
+
+/* @@@ label Error Semantic error ESE0000: The left-hand side of an 'instanceof' expression must be of type 'any', an object type or a type parameter. */

@@ -16,4 +16,5 @@
 
 fa`${/* @@ label */}`
 
-/* @@@ label Error SyntaxError: Unexpected token '}'. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token '}'. */

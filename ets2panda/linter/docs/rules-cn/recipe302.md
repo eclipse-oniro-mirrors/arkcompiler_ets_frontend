@@ -1,8 +1,8 @@
 ### ArkTS1.2Object内置方法作用在ArkTS1.1对象
 
-**规则：** arkts-interop-d2s-static-object-on-dynamic-instance
+**规则：** `arkts-interop-d2s-static-object-on-dynamic-instance`
 
-**级别：** error
+Object的接口参数类型为静态Object。ArkTS1.1对象在ArkTS1.2中不是静态Object实例，因此参数类型不匹配。
 
 **ArkTS1.1**
 ```typescript
@@ -28,7 +28,7 @@ export class X {
   a = 1;
 }
 
-// file2.ets  ArkTS 1.2
+// file2.ets  ArkTS1.2
 'use static'
 import { X } from 'file1';
 export function foo(prx: Object) {

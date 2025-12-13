@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_ETS_BASE_ANALYZER_H
 #define ES2PANDA_COMPILER_CHECKER_ETS_BASE_ANALYZER_H
 
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "util/enumbitops.h"
 
 namespace ark::es2panda::ir {

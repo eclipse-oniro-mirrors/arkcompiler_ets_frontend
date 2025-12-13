@@ -15,5 +15,6 @@
 
 
 if(/* @@ label */)
-/* @@@ label Error SyntaxError: Unexpected token ')'. */
-/* @@? 20:1 Error SyntaxError: Unexpected token 'end of stream'. */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 20:78 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

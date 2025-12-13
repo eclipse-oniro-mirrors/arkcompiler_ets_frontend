@@ -17,4 +17,5 @@ class A {
     # /* @@ label */a;
 }
 
-/* @@@ label Error SyntaxError: Unexpected token in private field.  */
+
+/* @@@ label Error Syntax error ESY0160: Unexpected token in private field. */

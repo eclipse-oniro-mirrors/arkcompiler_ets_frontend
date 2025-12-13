@@ -21,5 +21,6 @@ function foo()
     }
 }
 
-/* @@? 18:5 Error SyntaxError: Illegal start of CLASS expression.  */
-/* @@? 20:9 Error SyntaxError: Local class or interface declaration members can not have access modifies. */
+
+/* @@? 18:5 Error Syntax error ESY0040: Illegal start of CLASS expression. */
+/* @@? 20:9 Error Syntax error ESY0030: Local class or interface declaration members can not have access modifies. */

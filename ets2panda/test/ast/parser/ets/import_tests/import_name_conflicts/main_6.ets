@@ -13,11 +13,14 @@
  * limitations under the License.
  */
 
-import {dbl as c} from /* @@ label */"./imported_module_1.ets";
+import {dbl as c} from /* @@ label1 */"./imported_module_1.ets";
 import * as c from "./imported_module_2.ets";
 
 
 function main() {
-    console.log(c);
+    /* @@ label2 */console.log(/* @@ label3 */c);
 }
-/* @@@ label Error TypeError: Variable 'c' is already defined with different type.  */
+
+/* @@? 16:39 Error Semantic error ESE0350: Variable 'c' is already defined with different type. */
+/* @@? 21:20 Error Semantic error ESE0127: No matching call signature for log(c) */
+/* @@? 21:47 Error Semantic error ESE43831: Namespace 'c' cannot be used as object */

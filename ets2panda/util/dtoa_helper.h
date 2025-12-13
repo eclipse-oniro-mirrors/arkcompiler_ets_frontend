@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <array>
-#include "globals.h"
+#include "libarkbase/globals.h"
 #include "util/es2pandaMacros.h"
 
 // Almost copy of ets_runtime/ecmascript/base/dtoa_helper.h

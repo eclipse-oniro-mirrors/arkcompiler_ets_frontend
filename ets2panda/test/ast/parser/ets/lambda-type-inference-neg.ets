@@ -25,4 +25,5 @@ function main(): void {
 }
 
 
-/* @@@ label Error TypeError: Function foo with this assembly signature already declared.  */
+
+/* @@@ label Error Semantic error ESE0131: Function foo with this assembly signature already declared. */

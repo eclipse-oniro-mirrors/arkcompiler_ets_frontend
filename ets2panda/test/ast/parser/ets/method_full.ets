@@ -30,8 +30,9 @@ abstract class method_full  {
     private native foo_native(): int ;
 }
 
-/* @@@ label Error TypeError: Function with a non void return type must return a value. */
-/* @@@ label1 Error TypeError: Function with a non void return type must return a value. */
-/* @@@ label2 Error TypeError: Function with a non void return type must return a value. */
-/* @@@ label3 Error TypeError: Function with a non void return type must return a value. */
-/* @@@ label4 Error TypeError: Function with a non void return type must return a value. */
+
+/* @@@ label Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label1 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label2 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label3 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@@ label4 Error Semantic error ESE0103: Function with a non void return type must return a value. */

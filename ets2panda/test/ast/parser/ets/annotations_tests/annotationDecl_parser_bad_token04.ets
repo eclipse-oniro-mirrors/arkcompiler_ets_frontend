@@ -19,4 +19,4 @@ import * as Src from "./annotation_export"
 Src.MyAnno
 class /* @@ label */A/* @@ label1 */{}
 
-/* @@? 19:5 Error TypeError: Property 'MyAnno' does not exist on type 'annotation_export' */
+/* @@? 19:5 Error Semantic error ESE0087: Property 'MyAnno' does not exist on type 'annotation_export' */

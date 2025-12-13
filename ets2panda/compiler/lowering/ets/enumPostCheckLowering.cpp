@@ -24,7 +24,7 @@
 #include "ir/expressions/identifier.h"
 #include "ir/statements/ifStatement.h"
 #include "ir/ts/tsAsExpression.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "parser/ETSparser.h"
 #include "util.h"
 #include "util/ustring.h"
@@ -74,10 +74,15 @@ static bool IsValidEnumCasting(checker::Type *type, EnumCastType castType)
         case EnumCastType::CAST_TO_STRING: {
             return type->IsETSStringEnumType();
         }
-        case EnumCastType::CAST_TO_INT: {
-            return type->IsETSIntEnumType();
+        case EnumCastType::CAST_TO_INT:
+        case EnumCastType::CAST_TO_LONG:
+        case EnumCastType::CAST_TO_DOUBLE:
+        case EnumCastType::CAST_TO_FLOAT:
+        case EnumCastType::CAST_TO_BYTE:
+        case EnumCastType::CAST_TO_SHORT: {
+            return type->IsETSNumericEnumType();
         }
-        case EnumCastType::CAST_TO_INT_ENUM:
+        case EnumCastType::CAST_TO_NUMERIC_ENUM:
         case EnumCastType::CAST_TO_STRING_ENUM: {
             return true;
         }
@@ -99,7 +104,8 @@ static EnumCastType NeedHandleEnumCasting(ir::TSAsExpression *node)
     } else if (type->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC) || type->IsBuiltinNumeric()) {
         castType = EnumCastType::CAST_TO_INT;
     } else if (type->IsETSEnumType()) {
-        castType = type->IsETSIntEnumType() ? EnumCastType::CAST_TO_INT_ENUM : EnumCastType::CAST_TO_STRING_ENUM;
+        castType =
+            type->IsETSNumericEnumType() ? EnumCastType::CAST_TO_NUMERIC_ENUM : EnumCastType::CAST_TO_STRING_ENUM;
     } else {
         return castType;
     }
@@ -250,7 +256,7 @@ void EnumPostCheckLoweringPhase::CreateStatementForUnionConstituentType(EnumCast
             break;
         }
         case EnumCastType::CAST_TO_INT: {
-            if (type->IsETSIntEnumType()) {
+            if (type->IsETSNumericEnumType()) {
                 auto callExpr = CallInstanceEnumMethod(context_, checker::ETSEnumType::VALUE_OF_METHOD_NAME,
                                                        ident->Clone(context_->Allocator(), nullptr)->AsExpression());
                 callExpr->SetRange(tsAsExpr->Expr()->Range());
@@ -258,7 +264,7 @@ void EnumPostCheckLoweringPhase::CreateStatementForUnionConstituentType(EnumCast
             }
             break;
         }
-        case EnumCastType::CAST_TO_INT_ENUM: {
+        case EnumCastType::CAST_TO_NUMERIC_ENUM: {
             // int and Boxed Int can be casted to int enum
             if (type->IsIntType() || (type->IsETSObjectType() &&
                                       type->AsETSObjectType()->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_INT))) {
@@ -348,7 +354,12 @@ ir::AstNode *EnumPostCheckLoweringPhase::GenerateValueOfCall(ir::AstNode *const 
         return node;
     }
     node->Parent()->AddAstNodeFlags(ir::AstNodeFlags::RECHECK);
-    if (node->AsExpression()->TsType()->AsETSEnumType()->NodeIsEnumLiteral(node->AsExpression())) {
+    if (node->AsExpression()->TsType()->IsTypeError()) {
+        return node;
+    }
+    auto *enumNode = node->AsExpression()->TsType()->AsETSEnumType();
+
+    if (enumNode->NodeIsEnumLiteral(node->AsExpression()) && enumNode->EnumAnnotedType() == nullptr) {
         return InlineValueOf(node->AsMemberExpression(), context_->Allocator());
     }
     auto *callExpr = CreateCallInstanceEnumExpression(context_, node, checker::ETSEnumType::VALUE_OF_METHOD_NAME);
@@ -398,10 +409,19 @@ static void RecheckNode(ir::AstNode *node, checker::ETSChecker *checker)
     node->Check(checker);
 
     if (node->IsExpression() && node->AsExpression()->TsType() != nullptr &&
-        !node->AsExpression()->TsType()->IsETSIntEnumType()) {
+        !node->AsExpression()->TsType()->IsETSNumericEnumType()) {
         node->RemoveAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
     }
 }
+
+ir::AstNode *EnumPostCheckLoweringPhase::BuildEnumCasting(ir::AstNode *const node)
+{
+    auto castFlag = NeedHandleEnumCasting(node->AsTSAsExpression());
+    if (castFlag == EnumCastType::NONE) {
+        return node;
+    }
+    return GenerateEnumCasting(node->AsTSAsExpression(), castFlag);
+};
 
 bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
@@ -421,14 +441,14 @@ bool EnumPostCheckLoweringPhase::PerformForModule(public_lib::Context *ctx, pars
                 RecheckNode(node, checker_);
             }
             if (node->HasAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF)) {
-                return GenerateValueOfCall(node);
+                auto newNode = node;
+                if (node->IsTSAsExpression()) {
+                    newNode = BuildEnumCasting(newNode);
+                }
+                return GenerateValueOfCall(newNode);
             }
             if (node->IsTSAsExpression()) {
-                auto castFlag = NeedHandleEnumCasting(node->AsTSAsExpression());
-                if (castFlag == EnumCastType::NONE) {
-                    return node;
-                }
-                return GenerateEnumCasting(node->AsTSAsExpression(), castFlag);
+                return BuildEnumCasting(node);
             }
             if (node->IsSwitchStatement() && (node->AsSwitchStatement()->Discriminant()->TsType() != nullptr) &&
                 node->AsSwitchStatement()->Discriminant()->TsType()->IsETSEnumType()) {

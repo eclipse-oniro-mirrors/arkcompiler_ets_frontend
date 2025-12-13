@@ -99,7 +99,7 @@ TSArrayType *TSArrayType::Clone(ArenaAllocator *const allocator, AstNode *const 
     auto *const clone = allocator->New<TSArrayType>(elementTypeClone, allocator);
     ES2PANDA_ASSERT(clone != nullptr);
 
-    clone->AddModifier(flags_);
+    clone->AddModifier(Modifiers());
 
     if (elementTypeClone != nullptr) {
         elementTypeClone->SetParent(clone);

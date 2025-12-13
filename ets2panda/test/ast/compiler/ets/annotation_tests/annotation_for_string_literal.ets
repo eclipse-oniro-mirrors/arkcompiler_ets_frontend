@@ -19,4 +19,4 @@
 // annotations for string literal
 let sl: @Anno @Anno() "123"
 
-/* @@? 20:16 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+/* @@? 20:16 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

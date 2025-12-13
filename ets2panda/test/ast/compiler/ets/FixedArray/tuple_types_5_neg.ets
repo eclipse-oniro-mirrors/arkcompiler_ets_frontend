@@ -18,12 +18,13 @@ function main(): void {
     let a: [number, FixedArray<...number>] = [1];
 }
 
-/* @@? 18:21 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 18:32 Error SyntaxError: Invalid Type. */
-/* @@? 18:32 Error SyntaxError: Unexpected token, expected '>'. */
-/* @@? 18:32 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 18:32 Error SyntaxError: Unexpected token '>'. */
-/* @@? 18:35 Error SyntaxError: Unexpected token 'number'. */
-/* @@? 18:35 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 18:35 Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
-/* @@? 18:42 Error SyntaxError: Unexpected token ']'. */
+
+/* @@? 18:21 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 18:32 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 18:32 Error Syntax error ESY0228: Unexpected token, expected '>'. */
+/* @@? 18:32 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 18:32 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 18:35 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 18:35 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 18:35 Error Semantic error ESE0114: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type. */
+/* @@? 18:42 Error Syntax error ESY0227: Unexpected token ']'. */

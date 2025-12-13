@@ -1,10 +1,20 @@
 ## 不支持确定赋值断言
 
-**规则：**`arkts-no-definite-assignment`
+**规则：** `arkts-no-definite-assignment`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2不支持确定赋值断言。改为在声明变量的同时为变量赋值。
+ArkTS1.2不支持确定赋值断言，例如：let v!: T。
+
+**变更原因：**
+
+ArkTS1.2语法层面不支持。
+
+**适配建议：**
+
+修改声明方式。
+
+**示例：**
 
 **ArkTS1.1**
 

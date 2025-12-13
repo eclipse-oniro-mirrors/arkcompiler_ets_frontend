@@ -16,5 +16,6 @@
 class WeAre {
     #1
 }
-/* @@? 17:6 Error SyntaxError: Unexpected token in private field. */
-/* @@? 17:6 Error SyntaxError: Private identifier name can not be number. */
+
+/* @@? 17:6 Error Syntax error ESY0160: Unexpected token in private field. */
+/* @@? 17:6 Error Syntax error ESY0269: Private identifier name can not be number. */

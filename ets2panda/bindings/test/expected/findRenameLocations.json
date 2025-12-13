@@ -1,16 +1,11 @@
 {
   "1": [
     {
-      "fileName": "findRenameLocations1.ets",
-      "start": 708,
-      "end": 711,
-      "line": 21
-    },
-    {
       "fileName": "findRenameLocations2.ets",
       "start": 630,
       "end": 633,
-      "line": 15
+      "line": 15,
+      "prefixText": "Foo as "
     },
     {
       "fileName": "findRenameLocations2.ets",

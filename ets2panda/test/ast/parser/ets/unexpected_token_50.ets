@@ -19,9 +19,4 @@ function identity<Type>(arg: Type): Type {
 let output = identity<string>
 let output1 = identity<number>/* @@ label */"hehe"
 
-/* @@? 20:15 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 20:15 Error TypeError: No matching call signature for identity() */
-/* @@? 20:15 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 20:15 Error TypeError: No matching call signature for identity() */
-/* @@? 20:45 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 27:70 Error SyntaxError: Expected ')', got 'end of stream'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'hehe'. */

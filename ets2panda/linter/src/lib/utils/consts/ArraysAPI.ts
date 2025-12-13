@@ -47,3 +47,11 @@ export const ARRAY_API_LIST = [
   'unshift',
   'values'
 ];
+
+export enum ArrayAsCastResult {
+  IGNORE,
+  REPORT,
+  MATCH
+}
+
+export const NEVER_ARRAY = 'never[]';

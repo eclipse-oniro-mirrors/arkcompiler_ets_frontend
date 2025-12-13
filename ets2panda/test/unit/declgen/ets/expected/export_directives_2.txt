@@ -1,0 +1,14 @@
+'use static'
+
+import { A1 as A1, foo78 as foo78 } from "./expected/export_directives_1.txt";
+import A2 from "./expected/export_directives_1.txt";
+
+export declare function foo(x: A2): A1;
+
+export declare function bar(x: A2): A1;
+
+export { A1 as A1 } from "./expected/export_directives_1.txt";
+
+declare let x: A1;
+
+export { A2 as default };

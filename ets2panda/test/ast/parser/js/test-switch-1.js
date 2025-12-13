@@ -16,9 +16,9 @@
 
 switch
 
-/* @@@ label Error SyntaxError: Expected '(', got 'end of stream'. */
-/* @@@ label Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@@ label Error SyntaxError: Expected ')', got 'end of stream'. */
-/* @@@ label Error SyntaxError: Expected '{', got 'end of stream'. */
-/* @@@ label Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label */
+
+/* @@ label *//* @@? 24:79 Error Syntax error ESY0230: Expected '(', got 'end of stream'. */
+/* @@? 24:79 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 24:79 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 24:79 Error Syntax error ESY0230: Expected '{', got 'end of stream'. */
+/* @@? 24:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

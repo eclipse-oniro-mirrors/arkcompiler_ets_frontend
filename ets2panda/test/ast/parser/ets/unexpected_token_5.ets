@@ -15,7 +15,8 @@
 
 import * as /* @@ label */~/* @@ label1 */path /* @@ label2 */from /* @@ label3 */'node:path';
 
-/* @@@ label Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@@ label3 Error SyntaxError: Unexpected token 'node:path'. */
+
+/* @@@ label Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@@ label2 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token 'node:path'. */

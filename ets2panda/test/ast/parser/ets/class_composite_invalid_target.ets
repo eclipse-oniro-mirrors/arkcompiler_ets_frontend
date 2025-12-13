@@ -19,4 +19,5 @@ let obj: A = {
     x: 123
 };
 
-/* @@? 18:14 Error TypeError: Target type for class composite needs to be an object type, found 'Double|Boolean' */
+
+/* @@? 18:14 Error Semantic error ESE0063: Target type for class composite needs to be an object type, found 'Double|Boolean' */

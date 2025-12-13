@@ -15,6 +15,9 @@
 
 #include "ast_verifier/helpers.h"
 #include "nodeHasType.h"
+#include "ast_verifier/invariantBase.h"
+#include "checker/types/ets/etsObjectTypeConstants.h"
+#include "ir/astNode.h"
 #include "ir/base/classDefinition.h"
 #include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
@@ -98,6 +101,38 @@ CheckResult NodeHasType::operator()(const ir::AstNode *ast)
     }
 
     AddCheckMessage("NULL_TS_TYPE", *ast);
+    return {CheckDecision::INCORRECT, CheckAction::CONTINUE};
+}
+
+CheckResult EnumHasCorrectType::operator()(const ir::AstNode *ast)
+{
+    const auto *type = Get<NodeHasType>().type_;
+    if (type == nullptr || !type->IsETSEnumType()) {
+        return {CheckDecision::CORRECT, CheckAction::CONTINUE};
+    }
+
+    auto enumObject = type->AsETSEnumType();
+
+    const checker::Type *enumType =
+        (enumObject->EnumAnnotedType() != nullptr) ? enumObject->EnumAnnotedType() : enumObject->Underlying();
+    if (enumType == nullptr) {
+        return {CheckDecision::CORRECT, CheckAction::CONTINUE};
+    }
+
+    if (enumType->IsETSObjectType()) {
+        const auto &asObject = enumType->AsETSObjectType();
+        if (asObject->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_NUMERIC) ||
+            asObject->HasObjectFlag(checker::ETSObjectFlags::BUILTIN_STRING)) {
+            return {CheckDecision::CORRECT, CheckAction::CONTINUE};
+        }
+    }
+
+    if (enumType->IsIntType() || enumType->IsLongType() || enumType->IsDoubleType() || enumType->IsFloatType() ||
+        enumType->IsShortType() || enumType->IsByteType()) {
+        return {CheckDecision::CORRECT, CheckAction::CONTINUE};
+    }
+
+    AddCheckMessage("ENUM_HAS_WRONG_TYPE", *ast);
     return {CheckDecision::INCORRECT, CheckAction::CONTINUE};
 }
 

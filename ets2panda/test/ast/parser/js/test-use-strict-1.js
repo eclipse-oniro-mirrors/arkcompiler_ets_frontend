@@ -18,4 +18,5 @@
 
 var a = 078;
 
-/* @@? 19:9 Error SyntaxError: Implicit octal literal not allowed. */
+
+/* @@? 19:9 Error Syntax error ESY0257: Implicit octal literal not allowed. */

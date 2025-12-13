@@ -21,5 +21,5 @@ function main() {
     foo(2,3);
 }
 
-/* @@? 17:25 Error TypeError: Expected initializer for parameter b.  */
-/* @@? 1:1 Error SyntaxError: Required parameter follows default parameter(s). */
+
+/* @@? 17:25 Error Syntax error ESY0219: A required parameter cannot follow an optional parameter. */

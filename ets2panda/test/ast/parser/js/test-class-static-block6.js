@@ -21,4 +21,5 @@ function *g() {
     }
 }
 
-/* @@? 19:13 Error SyntaxError: Unexpected strict mode reserved keyword. */
+
+/* @@? 19:13 Error Syntax error ESY0264: Unexpected strict mode reserved keyword. */

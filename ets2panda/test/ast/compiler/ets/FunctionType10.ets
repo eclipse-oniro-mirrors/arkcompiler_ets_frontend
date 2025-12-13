@@ -21,4 +21,4 @@ function main() {
     let goo : int = /* @@ label */foo
 }
 
-/* @@@ label Error TypeError: Type '(() => Int)' cannot be assigned to type 'Int' */
+/* @@@ label Error Semantic error ESE0318: Type '(() => Int)' cannot be assigned to type 'Int' */

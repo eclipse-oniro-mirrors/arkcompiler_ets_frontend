@@ -18,6 +18,7 @@ class Foo {
     function a();
 }
 
-/* @@? 18:14 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 18:15 Error SyntaxError: Unexpected token. */
-/* @@? 18:16 Error SyntaxError: Unexpected token, expected ';'. */
+
+/* @@? 18:14 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 18:15 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 18:16 Error Syntax error ESY0228: Unexpected token, expected ';'. */

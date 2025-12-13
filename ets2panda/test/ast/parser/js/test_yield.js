@@ -15,4 +15,5 @@
 
 function* g(x = yield) {}
 
-/* @@? 16:17 Error SyntaxError: Yield is not allowed in generator parameters. */
+
+/* @@? 16:17 Error Syntax error ESY0054: Yield is not allowed in generator parameters. */

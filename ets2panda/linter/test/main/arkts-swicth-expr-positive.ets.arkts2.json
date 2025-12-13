@@ -1,0 +1,138 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 185,
+            "column": 13,
+            "endLine": 185,
+            "endColumn": 32,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 205,
+            "column": 1,
+            "endLine": 207,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 219,
+            "column": 1,
+            "endLine": 221,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 365,
+            "column": 1,
+            "endLine": 368,
+            "endColumn": 2,
+            "problem": "EnumMerging",
+            "suggest": "",
+            "rule": "\"enum\" declaration merging is not supported (arkts-no-enum-merging)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 369,
+            "column": 1,
+            "endLine": 373,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 428,
+            "column": 14,
+            "endLine": 428,
+            "endColumn": 28,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 436,
+            "column": 14,
+            "endLine": 436,
+            "endColumn": 20,
+            "problem": "BuiltinNoCtorFunc",
+            "suggest": "",
+            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 499,
+            "column": 14,
+            "endLine": 499,
+            "endColumn": 34,
+            "problem": "CreatingPrimitiveTypes",
+            "suggest": "",
+            "rule": "Primitive types are normalized with their boxed type (arkts-primitive-type-normalization)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 560,
+            "column": 1,
+            "endLine": 562,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 569,
+            "column": 1,
+            "endLine": 571,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 579,
+            "column": 1,
+            "endLine": 582,
+            "endColumn": 2,
+            "problem": "EnumMerging",
+            "suggest": "",
+            "rule": "\"enum\" declaration merging is not supported (arkts-no-enum-merging)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 583,
+            "column": 1,
+            "endLine": 587,
+            "endColumn": 2,
+            "problem": "TsOverload",
+            "suggest": "",
+            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
+            "severity": "ERROR"
+        }
+    ]
+}

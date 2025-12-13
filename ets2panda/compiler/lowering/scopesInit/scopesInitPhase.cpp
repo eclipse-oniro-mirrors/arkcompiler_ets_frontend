@@ -17,6 +17,7 @@
 #include "compiler/lowering/scopesInit/savedBindingsCtx.h"
 #include "compiler/lowering/util.h"
 #include "varbinder/tsBinding.h"
+#include "varbinder/variableFlags.h"
 
 namespace ark::es2panda::compiler {
 
@@ -160,11 +161,12 @@ void ScopesInitPhase::VisitForUpdateStatement(ir::ForUpdateStatement *forUpdateS
                              // CC-OFFNXT(G.FMT.06-CPP) project code style
                              VarBinder(), forUpdateStmt->Scope()->DeclScope());
     CallNode(forUpdateStmt->Init());
-    if (auto *init = forUpdateStmt->Init(); init && init->IsVariableDeclaration()) {
+    if (auto *init = forUpdateStmt->Init(); (init != nullptr) && init->IsVariableDeclaration()) {
         auto *vd = init->AsVariableDeclaration();
         for (auto *decl : vd->Declarators()) {
-            if (!decl->Id()->IsIdentifier())
+            if (!decl->Id()->IsIdentifier()) {
                 continue;
+            }
             auto *id = decl->Id()->AsIdentifier();
             if (auto *var = id->Variable()) {
                 var->AddFlag(varbinder::VariableFlags::PER_ITERATION);
@@ -528,6 +530,9 @@ std::tuple<varbinder::Decl *, varbinder::Variable *> ScopesInitPhase::AddOrGetVa
         case ir::VariableDeclaratorFlag::LET:
             return VarBinder()->NewVarDecl<varbinder::LetDecl>(id->Start(), name);
         case ir::VariableDeclaratorFlag::VAR:
+            if (VarBinder()->IsETSBinder()) {
+                return VarBinder()->NewVarDecl<varbinder::LetDecl>(id->Start(), name);
+            }
             return VarBinder()->NewVarDecl<varbinder::VarDecl>(id->Start(), name);
         case ir::VariableDeclaratorFlag::CONST:
             return VarBinder()->NewVarDecl<varbinder::ConstDecl>(id->Start(), name);
@@ -842,8 +847,7 @@ void InitScopesPhaseTs::VisitTSMethodSignature(ir::TSMethodSignature *methodSign
 
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, varbinder::VarBinder *varbinder)
 {
-    auto program = parser::Program(varbinder->Allocator(), varbinder);
-    RunExternalNode(node, &program);
+    RunExternalNode(node, varbinder->Program());
 }
 
 void InitScopesPhaseETS::RunExternalNode(ir::AstNode *node, parser::Program *ctx)
@@ -861,10 +865,6 @@ bool InitScopesPhaseETS::Perform(PhaseContext *ctx, parser::Program *program)
         program->VarBinder()->InitTopScope();
         BindScopeNode(GetScope(), program->Ast());
         AddGlobalToBinder(program);
-    } else if ((ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) &&
-               program->GlobalClass()->Scope() == nullptr) {
-        BindScopeNode(GetScope(), program->Ast());
-        AddGlobalToBinder(program);
     }
     HandleProgram(program);
     Finalize();
@@ -877,16 +877,15 @@ void InitScopesPhaseETS::HandleProgram(parser::Program *program)
         (void)_;
         auto savedTopScope(program->VarBinder()->TopScope());
         auto mainProg = progList.front();
-        if (mainProg->IsASTLowered()) {
-            continue;
+        if (!mainProg->IsASTLowered() && mainProg->IsProgramModified()) {
+            mainProg->VarBinder()->InitTopScope();
+            AddGlobalToBinder(mainProg);
+            BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
         }
-        mainProg->VarBinder()->InitTopScope();
-        AddGlobalToBinder(mainProg);
-        BindScopeNode(mainProg->VarBinder()->GetScope(), mainProg->Ast());
         auto globalClass = mainProg->GlobalClass();
         auto globalScope = mainProg->GlobalScope();
         for (auto &prog : progList) {
-            if (prog->GetFlag(parser::ProgramFlags::AST_HAS_SCOPES_INITIALIZED)) {
+            if (prog->IsASTLowered() || !prog->IsProgramModified()) {
                 continue;
             }
             prog->SetGlobalClass(globalClass);
@@ -894,15 +893,13 @@ void InitScopesPhaseETS::HandleProgram(parser::Program *program)
             prog->VarBinder()->ResetTopScope(globalScope);
             if (mainProg->Ast() != nullptr) {
                 InitScopesPhaseETS().Perform(Context(), prog);
-                prog->SetFlag(parser::ProgramFlags::AST_HAS_SCOPES_INITIALIZED);
             }
         }
         program->VarBinder()->ResetTopScope(savedTopScope);
     }
     ES2PANDA_ASSERT(program->Ast() != nullptr);
 
-    auto *ast = program->Ast();
-    HandleETSModule(ast);
+    HandleETSModule(program->Ast());
 }
 
 void InitScopesPhaseETS::BindVarDecl(ir::Identifier *binding, ir::Expression *init, varbinder::Decl *decl,
@@ -972,6 +969,7 @@ void InitScopesPhaseETS::VisitImportNamespaceSpecifier(ir::ImportNamespaceSpecif
     auto var =
         VarBinder()->GetScope()->FindLocal(importSpec->Local()->Name(), varbinder::ResolveBindingOptions::BINDINGS);
     importSpec->Local()->SetVariable(var);
+    var->AddFlag(varbinder::VariableFlags::NAMESPACE);
     Iterate(importSpec);
 }
 
@@ -1320,20 +1318,6 @@ void InitScopesPhaseETS::AddGlobalToBinder(parser::Program *program)
     auto start = globalId->Start();
     auto name = globalId->Name();
     auto *varBinder = program->VarBinder();
-    auto *ctx = varBinder->GetContext();
-    if (ctx->compilingState == public_lib::CompilingState::MULTI_COMPILING_FOLLOW) {
-        auto *scope = varBinder->GetScope();
-        auto bindings = scope->Bindings();
-        auto res = bindings.find(name);
-        if (res != bindings.end()) {
-            auto classCtx =
-                LexicalScopeCreateOrEnter<varbinder::ClassScope>(program->VarBinder(), program->GlobalClass());
-            classCtx.GetScope()->BindNode(program->GlobalClass());
-            program->GlobalClass()->SetScope(classCtx.GetScope());
-            globalId->SetVariable(res->second);
-            return;
-        }
-    }
     auto [decl2, var] = varBinder->NewVarDecl<varbinder::ClassDecl>(start, name);
 
     auto classCtx = LexicalScopeCreateOrEnter<varbinder::ClassScope>(program->VarBinder(), program->GlobalClass());
@@ -1361,6 +1345,11 @@ void InitScopesPhaseETS::HandleETSModule(ir::BlockStatement *script)
     for (auto decl : script->Statements()) {
         AddGlobalDeclaration(decl);
     }
+}
+
+void InitScopesPhaseETS::VisitFunctionExpression(ir::FunctionExpression *funcExpr)
+{
+    Iterate(funcExpr);
 }
 
 void InitScopesPhaseETS::VisitClassDefinition(ir::ClassDefinition *classDef)

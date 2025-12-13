@@ -101,8 +101,6 @@ enum class GlobalTypeId : std::size_t {
     ETS_FUNCTION_BUILTIN,
     ETS_REGEXP_BUILTIN,
     ETS_ARRAY_BUILTIN,
-    ETS_INTEROP_JSRUNTIME_BUILTIN,
-    ETS_INTEROP_JSVALUE_BUILTIN,
     ETS_BOX_BUILTIN,
     ETS_BOOLEAN_BOX_BUILTIN,
     ETS_BYTE_BOX_BUILTIN,
@@ -337,10 +335,6 @@ public:
     Type *GlobalRecordBuiltinType();
     Type *GlobalRegExpBuiltinType();
     Type *GlobalSetBuiltinType();
-
-    // JS specific types
-    Type *GlobalJSRuntimeBuiltinType();
-    Type *GlobalJSValueBuiltinType();
 
     Type *GlobalTypeError();
 

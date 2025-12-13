@@ -22,4 +22,5 @@ function main(): void {
   let b : Person<string> ={name: /* @@ label */42, age:25}
 }
 
-/* @@@ label Error TypeError: Type 'Int' is not compatible with type 'String' at property 'name'  */
+
+/* @@@ label Error Semantic error ESE0319: Type 'Int' is not compatible with type 'String' at property 'name' */

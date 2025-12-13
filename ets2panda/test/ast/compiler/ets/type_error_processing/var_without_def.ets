@@ -24,7 +24,8 @@ function foo() {
     void = [([...asyncGenerator])]
 }
 
-/* @@? 21:9 Error TypeError: Unresolved reference a */
-/* @@? 21:17 Error TypeError: Unresolved reference c */
-/* @@? 24:5 Error SyntaxError: Unexpected token 'void'. */
-/* @@? 24:18 Error TypeError: Unresolved reference asyncGenerator */
+
+/* @@? 21:9 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 21:17 Error Semantic error ESE0143: Unresolved reference c */
+/* @@? 24:5 Error Syntax error ESY0227: Unexpected token 'void'. */
+/* @@? 24:18 Error Semantic error ESE0143: Unresolved reference asyncGenerator */

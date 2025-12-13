@@ -50,15 +50,16 @@ function g(x: int): int {
 }
 
 
-/* @@? 16:10 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 20:10 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 20:27 Error TypeError: struct B is not extensible. */
-/* @@? 30:17 Error SyntaxError: Label already declared. */
-/* @@? 40:1 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 40:8 Error TypeError: All return statements in the function should be empty or have a value. */
-/* @@? 43:12 Error SyntaxError: Expected '(', got 'identification literal'. */
-/* @@? 44:9 Error SyntaxError: Expected ')', got 'case'. */
-/* @@? 44:9 Error SyntaxError: Expected '{', got 'case'. */
-/* @@? 46:15 Error SyntaxError: Unexpected token ':'. */
-/* @@? 46:17 Error SyntaxError: Unexpected token 'return'. */
-/* @@? 48:9 Error SyntaxError: Multiple default clauses. */
+
+/* @@? 16:10 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 20:10 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 20:27 Error Semantic error ESE0177: struct B is not extensible. */
+/* @@? 30:17 Error Syntax error ESY0214: Label already declared. */
+/* @@? 40:1 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 40:8 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
+/* @@? 43:12 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */
+/* @@? 44:9 Error Syntax error ESY0230: Expected ')', got 'case'. */
+/* @@? 44:9 Error Syntax error ESY0230: Expected '{', got 'case'. */
+/* @@? 46:15 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 46:17 Error Syntax error ESY0227: Unexpected token 'return'. */
+/* @@? 48:9 Error Syntax error ESY0171: Multiple default clauses. */

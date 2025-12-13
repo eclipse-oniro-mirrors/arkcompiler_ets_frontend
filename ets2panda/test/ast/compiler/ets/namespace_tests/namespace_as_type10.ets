@@ -18,5 +18,4 @@ namespace MySpace {
 
 let a = 1 instanceof MySpace
 
-/* @@? 19:22 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
-/* @@? 19:22 Error TypeError: Namespace 'MySpace' cannot be used as a type.  */
+/* @@? 19:22 Error Semantic error ESE0158: Namespace 'MySpace' cannot be used as a type. */

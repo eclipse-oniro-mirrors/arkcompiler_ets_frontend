@@ -36,4 +36,4 @@ class Sub2 extends Base{
     overload foo{fooInt,fooNumber}
 }
 
-/* @@? 32:20 Error TypeError: Cannot inherit from class Base, because overload foo is inherited with a different declaration type */
+

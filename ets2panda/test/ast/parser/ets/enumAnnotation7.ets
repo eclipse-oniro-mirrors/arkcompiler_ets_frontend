@@ -13,11 +13,21 @@
  * limitations under the License.
  */
  
-enum E: double{
-	A = 1.1,
-	B = 1.2 + 1.3,
-	C = B,
-	D = C + 1.5,
-	E = D - 2.5,
-	F = D * C,
+const a: int = 1;
+
+enum Test: int {
+	A = a,
+	b = 1 + a
+};
+
+enum Test2: byte {
+	A = a,
+	b = 0x01 + A
+}
+
+const b: string = "name"
+
+enum Test3{
+	A = b,
+	B = A + " test"
 }

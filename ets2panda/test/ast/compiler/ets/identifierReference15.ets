@@ -33,6 +33,6 @@ class A {
   }
 }
 
-/* @@? 25:17 Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected. */
-/* @@? 31:7 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 31:7 Error TypeError: No matching call signature for foo() */
+/* @@? 25:17 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 31:7 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 31:7 Error Semantic error ESE0127: No matching call signature for foo() */

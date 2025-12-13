@@ -18,4 +18,4 @@ import {foo, flt} from "import_tests/packages";
 // Throw error: "dbl" is not visible.
 let x = foo(dbl);
 
-/* @@? 19:9 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
+/* @@? 19:9 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */

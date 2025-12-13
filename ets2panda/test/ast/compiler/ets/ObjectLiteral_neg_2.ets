@@ -20,4 +20,5 @@ class A {
 let a:A = {back:()=>{}}
 
 
-/* @@? 20:12 Error TypeError: Method 'back' cannot be used as a key of object literal. */
+
+/* @@? 20:12 Error Semantic error ESE0074: Class or interface methods cannot be initialized within an object literal. */

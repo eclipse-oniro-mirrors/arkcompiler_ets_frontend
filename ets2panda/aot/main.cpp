@@ -16,15 +16,16 @@
 #include "bytecode_optimizer/bytecodeopt_options.h"
 #include "bytecode_optimizer/optimize_bytecode.h"
 #include "compiler/compiler_logger.h"
-#include "mem/arena_allocator.h"
-#include "mem/pool_manager.h"
+#include "libarkbase/mem/arena_allocator.h"
+#include "libarkbase/mem/pool_manager.h"
 #include "es2panda.h"
 #include "util/arktsconfig.h"
 #include "util/diagnosticEngine.h"
 #include "util/generateBin.h"
 #include "util/options.h"
 #include "util/plugin.h"
-#include "os/stacktrace.h"
+#include "util/perfMetrics.h"
+#include "libarkbase/os/stacktrace.h"
 #include "generated/diagnostic.h"
 
 #include <iostream>
@@ -79,34 +80,12 @@ static int CompileFromSource(es2panda::Compiler &compiler, es2panda::SourceFile 
 
 using StringPairVector = std::vector<std::pair<std::string, std::string>>;
 
-static int CompileMultipleFiles(es2panda::Compiler &compiler, std::vector<SourceFile> &inputs, util::Options *options,
-                                util::DiagnosticEngine &diagnosticEngine)
-{
-    std::vector<pandasm::Program *> result;
-    auto overallRes = compiler.CompileM(inputs, *options, diagnosticEngine, result);
-    for (size_t i = 0; i < result.size(); i++) {
-        auto *program = result[i];
-        if (program == nullptr) {
-            overallRes |= 1U;
-            continue;
-        }
-        options->SetOutput(std::string(inputs[i].dest));
-        overallRes |= (unsigned int)util::GenerateProgram(
-            program, *options,
-            [&diagnosticEngine](const diagnostic::DiagnosticKind &kind, const util::DiagnosticMessageParams &params) {
-                diagnosticEngine.LogDiagnostic(kind, params);
-            });
-    }
-    return overallRes;
-}
-
-static unsigned int ReleaseInputsAndReturn(std::vector<std::string *> &parserInputs, unsigned int returnCode)
+static void ReleaseInputs(std::vector<std::string *> &parserInputs)
 {
     for (auto *input : parserInputs) {
         delete input;
     }
     parserInputs.clear();
-    return returnCode;
 }
 
 static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *options,
@@ -135,10 +114,6 @@ static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *option
         inputs.push_back(input);
     }
 
-    if (options->IsPermArena() && (options->GetExtension() == util::gen::extension::ETS)) {
-        return ReleaseInputsAndReturn(parserInputs, CompileMultipleFiles(compiler, inputs, options, diagnosticEngine));
-    }
-
     for (auto &input : inputs) {
         LOG_IF(options->IsListFiles(), INFO, ES2PANDA)
             << "> es2panda: compiling from '" << input.filePath << "' to '" << input.dest << "'";
@@ -150,7 +125,8 @@ static int CompileFromConfig(es2panda::Compiler &compiler, util::Options *option
             overallRes |= static_cast<unsigned>(res);
         }
     }
-    return ReleaseInputsAndReturn(parserInputs, overallRes);
+    ReleaseInputs(parserInputs);
+    return static_cast<int>(overallRes);
 }
 
 static std::optional<std::vector<util::Plugin>> InitializePlugins(std::vector<std::string> const &names,
@@ -168,6 +144,22 @@ static std::optional<std::vector<util::Plugin>> InitializePlugins(std::vector<st
         res.push_back(std::move(plugin));
     }
     return {std::move(res)};
+}
+
+static int checkDoubleOutput(util::Options *options, util::DiagnosticEngine &diagnosticEngine)
+{
+    if (!options->WasSetArktsconfig()) {
+        return 0;
+    }
+    std::string outdir = ParentPath(ark::os::GetAbsolutePath(options->ArkTSConfig()->ConfigPath()));
+    std::string output =
+        ark::os::RemoveExtension(ark::es2panda::util::BaseName(options->SourceFileName())).append(".abc");
+    if (options->ArkTSConfig()->OutDir() != outdir && options->GetOutput() != output) {
+        diagnosticEngine.LogDiagnostic(diagnostic::REWRITE_OUTPUT_IN_CLI,
+                                       ark::es2panda::util::DiagnosticMessageParams());
+        return 1;
+    }
+    return 0;
 }
 
 static int Run(Span<const char *const> args)
@@ -192,8 +184,7 @@ static int Run(Span<const char *const> args)
 
     es2panda::Compiler compiler(options->GetExtension(), options->GetThread(), std::move(pluginsOpt.value()));
     if (options->IsListPhases()) {
-        std::cerr << "Available phases:" << std::endl;
-        std::cerr << compiler.GetPhasesList();
+        std::cerr << "Available phases:" << std::endl << compiler.GetPhasesList();
         diagnosticEngine.FlushDiagnostic();
         return 1;
     }
@@ -212,6 +203,7 @@ static int Run(Span<const char *const> args)
             auto [buf, size] = options->CStrParserInputContents();
             parserInput = std::string_view(buf, size);
         }
+        checkDoubleOutput(options.get(), diagnosticEngine);
         es2panda::SourceFile input(sourceFile, parserInput, options->IsModule(), options->GetOutput());
         res = CompileFromSource(compiler, input, *options.get(), diagnosticEngine);
     }

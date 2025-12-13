@@ -17,11 +17,12 @@ interface A {}
 interface B {}
 interface C extends A, B [}
 
-/* @@? 18:26 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:27 Error SyntaxError: Identifier expected. */
-/* @@? 18:27 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 18:27 Error TypeError: Interface expected here. */
-/* @@? 28:1 Error SyntaxError: Identifier expected. */
-/* @@? 28:1 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 28:1 Error SyntaxError: Unexpected token, expected '}'. */
-/* @@? 28:1 Error TypeError: Interface expected here. */
+
+/* @@? 18:26 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:27 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 18:27 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:27 Error Semantic error ESE0179: Interface expected here. */
+/* @@? 28:71 Error Syntax error ESY0122: Identifier expected. */
+/* @@? 28:71 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 28:71 Error Syntax error ESY0228: Unexpected token, expected '}'. */
+/* @@? 28:71 Error Semantic error ESE0179: Interface expected here. */

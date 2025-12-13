@@ -30,7 +30,7 @@ class C {
 }
 
 function foo(x : A | B | C) {
-    x./* @@ label */num;  // CTE - `A` doesn't have field `num`
+    x.num;  // CTE - `A` doesn't have field `num`
 }
 
 function main() {
@@ -39,4 +39,5 @@ function main() {
     foo(x);
 }
 
-/* @@@ label Error TypeError: Property 'num' does not exist on type 'A'  */
+
+/* @@? 33:7 Error Semantic error ESE0087: Property 'num' does not exist on type 'A' */

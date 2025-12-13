@@ -22,4 +22,5 @@ namespace A.B {
 A.foo(); // Error: 'A' does not contain a member named 'foo'
 
 
-/* @@? 22:3 Error TypeError: Property 'foo' does not exist on type 'A'  */
+
+/* @@? 22:3 Error Semantic error ESE0087: Property 'foo' does not exist on type 'A' */

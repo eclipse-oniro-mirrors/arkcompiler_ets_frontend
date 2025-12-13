@@ -30,4 +30,5 @@ function main(): void {
   new A().foo(n)
 }
 
-/* @@@ label Error TypeError: Cannot obtain iterator type in 'for-of' statement.  */
+
+/* @@@ label Error Semantic error ESE0099: Cannot obtain iterator type in 'for-of' statement. */

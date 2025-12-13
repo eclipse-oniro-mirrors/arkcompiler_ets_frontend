@@ -26,4 +26,5 @@ function main(): void {
   foo(11);
 }
 
-/* @@@ label Error TypeError: Function with a non void return type must return a value.  */
+
+/* @@@ label Error Semantic error ESE0103: Function with a non void return type must return a value. */

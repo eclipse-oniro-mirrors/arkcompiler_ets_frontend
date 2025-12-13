@@ -14,7 +14,9 @@
  */
 
 #include "diagnostic.h"
+#include <iomanip>
 #include <memory>
+#include <sstream>
 #include <vector>
 #include "generated/diagnostic.h"
 #include "lexer/token/sourceLocation.h"
@@ -158,9 +160,9 @@ const char *DiagnosticTypeToString(DiagnosticType type)
         case DiagnosticType::FATAL:
             return "Fatal error";
         case DiagnosticType::SYNTAX:
-            return "SyntaxError";
+            return "Syntax error";
         case DiagnosticType::SEMANTIC:
-            return "TypeError";
+            return "Semantic error";
         case DiagnosticType::WARNING:
             return "Warning";
         case DiagnosticType::PLUGIN_WARNING:
@@ -180,6 +182,44 @@ const char *DiagnosticTypeToString(DiagnosticType type)
         default:
             ES2PANDA_UNREACHABLE();
     }
+}
+
+const char *DiagnosticTypePrefixSymbol(DiagnosticType type)
+{
+    switch (type) {
+        case DiagnosticType::FATAL:
+            return "F";
+        case DiagnosticType::SYNTAX:
+            return "ESY";
+        case DiagnosticType::SEMANTIC:
+            return "ESE";
+        case DiagnosticType::WARNING:
+            return "W";
+        case DiagnosticType::PLUGIN_WARNING:
+            return "WP";
+        case DiagnosticType::PLUGIN_ERROR:
+            return "EP";
+        case DiagnosticType::DECLGEN_ETS2TS_ERROR:
+            return "ED";
+        case DiagnosticType::DECLGEN_ETS2TS_WARNING:
+            return "WD";
+        case DiagnosticType::ISOLATED_DECLGEN:
+            return "EID";
+        case DiagnosticType::ARKTS_CONFIG_ERROR:
+            return "EAC";
+        case DiagnosticType::SUGGESTION:
+            return "S";
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+}
+
+std::string DiagnosticBase::ToStringUniqueNumber() const
+{
+    const size_t minWidthNumber = 4;
+    std::stringstream ss;
+    ss << std::setfill('0') << std::setw(minWidthNumber) << GetId();
+    return std::string {DiagnosticTypePrefixSymbol(Type())} + ss.str();
 }
 
 DiagnosticBase::DiagnosticBase(const lexer::SourcePosition &pos)

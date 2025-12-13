@@ -27,6 +27,9 @@ function main() : void {
     let x2 = 1, y2 = "abc"
 }
 
-/* @@? 22:2 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
-/* @@? 22:2 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
-/* @@? 26:6 Error TypeError: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+
+/* @@? 22:2 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 22:2 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 22:2 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 22:2 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */
+/* @@? 26:6 Error Semantic error ESE0044: The required field 'testProperty1' must be specified. Fields without default values cannot be omitted. */

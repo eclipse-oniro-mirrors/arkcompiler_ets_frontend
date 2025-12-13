@@ -90,11 +90,13 @@
     _(ETS_INTRINSIC_NODE_TYPE, ETSIntrinsicNode)                                          \
     _(ETS_FUNCTION_TYPE, ETSFunctionType)                                                 \
     _(ETS_WILDCARD_TYPE, ETSWildcardType)                                                 \
+    _(ETS_GENERIC_INSTANTIATED_NODE, ETSGenericInstantiatedNode)                          \
     _(ETS_PRIMITIVE_TYPE, ETSPrimitiveType)                                               \
     _(ETS_PACKAGE_DECLARATION, ETSPackageDeclaration)                                     \
     _(ETS_CLASS_LITERAL, ETSClassLiteral)                                                 \
     _(ETS_TYPE_REFERENCE, ETSTypeReference)                                               \
     _(ETS_TYPE_REFERENCE_PART, ETSTypeReferencePart)                                      \
+    _(ETS_DESTRUCTURING, ETSDestructuring)                                                \
     _(ETS_UNION_TYPE, ETSUnionType)                                                       \
     _(ETS_KEYOF_TYPE, ETSKeyofType)                                                       \
     _(ETS_NEW_ARRAY_INSTANCE_EXPRESSION, ETSNewArrayInstanceExpression)                   \

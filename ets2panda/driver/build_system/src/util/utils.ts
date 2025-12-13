@@ -35,8 +35,7 @@ import {
     OHOS_MODULE_TYPE,
     BuildConfig,
     DependencyModuleConfig,
-    CompileJobInfo,
-    CompileFileInfo
+    FileInfo
 } from '../types';
 
 const WINDOWS: string = 'Windows_NT';
@@ -220,7 +219,7 @@ export function isMixCompileProject(buildConfig: BuildConfig): boolean {
 }
 
 export function checkDependencyModuleInfoCorrectness(module: DependencyModuleConfig): boolean {
-    return (module.packageName && module.modulePath && module.sourceRoots && module.entryFile) != "";
+    return (module.packageName && module.modulePath && module.sourceRoots && module.entryFile) !== '';
 }
 
 export function computeHash(str: string): string {
@@ -233,18 +232,17 @@ export function getFileHash(filePath: string): string {
 }
 
 export function formEts2pandaCmd(
-    jobInfo: CompileJobInfo,
+    fileInfo: FileInfo,
     isDebug: boolean = false,
     simultaneous: boolean = false
 ): string[] {
-    let { inputFilePath, outputFilePath, arktsConfigFile }: CompileFileInfo = jobInfo.compileFileInfo;
 
     const ets2pandaCmd: string[] = [
         '_',
         '--extension',
         'ets',
         '--arktsconfig',
-        arktsConfigFile
+        fileInfo.arktsConfig
     ]
 
     if (simultaneous) {
@@ -252,21 +250,21 @@ export function formEts2pandaCmd(
     }
 
     ets2pandaCmd.push('--output')
-    ets2pandaCmd.push(outputFilePath)
+    ets2pandaCmd.push(fileInfo.output)
 
     if (isDebug) {
         ets2pandaCmd.push('--debug-info');
         ets2pandaCmd.push('--opt-level=0');
     }
 
-    ets2pandaCmd.push(inputFilePath)
+    ets2pandaCmd.push(fileInfo.input)
     return ets2pandaCmd
 }
 
 export function updateFileHash(file: string, hashCache: Record<string, string>): boolean {
     const fileHash: string = getFileHash(file);
     const currHash: string = hashCache[file];
-    if (fileHash == currHash) {
+    if (fileHash === currHash) {
         return false;
     }
 
@@ -277,7 +275,7 @@ export function updateFileHash(file: string, hashCache: Record<string, string>):
 
 }
 
-export function shouldBeCompiled(source: string, target: string): boolean {
+export function shouldBeUpdated(source: string, target: string): boolean {
     if (fs.existsSync(target)) {
         const sourceModified: number = fs.statSync(source).mtimeMs;
         const targetModified: number = fs.statSync(target).mtimeMs;

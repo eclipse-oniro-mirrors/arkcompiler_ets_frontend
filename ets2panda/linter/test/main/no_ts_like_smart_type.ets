@@ -394,3 +394,237 @@ class Temp {
     }
   }
 }
+
+// 1 - union return type
+declare type ResourceColor = number | string;
+
+class buttonBgTestParent {
+  public buttonBgColor: ResourceColor = '#FF000000'
+}
+
+class buttonBgTest extends buttonBgTestParent {
+  getBgColor(test: string): ResourceColor | undefined {
+    if (test) {
+      return this.buttonBgColor; //legal
+    }
+    return undefined;
+  }
+}
+
+// 2 - clearTimeout (stdlib func)
+
+class Common {
+  static isInvalid(obj: unknown): boolean {
+    return obj == null;
+  }
+
+  private checkRunnable(run: number | undefined): number | undefined {
+    if (Common.isInvalid(run)) {
+      return undefined
+    }
+    clearTimeout(run); // legal
+    return undefined
+  }
+
+}
+
+// 3 - method decl return
+
+class CardUtil {
+  public static isValid(card: string): boolean {
+    return card?.length >= 6
+  }
+
+  public static isValidNew(newCard: string): boolean {
+    return CardUtil.isValid(newCard); //legal
+  }
+}
+
+// 4 - array any type parameter
+function $r(value: string, ...params: any[]): string {
+  if (params) {
+    return value
+  }
+  return ''
+}
+const anyArrayasString = 'any type'
+let msg: string = $r('test');
+msg = $r('test', anyArrayasString) //legal
+
+let a: number | string = 42;
+a++;  //Global variable, error
+
+let a2: number | string = 42;
+const b2 = a++;  //Global variable, error
+const b3 = --a; //Global variable, error
+
+function foo5() {
+    let a: number | string = 42;
+    a++;  //local variable，no error
+    --a; //local variable，no error
+}
+
+let c: number = 45
+const fg = c++ // no error only number type
+
+function boo2(a: number | undefined) {
+    if (a != undefined) {
+        a++;  //function para, no error
+    }
+}
+
+class ay {
+    a: number | string = 42;
+}
+
+function boo() {
+    let aa: ay = new ay();
+    aa.a++;   //object prop，error
+}
+
+class A3 {
+    a: number = 1.0;
+}
+
+class B3 {
+    b: A3 | null = new A3();
+}
+
+function foo7() {
+    let aObj: A3 | null = new A3();
+    if (aObj != null) {
+        aObj.a = 2.0;   //smart type, the type of local variable 'a' is narrowed to 'A' and no longer includes 'null', no error
+    }
+}
+
+function foo1(aObj: A3 | null) {
+    if (aObj != null) {
+        aObj.a = 2.0;   //smart type，the type of function parameter 'a' is narrowed to 'A' and no longer includes 'null'. no error
+    }
+}
+
+function aoo() {
+    let bObj = new B3();
+    if (bObj.b != null) {
+        bObj.b.a = 2.0;   //bObj.b is an object property, which does not conform to smart type, so there is no type narrowing here. error
+    }
+}
+
+function boo5() {
+    let aObj: A3 | null = new A3();
+    if (aObj instanceof A3) {
+        aObj.a = 2.0;   //smart type，the type of local variable 'a' is narrowed to 'A'，no error
+    }
+}
+
+function boo1(aObj: A3 | null) {
+    if (aObj instanceof A3) {
+        aObj.a = 2.0;   //smart type，the type of local variable 'a' is narrowed to 'A' no error
+    }
+}
+
+function coo() {
+    let bObj = new B3();
+    if (bObj.b instanceof A3) {
+        bObj.b.a = 2.0;   //bObj.b is an object property, which doesn't meet the smart type criteria, so there's no type narrowing here, error
+    }
+}
+
+class C { }
+class Br {
+    bb: number = 1;
+    getBB() {
+        return new C();
+    }
+}
+class Ar {
+    a: Br | undefined;
+    b: C | undefined;
+    constructor() {
+        this.a = new Br();
+        this.b = this.a.getBB();// // Need to report the error "arkts-no-ts-like-smart-type"
+    }
+}
+
+class ef {
+    a: number = 1.0;
+}
+
+function roo(aObj: ef | null) {
+    if (typeof aObj === 'ef') {
+        aObj.a = 2.0; //error
+    }
+}
+
+class Ay {
+    private connectOptions?: Promise<void>;
+
+    private connect(): Promise<void> {
+        this.connectOptions = new Promise(() => { });
+        return this.connectOptions; // Need to report the error "arkts-no-ts-like-smart-type"
+    }
+}
+
+enum enumA {
+    a = 0,
+    b = 1,
+    c = 2
+}
+
+class AF {
+    test(a: enumA): void {
+        switch (a) {
+            case 0:
+                return AF.test1(); // No need to report the error "arkts-no-ts-like-smart-type"
+            case 1:
+                return AF.test2(); // No need to report the error "arkts-no-ts-like-smart-type"
+            default:
+                return AF.test3(); // No need to report the error "arkts-no-ts-like-smart-type"
+        }
+    }
+    public static test1() { }
+    public static test2() { }
+    public static test3() { }
+}
+
+function $g(value: string, ...params: string[]) { }
+
+(name: string) => {
+    $g(name, name); // No need to report the error "arkts-no-ts-like-smart-type"
+}
+
+class eq {
+    static getStatusBarTypeValue(): number {
+        return 1;
+    }
+    getCurStatusBarTypeValue(): number {
+        return eq.getStatusBarTypeValue(); // No need to report the error "arkts-no-ts-like-smart-type"
+    }
+}
+
+class er {
+    static test1(): string { return '1'; }
+    static test2(): string { return '2'; }
+
+    main(num: number): string {
+        if (num) {
+            return er.test1(); // No need to report the error "arkts-no-ts-like-smart-type"
+        } else {
+            return er.test2(); // No need to report the error "arkts-no-ts-like-smart-type"
+        }
+    }
+}
+
+export enum TestType {
+    Image = 'Image',
+    Edit = 'Edit',
+}
+export type EditorTestType = TestType | 'default';
+
+function EnterEditor(tip: TestType | 'default') {
+    console.log('test function');
+}
+
+function beforeTask(tip: EditorTestType) {
+    EnterEditor(tip); //legal
+}

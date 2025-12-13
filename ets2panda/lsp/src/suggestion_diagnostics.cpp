@@ -15,7 +15,7 @@
 
 #include "suggestion_diagnostics.h"
 #include "internal_api.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include <memory>
 #include <unordered_map>
 #include <vector>

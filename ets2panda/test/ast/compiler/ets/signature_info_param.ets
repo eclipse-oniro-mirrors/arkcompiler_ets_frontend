@@ -18,13 +18,14 @@ function testInfo() : void {
     let pThen = iniP.then((d = e : Object) : Object => { return else;});
 }
 
-/* @@? 17:34 Error TypeError: Unresolved reference intFunc */
-/* @@? 18:34 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:42 Error SyntaxError: Expected '=>', got ')'. */
-/* @@? 18:42 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:44 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:44 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:46 Error SyntaxError: Unexpected token 'Object'. */
-/* @@? 18:46 Error TypeError: The type of parameter 'Object' cannot be inferred */
-/* @@? 18:65 Error SyntaxError: Unexpected token 'else'. */
-/* @@? 18:71 Error SyntaxError: Unexpected token ')'. */
+/* @@? 17:34 Error Semantic error ESE0143: Unresolved reference intFunc */
+/* @@? 18:28 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 18:34 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:42 Error Syntax error ESY0230: Expected '=>', got ')'. */
+/* @@? 18:42 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 18:44 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:44 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:46 Error Syntax error ESY0227: Unexpected token 'Object'. */
+/* @@? 18:46 Error Semantic error ESE0132: The type of parameter 'Object' cannot be inferred */
+/* @@? 18:65 Error Syntax error ESY0227: Unexpected token 'else'. */
+/* @@? 18:71 Error Syntax error ESY0227: Unexpected token ')'. */

@@ -172,3 +172,26 @@ async function Foo_b(): Promise<(string| number)[]> {
 }
 
 AppStorage.SetOrCreate('passwordArray', [] as string[]);
+
+type AliasedType = (string | number)[]
+type AliasedTupleType = [(string | number)]
+
+function AliasTest(): AliasedType {
+    const arr: (string|number)[] = [1];
+    return arr;
+}
+
+function AliasTest2(): AliasedTupleType {
+    const arr: [(string|number)] = [1];
+    return arr;
+}
+
+function AliasTest3(): AliasedTupleType {
+    const arr: [(number|string)] = [1];
+    return arr;
+}
+
+function AliasTest4(): AliasedType {
+    const arr: (number|string)[] = [1];
+    return arr;
+}

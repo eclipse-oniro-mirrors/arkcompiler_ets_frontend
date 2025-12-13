@@ -104,8 +104,8 @@
           "program": "loopWithinLambda.ets"
         },
         "end": {
-          "line": 17,
-          "column": 5,
+          "line": 16,
+          "column": 28,
           "program": "loopWithinLambda.ets"
         }
       }
@@ -322,8 +322,8 @@
           "program": "loopWithinLambda.ets"
         },
         "end": {
-          "line": 18,
-          "column": 5,
+          "line": 17,
+          "column": 55,
           "program": "loopWithinLambda.ets"
         }
       }
@@ -431,8 +431,8 @@
           "program": "loopWithinLambda.ets"
         },
         "end": {
-          "line": 20,
-          "column": 6,
+          "line": 18,
+          "column": 26,
           "program": "loopWithinLambda.ets"
         }
       }

@@ -217,7 +217,7 @@ TEST_F(PluginConversionRuleUnitTest, StringInputParameter)
     extern "C" void SrcDumperAdd([[maybe_unused]] es2panda_Context *context, es2panda_SrcDumper *classInstance,
     [[maybe_unused]] char *str/*return_args:*/)
     {
-        std::string strE2p {str};
+        std::string_view strE2p {str};
         ((reinterpret_cast< ir::SrcDumper *>(classInstance))->Add(strE2p));
     })"};
 
@@ -384,7 +384,7 @@ TEST_F(PluginConversionRuleUnitTest, TSEnumDeclarationConstructorFlagsInputParam
 
             membersArenaVector.push_back(membersElement1E2p);
         }
-        
+
         ark::es2panda::Language langE2p {Language::Id::ETS};
         auto *ctx = reinterpret_cast<Context *>(context);
         auto *ctxAllocator = ctx->allocator;

@@ -16,7 +16,7 @@
   declare interface A {
       (arg :string) string
   }
-/* @@? 17:7 Error TypeError: Native and Declare methods should have explicit return type. */
-/* @@? 17:21 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:21 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 18:3 Error SyntaxError: Identifier expected. */
+/* @@? 17:7 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */
+/* @@? 17:21 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:21 Error Syntax error ESY0224: Identifier expected, got 'string'. */
+/* @@? 18:3 Error Syntax error ESY0122: Identifier expected. */

@@ -14,6 +14,8 @@
  */
 
 #include "recordTable.h"
+
+#include "public/public.h"
 #include "parser/program/program.h"
 #include "varbinder/ETSBinder.h"
 #include "ir/base/classDefinition.h"
@@ -21,7 +23,6 @@
 #include "ir/statements/annotationDeclaration.h"
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsInterfaceDeclaration.h"
-#include "checker/types/ets/etsObjectType.h"
 #include "generated/signatures.h"
 
 namespace ark::es2panda::varbinder {
@@ -87,9 +88,44 @@ BoundContext::~BoundContext()
 
 util::StringView BoundContext::FormRecordName() const
 {
+    //  Special processing for building in simultaneous mode when module prefix, as well as current file name
+    //  are not available. Use the first file from the list instead.
+    auto const getFileName = [this](util::UString &name) -> void {
+        auto const *const ctx = recordTable_->Program()->VarBinder()->GetContext();
+        if (ctx->sourceFileNames.empty()) {
+            return;
+        }
+
+        std::string_view fileName = *ctx->sourceFileNames.begin();
+        auto pos = fileName.rfind('/');
+        if (pos == std::string_view::npos) {
+            pos = fileName.rfind('\\');
+        }
+
+        if (pos != std::string_view::npos) {
+            fileName = fileName.substr(pos + 1U);
+        }
+
+        pos = fileName.find('.');
+        if (pos != std::string_view::npos) {
+            fileName = fileName.substr(0U, pos);
+        }
+
+        if (!fileName.empty()) {
+            util::UString modulePrefix(fileName, recordTable_->program_->Allocator());
+            modulePrefix.Append('$').Append('.');
+            const_cast<util::ModuleInfo &>(recordTable_->program_->ModuleInfo()).modulePrefix = modulePrefix.View();
+            name.Append(recordTable_->program_->ModulePrefix());
+        }
+    };
+
     if (prev_ == nullptr) {
         util::UString recordName(recordTable_->program_->Allocator());
         recordName.Append(recordTable_->program_->ModulePrefix());
+        if (recordName.Empty() && recordTable_->program_->VarBinder()->Extension() == ScriptExtension::ETS) {
+            getFileName(recordName);
+        }
+
         recordName.Append(recordIdent_->Name());
         return recordName.View();
     }

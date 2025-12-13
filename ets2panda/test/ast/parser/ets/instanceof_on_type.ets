@@ -22,6 +22,7 @@ let c = X instanceof Object
 let d = X instanceof X
 let f = B instanceof Object
 
-/* @@? 21:9 Error SyntaxError: The left operand of 'instanceof' operator cannot be a type.  */
-/* @@? 22:9 Error SyntaxError: The left operand of 'instanceof' operator cannot be a type.  */
-/* @@? 23:9 Error SyntaxError: The left operand of 'instanceof' operator cannot be a type.  */
+
+/* @@? 21:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */
+/* @@? 22:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */
+/* @@? 23:9 Error Syntax error ESY0310: The left operand of 'instanceof' operator cannot be a type. */

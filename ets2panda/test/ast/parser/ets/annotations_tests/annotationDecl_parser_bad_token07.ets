@@ -18,5 +18,6 @@
 }
 
 
-/* @@? 15:1 Error SyntaxError: Unexpected token '@@'. */
-/* @@? 15:3 Error SyntaxError: Unexpected token 'interface'. */
+
+/* @@? 15:1 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@? 15:3 Error Syntax error ESY0227: Unexpected token 'interface'. */

@@ -110,71 +110,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UnaryExpression",
-              "operator": "+",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 27,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 33,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 18,
-                    "column": 27,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 18,
-                    "column": 33,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 33,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -205,7 +140,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 33,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -228,71 +163,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UnaryExpression",
-              "operator": "-",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 19,
-                      "column": 27,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 19,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 19,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 19,
-                      "column": 33,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 19,
-                    "column": 27,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 19,
-                    "column": 33,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 19,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 19,
-                  "column": 33,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -323,7 +193,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 33,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -346,71 +216,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UpdateExpression",
-              "operator": "++",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 28,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 20,
-                      "column": 33,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 34,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 20,
-                    "column": 28,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 20,
-                    "column": 34,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 20,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 34,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -441,7 +246,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 34,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -464,71 +269,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UpdateExpression",
-              "operator": "--",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 21,
-                      "column": 28,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 21,
-                      "column": 33,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 21,
-                      "column": 34,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 21,
-                    "column": 28,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 21,
-                    "column": 34,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 21,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 21,
-                  "column": 34,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -559,7 +299,7 @@
               },
               "end": {
                 "line": 21,
-                "column": 34,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -582,71 +322,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UnaryExpression",
-              "operator": "~",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 22,
-                      "column": 27,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 22,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 22,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 22,
-                      "column": 33,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 22,
-                    "column": 27,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 22,
-                    "column": 33,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 22,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 22,
-                  "column": 33,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -677,7 +352,7 @@
               },
               "end": {
                 "line": 22,
-                "column": 33,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -696,22 +371,6 @@
                 "end": {
                   "line": 23,
                   "column": 14,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
-            "value": {
-              "type": "BooleanLiteral",
-              "value": false,
-              "loc": {
-                "start": {
-                  "line": 23,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 23,
-                  "column": 31,
                   "program": "unary_operations.ets"
                 }
               }
@@ -746,7 +405,7 @@
               },
               "end": {
                 "line": 23,
-                "column": 31,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -765,71 +424,6 @@
                 "end": {
                   "line": 24,
                   "column": 18,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
-            "value": {
-              "type": "UnaryExpression",
-              "operator": "!",
-              "prefix": true,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 24,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 24,
-                      "column": 35,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "b",
-                  "loc": {
-                    "start": {
-                      "line": 24,
-                      "column": 36,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 24,
-                      "column": 37,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 24,
-                    "column": 31,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 24,
-                    "column": 37,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 24,
-                  "column": 30,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 24,
-                  "column": 37,
                   "program": "unary_operations.ets"
                 }
               }
@@ -864,7 +458,7 @@
               },
               "end": {
                 "line": 24,
-                "column": 37,
+                "column": 27,
                 "program": "unary_operations.ets"
               }
             }
@@ -887,71 +481,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UpdateExpression",
-              "operator": "++",
-              "prefix": false,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 25,
-                      "column": 26,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 25,
-                      "column": 30,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 25,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 25,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 25,
-                    "column": 26,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 25,
-                    "column": 32,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 25,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 25,
-                  "column": 34,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -982,7 +511,7 @@
               },
               "end": {
                 "line": 25,
-                "column": 34,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -1005,71 +534,6 @@
                 }
               }
             },
-            "value": {
-              "type": "UpdateExpression",
-              "operator": "--",
-              "prefix": false,
-              "argument": {
-                "type": "MemberExpression",
-                "object": {
-                  "type": "ThisExpression",
-                  "loc": {
-                    "start": {
-                      "line": 26,
-                      "column": 26,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 26,
-                      "column": 30,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "property": {
-                  "type": "Identifier",
-                  "name": "a",
-                  "loc": {
-                    "start": {
-                      "line": 26,
-                      "column": 31,
-                      "program": "unary_operations.ets"
-                    },
-                    "end": {
-                      "line": 26,
-                      "column": 32,
-                      "program": "unary_operations.ets"
-                    }
-                  }
-                },
-                "computed": false,
-                "optional": false,
-                "loc": {
-                  "start": {
-                    "line": 26,
-                    "column": 26,
-                    "program": "unary_operations.ets"
-                  },
-                  "end": {
-                    "line": 26,
-                    "column": 32,
-                    "program": "unary_operations.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 26,
-                  "column": 26,
-                  "program": "unary_operations.ets"
-                },
-                "end": {
-                  "line": 26,
-                  "column": 34,
-                  "program": "unary_operations.ets"
-                }
-              }
-            },
             "accessibility": "private",
             "static": false,
             "readonly": false,
@@ -1100,7 +564,7 @@
               },
               "end": {
                 "line": 26,
-                "column": 34,
+                "column": 23,
                 "program": "unary_operations.ets"
               }
             }
@@ -1112,18 +576,19 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 16,
-                  "column": 33,
+                  "line": 1,
+                  "column": 1,
                   "program": "unary_operations.ets"
                 },
                 "end": {
-                  "line": 16,
-                  "column": 33,
+                  "line": 1,
+                  "column": 1,
                   "program": "unary_operations.ets"
                 }
               }
             },
             "kind": "constructor",
+            "accessibility": "public",
             "static": false,
             "optional": false,
             "computed": false,
@@ -1136,13 +601,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 16,
-                      "column": 33,
+                      "line": 1,
+                      "column": 1,
                       "program": "unary_operations.ets"
                     },
                     "end": {
-                      "line": 16,
-                      "column": 33,
+                      "line": 1,
+                      "column": 1,
                       "program": "unary_operations.ets"
                     }
                   }
@@ -1153,42 +618,1290 @@
                 "params": [],
                 "body": {
                   "type": "BlockStatement",
-                  "statements": [],
+                  "statements": [
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 28,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 28,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref1",
+                            "loc": {
+                              "start": {
+                                "line": 28,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 28,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 28,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 28,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "+",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 28,
+                                  "column": 23,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 28,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 28,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 28,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 28,
+                                "column": 23,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 28,
+                                "column": 29,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 28,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 28,
+                              "column": 29,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 28,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 28,
+                            "column": 29,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 28,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 30,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 29,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 29,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref2",
+                            "loc": {
+                              "start": {
+                                "line": 29,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 29,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 29,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 29,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "-",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 23,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 29,
+                                "column": 23,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 29,
+                                "column": 29,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 29,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 29,
+                              "column": 29,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 29,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 29,
+                            "column": 29,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 29,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 29,
+                          "column": 30,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 30,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 30,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref3",
+                            "loc": {
+                              "start": {
+                                "line": 30,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 30,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 30,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 30,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UpdateExpression",
+                          "operator": "++",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 24,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 30,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 30,
+                                  "column": 30,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 30,
+                                "column": 24,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 30,
+                                "column": 30,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 30,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 30,
+                              "column": 30,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 30,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 30,
+                            "column": 30,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 30,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 30,
+                          "column": 31,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 31,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 31,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref4",
+                            "loc": {
+                              "start": {
+                                "line": 31,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 31,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 31,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 31,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UpdateExpression",
+                          "operator": "--",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 24,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 31,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 31,
+                                  "column": 30,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 31,
+                                "column": 24,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 31,
+                                "column": 30,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 31,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 31,
+                              "column": 30,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 31,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 31,
+                            "column": 30,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 31,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 31,
+                          "column": 31,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref5",
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 32,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 32,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "~",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 32,
+                                  "column": 23,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 32,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 32,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 32,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 32,
+                                "column": 23,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 32,
+                                "column": 29,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 32,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 32,
+                              "column": 29,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 32,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 32,
+                            "column": 29,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 32,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 32,
+                          "column": 30,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 33,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 33,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "b",
+                            "loc": {
+                              "start": {
+                                "line": 33,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 33,
+                                "column": 15,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 33,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 33,
+                              "column": 15,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "BooleanLiteral",
+                          "value": false,
+                          "loc": {
+                            "start": {
+                              "line": 33,
+                              "column": 18,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 33,
+                              "column": 23,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 23,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 33,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 33,
+                          "column": 24,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 34,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 34,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "pref6",
+                            "loc": {
+                              "start": {
+                                "line": 34,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 34,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 34,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 34,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UnaryExpression",
+                          "operator": "!",
+                          "prefix": true,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 34,
+                                  "column": 23,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 34,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "b",
+                              "loc": {
+                                "start": {
+                                  "line": 34,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 34,
+                                  "column": 29,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 34,
+                                "column": 23,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 34,
+                                "column": 29,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 34,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 34,
+                              "column": 29,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 34,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 34,
+                            "column": 29,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 34,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 34,
+                          "column": 30,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 35,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 35,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "post1",
+                            "loc": {
+                              "start": {
+                                "line": 35,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 35,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 35,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 35,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UpdateExpression",
+                          "operator": "++",
+                          "prefix": false,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 35,
+                                  "column": 22,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 35,
+                                  "column": 26,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 35,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 35,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 35,
+                                "column": 22,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 35,
+                                "column": 28,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 35,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 35,
+                              "column": 30,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 35,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 35,
+                            "column": 30,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 35,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 35,
+                          "column": 31,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    },
+                    {
+                      "type": "ExpressionStatement",
+                      "expression": {
+                        "type": "AssignmentExpression",
+                        "operator": "=",
+                        "left": {
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "ThisExpression",
+                            "loc": {
+                              "start": {
+                                "line": 36,
+                                "column": 9,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 36,
+                                "column": 13,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "post2",
+                            "loc": {
+                              "start": {
+                                "line": 36,
+                                "column": 14,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 36,
+                                "column": 19,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
+                          "loc": {
+                            "start": {
+                              "line": 36,
+                              "column": 9,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 36,
+                              "column": 19,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "UpdateExpression",
+                          "operator": "--",
+                          "prefix": false,
+                          "argument": {
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "ThisExpression",
+                              "loc": {
+                                "start": {
+                                  "line": 36,
+                                  "column": 22,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 36,
+                                  "column": 26,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "a",
+                              "loc": {
+                                "start": {
+                                  "line": 36,
+                                  "column": 27,
+                                  "program": "unary_operations.ets"
+                                },
+                                "end": {
+                                  "line": 36,
+                                  "column": 28,
+                                  "program": "unary_operations.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
+                            "loc": {
+                              "start": {
+                                "line": 36,
+                                "column": 22,
+                                "program": "unary_operations.ets"
+                              },
+                              "end": {
+                                "line": 36,
+                                "column": 28,
+                                "program": "unary_operations.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 36,
+                              "column": 22,
+                              "program": "unary_operations.ets"
+                            },
+                            "end": {
+                              "line": 36,
+                              "column": 30,
+                              "program": "unary_operations.ets"
+                            }
+                          }
+                        },
+                        "loc": {
+                          "start": {
+                            "line": 36,
+                            "column": 9,
+                            "program": "unary_operations.ets"
+                          },
+                          "end": {
+                            "line": 36,
+                            "column": 30,
+                            "program": "unary_operations.ets"
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 36,
+                          "column": 9,
+                          "program": "unary_operations.ets"
+                        },
+                        "end": {
+                          "line": 36,
+                          "column": 31,
+                          "program": "unary_operations.ets"
+                        }
+                      }
+                    }
+                  ],
                   "loc": {
                     "start": {
-                      "line": 16,
-                      "column": 33,
+                      "line": 27,
+                      "column": 19,
                       "program": "unary_operations.ets"
                     },
                     "end": {
-                      "line": 16,
-                      "column": 33,
+                      "line": 37,
+                      "column": 6,
                       "program": "unary_operations.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 16,
-                    "column": 33,
+                    "line": 27,
+                    "column": 16,
                     "program": "unary_operations.ets"
                   },
                   "end": {
-                    "line": 16,
-                    "column": 33,
+                    "line": 37,
+                    "column": 6,
                     "program": "unary_operations.ets"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 16,
-                  "column": 33,
+                  "line": 27,
+                  "column": 16,
                   "program": "unary_operations.ets"
                 },
                 "end": {
-                  "line": 16,
-                  "column": 33,
+                  "line": 37,
+                  "column": 6,
                   "program": "unary_operations.ets"
                 }
               }
@@ -1196,14 +1909,14 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 1,
-                "column": 1,
-                "program": null
+                "line": 27,
+                "column": 5,
+                "program": "unary_operations.ets"
               },
               "end": {
-                "line": 1,
-                "column": 1,
-                "program": null
+                "line": 37,
+                "column": 6,
+                "program": "unary_operations.ets"
               }
             }
           }
@@ -1215,7 +1928,7 @@
             "program": "unary_operations.ets"
           },
           "end": {
-            "line": 28,
+            "line": 39,
             "column": 1,
             "program": "unary_operations.ets"
           }
@@ -1228,7 +1941,7 @@
           "program": "unary_operations.ets"
         },
         "end": {
-          "line": 28,
+          "line": 39,
           "column": 1,
           "program": "unary_operations.ets"
         }
@@ -1394,7 +2107,7 @@
       "program": "unary_operations.ets"
     },
     "end": {
-      "line": 28,
+      "line": 39,
       "column": 1,
       "program": "unary_operations.ets"
     }

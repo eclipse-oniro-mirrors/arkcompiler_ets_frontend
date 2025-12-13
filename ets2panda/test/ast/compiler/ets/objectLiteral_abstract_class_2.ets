@@ -24,4 +24,5 @@ function main(){
     let x:C4 = /* @@ label */{field1:1000,field2:"some str"};
 }
 
-/* @@@ label Error TypeError: Abstract class has abstract method method1  */
+
+/* @@@ label Error Semantic error ESE0257: Abstract class has abstract method method1 */

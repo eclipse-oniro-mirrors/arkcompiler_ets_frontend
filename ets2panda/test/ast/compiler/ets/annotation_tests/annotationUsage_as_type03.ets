@@ -20,6 +20,6 @@ function foo<T>(a:T){}
 
 let array:Array</* @@ label */MyAnno> = new Array</* @@ label1 */MyAnno>()
 
-/* @@? 21:31 Error TypeError: Annotations cannot be used as a type. */
-/* @@? 21:45 Error TypeError: Invalid type reference. */
-/* @@? 21:66 Error TypeError: Annotations cannot be used as a type. */
+
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */

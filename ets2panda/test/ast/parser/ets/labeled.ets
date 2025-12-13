@@ -23,10 +23,11 @@ class LabeledTest  {
     }
 }
 
-/* @@@ label Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label1 Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label2 Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label3 Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label4 Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label5 Error SyntaxError: Label must be followed by a loop statement.  */
-/* @@@ label6 Error SyntaxError: Label must be followed by a loop statement.  */
+
+/* @@@ label Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label1 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label2 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label3 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label4 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label5 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@@ label6 Error Syntax error ESY0038: Label must be followed by a loop statement. */

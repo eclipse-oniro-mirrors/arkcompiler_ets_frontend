@@ -19,6 +19,7 @@ class Foo {
     }
 
     async foo(o: Object | null, i: int): Promise<Object | null> {
+        return null;
     }
 }
 

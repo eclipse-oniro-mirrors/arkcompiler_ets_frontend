@@ -1,10 +1,20 @@
 ## 限定switch语句中case语句类型
 
-**规则：**`arkts-switch-expr`
+**规则：** `arkts-switch-expr`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2的switch表达式类型只能为number，string，enum。
+ArkTS1.2的switch表达式类型只能为number、string、enum。
+
+**变更原因：**
+ 
+提高代码可读性和执行性能。
+
+**适配建议：**
+
+使用number、string、enum作为switch表达式类型。
+
+**示例：**
 
 **ArkTS1.1**
 

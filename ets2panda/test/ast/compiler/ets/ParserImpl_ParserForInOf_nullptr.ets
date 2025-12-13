@@ -18,14 +18,14 @@
    __empty = 1,
   }
 
-/* @@? 16:2 Error SyntaxError: Unexpected token '%'. */
-/* @@? 16:4 Error SyntaxError: Unexpected token 'for'. */
-/* @@? 17:3 Error SyntaxError: Expected '(', got 'const'. */
-/* @@? 31:70 Error SyntaxError: Invalid left-hand side in 'for' statement: must have a single binding. */
-/* @@? 31:70 Error SyntaxError: Expected ';', got 'end of stream'. */
-/* @@? 31:70 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 31:70 Error SyntaxError: Unexpected token, expected ';'. */
-/* @@? 31:70 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 31:70 Error SyntaxError: Expected ')', got 'end of stream'. */
-/* @@? 31:70 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 31:70 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 16:2 Error Syntax error ESY0227: Unexpected token '%'. */
+/* @@? 16:4 Error Syntax error ESY0227: Unexpected token 'for'. */
+/* @@? 17:3 Error Syntax error ESY0230: Expected '(', got 'const'. */
+/* @@? 32:1 Error Syntax error ESY0211: Invalid left-hand side in 'for' statement: must have a single binding. */
+/* @@? 32:1 Error Syntax error ESY0230: Expected ';', got 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0228: Unexpected token, expected ';'. */
+/* @@? 32:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0230: Expected ')', got 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 32:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -33,7 +33,6 @@
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsEnumMember.h"
 #include "checker/types/ets/types.h"
-#include "checker/types/gradualType.h"
 namespace ark::es2panda::compiler {
 
 // #22952: this should have been done in lowering
@@ -41,8 +40,7 @@ void ETSFunction::CallImplicitCtor(ETSGen *etsg)
 {
     RegScope rs(etsg);
     auto *type = etsg->ContainingObjectType()->SuperType();
-    auto superType =
-        type->IsGradualType() ? type->AsGradualType()->GetBaseType()->AsETSObjectType() : type->AsETSObjectType();
+    auto superType = type->AsETSObjectType();
     if (superType == nullptr) {
         etsg->CallExact(etsg->RootNode(), Signatures::BUILTIN_OBJECT_CTOR, etsg->GetThisReg());
         return;
@@ -131,8 +129,12 @@ void ETSFunction::CompileAsStaticBlock(ETSGen *etsg)
 
 void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc)
 {
+    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded() || !scriptFunc->IsExplicitThisCall() ||
+                    !scriptFunc->IsExplicitSuperCall());
     if (scriptFunc->IsImplicitSuperCallNeeded()) {
         CallImplicitCtor(etsg);
+    } else if (scriptFunc->IsExplicitThisCall()) {
+        return;
     }
 
     const auto *classDef = etsg->ContainingObjectType()->GetDeclNode()->AsClassDefinition();
@@ -170,6 +172,7 @@ void ETSFunction::Compile(ETSGen *etsg)
         CompileSourceBlock(etsg, etsg->RootNode()->AsBlockStatement());
     }
 
+    etsg->FinalizeRegAllocation();
     etsg->SortCatchTables();
 }
 

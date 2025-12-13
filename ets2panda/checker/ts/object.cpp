@@ -177,8 +177,8 @@ void TSChecker::ResolveObjectTypeMembers(ObjectType *type)
 
     ES2PANDA_ASSERT(type->Variable() && type->Variable()->Declaration()->Node()->IsTSTypeLiteral());
     auto *typeLiteral = type->Variable()->Declaration()->Node()->AsTSTypeLiteral();
-    ArenaVector<ir::TSSignatureDeclaration *> signatureDeclarations(Allocator()->Adapter());
-    ArenaVector<ir::TSIndexSignature *> indexDeclarations(Allocator()->Adapter());
+    std::vector<ir::TSSignatureDeclaration *> signatureDeclarations {};
+    std::vector<ir::TSIndexSignature *> indexDeclarations {};
 
     for (auto *it : typeLiteral->Members()) {
         ResolvePropertiesOfObjectType(type, it, signatureDeclarations, indexDeclarations, false);
@@ -191,8 +191,8 @@ void TSChecker::ResolveObjectTypeMembers(ObjectType *type)
 }
 
 void TSChecker::ResolvePropertiesOfObjectType(ObjectType *type, ir::AstNode *member,
-                                              ArenaVector<ir::TSSignatureDeclaration *> &signatureDeclarations,
-                                              ArenaVector<ir::TSIndexSignature *> &indexDeclarations, bool isInterface)
+                                              std::vector<ir::TSSignatureDeclaration *> &signatureDeclarations,
+                                              std::vector<ir::TSIndexSignature *> &indexDeclarations, bool isInterface)
 {
     if (member->IsTSPropertySignature()) {
         varbinder::Variable *prop = member->AsTSPropertySignature()->Variable();
@@ -226,7 +226,7 @@ void TSChecker::ResolvePropertiesOfObjectType(ObjectType *type, ir::AstNode *mem
 }
 
 void TSChecker::ResolveSignaturesOfObjectType(ObjectType *type,
-                                              ArenaVector<ir::TSSignatureDeclaration *> &signatureDeclarations)
+                                              std::vector<ir::TSSignatureDeclaration *> &signatureDeclarations)
 {
     for (auto *it : signatureDeclarations) {
         Type *placeholderObj = it->Check(this);
@@ -240,7 +240,7 @@ void TSChecker::ResolveSignaturesOfObjectType(ObjectType *type,
         type->AddConstructSignature(placeholderObj->AsObjectType()->ConstructSignatures()[0]);
     }
 }
-void TSChecker::ResolveIndexInfosOfObjectType(ObjectType *type, ArenaVector<ir::TSIndexSignature *> &indexDeclarations)
+void TSChecker::ResolveIndexInfosOfObjectType(ObjectType *type, std::vector<ir::TSIndexSignature *> &indexDeclarations)
 {
     for (auto *it : indexDeclarations) {
         Type *placeholderObj = it->Check(this);
@@ -512,8 +512,8 @@ void TSChecker::ResolveDeclaredMembers(InterfaceType *type)
     ES2PANDA_ASSERT(type->Variable() && type->Variable()->Declaration()->IsInterfaceDecl());
     varbinder::InterfaceDecl *decl = type->Variable()->Declaration()->AsInterfaceDecl();
 
-    ArenaVector<ir::TSSignatureDeclaration *> signatureDeclarations(Allocator()->Adapter());
-    ArenaVector<ir::TSIndexSignature *> indexDeclarations(Allocator()->Adapter());
+    std::vector<ir::TSSignatureDeclaration *> signatureDeclarations {};
+    std::vector<ir::TSIndexSignature *> indexDeclarations {};
 
     for (const auto *declaration : decl->Decls()) {
         for (auto *member : declaration->Body()->Body()) {

@@ -38,9 +38,11 @@ void CheckPredefinedMethodReturnType(ETSChecker *checker, ir::ScriptFunction *sc
 void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc,
                                    const lexer::SourcePosition &position, const std::string &methodName);
 checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, checker::ETSChecker *checker,
-                                                 ir::CallExpression *expr);
+                                                 ir::CallExpression *expr,
+                                                 TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
 checker::Signature *ResolveCallForClassMethod(checker::ETSFunctionType *functionType, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr);
+                                              ir::CallExpression *expr,
+                                              TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
 checker::Signature *GetMostSpecificSigFromExtensionFuncAndClassMethod(checker::ETSExtensionFuncHelperType *type,
                                                                       checker::ETSChecker *checker,
                                                                       ir::CallExpression *expr);
@@ -54,6 +56,7 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
                            ir::ReturnStatement *st);
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc);
+bool HasSingleReturnStatement(const ir::AstNode *node);
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument);
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *arrayExprPreferredType);
 void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr);
@@ -62,8 +65,8 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
 
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
-
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
+void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature);
 }  // namespace ark::es2panda::checker
 
 #endif  // ES2PANDA_CHECKER_ETSANALYZERHELPERS_H

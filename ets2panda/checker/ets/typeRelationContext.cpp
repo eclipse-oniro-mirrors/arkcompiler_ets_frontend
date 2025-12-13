@@ -50,9 +50,10 @@ bool InstantiationContext::ValidateTypeArguments(ETSObjectType *type, ir::TSType
     if (checker_->HasStatus(CheckerStatus::IN_INSTANCEOF_CONTEXT)) {
         if (typeArgs != nullptr) {
             checker_->LogDiagnostic(diagnostic::INSTANCEOF_ERASED, {type->Name()}, pos);
+        } else {
+            result_ = type;
+            return true;
         }
-        result_ = type;
-        return true;
     }
     if (!checker_->CheckNumberOfTypeArguments(type, typeArgs, pos)) {
         result_ = checker_->GlobalTypeError();
@@ -112,8 +113,7 @@ static void CheckInstantiationConstraints(ETSChecker *checker, ArenaVector<Type 
 {
     auto relation = checker->Relation();
 
-    for (auto type : typeParams) {
-        type = type->MaybeBaseTypeOfGradualType();
+    for (auto const type : typeParams) {
         if (!type->IsETSTypeParameter()) {
             continue;
         }

@@ -20,7 +20,8 @@ function main() : void {
     let mod_long: long = /* @@ label4 */1 % 0;
 }
 
-/* @@@ label1 Error SyntaxError: Division by zero is not allowed. */
-/* @@@ label2 Error SyntaxError: Division by zero is not allowed. */
-/* @@@ label3 Error SyntaxError: Division by zero is not allowed. */
-/* @@@ label4 Error SyntaxError: Division by zero is not allowed. */
+
+/* @@@ label1 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */
+/* @@@ label2 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */
+/* @@@ label3 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */
+/* @@@ label4 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */

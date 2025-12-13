@@ -34,6 +34,6 @@ function main() {
   /* @@ label3 */new C<Long, Error>(new A<Long>, new B<Error>, new B<Error>)
 }
 
-/* @@? 32:18 Error TypeError: No matching construct signature for rest_parameter_13.C() */
-/* @@? 33:18 Error TypeError: No matching construct signature for rest_parameter_13.C(A<Long>) */
-/* @@? 34:18 Error TypeError: No matching construct signature for rest_parameter_13.C(A<Long>, B<Error>, B<Error>) */
+/* @@? 32:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C() */
+/* @@? 33:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>) */
+/* @@? 34:18 Error Semantic error ESE0127: No matching construct signature for rest_parameter_13.C(A<Long>, B<Error>, B<Error>) */

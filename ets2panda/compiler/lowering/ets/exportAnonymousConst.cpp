@@ -15,7 +15,6 @@
 
 #include "compiler/lowering/ets/exportAnonymousConst.h"
 #include "compiler/lowering/util.h"
-#include "macros.h"
 
 namespace ark::es2panda::compiler {
 
@@ -27,6 +26,7 @@ static ir::AstNode *CreateAnonymousVariableDecl(public_lib::Context *ctx, ir::Ex
 
     auto *anonymousIdentifier =
         allocator->New<ir::Identifier>(exportDecl->Specifiers().front()->Exported()->Name(), allocator);
+    anonymousIdentifier->SetRange(exportDecl->Specifiers().front()->GetConstantExpression()->Range());
     ES2PANDA_ASSERT(exportDecl->Specifiers().size() == exportDefaultMaxSize);
     auto *anonymousConstant = parser->CreateFormattedExpression(
         "const @@I1 = @@E2;", anonymousIdentifier, exportDecl->Specifiers().front()->GetConstantExpression());
@@ -36,6 +36,25 @@ static ir::AstNode *CreateAnonymousVariableDecl(public_lib::Context *ctx, ir::Ex
                                        ir::ModifierFlags::PUBLIC);
 
     return anonymousVariableDecl;
+}
+
+bool IsDefaultExport(ark::es2panda::ir::Statement *ast)
+{
+    if (ast->IsExportNamedDeclaration()) {
+        return std::any_of(ast->AsExportNamedDeclaration()->Specifiers().begin(),
+                           ast->AsExportNamedDeclaration()->Specifiers().end(),
+                           [](auto *specific) { return specific->IsDefault() || specific->IsDefaultExported(); });
+    }
+    if (ast->IsETSReExportDeclaration()) {
+        return std::any_of(
+            ast->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers().begin(),
+            ast->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers().end(), [](auto *specific) {
+                return specific->IsImportSpecifier() && specific->AsImportSpecifier()->Local()->Name() ==
+                                                            compiler::Signatures::REEXPORT_DEFAULT_ANONYMOUSLY;
+            });
+    }
+
+    return (ast->AsStatement()->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) != 0U;
 }
 
 static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program *const program)
@@ -57,6 +76,15 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
             [](auto *specific) { return specific->IsDefault() && specific->GetConstantExpression() != nullptr; });
     };
     auto module = program->Ast();
+    const size_t exportDefaultMaxSize = 1;
+    std::vector<ark::es2panda::ir::Statement *> defaultExportStatements;
+    std::copy_if(module->Statements().begin(), module->Statements().end(), std::back_inserter(defaultExportStatements),
+                 IsDefaultExport);
+    if (defaultExportStatements.size() > exportDefaultMaxSize) {
+        lexer::SourcePosition multiplePos = defaultExportStatements.back()->AsStatement()->Start();
+        ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS, multiplePos);
+        return;
+    }
     auto iteratorForFind =
         std::find_if(module->Statements().begin(), module->Statements().end(), isExportAnonymousConst);
     if (iteratorForFind == module->Statements().end()) {
@@ -65,7 +93,6 @@ static void HandleAnonymousConst(public_lib::Context *const ctx, parser::Program
     auto &stmt = module->StatementsForUpdates();
     auto iterator = std::find_if(stmt.begin(), stmt.end(), isExportAnonymousConst);
 
-    [[maybe_unused]] const size_t exportDefaultMaxSize = 1;
     if ((*iterator)->AsExportNamedDeclaration()->Specifiers().size() != exportDefaultMaxSize) {
         ctx->GetChecker()->AsETSChecker()->LogError(diagnostic::MULTIPLE_DEFAULT_EXPORTS,
                                                     (*iterator)->AsExportNamedDeclaration()->Start());
@@ -85,49 +112,53 @@ static void HandleExportDefaultInExportNamedDecl(public_lib::Context *const ctx,
      * export default new A()
      * export {B as B, C as C}
      */
-    auto exportNamedDeclarationhasDefault = [](ir::AstNode *ast) {
+    auto const exportNamedDeclarationHasDefault = [](ir::AstNode *ast) -> bool {
         if (!ast->IsExportNamedDeclaration()) {
             return false;
         }
-        return std::any_of(ast->AsExportNamedDeclaration()->Specifiers().begin(),
-                           ast->AsExportNamedDeclaration()->Specifiers().end(),
-                           [](auto *specific) { return specific->IsDefault(); });
+        auto const &specifiers = ast->AsExportNamedDeclaration()->Specifiers();
+        return std::any_of(specifiers.cbegin(), specifiers.cend(),
+                           [](auto *specifier) { return specifier->IsDefault(); });
     };
 
-    auto module = program->Ast();
-    auto iteratorConst =
-        std::find_if(module->Statements().begin(), module->Statements().end(), exportNamedDeclarationhasDefault);
-    if (iteratorConst == module->Statements().end()) {
+    auto *const module = program->Ast();
+    if (auto const &statements = module->Statements();
+        std::find_if(statements.cbegin(), statements.end(), exportNamedDeclarationHasDefault) == statements.cend()) {
         return;
     }
 
+    auto *allocator = ctx->allocator;
     auto &stmt = module->StatementsForUpdates();
 
-    auto iterator = std::find_if(stmt.begin(), stmt.end(), exportNamedDeclarationhasDefault);
+    auto iterator = std::find_if(stmt.begin(), stmt.end(), exportNamedDeclarationHasDefault);
+    auto *const exportNamedDeclaration = (*iterator)->AsExportNamedDeclaration();
 
-    auto *allocator = ctx->allocator;
-    auto *exportNamedDeclaration = (*iterator)->AsExportNamedDeclaration();
-    auto oldSpecifiers = exportNamedDeclaration->Specifiers();
-    ArenaVector<ir::ExportSpecifier *> newSpecifiers(allocator->Adapter());
-    ArenaVector<ir::ExportNamedDeclaration *> exportDefaulNamedDeclarations(allocator->Adapter());
+    auto &specifiers = exportNamedDeclaration->Specifiers();
+    auto specifier = specifiers.begin();
 
-    for (auto *specifier : oldSpecifiers) {
-        if (specifier->IsDefault()) {
+    while (specifier != specifiers.end()) {
+        if ((*specifier)->IsDefault()) {
             ArenaVector<ir::ExportSpecifier *> exports(allocator->Adapter());
-            exports.emplace_back(specifier);
-            auto *exportDefaulNamedDecl = allocator->New<ir::ExportNamedDeclaration>(
+            exports.emplace_back(*specifier);
+
+            ir::ExportNamedDeclaration *exportDefaultNamedDeclaration = allocator->New<ir::ExportNamedDeclaration>(
                 allocator, static_cast<ir::StringLiteral *>(nullptr), std::move(exports));
-            ES2PANDA_ASSERT(exportDefaulNamedDecl);
-            exportDefaulNamedDecl->AddModifier(ir::ModifierFlags::DEFAULT_EXPORT);
-            exportDefaulNamedDeclarations.push_back(exportDefaulNamedDecl);
-            continue;
+            exportDefaultNamedDeclaration->AddModifier(ir::ModifierFlags::DEFAULT_EXPORT);
+            exportDefaultNamedDeclaration->SetParent(exportNamedDeclaration->Parent());
+            exportDefaultNamedDeclaration->SetRange(exportNamedDeclaration->Range());
+
+            iterator = std::next(stmt.insert(iterator, exportDefaultNamedDeclaration));
+            specifier = specifiers.erase(specifier);
+        } else {
+            ++specifier;
         }
-        newSpecifiers.push_back(specifier);
     }
 
-    stmt.insert(iterator, exportDefaulNamedDeclarations.front());
-    exportNamedDeclaration->ReplaceSpecifiers(newSpecifiers);
-    exportNamedDeclaration->ClearModifier(ir::ModifierFlags::DEFAULT_EXPORT);
+    if (!specifiers.empty()) {
+        exportNamedDeclaration->ClearModifier(ir::ModifierFlags::DEFAULT_EXPORT);
+    } else {
+        stmt.erase(iterator);
+    }
 }
 
 bool ExportAnonymousConstPhase::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)

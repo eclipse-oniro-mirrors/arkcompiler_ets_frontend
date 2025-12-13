@@ -18,3 +18,4 @@ import {fooImport} from "./import_type_error_top_level"
 export let inExport = fooImport()
 
 // ignored because used only in import
+/* @@? import_type_error_top_level.ets:21:35 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

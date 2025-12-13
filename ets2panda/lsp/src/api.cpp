@@ -18,8 +18,8 @@
 #include <string>
 #include <vector>
 #include "class_hierarchy.h"
+#include "get_node.h"
 #include "lsp/include/organize_imports.h"
-#include "compiler/lowering/util.h"
 #include "get_safe_delete_info.h"
 #include "internal_api.h"
 #include "ir/astNode.h"
@@ -41,6 +41,9 @@
 #include "signature_help.h"
 #include "completions_details.h"
 #include "get_name_or_dotted_name_span.h"
+#include "get_signature.h"
+#include "node_matchers.h"
+#include "compiler/lowering/util.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 
@@ -51,6 +54,10 @@ DefinitionInfo GetDefinitionAtPosition(es2panda_Context *context, size_t positio
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     SetPhaseManager(ctx->phaseManager);
+    auto importFilePath = GetImportFilePath(context, position);
+    if (!importFilePath.empty()) {
+        return {importFilePath, 0, 0};
+    }
     auto declInfo = GetDefinitionAtPositionImpl(context, position);
     DefinitionInfo result {};
     if (declInfo.first == nullptr) {
@@ -214,9 +221,7 @@ DiagnosticReferences GetSemanticDiagnostics(es2panda_Context *context)
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SEMANTIC);
     SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
-    for (const auto &diagnostic : diagnostics) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
+    MakeDiagnosticReferences(context, diagnostics, result);
     return result;
 }
 
@@ -231,15 +236,9 @@ DiagnosticReferences GetSyntacticDiagnostics(es2panda_Context *context)
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_ERROR);
     const auto &diagnosticsPluginWarning =
         ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::PLUGIN_WARNING);
-    for (const auto &diagnostic : diagnostics) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
-    for (const auto &diagnostic : diagnosticsPluginError) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
-    for (const auto &diagnostic : diagnosticsPluginWarning) {
-        result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
-    }
+    MakeDiagnosticReferences(context, diagnostics, result);
+    MakeDiagnosticReferences(context, diagnosticsPluginError, result);
+    MakeDiagnosticReferences(context, diagnosticsPluginWarning, result);
     return result;
 }
 
@@ -327,6 +326,16 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWrapper(
     return std::vector<ark::es2panda::lsp::RenameLocation> {locations.begin(), locations.end()};
 }
 
+std::set<RenameLocation> FindRenameLocationsInCurrentFileWrapper(es2panda_Context *context, size_t position)
+{
+    return FindRenameLocationsInCurrentFile(context, position);
+}
+
+bool NeedsCrossFileRenameWrapper(es2panda_Context *context, size_t position)
+{
+    return NeedsCrossFileRename(context, position);
+}
+
 std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWithCancellationWrapper(
     ark::es2panda::lsp::CancellationToken *tkn, const std::vector<es2panda_Context *> &fileContexts,
     es2panda_Context *context, size_t position)
@@ -393,14 +402,22 @@ LineAndCharacter ToLineColumnOffsetWrapper(es2panda_Context *context, size_t pos
 
 // Returns type of refactoring and action that can be performed based
 // on the input kind information and cursor position
-std::vector<ApplicableRefactorInfo> GetApplicableRefactors(es2panda_Context *context, const char *kind, size_t position)
+std::vector<ApplicableRefactorInfo> GetApplicableRefactors(es2panda_Context *context, const char *kind, size_t startPos,
+                                                           size_t endPos)
 {
     RefactorContext refactorContext;
     refactorContext.context = context;
     refactorContext.kind = kind;
-    refactorContext.span.pos = position;
+    refactorContext.span.pos = startPos;
+    refactorContext.span.end = endPos;
     auto result = GetApplicableRefactorsImpl(&refactorContext);
     return result;
+}
+
+std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
+    const ark::es2panda::lsp::RefactorContext &context, const std::string &refactorName, const std::string &actionName)
+{
+    return ark::es2panda::lsp::GetEditsForRefactorsImpl(context, refactorName, actionName);
 }
 
 std::vector<ark::es2panda::lsp::TodoComment> GetTodoComments(
@@ -425,17 +442,19 @@ InlayHintList ProvideInlayHints(es2panda_Context *context, const TextSpan *span)
 
 SignatureHelpItems GetSignatureHelpItems(es2panda_Context *context, size_t position)
 {
-    const size_t defaultTime = 20;
-    auto invokedReason = ark::es2panda::lsp::SignatureHelpInvokedReason();
-    auto cancellationToken = ark::es2panda::lsp::CancellationToken(defaultTime, nullptr);
-    return ark::es2panda::lsp::GetSignatureHelpItems(context, position, invokedReason, cancellationToken);
+    return ark::es2panda::lsp::GetSignature(context, position);
 }
 
-size_t GetOffsetByColAndLine(es2panda_Context *context, size_t line, size_t column)
+size_t GetOffsetByColAndLine(const std::string &sourceCode, size_t line, size_t column)
 {
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto index = lexer::LineIndex(ctx->parserProgram->SourceCode());
-    return index.GetOffset(lexer::SourceLocation(line, column, ctx->parserProgram));
+    auto index = lexer::LineIndex(util::StringView(sourceCode));
+    return index.GetOffset(lexer::SourceLocation(line, column, nullptr));
+}
+
+std::pair<size_t, size_t> GetColAndLineByOffset(const std::string &sourceCode, size_t offset)
+{
+    auto index = lexer::LineIndex(util::StringView(sourceCode));
+    return index.GetLocation(offset);
 }
 
 std::vector<CodeFixActionInfo> GetCodeFixesAtPosition(es2panda_Context *context, size_t startPosition,
@@ -463,8 +482,151 @@ TextSpan *GetNameOrDottedNameSpan(es2panda_Context *context, int startPos)
     return result;
 }
 
+es2panda_AstNode *GetProgramAst(es2panda_Context *context)
+{
+    return GetProgramAstImpl(context);
+}
+
+std::vector<NodeInfo> GetNodeInfosByDefinitionData(es2panda_Context *context, size_t position)
+{
+    if (context == nullptr) {
+        return {};
+    }
+
+    auto node = GetTouchingToken(context, position, false);
+    if (node == nullptr) {
+        return {};
+    }
+
+    std::vector<NodeInfo> result;
+    while (node != nullptr) {
+        const auto &nodeInfoHandlers = GetNodeInfoHandlers();
+        auto it = nodeInfoHandlers.find(node->Type());
+        if (it != nodeInfoHandlers.end()) {
+            it->second(node, result);
+        }
+        node = node->Parent();
+    }
+    return std::vector<NodeInfo>(result.rbegin(), result.rend());
+}
+
+es2panda_AstNode *GetClassDefinition(es2panda_AstNode *astNode, const std::string &nodeName)
+{
+    return GetClassDefinitionImpl(astNode, nodeName);
+}
+
+es2panda_AstNode *GetIdentifier(es2panda_AstNode *astNode, const std::string &nodeName)
+{
+    return GetIdentifierImpl(astNode, nodeName);
+}
+
+DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::vector<NodeInfo *> &nodeInfos)
+{
+    DefinitionInfo result {"", 0, 0};
+    if (context == nullptr || nodeInfos.empty()) {
+        return result;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    if (rootNode == nullptr) {
+        return result;
+    }
+
+    ir::AstNode *lastFoundNode = nullptr;
+    NodeInfo *lastNodeInfo = nullptr;
+    for (auto info : nodeInfos) {
+        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
+            const auto &nodeMatchers = GetNodeMatchers();
+            auto it = nodeMatchers.find(info->kind);
+            if (it != nodeMatchers.end()) {
+                return it->second(childNode, info);
+            }
+            return false;
+        });
+        if (foundNode == nullptr) {
+            return {"", 0, 0};
+        }
+        lastFoundNode = foundNode;
+        lastNodeInfo = info;
+    }
+
+    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
+        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
+        if (identifierNode != nullptr) {
+            result = {"", identifierNode->Start().index, identifierNode->End().index - identifierNode->Start().index};
+        } else {
+            result = {"", lastFoundNode->Start().index, lastFoundNode->End().index - lastFoundNode->Start().index};
+        }
+    }
+
+    return result;
+}
+
+ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context *context,
+                                                               const std::vector<NodeInfo *> &nodeInfos)
+{
+    ark::es2panda::lsp::RenameLocation result {"", 0, 0, 0};
+    if (context == nullptr || nodeInfos.empty()) {
+        return result;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    if (rootNode == nullptr) {
+        return result;
+    }
+
+    ir::AstNode *lastFoundNode = nullptr;
+    NodeInfo *lastNodeInfo = nullptr;
+    for (auto info : nodeInfos) {
+        auto foundNode = rootNode->FindChild([info](ir::AstNode *childNode) -> bool {
+            const auto &nodeMatchers = GetNodeMatchers();
+            auto it = nodeMatchers.find(info->kind);
+            if (it != nodeMatchers.end()) {
+                return it->second(childNode, info);
+            }
+            return false;
+        });
+        if (foundNode == nullptr) {
+            return {"", 0, 0, 0};
+        }
+        lastFoundNode = foundNode;
+        lastNodeInfo = info;
+    }
+
+    if (lastFoundNode != nullptr && lastNodeInfo != nullptr) {
+        ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
+        if (identifierNode != nullptr) {
+            result = {"", identifierNode->Start().index, identifierNode->End().index,
+                      identifierNode->End().index - identifierNode->Start().index};
+        } else {
+            result = {"", lastFoundNode->Start().index, lastFoundNode->End().index,
+                      lastFoundNode->End().index - lastFoundNode->Start().index};
+        }
+    }
+
+    return result;
+}
+
+TokenTypeInfo GetTokenTypes(es2panda_Context *context, size_t offset)
+{
+    auto token = GetTouchingToken(context, offset, false);
+    std::string result;
+    std::string name;
+    ir::ModifierFlags flags;
+    if (token != nullptr && token->IsIdentifier()) {
+        name = std::string(token->AsIdentifier()->Name());
+        token = compiler::DeclarationFromIdentifier(token->AsIdentifier());
+        if (token != nullptr) {
+            flags = token->Modifiers();
+            result = GetTokenTypes(flags);
+        }
+    }
+    return {name, result};
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
+                    GetEditsForRefactor,
                     GetImplementationAtPosition,
                     IsPackageModule,
                     GetAliasScriptElementKind,
@@ -485,6 +647,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetTypeHierarchies,
                     GetDocumentHighlights,
                     FindRenameLocationsWrapper,
+                    FindRenameLocationsInCurrentFileWrapper,
+                    NeedsCrossFileRenameWrapper,
                     FindRenameLocationsWithCancellationWrapper,
                     FindSafeDeleteLocation,
                     FindReferencesWrapper,
@@ -501,9 +665,17 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     ProvideInlayHints,
                     GetSignatureHelpItems,
                     GetOffsetByColAndLine,
+                    GetColAndLineByOffset,
                     GetCodeFixesAtPosition,
                     GetCombinedCodeFix,
-                    GetNameOrDottedNameSpan};
+                    GetNameOrDottedNameSpan,
+                    GetProgramAst,
+                    GetNodeInfosByDefinitionData,
+                    GetClassDefinition,
+                    GetIdentifier,
+                    GetDefinitionDataFromNode,
+                    FindRenameLocationsFromNode,
+                    GetTokenTypes};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

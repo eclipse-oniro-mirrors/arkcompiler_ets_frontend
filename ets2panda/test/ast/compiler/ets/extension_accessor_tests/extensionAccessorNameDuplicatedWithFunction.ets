@@ -28,5 +28,5 @@ get name(this: B): string {
     this.name_ = n;
 }
 
-/* @@@ label1 Error TypeError: Method cannot use the same name as name accessor property  */
-/* @@@ label Error TypeError: Function name with this assembly signature already declared.  */
+
+/* @@@ label Error Semantic error ESE0131: Function name with this assembly signature already declared. */

@@ -17,4 +17,5 @@ interface Vehicle {
   private getHorsePower/* @@ label */(rpm: int, torque: int): int
 }
 
-/* @@@ label Error SyntaxError: Private interface methods must have body.  */
+
+/* @@@ label Error Syntax error ESY0032: Private interface methods must have body. */

@@ -20,7 +20,7 @@
 #include "compiler/core/pandagen.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 
@@ -29,7 +29,7 @@ void ImportDeclaration::SetSource(StringLiteral *source)
     auto newNode = this->GetOrCreateHistoryNodeAs<ImportDeclaration>();
     newNode->source_ = source;
 
-    if (source) {
+    if (source != nullptr) {
         source->SetParent(newNode);
     }
 }
@@ -91,24 +91,8 @@ void ImportDeclaration::Dump(ir::SrcDumper *dumper) const
 
     dumper->Add(" from ");
 
-    if (dumper->IsDeclgen()) {
-        auto fileName = Source()->Str();
-        auto len = fileName.Length();
-        if (fileName.EndsWith(".ets")) {
-            len -= 4U;
-            fileName = fileName.Substr(0, len);
-        }
+    Source()->Dump(dumper);
 
-        std::string importFile = '\"' + util::Helpers::CreateEscapedString(fileName.Utf8());
-        if (fileName.Utf8().find('.', 1U) == std::string_view::npos) {
-            importFile += ".d";
-        }
-        importFile += '\"';
-
-        dumper->Add(importFile);
-    } else {
-        Source()->Dump(dumper);
-    }
     dumper->Add(";");
     dumper->Endl();
 }

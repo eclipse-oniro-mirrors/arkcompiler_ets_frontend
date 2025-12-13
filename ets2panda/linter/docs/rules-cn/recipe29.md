@@ -1,10 +1,20 @@
 ## 不支持[]访问对象属性
 
-**规则：**`arkts-no-props-by-index`
+**规则：** `arkts-no-props-by-index`
 
-**级别：error**
+**规则解释：**
 
-在ArkTS1.2中，对象结构在编译时已确定。为避免运行时出现错误和更好地提升性能，在ArkTS1.2中不能使用[]的方式动态访问object类型对象的属性。
+不能使用[]的方式动态访问object类型对象的属性。
+
+**变更原因：**
+ 
+在ArkTS1.2中，对象结构在编译时已确定。为避免运行时错误并提升性能，不能使用[]方式动态访问object类型对象的属性。
+
+**适配建议：**
+
+使用点访问符代替[]。
+
+**示例：**
 
 **ArkTS1.1**
 
@@ -24,14 +34,19 @@ console.log(data['name']); // 违反规则
 
 ```typescript
 function foo(m: Map<string, Object>) {
-  m.get('key') // 使用 `Map`
+    m.get('key') // 使用 `Map`
 }
 
+interface Person {
+    name: string;
+    age: number;
+}
+const person: Person = {name: 'John',age: 30};
 console.log(person.name); // 直接使用 `.` 访问
 
-interface UserData {
-  name: string;
+class UserData {
+    name?: string;
 }
-const data: UserData = JSON.parse('{ "name": "Alice" }');
+const data =  JSON.parse<UserData>('{ "name": "Alice" }', Type.from<UserData>())!;
 console.log(data.name); // 直接使用点访问符
 ```

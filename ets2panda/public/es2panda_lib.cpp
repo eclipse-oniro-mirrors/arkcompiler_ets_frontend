@@ -19,6 +19,7 @@
 #include <cstdint>
 
 #include "util/diagnostic.h"
+#include "util/perfMetrics.h"
 #include "varbinder/varbinder.h"
 #include "varbinder/scope.h"
 #include "public/public.h"
@@ -45,6 +46,7 @@
 #include "ir/ets/etsFunctionType.h"
 #include "ir/statements/ifStatement.h"
 #include "ir/base/methodDefinition.h"
+#include "ir/ets/etsGenericInstantiatedNode.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
 #include "ir/ets/etsNewArrayInstanceExpression.h"
 #include "ir/ets/etsNewMultiDimArrayInstanceExpression.h"
@@ -253,6 +255,9 @@ extern "C" void DestroyConfig(es2panda_Config *config)
         return;
     }
 
+    if (cfg->options->IsDumpPerfMetrics()) {
+        util::DumpPerfMetrics();
+    }
     delete cfg->options;
     cfg->diagnosticEngine->FlushDiagnostic();
     delete cfg->diagnosticEngine;
@@ -285,6 +290,9 @@ extern "C" const es2panda_Options *ConfigGetOptions(es2panda_Config *config)
 static void CompileJob(public_lib::Context *context, varbinder::FunctionScope *scope,
                        compiler::ProgramElement *programElement)
 {
+    if (!compiler::ETSFunctionEmitter::IsEmissionRequired(scope->Node()->AsScriptFunction(), context->parserProgram)) {
+        return;
+    }
     compiler::StaticRegSpiller regSpiller;
     ArenaAllocator allocator {SpaceType::SPACE_TYPE_COMPILER, nullptr, true};
     compiler::ETSCompiler astCompiler {};
@@ -341,13 +349,13 @@ static void InitializeContext(Context *res)
     res->phaseManager = new compiler::PhaseManager(res, ScriptExtension::ETS, res->allocator);
     res->queue = new compiler::CompileQueue(res->config->options->GetThread());
 
-    auto *varbinder = res->allocator->New<varbinder::ETSBinder>(res->allocator);
+    auto *varbinder = new varbinder::ETSBinder(res->allocator);
     res->parserProgram = res->allocator->New<parser::Program>(res->allocator, varbinder);
     res->parser = new parser::ETSParser(res->parserProgram, *res->config->options, *res->diagnosticEngine,
                                         parser::ParserStatus::NO_OPTS);
     res->parser->SetContext(res);
 
-    res->PushChecker(res->allocator->New<checker::ETSChecker>(res->allocator, *res->diagnosticEngine, res->allocator));
+    res->PushChecker(res->allocator->New<checker::ETSChecker>(res->allocator, *res->diagnosticEngine));
     res->PushAnalyzer(res->allocator->New<checker::ETSAnalyzer>(res->GetChecker()));
     res->GetChecker()->SetAnalyzer(res->GetAnalyzer());
 
@@ -531,6 +539,7 @@ __attribute__((unused)) static Context *Parse(Context *ctx)
     }
 
     ctx->phaseManager->Reset();
+    ES2PANDA_PERF_SCOPE("@Parser");
 
     if (ctx->isExternal && ctx->allocator != ctx->globalContext->stdLibAllocator) {
         ctx->sourceFileNames.emplace_back(ctx->sourceFileName);
@@ -599,6 +608,7 @@ __attribute__((unused)) static Context *Check(Context *ctx)
         if (phase->Name() == "plugins-after-check") {
             break;
         }
+        ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
         phase->Apply(ctx, ctx->parserProgram);
     }
     ctx->phaseManager->SetCurrentPhaseIdToAfterCheck();
@@ -627,6 +637,32 @@ __attribute__((unused)) static void SaveCache(Context *ctx)
     }
 }
 
+extern "C" void FreeCompilerPartMemory(es2panda_Context *context)
+{
+    auto *ctx = reinterpret_cast<Context *>(context);
+    delete ctx->emitter;
+    ctx->emitter = nullptr;
+    delete ctx->parser;
+    ctx->parser = nullptr;
+    delete ctx->queue;
+    ctx->queue = nullptr;
+    delete ctx->sourceFile;
+    ctx->sourceFile = nullptr;
+    delete ctx->phaseManager;
+    if (!ctx->isExternal) {
+        for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
+            delete varbinder;
+        }
+        delete ctx->allocator;
+        ctx->allocator = nullptr;
+    } else {
+        ES2PANDA_ASSERT(ctx->globalContext != nullptr);
+        for (auto [_, varbinder] : ctx->parserProgram->VarBinders()) {
+            ctx->globalContext->allocatedVarbinders.insert(varbinder->AsETSBinder());
+        }
+    }
+}
+
 __attribute__((unused)) static Context *Lower(Context *ctx)
 {
     if (ctx->state < ES2PANDA_STATE_CHECKED) {
@@ -639,6 +675,7 @@ __attribute__((unused)) static Context *Lower(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_CHECKED);
     while (auto phase = ctx->phaseManager->NextPhase()) {
+        ES2PANDA_PERF_EVENT_SCOPE("@phases/" + std::string(phase->Name()));
         phase->Apply(ctx, ctx->parserProgram);
         if (ctx->diagnosticEngine->IsAnyError()) {
             ctx->state = ES2PANDA_STATE_ERROR;
@@ -673,6 +710,7 @@ __attribute__((unused)) static Context *GenerateAsm(Context *ctx)
 
     ES2PANDA_ASSERT(ctx->state == ES2PANDA_STATE_LOWERED);
 
+    ES2PANDA_PERF_SCOPE("@EmitProgram");
     auto *emitter = ctx->emitter;
 
     // Handle context literals.
@@ -753,13 +791,8 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
 {
     auto *ctx = reinterpret_cast<Context *>(context);
     delete ctx->program;
-    delete ctx->emitter;
-    delete ctx->parser;
-    delete ctx->queue;
-    delete ctx->sourceFile;
-    delete ctx->phaseManager;
-    if (!ctx->isExternal) {
-        delete ctx->allocator;
+    if (ctx->emitter != nullptr) {
+        FreeCompilerPartMemory(context);
     }
     delete ctx;
 }
@@ -767,6 +800,9 @@ extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context
 extern "C" __attribute__((unused)) void DestroyGlobalContext(es2panda_GlobalContext *globalContext)
 {
     auto *globalCtx = reinterpret_cast<GlobalContext *>(globalContext);
+    for (auto varbinder : globalCtx->allocatedVarbinders) {
+        delete varbinder;
+    }
     for (auto [_, alloctor] : globalCtx->externalProgramAllocators) {
         delete alloctor;
     }
@@ -1076,6 +1112,7 @@ extern "C" es2panda_Scope *AstNodeRebind(es2panda_Context *ctx, es2panda_AstNode
 
 extern "C" void AstNodeRecheck(es2panda_Context *ctx, es2panda_AstNode *node)
 {
+    ES2PANDA_PERF_SCOPE("@Recheck");
     auto E2pNode = reinterpret_cast<ir::AstNode *>(node);
     auto context = reinterpret_cast<Context *>(ctx);
     auto varbinder = context->parserProgram->VarBinder()->AsETSBinder();
@@ -1274,7 +1311,8 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
 extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2panda_Context *ctx,
                                                                          const char *outputDeclEts,
                                                                          const char *outputEts, bool exportAll,
-                                                                         bool isolated, const char *recordFile)
+                                                                         bool isolated, const char *recordFile,
+                                                                         bool genAnnotations)
 {
     auto *ctxImpl = reinterpret_cast<Context *>(ctx);
     auto *checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctxImpl->GetChecker());
@@ -1285,34 +1323,16 @@ extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(es2pand
     declgenOptions.outputEts = outputEts ? outputEts : "";
     declgenOptions.isolated = isolated;
     declgenOptions.recordFile = recordFile ? recordFile : "";
+    declgenOptions.genAnnotations = genAnnotations;
 
     return ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions) ? 0
                                                                                                                   : 1;
 }
 
 // #28937 Will be removed after binary import support is fully implemented.
-__attribute__((unused)) static std::string GetFileNameByPath(const std::string &path)
-{
-    auto lastSlash = path.find_last_of("/\\");
-    std::string filename = (lastSlash == std::string::npos) ? path : path.substr(lastSlash + 1);
-
-    auto lastDot = filename.find_last_of('.');
-    if (lastDot != std::string::npos) {
-        filename = filename.substr(0, lastDot);
-    }
-
-    lastDot = filename.find_last_of('.');
-    if (lastDot != std::string::npos) {
-        filename = filename.substr(0, lastDot);
-    }
-
-    return filename;
-}
-
-// #28937 Will be removed after binary import support is fully implemented.
 __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const std::string &outputPath)
 {
-    std::string outputStem = GetFileNameByPath(outputPath);
+    std::string outputDir = ark::os::RemoveExtension(outputPath);
     auto &externalSources = ctxImpl->parserProgram->DirectExternalSources();
 
     for (const auto &entry : externalSources) {
@@ -1321,7 +1341,8 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
                 continue;
             }
 
-            if (prog->FileName().Mutf8() == outputStem) {
+            std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath().Mutf8());
+            if (util::StringView(outputDir).EndsWith(inputRelativeDir)) {
                 compiler::HandleGenerateDecl(*prog, ctxImpl, outputPath);
                 return !ctxImpl->diagnosticEngine->IsAnyError();
             }
@@ -1472,6 +1493,7 @@ es2panda_Impl g_impl = {
     InvalidateFileCache,
     RemoveFileCache,
     AddFileCache,
+    FreeCompilerPartMemory,
 
 #include "generated/es2panda_lib/es2panda_lib_list.inc"
 

@@ -17,4 +17,5 @@ package usestaticpackage2;
 
 "use static"
 
-/* @@? 18:1 Error SyntaxError: Invalid package toplevel statement */
+
+/* @@? 18:1 Error Syntax error ESY0291: Invalid package toplevel statement */

@@ -24,8 +24,8 @@ function price(this: A, id: int): int {
 }
 
 function main() {
-    console.println(A./* @@ label */price(1));
+    console.println(A.price(1));
 }
 
-/* @@? 27:5 Error TypeError: No matching call signature for println(...) */
-/* @@? 27:37 Error TypeError: Property 'price' does not exist on type 'A' */
+/* @@? 27:5 Error Semantic error ESE0127: No matching call signature for println(...) */
+/* @@? 27:23 Error Semantic error ESE0087: Property 'price' does not exist on type 'A' */

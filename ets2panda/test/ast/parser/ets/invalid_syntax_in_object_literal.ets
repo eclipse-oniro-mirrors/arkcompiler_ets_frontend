@@ -19,5 +19,6 @@ let a2: A2 = {
     }
 }
 
-/* @@? 16:9 Error TypeError: Cannot find type 'A2'. */
-/* @@? 19:5 Error SyntaxError: Unexpected token, expected '>'. */
+
+/* @@? 16:9 Error Semantic error ESE0371: Cannot find type 'A2'. */
+/* @@? 19:5 Error Syntax error ESY0228: Unexpected token, expected '>'. */
