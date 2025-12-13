@@ -212,7 +212,8 @@ void FunctionEmitter::GenFunctionCatchTables(pandasm::Function *func)
 }
 
 static void GenLocalVariableInfo(pandasm::debuginfo::LocalVariable &variableDebug, varbinder::Variable *var,
-                                 std::tuple<uint32_t, uint32_t, uint32_t> info, ScriptExtension extension)
+                                 std::tuple<uint32_t, uint32_t, uint32_t> info, ScriptExtension extension,
+                                 uint32_t spillOffset)
 {
     const auto [start, varsLength, totalRegsNum] = info;
 
@@ -229,8 +230,13 @@ static void GenLocalVariableInfo(pandasm::debuginfo::LocalVariable &variableDebu
         variableDebug.signatureType = ss.str();  // NOTE: Handle typeParams, either class or interface
     }
 
-    variableDebug.reg =
-        static_cast<int32_t>(IRNode::MapRegister(var->AsLocalVariable()->Vreg().GetIndex(), totalRegsNum));
+    uint32_t idx = var->AsLocalVariable()->Vreg().GetIndex();
+    if (spillOffset != 0) {
+        ES2PANDA_ASSERT(idx >= spillOffset);
+        idx -= spillOffset;
+    }
+
+    variableDebug.reg = static_cast<int32_t>(IRNode::MapRegister(idx, totalRegsNum));
     variableDebug.start = start;
     variableDebug.length = static_cast<uint32_t>(varsLength);
 }
@@ -245,7 +251,7 @@ void FunctionEmitter::GenScopeVariableInfoEnd(pandasm::Function *func, const var
         for (auto *param : scope->AsFunctionScope()->ParamScope()->Params()) {
             auto &variableDebug = func->localVariableDebug.emplace_back();
             GenLocalVariableInfo(variableDebug, param, std::make_tuple(scopeStart, varsLength, cg_->TotalRegsNum()),
-                                 extension);
+                                 extension, 0U);
         }
     }
     const auto &unsortedBindings = scope->Bindings();
@@ -273,7 +279,7 @@ void FunctionEmitter::GenScopeVariableInfoEnd(pandasm::Function *func, const var
 
         auto &variableDebug = func->localVariableDebug.emplace_back();
         GenLocalVariableInfo(variableDebug, variable, std::make_tuple(localStart, localLength, cg_->TotalRegsNum()),
-                             extension);
+                             extension, cg_->GetSpillDebugOffset());
     }
 }
 
