@@ -65,5 +65,6 @@ export const cookBookRefToFixTitle: Map<number, string> = new Map([
   [358, 'Replace missing attribute'],
   [359, '"@LocalBuilder" transform to "@Builder"'],
   [360, '"Repeat" disable default "virtualScroll"'],
-  [381, 'StateStyles needs arrow function block']
+  [381, 'StateStyles needs arrow function block'],
+  [415, 'Remove "enableV2Compatibility" and "makeV1Observed"']
 ]);

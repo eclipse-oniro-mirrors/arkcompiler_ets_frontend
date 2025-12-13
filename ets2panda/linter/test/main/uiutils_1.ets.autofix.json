@@ -1,0 +1,214 @@
+{
+    "result": [
+        {
+            "line": 25,
+            "column": 50,
+            "endLine": 25,
+            "endColumn": 95,
+            "problem": "EnableV2CompatibilityFunctionNotSupported",
+            "autofix": [
+                {
+                    "start": 805,
+                    "end": 850,
+                    "replacementText": "new ObservedV2Class()",
+                    "line": 25,
+                    "column": 50,
+                    "endLine": 25,
+                    "endColumn": 95
+                }
+            ],
+            "suggest": "",
+            "rule": "\"enableV2Compatibility\" function and \"makeV1Observed\" function is not supported (arkui-no-enableV2Compatibility-and-makeV1Observed-function)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 2,
+            "endLine": 22,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 2,
+            "endLine": 23,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 4,
+            "endLine": 25,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 5,
+            "endLine": 27,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 2,
+            "endLine": 33,
+            "endColumn": 13,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"ComponentV2\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 4,
+            "endLine": 35,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Param\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 11,
+            "endLine": 35,
+            "endColumn": 18,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Require\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 5,
+            "endLine": 38,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 7,
+            "endLine": 39,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 605,
+                    "end": 642,
+                    "replacementText": "import {\n  UIUtils,\n  Entry,\n  Component,\n  State,\n  Column,\n  ComponentV2,\n  Param,\n  Require,\n  Text,\n} from '@kit.ArkUI';",
+                    "line": 39,
+                    "column": 7,
+                    "endLine": 39,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}

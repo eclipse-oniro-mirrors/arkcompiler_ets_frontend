@@ -304,3 +304,4 @@ faultDesc[FaultID.unfixedTuple] = 'No unfixed tuple';
 faultDesc[FaultID.SuperInStaticContext] = '"super" in static context';
 faultDesc[FaultID.EntryHasInvalidParamsWithV2] = 'Entry has invalid parameters';
 faultDesc[FaultID.EntryHasInvalidLocalStorageWithV2] = 'Entry has invalid LocalStorage';
+faultDesc[FaultID.EnableV2CompatibilityFunctionNotSupported] = '"enableV2Compatibility" function and "makeV1Observed" function is not supported';

@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { UIUtils } from '@kit.ArkUI';
+
+class ObservedV2Class {
+  name: string = 'a';
+}
+
+@Entry
+@Component
+export struct V2DecoratorDecorateObserveV2 {
+  @State ObservedV2ClassLocal: ObservedV2Class = UIUtils.makeV1Observed(new ObservedV2Class());
+  build() {
+    Column() {
+      CompV1({ ObservedV2Class: this.ObservedV2ClassLocal })
+    }
+  }
+}
+
+@ComponentV2
+struct CompV1 {
+  @Param @Require ObservedV2Class: ObservedV2Class;
+
+  build() {
+    Column() {
+      Text("name = "+this.ObservedV2Class.name)
+    }
+  }
+}
