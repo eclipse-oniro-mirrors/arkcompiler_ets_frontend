@@ -732,4 +732,8 @@ group("es2panda_build_win") {
 }
 
 group("es2abc_tests") {
+  testonly = true
+  if (!ark_standalone_build && is_build_sdk && host_os == "linux") {
+    deps = [ "unittest:lexer_test(${toolchain_linux})" ]
+  }
 }
