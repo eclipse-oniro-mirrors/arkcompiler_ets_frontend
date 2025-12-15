@@ -5485,10 +5485,7 @@ export class Autofixer {
     ) {
       const shapeType = shapeMap[constructorName as keyof typeof shapeMap];
       const newExpression = ts.factory.createCallExpression(
-        ts.factory.createPropertyAccessExpression(
-          callExpr.expression.expression,
-          ts.factory.createIdentifier('clipShape')
-        ),
+        ts.factory.createIdentifier('clipShape'),
         undefined,
         [ts.factory.createNewExpression(ts.factory.createIdentifier(shapeType), undefined, argsExpr)]
       );
@@ -5496,7 +5493,7 @@ export class Autofixer {
       const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
       return [
         {
-          start: callExpr.getStart(),
+          start: callExpr.expression.name.getStart(),
           end: callExpr.getEnd(),
           replacementText: newText
         }
