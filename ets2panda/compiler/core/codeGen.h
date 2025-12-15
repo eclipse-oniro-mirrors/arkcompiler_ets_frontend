@@ -221,6 +221,7 @@ private:
     varbinder::FunctionScope *topScope_ {};
     varbinder::Scope *scope_ {};
     const ir::AstNode *rootNode_ {};
+    // NOTE(mbolshov): Refector to ArenaDeque
     SArenaList<IRNode *> insns_;
     SArenaVector<CatchTable *> catchList_;
     TypeMap typeMap_;

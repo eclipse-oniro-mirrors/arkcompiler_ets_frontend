@@ -90,13 +90,17 @@ public:
     AsmTest();
     ~AsmTest() override;
 
-    static std::unique_ptr<ark::pandasm::Program> GetProgram(int argc, char const *const *argv,
+    static std::unique_ptr<ark::pandasm::Program> GetProgram(ark::Span<const char *const> args,
                                                              std::string_view fileName, std::string_view src)
     {
+        // Defensive: avoid UB on args[0] when args is empty or contains null.
+        if (args.empty() || args[0] == nullptr) {
+            return nullptr;
+        }
+
         auto de = util_alias::DiagnosticEngine();
-        auto options = std::make_unique<util_alias::Options>(
-            argv[0], de);  // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        if (!options->Parse(ark::Span(argv, argc))) {
+        auto options = std::make_unique<util_alias::Options>(args[0], de);
+        if (!options->Parse(args)) {
             return nullptr;
         }
 
@@ -158,6 +162,9 @@ public:
     void SetCurrentProgram(std::string_view src);
 
     std::unique_ptr<ark::pandasm::Program> GetCurrentProgram(std::string_view src);
+
+    std::unique_ptr<ark::pandasm::Program> GetCurrentProgramWithArgs(ark::Span<const char *const> args,
+                                                                     std::string_view src);
 
     NO_COPY_SEMANTIC(AsmTest);
     NO_MOVE_SEMANTIC(AsmTest);
