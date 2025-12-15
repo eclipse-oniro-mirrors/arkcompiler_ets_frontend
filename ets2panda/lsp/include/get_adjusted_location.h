@@ -39,6 +39,7 @@ std::optional<ir::AstNode *> GetAdjustedLocationForExportDeclaration(ir::AstNode
                                                                      const std::vector<ir::AstNode *> &children);
 std::optional<ir::AstNode *> GetAdjustedLocationForHeritageClause(ir::AstNode *node);
 ir::AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos);
+ir::AstNode *GetTouchingIdentifierName(es2panda_Context *context, size_t pos);
 
 // Node finding functions
 ir::AstNode *FindFirstIdentifier(ir::AstNode *node, bool skipModifiers, const std::vector<ir::AstNode *> &children);

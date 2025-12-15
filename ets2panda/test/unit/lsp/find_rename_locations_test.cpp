@@ -156,6 +156,34 @@ std::set<RenameLocation> expected_name = {
     {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14},
 };
 
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsConstantName)
+{
+    // Create the files
+    std::vector<std::string> files = {"getCompletionsAtPositionMemberKeyWord.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+const newLocal = 1 + 1;
+class test {
+    newLocal = newLocal;
+    static getDouble(): number {
+        return newLocal;
+    }
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
+
+    auto res = ark::es2panda::lsp::FindRenameLocationsInCurrentFile(context, texts[0].find("newLocal"));
+    int renameCount1 = 3;
+    ASSERT_EQ(res.size(), renameCount1);
+
+    res = ark::es2panda::lsp::FindRenameLocationsInCurrentFile(context, texts[0].find("newLocal;"));
+    int renameCount2 = 3;
+    ASSERT_EQ(res.size(), renameCount2);
+    initializer.DestroyContext(context);
+}
+
 TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassName)
 {
     // Create the files

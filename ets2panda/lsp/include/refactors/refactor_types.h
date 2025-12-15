@@ -33,19 +33,56 @@ namespace ark::es2panda::lsp {
 struct RefactorEditInfo {
 private:
     std::vector<FileTextChanges> fileTextChanges_;
+    std::optional<std::string> renameFileName_;
+    std::optional<size_t> renameLocation_;
 
 public:
-    explicit RefactorEditInfo(std::vector<FileTextChanges> fileTextChanges = {})
-        : fileTextChanges_(std::move(fileTextChanges))
+    explicit RefactorEditInfo(std::vector<FileTextChanges> fileTextChanges = {},
+                              std::optional<std::string> renameFileName = std::nullopt,
+                              std::optional<size_t> renameLocation = std::nullopt)
+        : fileTextChanges_(std::move(fileTextChanges)),
+          renameFileName_(std::move(renameFileName)),
+          renameLocation_(renameLocation)
     {
     }
+
     const std::vector<FileTextChanges> &GetFileTextChanges() const
     {
         return fileTextChanges_;
     }
+
+    const std::optional<std::string> &GetRenameFileName() const
+    {
+        return renameFileName_;
+    }
+
+    const std::optional<size_t> &GetRenameLocation() const
+    {
+        return renameLocation_;
+    }
+
     void SetFileTextChanges(const std::vector<FileTextChanges> &fileTextChanges)
     {
         fileTextChanges_ = fileTextChanges;
+    }
+
+    void SetRenameFileName(const std::optional<std::string> &renameFileName)
+    {
+        renameFileName_ = renameFileName;
+    }
+
+    void SetRenameLocation(const std::optional<size_t> &renameLocation)
+    {
+        renameLocation_ = renameLocation;
+    }
+    void SetRenameFileName(std::string name)
+    {
+        renameFileName_ = std::move(name);
+    }
+
+    void SetRenameLocation(size_t loc)
+    {
+        renameLocation_ = loc;
     }
     void AddFileTextChange(const FileTextChanges &change)
     {

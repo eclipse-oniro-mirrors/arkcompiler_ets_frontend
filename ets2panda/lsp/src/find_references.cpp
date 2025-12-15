@@ -29,36 +29,6 @@
 #include "internal_api.h"
 
 namespace {
-
-ark::es2panda::ir::AstNode *GetIdentifier(ark::es2panda::ir::AstNode *node)
-{
-    if (node == nullptr) {
-        return nullptr;
-    }
-    if (!node->IsIdentifier()) {
-        return node->FindChild([](ark::es2panda::ir::AstNode *child) { return child->IsIdentifier(); });
-    }
-    return node;
-}
-
-std::string GetIdentifierName(ark::es2panda::ir::AstNode *node)
-{
-    auto id = ::GetIdentifier(node);
-    if (id == nullptr) {
-        return "";
-    }
-    return std::string {id->AsIdentifier()->Name()};
-}
-
-ark::es2panda::ir::AstNode *GetOwner(ark::es2panda::ir::AstNode *node)
-{
-    auto id = ::GetIdentifier(node);
-    if (id == nullptr) {
-        return nullptr;
-    }
-    return GetIdentifier(ark::es2panda::compiler::DeclarationFromIdentifier(id->AsIdentifier()));
-}
-
 // NOTE(muhammet): This may be wrong/inconsistent (slow for sure) for comparison, have to investigate
 // The Type of the Node and identifier name are not enough they don't account for edge cases like
 // functions with the same name and signature in different namespaces
@@ -106,11 +76,11 @@ std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(const ark::es2panda:
         if (!node->IsIdentifier()) {
             return false;
         }
-        auto nodeName = ::GetIdentifierName(node);
+        auto nodeName = ark::es2panda::lsp::GetIdentifierName(node);
         if (nodeName != tokenName) {
             return false;
         }
-        auto owner = GetOwner(node);
+        auto owner = ark::es2panda::lsp::GetOwner(node);
         auto nodeOwnerLocationId = GetLocationId(owner, pprogram);
         auto nodeLocationId = GetLocationId(node, pprogram);
         bool isDefinition = nodeLocationId == nodeOwnerLocationId;
@@ -147,33 +117,33 @@ std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(es2panda_Context *co
 
     // Clear before searching each file
     std::set<ark::es2panda::lsp::ReferencedNode> res;
-    ark::es2panda::parser::Program *pprogram = nullptr;
-    auto cb = [&tokenName, &pprogram, &filePath, &tokenLocationId, &res](ark::es2panda::ir::AstNode *node) {
-        if (!node->IsIdentifier()) {
-            return false;
-        }
-        auto nodeName = ::GetIdentifierName(node);
-        if (nodeName != tokenName) {
-            return false;
-        }
-        auto owner = GetOwner(node);
-        auto nodeOwnerLocationId = GetLocationId(owner, pprogram);
-        auto nodeLocationId = GetLocationId(node, pprogram);
-        bool isDefinition = nodeLocationId == nodeOwnerLocationId;
-        if (nodeOwnerLocationId == tokenLocationId) {
-            res.insert(ark::es2panda::lsp::ReferencedNode {filePath, node->Start().index, node->End().index,
-                                                           node->Start().line, isDefinition});
-        }
-        return false;
-    };
+    ark::es2panda::parser::Program *pprogram = ctx->parserProgram;
 
-    auto ast = ctx->parserProgram->Ast();
-    if (ast == nullptr) {
+    if (ctx->parserProgram->Ast() == nullptr) {
         return res;
     }
-    pprogram = ctx->parserProgram;
-    ast->FindChild(cb);
-
+    ctx->parserProgram->Ast()->IterateRecursively([&tokenName, &pprogram, &filePath, &tokenLocationId,
+                                                   &res](ark::es2panda::ir::AstNode *node) {
+        auto targetNode = node;
+        if (targetNode->OriginalNode()) {
+            targetNode = targetNode->OriginalNode();
+        }
+        if (!targetNode->IsIdentifier()) {
+            return;
+        }
+        auto nodeName = ark::es2panda::lsp::GetIdentifierName(targetNode);
+        if (nodeName != tokenName) {
+            return;
+        }
+        auto owner = ark::es2panda::lsp::GetOwner(targetNode);
+        auto nodeOwnerLocationId = GetLocationId(owner, pprogram);
+        auto nodeLocationId = GetLocationId(targetNode, pprogram);
+        bool isDefinition = nodeLocationId == nodeOwnerLocationId;
+        if (nodeOwnerLocationId == tokenLocationId) {
+            res.insert(ark::es2panda::lsp::ReferencedNode {filePath, targetNode->Start().index, targetNode->End().index,
+                                                           targetNode->Start().line, isDefinition});
+        }
+    });
     return res;
 }
 }  // namespace
@@ -192,7 +162,7 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
         auto context = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED, fileContent.c_str());
 
         auto touchingToken = GetTouchingToken(context, position, false);
-        tokenName = ::GetIdentifierName(touchingToken);
+        tokenName = GetIdentifierName(touchingToken);
         auto owner = GetOwner(touchingToken);
         tokenLocationId =
             ::GetLocationId(owner, reinterpret_cast<ark::es2panda::public_lib::Context *>(context)->parserProgram);
@@ -230,8 +200,8 @@ std::set<ReferencedNode> FindReferences(CancellationToken *tkn, const std::vecto
     {
         auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
 
-        auto touchingToken = GetTouchingToken(context, position, false);
-        tokenName = ::GetIdentifierName(touchingToken);
+        auto touchingToken = GetTouchingTokenForIdentifier(context, position, false);
+        tokenName = GetIdentifierName(touchingToken);
         auto owner = GetOwner(touchingToken);
         tokenLocationId = ::GetLocationId(owner, ctx->parserProgram);
     }

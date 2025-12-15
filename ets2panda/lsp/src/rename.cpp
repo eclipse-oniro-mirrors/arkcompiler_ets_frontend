@@ -20,6 +20,7 @@
 #include "public/public.h"
 #include "lexer/token/letters.h"
 #include "get_adjusted_location.h"
+#include "internal_api.h"
 #include "compiler/lowering/util.h"
 
 namespace ark::es2panda::lsp {
@@ -35,24 +36,13 @@ RenameInfoType GetRenameInfo(es2panda_Context *context, size_t pos, const std::s
     SetPhaseManager(ctx->phaseManager);
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *program = ctx->parserProgram;
-    ir::AstNode *token = GetTouchingPropertyName(context, pos);
+    ir::AstNode *token = GetTouchingIdentifierName(context, pos);
     if (token == nullptr) {
         return GetRenameInfoError(diagnosticMessage);
     }
 
-    ir::AstNode *declFromIdent = nullptr;
-    if (token->IsIdentifier()) {
-        declFromIdent = compiler::DeclarationFromIdentifier(token->AsIdentifier());
-    }
-
     if (NodeIsEligibleForRename(token)) {
         if (auto info = GetRenameInfoForNode(token, checker, program, pandaLibPath)) {
-            return *info;
-        }
-    }
-
-    if (declFromIdent != nullptr) {
-        if (auto info = GetRenameInfoForNode(declFromIdent, checker, program, pandaLibPath)) {
             return *info;
         }
     }
@@ -144,26 +134,57 @@ bool IsDefinedInOhModules(const ir::AstNode *node)
     return filePath.find("oh_modules") != std::string::npos;
 }
 
+std::optional<RenameInfoType> HandleStringLiteralRename(ir::AstNode *node, checker::ETSChecker *checker)
+{
+    if (!node->IsStringLiteral()) {
+        return std::nullopt;
+    }
+
+    auto type = GetContextualTypeFromParentOrAncestorTypeNode(node, checker);
+    if (!type) {
+        return std::nullopt;
+    }
+
+    const std::string value = node->AsStringLiteral()->ToString();
+    const std::string kind = "string";
+    return GetRenameInfoSuccess(value, value, kind, "", node);
+}
+
+std::optional<RenameInfoType> HandleLabelRename(ir::AstNode *node, parser::Program *program)
+{
+    if (node->IsLabelledStatement() ||
+        (node->IsIdentifier() && (node->Parent()->IsContinueStatement() || node->Parent()->IsBreakStatement()))) {
+        const std::string name = GetTextOfNode(node, program);
+        const std::string kind = "label";
+        return GetRenameInfoSuccess(name, name, kind, "", node);
+    }
+    return std::nullopt;
+}
+
+std::optional<RenameInfoType> HandleRenameNoDecl(ir::AstNode *node, checker::ETSChecker *checker,
+                                                 parser::Program *program)
+{
+    if (auto result = HandleStringLiteralRename(node, checker)) {
+        return result;
+    }
+
+    if (auto result = HandleLabelRename(node, program)) {
+        return result;
+    }
+
+    return std::nullopt;
+}
+
 std::optional<RenameInfoType> GetRenameInfoForNode(ir::AstNode *node, checker::ETSChecker *checker,
                                                    parser::Program *program, const std::string &pandaLibPath)
 {
-    auto decl = GetDeclaration(node);
+    auto var = ResolveIdentifier(node->AsIdentifier());
+    ir::AstNode *decl = nullptr;
+    if (var != nullptr) {
+        decl = var->Declaration()->Node();
+    }
     if (decl == nullptr) {
-        if (node->IsStringLiteral()) {
-            auto type = GetContextualTypeFromParentOrAncestorTypeNode(node, checker);
-            if (type) {
-                const std::string kind = "string";
-                return GetRenameInfoSuccess(node->AsStringLiteral()->ToString(), node->AsStringLiteral()->ToString(),
-                                            kind, "", node);
-            }
-        }
-        if (node->IsLabelledStatement() ||
-            (node->IsIdentifier() && (node->Parent()->IsContinueStatement() || node->Parent()->IsBreakStatement()))) {
-            const std::string name = GetTextOfNode(node, program);
-            const std::string kind = "label";
-            return GetRenameInfoSuccess(name, name, kind, "", node);
-        }
-        return std::nullopt;
+        return HandleRenameNoDecl(node, checker, program);
     }
 
     if (IsDefinedInLibraryFile(decl, pandaLibPath) || IsDefinedInOhModules(decl)) {
