@@ -834,7 +834,7 @@ static bool IsTypeRetainedAfterErasure(const Type *const typeToCheck)
 {
     // NOTE (smartin): #30480 - Many checks are missing from this function, to be able to merge this patch in time.
     // These must be added.
-    if (typeToCheck->IsETSTypeParameter() || typeToCheck->IsETSTupleType()) {
+    if (typeToCheck->IsETSTypeParameter()) {
         return false;
     }
 
