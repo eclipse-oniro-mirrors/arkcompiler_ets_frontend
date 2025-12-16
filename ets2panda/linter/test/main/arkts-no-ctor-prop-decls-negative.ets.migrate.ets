@@ -16,11 +16,13 @@
 class A {
   public readonly x: number;
   protected y: number;
-  private z: number;
+  private z: number // Declaring fields in constructor is not supported
+    ;
   constructor(
-    x: number,
-    y: number,
-    z: number
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
+    z: number // Declaring fields in constructor is not supported
+ // Declaring fields in constructor is not supported
   ) {
     this.x = x;
     this.y = y;
@@ -40,7 +42,7 @@ class B {
 
   public w: string;
   private readonly r: number[];
-  constructor(q: number, w = 'default', e: boolean, r: number[] = [1, 2, 3]) {
+  constructor(q: number, w = 'default', e: boolean, r: number[] = [1, 2, 3]) { // Declaring fields in constructor is not supported
     this.w = w;
     this.r = r;
     console.log(q, this.w, e, this.r, this.f);
@@ -73,17 +75,19 @@ class E {
   readonly a: number;
   constructor(a: number) {
     this.a = a;
-  }
+  } // Declaring fields in constructor is not supported
 }
 
 class F extends E {
   readonly aa: number;
   b: number;
-  public c: number;
+  public c: number // Declaring fields in constructor is not supported
+    ;
   constructor(
-    aa: number,
-    b: number,
-    c: number
+    aa: number, // Declaring fields in constructor is not supported
+    b: number, // Declaring fields in constructor is not supported
+    c: number // Declaring fields in constructor is not supported
+ // Declaring fields in constructor is not supported
   ){
     super(aa);
     this.aa = aa;
@@ -94,7 +98,7 @@ class F extends E {
 
 class F2 extends E {
   readonly aa: number;
-  constructor(aa: number) {
+  constructor(aa: number) { // Declaring fields in constructor is not supported
     let f2: number = 1;
     console.log('before super() call');
     super(aa);
@@ -104,7 +108,7 @@ class F2 extends E {
 
 class F3 extends E {
   readonly aa: number;
-  constructor(aa: number) {
+  constructor(aa: number) { // Declaring fields in constructor is not supported
     super(aa);
     this.aa = aa;
     let f3: number = 1;
@@ -114,7 +118,7 @@ class F3 extends E {
 
 class F4 extends E {
   readonly aa: number;
-  constructor(aa: number) {
+  constructor(aa: number) { // Declaring fields in constructor is not supported
     let f4: number = 1;
     console.log('before super() call');
     super(aa);
@@ -134,7 +138,7 @@ class G1 {
   constructor(a?: number, b: number) {
     this.a = a;
     this.b = b;
-  }
+  } // Declaring fields in constructor is not supported
 }
 
 class G2 {
@@ -143,7 +147,7 @@ class G2 {
   constructor(a?: number, b?: number) {
     this.a = a;
     this.b = b;
-  }
+  } // Declaring fields in constructor is not supported
 }
 
 // empty body, braces on same line
@@ -151,8 +155,8 @@ class H1 {
   readonly x: number;
   readonly y: number;
   constructor(
-    x: number,
-    y: number,
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
   ) {
     this.x = x;
     this.y = y;
@@ -164,8 +168,8 @@ class H2 {
   readonly x: number;
   readonly y: number;
   constructor(
-    x: number,
-    y: number,
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
   ) { /* Comment */ 
     this.x = x;
     this.y = y;
@@ -177,8 +181,8 @@ class H3 {
   readonly x: number;
   readonly y: number;
   constructor(
-    x: number,
-    y: number,
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
   ) {
     this.x = x;
     this.y = y;
@@ -190,8 +194,8 @@ class H4 {
   readonly x: number;
   readonly y: number;
   constructor(
-    x: number,
-    y: number,
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
   ) {
     // comment 1
     // comment 2
@@ -205,8 +209,8 @@ class H5 {
   readonly x: number;
   readonly y: number;
   constructor(
-    x: number,
-    y: number,
+    x: number, // Declaring fields in constructor is not supported
+    y: number, // Declaring fields in constructor is not supported
   ) {
     // comment at the beginning
     this.x = x;

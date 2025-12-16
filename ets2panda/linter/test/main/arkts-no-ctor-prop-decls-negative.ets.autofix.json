@@ -24,7 +24,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -40,8 +40,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 670,
-                    "end": 689,
+                    "start": 722,
+                    "end": 741,
                     "replacementText": "y: number",
                     "line": 20,
                     "column": 5,
@@ -49,17 +49,17 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 695,
-                    "end": 712,
-                    "replacementText": "z: number",
+                    "start": 799,
+                    "end": 816,
+                    "replacementText": "z: number // Declaring fields in constructor is not supported\n",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
                     "endColumn": 12
                 },
                 {
-                    "start": 718,
-                    "end": 718,
+                    "start": 874,
+                    "end": 874,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
@@ -81,7 +81,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -97,8 +97,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 670,
-                    "end": 689,
+                    "start": 722,
+                    "end": 741,
                     "replacementText": "y: number",
                     "line": 20,
                     "column": 5,
@@ -106,17 +106,17 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 695,
-                    "end": 712,
-                    "replacementText": "z: number",
+                    "start": 799,
+                    "end": 816,
+                    "replacementText": "z: number // Declaring fields in constructor is not supported\n",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
                     "endColumn": 12
                 },
                 {
-                    "start": 718,
-                    "end": 718,
+                    "start": 874,
+                    "end": 874,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
@@ -138,7 +138,7 @@
                 {
                     "start": 622,
                     "end": 622,
-                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number;\n  ",
+                    "replacementText": "public readonly x: number;\n  protected y: number;\n  private z: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
@@ -154,8 +154,8 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 670,
-                    "end": 689,
+                    "start": 722,
+                    "end": 741,
                     "replacementText": "y: number",
                     "line": 20,
                     "column": 5,
@@ -163,17 +163,17 @@
                     "endColumn": 12
                 },
                 {
-                    "start": 695,
-                    "end": 712,
-                    "replacementText": "z: number",
+                    "start": 799,
+                    "end": 816,
+                    "replacementText": "z: number // Declaring fields in constructor is not supported\n",
                     "line": 20,
                     "column": 5,
                     "endLine": 20,
                     "endColumn": 12
                 },
                 {
-                    "start": 718,
-                    "end": 718,
+                    "start": 874,
+                    "end": 874,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n    this.z = z;\n  ",
                     "line": 20,
                     "column": 5,
@@ -203,8 +203,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 870,
-                    "end": 870,
+                    "start": 1026,
+                    "end": 1026,
                     "replacementText": "public w: string;\n  private readonly r: number[];\n  ",
                     "line": 34,
                     "column": 60,
@@ -212,8 +212,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 893,
-                    "end": 913,
+                    "start": 1049,
+                    "end": 1069,
                     "replacementText": "w = 'default'",
                     "line": 34,
                     "column": 60,
@@ -221,8 +221,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 927,
-                    "end": 967,
+                    "start": 1083,
+                    "end": 1123,
                     "replacementText": "r: number[] = [1, 2, 3]",
                     "line": 34,
                     "column": 60,
@@ -230,8 +230,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 975,
-                    "end": 975,
+                    "start": 1183,
+                    "end": 1183,
                     "replacementText": "this.w = w;\n    this.r = r;\n    ",
                     "line": 34,
                     "column": 60,
@@ -251,8 +251,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 870,
-                    "end": 870,
+                    "start": 1026,
+                    "end": 1026,
                     "replacementText": "public w: string;\n  private readonly r: number[];\n  ",
                     "line": 34,
                     "column": 60,
@@ -260,8 +260,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 893,
-                    "end": 913,
+                    "start": 1049,
+                    "end": 1069,
                     "replacementText": "w = 'default'",
                     "line": 34,
                     "column": 60,
@@ -269,8 +269,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 927,
-                    "end": 967,
+                    "start": 1083,
+                    "end": 1123,
                     "replacementText": "r: number[] = [1, 2, 3]",
                     "line": 34,
                     "column": 60,
@@ -278,8 +278,8 @@
                     "endColumn": 67
                 },
                 {
-                    "start": 975,
-                    "end": 975,
+                    "start": 1183,
+                    "end": 1183,
                     "replacementText": "this.w = w;\n    this.r = r;\n    ",
                     "line": 34,
                     "column": 60,
@@ -339,8 +339,8 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1139,
-                    "end": 1139,
+                    "start": 1347,
+                    "end": 1347,
                     "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    x: string;\n}\n",
                     "line": 47,
                     "column": 44,
@@ -348,8 +348,8 @@
                     "endColumn": 45
                 },
                 {
-                    "start": 1192,
-                    "end": 1203,
+                    "start": 1400,
+                    "end": 1411,
                     "replacementText": "GeneratedTypeLiteralInterface_1",
                     "line": 47,
                     "column": 44,
@@ -369,8 +369,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1275,
-                    "end": 1275,
+                    "start": 1483,
+                    "end": 1483,
                     "replacementText": "readonly a: number;\n  ",
                     "line": 54,
                     "column": 15,
@@ -378,8 +378,8 @@
                     "endColumn": 33
                 },
                 {
-                    "start": 1287,
-                    "end": 1305,
+                    "start": 1495,
+                    "end": 1513,
                     "replacementText": "a: number",
                     "line": 54,
                     "column": 15,
@@ -387,8 +387,8 @@
                     "endColumn": 33
                 },
                 {
-                    "start": 1308,
-                    "end": 1308,
+                    "start": 1516,
+                    "end": 1516,
                     "replacementText": "\n    this.a = a;\n  ",
                     "line": 54,
                     "column": 15,
@@ -408,17 +408,17 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1335,
-                    "end": 1335,
-                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
+                    "start": 1595,
+                    "end": 1595,
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1352,
-                    "end": 1371,
+                    "start": 1612,
+                    "end": 1631,
                     "replacementText": "aa: number",
                     "line": 61,
                     "column": 5,
@@ -426,8 +426,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1377,
-                    "end": 1395,
+                    "start": 1689,
+                    "end": 1707,
                     "replacementText": "b: number",
                     "line": 61,
                     "column": 5,
@@ -435,17 +435,17 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1401,
-                    "end": 1426,
-                    "replacementText": "c: number",
+                    "start": 1765,
+                    "end": 1790,
+                    "replacementText": "c: number // Declaring fields in constructor is not supported\n",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1446,
-                    "end": 1446,
+                    "start": 1862,
+                    "end": 1862,
                     "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
@@ -465,17 +465,17 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1335,
-                    "end": 1335,
-                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
+                    "start": 1595,
+                    "end": 1595,
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1352,
-                    "end": 1371,
+                    "start": 1612,
+                    "end": 1631,
                     "replacementText": "aa: number",
                     "line": 61,
                     "column": 5,
@@ -483,8 +483,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1377,
-                    "end": 1395,
+                    "start": 1689,
+                    "end": 1707,
                     "replacementText": "b: number",
                     "line": 61,
                     "column": 5,
@@ -492,17 +492,17 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1401,
-                    "end": 1426,
-                    "replacementText": "c: number",
+                    "start": 1765,
+                    "end": 1790,
+                    "replacementText": "c: number // Declaring fields in constructor is not supported\n",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1446,
-                    "end": 1446,
+                    "start": 1862,
+                    "end": 1862,
                     "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
@@ -522,17 +522,17 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1335,
-                    "end": 1335,
-                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number;\n  ",
+                    "start": 1595,
+                    "end": 1595,
+                    "replacementText": "readonly aa: number;\n  b: number;\n  public c: number // Declaring fields in constructor is not supported\n    ;\n  ",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1352,
-                    "end": 1371,
+                    "start": 1612,
+                    "end": 1631,
                     "replacementText": "aa: number",
                     "line": 61,
                     "column": 5,
@@ -540,8 +540,8 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1377,
-                    "end": 1395,
+                    "start": 1689,
+                    "end": 1707,
                     "replacementText": "b: number",
                     "line": 61,
                     "column": 5,
@@ -549,17 +549,17 @@
                     "endColumn": 11
                 },
                 {
-                    "start": 1401,
-                    "end": 1426,
-                    "replacementText": "c: number",
+                    "start": 1765,
+                    "end": 1790,
+                    "replacementText": "c: number // Declaring fields in constructor is not supported\n",
                     "line": 61,
                     "column": 5,
                     "endLine": 61,
                     "endColumn": 11
                 },
                 {
-                    "start": 1446,
-                    "end": 1446,
+                    "start": 1862,
+                    "end": 1862,
                     "replacementText": "\n    this.aa = aa;\n    this.b = b;\n    this.c = c;",
                     "line": 61,
                     "column": 5,
@@ -579,8 +579,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1477,
-                    "end": 1477,
+                    "start": 1893,
+                    "end": 1893,
                     "replacementText": "readonly aa: number;\n  ",
                     "line": 68,
                     "column": 15,
@@ -588,8 +588,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1489,
-                    "end": 1508,
+                    "start": 1905,
+                    "end": 1924,
                     "replacementText": "aa: number",
                     "line": 68,
                     "column": 15,
@@ -597,8 +597,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1590,
-                    "end": 1590,
+                    "start": 2058,
+                    "end": 2058,
                     "replacementText": "\n    this.aa = aa;",
                     "line": 68,
                     "column": 15,
@@ -618,8 +618,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1621,
-                    "end": 1621,
+                    "start": 2089,
+                    "end": 2089,
                     "replacementText": "readonly aa: number;\n  ",
                     "line": 76,
                     "column": 15,
@@ -627,8 +627,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1633,
-                    "end": 1652,
+                    "start": 2101,
+                    "end": 2120,
                     "replacementText": "aa: number",
                     "line": 76,
                     "column": 15,
@@ -636,8 +636,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1675,
-                    "end": 1675,
+                    "start": 2195,
+                    "end": 2195,
                     "replacementText": "this.aa = aa;\n    ",
                     "line": 76,
                     "column": 15,
@@ -657,8 +657,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 1764,
-                    "end": 1764,
+                    "start": 2284,
+                    "end": 2284,
                     "replacementText": "readonly aa: number;\n  ",
                     "line": 84,
                     "column": 15,
@@ -666,8 +666,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1776,
-                    "end": 1795,
+                    "start": 2296,
+                    "end": 2315,
                     "replacementText": "aa: number",
                     "line": 84,
                     "column": 15,
@@ -675,8 +675,8 @@
                     "endColumn": 34
                 },
                 {
-                    "start": 1882,
-                    "end": 1882,
+                    "start": 2454,
+                    "end": 2454,
                     "replacementText": "this.aa = aa;\n    ",
                     "line": 84,
                     "column": 15,
@@ -696,8 +696,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2003,
-                    "end": 2003,
+                    "start": 2575,
+                    "end": 2575,
                     "replacementText": "public a?: number;\n  public b: number;\n  ",
                     "line": 98,
                     "column": 34,
@@ -705,8 +705,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2015,
-                    "end": 2032,
+                    "start": 2587,
+                    "end": 2604,
                     "replacementText": "a?: number",
                     "line": 98,
                     "column": 34,
@@ -714,8 +714,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2034,
-                    "end": 2050,
+                    "start": 2606,
+                    "end": 2622,
                     "replacementText": "b: number",
                     "line": 98,
                     "column": 34,
@@ -723,8 +723,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2053,
-                    "end": 2053,
+                    "start": 2625,
+                    "end": 2625,
                     "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 98,
                     "column": 34,
@@ -744,8 +744,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2003,
-                    "end": 2003,
+                    "start": 2575,
+                    "end": 2575,
                     "replacementText": "public a?: number;\n  public b: number;\n  ",
                     "line": 98,
                     "column": 34,
@@ -753,8 +753,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2015,
-                    "end": 2032,
+                    "start": 2587,
+                    "end": 2604,
                     "replacementText": "a?: number",
                     "line": 98,
                     "column": 34,
@@ -762,8 +762,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2034,
-                    "end": 2050,
+                    "start": 2606,
+                    "end": 2622,
                     "replacementText": "b: number",
                     "line": 98,
                     "column": 34,
@@ -771,8 +771,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2053,
-                    "end": 2053,
+                    "start": 2625,
+                    "end": 2625,
                     "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 98,
                     "column": 34,
@@ -792,8 +792,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2071,
-                    "end": 2071,
+                    "start": 2695,
+                    "end": 2695,
                     "replacementText": "public a?: number;\n  public b?: number;\n  ",
                     "line": 102,
                     "column": 34,
@@ -801,8 +801,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2083,
-                    "end": 2100,
+                    "start": 2707,
+                    "end": 2724,
                     "replacementText": "a?: number",
                     "line": 102,
                     "column": 34,
@@ -810,8 +810,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2102,
-                    "end": 2119,
+                    "start": 2726,
+                    "end": 2743,
                     "replacementText": "b?: number",
                     "line": 102,
                     "column": 34,
@@ -819,8 +819,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2122,
-                    "end": 2122,
+                    "start": 2746,
+                    "end": 2746,
                     "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 102,
                     "column": 34,
@@ -840,8 +840,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2071,
-                    "end": 2071,
+                    "start": 2695,
+                    "end": 2695,
                     "replacementText": "public a?: number;\n  public b?: number;\n  ",
                     "line": 102,
                     "column": 34,
@@ -849,8 +849,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2083,
-                    "end": 2100,
+                    "start": 2707,
+                    "end": 2724,
                     "replacementText": "a?: number",
                     "line": 102,
                     "column": 34,
@@ -858,8 +858,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2102,
-                    "end": 2119,
+                    "start": 2726,
+                    "end": 2743,
                     "replacementText": "b?: number",
                     "line": 102,
                     "column": 34,
@@ -867,8 +867,8 @@
                     "endColumn": 40
                 },
                 {
-                    "start": 2122,
-                    "end": 2122,
+                    "start": 2746,
+                    "end": 2746,
                     "replacementText": "\n    this.a = a;\n    this.b = b;\n  ",
                     "line": 102,
                     "column": 34,
@@ -888,8 +888,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2175,
-                    "end": 2175,
+                    "start": 2851,
+                    "end": 2851,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 109,
                     "column": 5,
@@ -897,8 +897,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2192,
-                    "end": 2210,
+                    "start": 2868,
+                    "end": 2886,
                     "replacementText": "x: number",
                     "line": 109,
                     "column": 5,
@@ -906,8 +906,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2216,
-                    "end": 2234,
+                    "start": 2944,
+                    "end": 2962,
                     "replacementText": "y: number",
                     "line": 109,
                     "column": 5,
@@ -915,8 +915,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2241,
-                    "end": 2241,
+                    "start": 3021,
+                    "end": 3021,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
                     "line": 109,
                     "column": 5,
@@ -936,8 +936,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2175,
-                    "end": 2175,
+                    "start": 2851,
+                    "end": 2851,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 109,
                     "column": 5,
@@ -945,8 +945,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2192,
-                    "end": 2210,
+                    "start": 2868,
+                    "end": 2886,
                     "replacementText": "x: number",
                     "line": 109,
                     "column": 5,
@@ -954,8 +954,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2216,
-                    "end": 2234,
+                    "start": 2944,
+                    "end": 2962,
                     "replacementText": "y: number",
                     "line": 109,
                     "column": 5,
@@ -963,8 +963,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2241,
-                    "end": 2241,
+                    "start": 3021,
+                    "end": 3021,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
                     "line": 109,
                     "column": 5,
@@ -984,8 +984,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2307,
-                    "end": 2307,
+                    "start": 3087,
+                    "end": 3087,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 117,
                     "column": 5,
@@ -993,8 +993,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2324,
-                    "end": 2342,
+                    "start": 3104,
+                    "end": 3122,
                     "replacementText": "x: number",
                     "line": 117,
                     "column": 5,
@@ -1002,8 +1002,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2348,
-                    "end": 2366,
+                    "start": 3180,
+                    "end": 3198,
                     "replacementText": "y: number",
                     "line": 117,
                     "column": 5,
@@ -1011,8 +1011,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2388,
-                    "end": 2388,
+                    "start": 3272,
+                    "end": 3272,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
                     "line": 117,
                     "column": 5,
@@ -1032,8 +1032,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2307,
-                    "end": 2307,
+                    "start": 3087,
+                    "end": 3087,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 117,
                     "column": 5,
@@ -1041,8 +1041,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2324,
-                    "end": 2342,
+                    "start": 3104,
+                    "end": 3122,
                     "replacementText": "x: number",
                     "line": 117,
                     "column": 5,
@@ -1050,8 +1050,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2348,
-                    "end": 2366,
+                    "start": 3180,
+                    "end": 3198,
                     "replacementText": "y: number",
                     "line": 117,
                     "column": 5,
@@ -1059,8 +1059,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2388,
-                    "end": 2388,
+                    "start": 3272,
+                    "end": 3272,
                     "replacementText": "\n    this.x = x;\n    this.y = y;\n  ",
                     "line": 117,
                     "column": 5,
@@ -1080,8 +1080,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2447,
-                    "end": 2447,
+                    "start": 3331,
+                    "end": 3331,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 125,
                     "column": 5,
@@ -1089,8 +1089,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2464,
-                    "end": 2482,
+                    "start": 3348,
+                    "end": 3366,
                     "replacementText": "x: number",
                     "line": 125,
                     "column": 5,
@@ -1098,8 +1098,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2488,
-                    "end": 2506,
+                    "start": 3424,
+                    "end": 3442,
                     "replacementText": "y: number",
                     "line": 125,
                     "column": 5,
@@ -1107,8 +1107,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2513,
-                    "end": 2513,
+                    "start": 3501,
+                    "end": 3501,
                     "replacementText": "\n    this.x = x;\n    this.y = y;",
                     "line": 125,
                     "column": 5,
@@ -1128,8 +1128,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2447,
-                    "end": 2447,
+                    "start": 3331,
+                    "end": 3331,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 125,
                     "column": 5,
@@ -1137,8 +1137,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2464,
-                    "end": 2482,
+                    "start": 3348,
+                    "end": 3366,
                     "replacementText": "x: number",
                     "line": 125,
                     "column": 5,
@@ -1146,8 +1146,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2488,
-                    "end": 2506,
+                    "start": 3424,
+                    "end": 3442,
                     "replacementText": "y: number",
                     "line": 125,
                     "column": 5,
@@ -1155,8 +1155,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2513,
-                    "end": 2513,
+                    "start": 3501,
+                    "end": 3501,
                     "replacementText": "\n    this.x = x;\n    this.y = y;",
                     "line": 125,
                     "column": 5,
@@ -1176,8 +1176,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2580,
-                    "end": 2580,
+                    "start": 3568,
+                    "end": 3568,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 134,
                     "column": 5,
@@ -1185,8 +1185,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2597,
-                    "end": 2615,
+                    "start": 3585,
+                    "end": 3603,
                     "replacementText": "x: number",
                     "line": 134,
                     "column": 5,
@@ -1194,8 +1194,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2621,
-                    "end": 2639,
+                    "start": 3661,
+                    "end": 3679,
                     "replacementText": "y: number",
                     "line": 134,
                     "column": 5,
@@ -1203,8 +1203,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2680,
-                    "end": 2680,
+                    "start": 3772,
+                    "end": 3772,
                     "replacementText": "\n    this.x = x;\n    this.y = y;",
                     "line": 134,
                     "column": 5,
@@ -1224,8 +1224,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2580,
-                    "end": 2580,
+                    "start": 3568,
+                    "end": 3568,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 134,
                     "column": 5,
@@ -1233,8 +1233,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2597,
-                    "end": 2615,
+                    "start": 3585,
+                    "end": 3603,
                     "replacementText": "x: number",
                     "line": 134,
                     "column": 5,
@@ -1242,8 +1242,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2621,
-                    "end": 2639,
+                    "start": 3661,
+                    "end": 3679,
                     "replacementText": "y: number",
                     "line": 134,
                     "column": 5,
@@ -1251,8 +1251,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2680,
-                    "end": 2680,
+                    "start": 3772,
+                    "end": 3772,
                     "replacementText": "\n    this.x = x;\n    this.y = y;",
                     "line": 134,
                     "column": 5,
@@ -1272,8 +1272,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2738,
-                    "end": 2738,
+                    "start": 3830,
+                    "end": 3830,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 145,
                     "column": 5,
@@ -1281,8 +1281,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2755,
-                    "end": 2773,
+                    "start": 3847,
+                    "end": 3865,
                     "replacementText": "x: number",
                     "line": 145,
                     "column": 5,
@@ -1290,8 +1290,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2779,
-                    "end": 2797,
+                    "start": 3923,
+                    "end": 3941,
                     "replacementText": "y: number",
                     "line": 145,
                     "column": 5,
@@ -1299,8 +1299,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2841,
-                    "end": 2841,
+                    "start": 4037,
+                    "end": 4037,
                     "replacementText": "this.x = x;\n    this.y = y;\n    ",
                     "line": 145,
                     "column": 5,
@@ -1320,8 +1320,8 @@
             "problem": "ParameterProperties",
             "autofix": [
                 {
-                    "start": 2738,
-                    "end": 2738,
+                    "start": 3830,
+                    "end": 3830,
                     "replacementText": "readonly x: number;\n  readonly y: number;\n  ",
                     "line": 145,
                     "column": 5,
@@ -1329,8 +1329,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2755,
-                    "end": 2773,
+                    "start": 3847,
+                    "end": 3865,
                     "replacementText": "x: number",
                     "line": 145,
                     "column": 5,
@@ -1338,8 +1338,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2779,
-                    "end": 2797,
+                    "start": 3923,
+                    "end": 3941,
                     "replacementText": "y: number",
                     "line": 145,
                     "column": 5,
@@ -1347,8 +1347,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 2841,
-                    "end": 2841,
+                    "start": 4037,
+                    "end": 4037,
                     "replacementText": "this.x = x;\n    this.y = y;\n    ",
                     "line": 145,
                     "column": 5,

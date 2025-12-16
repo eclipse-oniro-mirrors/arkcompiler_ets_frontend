@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 60,
+            "line": 20,
             "column": 3,
-            "endLine": 62,
+            "endLine": 22,
             "endColumn": 4,
             "problem": "OptionalMethodFromSdk",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 64,
+            "line": 24,
             "column": 3,
-            "endLine": 66,
+            "endLine": 26,
             "endColumn": 4,
             "problem": "OptionalMethodFromSdk",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 60,
+            "line": 20,
             "column": 15,
-            "endLine": 60,
+            "endLine": 20,
             "endColumn": 16,
             "problem": "OptionalMethod",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 64,
+            "line": 24,
             "column": 16,
-            "endLine": 64,
+            "endLine": 24,
             "endColumn": 17,
             "problem": "OptionalMethod",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 76,
+            "line": 30,
             "column": 3,
-            "endLine": 78,
+            "endLine": 32,
             "endColumn": 4,
             "problem": "OptionalMethodFromSdk",
             "suggest": "",
@@ -65,19 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 71,
-            "column": 3,
-            "endLine": 73,
-            "endColumn": 4,
-            "problem": "OptionalMethodFromSdk",
-            "suggest": "",
-            "rule": "API no longer supports optional methods (sdk-optional-methods)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 76,
+            "line": 30,
             "column": 22,
-            "endLine": 76,
+            "endLine": 30,
             "endColumn": 23,
             "problem": "OptionalMethod",
             "suggest": "",
@@ -85,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 102,
+            "line": 41,
             "column": 3,
-            "endLine": 102,
+            "endLine": 41,
             "endColumn": 52,
             "problem": "OptionalMethodFromSdk",
             "suggest": "",

@@ -1,0 +1,799 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 3,
+            "endLine": 17,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "validName",
+                    "start": 618,
+                    "end": 629,
+                    "line": 17,
+                    "column": 3,
+                    "endLine": 17,
+                    "endColumn": 14
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 3,
+            "endLine": 26,
+            "endColumn": 15,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "status",
+                    "start": 944,
+                    "end": 952,
+                    "line": 26,
+                    "column": 3,
+                    "endLine": 26,
+                    "endColumn": 15
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 3,
+            "endLine": 35,
+            "endColumn": 18,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 10,
+            "endLine": 40,
+            "endColumn": 23,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 3,
+            "endLine": 44,
+            "endColumn": 16,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "log_key",
+                    "start": 1714,
+                    "end": 1723,
+                    "line": 44,
+                    "column": 3,
+                    "endLine": 44,
+                    "endColumn": 16
+                },
+                {
+                    "replacementText": "E3.log_key",
+                    "start": 2011,
+                    "end": 2024,
+                    "line": 44,
+                    "column": 3,
+                    "endLine": 44,
+                    "endColumn": 16
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 10,
+            "endLine": 49,
+            "endColumn": 23,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 3,
+            "endLine": 53,
+            "endColumn": 16,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__200OK",
+                    "start": 2117,
+                    "end": 2124,
+                    "line": 53,
+                    "column": 3,
+                    "endLine": 53,
+                    "endColumn": 16
+                },
+                {
+                    "replacementText": "E4.__200OK",
+                    "start": 2400,
+                    "end": 2411,
+                    "line": 53,
+                    "column": 3,
+                    "endLine": 53,
+                    "endColumn": 16
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 10,
+            "endLine": 57,
+            "endColumn": 21,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 3,
+            "endLine": 61,
+            "endColumn": 7,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "id",
+                    "start": 2505,
+                    "end": 2509,
+                    "line": 61,
+                    "column": 3,
+                    "endLine": 61,
+                    "endColumn": 7
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 3,
+            "endLine": 70,
+            "endColumn": 17,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "readonlyProp",
+                    "start": 2826,
+                    "end": 2840,
+                    "line": 70,
+                    "column": 3,
+                    "endLine": 70,
+                    "endColumn": 17
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 3,
+            "endLine": 86,
+            "endColumn": 22,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "PrivateTwo",
+                    "start": 3284,
+                    "end": 3296,
+                    "line": 86,
+                    "column": 3,
+                    "endLine": 86,
+                    "endColumn": 22
+                },
+                {
+                    "replacementText": "LiteralAsPropertyNameEnum.PrivateTwo",
+                    "start": 4702,
+                    "end": 4741,
+                    "line": 86,
+                    "column": 3,
+                    "endLine": 86,
+                    "endColumn": 22
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 92,
+            "column": 3,
+            "endLine": 92,
+            "endColumn": 8,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "Two",
+                    "start": 3448,
+                    "end": 3453,
+                    "line": 92,
+                    "column": 3,
+                    "endLine": 92,
+                    "endColumn": 8
+                },
+                {
+                    "replacementText": "Two",
+                    "start": 3584,
+                    "end": 3589,
+                    "line": 92,
+                    "column": 3,
+                    "endLine": 92,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 3,
+            "endLine": 97,
+            "endColumn": 8,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 133,
+            "column": 3,
+            "endLine": 133,
+            "endColumn": 8,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__2",
+                    "start": 4470,
+                    "end": 4475,
+                    "line": 133,
+                    "column": 3,
+                    "endLine": 133,
+                    "endColumn": 8
+                },
+                {
+                    "replacementText": "__2",
+                    "start": 4596,
+                    "end": 4601,
+                    "line": 133,
+                    "column": 3,
+                    "endLine": 133,
+                    "endColumn": 8
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 135,
+            "column": 7,
+            "endLine": 135,
+            "endColumn": 10,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 137,
+            "column": 3,
+            "endLine": 137,
+            "endColumn": 8,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 140,
+            "column": 1,
+            "endLine": 140,
+            "endColumn": 33,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 142,
+            "column": 1,
+            "endLine": 142,
+            "endColumn": 40,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 146,
+            "column": 5,
+            "endLine": 146,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__empty",
+                    "start": 4775,
+                    "end": 4777,
+                    "line": 146,
+                    "column": 5,
+                    "endLine": 146,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 151,
+            "column": 3,
+            "endLine": 151,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "___x5c",
+                    "start": 4874,
+                    "end": 4878,
+                    "line": 151,
+                    "column": 3,
+                    "endLine": 151,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 152,
+            "column": 3,
+            "endLine": 152,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__x5c",
+                    "start": 4943,
+                    "end": 4950,
+                    "line": 152,
+                    "column": 3,
+                    "endLine": 152,
+                    "endColumn": 14
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 156,
+            "column": 3,
+            "endLine": 156,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "___x5c",
+                    "start": 5043,
+                    "end": 5047,
+                    "line": 156,
+                    "column": 3,
+                    "endLine": 156,
+                    "endColumn": 11
+                },
+                {
+                    "replacementText": "Direction17.___x5c",
+                    "start": 5197,
+                    "end": 5214,
+                    "line": 156,
+                    "column": 3,
+                    "endLine": 156,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 157,
+            "column": 3,
+            "endLine": 157,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__x5c",
+                    "start": 5112,
+                    "end": 5119,
+                    "line": 157,
+                    "column": 3,
+                    "endLine": 157,
+                    "endColumn": 14
+                },
+                {
+                    "replacementText": "Direction17.__x5c",
+                    "start": 5305,
+                    "end": 5325,
+                    "line": 157,
+                    "column": 3,
+                    "endLine": 157,
+                    "endColumn": 14
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 159,
+            "column": 14,
+            "endLine": 159,
+            "endColumn": 31,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 160,
+            "column": 15,
+            "endLine": 160,
+            "endColumn": 35,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 163,
+            "column": 3,
+            "endLine": 163,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__x21x21",
+                    "start": 5430,
+                    "end": 5434,
+                    "line": 163,
+                    "column": 3,
+                    "endLine": 163,
+                    "endColumn": 11
+                },
+                {
+                    "replacementText": "Direction11.__x21x21",
+                    "start": 5693,
+                    "end": 5710,
+                    "line": 163,
+                    "column": 3,
+                    "endLine": 163,
+                    "endColumn": 11
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 166,
+            "column": 3,
+            "endLine": 166,
+            "endColumn": 12,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "aaa",
+                    "start": 5526,
+                    "end": 5531,
+                    "line": 166,
+                    "column": 3,
+                    "endLine": 166,
+                    "endColumn": 12
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 172,
+            "column": 20,
+            "endLine": 172,
+            "endColumn": 37,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 178,
+            "column": 10,
+            "endLine": 178,
+            "endColumn": 15,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "age",
+                    "start": 5825,
+                    "end": 5830,
+                    "line": 178,
+                    "column": 10,
+                    "endLine": 178,
+                    "endColumn": 15
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 182,
+            "column": 3,
+            "endLine": 182,
+            "endColumn": 12,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 181,
+            "column": 37,
+            "endLine": 181,
+            "endColumn": 38,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 182,
+            "column": 3,
+            "endLine": 182,
+            "endColumn": 12,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 3,
+            "endLine": 187,
+            "endColumn": 15,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 188,
+            "column": 3,
+            "endLine": 188,
+            "endColumn": 34,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 192,
+            "column": 3,
+            "endLine": 192,
+            "endColumn": 15,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 3,
+            "endLine": 193,
+            "endColumn": 34,
+            "problem": "ObjectLiteralKeyType",
+            "suggest": "",
+            "rule": "Use string-literal keys with Record (arkts-obj-literal-key-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 192,
+            "column": 3,
+            "endLine": 192,
+            "endColumn": 15,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 3,
+            "endLine": 193,
+            "endColumn": 34,
+            "problem": "ComputedPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 207,
+            "column": 11,
+            "endLine": 207,
+            "endColumn": 24,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 208,
+            "column": 11,
+            "endLine": 208,
+            "endColumn": 32,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 213,
+            "column": 3,
+            "endLine": 213,
+            "endColumn": 18,
+            "problem": "LiteralAsPropertyName",
+            "autofix": [
+                {
+                    "replacementText": "__2IN1",
+                    "start": 6642,
+                    "end": 6648,
+                    "line": 213,
+                    "column": 3,
+                    "endLine": 213,
+                    "endColumn": 18
+                },
+                {
+                    "replacementText": "DeviceTypes12.__2IN1",
+                    "start": 6847,
+                    "end": 6868,
+                    "line": 213,
+                    "column": 3,
+                    "endLine": 213,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 217,
+            "column": 20,
+            "endLine": 217,
+            "endColumn": 41,
+            "problem": "UnsupportPropNameFromValue",
+            "suggest": "",
+            "rule": "Enum cannot get member name by member value (arkts-enum-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 221,
+            "column": 3,
+            "endLine": 221,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 222,
+            "column": 3,
+            "endLine": 222,
+            "endColumn": 11,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 226,
+            "column": 3,
+            "endLine": 226,
+            "endColumn": 20,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 227,
+            "column": 3,
+            "endLine": 227,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 169,
+            "column": 2,
+            "endLine": 169,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Component,\n  State,\n} from '@kit.ArkUI';",
+                    "line": 171,
+                    "column": 4,
+                    "endLine": 171,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 171,
+            "column": 4,
+            "endLine": 171,
+            "endColumn": 9,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Component,\n  State,\n} from '@kit.ArkUI';",
+                    "line": 171,
+                    "column": 4,
+                    "endLine": 171,
+                    "endColumn": 9
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}
