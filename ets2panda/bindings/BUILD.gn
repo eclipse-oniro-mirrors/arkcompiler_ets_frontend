@@ -49,8 +49,8 @@ shared_library("ts_bindings") {
   ]
 
   deps = [
+    "../:libes2panda_frontend_static",
     "../lsp:libes2panda_lsp_static",
-    "../:libes2panda_frontend_static"
   ]
 
   include_dirs = [

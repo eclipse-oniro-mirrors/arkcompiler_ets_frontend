@@ -92,7 +92,6 @@ ohos_executable("ets2panda") {
     ]
   }
 
-
   libs = platform_libs
   ldflags = platform_ldflags
   if (is_linux) {
