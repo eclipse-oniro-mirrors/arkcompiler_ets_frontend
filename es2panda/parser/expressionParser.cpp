@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -162,7 +162,6 @@ ir::TSSatisfiesExpression *ParserImpl::ParseTsSatisfiesExpression(ir::Expression
 
 ir::Expression *ParserImpl::ParseExpression(ExpressionParseFlags flags)
 {
-    // ParseUnaryOrPrefixUpdateExpression() → ParseBinaryExpression() → ParseExpression()
     CHECK_PARSER_STACK_OVER_FLOW
     if (lexer_->GetToken().Type() == lexer::TokenType::KEYW_YIELD && !(flags & ExpressionParseFlags::DISALLOW_YIELD)) {
         ir::YieldExpression *yieldExpr = ParseYieldExpression();
@@ -204,7 +203,6 @@ ir::Expression *ParserImpl::ParseExpression(ExpressionParseFlags flags)
 
 ir::Expression *ParserImpl::ParseArrayExpression(ExpressionParseFlags flags)
 {
-    // ->  ParseExpression()
     CHECK_PARSER_STACK_OVER_FLOW
 
     lexer::SourcePosition startLoc = lexer_->GetToken().Start();
@@ -1243,7 +1241,6 @@ static inline bool ShouldBinaryExpressionBeAmended(ir::BinaryExpression *binaryE
 
 ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left)
 {
-    // ->ParseExpression()
     CHECK_PARSER_STACK_OVER_FLOW
     lexer::TokenType operatorType = lexer_->GetToken().Type();
     ASSERT(lexer::Token::IsBinaryToken(operatorType));
@@ -1323,7 +1320,6 @@ ir::Expression *ParserImpl::ParseBinaryExpression(ir::Expression *left)
 
 ir::CallExpression *ParserImpl::ParseCallExpression(ir::Expression *callee, bool isOptionalChain, bool isAsync)
 {
-    // ->  ParseExpression()
     CHECK_PARSER_STACK_OVER_FLOW
 
     ASSERT(lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS);
@@ -2346,7 +2342,6 @@ ir::ObjectExpression *ParserImpl::ParseObjectExpression(ExpressionParseFlags fla
 ir::SequenceExpression *ParserImpl::ParseSequenceExpression(ir::Expression *startExpr, bool acceptRest,
                                                             bool acceptTsParam, bool acceptPattern)
 {
-    // ->  ParseExpression()
     CHECK_PARSER_STACK_OVER_FLOW
 
     lexer::SourcePosition start = startExpr->Start();
