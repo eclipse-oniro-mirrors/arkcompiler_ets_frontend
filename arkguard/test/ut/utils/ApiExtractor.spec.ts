@@ -293,7 +293,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with wrong recordkey tag, it will not be added in whitelist', function () {
+    it('For ApiType.API, when property names with wrong recordkey tag, it will not be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -305,7 +305,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for MethodSignature, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for MethodSignature, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -329,7 +329,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for PropertySignature, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for PropertySignature, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -342,7 +342,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for Constructor, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for Constructor, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -355,7 +355,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for PropertyDeclaration, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for PropertyDeclaration, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -368,7 +368,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for MethodDeclaration, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for MethodDeclaration, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -381,7 +381,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for SetAccessor, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for SetAccessor, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -394,7 +394,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for FunctionDeclaration, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for FunctionDeclaration, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -407,7 +407,7 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for VariableStatement, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for VariableStatement, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
@@ -420,13 +420,153 @@ describe('test for ApiExtractor', function () {
       clearAll();
     });
 
-    it('When property names with recordkey tag for TypeAliasDeclaration, it should be added in whitelist', function () {
+    it('For ApiType.API, when property names with recordkey tag for TypeAliasDeclaration, it should be added in whitelist', function () {
       let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
       let config: MergedConfig = new MergedConfig();
       config.options.stripSystemApiArgs = false;
       initScanProjectConfigByMergeConfig(config);
 
       collectApi(filePath, ApiExtractor.ApiType.API);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with wrong recordkey tag, it will not be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('testForRecordkey1'), false);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('testForRecordkey2'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for MethodSignature, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('objectTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('objectTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('objectTest3'), false);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('indexTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('indexTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('indexTest3'), false);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('recordTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('recordTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('recordTest3'), false);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('anyTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('anyTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('anyTest11'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('anyTest22'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('anyTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for PropertySignature, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertySignatureTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertySignatureTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertySignatureTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for Constructor, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('constructorTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('constructorTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('constructorTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for PropertyDeclaration, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertyTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertyTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('propertyTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for MethodDeclaration, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('methodTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('methodTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('methodTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for SetAccessor, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('setterTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('setterTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('setterTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for FunctionDeclaration, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('functionTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('functionTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('functionTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for VariableStatement, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest1'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest2'), true);
+      assert.strictEqual(ApiExtractor.mPropertySet.has('variableStatementTest3'), false);
+      clearAll();
+    });
+
+    it('For ApiType.COMPONENT, when property names with recordkey tag for TypeAliasDeclaration, it should be added in whitelist', function () {
+      let filePath: string = 'test/ut/utils/apiTest_visitPropertyAndName/recordkeyTest.d.ts';
+      let config: MergedConfig = new MergedConfig();
+      config.options.stripSystemApiArgs = false;
+      initScanProjectConfigByMergeConfig(config);
+
+      collectApi(filePath, ApiExtractor.ApiType.COMPONENT);
       assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest1'), true);
       assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest2'), true);
       assert.strictEqual(ApiExtractor.mPropertySet.has('typeTest3'), false);
