@@ -420,7 +420,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 continue;
             }
             const rightOp = stmt.getRightOp();
-            if (rightOp instanceof Local && rightOp.getName().startsWith(TEMP_LOCAL_PREFIX)) {
+            if (rightOp instanceof Local && (rightOp.getName().startsWith(TEMP_LOCAL_PREFIX) || rightOp instanceof ArkNormalBinopExpr)) {
                 // 类属性的初始化语句使用Local赋值，且Local为临时变量，则可能涉及除法运算
                 // 整型字面量参与除法运算的告警和自动修复信息在检查过程中就已生成，无需在此处额外生成
                 this.checkValueOnlyUsedAsIntLong(stmt, rightOp, new Map<Local, IssueInfo>(), NumberCategory.int);
