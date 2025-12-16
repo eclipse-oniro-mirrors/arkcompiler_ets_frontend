@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,9 @@ import {Job} from "std/core"
 
 class Foo {
   public  bar(): Job<Foo> {
-    return launch<Foo, (f: Foo) => Foo>(this.baz, this);
+    return launch<Foo>() {
+      return this.baz(this)
+    };
   }
 
   public  baz(x: Foo): Foo {
@@ -26,7 +28,9 @@ class Foo {
   }
 
   public  bar2(): Job<Foo> {
-    return launch<Foo, (f: Foo, i: int) => Foo>(this.baz2, this, 1);
+    return launch<Foo>() {
+      return this.baz2(this, 1)
+    };
   }
 
   public  baz2(x: Foo, y: int): Foo {

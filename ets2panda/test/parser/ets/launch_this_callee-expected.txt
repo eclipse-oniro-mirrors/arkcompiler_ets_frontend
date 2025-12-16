@@ -362,71 +362,7 @@
                             }
                           }
                         },
-                        "arguments": [
-                          {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "ThisExpression",
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 41,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 45,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "baz",
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 46,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 49,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 41,
-                                "program": "launch_this_callee.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 49,
-                                "program": "launch_this_callee.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "ThisExpression",
-                            "loc": {
-                              "start": {
-                                "line": 21,
-                                "column": 51,
-                                "program": "launch_this_callee.ets"
-                              },
-                              "end": {
-                                "line": 21,
-                                "column": 55,
-                                "program": "launch_this_callee.ets"
-                              }
-                            }
-                          }
-                        ],
+                        "arguments": [],
                         "optional": false,
                         "typeParameters": {
                           "type": "TSTypeParameterInstantiation",
@@ -476,146 +412,6 @@
                                   "program": "launch_this_callee.ets"
                                 }
                               }
-                            },
-                            {
-                              "type": "ETSFunctionType",
-                              "params": [
-                                {
-                                  "type": "ETSParameterExpression",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "f",
-                                    "typeAnnotation": {
-                                      "type": "ETSTypeReference",
-                                      "part": {
-                                        "type": "ETSTypeReferencePart",
-                                        "name": {
-                                          "type": "Identifier",
-                                          "name": "Foo",
-                                          "loc": {
-                                            "start": {
-                                              "line": 21,
-                                              "column": 28,
-                                              "program": "launch_this_callee.ets"
-                                            },
-                                            "end": {
-                                              "line": 21,
-                                              "column": 31,
-                                              "program": "launch_this_callee.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 21,
-                                            "column": 28,
-                                            "program": "launch_this_callee.ets"
-                                          },
-                                          "end": {
-                                            "line": 21,
-                                            "column": 31,
-                                            "program": "launch_this_callee.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 21,
-                                          "column": 28,
-                                          "program": "launch_this_callee.ets"
-                                        },
-                                        "end": {
-                                          "line": 21,
-                                          "column": 31,
-                                          "program": "launch_this_callee.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 21,
-                                        "column": 25,
-                                        "program": "launch_this_callee.ets"
-                                      },
-                                      "end": {
-                                        "line": 21,
-                                        "column": 31,
-                                        "program": "launch_this_callee.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 25,
-                                      "program": "launch_this_callee.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 31,
-                                      "program": "launch_this_callee.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "returnType": {
-                                "type": "ETSTypeReference",
-                                "part": {
-                                  "type": "ETSTypeReferencePart",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "Foo",
-                                    "loc": {
-                                      "start": {
-                                        "line": 21,
-                                        "column": 36,
-                                        "program": "launch_this_callee.ets"
-                                      },
-                                      "end": {
-                                        "line": 21,
-                                        "column": 39,
-                                        "program": "launch_this_callee.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 21,
-                                      "column": 36,
-                                      "program": "launch_this_callee.ets"
-                                    },
-                                    "end": {
-                                      "line": 21,
-                                      "column": 39,
-                                      "program": "launch_this_callee.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 21,
-                                    "column": 36,
-                                    "program": "launch_this_callee.ets"
-                                  },
-                                  "end": {
-                                    "line": 21,
-                                    "column": 39,
-                                    "program": "launch_this_callee.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 21,
-                                  "column": 24,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 21,
-                                  "column": 39,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
                             }
                           ],
                           "loc": {
@@ -626,7 +422,7 @@
                             },
                             "end": {
                               "line": 21,
-                              "column": 40,
+                              "column": 23,
                               "program": "launch_this_callee.ets"
                             }
                           }
@@ -638,8 +434,8 @@
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 21,
-                            "column": 56,
+                            "line": 23,
+                            "column": 6,
                             "program": "launch_this_callee.ets"
                           }
                         }
@@ -651,8 +447,8 @@
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 21,
-                          "column": 57,
+                          "line": 23,
+                          "column": 7,
                           "program": "launch_this_callee.ets"
                         }
                       }
@@ -665,7 +461,7 @@
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 22,
+                      "line": 24,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -678,7 +474,7 @@
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 22,
+                    "line": 24,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -691,7 +487,7 @@
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 22,
+                  "line": 24,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -705,7 +501,7 @@
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 22,
+                "line": 24,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -718,12 +514,12 @@
               "name": "baz",
               "loc": {
                 "start": {
-                  "line": 24,
+                  "line": 26,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 24,
+                  "line": 26,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 }
@@ -743,12 +539,12 @@
                   "name": "baz",
                   "loc": {
                     "start": {
-                      "line": 24,
+                      "line": 26,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 24,
+                      "line": 26,
                       "column": 14,
                       "program": "launch_this_callee.ets"
                     }
@@ -772,12 +568,12 @@
                             "name": "Foo",
                             "loc": {
                               "start": {
-                                "line": 24,
+                                "line": 26,
                                 "column": 18,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 24,
+                                "line": 26,
                                 "column": 21,
                                 "program": "launch_this_callee.ets"
                               }
@@ -785,12 +581,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 24,
+                              "line": 26,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 24,
+                              "line": 26,
                               "column": 21,
                               "program": "launch_this_callee.ets"
                             }
@@ -798,12 +594,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 24,
+                            "line": 26,
                             "column": 18,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 24,
+                            "line": 26,
                             "column": 21,
                             "program": "launch_this_callee.ets"
                           }
@@ -811,12 +607,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 24,
+                          "line": 26,
                           "column": 15,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 24,
+                          "line": 26,
                           "column": 21,
                           "program": "launch_this_callee.ets"
                         }
@@ -824,12 +620,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 24,
+                        "line": 26,
                         "column": 15,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 24,
+                        "line": 26,
                         "column": 21,
                         "program": "launch_this_callee.ets"
                       }
@@ -845,12 +641,12 @@
                       "name": "Foo",
                       "loc": {
                         "start": {
-                          "line": 24,
+                          "line": 26,
                           "column": 24,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 24,
+                          "line": 26,
                           "column": 27,
                           "program": "launch_this_callee.ets"
                         }
@@ -858,12 +654,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 24,
+                        "line": 26,
                         "column": 24,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 24,
+                        "line": 26,
                         "column": 27,
                         "program": "launch_this_callee.ets"
                       }
@@ -871,12 +667,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 24,
+                      "line": 26,
                       "column": 24,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 24,
+                      "line": 26,
                       "column": 27,
                       "program": "launch_this_callee.ets"
                     }
@@ -892,12 +688,12 @@
                         "name": "x",
                         "loc": {
                           "start": {
-                            "line": 25,
+                            "line": 27,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 25,
+                            "line": 27,
                             "column": 13,
                             "program": "launch_this_callee.ets"
                           }
@@ -905,12 +701,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 27,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 27,
                           "column": 14,
                           "program": "launch_this_callee.ets"
                         }
@@ -919,12 +715,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 24,
+                      "line": 26,
                       "column": 28,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 26,
+                      "line": 28,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -932,12 +728,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 24,
+                    "line": 26,
                     "column": 14,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 26,
+                    "line": 28,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -945,12 +741,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 24,
+                  "line": 26,
                   "column": 14,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 26,
+                  "line": 28,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -959,12 +755,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 24,
+                "line": 26,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 26,
+                "line": 28,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -977,12 +773,12 @@
               "name": "bar2",
               "loc": {
                 "start": {
-                  "line": 28,
+                  "line": 30,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 28,
+                  "line": 30,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 }
@@ -1002,12 +798,12 @@
                   "name": "bar2",
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 30,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 28,
+                      "line": 30,
                       "column": 15,
                       "program": "launch_this_callee.ets"
                     }
@@ -1026,12 +822,12 @@
                       "name": "Job",
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 30,
                           "column": 19,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 28,
+                          "line": 30,
                           "column": 22,
                           "program": "launch_this_callee.ets"
                         }
@@ -1049,12 +845,12 @@
                               "name": "Foo",
                               "loc": {
                                 "start": {
-                                  "line": 28,
+                                  "line": 30,
                                   "column": 23,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 28,
+                                  "line": 30,
                                   "column": 26,
                                   "program": "launch_this_callee.ets"
                                 }
@@ -1062,12 +858,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 28,
+                                "line": 30,
                                 "column": 23,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 28,
+                                "line": 30,
                                 "column": 26,
                                 "program": "launch_this_callee.ets"
                               }
@@ -1075,12 +871,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 28,
+                              "line": 30,
                               "column": 23,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 28,
+                              "line": 30,
                               "column": 26,
                               "program": "launch_this_callee.ets"
                             }
@@ -1089,12 +885,12 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 28,
+                          "line": 30,
                           "column": 22,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 28,
+                          "line": 30,
                           "column": 27,
                           "program": "launch_this_callee.ets"
                         }
@@ -1102,12 +898,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 28,
+                        "line": 30,
                         "column": 19,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 28,
+                        "line": 30,
                         "column": 27,
                         "program": "launch_this_callee.ets"
                       }
@@ -1115,12 +911,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 30,
                       "column": 19,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 28,
+                      "line": 30,
                       "column": 27,
                       "program": "launch_this_callee.ets"
                     }
@@ -1138,98 +934,18 @@
                           "name": "launch",
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 31,
                               "column": 12,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 31,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             }
                           }
                         },
-                        "arguments": [
-                          {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "ThisExpression",
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 49,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 53,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "baz2",
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 54,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 58,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 29,
-                                "column": 49,
-                                "program": "launch_this_callee.ets"
-                              },
-                              "end": {
-                                "line": 29,
-                                "column": 58,
-                                "program": "launch_this_callee.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "ThisExpression",
-                            "loc": {
-                              "start": {
-                                "line": 29,
-                                "column": 60,
-                                "program": "launch_this_callee.ets"
-                              },
-                              "end": {
-                                "line": 29,
-                                "column": 64,
-                                "program": "launch_this_callee.ets"
-                              }
-                            }
-                          },
-                          {
-                            "type": "NumberLiteral",
-                            "value": 1,
-                            "loc": {
-                              "start": {
-                                "line": 29,
-                                "column": 66,
-                                "program": "launch_this_callee.ets"
-                              },
-                              "end": {
-                                "line": 29,
-                                "column": 67,
-                                "program": "launch_this_callee.ets"
-                              }
-                            }
-                          }
-                        ],
+                        "arguments": [],
                         "optional": false,
                         "typeParameters": {
                           "type": "TSTypeParameterInstantiation",
@@ -1243,12 +959,12 @@
                                   "name": "Foo",
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 19,
                                       "program": "launch_this_callee.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 22,
                                       "program": "launch_this_callee.ets"
                                     }
@@ -1256,12 +972,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 19,
                                     "program": "launch_this_callee.ets"
                                   },
                                   "end": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 22,
                                     "program": "launch_this_callee.ets"
                                   }
@@ -1269,199 +985,13 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 19,
                                   "program": "launch_this_callee.ets"
                                 },
                                 "end": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 22,
-                                  "program": "launch_this_callee.ets"
-                                }
-                              }
-                            },
-                            {
-                              "type": "ETSFunctionType",
-                              "params": [
-                                {
-                                  "type": "ETSParameterExpression",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "f",
-                                    "typeAnnotation": {
-                                      "type": "ETSTypeReference",
-                                      "part": {
-                                        "type": "ETSTypeReferencePart",
-                                        "name": {
-                                          "type": "Identifier",
-                                          "name": "Foo",
-                                          "loc": {
-                                            "start": {
-                                              "line": 29,
-                                              "column": 28,
-                                              "program": "launch_this_callee.ets"
-                                            },
-                                            "end": {
-                                              "line": 29,
-                                              "column": 31,
-                                              "program": "launch_this_callee.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 29,
-                                            "column": 28,
-                                            "program": "launch_this_callee.ets"
-                                          },
-                                          "end": {
-                                            "line": 29,
-                                            "column": 31,
-                                            "program": "launch_this_callee.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 29,
-                                          "column": 28,
-                                          "program": "launch_this_callee.ets"
-                                        },
-                                        "end": {
-                                          "line": 29,
-                                          "column": 31,
-                                          "program": "launch_this_callee.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 29,
-                                        "column": 25,
-                                        "program": "launch_this_callee.ets"
-                                      },
-                                      "end": {
-                                        "line": 29,
-                                        "column": 31,
-                                        "program": "launch_this_callee.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 29,
-                                      "column": 25,
-                                      "program": "launch_this_callee.ets"
-                                    },
-                                    "end": {
-                                      "line": 29,
-                                      "column": 31,
-                                      "program": "launch_this_callee.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "ETSParameterExpression",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "i",
-                                    "typeAnnotation": {
-                                      "type": "ETSPrimitiveType",
-                                      "loc": {
-                                        "start": {
-                                          "line": 29,
-                                          "column": 36,
-                                          "program": "launch_this_callee.ets"
-                                        },
-                                        "end": {
-                                          "line": 29,
-                                          "column": 39,
-                                          "program": "launch_this_callee.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 29,
-                                        "column": 33,
-                                        "program": "launch_this_callee.ets"
-                                      },
-                                      "end": {
-                                        "line": 29,
-                                        "column": 39,
-                                        "program": "launch_this_callee.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 29,
-                                      "column": 33,
-                                      "program": "launch_this_callee.ets"
-                                    },
-                                    "end": {
-                                      "line": 29,
-                                      "column": 39,
-                                      "program": "launch_this_callee.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "returnType": {
-                                "type": "ETSTypeReference",
-                                "part": {
-                                  "type": "ETSTypeReferencePart",
-                                  "name": {
-                                    "type": "Identifier",
-                                    "name": "Foo",
-                                    "loc": {
-                                      "start": {
-                                        "line": 29,
-                                        "column": 44,
-                                        "program": "launch_this_callee.ets"
-                                      },
-                                      "end": {
-                                        "line": 29,
-                                        "column": 47,
-                                        "program": "launch_this_callee.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 29,
-                                      "column": 44,
-                                      "program": "launch_this_callee.ets"
-                                    },
-                                    "end": {
-                                      "line": 29,
-                                      "column": 47,
-                                      "program": "launch_this_callee.ets"
-                                    }
-                                  }
-                                },
-                                "loc": {
-                                  "start": {
-                                    "line": 29,
-                                    "column": 44,
-                                    "program": "launch_this_callee.ets"
-                                  },
-                                  "end": {
-                                    "line": 29,
-                                    "column": 47,
-                                    "program": "launch_this_callee.ets"
-                                  }
-                                }
-                              },
-                              "loc": {
-                                "start": {
-                                  "line": 29,
-                                  "column": 24,
-                                  "program": "launch_this_callee.ets"
-                                },
-                                "end": {
-                                  "line": 29,
-                                  "column": 47,
                                   "program": "launch_this_callee.ets"
                                 }
                               }
@@ -1469,39 +999,39 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 31,
                               "column": 18,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 29,
-                              "column": 48,
+                              "line": 31,
+                              "column": 23,
                               "program": "launch_this_callee.ets"
                             }
                           }
                         },
                         "loc": {
                           "start": {
-                            "line": 29,
+                            "line": 31,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 29,
-                            "column": 68,
+                            "line": 33,
+                            "column": 6,
                             "program": "launch_this_callee.ets"
                           }
                         }
                       },
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 31,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 29,
-                          "column": 69,
+                          "line": 33,
+                          "column": 7,
                           "program": "launch_this_callee.ets"
                         }
                       }
@@ -1509,12 +1039,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 28,
+                      "line": 30,
                       "column": 28,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 30,
+                      "line": 34,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -1522,12 +1052,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 28,
+                    "line": 30,
                     "column": 15,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 30,
+                    "line": 34,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -1535,12 +1065,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 28,
+                  "line": 30,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 30,
+                  "line": 34,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -1549,12 +1079,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 28,
+                "line": 30,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 30,
+                "line": 34,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -1567,12 +1097,12 @@
               "name": "baz2",
               "loc": {
                 "start": {
-                  "line": 32,
+                  "line": 36,
                   "column": 11,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 32,
+                  "line": 36,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 }
@@ -1592,12 +1122,12 @@
                   "name": "baz2",
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 36,
                       "column": 11,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 32,
+                      "line": 36,
                       "column": 15,
                       "program": "launch_this_callee.ets"
                     }
@@ -1621,12 +1151,12 @@
                             "name": "Foo",
                             "loc": {
                               "start": {
-                                "line": 32,
+                                "line": 36,
                                 "column": 19,
                                 "program": "launch_this_callee.ets"
                               },
                               "end": {
-                                "line": 32,
+                                "line": 36,
                                 "column": 22,
                                 "program": "launch_this_callee.ets"
                               }
@@ -1634,12 +1164,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 32,
+                              "line": 36,
                               "column": 19,
                               "program": "launch_this_callee.ets"
                             },
                             "end": {
-                              "line": 32,
+                              "line": 36,
                               "column": 22,
                               "program": "launch_this_callee.ets"
                             }
@@ -1647,12 +1177,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 32,
+                            "line": 36,
                             "column": 19,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 32,
+                            "line": 36,
                             "column": 22,
                             "program": "launch_this_callee.ets"
                           }
@@ -1660,12 +1190,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 36,
                           "column": 16,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 36,
                           "column": 22,
                           "program": "launch_this_callee.ets"
                         }
@@ -1673,12 +1203,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 32,
+                        "line": 36,
                         "column": 16,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 32,
+                        "line": 36,
                         "column": 22,
                         "program": "launch_this_callee.ets"
                       }
@@ -1693,12 +1223,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 32,
+                            "line": 36,
                             "column": 27,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 32,
+                            "line": 36,
                             "column": 30,
                             "program": "launch_this_callee.ets"
                           }
@@ -1706,12 +1236,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 36,
                           "column": 24,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 36,
                           "column": 30,
                           "program": "launch_this_callee.ets"
                         }
@@ -1719,12 +1249,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 32,
+                        "line": 36,
                         "column": 24,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 32,
+                        "line": 36,
                         "column": 30,
                         "program": "launch_this_callee.ets"
                       }
@@ -1740,12 +1270,12 @@
                       "name": "Foo",
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 36,
                           "column": 33,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 36,
                           "column": 36,
                           "program": "launch_this_callee.ets"
                         }
@@ -1753,12 +1283,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 32,
+                        "line": 36,
                         "column": 33,
                         "program": "launch_this_callee.ets"
                       },
                       "end": {
-                        "line": 32,
+                        "line": 36,
                         "column": 36,
                         "program": "launch_this_callee.ets"
                       }
@@ -1766,12 +1296,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 36,
                       "column": 33,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 32,
+                      "line": 36,
                       "column": 36,
                       "program": "launch_this_callee.ets"
                     }
@@ -1787,12 +1317,12 @@
                         "name": "x",
                         "loc": {
                           "start": {
-                            "line": 33,
+                            "line": 37,
                             "column": 12,
                             "program": "launch_this_callee.ets"
                           },
                           "end": {
-                            "line": 33,
+                            "line": 37,
                             "column": 13,
                             "program": "launch_this_callee.ets"
                           }
@@ -1800,12 +1330,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 33,
+                          "line": 37,
                           "column": 5,
                           "program": "launch_this_callee.ets"
                         },
                         "end": {
-                          "line": 33,
+                          "line": 37,
                           "column": 14,
                           "program": "launch_this_callee.ets"
                         }
@@ -1814,12 +1344,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 32,
+                      "line": 36,
                       "column": 37,
                       "program": "launch_this_callee.ets"
                     },
                     "end": {
-                      "line": 34,
+                      "line": 38,
                       "column": 4,
                       "program": "launch_this_callee.ets"
                     }
@@ -1827,12 +1357,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 32,
+                    "line": 36,
                     "column": 15,
                     "program": "launch_this_callee.ets"
                   },
                   "end": {
-                    "line": 34,
+                    "line": 38,
                     "column": 4,
                     "program": "launch_this_callee.ets"
                   }
@@ -1840,12 +1370,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 32,
+                  "line": 36,
                   "column": 15,
                   "program": "launch_this_callee.ets"
                 },
                 "end": {
-                  "line": 34,
+                  "line": 38,
                   "column": 4,
                   "program": "launch_this_callee.ets"
                 }
@@ -1854,12 +1384,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 32,
+                "line": 36,
                 "column": 11,
                 "program": "launch_this_callee.ets"
               },
               "end": {
-                "line": 34,
+                "line": 38,
                 "column": 4,
                 "program": "launch_this_callee.ets"
               }
@@ -1975,7 +1505,7 @@
             "program": "launch_this_callee.ets"
           },
           "end": {
-            "line": 36,
+            "line": 40,
             "column": 1,
             "program": "launch_this_callee.ets"
           }
@@ -1988,7 +1518,7 @@
           "program": "launch_this_callee.ets"
         },
         "end": {
-          "line": 36,
+          "line": 40,
           "column": 1,
           "program": "launch_this_callee.ets"
         }
@@ -2154,7 +1684,7 @@
       "program": "launch_this_callee.ets"
     },
     "end": {
-      "line": 36,
+      "line": 40,
       "column": 1,
       "program": "launch_this_callee.ets"
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,9 @@ function main() {
     // array of promises
     let ps: Object[] = new Object[10]
     for (let i = 0; i < 10; i++) {
-        ps[i] = launch<Cb, (i: int) => Cb>(foo, i)
+        ps[i] = launch<Cb>() {
+            return foo(i)
+        }
     }
 
     let cnt = 0

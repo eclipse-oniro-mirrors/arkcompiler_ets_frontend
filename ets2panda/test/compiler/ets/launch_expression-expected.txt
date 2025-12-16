@@ -2005,104 +2005,7 @@
                                     }
                                   }
                                 },
-                                "arguments": [
-                                  {
-                                    "type": "Identifier",
-                                    "name": "ufib",
-                                    "loc": {
-                                      "start": {
-                                        "line": 36,
-                                        "column": 45,
-                                        "program": "launch_expression.ets"
-                                      },
-                                      "end": {
-                                        "line": 36,
-                                        "column": 49,
-                                        "program": "launch_expression.ets"
-                                      }
-                                    }
-                                  },
-                                  {
-                                    "type": "BinaryExpression",
-                                    "operator": "-",
-                                    "left": {
-                                      "type": "BinaryExpression",
-                                      "operator": "-",
-                                      "left": {
-                                        "type": "Identifier",
-                                        "name": "n",
-                                        "loc": {
-                                          "start": {
-                                            "line": 36,
-                                            "column": 51,
-                                            "program": "launch_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 36,
-                                            "column": 52,
-                                            "program": "launch_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "right": {
-                                        "type": "NumberLiteral",
-                                        "value": 1,
-                                        "loc": {
-                                          "start": {
-                                            "line": 36,
-                                            "column": 53,
-                                            "program": "launch_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 36,
-                                            "column": 54,
-                                            "program": "launch_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 36,
-                                          "column": 51,
-                                          "program": "launch_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 36,
-                                          "column": 54,
-                                          "program": "launch_expression.ets"
-                                        }
-                                      }
-                                    },
-                                    "right": {
-                                      "type": "Identifier",
-                                      "name": "i",
-                                      "loc": {
-                                        "start": {
-                                          "line": 36,
-                                          "column": 55,
-                                          "program": "launch_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 36,
-                                          "column": 56,
-                                          "program": "launch_expression.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 36,
-                                        "column": 53,
-                                        "program": "launch_expression.ets"
-                                      },
-                                      "end": {
-                                        "line": 36,
-                                        "column": 56,
-                                        "program": "launch_expression.ets"
-                                      }
-                                    }
-                                  }
-                                ],
+                                "arguments": [],
                                 "optional": false,
                                 "typeParameters": {
                                   "type": "TSTypeParameterInstantiation",
@@ -2152,115 +2055,6 @@
                                           "program": "launch_expression.ets"
                                         }
                                       }
-                                    },
-                                    {
-                                      "type": "ETSFunctionType",
-                                      "params": [
-                                        {
-                                          "type": "ETSParameterExpression",
-                                          "name": {
-                                            "type": "Identifier",
-                                            "name": "i",
-                                            "typeAnnotation": {
-                                              "type": "ETSPrimitiveType",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 36,
-                                                  "column": 32,
-                                                  "program": "launch_expression.ets"
-                                                },
-                                                "end": {
-                                                  "line": 36,
-                                                  "column": 35,
-                                                  "program": "launch_expression.ets"
-                                                }
-                                              }
-                                            },
-                                            "loc": {
-                                              "start": {
-                                                "line": 36,
-                                                "column": 29,
-                                                "program": "launch_expression.ets"
-                                              },
-                                              "end": {
-                                                "line": 36,
-                                                "column": 35,
-                                                "program": "launch_expression.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 36,
-                                              "column": 29,
-                                              "program": "launch_expression.ets"
-                                            },
-                                            "end": {
-                                              "line": 36,
-                                              "column": 35,
-                                              "program": "launch_expression.ets"
-                                            }
-                                          }
-                                        }
-                                      ],
-                                      "returnType": {
-                                        "type": "ETSTypeReference",
-                                        "part": {
-                                          "type": "ETSTypeReferencePart",
-                                          "name": {
-                                            "type": "Identifier",
-                                            "name": "Int",
-                                            "loc": {
-                                              "start": {
-                                                "line": 36,
-                                                "column": 40,
-                                                "program": "launch_expression.ets"
-                                              },
-                                              "end": {
-                                                "line": 36,
-                                                "column": 43,
-                                                "program": "launch_expression.ets"
-                                              }
-                                            }
-                                          },
-                                          "loc": {
-                                            "start": {
-                                              "line": 36,
-                                              "column": 40,
-                                              "program": "launch_expression.ets"
-                                            },
-                                            "end": {
-                                              "line": 36,
-                                              "column": 43,
-                                              "program": "launch_expression.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 36,
-                                            "column": 40,
-                                            "program": "launch_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 36,
-                                            "column": 43,
-                                            "program": "launch_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 36,
-                                          "column": 28,
-                                          "program": "launch_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 36,
-                                          "column": 43,
-                                          "program": "launch_expression.ets"
-                                        }
-                                      }
                                     }
                                   ],
                                   "loc": {
@@ -2271,7 +2065,7 @@
                                     },
                                     "end": {
                                       "line": 36,
-                                      "column": 44,
+                                      "column": 27,
                                       "program": "launch_expression.ets"
                                     }
                                   }
@@ -2283,8 +2077,8 @@
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 36,
-                                    "column": 57,
+                                    "line": 38,
+                                    "column": 10,
                                     "program": "launch_expression.ets"
                                   }
                                 }
@@ -2296,8 +2090,8 @@
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 36,
-                                  "column": 57,
+                                  "line": 38,
+                                  "column": 10,
                                   "program": "launch_expression.ets"
                                 }
                               }
@@ -2309,8 +2103,8 @@
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 36,
-                                "column": 58,
+                                "line": 38,
+                                "column": 11,
                                 "program": "launch_expression.ets"
                               }
                             }
@@ -2323,7 +2117,7 @@
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 37,
+                            "line": 39,
                             "column": 6,
                             "program": "launch_expression.ets"
                           }
@@ -2336,7 +2130,7 @@
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 37,
+                          "line": 39,
                           "column": 6,
                           "program": "launch_expression.ets"
                         }
@@ -2352,12 +2146,12 @@
                             "name": "result",
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 40,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 40,
                                 "column": 15,
                                 "program": "launch_expression.ets"
                               }
@@ -2368,12 +2162,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 40,
                                 "column": 18,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 40,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               }
@@ -2381,12 +2175,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 38,
+                              "line": 40,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 38,
+                              "line": 40,
                               "column": 19,
                               "program": "launch_expression.ets"
                             }
@@ -2396,12 +2190,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 38,
+                          "line": 40,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 38,
+                          "line": 40,
                           "column": 19,
                           "program": "launch_expression.ets"
                         }
@@ -2419,12 +2213,12 @@
                               "name": "i",
                               "loc": {
                                 "start": {
-                                  "line": 39,
+                                  "line": 41,
                                   "column": 14,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 39,
+                                  "line": 41,
                                   "column": 15,
                                   "program": "launch_expression.ets"
                                 }
@@ -2435,12 +2229,12 @@
                               "value": 0,
                               "loc": {
                                 "start": {
-                                  "line": 39,
+                                  "line": 41,
                                   "column": 18,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 39,
+                                  "line": 41,
                                   "column": 19,
                                   "program": "launch_expression.ets"
                                 }
@@ -2448,12 +2242,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 39,
+                                "line": 41,
                                 "column": 14,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 39,
+                                "line": 41,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               }
@@ -2463,12 +2257,12 @@
                         "kind": "let",
                         "loc": {
                           "start": {
-                            "line": 39,
+                            "line": 41,
                             "column": 10,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 39,
+                            "line": 41,
                             "column": 19,
                             "program": "launch_expression.ets"
                           }
@@ -2482,12 +2276,12 @@
                           "name": "i",
                           "loc": {
                             "start": {
-                              "line": 39,
+                              "line": 41,
                               "column": 21,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 39,
+                              "line": 41,
                               "column": 22,
                               "program": "launch_expression.ets"
                             }
@@ -2498,12 +2292,12 @@
                           "name": "count",
                           "loc": {
                             "start": {
-                              "line": 39,
+                              "line": 41,
                               "column": 25,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 39,
+                              "line": 41,
                               "column": 30,
                               "program": "launch_expression.ets"
                             }
@@ -2511,12 +2305,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 39,
+                            "line": 41,
                             "column": 21,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 39,
+                            "line": 41,
                             "column": 30,
                             "program": "launch_expression.ets"
                           }
@@ -2531,12 +2325,12 @@
                           "name": "i",
                           "loc": {
                             "start": {
-                              "line": 39,
+                              "line": 41,
                               "column": 34,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 39,
+                              "line": 41,
                               "column": 35,
                               "program": "launch_expression.ets"
                             }
@@ -2544,12 +2338,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 39,
+                            "line": 41,
                             "column": 32,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 39,
+                            "line": 41,
                             "column": 35,
                             "program": "launch_expression.ets"
                           }
@@ -2568,12 +2362,12 @@
                                 "name": "result",
                                 "loc": {
                                   "start": {
-                                    "line": 40,
+                                    "line": 42,
                                     "column": 9,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 40,
+                                    "line": 42,
                                     "column": 15,
                                     "program": "launch_expression.ets"
                                   }
@@ -2587,12 +2381,12 @@
                                   "name": "result",
                                   "loc": {
                                     "start": {
-                                      "line": 40,
+                                      "line": 42,
                                       "column": 18,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 40,
+                                      "line": 42,
                                       "column": 24,
                                       "program": "launch_expression.ets"
                                     }
@@ -2614,12 +2408,12 @@
                                             "name": "p",
                                             "loc": {
                                               "start": {
-                                                "line": 40,
+                                                "line": 42,
                                                 "column": 27,
                                                 "program": "launch_expression.ets"
                                               },
                                               "end": {
-                                                "line": 40,
+                                                "line": 42,
                                                 "column": 28,
                                                 "program": "launch_expression.ets"
                                               }
@@ -2630,12 +2424,12 @@
                                             "name": "i",
                                             "loc": {
                                               "start": {
-                                                "line": 40,
+                                                "line": 42,
                                                 "column": 29,
                                                 "program": "launch_expression.ets"
                                               },
                                               "end": {
-                                                "line": 40,
+                                                "line": 42,
                                                 "column": 30,
                                                 "program": "launch_expression.ets"
                                               }
@@ -2645,12 +2439,12 @@
                                           "optional": false,
                                           "loc": {
                                             "start": {
-                                              "line": 40,
+                                              "line": 42,
                                               "column": 27,
                                               "program": "launch_expression.ets"
                                             },
                                             "end": {
-                                              "line": 40,
+                                              "line": 42,
                                               "column": 31,
                                               "program": "launch_expression.ets"
                                             }
@@ -2658,12 +2452,12 @@
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 40,
+                                            "line": 42,
                                             "column": 27,
                                             "program": "launch_expression.ets"
                                           },
                                           "end": {
-                                            "line": 40,
+                                            "line": 42,
                                             "column": 32,
                                             "program": "launch_expression.ets"
                                           }
@@ -2674,12 +2468,12 @@
                                         "name": "Await",
                                         "loc": {
                                           "start": {
-                                            "line": 40,
+                                            "line": 42,
                                             "column": 33,
                                             "program": "launch_expression.ets"
                                           },
                                           "end": {
-                                            "line": 40,
+                                            "line": 42,
                                             "column": 38,
                                             "program": "launch_expression.ets"
                                           }
@@ -2689,12 +2483,12 @@
                                       "optional": false,
                                       "loc": {
                                         "start": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 27,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 38,
                                           "program": "launch_expression.ets"
                                         }
@@ -2704,12 +2498,12 @@
                                     "optional": false,
                                     "loc": {
                                       "start": {
-                                        "line": 40,
+                                        "line": 42,
                                         "column": 27,
                                         "program": "launch_expression.ets"
                                       },
                                       "end": {
-                                        "line": 40,
+                                        "line": 42,
                                         "column": 40,
                                         "program": "launch_expression.ets"
                                       }
@@ -2722,12 +2516,12 @@
                                       "name": "a",
                                       "loc": {
                                         "start": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 43,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 44,
                                           "program": "launch_expression.ets"
                                         }
@@ -2738,12 +2532,12 @@
                                       "name": "i",
                                       "loc": {
                                         "start": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 45,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 40,
+                                          "line": 42,
                                           "column": 46,
                                           "program": "launch_expression.ets"
                                         }
@@ -2753,12 +2547,12 @@
                                     "optional": false,
                                     "loc": {
                                       "start": {
-                                        "line": 40,
+                                        "line": 42,
                                         "column": 43,
                                         "program": "launch_expression.ets"
                                       },
                                       "end": {
-                                        "line": 40,
+                                        "line": 42,
                                         "column": 47,
                                         "program": "launch_expression.ets"
                                       }
@@ -2766,12 +2560,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 40,
+                                      "line": 42,
                                       "column": 27,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 40,
+                                      "line": 42,
                                       "column": 47,
                                       "program": "launch_expression.ets"
                                     }
@@ -2779,12 +2573,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 40,
+                                    "line": 42,
                                     "column": 18,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 40,
+                                    "line": 42,
                                     "column": 47,
                                     "program": "launch_expression.ets"
                                   }
@@ -2792,12 +2586,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 40,
+                                  "line": 42,
                                   "column": 9,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 40,
+                                  "line": 42,
                                   "column": 47,
                                   "program": "launch_expression.ets"
                                 }
@@ -2805,12 +2599,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 40,
+                                "line": 42,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 40,
+                                "line": 42,
                                 "column": 48,
                                 "program": "launch_expression.ets"
                               }
@@ -2819,12 +2613,12 @@
                         ],
                         "loc": {
                           "start": {
-                            "line": 39,
+                            "line": 41,
                             "column": 37,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 41,
+                            "line": 43,
                             "column": 6,
                             "program": "launch_expression.ets"
                           }
@@ -2832,12 +2626,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 39,
+                          "line": 41,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 41,
+                          "line": 43,
                           "column": 6,
                           "program": "launch_expression.ets"
                         }
@@ -2850,12 +2644,12 @@
                         "name": "result",
                         "loc": {
                           "start": {
-                            "line": 42,
+                            "line": 44,
                             "column": 12,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 42,
+                            "line": 44,
                             "column": 18,
                             "program": "launch_expression.ets"
                           }
@@ -2863,12 +2657,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 42,
+                          "line": 44,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 42,
+                          "line": 44,
                           "column": 19,
                           "program": "launch_expression.ets"
                         }
@@ -2882,7 +2676,7 @@
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 43,
+                      "line": 45,
                       "column": 2,
                       "program": "launch_expression.ets"
                     }
@@ -2895,7 +2689,7 @@
                     "program": "launch_expression.ets"
                   },
                   "end": {
-                    "line": 43,
+                    "line": 45,
                     "column": 2,
                     "program": "launch_expression.ets"
                   }
@@ -2908,7 +2702,7 @@
                   "program": "launch_expression.ets"
                 },
                 "end": {
-                  "line": 43,
+                  "line": 45,
                   "column": 2,
                   "program": "launch_expression.ets"
                 }
@@ -2922,7 +2716,7 @@
                 "program": "launch_expression.ets"
               },
               "end": {
-                "line": 43,
+                "line": 45,
                 "column": 2,
                 "program": "launch_expression.ets"
               }
@@ -2935,12 +2729,12 @@
               "name": "ufib_seq",
               "loc": {
                 "start": {
-                  "line": 44,
+                  "line": 46,
                   "column": 10,
                   "program": "launch_expression.ets"
                 },
                 "end": {
-                  "line": 44,
+                  "line": 46,
                   "column": 18,
                   "program": "launch_expression.ets"
                 }
@@ -2960,12 +2754,12 @@
                   "name": "ufib_seq",
                   "loc": {
                     "start": {
-                      "line": 44,
+                      "line": 46,
                       "column": 10,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 44,
+                      "line": 46,
                       "column": 18,
                       "program": "launch_expression.ets"
                     }
@@ -2984,12 +2778,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 44,
+                            "line": 46,
                             "column": 22,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 44,
+                            "line": 46,
                             "column": 25,
                             "program": "launch_expression.ets"
                           }
@@ -2997,12 +2791,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 44,
+                          "line": 46,
                           "column": 19,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 44,
+                          "line": 46,
                           "column": 25,
                           "program": "launch_expression.ets"
                         }
@@ -3010,12 +2804,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 44,
+                        "line": 46,
                         "column": 19,
                         "program": "launch_expression.ets"
                       },
                       "end": {
-                        "line": 44,
+                        "line": 46,
                         "column": 25,
                         "program": "launch_expression.ets"
                       }
@@ -3026,12 +2820,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 44,
+                      "line": 46,
                       "column": 29,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 44,
+                      "line": 46,
                       "column": 32,
                       "program": "launch_expression.ets"
                     }
@@ -3053,12 +2847,12 @@
                             "name": "n",
                             "loc": {
                               "start": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 10,
                                 "program": "launch_expression.ets"
                               }
@@ -3069,12 +2863,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 14,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 15,
                                 "program": "launch_expression.ets"
                               }
@@ -3082,12 +2876,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 45,
+                              "line": 47,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 45,
+                              "line": 47,
                               "column": 15,
                               "program": "launch_expression.ets"
                             }
@@ -3101,12 +2895,12 @@
                             "name": "n",
                             "loc": {
                               "start": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 20,
                                 "program": "launch_expression.ets"
                               }
@@ -3117,12 +2911,12 @@
                             "name": "count",
                             "loc": {
                               "start": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 23,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 45,
+                                "line": 47,
                                 "column": 28,
                                 "program": "launch_expression.ets"
                               }
@@ -3130,12 +2924,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 45,
+                              "line": 47,
                               "column": 19,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 45,
+                              "line": 47,
                               "column": 28,
                               "program": "launch_expression.ets"
                             }
@@ -3143,12 +2937,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 45,
+                            "line": 47,
                             "column": 14,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 45,
+                            "line": 47,
                             "column": 28,
                             "program": "launch_expression.ets"
                           }
@@ -3166,12 +2960,12 @@
                                 "name": "v",
                                 "loc": {
                                   "start": {
-                                    "line": 46,
+                                    "line": 48,
                                     "column": 16,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 46,
+                                    "line": 48,
                                     "column": 17,
                                     "program": "launch_expression.ets"
                                   }
@@ -3182,12 +2976,12 @@
                                 "name": "n",
                                 "loc": {
                                   "start": {
-                                    "line": 46,
+                                    "line": 48,
                                     "column": 18,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 46,
+                                    "line": 48,
                                     "column": 19,
                                     "program": "launch_expression.ets"
                                   }
@@ -3197,12 +2991,12 @@
                               "optional": false,
                               "loc": {
                                 "start": {
-                                  "line": 46,
+                                  "line": 48,
                                   "column": 16,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 46,
+                                  "line": 48,
                                   "column": 20,
                                   "program": "launch_expression.ets"
                                 }
@@ -3210,12 +3004,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 46,
+                                "line": 48,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 46,
+                                "line": 48,
                                 "column": 21,
                                 "program": "launch_expression.ets"
                               }
@@ -3224,12 +3018,12 @@
                         ],
                         "loc": {
                           "start": {
-                            "line": 45,
+                            "line": 47,
                             "column": 30,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 47,
+                            "line": 49,
                             "column": 6,
                             "program": "launch_expression.ets"
                           }
@@ -3238,12 +3032,12 @@
                       "alternate": null,
                       "loc": {
                         "start": {
-                          "line": 45,
+                          "line": 47,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 47,
+                          "line": 49,
                           "column": 6,
                           "program": "launch_expression.ets"
                         }
@@ -3259,12 +3053,12 @@
                             "name": "result",
                             "loc": {
                               "start": {
-                                "line": 48,
+                                "line": 50,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 48,
+                                "line": 50,
                                 "column": 15,
                                 "program": "launch_expression.ets"
                               }
@@ -3275,12 +3069,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 48,
+                                "line": 50,
                                 "column": 18,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 48,
+                                "line": 50,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               }
@@ -3288,12 +3082,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 48,
+                              "line": 50,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 48,
+                              "line": 50,
                               "column": 19,
                               "program": "launch_expression.ets"
                             }
@@ -3303,12 +3097,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 48,
+                          "line": 50,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 48,
+                          "line": 50,
                           "column": 19,
                           "program": "launch_expression.ets"
                         }
@@ -3326,12 +3120,12 @@
                               "name": "i",
                               "loc": {
                                 "start": {
-                                  "line": 49,
+                                  "line": 51,
                                   "column": 14,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 49,
+                                  "line": 51,
                                   "column": 15,
                                   "program": "launch_expression.ets"
                                 }
@@ -3342,12 +3136,12 @@
                               "value": 0,
                               "loc": {
                                 "start": {
-                                  "line": 49,
+                                  "line": 51,
                                   "column": 18,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 49,
+                                  "line": 51,
                                   "column": 19,
                                   "program": "launch_expression.ets"
                                 }
@@ -3355,12 +3149,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 49,
+                                "line": 51,
                                 "column": 14,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 49,
+                                "line": 51,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               }
@@ -3370,12 +3164,12 @@
                         "kind": "let",
                         "loc": {
                           "start": {
-                            "line": 49,
+                            "line": 51,
                             "column": 10,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 49,
+                            "line": 51,
                             "column": 19,
                             "program": "launch_expression.ets"
                           }
@@ -3389,12 +3183,12 @@
                           "name": "i",
                           "loc": {
                             "start": {
-                              "line": 49,
+                              "line": 51,
                               "column": 21,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 49,
+                              "line": 51,
                               "column": 22,
                               "program": "launch_expression.ets"
                             }
@@ -3405,12 +3199,12 @@
                           "name": "count",
                           "loc": {
                             "start": {
-                              "line": 49,
+                              "line": 51,
                               "column": 25,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 49,
+                              "line": 51,
                               "column": 30,
                               "program": "launch_expression.ets"
                             }
@@ -3418,12 +3212,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 49,
+                            "line": 51,
                             "column": 21,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 49,
+                            "line": 51,
                             "column": 30,
                             "program": "launch_expression.ets"
                           }
@@ -3438,12 +3232,12 @@
                           "name": "i",
                           "loc": {
                             "start": {
-                              "line": 49,
+                              "line": 51,
                               "column": 34,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 49,
+                              "line": 51,
                               "column": 35,
                               "program": "launch_expression.ets"
                             }
@@ -3451,12 +3245,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 49,
+                            "line": 51,
                             "column": 32,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 49,
+                            "line": 51,
                             "column": 35,
                             "program": "launch_expression.ets"
                           }
@@ -3475,12 +3269,12 @@
                                 "name": "result",
                                 "loc": {
                                   "start": {
-                                    "line": 50,
+                                    "line": 52,
                                     "column": 9,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 50,
+                                    "line": 52,
                                     "column": 15,
                                     "program": "launch_expression.ets"
                                   }
@@ -3494,12 +3288,12 @@
                                   "name": "result",
                                   "loc": {
                                     "start": {
-                                      "line": 50,
+                                      "line": 52,
                                       "column": 18,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 50,
+                                      "line": 52,
                                       "column": 24,
                                       "program": "launch_expression.ets"
                                     }
@@ -3515,12 +3309,12 @@
                                       "name": "ufib_seq",
                                       "loc": {
                                         "start": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 27,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 35,
                                           "program": "launch_expression.ets"
                                         }
@@ -3538,12 +3332,12 @@
                                             "name": "n",
                                             "loc": {
                                               "start": {
-                                                "line": 50,
+                                                "line": 52,
                                                 "column": 36,
                                                 "program": "launch_expression.ets"
                                               },
                                               "end": {
-                                                "line": 50,
+                                                "line": 52,
                                                 "column": 37,
                                                 "program": "launch_expression.ets"
                                               }
@@ -3554,12 +3348,12 @@
                                             "value": 1,
                                             "loc": {
                                               "start": {
-                                                "line": 50,
+                                                "line": 52,
                                                 "column": 38,
                                                 "program": "launch_expression.ets"
                                               },
                                               "end": {
-                                                "line": 50,
+                                                "line": 52,
                                                 "column": 39,
                                                 "program": "launch_expression.ets"
                                               }
@@ -3567,12 +3361,12 @@
                                           },
                                           "loc": {
                                             "start": {
-                                              "line": 50,
+                                              "line": 52,
                                               "column": 36,
                                               "program": "launch_expression.ets"
                                             },
                                             "end": {
-                                              "line": 50,
+                                              "line": 52,
                                               "column": 39,
                                               "program": "launch_expression.ets"
                                             }
@@ -3583,12 +3377,12 @@
                                           "name": "i",
                                           "loc": {
                                             "start": {
-                                              "line": 50,
+                                              "line": 52,
                                               "column": 40,
                                               "program": "launch_expression.ets"
                                             },
                                             "end": {
-                                              "line": 50,
+                                              "line": 52,
                                               "column": 41,
                                               "program": "launch_expression.ets"
                                             }
@@ -3596,12 +3390,12 @@
                                         },
                                         "loc": {
                                           "start": {
-                                            "line": 50,
+                                            "line": 52,
                                             "column": 38,
                                             "program": "launch_expression.ets"
                                           },
                                           "end": {
-                                            "line": 50,
+                                            "line": 52,
                                             "column": 41,
                                             "program": "launch_expression.ets"
                                           }
@@ -3611,12 +3405,12 @@
                                     "optional": false,
                                     "loc": {
                                       "start": {
-                                        "line": 50,
+                                        "line": 52,
                                         "column": 27,
                                         "program": "launch_expression.ets"
                                       },
                                       "end": {
-                                        "line": 50,
+                                        "line": 52,
                                         "column": 42,
                                         "program": "launch_expression.ets"
                                       }
@@ -3629,12 +3423,12 @@
                                       "name": "a",
                                       "loc": {
                                         "start": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 45,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 46,
                                           "program": "launch_expression.ets"
                                         }
@@ -3645,12 +3439,12 @@
                                       "name": "i",
                                       "loc": {
                                         "start": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 47,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 50,
+                                          "line": 52,
                                           "column": 48,
                                           "program": "launch_expression.ets"
                                         }
@@ -3660,12 +3454,12 @@
                                     "optional": false,
                                     "loc": {
                                       "start": {
-                                        "line": 50,
+                                        "line": 52,
                                         "column": 45,
                                         "program": "launch_expression.ets"
                                       },
                                       "end": {
-                                        "line": 50,
+                                        "line": 52,
                                         "column": 49,
                                         "program": "launch_expression.ets"
                                       }
@@ -3673,12 +3467,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 50,
+                                      "line": 52,
                                       "column": 27,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 50,
+                                      "line": 52,
                                       "column": 49,
                                       "program": "launch_expression.ets"
                                     }
@@ -3686,12 +3480,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 50,
+                                    "line": 52,
                                     "column": 18,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 50,
+                                    "line": 52,
                                     "column": 49,
                                     "program": "launch_expression.ets"
                                   }
@@ -3699,12 +3493,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 50,
+                                  "line": 52,
                                   "column": 9,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 50,
+                                  "line": 52,
                                   "column": 49,
                                   "program": "launch_expression.ets"
                                 }
@@ -3712,12 +3506,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 50,
+                                "line": 52,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 50,
+                                "line": 52,
                                 "column": 50,
                                 "program": "launch_expression.ets"
                               }
@@ -3726,12 +3520,12 @@
                         ],
                         "loc": {
                           "start": {
-                            "line": 49,
+                            "line": 51,
                             "column": 37,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 51,
+                            "line": 53,
                             "column": 6,
                             "program": "launch_expression.ets"
                           }
@@ -3739,12 +3533,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 49,
+                          "line": 51,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 51,
+                          "line": 53,
                           "column": 6,
                           "program": "launch_expression.ets"
                         }
@@ -3757,12 +3551,12 @@
                         "name": "result",
                         "loc": {
                           "start": {
-                            "line": 52,
+                            "line": 54,
                             "column": 12,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 52,
+                            "line": 54,
                             "column": 18,
                             "program": "launch_expression.ets"
                           }
@@ -3770,12 +3564,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 52,
+                          "line": 54,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 52,
+                          "line": 54,
                           "column": 19,
                           "program": "launch_expression.ets"
                         }
@@ -3784,12 +3578,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 44,
+                      "line": 46,
                       "column": 33,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 53,
+                      "line": 55,
                       "column": 2,
                       "program": "launch_expression.ets"
                     }
@@ -3797,12 +3591,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 44,
+                    "line": 46,
                     "column": 10,
                     "program": "launch_expression.ets"
                   },
                   "end": {
-                    "line": 53,
+                    "line": 55,
                     "column": 2,
                     "program": "launch_expression.ets"
                   }
@@ -3810,12 +3604,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 44,
+                  "line": 46,
                   "column": 10,
                   "program": "launch_expression.ets"
                 },
                 "end": {
-                  "line": 53,
+                  "line": 55,
                   "column": 2,
                   "program": "launch_expression.ets"
                 }
@@ -3824,12 +3618,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 44,
+                "line": 46,
                 "column": 1,
                 "program": "launch_expression.ets"
               },
               "end": {
-                "line": 53,
+                "line": 55,
                 "column": 2,
                 "program": "launch_expression.ets"
               }
@@ -3842,12 +3636,12 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 54,
+                  "line": 56,
                   "column": 17,
                   "program": "launch_expression.ets"
                 },
                 "end": {
-                  "line": 54,
+                  "line": 56,
                   "column": 21,
                   "program": "launch_expression.ets"
                 }
@@ -3867,12 +3661,12 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 54,
+                      "line": 56,
                       "column": 17,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 54,
+                      "line": 56,
                       "column": 21,
                       "program": "launch_expression.ets"
                     }
@@ -3886,12 +3680,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 54,
+                      "line": 56,
                       "column": 25,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 54,
+                      "line": 56,
                       "column": 28,
                       "program": "launch_expression.ets"
                     }
@@ -3912,12 +3706,12 @@
                             "name": "a",
                             "loc": {
                               "start": {
-                                "line": 55,
+                                "line": 57,
                                 "column": 5,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 55,
+                                "line": 57,
                                 "column": 6,
                                 "program": "launch_expression.ets"
                               }
@@ -3928,12 +3722,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 55,
+                                "line": 57,
                                 "column": 7,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 55,
+                                "line": 57,
                                 "column": 8,
                                 "program": "launch_expression.ets"
                               }
@@ -3943,12 +3737,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 55,
+                              "line": 57,
                               "column": 5,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 55,
+                              "line": 57,
                               "column": 9,
                               "program": "launch_expression.ets"
                             }
@@ -3959,12 +3753,12 @@
                           "value": 2,
                           "loc": {
                             "start": {
-                              "line": 55,
+                              "line": 57,
                               "column": 12,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 55,
+                              "line": 57,
                               "column": 13,
                               "program": "launch_expression.ets"
                             }
@@ -3972,12 +3766,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 55,
+                            "line": 57,
                             "column": 5,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 55,
+                            "line": 57,
                             "column": 13,
                             "program": "launch_expression.ets"
                           }
@@ -3985,12 +3779,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 55,
+                          "line": 57,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 55,
+                          "line": 57,
                           "column": 14,
                           "program": "launch_expression.ets"
                         }
@@ -4008,12 +3802,12 @@
                             "name": "v",
                             "loc": {
                               "start": {
-                                "line": 56,
+                                "line": 58,
                                 "column": 5,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 56,
+                                "line": 58,
                                 "column": 6,
                                 "program": "launch_expression.ets"
                               }
@@ -4024,12 +3818,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 56,
+                                "line": 58,
                                 "column": 7,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 56,
+                                "line": 58,
                                 "column": 8,
                                 "program": "launch_expression.ets"
                               }
@@ -4039,12 +3833,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 56,
+                              "line": 58,
                               "column": 5,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 56,
+                              "line": 58,
                               "column": 9,
                               "program": "launch_expression.ets"
                             }
@@ -4055,12 +3849,12 @@
                           "value": 6,
                           "loc": {
                             "start": {
-                              "line": 56,
+                              "line": 58,
                               "column": 12,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 56,
+                              "line": 58,
                               "column": 13,
                               "program": "launch_expression.ets"
                             }
@@ -4068,12 +3862,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 56,
+                            "line": 58,
                             "column": 5,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 56,
+                            "line": 58,
                             "column": 13,
                             "program": "launch_expression.ets"
                           }
@@ -4081,12 +3875,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 56,
+                          "line": 58,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 56,
+                          "line": 58,
                           "column": 14,
                           "program": "launch_expression.ets"
                         }
@@ -4104,12 +3898,12 @@
                             "name": "a",
                             "loc": {
                               "start": {
-                                "line": 57,
+                                "line": 59,
                                 "column": 5,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 57,
+                                "line": 59,
                                 "column": 6,
                                 "program": "launch_expression.ets"
                               }
@@ -4120,12 +3914,12 @@
                             "value": 1,
                             "loc": {
                               "start": {
-                                "line": 57,
+                                "line": 59,
                                 "column": 7,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 57,
+                                "line": 59,
                                 "column": 8,
                                 "program": "launch_expression.ets"
                               }
@@ -4135,12 +3929,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 57,
+                              "line": 59,
                               "column": 5,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 57,
+                              "line": 59,
                               "column": 9,
                               "program": "launch_expression.ets"
                             }
@@ -4151,12 +3945,12 @@
                           "value": 2,
                           "loc": {
                             "start": {
-                              "line": 57,
+                              "line": 59,
                               "column": 12,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 57,
+                              "line": 59,
                               "column": 13,
                               "program": "launch_expression.ets"
                             }
@@ -4164,12 +3958,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 57,
+                            "line": 59,
                             "column": 5,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 57,
+                            "line": 59,
                             "column": 13,
                             "program": "launch_expression.ets"
                           }
@@ -4177,12 +3971,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 57,
+                          "line": 59,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 57,
+                          "line": 59,
                           "column": 14,
                           "program": "launch_expression.ets"
                         }
@@ -4200,12 +3994,12 @@
                             "name": "v",
                             "loc": {
                               "start": {
-                                "line": 58,
+                                "line": 60,
                                 "column": 5,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 58,
+                                "line": 60,
                                 "column": 6,
                                 "program": "launch_expression.ets"
                               }
@@ -4216,12 +4010,12 @@
                             "value": 1,
                             "loc": {
                               "start": {
-                                "line": 58,
+                                "line": 60,
                                 "column": 7,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 58,
+                                "line": 60,
                                 "column": 8,
                                 "program": "launch_expression.ets"
                               }
@@ -4231,12 +4025,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 58,
+                              "line": 60,
                               "column": 5,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 58,
+                              "line": 60,
                               "column": 9,
                               "program": "launch_expression.ets"
                             }
@@ -4247,12 +4041,12 @@
                           "value": 7,
                           "loc": {
                             "start": {
-                              "line": 58,
+                              "line": 60,
                               "column": 12,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 58,
+                              "line": 60,
                               "column": 13,
                               "program": "launch_expression.ets"
                             }
@@ -4260,12 +4054,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 58,
+                            "line": 60,
                             "column": 5,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 58,
+                            "line": 60,
                             "column": 13,
                             "program": "launch_expression.ets"
                           }
@@ -4273,12 +4067,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 58,
+                          "line": 60,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 58,
+                          "line": 60,
                           "column": 14,
                           "program": "launch_expression.ets"
                         }
@@ -4294,12 +4088,12 @@
                             "name": "seq_result",
                             "loc": {
                               "start": {
-                                "line": 59,
+                                "line": 61,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 59,
+                                "line": 61,
                                 "column": 19,
                                 "program": "launch_expression.ets"
                               }
@@ -4312,12 +4106,12 @@
                               "name": "ufib_seq",
                               "loc": {
                                 "start": {
-                                  "line": 59,
+                                  "line": 61,
                                   "column": 22,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 59,
+                                  "line": 61,
                                   "column": 30,
                                   "program": "launch_expression.ets"
                                 }
@@ -4329,12 +4123,12 @@
                                 "name": "n",
                                 "loc": {
                                   "start": {
-                                    "line": 59,
+                                    "line": 61,
                                     "column": 31,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 59,
+                                    "line": 61,
                                     "column": 32,
                                     "program": "launch_expression.ets"
                                   }
@@ -4344,12 +4138,12 @@
                             "optional": false,
                             "loc": {
                               "start": {
-                                "line": 59,
+                                "line": 61,
                                 "column": 22,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 59,
+                                "line": 61,
                                 "column": 33,
                                 "program": "launch_expression.ets"
                               }
@@ -4357,12 +4151,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 59,
+                              "line": 61,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 59,
+                              "line": 61,
                               "column": 33,
                               "program": "launch_expression.ets"
                             }
@@ -4372,12 +4166,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 59,
+                          "line": 61,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 59,
+                          "line": 61,
                           "column": 34,
                           "program": "launch_expression.ets"
                         }
@@ -4393,12 +4187,12 @@
                             "name": "p",
                             "loc": {
                               "start": {
-                                "line": 60,
+                                "line": 62,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 60,
+                                "line": 62,
                                 "column": 10,
                                 "program": "launch_expression.ets"
                               }
@@ -4411,51 +4205,18 @@
                               "name": "launch",
                               "loc": {
                                 "start": {
-                                  "line": 60,
+                                  "line": 62,
                                   "column": 13,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 60,
+                                  "line": 62,
                                   "column": 19,
                                   "program": "launch_expression.ets"
                                 }
                               }
                             },
-                            "arguments": [
-                              {
-                                "type": "Identifier",
-                                "name": "ufib",
-                                "loc": {
-                                  "start": {
-                                    "line": 60,
-                                    "column": 42,
-                                    "program": "launch_expression.ets"
-                                  },
-                                  "end": {
-                                    "line": 60,
-                                    "column": 46,
-                                    "program": "launch_expression.ets"
-                                  }
-                                }
-                              },
-                              {
-                                "type": "Identifier",
-                                "name": "n",
-                                "loc": {
-                                  "start": {
-                                    "line": 60,
-                                    "column": 48,
-                                    "program": "launch_expression.ets"
-                                  },
-                                  "end": {
-                                    "line": 60,
-                                    "column": 49,
-                                    "program": "launch_expression.ets"
-                                  }
-                                }
-                              }
-                            ],
+                            "arguments": [],
                             "optional": false,
                             "typeParameters": {
                               "type": "TSTypeParameterInstantiation",
@@ -4469,12 +4230,12 @@
                                       "name": "Int",
                                       "loc": {
                                         "start": {
-                                          "line": 60,
+                                          "line": 62,
                                           "column": 20,
                                           "program": "launch_expression.ets"
                                         },
                                         "end": {
-                                          "line": 60,
+                                          "line": 62,
                                           "column": 23,
                                           "program": "launch_expression.ets"
                                         }
@@ -4482,12 +4243,12 @@
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 60,
+                                        "line": 62,
                                         "column": 20,
                                         "program": "launch_expression.ets"
                                       },
                                       "end": {
-                                        "line": 60,
+                                        "line": 62,
                                         "column": 23,
                                         "program": "launch_expression.ets"
                                       }
@@ -4495,122 +4256,13 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 60,
+                                      "line": 62,
                                       "column": 20,
                                       "program": "launch_expression.ets"
                                     },
                                     "end": {
-                                      "line": 60,
+                                      "line": 62,
                                       "column": 23,
-                                      "program": "launch_expression.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "ETSFunctionType",
-                                  "params": [
-                                    {
-                                      "type": "ETSParameterExpression",
-                                      "name": {
-                                        "type": "Identifier",
-                                        "name": "i",
-                                        "typeAnnotation": {
-                                          "type": "ETSPrimitiveType",
-                                          "loc": {
-                                            "start": {
-                                              "line": 60,
-                                              "column": 29,
-                                              "program": "launch_expression.ets"
-                                            },
-                                            "end": {
-                                              "line": 60,
-                                              "column": 32,
-                                              "program": "launch_expression.ets"
-                                            }
-                                          }
-                                        },
-                                        "loc": {
-                                          "start": {
-                                            "line": 60,
-                                            "column": 26,
-                                            "program": "launch_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 60,
-                                            "column": 32,
-                                            "program": "launch_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 60,
-                                          "column": 26,
-                                          "program": "launch_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 60,
-                                          "column": 32,
-                                          "program": "launch_expression.ets"
-                                        }
-                                      }
-                                    }
-                                  ],
-                                  "returnType": {
-                                    "type": "ETSTypeReference",
-                                    "part": {
-                                      "type": "ETSTypeReferencePart",
-                                      "name": {
-                                        "type": "Identifier",
-                                        "name": "Int",
-                                        "loc": {
-                                          "start": {
-                                            "line": 60,
-                                            "column": 37,
-                                            "program": "launch_expression.ets"
-                                          },
-                                          "end": {
-                                            "line": 60,
-                                            "column": 40,
-                                            "program": "launch_expression.ets"
-                                          }
-                                        }
-                                      },
-                                      "loc": {
-                                        "start": {
-                                          "line": 60,
-                                          "column": 37,
-                                          "program": "launch_expression.ets"
-                                        },
-                                        "end": {
-                                          "line": 60,
-                                          "column": 40,
-                                          "program": "launch_expression.ets"
-                                        }
-                                      }
-                                    },
-                                    "loc": {
-                                      "start": {
-                                        "line": 60,
-                                        "column": 37,
-                                        "program": "launch_expression.ets"
-                                      },
-                                      "end": {
-                                        "line": 60,
-                                        "column": 40,
-                                        "program": "launch_expression.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 60,
-                                      "column": 25,
-                                      "program": "launch_expression.ets"
-                                    },
-                                    "end": {
-                                      "line": 60,
-                                      "column": 40,
                                       "program": "launch_expression.ets"
                                     }
                                   }
@@ -4618,39 +4270,39 @@
                               ],
                               "loc": {
                                 "start": {
-                                  "line": 60,
+                                  "line": 62,
                                   "column": 19,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 60,
-                                  "column": 41,
+                                  "line": 62,
+                                  "column": 24,
                                   "program": "launch_expression.ets"
                                 }
                               }
                             },
                             "loc": {
                               "start": {
-                                "line": 60,
+                                "line": 62,
                                 "column": 13,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 60,
-                                "column": 50,
+                                "line": 64,
+                                "column": 6,
                                 "program": "launch_expression.ets"
                               }
                             }
                           },
                           "loc": {
                             "start": {
-                              "line": 60,
+                              "line": 62,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 60,
-                              "column": 50,
+                              "line": 64,
+                              "column": 6,
                               "program": "launch_expression.ets"
                             }
                           }
@@ -4659,13 +4311,13 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 60,
+                          "line": 62,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 60,
-                          "column": 51,
+                          "line": 64,
+                          "column": 7,
                           "program": "launch_expression.ets"
                         }
                       }
@@ -4680,12 +4332,12 @@
                             "name": "co_result",
                             "loc": {
                               "start": {
-                                "line": 61,
+                                "line": 65,
                                 "column": 9,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 61,
+                                "line": 65,
                                 "column": 18,
                                 "program": "launch_expression.ets"
                               }
@@ -4700,12 +4352,12 @@
                                 "name": "p",
                                 "loc": {
                                   "start": {
-                                    "line": 61,
+                                    "line": 65,
                                     "column": 21,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 61,
+                                    "line": 65,
                                     "column": 22,
                                     "program": "launch_expression.ets"
                                   }
@@ -4716,12 +4368,12 @@
                                 "name": "Await",
                                 "loc": {
                                   "start": {
-                                    "line": 61,
+                                    "line": 65,
                                     "column": 23,
                                     "program": "launch_expression.ets"
                                   },
                                   "end": {
-                                    "line": 61,
+                                    "line": 65,
                                     "column": 28,
                                     "program": "launch_expression.ets"
                                   }
@@ -4731,12 +4383,12 @@
                               "optional": false,
                               "loc": {
                                 "start": {
-                                  "line": 61,
+                                  "line": 65,
                                   "column": 21,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 61,
+                                  "line": 65,
                                   "column": 28,
                                   "program": "launch_expression.ets"
                                 }
@@ -4746,12 +4398,12 @@
                             "optional": false,
                             "loc": {
                               "start": {
-                                "line": 61,
+                                "line": 65,
                                 "column": 21,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 61,
+                                "line": 65,
                                 "column": 30,
                                 "program": "launch_expression.ets"
                               }
@@ -4759,12 +4411,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 61,
+                              "line": 65,
                               "column": 9,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 61,
+                              "line": 65,
                               "column": 30,
                               "program": "launch_expression.ets"
                             }
@@ -4774,12 +4426,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 61,
+                          "line": 65,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 61,
+                          "line": 65,
                           "column": 31,
                           "program": "launch_expression.ets"
                         }
@@ -4794,12 +4446,12 @@
                           "name": "assert_eq",
                           "loc": {
                             "start": {
-                              "line": 62,
+                              "line": 66,
                               "column": 5,
                               "program": "launch_expression.ets"
                             },
                             "end": {
-                              "line": 62,
+                              "line": 66,
                               "column": 14,
                               "program": "launch_expression.ets"
                             }
@@ -4813,12 +4465,12 @@
                               "name": "co_result",
                               "loc": {
                                 "start": {
-                                  "line": 62,
+                                  "line": 66,
                                   "column": 15,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 62,
+                                  "line": 66,
                                   "column": 24,
                                   "program": "launch_expression.ets"
                                 }
@@ -4828,12 +4480,12 @@
                               "type": "ETSPrimitiveType",
                               "loc": {
                                 "start": {
-                                  "line": 62,
+                                  "line": 66,
                                   "column": 28,
                                   "program": "launch_expression.ets"
                                 },
                                 "end": {
-                                  "line": 62,
+                                  "line": 66,
                                   "column": 31,
                                   "program": "launch_expression.ets"
                                 }
@@ -4841,12 +4493,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 62,
+                                "line": 66,
                                 "column": 15,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 62,
+                                "line": 66,
                                 "column": 31,
                                 "program": "launch_expression.ets"
                               }
@@ -4857,12 +4509,12 @@
                             "name": "seq_result",
                             "loc": {
                               "start": {
-                                "line": 62,
+                                "line": 66,
                                 "column": 33,
                                 "program": "launch_expression.ets"
                               },
                               "end": {
-                                "line": 62,
+                                "line": 66,
                                 "column": 43,
                                 "program": "launch_expression.ets"
                               }
@@ -4872,12 +4524,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 62,
+                            "line": 66,
                             "column": 5,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 62,
+                            "line": 66,
                             "column": 44,
                             "program": "launch_expression.ets"
                           }
@@ -4885,12 +4537,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 62,
+                          "line": 66,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 62,
+                          "line": 66,
                           "column": 45,
                           "program": "launch_expression.ets"
                         }
@@ -4903,12 +4555,12 @@
                         "value": 0,
                         "loc": {
                           "start": {
-                            "line": 63,
+                            "line": 67,
                             "column": 12,
                             "program": "launch_expression.ets"
                           },
                           "end": {
-                            "line": 63,
+                            "line": 67,
                             "column": 13,
                             "program": "launch_expression.ets"
                           }
@@ -4916,12 +4568,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 63,
+                          "line": 67,
                           "column": 5,
                           "program": "launch_expression.ets"
                         },
                         "end": {
-                          "line": 63,
+                          "line": 67,
                           "column": 14,
                           "program": "launch_expression.ets"
                         }
@@ -4930,12 +4582,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 54,
+                      "line": 56,
                       "column": 29,
                       "program": "launch_expression.ets"
                     },
                     "end": {
-                      "line": 64,
+                      "line": 68,
                       "column": 2,
                       "program": "launch_expression.ets"
                     }
@@ -4943,12 +4595,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 54,
+                    "line": 56,
                     "column": 17,
                     "program": "launch_expression.ets"
                   },
                   "end": {
-                    "line": 64,
+                    "line": 68,
                     "column": 2,
                     "program": "launch_expression.ets"
                   }
@@ -4956,12 +4608,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 54,
+                  "line": 56,
                   "column": 17,
                   "program": "launch_expression.ets"
                 },
                 "end": {
-                  "line": 64,
+                  "line": 68,
                   "column": 2,
                   "program": "launch_expression.ets"
                 }
@@ -4970,12 +4622,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 54,
+                "line": 56,
                 "column": 8,
                 "program": "launch_expression.ets"
               },
               "end": {
-                "line": 64,
+                "line": 68,
                 "column": 2,
                 "program": "launch_expression.ets"
               }
@@ -5016,7 +4668,7 @@
       "program": "launch_expression.ets"
     },
     "end": {
-      "line": 65,
+      "line": 69,
       "column": 1,
       "program": "launch_expression.ets"
     }

@@ -522,81 +522,18 @@
                                 "loc": {
                                   "start": {
                                     "line": 24,
-                                    "column": 46,
+                                    "column": 30,
                                     "program": "launch_ret.ets"
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 52,
+                                    "column": 36,
                                     "program": "launch_ret.ets"
                                   }
                                 }
                               }
                             ],
                             "optional": false,
-                            "typeParameters": {
-                              "type": "TSTypeParameterInstantiation",
-                              "params": [
-                                {
-                                  "type": "ETSPrimitiveType",
-                                  "loc": {
-                                    "start": {
-                                      "line": 24,
-                                      "column": 30,
-                                      "program": "launch_ret.ets"
-                                    },
-                                    "end": {
-                                      "line": 24,
-                                      "column": 33,
-                                      "program": "launch_ret.ets"
-                                    }
-                                  }
-                                },
-                                {
-                                  "type": "ETSFunctionType",
-                                  "params": [],
-                                  "returnType": {
-                                    "type": "ETSPrimitiveType",
-                                    "loc": {
-                                      "start": {
-                                        "line": 24,
-                                        "column": 41,
-                                        "program": "launch_ret.ets"
-                                      },
-                                      "end": {
-                                        "line": 24,
-                                        "column": 44,
-                                        "program": "launch_ret.ets"
-                                      }
-                                    }
-                                  },
-                                  "loc": {
-                                    "start": {
-                                      "line": 24,
-                                      "column": 35,
-                                      "program": "launch_ret.ets"
-                                    },
-                                    "end": {
-                                      "line": 24,
-                                      "column": 44,
-                                      "program": "launch_ret.ets"
-                                    }
-                                  }
-                                }
-                              ],
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 29,
-                                  "program": "launch_ret.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 45,
-                                  "program": "launch_ret.ets"
-                                }
-                              }
-                            },
                             "loc": {
                               "start": {
                                 "line": 24,
@@ -605,7 +542,7 @@
                               },
                               "end": {
                                 "line": 24,
-                                "column": 53,
+                                "column": 37,
                                 "program": "launch_ret.ets"
                               }
                             }
@@ -618,7 +555,7 @@
                             },
                             "end": {
                               "line": 24,
-                              "column": 53,
+                              "column": 37,
                               "program": "launch_ret.ets"
                             }
                           }
@@ -633,7 +570,7 @@
                         },
                         "end": {
                           "line": 24,
-                          "column": 54,
+                          "column": 38,
                           "program": "launch_ret.ets"
                         }
                       }

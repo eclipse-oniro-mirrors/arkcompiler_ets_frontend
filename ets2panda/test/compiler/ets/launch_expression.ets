@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+* Copyright (c) 2022-2026 Huawei Device Co., Ltd.
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at 
@@ -33,7 +33,9 @@ function ufib(n: int) : Int {
     }
     let p: P[] = new P[count]
     for (let i = 0; i < count; ++i) {
-        p[i] = launch<Int, (i: int) => Int>(ufib, n-1-i);
+        p[i] = launch<Int>() {
+            return ufib(n-1-i)
+        };
     }
     let result = 0
     for (let i = 0; i < count; ++i) {
@@ -57,7 +59,9 @@ export function main(): int {
     a[1] = 2;
     v[1] = 7;
     let seq_result = ufib_seq(n);
-    let p = launch<Int, (i: int) => Int>(ufib, n);
+    let p = launch<Int>() {
+        return ufib(n)
+    };
     let co_result = p.Await();
     assert_eq(co_result as int, seq_result);
     return 0;
