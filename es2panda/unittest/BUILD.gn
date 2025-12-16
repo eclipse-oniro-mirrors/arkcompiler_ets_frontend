@@ -1,0 +1,74 @@
+# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//arkcompiler/ets_frontend/es2panda/es2abc_config.gni")
+import("//arkcompiler/ets_frontend/ets_frontend_config.gni")
+
+if ((defined(ark_standalone_build) && ark_standalone_build) ||
+    (defined(is_arkui_x) && is_arkui_x)) {
+  import("//arkcompiler/runtime_core/ark_config.gni")
+} else {
+  import("//arkcompiler/ets_frontend/ark_config.gni")
+}
+
+config("unittest_config") {
+  cflags = [ "-fexceptions" ]
+}
+
+ohos_unittest("lexer_test") {  
+  use_exceptions = true
+  testonly = true
+  sources = [
+    "lexer/lexer_test.cpp",
+  ]
+
+  configs = [
+    "../:es2abc_config_common",
+    "../../merge_abc:panda_assembly_proto_public_config",
+  ]
+
+  include_dirs = [
+    "../",
+    "${target_out_dir}",
+  ]
+
+  deps = [
+    "../:es2panda_lib",
+    "../../merge_abc:panda_assembly_proto_static",
+  ]
+
+  external_deps = [
+    "googletest:gtest_main",
+  ]
+
+  external_deps += [ sdk_libc_secshared_dep ]
+
+  external_deps += [
+    "icu:static_icuuc",
+    "runtime_core:arkabc2program_public_headers",
+    "runtime_core:arkassembler_public_headers",
+    "runtime_core:arkbase_public_headers",
+    "runtime_core:arkfile_public_headers",
+  ]
+
+  external_deps += [
+      "json:nlohmann_json_static",
+      "runtime_core:abc2program_frontend_static",
+      "runtime_core:libarkassembler_frontend_static",
+      "runtime_core:libarkbase_frontend_static",
+      "runtime_core:libarkfile_frontend_static",
+      "runtime_core:libarkziparchive_frontend_static",
+    ]
+
+  module_out_path = "arkcompiler/ets_frontend"
+}
