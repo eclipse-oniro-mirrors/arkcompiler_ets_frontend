@@ -45,16 +45,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 44,
-            "endLine": 26,
-            "endColumn": 70,
-            "problem": "DynamicCtorCall",
-            "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
-            "severity": "ERROR"
-        },
-        {
             "line": 27,
             "column": 12,
             "endLine": 27,
@@ -62,16 +52,6 @@
             "problem": "NoImportNamespaceStarAsVar",
             "suggest": "",
             "rule": "The namespace imported by import * as cannot be used as a variable (arkts-no-import-namespace-with-star-as-var)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 27,
-            "column": 48,
-            "endLine": 27,
-            "endColumn": 77,
-            "problem": "DynamicCtorCall",
-            "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         }
     ]

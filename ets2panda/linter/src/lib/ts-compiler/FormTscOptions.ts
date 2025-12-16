@@ -72,7 +72,12 @@ export function formTscOptions(
       options.options
     );
   }
+  setNoTransformedKitOption(options.options);
   return options;
+}
+
+function setNoTransformedKitOption(options: ts.CompilerOptions): void {
+  options.noTransformedKitInParser = true;
 }
 
 function getDefaultCompilerOptions(): ts.CompilerOptions {

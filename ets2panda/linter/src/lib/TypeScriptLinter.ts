@@ -11588,12 +11588,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
 
     if (defaultIsForbidden) {
-      if (defaultImport?.getText() === 'process') {
-        this.incrementCounters(defaultImport, FaultID.LimitedStdLibNoImportConcurrency);
-      } else {
-        const autofix = this.autofixer?.removeDefaultImport(importDeclaration, defaultImport, expectedImports[0]);
-        this.incrementCounters(defaultImport, FaultID.LimitedStdLibNoImportConcurrency, autofix);
-      }
+      const autofix = this.autofixer?.removeDefaultImport(importDeclaration, defaultImport, expectedImports[0]);
+      this.incrementCounters(defaultImport, FaultID.LimitedStdLibNoImportConcurrency, autofix);
     }
 
     this.processImportSpecifier(forbiddenNamed, importDeclaration);

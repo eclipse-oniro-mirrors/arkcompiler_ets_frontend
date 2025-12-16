@@ -17,7 +17,7 @@
 
 
 
-import process from '@ohos.process';
+
 
 
 let func: () => void = () => {};
@@ -26,8 +26,8 @@ taskpool.execute(func)
 let result = process.isIsolatedProcess();
 let result1 = process.isIsolatedProcess();
 let lock: AsyncLock = new AsyncLock()
-let lock1: AU.locks.AsyncLock = new AU.locks.AsyncLock()
+let lock1: AsyncLock = new AsyncLock()
 let lck: AsyncLock = AsyncLock.request("lock")
-let lck1: AU.locks.AsyncLock = AU.locks.AsyncLock.request("lock")
-let pro = new ArkTSUtils.SendableLruCache<number, number>()
-let pro1 = new ArkTSUtils.SendableLruCache<number, number>()
+let lck1: AsyncLock = AsyncLock.request("lock")
+let pro = new SendableLruCache<number, number>()
+let pro1 = new SendableLruCache<number, number>()

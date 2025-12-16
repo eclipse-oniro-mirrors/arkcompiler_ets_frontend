@@ -108,17 +108,17 @@
             "line": 26,
             "column": 44,
             "endLine": 26,
-            "endColumn": 70,
-            "problem": "DynamicCtorCall",
+            "endColumn": 54,
+            "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
             "severity": "ERROR"
         },
         {
-            "line": 26,
-            "column": 44,
-            "endLine": 26,
-            "endColumn": 54,
+            "line": 27,
+            "column": 12,
+            "endLine": 27,
+            "endColumn": 14,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
             "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
@@ -128,10 +128,10 @@
             "line": 27,
             "column": 37,
             "endLine": 27,
-            "endColumn": 55,
-            "problem": "DynamicCtorCall",
+            "endColumn": 39,
+            "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
             "severity": "ERROR"
         },
         {
@@ -149,6 +149,26 @@
             "column": 39,
             "endLine": 28,
             "endColumn": 49,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 11,
+            "endLine": 29,
+            "endColumn": 13,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 29,
+            "column": 32,
+            "endLine": 29,
+            "endColumn": 34,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
             "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
@@ -202,6 +222,16 @@
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 16,
+            "endLine": 31,
+            "endColumn": 18,
+            "problem": "LimitedStdLibNoImportConcurrency",
+            "suggest": "",
+            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
             "severity": "ERROR"
         },
         {

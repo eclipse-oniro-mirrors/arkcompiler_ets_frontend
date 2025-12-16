@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import taskpool from '@ohos.taskpool';
-import tp from '@ohos.taskpool';
-import ArkTSUtils from '@arkts.utils';
-import AU from '@arkts.utils';
-import process from '@ohos.process';
-import pc from '@ohos.process';
+import taskpool from './oh_modules/@ohos.taskpool';
+import tp from './oh_modules/@ohos.taskpool';
+import ArkTSUtils from './oh_modules/@arkts.utils';
+import AU from './oh_modules/@arkts.utils';
+import process from './oh_modules/@ohos.process';
+import pc from './oh_modules/@ohos.process';
 
 let func: () => void = () => {};
 taskpool.execute(func);
