@@ -18,3 +18,6 @@ jsDiff_test
 
 #30387
 pdfview_test
+
+#29254
+xslt_processor_test
