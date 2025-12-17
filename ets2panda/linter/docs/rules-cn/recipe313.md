@@ -5,7 +5,7 @@
 
 **规则解释：**
 
-ArkTS1.2不支持构造函数类型，需要将使用构造函数类型的地方改为lambda函数。
+ArkTS-Sta不支持构造函数类型，需要将使用构造函数类型的地方改为lambda函数。
 
 **变更原因：**
 
@@ -17,26 +17,29 @@ ArkTS1.2不支持构造函数类型，需要将使用构造函数类型的地方
 
 **示例：**
 
-**ArkTS1.1**
+**ArkTS-Dyn**
 ```typescript
-// ArkTS1.1API定义
-declare class User {}
-declare class DatabaseQuery<T> {
-    constructor(entityClass: new () => T);
+// a.ts ArkTS-Dyn API定义
+export declare class User {}
+export declare class DatabaseQuery<T> {
+  constructor(entityClass: new () => T) ;
 }
-// ArkTS1.1应用代码
+
+// ArkTS-Dyn应用代码
+import { User, DatabaseQuery } from './a';
 const userQuery = new DatabaseQuery(User);
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
-// ArkTS1.2API定义
-declare class User {}
-declare function createInstence<T>(): T;
-declare class DatabaseQuery<T> {
-  constructor(entityClass: () => T);
+// a.ets ArkTS-Sta API定义
+export declare class User {}
+export declare function createInstence<T>(): T;
+export declare class DatabaseQuery<T> {
+  constructor(entityClass: () => T);
 }
 
-// ArkTS1.2应用代码
+// ArkTS-Sta应用代码
+import { createInstence, User, DatabaseQuery } from './a.ets';
 const userQuery = new DatabaseQuery<User>(createInstence);
 ```

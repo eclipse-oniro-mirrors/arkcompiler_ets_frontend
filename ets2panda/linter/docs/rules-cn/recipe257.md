@@ -2,9 +2,21 @@
 
 **规则：** `arkui-animatableextend-use-receiver`
 
-在ArkTS1.2中，使用`@AnimatableExtend`装饰器装饰的函数需要进行修改。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，使用`@AnimatableExtend`装饰器装饰的函数需要进行修改。
+
+**变更原因：**
+
+受ArkTS-Sta静态类型系统的影响，使用`@AnimatableExtend`装饰器装饰的函数需要进行修改。
+
+**适配建议：**
+
+使用`@AnimatableExtend`装饰器装饰的函数需要按照示例进行修改。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @AnimatableExtend(Text)
@@ -32,7 +44,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

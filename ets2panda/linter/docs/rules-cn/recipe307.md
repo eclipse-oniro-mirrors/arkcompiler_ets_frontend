@@ -1,10 +1,22 @@
-### ArkTS1.2处理TS非常规异常
+### ArkTS-Sta处理TS非常规异常
 
 **规则：** `arkts-interop-ts2s-ts-exception`
 
-ArkTS1.2中throw和catch的对象只能是Error的实例。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta不支持直接处理TS的非常规异常。
+
+**变更原因：**
+
+ArkTS-Sta中throw和catch的对象只能是Error的实例，针对非常规的TS异常对象，交互时会被包装到ESError中。
+
+**适配建议：**
+
+通过getValue()方法获取包装了原始异常对象的ESValue实例后再进行处理。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.ts
 export function foo() {
@@ -21,14 +33,14 @@ try {
 }
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.ts
 export function foo() {
   throw 123;
 }
 
-// file2.ets  // ArkTS1.2
+// file2.ets  // ArkTS-Sta
 'use static'
 import { foo } from './file1';
 

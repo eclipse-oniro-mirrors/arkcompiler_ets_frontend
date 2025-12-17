@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不支持void操作符获取undefined。
+ArkTS-Sta不支持void操作符获取undefined。
 
 **变更原因：**
  
-在ArkTS1.2中，undefined是关键字，不能用作变量名称，因此无需使用void操作符获取undefined。
+在ArkTS-Sta中，undefined是关键字，不能用作变量名称，因此无需使用void操作符获取undefined。
 
 **适配建议：**
 
@@ -16,23 +16,23 @@ ArkTS1.2不支持void操作符获取undefined。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 ```typescript
 let s = void 'hello';
-console.log(s);  // output: undefined
+console.info(s);  // output: undefined
 
 let a = 5;
 let b = void (a + 1);
 
-function logValue(value: any) {
-    console.log(value);
+function logValue(value: string | undefined) {
+  console.info(value);
 }
 logValue(void 'data');
 
 let fn = () => void 0;
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 ```typescript
 (() => {
     'hello'
@@ -45,7 +45,7 @@ let b = (() => {
     return undefined;
 })();  // 替换为 IIFE
 
-logValue((() => {
+let logValue = ((() => {
     'data';
     return undefined;
 })());  // 替换为 IIFE

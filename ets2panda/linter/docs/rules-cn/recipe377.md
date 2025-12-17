@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2暂不支持非十进制bigint字面量。
+ArkTS-Sta暂不支持非十进制bigint字面量。
 
 **变更原因：**
 
@@ -16,15 +16,15 @@ ArkTS1.2暂不支持非十进制bigint字面量。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-let a1: bigint = 0xBAD3n;  // 十六进制字面量，ArkTS1.2暂不支持
-let a2: bigint = 0o777n;   // 八进制字面量，ArkTS1.2暂不支持
-let a3: bigint = 0b101n;  // 二进制字面量，ArkTS1.2暂不支持
+let a1: bigint = 0xBAD3n;  // 十六进制字面量，ArkTS-Sta暂不支持
+let a2: bigint = 0o777n;   // 八进制字面量，ArkTS-Sta暂不支持
+let a3: bigint = 0b101n;  // 二进制字面量，ArkTS-Sta暂不支持
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 let a1: bigint = BigInt(0xBAD3);

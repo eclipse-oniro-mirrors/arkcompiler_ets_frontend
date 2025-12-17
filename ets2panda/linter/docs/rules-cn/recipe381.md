@@ -2,9 +2,21 @@
 
 **规则：** `arkui-statestyles-block-need-arrow-func`
 
-在ArkTS1.2中，传递给`stateStyles`的匿名代码块必须是箭头函数。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，传递给`stateStyles`的匿名代码块必须是箭头函数。
+
+**变更原因：**
+
+在ArkTS-Dyn中，传递给`stateStyles`的匿名代码块不符合标准语法。
+
+**适配建议：**
+
+把传递给给`stateStyles`的匿名代码块改为箭头函数。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -27,7 +39,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

@@ -4,19 +4,21 @@
 
 **规则解释：**
 
-ArkTS1.2不支持通过自定义装饰器动态改变类、方法、属性或函数参数。
+ArkTS-Sta不支持通过自定义装饰器动态改变类、方法、属性或函数参数。
 
 **变更原因：**
  
-由于自定义装饰器需要动态改变类、方法、属性，而ArkTS1.2是静态类型语言，所以不支持自定义装饰器。
+由于自定义装饰器需要动态改变类、方法、属性，而ArkTS-Sta是静态类型语言，所以不支持自定义装饰器。
 
 **适配建议：**
 
 请参考以下示例修改代码。
 
 **示例1：日志追踪装饰器**
+
+ArkTS-Dyn
+
 ```typescript
-// ArkTS1.1代码：
 // file1.ts
 export function Log(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -27,8 +29,11 @@ export function Log(target: any, propertyKey: string, descriptor: PropertyDescri
     return result;
   };
 }
-// file2.ets
-import {Log} from './file1';
+
+// index.ets
+import { Log } from './file1';
+
+@Entry
 @Component
 struct MyCounter {
   @State count: number = 0;
@@ -45,8 +50,10 @@ struct MyCounter {
   }
 }
 ```
+
+ArkTS-Sta
+
 ```typescript
-// ArkTS1.2代码：
 import { Component, Button, ClickEvent } from '@ohos.arkui.component';
 import { State } from '@ohos.arkui.stateManagement';
 
@@ -68,9 +75,12 @@ struct Counter {
   }
 }
 ```
+
 **示例2：防抖装饰器**
+
+ArkTS-Dyn
+
 ```typescript
-// ArkTS1.1代码：
 // file1.ts
 export function Debounce(delay: number = 300) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
@@ -87,8 +97,11 @@ export function Debounce(delay: number = 300) {
     };
   };
 }
-// file2.ets
-import {Debounce} from './file1';
+
+// index.ets
+import { Debounce } from './file1';
+
+@Entry
 @Component
 struct SearchBox {
   @State keyword: string = '';
@@ -101,13 +114,17 @@ struct SearchBox {
   }
 
   build() {
-    TextField({ placeholder: '搜索...' })
-      .onChange((value) => this.onSearchInput(value))
+    Row() {
+      TextInput({ placeholder: '搜索...' })
+        .onChange((value) => this.onSearchInput(value))
+    }
   }
 }
 ```
+
+ArkTS-Sta
+
 ```typescript
-// ArkTS1.2代码：
 import { Component, Button } from '@ohos.arkui.component';
 import { State } from '@ohos.arkui.stateManagement';
 
@@ -133,15 +150,22 @@ struct SearchBox {
   }
 }
 ```
+
 **示例3：权限校验装饰器**
+
+ArkTS-Dyn
+
 ```typescript
-// ArkTS1.1代码：
 // file1.ts
+const checkUserPermission = (permission: string) => {
+  return true; // 自定义权限检查函数
+}
+
 export function RequiresPermission(permission: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args: any[]) {
-      if (checkUserPermission(permission)) {  // 自定义权限检查函数
+      if (checkUserPermission(permission)) {
         return originalMethod.apply(this, args);
       } else {
         console.error(`[权限不足] 需要 ${permission} 权限`);
@@ -150,9 +174,11 @@ export function RequiresPermission(permission: string) {
     };
   };
 }
-// file2.ets
-import {RequiresPermission} from './file1';
 
+// index.ets
+import { RequiresPermission } from './file1';
+
+@Entry
 @Component
 struct AdminPanel {
   @RequiresPermission('admin')
@@ -166,8 +192,10 @@ struct AdminPanel {
   }
 }
 ```
+
+ArkTS-Sta
+
 ```typescript
-// ArkTS1.2代码：
 import { Component, Button, ClickEvent } from '@ohos.arkui.component';
 import { State } from '@ohos.arkui.stateManagement';
 
@@ -187,9 +215,12 @@ struct AdminPanel {
   }
 }
 ```
+
 **示例4：性能监控装饰器**
+
+ArkTS-Dyn
+
 ```typescript
-// ArkTS1.1代码：
 // file1.ts
 export function PerformanceMonitor(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
   const originalMethod = descriptor.value;
@@ -201,9 +232,11 @@ export function PerformanceMonitor(target: any, propertyKey: string, descriptor:
     return result;
   };
 }
-// file2.ets
-import {PerformanceMonitor} from './file1';
 
+// index.ets
+import { PerformanceMonitor } from './file1';
+
+@Entry
 @Component
 struct DataLoader {
   @PerformanceMonitor
@@ -222,8 +255,10 @@ struct DataLoader {
   }
 }
 ```
+
+ArkTS-Sta
+
 ```typescript
-// ArkTS1.2代码：
 import { Component, Button, ClickEvent } from '@ohos.arkui.component';
 import { State } from '@ohos.arkui.stateManagement';
 @Component
@@ -246,25 +281,28 @@ struct DataLoader {
   }
 }
 ```
+
 **示例5：自动保存装饰器**
+
+ArkTS-Dyn
+
 ```typescript
-// ArkTS1.1代码：
 // file1.ts
 export function AutoSave(key: string) {
   return function (target: any, propertyKey: string) {
     let value = target[propertyKey];
-    
+
     const getter = () => value;
     const setter = (newVal: any) => {
       value = newVal;
       try {
         console.info(`[自动保存] 键: ${key}, 值: ${JSON.stringify(newVal)}`);
-        localStorage.setItem(key, JSON.stringify(newVal));  // 实际项目需使用存储API
+        // localStorage.setItem(key, JSON.stringify(newVal)); // 实际项目需使用存储API
       } catch (e) {
         console.error(`[自动保存失败] ${e}`);
       }
     };
-    
+
     Object.defineProperty(target, propertyKey, {
       get: getter,
       set: setter,
@@ -273,8 +311,11 @@ export function AutoSave(key: string) {
     });
   };
 }
-// file2.ets
-import {AutoSave} from './file1';
+
+// index.ets
+import { AutoSave } from './file1';
+
+@Entry
 @Component
 struct Settings {
   @AutoSave('user_settings')
@@ -288,8 +329,10 @@ struct Settings {
   }
 }
 ```
+
+ArkTS-Sta
+
 ```typescript
-// ArkTS1.2代码：
 import { Component, Button, ClickEvent,Row } from '@ohos.arkui.component';
 import { State } from '@ohos.arkui.stateManagement';
 
@@ -301,7 +344,7 @@ struct Settings {
     this.theme = newTheme;
     try {
       console.info(`[自动保存] 键: user_settings, 值: ${JSON.stringify(newTheme)}`);
-      localStorage.setItem('user_settings', JSON.stringify(newTheme));  // 实际项目需使用存储API
+      // localStorage.setItem('user_settings', JSON.stringify(newTheme));  // 实际项目需使用存储API
     } catch (e) {
       console.error(`[自动保存失败] ${e}`);
     }

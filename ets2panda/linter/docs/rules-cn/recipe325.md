@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-在ArkTS1.2中，函数、方法及lambda表达式的默认参数必须放在必选参数之后。
+在ArkTS-Sta中，函数、方法及lambda表达式的默认参数必须放在必选参数之后。
 
 **变更原因：**
 
@@ -16,7 +16,7 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 function add(left: number = 0, right: number) { 
@@ -24,10 +24,10 @@ function add(left: number = 0, right: number) {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-function add(left: number, right: number) {
+function add(left: number, right: number = 0) {
   return left + right;
 }
 ```

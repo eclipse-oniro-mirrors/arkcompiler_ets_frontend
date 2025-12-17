@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2的switch表达式类型只能为number、string、enum。
+ArkTS-Sta的switch表达式类型只能为number、string、enum。
 
 **变更原因：**
  
@@ -16,50 +16,62 @@ ArkTS1.2的switch表达式类型只能为number、string、enum。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-const isTrue = true;
+let isTrue: boolean = Boolean(1);
 switch (isTrue) {
-    case true: // 违反规则
-        console.log('It\'s true'); break;
-    case false:  // 违反规则
-        console.log('It\'s false'); break;
+  case true:
+    console.info('It\'s true');
+    break;
+  case false:
+    console.info('It\'s false');
+    break;
 }
 
-const obj = { value: 1 };
-switch (obj) {  // 违反规则
-    case { value: 1 }:
-        console.log('Matched'); break;
+interface IObj {
+  value: number
+}
+
+const obj: IObj = { value: 1 };
+switch (obj) {
+  case { value: 1 } as IObj:
+    console.info('Matched');
+    break;
 }
 
 const arr = [1, 2, 3];
-switch (arr) {  // 违反规则
-    case [1, 2, 3]: 
-        console.log('Matched'); break;
+switch (arr) {
+  case [1, 2, 3]:
+    console.info('Matched');
+    break;
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 const isTrue = 'true';
 switch (isTrue) {
-    case 'true': 
-        console.log('It\'s true'); break;
-    case 'false': 
-        console.log('It\'s false'); break;
+  case 'true':
+    console.info('It\'s true');
+    break;
+  case 'false':
+    console.info('It\'s false');
+    break;
 }
 
-const objValue = 1;  // 仅存储值
+const objValue = 1; // 仅存储值
 switch (objValue) {
-    case 1:
-        console.log('Matched'); break;
+  case 1:
+    console.info('Matched');
+    break;
 }
 
-const arrValue = '1,2,3';  // 变成字符串
+const arrValue = '1,2,3'; // 变成字符串
 switch (arrValue) {
-    case '1,2,3':
-        console.log('Matched'); break;
+  case '1,2,3':
+    console.info('Matched');
+    break;
 }
 ```

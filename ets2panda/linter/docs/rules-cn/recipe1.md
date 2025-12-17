@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不支持将字符串作为class、interface、enum等属性或元素的名称，仅支持合法标识符作为属性。
+ArkTS-Sta不支持将字符串作为class、interface、enum等属性或元素的名称，仅支持合法标识符作为属性。
 
 **变更原因：**
  
-在ArkTS1.2中，为了增强对边界场景的约束，对象的属性名不能使用数字或字符串。
+在ArkTS-Sta中，为了增强对边界场景的约束，对象的属性名不能使用数字或字符串。
 
 **适配建议：**
 
@@ -16,7 +16,7 @@ ArkTS1.2不支持将字符串作为class、interface、enum等属性或元素的
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 enum A{
@@ -24,7 +24,7 @@ enum A{
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 enum A{

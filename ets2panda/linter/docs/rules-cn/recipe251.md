@@ -4,9 +4,21 @@
 
 ### 系统组件参数双向绑定
 
-在ArkTS1.2中，不支持`this.value!!`形式的双向绑定。对于系统组件参数的双向绑定，应改为`$$(this.value)`的形式。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，不支持`this.value!!`形式的双向绑定。对于系统组件参数的双向绑定，应改为`$$(this.value)`的形式。
+
+**变更原因：**
+
+在ArkTS-Sta中，不支持`this.value!!`形式的双向绑定。
+
+**适配建议：**
+
+对于系统组件参数的双向绑定，应改为`$$(this.value)`的形式。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -24,7 +36,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'
@@ -55,9 +67,21 @@ struct Index {
 
 ### 自定义组件间双向绑定
 
-在ArkTS1.2中，对于自定义组件间的双向绑定，要将原来的双向绑定语法糖展开。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，对于自定义组件间的双向绑定，要将原来的双向绑定语法糖展开。
+
+**变更原因：**
+
+在ArkTS-Dyn中，对于自定义组件间的双向绑定，编译过程中会将双向绑定语法糖展开。在ArkTS-Sta中则不会。
+
+**适配建议：**
+
+对于自定义组件间的双向绑定，要将原来的双向绑定语法糖展开。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -92,7 +116,7 @@ struct Star {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'
@@ -119,7 +143,7 @@ struct Index {
       Button(`change value`).onClick((e: ClickEvent) => {
         this.value++;
       })
-      // 在ArkTS1.2中，展开双向绑定语法糖
+      // 在ArkTS-Sta中，展开双向绑定语法糖
       Star({
         value: this.value,
         $value: (value: number) => {

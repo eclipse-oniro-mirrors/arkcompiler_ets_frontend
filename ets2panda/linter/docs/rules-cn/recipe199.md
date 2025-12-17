@@ -2,16 +2,30 @@
 
 **规则：** `arkts-no-need-stdlib-sendable-containers`
 
-新增对象天然共享特性，不再依赖Sendable特性。可直接使用ArkTS1.2原生容器，删除collections.前缀。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta新增对象天然共享特性，不再依赖Sendable特性。可直接使用ArkTS-Sta原生容器进行跨线程安全访问。
+
+**变更原因：**
+
+ArkTS-Sta新增对象天然共享特性，原生容器默认支持跨线程安全访问，无需再依赖Sendable容器，无需使用collections.前缀。
+
+**适配建议：**
+
+使用ArkTS-Sta原生容器，删除collections.前缀。
+
+**示例：**
+
+ArkTS-Dyn
+
 ```typescript
 import { collections } from '@kit.ArkTS';
 
 let array = new collections.Array<number>();
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
+
 ```typescript
 let array = new Array<number>();
 ```

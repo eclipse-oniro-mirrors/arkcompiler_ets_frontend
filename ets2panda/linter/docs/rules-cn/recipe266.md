@@ -1,10 +1,23 @@
-### ArkTS1.2遍历js对象
+### ArkTS-Sta遍历JS对象
 
 **规则：** `arkts-interop-js2s-traverse-js-instance`
 
-ArkTS1.2遍历js对象时，使用ESValue接口访问索引和属性。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta遍历JS对象时，不能直接访问索引和属性。
+
+**变更原因：**
+
+ArkTS-Sta中只能和有类型声明的文件进行交互。
+ArkTS-Sta中限制ESValue的动态行为，形成动静态更清晰的界限，减少开发者滥用ESValue导致性能劣化的场景。
+
+**适配建议：**
+
+使用ESValue接口访问索引和属性。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.js
 export let foo = { arr: [1, 2, 3] };
@@ -18,12 +31,12 @@ for (let i = 0; i < len; ++i) {
 }
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.js
 export let foo = { arr: [1, 2, 3] };
 
-// file2.ets  ArkTS1.2
+// file2.ets  ArkTS-Sta
 'use static'
 let mod = ESValue.load('./file1');
 let foo = mod.getProperty('foo');

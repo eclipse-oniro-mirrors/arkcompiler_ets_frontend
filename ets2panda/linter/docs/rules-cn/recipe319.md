@@ -4,8 +4,8 @@
 
 **规则解释：**
 
-ArkTS1.1与ArkTS1.2在继承/实现方法时遵循以下规则。有关逆变和协变的详细解释，请参见[逆变和协变](#逆变和协变)。
-|  类型位置 &nbsp;&nbsp;  |  ArkTS1.1规则   | ArkTS1.2规则  | 
+ArkTS-Dyn与ArkTS-Sta在继承/实现方法时遵循以下规则。有关逆变和协变的详细解释，请参见[逆变和协变](#逆变和协变)。
+|  类型位置 &nbsp;&nbsp;  |  ArkTS-Dyn规则   | ArkTS-Sta规则  | 
 |  ----  |  ----  | ----  |
 | 参数类型 | 逆变&协变  | 逆变 |
 | 返回类型 | 协变  | 协变 |
@@ -22,15 +22,15 @@ ArkTS1.1与ArkTS1.2在继承/实现方法时遵循以下规则。有关逆变和
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-class A { u = 0 }
-class B { v = 0 }
+class A { u = 0; }
+class B { v = 0; }
 class Father {
   fun1(a: A | B) { }
   fun2(a: A) { }
-  fun3(): A | B { return new A() }
+  fun3(): A | B { return new A(); }
   fun4(x: A) { }
 }
 class Son extends Father {
@@ -39,7 +39,7 @@ class Son extends Father {
   // 方法参数类型：逆变
   override fun2(a: A | B) { }
   // 方法返回类型：协变
-  override fun3(): A { return new A() }
+  override fun3(): A { return new A(); }
   // 父类是普通函数，子类是异步函数
   override async fun4(x: A | B) {
     await new Promise<void>(() => {});
@@ -47,23 +47,26 @@ class Son extends Father {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-class A { u = 0 }
-class B { v = 0 }
+class A { u = 0; }
+class B { v = 0; }
 class Father {
-  fun1(a: A) { }
-  fun2(): A | B { return new A() }
-  fun3(x: A) { }
+  fun1(a: A | B) { }
+  fun2(a: A) { }
+  fun3(): A | B { return new A(); }
+  fun4(x: A) { }
 }
 class Son extends Father {
   // 方法参数类型：逆变
   override fun1(a: A | B) { }
+  // 方法参数类型：逆变
+  override fun2(a: A | B) { }
   // 方法返回类型：协变
-  override fun2(): A { return new A() }
+  override fun3(): A { return new A(); }
   // 父类是普通函数，子类是异步函数，需要改为普通函数，将异步的部分抽取出来
-  override fun3(x: A | B) {
+  override fun4(x: A | B) {
     this.asyncFunc();
   }
   async asyncFunc() {

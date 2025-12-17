@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2不支持Switch语句的中case重复。
+ArkTS-Sta不支持Switch语句的中case重复。
 
 **变更原因：**
  
@@ -16,7 +16,7 @@ ArkTS1.2不支持Switch语句的中case重复。
 
 **示例：**
 
-**ArkTS1.1**
+**ArkTS-Dyn**
 
 ```typescript
 const num = 1;
@@ -46,7 +46,7 @@ switch (state) {
 }
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 
 ```typescript
 const num = 1;

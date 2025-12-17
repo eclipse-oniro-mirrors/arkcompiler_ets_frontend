@@ -2,11 +2,23 @@
 
 **规则：** `arkui-no-styles-decorator`
 
-在ArkTS1.2中，不支持`@Styles`装饰器。使用`@Styles`装饰器装饰的函数需要进行修改。
+**规则解释：**
+
+在ArkTS-Sta中，不支持`@Styles`装饰器。使用`@Styles`装饰器装饰的函数需要进行修改。
+
+**变更原因：**
+
+在ArkTS-Sta中，`@Styles`装饰器被废弃。
+
+**适配建议：**
+
+使用`@Styles`装饰器装饰的函数需要按照示例进行修改。
 
 ### `@Styles`装饰器装饰全局函数
 
-**ArkTS1.1**
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Styles
@@ -29,7 +41,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'
@@ -65,7 +77,9 @@ struct Index {
 
 ### `@Styles`装饰器装饰成员函数
 
-**ArkTS1.1**
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -88,7 +102,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

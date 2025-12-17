@@ -2,13 +2,25 @@
 
 **规则：** `arkui-makeobserved-cannot-observe-custom-class`
 
-在ArkTS1.2中，`UIUtils.makeObserved`不支持监听开发者自定义的类，需要按照如下示例进行修改。
+**规则解释：**
+
+在ArkTS-Sta中，`UIUtils.makeObserved`不支持监听开发者自定义的类，需要按照示例进行修改。
+
+**变更原因：**
+
+在ArkTS-Sta中，`UIUtils.makeObserved`不支持监听开发者自定义的类。
+
+**适配建议：**
+
+按照示例进行修改。
 
 ### `makeObserved`和V1装饰器配合使用
 
 如果`UIUtils.makeObserved`的入参是自定义类的对象，需为该类添加`@Observed`装饰器，并使用`@State`装饰监听的变量。
 
-**ArkTS1.1**
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 import { UIUtils } from '@kit.ArkUI';
@@ -36,7 +48,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'
@@ -79,7 +91,9 @@ struct Index {
 
 如果`UIUtils.makeObserved`的入参是自定义类的对象，需为该类添加`@ObservedV2`装饰器，为该类的属性添加`@Trace`装饰器，并使用`@Local`装饰监听的变量。
 
-**ArkTS1.1**
+**示例：**
+
+ArkTS-Dyn
 
 ```TypeScript
 import { UIUtils } from '@kit.ArkUI';
@@ -107,7 +121,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```TypeScript
 'use static'

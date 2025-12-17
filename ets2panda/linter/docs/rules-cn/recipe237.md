@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2中数组和元组是不同的类型。
+ArkTS-Sta中数组和元组是不同的类型，元组不支持Array拥有的接口和属性。
 
 **变更原因：**
  
-ArkTS1.2中数组和元组是不同的类型。运行时使用元组类型可以获得更好的性能。
+ArkTS-Sta中数组和元组是不同的类型，运行时使用元组类型可以获得更好的性能。
 
 **适配建议：**
 
@@ -16,36 +16,44 @@ ArkTS1.2中数组和元组是不同的类型。运行时使用元组类型可以
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-const tuple: [number, number, boolean] = [1, 3.14, true];
-const array: (number|boolean) [] = tuple;
+const tuple1: [number, number, boolean] = [1, 3.14, true];
+const array: (number | boolean) [] = tuple1;
 
-const tuple: Array<number | boolean> = [1, 3.14, true];  // 违反规则
+const tuple2: Array<number | boolean> = [1, 3.14, true]; // 违反规则
 
-function getTuple(): (number | boolean)[] {  // 违反规则
-  return [1, 3.14, true];
+function getTuple(input: (number | boolean)[]): (number | boolean)[] { // 违反规则
+  return input;
 }
-getTuple([1, 3.14, true]);  // 传入元组
 
-type Point = (number | boolean)[];  // 违反规则
+getTuple([1, 3.14, true]); // 传入元组
+
+type Point = (number | boolean)[]; // 违反规则
 const p: Point = [3, 5, true];
+
+let a: [number, string] = [1, "a"];
+console.info("length=" + a.length); // 可以通过.length获取元组长度
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-const tuple: [number, number, boolean] = [1, 3.14, true];
-const array:  [number, number, boolean] = tuple;
+const tuple1: [number, number, boolean] = [1, 3.14, true];
+const array: [number, number, boolean] = tuple1;
 
-const tuple: [number, number, boolean] = [1, 3.14, true];  // 正确使用元组
+const tuple2: [number, number, boolean] = [1, 3.14, true]; // 正确使用元组
 
-function getTuple(): [number, number, boolean] {  // 正确使用元组
-  return [1, 3.14, true];
+function getTuple(input: [number, number, boolean]): [number, number, boolean] { // 正确使用元组
+  return input;
 }
+
 getTuple([1, 3.14, true]);
 
-type Point = [number, number, boolean];  // 使用元组
+type Point = [number, number, boolean]; // 使用元组
 const p: Point = [3, 5, true];
+
+let a: [number, string] = [1, "a"];
+console.info("length=" + 2); // 元组不支持.length接口，元组长度固定，直接输入长度
 ```

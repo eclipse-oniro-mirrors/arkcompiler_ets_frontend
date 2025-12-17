@@ -2,9 +2,21 @@
 
 **规则：** `arkui-no-localbuilder-decorator`
 
-在ArkTS1.2中，`@LocalBuilder`装饰器和`@Builder`装饰器的作用相同，因此废弃`@LocalBuilder`装饰器，用`@Builder`装饰器替代。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，不支持`@LocalBuilder`装饰器，用`@Builder`装饰器替代。
+
+**变更原因：**
+
+在ArkTS-Sta中，`@LocalBuilder`装饰器和`@Builder`装饰器的作用相同，因此废弃`@LocalBuilder`装饰器。
+
+**适配建议：**
+
+用`@Builder`装饰器替代`@LocalBuilder`装饰器。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -27,7 +39,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

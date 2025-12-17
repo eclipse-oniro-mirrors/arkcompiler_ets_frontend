@@ -8,7 +8,7 @@
 
 **变更原因：**
  
-在ArkTS1.2中，对象结构在编译时已确定。为避免运行时错误并提升性能，不能使用[]方式动态访问object类型对象的属性。
+在ArkTS-Sta中，对象结构在编译时已确定。为避免运行时错误并提升性能，不能使用[]方式动态访问object类型对象的属性。
 
 **适配建议：**
 
@@ -16,37 +16,43 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-function foo(u: object) {
-  u['key'] // 违反规则
+interface Person {
+  name: string;
+  age: number;
 }
 
-const person = { name: "Alice", age: 30 };
-console.log(person['name']); // 违反规则
+function foo(u: object) {
+  u['key'];
+}
 
-const data = JSON.parse('{ "name": "Alice" }');
-console.log(data['name']); // 违反规则
+const person: Person = { name: "Alice", age: 30 };
+console.info((person as object)['name']);
+
+const data: object = JSON.parse('{ "name": "Alice" }');
+console.info(data['name']);
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-function foo(m: Map<string, Object>) {
-    m.get('key') // 使用 `Map`
+interface Person {
+  name: string;
+  age: number;
 }
 
-interface Person {
-    name: string;
-    age: number;
+function foo(m: Map<string, Object>) {
+  m.get('key'); // 使用 `Map`
 }
+
 const person: Person = {name: 'John',age: 30};
-console.log(person.name); // 直接使用 `.` 访问
+console.info(person.name); // 直接使用 `.` 访问
 
 class UserData {
-    name?: string;
+  name?: string;
 }
 const data =  JSON.parse<UserData>('{ "name": "Alice" }', Type.from<UserData>())!;
-console.log(data.name); // 直接使用点访问符
+console.info(data.name); // 直接使用点访问符
 ```

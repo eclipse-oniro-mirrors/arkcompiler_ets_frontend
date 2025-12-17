@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-在ArkTS1.2中，为了遵循null-safety（空安全），需要为属性赋上初始值。
+在ArkTS-Sta中，为了遵循null-safety（空安全），需要为属性赋上初始值。
 
 **变更原因：**
 
-ArkTS1.2遵循null-safety（空安全），需要为类的静态属性赋初始值（具有默认值的类型除外）。
+ArkTS-Sta遵循null-safety（空安全），需要为类的静态属性赋初始值（具有默认值的类型除外）。
 
 **适配建议：**
 
@@ -16,52 +16,60 @@ ArkTS1.2遵循null-safety（空安全），需要为类的静态属性赋初始�
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-class B {}
-
-class A {
-  static b: B
+class O {
 }
 
 class A {
-  static count: number; // 违反规则，必须初始化
+  static o: O;
 }
 
-class A {
-  static config: { theme: string }; // 违反规则，必须初始化
+class B {
+  static count: number;
 }
 
-class A {
-  static name: string;
+interface IConfig {
+  theme: string;
+}
+
+class C {
+  static config: IConfig;
+}
+
+class D {
+  static msg: string;
 
   constructor() {
-    A.name = "default"; // 违反规则，静态属性必须在定义时初始化
+    D.msg = "default";
   }
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-class B {}
-
-class A {
-  static b? : B
-  static b: B | undefined = undefined
+class O {
 }
 
 class A {
-  static count: number = 0; // 提供初始值
+  static o: O = new O(); // 提供初始值
 }
 
-class A {
-  static config: { theme: string } = { theme: "light" }; // 提供初始值
+class B {
+  static count: number = 1; // 提供初始值
 }
 
-class A {
-  static name: string = "default"; // 在定义时初始化
+interface IConfig {
+  theme: string;
 }
 
+class C {
+  static config: IConfig = { theme: "light" }; // 提供初始值
+}
+
+class D {
+  static msg: string = "default"; // 在定义时初始化
+}
 ```

@@ -1,37 +1,45 @@
-## enum中当前语法不支持浮点数值
+## enum语法不支持混合使用不同类型的值
 
 **规则：** `arkts-no-enum-mixed-types`
 
 **规则解释：**
 
-ArkTS1.2中enum当前语法不支持浮点数值。
+ArkTS-Sta中enum语法不支持混合使用不同类型的值，不支持浮点数类型的值。
 
 **变更原因：**
  
-enum表示一组离散的数据，使用浮点数据不符合设计理念，可能造成精度损失。因此，ArkTS1.2中enum的值必须为整型。
+为提高代码可读性和性能，禁止在enum中混用类型，禁止使用浮点数类型。
 
 **适配建议：**
 
-定义enum类型时，需显式声明number类型，以支持浮点数值。
+ArkTS-Sta中定义的enum，需要修改为同一类型，比如统一int、long或string。同时不建议在enum中使用复杂表达式（如加减乘除、条件表达式、特殊边界值等），不建议使用其他enum类型进行值传递。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-enum Size {
+enum E {
   UP = 1.5,
   MIDDLE = 1,
   DOWN = 0.75
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-enum Size: number{ 
-  UP = 1.5,
-  MIDDLE = 1,
-  DOWN = 0.75
+// 统一int
+enum E1 {
+  UP = 15,
+  MIDDLE = 10,
+  DOWN = 75
+}
+
+// 统一string
+enum E3 {
+  UP = "up",
+  MIDDLE = "middle",
+  DOWN = "down"
 }
 ```

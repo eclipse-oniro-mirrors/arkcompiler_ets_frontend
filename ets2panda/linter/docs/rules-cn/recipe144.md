@@ -1,10 +1,10 @@
-## arkts-limited-stdlib
+## 限制使用标准库
 
 **规则：** `arkts-limited-stdlib`
 
 **规则解释：**
 
-ArkTS1.2中禁止使用以下接口：
+ArkTS-Sta中禁止使用以下接口：
 
 - 全局对象的属性和方法：`eval`
 
@@ -12,12 +12,12 @@ ArkTS1.2中禁止使用以下接口：
 
 - Reflect：`apply`、`construct`、`defineProperty`、`deleteProperty`、`getOwnPropertyDescriptor`、`getPrototypeOf`、`isExtensible`、`preventExtensions`、`setPrototypeOf`
 
-- Proxy：`handler.apply()`、`handler.construct()`、`handler.defineProperty()`、`handler.deleteProperty()`、`handler.get()`、`handler.getOwnPropertyDescriptor()`、`handler.getPrototypeOf()`、`handler.has()`、`handler.isExtensible()`、`handler.ownKeys()`、`handler.preventExtensions()`、`handler.set()`、`handler.setPrototypeOf()`
+- Proxy：`apply`、`construct`、`defineProperty`、`deleteProperty`、`get`、`getOwnPropertyDescriptor`、`getPrototypeOf`、`has`、`isExtensible`、`ownKeys`、`preventExtensions`、`set`、`setPrototypeOf`
 
 **变更原因：**
  
-ArkTS1.2不允许使用TypeScript或JavaScript标准库中的这些接口，这些接口大多与动态特性相关。
+ArkTS-Sta不允许使用这些受限的Stdlib API，这些接口大多与动态特性相关。
 
 **适配建议：**
 
-NA
+不使用这些受限的Stdlib API。

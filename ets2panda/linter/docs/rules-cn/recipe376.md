@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2暂不支持数值类型和bigint类型的比较。
+ArkTS-Sta暂不支持数值类型和bigint类型的比较。
 
 **变更原因：**
 
@@ -16,7 +16,7 @@ ArkTS1.2暂不支持数值类型和bigint类型的比较。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 let n1: number = 123;
@@ -27,7 +27,7 @@ n1 == n2;   // 编译失败
 n1 >= n2;   // 编译通过
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 let n1: number = 123;

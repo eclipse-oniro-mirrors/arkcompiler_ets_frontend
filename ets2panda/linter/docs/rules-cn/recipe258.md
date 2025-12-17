@@ -2,7 +2,9 @@
 
 **规则：** `arkui-data-observation`
 
-在ArkTS1.2中，被特定装饰器装饰的状态变量，如果要实现数据监听，需要为状态变量所属的类添加`@Observed`装饰器。
+**规则解释：**
+
+在ArkTS-Sta中，被特定装饰器装饰的状态变量，如果要实现数据监听，需要为状态变量所属的类添加`@Observed`装饰器。
 
 装饰器范围如下：
 
@@ -16,7 +18,17 @@
 - `@StorageProp`
 - `@StorageLink`
 
-**ArkTS1.1**
+**变更原因：**
+
+受ArkTS-Sta静态类型系统的影响，如果要实现数据监听，需要为状态变量所属的类添加`@Observed`装饰器。
+
+**适配建议：**
+
+为状态变量所属的类添加`@Observed`装饰器。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 class Num {
@@ -40,7 +52,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

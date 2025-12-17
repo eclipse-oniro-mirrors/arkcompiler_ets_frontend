@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不支持副作用导入的功能。
+ArkTS-Sta不支持副作用导入的功能。
 
 **变更原因：**
  
-ArkTS1.2中模块加载支持懒加载，不支持副作用导入的功能。
+ArkTS-Sta中模块加载支持懒加载，不支持副作用导入的功能。
 
 **适配建议：**
 
@@ -16,21 +16,21 @@ ArkTS1.2中模块加载支持懒加载，不支持副作用导入的功能。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 // logger.ets
-console.log("Logger initialized!");
+console.info("Logger initialized!");
 
 // main.ets
 import "./logger";
-console.log("Main program running...");
+console.info("Main program running...");
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 // main.ets
-console.log("Logger initialized!");
-console.log("Main program running...");
+console.info("Logger initialized!");
+console.info("Main program running...");
 ```

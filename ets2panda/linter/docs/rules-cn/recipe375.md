@@ -4,13 +4,13 @@
 
 **规则解释：**
 
-在ArkTS1.2的静态模式中，类型必须明确，同时需考虑与ArkTS1.1的兼容性。对于catch(e)的语法，默认e为Error类型。
+在ArkTS-Sta的静态模式中，类型必须明确，同时需考虑与ArkTS-Dyn的兼容性。对于catch(e)的语法，默认e为Error类型。
 
 **变更原因：**
 
-在ArkTS1.1上catch语句中的e是any类型。编译器不会对catch语句中的异常进行编译时类型检查。当ArkTS1.1上限制throw时，只能抛出Error类型。
+在ArkTS-Dyn上catch语句中的e是any类型。编译器不会对catch语句中的异常进行编译时类型检查。当ArkTS-Dyn上限制throw时，只能抛出Error类型。
 
-在ArkTS1.2中，类型必须明确。对于catch(e)的语法，默认e为Error类型，以保持与ArkTS1.1的兼容性。
+在ArkTS-Sta中，类型必须明确。对于catch(e)的语法，默认e为Error类型，以保持与ArkTS-Dyn的兼容性。
 
 **适配建议：**
 
@@ -18,24 +18,24 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 try {
   throw new Error();
 } catch(e) {  // e是any类型
-  e.message; // ArkTS1.1编译通过，运行正常
-  e.prop;     // ArkTS1.1编译通过，输出undefined
+  e.message; // ArkTS-Dyn编译通过，运行正常
+  e.prop;     // ArkTS-Dyn编译通过，输出undefined
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 try {
   throw new Error();
 } catch(e:Error) {  // e是Error类型
-  e.message;   // ArkTS1.2编译通过，运行正常
-  e.prop;      // ArkTS1.2编译错误，需要将e转换成需要处理的异常类型，例如：(e as SomeError).prop
+  e.message;   // ArkTS-Sta编译通过，运行正常
+  e.prop;      // ArkTS-Sta编译错误，需要将e转换成需要处理的异常类型，例如：(e as SomeError).prop
 }
 ```

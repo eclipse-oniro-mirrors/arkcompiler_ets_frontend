@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不支持数字字面量类型和布尔字面量类型。
+ArkTS-Sta不支持数字字面量类型和布尔字面量类型。
 
 **变更原因：**
 
-ArkTS1.2提供更细化的数值类型供开发者选择，关注数值范围而非特定数字值，同时简化代码，避免歧义，不引入复杂数值字面量类型语法。
+ArkTS-Sta提供更细化的数值类型供开发者选择，关注数值范围而非特定数字值，同时简化代码，避免歧义，不引入复杂数值字面量类型语法。
  
 **适配建议：**
 
@@ -16,24 +16,24 @@ ArkTS1.2提供更细化的数值类型供开发者选择，关注数值范围而
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 ```typescript
 let n1: 1 = 1;
 let n2: 0.1 = 0.1;
 let f: true = true;
 
 function getOne(): 1 {
-  return 1; 
+  return 1;
 }
 function isAvailable(): true {
   return true;
 }
 
 function setFlag(flag: true) {
-  console.log(flag);
+  console.info(flag.toString());
 }
 function setPrecision(precision: 0.1) {
-  console.log(precision);
+  console.info(precision.toString());
 }
 
 interface Config {
@@ -42,7 +42,7 @@ interface Config {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 ```typescript
 let n1: int = 1;
 let n2: number = 0.1;
@@ -56,10 +56,10 @@ function isAvailable(): boolean {
 }
 
 function setFlag(flag: boolean) {
-  console.log(flag);
+  console.info(flag);
 }
 function setPrecision(precision: number) {
-  console.log(precision);
+  console.info(precision);
 }
 
 interface Config {
