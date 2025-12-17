@@ -1183,7 +1183,6 @@ test262/data/other_tests/built-ins/GeneratorPrototype/throw/from-state-executing
 test262/data/other_tests/built-ins/GeneratorPrototype/throw/not-a-constructor.js
 test262/data/other_tests/built-ins/GeneratorPrototype/throw/this-val-not-generator.js
 test262/data/other_tests/built-ins/GeneratorPrototype/throw/this-val-not-object.js
-test262/data/other_tests/built-ins/IteratorPrototype/Symbol.iterator/return-val.js
 test262/data/other_tests/built-ins/JSON/parse/builtin.js
 test262/data/other_tests/built-ins/JSON/parse/duplicate-proto.js
 test262/data/other_tests/built-ins/JSON/parse/length.js

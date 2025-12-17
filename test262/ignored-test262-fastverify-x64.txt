@@ -1,5 +1,7 @@
 # Known failure list for test262 - fastverify-x64
 
+test262/data/test_es2021/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js
+
 #27177
 test262/data/test_es2021/language/expressions/async-generator/yield-thenable-create-resolving-functions-resolve.js
 

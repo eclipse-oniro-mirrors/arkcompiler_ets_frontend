@@ -2,3 +2,6 @@
 
 #27184
 test262/data/test_es2021/language/module-code/instn-iee-err-circular-as.js
+
+
+test262/data/test_es2021/intl402/Locale/prototype/minimize/removing-likely-subtags-first-adds-likely-subtags.js

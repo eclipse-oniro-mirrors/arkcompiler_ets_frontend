@@ -20,3 +20,4 @@ test262/data/test/built-ins/TypedArray/prototype/subarray/tointeger-end.js
 test262/data/test/built-ins/TypedArray/prototype/slice/results-with-different-length.js
 test262/data/test/built-ins/TypedArray/prototype/copyWithin/BigInt/non-negative-target-and-start.js
 
+test262/data/test/intl402/NumberFormat/prototype/format/units-invalid.js
