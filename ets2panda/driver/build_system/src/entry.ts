@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,7 +113,7 @@ function validateCompileFiles(compileFiles: string[]): void {
 }
 
 function validateDependencyModuleList(projectConfig: BuildConfig): void {
-    for(let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
+    for (let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
         projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
 
         const currentDeclFilesPath = projectConfig.dependencyModuleList[i].declFilesPath;
@@ -128,7 +128,7 @@ function validateDependencyModuleList(projectConfig: BuildConfig): void {
 }
 
 function validateDependentModuleList(projectConfig: BuildConfig): void {
-    for(let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
+    for (let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
         projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
 
         const currentDeclFilesPath = projectConfig.dependentModuleList[i].declFilesPath;
@@ -142,6 +142,15 @@ function validateDependentModuleList(projectConfig: BuildConfig): void {
     }
 }
 
+function validateModuleFiles(projectConfig: BuildConfig): void {
+    for (let i = 0; i < projectConfig.moduleFiles?.length || 0; i++) {
+        projectConfig.moduleFiles[i].packageName = getVar(projectConfig.moduleFiles[i].packageName);
+        for (let j = 0; j < projectConfig.moduleFiles[i].staticFiles?.length || 0; j++) {
+            projectConfig.moduleFiles[i].staticFiles[j] = getVar(projectConfig.moduleFiles[i].staticFiles[j]);
+        }
+    }
+}
+
 function validate(projectConfig: BuildConfig): void {
     validatePlugins(projectConfig)
     validatePaths(projectConfig)
@@ -151,6 +160,7 @@ function validate(projectConfig: BuildConfig): void {
     validateCompileFiles(projectConfig.compileFiles)
     validateDependencyModuleList(projectConfig)
     validateDependentModuleList(projectConfig)
+    validateModuleFiles(projectConfig)
 }
 
 export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGetter): Promise<void> {

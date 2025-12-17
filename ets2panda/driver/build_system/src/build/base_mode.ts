@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,7 +52,8 @@ import {
     CompileJobType,
     DeclgenV1JobInfo,
     ES2PANDA_MODE,
-    OHOS_MODULE_TYPE
+    OHOS_MODULE_TYPE,
+    ModuleFile
 } from '../types';
 import {
     ArkTSConfigGenerator
@@ -424,28 +425,25 @@ export abstract class BaseMode {
         // Just to init the generator
         ArkTSConfigGenerator.getInstance(this.buildConfig)
 
-        const dependenciesSets = new Map<string, Set<ModuleInfo>>;
+        const dependenciesSets = new Map<string, Set<string>>;
 
         // Fill dependenciesSets and generate ArktsConfigs
         this.moduleInfos.forEach((moduleInfo: ModuleInfo) => {
             dependenciesSets.set(moduleInfo.packageName, new Set())
             moduleInfo.dependencies?.forEach((dependency: string) => {
-                dependenciesSets.get(moduleInfo.packageName)!.add(this.moduleInfos.get(dependency)!)
+                dependenciesSets.get(moduleInfo.packageName)!.add(dependency)
             });
-
             ArkTSConfigGenerator.getInstance().generateArkTSConfigFile(moduleInfo, this.enableDeclgenEts2Ts);
         });
 
         // Merge ArktsConfigs
-        dependenciesSets.forEach((dependencies: Set<ModuleInfo>, module: string) => {
-            let moduleInfo = this.moduleInfos.get(module)!
-            let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(module)!;
-            dependencies.forEach((dependency: ModuleInfo) => {
-                arktsConfig.mergeArktsConfig(
-                    ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(dependency.packageName)!
-                )
+        // Start the recursive merge from the main module
+        let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(this.mainPackageName)!;
+        arktsConfig.mergeArktsConfigByDependencies(dependenciesSets.get(this.mainPackageName)!, dependenciesSets!);
 
-            });
+        dependenciesSets.forEach((_: Set<string>, module: string) => {
+            let moduleInfo = this.moduleInfos.get(module)!;
+            let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(module)!;
             fs.writeFileSync(moduleInfo.arktsConfigFile, JSON.stringify(arktsConfig.object, null, 2))
         });
     }
@@ -458,6 +456,27 @@ export abstract class BaseMode {
         });
     }
 
+    // ModuleFiles contain static file information of hsp and the packages that hsp depends on
+    // This field only serves hsp
+    protected collectModuleFiles(): void {
+        if (!this.buildConfig.moduleFiles || this.buildConfig.moduleFiles.length === 0) {
+            return;
+        }
+
+        const moduleFiles = this.buildConfig.moduleFiles;
+        for (const moduleFile of moduleFiles) {
+            let packageName = moduleFile.packageName;
+            if (!this.moduleInfos.has(packageName)) {
+                throw new DriverError(
+                    LogDataFactory.newInstance(
+                        ErrorCode.BUILDSYSTEM_PACKAGENAME_NOT_INCLUDED_IN_MODULEINFOS,
+                        `Package '${packageName}' is not included in moduleInfos.`
+                    )
+                );
+            }
+            this.moduleInfos.get(packageName)!.staticFiles = moduleFile.staticFiles;
+        }
+    }
     protected collectModuleInfos(): void {
         // NOTE: workaround for frameworkMode
         if (this.hasMainModule && (!this.mainPackageName || !this.mainModuleRootPath || !this.mainSourceRoots)) {
@@ -511,6 +530,7 @@ export abstract class BaseMode {
                 dependencies: dependency.dependencies ?? [],
                 byteCodeHar: dependency.byteCodeHar,
                 abcPath: dependency.abcPath,
+                staticFiles: []
             };
             this.moduleInfos.set(dependency.packageName, moduleInfo);
             this.moduleInfos.get(this.mainPackageName)!.dependencies.push(dependency.packageName)
@@ -539,7 +559,8 @@ export abstract class BaseMode {
             byteCodeHar: this.byteCodeHar,
             language: mainModuleInfo?.language ?? LANGUAGE_VERSION.ARKTS_1_2,
             declFilesPath: mainModuleInfo?.declFilesPath,
-            dependencies: mainModuleInfo?.dependencies ?? []
+            dependencies: mainModuleInfo?.dependencies ?? [],
+            staticFiles: []
         };
     }
 
@@ -571,6 +592,7 @@ export abstract class BaseMode {
     protected processBuildConfig(): void {
         this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
+        this.collectModuleFiles();
         this.logger.printDebug(`ModuleInfos: ${JSON.stringify([...this.moduleInfos], null, 1)}`)
         this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_CONFIGS));
         this.generateArkTSConfigForModules();
