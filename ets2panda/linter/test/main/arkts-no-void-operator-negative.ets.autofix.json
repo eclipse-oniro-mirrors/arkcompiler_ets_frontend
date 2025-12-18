@@ -22,8 +22,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 606,
-                    "end": 612,
+                    "start": 605,
+                    "end": 611,
                     "replacementText": "(() => {\n    0;\n    return undefined;\n})()",
                     "line": 16,
                     "column": 1,
@@ -43,8 +43,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 641,
-                    "end": 653,
+                    "start": 640,
+                    "end": 652,
                     "replacementText": "(() => {\n    'hello';\n    return undefined;\n})()",
                     "line": 18,
                     "column": 1,
@@ -64,8 +64,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 682,
-                    "end": 694,
+                    "start": 681,
+                    "end": 693,
                     "replacementText": "(() => {\n    (1 + 2);\n    return undefined;\n})()",
                     "line": 20,
                     "column": 1,
@@ -85,8 +85,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 723,
-                    "end": 737,
+                    "start": 722,
+                    "end": 736,
                     "replacementText": "(() => {\n    [1, 2, 3];\n    return undefined;\n})()",
                     "line": 22,
                     "column": 1,
@@ -106,8 +106,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 766,
-                    "end": 806,
+                    "start": 765,
+                    "end": 805,
                     "replacementText": "(() => {\n    console.log('expression evaluated');\n    return undefined;\n})()",
                     "line": 24,
                     "column": 1,
@@ -127,8 +127,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 859,
-                    "end": 865,
+                    "start": 858,
+                    "end": 864,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n})()",
                     "line": 26,
                     "column": 25,
@@ -148,8 +148,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 930,
-                    "end": 936,
+                    "start": 929,
+                    "end": 935,
                     "replacementText": "(() => {\n    2;\n    return undefined;\n})()",
                     "line": 28,
                     "column": 37,
@@ -169,8 +169,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1010,
-                    "end": 1016,
+                    "start": 1009,
+                    "end": 1015,
                     "replacementText": "(() => {\n    3;\n    return undefined;\n})()",
                     "line": 30,
                     "column": 46,
@@ -190,8 +190,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1045,
-                    "end": 1056,
+                    "start": 1044,
+                    "end": 1055,
                     "replacementText": "(() => {\n    void 1;\n    return undefined;\n})()",
                     "line": 32,
                     "column": 1,
@@ -211,8 +211,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1050,
-                    "end": 1056,
+                    "start": 1049,
+                    "end": 1055,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n})()",
                     "line": 32,
                     "column": 6,
@@ -232,8 +232,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1085,
-                    "end": 1100,
+                    "start": 1084,
+                    "end": 1099,
                     "replacementText": "(() => {\n    (() => { });\n    return undefined;\n})()",
                     "line": 34,
                     "column": 1,
@@ -253,9 +253,9 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1161,
-                    "end": 1169,
-                    "replacementText": "(() => {\n    a++;\n    return undefined;\n})()",
+                    "start": 1160,
+                    "end": 1168,
+                    "replacementText": "(() => {\n    a++;\n    return undefined;\n  })()",
                     "line": 38,
                     "column": 3,
                     "endLine": 38,
@@ -274,9 +274,9 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1221,
-                    "end": 1276,
-                    "replacementText": "(() => {\n    console.log(b.filter(x => x % 2 !== 0).toString());\n    return undefined;\n})()",
+                    "start": 1220,
+                    "end": 1275,
+                    "replacementText": "(() => {\n    console.log(b.filter(x => x % 2 !== 0).toString());\n    return undefined;\n  })()",
                     "line": 41,
                     "column": 3,
                     "endLine": 41,
@@ -305,6 +305,111 @@
             "problem": "LimitedVoidType",
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 9,
+            "endLine": 54,
+            "endColumn": 13,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1451,
+                    "end": 1463,
+                    "replacementText": "(() => {\n    'hello';\n    return undefined;\n  })()",
+                    "line": 54,
+                    "column": 9,
+                    "endLine": 54,
+                    "endColumn": 13
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 16,
+            "endLine": 55,
+            "endColumn": 20,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1506,
+                    "end": 1512,
+                    "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
+                    "line": 55,
+                    "column": 16,
+                    "endLine": 55,
+                    "endColumn": 20
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 17,
+            "endLine": 56,
+            "endColumn": 21,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1556,
+                    "end": 1562,
+                    "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
+                    "line": 56,
+                    "column": 17,
+                    "endLine": 56,
+                    "endColumn": 21
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 19,
+            "endLine": 57,
+            "endColumn": 23,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1608,
+                    "end": 1614,
+                    "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
+                    "line": 57,
+                    "column": 19,
+                    "endLine": 57,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 16,
+            "endLine": 58,
+            "endColumn": 20,
+            "problem": "VoidOperator",
+            "autofix": [
+                {
+                    "start": 1657,
+                    "end": 1663,
+                    "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
+                    "line": 58,
+                    "column": 16,
+                    "endLine": 58,
+                    "endColumn": 20
+                }
+            ],
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
             "severity": "ERROR"
         }
     ]

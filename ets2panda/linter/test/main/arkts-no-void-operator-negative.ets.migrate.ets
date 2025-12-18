@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 (() => {
     0;
     return undefined;
@@ -55,9 +55,9 @@ const undefined_value3: number | undefined = (() => {
 
 (() => {
     (() => {
-    1;
-    return undefined;
-})();
+      1;
+      return undefined;
+    })();
     return undefined;
 })();       // No void operator
 
@@ -71,13 +71,13 @@ function foo() {
   (() => {
     a++;
     return undefined;
-})();       // No void operator
+  })();       // No void operator
 
   let b = [1, 2, 3];
   (() => {
     console.log(b.filter(x => x % 2 !== 0).toString());
     return undefined;
-})();       // No void operator
+  })();       // No void operator
 }
 
 function getEmpty() {
@@ -87,4 +87,27 @@ function getEmpty() {
 function undefined() {
   let y = getEmpty();       // Can't use void as value
   return y;
+}
+
+class B{
+  s15 = (() => {
+    'hello';
+    return undefined;
+  })();//(arkts-no-void-operator)
+  public s16 = (() => {
+    1;
+    return undefined;
+  })();//(arkts-no-void-operator)
+  private s17 = (() => {
+    1;
+    return undefined;
+  })();//(arkts-no-void-operator)
+  protected s18 = (() => {
+    1;
+    return undefined;
+  })();//(arkts-no-void-operator)
+  static s19 = (() => {
+    1;
+    return undefined;
+  })();//(arkts-no-void-operator)
 }

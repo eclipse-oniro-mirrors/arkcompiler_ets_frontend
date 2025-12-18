@@ -163,6 +163,56 @@
             "suggest": "",
             "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
+        },
+        {
+            "line": 54,
+            "column": 9,
+            "endLine": 54,
+            "endColumn": 13,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 16,
+            "endLine": 55,
+            "endColumn": 20,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 17,
+            "endLine": 56,
+            "endColumn": 21,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 19,
+            "endLine": 57,
+            "endColumn": 23,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 58,
+            "column": 16,
+            "endLine": 58,
+            "endColumn": 20,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
         }
     ]
 }
