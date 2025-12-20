@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -273,6 +273,59 @@ TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetails6)
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
     expected.emplace_back("[string, number, number]", "typeName");
+    auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
+                                                                 source, sourceDisplay, expectedFileName);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(completionEntryDetails, expectedCompletionEntryDetails);
+}
+
+TEST_F(LSPCompletionsEntryDetailsTests, GetCompletionEntryDetailsForSpecialCharacters)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("completion_entry_details13.ets", ES2PANDA_STATE_CHECKED,
+                                                      R"(class DuttonInterface {
+  ff : number;
+  constructor(ff:number) {
+    this.ff = ff;
+  }
+  //中文测试
+  static buttonRun(value: string | number | boolean):number{
+    return 1;
+  }
+}
+
+ function aa() {
+   let Dutton: DuttonInterface = new DuttonInterface(1);
+   //中文测试
+   let  a = DuttonInterface.buttonRun(1)
+})");
+    size_t const offset = 299;
+    LSPAPI const *lspApi = GetImpl();
+    const char *entryName = "buttonRun";
+    auto completionEntryDetails =
+        lspApi->getCompletionEntryDetails(entryName, "completion_entry_details13.ets", ctx, offset);
+    ASSERT_NE(completionEntryDetails, CompletionEntryDetails());
+    std::vector<SymbolDisplayPart> source {};
+    std::vector<SymbolDisplayPart> sourceDisplay {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "method";
+    const std::string kindModifiers = "static public";
+    const std::string expectedFileName = "completion_entry_details13.ets";
+
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("DuttonInterface", "className");
+    expected.emplace_back(".", "punctuation");
+    expected.emplace_back("buttonRun", "functionName");
+    expected.emplace_back("(", "punctuation");
+    expected.emplace_back("value", "functionParameter");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("string | number | boolean", "typeParameter");
+    expected.emplace_back(")", "punctuation");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("number", "returnType");
+
     auto expectedCompletionEntryDetails = CompletionEntryDetails(entryName, kind, kindModifiers, expected, document,
                                                                  source, sourceDisplay, expectedFileName);
     initializer.DestroyContext(ctx);

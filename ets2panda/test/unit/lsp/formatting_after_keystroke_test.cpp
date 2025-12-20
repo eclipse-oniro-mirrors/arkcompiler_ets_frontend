@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -143,6 +143,45 @@ TEST_F(LSPFormattingAfteyKeystrokeTest, FormatAfterKeystroke_SkipsInsideComment)
 
     auto changes = ark::es2panda::lsp::FormatAfterKeystroke(ctx, formatContext, '{', TextSpan {bracePos + 1, 0});
     ASSERT_TRUE(changes.empty());
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingAfteyKeystrokeTest, FormatAfterKeystroke_NewlineIndentsNextLine00)
+{
+    std::string code = R"(
+function foo() {
+//中文测试
+let obj = { a: 1, b: 2 };
+}
+)";
+    std::string expected = R"(
+function foo() {
+//中文测试
+let obj = {a: 1, b: 2};
+}
+)";
+    const char *fileName = "keystroke_newline.ets";
+    ark::es2panda::lsp::Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(fileName, ES2PANDA_STATE_PARSED, code.c_str());
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    settings.SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(false);
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    size_t caretPos = 26;
+
+    LSPAPI const *lspApi = GetImpl();
+    auto changes = lspApi->getFormattingEditsAfterKeystroke(ctx, formatContext.GetFormatCodeSettings(), '\n',
+                                                            TextSpan {caretPos, 0});
+    ASSERT_FALSE(changes.empty());
+    ASSERT_EQ(changes.size(), 2u);
+    EXPECT_EQ(changes[0].span.start, 36u);
+    EXPECT_EQ(changes[0].span.length, 1u);
+    EXPECT_EQ(changes[0].newText, "");
+    EXPECT_EQ(changes[1].span.start, 47u);
+    EXPECT_EQ(changes[1].span.length, 1u);
+    EXPECT_EQ(changes[1].newText, "");
+
     initializer.DestroyContext(ctx);
 }
 

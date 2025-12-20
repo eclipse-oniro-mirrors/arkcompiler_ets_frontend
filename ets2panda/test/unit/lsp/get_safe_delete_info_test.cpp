@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -238,6 +238,67 @@ TEST_F(LspGetSafeDeleteInfoTest, GetSafeDeleteInfoCase9)
 
     // NOLINTNEXTLINE(readability-identifier-naming,-warnings-as-errors)
     constexpr size_t offsetT2 = 52;
+    result = lspApi->getSafeDeleteInfo(ctx, offsetT2);
+    ASSERT_EQ(result, true);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspGetSafeDeleteInfoTest, GetSafeDeleteInfoCase10)
+{
+    std::vector<std::string> files = {"get-safe-delete-info-interface.ets"};
+    std::vector<std::string> texts = {R"(
+    //中文测试
+    export interface VideoPlayer {
+        prepare(): Promise<void>;
+    }
+
+    function bar(parameter: VideoPlayer) {
+        //中文测试
+        parameter.prepare();
+    }
+    )"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    // NOLINTNEXTLINE(readability-identifier-naming,-warnings-as-errors)
+    constexpr size_t offset = 42;
+    bool result = lspApi->getSafeDeleteInfo(ctx, offset);
+    ASSERT_EQ(result, true);
+
+    // NOLINTNEXTLINE(readability-identifier-naming,-warnings-as-errors)
+    constexpr size_t offsetT2 = 169;
+    result = lspApi->getSafeDeleteInfo(ctx, offsetT2);
+    ASSERT_EQ(result, true);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspGetSafeDeleteInfoTest, GetSafeDeleteInfoCase11)
+{
+    std::vector<std::string> files = {"get-safe-delete-info-importdefault.ets"};
+    std::vector<std::string> texts = {R"(
+    //中文测试
+    import BuildProfile from 'BuildProfile';
+    //中文测试
+    BuildProfile.bundleName
+    )"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    // NOLINTNEXTLINE(readability-identifier-naming,-warnings-as-errors)
+    constexpr size_t offset = 26;
+    bool result = lspApi->getSafeDeleteInfo(ctx, offset);
+    ASSERT_EQ(result, true);
+
+    // NOLINTNEXTLINE(readability-identifier-naming,-warnings-as-errors)
+    constexpr size_t offsetT2 = 74;
     result = lspApi->getSafeDeleteInfo(ctx, offsetT2);
     ASSERT_EQ(result, true);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -98,7 +98,9 @@ void ExpectExtractionApplies(const std::string &source, ark::es2panda::lsp::Refa
                              const std::string &refactorName, const std::string &actionName,
                              const std::string &expected)
 {
-    auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, refactorName, actionName);
+    LSPAPI const *lspApi = GetImpl();
+
+    auto edits = lspApi->getEditsForRefactor(*refactorContext, refactorName, actionName);
 
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1);
 
@@ -893,6 +895,110 @@ class MyClass {
     const std::string classScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_CLASS.name);
 
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const bool hasClass = std::any_of(applicable.begin(), applicable.end(),
+                                      [&](const auto &info) { return info.action.name == classScopeAction; });
+    EXPECT_TRUE(hasClass);
+
+    ExpectExtractionApplies(code, refactorContext, refactorName, classScopeAction, expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractVariableForSpecialCharacters)
+{
+    const std::string code = R"('use static'
+
+class AccountingDepartment {
+    //中文测试
+    name: string = '中文测试';
+    //中文测试
+    printName(): void {
+        //中文测试
+        console.log('中文测试' + this.name);
+    }
+}
+)";
+
+    const size_t spanStart = 151;
+    const size_t spanEnd = 157;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    refactorContext->kind = "refactor.extract.variable";
+
+    LSPAPI const *lspApi = GetImpl();
+    auto applicable =
+        lspApi->getApplicableRefactors(refactorContext->context, refactorContext->kind.c_str(), spanStart, spanEnd);
+
+    EXPECT_FALSE(applicable.empty());
+
+    const std::string actionName = std::string(ark::es2panda::lsp::EXTRACT_VARIABLE_ACTION_ENCLOSE.name);
+    const bool hasVariableEnclose = std::any_of(applicable.begin(), applicable.end(),
+                                                [&](const auto &info) { return info.action.name == actionName; });
+    EXPECT_TRUE(hasVariableEnclose);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_VARIABLE_ACTION_NAME);
+    auto edits = lspApi->getEditsForRefactor(*refactorContext, refactorName, actionName);
+    ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
+    const auto &fileEdit = edits->GetFileTextChanges().at(0);
+    ASSERT_FALSE(fileEdit.textChanges.empty());
+    ASSERT_EQ(fileEdit.fileName, "/tmp/ExtractSymbolRefactorTest.ets");
+    ASSERT_EQ(fileEdit.textChanges.size(), 2u);
+    EXPECT_EQ(fileEdit.textChanges[0].span.start, 139u);
+    EXPECT_EQ(fileEdit.textChanges[0].span.length, 0u);
+    EXPECT_EQ(fileEdit.textChanges[0].newText, "let newLocal = '中文测试';");
+    EXPECT_EQ(fileEdit.textChanges[1].span.start, 183u);
+    EXPECT_EQ(fileEdit.textChanges[1].span.length, 14u);
+    EXPECT_EQ(fileEdit.textChanges[1].newText, "newLocal");
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractMethodForSpecialCharacters)
+{
+    const std::string code = R"('use static'
+
+class MyClass {
+    //中文测试
+    MyMethod(a: string, b: number) {
+        //中文测试
+        let c = a + "中文测试";
+        return c;
+    }
+}
+)";
+    const std::string expected = R"('use static'
+
+class MyClass {
+    //中文测试
+    MyMethod(a: string, b: number) {
+        //中文测试
+
+        let c = this.newMethod(a);
+        return c;
+    }
+
+    private newMethod(a: string) {
+        let c = a + "中文测试";
+        return c;
+    }
+}
+)";
+
+    const size_t spanStart = 101;
+    const size_t spanEnd = 120;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    refactorContext->kind = "refactor.extract.function";
+
+    LSPAPI const *lspApi = GetImpl();
+    auto applicable =
+        lspApi->getApplicableRefactors(refactorContext->context, refactorContext->kind.c_str(), spanStart, spanEnd);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string classScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_CLASS.name);
+
     const bool hasClass = std::any_of(applicable.begin(), applicable.end(),
                                       [&](const auto &info) { return info.action.name == classScopeAction; });
     EXPECT_TRUE(hasClass);

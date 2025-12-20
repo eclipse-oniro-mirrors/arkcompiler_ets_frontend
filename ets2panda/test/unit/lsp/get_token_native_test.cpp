@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,20 @@ TEST_F(LSPAPITests, GetTokenNative1)
                                                       "class Calc {\n  native add(arg1: int, arg2:int): int;\n}");
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
     size_t const offset = 24;
+    LSPAPI const *lspApi = GetImpl();
+    auto result = lspApi->getTokenTypes(ctx, offset);
+    ASSERT_EQ(result.type.find("native") != std::string::npos, true);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPAPITests, GetTokenNative2)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx =
+        initializer.CreateContext("token_native_2.ets", ES2PANDA_STATE_CHECKED,
+                                  "class Calc {\n  //中文测试\nnative add(arg1: int, arg2:int): int;\n}");
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+    size_t const offset = 31;
     LSPAPI const *lspApi = GetImpl();
     auto result = lspApi->getTokenTypes(ctx, offset);
     ASSERT_EQ(result.type.find("native") != std::string::npos, true);

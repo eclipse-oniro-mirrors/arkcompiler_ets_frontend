@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -102,6 +102,42 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPosition3)
     const std::string kind = "get";
     const std::string kindModifiers = "public abstract";
     size_t const start = 52;
+    size_t const length = 3;
+    TextSpan span(start, length);
+    std::vector<SymbolDisplayPart> expected;
+
+    expected.emplace_back("objI", "interface");
+    expected.emplace_back(".", "punctuation");
+    expected.emplace_back("key", "property");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("string", "returnType");
+
+    auto expectedQuickInfo = QuickInfo(kind, kindModifiers, span, expected, document, tags, fileName);
+    ASSERT_EQ(quickInfo, expectedQuickInfo);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPosition4)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("quick-info-test.ets", ES2PANDA_STATE_CHECKED,
+                                                      "//中文注释\ninterface objI {\n//中文注释\n key : string; }\nlet "
+                                                      "obj : objI = {\n//中文注释\n key:\"valueaaaaaaaaa,\" }");
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset = 76;
+    const std::string fileName = "quick-info-test.ets";
+    auto quickInfo = lspApi->getQuickInfoAtPosition(fileName.c_str(), ctx, offset);
+    ASSERT_NE(quickInfo, QuickInfo());
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string kind = "get";
+    const std::string kindModifiers = "public abstract";
+    size_t const start = 99;
     size_t const length = 3;
     TextSpan span(start, length);
     std::vector<SymbolDisplayPart> expected;

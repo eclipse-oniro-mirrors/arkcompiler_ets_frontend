@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -181,7 +181,7 @@ export class Lsp {
     if (!cfg || !ctx) {
       return;
     }
-    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx, fileHash: hash});
+    this.filesMap.set(fileName, { fileContent: fileContent.newDoc, fileConfig: cfg, fileContext: ctx, fileHash: hash });
   }
 
   deleteFromFilesMap(fileName: string): void {
@@ -295,24 +295,6 @@ export class Lsp {
     this.generateDeclFile(filePath);
   }
 
-  private charOffsetToByteOffset(filePath: string, offset: number): number {
-    if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-      return offset;
-    }
-    const fileSource = this.getFileSource(filePath);
-    const result = TextPositionUtils.charOffsetToByteOffset(fileSource, offset);
-    return result ? result : offset;
-  }
-
-  private byteOffsetToCharOffset(filePath: string, offset: number): number {
-    if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
-      return offset;
-    }
-    const fileSource = this.getFileSource(filePath);
-    const result = TextPositionUtils.byteOffsetToCharOffset(fileSource, offset);
-    return result ? result : offset;
-  }
-
   getOffsetByColAndLine(filename: String, line: number, column: number): number {
     const sourceCode = this.getFileSource(filename.valueOf());
     return global.es2panda._getOffsetByColAndLine(sourceCode, line, column);
@@ -329,10 +311,9 @@ export class Lsp {
     }
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getDefinitionAtPosition(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getDefinitionAtPosition by fileCache', error);
         return;
@@ -343,7 +324,7 @@ export class Lsp {
         return;
       }
       try {
-        ptr = global.es2panda._getDefinitionAtPosition(ctx, byteOffset);
+        ptr = global.es2panda._getDefinitionAtPosition(ctx, offset);
       } catch (error) {
         logger.error('failed to getDefinitionAtPosition', error);
         return;
@@ -352,8 +333,6 @@ export class Lsp {
       }
     }
     const result = new LspDefinitionData(ptr);
-    result.start = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.start);
-    result.length = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.length);
     const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, result.fileName, result.start);
     if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
       result.nodeInfos = nodeInfoTemp;
@@ -394,10 +373,9 @@ export class Lsp {
   getCurrentTokenValue(filename: String, offset: number): string | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getCurrentTokenValue(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getCurrentTokenValue(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getCurrentTokenValue by fileCache', error);
         return;
@@ -406,7 +384,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getCurrentTokenValue(ctx, byteOffset);
+        ptr = global.es2panda._getCurrentTokenValue(ctx, offset);
       } catch (error) {
         logger.error('failed to getCurrentTokenValue', error);
         return;
@@ -420,10 +398,9 @@ export class Lsp {
   getImplementationAtPosition(filename: String, offset: number): LspDefinitionData | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getImplementationAtPosition(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getImplementationAtPosition(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getImplementationAtPosition by fileCache', error);
         return;
@@ -432,7 +409,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getImplementationAtPosition(ctx, byteOffset);
+        ptr = global.es2panda._getImplementationAtPosition(ctx, offset);
       } catch (error) {
         logger.error('failed to getImplementationAtPosition', error);
         return;
@@ -441,8 +418,6 @@ export class Lsp {
       }
     }
     const result = new LspDefinitionData(ptr);
-    result.start = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.start);
-    result.length = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.length);
     return result;
   }
 
@@ -508,10 +483,9 @@ export class Lsp {
     }
     let declInfo: KPointer;
     let searchFileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (searchFileCache) {
       try {
-        declInfo = global.es2panda._getDeclInfo(searchFileCache.fileContext, byteOffset);
+        declInfo = global.es2panda._getDeclInfo(searchFileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getReferencesAtPosition by fileCache', error);
         return;
@@ -520,7 +494,7 @@ export class Lsp {
       const [cfg, searchCtx] = this.createContext(filename) ?? [];
       if (!cfg || !searchCtx) { return; }
       try {
-        declInfo = global.es2panda._getDeclInfo(searchCtx, byteOffset);
+        declInfo = global.es2panda._getDeclInfo(searchCtx, offset);
       } catch (error) {
         logger.error('failed to getReferencesAtPosition', error);
         return;
@@ -565,8 +539,6 @@ export class Lsp {
         const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
         if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
           ref.nodeInfos = nodeInfoTemp;
-          ref.start = this.byteOffsetToCharOffset(ref.fileName.valueOf(), ref.start);
-          ref.length = this.byteOffsetToCharOffset(ref.fileName.valueOf(), ref.length);
         }
         result.push(ref);
       });
@@ -699,11 +671,10 @@ export class Lsp {
     let ptr: KPointer;
     let ctxFile: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
         ctxFile = fileCache.fileContext;
-        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, byteOffset);
+        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
       } catch (error) {
         logger.error('failed to getTypeHierarchies by fileCache', error);
         return;
@@ -713,7 +684,7 @@ export class Lsp {
       if (!cfg || !ctx) { return; }
       try {
         ctxFile = ctx;
-        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, byteOffset);
+        ptr = global.es2panda._getTypeHierarchies(ctxFile, ctxFile, offset);
       } finally {
         this.destroyContext(cfg, ctx);
       }
@@ -729,7 +700,7 @@ export class Lsp {
       let searchFileCache = this.filesMap.get(compileFiles[i].valueOf());
       if (searchFileCache) {
         try {
-          searchPtr = global.es2panda._getTypeHierarchies(searchFileCache.fileContext, ctxFile, byteOffset);
+          searchPtr = global.es2panda._getTypeHierarchies(searchFileCache.fileContext, ctxFile, offset);
         } catch (error) {
           logger.error('failed to getTypeHierarchies by fileCache', error);
           return;
@@ -738,7 +709,7 @@ export class Lsp {
         const [cfg, searchCtx] = this.createContext(compileFiles[i]) ?? [];
         if (!cfg || !searchCtx) { return; }
         try {
-          searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctxFile, byteOffset);
+          searchPtr = global.es2panda._getTypeHierarchies(searchCtx, ctxFile, offset);
         } catch (error) {
           logger.error('failed to getTypeHierarchies', error);
           return;
@@ -775,10 +746,9 @@ export class Lsp {
   getClassHierarchyInfo(filename: String, offset: number): LspClassHierarchy | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getClassHierarchyInfo(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getClassHierarchyInfo(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getClassHierarchyInfo by fileCache', error);
         return;
@@ -787,7 +757,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getClassHierarchyInfo(ctx, byteOffset);
+        ptr = global.es2panda._getClassHierarchyInfo(ctx, offset);
       } catch (error) {
         logger.error('failed to getClassHierarchyInfo', error);
         return;
@@ -801,10 +771,9 @@ export class Lsp {
   getAliasScriptElementKind(filename: String, offset: number): LspCompletionEntryKind | undefined {
     let kind: KInt;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        kind = global.es2panda._getAliasScriptElementKind(fileCache.fileContext, byteOffset);
+        kind = global.es2panda._getAliasScriptElementKind(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getAliasScriptElementKind by fileCache', error);
         return;
@@ -813,7 +782,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        kind = global.es2panda._getAliasScriptElementKind(ctx, byteOffset);
+        kind = global.es2panda._getAliasScriptElementKind(ctx, offset);
       } catch (error) {
         logger.error('failed to getAliasScriptElementKind', error);
         return;
@@ -853,8 +822,7 @@ export class Lsp {
         global.es2panda._pushBackToNativeContextVector(searchCtx, nativeContextList, 0);
       }
     }
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
-    let ptr = global.es2panda._getClassHierarchies(nativeContextList, filename, byteOffset);
+    let ptr = global.es2panda._getClassHierarchies(nativeContextList, filename, offset);
     PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
     for (const { ctx, cfg } of contextList) {
       this.destroyContext(cfg, ctx);
@@ -869,10 +837,9 @@ export class Lsp {
   ): LspClassPropertyInfo | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getClassPropertyInfo(fileCache.fileContext, byteOffset, shouldCollectInherited);
+        ptr = global.es2panda._getClassPropertyInfo(fileCache.fileContext, offset, shouldCollectInherited);
       } catch (error) {
         logger.error('failed to getClassPropertyInfo by fileCache', error);
         return;
@@ -881,7 +848,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getClassPropertyInfo(ctx, byteOffset, shouldCollectInherited);
+        ptr = global.es2panda._getClassPropertyInfo(ctx, offset, shouldCollectInherited);
       } catch (error) {
         logger.error('failed to getClassPropertyInfo', error);
         return;
@@ -923,10 +890,9 @@ export class Lsp {
   findSafeDeleteLocation(filename: String, offset: number): LspSafeDeleteLocationInfo[] | undefined {
     let declInfo: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        declInfo = global.es2panda._getDeclInfo(fileCache.fileContext, byteOffset);
+        declInfo = global.es2panda._getDeclInfo(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to findSafeDeleteLocation by fileCache', error);
         return;
@@ -935,8 +901,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
-        declInfo = global.es2panda._getDeclInfo(ctx, byteOffset);
+        declInfo = global.es2panda._getDeclInfo(ctx, offset);
       } catch (error) {
         logger.error('failed to findSafeDeleteLocation', error);
         return;
@@ -978,10 +943,9 @@ export class Lsp {
   getCompletionEntryDetails(filename: String, offset: number, entryName: String): CompletionEntryDetails | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getCompletionEntryDetails by fileCache', error);
         return;
@@ -990,7 +954,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, ctx, byteOffset);
+        ptr = global.es2panda._getCompletionEntryDetails(entryName, filename, ctx, offset);
       } catch (error) {
         logger.error('failed to getCompletionEntryDetails', error);
         return;
@@ -1011,11 +975,9 @@ export class Lsp {
     let ptr: KPointer;
     let result: ApplicableRefactorItemInfo[] = [];
     let fileCache = this.filesMap.get(filename.valueOf());
-    const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), startPos);
-    const endByteOffset = this.charOffsetToByteOffset(filename.valueOf(), endPos);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startByteOffset, endByteOffset);
+        ptr = global.es2panda._getApplicableRefactors(fileCache.fileContext, kind, startPos, endPos);
       } catch (error) {
         logger.error('failed to getApplicableRefactors by fileCache', error);
         return;
@@ -1024,7 +986,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getApplicableRefactors(ctx, kind, startByteOffset, endByteOffset);
+        ptr = global.es2panda._getApplicableRefactors(ctx, kind, startPos, endPos);
       } catch (error) {
         logger.error('failed to getApplicableRefactors', error);
         return;
@@ -1051,16 +1013,14 @@ export class Lsp {
     let ptr: KPointer;
     let up = opts?.userPrefsPtr ?? BigInt(0);
     let fmt = opts?.FormattingSettings ?? BigInt(0);
-    const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), start);
-    const endByteOffset = this.charOffsetToByteOffset(filename.valueOf(), end);
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
       ptr = global.es2panda._getEditsForRefactor(
         fileCache.fileContext,
         refactorName,
         actionName,
-        startByteOffset,
-        endByteOffset,
+        start,
+        end,
         up,
         fmt
       );
@@ -1071,8 +1031,8 @@ export class Lsp {
         ctx,
         refactorName,
         actionName,
-        startByteOffset,
-        endByteOffset,
+        start,
+        end,
         up,
         fmt
       );
@@ -1084,10 +1044,9 @@ export class Lsp {
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getClassConstructorInfo(fileCache.fileContext, byteOffset, passStringArray(properties));
+        ptr = global.es2panda._getClassConstructorInfo(fileCache.fileContext, offset, passStringArray(properties));
       } catch (error) {
         logger.error('failed to getClassConstructorInfo by fileCache', error);
         return;
@@ -1096,7 +1055,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getClassConstructorInfo(ctx, byteOffset, passStringArray(properties));
+        ptr = global.es2panda._getClassConstructorInfo(ctx, offset, passStringArray(properties));
       } catch (error) {
         logger.error('failed to getClassConstructorInfo', error);
         return;
@@ -1160,10 +1119,9 @@ export class Lsp {
   getQuickInfoAtPosition(filename: String, offset: number): LspQuickInfo | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getQuickInfoAtPosition(filename, fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getQuickInfoAtPosition(filename, fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getQuickInfoAtPosition by fileCache', error);
         return;
@@ -1172,7 +1130,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, byteOffset);
+        ptr = global.es2panda._getQuickInfoAtPosition(filename, ctx, offset);
       } catch (error) {
         logger.error('failed to getQuickInfoAtPosition', error);
         return;
@@ -1181,18 +1139,15 @@ export class Lsp {
       }
     }
     const result = new LspQuickInfo(ptr);
-    result.textSpan.start = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.textSpan.start);
-    result.textSpan.length = this.byteOffsetToCharOffset(result.fileName.valueOf(), result.textSpan.length);
     return result;
   }
 
   getDocumentHighlights(filename: String, offset: number): LspDocumentHighlightsReferences | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getDocumentHighlights(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getDocumentHighlights(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getDocumentHighlights by fileCache', error);
         return;
@@ -1203,7 +1158,7 @@ export class Lsp {
         return;
       }
       try {
-        ptr = global.es2panda._getDocumentHighlights(ctx, byteOffset);
+        ptr = global.es2panda._getDocumentHighlights(ctx, offset);
       } catch (error) {
         logger.error('failed to getDocumentHighlights', error);
         return;
@@ -1212,22 +1167,15 @@ export class Lsp {
       }
     }
     const result = new LspDocumentHighlightsReferences(ptr);
-    result.documentHighlights.forEach((doc) => {
-      doc.highlightSpans.forEach((item) => {
-        item.textSpan.start = this.byteOffsetToCharOffset(item.fileName.valueOf(), item.textSpan.start);
-        item.textSpan.start = this.byteOffsetToCharOffset(item.fileName.valueOf(), item.textSpan.start);
-      });
-    });
     return result;
   }
 
   getCompletionAtPosition(filename: String, offset: number): LspCompletionInfo | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getCompletionAtPosition(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getCompletionAtPosition(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getCompletionAtPosition by fileCache', error);
         return;
@@ -1236,7 +1184,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getCompletionAtPosition(ctx, byteOffset);
+        ptr = global.es2panda._getCompletionAtPosition(ctx, offset);
       } catch (error) {
         logger.error('failed to getCompletionAtPosition', error);
         return;
@@ -1250,10 +1198,9 @@ export class Lsp {
   toLineColumnOffset(filename: String, offset: number): LspLineAndCharacter | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._toLineColumnOffset(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._toLineColumnOffset(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to toLineColumnOffset by fileCache', error);
         return;
@@ -1264,7 +1211,7 @@ export class Lsp {
         return;
       }
       try {
-        ptr = global.es2panda._toLineColumnOffset(ctx, byteOffset);
+        ptr = global.es2panda._toLineColumnOffset(ctx, offset);
       } catch (error) {
         logger.error('failed to toLineColumnOffset', error);
         return;
@@ -1279,10 +1226,9 @@ export class Lsp {
   getSafeDeleteInfo(filename: String, position: number): boolean | undefined {
     let result: boolean;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), position);
     if (fileCache) {
       try {
-        result = global.es2panda._getSafeDeleteInfo(fileCache.fileContext, byteOffset);
+        result = global.es2panda._getSafeDeleteInfo(fileCache.fileContext, position);
       } catch (error) {
         logger.error('failed to getSafeDeleteInfo by fileCache', error);
         return;
@@ -1292,7 +1238,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        result = global.es2panda._getSafeDeleteInfo(ctx, byteOffset);
+        result = global.es2panda._getSafeDeleteInfo(ctx, position);
       } catch (error) {
         logger.error('failed to getSafeDeleteInfo', error);
         return;
@@ -1348,14 +1294,13 @@ export class Lsp {
     }
 
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
 
     const processRenameLocations = (ctx: KNativePointer, isCached: boolean = false, cfg?: Config) => {
-      const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, byteOffset);
+      const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, offset);
       if (!needsCrossFileRename) {
         let ptr: KPointer;
         try {
-          ptr = global.es2panda._findRenameLocationsInCurrentFile(ctx, byteOffset);
+          ptr = global.es2panda._findRenameLocationsInCurrentFile(ctx, offset);
         } catch (error) {
           logger.error('failed to findRenameLocations', error);
           if (!isCached && cfg) {
@@ -1379,8 +1324,8 @@ export class Lsp {
 
         const fileContexts: KPointer[] = [];
         const fileConfigs: Config[] = [];
-        const tempContexts: {ctx: KNativePointer, cfg: Config}[] = [];
-        
+        const tempContexts: { ctx: KNativePointer, cfg: Config }[] = [];
+
         for (let i = 0; i < compileFiles.length; i++) {
           let filePath = path.resolve(compileFiles[i]);
           if (filePath === path.resolve(filename.valueOf()) && isCached) {
@@ -1397,7 +1342,7 @@ export class Lsp {
               return undefined;
             }
             fileContexts.push(compileFileCtx);
-            tempContexts.push({ctx: compileFileCtx, cfg: compileFileCfg});
+            tempContexts.push({ ctx: compileFileCtx, cfg: compileFileCfg });
           }
         }
 
@@ -1407,7 +1352,7 @@ export class Lsp {
             fileContexts.length,
             passPointerArray(fileContexts),
             ctx,
-            byteOffset
+            offset
           );
         } catch (error) {
           logger.error('failed to findRenameLocations', error);
@@ -1452,10 +1397,9 @@ export class Lsp {
     let res: LspRenameInfoType;
 
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getRenameInfo(fileCache.fileContext, byteOffset, this.pandaLibPath);
+        ptr = global.es2panda._getRenameInfo(fileCache.fileContext, offset, this.pandaLibPath);
       } catch (error) {
         logger.error('failed to getRenameInfo by fileCache', error);
         return;
@@ -1464,7 +1408,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getRenameInfo(ctx, byteOffset, this.pandaLibPath);
+        ptr = global.es2panda._getRenameInfo(ctx, offset, this.pandaLibPath);
       } catch (error) {
         logger.error('failed to getRenameInfo', error);
         return;
@@ -1484,10 +1428,9 @@ export class Lsp {
   getSpanOfEnclosingComment(filename: String, offset: number, onlyMultiLine: boolean): LspTextSpan | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getSpanOfEnclosingComment(fileCache.fileContext, byteOffset, onlyMultiLine);
+        ptr = global.es2panda._getSpanOfEnclosingComment(fileCache.fileContext, offset, onlyMultiLine);
       } catch (error) {
         logger.error('failed to getSpanOfEnclosingComment by fileCache', error);
         return;
@@ -1496,8 +1439,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
-        ptr = global.es2panda._getSpanOfEnclosingComment(ctx, byteOffset, onlyMultiLine);
+        ptr = global.es2panda._getSpanOfEnclosingComment(ctx, offset, onlyMultiLine);
       } catch (error) {
         logger.error('failed to getSpanOfEnclosingComment', error);
         return;
@@ -1505,10 +1447,7 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    const result = new LspTextSpan(ptr);
-    result.start = this.byteOffsetToCharOffset(filename.valueOf(), result.start);
-    result.length = this.byteOffsetToCharOffset(filename.valueOf(), result.length);
-    return result;
+    return new LspTextSpan(ptr);
   }
 
   getCodeFixesAtPosition(
@@ -1519,11 +1458,9 @@ export class Lsp {
   ): CodeFixActionInfo[] | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const startByteOffset = this.charOffsetToByteOffset(filename.valueOf(), start);
-    const endByteOffset = this.charOffsetToByteOffset(filename.valueOf(), end);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getCodeFixesAtPosition(fileCache.fileContext, startByteOffset, endByteOffset, new Int32Array(errorCodes), errorCodes.length);
+        ptr = global.es2panda._getCodeFixesAtPosition(fileCache.fileContext, start, end, new Int32Array(errorCodes), errorCodes.length);
       } catch (error) {
         logger.error('failed to getCodeFixesAtPosition by fileCache', error);
         return;
@@ -1532,7 +1469,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getCodeFixesAtPosition(ctx, startByteOffset, endByteOffset, new Int32Array(errorCodes), errorCodes.length);
+        ptr = global.es2panda._getCodeFixesAtPosition(ctx, start, end, new Int32Array(errorCodes), errorCodes.length);
       } catch (error) {
         logger.error('failed to getCodeFixesAtPosition', error);
         return;
@@ -1579,10 +1516,9 @@ export class Lsp {
   getSignatureHelpItems(filename: String, offset: number): LspSignatureHelpItems | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
-    const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
       try {
-        ptr = global.es2panda._getSignatureHelpItems(fileCache.fileContext, byteOffset);
+        ptr = global.es2panda._getSignatureHelpItems(fileCache.fileContext, offset);
       } catch (error) {
         logger.error('failed to getSignatureHelpItems by fileCache', error);
         return;
@@ -1591,7 +1527,7 @@ export class Lsp {
       const [cfg, ctx] = this.createContext(filename) ?? [];
       if (!cfg || !ctx) { return; }
       try {
-        ptr = global.es2panda._getSignatureHelpItems(ctx, byteOffset);
+        ptr = global.es2panda._getSignatureHelpItems(ctx, offset);
       } catch (error) {
         logger.error('failed to getSignatureHelpItems', error);
         return;
@@ -2171,14 +2107,12 @@ export class Lsp {
   ): TextChange[] | undefined {
     let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
-    const byteStart = this.charOffsetToByteOffset(filename.valueOf(), start);
-    const byteLength = this.charOffsetToByteOffset(filename.valueOf(), start + length) - byteStart;
 
     try {
       let fileCache = this.filesMap.get(filename.valueOf());
       if (fileCache) {
         try {
-          ptr = global.es2panda._getFormattingEditsForRange(fileCache.fileContext, settingsPtr, byteStart, byteLength);
+          ptr = global.es2panda._getFormattingEditsForRange(fileCache.fileContext, settingsPtr, start, length);
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         } catch (error) {
           logger.error('failed to getFormattingEditsForRange by fileCache', error);
@@ -2190,7 +2124,7 @@ export class Lsp {
           return;
         }
         try {
-          ptr = global.es2panda._getFormattingEditsForRange(ctx, settingsPtr, byteStart, byteLength);
+          ptr = global.es2panda._getFormattingEditsForRange(ctx, settingsPtr, start, length);
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         } catch (error) {
           logger.error('failed to getFormattingEditsForRange', error);
@@ -2220,14 +2154,13 @@ export class Lsp {
     }
     let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
-    const bytePos = this.charOffsetToByteOffset(filename.valueOf(), position);
     const keyCode = key.charCodeAt(0);
 
     try {
       let fileCache = this.filesMap.get(filename.valueOf());
       if (fileCache) {
         try {
-          ptr = global.es2panda._getFormattingEditsAfterKeystroke(fileCache.fileContext, settingsPtr, bytePos, 0, keyCode);
+          ptr = global.es2panda._getFormattingEditsAfterKeystroke(fileCache.fileContext, settingsPtr, position, 0, keyCode);
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         } catch (error) {
           logger.error('failed to getFormattingEditsAfterKeystroke by fileCache', error);
@@ -2239,7 +2172,7 @@ export class Lsp {
           return;
         }
         try {
-          ptr = global.es2panda._getFormattingEditsAfterKeystroke(ctx, settingsPtr, bytePos, 0, keyCode);
+          ptr = global.es2panda._getFormattingEditsAfterKeystroke(ctx, settingsPtr, position, 0, keyCode);
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         } catch (error) {
           logger.error('failed to getFormattingEditsAfterKeystroke', error);

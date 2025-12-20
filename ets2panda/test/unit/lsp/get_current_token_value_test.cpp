@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,6 +70,17 @@ TEST_F(LSPAPITests, GetCurrentTokenValue3)
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPAPITests, GetCurrentTokenValue4)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext("current_token.ets", ES2PANDA_STATE_CHECKED, "//中文测试\nab");
+    LSPAPI const *lspApi = GetImpl();
+    size_t offset = 9;
+    std::string result = lspApi->getCurrentTokenValue(ctx, offset);
+    initializer.DestroyContext(ctx);
+    ASSERT_EQ(result, "ab");
+}
+
 TEST_F(LSPAPITests, GetTokenPosOfNode1)
 {
     using ark::es2panda::ir::AstNode;
@@ -132,6 +143,22 @@ TEST_F(LSPAPITests, GetTokenPosOfNode3)
     size_t const pos = 29;
     ASSERT_EQ(result, pos);
 
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPAPITests, GetTokenPosOfNode4)
+{
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(
+        "token-pos-literal.ets", ES2PANDA_STATE_CHECKED,
+        "//中文测试\nlet number_literal: number = 1234;\nlet string_literal: string = \"hello\";\nconst str_property = "
+        "\"foo\";\n");
+    ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t offset = 40;
+    std::string result = lspApi->getCurrentTokenValue(ctx, offset);
+    ASSERT_EQ(result, "1234");
     initializer.DestroyContext(ctx);
 }
 

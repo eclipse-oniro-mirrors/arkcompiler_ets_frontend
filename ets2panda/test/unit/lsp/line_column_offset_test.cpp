@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,6 +50,60 @@ TEST_F(LCOTests, LCOPositionIsCorrect)
     auto lineAndChar = ark::es2panda::lsp::ToLineColumnOffset(context, position);
 
     auto expectedLine = 2;
+    ASSERT_EQ(lineAndChar.GetLine(), expectedLine);
+    ASSERT_EQ(lineAndChar.GetCharacter(), position);
+
+    initializer.DestroyContext(context);
+}
+TEST_F(LCOTests, LCOPositionIsZeroForSpecialCharacters)
+{
+    std::vector<std::string> files = {"not-found-node_ForSpecialCharacters.ets"};
+    std::vector<std::string> texts = {R"(
+        //中文测试
+        interface X
+        { name: string};
+         let variable: X = { name: '中文测试' };
+         )"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+
+    size_t posZero = 0;
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto lineAndChar = lspApi->toLineColumnOffset(context, posZero);
+
+    auto expectedLine = 0;
+    ASSERT_EQ(lineAndChar.GetLine(), expectedLine);
+    ASSERT_EQ(lineAndChar.GetCharacter(), posZero);
+
+    initializer.DestroyContext(context);
+}
+TEST_F(LCOTests, LCOPositionIsCorrectForSpecialCharacters)
+{
+    std::vector<std::string> files = {"not-found-node_ForSpecialCharacters.ets"};
+    std::vector<std::string> texts = {R"(
+        //中文测试
+        interface X
+        { name: string};
+         let variable: X = { name: '中文测试' };
+         )"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    Initializer initializer = Initializer();
+
+    size_t position = 74;
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto lineAndChar = lspApi->toLineColumnOffset(context, position);
+
+    auto expectedLine = 4;
     ASSERT_EQ(lineAndChar.GetLine(), expectedLine);
     ASSERT_EQ(lineAndChar.GetCharacter(), position);
 

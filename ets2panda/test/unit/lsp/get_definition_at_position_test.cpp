@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -289,6 +289,49 @@ a.Foo(1, 2);)"};
     initializer.DestroyContext(ctx);
     std::string expectedFileName1 = filePaths[0];
     size_t const expectedStart1 = 19;
+    size_t const expectedLength1 = 3;
+    ASSERT_EQ(result1.fileName, expectedFileName1);
+    ASSERT_EQ(result1.start, expectedStart1);
+    ASSERT_EQ(result1.length, expectedLength1);
+}
+
+TEST_F(LspGetDefTests, GetDefinitionAtPositionForSpecialCharacters)
+{
+    std::vector<std::string> files = {"getDefinitionAtPosition18.ets", "getDefinitionAtPosition19.ets"};
+    std::vector<std::string> texts = {R"(
+//中文测试
+export class Foo {
+//中文测试
+Foo(a:number, b:number): number {
+    return a + b;
+}})",
+                                      R"(import * as All from './getDefinitionAtPosition18';
+//中文测试
+let a = new All.Foo();
+a.Foo(1, 2);)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 76;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result = lspApi->getDefinitionAtPosition(ctx, offset);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName = filePaths[0];
+    size_t const expectedStart = 21;
+    size_t const expectedLength = 3;
+    ASSERT_EQ(result.fileName, expectedFileName);
+    ASSERT_EQ(result.start, expectedStart);
+    ASSERT_EQ(result.length, expectedLength);
+
+    size_t const offset1 = 85;
+    ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto result1 = lspApi->getDefinitionAtPosition(ctx, offset1);
+    initializer.DestroyContext(ctx);
+    std::string expectedFileName1 = filePaths[0];
+    size_t const expectedStart1 = 34;
     size_t const expectedLength1 = 3;
     ASSERT_EQ(result1.fileName, expectedFileName1);
     ASSERT_EQ(result1.start, expectedStart1);

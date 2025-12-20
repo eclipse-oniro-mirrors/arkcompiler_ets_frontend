@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -361,6 +361,53 @@ class GrandSon extends Son {/*1*/
     auto parentItems = classHierarchy[1].GetPropertyItemList();
     ASSERT_EQ(parentItems.size(), 1);
     ASSERT_TRUE(parentItems.find("property4: number") != parentItems.end());
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LspGetClassHierarchyInfoTests, GetClassHierarchyInfo_9)
+{
+    LSPAPI const *lspApi = GetImpl();
+    ASSERT_TRUE(lspApi != nullptr);
+    const std::string text = R"(class Parent {
+private privateMethod(): void {
+  console.log("Parent method");
+}
+  public publicMethod(): void {
+  console.log("Parent method");
+}
+  protected action(fileName: string, position: number): number {
+  return position;
+}
+  static staticMethod(): void {
+  console.log("Parent static method");
+  }
+}
+  //中文测试
+  class Child extends Parent {
+  public display(): void {
+    console.log("need display");
+  }
+})";
+
+    auto pos = 327;
+    ASSERT_NE(pos, std::string::npos);
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext("class_hierarchy_info_9.ets", ES2PANDA_STATE_CHECKED, text.c_str());
+    auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
+
+    ASSERT_EQ(classHierarchy.size(), 1);
+    ASSERT_EQ(classHierarchy[0].GetClassName(), "Parent");
+    auto methods = classHierarchy[0].GetMethodItemList();
+    auto it = methods.find("publicMethod(): void");
+    ASSERT_TRUE(it != methods.end());
+    ASSERT_TRUE(it->second != nullptr);
+    ASSERT_EQ(it->second->GetSetterStyle(), ark::es2panda::lsp::SetterStyle::NONE);
+    ASSERT_EQ(it->second->GetAccessModifierStyle(), ark::es2panda::lsp::AccessModifierStyle::PUBLIC);
+    it = methods.find("action(fileName: string, position: number): number");
+    ASSERT_TRUE(it != methods.end());
+    ASSERT_TRUE(it->second != nullptr);
+    ASSERT_EQ(it->second->GetSetterStyle(), ark::es2panda::lsp::SetterStyle::NONE);
+    ASSERT_EQ(it->second->GetAccessModifierStyle(), ark::es2panda::lsp::AccessModifierStyle::PROTECTED);
     initializer.DestroyContext(context);
 }
 }  // namespace

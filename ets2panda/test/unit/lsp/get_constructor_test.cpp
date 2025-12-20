@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -640,6 +640,96 @@ class Demo {
         "flag;\n  this.doTask1 = doTask1;\n  this.doTask2 = doTask2;\n  this.doTask3 = doTask3;\n  this.doTask4 = "
         "doTask4;\n}";
     size_t const expectedPosition = 18;
+    std::vector<FileTextChanges> expectedFileTextChanges =
+        CreateExpectedFileTextChanges(filePaths.at(0), expectedPosition, expectedText);
+    AssertClassConstructorInfo(res.GetFileTextChanges(), expectedFileTextChanges);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPClassInfoTests, getClassConstructorInfo16)
+{
+    std::vector<std::string> fileNames = {"getClassConstructorInfo17.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+class FooParent {
+    f: Number = 0;
+    str: String = "aaa";
+    constructor (f: Number, str: String) {
+        this.f = f;
+        this.str = str;
+    }
+};
+
+enum Colors {Red = "#FF0000", Green = "#00FF00", Blue = "#0000FF"};
+export class Foo extends FooParent {
+    name: String = "unassigned";
+    isActive: Boolean = true;
+    items: String[] = ["aaa", "bbb"];
+    point: Number[] = [0, 0];
+    //中文测试
+    primaryColor: Colors = Colors.Blue;
+    optionalValue?:String|null|undefined;
+    x: Number = 1;
+    static y: Number = 2;
+    z: Number = 3;
+};)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 411;
+    std::vector<std::string> properties = {"name", "x", "primaryColor", "isActive", "items", "point", "optionalValue"};
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getClassConstructorInfo(ctx, offset, properties);
+
+    std::string expectedText =
+        "constructor(f: Number, str: String, name: String, x: Number, primaryColor: Colors, isActive: Boolean, "
+        "items: Array<String>, point: Array<Number>, optionalValue: String | null | undefined) {\n  super(f, str);\n"
+        "  this.name = name;\n  this.x = x;\n  this.primaryColor = primaryColor;\n  this.isActive = isActive;\n"
+        "  this.items = items;\n  this.point = point;\n  this.optionalValue = optionalValue;\n}";
+    size_t const expectedPosition = 269;
+    std::vector<FileTextChanges> expectedFileTextChanges =
+        CreateExpectedFileTextChanges(filePaths.at(0), expectedPosition, expectedText);
+    AssertClassConstructorInfo(res.GetFileTextChanges(), expectedFileTextChanges);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPClassInfoTests, getClassConstructorInfo17)
+{
+    std::vector<std::string> files = {"getClassConstructorInfo18.ets"};
+    std::vector<std::string> texts = {
+        R"(
+//中文测试
+class KKK {
+    tr: String;
+
+    //中文测试
+    constructor(tr: String) {
+        //中文测试
+        this.tr = "中文测试";
+    }
+}
+
+//中文测试
+class NNN extends KKK {
+})"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 155;
+    std::vector<std::string> properties = {};
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getClassConstructorInfo(ctx, offset, properties);
+
+    std::string expectedText = "constructor(tr: String) {\n  super(tr);\n}";
+    size_t const expectedPosition = 158;
     std::vector<FileTextChanges> expectedFileTextChanges =
         CreateExpectedFileTextChanges(filePaths.at(0), expectedPosition, expectedText);
     AssertClassConstructorInfo(res.GetFileTextChanges(), expectedFileTextChanges);

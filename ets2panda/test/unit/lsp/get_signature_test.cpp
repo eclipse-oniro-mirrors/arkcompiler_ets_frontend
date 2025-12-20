@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -203,14 +203,13 @@ TEST_F(LspGetSignatureTests, LspTests7)
 let p: Person = new Person("张三", 18);
 p.introduce())");
     const LSPAPI *lspApi = GetImpl();
-    const size_t offset = 246;
-    lspApi->getSignatureHelpItems(ctx, offset);
-    auto result = ark::es2panda::lsp::GetSignature(ctx, offset);
+    const size_t offset = 242;
+    auto result = lspApi->getSignatureHelpItems(ctx, offset);
     initializer.DestroyContext(ctx);
     const size_t expectedCount = 2;
     const size_t expectedIndex = 0;
     const size_t expectedSpanLength = 0;
-    const size_t expectedSpanStart = 246;
+    const size_t expectedSpanStart = 242;
     const size_t typeIndex = 3;
     ASSERT_EQ(result.GetArgumentCount(), expectedCount);
     ASSERT_EQ(result.GetArgumentIndex(), expectedIndex);
