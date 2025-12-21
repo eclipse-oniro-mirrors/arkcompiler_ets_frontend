@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,7 +52,7 @@ void EmitFileQueue::Schedule()
 
     if (mergeAbc_) {
         // generate merged abc
-        auto emitMergedAbcJob = new EmitMergedAbcJob(options_, progsInfo_);
+        auto emitMergedAbcJob = new EmitMergedAbcJob(options_, progsInfo_, statp_);
         //  One job should be placed before the jobs on which it depends to prevent blocking
         jobs_.push_back(emitMergedAbcJob);
         jobsCount_++;
@@ -112,7 +112,7 @@ void EmitMergedAbcJob::Run()
         options_->CompilerOptions().isDebug, options_->CompilerOptions().fileThreadCount};
     bool success = panda::pandasm::AsmEmitter::EmitPrograms(
         panda::os::file::File::GetExtendedFilePath(outputFileName_), progs, true,
-        emitConfig);
+        emitConfig, statp_);
 
     panda::Timer::timerEnd(panda::EVENT_EMIT_MERGED_PROGRAM, "");
 

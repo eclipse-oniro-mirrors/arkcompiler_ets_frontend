@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2024 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,11 +46,12 @@ private:
 class EmitMergedAbcJob : public util::WorkerJob {
 public:
     explicit EmitMergedAbcJob(const std::unique_ptr<panda::es2panda::aot::Options> &options,
-                              const std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo)
+                              const std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo,
+                              std::map<std::string, size_t> *statp)
         : options_(options), outputFileName_(options->CompilerOutput()),
         transformLib_(options->CompilerOptions().transformLib),
         progsInfo_(progsInfo), targetApiVersion_(options->CompilerOptions().targetApiVersion),
-        targetApiSubVersion_(options->CompilerOptions().targetApiSubVersion) {};
+        targetApiSubVersion_(options->CompilerOptions().targetApiSubVersion), statp_(statp) {};
     NO_COPY_SEMANTIC(EmitMergedAbcJob);
     NO_MOVE_SEMANTIC(EmitMergedAbcJob);
     ~EmitMergedAbcJob() override = default;
@@ -63,6 +64,7 @@ private:
     const std::map<std::string, panda::es2panda::util::ProgramCache*> &progsInfo_;
     uint8_t targetApiVersion_ = 0;
     std::string targetApiSubVersion_ { util::Helpers::DEFAULT_SUB_API_VERSION };
+    std::map<std::string, size_t> *statp_;
 };
 
 class EmitCacheJob : public util::WorkerJob {
