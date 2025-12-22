@@ -2072,8 +2072,7 @@ Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *cl
         return classType;
     }
 
-    if (node->Parent()->IsCallExpression() && (node->Parent()->AsCallExpression()->Callee() == node) &&
-        !node->Parent()->HasAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST)) {
+    if (node->Parent()->IsCallExpression() && (node->Parent()->AsCallExpression()->Callee() == node)) {
         if (Context().ContainingSignature() == nullptr) {
             LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
             return GlobalTypeError();

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -793,8 +793,9 @@ static ir::Expression *SetRestIdentOfCallArguments(public_lib::Context *ctx, Lam
         return spread;
     }
     ES2PANDA_ASSERT(restType->IsETSResizableArrayType() || restType->IsETSReadonlyArrayType());
-    restIdent->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
-    return restIdent;
+    auto *spread = allocator->New<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, allocator, restIdent);
+    restIdent->SetParent(spread);
+    return spread;
 }
 
 static ir::Expression *GetInvokeCallArgumentAtIdx(public_lib::Context *ctx, LambdaClassInvokeInfo const *lciInfo,

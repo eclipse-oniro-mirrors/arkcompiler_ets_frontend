@@ -41,11 +41,12 @@ foo(,)
 /* @@? 24:15 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 28:9 Error Syntax error ESY167720: Omitted elements are not supported in arrays. */
 /* @@? 29:1 Error Semantic error ESE0127: No matching call signature for foo(Double) */
-/* @@? 29:5 Error Semantic error ESE0323: Type 'Array<Double>' is not compatible with rest parameter type 'FixedArray<Int>' at index 1 */
+/* @@? 29:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 30:1 Error Semantic error ESE0127: No matching call signature for foo(Double) */
 /* @@? 30:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 31:1 Error Semantic error ESE0127: No matching call signature for foo(Double, Double, Double) */
 /* @@? 31:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
+/* @@? 32:1 Error Semantic error ESE0127: No matching call signature for foo(Double, ...) */
 /* @@? 32:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 32:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 32:11 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
@@ -55,11 +56,12 @@ foo(,)
 /* @@? 33:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
 /* @@? 33:10 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 34:5 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 34:6 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 34:6 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 34:6 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 34:10 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 35:1 Error Semantic error ESE0127: No matching call signature for foo(Double) */
 /* @@? 35:5 Error Semantic error ESE0323: Type 'Double' is not compatible with rest parameter type 'Int' at index 1 */
-/* @@? 35:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 35:10 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 35:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 35:14 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 36:5 Error Syntax error ESY0227: Unexpected token ','. */

@@ -915,9 +915,6 @@ static bool IsValidRestArgument(ETSChecker *checker, ir::Expression *const argum
     }
 
     const auto argumentType = argument->Check(checker);
-    if (argument->HasAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST)) {
-        return true;
-    }
 
     auto targetType = checker->GetElementTypeOfArray(restParamType);
     if (substitutedSig->OwnerVar() == nullptr) {
@@ -959,6 +956,45 @@ static bool SetPreferredTypeForArrayArgument(ETSChecker *checker, ir::ArrayExpre
     return true;
 }
 
+static void ExtractArrayElementTypes(ETSChecker *checker, Type *&argumentType, Type *&targetType)
+{
+    auto isArrayType = [](Type *type) -> bool {
+        return type->IsETSArrayType() || type->IsETSResizableArrayType() || type->IsETSReadonlyArrayType();
+    };
+    while (isArrayType(argumentType) && isArrayType(targetType)) {
+        argumentType = checker->GetElementTypeOfArray(argumentType);
+        targetType = checker->GetElementTypeOfArray(targetType);
+    }
+}
+
+static bool ValidateSpreadRestArgument(ETSChecker *checker, ir::Expression *argument, Signature *substitutedSig,
+                                       TypeRelationFlag flags, size_t index)
+{
+    auto *const restArgument = argument->AsSpreadElement()->Argument();
+    Type *targetType = substitutedSig->RestVar()->TsType();
+    // backing out of check that results in a signature mismatch would be difficult
+    // so only attempt it if there is only one candidate signature
+    restArgument->SetPreferredType(targetType);
+    argument->Check(checker);
+    Type *argumentType = restArgument->TsType();
+    if (argument->HasAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT)) {
+        return true;
+    }
+
+    ExtractArrayElementTypes(checker, argumentType, targetType);
+    auto const invocationCtx = checker::InvocationContext(
+        checker->Relation(), restArgument, argumentType, targetType, argument->Start(),
+        {{diagnostic::REST_PARAM_INCOMPAT_AT, {argumentType, targetType, index + 1}}}, flags);
+    if (!invocationCtx.IsInvocable()) {
+        if (restArgument->IsArrayExpression()) {
+            checker->ModifyPreferredType(restArgument->AsArrayExpression(), nullptr);
+            argument->SetTsType(nullptr);
+        }
+        return false;
+    }
+    return true;
+}
+
 static bool ValidateSignatureRestParams(ETSChecker *checker, Signature *substitutedSig,
                                         const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
                                         bool reportError)
@@ -966,10 +1002,10 @@ static bool ValidateSignatureRestParams(ETSChecker *checker, Signature *substitu
     size_t const argumentCount = arguments.size();
     auto const commonArity = std::min(substitutedSig->ArgCount(), argumentCount);
     auto const restCount = argumentCount - commonArity;
-
     if (argumentCount == commonArity && substitutedSig->RestVar()->TsType()->IsETSTupleType()) {
         return false;
     }
+
     for (size_t index = commonArity; index < argumentCount; ++index) {
         auto &argument = arguments[index];
 
@@ -987,23 +1023,7 @@ static bool ValidateSignatureRestParams(ETSChecker *checker, Signature *substitu
             return false;
         }
 
-        auto *const restArgument = argument->AsSpreadElement()->Argument();
-        Type *targetType = substitutedSig->RestVar()->TsType();
-        // backing out of check that results in a signature mismatch would be difficult
-        // so only attempt it if there is only one candidate signature
-        restArgument->SetPreferredType(targetType);
-        argument->Check(checker);
-        auto const argumentType = restArgument->TsType();
-
-        auto const invocationCtx = checker::InvocationContext(
-            checker->Relation(), restArgument, argumentType, substitutedSig->RestVar()->TsType(), argument->Start(),
-            {{diagnostic::REST_PARAM_INCOMPAT_AT, {argumentType, substitutedSig->RestVar()->TsType(), index + 1}}},
-            flags);
-        if (!invocationCtx.IsInvocable()) {
-            if (restArgument->IsArrayExpression()) {
-                checker->ModifyPreferredType(restArgument->AsArrayExpression(), nullptr);
-                argument->SetTsType(nullptr);
-            }
+        if (!ValidateSpreadRestArgument(checker, argument, substitutedSig, flags, index)) {
             return false;
         }
     }
