@@ -27,7 +27,10 @@ TEST_F(ASTVerifierTest, PrivateAccessTestNegative1)
             public a: int = 1;
         }
         class Derived extends Base {
-            public b: int = this.a;
+            public b: int;
+            constructor() {
+                this.b = this.a;
+            }
         }
     )";
     CONTEXT(ES2PANDA_STATE_CHECKED, text)

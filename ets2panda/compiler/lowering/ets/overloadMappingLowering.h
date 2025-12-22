@@ -20,7 +20,7 @@
 
 namespace ark::es2panda::compiler {
 
-class OverloadMappingLowering : public PhaseForDeclarations {
+class OverloadMappingLowering : public PhaseForBodies {
 public:
     std::string_view Name() const override;
     bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;

@@ -15,7 +15,7 @@
 
 try {
 
-} catch (e: number /* @@ label1 */{}
+} catch (e /* @@ label1 */{}
 
-/* @@? 18:10 Error TypeError: Argument must be an instance of 'Exception' or 'Error' */
-/* @@@ label1 Error SyntaxError: Expected ')', got '{'. */
+
+/* @@@ label1 Error Syntax error ESY0230: Expected ')', got '{'. */

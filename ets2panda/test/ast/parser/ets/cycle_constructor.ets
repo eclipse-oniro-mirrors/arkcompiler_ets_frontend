@@ -29,7 +29,7 @@ class B extends A {
     }
 }
 
-/* @@? 28:9 Error TypeError: Expected 0 arguments, got 1. */
-/* @@? 28:9 Error TypeError: No matching call signature for cycle_constructor.B(Int)  */
-/* @@? 28:9 Error TypeError: No matching call signature for constructor  */
-/* @@? 28:14 Error TypeError: Using super is not allowed in constructor  */
+/* @@? 28:9 Error Semantic error ESE0124: Expected 0 arguments, got 1. */
+/* @@? 28:9 Error Semantic error ESE0127: No matching call signature for cycle_constructor.B(Int) */
+/* @@? 28:9 Error Semantic error ESE0204: No matching call signature for constructor */
+/* @@? 28:14 Error Semantic error ESE0235: Using super is not allowed in constructor */

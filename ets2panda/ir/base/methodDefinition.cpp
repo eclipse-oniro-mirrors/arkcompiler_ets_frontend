@@ -235,7 +235,8 @@ static void DumpAccessorPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dum
     if (dumper->IsDeclgen() && parent->IsTSInterfaceBody()) {
         if (m->Value() != nullptr && m->Value()->IsFunctionExpression() &&
             m->Value()->AsFunctionExpression()->Function() != nullptr &&
-            m->Value()->AsFunctionExpression()->Function()->HasBody()) {
+            m->Value()->AsFunctionExpression()->Function()->HasBody() && !m->IsGetter() && !m->IsSetter()) {
+            // Setter and Getter don't have 'default' modifier according to the language spec.
             dumper->Add("default ");
         }
     }
@@ -250,6 +251,7 @@ static void DumpPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
         }
         if (m->IsDefaultExported()) {
             dumper->Add("export default ");
+            dumper->SetDefaultExport();
         }
         if (dumper->IsDeclgen()) {
             if (global) {
@@ -287,17 +289,13 @@ bool MethodDefinition::FilterForDeclGen() const
     }
 
     ES2PANDA_ASSERT(Id() != nullptr);
-    auto name = Id()->Name().Mutf8();
-    if (name.find("%%async") != std::string::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
-        name == compiler::Signatures::INIT_METHOD) {
+    auto const name = Id()->Name().Utf8();
+    if (name.find("%%async") != std::string_view::npos || name == compiler::Signatures::INITIALIZER_BLOCK_INIT ||
+        name == compiler::Signatures::INIT_METHOD || name == compiler::Signatures::CCTOR) {
         return true;
     }
 
-    if (name.rfind('#', 0) == 0) {
-        return true;
-    }
-
-    if (name == compiler::Signatures::CCTOR) {
+    if (name.rfind('#', 0U) == 0U) {
         return true;
     }
 
@@ -318,6 +316,7 @@ static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dum
             // NOTE(zhelyapov): workaround, see #26031
             if (anno->GetBaseName()->Name() != compiler::Signatures::DEFAULT_ANNO_FOR_FUNC) {
                 anno->Dump(dumper);
+                dumper->Endl();
             }
         }
     }
@@ -341,8 +340,16 @@ static void DumpSingleOverload(const ir::MethodDefinition *m, ir::SrcDumper *dum
 
 void MethodDefinition::Dump(ir::SrcDumper *dumper) const
 {
-    if (dumper->IsDeclgen() && FilterForDeclGen()) {
-        return;
+    if (dumper->IsDeclgen()) {
+        if (FilterForDeclGen()) {
+            return;
+        }
+        if (Parent() != nullptr && (IsGetter() || IsSetter()) && IsOptionalDeclaration() &&
+            Parent()->IsTSInterfaceBody() && OriginalNode() != nullptr && OriginalNode()->IsClassProperty()) {
+            OriginalNode()->AsClassProperty()->ForceDump(dumper);
+            dumper->Endl();
+            return;
+        }
     }
 
     dumper->DumpJsdocBeforeTargetNode(this);

@@ -44,15 +44,18 @@ ohos_executable("ets2panda") {
   if (ark_standalone_build || ark_static_standalone_build) {
     configs += [
       "$ark_root/assembler:arkassembler_public_config",
-      "$ark_root/libpandafile:arkfile_public_config",
-      "$ark_root/libpandabase:arkbase_public_config",
+      "$ark_root/libarkfile:arkfile_public_config",
+      "$ark_root/libarkbase:arkbase_public_config",
       "$ark_root/bytecode_optimizer:bytecodeopt_public_config",
       "$ark_root/runtime:arkruntime_public_config",
       "$ark_root/compiler:arkcompiler_public_config",
     ]
   }
 
-  configs += [ "$ark_es2panda_root:libes2panda_public_config" ]
+  configs += [
+    "$ark_es2panda_root:libes2panda_public_config",
+    "$ark_es2panda_root:libes2panda_config",
+  ]
 
   deps = [
     "$ark_es2panda_root:libes2panda_frontend_static",
@@ -62,8 +65,8 @@ ohos_executable("ets2panda") {
   if (ark_standalone_build) {
     deps += [
       "$ark_root/bytecode_optimizer:libarktsbytecodeopt_package",
-      "$ark_root/libpandabase:libarktsbase_package",
-      "$ark_root/libpandafile:libarktsfile_package",
+      "$ark_root/libarkbase:libarktsbase_package",
+      "$ark_root/libarkfile:libarktsfile_package",
     ]
   }
 
@@ -88,7 +91,6 @@ ohos_executable("ets2panda") {
       "runtime_core:verification_headers",
     ]
   }
-
 
   libs = platform_libs
   ldflags = platform_ldflags

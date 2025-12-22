@@ -22,6 +22,7 @@ namespace ark::es2panda::ir {
 class StringLiteral;
 
 enum class ImportKinds { ALL, TYPES };
+using ExportKinds = ImportKinds;
 
 class ImportDeclaration : public Statement {
 public:
@@ -48,7 +49,7 @@ public:
           importKinds_(importKinds)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

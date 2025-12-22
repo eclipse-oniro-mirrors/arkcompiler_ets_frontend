@@ -18,14 +18,14 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "util.h"
 #include "generated/signatures.h"
 #include "parser/program/program.h"
 #include "public/es2panda_lib.h"
 #include "ir/ets/etsImportDeclaration.h"
 #include "ir/statements/expressionStatement.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 // NOLINTBEGIN
 

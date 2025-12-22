@@ -23,4 +23,6 @@ switch (a/* @@ label */] {
         console.log("bbb")
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ')'.  */
+
+/* @@@ label Error Syntax error ESY0230: Expected ')', got ']'. */
+/* @@@ label Error Syntax error ESY0230: Expected '{', got ']'. */

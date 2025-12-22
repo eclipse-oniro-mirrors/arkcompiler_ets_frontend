@@ -15,9 +15,10 @@
 
 import * \u0061s something from "./module"
 
-/* @@? 16:10 Error SyntaxError: Escape sequences are not allowed in keyword. */
-/* @@? 16:10 Error SyntaxError: Escape sequences are not allowed in 'as' keyword.*/
-/* @@? 16:10 Error SyntaxError: Expected 'as', got 'identification literal'. */
-/* @@? 16:18 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 16:28 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 16:33 Error SyntaxError: Unexpected token './module'. */
+
+/* @@? 16:10 Error Syntax error ESY0271: Escape sequences are not allowed in keyword. */
+/* @@? 16:10 Error Syntax error ESY0108: Escape sequences are not allowed in 'as' keyword. */
+/* @@? 16:10 Error Syntax error ESY0230: Expected 'as', got 'identification literal'. */
+/* @@? 16:18 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 16:28 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 16:33 Error Syntax error ESY0227: Unexpected token './module'. */

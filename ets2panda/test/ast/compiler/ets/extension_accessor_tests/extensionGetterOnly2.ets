@@ -28,12 +28,13 @@ set field(this: B, n: int) {
 get field(this: A): int {
     return this.field_;
 }
-new A()./* @@ label1 */field = 1;
-new A()./* @@ label2 */field += 1;
-new A()./* @@ label3 */field++;
-++new A()./* @@ label4 */field;
+new A().field = 1;
+new A().field += 1;
+new A().field++;
+++new A().field;
 
-/* @@@ label1 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label2 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label3 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@@ label4 Error TypeError: Cannot assign to this property because it is readonly. */
+
+/* @@? 31:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 32:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 33:9 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 34:11 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

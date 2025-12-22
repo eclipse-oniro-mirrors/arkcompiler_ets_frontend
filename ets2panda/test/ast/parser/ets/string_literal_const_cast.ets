@@ -15,8 +15,9 @@
 
 let x = "literal str" as const
 
-/* @@? 16:26 Error SyntaxError: 'as const' assertion is not supported. */
-/* @@? 16:26 Error SyntaxError: Unexpected token 'const'. */
-/* @@? 23:1 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 23:1 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? 23:1 Error TypeError: Missing initializer in const declaration */
+
+/* @@? 16:26 Error Syntax error ESY0311: 'as const' assertion is not supported. */
+/* @@? 16:26 Error Syntax error ESY0227: Unexpected token 'const'. */
+/* @@? 23:87 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 23:87 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 23:87 Error Semantic error ESE0363: Missing initializer in const declaration */

@@ -24,5 +24,5 @@ function main(): int {
     return 0;
 }
 
-/* @@? 23:19 Error TypeError: Invalid type reference. */
-/* @@? 23:35 Error TypeError: 'fun' type does not exist. */
+
+/* @@@ label Error Semantic error ESE0070: 'fun' type does not exist. */

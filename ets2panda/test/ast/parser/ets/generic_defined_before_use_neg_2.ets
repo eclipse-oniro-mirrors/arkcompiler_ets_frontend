@@ -13,4 +13,5 @@
  * limitations under the License.
  */
 function foo<T, U=/* @@ label */F, F=T>(){}
-/* @@@ label Error TypeError: Type Parameter F should be defined before use.  */
+
+/* @@@ label Error Semantic error ESE0183: Type Parameter F should be defined before use. */

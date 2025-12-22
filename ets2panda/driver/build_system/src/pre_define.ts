@@ -14,8 +14,9 @@
  */
 
 export const ARKTSCONFIG_JSON_FILE: string = 'arktsconfig.json';
-export const MERGED_CYCLE_FILE: string = 'cycle.abc';
+export const MERGED_CLUSTER_FILE: string = 'cluster.abc';
 export const MERGED_ABC_FILE: string = 'modules_static.abc';
+export const MERGED_INTERMEDIATE_FILE: string = 'modules_intermediate.abc';
 export const LINKER_INPUT_FILE: string = 'fileInfo.txt';
 export const DEP_ANALYZER_INPUT_FILE: string = 'dependencyFileInfo.txt';
 export const DEP_ANALYZER_OUTPUT_FILE: string = 'dependency.json';
@@ -29,7 +30,7 @@ export const DECL_TS_SUFFIX: string = '.d.ts';
 export const ETS_SUFFIX: string = '.ets';
 export const TS_SUFFIX: string = '.ts';
 export const ABC_SUFFIX: string = '.abc';
-export const DECL_FILE_MAP_NAME: string = 'decl_file_map.json';
+export const ETSCACHE_SUFFIX: string = '.etscache';
 
 export enum LANGUAGE_VERSION {
     ARKTS_1_2 = '1.2',
@@ -41,7 +42,7 @@ export const PANDA_SDK_PATH_FROM_SDK: string = './build-tools/ets2panda';
 export const SYSTEM_SDK_PATH_FROM_SDK: string = './';
 export const KIT_CONFIGS_PATH_FROM_SDK: string = '../dynamic/build-tools/ets-loader/kit_configs';
 
-export const DEFAULT_WORKER_NUMS: number = 6;
+export const DEFAULT_WORKER_NUMS: number = 3;
 
 export const ETS_1_1 = 'dynamic';
 export const ETS_1_1_INTEROP = 'dynamic-interop';
@@ -68,3 +69,13 @@ export type Record<K extends keyof any, T> = {
 export const KOALA_WRAPPER_PATH_FROM_SDK: string = process.env.USE_KOALA_LIBARKTS ? './build-tools/ui2abc/libarkts/lib/libarkts.js' : './build-tools/koala-wrapper/build/lib/es2panda'
 export const UI_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/ui-plugin/lib/entry.js'
 export const MEMO_PLUGIN_PATH_FROM_SDK: string = './build-tools/ui2abc/memo-plugin/lib/entry.js'
+
+
+// Build control constants
+export const ENABLE_CLUSTERS: boolean = true;
+// Optimal number for each application should be selected manually right now
+export const CLUSTER_FILES_TRESHOLD: number = 460;
+// Declaration cache is not fixed right now
+export const ENABLE_DECL_CACHE: boolean = false;
+// Synchronize execution on declaration generation.
+export const ENABLE_DECLARATION_BARRIER: boolean = false;

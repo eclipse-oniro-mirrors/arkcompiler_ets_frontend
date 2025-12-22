@@ -22,4 +22,5 @@ function main()
     a++
 }
 
-/* @@? 22:5 Error TypeError: Function name 'a' used in the wrong context  */
+
+/* @@? 22:5 Error Semantic error ESE0144: Function name 'a' used in the wrong context */

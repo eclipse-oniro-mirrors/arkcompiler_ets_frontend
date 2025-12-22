@@ -1,8 +1,8 @@
 ### ArkTS1.2实例化js对象
 
-**规则：** arkts-interop-js2s-create-js-instance
+**规则：** `arkts-interop-js2s-create-js-instance`
 
-**级别：** error
+ArkTS1.2使用ESValue接口实例化js对象。
 
 **ArkTS1.1**
 ```typescript

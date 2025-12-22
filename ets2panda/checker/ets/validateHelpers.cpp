@@ -18,7 +18,7 @@
 #include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
-void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, const lexer::SourcePosition &pos)
+void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType *obj, ir::Expression const *expr)
 {
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
         return;
@@ -28,8 +28,9 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
     }
 
     if (var->HasFlag(varbinder::VariableFlags::PRIVATE) || var->HasFlag(varbinder::VariableFlags::PROTECTED)) {
-        if ((Context().ContainingClass() == obj ||
-             Context().ContainingClass()->GetOriginalBaseType() == obj->GetOriginalBaseType()) &&
+        if ((Relation()->IsIdenticalTo(Context().ContainingClass(), obj) ||
+             Relation()->IsIdenticalTo(Context().ContainingClass()->GetOriginalBaseType(),
+                                       obj->GetOriginalBaseType())) &&
             obj->IsPropertyInherited(var)) {
             return;
         }
@@ -42,12 +43,12 @@ void ETSChecker::ValidatePropertyAccess(varbinder::Variable *var, ETSObjectType 
         auto *currentOutermost = Context().ContainingClass()->OutermostClass();
         auto *objOutermost = obj->OutermostClass();
 
-        if (currentOutermost != nullptr && objOutermost != nullptr && currentOutermost == objOutermost &&
-            obj->IsPropertyInherited(var)) {
+        if (currentOutermost != nullptr && objOutermost != nullptr &&
+            Relation()->IsIdenticalTo(currentOutermost, objOutermost) && obj->IsPropertyInherited(var)) {
             return;
         }
 
-        std::ignore = TypeError(var, diagnostic::PROP_INVISIBLE, {var->Name()}, pos);
+        std::ignore = TypeError(var, diagnostic::PROP_INVISIBLE, {var->Name()}, expr->Start());
     }
 }
 
@@ -82,10 +83,30 @@ void ETSChecker::ValidateCallExpressionIdentifier(ir::Identifier *const ident, T
         return;
     }
 
-    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE_OR_ENUM) &&
-        callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
-        std::ignore = TypeError(ident->Variable(), diagnostic::CLASS_OR_IFACE_OR_ENUM_AS_OBJ, {ident->ToString()},
-                                ident->Start());
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS_OR_INTERFACE)) {
+        if (callExpr->Callee()->Variable() != nullptr && callExpr->Callee()->Variable()->Name().Is("with")) {
+            LogError(diagnostic::ERROR_ARKTS_NO_WITH, callExpr->Start());
+        }
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::CLASS) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::CLASS_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::INTERFACE) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::INTERFACE_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::ENUM_LITERAL) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::ENUM_AS_OBJ, {ident->ToString()}, ident->Start());
+    }
+
+    if (ident->Variable()->HasFlag(varbinder::VariableFlags::NAMESPACE) && callExpr->Callee() != ident &&
+        callExpr->Callee() != ident->Parent()) {
+        std::ignore = TypeError(ident->Variable(), diagnostic::NAMESPACE_AS_OBJ, {ident->ToString()}, ident->Start());
     }
 
     if (callExpr->Callee() != ident && callExpr->Callee() != ident->Parent()) {
@@ -101,7 +122,7 @@ void ETSChecker::ValidateCallExpressionIdentifier(ir::Identifier *const ident, T
         ident->Variable()->Declaration()->Node()->IsImportNamespaceSpecifier()) {
         std::ignore = TypeError(ident->Variable(), diagnostic::NAMESPACE_CALL, {ident->ToString()}, ident->Start());
     }
-    if (type->IsETSFunctionType()) {
+    if (type->IsETSFunctionType() || type->IsETSRelaxedAnyType()) {
         return;
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

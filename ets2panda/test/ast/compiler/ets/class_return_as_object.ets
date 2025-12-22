@@ -22,4 +22,4 @@ function getExampleClass() {
 const exampleClassReference = getExampleClass;
 exampleClassReference().toString();
 
-/* @@? 19:12 Error SyntaxError: Class cannot be used as object.  */
+/* @@? 19:12 Error Syntax error ESY0318: Class cannot be used as object. */

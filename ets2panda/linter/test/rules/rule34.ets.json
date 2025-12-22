@@ -23,16 +23,6 @@
             "suggest": "",
             "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
             "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 9,
-            "endLine": 26,
-            "endColumn": 16,
-            "problem": "GenericCallNoTypeArgs",
-            "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
         }
     ]
 }

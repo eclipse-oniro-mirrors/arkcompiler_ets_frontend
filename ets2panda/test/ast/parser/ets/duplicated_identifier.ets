@@ -20,4 +20,5 @@ export class testGC{
     }
 }
 
-/* @@? 16:23 Error TypeError: Identifier 'testGC' has already been declared. */
+
+/* @@? 16:23 Error Semantic error ESE0369: Identifier 'testGC' has already been declared. */

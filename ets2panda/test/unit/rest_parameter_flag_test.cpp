@@ -22,10 +22,6 @@
 #include "assembler/assembly-program.h"
 #include "assembly-function.h"
 #include "es2panda.h"
-#include "generated/signatures.h"
-#include "mem/mem.h"
-#include "macros.h"
-#include "mem/pool_manager.h"
 #include "test/utils/asm_test.h"
 
 namespace ark::pandasm {
@@ -338,7 +334,7 @@ TEST_F(RestParameterTest, abstract_function_with_rest_parameter_1)
 TEST_F(RestParameterTest, external_function_with_rest_parameter_0)
 {
     SetCurrentProgram("");
-    using namespace ::testing;
+    using ::testing::Contains, ::testing::Key, ::testing::Eq;
     EXPECT_THAT(program_->functionInstanceTable,
                 Contains(Key(Eq("std.core.Object[].<ctor>:std.core.Object[];i32;void;"))));
 }
@@ -348,7 +344,7 @@ TEST_F(RestParameterTest, external_function_with_rest_parameter_1)
     SetCurrentProgram(R"(
        let v = Math.max(0.0, 1.0, 2.0) // Ensure the func is actually called and reference processed by unboxLowering.
     )");
-    CheckRestParameterFlag("std.core.Math.max:escompat.Array;f64;", true);
+    CheckRestParameterFlag("std.core.Math.max:std.core.Array;f64;", true);
 }
 
 }  // namespace ark::es2panda::compiler::test

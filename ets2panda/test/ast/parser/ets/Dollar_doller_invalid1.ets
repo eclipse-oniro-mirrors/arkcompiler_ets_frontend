@@ -20,4 +20,5 @@ function main(){
  let b = $$a;
 }
 
-/* @@? 20:10 Error TypeError: Unresolved reference $$a */
+
+/* @@? 20:10 Error Semantic error ESE0143: Unresolved reference $$a */

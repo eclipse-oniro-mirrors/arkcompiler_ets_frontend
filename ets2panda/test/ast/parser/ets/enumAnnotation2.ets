@@ -13,7 +13,11 @@
  * limitations under the License.
  */
  
-enum Fraction: double { 
-    A = 1.2,
-    B = 3.1
+enum Test1: int {
+    A = 0x32
 }
+
+enum Test2: short {
+    A = 0x01
+}
+

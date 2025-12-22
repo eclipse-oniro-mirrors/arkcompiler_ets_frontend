@@ -26,7 +26,7 @@ class A implements I {
 
 class B extends A {
     constructor() {
-        this./* @@ label */a = true;
+        this.a = true;
     }
 }
 
@@ -35,4 +35,5 @@ function main() {
     arktest.assertEQ(a.a, false);
 }
 
-/* @@@ label Error TypeError: Cannot assign to this property because it is readonly.  */
+
+/* @@? 29:14 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */

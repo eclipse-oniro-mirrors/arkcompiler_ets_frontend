@@ -19,29 +19,9 @@
             "column": 10,
             "endLine": 15,
             "endColumn": 21,
-            "problem": "LimitedStdLibNoImportConcurrency",
+            "problem": "NoNeedStdLibSendableContainer",
             "suggest": "",
-            "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 16,
-            "endLine": 17,
-            "endColumn": 21,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 16,
-            "endLine": 18,
-            "endColumn": 21,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -52,26 +32,6 @@
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
             "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 40,
-            "endLine": 21,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 40,
-            "endLine": 22,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -92,16 +52,6 @@
             "problem": "BuiltinNarrowTypes",
             "suggest": "",
             "rule": "Using narrowing of types is not allowed in this API (arkts-builtin-narrow-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 26,
-            "column": 15,
-            "endLine": 26,
-            "endColumn": 20,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -172,16 +122,6 @@
             "problem": "BuiltinNewCtor",
             "suggest": "",
             "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 1,
-            "endLine": 41,
-            "endColumn": 20,
-            "problem": "InteropCallReflect",
-            "suggest": "",
-            "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
             "severity": "ERROR"
         },
         {
@@ -295,6 +235,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 64,
+            "column": 17,
+            "endLine": 64,
+            "endColumn": 34,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
             "line": 65,
             "column": 5,
             "endLine": 65,
@@ -315,6 +265,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 65,
+            "column": 18,
+            "endLine": 65,
+            "endColumn": 35,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
             "line": 66,
             "column": 5,
             "endLine": 66,
@@ -332,6 +292,16 @@
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 66,
+            "column": 18,
+            "endLine": 66,
+            "endColumn": 35,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -346,12 +316,42 @@
         },
         {
             "line": 68,
+            "column": 11,
+            "endLine": 68,
+            "endColumn": 28,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
             "column": 43,
             "endLine": 68,
             "endColumn": 60,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 43,
+            "endLine": 68,
+            "endColumn": 60,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 23,
+            "endLine": 69,
+            "endColumn": 40,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {

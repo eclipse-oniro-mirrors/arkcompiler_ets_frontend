@@ -18,6 +18,7 @@ function main(){
               Test escape characters` | "X";
 }
 
-/* @@? 17:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 17:15 Error SyntaxError: Invalid character escape sequence. */
-/* @@? 17:15 Error SyntaxError: Invalid Unicode escape. */
+
+/* @@? 17:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 17:15 Error Syntax error ESY0258: Invalid character escape sequence. */
+/* @@? 17:15 Error Syntax error ESY0091: Invalid Unicode escape. */

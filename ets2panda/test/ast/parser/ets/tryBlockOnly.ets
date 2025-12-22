@@ -19,4 +19,5 @@ function main() : int {
     return 0;
 }
 
-/* @@@ label Error SyntaxError: A try statement should contain either finally clause or at least one catch clause.  */
+
+/* @@@ label Error Syntax error ESY0039: A try statement should contain either finally clause or at least one catch clause. */

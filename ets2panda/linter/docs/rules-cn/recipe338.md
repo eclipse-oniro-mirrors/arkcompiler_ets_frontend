@@ -1,8 +1,8 @@
 ### ArkTS1.2对js数据进行相等判断
 
-**规则：** arkts-interop-js2s-equality-judgment
+**规则：** `arkts-interop-js2s-equality-judgment`
 
-**级别：** error
+ArkTS1.2对js数据进行相等判断时，使用ESValue接口判断。
 
 **ArkTS1.1**
 ```typescript

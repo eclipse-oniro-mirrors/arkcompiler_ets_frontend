@@ -114,16 +114,13 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
         } else if (caseType->IsETSEnumType() || comparedExprType->IsETSEnumType()) {
             validCaseType = checker->Relation()->IsIdenticalTo(caseType, comparedExprType);
         } else {
-            const checker::AssignmentContext ctx {
-                checker->Relation(),
-                node,
-                caseType,
-                unboxedDiscType,
-                test_->Start(),
-                std::nullopt,
-                (comparedExprType->IsETSObjectType() ? checker::TypeRelationFlag::NO_WIDENING
-                                                     : checker::TypeRelationFlag::NO_UNBOXING) |
-                    checker::TypeRelationFlag::NO_BOXING | checker::TypeRelationFlag::NO_THROW};
+            const checker::AssignmentContext ctx {checker->Relation(),
+                                                  node,
+                                                  caseType,
+                                                  unboxedDiscType,
+                                                  test_->Start(),
+                                                  std::nullopt,
+                                                  checker::TypeRelationFlag::NO_THROW};
             if (!ctx.IsAssignable()) {
                 checker->LogError(diagnostic::SWITCH_CASE_TYPE_INCOMPARABLE, {caseType, comparedExprType},
                                   test_->Start());

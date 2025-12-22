@@ -20,7 +20,7 @@
 #include "public/es2panda_lib.h"
 
 #include "assembler/assembly-program.h"
-#include "mem/arena_allocator.h"
+#include "libarkbase/mem/arena_allocator.h"
 
 #include "compiler/core/compileQueue.h"
 #include "parser/ETSparser.h"
@@ -37,14 +37,9 @@ void SetPhaseManager(PhaseManager *phaseManager);
 PhaseManager *GetPhaseManager();
 }  // namespace ark::es2panda::compiler
 
-namespace ark::es2panda::public_lib {
+class DepAnalyzer;
 
-enum class CompilingState : unsigned int {
-    NONE_COMPILING = 0,
-    SINGLE_COMPILING = 1,
-    MULTI_COMPILING_INIT = 2,
-    MULTI_COMPILING_FOLLOW = 3,
-};
+namespace ark::es2panda::public_lib {
 
 struct ConfigImpl {
     const util::Options *options = nullptr;
@@ -58,97 +53,12 @@ using ComputedAbstracts =
     ArenaUnorderedMap<checker::ETSObjectType *,
                       std::pair<ArenaVector<checker::ETSFunctionType *>, ArenaUnorderedSet<checker::ETSObjectType *>>>;
 
-class TransitionMemory {
-public:
-    explicit TransitionMemory(ThreadSafeArenaAllocator *allocator)
-        : permanentAllocator_(allocator), compiledPrograms_(allocator->Adapter())
-    {
-        compiledPrograms_ = {};
-    }
-
-    NO_COPY_SEMANTIC(TransitionMemory);
-    DEFAULT_MOVE_SEMANTIC(TransitionMemory);
-
-    ~TransitionMemory() = default;
-
-    ThreadSafeArenaAllocator *PermanentAllocator() const
-    {
-        return permanentAllocator_.get();
-    }
-
-    const varbinder::VarBinder *VarBinder() const
-    {
-        return varbinder_;
-    }
-
-    varbinder::VarBinder *VarBinder()
-    {
-        return varbinder_;
-    }
-
-    void SetVarBinder(varbinder::VarBinder *varbinder)
-    {
-        varbinder_ = varbinder;
-    }
-
-    const checker::GlobalTypesHolder *GlobalTypes() const
-    {
-        return globalTypes_;
-    }
-
-    checker::GlobalTypesHolder *GlobalTypes()
-    {
-        return globalTypes_;
-    }
-
-    void SetGlobalTypes(checker::GlobalTypesHolder *globalTypes)
-    {
-        globalTypes_ = globalTypes;
-    }
-
-    void AddCompiledProgram(parser::Program *program)
-    {
-        compiledPrograms_.push_back(program);
-    }
-
-    ArenaVector<parser::Program *> &CompiledSources()
-    {
-        return compiledPrograms_;
-    }
-
-    const ArenaVector<parser::Program *> &CompiledPrograms() const
-    {
-        return compiledPrograms_;
-    }
-
-    const ComputedAbstracts *CachedComputedAbstracts() const
-    {
-        return cachedComputedAbstracts_;
-    }
-
-    ComputedAbstracts *CachedComputedAbstracts()
-    {
-        return cachedComputedAbstracts_;
-    }
-
-    void SetCachechedComputedAbstracts(ComputedAbstracts *cachedComputedAbstracts)
-    {
-        cachedComputedAbstracts_ = cachedComputedAbstracts;
-    }
-
-private:
-    std::unique_ptr<ThreadSafeArenaAllocator> permanentAllocator_;
-    ArenaVector<parser::Program *> compiledPrograms_;
-    varbinder::VarBinder *varbinder_ {nullptr};
-    checker::GlobalTypesHolder *globalTypes_ {nullptr};
-    ComputedAbstracts *cachedComputedAbstracts_ {nullptr};
-};
-
 struct GlobalContext {
     std::unordered_map<std::string, ArenaAllocator *> externalProgramAllocators;
     std::unordered_map<std::string, ExternalSource *> cachedExternalPrograms;
     ThreadSafeArenaAllocator *stdLibAllocator = nullptr;
     ExternalSource *stdLibAstCache = nullptr;
+    std::unordered_set<varbinder::ETSBinder *> allocatedVarbinders;
 };
 
 struct Context {
@@ -221,17 +131,17 @@ struct Context {
     parser::ParserImpl *parser = nullptr;
     compiler::Emitter *emitter = nullptr;
     pandasm::Program *program = nullptr;
+    DepAnalyzer *depAnalyzer = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
 
     es2panda_ContextState state = ES2PANDA_STATE_NEW;
     std::string errorMessage;
     lexer::SourcePosition errorPos;
 
-    CompilingState compilingState {CompilingState::NONE_COMPILING};
     ExternalSources externalSources;
-    TransitionMemory *transitionMemory {nullptr};
     bool isExternal = false;
     bool compiledByCapi = false;
+    bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
     std::map<util::StringView, parser::Program *> dupPrograms {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)

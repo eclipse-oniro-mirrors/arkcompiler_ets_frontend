@@ -19,4 +19,5 @@
     }
 }
 
-/* @@@ label1 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
+
+/* @@@ label1 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */

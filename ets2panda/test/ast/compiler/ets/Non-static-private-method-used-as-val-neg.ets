@@ -21,9 +21,9 @@ class C {
    private f(n: int) {}
 
    test() {
-       apply(this./* @@ label */f)
+       apply(this.f)
    }
 }
 
-/* @@? 24:8 Error TypeError: No matching call signature for apply(...) */
-/* @@? 24:33 Error TypeError: Private method is used as value */
+
+/* @@? 24:19 Error Semantic error ESE0306: Private method is used as value */

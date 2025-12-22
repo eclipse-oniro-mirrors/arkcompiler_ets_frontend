@@ -23,5 +23,5 @@ class extendA extends A{
 
 }
 
-/* @@? 19:22 Error TypeError: A is not abstract and does not implement getter for X property in AA */
-/* @@? 22:24 Error TypeError: extendA is not abstract and does not implement getter for X property in AA */
+/* @@? 19:22 Error Semantic error ESE0188: A is not abstract and does not implement getter for X property in AA */
+/* @@? 22:24 Error Semantic error ESE0188: extendA is not abstract and does not implement getter for X property in AA */

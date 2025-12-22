@@ -26,15 +26,16 @@ funct\u{0069}on
 
 `string ${expr
 
-/* @@? 16:7 Error SyntaxError: Invalid RegExp flag */
-/* @@? 16:7 Error SyntaxError: Unexpected token: 'identification literal'. */
-/* @@? 18:8 Error SyntaxError: Invalid RegExp flag */
-/* @@? 20:5 Error SyntaxError: Unterminated RegExp */
-/* @@? 20:5 Error SyntaxError: Expected an identifier */
-/* @@? 20:5 Error SyntaxError: Unexpected token: 'identification literal'. */
-/* @@? 22:1 Error SyntaxError: Unexpected strict mode reserved keyword */
-/* @@? 24:1 Error SyntaxError: Escape sequences are not allowed in keywords */
-/* @@? 40:66 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@? 40:66 Error SyntaxError: Unterminated string */
-/* @@? 40:66 Error SyntaxError: Unexpected token, expected '${' or '`' */
-/* @@? 40:66 Error SyntaxError: Unexpected token, expected '`' */
+
+/* @@? 16:2 Error Syntax error ESY0246: Invalid RegExp flag. */
+/* @@? 16:7 Error Syntax error ESY0227: Unexpected token 'ar'. */
+/* @@? 18:2 Error Syntax error ESY0246: Invalid RegExp flag. */
+/* @@? 20:2 Error Syntax error ESY0260: Unterminated RegExp. */
+/* @@? 20:5 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 20:5 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 22:1 Error Syntax error ESY0264: Unexpected strict mode reserved keyword. */
+/* @@? 24:1 Error Syntax error ESY0271: Escape sequences are not allowed in keyword. */
+/* @@? 40:83 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 40:83 Error Syntax error ESY0253: Unterminated string. */
+/* @@? 40:83 Error Syntax error ESY0259: Unexpected token, expected '${' or '`' */
+/* @@? 40:83 Error Syntax error ESY0228: Unexpected token, expected '`'. */

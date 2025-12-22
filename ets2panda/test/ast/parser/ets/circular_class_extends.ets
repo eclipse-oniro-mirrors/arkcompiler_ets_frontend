@@ -24,4 +24,5 @@ export { m };
 // If you want to re-export the class from the namespace:
 export class c extends m.c {}
 
-/* @@? 25:28 Error TypeError: Class's super type is itself */
+
+/* @@? 25:28 Error Semantic error ESE0380: Class's super type is itself */

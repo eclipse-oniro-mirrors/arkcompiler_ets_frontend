@@ -17,4 +17,5 @@ class A {}
 
 interface BInterface extends /* @@ label */A {}
 
-/* @@@ label Error TypeError: Interfaces cannot extend classes, only other interfaces. */
+
+/* @@@ label Error Semantic error ESE0378: Interfaces cannot extend classes, only other interfaces. */

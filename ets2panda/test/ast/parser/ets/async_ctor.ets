@@ -17,4 +17,5 @@ class Test {
     async /* @@ label */constructor() {}
 }
 
-/* @@@ label Error SyntaxError: The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers. */
+
+/* @@@ label Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers. */

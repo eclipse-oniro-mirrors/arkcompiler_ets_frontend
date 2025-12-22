@@ -108,7 +108,6 @@ public:
     [[nodiscard]] ArrayExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     [[nodiscard]] bool ConvertibleToArrayPattern();
-    [[nodiscard]] ValidationInfo ValidateExpression();
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -125,8 +124,9 @@ public:
     {
         v->Accept(this);
     }
-    static std::optional<checker::Type *> ExtractPossiblePreferredType(checker::Type *type);
 
+    void SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
+                                     checker::TypeRelationFlag flags);
     void SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
                                           checker::TypeRelationFlag flags);
 

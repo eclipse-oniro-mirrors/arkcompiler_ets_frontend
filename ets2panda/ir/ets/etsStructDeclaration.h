@@ -37,7 +37,7 @@ public:
         : ClassDeclaration(AstNodeType::STRUCT_DECLARATION, def, allocator)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }

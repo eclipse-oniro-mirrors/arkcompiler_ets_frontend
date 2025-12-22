@@ -32,7 +32,7 @@ public:
         : TypeNode(AstNodeType::ETS_TYPE_REFERENCE, allocator), part_(part)
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -61,6 +61,7 @@ public:
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
     checker::Type *GetType([[maybe_unused]] checker::ETSChecker *checker) override;
+    checker::Type *HandleTypeRefAnnotations(checker::ETSChecker *checker, checker::Type *originalType);
 
     void Accept(ASTVisitorT *v) override
     {

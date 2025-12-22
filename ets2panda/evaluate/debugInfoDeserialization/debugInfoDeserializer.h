@@ -16,9 +16,9 @@
 #ifndef ES2PANDA_EVALUATE_DEBUG_INFO_DESERIALIZER_H
 #define ES2PANDA_EVALUATE_DEBUG_INFO_DESERIALIZER_H
 
-#include "utils/arena_containers.h"
-#include "libpandafile/debug_info_extractor.h"
-#include "libpandafile/file.h"
+#include "libarkbase/utils/arena_containers.h"
+#include "libarkfile/debug_info_extractor.h"
+#include "libarkfile/file.h"
 
 namespace ark::es2panda::varbinder {
 class Variable;
@@ -83,7 +83,7 @@ private:
      * @returns declaration name of the first already created class in chain,
      * empty string if algorithm has reached BUILTIN_OBJECT.
      */
-    util::StringView CollectChainInfo(ArenaVector<ChainEntryInfo> &chainEntryList, util::StringView abcSuperName,
+    util::StringView CollectChainInfo(std::vector<ChainEntryInfo> &chainEntryList, util::StringView abcSuperName,
                                       FileDebugInfo *debugInfo);
 
     varbinder::Variable *CreateLocalVarDecl(ir::Identifier *ident, RegisterNumber regNumber,

@@ -22,5 +22,5 @@ class A<T>{
 
 new A</* @@ label */MyAnno>()
 
-/* @@? 23:5 Error TypeError: Invalid type reference. */
-/* @@? 23:21 Error TypeError: Annotations cannot be used as a type. */
+
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */

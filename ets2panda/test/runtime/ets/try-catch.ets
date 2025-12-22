@@ -13,56 +13,54 @@
  * limitations under the License.
  */
 
-class TestException extends Exception {}
+class TestError extends Error {}
 
 let catchCode = 0;
 
 function main(): void {
   try {
     throw new NullPointerError();
-  } catch (e: NullPointerError) {
-    catchCode = 1;
-  } catch (e: Error) {
-    arktest.assertTrue(false)
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof NullPointerError) {
+      catchCode = 1;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 1)
 
   try {
     throw new NullPointerError();
-  } catch (e: Error) {
-    catchCode = 2;
-  } catch (e: NullPointerError) {
-    arktest.assertTrue(false)
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof Error) {
+      catchCode = 2;
+    } else if (e instanceof NullPointerError) {
+      arktest.assertTrue(false)
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 2)
 
   try {
-    throw new TestException();
-  } catch(e: TestException) {
-    catchCode = 3;
-  } catch (e: Exception) {
-    arktest.assertTrue(false)
-  } catch (e) {
-    arktest.assertTrue(false)
+    throw new TestError();
+  } catch(e) {
+    if (e instanceof TestError) {
+      catchCode = 3;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 3)
 
   try {
-    throw new TestException();
-  } catch (e: Exception) {
-    catchCode = 4;
-  } catch (e: TestException) {
-    arktest.assertTrue(false)
+    throw new TestError();
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof Error) {
+      catchCode = 4;
+    } else {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 4)
 }

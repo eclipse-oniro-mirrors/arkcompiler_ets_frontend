@@ -18,4 +18,5 @@ export namespace MergeSpace {
     export function foo() { return 42; }  // Error: Conflicting 'foo()' definitions
 }
 
-/* @@? src01.ets:19:11 Error TypeError: Function foo is already declared.  */
+
+/* @@? src01.ets:19:11 Error Semantic error ESE0130: Function foo is already declared. */

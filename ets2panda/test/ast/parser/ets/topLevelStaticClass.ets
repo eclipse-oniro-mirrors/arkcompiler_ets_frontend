@@ -17,4 +17,5 @@
 
 }
 
-/* @@@ label Error SyntaxError: Unexpected token 'static'.  */
+
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'static'. */

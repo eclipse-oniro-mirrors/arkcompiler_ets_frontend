@@ -2489,3 +2489,6 @@
     }
   }
 }
+[await_keyword.ets:30:36] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
+[await_keyword.ets:35:36] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
+[await_keyword.ets:39:32] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.

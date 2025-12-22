@@ -35,7 +35,8 @@ let s: String = "abc";
 // see 3.2.2 Array types
 let a: int[] = new int[5];
 
-/* @@? 23:25 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
-/* @@@ label Error TypeError: Variable 'non_prim_b' has already been declared. */
-/* @@? 27:31 Error TypeError: Cannot find type 'Bool'. */
-/* @@? 27:38 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */
+
+/* @@? 23:25 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
+/* @@@ label Error Semantic error ESE0351: Variable 'non_prim_b' has already been declared. */
+/* @@? 27:31 Error Semantic error ESE0371: Cannot find type 'Bool'. */
+/* @@? 27:38 Error Semantic error ESE0318: Type 'Boolean' cannot be assigned to type 'Byte' */

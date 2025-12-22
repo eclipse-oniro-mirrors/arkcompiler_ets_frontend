@@ -21,7 +21,7 @@ class A {
 }
 
 namespace NS {
-   export native function foo(x: number): void;
+    export native function foo(x: number): void;
     export function foo(x: string) {
         return "invoke2"
     }

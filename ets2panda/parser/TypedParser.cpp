@@ -661,7 +661,7 @@ ir::TSEnumDeclaration *TypedParser::ParseEnumMembers(ir::Identifier *key, const 
     lexer::SourcePosition endLoc;
     ParseList(
         lexer::TokenType::PUNCTUATOR_RIGHT_BRACE, lexer::NextTokenFlags::KEYWORD_TO_IDENT,
-        [this, &members]() {
+        [this, &members](bool &) {
             ir::Expression *memberKey = nullptr;
 
             if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
@@ -692,7 +692,7 @@ ir::TSEnumDeclaration *TypedParser::ParseEnumMembers(ir::Identifier *key, const 
             members.push_back(member);
             return true;
         },
-        &endLoc, true);
+        &endLoc, ParseListOptions::ALLOW_TRAILING_SEP);
 
     auto *enumDeclaration =
         AllocNode<ir::TSEnumDeclaration>(Allocator(), key, std::move(members),
@@ -1242,6 +1242,7 @@ ir::Expression *TypedParser::ParseLiteralIndent(ir::Expression *typeName, Expres
 ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, ExpressionParseFlags flags)
 {
     lexer::SourcePosition startLoc = typeName->Start();
+    lexer::SourcePosition endLoc = typeName->End();
 
     do {
         Lexer()->NextToken();  // eat '.'
@@ -1254,7 +1255,12 @@ ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, E
         } else if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_FORMAT) {
             propName = ParseIdentifierFormatPlaceholder(std::nullopt);
         } else if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_IDENT) {
-            return ParseLiteralIndent(typeName, flags, startLoc);
+            if ((flags & ExpressionParseFlags::POTENTIAL_CLASS_LITERAL) != 0 &&
+                Lexer()->GetToken().Type() == lexer::TokenType::KEYW_CLASS) {
+                return ParseLiteralIndent(typeName, flags, startLoc);
+            }
+            LogError(diagnostic::ID_EXPECTED);
+            propName = AllocBrokenExpression(Lexer()->GetToken().Loc());
         } else {
             propName = AllocNode<ir::Identifier>(Lexer()->GetToken().Ident(), Allocator());
         }
@@ -1266,14 +1272,15 @@ ir::Expression *TypedParser::ParseQualifiedReference(ir::Expression *typeName, E
 
         typeName = AllocNode<ir::TSQualifiedName>(typeName, propName, Allocator());
         ES2PANDA_ASSERT(typeName != nullptr);
-        typeName->SetRange({typeName->AsTSQualifiedName()->Left()->Start(), Lexer()->GetToken().End()});
+        endLoc = propName->End();
+        typeName->SetRange({typeName->AsTSQualifiedName()->Left()->Start(), endLoc});
 
         if (Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT) {
             Lexer()->NextToken();
         }
     } while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD);
 
-    typeName->SetRange({startLoc, Lexer()->GetToken().End()});
+    typeName->SetRange({startLoc, endLoc});
 
     return typeName;
 }

@@ -25,4 +25,5 @@ class B {
     }
 }
 
-/* @@@ label Error TypeError: Method foo(a: Int): Int in B not overriding any method  */
+
+/* @@@ label Error Semantic error ESE0136: Method foo(a: Int): Int in B not overriding any method */

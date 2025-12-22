@@ -49,21 +49,22 @@ for (var i of a) {
     continue label;
 }
 
-/* @@? 16:7 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:10 Error SyntaxError: Unexpected token '{'. */
-/* @@? 22:5 Error SyntaxError: Private field has already been declared. */
-/* @@? 22:15 Error SyntaxError: Invalid accessor. */
-/* @@? 24:12 Error SyntaxError: Unexpected modifier. */
-/* @@? 24:12 Error SyntaxError: Duplicated modifier is not allowed. */
-/* @@? 26:6 Error SyntaxError: Unexpected identifier. */
-/* @@? 30:6 Error SyntaxError: Private identifier can not be constructor. */
-/* @@? 35:12 Error SyntaxError: Classes may not have static property named prototype. */
-/* @@? 37:5 Error SyntaxError: Classes may not have a field named 'constructor'. */
-/* @@? 38:12 Error SyntaxError: Classes may not have static property named prototype. */
-/* @@? 40:5 Error SyntaxError: Multiple constructor implementations are not allowed. */
-/* @@? 41:5 Error SyntaxError: Multiple constructor implementations are not allowed. */
-/* @@? 43:5 Error SyntaxError: Multiple constructor implementations are not allowed. */
-/* @@? 43:11 Error SyntaxError: Constructor can not be special method. */
-/* @@? 46:12 Error SyntaxError: 'eval' or 'arguments' can't be defined or assigned to in strict mode code. */
-/* @@? 46:18 Error SyntaxError: 'eval' or 'arguments' can't be defined or assigned to in strict mode code. */
-/* @@? 49:14 Error SyntaxError: Undefined label. */
+
+/* @@? 16:7 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 22:5 Error Syntax error ESY0154: Private field has already been declared. */
+/* @@? 22:15 Error Syntax error ESY0159: Invalid accessor. */
+/* @@? 24:12 Error Syntax error ESY0153: Unexpected modifier. */
+/* @@? 24:12 Error Syntax error ESY0115: Duplicated modifier is not allowed. */
+/* @@? 26:6 Error Syntax error ESY0045: Unexpected identifier. */
+/* @@? 30:6 Error Syntax error ESY0267: Private identifier can not be constructor. */
+/* @@? 35:12 Error Syntax error ESY0155: Classes may not have static property named prototype. */
+/* @@? 37:5 Error Syntax error ESY0144: Classes may not have a field named 'constructor'. */
+/* @@? 38:12 Error Syntax error ESY0155: Classes may not have static property named prototype. */
+/* @@? 40:5 Error Syntax error ESY0206: Multiple constructor implementations are not allowed. */
+/* @@? 41:5 Error Syntax error ESY0206: Multiple constructor implementations are not allowed. */
+/* @@? 43:5 Error Syntax error ESY0206: Multiple constructor implementations are not allowed. */
+/* @@? 43:11 Error Syntax error ESY0149: Constructor can not be special method. */
+/* @@? 46:12 Error Syntax error ESY0207: 'eval' or 'arguments' can't be defined or assigned to in strict mode code. */
+/* @@? 46:18 Error Syntax error ESY0207: 'eval' or 'arguments' can't be defined or assigned to in strict mode code. */
+/* @@? 49:14 Error Syntax error ESY0162: Undefined label. */

@@ -44,8 +44,10 @@ function main(): void {
 
     try {
         let residence = (john as Person).residence;
-    } catch (e: ClassCastError) {
+    } catch (e) {
+        if (e instanceof ClassCastError) {
         test = true;
+        }
     }
     arktest.assertEQ(test, true)
 
@@ -54,8 +56,10 @@ function main(): void {
 
     try {
         let numbers: int = john!.residence.numberOfRooms;
-    } catch (e: NullPointerError) {
-        test = true;
+    } catch (e) {
+        if (e instanceof NullPointerError) {
+            test = true;
+        }
     }
     arktest.assertEQ(test, true)
 
@@ -63,8 +67,10 @@ function main(): void {
     arktest.assertEQ(test, false)
     try {
         let numbers: int = foo() + bar() + john!.residence.numberOfRooms;
-    } catch (e: NullPointerError) {
-        test = true;
+    } catch (e) {
+         if (e instanceof NullPointerError) {
+            test = true;
+        }
     }
     arktest.assertEQ(test, true)
     arktest.assertEQ(a, 2) // foo and bar were evaluated

@@ -24,5 +24,5 @@ namespace A{
 @Anno1
 namespace A.B{}
 
-/* @@? 25:13 Error SyntaxError: Unable to merge namespaces 'B', because their modifiers are different.  */
-/* @@? 25:13 Error SyntaxError: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations.  */
+/* @@? 25:13 Error Syntax error ESY0006: Unable to merge namespaces 'B', because their modifiers are different. */
+/* @@? 25:13 Error Syntax error ESY0007: Annotation conflict! Multiple namespace declarations for 'B' cannot each have annotations. */

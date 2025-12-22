@@ -20,4 +20,5 @@ class A {
     }
 }
 
-/* @@@ label Error SyntaxError: Private fields can not be deleted.  */
+
+/* @@@ label Error Syntax error ESY0070: Private fields can not be deleted. */

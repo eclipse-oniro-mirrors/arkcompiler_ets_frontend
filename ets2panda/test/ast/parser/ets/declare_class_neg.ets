@@ -19,6 +19,7 @@ declare class A {
 class B {
   declare/* @@ label1 */ constructor()
 }
-/* @@? 17:10 Error SyntaxError: Field type annotation expected. */
-/* @@? 20:10 Error SyntaxError: Field type annotation expected. */
-/* @@? 20:37 Error TypeError: Only abstract or native methods can't have body. */
+
+/* @@? 17:10 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 20:10 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 20:37 Error Semantic error ESE0017: Only abstract or native methods can't have body. */

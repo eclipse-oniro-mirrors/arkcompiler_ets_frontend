@@ -20,4 +20,4 @@ namespace NS {
 
 new NS.Inter()
 
-/* @@? 21:5 Error TypeError: Invalid type reference. */
+/* @@? 21:1 Error Semantic error ESE0128: No matching constructor signature */

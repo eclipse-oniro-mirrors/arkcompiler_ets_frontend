@@ -27,5 +27,6 @@ function main()
     /* @@ label */b(1, 2)
 }
 
-/* @@@ label Error TypeError: No static $_invoke method and static $_instantiate method in b. b() is not allowed.  */
-/* @@@ label Error TypeError: Type 'Int' has no call signatures.  */
+
+/* @@@ label Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in b. b() is not allowed. */
+/* @@@ label Error Semantic error ESE0002: Type 'Int' has no call signatures. */

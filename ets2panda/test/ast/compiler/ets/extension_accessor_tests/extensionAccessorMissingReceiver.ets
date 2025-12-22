@@ -24,5 +24,5 @@ class A{
 /* @@ label2 */set field() {}
 
 
-/* @@@ label1 Error SyntaxError: Getter must not have formal parameters. */
-/* @@@ label2 Error SyntaxError: Setter must have exactly one formal parameter. */
+/* @@@ label1 Error Syntax error ESY0058: Getter must not have formal parameters. */
+/* @@@ label2 Error Syntax error ESY0063: Setter must have exactly one formal parameter. */

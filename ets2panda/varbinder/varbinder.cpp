@@ -658,7 +658,7 @@ void VarBinder::AddMandatoryParams()
         const ir::ScriptFunction *ctor = util::Helpers::GetContainingConstructor(scriptFunc);
         bool lexicalFunctionObject {};
 
-        if (ctor != nullptr && util::Helpers::GetClassDefiniton(ctor)->Super() != nullptr &&
+        if (ctor != nullptr && util::Helpers::GetClassDefinition(ctor)->Super() != nullptr &&
             funcScope->HasFlag(ScopeFlags::USE_SUPER)) {
             ES2PANDA_ASSERT(ctor->Scope()->HasFlag(ScopeFlags::INNER_ARROW));
             ctor->Scope()->AddFlag(ScopeFlags::SET_LEXICAL_FUNCTION);

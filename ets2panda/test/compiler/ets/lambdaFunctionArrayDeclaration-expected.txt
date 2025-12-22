@@ -392,58 +392,8 @@
                                       {
                                         "type": "ReturnStatement",
                                         "argument": {
-                                          "type": "CallExpression",
-                                          "callee": {
-                                            "type": "MemberExpression",
-                                            "object": {
-                                              "type": "Identifier",
-                                              "name": "p",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 17,
-                                                  "column": 67,
-                                                  "program": "lambdaFunctionArrayDeclaration.ets"
-                                                },
-                                                "end": {
-                                                  "line": 17,
-                                                  "column": 68,
-                                                  "program": "lambdaFunctionArrayDeclaration.ets"
-                                                }
-                                              }
-                                            },
-                                            "property": {
-                                              "type": "Identifier",
-                                              "name": "unboxed",
-                                              "loc": {
-                                                "start": {
-                                                  "line": 17,
-                                                  "column": 69,
-                                                  "program": "lambdaFunctionArrayDeclaration.ets"
-                                                },
-                                                "end": {
-                                                  "line": 17,
-                                                  "column": 76,
-                                                  "program": "lambdaFunctionArrayDeclaration.ets"
-                                                }
-                                              }
-                                            },
-                                            "computed": false,
-                                            "optional": false,
-                                            "loc": {
-                                              "start": {
-                                                "line": 17,
-                                                "column": 67,
-                                                "program": "lambdaFunctionArrayDeclaration.ets"
-                                              },
-                                              "end": {
-                                                "line": 17,
-                                                "column": 76,
-                                                "program": "lambdaFunctionArrayDeclaration.ets"
-                                              }
-                                            }
-                                          },
-                                          "arguments": [],
-                                          "optional": false,
+                                          "type": "Identifier",
+                                          "name": "p",
                                           "loc": {
                                             "start": {
                                               "line": 17,
@@ -452,7 +402,7 @@
                                             },
                                             "end": {
                                               "line": 17,
-                                              "column": 78,
+                                              "column": 68,
                                               "program": "lambdaFunctionArrayDeclaration.ets"
                                             }
                                           }
@@ -465,7 +415,7 @@
                                           },
                                           "end": {
                                             "line": 17,
-                                            "column": 79,
+                                            "column": 69,
                                             "program": "lambdaFunctionArrayDeclaration.ets"
                                           }
                                         }
@@ -479,7 +429,7 @@
                                       },
                                       "end": {
                                         "line": 17,
-                                        "column": 81,
+                                        "column": 71,
                                         "program": "lambdaFunctionArrayDeclaration.ets"
                                       }
                                     }
@@ -492,7 +442,7 @@
                                     },
                                     "end": {
                                       "line": 17,
-                                      "column": 81,
+                                      "column": 71,
                                       "program": "lambdaFunctionArrayDeclaration.ets"
                                     }
                                   }
@@ -505,7 +455,7 @@
                                   },
                                   "end": {
                                     "line": 17,
-                                    "column": 81,
+                                    "column": 71,
                                     "program": "lambdaFunctionArrayDeclaration.ets"
                                   }
                                 }
@@ -519,7 +469,7 @@
                               },
                               "end": {
                                 "line": 17,
-                                "column": 82,
+                                "column": 72,
                                 "program": "lambdaFunctionArrayDeclaration.ets"
                               }
                             }
@@ -532,7 +482,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 82,
+                              "column": 72,
                               "program": "lambdaFunctionArrayDeclaration.ets"
                             }
                           }
@@ -547,7 +497,7 @@
                         },
                         "end": {
                           "line": 17,
-                          "column": 83,
+                          "column": 73,
                           "program": "lambdaFunctionArrayDeclaration.ets"
                         }
                       }

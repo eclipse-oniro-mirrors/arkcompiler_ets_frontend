@@ -25,26 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 9,
-            "endLine": 19,
-            "endColumn": 23,
-            "problem": "MathPow",
-            "suggest": "",
-            "rule": "function \"Math.pow()\" behavior for ArkTS differs from Typescript version (arkts-math-pow-standard-diff)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 19,
-            "problem": "MathPow",
-            "suggest": "",
-            "rule": "function \"Math.pow()\" behavior for ArkTS differs from Typescript version (arkts-math-pow-standard-diff)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 5,
             "endLine": 25,

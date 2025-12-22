@@ -73,7 +73,7 @@
         },
         "end": {
           "line": 16,
-          "column": 19,
+          "column": 18,
           "program": "main_entry_point_8.ets"
         }
       }

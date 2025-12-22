@@ -41,11 +41,11 @@ function foo4() {
     console.log(a + 5)
 }
 
-/* @@? 18:5 Error SyntaxError: Illegal continue statement. */
-/* @@? 18:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 25:5 Error SyntaxError: Illegal continue statement. */
-/* @@? 25:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 32:5 Error SyntaxError: Illegal break statement. */
-/* @@? 32:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
-/* @@? 39:5 Error SyntaxError: Illegal break statement. */
-/* @@? 39:5 Error TypeError: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 18:5 Error Syntax error ESY0165: Illegal continue statement. */
+/* @@? 18:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 25:5 Error Syntax error ESY0165: Illegal continue statement. */
+/* @@? 25:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 32:5 Error Syntax error ESY0209: Illegal break statement. */
+/* @@? 32:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */
+/* @@? 39:5 Error Syntax error ESY0209: Illegal break statement. */
+/* @@? 39:5 Error Semantic error ESE0161: Control flow redirection statement can not be used out of loop or switch statement. */

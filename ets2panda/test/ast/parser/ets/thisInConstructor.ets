@@ -30,4 +30,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: Using this is not allowed in constructor  */
+
+/* @@@ label Error Semantic error ESE0235: Using this is not allowed in constructor */

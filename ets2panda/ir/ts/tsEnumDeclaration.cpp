@@ -22,7 +22,7 @@
 #include "util/helpers.h"
 #include "ir/astDump.h"
 #include "ir/srcDump.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 
@@ -107,6 +107,7 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     } else if (key_->Parent()->IsDefaultExported() && dumper->IsDeclgen()) {
         dumper->Add("export default ");
+        dumper->SetDefaultExport();
     }
     if (dumper->IsDeclgen()) {
         dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
@@ -115,6 +116,10 @@ void TSEnumDeclaration::Dump(ir::SrcDumper *dumper) const
     }
     dumper->Add("enum ");
     Key()->Dump(dumper);
+    if (typeAnnotation_ != nullptr) {
+        dumper->Add(": ");
+        dumper->Add(typeAnnotation_->DumpEtsSrc());
+    }
     dumper->Add(" {");
     auto const members = Members();
     if (!members.empty()) {
@@ -194,6 +199,7 @@ void TSEnumDeclaration::CopyTo(AstNode *other) const
     otherImpl->boxedClass_ = boxedClass_;
     otherImpl->isConst_ = isConst_;
 
+    // NOLINTNEXTLINE(bugprone-parent-virtual-call)
     TypedStatement::CopyTo(other);
 }
 

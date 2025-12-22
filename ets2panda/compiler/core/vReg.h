@@ -54,7 +54,20 @@ public:
 
     [[nodiscard]] constexpr bool IsValid(uint32_t limit) const noexcept
     {
+        ES2PANDA_ASSERT(limit <= REG_MAX);
         return (idx_ >= REG_MAX - limit) && (limit == REG_MAX || !IsParameter());
+    }
+
+    [[nodiscard]] constexpr bool IsRegOrParamValid(uint32_t limit, uint32_t regNum) const noexcept
+    {
+        if (IsParameter()) {
+            ES2PANDA_ASSERT(idx_ >= REG_MAX);
+            uint32_t paramOrder = idx_ - REG_MAX;
+            ES2PANDA_ASSERT(paramOrder < INVALID_IDX);
+            ES2PANDA_ASSERT(regNum < INVALID_IDX - paramOrder);
+            return paramOrder + regNum < limit;
+        }
+        return IsValid(limit);
     }
 
     [[nodiscard]] constexpr bool IsParameter() const noexcept

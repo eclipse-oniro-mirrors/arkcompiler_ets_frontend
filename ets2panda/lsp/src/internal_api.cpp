@@ -24,15 +24,15 @@
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "lexer/token/sourceLocation.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include "formatting/formatting.h"
 #include "code_fix_provider.h"
 #include "get_class_property_info.h"
 #include "generated/code_fix_register.h"
-
+#include "quick_info.h"
 namespace ark::es2panda::lsp {
 
 Initializer::Initializer()
@@ -211,7 +211,12 @@ bool NodeHasTokens(const ir::AstNode *node)
     return node->Start().index != node->End().index;
 }
 
-ir::AstNode *FindRightmostChildNodeWithTokens(const ArenaVector<ir::AstNode *> &nodes, int exclusiveStartPosition)
+bool IsTokenRangeValid(const ir::AstNode *node)
+{
+    return node->Start().index != 0 || node->End().index != 0;
+}
+
+ir::AstNode *FindRightmostChildNodeWithTokens(const std::vector<ir::AstNode *> &nodes, int exclusiveStartPosition)
 {
     for (int i = exclusiveStartPosition - 1; i >= 0; --i) {
         if (NodeHasTokens(nodes[i])) {
@@ -221,14 +226,16 @@ ir::AstNode *FindRightmostChildNodeWithTokens(const ArenaVector<ir::AstNode *> &
     return nullptr;
 }
 
-ArenaVector<ir::AstNode *> GetChildren(const ir::AstNode *node, ArenaAllocator *allocator)
+std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, [[maybe_unused]] ArenaAllocator *allocator)
 {
-    ArenaVector<ir::AstNode *> children(allocator->Adapter());
+    std::vector<ir::AstNode *> children {};
     if (node->Type() == ir::AstNodeType::ETS_MODULE) {
         // ETS_MODULE is the root node, need to get the definition of global class
-        auto globalClass =
-            node->FindChild([](ir::AstNode *child) { return child->IsClassDeclaration(); })->AsClassDeclaration();
-        node = globalClass->Definition();
+        auto classNode = node->FindChild([](ir::AstNode *child) { return child->IsClassDeclaration(); });
+        if (classNode != nullptr) {
+            auto globalClass = classNode->AsClassDeclaration();
+            node = globalClass->Definition();
+        }
     }
     node->Iterate([&children](ir::AstNode *child) { children.push_back(child); });
     return children;
@@ -250,7 +257,7 @@ ir::AstNode *FindRightmostToken(const ir::AstNode *node, ArenaAllocator *allocat
     return FindRightmostToken(candidate, allocator);
 }
 
-ir::AstNode *FindNodeBeforePosition(const ArenaVector<ir::AstNode *> &children, size_t pos)
+ir::AstNode *FindNodeBeforePosition(const std::vector<ir::AstNode *> &children, size_t pos)
 {
     if (children.empty()) {
         return nullptr;
@@ -285,8 +292,12 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, 
         }
 
         // position is 0, found does not has any tokens
-        if (!NodeHasTokens(found)) {
+        if (!IsTokenRangeValid(found)) {
             return nullptr;
+        }
+        // could return token after '.' of 'cls.ERROR_LITERAL'
+        if (!NodeHasTokens(found)) {
+            return found;
         }
 
         if (IsNonWhitespaceToken(found)) {
@@ -339,7 +350,7 @@ std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position)
     return node != nullptr ? ReplaceQuotation(program->SourceCode().Substr(node->Start().index, position)) : "";
 }
 
-ir::AstNode *FindLeftToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes)
+ir::AstNode *FindLeftToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
 {
     int left = 0;
     int right = nodes.size() - 1;
@@ -356,7 +367,7 @@ ir::AstNode *FindLeftToken(const size_t pos, const ArenaVector<ir::AstNode *> &n
     return result;
 }
 
-ir::AstNode *FindRightToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes)
+ir::AstNode *FindRightToken(const size_t pos, const std::vector<ir::AstNode *> &nodes)
 {
     int left = 0;
     int right = nodes.size() - 1;
@@ -575,6 +586,20 @@ Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::Diagn
     return Diagnostic(range, tags, relatedInformation, severity, code, message, codeDescription, source);
 }
 
+void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
+                              DiagnosticReferences &result)
+{
+    if (context == nullptr) {
+        return;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    for (const auto &diagnostic : diagnostics) {
+        if (ctx->sourceFileName == diagnostic->File()) {
+            result.diagnostic.push_back(CreateDiagnosticForError(context, *diagnostic));
+        }
+    }
+}
+
 Diagnostic CreateDiagnosticWithoutFile(const util::DiagnosticBase &error)
 {
     auto range = Range(Position(), Position());
@@ -630,6 +655,20 @@ std::pair<ir::AstNode *, util::StringView> GetDefinitionAtPositionImpl(es2panda_
         return res;
     }
     res = {compiler::DeclarationFromIdentifier(node->AsIdentifier()), node->AsIdentifier()->Name()};
+    return res;
+}
+
+std::string GetImportFilePath(es2panda_Context *context, size_t pos)
+{
+    std::string res;
+    auto node = GetTouchingToken(context, pos, false);
+    if (node == nullptr) {
+        return res;
+    }
+    auto parent = node->Parent();
+    if (parent != nullptr && parent->IsETSImportDeclaration() && parent->AsETSImportDeclaration()->Source() == node) {
+        res = std::string(parent->AsETSImportDeclaration()->ImportMetadata().resolvedSource);
+    }
     return res;
 }
 
@@ -708,10 +747,11 @@ HighlightSpanKind GetHightlightSpanKind(ir::AstNode *identifierDeclaration, ir::
 DocumentHighlights GetSemanticDocumentHighlights(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto ast = ctx->parserProgram->Ast();
     std::string fileName(ctx->sourceFile->filePath);
     auto touchingToken = GetTouchingToken(context, position, false);
-    if (!touchingToken) {
+    if (touchingToken == nullptr) {
         return DocumentHighlights(fileName, {});
     }
     if (!touchingToken->IsIdentifier()) {
@@ -867,4 +907,8 @@ varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util
     return FindDeclInGlobalScope(scope, name);
 }
 
+std::string GetTokenTypes(ir::ModifierFlags flags)
+{
+    return ModifiersToString(flags);
+}
 }  // namespace ark::es2panda::lsp

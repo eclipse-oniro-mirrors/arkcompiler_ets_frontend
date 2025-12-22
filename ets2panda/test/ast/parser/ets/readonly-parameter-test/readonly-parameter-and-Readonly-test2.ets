@@ -19,7 +19,7 @@ function foo1(x : readonly int[], y : readonly [int, string]) {
     /* @@ label2 */y[1] = 'a'
 }
 
-function foo2(x : Readonly<int[]>, y : Readonly<[int, string]>) {
+function foo2(x : Readonly<int[]>, y : readonly [int, string]) {
     /* @@ label3 */x[1] = 0
     /* @@ label4 */y[0] = 10
     /* @@ label5 */y[1] = 'a'
@@ -32,16 +32,16 @@ let y1 : readonly [int, string] = [1, "a"]
 
 let x2 : Readonly<int[]> = [0]
 /* @@ label8 */x2[0] = 1
-let y2 : Readonly<[int, string]>
+let y2 : readonly [int, string]
 /* @@ label9 */y2[1] = "b"
 
-/* @@@ label Error TypeError: Object type doesn't have proper index access method. */
-/* @@@ label1 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label2 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label3 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label4 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label5 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label6 Error TypeError: Object type doesn't have proper index access method. */
-/* @@@ label7 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label8 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
-/* @@@ label9 Error TypeError: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label1 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label2 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label3 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label4 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label5 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label6 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label7 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label8 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label9 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */

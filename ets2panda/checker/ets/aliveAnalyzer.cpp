@@ -260,10 +260,8 @@ void AliveAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
     if (status_ == LivenessStatus::ALIVE && !isVoid && !isPromiseVoid) {
         ES2PANDA_ASSERT(methodDef->Function() != nullptr);
         if (!methodDef->Function()->HasReturnStatement()) {
-            if (!util::Helpers::IsAsyncMethod(methodDef)) {
-                checker_->LogError(diagnostic::MISSING_RETURN_STMT, {}, func->Start());
-                ClearPendingExits();
-            }
+            checker_->LogError(diagnostic::MISSING_RETURN_STMT, {}, func->Start());
+            ClearPendingExits();
             return;
         }
 

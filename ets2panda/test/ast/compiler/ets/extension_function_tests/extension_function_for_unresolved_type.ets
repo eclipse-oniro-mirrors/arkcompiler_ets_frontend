@@ -17,5 +17,6 @@ function name(this: /* @@label */Fruit): int {
     return 1;
 }
 
-/* @@@ label Error TypeError: Cannot find type 'Fruit'.  */
-/* @@? 16:1 Error TypeError: Extension function can only defined for class, interface or array. */
+
+/* @@? 16:1 Error Semantic error ESE0082: Extension function can only defined for class, interface or array. */
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'Fruit'. */

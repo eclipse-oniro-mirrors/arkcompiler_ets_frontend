@@ -49,10 +49,33 @@ void ImportExportDecls::ParseDefaultSources()
     varbinder_->SetDefaultImports(std::move(imports));
 }
 
+void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec)
+{
+    if (spec->IsImportSpecifier() &&
+        !varbinder_->AddSelectiveExportAlias(
+            parser_, program->SourceFilePath(), spec->AsImportSpecifier()->Imported()->Name(),
+            spec->AsImportSpecifier()->Local()->Name(), stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+        return;
+    }
+    if (spec->IsImportNamespaceSpecifier()) {
+        auto localName = spec->AsImportNamespaceSpecifier()->Local()->Name();
+        if (!localName.Empty() &&
+            !varbinder_->AddSelectiveExportAlias(parser_, program->SourceFilePath(), localName, localName,
+                                                 stmt->AsETSReExportDeclaration()->GetETSImportDeclarations())) {
+            return;
+        }
+    }
+}
+
 void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
                                                  const ArenaVector<ir::Statement *> &statements,
                                                  GlobalClassHandler::ModuleDependencies &moduleDependencies)
 {
+    auto processReExportDefaultSpecifier = [&](const auto &stmt) -> void {
+        for (auto spec : stmt->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers()) {
+            AddSelectiveExportAlias(program, stmt, spec);
+        }
+    };
     for (auto stmt : statements) {
         if (stmt->IsETSModule()) {
             SavedImportExportDeclsContext savedContext(this, program);
@@ -63,6 +86,9 @@ void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
         stmt->Accept(this);
         if (stmt->IsExportNamedDeclaration()) {
             PopulateAliasMap(stmt->AsExportNamedDeclaration(), program->SourceFilePath());
+        }
+        if (stmt->IsETSReExportDeclaration()) {
+            processReExportDefaultSpecifier(stmt);
         }
         if (stmt->IsTSTypeAliasDeclaration() && (stmt->IsExported() || stmt->IsDefaultExported())) {
             PopulateAliasMap(stmt->AsTSTypeAliasDeclaration(), program->SourceFilePath());
@@ -215,12 +241,27 @@ void ImportExportDecls::VisitETSModule(ir::ETSModule *etsModule)
 
 void ImportExportDecls::VisitExportNamedDeclaration(ir::ExportNamedDeclaration *exportDecl)
 {
+    if (exportDecl->Specifiers().empty()) {
+        parser_->LogError(diagnostic::EMPTY_EXPORT_SPECIFIER_LIST, {}, exportDecl->Start());
+        return;
+    }
+
+    // Lambda function to avoid extra nested level.
+    auto const logError = [this, exportDecl](ir::Identifier const *const local) -> void {
+        if (!exportDefaultName_.Is(local->Name().Utf8())) {
+            parser_->LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER, {}, exportDecl->Start());
+        }
+    };
+
+    bool const isDefault = (exportDecl->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) !=
+                           static_cast<std::underlying_type_t<ir::ModifierFlags>>(0U);
+
     for (auto spec : exportDecl->Specifiers()) {
-        auto local = spec->Local();
+        auto const *const local = spec->Local();
         // If this was enterred more than once, CTE must has been logged in parser.
-        if ((exportDecl->Modifiers() & ir::ModifierFlags::DEFAULT_EXPORT) != 0) {
+        if (isDefault) {
             if (exportDefaultName_ != nullptr) {
-                parser_->LogError(diagnostic::EXPORT_DEFAULT_WITH_MUPLTIPLE_SPECIFIER, {}, local->Start());
+                logError(local);
                 continue;
             }
             exportDefaultName_ = local->Name();
@@ -336,8 +377,13 @@ void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program
 
 void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
 {
-    bool isChanged = false;
-    auto mergeNameSpace = [&program, &isChanged](ir::AstNode *ast) {
+    bool hasChange = true;
+
+    std::function<void(ir::AstNode *)> merge = [&program, &hasChange, &merge](ir::AstNode *ast) {
+        if (ast->IsClassDeclaration() && ast->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
+            ast->Iterate(merge);
+            return;
+        }
         if (!ast->IsETSModule()) {
             return;
         }
@@ -359,14 +405,14 @@ void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
         for (auto ns : namespaces) {
             body.emplace_back(ns);
         }
+        hasChange |= (originalSize != body.size());
 
-        isChanged |= (originalSize != body.size());
+        ast->Iterate(merge);
     };
 
-    do {
-        isChanged = false;
-        mergeNameSpace(program->Ast());
-        program->Ast()->IterateRecursivelyPreorder(mergeNameSpace);
-    } while (isChanged);
+    while (hasChange) {
+        hasChange = false;
+        merge(program->Ast());
+    }
 }
 }  // namespace ark::es2panda::compiler

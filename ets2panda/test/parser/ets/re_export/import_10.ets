@@ -19,4 +19,5 @@ function main() : void
 {
 }
 
-// NOTE: ttamas - Duplication check disabled
+/* @@? 17:22 Error Warning: Duplicated export aliases for 'foo'. */
+/* @@? 16:23 Error TypeError: Ambiguous export 'foo' */

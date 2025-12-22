@@ -17,6 +17,7 @@ struct typeof{
   a : string = "15";
 }
 
-/* @@? 16:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 16:8 Error SyntaxError: Hard keyword 'typeof' cannot be used as identifier */
-/* @@? 16:8 Error SyntaxError: Identifier expected, got 'typeof'. */
+
+/* @@? 16:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 16:8 Error Syntax error ESY0316: Hard keyword 'typeof' cannot be used as identifier */
+/* @@? 16:8 Error Syntax error ESY0224: Identifier expected, got 'typeof'. */

@@ -19,4 +19,4 @@ function main(): void {
   let long_a: long[][] = int_a as long[][];
 }
 
-/* @@? 19:26 Error TypeError: Cannot cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' */
+/* @@? 19:26 Error Semantic error ESE0326: Cannot cast type 'Array<Array<Int>>' to 'Array<Array<Long>>' */

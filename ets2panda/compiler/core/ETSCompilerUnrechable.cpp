@@ -112,6 +112,11 @@ void ETSCompiler::Compile([[maybe_unused]] const ir::ETSPackageDeclaration *st) 
     ES2PANDA_UNREACHABLE();
 }
 
+void ETSCompiler::Compile([[maybe_unused]] const ir::ETSGenericInstantiatedNode *node) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
 void ETSCompiler::Compile([[maybe_unused]] const ir::ETSPrimitiveType *node) const
 {
     ES2PANDA_UNREACHABLE();
@@ -179,6 +184,11 @@ void ETSCompiler::Compile([[maybe_unused]] const ir::ETSReExportDeclaration *stm
 }
 
 void ETSCompiler::Compile([[maybe_unused]] const ir::DirectEvalExpression *expr) const
+{
+    ES2PANDA_UNREACHABLE();
+}
+
+void ETSCompiler::Compile([[maybe_unused]] const ir::ETSDestructuring *expr) const
 {
     ES2PANDA_UNREACHABLE();
 }

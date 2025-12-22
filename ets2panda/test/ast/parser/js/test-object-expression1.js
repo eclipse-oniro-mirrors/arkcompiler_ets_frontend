@@ -18,4 +18,5 @@ a = {
   set a(b,c){}
 /* @@ label */}
 
-/* @@@ label Error SyntaxError: Setter must have exactly one formal parameter.  */
+
+/* @@@ label Error Syntax error ESY0063: Setter must have exactly one formal parameter. */

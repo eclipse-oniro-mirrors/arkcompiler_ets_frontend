@@ -21,8 +21,12 @@
 namespace ark::es2panda::checker {
 class ETSAnyType : public Type {
 public:
-    ETSAnyType() : Type(TypeFlag::ETS_ANY) {}
-    explicit ETSAnyType(bool isRelaxedAny) : Type(TypeFlag::ETS_ANY), isRelaxedAny_(isRelaxedAny) {}
+    explicit ETSAnyType(bool isRelaxed) : Type(TypeFlag::ETS_ANY), isRelaxed_(isRelaxed) {}
+
+    bool IsRelaxed() const
+    {
+        return isRelaxed_;
+    }
 
     void Identical(TypeRelation *relation, Type *other) override;
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
@@ -40,13 +44,8 @@ public:
 
     Type *Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) override;
 
-    bool IsRelaxedAny() const
-    {
-        return isRelaxedAny_;
-    }
-
 private:
-    bool isRelaxedAny_ = false;
+    bool isRelaxed_;
 };
 }  // namespace ark::es2panda::checker
 

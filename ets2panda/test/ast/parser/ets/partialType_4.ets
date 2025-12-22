@@ -79,9 +79,10 @@ class A<T extends A<T>>{
     bar(initializers: Partial<T>): void {}
 }
 
-/* @@? 39:142 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 49:55 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 51:51 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 53:86 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 75:55 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 79:30 Error TypeError: T in Partial<T> must be a class or an interface type. */
+
+/* @@? 39:142 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 49:55 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 51:51 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 53:86 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 75:55 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 79:30 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

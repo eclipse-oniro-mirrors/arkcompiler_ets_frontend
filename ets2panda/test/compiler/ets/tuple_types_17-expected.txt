@@ -167,8 +167,8 @@
           "program": "tuple_types_17.ets"
         },
         "end": {
-          "line": 17,
-          "column": 9,
+          "line": 16,
+          "column": 35,
           "program": "tuple_types_17.ets"
         }
       }

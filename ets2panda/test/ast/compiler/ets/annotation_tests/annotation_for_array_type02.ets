@@ -19,6 +19,7 @@
 // annotataions for different dimensions of array
 let a: Int[] @Anno []
 
-/* @@? 20:14 Error SyntaxError: Unexpected token '@'. */
-/* @@? 20:20 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 20:20 Error TypeError: Can't resolve array type */
+
+/* @@? 20:14 Error Syntax error ESY0227: Unexpected token '@'. */
+/* @@? 20:20 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 20:20 Error Semantic error ESE0301: Can't resolve array type */

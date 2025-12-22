@@ -1,8 +1,8 @@
 ### ArkTS1.2对js对象进行二元运算
 
-**规则：** arkts-interop-js2s-binary-op
+**规则：** `arkts-interop-js2s-binary-op`
 
-**级别：** error
+ArkTS1.2对js对象进行二元运算时，使用ESValue接口转换为数字后再操作。
 
 **ArkTS1.1**
 ```typescript

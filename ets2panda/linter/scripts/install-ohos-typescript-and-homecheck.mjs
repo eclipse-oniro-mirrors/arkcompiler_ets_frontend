@@ -141,20 +141,30 @@ function getTypescript(detectedOS) {
     shell.cd(arkanalyzer)
     const arkanalyzerBackFile = backupPackageJson(arkanalyzer)
     shell.exec(`npm install ${typescript_dir}/${npm_typescript_package}`)
+    const arkanalyzer_source_file1 = arkanalyzer + '/node_modules/ohos-typescript/lib/lib.es5.d.ts'
+    const arkanalyzer_source_file2 = arkanalyzer + '/node_modules/ohos-typescript/lib/lib.es2015.collection.d.ts'
+    const arkanalyzer_target_dir = arkanalyzer + '/builtIn/typescript/api/@internal'
+    shell.mkdir('-p', arkanalyzer_target_dir)
+    shell.cp('-f', arkanalyzer_source_file1, arkanalyzer_target_dir)
+    shell.cp('-f', arkanalyzer_source_file2, arkanalyzer_target_dir)
     shell.exec('npm run compile')
     const npm_arkanalyzer_package = shell.exec('npm pack').stdout.trim()
     restorePackageJson(arkanalyzer, arkanalyzerBackFile)
-    shell.rm('-rf', 'lib')
+    shell.rm('-rf', 'lib', 'builtIn')
 
     shell.cd(homecheck)
     const homecheckBackFile = backupPackageJson(homecheck)
 
     shell.exec(`npm install ${arkanalyzer}/${npm_arkanalyzer_package}`)
     shell.exec(`npm install --no-save ${typescript_dir}/${npm_typescript_package}`)
+    const homecheck_source_file = homecheck + '/node_modules/ohos-typescript/lib/lib.es5.d.ts'
+    const homecheck_target_dir = homecheck + '/resources/internalSdk/@interanl'
+    shell.mkdir('-p', homecheck_target_dir)
+    shell.cp('-f', homecheck_source_file, homecheck_target_dir)
     shell.exec('npm run compile')
     const npm_homecheck_package = shell.exec('npm pack').stdout.trim()
     restorePackageJson(homecheck, homecheckBackFile)
-    shell.rm('-rf', 'lib')
+    shell.rm('-rf', 'lib', 'resources/internalSdk')
 
     shell.cd(linter)
     shell.exec(`npm install --no-save ${typescript_dir}/${npm_typescript_package}  ${homecheck}/${npm_homecheck_package}`)

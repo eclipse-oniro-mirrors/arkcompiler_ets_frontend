@@ -20,4 +20,4 @@ function foo(x: A | C) {
     x[x+1]
 }
 
-/* @@? 20:5 Error TypeError: Indexed access is not supported for such expression type. */
+/* @@? 20:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

@@ -21,5 +21,6 @@
 @MyAnno({testProperty2: /* @@ label */"Bob", testProperty1: /* @@ label1 */1})
 class A{}
 
-/* @@@ label Error TypeError: Type '"Bob"' cannot be assigned to type 'Double'  */
-/* @@@ label1 Error TypeError: Type 'Int' cannot be assigned to type 'String'  */
+
+/* @@@ label Error Semantic error ESE0318: Type '"Bob"' cannot be assigned to type 'Double' */
+/* @@@ label1 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */

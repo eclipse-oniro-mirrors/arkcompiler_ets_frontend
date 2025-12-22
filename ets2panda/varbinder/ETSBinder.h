@@ -44,8 +44,8 @@ class ETSNewClassInstanceExpression;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::varbinder {
-using AliasesByExportedNames = ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
-using ModulesToExportedNamesWithAliases = ArenaMap<util::StringView, AliasesByExportedNames>;
+using AliasesByExportedNames = std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
+using ModulesToExportedNamesWithAliases = std::map<util::StringView, AliasesByExportedNames>;
 
 struct DynamicImportData {
     const ir::ETSImportDeclaration *import;
@@ -65,8 +65,7 @@ public:
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
           reExportImports_(Allocator()->Adapter()),
-          reexportedNames_(Allocator()->Adapter()),
-          selectiveExportAliasMultimap_(Allocator()->Adapter())
+          reexportedNames_(Allocator()->Adapter())
     {
         InitImplicitThisParam();
     }
@@ -170,6 +169,8 @@ public:
     void AddImportNamespaceSpecifiersToTopBindings(Span<parser::Program *const> records,
                                                    ir::ImportNamespaceSpecifier *namespaceSpecifier,
                                                    const ir::ETSImportDeclaration *import);
+    util::StringView GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
+                                             const ir::ETSImportDeclaration *const import);
     bool AddImportSpecifiersToTopBindings(Span<parser::Program *const> records, ir::ImportSpecifier *importSpecifier,
                                           const ir::ETSImportDeclaration *import);
     void AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *const> records,
@@ -267,7 +268,8 @@ public:
     }
 
     util::StringView FindNameInAliasMap(const util::StringView &pathAsKey, const util::StringView &aliasName);
-    const ir::AstNode *FindNodeInAliasMap(const util::StringView &pathAsKey, const util::StringView &aliasName);
+    std::pair<util::StringView, const ir::AstNode *> FindNameAndNodeInAliasMap(const util::StringView &pathAsKey,
+                                                                               const util::StringView &aliasName);
 
     void CleanUp() override
     {

@@ -19,6 +19,9 @@ class A {
 
 class B extends A {
     foo() {
-        console.log(super./* @@ label */value);
+        console.log(super.value);
     }
 }
+
+
+/* @@? 22:27 Error Semantic error ESE0377: Class field 'value' defined by the parent class is not accessible in the child class via super. */

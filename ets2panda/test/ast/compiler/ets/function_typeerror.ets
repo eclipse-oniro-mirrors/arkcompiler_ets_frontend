@@ -35,21 +35,19 @@ function main(): void {
     arktest.assertEQ(resultA, resultB);
 }
 
-/* @@? 17:14 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:19 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:19 Error SyntaxError: Unexpected token '.'. */
-/* @@? 17:19 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 17:30 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:30 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:32 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 17:36 Error SyntaxError: Unexpected token '.'. */
-/* @@? 17:41 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:41 Error SyntaxError: Unexpected token ')'. */
-/* @@? 17:42 Error SyntaxError: Unexpected token ':'. */
-/* @@? 17:48 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:49 Error SyntaxError: Unexpected token '{'. */
-/* @@? 18:9 Error SyntaxError: Unexpected token 'return'. */
-/* @@? 18:17 Error SyntaxError: Field type annotation expected. */
-/* @@? 20:1 Error SyntaxError: Unexpected token '}'. */
-/* @@? 23:23 Error TypeError: Method methodOne(p: Derived): Base in Derived not overriding any method */
-/* @@? 32:21 Error TypeError: Property 'methodOne' does not exist on type 'Base' */
+
+/* @@? 17:19 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:19 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 17:19 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 17:30 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:30 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 17:32 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 17:36 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 17:41 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:41 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 17:42 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 17:48 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:49 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 18:9 Error Syntax error ESY0227: Unexpected token 'return'. */
+/* @@? 18:17 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 20:1 Error Syntax error ESY0227: Unexpected token '}'. */

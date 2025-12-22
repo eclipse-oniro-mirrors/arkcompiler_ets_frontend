@@ -35,7 +35,7 @@ function foo<T, U, K>(a: A<A<K, U, T>, String, K>): void {
     arktest.assertEQ((typeof a.c), "boolean")
     arktest.assertEQ((typeof a.a.a), "boolean")
     arktest.assertEQ((typeof a.a.b), "string")
-    arktest.assertEQ((typeof a.a.c), "number")
+    arktest.assertEQ((typeof a.a.c), "int")
 }
 
 function main(): void {

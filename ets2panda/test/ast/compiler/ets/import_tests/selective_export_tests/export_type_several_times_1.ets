@@ -22,3 +22,5 @@ export {
   A as a1,
   A as a2
 }
+/* @@? 21:3 Warning Warning W32596: 'foo' is explicitly used with alias several times */
+/* @@? 23:3 Warning Warning W32596: 'A' is explicitly used with alias several times */

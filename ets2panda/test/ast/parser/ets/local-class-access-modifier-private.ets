@@ -20,4 +20,5 @@ function foo()
     {
     }
 }
-/* @@@ label Error SyntaxError: Local class or interface declaration members can not have access modifies.  */
+
+/* @@@ label Error Syntax error ESY0030: Local class or interface declaration members can not have access modifies. */

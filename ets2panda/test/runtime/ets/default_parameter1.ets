@@ -15,12 +15,7 @@
 
 function main() : void
 {
-    arktest.assertEQ(foo(5), 5);
-}
-
-function foo(a : int) : int
-{
-    return a;
+    arktest.assertEQ(foo(5), 15);
 }
 
 function foo(a : int, b : int = 10) : int
@@ -28,4 +23,8 @@ function foo(a : int, b : int = 10) : int
     return a + b;
 }
 
+function foo(a : int) : int
+{
+    return a;
+}
 

@@ -15,9 +15,15 @@
 
 #include <gtest/gtest.h>
 #include <cstddef>
+#include <iostream>
+#include <ostream>
 #include <string>
+#include <string_view>
+#include "lsp/include/services/text_change/change_tracker.h"
 #include "lsp_api_test.h"
 #include "lsp/include/applicable_refactors.h"
+#include "lsp/include/refactors/convert_template.h"
+#include "public/public.h"
 
 const size_t REFACTOR_TEMPLATE_POSITION_OFFSET = 8;
 
@@ -37,19 +43,26 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor1)
     auto filePaths = CreateTempFile(files, texts);
     size_t const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
-
     auto pos = texts[0].find("/*1*/");
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
-
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
 
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`\\0\\b\\f\\t\\r\\n${text}\\n`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }
@@ -66,12 +79,21 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor2)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`${text}`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }
@@ -88,13 +110,21 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor3)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
-
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`\$${text}\\\\/*6*/`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }
@@ -111,11 +141,19 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor4)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
 
     initializer.DestroyContext(ctx);
     ASSERT_EQ(0, result.size());
@@ -133,13 +171,22 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor5)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
 
     initializer.DestroyContext(ctx);
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`\${${text}}`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }
@@ -156,11 +203,19 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor6)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
     ASSERT_EQ(0, result.size());
 }
@@ -177,12 +232,19 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor7)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
-
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
     ASSERT_EQ(0, result.size());
 }
@@ -199,12 +261,21 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor8)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`\\u0041\\u0061${text}\\0\\u0000`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }
@@ -221,12 +292,21 @@ TEST_F(LspTemplateRefTests, ConvertTemplateRefactor9)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+    TextChangesContext changeText {{}, formatContext, {}};
     ark::es2panda::lsp::RefactorContext refactorContext;
     refactorContext.context = ctx;
+    refactorContext.textChangesContext = &changeText;
     refactorContext.kind = std::string(TO_NAMED_TEMPLATE_KIND);
     refactorContext.span.pos = pos + REFACTOR_TEMPLATE_POSITION_OFFSET;
+    refactorContext.span.end = refactorContext.span.pos;
+    ark::es2panda::lsp::ChangeTracker tracker = ark::es2panda::lsp::ChangeTracker::FromContext(changeText);
     auto result = GetApplicableRefactorsImpl(&refactorContext);
+    auto actions = ark::es2panda::lsp::ConvertTemplateRefactor().GetEditsForAction(refactorContext,
+                                                                                   std::string(TO_NAMED_TEMPLATE_NAME));
     initializer.DestroyContext(ctx);
+    EXPECT_EQ(actions->GetFileTextChanges()[0].textChanges[0].newText, R"(`\$\`${text}\`\\\\`;)");
     ASSERT_EQ(1, result.size());
     ASSERT_EQ(std::string(TO_NAMED_TEMPLATE_NAME), result[0].action.name);
 }

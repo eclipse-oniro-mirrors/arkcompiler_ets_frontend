@@ -17,4 +17,5 @@ class A {
   /* @@ label */enum Color { Red, Green, Blue }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
+
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */

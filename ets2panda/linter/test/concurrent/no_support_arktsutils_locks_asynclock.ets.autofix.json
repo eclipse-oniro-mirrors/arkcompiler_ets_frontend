@@ -37,19 +37,19 @@
         },
         {
             "line": 18,
-            "column": 28,
+            "column": 17,
             "endLine": 18,
-            "endColumn": 33,
+            "endColumn": 27,
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 678,
-                    "end": 710,
-                    "replacementText": "new AsyncLock()",
+                    "start": 682,
+                    "end": 708,
+                    "replacementText": "AsyncLock",
                     "line": 18,
-                    "column": 28,
+                    "column": 17,
                     "endLine": 18,
-                    "endColumn": 33
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -58,19 +58,19 @@
         },
         {
             "line": 20,
-            "column": 28,
+            "column": 17,
             "endLine": 20,
-            "endColumn": 33,
+            "endColumn": 27,
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 725,
-                    "end": 757,
-                    "replacementText": "new AsyncLock()",
+                    "start": 729,
+                    "end": 755,
+                    "replacementText": "AsyncLock",
                     "line": 20,
-                    "column": 28,
+                    "column": 17,
                     "endLine": 20,
-                    "endColumn": 33
+                    "endColumn": 27
                 }
             ],
             "suggest": "",

@@ -14,7 +14,7 @@
  */
 
 #include "arktsconfig.h"
-#include "os/filesystem.h"
+#include "libarkbase/os/filesystem.h"
 #include "util/language.h"
 #include "util/diagnosticEngine.h"
 #include "generated/signatures.h"
@@ -34,6 +34,18 @@ bool ArkTsConfig::Check(bool cond, const diagnostic::DiagnosticKind &diag, const
         return false;
     }
     return true;
+}
+
+void ArkTsConfig::GenerateSourcePathMap()
+{
+    if (!sourcePathMap_.empty()) {
+        return;
+    }
+    for (auto &keyValPair : dependencies_) {
+        if (!keyValPair.second.SourceFilePath().empty()) {
+            sourcePathMap_.insert({keyValPair.second.SourceFilePath(), keyValPair.first});
+        }
+    }
 }
 
 static bool IsAbsolute(const std::string &path)
@@ -229,6 +241,16 @@ static constexpr auto LANGUAGE = "language";  // CC-OFF(G.NAM.03-CPP) project co
 static constexpr auto PATH = "path";          // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto OHM_URL = "ohmUrl";     // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto ALIAS = "alias";        // CC-OFF(G.NAM.03-CPP) project code style
+static constexpr auto SOURCEFILEPATH = "sourceFilePath";
+
+static void ParseLanguage(const std::string *langValue, std::optional<Language> &lang)
+{
+    if (langValue != nullptr) {
+        lang = Language::FromString(*langValue);
+    } else {
+        lang = Language {Language::Id::ETS};
+    }
+}
 
 bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
                                   std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap)
@@ -246,11 +268,7 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
 
     auto langValue = data->get()->GetValue<JsonObject::StringT>(LANGUAGE);
     std::optional<Language> lang = std::nullopt;
-    if (langValue != nullptr) {
-        lang = Language::FromString(*langValue);
-    } else {
-        lang = Language {Language::Id::ETS};
-    }
+    ParseLanguage(langValue, lang);
     const auto &diagParams = util::DiagnosticMessageParams {LANGUAGE, key, ValidLanguages()};
     if (!Check(lang != std::nullopt && lang->IsValid(), diagnostic::INVALID_LANGUAGE, diagParams)) {
         return false;
@@ -273,7 +291,7 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
     if (pathValue != nullptr) {
         normalizedPath =
             IsAbsolute(*pathValue) ? ark::os::GetAbsolutePath(*pathValue) : MakeAbsolute(*pathValue, baseUrl_);
-        if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {key})) {
+        if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {normalizedPath, key, baseUrl_})) {
             return false;
         }
     } else {
@@ -282,9 +300,15 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
             return false;
         }
     }
+    auto sourcePathValue = data->get()->GetValue<JsonObject::StringT>(SOURCEFILEPATH);
+    std::string sourcePath {};
+    if (sourcePathValue != nullptr) {
+        sourcePath = IsAbsolute(*sourcePathValue) ? ark::os::GetAbsolutePath(*sourcePathValue)
+                                                  : MakeAbsolute(*sourcePathValue, baseUrl_);
+    }
     std::vector<std::string> aliases = ParseStringArray(data, ALIAS);
     auto res = dependenciesMap.insert(
-        {key, ArkTsConfig::ExternalModuleData(*lang, normalizedPath, ohmUrlValue, std::move(aliases))});
+        {key, ArkTsConfig::ExternalModuleData(*lang, normalizedPath, sourcePath, ohmUrlValue, std::move(aliases))});
     return Check(res.second, diagnostic::DUPLICATED_DEPENDENCIES, {normalizedPath, key});
 }
 
@@ -373,10 +397,12 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
         !Check(ark::os::file::File::IsDirectory(rootDir_), diagnostic::NOT_A_DIR, {"rootDir " + rootDir_})) {
         return false;
     }
+    if (rootDir_.empty()) {
+        rootDir_ = ".";
+    }
     cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
-    if (!cacheDir_.empty() &&
-        !Check(ark::os::file::File::IsDirectory(cacheDir_), diagnostic::NOT_A_DIR, {"cacheDir " + cacheDir_})) {
-        return false;
+    if (!cacheDir_.empty() && !ark::os::IsDirExists(cacheDir_)) {
+        ark::os::CreateDirectories(cacheDir_);
     }
     // Parse "useUrl"
     if (compilerOptions->get()->HasKey(USE_EMPTY_PACKAGE)) {

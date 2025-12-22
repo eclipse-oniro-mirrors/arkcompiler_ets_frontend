@@ -14,5 +14,6 @@
  */
 function foo (): void
 let y = foo()
-/* @@? 16:9 Error TypeError: Cannot use type 'void' as value.   */
-/* @@? 15:10 Error TypeError: Only abstract or native methods can't have body.  */
+
+/* @@? 15:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 16:9 Error Semantic error ESE0078: Cannot use type 'void' as value. */

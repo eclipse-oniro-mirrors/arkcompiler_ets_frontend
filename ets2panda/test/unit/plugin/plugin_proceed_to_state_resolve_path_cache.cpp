@@ -21,7 +21,7 @@
 #include <cstring>
 #include "util.h"
 #include "public/es2panda_lib.h"
-#include "os/file.h"
+#include "libarkbase/os/file.h"
 
 // NOLINTBEGIN
 
@@ -62,18 +62,18 @@ int main(int argc, char **argv)
 
     auto pathDelim = ark::os::file::File::GetPathDelim();
     auto resolvedPath = ResolveImportPath(argc, argv, context, const_cast<char *>("./export.ets"));
-    if (strstr(resolvedPath, ("cache" + std::string(pathDelim) + "export.d.ets").c_str()) == nullptr) {
+    if (strstr(resolvedPath, ("cache" + std::string(pathDelim) + "export.etscache").c_str()) == nullptr) {
         return TEST_ERROR_CODE;
     }
 
     auto resolvedPath1 = ResolveImportPath(argc, argv, context, const_cast<char *>("./export"));
-    if (strstr(resolvedPath1, ("cache" + std::string(pathDelim) + "export.d.ets").c_str()) == nullptr) {
+    if (strstr(resolvedPath1, ("cache" + std::string(pathDelim) + "export.etscache").c_str()) == nullptr) {
         return TEST_ERROR_CODE;
     }
 
     auto resolvedPath2 = ResolveImportPath(argc, argv, context, const_cast<char *>("./export.d.ets"));
     if (strstr(resolvedPath2, "export.d.ets") == nullptr ||
-        strstr(resolvedPath2, ("cache" + std::string(pathDelim) + "export.d.ets").c_str()) != nullptr) {
+        strstr(resolvedPath2, ("cache" + std::string(pathDelim) + "export.etscache").c_str()) != nullptr) {
         return TEST_ERROR_CODE;
     }
 

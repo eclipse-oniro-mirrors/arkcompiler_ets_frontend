@@ -24,54 +24,26 @@
 #include "objectIndexAccess.h"
 
 #include "checker/ETSchecker.h"
-#include "checker/types/typeFlag.h"
 #include "compiler/lowering/util.h"
 #include "parser/ETSparser.h"
-#include "util/options.h"
 
 namespace ark::es2panda::compiler {
-ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *parser, checker::ETSChecker *checker,
-                                                           ir::AssignmentExpression *assignmentExpression) const
+static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::AssignmentExpression *assignmentExpression)
 {
     //  Note! We assume that parser and checker phase nave been already passed correctly, thus the class has
     //  required accessible index method[s] and all the types are properly resolved.
 
-    auto indexSymbol = Gensym(checker->Allocator());
+    auto *const parser = ctx->parser->AsETSParser();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
     auto *const memberExpression = assignmentExpression->Left()->AsMemberExpression();
-    ir::Expression *loweringResult = nullptr;
-    [[maybe_unused]] ir::AstNode *setter = nullptr;
-    // Generate call to $_get to handle the chained assignment expression
-    if (assignmentExpression->Parent()->IsExpression() || assignmentExpression->Parent()->IsVariableDeclarator()) {
-        ArenaVector<ir::Statement *> blockStatements(checker->Allocator()->Adapter());
-        auto objectSymbol = Gensym(checker->Allocator());
-        blockStatements.push_back(
-            parser->CreateFormattedStatement("let @@I1 = @@E2", objectSymbol, memberExpression->Object()));
-        blockStatements.push_back(
-            parser->CreateFormattedStatement("let @@I1 = @@E2", indexSymbol, memberExpression->Property()));
-        static std::string const CALL_EXPRESSION =
-            std::string {"@@E1."} + std::string {compiler::Signatures::SET_INDEX_METHOD} + "(@@E2, @@E3)";
-        // Parse ArkTS code string and create and process corresponding AST node(s)
-        auto *const setStmt = parser->CreateFormattedStatement(
-            CALL_EXPRESSION, objectSymbol->Clone(checker->Allocator(), nullptr),
-            indexSymbol->Clone(checker->Allocator(), nullptr), assignmentExpression->Right());
-        setter = setStmt;
-        blockStatements.push_back(setStmt);
-        static std::string const GET_EXPRESSION =
-            std::string {"@@E1."} + std::string {compiler::Signatures::GET_INDEX_METHOD} + "(@@E2)";
-        blockStatements.push_back(parser->CreateFormattedStatement(GET_EXPRESSION,
-                                                                   objectSymbol->Clone(checker->Allocator(), nullptr),
-                                                                   indexSymbol->Clone(checker->Allocator(), nullptr)));
-        loweringResult =
-            util::NodeAllocator::ForceSetParent<ir::BlockExpression>(checker->Allocator(), std::move(blockStatements));
-    } else {
-        static std::string const CALL_EXPRESSION =
-            std::string {"@@E1."} + std::string {compiler::Signatures::SET_INDEX_METHOD} + "(@@E2, @@E3)";
-        // Parse ArkTS code string and create and process corresponding AST node(s)
-        loweringResult = parser->CreateFormattedExpression(CALL_EXPRESSION, memberExpression->Object(),
-                                                           memberExpression->Property(), assignmentExpression->Right());
-        setter = loweringResult;
-    }
-    ES2PANDA_ASSERT(loweringResult != nullptr && setter != nullptr);
+
+    static std::string const CALL_EXPRESSION =
+        std::string {"@@E1."} + std::string {compiler::Signatures::SET_INDEX_METHOD} + "(@@E2, @@E3)";
+
+    ir::Expression *loweringResult = parser->CreateFormattedExpression(
+        CALL_EXPRESSION, memberExpression->Object(), memberExpression->Property(), assignmentExpression->Right());
+
+    ES2PANDA_ASSERT(loweringResult != nullptr);
     loweringResult->SetParent(assignmentExpression->Parent());
     loweringResult->SetRange(assignmentExpression->Range());
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
@@ -82,13 +54,15 @@ ir::Expression *ObjectIndexLowering::ProcessIndexSetAccess(parser::ETSParser *pa
     return loweringResult;
 }
 
-ir::Expression *ObjectIndexLowering::ProcessIndexGetAccess(parser::ETSParser *parser, checker::ETSChecker *checker,
-                                                           ir::MemberExpression *memberExpression) const
+static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberExpression *memberExpression)
 {
+    auto *const parser = ctx->parser->AsETSParser();
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
+
     //  Note! We assume that parser and checker phase nave been already passed correctly, thus the class has
     //  required accessible index method[s] and all the types are properly resolved.
     static std::string const CALL_EXPRESSION =
-        std::string {"@@E1."} + std::string {compiler::Signatures::GET_INDEX_METHOD} + "(@@E2)";
+        std::string {"@@E1."} + std::string {Signatures::GET_INDEX_METHOD} + "(@@E2)";
 
     // Parse ArkTS code string and create and process corresponding AST node(s)
     auto *const loweringResult =
@@ -103,20 +77,16 @@ ir::Expression *ObjectIndexLowering::ProcessIndexGetAccess(parser::ETSParser *pa
 
 bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
-    auto *const parser = ctx->parser->AsETSParser();
-    ES2PANDA_ASSERT(parser != nullptr);
-    auto *const checker = ctx->GetChecker()->AsETSChecker();
-    ES2PANDA_ASSERT(checker != nullptr);
+    const auto isGetSetExpression = [](const ir::MemberExpression *const memberExpr) {
+        return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
+    };
 
     program->Ast()->TransformChildrenRecursively(
-        // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [this, parser, checker](ir::AstNode *const ast) -> ir::AstNode * {
+        [ctx, &isGetSetExpression](ir::AstNode *const ast) {
             if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
-                auto memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
-                if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
-                    memberExpr->AsMemberExpression()->ObjType() != nullptr &&
-                    !memberExpr->Object()->TsType()->IsGradualType()) {
-                    return ProcessIndexSetAccess(parser, checker, ast->AsAssignmentExpression());
+                const auto *const memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
+                if (isGetSetExpression(memberExpr)) {
+                    return ProcessIndexSetAccess(ctx, ast->AsAssignmentExpression());
                 }
             }
             return ast;
@@ -124,13 +94,11 @@ bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Pro
         Name());
 
     program->Ast()->TransformChildrenRecursively(
-        // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [this, parser, checker](ir::AstNode *const ast) -> ir::AstNode * {
+        [ctx, &isGetSetExpression](ir::AstNode *const ast) {
             if (ast->IsMemberExpression()) {
-                auto memberExpr = ast->AsMemberExpression();
-                if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS &&
-                    memberExpr->ObjType() != nullptr && !memberExpr->Object()->TsType()->IsGradualType()) {
-                    return ProcessIndexGetAccess(parser, checker, ast->AsMemberExpression());
+                auto *const memberExpr = ast->AsMemberExpression();
+                if (isGetSetExpression(memberExpr)) {
+                    return ProcessIndexGetAccess(ctx, memberExpr);
                 }
             }
             return ast;
@@ -144,10 +112,9 @@ bool ObjectIndexLowering::PostconditionForModule([[maybe_unused]] public_lib::Co
                                                  const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) {
-        if (ast->IsMemberExpression()) {
-            auto memberExpr = ast->AsMemberExpression();
-            if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr &&
-                !memberExpr->Object()->TsType()->IsGradualType()) {
+        if (ast->IsMemberExpression() &&
+            ast->AsMemberExpression()->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+            if (auto const *const objectType = ast->AsMemberExpression()->ObjType(); objectType != nullptr) {
                 return true;
             }
         }

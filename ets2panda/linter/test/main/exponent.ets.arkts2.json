@@ -25,26 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 19,
-            "column": 11,
-            "endLine": 19,
-            "endColumn": 13,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 3,
-            "endLine": 22,
-            "endColumn": 6,
-            "problem": "ExponentOp",
-            "suggest": "",
-            "rule": "exponent opartions \"**\" and \"**=\" are disabled (arkts-no-exponent-op)",
-            "severity": "ERROR"
-        },
-        {
             "line": 25,
             "column": 5,
             "endLine": 25,

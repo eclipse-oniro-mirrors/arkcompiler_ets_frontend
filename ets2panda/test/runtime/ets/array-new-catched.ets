@@ -20,8 +20,10 @@ function baz(): number {
     let catched = false;
     try {
         let a:FixedArray<int> = new int[baz()]
-    } catch (e: TypeError) {
-        catched = true
+    } catch (e) {
+        if (e instanceof TypeError) {
+           catched = true
+        }
     }
     arktest.assertTrue(catched)
   }

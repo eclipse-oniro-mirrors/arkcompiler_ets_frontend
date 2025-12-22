@@ -46,9 +46,10 @@ function relationalStoreCustomDirTest() {
         let ret = await storestore.insert("test", valueBucket);
     })
 }
-/* @@? 17:5 Error TypeError: Unresolved reference it */
-/* @@? 17:14 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
-/* @@? 19:5 Error TypeError: This expression is not callable. */
-/* @@? 19:14 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
-/* @@? 31:5 Error TypeError: This expression is not callable. */
-/* @@? 31:14 Error SyntaxError: Function expressions are not supported, use arrow functions instead */
+
+/* @@? 17:5 Error Semantic error ESE0143: Unresolved reference it */
+/* @@? 17:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
+/* @@? 19:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 19:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
+/* @@? 31:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 31:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */

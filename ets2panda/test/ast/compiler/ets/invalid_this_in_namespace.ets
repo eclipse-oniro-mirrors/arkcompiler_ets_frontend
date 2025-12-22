@@ -17,4 +17,4 @@ namespace X {
     this.toString()
 }
 
-/* @@? 17:5 Error TypeError: 'this' cannot be referenced from a static context */
+/* @@? 17:5 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */

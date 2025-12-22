@@ -285,4 +285,4 @@
     }
   }
 }
-TypeError: Block-scoped variable 'a' used before its declaration [test_object_literal.ts:17:5]
+Warning W0025: Not matching extensions! Sourcefile: ts, Manual(used): as

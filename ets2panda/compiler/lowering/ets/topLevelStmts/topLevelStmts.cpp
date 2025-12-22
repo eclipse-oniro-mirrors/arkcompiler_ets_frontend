@@ -58,18 +58,14 @@ static void AddExportModifierForInterface(ir::AstNode *const ast)
     }
 }
 
-static void DeclareNamespaceExportAdjust(parser::Program *program, const std::string_view &name)
+static void DeclareNamespaceExportAdjust(parser::Program *program)
 {
-    program->Ast()->TransformChildrenRecursively(
-        [](ir::AstNode *const ast) {
-            if (ast->IsClassDeclaration() && ast->AsClassDeclaration()->Definition()->IsNamespaceTransformed() &&
-                ast->AsClassDeclaration()->Definition()->IsDeclare() &&
-                (ast->IsExported() || ast->IsDefaultExported())) {
-                AddExportModifierForInterface(ast);
-            }
-            return ast;
-        },
-        name);
+    program->Ast()->Iterate([](ir::AstNode *const ast) {
+        if (ast->IsClassDeclaration() && ast->AsClassDeclaration()->Definition()->IsNamespaceTransformed() &&
+            ast->AsClassDeclaration()->Definition()->IsDeclare() && (ast->IsExported() || ast->IsDefaultExported())) {
+            AddExportModifierForInterface(ast);
+        }
+    });
 }
 
 static void CheckFileHeaderFlag(parser::Program *program)
@@ -108,7 +104,7 @@ bool TopLevelStatements::Perform(public_lib::Context *ctx, parser::Program *prog
             globalClass.SetGlobalProgram(extPrograms.front());
             globalClass.SetupGlobalClass(extPrograms, &moduleDependencies);
             for (auto extProg : extPrograms) {
-                DeclareNamespaceExportAdjust(extProg, Name());
+                DeclareNamespaceExportAdjust(extProg);
             }
         }
     }
@@ -118,7 +114,7 @@ bool TopLevelStatements::Perform(public_lib::Context *ctx, parser::Program *prog
     auto moduleDependencies = imports.HandleGlobalStmts(mainModule);
     globalClass.SetGlobalProgram(program);
     globalClass.SetupGlobalClass(mainModule, &moduleDependencies);
-    DeclareNamespaceExportAdjust(program, Name());
+    DeclareNamespaceExportAdjust(program);
 
     return true;
 }

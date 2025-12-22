@@ -27,25 +27,26 @@ function main(){
     a.foo111(["abc","abc",1]);
 }
 
-/* @@? 21:20 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 21:20 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 21:20 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 21:21 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 21:21 Error TypeError: Variable 'foo1' has already been declared. */
-/* @@? 21:25 Error SyntaxError: Unexpected token ','. */
-/* @@? 21:25 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:30 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:30 Error SyntaxError: Unexpected token ','. */
-/* @@? 21:35 Error SyntaxError: Unexpected token ')'. */
-/* @@? 21:35 Error SyntaxError: Field type annotation expected. */
-/* @@? 21:36 Error SyntaxError: Unexpected token '{'. */
-/* @@? 22:20 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 22:20 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 22:20 Error TypeError: overloaded name must refer to an accessible method. */
-/* @@? 22:21 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 22:21 Error TypeError: Unresolved reference foo1 */
-/* @@? 22:25 Error SyntaxError: Unexpected token ','. */
-/* @@? 22:26 Error SyntaxError: Unexpected token 'foo2'. */
-/* @@? 22:26 Error TypeError: Unresolved reference foo2 */
-/* @@? 22:30 Error SyntaxError: Unexpected token ')'. */
-/* @@? 23:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 21:20 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 21:20 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 21:20 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 21:21 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 21:21 Error Semantic error ESE0351: Variable 'foo1' has already been declared. */
+/* @@? 21:25 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 21:25 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:30 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 21:30 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:35 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 21:35 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 21:36 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 22:20 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 22:20 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 22:20 Error Semantic error ESE0384: overloaded name must refer to an accessible method. */
+/* @@? 22:21 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 22:21 Error Semantic error ESE0143: Unresolved reference foo1 */
+/* @@? 22:25 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 22:26 Error Syntax error ESY0227: Unexpected token 'foo2'. */
+/* @@? 22:26 Error Semantic error ESE0143: Unresolved reference foo2 */
+/* @@? 22:30 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 23:1 Error Syntax error ESY0227: Unexpected token '}'. */

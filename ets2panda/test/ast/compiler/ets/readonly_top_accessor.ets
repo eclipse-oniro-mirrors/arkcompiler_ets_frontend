@@ -24,6 +24,8 @@ function main() {
     NS.name = "world";
 }
 
-/* @@? 23:5 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@? 24:8 Error TypeError: Cannot assign to this property because it is readonly. */
-/* @@? 24:8 Error TypeError: 'name' is not exported in 'NS' */
+/* @@? 23:5 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */
+/* @@? 24:8 Error Semantic error ESE0209: Cannot assign to this property because it is readonly. */
+/* @@? 24:8 Error Semantic error ESE0206: 'name' is not exported in 'NS' */

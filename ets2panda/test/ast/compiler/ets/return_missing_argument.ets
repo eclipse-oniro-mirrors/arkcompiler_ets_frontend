@@ -22,4 +22,5 @@ function main(): void {
   let a: int = dummy();
 }
 
-/* @@@ label Error TypeError: Missing return value.  */
+
+/* @@@ label Error Semantic error ESE0032: Missing return value. */

@@ -15,14 +15,11 @@
 
 #include <cstdio>
 #include <string>
-#include "os/filesystem.h"
+#include "importPathManager.h"
+#include "libarkbase/os/filesystem.h"
 #include "path.h"
 
 namespace ark::es2panda::util {
-
-constexpr size_t ALLOWED_EXTENSIONS_SIZE = 8;
-inline constexpr std::array<std::string_view, ALLOWED_EXTENSIONS_SIZE> SUPPORTED_EXTENSIONS = {
-    ".d.ets", ".ets", ".d.sts", ".sts", ".d.ts", ".ts", ".js", ".abc"};
 
 Path::Path() = default;
 
@@ -68,7 +65,7 @@ void Path::InitializeFileName()
         return;
     }
 
-    for (auto extension : SUPPORTED_EXTENSIONS) {
+    for (auto extension : ImportPathManager::supportedExtensionsInversed) {
         if (EndsWith(fileNameWithExtension_.Utf8(), extension)) {
             fileName_ = fileNameWithExtension_.Substr(0, fileNameWithExtension_.Length() - extension.length());
             return;
@@ -76,7 +73,8 @@ void Path::InitializeFileName()
     }
 
     size_t extensionPosition = fileNameWithExtension_.Mutf8().find_last_of('.');
-    fileName_ = fileNameWithExtension_.Substr(0, extensionPosition);
+    fileName_ = extensionPosition == std::string::npos ? fileNameWithExtension_
+                                                       : fileNameWithExtension_.Substr(0, extensionPosition);
 }
 
 void Path::InitializeFileNameWithExtension()
@@ -95,7 +93,7 @@ void Path::InitializeFileExtension()
         return;
     }
 
-    for (auto extension : SUPPORTED_EXTENSIONS) {
+    for (auto extension : ImportPathManager::supportedExtensionsInversed) {
         if (EndsWith(path_.Utf8(), extension)) {
             fileExtension_ = util::UString(extension, allocator_).View();
             return;

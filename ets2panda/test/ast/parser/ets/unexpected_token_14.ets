@@ -19,9 +19,10 @@ enum HEHE
 }
 
 
-/* @@? 17:5 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@? 17:9 Error SyntaxError: Identifier expected, got '='. */
-/* @@? 17:11 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 17:21 Error SyntaxError: Unexpected token ','. */
-/* @@? 18:5 Error TypeError: Unresolved reference Green */
-/* @@? 19:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:5 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 17:9 Error Syntax error ESY0224: Identifier expected, got '='. */
+/* @@? 17:11 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 17:21 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 18:5 Error Semantic error ESE0143: Unresolved reference Green */
+/* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */

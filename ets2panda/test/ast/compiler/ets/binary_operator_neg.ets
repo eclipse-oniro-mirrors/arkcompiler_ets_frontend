@@ -15,8 +15,9 @@
 
 /* @@ label1 */@@/@
 
-/* @@@ label1 Error SyntaxError: Unexpected token '@@'. */
-/* @@? 23:1 Error SyntaxError: Identifier expected, got 'end of stream'. */
-/* @@? 23:1 Error SyntaxError: Invalid annotation name. */
-/* @@? 23:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 23:1 Error SyntaxError: Annotations are not allowed on this type of declaration. */
+
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@? 23:102 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 23:102 Error Syntax error ESY0329: Invalid annotation name. */
+/* @@? 23:102 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 23:102 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

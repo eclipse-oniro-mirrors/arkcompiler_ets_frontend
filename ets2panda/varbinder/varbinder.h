@@ -438,6 +438,7 @@ std::tuple<T *, varbinder::Variable *> VarBinder::NewVarDecl(const lexer::Source
     return {decl, var};
 }
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class TopScopeContext {
 public:
     TopScopeContext(VarBinder *varbinder, GlobalScope *globalScope)

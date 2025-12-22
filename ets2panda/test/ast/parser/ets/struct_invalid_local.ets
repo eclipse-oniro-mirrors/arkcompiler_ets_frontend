@@ -19,4 +19,5 @@ function main(): void {
     }
 }
 
-/* @@@ label Error SyntaxError: Illegal start of STRUCT expression.  */
+
+/* @@@ label Error Syntax error ESY0040: Illegal start of STRUCT expression. */

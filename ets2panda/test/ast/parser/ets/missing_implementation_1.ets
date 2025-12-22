@@ -27,4 +27,5 @@ class Derived implements Interface /* @@ label */{
   
 }
 
-/* @@@ label Error TypeError: Derived is not abstract and does not implement setter for instance_field property in Interface  */
+
+/* @@@ label Error Semantic error ESE0189: Derived is not abstract and does not implement setter for instance_field property in Interface */

@@ -23,4 +23,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: Must call super constructor  */
+
+/* @@@ label Error Semantic error ESE0192: Must call super constructor */

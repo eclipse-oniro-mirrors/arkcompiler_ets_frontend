@@ -23,8 +23,9 @@ export namespace xml {
   }
 }
 
-/* @@? 17:3 Error SyntaxError: Unexpected token 'static'. */
-/* @@? 17:10 Error SyntaxError: Unexpected token 'a'. */
-/* @@? 17:13 Error SyntaxError: Label must be followed by a loop statement. */
-/* @@? 17:13 Error TypeError: Type name 'number' used in the wrong context */
-/* @@? 20:3 Error SyntaxError: Only one static block is allowed in one namespace or class. */
+
+/* @@? 17:3 Error Syntax error ESY0227: Unexpected token 'static'. */
+/* @@? 17:10 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 17:13 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 17:13 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 20:3 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */

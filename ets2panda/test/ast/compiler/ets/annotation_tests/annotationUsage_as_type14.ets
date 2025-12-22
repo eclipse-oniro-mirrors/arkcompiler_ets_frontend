@@ -18,5 +18,6 @@
 
 function foo(a: /* @@ label1 */Anno) {}
 
-/* @@@ label Error TypeError: Annotations cannot be used as a type.  */
-/* @@@ label1 Error TypeError: Annotations cannot be used as a type.  */
+
+/* @@@ label Error Semantic error ESE0159: Annotations cannot be used as a type. */
+/* @@@ label1 Error Semantic error ESE0159: Annotations cannot be used as a type. */

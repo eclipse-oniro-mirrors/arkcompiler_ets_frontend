@@ -18,8 +18,9 @@ a[0] = 1
 a[1] = "1"
 let b = a[0] + a[1]
 
-/* @@? 16:9 Error TypeError: Can't resolve array type */
-/* @@? 17:1 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 18:1 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 19:9 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 19:16 Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@? 16:9 Error Semantic error ESE0301: Can't resolve array type */
+/* @@? 17:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 18:1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 19:9 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 19:16 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

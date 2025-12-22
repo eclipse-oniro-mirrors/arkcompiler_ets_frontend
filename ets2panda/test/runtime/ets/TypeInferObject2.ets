@@ -26,9 +26,9 @@ class A<T, U, K> {
 }
 
 function foo<T, U extends Number, K, L extends A<T, K, T>>(a: A<T, K, int>, b: U, c: K, d: U, e: L) {
-    arktest.assertEQ(typeof a.a, "number")
+    arktest.assertEQ(typeof a.a, "int")
     arktest.assertEQ(typeof a.b, "string")
-    arktest.assertEQ(typeof a.c, "number")
+    arktest.assertEQ(typeof a.c, "int")
     arktest.assertEQ(typeof b, "number")
     arktest.assertEQ(typeof c, "string")
     arktest.assertEQ(typeof d, "number")
@@ -37,9 +37,9 @@ function foo<T, U extends Number, K, L extends A<T, K, T>>(a: A<T, K, int>, b: U
 }
 
 function bar<T, U, K>(a: A<T, K, T>, b : U) {
-    arktest.assertEQ(typeof a.a, "number")
+    arktest.assertEQ(typeof a.a, "int")
     arktest.assertEQ(typeof a.b, "string")
-    arktest.assertEQ(typeof a.c, "number")
+    arktest.assertEQ(typeof a.c, "int")
     arktest.assertEQ(typeof b, "number")
     return new A<T, U, K>(a.a, b, a.b);
 }
@@ -48,11 +48,11 @@ function main() {
     let a = new A<int, String, int>(10, "Test", 40);
     let b: number = 20;
     let c = foo(a, b, "Test", 20, a);
-    arktest.assertEQ(typeof c.a, "number")
+    arktest.assertEQ(typeof c.a, "int")
     arktest.assertEQ(typeof c.b, "number")
     arktest.assertEQ(typeof c.c, "string")
     let d = bar(a, b);
-    arktest.assertEQ(typeof d.a, "number")
+    arktest.assertEQ(typeof d.a, "int")
     arktest.assertEQ(typeof d.b, "number")
     arktest.assertEQ(typeof d.c, "string")
 }

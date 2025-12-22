@@ -27,15 +27,17 @@ function compileExternalProgram(jobInfo: JobInfo): void {
   let ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', jobInfo.arktsConfigFile];
   let lspDriverHelper = new LspDriverHelper();
   let config = lspDriverHelper.createCfg(ets2pandaCmd, jobInfo.filePath);
-  if (!fs.existsSync(jobInfo.filePath)) {
+  if (!fs.existsSync(jobInfo.filePath) || fs.statSync(jobInfo.filePath).isDirectory()) {
     return;
   }
   const source = fs.readFileSync(jobInfo.filePath, 'utf8').replace(/\r\n/g, '\n');
   let context = lspDriverHelper.createCtx(source, jobInfo.filePath, config, jobInfo.globalContextPtr, true);
+  PluginDriver.getInstance().getPluginContext().setCodingFilePath(jobInfo.filePath);
+  PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
   PluginDriver.getInstance().getPluginContext().setContextPtr(context);
-  lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_PARSED);
+  lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
   PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-  lspDriverHelper.proceedToState(context, Es2pandaContextState.ES2PANDA_STATE_LOWERED);
+  lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_LOWERED, context);
 }
 
 parentPort?.on('message', (msg) => {

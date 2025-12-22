@@ -16,7 +16,7 @@
 #define ES2PANDA_UTIL_PLUGINS_H
 
 #include "util/es2pandaMacros.h"
-#include "os/library_loader.h"
+#include "libarkbase/os/library_loader.h"
 #include "public/es2panda_lib.h"
 #include "util/ustring.h"
 

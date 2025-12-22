@@ -18,11 +18,10 @@ import {
     LogData,
     LogDataFactory
 } from '../logger';
-import { BuildConfig } from '../types';
+import { BuildConfig, KPointer } from '../types';
 import { ErrorCode, DriverError } from '../util/error';
 import { FileManager } from './FileManager';
-import path from 'path'
-import { MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
+import { initKoalaPlugins } from '../init/init_koala_modules';
 
 export enum PluginHook {
     NEW = 'afterNew',
@@ -73,7 +72,7 @@ class PluginContext {
     private program: object | undefined;
     private projectConfig: object | undefined;
     private fileManager: FileManager | undefined;
-    private contextPtr: number | undefined;
+    private contextPtr: KPointer | undefined;
 
     constructor() {
         this.ast = undefined;
@@ -118,11 +117,11 @@ class PluginContext {
         return this.fileManager;
     }
 
-    public setContextPtr(ptr: number): void {
+    public setContextPtr(ptr: KPointer): void {
         this.contextPtr = ptr;
     }
 
-    public getContextPtr(): number | undefined {
+    public getContextPtr(): KPointer | undefined {
         return this.contextPtr;
     }
 }
@@ -131,7 +130,7 @@ export class PluginDriver {
     private static instance: PluginDriver | undefined;
     private sortedPlugins: Map<PluginHook, PluginExecutor[] | undefined>;
     private allPlugins: Map<string, Plugins>;
-    private context: PluginContext;
+    private context: PluginContext | undefined;
     private logger: Logger = Logger.getInstance();
 
     constructor() {
@@ -151,19 +150,8 @@ export class PluginDriver {
         PluginDriver.instance = undefined;
     }
 
-    private initKoalaPlugins(projectConfig: BuildConfig): void {
-
-        const uiPluginPath = path.resolve(projectConfig.buildSdkPath, UI_PLUGIN_PATH_FROM_SDK);
-        const memoPluginPath = path.resolve(projectConfig.buildSdkPath, MEMO_PLUGIN_PATH_FROM_SDK);
-
-        // TODO: need change in hvigor
-        if (process.env.USE_KOALA_UI_PLUGIN) {
-            projectConfig.plugins['ArkUI'] = uiPluginPath
-        }
-
-        if (process.env.USE_KOALA_MEMO_PLUGIN) {
-            projectConfig.plugins['ArkUI-Memo'] = memoPluginPath
-        }
+    public setPluginContext(ctxPeer: KPointer): void {
+        this.context!.setContextPtr(ctxPeer)
     }
 
     public initPlugins(projectConfig: BuildConfig): void {
@@ -171,7 +159,7 @@ export class PluginDriver {
             return;
         }
 
-        this.initKoalaPlugins(projectConfig)
+        initKoalaPlugins(projectConfig)
 
         const pluginResults: RawPlugins[] = []
 
@@ -182,7 +170,7 @@ export class PluginDriver {
                 if (typeof initFunction !== 'function') {
                     throw ('Failed to load plugin: plugin in wrong format');
                 }
-                this.logger.printInfo(`Loaded plugin: ', ${key}, ${pluginObject}`);
+                this.logger.printInfo(`[Plugin Driver] Loaded plugin: ', ${key}, ${value}`);
 
                 pluginResults.push({
                     name: key,
@@ -207,8 +195,10 @@ export class PluginDriver {
             }
         });
 
-        this.context.setProjectConfig(projectConfig);
-        this.context.setFileManager(projectConfig);
+        if (this.context !== undefined) {
+            this.context.setProjectConfig(projectConfig);
+            this.context.setFileManager(projectConfig);
+        }
     }
 
     private getPlugins(hook: PluginHook): PluginExecutor[] | undefined {
@@ -261,12 +251,15 @@ export class PluginDriver {
             return;
         }
         plugins.forEach((executor: PluginExecutor) => {
-            this.logger.printInfo(`executing plugin: ${executor.name}`);
-            return (executor.handler as Function).apply(this.context);
+            this.logger.printInfo(`[Plugin Driver] executing plugin: ${executor.name}`);
+            return (executor.handler as Function).apply(this.getPluginContext());
         });
     }
 
     public getPluginContext(): PluginContext {
+        if (this.context === undefined) {
+            throw new Error('Plugin context not initialized, pls call setPluginContext before')
+        }
         return this.context;
     }
 }

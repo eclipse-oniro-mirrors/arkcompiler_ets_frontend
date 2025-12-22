@@ -22,5 +22,5 @@ function main() {
     console.log(/* @@ label */a["a"])
 }
 
-/* @@? 22:5 Error TypeError: No matching call signature for log(a[a]) */
-/* @@? 22:31 Error TypeError: Object type doesn't have proper index access method. */
+/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for log(a[a]) */
+/* @@? 22:31 Error Semantic error ESE0250: Object type doesn't have proper index access method. */

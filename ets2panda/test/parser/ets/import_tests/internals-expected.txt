@@ -73,7 +73,7 @@
         },
         "end": {
           "line": 16,
-          "column": 40,
+          "column": 39,
           "program": "internals.ets"
         }
       }
@@ -150,7 +150,7 @@
         },
         "end": {
           "line": 17,
-          "column": 30,
+          "column": 29,
           "program": "internals.ets"
         }
       }

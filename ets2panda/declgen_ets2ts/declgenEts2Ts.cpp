@@ -47,6 +47,12 @@ static void DebugPrint([[maybe_unused]] const std::string &msg)
 
 bool TSDeclGen::Generate()
 {
+    auto ctx = checker_->VarBinder()->GetContext();
+    if (ctx->lazyCheck) {
+        ctx->lazyCheck = false;
+        checker_->StartChecker(ctx->parserProgram->VarBinder(), *ctx->config->options);
+        ctx->lazyCheck = true;
+    }
     if (!GenGlobalDescriptor()) {
         return false;
     }
@@ -246,11 +252,10 @@ void TSDeclGen::CollectClassPropDependencies(const ir::ClassDefinition *classDef
 
 void TSDeclGen::CollectClassMethodDependencies(const ir::MethodDefinition *methodDef)
 {
-    auto methDefFunc = methodDef->Function();
-    if (methDefFunc == nullptr) {
+    if (methodDef->Function() == nullptr || methodDef->Function()->Signature() == nullptr) {
         return;
     }
-    auto sig = methDefFunc->Signature();
+    auto sig = methodDef->Function()->Signature();
     GenSeparated(
         sig->Params(), [this](varbinder::LocalVariable *param) { AddDependency(param->TsType()); }, "");
 
@@ -293,11 +298,10 @@ void TSDeclGen::CollectInterfacePropDependencies(const ir::TSInterfaceDeclaratio
 
 void TSDeclGen::CollectInterfaceMethodDependencies(const ir::MethodDefinition *methodDef)
 {
-    auto methDefFunc = methodDef->Function();
-    if (methDefFunc == nullptr) {
+    if (methodDef->Function() == nullptr || methodDef->Function()->Signature() == nullptr) {
         return;
     }
-    auto sig = methDefFunc->Signature();
+    auto sig = methodDef->Function()->Signature();
     GenSeparated(
         sig->Params(), [this](varbinder::LocalVariable *param) { AddDependency(param->TsType()); }, "");
 
@@ -338,7 +342,8 @@ void TSDeclGen::GenDeclarations()
         const auto jsdoc = compiler::JsdocStringFromDeclaration(globalStatement);
         if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
             continue;
-        } else if (globalStatement->IsClassDeclaration()) {
+        }
+        if (globalStatement->IsClassDeclaration()) {
             GenClassDeclaration(globalStatement->AsClassDeclaration());
         } else if (globalStatement->IsTSInterfaceDeclaration()) {
             GenInterfaceDeclaration(globalStatement->AsTSInterfaceDeclaration());
@@ -355,6 +360,24 @@ void TSDeclGen::GenExportNamedDeclarations()
     for (auto *globalStatement : program_->Ast()->Statements()) {
         if (globalStatement->IsExportNamedDeclaration()) {
             GenExportNamedDeclaration(globalStatement->AsExportNamedDeclaration());
+        }
+    }
+}
+
+void TSDeclGen::GenInitModuleGlueCode()
+{
+    for (auto *stmt : program_->Ast()->Statements()) {
+        if (!stmt->IsExpressionStatement()) {
+            continue;
+        }
+        if (!stmt->AsExpressionStatement()->GetExpression()->IsCallExpression()) {
+            continue;
+        }
+        auto *callExpr = stmt->AsExpressionStatement()->GetExpression()->AsCallExpression();
+        if (callExpr->Callee()->IsIdentifier() &&
+            callExpr->Callee()->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
+            OutTs("import \"", callExpr->Arguments()[0]->ToString(), "\"");
+            OutEndlTs();
         }
     }
 }
@@ -643,7 +666,7 @@ void TSDeclGen::ProcessParameterName(varbinder::LocalVariable *param)
 
 void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
 {
-    if (std::string(param->Name()).find("<property>") != std::string::npos) {
+    if (std::string(param->Name()).find("%%property-") != std::string::npos) {
         return;
     }
 
@@ -680,6 +703,16 @@ void TSDeclGen::ProcessFuncParameter(varbinder::LocalVariable *param)
     OutDts("ESObject");
 }
 
+void TSDeclGen::GenOptionalFlag(const checker::Signature *sig, const ir::MethodDefinition *methodDef)
+{
+    if (sig->HasSignatureFlag(checker::SignatureFlags::DEFAULT) ||
+        (state_.inInterface && methodDef != nullptr && methodDef->Value()->IsFunctionExpression() &&
+         methodDef->Value()->AsFunctionExpression()->Function()->IsScriptFunction() &&
+         methodDef->Value()->AsFunctionExpression()->Function()->AsScriptFunction()->HasBody())) {
+        OutDts("?");
+    }
+}
+
 void TSDeclGen::ProcessFuncParameters(const checker::Signature *sig)
 {
     GenSeparated(sig->Params(), [this](varbinder::LocalVariable *param) { ProcessFuncParameter(param); });
@@ -693,6 +726,7 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     // CC-OFFNXT(G.FMT.14-CPP) project code style
     const auto *sig = GetFuncSignature(etsFunctionType, methodDef);
     ES2PANDA_ASSERT(sig != nullptr);
+    GenOptionalFlag(sig, methodDef);
     if (sig->HasFunction()) {
         GenTypeParameters(sig->Function()->TypeParams(), isStatic, sig->Owner()->AsETSObjectType());
         const auto *funcBody = sig->Function()->Body();
@@ -902,7 +936,7 @@ void TSDeclGen::GenObjectType(const checker::ETSObjectType *objectType)
     } else {
         if (typeStr == "Exception" || typeStr == "NullPointerError") {
             OutDts("Error");
-        } else if (size_t partialPos = typeStr.find("$partial"); partialPos != std::string::npos) {
+        } else if (size_t partialPos = typeStr.find("%%partial-"); partialPos != std::string::npos) {
             OutDts("Partial<", typeStr.substr(0, partialPos), ">");
         } else {
             OutDts(typeStr);
@@ -1065,7 +1099,8 @@ std::string TSDeclGen::RemoveModuleExtensionName(const std::string &filepath)
 template <class T>
 void TSDeclGen::GenAnnotations(const ir::AnnotationAllowed<T> *node)
 {
-    if (node == nullptr || !node->HasAnnotations()) {
+    if (!declgenOptions_.genAnnotations || node == nullptr ||
+        (!node->HasAnnotations() && node->Annotations().size() == 0U)) {
         return;
     }
     GenSeparated(
@@ -1647,7 +1682,7 @@ void TSDeclGen::ProcessETSTypeReference(const ir::TypeNode *typeAnnotation, cons
     if (ProcessTypeAnnotationSpecificTypes(checkerType)) {
         return;
     }
-    if (checkerType != nullptr && typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Name().Is("NullishType")) {
+    if (checkerType != nullptr && typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Name().Is("Any")) {
         OutDts(typeAnnotation->Parent()->IsTSArrayType() ? "(" : "");
         GenType(checkerType);
         OutDts(typeAnnotation->Parent()->IsTSArrayType() ? ")" : "");
@@ -1763,7 +1798,7 @@ void TSDeclGen::GenInterfaceDeclaration(const ir::TSInterfaceDeclaration *interf
 {
     const auto interfaceName = interfaceDecl->Id()->Name().Mutf8();
     DebugPrint("GenInterfaceDeclaration: " + interfaceName);
-    if (interfaceName.find("$partial") != std::string::npos) {
+    if (interfaceName.find("%%partial-") != std::string::npos) {
         return;
     }
     if (!ShouldEmitDeclaration(interfaceDecl)) {
@@ -1921,8 +1956,7 @@ void TSDeclGen::PrepareClassDeclaration(const ir::ClassDefinition *classDef)
 
 bool TSDeclGen::ShouldSkipClassDeclaration(const std::string_view &className) const
 {
-    return className == compiler::Signatures::DYNAMIC_MODULE_CLASS || className == compiler::Signatures::JSNEW_CLASS ||
-           className == compiler::Signatures::JSCALL_CLASS || (className.find("$partial") != std::string::npos);
+    return className.find("%%partial-") != std::string::npos;
 }
 
 void TSDeclGen::EmitDeclarationPrefix(const ir::ClassDefinition *classDef, const std::string &typeName,
@@ -2061,28 +2095,6 @@ void TSDeclGen::EmitClassGlueCode(const ir::ClassDefinition *classDef, const std
     }
 }
 
-void TSDeclGen::ProcessMethodsFromInterfaces(std::unordered_set<std::string> &processedMethods,
-                                             const ArenaVector<checker::ETSObjectType *> &interfaces)
-{
-    if (interfaces.empty()) {
-        return;
-    }
-    for (const auto &interface : interfaces) {
-        auto methods = interface->Methods();
-        std::unordered_set<std::string> processedInterfaceMethods;
-        for (const auto &method : methods) {
-            if ((method->Flags() & (varbinder::VariableFlags::PUBLIC)) != 0U &&
-                (method->Flags() & (varbinder::VariableFlags::STATIC)) == 0U &&
-                processedMethods.find(method->Name().Mutf8()) == processedMethods.end()) {
-                ProcessMethodDefinition(
-                    method->AsLocalVariable()->Declaration()->AsFunctionDecl()->Node()->AsMethodDefinition(),
-                    processedInterfaceMethods);
-            }
-        }
-        ProcessMethodsFromInterfaces(processedMethods, interface->Interfaces());
-    }
-}
-
 void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
 {
     state_.inClass = true;
@@ -2091,7 +2103,8 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         const auto jsdoc = compiler::JsdocStringFromDeclaration(prop);
         if (jsdoc.Utf8().find(NON_INTEROP_FLAG) != std::string_view::npos) {
             continue;
-        } else if (classDef->IsEnumTransformed()) {
+        }
+        if (classDef->IsEnumTransformed()) {
             if (prop->IsClassProperty()) {
                 state_.inEnum = true;
                 GenPropDeclaration(prop->AsClassProperty());
@@ -2110,7 +2123,7 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         } else if (prop->IsClassProperty()) {
             const auto classProp = prop->AsClassProperty();
             const auto propName = GetKeyIdent(classProp->Key())->Name().Mutf8();
-            if (propName.find("<property>") != std::string::npos) {
+            if (propName.find("%%property-") != std::string::npos) {
                 continue;
             }
             GenPropDeclaration(classProp);
@@ -2123,9 +2136,6 @@ void TSDeclGen::ProcessClassBody(const ir::ClassDefinition *classDef)
         } else if (prop->IsClassDeclaration() && classDef->IsFromStruct()) {
             GenClassDeclaration(prop->AsClassDeclaration());
         }
-    }
-    if (classDef->TsType() != nullptr && classDef->TsType()->IsETSObjectType()) {
-        ProcessMethodsFromInterfaces(processedMethods, classDef->TsType()->AsETSObjectType()->Interfaces());
     }
 }
 
@@ -2245,7 +2255,7 @@ void TSDeclGen::GenMethodDeclaration(const ir::MethodDefinition *methodDef)
     GenAnnotations(methodDef->Function());
     const auto methodIdent = GetKeyIdent(methodDef->Key());
     auto methodName = methodIdent->Name().Mutf8();
-    if (methodName.compare("$_iterator") == 0) {
+    if (methodName == "$_iterator") {
         methodName = "[Symbol.iterator]";
     }
     if (GenMethodDeclarationPrefix(methodDef, methodIdent, methodName)) {
@@ -2270,6 +2280,7 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
         if (!ShouldEmitDeclaration(methodDef)) {
             return true;
         }
+        GenAnnotations(methodDef->Function());
         if (methodDef->IsDefaultExported()) {
             OutDts("declare function ");
         } else {
@@ -2281,8 +2292,7 @@ bool TSDeclGen::GenMethodDeclarationPrefix(const ir::MethodDefinition *methodDef
             !ShouldEmitDeclaration(methodDef) && !methodDef->IsConstructor()) {
             return true;
         }
-        auto methDefFunc = methodDef->Function();
-        GenAnnotations(methDefFunc);
+        GenAnnotations(methodDef->Function());
         ProcessIndent();
         GenModifier(methodDef);
     }
@@ -2404,9 +2414,26 @@ void TSDeclGen::GenPropDeclaration(const ir::ClassProperty *classProp)
     }
 }
 
+bool TSDeclGen::HasUIAnnotation(const ir::ClassProperty *classProp) const
+{
+    if (!declgenOptions_.genAnnotations || classProp == nullptr) {
+        return false;
+    }
+
+    if (!classProp->HasAnnotations() && classProp->Annotations().empty()) {
+        return false;
+    }
+
+    const auto &annotations = classProp->Annotations();
+    return std::any_of(annotations.begin(), annotations.end(), [this](const auto &annotation) {
+        return annotationList_.count(annotation->GetBaseName()->Name().Mutf8()) > 0;
+    });
+}
+
 void TSDeclGen::ProcessClassPropDeclaration(const ir::ClassProperty *classProp)
 {
-    if (!state_.inInterface && (!state_.inNamespace || state_.isClassInNamespace) && !classNode_.isStruct) {
+    if (!state_.inInterface && (!state_.inNamespace || state_.isClassInNamespace) && !classNode_.isStruct &&
+        !HasUIAnnotation(classProp)) {
         GenPropAccessor(classProp, "get ");
         if (!classProp->IsReadonly()) {
             GenPropAccessor(classProp, "set ");
@@ -2461,7 +2488,7 @@ void TSDeclGen::GenGlobalVarDeclaration(const ir::ClassProperty *globalVar)
     const auto symbol = GetKeyIdent(globalVar->Key());
     auto varName = symbol->Name().Mutf8();
     const std::string prefix = "gensym%%_";
-    if (varName.rfind(prefix, 0) == 0) {
+    if (varName.find(prefix, 0U) == 0U) {
         varName = varName.substr(prefix.size());
     }
     const bool isConst = globalVar->IsConst();
@@ -2497,9 +2524,11 @@ bool TSDeclGen::IsImport(const ir::AstNode *specifier)
 {
     if (specifier->IsImportNamespaceSpecifier()) {
         return IsImport(specifier->AsImportNamespaceSpecifier()->Local());
-    } else if (specifier->IsImportDefaultSpecifier()) {
+    }
+    if (specifier->IsImportDefaultSpecifier()) {
         return IsImport(specifier->AsImportDefaultSpecifier()->Local());
-    } else if (specifier->IsImportSpecifier()) {
+    }
+    if (specifier->IsImportSpecifier()) {
         return IsImport(specifier->AsImportSpecifier()->Local());
     }
     return false;
@@ -2535,7 +2564,7 @@ void TSDeclGen::AddDependency(const checker::Type *tsType)
     if (tsType->IsETSObjectType()) {
         const auto objectType = tsType->AsETSObjectType();
         const auto typeName = objectType->AssemblerName().Mutf8();
-        if (typeName.empty()) {
+        if (typeName.empty() || typeName.find("std.core.") != std::string::npos) {
             return;
         }
         AddDependency(typeName);
@@ -2577,11 +2606,14 @@ bool TSDeclGen::IsDependency(const ir::AstNode *decl)
 
     if (decl->IsTSTypeAliasDeclaration()) {
         return IsDependency(decl->AsTSTypeAliasDeclaration()->TypeAnnotation()->TsType());
-    } else if (decl->IsClassDeclaration()) {
+    }
+    if (decl->IsClassDeclaration()) {
         return IsDependency(decl->AsClassDeclaration()->Definition()->TsType());
-    } else if (decl->IsClassDefinition()) {
+    }
+    if (decl->IsClassDefinition()) {
         return IsDependency(decl->AsClassDefinition()->TsType());
-    } else if (decl->IsTSInterfaceDeclaration()) {
+    }
+    if (decl->IsTSInterfaceDeclaration()) {
         return IsDependency(decl->AsTSInterfaceDeclaration()->TsType());
     }
 
@@ -2601,7 +2633,8 @@ bool TSDeclGen::IsDependency(const checker::Type *tsType)
             return false;
         }
         return IsDependency(typeName);
-    } else if (tsType->IsETSUnionType()) {
+    }
+    if (tsType->IsETSUnionType()) {
         const auto unionType = tsType->AsETSUnionType();
         bool isDependency = false;
         GenSeparated(
@@ -2669,13 +2702,17 @@ bool GenerateTsDeclarations(checker::ETSChecker *checker, const ark::es2panda::p
     declBuilder.ResetTsOutput();
     declBuilder.ResetDtsOutput();
 
+    declBuilder.GenInitModuleGlueCode();
+    std::string initModuleOutputEts = declBuilder.GetTsOutput();
+    declBuilder.ResetTsOutput();
+
     compiler::GetPhaseManager()->SetCurrentPhaseIdWithoutReCheck(afterCheckerId);
     declBuilder.GenImportDeclarations();
 
     std::string importOutputEts = declBuilder.GetTsOutput();
     std::string importOutputDEts = declBuilder.GetDtsOutput();
 
-    std::string combineEts = importOutputEts + outputEts + exportOutputEts;
+    std::string combineEts = importOutputEts + initModuleOutputEts + outputEts + exportOutputEts;
     std::string combinedDEts = importOutputDEts + outputDEts + exportOutputDEts;
 
     if (!declBuilder.GetDeclgenOptions().recordFile.empty()) {

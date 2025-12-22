@@ -36,4 +36,4 @@ function main() {
     foo(undefined);
 }
 
-/* @@@ label Error TypeError: Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type.  */
+

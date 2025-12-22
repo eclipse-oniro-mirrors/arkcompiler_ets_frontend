@@ -14,24 +14,19 @@
  */
 
 let a = (... ( ()   => {
- 
+
 })) = : async () => {
- 
+
 } []
 
-/* @@? 16:9 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 16:10 Error SyntaxError: Unexpected token '...'. */
-/* @@? 16:10 Error TypeError: This expression is not callable. */
-/* @@? 18:5 Error SyntaxError: Invalid left-hand side in assignment expression. */
-/* @@? 18:7 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:9 Error SyntaxError: Unexpected token 'async'. */
-/* @@? 18:15 Error SyntaxError: 'async' flags must be used for functions only at top-level. */
-/* @@? 18:16 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 18:16 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 18:16 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 18:18 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 18:18 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:18 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 18:18 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 18:21 Error SyntaxError: Unexpected token '{'. */
-/* @@? 20:3 Error TypeError: Can't resolve array type */
+
+/* @@? 18:5 Error Syntax error ESY0072: Invalid left-hand side in assignment expression. */
+/* @@? 18:7 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:9 Error Syntax error ESY0227: Unexpected token 'async'. */
+/* @@? 18:15 Error Syntax error ESY0202: 'async' flags must be used for functions only at top-level. */
+/* @@? 18:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 18:16 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 18:18 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 18:18 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 18:18 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:18 Error Syntax error ESY0227: Unexpected token '=>'. */

@@ -15,4 +15,5 @@
 
 import * /* @@ label */from "./module"
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'as'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected 'as'. */

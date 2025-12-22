@@ -679,7 +679,39 @@
                     },
                     "body": {
                       "type": "BlockStatement",
-                      "statements": [],
+                      "statements": [
+                        {
+                          "type": "ReturnStatement",
+                          "argument": {
+                            "type": "NullLiteral",
+                            "value": null,
+                            "loc": {
+                              "start": {
+                                "line": 22,
+                                "column": 16,
+                                "program": "async_overload.ets"
+                              },
+                              "end": {
+                                "line": 22,
+                                "column": 20,
+                                "program": "async_overload.ets"
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 22,
+                              "column": 9,
+                              "program": "async_overload.ets"
+                            },
+                            "end": {
+                              "line": 22,
+                              "column": 21,
+                              "program": "async_overload.ets"
+                            }
+                          }
+                        }
+                      ],
                       "loc": {
                         "start": {
                           "line": 21,
@@ -687,7 +719,7 @@
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 22,
+                          "line": 23,
                           "column": 6,
                           "program": "async_overload.ets"
                         }
@@ -700,7 +732,7 @@
                         "program": "async_overload.ets"
                       },
                       "end": {
-                        "line": 22,
+                        "line": 23,
                         "column": 6,
                         "program": "async_overload.ets"
                       }
@@ -713,7 +745,7 @@
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 22,
+                      "line": 23,
                       "column": 6,
                       "program": "async_overload.ets"
                     }
@@ -727,7 +759,7 @@
                     "program": "async_overload.ets"
                   },
                   "end": {
-                    "line": 22,
+                    "line": 23,
                     "column": 6,
                     "program": "async_overload.ets"
                   }
@@ -857,7 +889,7 @@
             "program": "async_overload.ets"
           },
           "end": {
-            "line": 25,
+            "line": 26,
             "column": 6,
             "program": "async_overload.ets"
           }
@@ -870,7 +902,7 @@
           "program": "async_overload.ets"
         },
         "end": {
-          "line": 25,
+          "line": 26,
           "column": 6,
           "program": "async_overload.ets"
         }
@@ -905,12 +937,12 @@
               "name": "bar",
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 26,
                   "column": 16,
                   "program": "async_overload.ets"
                 },
                 "end": {
-                  "line": 25,
+                  "line": 26,
                   "column": 19,
                   "program": "async_overload.ets"
                 }
@@ -930,12 +962,12 @@
                   "name": "bar",
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 16,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 26,
                       "column": 19,
                       "program": "async_overload.ets"
                     }
@@ -954,12 +986,12 @@
                         "type": "ETSPrimitiveType",
                         "loc": {
                           "start": {
-                            "line": 25,
+                            "line": 26,
                             "column": 23,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 25,
+                            "line": 26,
                             "column": 26,
                             "program": "async_overload.ets"
                           }
@@ -967,12 +999,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 26,
                           "column": 20,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 26,
                           "column": 26,
                           "program": "async_overload.ets"
                         }
@@ -980,12 +1012,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 26,
                         "column": 20,
                         "program": "async_overload.ets"
                       },
                       "end": {
-                        "line": 25,
+                        "line": 26,
                         "column": 26,
                         "program": "async_overload.ets"
                       }
@@ -1001,12 +1033,12 @@
                       "name": "Promise",
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 26,
                           "column": 29,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 26,
                           "column": 36,
                           "program": "async_overload.ets"
                         }
@@ -1027,12 +1059,12 @@
                                   "name": "Object",
                                   "loc": {
                                     "start": {
-                                      "line": 25,
+                                      "line": 26,
                                       "column": 37,
                                       "program": "async_overload.ets"
                                     },
                                     "end": {
-                                      "line": 25,
+                                      "line": 26,
                                       "column": 43,
                                       "program": "async_overload.ets"
                                     }
@@ -1040,12 +1072,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 25,
+                                    "line": 26,
                                     "column": 37,
                                     "program": "async_overload.ets"
                                   },
                                   "end": {
-                                    "line": 25,
+                                    "line": 26,
                                     "column": 43,
                                     "program": "async_overload.ets"
                                   }
@@ -1053,12 +1085,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 25,
+                                  "line": 26,
                                   "column": 37,
                                   "program": "async_overload.ets"
                                 },
                                 "end": {
-                                  "line": 25,
+                                  "line": 26,
                                   "column": 43,
                                   "program": "async_overload.ets"
                                 }
@@ -1068,12 +1100,12 @@
                               "type": "ETSNullType",
                               "loc": {
                                 "start": {
-                                  "line": 25,
+                                  "line": 26,
                                   "column": 46,
                                   "program": "async_overload.ets"
                                 },
                                 "end": {
-                                  "line": 25,
+                                  "line": 26,
                                   "column": 50,
                                   "program": "async_overload.ets"
                                 }
@@ -1082,12 +1114,12 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 25,
+                              "line": 26,
                               "column": 37,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 25,
+                              "line": 26,
                               "column": 50,
                               "program": "async_overload.ets"
                             }
@@ -1096,12 +1128,12 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 25,
+                          "line": 26,
                           "column": 36,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 25,
+                          "line": 26,
                           "column": 51,
                           "program": "async_overload.ets"
                         }
@@ -1109,12 +1141,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 25,
+                        "line": 26,
                         "column": 29,
                         "program": "async_overload.ets"
                       },
                       "end": {
-                        "line": 25,
+                        "line": 26,
                         "column": 51,
                         "program": "async_overload.ets"
                       }
@@ -1122,12 +1154,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 29,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 25,
+                      "line": 26,
                       "column": 51,
                       "program": "async_overload.ets"
                     }
@@ -1143,12 +1175,12 @@
                         "value": null,
                         "loc": {
                           "start": {
-                            "line": 26,
+                            "line": 27,
                             "column": 12,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 26,
+                            "line": 27,
                             "column": 16,
                             "program": "async_overload.ets"
                           }
@@ -1156,12 +1188,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 26,
+                          "line": 27,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 26,
+                          "line": 27,
                           "column": 17,
                           "program": "async_overload.ets"
                         }
@@ -1170,12 +1202,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 25,
+                      "line": 26,
                       "column": 52,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 27,
+                      "line": 28,
                       "column": 2,
                       "program": "async_overload.ets"
                     }
@@ -1183,12 +1215,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 25,
+                    "line": 26,
                     "column": 16,
                     "program": "async_overload.ets"
                   },
                   "end": {
-                    "line": 27,
+                    "line": 28,
                     "column": 2,
                     "program": "async_overload.ets"
                   }
@@ -1196,12 +1228,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 25,
+                  "line": 26,
                   "column": 16,
                   "program": "async_overload.ets"
                 },
                 "end": {
-                  "line": 27,
+                  "line": 28,
                   "column": 2,
                   "program": "async_overload.ets"
                 }
@@ -1215,12 +1247,12 @@
                   "name": "bar",
                   "loc": {
                     "start": {
-                      "line": 29,
+                      "line": 30,
                       "column": 16,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 29,
+                      "line": 30,
                       "column": 19,
                       "program": "async_overload.ets"
                     }
@@ -1240,12 +1272,12 @@
                       "name": "bar",
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 30,
                           "column": 16,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 29,
+                          "line": 30,
                           "column": 19,
                           "program": "async_overload.ets"
                         }
@@ -1272,12 +1304,12 @@
                                     "name": "Object",
                                     "loc": {
                                       "start": {
-                                        "line": 29,
+                                        "line": 30,
                                         "column": 23,
                                         "program": "async_overload.ets"
                                       },
                                       "end": {
-                                        "line": 29,
+                                        "line": 30,
                                         "column": 29,
                                         "program": "async_overload.ets"
                                       }
@@ -1285,12 +1317,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 23,
                                       "program": "async_overload.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 29,
                                       "program": "async_overload.ets"
                                     }
@@ -1298,12 +1330,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 29,
+                                    "line": 30,
                                     "column": 23,
                                     "program": "async_overload.ets"
                                   },
                                   "end": {
-                                    "line": 29,
+                                    "line": 30,
                                     "column": 29,
                                     "program": "async_overload.ets"
                                   }
@@ -1313,12 +1345,12 @@
                                 "type": "ETSNullType",
                                 "loc": {
                                   "start": {
-                                    "line": 29,
+                                    "line": 30,
                                     "column": 32,
                                     "program": "async_overload.ets"
                                   },
                                   "end": {
-                                    "line": 29,
+                                    "line": 30,
                                     "column": 36,
                                     "program": "async_overload.ets"
                                   }
@@ -1327,12 +1359,12 @@
                             ],
                             "loc": {
                               "start": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 23,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 36,
                                 "program": "async_overload.ets"
                               }
@@ -1340,12 +1372,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 30,
                               "column": 20,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 30,
                               "column": 36,
                               "program": "async_overload.ets"
                             }
@@ -1353,12 +1385,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 29,
+                            "line": 30,
                             "column": 20,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 29,
+                            "line": 30,
                             "column": 36,
                             "program": "async_overload.ets"
                           }
@@ -1373,12 +1405,12 @@
                             "type": "ETSPrimitiveType",
                             "loc": {
                               "start": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 41,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 29,
+                                "line": 30,
                                 "column": 44,
                                 "program": "async_overload.ets"
                               }
@@ -1386,12 +1418,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 30,
                               "column": 38,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 30,
                               "column": 44,
                               "program": "async_overload.ets"
                             }
@@ -1399,12 +1431,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 29,
+                            "line": 30,
                             "column": 38,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 29,
+                            "line": 30,
                             "column": 44,
                             "program": "async_overload.ets"
                           }
@@ -1420,12 +1452,12 @@
                           "name": "Promise",
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 30,
                               "column": 47,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 30,
                               "column": 54,
                               "program": "async_overload.ets"
                             }
@@ -1446,12 +1478,12 @@
                                       "name": "Object",
                                       "loc": {
                                         "start": {
-                                          "line": 29,
+                                          "line": 30,
                                           "column": 55,
                                           "program": "async_overload.ets"
                                         },
                                         "end": {
-                                          "line": 29,
+                                          "line": 30,
                                           "column": 61,
                                           "program": "async_overload.ets"
                                         }
@@ -1459,12 +1491,12 @@
                                     },
                                     "loc": {
                                       "start": {
-                                        "line": 29,
+                                        "line": 30,
                                         "column": 55,
                                         "program": "async_overload.ets"
                                       },
                                       "end": {
-                                        "line": 29,
+                                        "line": 30,
                                         "column": 61,
                                         "program": "async_overload.ets"
                                       }
@@ -1472,12 +1504,12 @@
                                   },
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 55,
                                       "program": "async_overload.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 61,
                                       "program": "async_overload.ets"
                                     }
@@ -1487,12 +1519,12 @@
                                   "type": "ETSNullType",
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 64,
                                       "program": "async_overload.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 30,
                                       "column": 68,
                                       "program": "async_overload.ets"
                                     }
@@ -1501,12 +1533,12 @@
                               ],
                               "loc": {
                                 "start": {
-                                  "line": 29,
+                                  "line": 30,
                                   "column": 55,
                                   "program": "async_overload.ets"
                                 },
                                 "end": {
-                                  "line": 29,
+                                  "line": 30,
                                   "column": 68,
                                   "program": "async_overload.ets"
                                 }
@@ -1515,12 +1547,12 @@
                           ],
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 30,
                               "column": 54,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 30,
                               "column": 69,
                               "program": "async_overload.ets"
                             }
@@ -1528,12 +1560,12 @@
                         },
                         "loc": {
                           "start": {
-                            "line": 29,
+                            "line": 30,
                             "column": 47,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 29,
+                            "line": 30,
                             "column": 69,
                             "program": "async_overload.ets"
                           }
@@ -1541,12 +1573,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 30,
                           "column": 47,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 29,
+                          "line": 30,
                           "column": 69,
                           "program": "async_overload.ets"
                         }
@@ -1562,12 +1594,12 @@
                             "value": null,
                             "loc": {
                               "start": {
-                                "line": 30,
+                                "line": 31,
                                 "column": 12,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 30,
+                                "line": 31,
                                 "column": 16,
                                 "program": "async_overload.ets"
                               }
@@ -1575,12 +1607,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 30,
+                              "line": 31,
                               "column": 5,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 30,
+                              "line": 31,
                               "column": 17,
                               "program": "async_overload.ets"
                             }
@@ -1589,12 +1621,12 @@
                       ],
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 30,
                           "column": 69,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 31,
+                          "line": 32,
                           "column": 2,
                           "program": "async_overload.ets"
                         }
@@ -1602,12 +1634,12 @@
                     },
                     "loc": {
                       "start": {
-                        "line": 29,
+                        "line": 30,
                         "column": 16,
                         "program": "async_overload.ets"
                       },
                       "end": {
-                        "line": 31,
+                        "line": 32,
                         "column": 2,
                         "program": "async_overload.ets"
                       }
@@ -1615,12 +1647,12 @@
                   },
                   "loc": {
                     "start": {
-                      "line": 29,
+                      "line": 30,
                       "column": 16,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 31,
+                      "line": 32,
                       "column": 2,
                       "program": "async_overload.ets"
                     }
@@ -1629,12 +1661,12 @@
                 "overloads": [],
                 "loc": {
                   "start": {
-                    "line": 29,
+                    "line": 30,
                     "column": 1,
                     "program": "async_overload.ets"
                   },
                   "end": {
-                    "line": 31,
+                    "line": 32,
                     "column": 2,
                     "program": "async_overload.ets"
                   }
@@ -1643,12 +1675,12 @@
             ],
             "loc": {
               "start": {
-                "line": 25,
+                "line": 26,
                 "column": 1,
                 "program": "async_overload.ets"
               },
               "end": {
-                "line": 27,
+                "line": 28,
                 "column": 2,
                 "program": "async_overload.ets"
               }
@@ -1661,12 +1693,12 @@
               "name": "main",
               "loc": {
                 "start": {
-                  "line": 33,
+                  "line": 34,
                   "column": 10,
                   "program": "async_overload.ets"
                 },
                 "end": {
-                  "line": 33,
+                  "line": 34,
                   "column": 14,
                   "program": "async_overload.ets"
                 }
@@ -1686,12 +1718,12 @@
                   "name": "main",
                   "loc": {
                     "start": {
-                      "line": 33,
+                      "line": 34,
                       "column": 10,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 33,
+                      "line": 34,
                       "column": 14,
                       "program": "async_overload.ets"
                     }
@@ -1705,12 +1737,12 @@
                   "type": "ETSPrimitiveType",
                   "loc": {
                     "start": {
-                      "line": 33,
+                      "line": 34,
                       "column": 18,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 33,
+                      "line": 34,
                       "column": 22,
                       "program": "async_overload.ets"
                     }
@@ -1728,12 +1760,12 @@
                           "name": "bar",
                           "loc": {
                             "start": {
-                              "line": 34,
+                              "line": 35,
                               "column": 5,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 34,
+                              "line": 35,
                               "column": 8,
                               "program": "async_overload.ets"
                             }
@@ -1745,12 +1777,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 34,
+                                "line": 35,
                                 "column": 9,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 34,
+                                "line": 35,
                                 "column": 10,
                                 "program": "async_overload.ets"
                               }
@@ -1760,12 +1792,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 34,
+                            "line": 35,
                             "column": 5,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 34,
+                            "line": 35,
                             "column": 11,
                             "program": "async_overload.ets"
                           }
@@ -1773,12 +1805,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 34,
+                          "line": 35,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 34,
+                          "line": 35,
                           "column": 12,
                           "program": "async_overload.ets"
                         }
@@ -1793,12 +1825,12 @@
                           "name": "bar",
                           "loc": {
                             "start": {
-                              "line": 35,
+                              "line": 36,
                               "column": 5,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 35,
+                              "line": 36,
                               "column": 8,
                               "program": "async_overload.ets"
                             }
@@ -1810,12 +1842,12 @@
                             "value": null,
                             "loc": {
                               "start": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 9,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 13,
                                 "program": "async_overload.ets"
                               }
@@ -1826,12 +1858,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 15,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 35,
+                                "line": 36,
                                 "column": 16,
                                 "program": "async_overload.ets"
                               }
@@ -1841,12 +1873,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 35,
+                            "line": 36,
                             "column": 5,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 35,
+                            "line": 36,
                             "column": 17,
                             "program": "async_overload.ets"
                           }
@@ -1854,12 +1886,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 35,
+                          "line": 36,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 35,
+                          "line": 36,
                           "column": 18,
                           "program": "async_overload.ets"
                         }
@@ -1875,12 +1907,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 9,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 12,
                                 "program": "async_overload.ets"
                               }
@@ -1897,12 +1929,12 @@
                                   "name": "Foo",
                                   "loc": {
                                     "start": {
-                                      "line": 36,
+                                      "line": 37,
                                       "column": 19,
                                       "program": "async_overload.ets"
                                     },
                                     "end": {
-                                      "line": 36,
+                                      "line": 37,
                                       "column": 22,
                                       "program": "async_overload.ets"
                                     }
@@ -1910,12 +1942,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 36,
+                                    "line": 37,
                                     "column": 19,
                                     "program": "async_overload.ets"
                                   },
                                   "end": {
-                                    "line": 36,
+                                    "line": 37,
                                     "column": 22,
                                     "program": "async_overload.ets"
                                   }
@@ -1923,12 +1955,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 36,
+                                  "line": 37,
                                   "column": 19,
                                   "program": "async_overload.ets"
                                 },
                                 "end": {
-                                  "line": 36,
+                                  "line": 37,
                                   "column": 22,
                                   "program": "async_overload.ets"
                                 }
@@ -1937,12 +1969,12 @@
                             "arguments": [],
                             "loc": {
                               "start": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 15,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 36,
+                                "line": 37,
                                 "column": 25,
                                 "program": "async_overload.ets"
                               }
@@ -1950,12 +1982,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 36,
+                              "line": 37,
                               "column": 9,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 36,
+                              "line": 37,
                               "column": 25,
                               "program": "async_overload.ets"
                             }
@@ -1965,12 +1997,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 36,
+                          "line": 37,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 36,
+                          "line": 37,
                           "column": 25,
                           "program": "async_overload.ets"
                         }
@@ -1987,12 +2019,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 5,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 8,
                                 "program": "async_overload.ets"
                               }
@@ -2003,12 +2035,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 9,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 12,
                                 "program": "async_overload.ets"
                               }
@@ -2018,12 +2050,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 37,
+                              "line": 38,
                               "column": 5,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 37,
+                              "line": 38,
                               "column": 12,
                               "program": "async_overload.ets"
                             }
@@ -2035,12 +2067,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 13,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 37,
+                                "line": 38,
                                 "column": 14,
                                 "program": "async_overload.ets"
                               }
@@ -2050,12 +2082,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 37,
+                            "line": 38,
                             "column": 5,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 37,
+                            "line": 38,
                             "column": 15,
                             "program": "async_overload.ets"
                           }
@@ -2063,12 +2095,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 37,
+                          "line": 38,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 37,
+                          "line": 38,
                           "column": 16,
                           "program": "async_overload.ets"
                         }
@@ -2085,12 +2117,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 5,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 8,
                                 "program": "async_overload.ets"
                               }
@@ -2101,12 +2133,12 @@
                             "name": "foo",
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 9,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 12,
                                 "program": "async_overload.ets"
                               }
@@ -2116,12 +2148,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 38,
+                              "line": 39,
                               "column": 5,
                               "program": "async_overload.ets"
                             },
                             "end": {
-                              "line": 38,
+                              "line": 39,
                               "column": 12,
                               "program": "async_overload.ets"
                             }
@@ -2133,12 +2165,12 @@
                             "value": null,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 13,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 17,
                                 "program": "async_overload.ets"
                               }
@@ -2149,12 +2181,12 @@
                             "value": 0,
                             "loc": {
                               "start": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 19,
                                 "program": "async_overload.ets"
                               },
                               "end": {
-                                "line": 38,
+                                "line": 39,
                                 "column": 20,
                                 "program": "async_overload.ets"
                               }
@@ -2164,12 +2196,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 38,
+                            "line": 39,
                             "column": 5,
                             "program": "async_overload.ets"
                           },
                           "end": {
-                            "line": 38,
+                            "line": 39,
                             "column": 21,
                             "program": "async_overload.ets"
                           }
@@ -2177,12 +2209,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 38,
+                          "line": 39,
                           "column": 5,
                           "program": "async_overload.ets"
                         },
                         "end": {
-                          "line": 38,
+                          "line": 39,
                           "column": 22,
                           "program": "async_overload.ets"
                         }
@@ -2191,12 +2223,12 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 33,
+                      "line": 34,
                       "column": 23,
                       "program": "async_overload.ets"
                     },
                     "end": {
-                      "line": 39,
+                      "line": 40,
                       "column": 2,
                       "program": "async_overload.ets"
                     }
@@ -2204,12 +2236,12 @@
                 },
                 "loc": {
                   "start": {
-                    "line": 33,
+                    "line": 34,
                     "column": 10,
                     "program": "async_overload.ets"
                   },
                   "end": {
-                    "line": 39,
+                    "line": 40,
                     "column": 2,
                     "program": "async_overload.ets"
                   }
@@ -2217,12 +2249,12 @@
               },
               "loc": {
                 "start": {
-                  "line": 33,
+                  "line": 34,
                   "column": 10,
                   "program": "async_overload.ets"
                 },
                 "end": {
-                  "line": 39,
+                  "line": 40,
                   "column": 2,
                   "program": "async_overload.ets"
                 }
@@ -2231,12 +2263,12 @@
             "overloads": [],
             "loc": {
               "start": {
-                "line": 33,
+                "line": 34,
                 "column": 1,
                 "program": "async_overload.ets"
               },
               "end": {
-                "line": 39,
+                "line": 40,
                 "column": 2,
                 "program": "async_overload.ets"
               }
@@ -2277,7 +2309,7 @@
       "program": "async_overload.ets"
     },
     "end": {
-      "line": 40,
+      "line": 41,
       "column": 1,
       "program": "async_overload.ets"
     }

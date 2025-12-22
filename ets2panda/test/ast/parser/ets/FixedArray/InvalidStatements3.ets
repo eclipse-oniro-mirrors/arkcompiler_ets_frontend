@@ -15,7 +15,7 @@
 
 try {
     let x = 77
-} catch(a: exception)
+} catch(a)
 }
 
 try
@@ -41,23 +41,23 @@ function foo() {
 
 for (let i = 1 in [0, 1, 2]) {}
 
-/* @@? 18:9 Error TypeError: Argument must be an instance of 'Exception' or 'Error' */
-/* @@? 18:12 Error TypeError: Cannot find type 'exception'. */
-/* @@? 19:1 Error SyntaxError: Expected '{', got '}'. */
-/* @@? 22:5 Error SyntaxError: Expected '{', got 'let'. */
-/* @@? 23:11 Error SyntaxError: Expected '{', got '('. */
-/* @@? 23:11 Error TypeError: Unresolved reference x */
-/* @@? 27:7 Error SyntaxError: Expected '(', got '{'. */
-/* @@? 27:7 Error TypeError: need to specify target type for class composite */
-/* @@? 29:1 Error SyntaxError: Expected ')', got 'while'. */
-/* @@? 29:7 Error SyntaxError: Expected '(', got 'identification literal'. */
-/* @@? 29:13 Error SyntaxError: Expected ')', got '{'. */
-/* @@? 31:9 Error SyntaxError: Unexpected token 'let'. */
-/* @@? 31:13 Error SyntaxError: Unexpected token 'x'. */
-/* @@? 34:5 Error SyntaxError: Illegal 'use strict' directive in function with non-simple parameter list. */
-/* @@? 38:5 Error SyntaxError: Annotation declaration can not have access modifier. */
-/* @@? 38:5 Error SyntaxError: Unexpected token 'private'. */
-/* @@? 38:13 Error SyntaxError: Unexpected token '@'. */
-/* @@? 38:14 Error TypeError: Cannot find type 'annotate'. */
-/* @@? 42:16 Error SyntaxError: for-in loop variable declaration may not have an initializer. */
-/* @@? 42:16 Error SyntaxError: 'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays and iterable objects. */
+
+/* @@? 19:1 Error Syntax error ESY0230: Expected '{', got '}'. */
+/* @@? 22:5 Error Syntax error ESY0230: Expected '{', got 'let'. */
+/* @@? 23:11 Error Syntax error ESY0230: Expected '{', got '('. */
+/* @@? 23:11 Error Semantic error ESE0143: Unresolved reference x */
+/* @@? 27:7 Error Syntax error ESY0230: Expected '(', got '{'. */
+/* @@? 27:7 Error Semantic error ESE0062: need to specify target type for class composite */
+/* @@? 29:1 Error Syntax error ESY0230: Expected ')', got 'while'. */
+/* @@? 29:7 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */
+/* @@? 29:13 Error Syntax error ESY0230: Expected ')', got '{'. */
+/* @@? 31:9 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 31:13 Error Syntax error ESY0227: Unexpected token 'x'. */
+/* @@? 34:5 Error Syntax error ESY0199: Illegal 'use strict' directive in function with non-simple parameter list. */
+/* @@? 38:5 Error Syntax error ESY0210: Annotation declaration can not have access modifier. */
+/* @@? 38:5 Error Syntax error ESY0227: Unexpected token 'private'. */
+/* @@? 38:13 Error Syntax error ESY0227: Unexpected token '@'. */
+/* @@? 38:14 Error Semantic error ESE0371: Cannot find type 'annotate'. */
+/* @@? 42:16 Error Syntax error ESY105822: 'in' operator is not supported. Use 'instanceof' operator to check whether an object is the instance of a class that contains the necessary class member. */
+/* @@? 42:28 Error Syntax error ESY0230: Expected ';', got ')'. */
+/* @@? 42:28 Error Syntax error ESY0167: Invalid left-hand side in 'For[In/Of]Statement'. */

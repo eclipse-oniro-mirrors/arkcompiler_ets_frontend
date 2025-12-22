@@ -18,4 +18,4 @@ function foo(param? : Object)
    for (let i? of "blablabla") { }
 }
 
-/* @@? 18:16 Error SyntaxError: Optional variable is not allowed in for of statements. */
+/* @@? 18:16 Error Syntax error ESY0096: Optional variable is not allowed in for of statements. */

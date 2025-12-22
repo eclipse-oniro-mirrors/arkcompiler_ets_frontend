@@ -17,5 +17,5 @@ let b1 = true
 let b2 = false
 let /* @@ label */b2? /* @@ label1 */= b1 || b2
 
-/* @@@ label Error TypeError: Variable 'b2' has already been declared.  */
-/* @@@ label1 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 18:19 Error Semantic error ESE0351: Variable 'b2' has already been declared. */
+/* @@? 18:38 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */

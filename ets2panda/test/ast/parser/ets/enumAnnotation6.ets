@@ -13,10 +13,29 @@
  * limitations under the License.
  */
  
-enum Fraction: byte { 
-    A = 1,
-    B = 2
+enum Test1: byte{
+	A = 0x1,
+	B = 0x01 + 1,
+	C = B,
+	D = C + 0x02,
+	E = D - 2,
+	F = D * C,
 }
 
+enum Test2: double{
+	A = 1.1,
+	B = 1.2 + 1.3,
+	C = B,
+	D = C + 1.5,
+	E = D - 2.5,
+	F = D * C,
+}
 
-/* @@? 16:21 Error SyntaxError: Unsupported enum type annotation. Supported enum types are: int, long or double. String is allowed for literal types, not annotations. */
+enum Test3: int{
+	A = 1,
+	B = 2 + 3,
+	C = B,
+	D = C + 1,
+	E = D - 2,
+	F = D * C,
+}

@@ -19,4 +19,4 @@ function main(){
     const myCharClass = new X/* @@ label */<Char,String>();
 }
 
-/* @@@ label Error TypeError: Type argument 'Char' should be a subtype of 'Comparable<String>'-constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'Char' should be a subtype of 'Comparable<String>' constraint */

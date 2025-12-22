@@ -29,6 +29,6 @@ namespace A{
     namespace C{}
 }
 
-/* @@? 25:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno2' has already been applied to this element.  */
-/* @@? 21:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno1' has already been applied to this element.  */
-/* @@? 28:6 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno3' has already been applied to this element.  */
+/* @@? 21:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno1' has already been applied to this element. */
+/* @@? 25:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno2' has already been applied to this element. */
+/* @@? 28:6 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno3' has already been applied to this element. */

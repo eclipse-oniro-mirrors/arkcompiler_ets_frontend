@@ -16,7 +16,7 @@
 function main() : void {
     let a = 0;
     try {
-        throw new Exception();
+        throw new Error();
     } catch (e) {
         a = 2;
     } finally {

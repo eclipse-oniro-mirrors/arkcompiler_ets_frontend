@@ -15,7 +15,8 @@
 
 declare /* @@ label1 */module /* @@ label2 */"someModule" /* @@ label3 */{}
 
-/* @@@ label1 Error SyntaxError: Ambient module declaration is not supported! */
-/* @@@ label1 Error TypeError: Unresolved reference module */
-/* @@@ label2 Error SyntaxError: Unexpected token 'someModule'. */
-/* @@@ label3 Error SyntaxError: Unexpected token '{'. */
+
+/* @@@ label1 Error Syntax error ESY0308: Ambient module declaration is not supported! */
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference module */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'someModule'. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token '{'. */

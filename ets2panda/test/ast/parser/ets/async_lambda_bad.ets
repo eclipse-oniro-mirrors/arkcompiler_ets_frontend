@@ -13,4 +13,6 @@
  * limitations under the License.
  */
 
-let lambda: () => int = async /* @@ label */(): int => { return 1; }
+let lambda: () => int = async (): int => { return 1; }
+
+/* @@? 16:35 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */

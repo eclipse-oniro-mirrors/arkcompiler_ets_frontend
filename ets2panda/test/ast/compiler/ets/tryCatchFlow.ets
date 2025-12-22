@@ -18,9 +18,5 @@ function main(): void {
     //Exception occures here.
   } catch (e) {
     //Do something.
-  } /* @@ label */catch (e: NullPointerError) {
-    //Do something.
   }
 }
-
-/* @@@ label Error TypeError: Default catch clause should be the last in the try statement  */

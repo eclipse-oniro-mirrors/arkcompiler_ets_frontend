@@ -16,7 +16,7 @@
 import path from 'path';
 import fs from 'fs';
 import { Lsp, LspDefinitionData, LspCompletionInfo, LspDiagsNode, ModuleDescriptor, PathConfig } from '../src/index';
-import { TestCases, basicCases, singleModuleCases } from './cases';
+import { TestCases, basicCases } from './cases';
 import { LspCompletionEntry } from '../src/lsp/lspNode';
 import { diff } from 'jest-diff';
 
@@ -327,7 +327,7 @@ function compareResults(
   caseName: string,
   actual: unknown,
   expected: unknown,
-  declgenOutDir: string = ''
+  pathConfig: PathConfig
 ): [boolean, unknown] {
   const testName = caseName.substring(0, caseName.indexOf(':'));
   if (testName === 'getDefinitionAtPosition') {
@@ -336,8 +336,8 @@ function compareResults(
   if (testName === 'getCompletionAtPosition') {
     return compareGetCompletionResult(caseName, actual, expected);
   }
-  if (testName === 'generateDeclFile' || testName === 'modifyDeclFile') {
-    const declOutPath = path.join(declgenOutDir, 'dynamic', 'dep', 'declgenV1');
+  if (testName === 'generateDeclFile') {
+    const declOutPath = path.join(pathConfig.declgenOutDir, testName, 'declgen', 'static');
     return compareDeclFileResult(caseName, declOutPath, expected);
   }
   if (
@@ -351,19 +351,12 @@ function compareResults(
     const actualData = normalizeData(actual, normalizeOption);
     return [compareResultsHelper(caseName, actualData, expected), actualData];
   }
-  if (testName === 'findRenameLocations') {
-    const normalizeOption: NormalizeOptions = {
-      fieldsToDelete: ['prefixText', 'suffixText']
-    };
-    const actualData = normalizeData(actual, normalizeOption);
-    return [compareResultsHelper(caseName, actualData, expected), actualData];
-  }
 
   const actualData = normalizeData(actual);
   return [compareResultsHelper(caseName, actualData, expected), actualData];
 }
 
-function runTests(lsp: Lsp, cases: TestCases, failedList: string[]): string[] {
+function runTests(lsp: Lsp, cases: TestCases, failedList: string[], pathConfig: PathConfig): string[] {
   console.log('Running tests...');
   if (!cases) {
     return [];
@@ -390,81 +383,7 @@ function runTests(lsp: Lsp, cases: TestCases, failedList: string[]): string[] {
         // CC-OFFNXT(no_explicit_any) project code style
         actualResult = (lsp as any)[testName](...params);
         actualResult = sortActualResult(testName, actualResult);
-        [pass, actualData] = compareResults(`${testName}:${index}`, actualResult, expectedResult[index]);
-      } catch (error) {
-        console.error(`[${testName}:${index}] ❌ Error: ${error}`);
-      }
-      if (!pass) {
-        failedList.push(`${testName}:${index}`);
-      }
-      if (!pass && updateMode) {
-        console.log(`Updating expected result for ${testName}:${index}`);
-        expectedResult[index] = actualData;
-      }
-    }
-    if (updateMode) {
-      fs.writeFileSync(expectedFilePath, JSON.stringify(expectedResult, null, 2));
-    }
-    console.log(`Finished test: ${testName}`);
-    console.log('-----------------------------------');
-  }
-  return failedList;
-}
-
-function runSingleTests(testDir: string, failedList: string[]): string[] {
-  console.log('Running single tests...');
-  if (!singleModuleCases) {
-    return [];
-  }
-  const testSrcPath = path.join(testDir, 'testcases');
-  for (const [testName, testConfig] of Object.entries(singleModuleCases)) {
-    const testBuildPath = path.join(testSrcPath, '.idea', '.deveco', testName);
-    let pathConfig: PathConfig = {
-      buildSdkPath: path.join(testDir, 'ets', 'static'),
-      projectPath: testBuildPath,
-      declgenOutDir: testBuildPath
-    };
-    const moduleList: ModuleDescriptor[] = [
-      {
-        arktsversion: '1.1',
-        name: 'entry',
-        moduleType: 'har',
-        srcPath: path.join(testSrcPath, testName, 'entry')
-      },
-      {
-        arktsversion: '1.2',
-        name: 'dep',
-        moduleType: 'har',
-        srcPath: path.join(testSrcPath, testName, 'dep')
-      }
-    ] as ModuleDescriptor[];
-    const lsp = new Lsp(pathConfig, undefined, moduleList);
-    const { expectedFilePath, ...testCaseVariants } = testConfig;
-    const expectedResult = getExpectedResult(expectedFilePath);
-    if (expectedResult === null) {
-      console.error(`[${testName}] Skipped (expected result not found)`);
-      continue;
-    }
-    // CC-OFFNXT(no_explicit_any) project code style
-    if (typeof (lsp as any)[testName] !== 'function') {
-      console.error(`[${testName}] ❌ Error: Method "${testName}" not found on Lsp object`);
-      continue;
-    }
-
-    for (const [index, params] of Object.entries(testCaseVariants)) {
-      let pass = false;
-      let actualData = undefined;
-      let actualResult = null;
-      try {
-        // CC-OFFNXT(no_explicit_any) project code style
-        actualResult = (lsp as any)[testName](...params);
-        actualResult = sortActualResult(testName, actualResult);
-        [pass, actualData] = compareResults(
-          `${testName}:${index}`,
-          actualResult,
-          expectedResult[index],
-          pathConfig.declgenOutDir
-        );
+        [pass, actualData] = compareResults(`${testName}:${index}`, actualResult, expectedResult[index], pathConfig);
       } catch (error) {
         console.error(`[${testName}:${index}] ❌ Error: ${error}`);
       }
@@ -490,9 +409,7 @@ function run(testDir: string, pathConfig: PathConfig): void {
 
   const basicModules = getModules(pathConfig.projectPath, basicCases);
   const basicLsp = new Lsp(pathConfig, undefined, basicModules);
-  failedList = runTests(basicLsp, basicCases, failedList);
-
-  failedList = runSingleTests(testDir, failedList);
+  failedList = runTests(basicLsp, basicCases, failedList, pathConfig);
 
   console.log('Tests completed.');
   if (failedList.length > 0) {
@@ -512,7 +429,6 @@ async function runWithAstCache(testDir: string, pathConfig: PathConfig): Promise
   // for generate ast cache
   const entry_module = [
     {
-      arktsversion: '1.2',
       name: 'entry',
       moduleType: 'har',
       srcPath: path.join(pathConfig.projectPath, 'entry')
@@ -523,7 +439,7 @@ async function runWithAstCache(testDir: string, pathConfig: PathConfig): Promise
   const basicLsp = new Lsp(pathConfig, undefined, entry_module);
   await basicLsp.initAstCache();
   basicLsp.update(basicModules);
-  failedList = runTests(basicLsp, basicCases, failedList);
+  failedList = runTests(basicLsp, basicCases, failedList, pathConfig);
 
   console.log('Tests completed.');
   if (failedList.length > 0) {
@@ -552,7 +468,7 @@ if (require.main === module) {
   const pathConfig: PathConfig = {
     buildSdkPath: path.join(testDir, 'ets', 'static'),
     projectPath: path.join(testDir, 'testcases'),
-    declgenOutDir: ''
+    declgenOutDir: path.join(testDir, 'testcases', '.idea', '.deveco')
   };
 
   process.env.BINDINGS_PATH = path.join(pathConfig.buildSdkPath, 'build-tools', 'bindings');

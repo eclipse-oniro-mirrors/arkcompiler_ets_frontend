@@ -16,6 +16,6 @@
 import * as ns from "./eitest_import_all_5_ne"
 const t: ns.B = new ns.B()
 
-/* @@? 17:13 Error TypeError: 'B' type does not exist. */
-/* @@? 17:21 Error TypeError: Invalid type reference. */
-/* @@? 17:24 Error TypeError: 'B' type does not exist. */
+
+/* @@? 17:13 Error Semantic error ESE0070: 'B' type does not exist. */
+/* @@? 17:24 Error Semantic error ESE0070: 'B' type does not exist. */

@@ -94,6 +94,16 @@ public:
         return impl_->LogDiagnostic(context, ekind, args, argc, pos);
     }
 
+    void ClassDefinitionSetFromStructModifier(es2panda_Context *context, es2panda_AstNode *classInstance)
+    {
+        return impl_->ClassDefinitionSetFromStructModifier(context, classInstance);
+    }
+
+    bool ClassDefinitionIsFromStructConst(es2panda_Context *context, es2panda_AstNode *classInstance)
+    {
+        return impl_->ClassDefinitionIsFromStructConst(context, classInstance);
+    }
+
     NO_COPY_SEMANTIC(Initializer);
     NO_MOVE_SEMANTIC(Initializer);
 
@@ -125,10 +135,11 @@ DocumentHighlights GetDocumentHighlightsImpl(es2panda_Context *context, size_t p
 void GetReferenceLocationAtPositionImpl(FileNodeInfo fileNodeInfo, es2panda_Context *referenceFileContext,
                                         ReferenceLocationList *list);
 void RemoveFromFiles(std::vector<std::string> &files, const std::vector<std::string> &autoGenerateFolders);
-ir::AstNode *FindRightToken(const size_t pos, const ArenaVector<ir::AstNode *> &nodes);
+ir::AstNode *FindRightToken(const size_t pos, const std::vector<ir::AstNode *> &nodes);
 std::string GetOwnerId(ir::AstNode *node);
 std::string GetIdentifierName(ir::AstNode *node);
 bool NodeHasTokens(const ir::AstNode *node);
+std::vector<ir::AstNode *> GetChildren(const ir::AstNode *node, ArenaAllocator *allocator);
 void FindAllChild(const ir::AstNode *ast, const ir::NodePredicate &cb, ArenaVector<ir::AstNode *> &results);
 ir::AstNode *FindAncestor(ir::AstNode *node, const ir::NodePredicate &cb);
 std::vector<CodeFixActionInfo> GetCodeFixesAtPositionImpl(es2panda_Context *context, size_t startPosition,
@@ -140,7 +151,10 @@ ir::Identifier *GetIdentFromNewClassExprPart(const ir::Expression *value);
 varbinder::Decl *FindDeclInFunctionScope(varbinder::Scope *scope, const util::StringView &name);
 varbinder::Decl *FindDeclInGlobalScope(varbinder::Scope *scope, const util::StringView &name);
 varbinder::Decl *FindDeclInScopeWithFallback(varbinder::Scope *scope, const util::StringView &name);
-
+std::string GetImportFilePath(es2panda_Context *context, size_t pos);
+void MakeDiagnosticReferences(es2panda_Context *context, const util::DiagnosticStorage &diagnostics,
+                              DiagnosticReferences &result);
+std::string GetTokenTypes(ir::ModifierFlags flags);
 }  // namespace ark::es2panda::lsp
 
 #endif

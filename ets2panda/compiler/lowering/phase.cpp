@@ -23,6 +23,7 @@
 #include "compiler/lowering/ets/ambientLowering.h"
 #include "compiler/lowering/ets/arrayLiteralLowering.h"
 #include "compiler/lowering/ets/bigintLowering.h"
+#include "compiler/lowering/ets/binaryExpressionLowering.h"
 #include "compiler/lowering/ets/boxingForLocals.h"
 #include "compiler/lowering/ets/capturedVariables.h"
 #include "compiler/lowering/ets/constantExpressionLowering.h"
@@ -32,6 +33,7 @@
 #include "compiler/lowering/ets/declGenPhase.h"
 #include "compiler/lowering/ets/defaultParametersInConstructorLowering.h"
 #include "compiler/lowering/ets/defaultParametersLowering.h"
+#include "compiler/lowering/ets/destructuringPhase.h"
 #include "compiler/lowering/ets/enumLowering.h"
 #include "compiler/lowering/ets/enumPostCheckLowering.h"
 #include "compiler/lowering/ets/enumPropertiesInAnnotationsLowering.h"
@@ -41,7 +43,6 @@
 #include "compiler/lowering/ets/expressionLambdaLowering.h"
 #include "compiler/lowering/ets/extensionAccessorLowering.h"
 #include "compiler/lowering/ets/genericBridgesLowering.h"
-#include "compiler/lowering/ets/gradualTypeNarrowing.h"
 #include "compiler/lowering/ets/initModuleLowering.h"
 #include "compiler/lowering/ets/insertOptionalParametersAnnotation.h"
 #include "compiler/lowering/ets/interfaceObjectLiteralLowering.h"
@@ -60,6 +61,7 @@
 #include "compiler/lowering/ets/primitiveConversionPhase.h"
 #include "compiler/lowering/ets/promiseVoid.h"
 #include "compiler/lowering/ets/recordLowering.h"
+#include "compiler/lowering/ets/relaxedAnyLowering.h"
 #include "compiler/lowering/ets/resizableArrayLowering.h"
 #include "compiler/lowering/ets/lateInitialization.h"
 #include "compiler/lowering/ets/restArgsLowering.h"
@@ -73,6 +75,7 @@
 #include "compiler/lowering/ets/unboxLowering.h"
 #include "compiler/lowering/ets/unionLowering.h"
 #include "compiler/lowering/ets/typeFromLowering.h"
+#include "compiler/lowering/ets/classFromExpressionLowering.h"
 #include "compiler/lowering/plugin_phase.h"
 #include "compiler/lowering/resolveIdentifiers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
@@ -134,16 +137,19 @@ std::vector<Phase *> GetETSPhaseList()
         new PluginPhase {g_pluginsAfterCheck, ES2PANDA_STATE_CHECKED, &util::Plugin::AfterCheck},
         // new ConvertPrimitiveCastMethodCall,
         new DynamicImport,
+        new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
         new AsyncMethodLowering,
         new DeclareOverloadLowering,
         new EnumPostCheckLoweringPhase,
         new SpreadConstructionPhase,
         new RestArgsLowering,
+        new DestructuringPhase,
         new ArrayLiteralLowering,
         new BigIntLowering,
         new OpAssignmentLowering,
-        new SetterLowering,
+        new BinaryExpressionLowering, // should be after BigIntLowering and OpAssignmentLowering
+        new SetterLowering,  // must be put before ObjectIndexLowering
         new LateInitializationConvert,
         new ExtensionAccessorPhase,
         new BoxingForLocals,
@@ -162,7 +168,7 @@ std::vector<Phase *> GetETSPhaseList()
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
         new TypeFromLowering,
-        new GradualTypeNarrowing,
+        new ClassFromExpressionLowering,
         new PrimitiveConversionPhase,
         new UnboxPhase,
         // pluginsAfterLowerings has to come at the very end, nothing should go after it
@@ -401,6 +407,29 @@ bool PhaseForBodies::Postcondition(public_lib::Context *ctx, const parser::Progr
     }
 
     return PostconditionForModule(ctx, program);
+}
+
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb)
+{
+    auto mode = context->config->options->GetCompilationMode();
+
+    parser::Program *program = context->parserProgram;
+
+    for (auto &[_, extPrograms] : program->ExternalSources()) {
+        (void)_;
+        for (auto *extProg : extPrograms) {
+            if (extProg->IsASTLowered()) {
+                continue;
+            }
+            if (mode == CompilationMode::GEN_STD_LIB ||
+                (mode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE && extProg->IsGenAbcForExternal())) {
+                cb(extProg);
+            }
+        }
+    }
+
+    cb(program);
 }
 
 PhaseManager::~PhaseManager()

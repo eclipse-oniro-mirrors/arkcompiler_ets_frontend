@@ -1,28 +1,33 @@
 ## 类实现接口时，不能用类方法替代对应interface属性
 
-**规则：**`arkts-no-method-overriding-field`
+**规则：** `arkts-no-method-overriding-field`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2不支持structural type，属性和方法不能互相转换。
+在ArkTS1.2中，类在实现接口时，lambda属性和方法不能混用。即不能用方法实现属性，也不能用属性实现方法。
+
+**变更原因：**
+ 
+在ArkTS1.1中，方法类型与函数属性类型兼容，类实现接口时可以混用。
+
+在ArkTS1.2中，属性和方法有本质区别，函数属性类型与方法类型不再兼容，因此不支持这种写法。
+
+**适配建议：**
+
+实现接口时，不要混用lambda属性和方法，确保实现与声明保持一致。
+
+**示例：**
 
 **ArkTS1.1**
 
 ```typescript
 interface Person {
-  cb: () => void
+  cb1: () => void;
+  cb2(): void;
 }
-
-class student implements Person{
-  cb() {}
-} 
-
-interface Transformer<T> {
-  transform: (value: T) => T; // 违反规则
-}
-
-class StringTransformer implements Transformer<string> {
-  transform(value: string) { return value.toUpperCase(); }  // 违反规则
+class Student implements Person {
+  cb1() { }          // 用方法实现lambda属性，ArkTS1.2编译错误
+  cb2:() => void = () => {}   // 用lambda属性实现方法，ArkTS1.2编译错误
 }
 ```
 
@@ -30,18 +35,11 @@ class StringTransformer implements Transformer<string> {
 
 ```typescript
 interface Person {
-  cb(): void
+  cb1: () => void;
+  cb2();
 }
-
-class student implements Person{
-  cb() {}
-}
-
-interface Transformer<T> {
-  transform(value: T): T;  // 变成方法
-}
-
-class StringTransformer implements Transformer<string> {
-  transform(value: string) { return value.toUpperCase(); }  // 正确
+class Student implements Person {
+  cb1: () => void = () => { }  // 修改为lambda属性，与声明保持一致
+  cb2() { }     // 修改为方法，与声明保持一致
 }
 ```

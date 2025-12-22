@@ -16,14 +16,9 @@
 #ifndef ES2PANDA_UTIL_HELPERS_H
 #define ES2PANDA_UTIL_HELPERS_H
 
-#include "varbinder/variableFlags.h"
-#include "mem/pool_manager.h"
-#include "util/ustring.h"
-#include "util/perfMetrics.h"
-#include "ir/module/importSpecifier.h"
-
-#include <cmath>
 #include <string>
+#include "ir/module/importSpecifier.h"
+#include "libarkbase/os/filesystem.h"
 
 namespace ark::es2panda::parser {
 class Program;
@@ -142,20 +137,24 @@ public:
     static const checker::ETSObjectType *GetContainingObjectType(const ir::AstNode *node);
     static const ir::TSEnumDeclaration *GetContainingEnumDeclaration(const ir::AstNode *node);
     static const ir::ClassDefinition *GetContainingClassDefinition(const ir::AstNode *node);
+    static const util::StringView GetContainingObjectName(const ir::AstNode *node);
     static const ir::TSInterfaceDeclaration *GetContainingInterfaceDeclaration(const ir::AstNode *node);
     static const ir::MethodDefinition *GetContainingClassMethodDefinition(const ir::AstNode *node);
     static const ir::ClassStaticBlock *GetContainingClassStaticBlock(const ir::AstNode *node);
     static const ir::ScriptFunction *GetContainingFunction(const ir::AstNode *node);
-    static const ir::ClassDefinition *GetClassDefiniton(const ir::ScriptFunction *node);
+    static const ir::ClassDefinition *GetClassDefinition(const ir::ScriptFunction *node);
     static bool IsSpecialPropertyKey(const ir::Expression *expr);
     static bool IsConstantPropertyKey(const ir::Expression *expr, bool isComputed);
+    [[nodiscard]] static bool IsErrorPlaceHolder(ir::Identifier const *ident, bool isNull = false) noexcept;
+    [[nodiscard]] static bool IsGlobalClass(ir::AstNode const *node) noexcept;
+    [[nodiscard]] static bool IsETSMethodType(checker::Type const *type) noexcept;
     static compiler::Literal ToConstantLiteral(const ir::Expression *expr);
     static bool IsBindingPattern(const ir::AstNode *node);
     static bool IsPattern(const ir::AstNode *node);
     static std::vector<ir::Identifier *> CollectBindingNames(varbinder::VarBinder *vb, ir::Expression *node);
     static util::StringView FunctionName(ArenaAllocator *allocator, const ir::ScriptFunction *func);
     static void CheckImportedName(const ArenaVector<ir::ImportSpecifier *> &specifiers,
-                                  const ir::ImportSpecifier *specifier, const std::string &fileName);
+                                  const ir::ImportSpecifier *specifier, DiagnosticEngine &diagnosticEngine);
     static void CheckDefaultImportedName(const ArenaVector<ir::ImportDefaultSpecifier *> &specifiers,
                                          const ir::ImportDefaultSpecifier *specifier, const std::string &fileName);
     static void CheckDefaultImport(const ArenaVector<ir::ETSImportDeclaration *> &statements);
@@ -164,6 +163,8 @@ public:
     static bool IsAsyncMethod(ir::AstNode const *node);
 
     static bool IsGlobalVar(const ark::es2panda::varbinder::Variable *var);
+
+    static void CheckValidFileName(const util::StringView &fileName, util::DiagnosticEngine &diagnosticEngine);
 
     static varbinder::Scope *NearestScope(const ir::AstNode *ast);
     static checker::ETSObjectType const *ContainingClass(const ir::AstNode *ast);
@@ -209,6 +210,9 @@ public:
 
     [[nodiscard]] static util::UString EscapeHTMLString(ArenaAllocator *allocator, const std::string &str);
     [[nodiscard]] static ir::AstNode *DerefETSTypeReference(ir::AstNode *node);
+
+    static std::vector<std::string> Split(const std::string &str, const char delimiter);
+    static std::string CalcRelativePath(const std::string &targetPath, const std::string &basePath);
 };
 
 template <typename T>

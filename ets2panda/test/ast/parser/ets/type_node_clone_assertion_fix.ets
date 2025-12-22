@@ -26,6 +26,6 @@ type MyMap<K extends keyof RecordMap> = {
 type RecordMap = { n: number };
 
 // Expected compilation errors for unsupported TypeScript features in ETS:
-/* @@? 22:37 Error TypeError: The `keyof` keyword can only be used for class or interface type. */
-/* @@? 22:41 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 26:18 Error SyntaxError: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 22:37 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
+/* @@? 22:41 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 26:18 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */

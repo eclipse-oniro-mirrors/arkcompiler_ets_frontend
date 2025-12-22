@@ -15,8 +15,8 @@
 
 interface I {
     foo(a: number){
-    return "invoke1"
-}
+        return "invoke1"
+    }
 }
 
 interface J extends I {

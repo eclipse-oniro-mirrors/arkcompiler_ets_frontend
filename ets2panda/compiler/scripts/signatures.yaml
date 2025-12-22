@@ -30,9 +30,13 @@ defines:
     ref: GET_INDEX_METHOD
   - name: $_set
     ref: SET_INDEX_METHOD
+  - name: '%%get-'
+    ref: GETTER_METHOD_BEGIN
+  - name: '%%set-'
+    ref: SETTER_METHOD_BEGIN
   - name: $_iterator
     ref: ITERATOR_METHOD
-  - name: Iterator 
+  - name: Iterator
     ref: ITERATOR_CLASS
   - name: 'ambient_indexer'
     ref: AMBIENT_INDEXER
@@ -154,6 +158,10 @@ defines:
     ref: READONLY_TYPE_NAME
   - name: 'Partial'
     ref: PARTIAL_TYPE_NAME
+  - name: 'Awaited'
+    ref: AWAITED_TYPE_NAME
+  - name: 'ReturnType'
+    ref: RETURN_TYPE_TYPE_NAME
   - name: 'FixedArray'
     ref: FIXED_ARRAY_TYPE_NAME
   - name: 'Required'
@@ -162,7 +170,7 @@ defines:
     ref: ARRAY
   - name: 'gradual'
     ref: GRADUAL_TYPE_NAME
-  - name: '<property>'
+  - name: '%%property-'
     ref: PROPERTY
   - name: 'Any'
     ref: ANY_TYPE_NAME
@@ -182,8 +190,10 @@ defines:
     ref: BUILTIN_RETENTION
   - name: 'Symbol'
     ref: SYMBOL
-  - name: 'escompat.Array'
-    ref: ESCOMPAT_ARRAY
+  - name: 'std.core.Array'
+    ref: STD_CORE_ARRAY
+  - name: 'std.core.ReadonlyArray'
+    ref: STD_CORE_READONLYARRAY
   - name: 'ByteType.VAL'
     ref: BYTETYPE_VAL
   - name: 'IntType.VAL'
@@ -216,10 +226,16 @@ defines:
     ref: DEFAULT_ANNO_QUALIFIED_LEFT
   - name: 'OptionalParametersAnnotation'
     ref: DEFAULT_ANNO_FOR_FUNC
+  - name: 'SkipVarianceCheckDontUseItWillBeRemoved'
+    ref: ANNO_UNSAFE_VARIANCE
   - name: 'minArgCount'
     ref: MIN_ARGSCOUNT_OF_FUNC
   - name: 'gensym%%_anonymous_const'
     ref: EXPORT_DEFAULT_CONSTANT_ANONYMOUSLY
+  - name: 'gensym%%_default_anonymous'
+    ref: REEXPORT_DEFAULT_ANONYMOUSLY
+  - name: 'toBoolean'
+    ref: BOOLEAN_CAST
   - name: 'toByte'
     ref: BYTE_CAST
   - name: 'toShort'
@@ -259,6 +275,8 @@ defines:
     ref: ESVALUE
   - name: 'load'
     ref: LOAD
+  - name: 'InvalidStoreAccessError'
+    ref: INVALID_STOREACCESS_ERROR
 
 packages:
   - name: 'std.core'
@@ -393,6 +411,12 @@ builtins:
   - name: Promise
     package: PKG_STD_CORE
     ref: BUILTIN_PROMISE
+  - name: Record
+    package: PKG_STD_CORE
+    ref: BUILTIN_RECORD
+  - name: Map
+    package: PKG_STD_CORE
+    ref: BUILTIN_MAP
   - name: Error
     package: PKG_ESCOMPAT
     ref: BUILTIN_ERROR
@@ -400,17 +424,11 @@ builtins:
     package: PKG_ESCOMPAT
     ref: BUILTIN_ERROR_OPTIONS
   - name: BigInt
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_BIGINT
   - name: Array
-    package: PKG_ESCOMPAT
+    package: PKG_STD_CORE
     ref: BUILTIN_ARRAY
-  - name: Record
-    package: PKG_ESCOMPAT
-    ref: BUILTIN_RECORD
-  - name: Map
-    package: PKG_ESCOMPAT
-    ref: BUILTIN_MAP
   - name: AssertionError
     package: PKG_STD_CORE
     ref: BUILTIN_ASSERTION_ERROR
@@ -773,7 +791,7 @@ signatures:
     ref: BUILTIN_STRING_CHAR_AT
 
   - callee: BUILTIN_ARRAY
-    method_name: <get>length
+    method_name: '%%get-length'
     params: []
     return_type: PRIMITIVE_INT
     ref: BUILTIN_ARRAY_LENGTH
@@ -791,10 +809,16 @@ signatures:
     ref: BUILTIN_ASSERTION_ERROR_CTOR
 
   - callee: BUILTIN_RUNTIME
-    method_name: failedTypeCastException
-    params: [BUILTIN_OBJECT, BUILTIN_STRING, PRIMITIVE_BOOLEAN]
+    method_name: failedTypeCastInclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
     return_type: BUILTIN_CLASS_CAST_ERROR
-    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCEPTION
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_INCL_UNDEFINED_STUB
+
+  - callee: BUILTIN_RUNTIME
+    method_name: failedTypeCastExclUndefinedStub
+    params: [BUILTIN_OBJECT, BUILTIN_CLASS]
+    return_type: BUILTIN_CLASS_CAST_ERROR
+    ref: BUILTIN_RUNTIME_FAILED_TYPE_CAST_EXCL_UNDEFINED_STUB
 
   - callee: BUILTIN_ERROR
     method_name: $CTOR
@@ -933,6 +957,18 @@ signatures:
     params: []
     return_type: BUILTIN_BIGINT
     ref: BUILTIN_BIGINT_OPERATOR_BITWISE_NOT
+
+  - callee: BUILTIN_BIGINT
+    method_name: pow
+    params: [BUILTIN_BIGINT]
+    return_type: BUILTIN_BIGINT
+    ref: BUILTIN_BIGINT_OPERATOR_EXPONENTIATION
+
+  - callee: BUILTIN_BIGINT
+    method_name: pow
+    params: [BUILTIN_BIGINT]
+    return_type: BUILTIN_BIGINT
+    ref: BUILTIN_BIGINT_OPERATOR_EXPONENTIATION_EQUAL
 
   - callee: BUILTIN_THROWABLE
     method_name: $CTOR

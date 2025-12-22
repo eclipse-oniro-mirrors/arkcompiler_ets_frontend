@@ -86,6 +86,158 @@
       "definition": {
         "id": {
           "type": "Identifier",
+          "name": "ETSGLOBAL",
+          "loc": {
+            "start": {
+              "line": 1,
+              "column": 1,
+              "program": "dynamic_iface_decl_bad.ets"
+            },
+            "end": {
+              "line": 1,
+              "column": 1,
+              "program": "dynamic_iface_decl_bad.ets"
+            }
+          }
+        },
+        "superClass": null,
+        "implements": [],
+        "body": [
+          {
+            "type": "MethodDefinition",
+            "key": {
+              "type": "Identifier",
+              "name": "main",
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": null
+                }
+              }
+            },
+            "kind": "method",
+            "accessibility": "public",
+            "static": true,
+            "optional": false,
+            "computed": false,
+            "value": {
+              "type": "FunctionExpression",
+              "function": {
+                "type": "ScriptFunction",
+                "id": {
+                  "type": "Identifier",
+                  "name": "main",
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
+                "generator": false,
+                "async": false,
+                "expression": false,
+                "params": [],
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "dynamic_iface_decl_bad.ets"
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": "dynamic_iface_decl_bad.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "dynamic_iface_decl_bad.ets"
+                  },
+                  "end": {
+                    "line": 1,
+                    "column": 1,
+                    "program": "dynamic_iface_decl_bad.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "dynamic_iface_decl_bad.ets"
+                },
+                "end": {
+                  "line": 1,
+                  "column": 1,
+                  "program": "dynamic_iface_decl_bad.ets"
+                }
+              }
+            },
+            "overloads": [],
+            "loc": {
+              "start": {
+                "line": 1,
+                "column": 1,
+                "program": "dynamic_iface_decl_bad.ets"
+              },
+              "end": {
+                "line": 1,
+                "column": 1,
+                "program": "dynamic_iface_decl_bad.ets"
+              }
+            }
+          }
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 1,
+            "program": "dynamic_iface_decl_bad.ets"
+          },
+          "end": {
+            "line": 1,
+            "column": 1,
+            "program": "dynamic_iface_decl_bad.ets"
+          }
+        }
+      },
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 1,
+          "program": "dynamic_iface_decl_bad.ets"
+        },
+        "end": {
+          "line": 1,
+          "column": 1,
+          "program": "dynamic_iface_decl_bad.ets"
+        }
+      }
+    },
+    {
+      "type": "ClassDeclaration",
+      "definition": {
+        "id": {
+          "type": "Identifier",
           "name": "A",
           "loc": {
             "start": {
@@ -293,158 +445,6 @@
           "program": "dynamic_iface_decl_bad.ets"
         }
       }
-    },
-    {
-      "type": "ClassDeclaration",
-      "definition": {
-        "id": {
-          "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "dynamic_iface_decl_bad.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "dynamic_iface_decl_bad.ets"
-            }
-          }
-        },
-        "superClass": null,
-        "implements": [],
-        "body": [
-          {
-            "type": "MethodDefinition",
-            "key": {
-              "type": "Identifier",
-              "name": "main",
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
-                }
-              }
-            },
-            "kind": "method",
-            "accessibility": "public",
-            "static": true,
-            "optional": false,
-            "computed": false,
-            "value": {
-              "type": "FunctionExpression",
-              "function": {
-                "type": "ScriptFunction",
-                "id": {
-                  "type": "Identifier",
-                  "name": "main",
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
-                    }
-                  }
-                },
-                "generator": false,
-                "async": false,
-                "expression": false,
-                "params": [],
-                "body": {
-                  "type": "BlockStatement",
-                  "statements": [],
-                  "loc": {
-                    "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": "dynamic_iface_decl_bad.ets"
-                    },
-                    "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": "dynamic_iface_decl_bad.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": "dynamic_iface_decl_bad.ets"
-                  },
-                  "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": "dynamic_iface_decl_bad.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": "dynamic_iface_decl_bad.ets"
-                },
-                "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": "dynamic_iface_decl_bad.ets"
-                }
-              }
-            },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamic_iface_decl_bad.ets"
-              },
-              "end": {
-                "line": 1,
-                "column": 1,
-                "program": "dynamic_iface_decl_bad.ets"
-              }
-            }
-          }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "dynamic_iface_decl_bad.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "dynamic_iface_decl_bad.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": "dynamic_iface_decl_bad.ets"
-        }
-      }
     }
   ],
   "loc": {
@@ -460,5 +460,5 @@
     }
   }
 }
-TypeError: A is not abstract and does not override abstract method f1(p: String): Double in I [dynamic_iface_decl_bad.ets:22:22]
-TypeError: class A can not implements interface I which is from dynamic declaration file. [dynamic_iface_decl_bad.ets:22:22]
+[dynamic_iface_decl_bad.ets:22:22] Semantic error ESE0190: A is not abstract and does not override abstract method f1(p: String): Double in I
+[dynamic_iface_decl_bad.ets:22:22] Semantic error ESE24143: class A can not implements interface I which is from dynamic declaration file.

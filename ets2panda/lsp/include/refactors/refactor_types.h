@@ -16,11 +16,14 @@
 #ifndef REFACTOR_TYPES_H
 #define REFACTOR_TYPES_H
 
+#include "../formatting/formatting_settings.h"
+#include "../formatting/formatting.h"
 #include "public/es2panda_lib.h"
 #include "../cancellation_token.h"
 #include "../user_preferences.h"
 #include "../types.h"
 #include "es2panda.h"
+#include "lsp/include/services/text_change/text_change_context.h"
 #include <string>
 #include <string_view>
 #include <vector>
@@ -36,10 +39,17 @@ public:
         : fileTextChanges_(std::move(fileTextChanges))
     {
     }
-
-    std::vector<FileTextChanges> &GetFileTextChanges()
+    const std::vector<FileTextChanges> &GetFileTextChanges() const
     {
         return fileTextChanges_;
+    }
+    void SetFileTextChanges(const std::vector<FileTextChanges> &fileTextChanges)
+    {
+        fileTextChanges_ = fileTextChanges;
+    }
+    void AddFileTextChange(const FileTextChanges &change)
+    {
+        fileTextChanges_.emplace_back(change);
     }
 };
 
@@ -49,8 +59,8 @@ struct TextRange {
 };
 
 struct RefactorContext {
-    ark::es2panda::lsp::CancellationToken *cancellationToken = nullptr;
-    ark::es2panda::lsp::UserPreferences *preferences = nullptr;
+    TextChangesContext *textChangesContext = nullptr;
+    CancellationToken *cancellationToken = nullptr;
     TextRange span = {0, 0};
     es2panda_Context *context = nullptr;
     std::string kind;
@@ -75,17 +85,52 @@ struct ApplicableRefactorInfo {
 };
 
 namespace refactor_name {
+constexpr std::string_view CONVERT_ARROW_BRACES_REFACTOR_NAME = "ConvertArrowBracesRefactor";
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_NAME = "Convert arrow function or function expression";
-constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "Convert export";
+constexpr std::string_view CONVERT_EXPORT_REFACTOR_NAME = "ConvertExportRefactor";
 constexpr std::string_view CONVERT_IMPORT_REFACTOR_NAME = "Convert import";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_NAME = "Convert to template string";
-constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "Convert to optional chain expression";
+constexpr std::string_view MOVE_TO_NEW_FILE_REFACTOR_NAME = "Move to a new file";
+constexpr std::string_view CONVERT_CHAIN_REFACTOR_NAME = "ConvertToOptionalChainExpressionRefactor";
+constexpr std::string_view GENERATE_OVERRIDE_METHODS_NAME = "Generate override methods";
+constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_NAME = "ConvertFunctionToClassRefactor";
+constexpr std::string_view EXTRACT_TYPE_NAME = "ExtractTypeRefactor";
+constexpr std::string_view INFER_FUNCTION_RETURN_TYPE = "Infer function return type";
+
+constexpr std::string_view EXTRACT_CONSTANT_ACTION_NAME = "ExtractSymbolRefactor";
+constexpr std::string_view EXTRACT_FUNCTION_ACTION_NAME = "ExtractSymbolRefactor";
+constexpr std::string_view EXTRACT_VARIABLE_ACTION_NAME = "ExtractSymbolRefactor";
+
+constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_NAME = "Convert overload list to single signature";
+constexpr std::string_view CONVERT_PARAMS_TO_OBJECT = "Convert parameters to object and introduce interface";
+constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_NAME = "Generate Constructor";
+
+constexpr std::string_view GENERATE_GETTERS_AND_SETTERS_REFACTOR_NAME = "GenerateGettersAndSettersRefactor";
 }  // namespace refactor_name
 
 namespace refactor_description {
+constexpr std::string_view CONVERT_ARROW_BRACES_REFACTOR_DESC = "Add or remove braces in an arrow function";
 constexpr std::string_view CONVERT_FUNCTION_REFACTOR_DESC = "Convert arrow function or function expression";
 constexpr std::string_view CONVERT_TEMPLATE_REFACTOR_DESC = "Convert to template string";
 constexpr std::string_view CONVERT_CHAIN_REFACTOR_DESC = "Convert to optional chain expression";
+constexpr std::string_view MOVE_TO_NEW_FILE_REFACTOR_DESC = "Move to a new file";
+constexpr std::string_view GENERATE_OVERRIDE_METHODS_DESC = "Generate override methods";
+constexpr std::string_view CONVERT_IMPORT_REFACTOR_DESC = "Convert to named import";
+constexpr std::string_view CONVERT_FUNCTION_TO_CLASS_DESC =
+    "Convert a standalone function, arrow function, or function expression into a class declaration";
+constexpr std::string_view EXTRACT_TYPE_DESC = "Extract selected type";
+constexpr std::string_view INFER_FUNCTION_RETURN_TYPE_DESC = "Infer function return type";
+
+constexpr std::string_view EXTRACT_CONSTANT_ACTION_DESC = "Extract Constant";
+constexpr std::string_view EXTRACT_FUNCTION_ACTION_DESC = "Extract Function";
+constexpr std::string_view EXTRACT_VARIABLE_ACTION_DESC = "Extract Variable";
+
+constexpr std::string_view CONVERT_OVERLOAD_LIST_REFACTOR_DESC =
+    "Convert multiple function overloads to a single signature with union types";
+constexpr std::string_view CONVERT_PARAMS_TO_OBJECT_DESC =
+    "Convert multiple function parameters to a single object parameter with an interface";
+constexpr std::string_view GENERATE_CONSTRUCTOR_REFACTOR_DESC = "Generate Constructor";
+constexpr std::string_view GENERATE_GETTERS_AND_SETTERS_REFACTOR_DESC = "Generate getters and setters";
 }  // namespace refactor_description
 
 class Refactor {
@@ -95,7 +140,7 @@ private:
 public:
     bool IsKind(const std::string &kind) const;
     void AddKind(const std::string &kind);
-    virtual ApplicableRefactorInfo GetAvailableActions(const RefactorContext &context) const = 0;
+    virtual std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const = 0;
 
     virtual std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                                 const std::string &actionName) const = 0;

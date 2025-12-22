@@ -21,8 +21,8 @@ function main() {
     let a : A = new A();
 }
 
-/* @@@ label Error SyntaxError: Index type expected in index signature. */
-/* @@@ label1 Error SyntaxError: Invalid index type ':' in index signature. */
-/* @@@ label1 Error SyntaxError: ] expected in index signature. */
-/* @@@ label2 Error SyntaxError: An index signature must have a type annotation. */
-/* @@@ label2 Error SyntaxError: Expected ':', got 'identification literal'. */
+/* @@@ label Error Syntax error ESY0017: Index type expected in index signature. */
+/* @@@ label1 Error Syntax error ESY0018: Invalid index type ':' in index signature. */
+/* @@@ label1 Error Syntax error ESY0019: ] expected in index signature. */
+/* @@@ label2 Error Syntax error ESY0020: An index signature must have a type annotation. */
+/* @@@ label2 Error Syntax error ESY0230: Expected ':', got 'identification literal'. */

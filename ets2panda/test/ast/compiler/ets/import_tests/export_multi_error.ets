@@ -57,7 +57,9 @@ export default function TestFunc(): void {}
 export default function TestFuncToo(): void {}
 
 /*-----------------*/
-/* @@? 16:10 Error SyntaxError: Cannot find name 'foo' to export. */
-/* @@? 27:14 Error SyntaxError: Cannot export two different names with the same export alias name 'foo2'. */
-/* @@? 56:16 Error TypeError: Only one default export is allowed in a module */
-/* @@? 57:16 Error TypeError: Only one default export is allowed in a module */
+
+/* @@? 46:13 Warning Warning W0000: Duplicated export aliases for 'MyI'. */
+/* @@? 16:10 Error Syntax error ESY0279: Cannot find name 'foo' to export. */
+/* @@? 27:14 Error Syntax error ESY0344: Cannot export two different names with the same export alias name 'foo2'. */
+/* @@? 56:16 Error Semantic error ESE0374: Only one default export is allowed in a module */
+/* @@? 57:16 Error Semantic error ESE0374: Only one default export is allowed in a module */

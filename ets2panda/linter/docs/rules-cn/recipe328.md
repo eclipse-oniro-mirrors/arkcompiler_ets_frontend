@@ -1,8 +1,8 @@
 ### ArkTS1.2创建ArkTS1.1的没有无参构造函数的类的对象字面量
 
-**规则：** arkts-interop-d2s-object-literal-no-args-constructor
+**规则：** `arkts-interop-d2s-object-literal-no-args-constructor`
 
-**级别：** error
+由于ArkTS1.2的语法限制，当ArkTS1.2创建ArkTS1.1的没有无参构造函数的类的对象字面量时，需要使用new关键字和构造函数。
 
 **ArkTS1.1**
 ```typescript

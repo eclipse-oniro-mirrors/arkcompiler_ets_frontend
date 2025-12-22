@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_CHECKER_ETSANALYZER_H
 #define ES2PANDA_CHECKER_ETSANALYZER_H
 
-#include "checker/SemanticAnalyzer.h"
 #include "checker/ETSchecker.h"
 #include "ETSAnalyzerHelpers.h"
 
@@ -39,6 +38,8 @@ public:
     checker::Type *CheckDynamic(ir::ObjectExpression *expr) const;
     checker::Type *GetPreferredType(ir::ArrayExpression *expr) const;
     void GetUnionPreferredType(ir::Expression *expr, Type *originalType) const;
+    void CollectNonOptionalProperty(const ETSObjectType *objType,
+                                    std::unordered_map<util::StringView, ETSObjectType *> &props) const;
     void CheckObjectExprProps(const ir::ObjectExpression *expr, checker::ETSObjectType *objectTypeForProperties,
                               checker::PropertySearchFlags searchFlags) const;
     std::tuple<Type *, ir::Expression *> CheckAssignmentExprOperatorType(ir::AssignmentExpression *expr,
@@ -49,12 +50,10 @@ private:
     ETSChecker *GetETSChecker() const;
     void CheckInstantatedClass(ir::ETSNewClassInstanceExpression *expr, ETSObjectType *&calleeObj) const;
     void CheckMethodModifiers(ir::MethodDefinition *node) const;
-    checker::Signature *ResolveSignature(ETSChecker *checker, ir::CallExpression *expr,
-                                         checker::Type *calleeType) const;
-    checker::Type *GetReturnType(ir::CallExpression *expr, checker::Type *calleeType) const;
     checker::Type *GetFunctionReturnType(ir::ReturnStatement *st, ir::ScriptFunction *containingFunc) const;
-    checker::Type *GetCallExpressionReturnType(ir::CallExpression *expr, checker::Type *calleeType) const;
     checker::Type *UnwrapPromiseType(checker::Type *type) const;
+    checker::Type *GetSmartTypeForAssignment(ir::AssignmentExpression *const expr, checker::Type *const leftType,
+                                             checker::Type *const rightType, ir::Expression *const relationNode) const;
     checker::Type *GetSmartType(ir::AssignmentExpression *expr, checker::Type *leftType,
                                 checker::Type *rightType) const;
     bool SetAssignmentExpressionTarget(ir::AssignmentExpression *const expr, ETSChecker *checker) const;
@@ -79,7 +78,9 @@ private:
                 return;
             }
         }
-        bool acceptVoid = parent->IsExpressionStatement() || parent->IsReturnStatement();
+        bool acceptVoid =
+            parent->IsExpressionStatement() || parent->IsReturnStatement() ||
+            (parent->IsSequenceExpression() && parent->Parent() != nullptr && parent->Parent()->IsForUpdateStatement());
         if (!acceptVoid) {
             checker->LogError(diagnostic::VOID_VALUE, {}, expr->Start());
         }

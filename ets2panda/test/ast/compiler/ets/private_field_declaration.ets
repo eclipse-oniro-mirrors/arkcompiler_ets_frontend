@@ -18,5 +18,5 @@
     #field: int = 0;
  }
 
- /* @@? 18:5 Error SyntaxError: Use 'private' keyword to declare an identifier as private. */
- /* @@? 18:5 Error SyntaxError: Unexpected token '{'. */
+ /* @@? 18:5 Error Syntax error ESY0298: Use 'private' keyword to declare an identifier as private. */
+/* @@? 18:5 Error Syntax error ESY0227: Unexpected token '{'. */

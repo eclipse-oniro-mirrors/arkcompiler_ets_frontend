@@ -1070,7 +1070,8 @@ module Es2pandaLibApi
                       'overload_name' => get_new_method_name(function_overload, method.name, const, rt_name),
                       'idl_name' => get_new_method_name(idl_function_overload, method.name, const, rt_name, true),
                       'return_type' => return_type, 'return_expr' => return_expr, 'raw_decl' => method.raw_declaration,
-                      'const_return' => const_return, 'get_modifier' => method['additional_attributes'], 'args' => args }
+                      'const_return' => const_return, 'get_modifier' => method['additional_attributes'], 'args' => args,
+                      'call_cast' => call_cast }
             end
           else
             Es2pandaLibApi.log('info', "Banned method\n")
@@ -1135,7 +1136,8 @@ module Es2pandaLibApi
 
   @info_log = false
   @debug_log = false
-  @warning_log = true
+  # 29204
+  @warning_log = false
   @backtrace_log = false
   @stat_log = false
   @type_stat_log = false

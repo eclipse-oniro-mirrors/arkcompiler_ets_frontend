@@ -14,15 +14,15 @@
  */
 
 class A {
-    func(a: Int): String { return "of Int" }
-    func(a: Float): String { return "of Float" }
     func(a: Double): String { return "of Double" }
+    func(a: Float): String { return "of Float" }
+    func(a: Int): String { return "of Int" }
 }
 
 function main(): int{
     let c1: A = new A();
     let helpbyte: Byte = new Byte(1 as byte);
-    if (c1.func(helpbyte) != "of Int") {
+    if (c1.func(helpbyte) != "of Double") {
         return 1;
     }
     return 0;

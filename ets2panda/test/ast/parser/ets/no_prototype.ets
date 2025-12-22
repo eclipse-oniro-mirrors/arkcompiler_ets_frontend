@@ -23,14 +23,10 @@ C.prototype = {
   }
 }
 
-/* @@? 18:3 Error TypeError: Property 'prototype' does not exist on type 'C' */
-/* @@? 18:13 Error SyntaxError: Runtime prototype assignment is not supported because of static typing */
-/* @@? 18:22 Error TypeError: Property 'prototype' does not exist on type 'Object' */
-/* @@? 20:1 Error SyntaxError: Runtime prototype assignment is not supported because of static typing */
-/* @@? 20:3 Error TypeError: Property 'prototype' does not exist on type 'C' */
-/* @@? 20:13 Error SyntaxError: Runtime prototype assignment is not supported because of static typing */
-/* @@? 21:4 Error SyntaxError: Unexpected token, expected ':'. */
-/* @@? 21:5 Error SyntaxError: Unexpected token ')'. */
-/* @@? 21:7 Error SyntaxError: Unexpected token. */
-/* @@? 22:12 Error SyntaxError: Unexpected token, expected ':'. */
-/* @@? 24:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 18:3 Error Semantic error ESE0087: Property 'prototype' does not exist on type 'C' */
+/* @@? 18:13 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */
+/* @@? 18:22 Error Semantic error ESE0087: Property 'prototype' does not exist on type 'Object' */
+/* @@? 20:1 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */
+/* @@? 20:3 Error Semantic error ESE0087: Property 'prototype' does not exist on type 'C' */
+/* @@? 20:13 Error Syntax error ESY30818: Runtime prototype assignment is not supported because of static typing */

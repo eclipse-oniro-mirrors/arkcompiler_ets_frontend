@@ -17,5 +17,6 @@
 class Foo {
     constructor(readonly readonly readonly) { };
 }
-/* @@? 18:26 Error SyntaxError: Unexpected modifier.  */
-/* @@? 18:26 Error SyntaxError: Duplicated modifier is not allowed.  */
+
+/* @@? 18:26 Error Syntax error ESY0153: Unexpected modifier. */
+/* @@? 18:26 Error Syntax error ESY0115: Duplicated modifier is not allowed. */

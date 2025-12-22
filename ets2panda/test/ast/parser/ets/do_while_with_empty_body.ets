@@ -16,11 +16,13 @@
 do export  Boolean [1] = delete
    while(true)
 
-/* @@? 16:4 Error SyntaxError: Unexpected token 'export'. */
-/* @@? 16:4 Error SyntaxError: Missing body in do while statement */
-/* @@? 16:4 Error SyntaxError: Unexpected token, expected 'while'. */
-/* @@? 16:12 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 16:20 Error SyntaxError: Invalid left-hand side in array destructuring pattern. */
-/* @@? 16:20 Error TypeError: Invalid left-hand side of assignment expression */
-/* @@? 17:4 Error SyntaxError: Expected ')', got 'while'. */
-/* @@? 27:1 Error SyntaxError: Unexpected token 'end of stream'. */
+
+/* @@? 16:4 Error Syntax error ESY0227: Unexpected token 'export'. */
+/* @@? 16:4 Error Syntax error ESY0300: Missing body in do while statement */
+/* @@? 16:4 Error Syntax error ESY0228: Unexpected token, expected 'while'. */
+/* @@? 16:12 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 16:20 Error Syntax error ESY0204: Invalid left-hand side in array destructuring pattern. */
+/* @@? 16:26 Error Syntax error ESY0049: Invalid destructuring assignment target. */
+/* @@? 16:26 Error Semantic error ESE55815: Types cannot be modified at runtime with 'delete'. */
+/* @@? 17:4 Error Syntax error ESY0230: Expected ')', got 'while'. */
+/* @@? 29:1 Error Syntax error ESY0227: Unexpected token 'end of stream'. */

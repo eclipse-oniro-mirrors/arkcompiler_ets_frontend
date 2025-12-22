@@ -6537,7 +6537,7 @@
       "file_path": "lib.es2015.reflect.d.ts",
       "api_info": {
         "line": 1506,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinNarrowTypes",
         "api_name": "get",
         "api_type": "MethodDeclaration",
         "api_func_args": [
@@ -6636,7 +6636,7 @@
       "file_path": "lib.es2015.reflect.d.ts",
       "api_info": {
         "line": 1506,
-        "problem": "BuiltinAll",
+        "problem": "BuiltinNarrowTypes",
         "api_name": "set",
         "api_type": "MethodDeclaration",
         "api_func_args": [

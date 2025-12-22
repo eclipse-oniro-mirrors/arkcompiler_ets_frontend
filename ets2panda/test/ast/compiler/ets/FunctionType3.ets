@@ -23,5 +23,6 @@ function main(): void {
     /* @@ label */func2()(1, /* @@ label1 */"foo");
 }
 
-/* @@@ label1 Error TypeError: Type '"foo"' is not compatible with type 'Int' at index 2  */
-/* @@@ label Error TypeError: No matching call signature for (Int, "foo")  */
+
+/* @@@ label Error Semantic error ESE0127: No matching call signature for (Int, "foo") */
+/* @@@ label1 Error Semantic error ESE0046: Type '"foo"' is not compatible with type 'Int' at index 2 */

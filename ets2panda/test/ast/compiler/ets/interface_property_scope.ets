@@ -18,10 +18,11 @@ interface itf0{
     @Anno(()=> {testList.subArrayList(0, 1)}, exceptionCherckEmptyContainer)
 }
 
-/* @@? 16:2 Error TypeError: Cannot find type 'Anno'. */
-/* @@? 18:6 Error TypeError: Cannot find type 'Anno'. */
-/* @@? 18:11 Error SyntaxError: Invalid value for annotation field, expected a constant literal. */
-/* @@? 18:45 Error SyntaxError: Expected ')', got ','. */
-/* @@? 18:45 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 18:76 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 19:1 Error SyntaxError: Invalid Type. */
+
+/* @@? 16:2 Error Semantic error ESE0371: Cannot find type 'Anno'. */
+/* @@? 18:6 Error Semantic error ESE0371: Cannot find type 'Anno'. */
+/* @@? 18:11 Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */
+/* @@? 18:45 Error Syntax error ESY0230: Expected ')', got ','. */
+/* @@? 18:45 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 18:76 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 19:1 Error Syntax error ESY0138: Invalid Type. */

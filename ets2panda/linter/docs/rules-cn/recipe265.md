@@ -1,8 +1,8 @@
 ### ArkTS1.2继承js的类
 
-**规则：** arkts-interop-js2s-inherit-js-class
+**规则：** `arkts-interop-js2s-inherit-js-class`
 
-**级别：** error
+ArkTS1.2继承js的类时，使用ESValue接口构造JS类并传递js父类。
 
 **ArkTS1.1**
 ```typescript

@@ -15,19 +15,29 @@
 #ifndef INTEROP_LOGGING_H
 #define INTEROP_LOGGING_H
 
-#include <cstdio>
+#include <iostream>
 #include <cstdint>
 
-// NOLINTBEGIN
+inline void Log(const char *msg)
+{
+    std::cout << msg << "\n";
+}
 
-// CC-OFFNXT(G.PRE.09) code generation
-#define LOG(msg) fprintf(stdout, msg "\n");
-// CC-OFFNXT(G.PRE.09) code generation
-#define LOGI(msg, ...) fprintf(stdout, msg "\n", __VA_ARGS__);
-// CC-OFFNXT(G.PRE.09) code generation
-#define LOGE(msg, ...) fprintf(stderr, msg "\n", __VA_ARGS__);
-// CC-OFFNXT(G.PRE.09) code generation
-#define LOGE0(msg) fprintf(stderr, msg "\n");
+template <typename... Args>
+void LogI(Args &&...args)
+{
+    (std::cout << ... << args);
+    std::cout << "\n";
+}
+
+template <typename... Args>
+void LogE(Args &&...args)
+{
+    (std::cerr << ... << args);
+    std::cerr << "\n";
+}
+
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define LOG_PUBLIC ""
 
 #if defined(PANDA_TARGET_WINDOWS)
@@ -35,7 +45,5 @@
 #else
 #define INTEROP_API_EXPORT __attribute__((visibility("default")))
 #endif
-
-// NOLINTEND
 
 #endif  // INTEROP_LOGGING_H

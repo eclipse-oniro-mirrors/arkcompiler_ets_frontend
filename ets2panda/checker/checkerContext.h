@@ -77,6 +77,7 @@ enum class CheckerStatus : uint32_t {
     IN_SETTER = 1U << 27U,
     IN_EXTENSION_ACCESSOR_CHECK = 1U << 28U,
     IN_TYPE_INFER = 1U << 29U,
+    RESTRICTED_RETURN_IN_BLOCK = 1U << 30U
 };
 
 }  // namespace ark::es2panda::checker
@@ -165,6 +166,11 @@ public:
         return status_;
     }
 
+    [[nodiscard]] varbinder::Variable *ContainingOverloadDeclaration() noexcept
+    {
+        return containingOverloadDeclaration_;
+    }
+
     void SetContainingSignature(Signature *containingSignature) noexcept
     {
         containingSignature_ = containingSignature;
@@ -173,6 +179,11 @@ public:
     void SetContainingClass(ETSObjectType *containingClass) noexcept
     {
         containingClass_ = containingClass;
+    }
+
+    void SetContainingOverloadDeclaration(varbinder::Variable *containingOverloadDeclaration) noexcept
+    {
+        containingOverloadDeclaration_ = containingOverloadDeclaration;
     }
 
     void AddCapturedVar(varbinder::Variable *var, const lexer::SourcePosition &pos)
@@ -275,6 +286,7 @@ private:
     const ETSObjectType *containingClass_ {nullptr};
     ir::ArrowFunctionExpression *containingLambda_ {nullptr};
     Signature *containingSignature_ {nullptr};
+    varbinder::Variable *containingOverloadDeclaration_ {nullptr};
 
     lexer::TokenType operatorType_ = lexer::TokenType::EOS;
     SmartCastCondition testCondition_ {};

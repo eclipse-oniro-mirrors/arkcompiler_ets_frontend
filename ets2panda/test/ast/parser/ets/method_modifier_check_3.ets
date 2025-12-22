@@ -17,5 +17,6 @@ abstract class A {
     abstract override /* @@ label */foo(): void /* @@ label1 */{}
 }
 
-/* @@@ label Error TypeError: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier.  */
-/* @@@ label1 Error TypeError: Native, Abstract and Declare methods cannot have body.  */
+
+/* @@@ label Error Semantic error ESE0047: Invalid method modifier(s): an abstract method can't have private, override, static, final or native modifier. */
+/* @@@ label1 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */

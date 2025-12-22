@@ -13,6 +13,12 @@
  * limitations under the License.
  */
 
-class instanceof{
-  a : string = "15";
+class Base {}
+
+function foo<T>(arg: Partial<T>): void {}
+
+function main() {
+  foo(new Partial<Base>())
 }
+
+/* @@? 18:29 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

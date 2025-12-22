@@ -1,50 +1,33 @@
-## 不支持TS-like `Function`类型的调用方式
+## `Function`类型的调用方式与Typescript不同
 
-**规则：**`arkts-no-ts-like-function-call`
+**规则：** `arkts-no-ts-like-function-call`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2会对函数类型进行更严格的编译器检查。函数返回类型需要严格定义来保证类型安全，因此不支持TS-like`Function`类型。
+ArkTS1.1中`Function`类型可以直接用括号调用。
+
+ArkTS1.2中`Function`类型的调用方式与Typescript不同，需要使用`unsafeCall`方法调用。
+
+**变更原因：**
+
+ArkTS1.2对函数类型进行严格编译期检查，要求函数返回类型严格定义。`Function`对象必须通过`unsafeCall`调用后转换类型，以确保类型安全，替代ArkTS1.1中的括号调用。
+
+**适配建议：**
+
+使用`unsafeCall`方法代替括号调用`Function`类型。
+
+**示例：**
 
 **ArkTS1.1**
 
 ```typescript
-let f: Function = () => {} // 违反规则
-
-function run(fn: Function) {  // 违反规则
-  fn();
-}
-
-let fn: Function = (x: number) => x + 1; // 违反规则
-
-class A {
-  func: Function = () => {}; // 违反规则
-}
-
-function getFunction(): Function { // 违反规则
-  return () => {};
-}
+let fn: Function = (): number => { return 11 };
+let res: number = fn();
 ```
 
 **ArkTS1.2**
 
 ```typescript
-type F<R> = () => R;
-type F1<P, R> = (p:  P) => R
-
-let f: F<void> = () => {}
-
-function run(fn: () => void) {  // 指定返回类型
-  fn();
-}
-
-let fn: (x: number) => number = (x) => x + 1; // 明确参数类型
-
-class A {
-  func: () => void = () => {}; // 明确类型
-}
-
-function getFunction(): () => void { // 明确返回类型
-  return () => {};
-}
+let fn: Function = (): number => { return 11 };
+let res: number = fn.unsafeCall() as number;
 ```

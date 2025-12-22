@@ -19,11 +19,15 @@ import { notInit, importantInfo } from "./inner_package_with_errors"
 
 function bar(x: notInit) { (=_=) }
 
-/* @@? distant_package.ets:22:22 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? package_with_errors_1.ets:19:32 Error TypeError: Cannot cast type 'String' to 'Double' */
-/* @@? package_with_errors_2.ets:19:16 Error TypeError: Unresolved reference foo */
-/* @@? package_with_errors_2.ets:19:16 Error TypeError: This expression is not callable. */
-/* @@? import_in_package_with_error.ets:20:17 Error TypeError: Cannot find type 'notInit'. */
-/* @@? import_in_package_with_error.ets:20:29 Error SyntaxError: Unexpected token '='. */
-/* @@? import_in_package_with_error.ets:20:30 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? import_in_package_with_error.ets:20:32 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? distant_package.ets:22:22 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+
+/* @@? package_with_errors_1.ets:19:32 Error Semantic error ESE0326: Cannot cast type 'String' to 'Double' */
+
+/* @@? package_with_errors_2.ets:19:16 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? package_with_errors_2.ets:19:16 Error Semantic error ESE0289: This expression is not callable. */
+
+/* @@? import_in_package_with_error.ets:20:17 Error Semantic error ESE0371: Cannot find type 'notInit'. */
+/* @@? import_in_package_with_error.ets:20:29 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@? import_in_package_with_error.ets:20:30 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? import_in_package_with_error.ets:20:32 Error Syntax error ESY0227: Unexpected token ')'. */

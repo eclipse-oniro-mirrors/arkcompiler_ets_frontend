@@ -25,4 +25,5 @@ class A{
 }
 
 
-/* @@@ label Error TypeError: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element.  */
+
+/* @@@ label Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'MyAnno' has already been applied to this element. */

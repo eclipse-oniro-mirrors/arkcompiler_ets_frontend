@@ -20,9 +20,9 @@
 #include "evaluate/importExportTable.h"
 #include "util/ustring.h"
 
-#include "libpandafile/debug_info_extractor.h"
-#include "libpandafile/file.h"
-#include "libpandafile/class_data_accessor.h"
+#include "libarkfile/debug_info_extractor.h"
+#include "libarkfile/file.h"
+#include "libarkfile/class_data_accessor.h"
 
 #include <memory>
 #include <optional>

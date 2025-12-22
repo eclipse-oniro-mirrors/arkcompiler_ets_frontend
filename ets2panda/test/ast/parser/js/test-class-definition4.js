@@ -18,4 +18,5 @@ class B {
   static /* @@ label */prototype() {
   }
 }
-/* @@@ label Error SyntaxError: Classes may not have static property named prototype.  */
+
+/* @@@ label Error Syntax error ESY0155: Classes may not have static property named prototype. */

@@ -584,6 +584,6 @@
     }
   }
 }
-TypeError: Cannot find import: dynamic_import_tests [instanceof_dynvalue_dynvalue.ets:20:22]
-TypeError: Cannot find type 'B'. [instanceof_dynvalue_dynvalue.ets:22:16]
-TypeError: Cannot find type 'A'. [instanceof_dynvalue_dynvalue.ets:23:25]
+[instanceof_dynvalue_dynvalue.ets:20:22] Semantic error ESE0360: Cannot find import: dynamic_import_tests
+[instanceof_dynvalue_dynvalue.ets:22:16] Semantic error ESE0371: Cannot find type 'B'.
+[instanceof_dynvalue_dynvalue.ets:23:25] Semantic error ESE0371: Cannot find type 'A'.

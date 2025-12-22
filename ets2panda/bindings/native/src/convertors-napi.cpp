@@ -20,7 +20,7 @@
 #include "interop-logging.h"
 #include "convertors-napi.h"
 
-// NOLINTBEGIN
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 // Adapter for NAPI_MODULE
 #define NODE_API_MODULE_ADAPTER(modname, regfunc)                        \
@@ -31,7 +31,9 @@
     }                                                                    \
     NAPI_MODULE(modname, __napi_##regfunc)
 
-napi_valuetype getValueTypeChecked(napi_env env, napi_value value)
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
+napi_valuetype GetValueTypeChecked(napi_env env, napi_value value)
 {
     napi_valuetype type;
     napi_status status = napi_typeof(env, value, &type);
@@ -39,7 +41,7 @@ napi_valuetype getValueTypeChecked(napi_env env, napi_value value)
     return type;
 }
 
-bool isTypedArray(napi_env env, napi_value value)
+bool IsTypedArray(napi_env env, napi_value value)
 {
     bool result = false;
     napi_status status = napi_is_typedarray(env, value, &result);
@@ -47,19 +49,19 @@ bool isTypedArray(napi_env env, napi_value value)
     return result;
 }
 
-KBoolean getBoolean(napi_env env, napi_value value)
+KBoolean GetBoolean(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) == napi_valuetype::napi_boolean) {
+    if (GetValueTypeChecked(env, value) == napi_valuetype::napi_boolean) {
         bool result = false;
         napi_get_value_bool(env, value, &result);
         return static_cast<KBoolean>(result);
     }
-    return static_cast<KBoolean>(getInt32(env, value) != 0);
+    return static_cast<KBoolean>(GetInt32(env, value) != 0);
 }
 
-KInt getInt32(napi_env env, napi_value value)
+KInt GetInt32(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) != napi_valuetype::napi_number) {
+    if (GetValueTypeChecked(env, value) != napi_valuetype::napi_number) {
         napi_throw_error(env, nullptr, "Expected Number");
         return 0;
     }
@@ -68,9 +70,9 @@ KInt getInt32(napi_env env, napi_value value)
     return static_cast<KInt>(result);
 }
 
-KUInt getUInt32(napi_env env, napi_value value)
+KUInt GetUInt32(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) != napi_valuetype::napi_number) {
+    if (GetValueTypeChecked(env, value) != napi_valuetype::napi_number) {
         napi_throw_error(env, nullptr, "Expected Number");
         return 0;
     }
@@ -79,9 +81,9 @@ KUInt getUInt32(napi_env env, napi_value value)
     return static_cast<KUInt>(result);
 }
 
-KFloat getFloat32(napi_env env, napi_value value)
+KFloat GetFloat32(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) != napi_valuetype::napi_number) {
+    if (GetValueTypeChecked(env, value) != napi_valuetype::napi_number) {
         napi_throw_error(env, nullptr, "Expected Number");
         return 0.0F;
     }
@@ -90,9 +92,9 @@ KFloat getFloat32(napi_env env, napi_value value)
     return static_cast<KFloat>(static_cast<float>(result));
 }
 
-KDouble getFloat64(napi_env env, napi_value value)
+KDouble GetFloat64(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) != napi_valuetype::napi_number) {
+    if (GetValueTypeChecked(env, value) != napi_valuetype::napi_number) {
         napi_throw_error(env, nullptr, "Expected Number");
         return 0.0;
     }
@@ -101,10 +103,10 @@ KDouble getFloat64(napi_env env, napi_value value)
     return static_cast<KDouble>(result);
 }
 
-KStringPtr getString(napi_env env, napi_value value)
+KStringPtr GetString(napi_env env, napi_value value)
 {
     KStringPtr result {};
-    napi_valuetype valueType = getValueTypeChecked(env, value);
+    napi_valuetype valueType = GetValueTypeChecked(env, value);
     if (valueType == napi_valuetype::napi_null || valueType == napi_valuetype::napi_undefined) {
         return result;
     }
@@ -119,15 +121,16 @@ KStringPtr getString(napi_env env, napi_value value)
     if (status != 0) {
         return result;
     }
-    result.resize(length);
-    status = napi_get_value_string_utf8(env, value, result.data(), length + 1, nullptr);
-    TS_NAPI_THROW_IF_FAILED(env, status, nullptr);
+    result.Resize(length);
+    status = napi_get_value_string_utf8(env, value, result.Data(), length + 1, nullptr);
+    TS_NAPI_THROW_IF_FAILED(env, status, KStringPtr(nullptr));
+
     return result;
 }
 
-KNativePointer getPointer(napi_env env, napi_value value)
+KNativePointer GetPointer(napi_env env, napi_value value)
 {
-    napi_valuetype valueType = getValueTypeChecked(env, value);
+    napi_valuetype valueType = GetValueTypeChecked(env, value);
     if (valueType == napi_valuetype::napi_external) {
         KNativePointer result = nullptr;
         napi_status status = napi_get_value_external(env, value, &result);
@@ -151,9 +154,9 @@ KNativePointer getPointer(napi_env env, napi_value value)
     return reinterpret_cast<KNativePointer>(ptrU64);
 }
 
-KLong getInt64(napi_env env, napi_value value)
+KLong GetInt64(napi_env env, napi_value value)
 {
-    if (getValueTypeChecked(env, value) != napi_valuetype::napi_bigint) {
+    if (GetValueTypeChecked(env, value) != napi_valuetype::napi_bigint) {
         napi_throw_error(env, nullptr, "cannot be coerced to int64");
         return -1;
     }
@@ -168,15 +171,15 @@ KLong getInt64(napi_env env, napi_value value)
     return static_cast<KLong>(ptr64);
 }
 
-napi_value makeString(napi_env env, const KStringPtr &value)
+napi_value MakeString(napi_env env, const KStringPtr &value)
 {
     napi_value result;
-    napi_status status = napi_create_string_utf8(env, value.isNull() ? "" : value.data(), value.length(), &result);
+    napi_status status = napi_create_string_utf8(env, value.IsNull() ? "" : value.Data(), value.Length(), &result);
     TS_NAPI_THROW_IF_FAILED(env, status, result);
     return result;
 }
 
-napi_value makeString(napi_env env, const std::string &value)
+napi_value MakeString(napi_env env, const std::string &value)
 {
     napi_value result;
     napi_status status = napi_create_string_utf8(env, value.c_str(), value.length(), &result);
@@ -184,7 +187,7 @@ napi_value makeString(napi_env env, const std::string &value)
     return result;
 }
 
-napi_value makeBoolean(napi_env env, int8_t value)
+napi_value MakeBoolean(napi_env env, int8_t value)
 {
     napi_value result;
     napi_status status = napi_get_boolean(env, value != 0, &result);
@@ -192,7 +195,7 @@ napi_value makeBoolean(napi_env env, int8_t value)
     return result;
 }
 
-napi_value makeInt32(napi_env env, int32_t value)
+napi_value MakeInt32(napi_env env, int32_t value)
 {
     napi_value result;
     napi_status status = napi_create_int32(env, value, &result);
@@ -200,7 +203,7 @@ napi_value makeInt32(napi_env env, int32_t value)
     return result;
 }
 
-napi_value makeUInt32(napi_env env, uint32_t value)
+napi_value MakeUInt32(napi_env env, uint32_t value)
 {
     napi_value result;
     napi_status status = napi_create_uint32(env, value, &result);
@@ -208,7 +211,7 @@ napi_value makeUInt32(napi_env env, uint32_t value)
     return result;
 }
 
-napi_value makeFloat32(napi_env env, float value)
+napi_value MakeFloat32(napi_env env, float value)
 {
     napi_value result;
     napi_status status = napi_create_double(env, value, &result);
@@ -216,7 +219,7 @@ napi_value makeFloat32(napi_env env, float value)
     return result;
 }
 
-napi_value makePointer(napi_env env, void *value)
+napi_value MakePointer(napi_env env, void *value)
 {
     napi_value result;
     napi_status status =
@@ -225,7 +228,7 @@ napi_value makePointer(napi_env env, void *value)
     return result;
 }
 
-napi_value makeVoid(napi_env env)
+napi_value MakeVoid(napi_env env)
 {
     napi_value result;
     napi_status status = napi_get_undefined(env, &result);
@@ -233,7 +236,7 @@ napi_value makeVoid(napi_env env)
     return result;
 }
 
-napi_value makeObject(napi_env env, [[maybe_unused]] napi_value object)
+napi_value MakeObject(napi_env env, [[maybe_unused]] napi_value object)
 {
     napi_value result;
     napi_status status = napi_create_object(env, &result);
@@ -246,7 +249,7 @@ napi_value makeObject(napi_env env, [[maybe_unused]] napi_value object)
 #pragma comment(linker, "/alternatename:__imp___std_init_once_begin_initialize=__imp_InitOnceBeginInitialize")
 #endif
 
-Exports *Exports::getInstance()
+Exports *Exports::GetInstance()
 {
     static Exports *instance = nullptr;
     if (instance == nullptr) {
@@ -255,30 +258,30 @@ Exports *Exports::getInstance()
     return instance;
 }
 
-std::vector<std::string> Exports::getModules()
+std::vector<std::string> Exports::GetModules()
 {
     std::vector<std::string> result;
-    for (auto it = implementations.begin(); it != implementations.end(); ++it) {
-        result.push_back(it->first);
+    for (auto &it : implementations_) {
+        result.push_back(it.first);
     }
     return result;
 }
 
-void Exports::addMethod(const char *module, const char *name, napi_type_t impl)
+void Exports::addMethod(const char *module, const char *name, NapiTypeT impl)
 {
-    auto it = implementations.find(module);
-    if (it == implementations.end()) {
-        it = implementations.insert(std::make_pair(module, std::vector<std::pair<std::string, napi_type_t>>())).first;
+    auto it = implementations_.find(module);
+    if (it == implementations_.end()) {
+        it = implementations_.insert(std::make_pair(module, std::vector<std::pair<std::string, NapiTypeT>>())).first;
     }
-    it->second.push_back(std::make_pair(name, impl));
+    it->second.emplace_back(std::make_pair(name, impl));
 }
 
-const std::vector<std::pair<std::string, napi_type_t>> &Exports::getMethods(const std::string &module)
+const std::vector<std::pair<std::string, NapiTypeT>> &Exports::GetMethods(const std::string &module)
 {
-    auto it = implementations.find(module);
-    if (it == implementations.end()) {
-        LOGE("Module %s is not registered", module.c_str());
-        throw "Fatal error";
+    auto it = implementations_.find(module);
+    if (it == implementations_.end()) {
+        LogE("Module", module.c_str(), "is not registered");
+        throw std::runtime_error("Fatal error");
     }
     return it->second;
 }
@@ -296,7 +299,7 @@ napi_value Node_SetCallbackDispatcher(napi_env env, napi_callback_info cbinfo)
 {
     CallbackInfo info(env, cbinfo);
     napi_value dispatcher = info[0];
-    napi_value result = makeVoid(env);
+    napi_value result = MakeVoid(env);
     napi_status status = napi_create_reference(env, dispatcher, 1, &g_koalaNapiCallbackDispatcher);
     TS_NAPI_THROW_IF_FAILED(env, status, result);
 
@@ -306,8 +309,8 @@ MAKE_NODE_EXPORT(TS_INTEROP_MODULE, SetCallbackDispatcher)
 
 napi_value Node_CleanCallbackDispatcher(napi_env env, [[maybe_unused]] napi_callback_info cbinfo)
 {
-    napi_value result = makeVoid(env);
-    if (g_koalaNapiCallbackDispatcher) {
+    napi_value result = MakeVoid(env);
+    if (g_koalaNapiCallbackDispatcher != nullptr) {
         napi_status status = napi_delete_reference(env, g_koalaNapiCallbackDispatcher);
         g_koalaNapiCallbackDispatcher = nullptr;
         TS_NAPI_THROW_IF_FAILED(env, status, result);
@@ -316,14 +319,14 @@ napi_value Node_CleanCallbackDispatcher(napi_env env, [[maybe_unused]] napi_call
 }
 MAKE_NODE_EXPORT(TS_INTEROP_MODULE, CleanCallbackDispatcher)
 
-napi_value getKoalaNapiCallbackDispatcher(napi_env env)
+napi_value GetKoalaNapiCallbackDispatcher(napi_env env)
 {
-    if (!g_koalaNapiCallbackDispatcher) {
+    if (g_koalaNapiCallbackDispatcher == nullptr) {
         abort();
     }
     napi_value value;
     napi_status status = napi_get_reference_value(env, g_koalaNapiCallbackDispatcher, &value);
-    TS_NAPI_THROW_IF_FAILED(env, status, makeVoid(env));
+    TS_NAPI_THROW_IF_FAILED(env, status, MakeVoid(env));
     return value;
 }
 
@@ -349,10 +352,10 @@ static constexpr bool SPLIT_MODULES = true;
 
 static napi_value InitModule(napi_env env, napi_value exports)
 {
-    Exports *inst = Exports::getInstance();
+    Exports *inst = Exports::GetInstance();
     napi_status status;
     napi_value target = exports;
-    for (const auto &module : inst->getModules()) {
+    for (const auto &module : inst->GetModules()) {
         if (SPLIT_MODULES) {
             status = napi_create_object(env, &target);
             TS_NAPI_THROW_IF_FAILED(env, status, exports);
@@ -360,7 +363,7 @@ static napi_value InitModule(napi_env env, napi_value exports)
             TS_NAPI_THROW_IF_FAILED(env, status, exports);
         }
 
-        for (const auto &impl : inst->getMethods(module)) {
+        for (const auto &impl : inst->GetMethods(module)) {
             napi_value implFunc;
             status = napi_create_function(env, impl.first.c_str(), 0, impl.second, nullptr, &implFunc);
             TS_NAPI_THROW_IF_FAILED(env, status, exports);
@@ -372,5 +375,3 @@ static napi_value InitModule(napi_env env, napi_value exports)
 }
 
 NAPI_MODULE(INTEROP_LIBRARY_NAME, InitModule)
-
-// NOLINTEND

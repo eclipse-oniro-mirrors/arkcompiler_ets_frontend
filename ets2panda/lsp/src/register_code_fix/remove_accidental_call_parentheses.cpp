@@ -14,11 +14,12 @@
  */
 
 #include "lsp/include/internal_api.h"
+#include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/register_code_fix/remove_accidental_call_parentheses.h"
 
 namespace ark::es2panda::lsp {
-const int G_REMOVE_CALL_PARENS_CODE = 1011;
+using codefixes::REMOVE_ACCIDENTAL_CALL_PARENTHESES;
 
 bool FixRemoveAccidentalCallParentheses::IsValidCallExpression(const ir::AstNode *node)
 {
@@ -100,9 +101,9 @@ std::vector<FileTextChanges> FixRemoveAccidentalCallParentheses::GetCodeActionsT
 
 FixRemoveAccidentalCallParentheses::FixRemoveAccidentalCallParentheses()
 {
-    const char *fixId = "RemoveAccidentalCallParentheses";
-    SetErrorCodes({G_REMOVE_CALL_PARENS_CODE});
-    SetFixIds({fixId});
+    const auto &codes = REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetSupportedCodeNumbers();
+    SetErrorCodes({codes.begin(), codes.end()});
+    SetFixIds({REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetFixId().data()});
 }
 
 std::vector<CodeFixAction> FixRemoveAccidentalCallParentheses::GetCodeActions(const CodeFixContext &context)
@@ -111,20 +112,21 @@ std::vector<CodeFixAction> FixRemoveAccidentalCallParentheses::GetCodeActions(co
     auto changes = GetCodeActionsToFix(context);
     if (!changes.empty()) {
         CodeFixAction codeAction;
-        codeAction.fixName = "removeAccidentalCallParentheses";
+        codeAction.fixName = REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetFixId().data();
         codeAction.description = "Remove parentheses from accessor call";
         codeAction.changes = changes;
-        codeAction.fixId = "RemoveAccidentalCallParentheses";
+        codeAction.fixId = REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetFixId().data();
         returnedActions.push_back(codeAction);
     }
     return returnedActions;
 }
 
-CombinedCodeActions FixRemoveAccidentalCallParentheses::GetAllCodeActions(const CodeFixAllContext &codeFixAll)
+CombinedCodeActions FixRemoveAccidentalCallParentheses::GetAllCodeActions([[maybe_unused]] const CodeFixAllContext &ctx)
 {
-    (void)codeFixAll;
     return {};
 }
+
 // NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
-AutoCodeFixRegister<FixRemoveAccidentalCallParentheses> g_removeCallParens("RemoveAccidentalCallParentheses");
+AutoCodeFixRegister<FixRemoveAccidentalCallParentheses> g_removeCallParens(
+    REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetFixId().data());
 }  // namespace ark::es2panda::lsp

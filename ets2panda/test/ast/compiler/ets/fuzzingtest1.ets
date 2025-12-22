@@ -16,7 +16,8 @@
 // the test case is from fuzzer.
 /* @@ label */fuzzz./* @@ label2 */@@/* @@ label3 */@@
 
-/* @@@ label Error TypeError: Unresolved reference fuzzz  */
-/* @@@ label2 Error SyntaxError: There is no any node to insert at the placeholder position. */
-/* @@@ label2 Error SyntaxError: Identifier expected, got '@@'. */
-/* @@@ label3 Error SyntaxError: Unexpected token '@@'. */
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference fuzzz */
+/* @@@ label2 Error Syntax error ESY0010: There is no any node to insert at the placeholder position. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token '@@'. */

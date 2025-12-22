@@ -21,4 +21,4 @@ function main(){
         2: 2
     }
 }
-/* @@@ label Error TypeError: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>'-constraint */
+/* @@@ label Error Semantic error ESE0228: Type argument 'A|Double' should be a subtype of 'Numeric|String|BaseEnum<Int>|BaseEnum<Long>|BaseEnum<String>' constraint */

@@ -95,3 +95,6 @@ class C7 implements I72 {
 class C8 implements I {
     a ?: Array<number>
 }
+
+
+/* @@? 57:5 Error Syntax error ESY0224: Identifier expected, got 'private'. */

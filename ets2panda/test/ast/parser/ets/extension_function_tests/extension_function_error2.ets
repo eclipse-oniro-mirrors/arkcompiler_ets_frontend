@@ -16,16 +16,15 @@
 let a = (this: TextAttribute, this { this.width(width); return this;
 }
 
-/* @@? 16:9 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 16:14 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 16:16 Error SyntaxError: Unexpected token 'TextAttribute'. */
-/* @@? 16:16 Error TypeError: Unresolved reference TextAttribute */
-/* @@? 16:29 Error SyntaxError: Unexpected token ','. */
-/* @@? 16:31 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 16:31 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 16:36 Error SyntaxError: Unexpected token '{'. */
-/* @@? 16:38 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 16:43 Error TypeError: Property 'width' does not exist on type 'ETSGLOBAL' */
-/* @@? 16:57 Error SyntaxError: return keyword should be used in function body. */
-/* @@? 16:64 Error TypeError: 'this' cannot be referenced from a static context */
-/* @@? 16:64 Error TypeError: All return statements in the function should be empty or have a value. */
+/* @@? 16:9 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 16:14 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 16:16 Error Syntax error ESY0227: Unexpected token 'TextAttribute'. */
+/* @@? 16:16 Error Semantic error ESE0143: Unresolved reference TextAttribute */
+/* @@? 16:29 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:31 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 16:31 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 16:36 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 16:38 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 16:57 Error Syntax error ESY0163: return keyword should be used in function body. */
+/* @@? 16:64 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */
+/* @@? 16:64 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */

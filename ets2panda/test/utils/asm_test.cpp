@@ -12,13 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-#include <cstdint>
-#include <iomanip>
-#include <ios>
-#include <string>
-
-#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 #include "asm_test.h"
 #include "assembly-field.h"
@@ -27,7 +21,8 @@
 
 #include "generated/signatures.h"
 #include "gmock/gmock.h"
-#include "libpandafile/literal_data_accessor.h"
+#include "libarkfile/literal_data_accessor.h"
+#include "libarkbase/mem/pool_manager.h"
 
 // Value printers for tests
 namespace ark::pandasm {
@@ -35,7 +30,7 @@ namespace ark::pandasm {
 namespace {
 
 template <class... Ts>
-struct LiteralOverloaded : Ts... {
+struct LiteralOverloaded : Ts... {  // NOLINT (fuchsia-multiple-inheritance)
     using Ts::operator()...;
 };
 
@@ -173,6 +168,9 @@ void AsmTest::CheckAnnoDecl(ark::pandasm::Program *program, const std::string &a
     ASSERT_NE(found, recordTable.end());
 
     for (size_t i = 0; i < expectedAnnotations.size(); i++) {
+        ASSERT_EQ(expectedAnnotations[i].first, found->second.fieldList[i].name)
+            << "missing expected annotation name: " << found->second.fieldList[i].name;
+        ;
         auto scalarValue = found->second.fieldList[i].metadata->GetValue();
         if (scalarValue) {
             CompareActualWithExpected(expectedAnnotations[i].second, &*scalarValue, found->second.fieldList[i].name);
@@ -213,6 +211,8 @@ void AsmTest::CheckAnnotation(const std::vector<std::pair<std::string, std::stri
                                [&element](const auto &pair) { return pair.first == element.GetName(); });
         if (it != expectedValues.end()) {
             CompareActualWithExpected(it->second, element.GetValue()->GetAsScalar(), element.GetName());
+        } else {
+            ASSERT_TRUE(false) << "missing expected annotation name: " << element.GetName();
         }
     }
 }

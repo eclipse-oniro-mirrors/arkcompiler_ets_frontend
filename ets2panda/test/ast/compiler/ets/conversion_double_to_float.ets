@@ -30,9 +30,10 @@ function main() {
     foo(NaN);
 }
 
-/* @@? 28:5 Error TypeError: No matching call signature for foo(Double)  */
-/* @@? 28:9 Error TypeError: Type 'Double' is not compatible with type 'Float' at index 1  */
-/* @@? 29:5 Error TypeError: No matching call signature for foo(Double)  */
-/* @@? 29:9 Error TypeError: Type 'Double' is not compatible with type 'Float' at index 1  */
-/* @@? 30:5 Error TypeError: No matching call signature for foo(Double)  */
-/* @@? 30:9 Error TypeError: Type 'Double' is not compatible with type 'Float' at index 1  */
+
+/* @@? 28:5 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 28:9 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Float' at index 1 */
+/* @@? 29:5 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 29:9 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Float' at index 1 */
+/* @@? 30:5 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@? 30:9 Error Semantic error ESE0046: Type 'Double' is not compatible with type 'Float' at index 1 */

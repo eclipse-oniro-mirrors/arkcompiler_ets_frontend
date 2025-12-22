@@ -15,4 +15,5 @@
 
 import {MyAnno as NA} from /* @@ label */"./annotation_export"
 
-/* @@@ label Error TypeError: Can not rename annotation 'MyAnno' in export or import statements.  */
+
+/* @@@ label Error Semantic error ESE0357: Can not rename annotation 'MyAnno' in export or import statements. */

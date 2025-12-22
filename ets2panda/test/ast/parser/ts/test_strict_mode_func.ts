@@ -16,4 +16,5 @@
 a:
 /* @@ label */function foo() { }
 
-/* @@@ label Error SyntaxError: In strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement. */
+
+/* @@@ label Error Syntax error ESY0198: In strict mode code, functions can only be declared at top level, inside a block, or as the body of an if statement. */

@@ -28,7 +28,7 @@
 }
 
 // annotations for function type
-let func: @Message @Anno2 (a: @Message string) => @Message @Anno1 Int
-let foo: @Message @Anno1 (a?: @Anno1 string) => @Message @Anno2 Int
+let func: @Message() @Anno2() (a: @Message() string) => @Message() @Anno1() Int
+let foo: @Message() @Anno1() (a?: @Anno1() string) => @Message() @Anno2() Int
 
 function main(){}

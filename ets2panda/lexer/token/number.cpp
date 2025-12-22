@@ -17,6 +17,7 @@
 #include "lexer/lexer.h"
 
 namespace ark::es2panda::lexer {
+// CC-OFFNXT(huge_depth[C++], C_RULE_ID_FUNCTION_NESTING_LEVEL, G.FUN.01-CPP, G.FUD.05) solid logic
 // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init,bugprone-exception-escape)
 Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), flags_(flags)
 {
@@ -36,8 +37,6 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
             } else {
                 num_ = temp;
             }
-        } else {
-            flags_ |= NumberFlags::ERROR;
         }
     } else {
         if (hasFloatSuffix) {

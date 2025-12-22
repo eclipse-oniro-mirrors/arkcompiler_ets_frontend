@@ -23,12 +23,9 @@ let func3: (f: (a: number, b: string) => FixedArray<number>): FixedArray<number>
 // let func3: (f: (a: number, b: string) => FixedArray<number>): FixedArray<number>) => (a: number, b: boolean) => true;
 
 
-/* @@? 19:8 Error TypeError: 'void' used as type annotation. */
-/* @@? 22:61 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 22:61 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:61 Error SyntaxError: Invalid Type. */
-/* @@? 22:61 Error SyntaxError: Unexpected token '('. */
-/* @@? 22:63 Error TypeError: Unresolved reference FixedArray */
-/* @@? 22:82 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:116 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 22:116 Error SyntaxError: Unexpected token, expected ')'. */
+/* @@? 19:8 Error Semantic error ESE0232: 'void' used as type annotation. */
+/* @@? 22:61 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 22:61 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:63 Error Syntax error ESY0227: Unexpected token 'FixedArray'. */
+/* @@? 22:82 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:82 Error Syntax error ESY0016: Unexpected token. */

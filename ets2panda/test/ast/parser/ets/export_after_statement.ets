@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
-while (false) export {
+while (false) export /* @@ label */{
 }
 
-/* @@? 16:15 Error SyntaxError: Unexpected token 'export'. */
-/* @@? 16:15 Error SyntaxError: Missing body in while statement */
+/* @@? 16:15 Error Syntax error ESY0227: Unexpected token 'export'. */
+/* @@? 16:15 Error Syntax error ESY0300: Missing body in while statement */
+/* @@@ label Warning Warning W3614: Nothing is exported. */

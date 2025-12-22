@@ -18,4 +18,5 @@ function foo(x: int): string {
     switch (x) { }
 }
 
-/* @@? 16:10 Error TypeError: Function with a non void return type must return a value. */
+
+/* @@? 16:10 Error Semantic error ESE0103: Function with a non void return type must return a value. */

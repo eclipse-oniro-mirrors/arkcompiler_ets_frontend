@@ -32,8 +32,5 @@ function foo(a: Partial<A<beta>>): void {}
 
 
 function foa(b: Partial<B<gamma>>): void {
-	/* @@ label */foo(/* @@ label1 */b);
+	foo(b);
 }
-
-/* @@@ label1 Error TypeError: Type 'Partial<B<gamma>>' is not compatible with type 'Partial<A<beta>>' at index 1 */
-/* @@@ label Error TypeError: No matching call signature for foo(Partial<B<gamma>>) */

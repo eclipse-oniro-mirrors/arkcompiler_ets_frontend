@@ -17,10 +17,11 @@ for /* @@ label */let i = 0; i < count; ++i) {
     result = result + p[i]!.awaitResolution() * /* @@ label1 */a[i];
 }
 
-/* @@@ label Error SyntaxError: Expected '(', got 'let'. */
-/* @@? 16:34 Error TypeError: Unresolved reference count */
-/* @@? 17:5 Error TypeError: Unresolved reference result */
-/* @@? 17:23 Error TypeError: Unresolved reference p */
-/* @@? 17:23 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@@ label1 Error TypeError: Unresolved reference a */
-/* @@@ label1 Error TypeError: Indexed access is not supported for such expression type. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got 'let'. */
+/* @@? 16:34 Error Semantic error ESE0143: Unresolved reference count */
+/* @@? 17:5 Error Semantic error ESE0143: Unresolved reference result */
+/* @@? 17:23 Error Semantic error ESE0143: Unresolved reference p */
+/* @@? 17:23 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference a */
+/* @@@ label1 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

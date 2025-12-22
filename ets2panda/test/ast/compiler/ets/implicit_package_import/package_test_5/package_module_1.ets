@@ -17,8 +17,9 @@ package mypack;
 
 let myvar: number = wont_exist;
 
-/* @@? package_module_2_neg.ets:22:1 Error SyntaxError: Invalid package toplevel statement */
-/* @@? package_module_2_neg.ets:22:1 Error TypeError: Unresolved reference syntax */
-/* @@? package_module_2_neg.ets:22:8 Error SyntaxError: Unexpected token 'error'. */
-/* @@? package_module_2_neg.ets:22:8 Error SyntaxError: Invalid package toplevel statement */
-/* @@? package_module_2_neg.ets:22:8 Error TypeError: Unresolved reference error */
+
+/* @@? package_module_2_neg.ets:22:1 Error Syntax error ESY0291: Invalid package toplevel statement */
+/* @@? package_module_2_neg.ets:22:1 Error Semantic error ESE0143: Unresolved reference syntax */
+/* @@? package_module_2_neg.ets:22:8 Error Syntax error ESY0227: Unexpected token 'error'. */
+/* @@? package_module_2_neg.ets:22:8 Error Syntax error ESY0291: Invalid package toplevel statement */
+/* @@? package_module_2_neg.ets:22:8 Error Semantic error ESE0143: Unresolved reference error */

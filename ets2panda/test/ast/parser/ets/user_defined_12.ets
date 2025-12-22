@@ -17,4 +17,5 @@ class /* @@ label */yield{
   a : string = "15";
 }
 
-/* @@@ label Error SyntaxError: Cannot be used as user-defined type.  */
+
+/* @@@ label Error Syntax error ESY0145: Cannot be used as user-defined type. */

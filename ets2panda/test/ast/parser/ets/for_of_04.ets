@@ -25,14 +25,13 @@ function main(): void {
 for (i in 50) {
   a += 10
 }
-/* @@? 20:9 Error SyntaxError: Type annotation is not allowed when existing variable is used as loop iterator in 'for' statement. */
-/* @@? 20:11 Error SyntaxError: Expected ';', got 'double'. */
-/* @@? 20:11 Error SyntaxError: Unexpected token 'double'. */
-/* @@? 20:18 Error SyntaxError: Expected ';', got 'identification literal'. */
-/* @@? 20:18 Error TypeError: Unresolved reference of */
-/* @@? 20:21 Error SyntaxError: Expected ')', got 'identification literal'. */
-/* @@? 20:21 Error TypeError: Unresolved reference a */
-/* @@? 20:22 Error SyntaxError: Unexpected token ')'. */
-/* @@? 20:24 Error SyntaxError: Unexpected token '{'. */
-/* @@? 25:11 Error TypeError: Object type doesn't have proper iterator method. */
-/* @@? 25:11 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+/* @@? 20:9 Error Syntax error ESY0212: Type annotation is not allowed when existing variable is used as loop iterator in 'for' statement. */
+/* @@? 20:11 Error Syntax error ESY0230: Expected ';', got 'double'. */
+/* @@? 20:11 Error Syntax error ESY0227: Unexpected token 'double'. */
+/* @@? 20:18 Error Syntax error ESY0230: Expected ';', got 'identification literal'. */
+/* @@? 20:18 Error Semantic error ESE0143: Unresolved reference of */
+/* @@? 20:21 Error Syntax error ESY0230: Expected ')', got 'identification literal'. */
+/* @@? 20:21 Error Semantic error ESE0143: Unresolved reference a */
+/* @@? 20:22 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 20:24 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 25:8 Error Syntax error ESY6987: 'for ... in' loop is not supported, please use regular 'for' or 'for ... of ...' loop to iterate through arrays and iterable objects. */

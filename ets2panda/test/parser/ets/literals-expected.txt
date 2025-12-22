@@ -1448,4 +1448,4 @@
     }
   }
 }
-TypeError: Can't resolve array type [literals.ets:35:15]
+[literals.ets:35:15] Semantic error ESE0301: Can't resolve array type

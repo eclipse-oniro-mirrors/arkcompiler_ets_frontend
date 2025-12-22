@@ -105,7 +105,7 @@
         },
         "end": {
           "line": 16,
-          "column": 38,
+          "column": 37,
           "program": "tuple_types_15.ets"
         }
       }

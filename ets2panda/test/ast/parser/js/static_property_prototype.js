@@ -18,4 +18,5 @@ class A {
     static "prototype" = 123;
 }
 
-/* @@? 18:12 Error SyntaxError: Classes may not have static property named prototype. */
+
+/* @@? 18:12 Error Syntax error ESY0155: Classes may not have static property named prototype. */

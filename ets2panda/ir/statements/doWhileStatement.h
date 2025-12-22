@@ -46,7 +46,7 @@ public:
     {
         body_ = body;
 
-        if (body) {
+        if (body != nullptr) {
             body->SetParent(this);
         }
     }
@@ -65,7 +65,7 @@ public:
     {
         test_ = test;
 
-        if (test) {
+        if (test != nullptr) {
             test->SetParent(this);
         }
     }

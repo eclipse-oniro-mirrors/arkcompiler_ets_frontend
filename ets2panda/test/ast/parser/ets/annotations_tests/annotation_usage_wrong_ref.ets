@@ -18,4 +18,4 @@ function foo() {}
 @/* @@ label */foo
 @interface anno {}
 
-/* @@@ label Error TypeError: Cannot find type 'foo'. */
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'foo'. */

@@ -67,7 +67,7 @@ export default jsdocVal2
  * @param1 preStr { p } behindStr
  * @param2 preStr {} behindStr
 */
-export @interface exportAnno {}
+export declare @interface exportAnno {}
 
 /**
  * ==== export declare class A ====

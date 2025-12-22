@@ -16,13 +16,8 @@
 #ifndef ES2PANDA_IR_SRCDUMP_H
 #define ES2PANDA_IR_SRCDUMP_H
 
-#include <ir/astNode.h>
+#include "ir/astNode.h"
 #include "parser/JsdocHelper.h"
-#include <util/ustring.h>
-
-#include <sstream>
-#include <variant>
-#include <future>
 
 namespace ark::es2panda::ir {
 
@@ -56,7 +51,7 @@ public:
         public:
             NO_COPY_SEMANTIC(Releaser);
             Releaser &operator=(Releaser &&other) = delete;
-            explicit Releaser(Releaser &&other) : lock_ {other.lock_}, prevAcquired_ {other.prevAcquired_}
+            Releaser(Releaser &&other) : lock_ {other.lock_}, prevAcquired_ {other.prevAcquired_}
             {
                 other.lock_ = nullptr;
             }
@@ -117,7 +112,7 @@ public:
 
     void TryDeclareAmbientContext(SrcDumper *srcDumper);
 
-    std::string DumpImports();
+    void DumpImports(std::string &res);
 
     // Postdump
     auto BuildPostDumpIndirectDepsPhaseLockGuard()
@@ -175,10 +170,12 @@ private:
 class SrcDumper {
 public:
     // Delete after the bindings problem solved:
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit SrcDumper([[maybe_unused]] const ir::AstNode *node)
     {
         ES2PANDA_UNREACHABLE();
     }
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
     explicit SrcDumper([[maybe_unused]] const ir::AstNode *node, [[maybe_unused]] bool isDeclgen)
     {
         ES2PANDA_UNREACHABLE();
@@ -187,7 +184,8 @@ public:
     explicit SrcDumper(Declgen *dg = nullptr);
     explicit SrcDumper(const ir::AstNode *node, bool enableJsdocDump, Declgen *dg);
 
-    void Add(const std::string &str);
+    void Add(std::string_view str);
+    void Add(char ch);
     void Add(int8_t i);
     void Add(int16_t i);
     void Add(int32_t i);
@@ -214,6 +212,11 @@ public:
 
     void DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode);
 
+    void DumpExports();
+
+    void SetDefaultExport() noexcept;
+    [[nodiscard]] bool HasDefaultExport() const noexcept;
+
 private:
     std::stringstream ss_;
     std::string indent_;
@@ -221,6 +224,8 @@ private:
     /* declgen-specific: */
     Declgen *dg_;
     std::unique_ptr<parser::JsdocHelper> jsdocGetter_ {};
+    // Flag to avoid duplicate default export declarations
+    bool hasDefaultExport_ = false;
 };
 
 }  // namespace ark::es2panda::ir

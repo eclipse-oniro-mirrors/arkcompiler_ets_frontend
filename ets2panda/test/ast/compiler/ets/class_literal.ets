@@ -22,4 +22,5 @@ let rectangle = class {
   width: number;
 }
 
-/* @@? 26:1 Error TypeError: Class literal is not yet supported. */
+
+/* @@? 26:82 Error Semantic error ESE0020: Class literal is not yet supported. */

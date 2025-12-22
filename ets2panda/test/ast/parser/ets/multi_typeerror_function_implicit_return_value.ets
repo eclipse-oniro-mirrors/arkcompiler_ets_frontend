@@ -27,5 +27,5 @@ function main() {
 }
 
 
-/* @@@ label Error TypeError: Function cannot have different primitive return types, require 'boolean', found 'int'  */
-/* @@@ label1 Error TypeError: Function cannot have different primitive return types, require 'boolean', found 'double'  */
+
+/* @@? 22:3 Warning Warning W0026: Unreachable statement. */

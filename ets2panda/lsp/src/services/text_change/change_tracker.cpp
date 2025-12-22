@@ -25,6 +25,86 @@ namespace ark::es2panda::lsp {
 
 ConfigurableStartEnd g_useNonAdjustedPositions = {{LeadingTriviaOption::EXCLUDE}, {TrailingTriviaOption::EXCLUDE}};
 
+bool IsEditBoundaryNode(const ir::AstNode *n)
+{
+    using ark::es2panda::ir::ModifierFlags;
+    using ir::AstNodeType;
+    if (n == nullptr) {
+        return false;
+    }
+
+    switch (n->Type()) {
+        case AstNodeType::FUNCTION_DECLARATION:
+        case AstNodeType::CLASS_DECLARATION:
+        case AstNodeType::VARIABLE_DECLARATION:
+        case AstNodeType::METHOD_DEFINITION:
+        case AstNodeType::PROPERTY:
+        case AstNodeType::CLASS_PROPERTY:
+        case AstNodeType::TS_INTERFACE_DECLARATION:
+        case AstNodeType::TS_ENUM_DECLARATION:
+        case AstNodeType::TS_TYPE_ALIAS_DECLARATION:
+        case AstNodeType::TS_MODULE_DECLARATION:
+        case AstNodeType::IMPORT_DECLARATION:
+        case AstNodeType::EXPORT_ALL_DECLARATION:
+        case AstNodeType::EXPORT_DEFAULT_DECLARATION:
+        case AstNodeType::EXPORT_NAMED_DECLARATION:
+        case AstNodeType::LABELLED_STATEMENT:
+        case AstNodeType::STRUCT_DECLARATION:
+            return true;
+        default:
+            break;
+    }
+
+    const auto mods = static_cast<uint32_t>(n->Modifiers());
+    return (mods & static_cast<uint32_t>(ModifierFlags::DEFAULT_EXPORT)) != 0U;
+}
+
+ir::AstNode *ChangeTracker::ToEditBoundary(ir::AstNode *node)
+{
+    if (node == nullptr) {
+        return nullptr;
+    }
+
+    ir::AstNode *cur = node;
+    if (cur->Parent() != nullptr && cur->Parent()->IsBlockStatement()) {
+        return cur;
+    }
+
+    while (cur != nullptr) {
+        if (IsEditBoundaryNode(cur)) {
+            break;
+        }
+
+        ir::AstNode *parent = cur->Parent();
+        if (parent == nullptr) {
+            break;
+        }
+
+        if (parent->IsBlockStatement()) {
+            return cur;
+        }
+
+        if (parent->IsImportDeclaration() || parent->IsExportAllDeclaration() || parent->IsExportDefaultDeclaration()) {
+            cur = parent;
+            break;
+        }
+
+        cur = parent;
+    }
+
+    return cur;
+}
+
+// Build a [start, end) range from two arbitrary nodes by snapping to edit boundaries.
+static inline TextRange MakeEditRange(ir::AstNode *startNode, ir::AstNode *endNode)
+{
+    ir::AstNode *start = ChangeTracker::ToEditBoundary(startNode);
+    ir::AstNode *end = ChangeTracker::ToEditBoundary(endNode);
+    const size_t s = (start != nullptr) ? start->Start().index : startNode->Start().index;
+    const size_t e = (end != nullptr) ? end->End().index : endNode->End().index;
+    return {s, e};
+}
+
 ChangeTracker ChangeTracker::FromContext(TextChangesContext &context)
 {
     return ChangeTracker(context.formatContext, context.formatContext.GetFormatCodeSettings().GetNewLineCharacter());
@@ -216,9 +296,6 @@ bool ChangeTracker::NeedSemicolonBetween(const ir::AstNode *a, const ir::AstNode
 size_t ChangeTracker::InsertNodeAfterWorker(es2panda_Context *context, ir::AstNode *after, const ir::AstNode *newNode)
 {
     if (NeedSemicolonBetween(after, newNode)) {
-        // check if previous statement ends with semicolon
-        // if not - insert semicolon to preserve the code from changing the meaning
-        // due to ASI
         auto astContext =
             reinterpret_cast<ark::es2panda::public_lib::Context *>(const_cast<es2panda_Context *>(context));
         const auto sourceFile = astContext->sourceFile;
@@ -228,10 +305,11 @@ size_t ChangeTracker::InsertNodeAfterWorker(es2panda_Context *context, ir::AstNo
         }
     }
 
-    auto *ctx = reinterpret_cast<public_lib::Context *>(context);
-
-    const auto endPosition = GetAdjustedLocation(after, false, ctx->allocator);
-    return (*endPosition)->End().index;
+    ir::AstNode *anchor = ChangeTracker::ToEditBoundary(after);
+    if (anchor == nullptr) {
+        anchor = after;
+    }
+    return anchor->End().index;
 }
 
 InsertNodeOptions ChangeTracker::GetInsertNodeAfterOptionsWorker(const ir::AstNode *node)
@@ -323,13 +401,10 @@ void ChangeTracker::Delete(const SourceFile *sourceFile,
         deletedNodes_.push_back({sourceFile, node});
     }
 }
-TextRange ChangeTracker::GetAdjustedRange(es2panda_Context *context, ir::AstNode *startNode, ir::AstNode *endNode)
-{
-    auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
 
-    const auto startPosition = GetAdjustedLocation(startNode, false, ctx->allocator);
-    const auto endPosition = GetAdjustedLocation(endNode, false, ctx->allocator);
-    return {(*startPosition)->Start().index, (*endPosition)->End().index};
+TextRange ChangeTracker::GetAdjustedRange(es2panda_Context * /*context*/, ir::AstNode *startNode, ir::AstNode *endNode)
+{
+    return MakeEditRange(startNode, endNode);
 }
 
 void ChangeTracker::DeleteNode(es2panda_Context *context, const SourceFile *sourceFile, ir::AstNode *node)
@@ -341,11 +416,8 @@ void ChangeTracker::DeleteNode(es2panda_Context *context, const SourceFile *sour
 void ChangeTracker::DeleteNodeRange(es2panda_Context *context, ir::AstNode *startNode, ir::AstNode *endNode)
 {
     auto *ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-
-    const auto startPosition = GetAdjustedLocation(startNode, false, ctx->allocator);
-    const auto endPosition = GetAdjustedLocation(endNode, false, ctx->allocator);
-    const auto sourceFile = ctx->sourceFile;
-    DeleteRange(sourceFile, {(*startPosition)->Start().index, (*endPosition)->End().index});
+    const auto range = MakeEditRange(startNode, endNode);
+    DeleteRange(ctx->sourceFile, range);
 }
 
 void ChangeTracker::DeleteModifier(es2panda_Context *context, ir::AstNode *modifier)
@@ -487,9 +559,12 @@ void ChangeTracker::InsertNodeBefore(es2panda_Context *context, ir::AstNode *bef
                                      bool blankLineBetween)
 {
     InsertNodeOptions insertOptions = GetOptionsForInsertNodeBefore(before, newNode, blankLineBetween);
-    auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    auto startpos = GetAdjustedLocation(before, false, ctx->allocator);
-    InsertNodeAt(context, (*startpos)->Start().index, newNode, insertOptions);
+    ir::AstNode *anchor = ChangeTracker::ToEditBoundary(before);
+    if (anchor == nullptr) {
+        anchor = before;  // fallback
+    }
+
+    InsertNodeAt(context, anchor->Start().index, newNode, insertOptions);
 }
 
 void ChangeTracker::InsertModifierAt(es2panda_Context *context, const size_t pos, const ir::AstNode *modifier,
@@ -550,31 +625,33 @@ void ChangeTracker::InsertTypeParameters(es2panda_Context *context, const ir::As
 void ChangeTracker::InsertNodeAtConstructorStart(es2panda_Context *context, ir::AstNode *ctr,
                                                  ir::Statement *newStatement)
 {
-    if (!ctr->IsConstructor()) {
+    if (ctr == nullptr || newStatement == nullptr) {
         return;
     }
-    std::vector<ir::Statement *> statements;
-    ir::Statement *superStatement;
+    if (!ctr->Parent()->IsConstructor()) {
+        return;
+    }
 
-    ctr->FindChild([&statements, &superStatement](ir::AstNode *n) {
-        if (n->IsSuperExpression()) {
-            superStatement = n->AsStatement();
-            return true;
-        }
+    std::vector<ir::Statement *> statements;
+    ir::Statement *firstStatement = nullptr;
+
+    ctr->FindChild([&](ir::AstNode *n) {
         if (n->IsStatement()) {
+            if (firstStatement == nullptr) {
+                firstStatement = n->AsStatement();
+            }
             statements.push_back(n->AsStatement());
         }
-
         return false;
     });
-    if (superStatement == nullptr && !statements.empty()) {
-        ReplaceConstructorBody(context, ctr, statements);
+
+    if (firstStatement == nullptr && statements.empty()) {
+        std::vector<ir::Statement *> newStatements = {newStatement};
+        newStatements.insert(newStatements.end(), statements.begin(), statements.end());
+        ReplaceConstructorBody(context, ctr, newStatements);
     } else {
-        if (superStatement != nullptr) {
-            InsertNodeAfter(context, superStatement, newStatement->AsStatement());
-        } else {
-            InsertNodeBefore(context, ctr, newStatement->AsStatement());
-        }
+        // Insert the new statement before the first statement
+        InsertNodeBefore(context, firstStatement, newStatement);
     }
 }
 
@@ -822,7 +899,7 @@ std::vector<FileTextChanges> ChangeTracker::GetChanges()  // should add Validate
     return textChangesList;
 }
 
-void ChangeTracker::CreateNewFile(SourceFile *oldFile, const std::string &fileName,
+void ChangeTracker::CreateNewFile(const SourceFile *oldFile, const std::string &fileName,
                                   std::vector<const ir::Statement *> &statements)
 {
     NewFile newFile;

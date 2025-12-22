@@ -69,6 +69,7 @@ void FunctionDeclaration::Dump(ir::SrcDumper *dumper) const
         dumper->Add("export ");
     } else if (IsDefaultExported()) {
         dumper->Add("export default ");
+        dumper->SetDefaultExport();
     }
     if (func->IsDeclare() && !(parent_ != nullptr && parent_->IsDeclare())) {
         dumper->Add("declare ");

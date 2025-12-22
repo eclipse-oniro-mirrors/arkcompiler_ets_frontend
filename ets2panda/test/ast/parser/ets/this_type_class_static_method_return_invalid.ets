@@ -17,5 +17,6 @@ class A {
     static foo(arg1: int, arg2: /* @@ label */this) { return this; }
 }
 
-/* @@@ label Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
-/* @@? 17:62 Error TypeError: 'this' cannot be referenced from a static context */
+
+/* @@@ label Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@? 17:62 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */

@@ -18,6 +18,6 @@ class A {}
 let x: (i: int, n: number) => A;
 x = (i: int, n: number): /* @@ label */this => { return new A(); };
 
-/* @@? 19:5 Error TypeError: Type '(p1: int, p2: double) => ETSGLOBAL' cannot be assigned to type '(p1: Int, p2: Double) => A' */
-/* @@@ label Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions.  */
-/* @@? 19:50 Error TypeError: Only extension function or a class method can return 'this' */
+/* @@? 19:5 Error Semantic error ESE0318: Type '((p1: Int, p2: Double) => ETSGLOBAL)' cannot be assigned to type '((p1: Int, p2: Double) => A)' */
+/* @@@ label Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@? 19:50 Error Semantic error ESE0031: Only extension function or a class method can return 'this' */

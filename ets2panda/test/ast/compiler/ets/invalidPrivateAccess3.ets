@@ -35,5 +35,5 @@ function main(): void {
     klass.foo();
 }
 
-/* @@? 35:5 Error TypeError: Signature foo(): void is not visible here. */
-/* @@? 35:5 Error TypeError: No matching call signature for foo() */
+/* @@? 35:5 Error Semantic error ESE0139: Signature foo(): void is not visible here. */
+/* @@? 35:5 Error Semantic error ESE0127: No matching call signature for foo() */

@@ -26,12 +26,16 @@ AstNode::AstNode(AstNode const &other)
 {
     auto otherHistoryNode = other.GetHistoryNode();
     range_ = otherHistoryNode->range_;
+#ifndef NDEBUG
     type_ = otherHistoryNode->type_;
+    flags_ = otherHistoryNode->flags_;
+    astNodeFlags_ = otherHistoryNode->astNodeFlags_;
+#else
+    bitFields_ = otherHistoryNode->bitFields_;
+#endif
     if (otherHistoryNode->variable_ != nullptr) {
         variable_ = otherHistoryNode->variable_;
     }
-    flags_ = otherHistoryNode->flags_;
-    astNodeFlags_ = otherHistoryNode->astNodeFlags_;
     // boxing_unboxing_flags_ {};  leave default value!
 }
 
@@ -67,7 +71,11 @@ AstNode::AstNode(AstNode const &other)
     if (UNLIKELY(IsClassDefinition())) {
         return GetHistoryNode()->parent_->HasExportAlias();
     }
+#ifndef NDEBUG
     return (GetHistoryNode()->flags_ & ModifierFlags::EXPORT_WITH_ALIAS) != 0;
+#else
+    return (Modifiers() & ModifierFlags::EXPORT_WITH_ALIAS) != 0;
+#endif
 }
 
 bool AstNode::IsScopeBearer() const noexcept
@@ -233,13 +241,24 @@ AstNode *AstNode::ShallowClone(ArenaAllocator *allocator)
 
 void AstNode::CopyTo(AstNode *other) const
 {
+#ifndef NDEBUG
     ES2PANDA_ASSERT(other->type_ == type_);
+#else
+    ES2PANDA_ASSERT(TypeField::Decode(other->bitFields_) == TypeField::Decode(bitFields_));
+#endif
 
     other->parent_ = parent_;
     other->range_ = range_;
+#ifndef NDEBUG
     other->flags_ = flags_;
     other->astNodeFlags_ = astNodeFlags_;
+#else
+    FlagsField::Set(FlagsField::Decode(bitFields_), &(other->bitFields_));
+    AstNodeFlagsField::Set(AstNodeFlagsField::Decode(bitFields_), &(other->bitFields_));
+#endif
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
     other->history_ = history_;
+#endif
     other->variable_ = variable_;
     other->originalNode_ = originalNode_;
 }
@@ -249,17 +268,13 @@ AstNode *AstNode::Construct([[maybe_unused]] ArenaAllocator *allocator)
     ES2PANDA_UNREACHABLE();
 }
 
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
 bool AstNode::IsValidInCurrentPhase() const
 {
     if (!HistoryInitialized()) {
         return true;
     }
-    return compiler::GetPhaseManager()->CurrentPhaseId() >= GetFirstCreated();
-}
-
-compiler::PhaseId AstNode::GetFirstCreated() const
-{
-    return history_->FirstCreated();
+    return compiler::GetPhaseManager()->CurrentPhaseId() >= history_->FirstCreated();
 }
 
 AstNode *AstNode::GetFromExistingHistory() const
@@ -293,20 +308,6 @@ AstNode *AstNode::GetOrCreateHistoryNode() const
     return node;
 }
 
-void AstNode::AddModifier(ModifierFlags const flags) noexcept
-{
-    if (!All(Modifiers(), flags)) {
-        GetOrCreateHistoryNode()->flags_ |= flags;
-    }
-}
-
-void AstNode::ClearModifier(ModifierFlags const flags) noexcept
-{
-    if (Any(Modifiers(), flags)) {
-        GetOrCreateHistoryNode()->flags_ &= ~flags;
-    }
-}
-
 void AstNode::InitHistory()
 {
     if (!g_enableContextHistory || HistoryInitialized()) {
@@ -320,6 +321,31 @@ void AstNode::InitHistory()
 bool AstNode::HistoryInitialized() const
 {
     return history_ != nullptr;
+}
+#endif  // ES2PANDA_ENABLE_AST_HISTORY
+
+void AstNode::AddModifier(ModifierFlags const flags) noexcept
+{
+    if (!All(Modifiers(), flags)) {
+#ifndef NDEBUG
+        GetOrCreateHistoryNode()->flags_ |= flags;
+#else
+        FlagsField::Set(FlagsField::Decode(GetOrCreateHistoryNode()->bitFields_) | static_cast<uint64_t>(flags),
+                        &(GetOrCreateHistoryNode()->bitFields_));
+#endif
+    }
+}
+
+void AstNode::ClearModifier(ModifierFlags const flags) noexcept
+{
+    if (Any(Modifiers(), flags)) {
+#ifndef NDEBUG
+        GetOrCreateHistoryNode()->flags_ &= ~flags;
+#else
+        FlagsField::Set(FlagsField::Decode(GetOrCreateHistoryNode()->bitFields_) & ~static_cast<uint64_t>(flags),
+                        &(GetOrCreateHistoryNode()->bitFields_));
+#endif
+    }
 }
 
 void AstNode::CleanCheckInformation()

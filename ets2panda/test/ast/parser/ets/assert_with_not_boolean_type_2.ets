@@ -17,5 +17,6 @@ function main(): void {
     /* @@ label1 */arktest.assertTrue(/* @@ label2 */1)
 }
 
-/* @@@ label1 Error TypeError: No matching call signature for assertTrue(Int)  */
-/* @@@ label2 Error TypeError: Type 'Int' is not compatible with type 'Boolean' at index 1 */
+
+/* @@@ label1 Error Semantic error ESE0127: No matching call signature for assertTrue(Int) */
+/* @@@ label2 Error Semantic error ESE0046: Type 'Int' is not compatible with type 'Boolean' at index 1 */

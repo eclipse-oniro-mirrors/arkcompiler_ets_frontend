@@ -34,6 +34,6 @@ function foo<T extends I>(i: Partial<T>): number {
 function main() {
   // Test case: only 'i' is provided, 'j' is omitted
   foo<I>({ i: 5 });
+}
 
-/* @@? 21:37 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 39:70 Error SyntaxError: Expected '}', got 'end of stream'. */
+/* @@? 21:37 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

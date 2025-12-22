@@ -162,7 +162,7 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
         case 1U: {
             if (resolveRes[0]->Kind() == checker::ResolvedKind::PROPERTY) {
                 auto var = resolveRes[0]->Variable()->AsLocalVariable();
-                checker->ValidatePropertyAccess(var, objType_, property_->Start());
+                checker->ValidatePropertyAccess(var, objType_, property_);
                 return {checker->GetTypeOfVariable(var), var};
             }
 
@@ -178,6 +178,12 @@ std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::Resolve
             auto classMethodType = checker->GetTypeOfVariable(resolveRes[1]->Variable());
             auto extensionMethodType = checker->GetTypeOfVariable(resolveRes[0]->Variable());
             auto *resolvedType = extensionMethodType;
+            if (classMethodType->IsETSArrowType()) {
+                auto *callee = const_cast<ir::Expression *>(this->AsExpression());
+                callee->AsMemberExpression()->AddMemberKind(ir::MemberExpressionKind::EXTENSION_ACCESSOR);
+                return {resolveRes[0]->Variable()->TsType(), nullptr};
+            }
+
             if (classMethodType->IsETSFunctionType()) {
                 ES2PANDA_ASSERT(extensionMethodType->IsETSFunctionType());
                 resolvedType = checker->CreateETSExtensionFuncHelperType(classMethodType->AsETSFunctionType(),
@@ -221,6 +227,13 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             }
         }
 
+        if (memberType->IsETSMethodType() && memberType->IsETSMethodType()) {
+            if (!Parent()->IsCallExpression()) {
+                checker->LogError(diagnostic::UNION_MEMBER_METHOD_REFERENCE, {}, Start());
+                return;
+            }
+        }
+
         if (!commonPropType->IsETSMethodType() && !memberType->IsETSMethodType()) {
             if (!checker->IsTypeIdenticalTo(commonPropType, memberType)) {
                 checker->LogError(diagnostic::MEMBER_TYPE_MISMATCH_ACROSS_UNION, {}, Start());
@@ -254,7 +267,6 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             if (memberType != nullptr && memberType->IsTypeError()) {
                 return checker->GlobalTypeError();
             }
-
             addPropType(memberType);
         } else {
             checker->LogError(diagnostic::UNION_MEMBER_ILLEGAL_TYPE, {unionType}, Start());
@@ -347,9 +359,10 @@ checker::Type *MemberExpression::SetAndAdjustType(checker::ETSChecker *checker, 
     return AdjustType(checker, resType);
 }
 
-std::optional<std::size_t> MemberExpression::GetTupleIndexValue() const
+std::optional<std::size_t> MemberExpression::GetTupleIndexValue(const checker::ETSChecker *checker) const
 {
-    if (object_->TsType() == nullptr || !object_->TsType()->IsETSTupleType() || !property_->IsNumberLiteral()) {
+    if (object_->TsType() == nullptr || !checker->GetApparentType(object_->TsType())->IsETSTupleType() ||
+        !property_->IsNumberLiteral()) {
         return std::nullopt;
     }
     return property_->AsNumberLiteral()->Number().GetValueAndCastTo<std::size_t>();
@@ -437,6 +450,12 @@ checker::Type *MemberExpression::CheckIndexAccessMethod(checker::ETSChecker *che
     std::string_view const methodName =
         isSetter ? compiler::Signatures::SET_INDEX_METHOD : compiler::Signatures::GET_INDEX_METHOD;
     auto *const method = objType_->GetProperty(methodName, searchFlag);
+    if (isSetter && objType_->IsETSReadonlyArrayType()) {
+        checker->LogError(diagnostic::READONLY_ARRAYLIKE_MODIFICATION, {},
+                          Parent()->AsAssignmentExpression()->Left()->Start());
+        return nullptr;
+    }
+
     if (method == nullptr || !method->HasFlag(varbinder::VariableFlags::METHOD)) {
         checker->LogError(diagnostic::NO_INDEX_ACCESS_METHOD, {}, Start());
         return nullptr;
@@ -479,39 +498,13 @@ static void CastTupleElementFromClassMemberType(checker::ETSChecker *checker,
                                                   tupleElementAccessor->Start(), checker::TypeRelationFlag::NO_THROW});
 }
 
-checker::Type *MemberExpression::HandleComputedInGradualType(checker::ETSChecker *checker, checker::Type *baseType)
-{
-    property_->Check(checker);
-    if (baseType->IsETSObjectType()) {
-        util::StringView searchName;
-        if (property_->IsLiteral()) {
-            searchName = util::StringView {property_->AsLiteral()->ToString()};
-        }
-        auto found = baseType->AsETSObjectType()->GetProperty(searchName, checker::PropertySearchFlags::SEARCH_ALL);
-        if (found == nullptr) {
-            // Try to find indexer method
-            checker::Type *indexType = CheckIndexAccessMethod(checker);
-            if (indexType != nullptr) {
-                return indexType;
-            }
-            checker->LogError(diagnostic::PROPERTY_NONEXISTENT, {searchName, baseType->AsETSObjectType()->Name()},
-                              property_->Start());
-            return nullptr;
-        }
-        return found->TsType();
-    }
-    ES2PANDA_UNREACHABLE();
-    return nullptr;
-}
-
 checker::Type *MemberExpression::CheckComputed(checker::ETSChecker *checker, checker::Type *baseType)
 {
-    if (baseType->IsETSObjectType() && baseType->AsETSObjectType()->GetDeclNode() != nullptr &&
-        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType() != nullptr &&
-        baseType->AsETSObjectType()->GetDeclNode()->AsTyped()->TsType()->IsGradualType()) {
-        SetObjectType(baseType->AsETSObjectType());
-        return HandleComputedInGradualType(checker, baseType);
+    if (baseType->IsETSRelaxedAnyType()) {
+        Property()->Check(checker);
+        return checker->GlobalETSRelaxedAnyType();
     }
+
     if (baseType->IsETSArrayType()) {
         auto *dflt = baseType->AsETSArrayType()->ElementType();
         if (!checker->ValidateArrayIndex(property_)) {

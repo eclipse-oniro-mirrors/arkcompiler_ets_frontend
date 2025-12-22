@@ -13,21 +13,22 @@
  * limitations under the License.
  */
 
+#include "generated/code_fix_register.h"
 #include "gtest/gtest.h"
-#include "lsp/include/code_fixes/code_fix_types.h"
-#include "lsp/include/register_code_fix/remove_accidental_call_parentheses.h"
-#include "lsp/include/internal_api.h"
-#include "public/es2panda_lib.h"
 #include "lsp_api_test.h"
+#include "public/es2panda_lib.h"
+#include "lsp/include/internal_api.h"
+#include "lsp/include/register_code_fix/remove_accidental_call_parentheses.h"
+#include <cstddef>
 
 namespace {
 constexpr int DEFAULT_THROTTLE = 20;
 const size_t GETTER_CALL_IDX = 92;
 const size_t IGNORE_MALFORMED_CALL_IDX = 42;
-const size_t NON_FUNC_CALLS_IDX = 83;
 const size_t SKIP_VALID_METHOD_CALL_IDX = 77;
-
-class FixRemoveCallParensTests : public LSPAPITests {
+using ark::es2panda::lsp::codefixes::REMOVE_ACCIDENTAL_CALL_PARENTHESES;
+constexpr auto ERROR_CODES = REMOVE_ACCIDENTAL_CALL_PARENTHESES.GetSupportedCodeNumbers();
+class FixRemoveCallParensAtPosTests : public LSPAPITests {
 public:
     class NullCancellationToken : public ark::es2panda::lsp::HostCancellationToken {
     public:
@@ -42,47 +43,36 @@ public:
         static NullCancellationToken nullToken;
         return ark::es2panda::lsp::CancellationToken(DEFAULT_THROTTLE, &nullToken);
     }
-
-    static ark::es2panda::lsp::CodeFixContext CreateCodeFixContext(es2panda_Context *ctx, size_t pos)
-    {
-        ark::es2panda::lsp::RulesMap rules;
-        ark::es2panda::lsp::FormatCodeSettings formatSettings;
-        ark::es2panda::lsp::UserPreferences preferences;
-        LanguageServiceHost host;
-        ark::es2panda::lsp::FormatContext fmtCtx {formatSettings, rules};
-        TextChangesContext textCtx {host, fmtCtx, preferences};
-        return ark::es2panda::lsp::CodeFixContext {{textCtx, ctx, CreateToken()}, 0, TextSpan {pos, 0}};
-    }
 };
 
-TEST_F(FixRemoveCallParensTests, RemovesParenthesesFromGetterCall)
+TEST_F(FixRemoveCallParensAtPosTests, RemovesParenthesesFromGetterCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
-class Obj {
-  get value() {
-    return () => 42;
-  }
+class User {
+get name() {return "Alice;"}
 }
-const obj = new Obj();
-const x = obj.value();
+const user = new User();
+const name = user.name();
     )";
 
-    const auto c1 = 1;
-    const auto c2 = 2;
     es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_getter_call.ets",
                                                       ES2PANDA_STATE_CHECKED, sourceCode.c_str());
-    ark::es2panda::lsp::FixRemoveAccidentalCallParentheses fix;
-    ark::es2panda::lsp::CodeFixContext context = CreateCodeFixContext(ctx, GETTER_CALL_IDX);
-    auto actions = fix.GetCodeActions(context);
-    ASSERT_EQ(actions.size(), c1);
-    const auto &change = actions[0].changes[0].textChanges[0];
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    const size_t length = 0;
+    const size_t c1 = 1;
+    const size_t c2 = 2;
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(ctx, GETTER_CALL_IDX, GETTER_CALL_IDX + length,
+                                                                errorCodes, options);
+    ASSERT_EQ(fixes.size(), c1);
+    const auto &change = fixes[0].changes_[0].textChanges[0];
     EXPECT_EQ(change.newText, "");
     EXPECT_EQ(change.span.length, c2);
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParensTests, ignore_malformed_call_expressions)
+TEST_F(FixRemoveCallParensAtPosTests, IgnoreMalformedCallExpressions)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
@@ -90,41 +80,48 @@ const obj = { value: 42 };
 const z = obj.value(;
     )";
 
-    es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_mallformed_call_expr.ets",
+    es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_malformed_call_expr.ets",
                                                       ES2PANDA_STATE_CHECKED, sourceCode.c_str());
-    ark::es2panda::lsp::FixRemoveAccidentalCallParentheses fix;
-    ark::es2panda::lsp::CodeFixContext context = CreateCodeFixContext(ctx, IGNORE_MALFORMED_CALL_IDX);
-    auto actions = fix.GetCodeActions(context);
-    EXPECT_TRUE(actions.empty());
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    const size_t length = 0;
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(
+        ctx, IGNORE_MALFORMED_CALL_IDX, IGNORE_MALFORMED_CALL_IDX + length, errorCodes, options);
+    EXPECT_TRUE(fixes.empty());
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParensTests, remove_parens_from_non_function_property_call)
+TEST_F(FixRemoveCallParensAtPosTests, RemoveParensFromNonFunctionPropertyCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
-type MyObj = {
-  value: number;
-};
-const obj: MyObj = { value: 5 };
+class MyObj {
+  value: number = 5;
+}
+const obj = new MyObj();
 const z = obj.value()
     )";
 
-    const auto c1 = 1;
-    const auto c2 = 2;
-    es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_nonfunc_propety_call.ets",
+    es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_nonfunc_property_call.ets",
                                                       ES2PANDA_STATE_CHECKED, sourceCode.c_str());
-    ark::es2panda::lsp::FixRemoveAccidentalCallParentheses fix;
-    ark::es2panda::lsp::CodeFixContext context = CreateCodeFixContext(ctx, NON_FUNC_CALLS_IDX);
-    auto actions = fix.GetCodeActions(context);
-    ASSERT_EQ(actions.size(), c1);
-    const auto &change = actions[0].changes[0].textChanges[0];
+    const size_t c1 = 1;
+    const size_t c2 = 2;
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    const std::string needle = "obj.value()";
+    const auto posInStr = sourceCode.find(needle);
+    ASSERT_NE(posInStr, std::string::npos);
+    const size_t callPos = posInStr + std::string("obj.value").size();
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(ctx, callPos, callPos, errorCodes, options);
+    ASSERT_EQ(fixes.size(), c1);
+    const auto &change = fixes[0].changes_[0].textChanges[0];
     EXPECT_EQ(change.newText, "");
     EXPECT_EQ(change.span.length, c2);
+
     initializer.DestroyContext(ctx);
 }
 
-TEST_F(FixRemoveCallParensTests, SkipsValidMethodCall)
+TEST_F(FixRemoveCallParensAtPosTests, SkipsValidMethodCall)
 {
     ark::es2panda::lsp::Initializer initializer;
     const std::string sourceCode = R"(
@@ -139,10 +136,12 @@ const y = obj.calc();
 
     es2panda_Context *ctx = initializer.CreateContext("rmv_accidental_call_parens_valid_call.ets",
                                                       ES2PANDA_STATE_CHECKED, sourceCode.c_str());
-    ark::es2panda::lsp::FixRemoveAccidentalCallParentheses fix;
-    ark::es2panda::lsp::CodeFixContext context = CreateCodeFixContext(ctx, SKIP_VALID_METHOD_CALL_IDX);
-    auto actions = fix.GetCodeActions(context);
-    EXPECT_TRUE(actions.empty());
+    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+    CodeFixOptions options {CreateToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    const size_t length = 0;
+    auto fixes = ark::es2panda::lsp::GetCodeFixesAtPositionImpl(
+        ctx, SKIP_VALID_METHOD_CALL_IDX, SKIP_VALID_METHOD_CALL_IDX + length, errorCodes, options);
+    EXPECT_TRUE(fixes.empty());
     initializer.DestroyContext(ctx);
 }
 }  // namespace

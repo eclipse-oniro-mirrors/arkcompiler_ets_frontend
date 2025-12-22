@@ -16,8 +16,8 @@
 interface A {
     f!: string = "abc"
 }
-
-/* @@? 17:16 Error SyntaxError: Interface member initialization is prohibited. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected ','. */
-/* @@? 17:18 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
-/* @@? 18:1 Error SyntaxError: Identifier expected. */
+/* @@? 17:6 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 17:16 Error Syntax error ESY0180: Interface member initialization is prohibited. */
+/* @@? 17:18 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:18 Error Syntax error ESY0224: Identifier expected, got 'string literal'. */
+/* @@? 18:1 Error Syntax error ESY0122: Identifier expected. */

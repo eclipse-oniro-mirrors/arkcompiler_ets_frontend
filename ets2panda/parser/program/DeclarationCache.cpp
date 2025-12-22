@@ -25,7 +25,7 @@ UniqueSpinMutex::~UniqueSpinMutex()
 {
     // Atomic with relaxed order reason: read of field
     ES2PANDA_ASSERT(spin_.load(std::memory_order_relaxed) == LOCK_OFF);
-};
+}
 
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 void UniqueSpinMutex::lock()

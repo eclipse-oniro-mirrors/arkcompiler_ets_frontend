@@ -36,7 +36,8 @@ function labeledTest01(): int {
     return result;
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@@ label1 Error SyntaxError: Unexpected token '^'. */
-/* @@? 27:57 Error SyntaxError: Unexpected token 'label1'. */
-/* @@? 27:57 Error TypeError: Identifier 'label1' is used in wrong context. */
+
+/* @@@ label Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '^'. */
+/* @@? 27:57 Error Syntax error ESY0227: Unexpected token 'label1'. */
+/* @@? 27:57 Error Semantic error ESE0330: Identifier 'label1' is used in wrong context. */

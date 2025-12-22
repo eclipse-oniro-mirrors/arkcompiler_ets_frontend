@@ -27,4 +27,5 @@ class B extends A {
     }
 }
 
-/* @@@ label Error TypeError: 'super' cannot be referenced from a static context  */
+
+/* @@@ label Error Semantic error ESE0202: 'super' cannot be referenced from a static context */

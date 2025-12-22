@@ -27,12 +27,13 @@ class A{
     @ClassAuthor({authorName: "22"})
     foo3()
 
-/* @@? 17:7 Error SyntaxError: Missing type annotation for property 'au'. */
-/* @@? 17:7 Error SyntaxError: Identifier expected, got '`'. */
-/* @@? 21:6 Error TypeError: The required field 'au' must be specified. Fields without default values cannot be omitted. */
-/* @@? 24:6 Error TypeError: Annotation 'ClassAuthor' requires multiple fields to be specified. */
-/* @@? 24:18 Error TypeError: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
-/* @@? 27:6 Error TypeError: The required field 'au' must be specified. Fields without default values cannot be omitted. */
-/* @@? 27:19 Error TypeError: The parameter 'authorName' does not match any declared property in the annotation 'ClassAuthor'. */
-/* @@? 28:9 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 39:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@? 17:7 Error Syntax error ESY0001: Missing type annotation for property 'au'. */
+/* @@? 17:7 Error Syntax error ESY0224: Identifier expected, got '`'. */
+/* @@? 21:6 Error Semantic error ESE0044: The required field 'au' must be specified. Fields without default values cannot be omitted. */
+/* @@? 24:6 Error Semantic error ESE0043: Annotation 'ClassAuthor' requires multiple fields to be specified. */
+/* @@? 24:18 Error Semantic error ESE0042: Invalid annotation field type. Only numeric, boolean, string, enum, or arrays of these types are permitted for annotation fields. */
+/* @@? 27:6 Error Semantic error ESE0044: The required field 'au' must be specified. Fields without default values cannot be omitted. */
+/* @@? 27:19 Error Semantic error ESE0045: The parameter 'authorName' does not match any declared property in the annotation 'ClassAuthor'. */
+/* @@? 28:9 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 39:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

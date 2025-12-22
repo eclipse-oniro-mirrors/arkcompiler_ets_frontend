@@ -38,5 +38,6 @@ function main(): void {
    fn("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!");
 }
 
-/* @@? 38:4 Error TypeError: Expected 16 arguments, got 15. */
-/* @@? 38:4 Error TypeError: No matching call signature for ("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!") */
+
+/* @@? 38:4 Error Semantic error ESE0124: Expected 16 arguments, got 15. */
+/* @@? 38:4 Error Semantic error ESE0127: No matching call signature for ("hello", "world", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!", "!") */

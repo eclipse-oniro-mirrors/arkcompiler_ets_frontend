@@ -17,5 +17,6 @@ import * as Test from "import_tests/packages";
 
 function main() { Test() }
 
-/* @@? 18:19 Error TypeError: Namespace style identifier Test is not callable.  */
-/* @@? 18:19 Error TypeError: No static $_invoke method and static $_instantiate method in Test. Test() is not allowed.  */
+
+/* @@? 18:19 Error Semantic error ESE0295: Namespace style identifier Test is not callable. */
+/* @@? 18:19 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in Test. Test() is not allowed. */

@@ -26,5 +26,6 @@ function main()
     a[3]
 }
 
-/* @@? 26:5 Error TypeError: Function name 'a' used in the wrong context  */
-/* @@? 26:5 Error TypeError: Indexed access is not supported for such expression type.  */
+
+/* @@? 26:5 Error Semantic error ESE0144: Function name 'a' used in the wrong context */
+/* @@? 26:5 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

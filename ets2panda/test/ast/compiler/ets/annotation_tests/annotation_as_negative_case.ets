@@ -20,6 +20,8 @@ class A {}
 }
 
 
-/* @@? 18:18 Error TypeError: Cannot cast type 'Int' to 'String'  */
-/* @@? 19:15 Error TypeError: Cannot cast type 'Int' to 'A'  */
-/* @@? 19:15 Error TypeError: Type 'A' cannot be assigned to type 'Int'  */
+/* @@? 18:18 Error Semantic error ESE0326: Cannot cast type 'Int' to 'String' */
+/* @@? 18:18 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
+/* @@? 19:15 Error Semantic error ESE0326: Cannot cast type 'Int' to 'A' */
+/* @@? 19:15 Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'Int' */
+/* @@? 19:15 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

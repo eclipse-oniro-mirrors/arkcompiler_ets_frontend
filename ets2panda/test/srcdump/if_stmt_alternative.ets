@@ -20,6 +20,6 @@ export class XXX {
             17;
         } else
             this
-        this?.bar()
+        this.bar()
     }
 }

@@ -27,7 +27,7 @@ ast/parser/ets/extension_function_tests/extension_function_array_typealias.ets
 ast/parser/ets/extension_function_tests/extension_function_class.ets
 ast/parser/ets/extension_function_tests/extension_function_class_typealias.ets
 
-# Issue: #20874
+# Issue: #20875
 ast/parser/ets/unexpected_token_16.ets
 ast/parser/ets/unexpected_token_17.ets
 ast/parser/ets/unexpected_token_34.ets
@@ -48,9 +48,6 @@ ast/parser/ts/InvalidLexer.ts
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_1.ets
 ast/compiler/ets/expression/this_expression/undefined_class_for_this_2.ets
 
-# Issue: #22663
-ast/compiler/ets/implicit_this_method_trailing.ets
-
 # Checked only as imported modules. If these files are parsed directly, there will be
 # errors located in other files (import_type_error_in_class.ets/import_type_error_top_level.ets),
 # and such case cannot be checked in astchecker
@@ -62,9 +59,7 @@ ast/parser/ets/import_tests/export_and_import_top_level.ets
 ast/compiler/ets/type_error_processing/param_typeannotation_null.ets
 
 # Issue: #22951
-ast/compiler/ets/extension_accessor_tests/getterAsFunctionCall.ets
 ast/compiler/ets/extension_accessor_tests/getterAsMethodCall.ets
-ast/compiler/ets/extension_accessor_tests/setterAsFunctionCall.ets
 ast/compiler/ets/extension_accessor_tests/setterAsMethodCall.ets
 ast/compiler/ets/lambda_with_receiver_tests/ExtensionFunctypeUncompatible.ets
 ast/compiler/ets/lambda_with_receiver_tests/extensionFuncTypeAsParamsNameDuplicated.ets
@@ -106,28 +101,24 @@ ast/compiler/ets/lambda_infer_type/lambda_param_type_cannot_be_determined.ets
 # Issue: #24605 incorrect column
 ast/parser/ets/named_types_2.ets
 
-# Issue: #27365 Cannot add correct comment to astchecker to see warning with 0:0 position (duplicate export warning)
-ast/compiler/ets/export_type_class_multiple_times.ets
-ast/compiler/ets/export_type_interface_multiple_times.ets
-ast/compiler/ets/import_tests/export_multi_error.ets
-#
+#26324
 ast/parser/ets/partialGenericInterface.ets
 ast/parser/ets/partialGenericInterface_n.ets
 
 
 # No-primitives #24986 [start]
-ast/compiler/ets/enum-argument-private-method-call.ets
 ast/parser/ets/FixedArray/illegal_union_member_exp.ets
-ast/parser/ets/illegal_union_member_exp.ets
 ast/compiler/ets/same_assembly_overload/callExpr_pos.ets
 ast/compiler/ets/func_as_param.ets
-ast/compiler/ets/assertInTopLevelStatement.ets
 
 # New error: annotations: expected a constant literal
 ast/parser/ets/annotations_tests/annotationDecl_bad_initializer03.ets
 ast/parser/ets/annotations_tests/annotationDecl_bad_initializer04.ets
 ast/parser/ets/annotations_tests/annotationDecl_bad_initializer05.ets
 ast/compiler/ets/annotation_tests/annotation_as_negative_case.ets
+
+# Expected CTE Variable used before being assigned
+ast/parser/ets/never_assigned6.ets
 
 # Invalid position (0:0) not printed
 ast/compiler/ets/union_string_literals_4.ets
@@ -139,15 +130,9 @@ ast/compiler/ets/import_tests/import_distant_package/master_file.ets
 
 # Call to ... is ambiguous
 ast/compiler/ets/FixedArray/most_specific_method_with_empty_rest_param.ets
-ast/compiler/ets/annotation_tests/annotation_src.ets
-
-# Enum: Array element at index 0 with type '"1"' is not compatible with the target array element type 'Color'
-ast/compiler/ets/FixedArray/annotation_tests/annotation_src.ets
 
 # ABORT_FAIL
-ast/compiler/ets/optionalClassProperty1.ets
 ast/parser/ets/for_of_02.ets
-ast/parser/ets/for_of_loop_variable.ets
 
 ast/compiler/ets/dynamic-field-declaration.ets
 ast/parser/ets/enum15.ets
@@ -188,3 +173,9 @@ ast/compiler/ets/first_match/override.ets
 
 #30971
 ast/compiler/ets/nagative_trailingLambda_abort.ets
+#31069
+ast/parser/ets/overload_function_match_neg.ets
+ast/compiler/type_error_test.ets
+ast/parser/ets/super_field.ets
+#32155
+ast/compiler/ets/annotation_new.ets

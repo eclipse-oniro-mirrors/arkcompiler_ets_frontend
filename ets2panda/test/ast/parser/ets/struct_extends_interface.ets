@@ -22,5 +22,6 @@ struct B extends A {
 }
 
 
-/* @@? 20:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 20:18 Error TypeError: The super type of 'B' class is not extensible. */
+
+/* @@? 20:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 20:18 Error Semantic error ESE0176: The super type of 'B' class is not extensible. */

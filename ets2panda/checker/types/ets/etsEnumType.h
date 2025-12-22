@@ -23,6 +23,7 @@
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/literals/stringLiteral.h"
 #include "ir/expressions/memberExpression.h"
+#include "util/es2pandaMacros.h"
 
 namespace ark::es2panda::checker {
 
@@ -58,9 +59,19 @@ public:
     static constexpr std::string_view VALUES_ARRAY_NAME {"#ValuesArray"};
     static constexpr std::string_view NAMES_ARRAY_NAME {"#NamesArray"};
 
-    auto *Underlying()
+    Type *Underlying()
     {
-        ES2PANDA_ASSERT(membersValues_->TsType() != nullptr);
+        if (membersValues_->TsType() == nullptr) {
+            return nullptr;
+        }
+        return membersValues_->TsType()->AsETSArrayType()->ElementType();
+    }
+
+    Type const *Underlying() const
+    {
+        if (membersValues_->TsType() == nullptr) {
+            return nullptr;
+        }
         return membersValues_->TsType()->AsETSArrayType()->ElementType();
     }
 
@@ -91,7 +102,25 @@ public:
         }
         return false;
     }
+
+    [[nodiscard]] Type *EnumAnnotedType() noexcept
+    {
+        return enumType_;
+    }
+
+    void SetEnumType(ir::TypeNode *typeNode, ETSChecker *checker) noexcept;
+
+    [[nodiscard]] const Type *EnumAnnotedType() const noexcept
+    {
+        return enumType_;
+    }
+
+    virtual bool CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept = 0;
+
     Type *GetBaseEnumElementType(ETSChecker *checker);
+
+protected:
+    Type *enumType_ {nullptr};  // NOLINT(misc-non-private-member-variables-in-classes)
 
 private:
     void InitElementsShortcuts(ir::ClassDefinition *declNode)
@@ -120,25 +149,35 @@ private:
     ir::ArrayExpression *membersValues_;
 };
 
-class ETSIntEnumType : public ETSEnumType {
+class ETSNumericEnumType : public ETSEnumType {
 public:
-    explicit ETSIntEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
-                            ir::AstNode *declNode, TypeRelation *relation)
-        : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::INT_ENUM_OBJECT)
+    explicit ETSNumericEnumType(ThreadSafeArenaAllocator *allocator, util::StringView name,
+                                util::StringView internalName, ir::AstNode *declNode, TypeRelation *relation)
+        : ETSEnumType(allocator, name, internalName, declNode, relation, ETSObjectFlags::NUMERIC_ENUM_OBJECT)
     {
-        AddTypeFlag(checker::TypeFlag::ETS_INT_ENUM);
+        AddTypeFlag(checker::TypeFlag::ETS_NUMERIC_ENUM);
     }
 
-    NO_COPY_SEMANTIC(ETSIntEnumType);
-    NO_MOVE_SEMANTIC(ETSIntEnumType);
+    NO_COPY_SEMANTIC(ETSNumericEnumType);
+    NO_MOVE_SEMANTIC(ETSNumericEnumType);
 
-    ETSIntEnumType() = delete;
-    ~ETSIntEnumType() override = default;
+    ETSNumericEnumType() = delete;
+    ~ETSNumericEnumType() override = default;
 
     bool AssignmentSource(TypeRelation *relation, Type *target) override;
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
     void Cast(TypeRelation *relation, Type *target) override;
     void CastTarget(TypeRelation *relation, Type *source) override;
+    [[nodiscard]] bool CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept override;
+
+    [[nodiscard]] bool NonAnnotedHasDouble() const
+    {
+        ES2PANDA_ASSERT(EnumAnnotedType() == nullptr);
+        return Underlying()->IsDoubleType() || Underlying()->IsFloatType();
+    }
+
+private:
+    bool CheckAssignableNumericTypes(Type *let);
 };
 
 class ETSStringEnumType : public ETSEnumType {
@@ -160,6 +199,7 @@ public:
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
     void Cast(TypeRelation *relation, Type *target) override;
     void CastTarget(TypeRelation *relation, Type *source) override;
+    [[nodiscard]] bool CheckBuiltInType(const ETSChecker *checker, ETSObjectFlags flag) const noexcept override;
 };
 
 }  // namespace ark::es2panda::checker

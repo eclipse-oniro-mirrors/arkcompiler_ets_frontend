@@ -1,10 +1,20 @@
 ## 类的静态属性需要有初始值
 
-**规则：**`arkts-class-static-initialization`
+**规则：** `arkts-class-static-initialization`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2遵循null-safety，需要为属性赋上初始值。
+在ArkTS1.2中，为了遵循null-safety（空安全），需要为属性赋上初始值。
+
+**变更原因：**
+
+ArkTS1.2遵循null-safety（空安全），需要为类的静态属性赋初始值（具有默认值的类型除外）。
+
+**适配建议：**
+
+为静态属性赋初始值。
+
+**示例：**
 
 **ArkTS1.1**
 

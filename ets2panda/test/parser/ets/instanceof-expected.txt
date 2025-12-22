@@ -930,4 +930,4 @@
     }
   }
 }
-Warning: Type parameter is erased from type 'Array' when used in instanceof expression. [instanceof.ets:1:1]
+[instanceof.ets:1:1] Warning W0015: Type parameter is erased from type 'Array' when used in instanceof expression.

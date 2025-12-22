@@ -20,9 +20,9 @@ class A<T2> {
 function foo<T2>(this: A<T2>) {
 }
 
-/* @@? 17:8 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:13 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 17:13 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:13 Error SyntaxError: Unexpected token '.'. */
-/* @@? 17:18 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:18 Error SyntaxError: Unexpected token ')'. */
+
+/* @@? 17:13 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 17:13 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:13 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 17:18 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:18 Error Syntax error ESY0227: Unexpected token ')'. */

@@ -17,4 +17,5 @@ while (true /* @@ label */{
     console.log("hehehehe")
 }
 
-/* @@@ label Error SyntaxError: Expected ')', got '{'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected ')', got '{'. */

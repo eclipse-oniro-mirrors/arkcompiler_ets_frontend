@@ -17,7 +17,8 @@ function foo<T extends A<T>>(){}
 class B extends A<B>{}
 class D{}
 function main(){
-    /* @@ label */foo<D>() 
+    /* @@ label */foo<D>()
 }
 
-/* @@? 20:19 Error TypeError: No matching call signature for foo() */
+/* @@? 20:19 Error Semantic error ESE0228: Type argument 'D' should be a subtype of 'A<D>' constraint */
+/* @@? 20:19 Error Semantic error ESE0127: No matching call signature for foo() */

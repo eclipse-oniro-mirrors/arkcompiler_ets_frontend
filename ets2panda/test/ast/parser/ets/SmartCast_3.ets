@@ -23,4 +23,5 @@ function main() {
   /* @@ label */resolve("abc");                         // no smart cast!
 }
 
-/* @@@ label Error TypeError: This expression is not callable.  */
+
+/* @@@ label Error Semantic error ESE0289: This expression is not callable. */

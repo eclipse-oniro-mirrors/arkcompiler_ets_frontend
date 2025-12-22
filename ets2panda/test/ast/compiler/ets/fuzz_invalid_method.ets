@@ -28,9 +28,10 @@ class A<T> {
 
 }
 
-/* @@? 22:8 Error SyntaxError: Field type annotation expected. */
-/* @@? 23:9 Error SyntaxError: Unexpected token 'return'. */
-/* @@? 23:16 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 23:20 Error SyntaxError: Unexpected token '.'. */
-/* @@? 23:43 Error SyntaxError: Field type annotation expected. */
-/* @@? 25:5 Error SyntaxError: Call signatures in object types are not supported. Use '$_invoke' method instead. */
+
+/* @@? 22:8 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 23:9 Error Syntax error ESY0227: Unexpected token 'return'. */
+/* @@? 23:16 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 23:20 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 23:43 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 25:5 Error Syntax error ESY103145: Call signatures in object types are not supported. Use '$_invoke' method instead. */

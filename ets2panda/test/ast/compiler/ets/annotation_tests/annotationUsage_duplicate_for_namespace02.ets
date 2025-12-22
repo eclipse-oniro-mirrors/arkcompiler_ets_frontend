@@ -29,6 +29,6 @@ namespace A{
 @Anno1
 namespace A.B{}
 
-/* @@? 21:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno2' has already been applied to this element.  */
-/* @@? 24:6 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno3' has already been applied to this element.  */
-/* @@? 29:2 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno1' has already been applied to this element.  */
+/* @@? 21:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno2' has already been applied to this element. */
+/* @@? 24:6 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno3' has already been applied to this element. */
+/* @@? 29:2 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno1' has already been applied to this element. */

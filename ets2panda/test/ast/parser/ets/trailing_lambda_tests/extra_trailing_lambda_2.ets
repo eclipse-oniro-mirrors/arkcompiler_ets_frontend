@@ -34,4 +34,5 @@ function testExtraTrailing() {
     };
 }
 
-/* @@? 32:5 Error TypeError: No matching call signature with trailing lambda */
+
+/* @@? 32:5 Error Semantic error ESE0140: No matching call signature with trailing lambda */

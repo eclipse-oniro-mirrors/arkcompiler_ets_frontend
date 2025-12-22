@@ -20,7 +20,7 @@
 #include <string>
 #include "ir/astNode.h"
 #include "lexer/token/sourceLocation.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 #include <checker/checker.h>
 #include <checker/typeChecker/TypeChecker.h>
 #include <utility>

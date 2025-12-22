@@ -19,4 +19,5 @@
 // annotations for interface
 interface I1<@Anno @Anno() T>{}
 
-/* @@? 20:21 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+
+/* @@? 20:21 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

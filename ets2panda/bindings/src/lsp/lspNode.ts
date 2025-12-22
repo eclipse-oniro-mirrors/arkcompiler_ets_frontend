@@ -19,6 +19,7 @@ import { throwError } from '../common/utils';
 import { isNullPtr } from '../common/Wrapper';
 import { global } from '../common/global';
 import { NativePtrDecoder } from '../common/Platform';
+import { AstNodeType, NodeInfo, astNodeTypeMap } from '../common/types';
 
 enum HierarchyType {
   OTHERS,
@@ -137,13 +138,13 @@ export class LspDiagnosticNode extends LspNode {
       .map((elPeer: KNativePointer) => new LspRelatedInfo(elPeer));
     let codeVarPtr = global.es2panda._getDiagCode(peer);
     if (global.interop._getTypeOfVariant(codeVarPtr) === VariantTypes.VARIANT_INT) {
-      this.code = global.interop._getIntFromVariant(codeVarPtr);
+      this.code = global.interop._GetIntFromVariant(codeVarPtr);
     } else {
       this.code = unpackString(global.interop._getStringFromVariant(codeVarPtr));
     }
     let dataPtr = global.es2panda._getDiagData(peer);
     if (global.interop._getTypeOfVariant(dataPtr) === VariantTypes.VARIANT_INT) {
-      this.data = global.interop._getIntFromVariant(dataPtr);
+      this.data = global.interop._GetIntFromVariant(dataPtr);
     } else {
       this.data = unpackString(global.interop._getStringFromVariant(dataPtr));
     }
@@ -174,27 +175,29 @@ export class LspDiagsNode extends LspNode {
 }
 
 export class LspDefinitionData extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._getFileNameFromDef(peer));
-    this.start = global.es2panda._getStartFromDef(peer);
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._GetFileNameFromDef(peer));
+    this.start = global.es2panda._GetStartFromDef(peer);
     this.length = global.es2panda._getLengthFromDef(peer);
   }
   readonly fileName: String;
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
+  nodeInfos?: NodeInfo[];
 }
 
 export class LspReferenceData extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._getReferenceFileName(peer));
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._getReferenceFileName(peer));
     this.start = global.es2panda._getReferenceStart(peer);
     this.length = global.es2panda._getReferenceLength(peer);
   }
   readonly fileName: String;
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
+  nodeInfos?: NodeInfo[];
 }
 
 export class LspDeclInfo extends LspNode {
@@ -225,8 +228,18 @@ export class LspTextSpan extends LspNode {
     this.start = global.es2panda._getTextSpanStart(peer);
     this.length = global.es2panda._getTextSpanLength(peer);
   }
-  readonly start: KInt;
-  readonly length: KInt;
+  start: KInt;
+  length: KInt;
+}
+
+export class LspSourceLocation extends LspNode {
+  constructor(peer: KNativePointer) {
+    super(peer);
+    this.line = global.es2panda._getSourceLocationLine(peer);
+    this.column = global.es2panda._getSourceLocationColumn(peer);
+  }
+  readonly line: number;
+  readonly column: number;
 }
 
 export interface TextSpan {
@@ -793,6 +806,17 @@ export class LspApplicableRefactorInfo extends LspNode {
   readonly applicableRefactorInfo: ApplicableRefactorItemInfo[];
 }
 
+export class LspRefactorEditInfo extends LspNode {
+  readonly fileTextChanges: FileTextChanges[];
+
+  constructor(peer: KNativePointer) {
+    super(peer);
+    this.fileTextChanges = new NativePtrDecoder()
+      .decode(global.es2panda._getFileTextChanges(peer))
+      .map((elPeer: KNativePointer) => new FileTextChanges(elPeer));
+  }
+}
+
 export class LspTypeHierarchies extends LspNode {
   constructor(peer: KNativePointer) {
     super(peer);
@@ -974,19 +998,57 @@ export class LspRenameInfoFailure extends LspNode {
 export type LspRenameInfoType = LspRenameInfoSuccess | LspRenameInfoFailure;
 
 export class LspRenameLocation extends LspNode {
-  constructor(peer: KNativePointer) {
+  constructor(peer: KNativePointer, filePath?: string) {
     super(peer);
-    this.fileName = unpackString(global.es2panda._getRenameLocationFileName(peer));
+    this.fileName = filePath ? filePath : unpackString(global.es2panda._getRenameLocationFileName(peer));
     this.start = global.es2panda._getRenameLocationStart(peer);
     this.end = global.es2panda._getRenameLocationEnd(peer);
     this.line = global.es2panda._getRenameLocationLine(peer);
-    this.prefixText = unpackString(global.es2panda._getRenameLocationPrefixText(peer));
-    this.suffixText = unpackString(global.es2panda._getRenameLocationSuffixText(peer));
+    this.prefixText = global.es2panda._renameLocationHasPrefixText(peer)
+      ? unpackString(global.es2panda._getRenameLocationPrefixText(peer))
+      : undefined;
+    this.suffixText = global.es2panda._renameLocationHasSuffixText(peer)
+      ? unpackString(global.es2panda._getRenameLocationSuffixText(peer))
+      : undefined;
   }
   readonly fileName: string;
   readonly start: number;
   readonly end: number;
   readonly line: number;
-  readonly prefixText: string;
-  readonly suffixText: string;
+  readonly prefixText?: string;
+  readonly suffixText?: string;
+  nodeInfos?: NodeInfo[];
+}
+
+export function toAstNodeType(str: string): AstNodeType {
+  return astNodeTypeMap.get(str) ?? AstNodeType.UNKNOWN;
+}
+
+export class LspNodeInfo extends LspNode {
+  constructor(peer: KNativePointer) {
+    super(peer);
+    this.name = unpackString(global.es2panda._getNameByNodeInfo(peer));
+    this.kind = toAstNodeType(unpackString(global.es2panda._getKindByNodeInfo(peer)));
+  }
+  readonly name: string;
+  readonly kind: AstNodeType;
+}
+
+export class LspTokenTypeInfo extends LspNode {
+  constructor(peer: KNativePointer, filePath?: string) {
+    super(peer);
+    this.name = filePath ? filePath : unpackString(global.es2panda._GetNameFromTypeInfo(peer));
+    this.type = filePath ? filePath : unpackString(global.es2panda._GetTypeFromTypeInfo(peer));
+  }
+  readonly name: string;
+  readonly type: string;
+}
+
+export class LspTokenNativeInfo {
+  constructor(name: string = '', isNative: boolean = false) {
+    this.name = name;
+    this.isNative = isNative;
+  }
+  readonly name: string;
+  readonly isNative: boolean;
 }

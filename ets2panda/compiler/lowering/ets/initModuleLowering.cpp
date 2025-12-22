@@ -36,7 +36,7 @@ static bool IsInitModuleCall(ir::AstNode *node)
     }
     auto *callee = node->AsCallExpression()->Callee();
     if (callee->IsIdentifier() && callee->AsIdentifier()->Name() == compiler::Signatures::INIT_MODULE_METHOD) {
-        return true;
+        return true;  // NOLINT(readability-simplify-boolean-expr)
     }
     return false;
 }
@@ -55,7 +55,7 @@ static bool IsESValueLoadCall(ir::AstNode *node)
     auto *property = callee->AsMemberExpression()->Property();
     if (object->AsIdentifier()->Name() == compiler::Signatures::ESVALUE &&
         property->AsIdentifier()->Name() == compiler::Signatures::LOAD) {
-        return true;
+        return true;  // NOLINT(readability-simplify-boolean-expr)
     }
     return false;
 }
@@ -85,23 +85,9 @@ static ir::AstNode *TransformESValueLoadCallExpression(ir::CallExpression *callE
         return callExpr;
     }
     auto *parser = ctx->parser->AsETSParser();
-    auto allocator = ctx->allocator;
     auto metaData = parser->GetImportPathManager()->GatherImportMetadata(program, util::ImportFlags::NONE,
                                                                          importPath->AsStringLiteral());
     if (metaData.ohmUrl == util::ImportPathManager::DUMMY_PATH) {
-        // If it has suffix like .ts, .js, .ets etc., we should truncate the suffix
-        bool hasExtension = false;
-        auto truncatedPath =
-            util::ImportPathManager::TruncateFileExtension(importPath->AsStringLiteral()->ToString(), hasExtension);
-        if (!hasExtension) {
-            return callExpr;
-        }
-        auto truncatedArgument =
-            util::NodeAllocator::Alloc<ir::StringLiteral>(allocator, util::UString(truncatedPath, allocator).View());
-        truncatedArgument->SetParent(importPath->Parent());
-        truncatedArgument->SetRange(importPath->Range());
-        importPath->SetParent(nullptr);
-        callExpr->Arguments()[0] = truncatedArgument;
         return callExpr;
     }
     return CreateModuleCallExpressionForDynamic(ctx, callExpr, metaData.ohmUrl);
@@ -145,8 +131,7 @@ static ir::AstNode *TransformInitModuleCallExpression(ir::CallExpression *callEx
 
     params.emplace_back(moduleName);
     // Note (daizihan): #27086, we should not use stringLiteral as argument in ETSIntrinsicNode, should be TypeNode.
-    auto moduleNode = util::NodeAllocator::Alloc<ir::ETSIntrinsicNode>(allocator, ir::IntrinsicNodeType::TYPE_REFERENCE,
-                                                                       std::move(params));
+    auto moduleNode = util::NodeAllocator::Alloc<ir::ETSIntrinsicNode>(allocator, "typereference", std::move(params));
     auto initIdent =
         util::NodeAllocator::Alloc<ir::Identifier>(allocator, compiler::Signatures::CLASS_INITIALIZE_METHOD, allocator);
     auto callee = util::NodeAllocator::Alloc<ir::MemberExpression>(

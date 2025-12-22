@@ -18,7 +18,8 @@ let s1 = "foo"
 let n2: typeof n1
 let s2: typeof s1
 
-/* @@? 18:16 Error SyntaxError: Result of 'typeof' operator is not supported to be used as type annotation.  */
-/* @@? 18:16 Error SyntaxError: Unexpected token 'n1'.  */
-/* @@? 19:16 Error SyntaxError: Result of 'typeof' operator is not supported to be used as type annotation.  */
-/* @@? 19:16 Error SyntaxError: Unexpected token 's1'.  */
+
+/* @@? 18:16 Error Syntax error ESY0309: Result of 'typeof' operator is not supported to be used as type annotation. */
+/* @@? 18:16 Error Syntax error ESY0227: Unexpected token 'n1'. */
+/* @@? 19:16 Error Syntax error ESY0309: Result of 'typeof' operator is not supported to be used as type annotation. */
+/* @@? 19:16 Error Syntax error ESY0227: Unexpected token 's1'. */

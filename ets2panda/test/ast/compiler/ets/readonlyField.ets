@@ -24,4 +24,5 @@ function main(): void {
     /* @@ label */myData.value = "new data";
 }
 
-/* @@@ label Error TypeError: Cannot assign to a readonly field value  */
+
+/* @@@ label Error Semantic error ESE4002: Cannot assign to a readonly field value */

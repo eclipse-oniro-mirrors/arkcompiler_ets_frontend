@@ -20,4 +20,5 @@ function main(): void {
     arktest.assertEQ(i, undefined);
 }
 
-/* @@@ label Error TypeError: Type 'A<T>' is generic but type argument were not provided.  */
+
+/* @@@ label Error Semantic error ESE0170: Type 'A<T>' is generic but type argument were not provided. */

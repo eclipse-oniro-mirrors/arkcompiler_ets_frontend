@@ -27,7 +27,7 @@ switch (q) {
   }
 }
 
-class TestException extends Exception {
+class TestError extends Error {
 }
 
 arktest.assertEQ(q, 3)
@@ -36,12 +36,13 @@ arktest.assertEQ(s, "abc")
 try {
   s += "cba";
   q += 5;
-  throw new TestException();
-}
-catch (e: TestException) {
+  throw new TestError();
 }
 catch (e) {
-  arktest.assertTrue(false)
+  if (e instanceof TestError) {
+  } else {
+    arktest.assertTrue(false)
+  }
 }
 
 arktest.assertEQ(q, 8)

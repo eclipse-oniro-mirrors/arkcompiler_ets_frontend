@@ -102,10 +102,21 @@ public:
 
     Identifier *GetBaseName() const;
 
+    void SetHasParameterParen(bool v)
+    {
+        hasParameterParen_ = v;
+    }
+
+    bool HasParameterParen() const
+    {
+        return hasParameterParen_;
+    }
+
 private:
     Expression *expr_;
     ArenaVector<ir::AstNode *> properties_;
     varbinder::AnnotationParamScope *propertiesScope_ {};
+    bool hasParameterParen_ = false;
 };
 }  // namespace ark::es2panda::ir
 

@@ -23,6 +23,7 @@ class C implements A /* @@ label1 */{
     }
 }
 
-/* @@@ label Error TypeError: Cannot inherit from interface A because method length is inherited with a different declaration type */
-/* @@@ label1 Error TypeError: C is not abstract and does not override abstract method length(): Double in A */
-/* @@@ label2 Error TypeError: Method length(): Double in C not overriding any method */
+
+/* @@@ label Error Semantic error ESE0215: Cannot inherit from interface A because method length is inherited with a different declaration type */
+/* @@@ label1 Error Semantic error ESE0190: C is not abstract and does not override abstract method length(): Double in A */
+/* @@@ label2 Error Semantic error ESE0136: Method length(): Double in C not overriding any method */

@@ -35,5 +35,6 @@ set name(this: B, n: string) /* @@ label2 */{
     this.name_ = n;
 }
 
-/* @@@ label1 Error TypeError: The extension accessor 'name' has the same name with method in class A  */
-/* @@@ label2 Error TypeError: The extension accessor 'name' has the same name with method in class A  */
+
+/* @@@ label1 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */
+/* @@@ label2 Error Semantic error ESE0080: The extension accessor 'name' has the same name with method in class A */

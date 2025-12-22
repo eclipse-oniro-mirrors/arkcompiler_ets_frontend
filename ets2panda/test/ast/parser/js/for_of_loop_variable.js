@@ -27,4 +27,5 @@ for (let value of iterable2) {
   console.log(value);
 }
 
-/* @@@ label Error SyntaxError: for-of loop variable declaration may not have an initializer. */
+
+/* @@@ label Error Syntax error ESY0168: for-of loop variable declaration may not have an initializer. */

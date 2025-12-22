@@ -18,5 +18,6 @@ class B {}
 function f1(this : B): /* @@ label*/this | B {
     return this;
 }
-/* @@@ label Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions.  */
-/* @@? 18:37 Error TypeError: A 'this' cannot be used as a part of union type. */
+
+/* @@@ label Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@@ label Error Semantic error ESE0281: A 'this' cannot be used as a part of union type. */

@@ -47,6 +47,11 @@ void FormattingContext::SetNextTokenParent(ir::AstNode *node)
     nextTokenParent_ = node;
 }
 
+void FormattingContext::SetOptions(const FormatCodeSettings &options)
+{
+    options_ = options;
+}
+
 const lexer::Token &FormattingContext::GetCurrentToken() const
 {
     return currentToken_;
@@ -80,6 +85,11 @@ const std::string &FormattingContext::GetSourceText() const
 const lexer::SourceRange &FormattingContext::GetCurrentTokenSpan() const
 {
     return currentTokenSpan_;
+}
+
+const FormatCodeSettings &FormattingContext::GetOptions() const
+{
+    return options_;
 }
 
 bool FormattingContext::ContextNodeBlockIsOnOneLine() const

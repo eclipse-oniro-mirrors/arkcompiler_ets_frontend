@@ -17,8 +17,4 @@ function foo(): void {
   let b: FixedArray<number|undefined> = [ 1, 2, 3,  , 4, ]
 }
 
-/* @@? 17:53 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:55 Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:55 Error SyntaxError: Unexpected token '4'. */
-/* @@? 17:56 Error SyntaxError: Unexpected token ','. */
-/* @@? 17:58 Error SyntaxError: Unexpected token ']'. */
+/* @@? 17:41 Error Syntax error ESY167720: Omitted elements are not supported in arrays. */

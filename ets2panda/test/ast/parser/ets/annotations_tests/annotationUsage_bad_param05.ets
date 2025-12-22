@@ -21,4 +21,5 @@
 @MyAnno({testProperty1: /* @@ label */{s: A}, testProperty2: 1})
 class B{}
 
-/* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
+
+/* @@@ label Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */

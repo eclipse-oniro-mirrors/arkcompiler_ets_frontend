@@ -1,0 +1,178 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 17,
+            "column": 25,
+            "endLine": 17,
+            "endColumn": 31,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 18,
+            "endLine": 18,
+            "endColumn": 24,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 18,
+            "endLine": 19,
+            "endColumn": 25,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 25,
+            "endLine": 20,
+            "endColumn": 32,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 22,
+            "column": 10,
+            "endLine": 22,
+            "endColumn": 17,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 17,
+            "endLine": 23,
+            "endColumn": 24,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 26,
+            "endLine": 26,
+            "endColumn": 33,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 18,
+            "endLine": 27,
+            "endColumn": 25,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 26,
+            "endLine": 28,
+            "endColumn": 38,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 10,
+            "endLine": 30,
+            "endColumn": 17,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 17,
+            "endLine": 31,
+            "endColumn": 29,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 26,
+            "endLine": 34,
+            "endColumn": 32,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 18,
+            "endLine": 35,
+            "endColumn": 25,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 36,
+            "column": 26,
+            "endLine": 36,
+            "endColumn": 37,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 10,
+            "endLine": 38,
+            "endColumn": 15,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 17,
+            "endLine": 39,
+            "endColumn": 28,
+            "problem": "NondecimalBigint",
+            "suggest": "",
+            "rule": "Non-decimal BigInt literals (0x/0o/0b) are not supported. Use decimal format instead (arkts-only-support-decimal-bigint-literal)",
+            "severity": "ERROR"
+        }
+    ]
+}

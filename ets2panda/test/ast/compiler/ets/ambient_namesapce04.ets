@@ -20,5 +20,5 @@ declare namespace MySpace{
     }
 }
 
-/* @@? 18:20 Error TypeError: Native, Abstract and Declare methods cannot have body.  */
-/* @@? 19:9 Error TypeError: Native and Declare methods should have explicit return type.  */
+/* @@? 18:20 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
+/* @@? 19:9 Error Semantic error ESE0018: Native and Declare methods should have explicit return type. */

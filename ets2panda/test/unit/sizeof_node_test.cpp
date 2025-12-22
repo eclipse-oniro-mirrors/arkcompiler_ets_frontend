@@ -65,10 +65,16 @@ size_t SizeOfNodeTest::SizeOf<AstNode>()
     return Align(SIZE_OF_VTABLE +
         sizeof(node->parent_) +
         sizeof(node->range_) +
+#ifndef NDEBUG
         sizeof(node->type_) +
         sizeof(node->flags_) +
         sizeof(node->astNodeFlags_) +
+#else
+        sizeof(node->bitFields_) +
+#endif
+#ifdef ES2PANDA_ENABLE_AST_HISTORY
         sizeof(node->history_) +
+#endif
         sizeof(node->variable_) +
         sizeof(node->originalNode_));
     // clang-format on
@@ -289,23 +295,6 @@ size_t SizeOfNodeTest::SizeOf<FunctionDeclaration>()
 }
 
 template <>
-size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
-{
-    TSEnumDeclaration *node = nullptr;
-
-    // clang-format off
-    return SizeOf<TypedStatement>() +
-        sizeof(node->scope_) +
-        sizeof(node->key_) +
-        sizeof(node->members_) +
-        sizeof(node->internalName_) +
-        sizeof(node->boxedClass_) +
-        sizeof(node->typeNode_) +
-        Align(sizeof(node->isConst_));
-    // clang-format on
-}
-
-template <>
 size_t SizeOfNodeTest::SizeOf<AnnotationAllowed<TypedStatement>>()
 {
     AnnotationAllowed<TypedStatement> *node = nullptr;
@@ -313,6 +302,23 @@ size_t SizeOfNodeTest::SizeOf<AnnotationAllowed<TypedStatement>>()
     // clang-format off
     return SizeOf<TypedStatement>() +
         sizeof(node->annotations_);
+    // clang-format on
+}
+
+template <>
+size_t SizeOfNodeTest::SizeOf<TSEnumDeclaration>()
+{
+    TSEnumDeclaration *node = nullptr;
+
+    // clang-format off
+    return SizeOf<AnnotationAllowed<TypedStatement>>() +
+        sizeof(node->scope_) +
+        sizeof(node->key_) +
+        sizeof(node->members_) +
+        sizeof(node->internalName_) +
+        sizeof(node->boxedClass_) +
+        sizeof(node->typeAnnotation_) +
+        Align(sizeof(node->isConst_));
     // clang-format on
 }
 

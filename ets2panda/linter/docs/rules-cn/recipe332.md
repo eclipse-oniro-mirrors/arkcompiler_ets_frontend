@@ -1,8 +1,8 @@
 ### ArkTS1.2访问js属性
 
-**规则：** arkts-interop-js2s-access-js-prop
+**规则：** `arkts-interop-js2s-access-js-prop`
 
-**级别：** error
+ArkTS1.2使用ESValue接口访问js属性。
 
 **ArkTS1.1**
 ```typescript

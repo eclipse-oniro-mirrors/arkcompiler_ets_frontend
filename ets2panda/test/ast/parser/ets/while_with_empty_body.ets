@@ -15,5 +15,6 @@
 
 while (null) export function foo() {}
 
-/* @@? 16:14 Error SyntaxError: Unexpected token 'export'. */
-/* @@? 16:14 Error SyntaxError: Missing body in while statement */
+
+/* @@? 16:14 Error Syntax error ESY0227: Unexpected token 'export'. */
+/* @@? 16:14 Error Syntax error ESY0300: Missing body in while statement */

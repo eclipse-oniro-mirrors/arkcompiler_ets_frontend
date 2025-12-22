@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,5 +26,6 @@ interface B extends A {
 var a: A | B;
 a.a;
 a.b;
-a./* @@ label */d;
-/* @@@ label Error TypeError: Property d does not exist on this type.  */
+a.d;
+
+/* @@? 29:3 Error Semantic error ESE0000: Property d does not exist on this type. */

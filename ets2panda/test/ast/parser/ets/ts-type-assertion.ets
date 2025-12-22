@@ -20,9 +20,10 @@ const c = <t> foo;
 const d = (<t>foo);
 const e = <t>(foo);
 const f = <t><t>foo;
-/* @@? 18:11 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 19:11 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 20:12 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 21:11 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 22:11 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
-/* @@? 22:14 Error SyntaxError: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+
+/* @@? 18:11 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 19:11 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 20:12 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 21:11 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 22:11 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */
+/* @@? 22:14 Error Syntax error ESY178094: Type cast syntax '<type>' is not supported, please use 'as' keyword instead */

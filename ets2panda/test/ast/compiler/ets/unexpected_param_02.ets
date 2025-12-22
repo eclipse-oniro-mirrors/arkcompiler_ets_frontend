@@ -15,4 +15,4 @@
 
 function foo(a?){}
 
-/* @@? 16:16 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:16 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

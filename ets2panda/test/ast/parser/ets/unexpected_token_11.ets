@@ -15,4 +15,5 @@
 
 do {} /* @@ label */whi (true)
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'while'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected 'while'. */

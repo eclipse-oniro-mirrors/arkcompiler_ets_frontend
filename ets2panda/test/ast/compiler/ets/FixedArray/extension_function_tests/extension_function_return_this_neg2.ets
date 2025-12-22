@@ -20,6 +20,7 @@ function f1(this : B): FixedArray<this> {
     return this;
 }
 
-/* @@? 19:35 Error SyntaxError: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
-/* @@? 19:35 Error TypeError: A 'this' cannot be used as type of array. */
-/* @@? 20:12 Error TypeError: Type 'B' is not compatible with the enclosing method's return type 'FixedArray<ETSGLOBAL>' */
+
+/* @@? 19:35 Error Syntax error ESY0044: A 'this' type is available only as return type in a non-static method of a class or struct and extension functions. */
+/* @@? 19:35 Error Semantic error ESE0283: A 'this' cannot be used as type of array. */
+/* @@? 20:12 Error Semantic error ESE0091: Type 'B' is not compatible with the enclosing method's return type 'FixedArray<ETSGLOBAL>' */

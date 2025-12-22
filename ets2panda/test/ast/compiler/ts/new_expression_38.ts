@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,4 +17,5 @@
 var foo: { new(a: number, b: bigint): any ;};
 var a = /* @@ label */new foo("foo");
 
-/* @@@ label Error TypeError: Expected 2 arguments, but got 1.  */
+
+/* @@@ label Error Semantic error ESE0000: Expected 2 arguments, but got 1. */

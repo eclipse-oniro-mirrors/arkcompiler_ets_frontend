@@ -19,8 +19,10 @@ function assert_o(v: Object | null | undefined) { arktest.assertTrue(v !== null 
 function assert_npe(f: () => void) {
     try {
         f();
-    } catch (e: NullPointerError) {
-        return;
+    } catch (e) {
+        if (e instanceof NullPointerError) {
+            return;
+        }
     }
     arktest.assertTrue(false,  "npe was not thrown")
 }

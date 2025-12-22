@@ -4,6 +4,10 @@
       {
         "prefixDisplayParts": [
           {
+            "text": "add",
+            "kind": "functionName"
+          },
+          {
             "text": "(",
             "kind": "punctuation"
           }
@@ -14,15 +18,32 @@
             "kind": "punctuation"
           },
           {
-            "text": ":",
+            "text": " ",
+            "kind": "space"
+          },
+          {
+            "text": "=>",
             "kind": "punctuation"
           },
           {
-            "text": "void",
-            "kind": "typeName"
+            "text": " ",
+            "kind": "space"
+          },
+          {
+            "text": "number",
+            "kind": "keyword"
           }
         ],
-        "separatorDisplayParts": [],
+        "separatorDisplayParts": [
+          {
+            "text": ",",
+            "kind": "punctuation"
+          },
+          {
+            "text": " ",
+            "kind": "space"
+          }
+        ],
         "parameters": [
           {
             "name": "a",
@@ -30,19 +51,19 @@
             "displayParts": [
               {
                 "text": "a",
-                "kind": "paramName"
+                "kind": "parameterNmae"
               },
               {
                 "text": ":",
                 "kind": "punctuation"
               },
               {
-                "text": "Double",
-                "kind": "typeName"
+                "text": " ",
+                "kind": "space"
               },
               {
-                "text": ",",
-                "kind": "punctuation"
+                "text": "number",
+                "kind": "keyword"
               }
             ]
           },
@@ -52,15 +73,19 @@
             "displayParts": [
               {
                 "text": "b",
-                "kind": "paramName"
+                "kind": "parameterNmae"
               },
               {
                 "text": ":",
                 "kind": "punctuation"
               },
               {
-                "text": "String",
-                "kind": "typeName"
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "number",
+                "kind": "keyword"
               }
             ]
           }
@@ -69,385 +94,11 @@
       }
     ],
     "applicableSpan": {
-      "start": 609,
-      "length": 65
-    },
-    "selectedItemIndex": 0,
-    "argumentIndex": 1,
-    "argumentCount": 1
-  },
-  "2": {
-    "items": [
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "void",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "a",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "a",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "Double",
-                "kind": "typeName"
-              },
-              {
-                "text": ",",
-                "kind": "punctuation"
-              }
-            ]
-          },
-          {
-            "name": "b",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "b",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "String",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      }
-    ],
-    "applicableSpan": {
-      "start": 609,
-      "length": 65
-    },
-    "selectedItemIndex": 0,
-    "argumentIndex": 1,
-    "argumentCount": 1
-  },
-  "3": {
-    "items": [
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "void",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "a",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "a",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "Double",
-                "kind": "typeName"
-              },
-              {
-                "text": ",",
-                "kind": "punctuation"
-              }
-            ]
-          },
-          {
-            "name": "b",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "b",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "String",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      },
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "void",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "a",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "a",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "Double",
-                "kind": "typeName"
-              },
-              {
-                "text": ",",
-                "kind": "punctuation"
-              }
-            ]
-          },
-          {
-            "name": "b",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "b",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "String",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      }
-    ],
-    "applicableSpan": {
-      "start": 675,
-      "length": 15
-    },
-    "selectedItemIndex": 0,
-    "argumentIndex": 1,
-    "argumentCount": 0
-  },
-  "4": {
-    "items": [
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "Double",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "item",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "item",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "Double",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      }
-    ],
-    "applicableSpan": {
-      "start": 691,
-      "length": 11
+      "start": 678,
+      "length": 0
     },
     "selectedItemIndex": 0,
     "argumentIndex": 0,
-    "argumentCount": 1
-  },
-  "5": {
-    "items": [
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "Double|undefined",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "key",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "key",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "String",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      },
-      {
-        "prefixDisplayParts": [
-          {
-            "text": "(",
-            "kind": "punctuation"
-          }
-        ],
-        "suffixDisplayParts": [
-          {
-            "text": ")",
-            "kind": "punctuation"
-          },
-          {
-            "text": ":",
-            "kind": "punctuation"
-          },
-          {
-            "text": "Double|undefined",
-            "kind": "typeName"
-          }
-        ],
-        "separatorDisplayParts": [],
-        "parameters": [
-          {
-            "name": "key",
-            "documentation": [],
-            "displayParts": [
-              {
-                "text": "key",
-                "kind": "paramName"
-              },
-              {
-                "text": ":",
-                "kind": "punctuation"
-              },
-              {
-                "text": "String",
-                "kind": "typeName"
-              }
-            ]
-          }
-        ],
-        "documentation": []
-      }
-    ],
-    "applicableSpan": {
-      "start": 767,
-      "length": 12
-    },
-    "selectedItemIndex": 0,
-    "argumentIndex": 0,
-    "argumentCount": 1
+    "argumentCount": 2
   }
 }

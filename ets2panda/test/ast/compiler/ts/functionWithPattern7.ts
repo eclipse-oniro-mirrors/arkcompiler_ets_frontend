@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,4 +20,5 @@ function foo({ a, b: { t = "foo" } = { t: 3 }, d: [e = {}, f = 6] = [3, ["foo", 
 
 foo({ a: false, b: { t: 7 }, d: [2, /* @@ label */5n] });
 
-/* @@@ label Error TypeError: Type 'bigint' is not assignable to type 'string[]'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type 'bigint' is not assignable to type 'string[]'. */

@@ -29,4 +29,5 @@ class A implements I /* @@ label */{
     }
 }
 
-/* @@@ label Error TypeError: class A can not implements interface I which is from dynamic declaration file.  */
+
+/* @@@ label Error Semantic error ESE24143: class A can not implements interface I which is from dynamic declaration file. */

@@ -202,7 +202,7 @@ public:
     [[nodiscard]] bool IsPrivateReference() const noexcept;
 
     [[nodiscard]] MemberExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
-    std::optional<std::size_t> GetTupleIndexValue() const;
+    std::optional<std::size_t> GetTupleIndexValue(const checker::ETSChecker *checker) const;
     checker::Type *GetTypeOfTupleElement(checker::ETSChecker *checker, checker::Type *baseType);
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -251,7 +251,6 @@ private:
     checker::Type *TraverseUnionMember(checker::ETSChecker *checker, checker::ETSUnionType *unionType);
 
     bool CheckArrayIndexValue(checker::ETSChecker *checker) const;
-    checker::Type *HandleComputedInGradualType(checker::ETSChecker *checker, checker::Type *baseType);
     checker::Type *CheckIndexAccessMethod(checker::ETSChecker *checker);
     checker::Type *ResolveReturnTypeFromSignature(checker::ETSChecker *checker, bool isSetter,
                                                   ArenaVector<ir::Expression *> &arguments,

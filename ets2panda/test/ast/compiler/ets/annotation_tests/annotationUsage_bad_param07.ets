@@ -21,5 +21,6 @@
 @MyAnno({testProperty1: /* @@ label */1, testProperty2: /* @@ label1 */""})
 function foo(){}
 
-/* @@@ label Error TypeError: Type 'Int' cannot be assigned to type 'String'  */
-/* @@@ label1 Error TypeError: Type '""' cannot be assigned to type 'Double'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@@ label1 Error Semantic error ESE0318: Type '""' cannot be assigned to type 'Double' */

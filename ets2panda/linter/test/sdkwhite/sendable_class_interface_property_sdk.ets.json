@@ -13,16 +13,5 @@
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
-    "result": [
-        {
-            "line": 17,
-            "column": 34,
-            "endLine": 17,
-            "endColumn": 72,
-            "problem": "SdkTypeQuery",
-            "suggest": "",
-            "rule": "Using typeof as a type is not allowed in this API (sdk-type-query)",
-            "severity": "ERROR"
-        }
-    ]
+    "result": []
 }

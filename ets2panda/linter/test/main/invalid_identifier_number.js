@@ -14,3 +14,15 @@
  */
 
 export const number:number = 1;
+
+export const value1:number = 0;
+
+const value2 = 1;
+export default value2;
+
+export const value3:number = 3;
+
+const abstract = 1;
+export default abstract;
+
+export const class:number = 2; 

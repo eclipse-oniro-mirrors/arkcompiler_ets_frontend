@@ -960,11 +960,11 @@ export class CfgBuilder {
         this.exit.lasts = new Set([s]);
     }
 
-    private getParamPropertyNodes(constructorParams: ts.NodeArray<ParameterDeclaration>): ts.Node[] {
+    private getParamNodeWithInitializerOrModifier(paramNodes: ts.NodeArray<ParameterDeclaration>): ts.Node[] {
         let stmts: ts.Node[] = [];
-        constructorParams.forEach(parameter => {
-            if (parameter.modifiers !== undefined) {
-                stmts.push(parameter);
+        paramNodes.forEach(param => {
+            if (param.initializer !== undefined || param.modifiers !== undefined) {
+                stmts.push(param);
             }
         });
         return stmts;
@@ -998,9 +998,9 @@ export class CfgBuilder {
         } else if (ts.isModuleDeclaration(this.astRoot) && ts.isModuleBlock(this.astRoot.body!)) {
             stmts = [...this.astRoot.body.statements];
         }
-        // For constructor, add parameter property node to stmts which can be used when build body
-        if (ts.isConstructorDeclaration(this.astRoot)) {
-            stmts = [...this.getParamPropertyNodes(this.astRoot.parameters), ...stmts];
+        // Add param node with initializer or modifier to stmts which can be used when build body to create class field and initializer stmts.
+        if (!this.emptyBody && ts.isFunctionLike(this.astRoot)) {
+            stmts = [...this.getParamNodeWithInitializerOrModifier(this.astRoot.parameters), ...stmts];
         }
         if (!ModelUtils.isArkUIBuilderMethod(this.declaringMethod)) {
             this.walkAST(this.entry, this.exit, stmts);
@@ -1127,6 +1127,8 @@ export class CfgBuilder {
         const trapBuilder = new TrapBuilder();
         const traps = trapBuilder.buildTraps(blockBuilderToCfgBlock, blockBuildersBeforeTry, arkIRTransformer, basicBlockSet);
 
+        this.removeEmptyBlocks(basicBlockSet);
+
         const cfg = this.createCfg(blockBuilderToCfgBlock, basicBlockSet);
         return {
             cfg,
@@ -1135,6 +1137,51 @@ export class CfgBuilder {
             aliasTypeMap: arkIRTransformer.getAliasTypeMap(),
             traps,
         };
+    }
+
+    private removeEmptyBlocks(basicBlockSet: Set<BasicBlock>): void {
+        for (const bb of basicBlockSet) {
+            if (bb.getStmts().length > 0) {
+                continue;
+            }
+            const predecessors = bb.getPredecessors();
+            const successors = bb.getSuccessors();
+
+            // the empty basic block with neither predecessor nor successor could be deleted directly
+            if (predecessors.length === 0 && successors.length === 0) {
+                basicBlockSet.delete(bb);
+                continue;
+            }
+
+            // the empty basic block with predecessor but no successor could be deleted directly and remove its ID from the predecessor blocks
+            if (predecessors.length > 0 && successors.length === 0) {
+                for (const predecessor of predecessors) {
+                    predecessor.removeSuccessorBlock(bb);
+                }
+                basicBlockSet.delete(bb);
+                continue;
+            }
+
+            // the empty basic block with successor but no predecessor could be deleted directly and remove its ID from the successor blocks
+            if (predecessors.length === 0 && successors.length > 0) {
+                for (const successor of successors) {
+                    successor.removePredecessorBlock(bb);
+                }
+                basicBlockSet.delete(bb);
+                continue;
+            }
+
+            // the rest case is the empty basic block both with predecessor and successor, should relink its predecessor and successor
+            for (const predecessor of predecessors) {
+                predecessor.removeSuccessorBlock(bb);
+                successors.forEach(successor => predecessor.addSuccessorBlock(successor));
+            }
+            for (const successor of successors) {
+                successor.removePredecessorBlock(bb);
+                predecessors.forEach(predecessor => successor.addPredecessorBlock(predecessor));
+            }
+            basicBlockSet.delete(bb);
+        }
     }
 
     private initializeBuild(): {

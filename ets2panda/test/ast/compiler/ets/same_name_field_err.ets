@@ -23,4 +23,5 @@ function main(): void {
     arktest.assertEQ(SameName.a, 32);
 }
 
-/* @@? 19:12 Error TypeError: Variable 'a' has already been declared. */
+
+/* @@? 19:12 Error Semantic error ESE0351: Variable 'a' has already been declared. */

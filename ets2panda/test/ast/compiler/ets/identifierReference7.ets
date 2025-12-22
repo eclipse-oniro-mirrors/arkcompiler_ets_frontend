@@ -27,5 +27,6 @@ class A {
   }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token. A constructor, method, accessor, or property was expected.  */
-/* @@? 25:7 Error TypeError: Bad operand type, the type of the operand must be numeric type. */
+
+/* @@@ label Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 25:7 Error Semantic error ESE0066: Bad operand type, the type of the operand must be numeric type. */

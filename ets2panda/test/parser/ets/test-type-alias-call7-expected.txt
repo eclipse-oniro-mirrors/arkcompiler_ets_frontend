@@ -104,8 +104,8 @@
           "program": "test-type-alias-call7.ets"
         },
         "end": {
-          "line": 17,
-          "column": 7,
+          "line": 16,
+          "column": 32,
           "program": "test-type-alias-call7.ets"
         }
       }

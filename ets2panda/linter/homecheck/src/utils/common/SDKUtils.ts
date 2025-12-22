@@ -28,7 +28,7 @@ export class SdkUtils {
         const Ets2DirName = 'static';
         const ets1OhosSdk = sdkMap.get(this.OhosSdkName);
         const ets1HmsSdk = sdkMap.get(this.HmsSdkName);
-        let sdks: Sdk[] = []; 
+        let sdks: Sdk[] = [];
         if (ets1OhosSdk !== undefined) {
             const sdkPath = ets1OhosSdk.path;
             if (sdkPath.includes(Ets1DirName)) {

@@ -18,4 +18,5 @@ class Foo {
     a /* @@ label */b;
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected ';'.  */
+
+/* @@@ label Error Syntax error ESY0228: Unexpected token, expected ';'. */

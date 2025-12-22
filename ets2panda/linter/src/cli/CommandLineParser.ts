@@ -64,7 +64,7 @@ const getFiles = (dir: string): string[] => {
     } else {
       const extension = path.extname(name);
       if (extension === TS_EXT || extension === TSX_EXT || extension === ETS_EXT || extension === JS_EXT) {
-        resultFiles.push(name);
+        resultFiles.push(path.normalize(name));
       }
     }
   }

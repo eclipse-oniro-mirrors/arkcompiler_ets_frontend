@@ -23,4 +23,4 @@ function main() {
     }
 }
 
-/* @@@ label Error TypeError: Case duplicate  */
+

@@ -18,4 +18,5 @@ class A {}
 function foo(this: A, f: (this: A) => void) {}
 /* @@ label1 */function foo(this: A, f: (this: B) => void) {}
 
-/* @@@ label1 Error TypeError: Function foo is already declared.  */
+
+/* @@@ label1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */

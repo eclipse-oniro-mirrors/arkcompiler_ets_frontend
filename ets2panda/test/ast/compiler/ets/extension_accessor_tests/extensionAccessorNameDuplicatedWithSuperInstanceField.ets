@@ -26,5 +26,6 @@ set name(this: B, n: string) /* @@ label2 */{
     this.name_ = n;
 }
 
-/* @@@ label1 Error TypeError: The extension accessor or extension function 'name' has the same name with field of class A  */
-/* @@@ label2 Error TypeError: The extension accessor or extension function 'name' has the same name with field of class A  */
+
+/* @@@ label1 Error Semantic error ESE0079: The extension accessor or extension function 'name' has the same name with field of class A */
+/* @@@ label2 Error Semantic error ESE0079: The extension accessor or extension function 'name' has the same name with field of class A */

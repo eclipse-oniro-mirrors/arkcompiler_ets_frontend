@@ -31,4 +31,7 @@ function main(): void {
     }
 }
 
-/* @@@ label Error SyntaxError: Unexpected token 'break', expected ':'  */
+
+/* @@? 23:18 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int' */
+/* @@? 25:18 Error Semantic error ESE0262: Switch case type 'double' is not comparable to discriminant type 'int' */
+/* @@@ label Error Syntax error ESY0230: Expected ':', got 'break'. */

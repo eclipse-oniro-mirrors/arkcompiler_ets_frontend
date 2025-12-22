@@ -16,4 +16,5 @@
 export default function TestFunc(): void {}
 export default /* @@ label */function TestFuncToo(): void {}
 
-/* @@@ label Error TypeError: Only one default export is allowed in a module  */
+
+/* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */

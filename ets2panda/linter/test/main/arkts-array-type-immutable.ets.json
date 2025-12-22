@@ -36,16 +36,6 @@
         },
         {
             "line": 134,
-            "column": 17,
-            "endLine": 134,
-            "endColumn": 99,
-            "problem": "GenericCallNoTypeArgs",
-            "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 134,
             "column": 44,
             "endLine": 134,
             "endColumn": 45,
@@ -62,16 +52,6 @@
             "problem": "LimitedStdLibApi",
             "suggest": "",
             "rule": "Usage of standard library is restricted (arkts-limited-stdlib)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 151,
-            "column": 1,
-            "endLine": 151,
-            "endColumn": 54,
-            "problem": "InteropCallReflect",
-            "suggest": "",
-            "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
             "severity": "ERROR"
         }
     ]

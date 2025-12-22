@@ -14,7 +14,6 @@
  */
 
 #include "register_code_fix/forgotten_this_property_access.h"
-#include <iostream>
 #include "code_fix_provider.h"
 #include "generated/code_fix_register.h"
 
@@ -24,7 +23,7 @@ using codefixes::FORGOTTEN_THIS_PROPERTY_ACCESS;
 ForgottenThisPropertyAccess::ForgottenThisPropertyAccess()
 {
     auto errorCodes = FORGOTTEN_THIS_PROPERTY_ACCESS.GetSupportedCodeNumbers();
-    SetErrorCodes({errorCodes.begin(), errorCodes.end()});  // change this to the error code you want to handle
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
     SetFixIds({FORGOTTEN_THIS_PROPERTY_ACCESS.GetFixId().data()});
 }
 
@@ -42,52 +41,48 @@ Info GetInfoThisProp(es2panda_Context *context, size_t offset)
     return info;
 }
 
-void DoChanges(es2panda_Context *context, ChangeTracker tracker)
+void ForgottenThisPropertyAccess::DoChanges(ChangeTracker &tracker, es2panda_Context *context, size_t pos)
 {
-    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    auto info = GetInfoThisProp(context, pos);
+    auto node = info.GetNode();
+    if (node == nullptr) {
+        return;
+    }
+
     const auto impl = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
-
-    const auto &diagnostics =
-        ctx->diagnosticEngine->GetDiagnosticStorage(ark::es2panda::util::DiagnosticType::SEMANTIC);
-
-    for (const auto &diagnostic : diagnostics) {
-        auto index = ark::es2panda::lexer::LineIndex(ctx->parserProgram->SourceCode());
-        auto offset = index.GetOffset(
-            ark::es2panda::lexer::SourceLocation(diagnostic->Line(), diagnostic->Offset(), ctx->parserProgram));
-        auto node = ark::es2panda::lsp::GetTouchingToken(context, offset, false);
-        es2panda_AstNode *thisExpr = impl->CreateThisExpression(context);
-        es2panda_AstNode *memberExpr =
-            impl->CreateMemberExpression(context, thisExpr, reinterpret_cast<es2panda_AstNode *>(node),
-                                         MEMBER_EXPRESSION_KIND_PROPERTY_ACCESS, false, false);
-        impl->AstNodeSetParent(context, thisExpr, memberExpr);
-        impl->AstNodeSetParent(context, reinterpret_cast<es2panda_AstNode *>(node), memberExpr);
-        auto memNode = reinterpret_cast<ark::es2panda::ir::AstNode *>(memberExpr);
-        if (memNode == nullptr) {
-            continue;
-        }
+    es2panda_AstNode *thisExpr = impl->CreateThisExpression(context);
+    es2panda_AstNode *memberExpr =
+        impl->CreateMemberExpression(context, thisExpr, reinterpret_cast<es2panda_AstNode *>(node),
+                                     MEMBER_EXPRESSION_KIND_PROPERTY_ACCESS, false, false);
+    impl->AstNodeSetParent(context, thisExpr, memberExpr);
+    impl->AstNodeSetParent(context, reinterpret_cast<es2panda_AstNode *>(node), memberExpr);
+    auto memNode = reinterpret_cast<ark::es2panda::ir::AstNode *>(memberExpr);
+    if (memNode != nullptr) {
         tracker.ReplaceNode(context, node, memNode, {});
     }
+}
+
+std::vector<FileTextChanges> ForgottenThisPropertyAccess::GetCodeActionsToFix(const CodeFixContext &context)
+{
+    TextChangesContext textChangesContext = {context.host, context.formatContext, context.preferences};
+    auto fileTextChanges = ChangeTracker::With(
+        textChangesContext, [&](ChangeTracker &tracker) { DoChanges(tracker, context.context, context.span.start); });
+    return fileTextChanges;
 }
 
 std::vector<CodeFixAction> ForgottenThisPropertyAccess::GetCodeActions(const CodeFixContext &context)
 {
     std::vector<CodeFixAction> returnedActions;
-
-    const auto info = GetInfoThisProp(context.context, context.span.start);
-    if (info.GetNode() == nullptr) {
-        return {};
+    auto changes = GetCodeActionsToFix(context);
+    if (!changes.empty()) {
+        CodeFixAction action;
+        action.fixName = FORGOTTEN_THIS_PROPERTY_ACCESS.GetFixId().data();
+        action.description = "Add 'this.' to property access";
+        action.fixId = FORGOTTEN_THIS_PROPERTY_ACCESS.GetFixId().data();
+        action.fixAllDescription = "Add 'this.' to all property accesses in the file";
+        action.changes.insert(action.changes.end(), changes.begin(), changes.end());
+        returnedActions.push_back(action);
     }
-    TextChangesContext textChangesContext {context.host, context.formatContext, context.preferences};
-    const auto changes =
-        ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) { DoChanges(context.context, tracker); });
-    std::vector<CodeFixAction> actions;
-    CodeFixAction action;
-    action.fixName = FORGOTTEN_THIS_PROPERTY_ACCESS.GetFixId().data();
-    action.description = "Add 'this.' to property access";
-    action.fixId = FORGOTTEN_THIS_PROPERTY_ACCESS.GetFixId().data();
-    action.changes.insert(action.changes.end(), changes.begin(), changes.end());
-    action.fixAllDescription = "Add 'this.' to all property accesses in the file";
-    returnedActions.push_back(action);
     return returnedActions;
 }
 
@@ -98,7 +93,7 @@ CombinedCodeActions ForgottenThisPropertyAccess::GetAllCodeActions(const CodeFix
                                              [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
                                                  auto info = GetInfoThisProp(codeFixAll.context, diag.GetStart());
                                                  if (info.GetNode() != nullptr) {
-                                                     DoChanges(codeFixAll.context, tracker);
+                                                     DoChanges(tracker, codeFixAll.context, diag.GetStart());
                                                  }
                                              });
 

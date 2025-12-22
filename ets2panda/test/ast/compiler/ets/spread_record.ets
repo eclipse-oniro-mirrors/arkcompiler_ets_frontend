@@ -19,8 +19,7 @@ let r2: Record<string, string> = { 'two': '2' }
 let r3: Record<string, string> = { ...r1, ...r2 }
 console.log(...r3)                                 // crash - Issue #26773
 
-
-/* @@? 17:1 Error TypeError: No matching call signature for log(...r1) */
-/* @@? 17:13 Error TypeError: Spread expression can be applied only to array or tuple type, but 'Record<String,String>' is provided */
-/* @@? 20:1 Error TypeError: No matching call signature for log(...r3) */
-/* @@? 20:13 Error TypeError: Spread expression can be applied only to array or tuple type, but 'Record<String,String>' is provided */
+/* @@? 17:1 Error Semantic error ESE0127: No matching call signature for log(...r1) */
+/* @@? 17:13 Error Semantic error ESE0049: Spread expression can be applied only to array or tuple type, but 'Record<String,String>' is provided */
+/* @@? 20:1 Error Semantic error ESE0127: No matching call signature for log(...r3) */
+/* @@? 20:13 Error Semantic error ESE0049: Spread expression can be applied only to array or tuple type, but 'Record<String,String>' is provided */

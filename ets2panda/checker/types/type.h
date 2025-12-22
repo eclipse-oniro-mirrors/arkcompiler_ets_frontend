@@ -33,7 +33,6 @@ class ETSAsyncFuncReturnType;
 class ETSChecker;
 class ETSTypeParameter;
 class ETSEnumType;
-class GradualType;
 
 // CC-OFFNXT(G.PRE.02) name part
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
@@ -105,6 +104,7 @@ public:
     bool IsETSBigIntType() const;
     bool IsETSArrowType() const;
     bool IsETSMethodType() const;
+    bool IsETSRelaxedAnyType() const;
     bool IsETSPrimitiveType() const;
     bool IsETSReferenceType() const;
     bool IsETSAsyncFuncReturnType() const;
@@ -177,8 +177,6 @@ public:
         return IsETSArrayType() || IsETSResizableArrayType() || IsETSReadonlyArrayType() || IsETSTupleType();
     }
 
-    Type *MaybeBaseTypeOfGradualType();
-
     TypeFlag TypeFlags() const
     {
         return typeFlags_;
@@ -223,6 +221,13 @@ public:
     {
         std::stringstream ss;
         ToAssemblerType(ss);
+        return util::UString(ss.str(), allocator).View();
+    }
+
+    util::StringView ToAssemblerTypeWithRankView(ArenaAllocator *allocator) const
+    {
+        std::stringstream ss;
+        ToAssemblerTypeWithRank(ss);
         return util::UString(ss.str(), allocator).View();
     }
 

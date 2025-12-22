@@ -46,5 +46,6 @@ function price(this:B) /* @@label2 */{
 function xxx(this:A, id: int) {
 }
 
-/* @@@ label1 Error TypeError: The extension function 'sweetness1' has the same name with public method in class B  */
-/* @@@ label2 Error TypeError: The extension function 'price' has the same name with public method in class B  */
+
+/* @@@ label1 Error Semantic error ESE0081: The extension function 'sweetness1' has the same name with public method in class B */
+/* @@@ label2 Error Semantic error ESE0081: The extension function 'price' has the same name with public method in class B */

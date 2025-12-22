@@ -17,7 +17,7 @@
 #define ES2PANDA_UTIL_INCLUDE_CLASS_DEFINITION_BUILDER
 
 #include "ir/base/classDefinition.h"
-#include "mem/arena_allocator.h"
+#include "libarkbase/mem/arena_allocator.h"
 #include "astBuilder.h"
 
 namespace ark::es2panda::ir {

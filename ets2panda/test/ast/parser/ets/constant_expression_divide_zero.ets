@@ -25,5 +25,6 @@ enum Color {
 }
 
 
-/* @@? 20:14 Error SyntaxError: Division by zero is not allowed. */
-/* @@? 24:11 Error SyntaxError: Division by zero is not allowed. */
+
+/* @@? 20:14 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */
+/* @@? 24:11 Error Syntax error ESY0273: Division by zero is not allowed in integer arithmetic. */

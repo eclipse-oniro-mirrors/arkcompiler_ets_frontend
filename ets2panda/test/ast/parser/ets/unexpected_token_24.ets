@@ -27,6 +27,7 @@ function main(): void {
     }
 }
 
-/* @@? 19:5 Error TypeError: Unresolved reference with_param */
-/* @@? 20:31 Error SyntaxError: Expected '(', got 'identification literal'. */
-/* @@? 21:28 Error SyntaxError: Expected '{', got 'case'. */
+
+/* @@? 19:5 Error Semantic error ESE0143: Unresolved reference with_param */
+/* @@@ label1 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */
+/* @@@ label2 Error Syntax error ESY0230: Expected '{', got 'case'. */

@@ -2,9 +2,19 @@
 
 **规则：** `arkts-no-arguments-obj`
 
-**级别：** error
+**规则解释：**
 
-ArkTS1.2对函数调用进行严格的参数检查，参数个数不符时编译报错，因此不需要在函数体内通过arguments机制获取参数。
+ArkTS1.2不支持通过arguments对象获取参数。
+
+**变更原因：**
+
+ArkTS1.2对函数调用进行严格参数检查，参数个数不符时编译报错，因此无需使用arguments机制。
+ 
+**适配建议：**
+
+请使用具体形参代替arguments对象获取参数。
+
+**示例：**
 
 **ArkTS1.1**
 ```typescript
@@ -27,7 +37,7 @@ function sum() {
 }
 
 function test() {
-  console.log(arguments.callee);
+  console.log(String(arguments.callee));
 }
 ```
 

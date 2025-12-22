@@ -26,5 +26,5 @@ class Apple{
     this.y=y
   }
 }
-/* @@@ label Error TypeError: Native constructor declaration cannot have a body. */
-/* @@@ label1 Error TypeError: Native constructor declaration cannot have a body. */
+/* @@@ label Error Semantic error ESE0084: Native constructor declaration cannot have a body. */
+/* @@@ label1 Error Semantic error ESE0084: Native constructor declaration cannot have a body. */

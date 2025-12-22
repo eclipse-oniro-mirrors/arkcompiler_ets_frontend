@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,8 +25,7 @@ enum EStrNotInit {
     Str2
 }
 
-
-/* @@? 18:15 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 19:12 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 20:12 Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@? 25:9 Error SyntaxError: All items of string-type enumeration should be explicitly initialized. */
+/* @@? 18:15 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 19:12 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 20:12 Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@? 25:9 Error Syntax error ESY0276: All items of non-Integer enumeration should be explicitly initialized. */

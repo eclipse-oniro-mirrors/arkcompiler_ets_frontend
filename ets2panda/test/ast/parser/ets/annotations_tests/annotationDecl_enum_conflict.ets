@@ -16,4 +16,5 @@
 interface MyAnno {}
 enum /* @@ label */MyAnno {one, two, three}
 
-/* @@@ label Error TypeError: Variable 'MyAnno' has already been declared.  */
+
+/* @@@ label Error Semantic error ESE0351: Variable 'MyAnno' has already been declared. */

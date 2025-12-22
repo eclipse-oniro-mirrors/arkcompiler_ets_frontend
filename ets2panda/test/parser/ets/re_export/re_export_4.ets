@@ -15,3 +15,6 @@
 
 export {foo} from "./export"
 export {foo} from "./export_2"
+
+/* @@? 17:8 Error Warning: Duplicated export aliases for 'foo'. */
+/* @@? 16:8 Error TypeError: Ambiguous export 'foo' */

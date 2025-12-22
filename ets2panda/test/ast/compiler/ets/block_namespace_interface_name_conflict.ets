@@ -21,5 +21,6 @@
     }
 }
 
-/* @@? 18:5 Error SyntaxError: Illegal start of INTERFACE expression. */
-/* @@? 20:5 Error SyntaxError: Namespace is allowed only at the top level or inside a namespace. */
+
+/* @@? 18:5 Error Syntax error ESY0040: Illegal start of INTERFACE expression. */
+/* @@? 20:5 Error Syntax error ESY0134: Namespace is allowed only at the top level or inside a namespace. */

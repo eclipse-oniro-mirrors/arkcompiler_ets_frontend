@@ -16,9 +16,10 @@
 
 import {^7foo} from "."
 
-/* @@? 17:9 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 17:10 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@? 17:10 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@? 17:11 Error SyntaxError: Unexpected token, expected string literal. */
-/* @@? 17:14 Error SyntaxError: Unexpected token '}'. */
-/* @@? 17:21 Error SyntaxError: Unexpected token '.'. */
+
+/* @@? 17:9 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 17:10 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 17:10 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@? 17:11 Error Syntax error ESY0151: Unexpected token, expected string literal. */
+/* @@? 17:14 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 17:21 Error Syntax error ESY0227: Unexpected token '.'. */

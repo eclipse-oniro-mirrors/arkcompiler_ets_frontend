@@ -14,8 +14,8 @@
  */
 
 interface I {
-    /* @@ label */native foo/* @@ label1 */()
+    /* @@ label */native foo()
 }
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'private' or identifier.  */
-/* @@@ label1 Error SyntaxError: Private interface methods must have body.  */
+
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'native'. */

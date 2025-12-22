@@ -19,7 +19,7 @@
 #include "checker/ETSchecker.h"
 #include "compiler/core/ETSGen.h"
 #include "compiler/core/pandagen.h"
-#include "utils/arena_containers.h"
+#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::ir {
 
@@ -173,7 +173,7 @@ VariableDeclaration::VariableDeclaration([[maybe_unused]] Tag const tag, Variabl
     }
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }

@@ -20,5 +20,6 @@ class MyAnno {
 @/* @@ label */MyAnno()
 class B{}
 
-/* @@@ label Error TypeError: 'MyAnno' is not an annotation.  */
 
+
+/* @@@ label Error Semantic error ESE0067: 'MyAnno' is not an annotation. */

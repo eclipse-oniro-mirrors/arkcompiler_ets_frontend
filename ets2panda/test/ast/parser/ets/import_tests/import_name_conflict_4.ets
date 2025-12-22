@@ -18,4 +18,5 @@ import {foo} from /* @@ label */"import_tests/packages/subpackage-1";
 let foo: int = 1;
 
 //Throw error: Variable 'foo' is already defined.
-/* @@@ label Error TypeError: Variable 'foo' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Variable 'foo' is already defined. */

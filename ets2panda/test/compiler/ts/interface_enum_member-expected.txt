@@ -136,8 +136,8 @@
                     "program": "interface_enum_member.ts"
                   },
                   "end": {
-                    "line": 23,
-                    "column": 2,
+                    "line": 22,
+                    "column": 11,
                     "program": "interface_enum_member.ts"
                   }
                 }
@@ -149,8 +149,8 @@
                   "program": "interface_enum_member.ts"
                 },
                 "end": {
-                  "line": 23,
-                  "column": 2,
+                  "line": 22,
+                  "column": 11,
                   "program": "interface_enum_member.ts"
                 }
               }

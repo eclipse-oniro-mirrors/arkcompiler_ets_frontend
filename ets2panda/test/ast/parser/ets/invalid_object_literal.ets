@@ -36,6 +36,7 @@ let a: A = /* @@ label1 */{
     }
 }
 
-/* @@@ label1 Error TypeError: The object literal properties must be key-value pairs */
-/* @@@ label2 Error SyntaxError: Object pattern can't contain methods. */
-/* @@@ label3 Error SyntaxError: Object pattern can't contain methods. */
+
+/* @@@ label1 Error Semantic error ESE0064: The object literal properties must be key-value pairs */
+/* @@@ label2 Error Syntax error ESY0062: Object pattern can't contain methods. */
+/* @@@ label3 Error Syntax error ESY0062: Object pattern can't contain methods. */

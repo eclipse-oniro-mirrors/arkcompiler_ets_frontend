@@ -16,4 +16,5 @@
 interface Base {}
 let b = /* @@ label */new Base
 
-/* @@@ label Error TypeError: Base is an interface therefore cannot be instantiated. */
+
+/* @@@ label Error Semantic error ESE0275: Base is an interface therefore cannot be instantiated. */

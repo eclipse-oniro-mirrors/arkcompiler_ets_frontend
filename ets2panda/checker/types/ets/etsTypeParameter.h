@@ -62,6 +62,16 @@ public:
         return constraint_;
     }
 
+    void SetAllowUnsafeVariance(const bool value)
+    {
+        allowUnsafeVariance_ = value;
+    }
+
+    [[nodiscard]] bool DoAllowUnsafeVariance()
+    {
+        return allowUnsafeVariance_;
+    }
+
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
@@ -81,6 +91,7 @@ private:
     ir::TSTypeParameter *declNode_ {};
     Type *default_ {};
     Type *constraint_ {};
+    bool allowUnsafeVariance_ = false;
 };
 }  // namespace ark::es2panda::checker
 

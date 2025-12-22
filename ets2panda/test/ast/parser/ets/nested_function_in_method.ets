@@ -28,5 +28,6 @@ function main()
     a.foo()
 }
 
-/* @@@ label Error SyntaxError: Nested functions are not allowed.  */
-/* @@@ label1 Error SyntaxError: Expected '{', got '}'.  */
+
+/* @@@ label Error Syntax error ESY0135: Nested functions are not allowed. */
+/* @@@ label1 Error Syntax error ESY0230: Expected '{', got '}'. */

@@ -26,5 +26,6 @@ class B{
     y : string
 }
 
-/* @@? 23:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined. */
-/* @@? 25:6 Error TypeError: The number of arguments provided for the annotation exceeds the number of fields defined. */
+
+/* @@? 23:6 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */
+/* @@? 25:6 Error Semantic error ESE0068: The number of arguments provided for the annotation exceeds the number of fields defined. */

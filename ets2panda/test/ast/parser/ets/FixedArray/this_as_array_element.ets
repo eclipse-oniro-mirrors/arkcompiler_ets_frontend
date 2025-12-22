@@ -14,5 +14,8 @@
  */
 
 class Link {
-    a: FixedArray<Link> = [this];
+    a: FixedArray<Link>;
+    constructor() {
+        this.a = [this];
+    }
 }

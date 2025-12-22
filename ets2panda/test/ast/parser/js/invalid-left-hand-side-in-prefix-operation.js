@@ -15,5 +15,5 @@
 
 
 ++!a
-/* @@@ label Error SyntaxError: Invalid left-hand side in prefix operation.  */
-/* @@ label */
+
+/* @@ label *//* @@? 19:103 Error Syntax error ESY0071: Invalid left-hand side in prefix operation. */

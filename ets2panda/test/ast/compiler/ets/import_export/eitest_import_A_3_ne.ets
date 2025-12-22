@@ -19,6 +19,6 @@ function main(){
     let a :A = new A()
 }
 
-/* @@? 16:15 Error TypeError: Cannot find default imported element in the target */
-/* @@? 19:12 Error TypeError: Cannot find type 'A'. */
-/* @@? 19:20 Error TypeError: Cannot find type 'A'. */
+/* @@? 16:15 Error Semantic error ESE0358: Cannot find default imported element in the target */
+/* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'A'. */

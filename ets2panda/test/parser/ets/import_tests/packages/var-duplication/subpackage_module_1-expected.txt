@@ -76,7 +76,7 @@
           },
           "end": {
             "line": 16,
-            "column": 44,
+            "column": 43,
             "program": "subpackage_module_1.ets"
           }
         }
@@ -325,4 +325,4 @@
     }
   }
 }
-TypeError: Variable 'a' has already been declared. [subpackage_module_2.ets:19:12]
+[subpackage_module_2.ets:19:12] Semantic error ESE0351: Variable 'a' has already been declared.

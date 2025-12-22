@@ -17,4 +17,5 @@ import * as B from "./type"
 
 let aa:B./* @@ label */A;
 
-/* @@@ label Error TypeError: 'A' type does not exist.  */
+
+/* @@@ label Error Semantic error ESE0070: 'A' type does not exist. */

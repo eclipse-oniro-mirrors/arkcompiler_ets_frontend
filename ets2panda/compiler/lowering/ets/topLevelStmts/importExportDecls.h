@@ -45,6 +45,7 @@ public:
      * @param global_stmts program global statements
      */
     GlobalClassHandler::ModuleDependencies HandleGlobalStmts(ArenaVector<parser::Program *> &programs);
+    void AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec);
     void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements,
                                   GlobalClassHandler::ModuleDependencies &moduleDependencies);
     void VerifyTypeExports(const ArenaVector<parser::Program *> &programs);
@@ -138,8 +139,7 @@ private:
             exportMap.erase(it);
         }
 
-        ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>> newMap(
-            program_->Allocator()->Adapter());
+        std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> newMap;
         exportMap.insert({program_->SourceFilePath(), newMap});
     }
 
@@ -151,13 +151,12 @@ private:
         imExDecl_->exportDefaultName_ = exportDefaultNamePrev_;
     }
 
-    ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>> SaveExportAliasMultimap()
+    std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> SaveExportAliasMultimap()
     {
         auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
         const auto found = exportMap.find(program_->SourceFilePath());
         if (found == exportMap.end()) {
-            return ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>>(
-                program_->Allocator()->Adapter());
+            return std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>>();
         }
         return found->second;
     }
@@ -169,7 +168,7 @@ private:
     std::map<util::StringView, lexer::SourcePosition> exportNameMapPrev_;
     std::set<util::StringView> exportedTypesPrev_;
     util::StringView exportDefaultNamePrev_;
-    ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>> exportAliasMultimapPrev_;
+    std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> exportAliasMultimapPrev_;
 };
 }  // namespace ark::es2panda::compiler
 

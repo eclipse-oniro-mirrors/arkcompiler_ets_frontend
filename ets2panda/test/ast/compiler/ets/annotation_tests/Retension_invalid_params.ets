@@ -18,7 +18,8 @@
 
 }
 
-/* @@? 16:12 Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
-/* @@? 16:12 Error TypeError: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'.  */
-/* @@? 16:12 Error TypeError: Unresolved reference policy  */
-/* @@? 16:12 Error TypeError: Invalid value for annotation field, expected a constant literal. */
+
+/* @@? 16:12 Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */
+/* @@? 16:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'. */
+/* @@? 16:12 Error Semantic error ESE0143: Unresolved reference policy */
+/* @@? 16:12 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

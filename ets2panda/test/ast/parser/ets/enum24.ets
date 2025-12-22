@@ -21,4 +21,5 @@ enum Direction {
 }
 
 
-/* @@@ label Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type.  */
+
+/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */

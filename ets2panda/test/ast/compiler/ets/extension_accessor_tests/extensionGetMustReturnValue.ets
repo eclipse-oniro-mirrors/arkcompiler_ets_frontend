@@ -18,4 +18,5 @@ class A{
 }
 get /* @@ label */field(this: A){}
 
-/* @@@ label Error TypeError: Getter must return a value  */
+
+/* @@@ label Error Semantic error ESE0086: Getter must return a value */

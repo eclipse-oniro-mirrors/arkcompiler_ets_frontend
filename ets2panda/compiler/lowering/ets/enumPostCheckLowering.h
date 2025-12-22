@@ -25,11 +25,16 @@ enum class EnumCastType {
     NONE,
     CAST_TO_STRING,
     CAST_TO_INT,
-    CAST_TO_INT_ENUM,
+    CAST_TO_LONG,
+    CAST_TO_DOUBLE,
+    CAST_TO_FLOAT,
+    CAST_TO_BYTE,
+    CAST_TO_SHORT,
+    CAST_TO_NUMERIC_ENUM,
     CAST_TO_STRING_ENUM,
 };
 
-class EnumPostCheckLoweringPhase : public PhaseForDeclarations {
+class EnumPostCheckLoweringPhase : public PhaseForBodies {
 public:
     EnumPostCheckLoweringPhase() noexcept = default;
     std::string_view Name() const override
@@ -40,6 +45,7 @@ public:
 
 private:
     ir::Statement *CreateStatement(const std::string &src, ir::Expression *ident, ir::Expression *init);
+    ir::AstNode *BuildEnumCasting(ir::AstNode *const node);
     void CreateStatementForUnionConstituentType(EnumCastType castType, ir::Identifier *ident, checker::Type *type,
                                                 ir::TSAsExpression *tsAsExpr, ArenaVector<ir::Statement *> &statements);
     ir::SwitchStatement *GenerateGetOrdinalCallForSwitch(ir::SwitchStatement *const node);

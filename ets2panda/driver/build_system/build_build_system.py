@@ -33,20 +33,45 @@ def copy_files(source_path, dest_path, is_file=False):
 
 
 def run_cmd(cmd, execution_path=None):
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stdin=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            cwd=execution_path)
-    stdout, stderr = proc.communicate(timeout=300)
+    attempt = 0
+    while attempt < 3:
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=execution_path
+        )
+        stdout, stderr = proc.communicate(timeout=300)
+        if proc.returncode == 0:
+            return
+        attempt += 1
+
     if proc.returncode != 0:
         raise Exception(stderr.decode())
+
+
+def replace_symlink_with_absolute(symlink_path):
+    if os.path.islink(symlink_path):
+        target = os.readlink(symlink_path)
+        symlink_dir = os.path.dirname(symlink_path)
+        abs_target = os.path.abspath(os.path.join(symlink_dir, target))
+
+        os.remove(symlink_path)
+        os.symlink(abs_target, symlink_path)
+
+        print(f"Replaced {symlink_path} with absolute target: {abs_target}")
+    else:
+        print("Path is not a symlink.")
 
 
 def build(options):
     options.temp_dir = os.path.join(options.source_path, f"temp{time.time_ns()}")
     options.build_out = os.path.join(options.temp_dir, "dist")
     os.makedirs(options.temp_dir, exist_ok=True)
-
+    run_bindings_cmd = [options.npm, 'run', 'run']
+    run_cmd(run_bindings_cmd, os.path.join(options.source_path, "../../bindings/"))
+    replace_symlink_with_absolute(os.path.join(options.source_path, "node_modules/@es2panda/bindings"))
     build_cmd = [options.npm, 'run', 'build', '--', '--outDir', options.build_out]
     run_cmd(build_cmd, options.source_path)
 

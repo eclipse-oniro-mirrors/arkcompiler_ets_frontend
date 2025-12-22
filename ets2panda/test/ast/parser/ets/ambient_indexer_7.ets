@@ -21,6 +21,7 @@ function main() {
     let a : A = new A();
 }
 
-/* @@@ label Error SyntaxError: ] expected in index signature.  */
-/* @@@ label1 Error SyntaxError: An index signature must have a type annotation.  */
-/* @@@ label1 Error SyntaxError: Expected ':', got 'identification literal'.  */
+
+/* @@@ label Error Syntax error ESY0019: ] expected in index signature. */
+/* @@@ label1 Error Syntax error ESY0020: An index signature must have a type annotation. */
+/* @@@ label1 Error Syntax error ESY0230: Expected ':', got 'identification literal'. */

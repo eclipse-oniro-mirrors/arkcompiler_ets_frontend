@@ -1,0 +1,78 @@
+{
+    "copyright": [
+        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the 'License');",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 27,
+            "column": 3,
+            "endLine": 27,
+            "endColumn": 35,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 3,
+            "endLine": 28,
+            "endColumn": 32,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 5,
+            "endLine": 48,
+            "endColumn": 41,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 5,
+            "endLine": 49,
+            "endColumn": 34,
+            "problem": "MethodOverridingField",
+            "suggest": "",
+            "rule": "Method can't override filed in interface implemented (arkts-no-method-overriding-field)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 55,
+            "column": 1,
+            "endLine": 55,
+            "endColumn": 32,
+            "problem": "InterfaceMerging",
+            "suggest": "",
+            "rule": "Declaration merging is not supported (arkts-no-decl-merging)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 30,
+            "endLine": 57,
+            "endColumn": 31,
+            "problem": "ObjectLiteralNoContextType",
+            "suggest": "",
+            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "severity": "ERROR"
+        }
+    ]
+}

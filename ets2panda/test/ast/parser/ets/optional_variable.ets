@@ -27,12 +27,11 @@ function main() {
    const d1?: string = "123"
    const d2? = "123"
 }
-
-/* @@? 17:8 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 18:9 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 20:10 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 21:11 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 24:11 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 25:12 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 27:13 Error SyntaxError: Optional variable is deprecated and no longer supported. */
-/* @@? 28:14 Error SyntaxError: Optional variable is deprecated and no longer supported. */
+/* @@? 17:8 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 18:9 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 20:10 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 21:11 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 24:11 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 25:12 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 27:13 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */
+/* @@? 28:14 Error Syntax error ESY0306: Optional variable is deprecated and no longer supported. */

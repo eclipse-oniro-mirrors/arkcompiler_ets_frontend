@@ -27,10 +27,11 @@ foo(,a[0])
 foo(a[0] a[1])
 foo(,)
 
-/* @@? 24:10 Error SyntaxError: Unexpected token ','. */
-/* @@? 25:10 Error SyntaxError: Unexpected token ','. */
-/* @@? 26:5 Error SyntaxError: Unexpected token ','. */
-/* @@? 27:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 27:10 Error SyntaxError: Unexpected token 'a'. */
-/* @@? 27:14 Error SyntaxError: Unexpected token ')'. */
-/* @@? 28:5 Error SyntaxError: Unexpected token ','. */
+
+/* @@? 24:10 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 25:10 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 26:5 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 27:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 27:10 Error Syntax error ESY0227: Unexpected token 'a'. */
+/* @@? 27:14 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 28:5 Error Syntax error ESY0227: Unexpected token ','. */

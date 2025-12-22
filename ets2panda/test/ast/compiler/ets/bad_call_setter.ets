@@ -28,7 +28,8 @@ function main() {
     ins.text = "He";
 }
 
-/* @@? 23:5 Error SyntaxError: Unexpected token 'this'. */
-/* @@? 23:9 Error SyntaxError: Unexpected token '.'. */
-/* @@? 23:10 Error TypeError: Variable 'text' has already been declared. */
-/* @@? 23:17 Error TypeError: Property 's' must be accessed through 'this' */
+
+/* @@? 23:5 Error Syntax error ESY0227: Unexpected token 'this'. */
+/* @@? 23:9 Error Syntax error ESY0227: Unexpected token '.'. */
+/* @@? 23:10 Error Semantic error ESE0351: Variable 'text' has already been declared. */
+/* @@? 23:17 Error Semantic error ESE0145: Property 's' must be accessed through 'this' */

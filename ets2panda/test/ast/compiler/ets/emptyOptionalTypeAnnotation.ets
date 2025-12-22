@@ -21,6 +21,7 @@ class Src implements Dep {
   someMethod?
 }
 
-/* @@? 17:14 Error SyntaxError: Interface fields must have type annotation. */
-/* @@? 18:1 Error SyntaxError: Invalid Type. */
-/* @@? 21:14 Error SyntaxError: Field type annotation expected. */
+
+/* @@? 17:14 Error Syntax error ESY0119: Interface fields must have type annotation. */
+/* @@? 18:1 Error Syntax error ESY0138: Invalid Type. */
+/* @@? 21:14 Error Syntax error ESY0121: Field type annotation expected. */

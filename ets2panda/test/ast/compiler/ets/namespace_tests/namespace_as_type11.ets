@@ -18,4 +18,5 @@ namespace MySpace {
 
 let a = /* @@ label */MySpace
 
-/* @@@ label Error SyntaxError: Namespace cannot be used as object. */
+
+/* @@@ label Error Syntax error ESY0318: Namespace cannot be used as object. */

@@ -61,13 +61,14 @@ function main(): void {
 }
 
 
-/* @@? 47:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 47:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 50:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 50:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 53:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 53:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 56:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 56:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */
-/* @@? 60:5 Error SyntaxError: Illegal start of Type Alias expression. */
-/* @@? 60:5 Error SyntaxError: Annotations are not allowed on this type of declaration. */
+
+/* @@? 47:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 47:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 50:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 50:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 53:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 53:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 56:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 56:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */
+/* @@? 60:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
+/* @@? 60:5 Error Syntax error ESY0028: Annotations are not allowed on this type of declaration. */

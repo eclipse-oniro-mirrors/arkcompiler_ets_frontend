@@ -16,4 +16,5 @@
 let x: FixedArray<int> = [1,2,3]
 let y: int = x [0
 
-/* @@? 20:1 Error SyntaxError: Unexpected token, expected ']'.  */
+
+/* @@? 20:76 Error Syntax error ESY0228: Unexpected token, expected ']'. */

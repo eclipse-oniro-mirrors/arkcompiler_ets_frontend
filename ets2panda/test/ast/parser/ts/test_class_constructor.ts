@@ -17,4 +17,5 @@ class MyClass {
     /* @@ label */"constructor" = 42;
 }
 
-/* @@@ label Error SyntaxError: Classes may not have a field named 'constructor'. */
+
+/* @@@ label Error Syntax error ESY0144: Classes may not have a field named 'constructor'. */

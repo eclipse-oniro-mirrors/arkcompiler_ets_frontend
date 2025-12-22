@@ -18,4 +18,5 @@ export class A<T> {}
 export declare function foo(a:A<number>):void
 export function foo(a:A<string>):number {}
 
-/* @@? 19:8 Error TypeError: Method declaration `foo` must all ambient or non-ambient */
+
+/* @@? 19:8 Error Semantic error ESE0399: Method declaration `foo` must all ambient or non-ambient */

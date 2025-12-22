@@ -25,4 +25,5 @@ function main(): void {
     arktest.assertEQ(result, 0 as short);       
 }
 
-/* @@? 17:32 Error TypeError: Cannot cast type 'Int' to 'X'  */
+
+/* @@? 17:32 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X' */

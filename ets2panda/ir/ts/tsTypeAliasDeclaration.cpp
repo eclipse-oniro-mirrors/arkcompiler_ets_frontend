@@ -179,7 +179,7 @@ void TSTypeAliasDeclaration::CopyTo(AstNode *other) const
     otherImpl->typeParams_ = typeParams_;
     otherImpl->typeParamTypes_ = typeParamTypes_;
 
-    AnnotatedStatement::CopyTo(other);
+    AnnotatedStatement::CopyTo(other);  // NOLINT (bugprone-parent-virtual-call)
 }
 
 void TSTypeAliasDeclaration::EmplaceTypeParamterTypes(checker::Type *typeParamTypes)

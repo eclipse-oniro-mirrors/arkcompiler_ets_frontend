@@ -1,16 +1,16 @@
 'use static'
 
 export declare class ValueImpl extends NS.Value {
-  public getValue(): NS.Value;
+  getValue(): NS.Value;
 
-  public constructor();
+  constructor();
 
 }
 
 export declare namespace NS {
 
   export class Value {
-    public constructor();
+    constructor();
 
   }
 

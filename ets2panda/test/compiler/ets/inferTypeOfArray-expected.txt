@@ -803,7 +803,7 @@
     }
   }
 }
-TypeError: Can't resolve array type [inferTypeOfArray.ets:17:9]
-TypeError: Can't resolve array type [inferTypeOfArray.ets:21:9]
-TypeError: Indexed access is not supported for such expression type. [inferTypeOfArray.ets:23:1]
-TypeError: Indexed access is not supported for such expression type. [inferTypeOfArray.ets:24:1]
+[inferTypeOfArray.ets:17:9] Semantic error ESE0301: Can't resolve array type
+[inferTypeOfArray.ets:21:9] Semantic error ESE0301: Can't resolve array type
+[inferTypeOfArray.ets:23:1] Semantic error ESE0252: Indexed access is not supported for such expression type.
+[inferTypeOfArray.ets:24:1] Semantic error ESE0252: Indexed access is not supported for such expression type.

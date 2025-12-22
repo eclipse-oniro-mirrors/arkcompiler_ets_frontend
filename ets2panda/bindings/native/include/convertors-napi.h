@@ -20,6 +20,8 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <iostream>
+#include <stdexcept>
 
 #ifndef TS_NAPI_OHOS
 #include <node_api.h>
@@ -29,69 +31,69 @@
 #endif
 #include "panda_types.h"
 
-// NOLINTBEGIN
 template <class T>
 struct InteropTypeConverter {
     using InteropType = T;
-    static T convertFrom([[maybe_unused]] napi_env env, InteropType value)
+    static T ConvertFrom([[maybe_unused]] napi_env env, InteropType value)
     {
         return value;
     }
-    static InteropType convertTo([[maybe_unused]] napi_env env, T value)
+    static InteropType ConvertTo([[maybe_unused]] napi_env env, T value)
     {
         return value;
     }
-    static void release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value, [[maybe_unused]] T converted)
+    static void Release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value, [[maybe_unused]] T converted)
     {
     }
 };
 
 template <typename Type>
-inline typename InteropTypeConverter<Type>::InteropType makeResult(napi_env env, Type value)
+inline typename InteropTypeConverter<Type>::InteropType MakeResult(napi_env env, Type value)
 {
-    return InteropTypeConverter<Type>::convertTo(env, value);
+    return InteropTypeConverter<Type>::ConvertTo(env, value);
 }
 
 template <typename Type>
-inline Type getArgument(napi_env env, typename InteropTypeConverter<Type>::InteropType arg)
+inline Type GetArgument(napi_env env, typename InteropTypeConverter<Type>::InteropType arg)
 {
-    return InteropTypeConverter<Type>::convertFrom(env, arg);
+    return InteropTypeConverter<Type>::ConvertFrom(env, arg);
 }
 
 template <typename Type>
-inline void releaseArgument(napi_env env, typename InteropTypeConverter<Type>::InteropType arg, Type data)
+inline void ReleaseArgument(napi_env env, typename InteropTypeConverter<Type>::InteropType arg, Type data)
 {
-    InteropTypeConverter<Type>::release(env, arg, data);
+    InteropTypeConverter<Type>::Release(env, arg, data);
 }
 
 template <>
 struct InteropTypeConverter<KInteropBuffer> {
     using InteropType = napi_value;
-    static KInteropBuffer convertFrom(napi_env env, InteropType value)
+    static KInteropBuffer ConvertFrom(napi_env env, InteropType value)
     {
         auto placeholder = 0;
         KInteropBuffer result = {placeholder, nullptr, 0, nullptr};
         bool isArrayBuffer = false;
         napi_is_arraybuffer(env, value, &isArrayBuffer);
         if (isArrayBuffer) {
-            napi_get_arraybuffer_info(env, value, &result.data, (size_t *)&result.length);
+            napi_get_arraybuffer_info(env, value, &result.data, reinterpret_cast<size_t *>(&result.length));
         } else {
             bool isDataView = false;
             napi_is_dataview(env, value, &isDataView);
             if (isDataView) {
-                napi_get_dataview_info(env, value, (size_t *)&result.length, &result.data, nullptr, nullptr);
+                napi_get_dataview_info(env, value, reinterpret_cast<size_t *>(&result.length), &result.data, nullptr,
+                                       nullptr);
             }
         }
         return result;
     }
-    static InteropType convertTo(napi_env env, KInteropBuffer value)
+    static InteropType ConvertTo(napi_env env, KInteropBuffer value)
     {
-        KInteropBuffer *copy = new KInteropBuffer(value);
+        auto *copy = new KInteropBuffer(value);
         napi_value result;
         napi_status status = napi_create_external_arraybuffer(
             env, value.data, value.length,
-            []([[maybe_unused]] napi_env env_, [[maybe_unused]] void *finalize_data, void *finalize_hint) {
-                KInteropBuffer *buffer = reinterpret_cast<KInteropBuffer *>(finalize_hint);
+            []([[maybe_unused]] napi_env envArg, [[maybe_unused]] void *finalizeData, void *finalizeHint) {
+                auto *buffer = reinterpret_cast<KInteropBuffer *>(finalizeHint);
                 buffer->dispose(buffer->resourceId);
                 delete buffer;
             },
@@ -101,7 +103,7 @@ struct InteropTypeConverter<KInteropBuffer> {
         }
         return result;
     };
-    static void release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
+    static void Release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
                         [[maybe_unused]] KInteropBuffer converted)
     {
     }
@@ -110,26 +112,28 @@ struct InteropTypeConverter<KInteropBuffer> {
 template <>
 struct InteropTypeConverter<KStringPtr> {
     using InteropType = napi_value;
-    static KStringPtr convertFrom(napi_env env, InteropType value)
+    static KStringPtr ConvertFrom(napi_env env, InteropType value)
     {
-        if (value == nullptr)
+        if (value == nullptr) {
             return KStringPtr();
+        }
         KStringPtr result;
         size_t length = 0;
         napi_status status = napi_get_value_string_utf8(env, value, nullptr, 0, &length);
-        if (status != 0)
+        if (status != 0) {
             return result;
-        result.resize(length);
-        napi_get_value_string_utf8(env, value, result.data(), length + 1, nullptr);
+        }
+        result.Resize(length);
+        napi_get_value_string_utf8(env, value, result.Data(), length + 1, nullptr);
         return result;
     }
-    static InteropType convertTo(napi_env env, const KStringPtr &value)
+    static InteropType ConvertTo(napi_env env, const KStringPtr &value)
     {
         napi_value result;
-        napi_create_string_utf8(env, value.c_str(), value.length(), &result);
+        napi_create_string_utf8(env, value.CStr(), value.Length(), &result);
         return result;
     }
-    static void release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
+    static void Release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
                         [[maybe_unused]] const KStringPtr &converted)
     {
     }
@@ -138,19 +142,19 @@ struct InteropTypeConverter<KStringPtr> {
 template <>
 struct InteropTypeConverter<KInteropNumber> {
     using InteropType = napi_value;
-    static KInteropNumber convertFrom(napi_env env, InteropType interopValue)
+    static KInteropNumber ConvertFrom(napi_env env, InteropType interopValue)
     {
         double value = 0.0;
         napi_get_value_double(env, interopValue, &value);
-        return KInteropNumber::fromDouble(value);
+        return KInteropNumber::FromDouble(value);
     }
-    static InteropType convertTo(napi_env env, KInteropNumber value)
+    static InteropType ConvertTo(napi_env env, KInteropNumber value)
     {
         napi_value result;
-        napi_create_double(env, value.asDouble(), &result);
+        napi_create_double(env, value.AsDouble(), &result);
         return result;
     }
-    static void release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
+    static void Release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
                         [[maybe_unused]] KInteropNumber converted)
     {
     }
@@ -159,15 +163,15 @@ struct InteropTypeConverter<KInteropNumber> {
 template <>
 struct InteropTypeConverter<KVMObjectHandle> {
     using InteropType = napi_value;
-    static inline KVMObjectHandle convertFrom([[maybe_unused]] napi_env env, InteropType value)
+    static inline KVMObjectHandle ConvertFrom([[maybe_unused]] napi_env env, InteropType value)
     {
         return reinterpret_cast<KVMObjectHandle>(value);
     }
-    static InteropType convertTo([[maybe_unused]] napi_env env, KVMObjectHandle value)
+    static InteropType ConvertTo([[maybe_unused]] napi_env env, KVMObjectHandle value)
     {
         return reinterpret_cast<napi_value>(value);
     }
-    static inline void release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
+    static inline void Release([[maybe_unused]] napi_env env, [[maybe_unused]] InteropType value,
                                [[maybe_unused]] KVMObjectHandle converted)
     {
     }
@@ -176,25 +180,27 @@ struct InteropTypeConverter<KVMObjectHandle> {
 template <>
 struct InteropTypeConverter<KInteropReturnBuffer> {
     using InteropType = napi_value;
-    static inline KInteropReturnBuffer convertFrom(napi_env env, InteropType value) = delete;
-    static void disposer([[maybe_unused]] napi_env env, [[maybe_unused]] void *data, void *hint)
+    static inline KInteropReturnBuffer ConvertFrom(napi_env env, InteropType value) = delete;
+    static void Disposer([[maybe_unused]] napi_env env, [[maybe_unused]] void *data, void *hint)
     {
-        KInteropReturnBuffer *bufferCopy = (KInteropReturnBuffer *)hint;
+        auto *bufferCopy = static_cast<KInteropReturnBuffer *>(hint);
         bufferCopy->dispose(bufferCopy->data, bufferCopy->length);
         delete bufferCopy;
     }
-    static InteropType convertTo(napi_env env, KInteropReturnBuffer value)
+    static InteropType ConvertTo(napi_env env, KInteropReturnBuffer value)
     {
         napi_value result = nullptr;
         napi_value arrayBuffer = nullptr;
         auto clone = new KInteropReturnBuffer();
         *clone = value;
-        napi_create_external_arraybuffer(env, value.data, value.length, disposer, clone, &arrayBuffer);
+        napi_create_external_arraybuffer(env, value.data, value.length, Disposer, clone, &arrayBuffer);
         napi_create_typedarray(env, napi_uint8_array, value.length, arrayBuffer, 0, &result);
         return result;
     }
-    static inline void release(napi_env env, InteropType value, const KInteropReturnBuffer &converted) = delete;
+    static inline void Release(napi_env env, InteropType value, const KInteropReturnBuffer &converted) = delete;
 };
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 #define TS_INTEROP_THROW(vmcontext, object, ...)                                   \
     do {                                                                           \
@@ -215,15 +221,15 @@ struct InteropTypeConverter<KInteropReturnBuffer> {
     } while (0)
 
 // CC-OFFNXT(G.PRE.02-CPP) code generation
-#define NAPI_ASSERT_INDEX(info, index, result)                        \
-    do {                                                              \
-        /* CC-OFFNXT(G.PRE.02) name part*/                            \
-        if (static_cast<size_t>(index) >= info.Length()) {            \
-            /* CC-OFFNXT(G.PRE.02) name part*/                        \
-            napi_throw_error(info.Env(), nullptr, "No such element"); \
-            /* CC-OFFNXT(G.PRE.05) function gen */                    \
-            return result;                                            \
-        }                                                             \
+#define NAPI_ASSERT_INDEX(info, index, result)                          \
+    do {                                                                \
+        /* CC-OFFNXT(G.PRE.02) name part*/                              \
+        if ((static_cast<size_t>(index)) >= (info).Length()) {          \
+            /* CC-OFFNXT(G.PRE.02) name part*/                          \
+            napi_throw_error((info).Env(), nullptr, "No such element"); \
+            /* CC-OFFNXT(G.PRE.05) function gen */                      \
+            return result;                                              \
+        }                                                               \
     } while (0)
 
 // Helpers from node-addon-api
@@ -246,16 +252,19 @@ struct InteropTypeConverter<KInteropReturnBuffer> {
         return;                                                   \
     }
 
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
 class CallbackInfo {
 public:
-    CallbackInfo(napi_env env, napi_callback_info info) : _env(env)
+    CallbackInfo(napi_env env, napi_callback_info info) : env_(env)
     {
         size_t size = 0;
         napi_status status = napi_get_cb_info(env, info, &size, nullptr, nullptr, nullptr);
         TS_NAPI_THROW_IF_FAILED_VOID(env, status);
         if (size > 0) {
-            args.resize(size);  // NOTE(khil): statically allocate small array for common case with few arguments passed
-            status = napi_get_cb_info(env, info, &size, args.data(), nullptr, nullptr);
+            args_.resize(
+                size);  // NOTE(khil): statically allocate small array for common case with few arguments passed
+            status = napi_get_cb_info(env, info, &size, args_.data(), nullptr, nullptr);
             TS_NAPI_THROW_IF_FAILED_VOID(env, status);
         }
     }
@@ -264,91 +273,91 @@ public:
     {
         if (idx >= Length()) {
             napi_value result;
-            napi_get_undefined(_env, &result);
+            napi_get_undefined(env_, &result);
             return result;
         }
-        return args[idx];
+        return args_[idx];
     }
 
     napi_env Env() const
     {
-        return _env;
+        return env_;
     }
 
     size_t Length() const
     {
-        return args.size();
+        return args_.size();
     }
 
 private:
-    napi_env _env;
+    napi_env env_;
     // napi_callback_info _info;
-    std::vector<napi_value> args;
+    std::vector<napi_value> args_;
 };
 
 template <typename ElemType>
-inline napi_typedarray_type getNapiType() = delete;
+inline napi_typedarray_type GetNapiType() = delete;
 
 template <>
-inline napi_typedarray_type getNapiType<float>()
+inline napi_typedarray_type GetNapiType<float>()
 {
     return napi_float32_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<int8_t>()
+inline napi_typedarray_type GetNapiType<int8_t>()
 {
     return napi_int8_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<uint8_t>()
+inline napi_typedarray_type GetNapiType<uint8_t>()
 {
     return napi_uint8_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<int16_t>()
+inline napi_typedarray_type GetNapiType<int16_t>()
 {
     return napi_int16_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<uint16_t>()
+inline napi_typedarray_type GetNapiType<uint16_t>()
 {
     return napi_uint16_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<int32_t>()
+inline napi_typedarray_type GetNapiType<int32_t>()
 {
     return napi_int32_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<uint32_t>()
+inline napi_typedarray_type GetNapiType<uint32_t>()
 {
     return napi_uint32_array;
 }
 
 template <>
-inline napi_typedarray_type getNapiType<KNativePointer>()
+inline napi_typedarray_type GetNapiType<KNativePointer>()
 {
     return napi_biguint64_array;
 }
 
-napi_valuetype getValueTypeChecked(napi_env env, napi_value value);
-bool isTypedArray(napi_env env, napi_value value);
+napi_valuetype GetValueTypeChecked(napi_env env, napi_value value);
+bool IsTypedArray(napi_env env, napi_value value);
 
 template <typename ElemType>
 // CC-OFFNXT(G.FUD.06) solid logic, ODR
-inline ElemType *getTypedElements(napi_env env, napi_value value)
+inline ElemType *GetTypedElements(napi_env env, napi_value value)
 {
-    napi_valuetype valueType = getValueTypeChecked(env, value);
+    napi_valuetype valueType = GetValueTypeChecked(env, value);
     if (valueType == napi_null) {
         return nullptr;
     }
-    if (!isTypedArray(env, value)) {
+    if (!IsTypedArray(env, value)) {
         napi_throw_error(env, nullptr, "Expected TypedArray");
         return nullptr;
     }
@@ -359,8 +368,8 @@ inline ElemType *getTypedElements(napi_env env, napi_value value)
     napi_typedarray_type type;
     napi_status status = napi_get_typedarray_info(env, value, &type, &byteLength, &data, &arrayBuffer, &byteOffset);
     TS_NAPI_THROW_IF_FAILED(env, status, nullptr);
-    if (type != getNapiType<ElemType>()) {
-        printf("Array type mismatch. Expected %d got %d\n", getNapiType<ElemType>(), type);
+    if (type != GetNapiType<ElemType>()) {
+        std::cout << "Array type mismatch. Expected " << GetNapiType<ElemType>() << " got " << type << std::endl;
         napi_throw_error(env, nullptr, "Array type mismatch");
         return nullptr;
     }
@@ -368,155 +377,156 @@ inline ElemType *getTypedElements(napi_env env, napi_value value)
 }
 
 template <typename ElemType>
-inline ElemType *getTypedElements(const CallbackInfo &info, int index)
+inline ElemType *GetTypedElements(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, nullptr);
-    return getTypedElements<ElemType>(info.Env(), info[index]);
+    return GetTypedElements<ElemType>(info.Env(), info[index]);
 }
 
-inline uint8_t *getUInt8Elements(const CallbackInfo &info, int index)
+inline uint8_t *GetUInt8Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<uint8_t>(info, index);
+    return GetTypedElements<uint8_t>(info, index);
 }
 
-inline int8_t *getInt8Elements(const CallbackInfo &info, int index)
+inline int8_t *GetInt8Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<int8_t>(info, index);
+    return GetTypedElements<int8_t>(info, index);
 }
 
-inline uint16_t *getUInt16Elements(const CallbackInfo &info, int index)
+inline uint16_t *GetUInt16Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<uint16_t>(info, index);
+    return GetTypedElements<uint16_t>(info, index);
 }
 
-inline int16_t *getInt16Elements(const CallbackInfo &info, int index)
+inline int16_t *GetInt16Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<int16_t>(info, index);
+    return GetTypedElements<int16_t>(info, index);
 }
 
-inline uint32_t *getUInt32Elements(const CallbackInfo &info, int index)
+inline uint32_t *GetUInt32Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<uint32_t>(info, index);
+    return GetTypedElements<uint32_t>(info, index);
 }
 
-inline uint32_t *getUInt32Elements(napi_env env, napi_value value)
+inline uint32_t *GetUInt32Elements(napi_env env, napi_value value)
 {
-    return getTypedElements<uint32_t>(env, value);
+    return GetTypedElements<uint32_t>(env, value);
 }
 
-inline int32_t *getInt32Elements(const CallbackInfo &info, int index)
+inline int32_t *GetInt32Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<int32_t>(info, index);
+    return GetTypedElements<int32_t>(info, index);
 }
 
-inline float *getFloat32Elements(const CallbackInfo &info, int index)
+inline float *GetFloat32Elements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<float>(info, index);
+    return GetTypedElements<float>(info, index);
 }
 
-inline KNativePointer *getPointerElements(const CallbackInfo &info, int index)
+inline KNativePointer *GetPointerElements(const CallbackInfo &info, int index)
 {
-    return getTypedElements<KNativePointer>(info, index);
+    return GetTypedElements<KNativePointer>(info, index);
 }
 
-KInt getInt32(napi_env env, napi_value value);
-inline int32_t getInt32(const CallbackInfo &info, int index)
+KInt GetInt32(napi_env env, napi_value value);
+inline int32_t GetInt32(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, 0);
-    return getInt32(info.Env(), info[index]);
+    return GetInt32(info.Env(), info[index]);
 }
-KUInt getUInt32(napi_env env, napi_value value);
-inline uint32_t getUInt32(const CallbackInfo &info, int index)
+KUInt GetUInt32(napi_env env, napi_value value);
+inline uint32_t GetUInt32(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, 0);
-    return getUInt32(info.Env(), info[index]);
+    return GetUInt32(info.Env(), info[index]);
 }
-KFloat getFloat32(napi_env env, napi_value value);
-inline float getFloat32(const CallbackInfo &info, int index)
+KFloat GetFloat32(napi_env env, napi_value value);
+inline float GetFloat32(const CallbackInfo &info, int index)
 {
-    NAPI_ASSERT_INDEX(info, index, 0.0f);
-    return getFloat32(info.Env(), info[index]);
+    NAPI_ASSERT_INDEX(info, index, 0.0F);
+    return GetFloat32(info.Env(), info[index]);
 }
-KDouble getFloat64(napi_env env, napi_value value);
-inline KDouble getFloat64(const CallbackInfo &info, int index)
+KDouble GetFloat64(napi_env env, napi_value value);
+inline KDouble GetFloat64(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, 0.0);
-    return getFloat64(info.Env(), info[index]);
+    return GetFloat64(info.Env(), info[index]);
 }
-KStringPtr getString(napi_env env, napi_value value);
-inline KStringPtr getString(const CallbackInfo &info, int index)
+KStringPtr GetString(napi_env env, napi_value value);
+inline KStringPtr GetString(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, KStringPtr());
-    return getString(info.Env(), info[index]);
+    return GetString(info.Env(), info[index]);
 }
-void *getPointer(napi_env env, napi_value value);
-inline void *getPointer(const CallbackInfo &info, int index)
+void *GetPointer(napi_env env, napi_value value);
+inline void *GetPointer(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, nullptr);
-    return getPointer(info.Env(), info[index]);
+    return GetPointer(info.Env(), info[index]);
 }
-KLong getInt64(napi_env env, napi_value value);
-inline KLong getInt64(const CallbackInfo &info, int index)
+KLong GetInt64(napi_env env, napi_value value);
+inline KLong GetInt64(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, 0);
-    return getInt64(info.Env(), info[index]);
+    return GetInt64(info.Env(), info[index]);
 }
-KBoolean getBoolean(napi_env env, napi_value value);
-inline KBoolean getBoolean(const CallbackInfo &info, int index)
+KBoolean GetBoolean(napi_env env, napi_value value);
+inline KBoolean GetBoolean(const CallbackInfo &info, int index)
 {
     NAPI_ASSERT_INDEX(info, index, false);
-    return getBoolean(info.Env(), info[index]);
+    return GetBoolean(info.Env(), info[index]);
 }
 
 template <typename Type>
-inline Type getArgument(const CallbackInfo &info, int index) = delete;
+inline Type GetArgument(const CallbackInfo &info, int index) = delete;
 
 template <>
-inline KBoolean getArgument<KBoolean>(const CallbackInfo &info, int index)
+inline KBoolean GetArgument<KBoolean>(const CallbackInfo &info, int index)
 {
-    return getBoolean(info, index);
+    return GetBoolean(info, index);
 }
 
 template <>
-inline KUInt getArgument<uint32_t>(const CallbackInfo &info, int index)
+inline KUInt GetArgument<uint32_t>(const CallbackInfo &info, int index)
 {
-    return getUInt32(info, index);
+    return GetUInt32(info, index);
 }
 
 template <>
-inline KInt getArgument<int32_t>(const CallbackInfo &info, int index)
+inline KInt GetArgument<int32_t>(const CallbackInfo &info, int index)
 {
-    return getInt32(info, index);
+    return GetInt32(info, index);
 }
 
 template <>
-inline KInteropNumber getArgument<KInteropNumber>(const CallbackInfo &info, int index)
+inline KInteropNumber GetArgument<KInteropNumber>(const CallbackInfo &info, int index)
 {
-    KInteropNumber res = {0, {0}};
+    KInteropNumber res {};
     NAPI_ASSERT_INDEX(info, index, res);
-    return getArgument<KInteropNumber>(info.Env(), info[index]);
+    return GetArgument<KInteropNumber>(info.Env(), info[index]);
 }
 
 template <>
 // CC-OFFNXT(G.FUD.06) solid logic, ODR
-inline KLength getArgument<KLength>(const CallbackInfo &info, int index)
+inline KLength GetArgument<KLength>(const CallbackInfo &info, int index)
 {
-    KLength result = {0, 0.0f, 0, 0};
+    KLength result = {0, 0.0F, 0, 0};
     NAPI_ASSERT_INDEX(info, index, result);
     auto value = info[index];
     napi_valuetype type;
-    auto type_status = napi_typeof(info.Env(), value, &type);
-    if (type_status != 0)
+    auto typeStatus = napi_typeof(info.Env(), value, &type);
+    if (typeStatus != 0) {
         return result;
+    }
     switch (type) {
         case napi_number: {
-            result.value = getFloat32(info.Env(), value);
+            result.value = GetFloat32(info.Env(), value);
             result.unit = 1;
             result.type = 0;
             break;
         }
         case napi_string: {
-            KStringPtr string = getString(info.Env(), value);
+            KStringPtr string = GetString(info.Env(), value);
             ParseKLength(string, &result);
             result.type = 1;
             result.resource = 0;
@@ -530,200 +540,203 @@ inline KLength getArgument<KLength>(const CallbackInfo &info, int index)
             napi_status status = napi_get_named_property(info.Env(), value, "id", &field);
             if (status == 0) {
                 status = napi_get_value_int32(info.Env(), field, &result.resource);
-                if (status != 0)
+                if (status != 0) {
                     result.resource = 0;
+                }
             } else {
                 result.resource = 0;
             }
             break;
         }
         default:
-            throw "Error, unexpected KLength type";
+            throw std::runtime_error("Error, unexpected KLength type");
     }
     return result;
 }
 
 template <>
-inline KInteropBuffer getArgument<KInteropBuffer>(const CallbackInfo &info, int index)
+inline KInteropBuffer GetArgument<KInteropBuffer>(const CallbackInfo &info, int index)
 {
     KInteropBuffer res = {0, nullptr, 0, nullptr};
     NAPI_ASSERT_INDEX(info, index, res);
-    return getArgument<KInteropBuffer>((napi_env)info.Env(), (napi_value)info[index]);
+    return GetArgument<KInteropBuffer>((napi_env)info.Env(), (napi_value)info[index]);
 }
 
 template <>
-inline KFloat getArgument<KFloat>(const CallbackInfo &info, int index)
+inline KFloat GetArgument<KFloat>(const CallbackInfo &info, int index)
 {
-    return getFloat32(info, index);
+    return GetFloat32(info, index);
 }
 
 template <>
-inline KDouble getArgument<KDouble>(const CallbackInfo &info, int index)
+inline KDouble GetArgument<KDouble>(const CallbackInfo &info, int index)
 {
-    return getFloat64(info, index);
+    return GetFloat64(info, index);
 }
 
 template <>
-inline KNativePointer getArgument<KNativePointer>(const CallbackInfo &info, int index)
+inline KNativePointer GetArgument<KNativePointer>(const CallbackInfo &info, int index)
 {
-    return getPointer(info, index);
+    return GetPointer(info, index);
 }
 
 template <>
-inline KLong getArgument<KLong>(const CallbackInfo &info, int index)
+inline KLong GetArgument<KLong>(const CallbackInfo &info, int index)
 {
-    return getInt64(info, index);
+    return GetInt64(info, index);
 }
 
 template <>
-inline KNativePointerArray getArgument<KNativePointerArray>(const CallbackInfo &info, int index)
+inline KNativePointerArray GetArgument<KNativePointerArray>(const CallbackInfo &info, int index)
 {
-    return getPointerElements(info, index);
+    return GetPointerElements(info, index);
 }
 
 template <>
-inline uint8_t *getArgument<uint8_t *>(const CallbackInfo &info, int index)
+inline uint8_t *GetArgument<uint8_t *>(const CallbackInfo &info, int index)
 {
-    return getUInt8Elements(info, index);
+    return GetUInt8Elements(info, index);
 }
 
 template <>
-inline const uint8_t *getArgument<const uint8_t *>(const CallbackInfo &info, int index)
+inline const uint8_t *GetArgument<const uint8_t *>(const CallbackInfo &info, int index)
 {
-    return getUInt8Elements(info, index);
+    return GetUInt8Elements(info, index);
 }
 
 template <>
-inline int8_t *getArgument<int8_t *>(const CallbackInfo &info, int index)
+inline int8_t *GetArgument<int8_t *>(const CallbackInfo &info, int index)
 {
-    return getInt8Elements(info, index);
+    return GetInt8Elements(info, index);
 }
 
 template <>
-inline int16_t *getArgument<int16_t *>(const CallbackInfo &info, int index)
+inline int16_t *GetArgument<int16_t *>(const CallbackInfo &info, int index)
 {
-    return getInt16Elements(info, index);
+    return GetInt16Elements(info, index);
 }
 
 template <>
-inline uint16_t *getArgument<uint16_t *>(const CallbackInfo &info, int index)
+inline uint16_t *GetArgument<uint16_t *>(const CallbackInfo &info, int index)
 {
-    return getUInt16Elements(info, index);
+    return GetUInt16Elements(info, index);
 }
 
 template <>
-inline int32_t *getArgument<int32_t *>(const CallbackInfo &info, int index)
+inline int32_t *GetArgument<int32_t *>(const CallbackInfo &info, int index)
 {
-    return getInt32Elements(info, index);
+    return GetInt32Elements(info, index);
 }
 
 template <>
-inline uint32_t *getArgument<uint32_t *>(const CallbackInfo &info, int index)
+inline uint32_t *GetArgument<uint32_t *>(const CallbackInfo &info, int index)
 {
-    return getUInt32Elements(info, index);
+    return GetUInt32Elements(info, index);
 }
 
 template <>
-inline float *getArgument<float *>(const CallbackInfo &info, int index)
+inline float *GetArgument<float *>(const CallbackInfo &info, int index)
 {
-    return getFloat32Elements(info, index);
+    return GetFloat32Elements(info, index);
 }
 
 template <>
-inline KStringPtr getArgument<KStringPtr>(const CallbackInfo &info, int index)
+inline KStringPtr GetArgument<KStringPtr>(const CallbackInfo &info, int index)
 {
-    return getString(info, index);
+    return GetString(info, index);
 }
 
-napi_value makeString(napi_env env, KStringPtr value);
-napi_value makeString(napi_env env, const std::string &value);
-napi_value makeBoolean(napi_env env, KBoolean value);
-napi_value makeInt32(napi_env env, int32_t value);
-napi_value makeUInt32(napi_env env, uint32_t value);
-napi_value makeFloat32(napi_env env, float value);
-napi_value makePointer(napi_env env, void *value);
-napi_value makeVoid(napi_env env);
+napi_value MakeString(napi_env env, KStringPtr value);
+napi_value MakeString(napi_env env, const std::string &value);
+napi_value MakeBoolean(napi_env env, KBoolean value);
+napi_value MakeInt32(napi_env env, int32_t value);
+napi_value MakeUInt32(napi_env env, uint32_t value);
+napi_value MakeFloat32(napi_env env, float value);
+napi_value MakePointer(napi_env env, void *value);
+napi_value MakeVoid(napi_env env);
 
-inline napi_value makeVoid(const CallbackInfo &info)
+inline napi_value MakeVoid(const CallbackInfo &info)
 {
-    return makeVoid(info.Env());
+    return MakeVoid(info.Env());
 }
 
 template <typename Type>
-inline napi_value makeResult(const CallbackInfo &info, Type value) = delete;
+inline napi_value MakeResult(const CallbackInfo &info, Type value) = delete;
 
 template <>
-inline napi_value makeResult<KBoolean>(const CallbackInfo &info, KBoolean value)
+inline napi_value MakeResult<KBoolean>(const CallbackInfo &info, KBoolean value)
 {
-    return makeBoolean(info.Env(), value);
+    return MakeBoolean(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<int32_t>(const CallbackInfo &info, int32_t value)
+inline napi_value MakeResult<int32_t>(const CallbackInfo &info, int32_t value)
 {
-    return makeInt32(info.Env(), value);
+    return MakeInt32(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<uint32_t>(const CallbackInfo &info, uint32_t value)
+inline napi_value MakeResult<uint32_t>(const CallbackInfo &info, uint32_t value)
 {
-    return makeUInt32(info.Env(), value);
+    return MakeUInt32(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<float>(const CallbackInfo &info, float value)
+inline napi_value MakeResult<float>(const CallbackInfo &info, float value)
 {
-    return makeFloat32(info.Env(), value);
+    return MakeFloat32(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KNativePointer>(const CallbackInfo &info, KNativePointer value)
+inline napi_value MakeResult<KNativePointer>(const CallbackInfo &info, KNativePointer value)
 {
-    return makePointer(info.Env(), value);
+    return MakePointer(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KVMObjectHandle>(const CallbackInfo &info, KVMObjectHandle value)
+inline napi_value MakeResult<KVMObjectHandle>(const CallbackInfo &info, KVMObjectHandle value)
 {
-    return InteropTypeConverter<KVMObjectHandle>::convertTo(info.Env(), value);
+    return InteropTypeConverter<KVMObjectHandle>::ConvertTo(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KStringPtr>(const CallbackInfo &info, KStringPtr value)
+inline napi_value MakeResult<KStringPtr>(const CallbackInfo &info, KStringPtr value)
 {
-    return InteropTypeConverter<KStringPtr>::convertTo(info.Env(), value);
+    return InteropTypeConverter<KStringPtr>::ConvertTo(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KInteropBuffer>(const CallbackInfo &info, KInteropBuffer value)
+inline napi_value MakeResult<KInteropBuffer>(const CallbackInfo &info, KInteropBuffer value)
 {
-    return InteropTypeConverter<KInteropBuffer>::convertTo(info.Env(), value);
+    return InteropTypeConverter<KInteropBuffer>::ConvertTo(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KInteropReturnBuffer>(const CallbackInfo &info, KInteropReturnBuffer value)
+inline napi_value MakeResult<KInteropReturnBuffer>(const CallbackInfo &info, KInteropReturnBuffer value)
 {
-    return InteropTypeConverter<KInteropReturnBuffer>::convertTo(info.Env(), value);
+    return InteropTypeConverter<KInteropReturnBuffer>::ConvertTo(info.Env(), value);
 }
 
 template <>
-inline napi_value makeResult<KInteropNumber>(const CallbackInfo &info, KInteropNumber value)
+inline napi_value MakeResult<KInteropNumber>(const CallbackInfo &info, KInteropNumber value)
 {
-    return InteropTypeConverter<KInteropNumber>::convertTo(info.Env(), value);
+    return InteropTypeConverter<KInteropNumber>::ConvertTo(info.Env(), value);
 }
 
-typedef napi_value (*napi_type_t)(napi_env, napi_callback_info);
+using NapiTypeT = napi_value (*)(napi_env, napi_callback_info);
 
 class Exports {
-    std::unordered_map<std::string, std::vector<std::pair<std::string, napi_type_t>>> implementations;
+    std::unordered_map<std::string, std::vector<std::pair<std::string, NapiTypeT>>> implementations_;
 
 public:
-    static Exports *getInstance();
+    static Exports *GetInstance();
 
-    std::vector<std::string> getModules();
-    void addMethod(const char *module, const char *name, napi_type_t impl);
-    const std::vector<std::pair<std::string, napi_type_t>> &getMethods(const std::string &module);
+    std::vector<std::string> GetModules();
+    void addMethod(const char *module, const char *name, NapiTypeT impl);
+    const std::vector<std::pair<std::string, NapiTypeT>> &GetMethods(const std::string &module);
 };
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 // CC-OFFNXT(G.DCL.01) false positive
 // CC-OFFNXT(G.NAM.01) false positive
@@ -733,12 +746,16 @@ public:
 #define MAKE_NODE_EXPORT(module, name)                                            \
     __attribute__((constructor)) static void __init_##name()                      \
     {                                                                             \
-        Exports::getInstance()->addMethod(QUOTE(module), "_" #name, Node_##name); \
+        Exports::GetInstance()->addMethod(QUOTE(module), "_" #name, Node_##name); \
     }
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #ifndef TS_INTEROP_MODULE
 #error TS_INTEROP_MODULE is undefined
 #endif
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
 #define MAKE_INTEROP_NODE_EXPORT(name) MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -748,7 +765,7 @@ public:
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeResult<Ret>(info, impl_##name());                \
+        return MakeResult<Ret>(info, impl_##name());                \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -757,9 +774,9 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeResult<Ret>(info, impl_##name(p0));              \
+        return MakeResult<Ret>(info, impl_##name(p0));              \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -768,10 +785,10 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeResult<Ret>(info, impl_##name(p0, p1));          \
+        return MakeResult<Ret>(info, impl_##name(p0, p1));          \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -781,11 +798,11 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2));      \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2));      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -795,12 +812,12 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3));  \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3));  \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -810,13 +827,13 @@ public:
     {                                                                  \
         TS_MAYBE_LOG(name)                                             \
         CallbackInfo info(env, cbinfo);                                \
-        P0 p0 = getArgument<P0>(info, 0);                              \
-        P1 p1 = getArgument<P1>(info, 1);                              \
-        P2 p2 = getArgument<P2>(info, 2);                              \
-        P3 p3 = getArgument<P3>(info, 3);                              \
-        P4 p4 = getArgument<P4>(info, 4);                              \
+        P0 p0 = GetArgument<P0>(info, 0);                              \
+        P1 p1 = GetArgument<P1>(info, 1);                              \
+        P2 p2 = GetArgument<P2>(info, 2);                              \
+        P3 p3 = GetArgument<P3>(info, 3);                              \
+        P4 p4 = GetArgument<P4>(info, 4);                              \
         /* CC-OFFNXT(G.PRE.05) function gen */                         \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4)); \
     }                                                                  \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -826,14 +843,14 @@ public:
     {                                                                      \
         TS_MAYBE_LOG(name)                                                 \
         CallbackInfo info(env, cbinfo);                                    \
-        P0 p0 = getArgument<P0>(info, 0);                                  \
-        P1 p1 = getArgument<P1>(info, 1);                                  \
-        P2 p2 = getArgument<P2>(info, 2);                                  \
-        P3 p3 = getArgument<P3>(info, 3);                                  \
-        P4 p4 = getArgument<P4>(info, 4);                                  \
-        P5 p5 = getArgument<P5>(info, 5);                                  \
+        P0 p0 = GetArgument<P0>(info, 0);                                  \
+        P1 p1 = GetArgument<P1>(info, 1);                                  \
+        P2 p2 = GetArgument<P2>(info, 2);                                  \
+        P3 p3 = GetArgument<P3>(info, 3);                                  \
+        P4 p4 = GetArgument<P4>(info, 4);                                  \
+        P5 p5 = GetArgument<P5>(info, 5);                                  \
         /* CC-OFFNXT(G.PRE.05) function gen */                             \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5)); \
     }                                                                      \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -843,15 +860,15 @@ public:
     {                                                                          \
         TS_MAYBE_LOG(name)                                                     \
         CallbackInfo info(env, cbinfo);                                        \
-        P0 p0 = getArgument<P0>(info, 0);                                      \
-        P1 p1 = getArgument<P1>(info, 1);                                      \
-        P2 p2 = getArgument<P2>(info, 2);                                      \
-        P3 p3 = getArgument<P3>(info, 3);                                      \
-        P4 p4 = getArgument<P4>(info, 4);                                      \
-        P5 p5 = getArgument<P5>(info, 5);                                      \
-        P6 p6 = getArgument<P6>(info, 6);                                      \
+        P0 p0 = GetArgument<P0>(info, 0);                                      \
+        P1 p1 = GetArgument<P1>(info, 1);                                      \
+        P2 p2 = GetArgument<P2>(info, 2);                                      \
+        P3 p3 = GetArgument<P3>(info, 3);                                      \
+        P4 p4 = GetArgument<P4>(info, 4);                                      \
+        P5 p5 = GetArgument<P5>(info, 5);                                      \
+        P6 p6 = GetArgument<P6>(info, 6);                                      \
         /* CC-OFFNXT(G.PRE.05) function gen */                                 \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6)); \
     }                                                                          \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -861,16 +878,16 @@ public:
     {                                                                              \
         TS_MAYBE_LOG(name)                                                         \
         CallbackInfo info(env, cbinfo);                                            \
-        P0 p0 = getArgument<P0>(info, 0);                                          \
-        P1 p1 = getArgument<P1>(info, 1);                                          \
-        P2 p2 = getArgument<P2>(info, 2);                                          \
-        P3 p3 = getArgument<P3>(info, 3);                                          \
-        P4 p4 = getArgument<P4>(info, 4);                                          \
-        P5 p5 = getArgument<P5>(info, 5);                                          \
-        P6 p6 = getArgument<P6>(info, 6);                                          \
-        P7 p7 = getArgument<P7>(info, 7);                                          \
+        P0 p0 = GetArgument<P0>(info, 0);                                          \
+        P1 p1 = GetArgument<P1>(info, 1);                                          \
+        P2 p2 = GetArgument<P2>(info, 2);                                          \
+        P3 p3 = GetArgument<P3>(info, 3);                                          \
+        P4 p4 = GetArgument<P4>(info, 4);                                          \
+        P5 p5 = GetArgument<P5>(info, 5);                                          \
+        P6 p6 = GetArgument<P6>(info, 6);                                          \
+        P7 p7 = GetArgument<P7>(info, 7);                                          \
         /* CC-OFFNXT(G.PRE.05) function gen */                                     \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7)); \
     }                                                                              \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -880,17 +897,17 @@ public:
     {                                                                                  \
         TS_MAYBE_LOG(name)                                                             \
         CallbackInfo info(env, cbinfo);                                                \
-        P0 p0 = getArgument<P0>(info, 0);                                              \
-        P1 p1 = getArgument<P1>(info, 1);                                              \
-        P2 p2 = getArgument<P2>(info, 2);                                              \
-        P3 p3 = getArgument<P3>(info, 3);                                              \
-        P4 p4 = getArgument<P4>(info, 4);                                              \
-        P5 p5 = getArgument<P5>(info, 5);                                              \
-        P6 p6 = getArgument<P6>(info, 6);                                              \
-        P7 p7 = getArgument<P7>(info, 7);                                              \
-        P8 p8 = getArgument<P8>(info, 8);                                              \
+        P0 p0 = GetArgument<P0>(info, 0);                                              \
+        P1 p1 = GetArgument<P1>(info, 1);                                              \
+        P2 p2 = GetArgument<P2>(info, 2);                                              \
+        P3 p3 = GetArgument<P3>(info, 3);                                              \
+        P4 p4 = GetArgument<P4>(info, 4);                                              \
+        P5 p5 = GetArgument<P5>(info, 5);                                              \
+        P6 p6 = GetArgument<P6>(info, 6);                                              \
+        P7 p7 = GetArgument<P7>(info, 7);                                              \
+        P8 p8 = GetArgument<P8>(info, 8);                                              \
         /* CC-OFFNXT(G.PRE.05) function gen */                                         \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8)); \
     }                                                                                  \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -900,18 +917,18 @@ public:
     {                                                                                      \
         TS_MAYBE_LOG(name)                                                                 \
         CallbackInfo info(env, cbinfo);                                                    \
-        P0 p0 = getArgument<P0>(info, 0);                                                  \
-        P1 p1 = getArgument<P1>(info, 1);                                                  \
-        P2 p2 = getArgument<P2>(info, 2);                                                  \
-        P3 p3 = getArgument<P3>(info, 3);                                                  \
-        P4 p4 = getArgument<P4>(info, 4);                                                  \
-        P5 p5 = getArgument<P5>(info, 5);                                                  \
-        P6 p6 = getArgument<P6>(info, 6);                                                  \
-        P7 p7 = getArgument<P7>(info, 7);                                                  \
-        P8 p8 = getArgument<P8>(info, 8);                                                  \
-        P9 p9 = getArgument<P9>(info, 9);                                                  \
+        P0 p0 = GetArgument<P0>(info, 0);                                                  \
+        P1 p1 = GetArgument<P1>(info, 1);                                                  \
+        P2 p2 = GetArgument<P2>(info, 2);                                                  \
+        P3 p3 = GetArgument<P3>(info, 3);                                                  \
+        P4 p4 = GetArgument<P4>(info, 4);                                                  \
+        P5 p5 = GetArgument<P5>(info, 5);                                                  \
+        P6 p6 = GetArgument<P6>(info, 6);                                                  \
+        P7 p7 = GetArgument<P7>(info, 7);                                                  \
+        P8 p8 = GetArgument<P8>(info, 8);                                                  \
+        P9 p9 = GetArgument<P9>(info, 9);                                                  \
         /* CC-OFFNXT(G.PRE.05) function gen */                                             \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9)); \
     }                                                                                      \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -921,19 +938,19 @@ public:
     {                                                                                           \
         TS_MAYBE_LOG(name)                                                                      \
         CallbackInfo info(env, cbinfo);                                                         \
-        P0 p0 = getArgument<P0>(info, 0);                                                       \
-        P1 p1 = getArgument<P1>(info, 1);                                                       \
-        P2 p2 = getArgument<P2>(info, 2);                                                       \
-        P3 p3 = getArgument<P3>(info, 3);                                                       \
-        P4 p4 = getArgument<P4>(info, 4);                                                       \
-        P5 p5 = getArgument<P5>(info, 5);                                                       \
-        P6 p6 = getArgument<P6>(info, 6);                                                       \
-        P7 p7 = getArgument<P7>(info, 7);                                                       \
-        P8 p8 = getArgument<P8>(info, 8);                                                       \
-        P9 p9 = getArgument<P9>(info, 9);                                                       \
-        P10 p10 = getArgument<P10>(info, 10);                                                   \
+        P0 p0 = GetArgument<P0>(info, 0);                                                       \
+        P1 p1 = GetArgument<P1>(info, 1);                                                       \
+        P2 p2 = GetArgument<P2>(info, 2);                                                       \
+        P3 p3 = GetArgument<P3>(info, 3);                                                       \
+        P4 p4 = GetArgument<P4>(info, 4);                                                       \
+        P5 p5 = GetArgument<P5>(info, 5);                                                       \
+        P6 p6 = GetArgument<P6>(info, 6);                                                       \
+        P7 p7 = GetArgument<P7>(info, 7);                                                       \
+        P8 p8 = GetArgument<P8>(info, 8);                                                       \
+        P9 p9 = GetArgument<P9>(info, 9);                                                       \
+        P10 p10 = GetArgument<P10>(info, 10);                                                   \
         /* CC-OFFNXT(G.PRE.05) function gen */                                                  \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)); \
     }                                                                                           \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -943,20 +960,20 @@ public:
     {                                                                                                \
         TS_MAYBE_LOG(name)                                                                           \
         CallbackInfo info(env, cbinfo);                                                              \
-        P0 p0 = getArgument<P0>(info, 0);                                                            \
-        P1 p1 = getArgument<P1>(info, 1);                                                            \
-        P2 p2 = getArgument<P2>(info, 2);                                                            \
-        P3 p3 = getArgument<P3>(info, 3);                                                            \
-        P4 p4 = getArgument<P4>(info, 4);                                                            \
-        P5 p5 = getArgument<P5>(info, 5);                                                            \
-        P6 p6 = getArgument<P6>(info, 6);                                                            \
-        P7 p7 = getArgument<P7>(info, 7);                                                            \
-        P8 p8 = getArgument<P8>(info, 8);                                                            \
-        P9 p9 = getArgument<P9>(info, 9);                                                            \
-        P10 p10 = getArgument<P10>(info, 10);                                                        \
-        P11 p11 = getArgument<P11>(info, 11);                                                        \
+        P0 p0 = GetArgument<P0>(info, 0);                                                            \
+        P1 p1 = GetArgument<P1>(info, 1);                                                            \
+        P2 p2 = GetArgument<P2>(info, 2);                                                            \
+        P3 p3 = GetArgument<P3>(info, 3);                                                            \
+        P4 p4 = GetArgument<P4>(info, 4);                                                            \
+        P5 p5 = GetArgument<P5>(info, 5);                                                            \
+        P6 p6 = GetArgument<P6>(info, 6);                                                            \
+        P7 p7 = GetArgument<P7>(info, 7);                                                            \
+        P8 p8 = GetArgument<P8>(info, 8);                                                            \
+        P9 p9 = GetArgument<P9>(info, 9);                                                            \
+        P10 p10 = GetArgument<P10>(info, 10);                                                        \
+        P11 p11 = GetArgument<P11>(info, 11);                                                        \
         /* CC-OFFNXT(G.PRE.05) function gen */                                                       \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11)); \
     }                                                                                                \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -966,21 +983,21 @@ public:
     {                                                                                                     \
         TS_MAYBE_LOG(name)                                                                                \
         CallbackInfo info(env, cbinfo);                                                                   \
-        P0 p0 = getArgument<P0>(info, 0);                                                                 \
-        P1 p1 = getArgument<P1>(info, 1);                                                                 \
-        P2 p2 = getArgument<P2>(info, 2);                                                                 \
-        P3 p3 = getArgument<P3>(info, 3);                                                                 \
-        P4 p4 = getArgument<P4>(info, 4);                                                                 \
-        P5 p5 = getArgument<P5>(info, 5);                                                                 \
-        P6 p6 = getArgument<P6>(info, 6);                                                                 \
-        P7 p7 = getArgument<P7>(info, 7);                                                                 \
-        P8 p8 = getArgument<P8>(info, 8);                                                                 \
-        P9 p9 = getArgument<P9>(info, 9);                                                                 \
-        P10 p10 = getArgument<P10>(info, 10);                                                             \
-        P11 p11 = getArgument<P11>(info, 11);                                                             \
-        P12 p12 = getArgument<P12>(info, 12);                                                             \
+        P0 p0 = GetArgument<P0>(info, 0);                                                                 \
+        P1 p1 = GetArgument<P1>(info, 1);                                                                 \
+        P2 p2 = GetArgument<P2>(info, 2);                                                                 \
+        P3 p3 = GetArgument<P3>(info, 3);                                                                 \
+        P4 p4 = GetArgument<P4>(info, 4);                                                                 \
+        P5 p5 = GetArgument<P5>(info, 5);                                                                 \
+        P6 p6 = GetArgument<P6>(info, 6);                                                                 \
+        P7 p7 = GetArgument<P7>(info, 7);                                                                 \
+        P8 p8 = GetArgument<P8>(info, 8);                                                                 \
+        P9 p9 = GetArgument<P9>(info, 9);                                                                 \
+        P10 p10 = GetArgument<P10>(info, 10);                                                             \
+        P11 p11 = GetArgument<P11>(info, 11);                                                             \
+        P12 p12 = GetArgument<P12>(info, 12);                                                             \
         /* CC-OFFNXT(G.PRE.05) function gen */                                                            \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12)); \
     }                                                                                                     \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -990,22 +1007,22 @@ public:
     {                                                                                                          \
         TS_MAYBE_LOG(name)                                                                                     \
         CallbackInfo info(env, cbinfo);                                                                        \
-        P0 p0 = getArgument<P0>(info, 0);                                                                      \
-        P1 p1 = getArgument<P1>(info, 1);                                                                      \
-        P2 p2 = getArgument<P2>(info, 2);                                                                      \
-        P3 p3 = getArgument<P3>(info, 3);                                                                      \
-        P4 p4 = getArgument<P4>(info, 4);                                                                      \
-        P5 p5 = getArgument<P5>(info, 5);                                                                      \
-        P6 p6 = getArgument<P6>(info, 6);                                                                      \
-        P7 p7 = getArgument<P7>(info, 7);                                                                      \
-        P8 p8 = getArgument<P8>(info, 8);                                                                      \
-        P9 p9 = getArgument<P9>(info, 9);                                                                      \
-        P10 p10 = getArgument<P10>(info, 10);                                                                  \
-        P11 p11 = getArgument<P11>(info, 11);                                                                  \
-        P12 p12 = getArgument<P12>(info, 12);                                                                  \
-        P13 p13 = getArgument<P13>(info, 13);                                                                  \
+        P0 p0 = GetArgument<P0>(info, 0);                                                                      \
+        P1 p1 = GetArgument<P1>(info, 1);                                                                      \
+        P2 p2 = GetArgument<P2>(info, 2);                                                                      \
+        P3 p3 = GetArgument<P3>(info, 3);                                                                      \
+        P4 p4 = GetArgument<P4>(info, 4);                                                                      \
+        P5 p5 = GetArgument<P5>(info, 5);                                                                      \
+        P6 p6 = GetArgument<P6>(info, 6);                                                                      \
+        P7 p7 = GetArgument<P7>(info, 7);                                                                      \
+        P8 p8 = GetArgument<P8>(info, 8);                                                                      \
+        P9 p9 = GetArgument<P9>(info, 9);                                                                      \
+        P10 p10 = GetArgument<P10>(info, 10);                                                                  \
+        P11 p11 = GetArgument<P11>(info, 11);                                                                  \
+        P12 p12 = GetArgument<P12>(info, 12);                                                                  \
+        P13 p13 = GetArgument<P13>(info, 13);                                                                  \
         /* CC-OFFNXT(G.PRE.05) function gen */                                                                 \
-        return makeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13)); \
+        return MakeResult<Ret>(info, impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13)); \
     }                                                                                                          \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1016,7 +1033,7 @@ public:
         CallbackInfo info(env, cbinfo);                             \
         impl_##name();                                              \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1025,10 +1042,10 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
         impl_##name(p0);                                            \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1038,11 +1055,11 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
         impl_##name(p0, p1);                                        \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1052,12 +1069,12 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
         impl_##name(p0, p1, p2);                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1067,13 +1084,13 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
         impl_##name(p0, p1, p2, p3);                                \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1083,14 +1100,14 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
-        P4 p4 = getArgument<P4>(info, 4);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
+        P4 p4 = GetArgument<P4>(info, 4);                           \
         impl_##name(p0, p1, p2, p3, p4);                            \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1100,15 +1117,15 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
-        P4 p4 = getArgument<P4>(info, 4);                           \
-        P5 p5 = getArgument<P5>(info, 5);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
+        P4 p4 = GetArgument<P4>(info, 4);                           \
+        P5 p5 = GetArgument<P5>(info, 5);                           \
         impl_##name(p0, p1, p2, p3, p4, p5);                        \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1118,16 +1135,16 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
-        P4 p4 = getArgument<P4>(info, 4);                           \
-        P5 p5 = getArgument<P5>(info, 5);                           \
-        P6 p6 = getArgument<P6>(info, 6);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
+        P4 p4 = GetArgument<P4>(info, 4);                           \
+        P5 p5 = GetArgument<P5>(info, 5);                           \
+        P6 p6 = GetArgument<P6>(info, 6);                           \
         impl_##name(p0, p1, p2, p3, p4, p5, p6);                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1137,17 +1154,17 @@ public:
     {                                                               \
         TS_MAYBE_LOG(name)                                          \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
-        P4 p4 = getArgument<P4>(info, 4);                           \
-        P5 p5 = getArgument<P5>(info, 5);                           \
-        P6 p6 = getArgument<P6>(info, 6);                           \
-        P7 p7 = getArgument<P7>(info, 7);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
+        P4 p4 = GetArgument<P4>(info, 4);                           \
+        P5 p5 = GetArgument<P5>(info, 5);                           \
+        P6 p6 = GetArgument<P6>(info, 6);                           \
+        P7 p7 = GetArgument<P7>(info, 7);                           \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7);                \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1157,18 +1174,18 @@ public:
     {                                                               \
         TS_MAYBE_LOG(impl_##name)                                   \
         CallbackInfo info(env, cbinfo);                             \
-        P0 p0 = getArgument<P0>(info, 0);                           \
-        P1 p1 = getArgument<P1>(info, 1);                           \
-        P2 p2 = getArgument<P2>(info, 2);                           \
-        P3 p3 = getArgument<P3>(info, 3);                           \
-        P4 p4 = getArgument<P4>(info, 4);                           \
-        P5 p5 = getArgument<P5>(info, 5);                           \
-        P6 p6 = getArgument<P6>(info, 6);                           \
-        P7 p7 = getArgument<P7>(info, 7);                           \
-        P8 p8 = getArgument<P8>(info, 8);                           \
+        P0 p0 = GetArgument<P0>(info, 0);                           \
+        P1 p1 = GetArgument<P1>(info, 1);                           \
+        P2 p2 = GetArgument<P2>(info, 2);                           \
+        P3 p3 = GetArgument<P3>(info, 3);                           \
+        P4 p4 = GetArgument<P4>(info, 4);                           \
+        P5 p5 = GetArgument<P5>(info, 5);                           \
+        P6 p6 = GetArgument<P6>(info, 6);                           \
+        P7 p7 = GetArgument<P7>(info, 7);                           \
+        P8 p8 = GetArgument<P8>(info, 8);                           \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8);            \
         /* CC-OFFNXT(G.PRE.05) function gen */                      \
-        return makeVoid(info);                                      \
+        return MakeVoid(info);                                      \
     }                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1178,19 +1195,19 @@ public:
     {                                                                \
         TS_MAYBE_LOG(name)                                           \
         CallbackInfo info(env, cbinfo);                              \
-        P0 p0 = getArgument<P0>(info, 0);                            \
-        P1 p1 = getArgument<P1>(info, 1);                            \
-        P2 p2 = getArgument<P2>(info, 2);                            \
-        P3 p3 = getArgument<P3>(info, 3);                            \
-        P4 p4 = getArgument<P4>(info, 4);                            \
-        P5 p5 = getArgument<P5>(info, 5);                            \
-        P6 p6 = getArgument<P6>(info, 6);                            \
-        P7 p7 = getArgument<P7>(info, 7);                            \
-        P8 p8 = getArgument<P8>(info, 8);                            \
-        P9 p9 = getArgument<P9>(info, 9);                            \
+        P0 p0 = GetArgument<P0>(info, 0);                            \
+        P1 p1 = GetArgument<P1>(info, 1);                            \
+        P2 p2 = GetArgument<P2>(info, 2);                            \
+        P3 p3 = GetArgument<P3>(info, 3);                            \
+        P4 p4 = GetArgument<P4>(info, 4);                            \
+        P5 p5 = GetArgument<P5>(info, 5);                            \
+        P6 p6 = GetArgument<P6>(info, 6);                            \
+        P7 p7 = GetArgument<P7>(info, 7);                            \
+        P8 p8 = GetArgument<P8>(info, 8);                            \
+        P9 p9 = GetArgument<P9>(info, 9);                            \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                       \
-        return makeVoid(info);                                       \
+        return MakeVoid(info);                                       \
     }                                                                \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1200,20 +1217,20 @@ public:
     {                                                                     \
         TS_MAYBE_LOG(impl_##name)                                         \
         CallbackInfo info(env, cbinfo);                                   \
-        P0 p0 = getArgument<P0>(info, 0);                                 \
-        P1 p1 = getArgument<P1>(info, 1);                                 \
-        P2 p2 = getArgument<P2>(info, 2);                                 \
-        P3 p3 = getArgument<P3>(info, 3);                                 \
-        P4 p4 = getArgument<P4>(info, 4);                                 \
-        P5 p5 = getArgument<P5>(info, 5);                                 \
-        P6 p6 = getArgument<P6>(info, 6);                                 \
-        P7 p7 = getArgument<P7>(info, 7);                                 \
-        P8 p8 = getArgument<P8>(info, 8);                                 \
-        P9 p9 = getArgument<P9>(info, 9);                                 \
-        P10 p10 = getArgument<P10>(info, 10);                             \
+        P0 p0 = GetArgument<P0>(info, 0);                                 \
+        P1 p1 = GetArgument<P1>(info, 1);                                 \
+        P2 p2 = GetArgument<P2>(info, 2);                                 \
+        P3 p3 = GetArgument<P3>(info, 3);                                 \
+        P4 p4 = GetArgument<P4>(info, 4);                                 \
+        P5 p5 = GetArgument<P5>(info, 5);                                 \
+        P6 p6 = GetArgument<P6>(info, 6);                                 \
+        P7 p7 = GetArgument<P7>(info, 7);                                 \
+        P8 p8 = GetArgument<P8>(info, 8);                                 \
+        P9 p9 = GetArgument<P9>(info, 9);                                 \
+        P10 p10 = GetArgument<P10>(info, 10);                             \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                            \
-        return makeVoid(info);                                            \
+        return MakeVoid(info);                                            \
     }                                                                     \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1223,21 +1240,21 @@ public:
     {                                                                          \
         TS_MAYBE_LOG(impl_##name)                                              \
         CallbackInfo info(env, cbinfo);                                        \
-        P0 p0 = getArgument<P0>(info, 0);                                      \
-        P1 p1 = getArgument<P1>(info, 1);                                      \
-        P2 p2 = getArgument<P2>(info, 2);                                      \
-        P3 p3 = getArgument<P3>(info, 3);                                      \
-        P4 p4 = getArgument<P4>(info, 4);                                      \
-        P5 p5 = getArgument<P5>(info, 5);                                      \
-        P6 p6 = getArgument<P6>(info, 6);                                      \
-        P7 p7 = getArgument<P7>(info, 7);                                      \
-        P8 p8 = getArgument<P8>(info, 8);                                      \
-        P9 p9 = getArgument<P9>(info, 9);                                      \
-        P10 p10 = getArgument<P10>(info, 10);                                  \
-        P11 p11 = getArgument<P11>(info, 11);                                  \
+        P0 p0 = GetArgument<P0>(info, 0);                                      \
+        P1 p1 = GetArgument<P1>(info, 1);                                      \
+        P2 p2 = GetArgument<P2>(info, 2);                                      \
+        P3 p3 = GetArgument<P3>(info, 3);                                      \
+        P4 p4 = GetArgument<P4>(info, 4);                                      \
+        P5 p5 = GetArgument<P5>(info, 5);                                      \
+        P6 p6 = GetArgument<P6>(info, 6);                                      \
+        P7 p7 = GetArgument<P7>(info, 7);                                      \
+        P8 p8 = GetArgument<P8>(info, 8);                                      \
+        P9 p9 = GetArgument<P9>(info, 9);                                      \
+        P10 p10 = GetArgument<P10>(info, 10);                                  \
+        P11 p11 = GetArgument<P11>(info, 11);                                  \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                                 \
-        return makeVoid(info);                                                 \
+        return MakeVoid(info);                                                 \
     }                                                                          \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1247,22 +1264,22 @@ public:
     {                                                                               \
         TS_MAYBE_LOG(impl_##name)                                                   \
         CallbackInfo info(env, cbinfo);                                             \
-        P0 p0 = getArgument<P0>(info, 0);                                           \
-        P1 p1 = getArgument<P1>(info, 1);                                           \
-        P2 p2 = getArgument<P2>(info, 2);                                           \
-        P3 p3 = getArgument<P3>(info, 3);                                           \
-        P4 p4 = getArgument<P4>(info, 4);                                           \
-        P5 p5 = getArgument<P5>(info, 5);                                           \
-        P6 p6 = getArgument<P6>(info, 6);                                           \
-        P7 p7 = getArgument<P7>(info, 7);                                           \
-        P8 p8 = getArgument<P8>(info, 8);                                           \
-        P9 p9 = getArgument<P9>(info, 9);                                           \
-        P10 p10 = getArgument<P10>(info, 10);                                       \
-        P11 p11 = getArgument<P11>(info, 11);                                       \
-        P12 p12 = getArgument<P12>(info, 12);                                       \
+        P0 p0 = GetArgument<P0>(info, 0);                                           \
+        P1 p1 = GetArgument<P1>(info, 1);                                           \
+        P2 p2 = GetArgument<P2>(info, 2);                                           \
+        P3 p3 = GetArgument<P3>(info, 3);                                           \
+        P4 p4 = GetArgument<P4>(info, 4);                                           \
+        P5 p5 = GetArgument<P5>(info, 5);                                           \
+        P6 p6 = GetArgument<P6>(info, 6);                                           \
+        P7 p7 = GetArgument<P7>(info, 7);                                           \
+        P8 p8 = GetArgument<P8>(info, 8);                                           \
+        P9 p9 = GetArgument<P9>(info, 9);                                           \
+        P10 p10 = GetArgument<P10>(info, 10);                                       \
+        P11 p11 = GetArgument<P11>(info, 11);                                       \
+        P12 p12 = GetArgument<P12>(info, 12);                                       \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                                      \
-        return makeVoid(info);                                                      \
+        return MakeVoid(info);                                                      \
     }                                                                               \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1272,23 +1289,23 @@ public:
     {                                                                                    \
         TS_MAYBE_LOG(name)                                                               \
         CallbackInfo info(env, cbinfo);                                                  \
-        P0 p0 = getArgument<P0>(info, 0);                                                \
-        P1 p1 = getArgument<P1>(info, 1);                                                \
-        P2 p2 = getArgument<P2>(info, 2);                                                \
-        P3 p3 = getArgument<P3>(info, 3);                                                \
-        P4 p4 = getArgument<P4>(info, 4);                                                \
-        P5 p5 = getArgument<P5>(info, 5);                                                \
-        P6 p6 = getArgument<P6>(info, 6);                                                \
-        P7 p7 = getArgument<P7>(info, 7);                                                \
-        P8 p8 = getArgument<P8>(info, 8);                                                \
-        P9 p9 = getArgument<P9>(info, 9);                                                \
-        P10 p10 = getArgument<P10>(info, 10);                                            \
-        P11 p11 = getArgument<P11>(info, 11);                                            \
-        P12 p12 = getArgument<P12>(info, 12);                                            \
-        P13 p13 = getArgument<P13>(info, 13);                                            \
+        P0 p0 = GetArgument<P0>(info, 0);                                                \
+        P1 p1 = GetArgument<P1>(info, 1);                                                \
+        P2 p2 = GetArgument<P2>(info, 2);                                                \
+        P3 p3 = GetArgument<P3>(info, 3);                                                \
+        P4 p4 = GetArgument<P4>(info, 4);                                                \
+        P5 p5 = GetArgument<P5>(info, 5);                                                \
+        P6 p6 = GetArgument<P6>(info, 6);                                                \
+        P7 p7 = GetArgument<P7>(info, 7);                                                \
+        P8 p8 = GetArgument<P8>(info, 8);                                                \
+        P9 p9 = GetArgument<P9>(info, 9);                                                \
+        P10 p10 = GetArgument<P10>(info, 10);                                            \
+        P11 p11 = GetArgument<P11>(info, 11);                                            \
+        P12 p12 = GetArgument<P12>(info, 12);                                            \
+        P13 p13 = GetArgument<P13>(info, 13);                                            \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                                           \
-        return makeVoid(info);                                                           \
+        return MakeVoid(info);                                                           \
     }                                                                                    \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1298,24 +1315,24 @@ public:
     {                                                                                         \
         TS_MAYBE_LOG(name)                                                                    \
         CallbackInfo info(env, cbinfo);                                                       \
-        P0 p0 = getArgument<P0>(info, 0);                                                     \
-        P1 p1 = getArgument<P1>(info, 1);                                                     \
-        P2 p2 = getArgument<P2>(info, 2);                                                     \
-        P3 p3 = getArgument<P3>(info, 3);                                                     \
-        P4 p4 = getArgument<P4>(info, 4);                                                     \
-        P5 p5 = getArgument<P5>(info, 5);                                                     \
-        P6 p6 = getArgument<P6>(info, 6);                                                     \
-        P7 p7 = getArgument<P7>(info, 7);                                                     \
-        P8 p8 = getArgument<P8>(info, 8);                                                     \
-        P9 p9 = getArgument<P9>(info, 9);                                                     \
-        P10 p10 = getArgument<P10>(info, 10);                                                 \
-        P11 p11 = getArgument<P11>(info, 11);                                                 \
-        P12 p12 = getArgument<P12>(info, 12);                                                 \
-        P13 p13 = getArgument<P13>(info, 13);                                                 \
-        P14 p14 = getArgument<P14>(info, 14);                                                 \
+        P0 p0 = GetArgument<P0>(info, 0);                                                     \
+        P1 p1 = GetArgument<P1>(info, 1);                                                     \
+        P2 p2 = GetArgument<P2>(info, 2);                                                     \
+        P3 p3 = GetArgument<P3>(info, 3);                                                     \
+        P4 p4 = GetArgument<P4>(info, 4);                                                     \
+        P5 p5 = GetArgument<P5>(info, 5);                                                     \
+        P6 p6 = GetArgument<P6>(info, 6);                                                     \
+        P7 p7 = GetArgument<P7>(info, 7);                                                     \
+        P8 p8 = GetArgument<P8>(info, 8);                                                     \
+        P9 p9 = GetArgument<P9>(info, 9);                                                     \
+        P10 p10 = GetArgument<P10>(info, 10);                                                 \
+        P11 p11 = GetArgument<P11>(info, 11);                                                 \
+        P12 p12 = GetArgument<P12>(info, 12);                                                 \
+        P13 p13 = GetArgument<P13>(info, 13);                                                 \
+        P14 p14 = GetArgument<P14>(info, 14);                                                 \
         impl_##name(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);         \
         /* CC-OFFNXT(G.PRE.05) function gen */                                                \
-        return makeVoid(info);                                                                \
+        return MakeVoid(info);                                                                \
     }                                                                                         \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1327,7 +1344,7 @@ public:
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeResult<Ret>(info, impl_##name(ctx));                      \
+        return MakeResult<Ret>(info, impl_##name(ctx));                      \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1338,9 +1355,9 @@ public:
         TS_MAYBE_LOG(impl_##name)                                            \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeResult<Ret>(info, impl_##name(ctx, p0));                  \
+        return MakeResult<Ret>(info, impl_##name(ctx, p0));                  \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1351,10 +1368,10 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
-        P1 p1 = getArgument<P1>(info, 1);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
+        P1 p1 = GetArgument<P1>(info, 1);                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeResult<Ret>(info, impl_##name(ctx, p0, p1));              \
+        return MakeResult<Ret>(info, impl_##name(ctx, p0, p1));              \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1365,11 +1382,11 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
-        P1 p1 = getArgument<P1>(info, 1);                                    \
-        P2 p2 = getArgument<P2>(info, 2);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
+        P1 p1 = GetArgument<P1>(info, 1);                                    \
+        P2 p2 = GetArgument<P2>(info, 2);                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeResult<Ret>(info, impl_##name(ctx, p0, p1, p2));          \
+        return MakeResult<Ret>(info, impl_##name(ctx, p0, p1, p2));          \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1380,12 +1397,12 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
-        P1 p1 = getArgument<P1>(info, 1);                                    \
-        P2 p2 = getArgument<P2>(info, 2);                                    \
-        P3 p3 = getArgument<P3>(info, 3);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
+        P1 p1 = GetArgument<P1>(info, 1);                                    \
+        P2 p2 = GetArgument<P2>(info, 2);                                    \
+        P3 p3 = GetArgument<P3>(info, 3);                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeResult<Ret>(info, impl_##name(ctx, p0, p1, p2, p3));      \
+        return MakeResult<Ret>(info, impl_##name(ctx, p0, p1, p2, p3));      \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1398,7 +1415,7 @@ public:
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
         impl_##name(ctx);                                                    \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeVoid(info);                                               \
+        return MakeVoid(info);                                               \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1409,10 +1426,10 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
         impl_##name(ctx, p0);                                                \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeVoid(info);                                               \
+        return MakeVoid(info);                                               \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1423,11 +1440,11 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
-        P1 p1 = getArgument<P1>(info, 1);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
+        P1 p1 = GetArgument<P1>(info, 1);                                    \
         impl_##name(ctx, p0, p1);                                            \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeVoid(info);                                               \
+        return MakeVoid(info);                                               \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1438,12 +1455,12 @@ public:
         TS_MAYBE_LOG(name)                                                   \
         CallbackInfo info(env, cbinfo);                                      \
         KVMContext ctx = reinterpret_cast<KVMContext>((napi_env)info.Env()); \
-        P0 p0 = getArgument<P0>(info, 0);                                    \
-        P1 p1 = getArgument<P1>(info, 1);                                    \
-        P2 p2 = getArgument<P2>(info, 2);                                    \
+        P0 p0 = GetArgument<P0>(info, 0);                                    \
+        P1 p1 = GetArgument<P1>(info, 1);                                    \
+        P2 p2 = GetArgument<P2>(info, 2);                                    \
         impl_##name(ctx, p0, p1, p2);                                        \
         /* CC-OFFNXT(G.PRE.05) function gen */                               \
-        return makeVoid(info);                                               \
+        return MakeVoid(info);                                               \
     }                                                                        \
     MAKE_NODE_EXPORT(TS_INTEROP_MODULE, name)
 
@@ -1462,26 +1479,27 @@ public:
         }                                                                                              \
     } while (0)
 
-napi_value getKoalaNapiCallbackDispatcher(napi_env env);
+napi_value GetKoalaNapiCallbackDispatcher(napi_env env);
 
 // CC-OFFNXT(G.PRE.06) solid logic
 #define TS_INTEROP_CALL_VOID(venv, id, length, args)                                                     \
     {                                                                                                    \
         napi_env env = reinterpret_cast<napi_env>(venv);                                                 \
-        napi_value bridge = getKoalaNapiCallbackDispatcher(env), global = nullptr, return_val = nullptr; \
+        napi_value bridge = GetKoalaNapiCallbackDispatcher(env), global = nullptr, return_val = nullptr; \
         napi_handle_scope scope = nullptr;                                                               \
         napi_open_handle_scope(env, &scope);                                                             \
         napi_status status = napi_get_global(env, &global);                                              \
-        napi_value node_args[3];                                                                         \
+        std::array<napi_value, 3> node_args;                                                             \
         napi_create_int32(env, id, &node_args[0]);                                                       \
         napi_value buffer = nullptr;                                                                     \
         napi_create_external_arraybuffer(                                                                \
             env, args, length, [](napi_env, void *data, void *hint) {}, nullptr, &buffer);               \
         napi_create_typedarray(env, napi_uint8_array, length, buffer, 0, &node_args[1]);                 \
         napi_create_int32(env, length, &node_args[2]);                                                   \
-        status = napi_call_function(env, global, bridge, 3, node_args, &return_val);                     \
-        if (status != napi_ok)                                                                           \
+        status = napi_call_function(env, global, bridge, 3, node_args.data(), &return_val);              \
+        if (status != napi_ok) {                                                                         \
             NODEJS_GET_AND_THROW_LAST_ERROR((env));                                                      \
+        }                                                                                                \
         napi_close_handle_scope(env, scope);                                                             \
     }
 
@@ -1489,11 +1507,13 @@ napi_value getKoalaNapiCallbackDispatcher(napi_env env);
 #define TS_INTEROP_CALL_INT(venv, id, length, args)                                                                \
     {                                                                                                              \
         napi_env env = reinterpret_cast<napi_env>(venv);                                                           \
-        napi_value bridge = getKoalaNapiCallbackDispatcher(env), global = nullptr, return_val = nullptr;           \
+        napi_value bridge = GetKoalaNapiCallbackDispatcher(env);                                                   \
+        napi_value global = nullptr;                                                                               \
+        napi_value return_val = nullptr;                                                                           \
         napi_handle_scope scope = nullptr;                                                                         \
         napi_open_handle_scope(env, &scope);                                                                       \
         napi_status status = napi_get_global(env, &global);                                                        \
-        napi_value node_args[3];                                                                                   \
+        std::array<napi_value, 3> node_args {};                                                                    \
         napi_create_int32(env, id, &node_args[0]);                                                                 \
         napi_value buffer = nullptr;                                                                               \
         napi_create_external_arraybuffer(                                                                          \
@@ -1501,9 +1521,10 @@ napi_value getKoalaNapiCallbackDispatcher(napi_env env);
             &buffer);                                                                                              \
         napi_create_typedarray(env, napi_uint8_array, length, buffer, 0, &node_args[1]);                           \
         napi_create_int32(env, length, &node_args[2]);                                                             \
-        status = napi_call_function(env, global, bridge, 3, node_args, &return_val);                               \
-        if (status != napi_ok)                                                                                     \
+        status = napi_call_function(env, global, bridge, 3, node_args.data(), &return_val);                        \
+        if (status != napi_ok) {                                                                                   \
             NODEJS_GET_AND_THROW_LAST_ERROR((env));                                                                \
+        }                                                                                                          \
         int result;                                                                                                \
         status = napi_get_value_int32(env, return_val, &result);                                                   \
         napi_close_handle_scope(env, scope);                                                                       \
@@ -1514,6 +1535,6 @@ napi_value getKoalaNapiCallbackDispatcher(napi_env env);
 #define TS_INTEROP_CALL_VOID_INTS32(venv, id, argc, args) TS_INTEROP_CALL_VOID(venv, id, (argc) * sizeof(int32_t), args)
 #define TS_INTEROP_CALL_INT_INTS32(venv, id, argc, args) TS_INTEROP_CALL_INT(venv, id, (argc) * sizeof(int32_t), args)
 
-// NOLINTEND
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #endif  // CONVERTORS_NAPI_H_

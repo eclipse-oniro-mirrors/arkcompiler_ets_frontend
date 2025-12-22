@@ -22,6 +22,7 @@
 #include <gtest/gtest.h>
 
 using ark::es2panda::lsp::Initializer;
+using ark::es2panda::lsp::RenameLocation;
 
 // NOLINTBEGIN
 std::vector<std::string> fileNames = {"findRenameLocsOne.ets", "findRenameLocsTwo.ets"};
@@ -93,29 +94,11 @@ static size_t getLine(std::string source, size_t pos)
     return line;
 }
 
-static size_t getLineStart(std::string source, size_t pos)
-{
-    auto it = source.begin() + pos;
-    while (it > source.begin() && *(it - 1) != '\n') {
-        --it;
-    }
-    return it - source.begin();
-}
-
-static size_t getLineEnd(std::string source, size_t pos)
-{
-    auto it = source.begin() + pos;
-    while (it < source.end() && *it != '\n') {
-        ++it;
-    }
-    return it - source.begin();
-}
-
-class LspFindRenameLocationsTests : public LSPAPITests {
+class LspFindRenameLocationsTests1 : public LSPAPITests {
 public:
-    std::set<ark::es2panda::lsp::RenameLocation> genTestData(std::string word, std::string filePath, std::string source)
+    std::set<RenameLocation> genTestData(std::string word, std::string filePath, std::string source)
     {
-        std::set<ark::es2panda::lsp::RenameLocation> data;
+        std::set<RenameLocation> data;
         std::regex regex {"\\W" + word + "\\W"};
         auto matchBeg = std::sregex_iterator {source.begin(), source.end(), regex};
         auto matchEnd = std::sregex_iterator();
@@ -123,26 +106,23 @@ public:
         for (auto it = matchBeg; it != matchEnd; ++it) {
             size_t pos = it->position() + 1;
             size_t line = getLine(source, pos);
-            size_t lineStartPos = getLineStart(source, pos);
-            size_t lineEndPos = getLineEnd(source, pos);
-            std::string prefix {source.begin() + lineStartPos, source.begin() + pos};
-            std::string suffix {source.begin() + pos + word.length(), source.begin() + lineEndPos};
-            ark::es2panda::lsp::RenameLocation loc {filePath, pos, pos + word.length(), line, prefix, suffix};
+            RenameLocation loc {filePath, pos, pos + word.length(), line};
             printf("{R\"(%s)\", %ld, %ld, %ld, R\"(%s)\", R\"(%s)\"},\n", loc.fileName.c_str(), loc.start, loc.end,
-                   loc.line, loc.prefixText.c_str(), loc.suffixText.c_str());
+                   loc.line, loc.prefixText.has_value() ? loc.prefixText->c_str() : "null",
+                   loc.suffixText.has_value() ? loc.suffixText->c_str() : "null");
             data.insert(loc);
         }
 
         return data;
     }
 
-    std::set<ark::es2panda::lsp::RenameLocation> genTestData(std::string pattern)
+    std::set<RenameLocation> genTestData(std::string pattern)
     {
         // Create the files
         auto filePaths = CreateTempFile(fileNames, fileContents);
 
-        std::set<ark::es2panda::lsp::RenameLocation> data;
-        printf("std::set<ark::es2panda::lsp::RenameLocation> expected_%s = {\n", pattern.c_str());
+        std::set<RenameLocation> data;
+        printf("std::set<RenameLocation> expected_%s = {\n", pattern.c_str());
         for (size_t i = 0; i < filePaths.size(); ++i) {
             auto entries = genTestData(pattern, filePaths[i], fileContents[i]);
             for (const auto &entry : entries) {
@@ -154,65 +134,45 @@ public:
     }
 };
 
-std::set<ark::es2panda::lsp::RenameLocation> expected_Foo = {
-    {R"(/tmp/findRenameLocsOne.ets)", 140, 143, 7, R"(        export class )", R"( {)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 30, 33, 1, R"(        import { dummy, abc, )",
-     R"(  } from "./findRenameLocsOne.ets";)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 183, 186, 9, R"(        let myfoo = new )", R"(("apples", 1, 2, 3);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 234, 237, 10, R"(        let otherfoo = new )", R"(("oranges", 4, 5, 6);)"},
+std::set<RenameLocation> expected_Foo = {
+    {R"(/tmp/findRenameLocsTwo.ets)", 30, 33, 1, "Foo as "},
+    {R"(/tmp/findRenameLocsTwo.ets)", 183, 186, 9},
+    {R"(/tmp/findRenameLocsTwo.ets)", 234, 237, 10},
 };
-std::set<ark::es2panda::lsp::RenameLocation> expected_abc = {
-    {R"(/tmp/findRenameLocsOne.ets)", 25, 28, 1, R"(        export function )", R"((x: number): void {)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 899, 902, 35, R"(        )", R"((2);)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 915, 918, 36, R"(        )", R"((3);)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 931, 934, 37, R"(        )", R"((4);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 25, 28, 1, R"(        import { dummy, )",
-     R"(, Foo  } from "./findRenameLocsOne.ets";)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 115, 118, 5, R"(        )", R"((5);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 131, 134, 6, R"(        )", R"((55);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 148, 151, 7, R"(        )", R"((555);)"},
+std::set<RenameLocation> expected_abc = {
+    {R"(/tmp/findRenameLocsOne.ets)", 25, 28, 1},    {R"(/tmp/findRenameLocsOne.ets)", 899, 902, 35},
+    {R"(/tmp/findRenameLocsOne.ets)", 915, 918, 36}, {R"(/tmp/findRenameLocsOne.ets)", 931, 934, 37},
+    {R"(/tmp/findRenameLocsTwo.ets)", 25, 28, 1},    {R"(/tmp/findRenameLocsTwo.ets)", 115, 118, 5},
+    {R"(/tmp/findRenameLocsTwo.ets)", 131, 134, 6},  {R"(/tmp/findRenameLocsTwo.ets)", 148, 151, 7},
 };
-std::set<ark::es2panda::lsp::RenameLocation> expected_dummy = {
-    {R"(/tmp/findRenameLocsOne.ets)", 83, 88, 4, R"(        export function )", R"((x: number): void {)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 863, 868, 33, R"(        )", R"((0);)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 881, 886, 34, R"(        )", R"((1);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 18, 23, 1, R"(        import { )",
-     R"(, abc, Foo  } from "./findRenameLocsOne.ets";)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 78, 83, 3, R"(        )", R"((4);)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 96, 101, 4, R"(        )", R"((44);)"},
+std::set<RenameLocation> expected_dummy = {
+    {R"(/tmp/findRenameLocsOne.ets)", 83, 88, 4},    {R"(/tmp/findRenameLocsOne.ets)", 863, 868, 33},
+    {R"(/tmp/findRenameLocsOne.ets)", 881, 886, 34}, {R"(/tmp/findRenameLocsTwo.ets)", 18, 23, 1},
+    {R"(/tmp/findRenameLocsTwo.ets)", 78, 83, 3},    {R"(/tmp/findRenameLocsTwo.ets)", 96, 101, 4},
 };
-std::set<ark::es2panda::lsp::RenameLocation> expected_name = {
-    {R"(/tmp/findRenameLocsOne.ets)", 158, 162, 8, R"(            )", R"(: string = "unassigned";)"},
-    {R"(/tmp/findRenameLocsOne.ets)", 362, 366, 13, R"(                this.)", R"( = name;)"},
-    {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14, R"(        console.log(myfoo.)", R"())"},
+std::set<RenameLocation> expected_name = {
+    {R"(/tmp/findRenameLocsOne.ets)", 158, 162, 8},
+    {R"(/tmp/findRenameLocsOne.ets)", 362, 366, 13},
+    {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14},
 };
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
-    auto fileContexts = std::vector<es2panda_Context *>();
-    for (const auto &filePath : filePaths) {
-        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
-        fileContexts.push_back(fileContext);
-    }
-    // Search for rename locations
     ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
-    auto res = ark::es2panda::lsp::FindRenameLocations(&cancellationToken, fileContexts, context, 30);
+    auto res = ark::es2panda::lsp::FindRenameLocationsInCurrentFile(context, fileContents[1].find("Foo  }"));
     ASSERT_EQ(res.size(), expected_Foo.size());
     for (auto renameLoc : res) {
         auto found = expected_Foo.find(renameLoc);
         ASSERT_TRUE(found != expected_Foo.end());
     }
-    for (size_t i = 0; i < fileContexts.size(); ++i) {
-        initializer.DestroyContext(fileContexts[i]);
-    }
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsFunctionName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
@@ -238,7 +198,7 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName)
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName2)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsFunctionName2)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);
@@ -264,7 +224,7 @@ TEST_F(LspFindRenameLocationsTests, FindRenameLocationsFunctionName2)
     initializer.DestroyContext(context);
 }
 
-TEST_F(LspFindRenameLocationsTests, FindRenameLocationsClassMemberName)
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassMemberName)
 {
     // Create the files
     auto filePaths = CreateTempFile(fileNames, fileContents);

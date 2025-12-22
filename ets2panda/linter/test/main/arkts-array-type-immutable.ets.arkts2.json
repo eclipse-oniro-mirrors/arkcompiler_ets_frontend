@@ -125,16 +125,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 67,
-            "column": 6,
-            "endLine": 67,
-            "endColumn": 63,
-            "problem": "ArrayTypeImmutable",
-            "suggest": "",
-            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
             "line": 74,
             "column": 3,
             "endLine": 74,
@@ -235,6 +225,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 131,
+            "column": 42,
+            "endLine": 131,
+            "endColumn": 83,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 132,
             "column": 5,
             "endLine": 132,
@@ -255,13 +255,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 134,
-            "column": 17,
-            "endLine": 134,
-            "endColumn": 99,
-            "problem": "GenericCallNoTypeArgs",
+            "line": 132,
+            "column": 36,
+            "endLine": 132,
+            "endColumn": 70,
+            "problem": "ArrayTypeImmutable",
             "suggest": "",
-            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
             "severity": "ERROR"
         },
         {
@@ -305,6 +305,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 138,
+            "column": 34,
+            "endLine": 138,
+            "endColumn": 62,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 139,
             "column": 5,
             "endLine": 139,
@@ -332,16 +342,6 @@
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 149,
-            "column": 40,
-            "endLine": 149,
-            "endColumn": 45,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {
@@ -386,32 +386,12 @@
         },
         {
             "line": 151,
-            "column": 1,
-            "endLine": 151,
-            "endColumn": 54,
-            "problem": "InteropCallReflect",
-            "suggest": "",
-            "rule": "Reflect API usage is not allowed in interop calls when an \"Object\" parameter receives a class instance (arkts-interop-d2s-static-reflect-on-dynamic-instance)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 151,
             "column": 9,
             "endLine": 151,
             "endColumn": 14,
             "problem": "LimitedStdLibApi",
             "suggest": "",
             "rule": "Usage of standard library is restricted (arkts-limited-stdlib)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 155,
-            "column": 17,
-            "endLine": 155,
-            "endColumn": 22,
-            "problem": "BuiltinNewCtor",
-            "suggest": "",
-            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
         },
         {

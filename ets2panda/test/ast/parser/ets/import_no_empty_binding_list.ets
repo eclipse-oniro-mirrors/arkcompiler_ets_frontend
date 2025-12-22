@@ -15,6 +15,7 @@
 
 import {/* @@ label1 */} /* @@ label2 */from /* @@ label3 */'module'
 
-/* @@@ label1 Error SyntaxError: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module! */
-/* @@@ label2 Error TypeError: Unresolved reference from */
-/* @@@ label3 Error SyntaxError: Unexpected token 'module'. */
+
+/* @@@ label1 Error Syntax error ESY73297: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module! */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference from */
+/* @@@ label3 Error Syntax error ESY0227: Unexpected token 'module'. */

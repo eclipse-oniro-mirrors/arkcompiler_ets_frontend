@@ -17,6 +17,7 @@ final kngkgj class B {
 
 }
 
-/* @@? 16:7 Error SyntaxError: Unexpected token 'kngkgj'. */
-/* @@? 16:7 Error TypeError: Unresolved reference kngkgj */
-/* @@? 16:14 Error SyntaxError: Unexpected token 'class'. */
+
+/* @@? 16:7 Error Syntax error ESY0227: Unexpected token 'kngkgj'. */
+/* @@? 16:7 Error Semantic error ESE0143: Unresolved reference kngkgj */
+/* @@? 16:14 Error Syntax error ESY0227: Unexpected token 'class'. */

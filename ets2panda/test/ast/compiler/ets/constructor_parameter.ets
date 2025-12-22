@@ -17,7 +17,7 @@ class A {
     constructor (this.
 }
 
-/* @@? 17:17 Error TypeError: Only abstract or native methods can't have body. */
-/* @@? 17:22 Error SyntaxError: The function parameter 'this' must explicitly specify the typeAnnotation. */
-/* @@? 17:22 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 17:22 Error SyntaxError: Unexpected token '.'. */
+/* @@? 17:17 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
+/* @@? 17:22 Error Syntax error ESY0099: The function parameter 'this' must explicitly specify the typeAnnotation. */
+/* @@? 17:22 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 17:22 Error Syntax error ESY0227: Unexpected token '.'. */

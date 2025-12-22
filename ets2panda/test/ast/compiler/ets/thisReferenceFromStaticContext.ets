@@ -15,11 +15,10 @@
 
 class Klass {
     static {
-        /* @@ label */this./* @@ label1 */a = 13;
+        this.a = 13;
     }
 
     static a: int = 12;
 }
 
-/* @@@ label Error TypeError: 'this' cannot be referenced from a static context  */
-/* @@@ label1 Error TypeError: 'a' is a static property of 'Klass'  */
+/* @@? 18:9 Error Semantic error ESE0202: 'this' cannot be referenced from a static context */

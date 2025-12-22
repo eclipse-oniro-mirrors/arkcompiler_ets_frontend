@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "Fatal error F0044: File name 'test:2.ets' contains invalid characters: ':'\n",
+    "stderr": ""
+}

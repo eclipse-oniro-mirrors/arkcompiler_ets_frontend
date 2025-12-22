@@ -23,11 +23,9 @@ let func3: (f: (a: number, b: string) => number[]): number[] => (a: number, b: b
 // let func3: (f: (a: number, b: string) => number[]): number[]) => (a: number, b: boolean) => true;
 
 
-/* @@? 19:8 Error TypeError: 'void' used as type annotation. */
-/* @@? 22:51 Error SyntaxError: Unexpected token, expected '=>'. */
-/* @@? 22:51 Error SyntaxError: Unexpected token, expected '('. */
-/* @@? 22:51 Error SyntaxError: Invalid Type. */
-/* @@? 22:51 Error SyntaxError: Unexpected token '('. */
-/* @@? 22:62 Error SyntaxError: Unexpected token '=>'. */
-/* @@? 22:62 Error SyntaxError: Unexpected token. */
-/* @@? 22:96 Error SyntaxError: Unexpected token, expected ')'. */
+
+/* @@? 19:8 Error Semantic error ESE0232: 'void' used as type annotation. */
+/* @@? 22:51 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
+/* @@? 22:51 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:53 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 22:62 Error Syntax error ESY0227: Unexpected token '=>'. */

@@ -133,7 +133,7 @@ public:
     void SetOperator(lexer::TokenType operatorType) noexcept
     {
         operator_ = operatorType;
-        type_ = AstNodeType::BINARY_EXPRESSION;
+        SetType(AstNodeType::BINARY_EXPRESSION);
     }
 
     [[nodiscard]] checker::Type *OperationType() noexcept

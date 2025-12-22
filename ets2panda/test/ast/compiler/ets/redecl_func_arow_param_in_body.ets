@@ -22,11 +22,11 @@ function foo(bar: () => int) {
    foo(() => {});
  }
 
-/* @@? 18:11 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? 18:13 Error TypeError: Variable 'bar' has already been declared. */
-/* @@? 18:16 Error SyntaxError: Variable must be initialized or it's type must be declared. */
-/* @@? 18:16 Error SyntaxError: Unexpected token '('. */
-/* @@? 18:17 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:18 Error SyntaxError: Unexpected token, expected ')'. */
-/* @@? 22:4 Error TypeError: No matching call signature for foo((() => Int)) */
-/* @@? 22:14 Error TypeError: Type 'void' is not compatible with the enclosing method's return type 'Int' */
+
+/* @@? 18:11 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 18:13 Error Semantic error ESE0351: Variable 'bar' has already been declared. */
+/* @@? 18:16 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
+/* @@? 18:16 Error Syntax error ESY0227: Unexpected token '('. */
+/* @@? 18:17 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 18:18 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 22:14 Error Semantic error ESE0091: Type 'void' is not compatible with the enclosing method's return type 'Int' */

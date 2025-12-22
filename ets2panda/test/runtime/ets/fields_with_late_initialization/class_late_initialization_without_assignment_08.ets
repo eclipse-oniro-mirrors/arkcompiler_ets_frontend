@@ -13,11 +13,8 @@
  * limitations under the License.
  */
 
-interface I{
-    f!:string
-}
 
-class A implements I{
+class A {
     f!:string
 }
 

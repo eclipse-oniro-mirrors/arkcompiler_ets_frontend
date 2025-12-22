@@ -22,6 +22,7 @@ function getStringArray(): StringArray {
 let myArray: StringArray = getStringArray()
 let secondItem = /* @@ label3 */myArray[1]
 
-/* @@@ label1 Error TypeError: Indexed signatures are not allowed. Use arrays instead!  */
-/* @@@ label2 Error TypeError: Type 'Array<String>' is not compatible with the enclosing method's return type 'StringArray'  */
-/* @@@ label3 Error TypeError: Object type doesn't have proper index access method.  */
+
+/* @@@ label1 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
+/* @@@ label2 Error Semantic error ESE0091: Type 'Array<String>' is not compatible with the enclosing method's return type 'StringArray' */
+/* @@@ label3 Error Semantic error ESE0250: Object type doesn't have proper index access method. */

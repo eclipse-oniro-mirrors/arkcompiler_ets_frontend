@@ -15,4 +15,5 @@
 
 class C1 <T1, T2 = number, T3/* @@ label */> {}
 
-/* @@@ label Error SyntaxError: Required type parameters may not follow optional type parameters.  */
+
+/* @@@ label Error Syntax error ESY0179: Required type parameters may not follow optional type parameters. */

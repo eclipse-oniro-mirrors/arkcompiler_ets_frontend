@@ -17,5 +17,6 @@ declare namespace super {
 
 }
 
-/* @@? 16:19 Error SyntaxError: Hard keyword 'super' cannot be used as identifier */
-/* @@? 16:19 Error SyntaxError: Identifier expected, got 'super'. */
+
+/* @@? 16:19 Error Syntax error ESY0316: Hard keyword 'super' cannot be used as identifier */
+/* @@? 16:19 Error Syntax error ESY0224: Identifier expected, got 'super'. */

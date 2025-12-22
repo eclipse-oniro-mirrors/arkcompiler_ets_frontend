@@ -34,18 +34,22 @@ export const updateIfChanged = (t: Record<string, Object>) => {
   };
 };
 
-/* @@? 21:19 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@? 21:19 Error TypeError: Unresolved reference u */
-/* @@? 22:26 Error TypeError: No matching call signature for reduce(..., ((p1: Record<String,Object>) => Char)) */
-/* @@? 28:11 Error SyntaxError: Unexpected token. */
-/* @@? 28:12 Error SyntaxError: Unexpected token. */
-/* @@? 28:15 Error SyntaxError: Unexpected token. */
-/* @@? 28:16 Error SyntaxError: Unexpected token ':'. */
-/* @@? 28:18 Error SyntaxError: Unexpected token 'v'. */
-/* @@? 29:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 30:16 Error TypeError: Unresolved reference update */
-/* @@? 30:16 Error TypeError: This expression is not callable. */
-/* @@? 32:5 Error SyntaxError: Unexpected token ')'. */
-/* @@? 33:12 Error TypeError: Unresolved reference reduceResult */
-/* @@? 33:12 Error TypeError: Unexpected return value, enclosing method return type is void. */
-/* @@? 35:1 Error SyntaxError: Unexpected token '}'. */
+/* @@? 21:19 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 21:19 Error Semantic error ESE0143: Unresolved reference u */
+/* @@? 21:19 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 22:26 Error Semantic error ESE0127: No matching call signature for reduce(..., ((p1: Record<String,Object>) => Char)) */
+/* @@? 28:11 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 28:12 Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@? 28:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 28:15 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 28:15 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 28:15 Error Syntax error ESY0230: Expected '{', got ']'. */
+/* @@? 28:15 Error Syntax error ESY0016: Unexpected token. */
+/* @@? 28:16 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 28:18 Error Syntax error ESY0227: Unexpected token 'v'. */
+/* @@? 29:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 30:16 Error Semantic error ESE0143: Unresolved reference update */
+/* @@? 30:16 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 32:5 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 33:12 Error Semantic error ESE0143: Unresolved reference reduceResult */
+/* @@? 35:1 Error Syntax error ESY0227: Unexpected token '}'. */

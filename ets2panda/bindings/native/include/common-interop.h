@@ -20,10 +20,14 @@
 
 #include "panda_types.h"
 
-// NOLINTBEGIN
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
 
+// CC-OFFNXT(G.PRE.02) code gen
 #define TS_INTEROP_PROFILER 0
+// CC-OFFNXT(G.PRE.02) code gen
 #define TS_INTEROP_TRACER 0
+
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 #if TS_INTEROP_PROFILER
 #include "profiler.h"
@@ -45,8 +49,8 @@
 #define TS_MAYBE_LOG(name)
 #endif
 
-typedef void (*CallbackCallert)(KInt callbackKind, KByte *argsData, KInt argsLength);
-typedef void (*CallbackCallerSynct)(KVMContext vmContext, KInt callbackKind, KByte *argsData, KInt argsLength);
+using CallbackCallert = void (*)(KInt callbackKind, KByte *argsData, KInt argsLength);
+using CallbackCallerSynct = void (*)(KVMContext vmContext, KInt callbackKind, KByte *argsData, KInt argsLength);
 void SetCallbackCaller(CallbackCallert caller);
 void SetCallbackCallerSync(CallbackCallerSynct callerSync);
 
@@ -55,10 +59,8 @@ KVMDeferred *CreateDeferred(KVMContext context, KVMObjectHandle *promise);
 // CC-OFFNXT(G.NAM.01) false positive
 std::vector<KStringPtr> MakeStringVector(KStringArray strArray);
 // CC-OFFNXT(G.NAM.01) false positive
-std::vector<KStringPtr> MakeStringVector(KNativePointerArray arr, KInt size);
+std::vector<KStringPtr> MakeStringVector(KNativePointerArray arr, KInt length);
 
 #include "convertors-napi.h"
-
-// NOLINTEND
 
 #endif  // COMMON_INTEROP_BASE_H

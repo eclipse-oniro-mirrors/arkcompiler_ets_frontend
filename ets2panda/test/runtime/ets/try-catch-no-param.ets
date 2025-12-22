@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-class TestException extends Exception {}
+class TestError extends Error {}
 
 let catchCode = 0;
 
 function main(): void {
     try {
-        throw new TestException();
+        throw new TestError();
     } catch (e) {
         catchCode = 1;
     }
@@ -27,7 +27,7 @@ function main(): void {
     arktest.assertEQ(catchCode, 1)
 
     try {
-        throw new Exception();
+        throw new Error();
     } catch (e) {
         catchCode = 2;
     }

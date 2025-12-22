@@ -16,4 +16,5 @@
 
 const c/* @@ label */;
 
-/* @@@ label Error SyntaxError: Missing initializer in const declaration.  */
+
+/* @@@ label Error Syntax error ESY0100: Missing initializer in const declaration. */

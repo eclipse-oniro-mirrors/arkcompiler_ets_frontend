@@ -15,20 +15,20 @@
 
 interface Fruit {}
 
+function foo(this:Fruit): int {
+    return 1;
+}
+
 class Banana implements Fruit {}
 
 function foo(this:Banana):int {
     return 2
 }
 
-function foo(this:Fruit): int {
-    return 1;
-}
-
 function asFuncCall() {
     let banana = new Banana();
     let res: int = foo(banana);
-    arktest.assertEQ(res, 2 )
+    arktest.assertEQ(res, 1 )
     let res1: int = foo((banana as Fruit));
     arktest.assertEQ(res1, 1 )
 }
@@ -36,7 +36,7 @@ function asFuncCall() {
 function asMethodCall() {
     let banana = new Banana();
     let res: int = banana.foo();
-    arktest.assertEQ(res, 2 )
+    arktest.assertEQ(res, 1 )
     let res1: int = (banana as Fruit).foo();
     arktest.assertEQ(res1, 1 )
 }

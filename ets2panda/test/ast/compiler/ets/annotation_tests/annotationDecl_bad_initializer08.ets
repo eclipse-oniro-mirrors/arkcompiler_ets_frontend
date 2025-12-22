@@ -24,10 +24,11 @@ enum Size{S, M, L, XL, XXL}
     testProperty5: Size[] = [Color.GREEN, Color.BLUE]
 }
 
-/* @@? 20:29 Error TypeError: Type 'Int' cannot be assigned to type 'String' */
-/* @@? 21:30 Error TypeError: Type '"false"' cannot be assigned to type 'Boolean' */
-/* @@? 22:29 Error TypeError: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Int' */
-/* @@? 22:34 Error TypeError: Array element at index 1 with type 'Double' is not compatible with the target array element type 'Int' */
-/* @@? 23:28 Error TypeError: Type 'Size' cannot be assigned to type 'Color' */
-/* @@? 24:30 Error TypeError: Array element at index 0 with type 'Color' is not compatible with the target array element type 'Size' */
-/* @@? 24:43 Error TypeError: Array element at index 1 with type 'Color' is not compatible with the target array element type 'Size' */
+
+/* @@? 20:29 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'String' */
+/* @@? 21:30 Error Semantic error ESE0318: Type '"false"' cannot be assigned to type 'Boolean' */
+/* @@? 22:29 Error Semantic error ESE0227: Array element at index 0 with type 'Double' is not compatible with the target array element type 'Int' */
+/* @@? 22:34 Error Semantic error ESE0227: Array element at index 1 with type 'Double' is not compatible with the target array element type 'Int' */
+/* @@? 23:28 Error Semantic error ESE0318: Type 'Size' cannot be assigned to type 'Color' */
+/* @@? 24:30 Error Semantic error ESE0227: Array element at index 0 with type 'Color' is not compatible with the target array element type 'Size' */
+/* @@? 24:43 Error Semantic error ESE0227: Array element at index 1 with type 'Color' is not compatible with the target array element type 'Size' */

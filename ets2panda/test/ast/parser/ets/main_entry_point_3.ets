@@ -17,4 +17,5 @@ function main(/* @@ label */i : int[]): void {
     return;
 }
 
-/* @@@ label Error TypeError: Only 'FixedArray<string>' type argument is allowed.  */
+
+/* @@@ label Error Semantic error ESE0135: Only 'FixedArray<string>' type argument is allowed. */

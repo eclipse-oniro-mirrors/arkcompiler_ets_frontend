@@ -16,5 +16,5 @@
 set a(...args:number[]){}
 set b(args ?: number) {}
 
-/* @@? 16:7 Error SyntaxError: Setter cannot have rest parameter. */
-/* @@? 17:7 Error SyntaxError: Setter cannot have optional parameter. */
+/* @@? 16:7 Error Syntax error ESY36775: Setter cannot have rest parameter. */
+/* @@? 17:7 Error Syntax error ESY13534: Setter cannot have optional parameter. */

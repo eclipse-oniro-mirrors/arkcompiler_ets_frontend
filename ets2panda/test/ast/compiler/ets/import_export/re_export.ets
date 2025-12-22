@@ -13,4 +13,4 @@
  * limitations under the License.
  */
 
-export { A, A as B } from "./eitest_export_A_1"
+export { A, A as B } from "./eitest_export_A_1"/* @@? 16:13 Warning Warning W125428: 'A' has already imported */

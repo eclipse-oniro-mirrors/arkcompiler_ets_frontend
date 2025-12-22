@@ -323,8 +323,8 @@
           "program": "user_defined_22.ets"
         },
         "end": {
-          "line": 20,
-          "column": 4,
+          "line": 19,
+          "column": 16,
           "program": "user_defined_22.ets"
         }
       }

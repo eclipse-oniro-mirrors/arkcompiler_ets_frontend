@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,4 +36,5 @@ var a: A;
 a = d;
 /* @@ label */d = a;
 
-/* @@@ label Error TypeError: Type 'A' is not assignable to type 'D'.  */
+
+/* @@@ label Error Semantic error ESE0000: Type 'A' is not assignable to type 'D'. */

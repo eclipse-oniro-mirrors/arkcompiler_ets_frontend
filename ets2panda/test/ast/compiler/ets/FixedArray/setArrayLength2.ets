@@ -18,4 +18,5 @@ function main(): void {
     /* @@ label */test_array.length = 0;
 }
 
-/* @@@ label Error TypeError: Setting the length of an array is not permitted  */
+
+/* @@@ label Error Semantic error ESE0024: Setting the length of an array is not permitted */

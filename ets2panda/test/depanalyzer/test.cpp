@@ -17,9 +17,9 @@
 #include <vector>
 
 #include "driver/dependency_analyzer/dep_analyzer.h"
-#include "macros.h"
+#include "libarkbase/macros.h"
 #include "path_getter.h"
-#include "os/filesystem.h"
+#include "libarkbase/os/filesystem.h"
 
 namespace {
 

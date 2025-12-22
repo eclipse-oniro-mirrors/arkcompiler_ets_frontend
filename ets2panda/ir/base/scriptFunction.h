@@ -184,6 +184,11 @@ public:
         return (Flags() & ir::ScriptFunctionFlags::SETTER) != 0;
     }
 
+    [[nodiscard]] bool IsGetterOrSetter() const noexcept
+    {
+        return IsGetter() || IsSetter();
+    }
+
     [[nodiscard]] bool IsExtensionAccessor() const noexcept
     {
         return IsExtensionMethod() && (IsGetter() || IsSetter());
@@ -224,14 +229,26 @@ public:
         return (Flags() & ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED) != 0;
     }
 
+    [[nodiscard]] bool IsExplicitThisCall() const noexcept
+    {
+        return (Flags() & ir::ScriptFunctionFlags::EXPLICIT_THIS_CALL) != 0;
+    }
+
+    [[nodiscard]] bool IsExplicitSuperCall() const noexcept
+    {
+        return (Flags() & ir::ScriptFunctionFlags::EXPLICIT_SUPER_CALL) != 0;
+    }
+
     [[nodiscard]] bool HasBody() const noexcept
     {
         return Body() != nullptr;
     }
 
+    // Do not use anywhere except the ETSEmitter, should be removed
     [[nodiscard]] bool HasRestParameter() const noexcept
     {
-        return Signature()->RestVar() != nullptr;
+        auto const &params = GetHistoryNodeAs<ScriptFunction>()->irSignature_.Params();
+        return !params.empty() && params.back()->AsETSParameterExpression()->IsRestParameter();
     }
 
     [[nodiscard]] bool HasReturnStatement() const noexcept

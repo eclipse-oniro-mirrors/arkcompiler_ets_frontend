@@ -17,4 +17,5 @@
     a: @Anno
 }
 
-/* @@? 18:1 Error SyntaxError: Invalid Type. */
+
+/* @@? 18:1 Error Syntax error ESY0138: Invalid Type. */

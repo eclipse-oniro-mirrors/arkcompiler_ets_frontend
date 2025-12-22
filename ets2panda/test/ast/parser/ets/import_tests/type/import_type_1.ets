@@ -17,5 +17,6 @@ import {/* @@ label */A} from "./type"
 
 let aa:A;
 
-/* @@@ label Error TypeError: Cannot find imported element 'A'  */
-/* @@? 18:8 Error TypeError: Cannot find type 'A'. */
+
+/* @@@ label Error Semantic error ESE0356: Cannot find imported element 'A' */
+/* @@? 18:8 Error Semantic error ESE0371: Cannot find type 'A'. */

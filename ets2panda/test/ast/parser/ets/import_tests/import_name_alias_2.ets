@@ -18,5 +18,6 @@ import {foo as Foo, dbl} from "import_tests/packages";
 // Throw error: Foo qualifier should be used instead of foo.
 let x = foo(dbl);
 
-/* @@? 19:9 Error TypeError: Unresolved reference foo */
-/* @@? 19:9 Error TypeError: This expression is not callable. */
+
+/* @@? 19:9 Error Semantic error ESE0143: Unresolved reference foo */
+/* @@? 19:9 Error Semantic error ESE0289: This expression is not callable. */

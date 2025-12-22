@@ -15,7 +15,8 @@
 
 
 if /* @@ label */else;
-/* @@@ label Error SyntaxError: Expected '(', got 'else'. */
-/* @@@ label Error SyntaxError: Unexpected token 'else'. */
-/* @@@ label Error SyntaxError: Expected ')', got 'else'. */
-/* @@@ label Error SyntaxError: Unexpected token 'else'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got 'else'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'else'. */
+/* @@@ label Error Syntax error ESY0230: Expected ')', got 'else'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'else'. */

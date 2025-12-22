@@ -26,5 +26,6 @@ class B{
     y0 : string
 }
 
-/* @@? 23:6 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
-/* @@? 25:6 Error TypeError: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+
+/* @@? 23:6 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */
+/* @@? 25:6 Error Semantic error ESE0044: The required field 'testProperty2' must be specified. Fields without default values cannot be omitted. */

@@ -25,5 +25,6 @@ function main() {
     arktest.assertEQ(Foo.Bar as int, 0)
 }
 
-/* @@? 21:7 Error SyntaxError: Illegal start of ENUM expression.  */
-/* @@? 22:24 Warning Warning: Enum cast is deprecated. Cast support from 'Foo' to 'Int' will be removed. */
+
+/* @@? 21:7 Error Syntax error ESY0040: Illegal start of ENUM expression. */
+/* @@? 22:24 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Foo' to 'Int' will be removed. */

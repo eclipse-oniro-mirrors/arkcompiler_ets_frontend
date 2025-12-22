@@ -15,5 +15,6 @@
 
 if /* @@ label */true /* @@ label1 */{ console.log("hello!") }
 
-/* @@@ label Error SyntaxError: Expected '(', got 'true'. */
-/* @@@ label1 Error SyntaxError: Expected ')', got '{'. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '(', got 'true'. */
+/* @@@ label1 Error Syntax error ESY0230: Expected ')', got '{'. */

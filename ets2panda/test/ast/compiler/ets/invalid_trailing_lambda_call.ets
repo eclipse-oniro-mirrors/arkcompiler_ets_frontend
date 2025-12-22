@@ -25,15 +25,15 @@ foo3(){}
 foo4(){}
 foo5(){}
 
-/* @@? 17:17 Error SyntaxError: 'Required' is reserved and cannot be used as a variable/type name */
-/* @@? 18:17 Error SyntaxError: 'Partial' is reserved and cannot be used as a variable/type name */
-/* @@? 19:17 Error SyntaxError: 'Readonly' is reserved and cannot be used as a variable/type name */
-/* @@? 20:17 Error TypeError: FixedArray<T> must have only one type parameter. */
-/* @@? 23:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 23:1 Error TypeError: No matching call signature for foo2() */
-/* @@? 24:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 24:1 Error TypeError: No matching call signature for foo3() */
-/* @@? 25:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 25:1 Error TypeError: No matching call signature for foo4() */
-/* @@? 26:1 Error TypeError: Expected 1 arguments, got 0. */
-/* @@? 26:1 Error TypeError: No matching call signature for foo5() */
+/* @@? 17:17 Error Syntax error ESY0242: 'Required' is reserved and cannot be used as a variable/type name */
+/* @@? 18:17 Error Syntax error ESY0242: 'Partial' is reserved and cannot be used as a variable/type name */
+/* @@? 19:17 Error Syntax error ESY0242: 'Readonly' is reserved and cannot be used as a variable/type name */
+/* @@? 20:17 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
+/* @@? 23:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 23:1 Error Semantic error ESE0127: No matching call signature for foo2() */
+/* @@? 24:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 24:1 Error Semantic error ESE0127: No matching call signature for foo3() */
+/* @@? 25:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 25:1 Error Semantic error ESE0127: No matching call signature for foo4() */
+/* @@? 26:1 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
+/* @@? 26:1 Error Semantic error ESE0127: No matching call signature for foo5() */

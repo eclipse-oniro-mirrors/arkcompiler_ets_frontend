@@ -59,7 +59,7 @@ arkts_config_error:
 
 - name: INVALID_PATH
   id: 17
-  message: Invalid path for '{}' in dependencies
+  message: File '{}' not found (required from '{}', baseUrl is '{}').
 
 - name: INVALID_VALUE
   id: 4
@@ -67,7 +67,7 @@ arkts_config_error:
 
 - name: NOT_A_DIR
   id: 19
-  message: '{} is not a directory' 
+  message: '{} is not a directory'
 
 - name: NOT_ROOT_DIR
   id: 15

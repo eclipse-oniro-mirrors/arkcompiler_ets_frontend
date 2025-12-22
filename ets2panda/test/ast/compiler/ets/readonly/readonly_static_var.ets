@@ -15,7 +15,8 @@
 
 readonly static S = c' ';
 
-/* @@? 16:1 Error TypeError: Unresolved reference readonly */
-/* @@? 16:10 Error SyntaxError: Unexpected token 'static'. */
-/* @@? 16:17 Error SyntaxError: Unexpected token 'S'. */
-/* @@? 16:17 Error TypeError: Unresolved reference S */
+
+/* @@? 16:1 Error Semantic error ESE0143: Unresolved reference readonly */
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token 'static'. */
+/* @@? 16:17 Error Syntax error ESY0227: Unexpected token 'S'. */
+/* @@? 16:17 Error Semantic error ESE0143: Unresolved reference S */

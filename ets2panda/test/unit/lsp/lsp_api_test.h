@@ -20,11 +20,22 @@
 #include "lsp/include/internal_api.h"
 #include "public/public.h"
 #include <gtest/gtest.h>
+#include <cstdio>
 
 class LSPAPITests : public testing::Test {
 public:
     LSPAPITests() = default;
-    ~LSPAPITests() override = default;
+    ~LSPAPITests() override
+    {
+        for (const auto &file : tempFiles_) {
+            if (file.empty()) {
+                continue;
+            }
+            if (remove(file.c_str()) != 0) {
+                std::cerr << "Failed to delete file: " << file << std::endl;
+            }
+        }
+    }
 
     NO_COPY_SEMANTIC(LSPAPITests);
     NO_MOVE_SEMANTIC(LSPAPITests);
@@ -58,6 +69,7 @@ public:
             outStream.close();
             result.push_back(outPath);
         }
+        tempFiles_.insert(tempFiles_.end(), result.begin(), result.end());
         return result;
     }
 
@@ -79,6 +91,7 @@ protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     Range range_;
     std::string message_;
+    std::vector<std::string> tempFiles_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 

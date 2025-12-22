@@ -196,8 +196,8 @@ TEST_F(PluginConversionRuleUnitTest, ScriptionExtensionInputParameter)
 TEST_F(PluginConversionRuleUnitTest, SourcePositionInputParameter)
 {
     std::string targetCAPI {R"(
-    extern "C" void AstNodeSetStart([[maybe_unused]] es2panda_Context *context, es2panda_AstNode *classInstance,
-    [[maybe_unused]] es2panda_SourcePosition *start/*return_args:*/)
+    extern "C" void AstNodeSetStart([[maybe_unused]] es2panda_Context *context,
+    es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_SourcePosition *start/*return_args:*/)
     {
         auto &startE2p = *reinterpret_cast<lexer::SourcePosition *>(start);
         ((reinterpret_cast< ir::AstNode *>(classInstance))->SetStart(startE2p));
@@ -440,22 +440,30 @@ TEST_F(PluginConversionRuleUnitTest, LabelPairInputParameter)
 TEST_F(PluginConversionRuleUnitTest, LabelPairReturnValue)
 {
     std::string targetCAPI {R"(
-    extern "C" es2panda_LabelPair *TryStatementAddFinalizerInsertion([[maybe_unused]] es2panda_Context *context,
-    es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_LabelPair *insertion,
+    extern "C" es2panda_LabelPair *TryStatementAddFinalizerInsertion([[maybe_unused]]
+    es2panda_Context *context, es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_LabelPair *insertion,
     [[maybe_unused]] es2panda_AstNode *insertionStmt/*return_args:*/, const es2panda_AstNode **returnTypeSecond)
     {
+    {
+        auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(classInstance)->Program());
+        if (prog != nullptr) {
+            prog->SetProgramModified(true);
+        }
+    }
+
         auto *insertionStmtE2p = reinterpret_cast<ir::Statement *>(insertionStmt);
 
-     	auto *ctx = reinterpret_cast<Context *>(context);
-     	[[maybe_unused]] auto *ctxAllocator = ctx->allocator;
-     	auto resultPair = ((reinterpret_cast< ir::TryStatement *>(classInstance))->AddFinalizerInsertion(
-                          std::forward<compiler::LabelPair>(*reinterpret_cast<compiler::LabelPair *>(insertion)),
-                          insertionStmtE2p));
-     	*returnTypeSecond = reinterpret_cast<const es2panda_AstNode *>(const_cast<ir::Statement *>(resultPair.second));
-     	auto apiRes = reinterpret_cast< es2panda_LabelPair *>(ctxAllocator
-            ->New<compiler::LabelPair>(resultPair.first));
-     ;
-    	return apiRes;
+        auto *ctx = reinterpret_cast<Context *>(context);
+        [[maybe_unused]] auto *ctxAllocator = ctx->allocator;
+        auto resultPair = ((reinterpret_cast< ir::TryStatement *>(classInstance))->
+        AddFinalizerInsertion(std::forward<compiler::LabelPair>
+        (*reinterpret_cast<compiler::LabelPair *>(insertion)), insertionStmtE2p));
+        *returnTypeSecond = reinterpret_cast<const es2panda_AstNode *>
+        (const_cast<ir::Statement *>(resultPair.second));
+        auto apiRes = reinterpret_cast< es2panda_LabelPair *>
+        (ctxAllocator->New<compiler::LabelPair>(resultPair.first));
+    ;
+        return apiRes;
     })"};
 
     std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
@@ -466,22 +474,28 @@ TEST_F(PluginConversionRuleUnitTest, LabelPairReturnValue)
 TEST_F(PluginConversionRuleUnitTest, LabelPairPtrConstructor)
 {
     std::string targetCAPI {R"(
-    extern "C" es2panda_LabelPair *TryStatementAddFinalizerInsertion([[maybe_unused]] es2panda_Context *context,
-    es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_LabelPair *insertion,
-    [[maybe_unused]] es2panda_AstNode *insertionStmt/*return_args:*/, const es2panda_AstNode **returnTypeSecond)
+    extern "C" es2panda_LabelPair *TryStatementAddFinalizerInsertion([[maybe_unused]]
+    es2panda_Context *context, es2panda_AstNode *classInstance, [[maybe_unused]]
+    es2panda_LabelPair *insertion, [[maybe_unused]] es2panda_AstNode
+    *insertionStmt/*return_args:*/, const es2panda_AstNode **returnTypeSecond)
     {
+    {
+        auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(classInstance)->Program());
+        if (prog != nullptr) {
+            prog->SetProgramModified(true);
+        }
+    }
         auto *insertionStmtE2p = reinterpret_cast<ir::Statement *>(insertionStmt);
 
-     	auto *ctx = reinterpret_cast<Context *>(context);
-     	[[maybe_unused]] auto *ctxAllocator = ctx->allocator;
-     	auto resultPair = ((reinterpret_cast< ir::TryStatement *>(classInstance))->AddFinalizerInsertion(
-                          std::forward<compiler::LabelPair>(*reinterpret_cast<compiler::LabelPair *>(insertion)),
-                          insertionStmtE2p));
-     	*returnTypeSecond = reinterpret_cast<const es2panda_AstNode *>(const_cast<ir::Statement *>(resultPair.second));
-     	auto apiRes = reinterpret_cast< es2panda_LabelPair *>(ctxAllocator
-            ->New<compiler::LabelPair>(resultPair.first));
-     ;
-    	return apiRes;
+        auto *ctx = reinterpret_cast<Context *>(context);
+        [[maybe_unused]] auto *ctxAllocator = ctx->allocator;
+        auto resultPair = ((reinterpret_cast< ir::TryStatement *>(classInstance))->
+        AddFinalizerInsertion(std::forward<compiler::
+        LabelPair>(*reinterpret_cast<compiler::LabelPair *>(insertion)), insertionStmtE2p));
+        *returnTypeSecond = reinterpret_cast<const es2panda_AstNode *>(const_cast<ir::Statement *>(resultPair.second));
+        auto apiRes = reinterpret_cast< es2panda_LabelPair *>(ctxAllocator->New<compiler::LabelPair>(resultPair.first));
+    ;
+        return apiRes;
     })"};
 
     std::string targetAPIWithNoSpace = RemoveWhitespace(targetCAPI);
@@ -628,6 +642,12 @@ TEST_F(PluginConversionRuleUnitTest, IRSignaturePtrInputParameter)
     extern "C" void ScriptFunctionSetSignature([[maybe_unused]] es2panda_Context *context,
     es2panda_AstNode *classInstance, [[maybe_unused]] es2panda_Signature *signature/*return_args:*/)
     {
+    {
+        auto *prog = const_cast<parser::Program *>(reinterpret_cast<ir::AstNode *>(classInstance)->Program());
+        if (prog != nullptr) {
+            prog->SetProgramModified(true);
+        }
+    }
         auto *signatureE2p = reinterpret_cast<checker::Signature *>(signature);
         ((reinterpret_cast< ir::ScriptFunction *>(classInstance))->SetSignature(signatureE2p));
     })"};

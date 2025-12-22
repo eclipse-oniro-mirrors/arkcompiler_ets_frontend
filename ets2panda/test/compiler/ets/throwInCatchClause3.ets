@@ -16,9 +16,9 @@
 function TestFunc(): void {
     try {
         try {
-            throw new Exception();
+            throw new Error();
         } catch (e) {
-            throw e as Exception;
+            throw e as Error;
         }
     } catch (e) {
         //Handle the exception.

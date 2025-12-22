@@ -20,40 +20,47 @@ let catchCode = 0;
 function main(): void {
   try {
     throw new DivideByZeroError();
-  } catch (p: DivideByZeroError) {
-    catchCode = 1;
-  } catch (p: Error) {
-    arktest.assertTrue(false)
+  } catch (p) {
+    if (p instanceof DivideByZeroError) {
+      catchCode = 1;
+    } else if (p instanceof Error) {
+      arktest.assertTrue(false)
+    }
   }
-
   arktest.assertEQ(catchCode, 1)
 
   try {
     throw new DivideByZeroError();
-  } catch (p: Error) {
-    catchCode = 2;
-  } catch (p: DivideByZeroError) {
-    arktest.assertTrue(false)
+  } catch (p) {
+    if (p instanceof Error) {
+      catchCode = 2;
+    } else if (p instanceof DivideByZeroError) {
+      arktest.assertTrue(false)
+    }
   }
 
   arktest.assertEQ(catchCode, 2)
 
   try {
     throw new TestError();
-  } catch (p: TestError) {
-    catchCode = 3;
-  } catch (p: Error) {
-    arktest.assertTrue(false)
+  } catch (p) {
+    if (p instanceof TestError) {
+      catchCode = 3;
+    } else if (p instanceof Error) {
+      arktest.assertTrue(false)
+    }
   }
 
   arktest.assertEQ(catchCode, 3)
 
   try {
     throw new TestError();
-  } catch (p: Error) {
-    catchCode = 4;
-  } catch (p: TestError) {
-    arktest.assertTrue(false)
+  } catch (p) {
+    if (p instanceof Error) {
+      catchCode = 4;
+    } else if (p instanceof TestError) {
+      arktest.assertTrue(false)
+    }
   }
 
   arktest.assertEQ(catchCode, 4)

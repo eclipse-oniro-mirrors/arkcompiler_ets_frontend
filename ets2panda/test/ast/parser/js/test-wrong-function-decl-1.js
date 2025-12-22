@@ -16,9 +16,9 @@
 
 function f/* @@ label */{/* @@ label1 */}
 
-/* @@@ label Error SyntaxError: Unexpected token, expected '('. */
-/* @@@ label1 Error SyntaxError: Unexpected token. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected '{'. */
-/* @@@ label2 Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label2 */
+
+/* @@ label2 *//* @@@ label Error Syntax error ESY0228: Unexpected token, expected '('. */
+/* @@@ label1 Error Syntax error ESY0016: Unexpected token. */
+/* @@@ label1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected '{'. */
+/* @@? 24:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

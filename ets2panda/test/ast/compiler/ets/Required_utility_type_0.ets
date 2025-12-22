@@ -26,8 +26,9 @@ function foo<T>() {
 
 
 
-/* @@? 20:20 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 21:20 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 22:20 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 23:20 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 24:20 Error TypeError: T in Partial<T> must be a class or an interface type. */
+
+/* @@? 20:20 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 21:20 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 22:20 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 23:20 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 24:20 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */

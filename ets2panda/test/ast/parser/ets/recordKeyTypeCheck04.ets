@@ -18,4 +18,5 @@ function main(){
         "hello": 1,
     }
 }
-/* @@? 18:9 Error TypeError: Type '"hello"' is not compatible with type 'Double' at index 1  */
+
+/* @@? 18:9 Error Semantic error ESE0046: Type '"hello"' is not compatible with type 'Double' at index 1 */

@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+# http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import os
+from pathlib import Path
+from posixpath import dirname
+import posixpath
+import shutil
+import subprocess
+import sys
+from typing import Dict, List, TypeAlias, TypedDict
+import yaml
+
+usage = f"""\
+Usage: {sys.argv[0]} [--all] inputs
+
+    inputs: a (possibly empty) list of paths to diagnostic YAMLs
+    --all: run on all YAMLs that look like they include diagnostics
+    -h | --help: print this help
+    """
+
+def check_graveyard(yaml_path: Path)-> bool:
+    yaml_path = Path(posixpath.normpath(yaml_path.absolute()))
+    # strip trailing newline, otherwise path isn't valid
+    repo_dir = Path(posixpath.normpath(subprocess.run(["git", "rev-parse", "--show-toplevel"], cwd=dirname(yaml_path), capture_output=True).stdout.decode()[:-1])).absolute()
+    yaml_relative = yaml_path.relative_to(repo_dir)
+
+    diff_proc = subprocess.run(["git", "diff", "--quiet", yaml_path], cwd=repo_dir)
+    assert diff_proc.returncode in (0, 1)
+    has_changes = diff_proc.returncode == 1
+
+    prev_rev = 'HEAD' if has_changes else 'HEAD^'
+
+    with open(yaml_path) as f:
+        current_doc = yaml.safe_load(f)
+
+    diags_key = find_diags_key(current_doc)
+
+    graveyard = set(current_doc['graveyard'])
+    current_ids = {diag['id'] for diag in current_doc[diags_key]}
+
+    show_proc = subprocess.run(["git", "show", f"{prev_rev}:{yaml_relative}"], cwd=repo_dir, capture_output=True)
+    show_proc.check_returncode()
+    prev_doc = yaml.safe_load(show_proc.stdout.decode())
+    prev_ids = {diag['id'] for diag in prev_doc[diags_key]}
+
+    removed_ids = prev_ids - current_ids
+    not_in_graveyard = removed_ids - graveyard
+    if not_in_graveyard:
+        print(f"{yaml_path}: Missing from graveyard: {sorted(list(not_in_graveyard))}")
+        return False
+    return True
+
+def find_diags_key(current):
+    keys = set(current.keys())
+    keys.remove('graveyard')
+    assert len(keys) == 1
+    diags_key = keys.pop()
+    return diags_key
+
+def known_file_paths():
+    repo_base = posixpath.dirname(shutil.which(sys.argv[0])) + "/../../"
+    for relative in subprocess.run(["git", "grep", "--files-with-matches", "-e" "^  message:", "--", "**.yaml"], cwd = repo_base, stdout=subprocess.PIPE).stdout.decode().splitlines():
+        yield repo_base + relative
+
+def main():
+    params = sys.argv[1:]
+    if "-h" in sys.argv or "--help" in params:
+        print(usage, file=sys.stderr)
+        sys.exit(1)
+    if "--all" in params:
+        params = [p for p in params if p != "--all"]
+        for path in known_file_paths():
+            params.append(path)
+    passed = True
+    for path in params:
+        print("Processing", path)
+        passed = passed and check_graveyard(Path(path))
+    sys.exit(0 if passed else 1)
+
+if __name__ == "__main__":
+    main()

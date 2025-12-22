@@ -16,21 +16,8 @@
     "enableDeclgenEts2Ts": false,
     "declgenDtsOutPath": "./dist/cache/demo_mix_hap/decl",
     "declgenTsOutPath": "./dist/cache/demo_mix_hap/ts",
+
     "dependencyModuleList": [
-        {
-            "packageName": "entry",
-            "moduleName": "entry",
-            "moduleType": "feature",
-            "modulePath": "${absolute_path_to_build_system}/test/demo_mix_hap/entry",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/demo_mix_hap/entry",
-            "dependencies": [
-                "dynamic_har"
-            ],
-            "language": "1.2"
-        },
         {
             "packageName": "static_har",
             "moduleName": "static_har",

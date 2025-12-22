@@ -245,8 +245,8 @@
           "program": "generic_typealias_func_type_lib.ets"
         },
         "end": {
-          "line": 18,
-          "column": 7,
+          "line": 16,
+          "column": 43,
           "program": "generic_typealias_func_type_lib.ets"
         }
       }

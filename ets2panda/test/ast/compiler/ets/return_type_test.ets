@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-function test() {
+
+function test(): Promise<Int> {
     let pro = new Promise<Int>((resolve) => {
         resolve(21);
     });
@@ -25,4 +26,5 @@ function test() {
     return thenResult;
 }
 
-/* @@? 22:9 Error TypeError: Missing return value. */
+
+/* @@? 23:9 Error Semantic error ESE0032: Missing return value. */

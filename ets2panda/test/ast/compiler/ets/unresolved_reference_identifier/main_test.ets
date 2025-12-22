@@ -16,5 +16,5 @@
 import {atomicTask} from "./file1"
 const task = new taskpool.Task(atomicTask);
 
-/* @@? file1.ets:23:12 Error TypeError: No matching call signature for load(shareArray, Int) */
-/* @@? file1.ets:23:25 Error TypeError: Unresolved reference shareArray */
+/* @@? file1.ets:23:12 Error Semantic error ESE0127: No matching call signature for load(shareArray, Int) */
+/* @@? file1.ets:23:25 Error Semantic error ESE0143: Unresolved reference shareArray */

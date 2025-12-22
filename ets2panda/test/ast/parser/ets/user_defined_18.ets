@@ -17,5 +17,6 @@ struct yield{
   a : string = "15";
 }
 
-/* @@? 16:1 Error TypeError: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
-/* @@? 16:8 Error SyntaxError: Cannot be used as user-defined type. */
+
+/* @@? 16:1 Error Semantic error ESE0364: Structs are only used to define UI components, it should be translated at 'plugin after parser' phase. */
+/* @@? 16:8 Error Syntax error ESY0145: Cannot be used as user-defined type. */

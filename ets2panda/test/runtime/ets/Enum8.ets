@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@ enum StringEnum {
     C = "Cherry"
 }
 
-enum IntEnum {
+enum NumericEnum {
     One = 1,
     Two = 2,
     Three = 3,
@@ -67,10 +67,10 @@ function main() {
     arktest.assertTrue(StringEnum.A !== StringEnum.B);
     arktest.assertTrue(StringEnum.C > StringEnum.A);
 
-    arktest.assertEQ(IntEnum.One + IntEnum.Two, 3);
-    arktest.assertEQ(IntEnum.Three - IntEnum.One, 2);
-    arktest.assertEQ(IntEnum.Four * IntEnum.Two, 8);
-    arktest.assertEQ(IntEnum.Four / IntEnum.Two, 2);
+    arktest.assertEQ(NumericEnum.One + NumericEnum.Two, 3);
+    arktest.assertEQ(NumericEnum.Three - NumericEnum.One, 2);
+    arktest.assertEQ(NumericEnum.Four * NumericEnum.Two, 8);
+    arktest.assertEQ(NumericEnum.Four / NumericEnum.Two, 2);
 
     arktest.assertEQ(ColorEnum.Red + ColorEnum.Green, 15);
     arktest.assertEQ(ColorEnum.Blue - ColorEnum.Green > 0 ? "Greater" : "Smaller", "Greater");

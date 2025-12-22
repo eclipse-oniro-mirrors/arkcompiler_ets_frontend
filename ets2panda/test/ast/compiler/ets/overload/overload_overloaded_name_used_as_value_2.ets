@@ -18,4 +18,5 @@ function foo2() {}
 overload foo{foo1, foo2}
 let OL = /* @@ label */foo;
 
-/* @@@ label Error TypeError: Overloaded method is used as value */
+
+/* @@@ label Error Semantic error ESE0307: Overloaded method is used as value */

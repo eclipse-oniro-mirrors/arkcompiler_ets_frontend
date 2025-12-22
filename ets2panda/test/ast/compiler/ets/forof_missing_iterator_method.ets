@@ -27,5 +27,6 @@ function main(): int {
   return 0
 }
 
-/* @@? 23:17 Error TypeError: Object type doesn't have proper iterator method. */
-/* @@? 23:17 Error TypeError: 'For-of' statement source expression is not of iterable type. */
+
+/* @@? 23:17 Error Semantic error ESE0258: Object type doesn't have proper iterator method. */
+/* @@? 23:17 Error Semantic error ESE0076: 'For-of' statement source expression is not of iterable type. */

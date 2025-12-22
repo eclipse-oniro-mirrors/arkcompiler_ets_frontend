@@ -56,11 +56,12 @@ let non_prim_c: Char = c'b';
 // see 3.1.5 Void type
 function v(): void {}
 
-/* @@? 35:21 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
-/* @@? 36:25 Error TypeError: Type 'Double' cannot be assigned to type 'Float' */
-/* @@@ label Error TypeError: Variable 'prim_b' has already been declared. */
-/* @@? 45:27 Error TypeError: Cannot find type 'bool'. */
-/* @@? 45:34 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */
-/* @@? 46:5 Error TypeError: Variable 'non_prim_b' has already been declared. */
-/* @@? 46:17 Error TypeError: Cannot find type 'Bool'. */
-/* @@? 46:24 Error TypeError: Type 'Boolean' cannot be assigned to type 'Byte' */
+
+/* @@? 35:21 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
+/* @@? 36:25 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
+/* @@@ label Error Semantic error ESE0351: Variable 'prim_b' has already been declared. */
+/* @@? 45:27 Error Semantic error ESE0371: Cannot find type 'bool'. */
+/* @@? 45:34 Error Semantic error ESE0318: Type 'Boolean' cannot be assigned to type 'Byte' */
+/* @@? 46:5 Error Semantic error ESE0351: Variable 'non_prim_b' has already been declared. */
+/* @@? 46:17 Error Semantic error ESE0371: Cannot find type 'Bool'. */
+/* @@? 46:24 Error Semantic error ESE0318: Type 'Boolean' cannot be assigned to type 'Byte' */

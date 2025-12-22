@@ -16,5 +16,6 @@
 
 this./* @@ label */"foo";
 
-/* @@@ label Error SyntaxError: Identifier expected, got 'string literal'. */
-/* @@@ label Error SyntaxError: Number, string or computed value property name 'foo' is not allowed, use classes to access data by property names that are identifiers */
+
+/* @@@ label Error Syntax error ESY0315: Number, string or computed value property name 'foo' is not allowed, use classes to access data by property names that are identifiers */
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'string literal'. */

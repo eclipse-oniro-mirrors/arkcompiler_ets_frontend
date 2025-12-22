@@ -25,8 +25,8 @@
 
 #include "util/language.h"
 #include "util/diagnostic.h"
-#include "utils/json_builder.h"
-#include "utils/json_parser.h"
+#include "libarkbase/utils/json_builder.h"
+#include "libarkbase/utils/json_parser.h"
 
 // NOTE(ivagin): If ARKTSCONFIG_USE_FILESYSTEM is not defined part of ArkTsConfig functionality is disabled.
 //       Only build configuration which prevents us from usage of std::filesystem is "MOBILE" build
@@ -91,9 +91,13 @@ public:
 
     class ExternalModuleData {
     public:
-        explicit ExternalModuleData(Language lang, std::string path, std::string ohmUrl,
+        explicit ExternalModuleData(Language lang, std::string path, std::string sourceFilePath, std::string ohmUrl,
                                     std::vector<std::string> alias = {})
-            : lang_(lang), path_(std::move(path)), ohmUrl_(std::move(ohmUrl)), alias_(std::move(alias))
+            : lang_(lang),
+              path_(std::move(path)),
+              sourceFilePath_(std::move(sourceFilePath)),
+              ohmUrl_(std::move(ohmUrl)),
+              alias_(std::move(alias))
         {
         }
 
@@ -105,6 +109,10 @@ public:
         std::string_view Path() const
         {
             return path_;
+        }
+        std::string_view SourceFilePath() const
+        {
+            return sourceFilePath_;
         }
 
         std::string_view OhmUrl() const
@@ -120,6 +128,7 @@ public:
     private:
         Language lang_;
         std::string path_ {};
+        std::string sourceFilePath_ {};
         std::string ohmUrl_ {};
         std::vector<std::string> alias_;
     };
@@ -175,6 +184,10 @@ public:
     {
         return dependencies_;
     }
+    const std::map<std::string_view, std::string_view> &SourcePathMap() const
+    {
+        return sourcePathMap_;
+    }
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     const std::vector<Pattern> &Include() const
     {
@@ -187,6 +200,7 @@ public:
     fs::path ComputeDestination(const fs::path &src, const fs::path &rootDir, const fs::path &outDir);
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
     bool Check(bool cond, const diagnostic::DiagnosticKind &diag, const util::DiagnosticMessageParams &params);
+    void GenerateSourcePathMap();
 
 private:
     bool ParseCompilerOptions(std::string &arktsConfigDir, const JsonObject *arktsConfig);
@@ -229,6 +243,7 @@ private:
     std::string cacheDir_ {};
     PathsMap paths_ {};
     std::map<std::string, ExternalModuleData, CompareByLength> dependencies_ {};
+    std::map<std::string_view, std::string_view> sourcePathMap_ {};
     std::vector<std::string> files_ {};
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     std::vector<Pattern> include_ {};

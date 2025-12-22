@@ -1,10 +1,20 @@
 ## 不支持重复case语句
 
-**规则：**`arkts-case-expr`
+**规则：** `arkts-case-expr`
 
-**级别：error**
+**规则解释：**
 
-ArkTS1.2不支持Switch语句的中case重复，便于提高代码可读性。
+ArkTS1.2不支持Switch语句的中case重复。
+
+**变更原因：**
+ 
+提高代码的可读性。
+
+**适配建议：**
+
+避免出现重复的case。
+
+**示例：**
 
 **ArkTS1.1**
 

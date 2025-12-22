@@ -17,5 +17,6 @@ class /* @@ label */typeof {
   a : string = "15";
 }
 
-/* @@@ label Error SyntaxError: Hard keyword 'typeof' cannot be used as identifier */
-/* @@@ label Error SyntaxError: Identifier expected, got 'typeof'. */
+
+/* @@@ label Error Syntax error ESY0316: Hard keyword 'typeof' cannot be used as identifier */
+/* @@@ label Error Syntax error ESY0224: Identifier expected, got 'typeof'. */

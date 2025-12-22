@@ -20,5 +20,6 @@ declare namespace A.B.C{
     }
 }
 
-/* @@? 20:5 Error SyntaxError: Initializers are not allowed in ambient contexts. */
-/* @@? 19:17 Error TypeError: Initializers are not allowed in ambient contexts: a */
+
+/* @@? 19:17 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: a */
+/* @@? 20:5 Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */

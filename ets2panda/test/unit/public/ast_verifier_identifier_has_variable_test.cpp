@@ -184,7 +184,7 @@ TEST_F(ASTVerifierTest, PromiseUndefined)
     }
 }
 
-TEST_F(ASTVerifierTest, EnumInts)
+TEST_F(ASTVerifierTest, EnumNumerics)
 {
     char const *text = R"(
         enum Color {

@@ -22,4 +22,4 @@ function main(){
     let a : A = {name : "John", age : 11, /* @@ label */age : 12}
 }
 
-/* @@@ label Error TypeError: An object literal cannot have multiple properties with the same name. */
+/* @@@ label Error Semantic error ESE0100: An object literal cannot have multiple properties with the same name. */

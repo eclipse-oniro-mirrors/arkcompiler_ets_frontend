@@ -34,5 +34,6 @@ function main(): void {
     arktest.assertEQ(instance.getX(), true);
 }
 
-/* @@@ label1 Error TypeError: Type 'Boolean' has no call signatures.  */
-/* @@@ label Error TypeError: Cannot inherit from class C, because field x is inherited with a different declaration type  */
+
+/* @@@ label Error Semantic error ESE0216: Cannot inherit from class C, because field x is inherited with a different declaration type */
+/* @@@ label1 Error Semantic error ESE0002: Type 'Boolean' has no call signatures. */

@@ -13,7 +13,10 @@
  * limitations under the License.
  */
 
-export {};
+export /* @@ label */{};
 const MyValue = 111111;
 export MyValue;
 export const MyValue2 = 111111;
+
+
+/* @@@ label Warning Warning W3614: Nothing is exported. */

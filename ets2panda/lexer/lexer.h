@@ -272,12 +272,12 @@ public:
 
     NextTokenFlags DefaultNextTokenFlags() const
     {
-        return defaultNextTokenFlags;
+        return defaultNextTokenFlags_;
     }
 
     void SetDefaultNextTokenFlags(NextTokenFlags flags)
     {
-        defaultNextTokenFlags = flags;
+        defaultNextTokenFlags_ = flags;
     }
 
 protected:
@@ -392,7 +392,7 @@ private:
     util::StringView source_;
     LexerPosition pos_;
     util::DiagnosticEngine &diagnosticEngine_;
-    NextTokenFlags defaultNextTokenFlags = NextTokenFlags::NONE;
+    NextTokenFlags defaultNextTokenFlags_ = NextTokenFlags::NONE;
 };
 
 class TemplateLiteralParserContext {

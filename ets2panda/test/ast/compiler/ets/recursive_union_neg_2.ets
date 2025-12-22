@@ -18,5 +18,6 @@ class B extends A<B>{}
 class T<P extends B|D>{}
 class C extends /* @@ label */A<C|B|D|/* @@ label1 */T>{}
 
-/* @@@ label1 Error TypeError: Type 'T<P>' is generic but type argument were not provided.  */
-/* @@@ label Error TypeError: The super type of 'C' class is not extensible.  */
+
+/* @@@ label Error Semantic error ESE0176: The super type of 'C' class is not extensible. */
+/* @@@ label1 Error Semantic error ESE0170: Type 'T<P>' is generic but type argument were not provided. */

@@ -101,56 +101,6 @@ bool ArrayExpression::ConvertibleToArrayPattern()
     return convResult;
 }
 
-ValidationInfo ArrayExpression::ValidateExpression()
-{
-    if (optional_) {
-        return {"Unexpected token '?'.", Start()};
-    }
-
-    if (TypeAnnotation() != nullptr) {
-        return {"Unexpected token.", TypeAnnotation()->Start()};
-    }
-
-    ValidationInfo info;
-
-    for (auto *it : elements_) {
-        switch (it->Type()) {
-            case AstNodeType::OBJECT_EXPRESSION: {
-                info = it->AsObjectExpression()->ValidateExpression();
-                break;
-            }
-            case AstNodeType::ARRAY_EXPRESSION: {
-                info = it->AsArrayExpression()->ValidateExpression();
-                break;
-            }
-            case AstNodeType::ASSIGNMENT_EXPRESSION: {
-                auto *assignmentExpr = it->AsAssignmentExpression();
-
-                if (assignmentExpr->Left()->IsArrayExpression()) {
-                    info = assignmentExpr->Left()->AsArrayExpression()->ValidateExpression();
-                } else if (assignmentExpr->Left()->IsObjectExpression()) {
-                    info = assignmentExpr->Left()->AsObjectExpression()->ValidateExpression();
-                }
-
-                break;
-            }
-            case AstNodeType::SPREAD_ELEMENT: {
-                info = it->AsSpreadElement()->ValidateExpression();
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
-        if (info.Fail()) {
-            break;
-        }
-    }
-
-    return info;
-}
-
 void ArrayExpression::TransformChildren(const NodeTransformer &cb, std::string_view const transformationName)
 {
     for (auto *&it : VectorIterationGuard(elements_)) {
@@ -181,7 +131,7 @@ void ArrayExpression::Iterate(const NodeTraverser &cb) const
 
 void ArrayExpression::Dump(ir::AstDumper *dumper) const
 {
-    dumper->Add({{"type", type_ == AstNodeType::ARRAY_EXPRESSION ? "ArrayExpression" : "ArrayPattern"},
+    dumper->Add({{"type", Type() == AstNodeType::ARRAY_EXPRESSION ? "ArrayExpression" : "ArrayPattern"},
                  {"elements", elements_},
                  {"typeAnnotation", AstDumper::Optional(TypeAnnotation())},
                  {"optional", AstDumper::Optional(optional_)}});
@@ -404,33 +354,19 @@ checker::VerifiedType ArrayExpression::Check(checker::ETSChecker *checker)
     return {this, checker->GetAnalyzer()->Check(this)};
 }
 
-std::optional<checker::Type *> ArrayExpression::ExtractPossiblePreferredType(checker::Type *type)
+static std::optional<checker::Type *> ExtractPossiblePreferredType(checker::Type *type)
 {
     ES2PANDA_ASSERT(type);
     if (type->IsETSArrayType() || type->IsETSTupleType() || type->IsETSResizableArrayType()) {
         return std::make_optional(type);
     }
 
-    if (type->IsETSUnionType()) {
-        for (checker::Type *const typeOfUnion : type->AsETSUnionType()->ConstituentTypes()) {
-            auto possiblePreferredType = ExtractPossiblePreferredType(typeOfUnion);
-            if (possiblePreferredType.has_value()) {
-                return std::make_optional(possiblePreferredType.value());
-            }
-        }
-    }
-
     return std::nullopt;
 }
 
-void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
-                                                       checker::TypeRelationFlag flags)
+void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
+                                                  checker::TypeRelationFlag flags)
 {
-    // NOTE (mmartin): This needs a complete solution
-    if (PreferredType() != nullptr) {
-        return;
-    }
-
     auto possiblePreferredType = ExtractPossiblePreferredType(param);
     if (!possiblePreferredType.has_value()) {
         return;
@@ -460,6 +396,23 @@ void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *chec
 
     if (isAssignable) {
         SetPreferredType(param);
+    }
+}
+
+void ArrayExpression::SetPreferredTypeBasedOnFuncParam(checker::ETSChecker *checker, checker::Type *param,
+                                                       checker::TypeRelationFlag flags)
+{
+    // NOTE (mmartin): This needs a complete solution
+    if (PreferredType() != nullptr) {
+        return;
+    }
+
+    if (param->IsETSUnionType()) {
+        for (checker::Type *typeOfUnion : param->AsETSUnionType()->ConstituentTypes()) {
+            SetPreferredTypeOnFuncParam(checker, typeOfUnion, flags);
+        }
+    } else {
+        SetPreferredTypeOnFuncParam(checker, param, flags);
     }
 }
 

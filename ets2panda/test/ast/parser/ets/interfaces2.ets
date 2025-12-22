@@ -17,4 +17,5 @@ interface K {}
 
 interface J /* @@ label */implements K {}
 
-/* @@@ label Error SyntaxError: Interface declaration cannot have 'implements' clause.  */
+
+/* @@@ label Error Syntax error ESY0177: Interface declaration cannot have 'implements' clause. */

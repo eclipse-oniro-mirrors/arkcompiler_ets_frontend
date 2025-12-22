@@ -20,11 +20,12 @@ module CodeFixRegister
   @codefix_map = Hash.new { |h, k| h[k] = [] }
 
   class DiagnosticCode
-    attr_reader :type, :id
+    attr_reader :type, :id, :message
 
-    def initialize(type, id)
+    def initialize(type, id, message)
       @type = type
       @id = id
+      @message = message
     end
   end
 
@@ -35,7 +36,7 @@ module CodeFixRegister
 
     def collect_code_fix(diagnostic)
       diagnostic.code_fix_ids.each do |code_fix_id|
-        @codefix_map[code_fix_id] << DiagnosticCode.new(diagnostic.type, diagnostic.id)
+        @codefix_map[code_fix_id] << DiagnosticCode.new(diagnostic.type, diagnostic.id, diagnostic.message)
       end
     end
 

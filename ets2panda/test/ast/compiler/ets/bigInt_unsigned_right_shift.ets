@@ -18,4 +18,5 @@ const v1 = 213n;
 
 let v2 = v0 >>> v1;
 
-/* @@? 19:10 Error TypeError: Bad operand type, the types of the operands must be numeric type.  */
+
+/* @@? 19:10 Error Semantic error ESE0107: Bad operand type, the types of the operands must be numeric type. */

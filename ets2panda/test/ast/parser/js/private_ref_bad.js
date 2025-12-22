@@ -18,4 +18,5 @@ class A{
         return this.#x
     }
 }
-/* @@? 18:21 Error SyntaxError: Private field 'x' must be declared in an enclosing class */
+
+/* @@? 18:21 Error Syntax error ESY0000: Private field 'x' must be declared in an enclosing class */

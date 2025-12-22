@@ -34,4 +34,5 @@ class I1 extends /* @@ label */I {
   }
 }
 
-/* @@@ label Error TypeError: Cannot inherit with 'final' modifier.  */
+
+/* @@@ label Error Semantic error ESE0178: Cannot inherit with 'final' modifier. */

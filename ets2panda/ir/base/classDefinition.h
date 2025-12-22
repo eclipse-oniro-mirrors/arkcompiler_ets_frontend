@@ -26,6 +26,7 @@
 #include "ir/statements/annotationUsage.h"
 #include "ir/statements/classDeclaration.h"
 #include "util/language.h"
+#include "util/nameMangler.h"
 
 namespace ark::es2panda::ir {
 class ClassElement;
@@ -55,7 +56,7 @@ enum class ClassDefinitionModifiers : uint32_t {
     CLASSDEFINITION_CHECKED = 1U << 12U,
     NAMESPACE_TRANSFORMED = 1U << 13U,
     STRING_ENUM_TRANSFORMED = 1U << 14U,
-    INT_ENUM_TRANSFORMED = 1U << 15U,
+    NUMERIC_ENUM_TRANSFORMED = 1U << 15U,
     FROM_STRUCT = 1U << 16U,
     FUNCTIONAL_REFERENCE = 1U << 17U,
     LAZY_IMPORT_OBJECT_CLASS = 1U << 18U,
@@ -155,7 +156,7 @@ public:
           exportedClasses_(body_.get_allocator())
     {
         if (history != nullptr) {
-            history_ = history;
+            SetHistoryInternal(history);
         } else {
             InitHistory();
         }
@@ -251,9 +252,9 @@ public:
         return (Modifiers() & ClassDefinitionModifiers::ANONYMOUS) != 0;
     }
 
-    [[nodiscard]] bool IsIntEnumTransformed() const noexcept
+    [[nodiscard]] bool IsNumericEnumTransformed() const noexcept
     {
-        return (Modifiers() & ClassDefinitionModifiers::INT_ENUM_TRANSFORMED) != 0;
+        return (Modifiers() & ClassDefinitionModifiers::NUMERIC_ENUM_TRANSFORMED) != 0;
     }
 
     [[nodiscard]] bool IsStringEnumTransformed() const noexcept
@@ -263,7 +264,7 @@ public:
 
     [[nodiscard]] bool IsEnumTransformed() const noexcept
     {
-        return IsIntEnumTransformed() || IsStringEnumTransformed();
+        return IsNumericEnumTransformed() || IsStringEnumTransformed();
     }
 
     [[nodiscard]] bool IsNamespaceTransformed() const noexcept
@@ -289,6 +290,11 @@ public:
     [[nodiscard]] bool IsModule() const noexcept
     {
         return IsGlobal() || IsNamespaceTransformed();
+    }
+
+    [[nodiscard]] bool IsFromLambda() const noexcept
+    {
+        return Ident()->Name().StartsWith(util::LAMBDA_CLASS_PREFIX);
     }
 
     [[nodiscard]] es2panda::Language Language() const noexcept

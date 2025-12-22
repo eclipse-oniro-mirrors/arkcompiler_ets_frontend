@@ -15,6 +15,7 @@
 
 
 [a['b']/* @@ label */c]
-/* @@@ label Error SyntaxError: Unexpected token, expected ',' or ']'. */
-/* @@? 17:22 Error SyntaxError: Unexpected token 'c'. */
-/* @@? 17:23 Error SyntaxError: Unexpected token ']'. */
+
+/* @@@ label Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token 'c'. */
+/* @@? 17:23 Error Syntax error ESY0227: Unexpected token ']'. */

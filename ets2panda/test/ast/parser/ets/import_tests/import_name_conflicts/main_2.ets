@@ -19,4 +19,5 @@ import {flt as floatingPointNumber} from /* @@ label */"./imported_module_2.ets"
 
 function main() {}
 
-/* @@@ label Error TypeError: Variable 'floatingPointNumber' is already defined.  */
+
+/* @@@ label Error Semantic error ESE0349: Variable 'floatingPointNumber' is already defined. */

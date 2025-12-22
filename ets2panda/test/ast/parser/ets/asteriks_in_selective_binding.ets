@@ -15,7 +15,8 @@
 
 import { * } from './module';
 
-/* @@? 16:10 Error SyntaxError: The '*' token is not allowed as a selective binding (between braces). */
-/* @@? 16:10 Error SyntaxError: Unexpected token '*'. */
-/* @@? 16:14 Error TypeError: Unresolved reference from */
-/* @@? 16:19 Error SyntaxError: Unexpected token './module'. */
+
+/* @@? 16:10 Error Syntax error ESY0102: The '*' token is not allowed as a selective binding (between braces). */
+/* @@? 16:10 Error Syntax error ESY0227: Unexpected token '*'. */
+/* @@? 16:14 Error Semantic error ESE0143: Unresolved reference from */
+/* @@? 16:19 Error Syntax error ESY0227: Unexpected token './module'. */

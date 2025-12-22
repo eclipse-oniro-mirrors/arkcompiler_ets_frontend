@@ -136,7 +136,7 @@
         },
         "end": {
           "line": 16,
-          "column": 31,
+          "column": 30,
           "program": "main_entry_point_9.ets"
         }
       }

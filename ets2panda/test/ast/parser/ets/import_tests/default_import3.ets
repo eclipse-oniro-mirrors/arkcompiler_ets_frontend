@@ -15,8 +15,9 @@
 
 import {default/* @@ label */} from /* @@ label1 */"./modules/class_default_module.ets"/* @@ label2 */;
 
-/* @@@ label Error SyntaxError: Unexpected token, expected 'as'. */
-/* @@@ label Error SyntaxError: Unexpected token '}'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected ',' or '}'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected 'from'. */
-/* @@@ label2 Error SyntaxError: Unexpected token, expected string literal. */
+
+/* @@@ label Error Syntax error ESY0095: Unexpected token, expected 'as'. */
+/* @@@ label Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@@ label1 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected 'from'. */
+/* @@@ label2 Error Syntax error ESY0151: Unexpected token, expected string literal. */

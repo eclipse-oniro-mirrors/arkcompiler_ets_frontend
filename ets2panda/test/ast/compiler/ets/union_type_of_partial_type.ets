@@ -17,13 +17,14 @@ abstract class A<T extends A<T>>{
     }
 }
 
-/* @@? 16:9 Error SyntaxError: Unexpected token, expected an identifier. */
-/* @@? 16:9 Error SyntaxError: Parameter declaration should have an explicit type annotation. */
-/* @@? 16:9 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 16:12 Error SyntaxError: Unexpected token ','. */
-/* @@? 16:27 Error TypeError: T in Partial<T> must be a class or an interface type. */
-/* @@? 16:42 Error SyntaxError: Unexpected token ')'. */
-/* @@? 16:43 Error SyntaxError: Unexpected token ':'. */
-/* @@? 16:45 Error SyntaxError: void is a predefined type, cannot be used as an identifier */
-/* @@? 16:50 Error SyntaxError: Unexpected token '{'. */
-/* @@? 18:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 16:9 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 16:9 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 16:9 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 16:12 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 16:27 Error Semantic error ESE124644: T in Partial<T> must be a class or an interface type. */
+/* @@? 16:42 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 16:43 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 16:45 Error Syntax error ESY0295: void is a predefined type, cannot be used as an identifier */
+/* @@? 16:50 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */

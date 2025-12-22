@@ -96,16 +96,6 @@
         },
         {
             "line": 49,
-            "column": 3,
-            "endLine": 51,
-            "endColumn": 4,
-            "problem": "ObjectLiteralProperty",
-            "suggest": "",
-            "rule": "Object literal properties can only contain name-value pairs (arkts-obj-literal-props)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 49,
             "column": 9,
             "endLine": 49,
             "endColumn": 18,

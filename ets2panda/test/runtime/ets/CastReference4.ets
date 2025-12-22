@@ -32,10 +32,10 @@ function main() {
     // Element type in array in accumulator is of incompatible type 'A'.
     // Instruction 'checkcast' will always throw an exception here. It may be a sign of possible error here.
     let Bs: FixedArray<B> = Is as FixedArray<B>;
-  } catch (e: ClassCastError) {
-    caught = true;
   } catch (e) {
-    arktest.assertTrue(false)
+    if (e instanceof ClassCastError) {
+      caught = true
+    }
   }
   arktest.assertTrue(caught)
 

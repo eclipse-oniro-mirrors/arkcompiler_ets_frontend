@@ -25,17 +25,19 @@ import {
     Stmt,
     Value,
     Scene,
-    ArkNewArrayExpr,
     ArkNewExpr,
     ArkClass,
     ClassSignature,
     ArkReturnStmt,
+    ArkInvokeStmt, ArkStaticInvokeExpr,
 } from 'arkanalyzer';
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
 import { BaseChecker, BaseMetaData } from '../BaseChecker';
 import { Rule, Defects, MatcherTypes, MethodMatcher, MatcherCallback } from '../../Index';
 import { IssueReport } from '../../model/Defects';
 import { WarnInfo } from '../../utils/common/Utils';
+import {ArkPtrInvokeExpr} from "arkanalyzer/lib";
+import {Language} from "arkanalyzer/lib/core/model/ArkFile";
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'ThisBindCheck');
 
@@ -74,8 +76,11 @@ export class ThisBindCheck implements BaseChecker {
     }
 
     public check = (targetMtd: ArkMethod): void => {
+        if (targetMtd.getLanguage() !== Language.ARKTS1_2) {
+            return;
+        }
         const file = targetMtd.getDeclaringArkFile();
-        if (file.getName().includes('.test.ets')) {
+        if (file.getName().endsWith('.test.ets') || file.getName().endsWith('.ts') || file.getName().endsWith('.js')) {
             return;
         }
         const scene = file.getScene();
@@ -95,16 +100,31 @@ export class ThisBindCheck implements BaseChecker {
             if (!(classTy instanceof ClassType)) {
                 continue;
             }
-            if (!(rightOp.getFieldSignature().getType() instanceof FunctionType)) {
+            let isArrowType = false;
+            if (rightOp.getFieldSignature().getType() instanceof ClassType) {
+                if (rightOp.getFieldSignature().getType().toString().includes('Function')) {
+                    isArrowType = true;
+                }
+            }
+            let isFuncType = false;
+            if (rightOp.getFieldSignature().getType() instanceof FunctionType) {
+                isFuncType = true;
+            }
+            if (!(isArrowType || isFuncType)) {
                 continue;
             }
+
             const klass = scene.getClass(classTy.getClassSignature());
-            const method = klass?.getMethodWithName(rightOp.getFieldName());
-            if (!method || !method.getCfg() || !this.useThisInBody(method)) {
-                continue;
+            let isBuilder = false;
+            let isLocalBuilder = false;
+            if (klass && isFuncType) {
+                const method = klass?.getMethodWithName(rightOp.getFieldName());
+                if (!method || !method.getCfg() || !this.useThisInBody(method)) {
+                    continue;
+                }
+                isBuilder = method.hasBuilderDecorator();
+                isLocalBuilder = method.hasDecorator('LocalBuilder');
             }
-            const isBuilder = method.hasBuilderDecorator();
-            const isLocalBuilder = method.hasDecorator('LocalBuilder');
             const leftOp = stmt.getLeftOp();
             if (i + 1 >= stmts.length || !this.hasBindThis(leftOp, stmts[i + 1])) {
                 if (!this.isSafeUse(leftOp)) {
@@ -137,7 +157,7 @@ export class ThisBindCheck implements BaseChecker {
 
         const users = v.getUsedStmts();
         if (users.length === 0) {
-            return false;
+            return true;
         }
         for (const user of users) {
             if (user instanceof ArkIfStmt) {
@@ -145,7 +165,13 @@ export class ThisBindCheck implements BaseChecker {
                 if (v !== cond.getOp1() && v !== cond.getOp2()) {
                     return false;
                 }
-            } else {
+            } else if(user instanceof ArkAssignStmt) {
+                if (user.getRightOp() instanceof ArkPtrInvokeExpr || user.getRightOp() instanceof ArkStaticInvokeExpr) {
+                    return false;
+                }
+            } else if (user instanceof ArkReturnStmt) {
+                return false;
+            } else if (user instanceof ArkInvokeStmt) {
                 return false;
             }
         }
@@ -167,6 +193,7 @@ export class ThisBindCheck implements BaseChecker {
         if (rightOp.getBase() !== base) {
             return false;
         }
+
         if (rightOp.getMethodSignature().getMethodSubSignature().getMethodName() !== 'bind') {
             return false;
         }

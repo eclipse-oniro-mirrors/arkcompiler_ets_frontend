@@ -19,4 +19,5 @@ function main(): void {
   /* @@ label */new iface[5];
 }
 
-/* @@@ label Error TypeError: Cannot use array creation expression with abstract classes and interfaces.  */
+
+/* @@@ label Error Semantic error ESE0050: Cannot use array creation expression with abstract classes and interfaces. */

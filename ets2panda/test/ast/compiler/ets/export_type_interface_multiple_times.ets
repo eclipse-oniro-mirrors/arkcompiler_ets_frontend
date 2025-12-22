@@ -18,3 +18,4 @@ interface I {}
 export type {I}
 export type MyI = I
 export type {MyI}
+/* @@? 20:13 Warning Warning W0000: Duplicated export aliases for 'MyI'. */

@@ -17,5 +17,5 @@
     testProperty1: string = /* @@ label */{s:A}
 }
 
-/* @@@ label Error SyntaxError: Invalid value for annotation field, expected a constant literal.  */
-/* @@@ label Error TypeError: Invalid value for annotation field, expected a constant literal.  */
+
+/* @@@ label Error Syntax error ESY0027: Invalid value for annotation field, expected a constant literal. */

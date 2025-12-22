@@ -16,4 +16,4 @@
 declare class B
 
 
-/* @@? 20:1 Error SyntaxError: Ambient class declarations must have a body. */
+/* @@? 20:1 Error Syntax error ESY0004: Ambient class declarations must have a body. */

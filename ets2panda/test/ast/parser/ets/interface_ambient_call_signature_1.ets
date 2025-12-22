@@ -16,4 +16,4 @@
   declare interface A {
       (arg : string: string
   }
-  /* @@? 17:20 Error SyntaxError: Unexpected token, expected ',' or ')'. */
+  /* @@? 17:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

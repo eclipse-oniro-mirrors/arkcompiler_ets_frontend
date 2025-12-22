@@ -66,7 +66,7 @@ ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identO
     }
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }
@@ -85,7 +85,7 @@ ETSParameterExpression::ETSParameterExpression(AnnotatedExpression *const identO
     SetInitializer(initializer);
 
     if (history != nullptr) {
-        history_ = history;
+        SetHistoryInternal(history);
     } else {
         InitHistory();
     }
@@ -233,15 +233,28 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
 
         auto const ident = node->Ident();
         ES2PANDA_ASSERT(ident != nullptr);
+
         auto const initializer = node->Initializer();
+        bool dumpDefault = initializer != nullptr;
+        //  Note (DZ, #30515): temporary solution until we fix the default parameter processing in constructors properly
+        //  For parameters of primitive type in constructors we leave default value in declaration instead of `?: type`.
+        if (dumpDefault) {
+            auto const *const method = Parent()->Parent()->Parent();
+            if (dumper->IsDeclgen() &&
+                (method == nullptr || !method->IsMethodDefinition() || !method->AsMethodDefinition()->IsConstructor() ||
+                 (ident->TsType() != nullptr && !ident->TsType()->IsETSUnboxableObject()))) {
+                dumpDefault = false;
+            }
+        }
 
         ident->Dump(dumper);
-        if (node->IsOptional() && initializer == nullptr) {
-            dumper->Add("?");
-        }
 
         auto typeAnnotation = ident->AsAnnotatedExpression()->TypeAnnotation();
         if (typeAnnotation != nullptr) {
+            if (node->IsOptional() && !dumpDefault) {
+                dumper->Add("?");
+            }
+
             if (dumper->IsDeclgen() && typeAnnotation->OriginalNode() != nullptr) {
                 typeAnnotation = typeAnnotation->OriginalNode()->AsExpression()->AsTypeNode();
             }
@@ -249,7 +262,7 @@ void ETSParameterExpression::Dump(ir::SrcDumper *const dumper) const
             typeAnnotation->Dump(dumper);
         }
 
-        if (initializer != nullptr) {
+        if (dumpDefault) {
             dumper->Add(" = ");
             initializer->Dump(dumper);
         }

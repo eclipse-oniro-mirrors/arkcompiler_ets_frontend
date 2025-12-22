@@ -16,10 +16,11 @@
 // the test case is from fuzzer.
 let callback = () => {for /* @@ label1 */aa !== /* @@ label2 */arr[idx]/* @@ label3 */)
 
-/* @@@ label1 Error SyntaxError: Expected '(', got 'identification literal'. */
-/* @@@ label1 Error TypeError: Unresolved reference aa */
-/* @@@ label2 Error TypeError: Unresolved reference arr */
-/* @@@ label2 Error TypeError: Indexed access is not supported for such expression type. */
-/* @@@ label3 Error SyntaxError: Invalid left-hand side in 'For[In/Of]Statement'. */
-/* @@? 26:1 Error SyntaxError: Unexpected token 'end of stream'. */
-/* @@? 26:1 Error SyntaxError: Expected '}', got 'end of stream'. */
+
+/* @@@ label1 Error Syntax error ESY0230: Expected '(', got 'identification literal'. */
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference aa */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference arr */
+/* @@@ label2 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@@ label3 Error Syntax error ESY0167: Invalid left-hand side in 'For[In/Of]Statement'. */
+/* @@? 26:79 Error Syntax error ESY0227: Unexpected token 'end of stream'. */
+/* @@? 26:79 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -17,4 +17,5 @@ interface A{
     static f!:string
 }
 
-/* @@? 17:5 Error SyntaxError: Unexpected token, expected 'private' or identifier. */
+/* @@? 17:5 Error Syntax error ESY0224: Identifier expected, got 'static'. */
+/* @@? 17:13 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */

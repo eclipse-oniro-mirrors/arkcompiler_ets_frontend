@@ -30,4 +30,5 @@ function main() {
     x = /* @@ label */new B();  // CTE
 }
 
-/* @@@ label Error TypeError: Type 'B' cannot be assigned to type 'String|Short|A'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'B' cannot be assigned to type 'String|Short|A' */

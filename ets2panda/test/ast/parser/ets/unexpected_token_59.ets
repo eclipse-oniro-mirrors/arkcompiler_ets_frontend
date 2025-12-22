@@ -17,5 +17,5 @@ class A {
     x: int
 
 
-/* @@@ label Error SyntaxError: Expected '}', got 'end of stream'. */
-/* @@ label */
+
+/* @@ label *//* @@? 21:93 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

@@ -15,4 +15,5 @@
 
 function foo<X extends short, Y extends short>(v: X = 1 as (X | Y)){}
 
-/* @@? 16:55 Error TypeError: Cannot cast type 'Int' to 'X|Y'  */
+
+/* @@? 16:55 Error Semantic error ESE0326: Cannot cast type 'Int' to 'X|Y' */

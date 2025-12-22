@@ -20,5 +20,5 @@ function main(): int {
     let hehe: int = 10
 }
 
-/* @@? 16:28 Error SyntaxError: Lexical declaration is not allowed in single statement context. */
-/* @@? 19:20 Error SyntaxError: Unexpected token ')'. */
+/* @@? 16:28 Error Syntax error ESY0175: Lexical declaration is not allowed in single statement context. */
+/* @@? 19:20 Error Syntax error ESY0227: Unexpected token ')'. */

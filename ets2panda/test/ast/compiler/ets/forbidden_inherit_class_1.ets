@@ -21,4 +21,5 @@ class B extends /* @@ label */Partial<A> {
 
 }
 
-/* @@@ label Error TypeError: The super type of 'B' class is not extensible.  */
+
+/* @@@ label Error Semantic error ESE0176: The super type of 'B' class is not extensible. */

@@ -18,4 +18,5 @@ function foo<T extends "abc"| "ff">(a: T) {
     return a
 }
 
-/* @@@ label Error TypeError: Type '"abc"' cannot be assigned to type 'T'  */
+
+/* @@@ label Error Semantic error ESE0318: Type '"abc"' cannot be assigned to type 'T' */

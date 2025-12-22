@@ -14,21 +14,47 @@
  */
 
 #include "lsp/include/internal_api.h"
+#include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/register_code_fix/add_missing_new_operator.h"
 
 namespace ark::es2panda::lsp {
-const int G_ADD_MISSING_NEW_OPERATOR_CODE = 1022;
+using codefixes::FIX_ADD_MISSING_NEW_OPERATOR;
 FixAddMissingNewOperator::FixAddMissingNewOperator()
 {
-    const char *fixId = "FixAddMissingNewOperator";
-    SetErrorCodes({G_ADD_MISSING_NEW_OPERATOR_CODE});
-    SetFixIds({fixId});
+    auto errorCodes = FIX_ADD_MISSING_NEW_OPERATOR.GetSupportedCodeNumbers();
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
+    SetFixIds({FIX_ADD_MISSING_NEW_OPERATOR.GetFixId().data()});
 }
 
 bool FixAddMissingNewOperator::IsValidTarget(const ir::AstNode *node)
 {
-    return node != nullptr && node->IsCallExpression();
+    if (node == nullptr || !node->IsCallExpression()) {
+        return false;
+    }
+
+    const auto *call = node->AsCallExpression();
+    const auto *callee = call->Callee();
+    if (callee == nullptr) {
+        return false;
+    }
+
+    if (!callee->IsIdentifier()) {
+        return false;
+    }
+    const ir::Identifier *id = callee->AsIdentifier();
+
+    auto *var = id->Variable();
+    if (var == nullptr || var->Declaration() == nullptr) {
+        return false;
+    }
+
+    const auto *decl = var->Declaration()->Node();
+    if (decl == nullptr || (!decl->IsClassDeclaration() && !decl->IsClassDefinition())) {
+        return false;  // NOLINT(readability-simplify-boolean-expr)
+    }
+
+    return true;
 }
 
 void FixAddMissingNewOperator::MakeChange(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos,
@@ -43,7 +69,7 @@ void FixAddMissingNewOperator::MakeChange(ChangeTracker &changeTracker, es2panda
     while (callExpr != nullptr && !callExpr->IsCallExpression()) {
         callExpr = callExpr->Parent();
     }
-    if (!IsValidTarget(callExpr)) {
+    if (callExpr == nullptr || !IsValidTarget(callExpr)) {
         return;
     }
     auto *call = const_cast<ir::CallExpression *>(callExpr->AsCallExpression());
@@ -86,10 +112,10 @@ std::vector<CodeFixAction> FixAddMissingNewOperator::GetCodeActions(const CodeFi
     auto changes = GetCodeActionsToFix(context);
     if (!changes.empty()) {
         CodeFixAction codeAction;
-        codeAction.fixName = "addMissingNewOperator";
+        codeAction.fixName = FIX_ADD_MISSING_NEW_OPERATOR.GetFixId().data();
         codeAction.description = "Add missing 'new' operator to constructor call";
         codeAction.changes = changes;
-        codeAction.fixId = "AddMissingNewOperator";
+        codeAction.fixId = FIX_ADD_MISSING_NEW_OPERATOR.GetFixId().data();
         returnedActions.push_back(codeAction);
     }
     return returnedActions;
@@ -101,5 +127,5 @@ CombinedCodeActions FixAddMissingNewOperator::GetAllCodeActions([[maybe_unused]]
 }
 
 // NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
-AutoCodeFixRegister<FixAddMissingNewOperator> g_addMissingNew("AddMissingNewOperator");
+AutoCodeFixRegister<FixAddMissingNewOperator> g_addMissingNew(FIX_ADD_MISSING_NEW_OPERATOR.GetFixId().data());
 }  // namespace ark::es2panda::lsp

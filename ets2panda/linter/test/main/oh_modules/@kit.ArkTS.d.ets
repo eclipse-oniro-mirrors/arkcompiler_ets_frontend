@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-export { worker } from '../oh_modules/@ohos.worker';
-export { collections } from '../oh_modules/@arkts.collections';
-export { utils } from '../oh_modules/@arkts.utils';
-export { taskpool } from '../oh_modules/@ohos.taskpool';
-export { ArkTSUtils } from '../oh_modules/@arkts.utils';
-export { process } from '../oh_modules/@ohos.process';
+import worker, { ErrorEvent, MessageEvents, ThreadWorkerGlobalScope } from './@ohos.worker';
+export { worker, ErrorEvent, MessageEvents, ThreadWorkerGlobalScope }
+export { collections } from './@arkts.collections';
+export { utils } from './@arkts.utils';
+export { taskpool } from './@ohos.taskpool';
+export { ArkTSUtils } from './@arkts.utils';
+export { process } from './@ohos.process';

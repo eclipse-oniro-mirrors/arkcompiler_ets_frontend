@@ -49,6 +49,26 @@ RelationResult TypeRelation::CacheLookup(const Type *source, const Type *target,
     return RelationResult::CACHE_MISS;
 }
 
+bool TypeRelation::CheckTypeParameterConstraints(ArenaVector<Type *> const &typeParameters1,
+                                                 ArenaVector<Type *> const &typeParameters2)
+{
+    auto const paramNumber = typeParameters1.size();
+    if (paramNumber != typeParameters2.size()) {
+        return false;
+    }
+
+    if (paramNumber > 0U) {
+        for (std::size_t i = 0U; i < paramNumber; ++i) {
+            auto const *const c1 = typeParameters1[i]->AsETSTypeParameter()->GetConstraintType();
+            auto const *const c2 = typeParameters2[i]->AsETSTypeParameter()->GetConstraintType();
+            if (!IsSupertypeOf(c1, c2)) {  // contravariance check
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool TypeRelation::IsIdenticalTo(Type *source, Type *target)
 {
     if (source == nullptr || target == nullptr) {
@@ -236,7 +256,7 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
     Type *targetUnboxedType = checker->MaybeUnboxType(target);
     Type *sourceUnboxedType = checker->MaybeUnboxType(source);
 
-    if (source->IsETSIntEnumType()) {
+    if (source->IsETSNumericEnumType()) {
         targetUnboxedType = checker->GlobalIntType();
     }
 

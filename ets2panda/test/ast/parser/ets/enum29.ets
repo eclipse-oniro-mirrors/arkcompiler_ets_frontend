@@ -66,5 +66,6 @@ function main(): void {
   }
 }
 
-/* @@@ label Error TypeError: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
-/* @@@ label1 Error TypeError: Enum switch case must be unqualified name of an enum constant */
+
+/* @@@ label Error Semantic error ESE0342: Enumeration members can be initialized only by compile-time expressions and initializers must be of the same type. */
+/* @@@ label1 Error Semantic error ESE0334: Enum switch case must be unqualified name of an enum constant */

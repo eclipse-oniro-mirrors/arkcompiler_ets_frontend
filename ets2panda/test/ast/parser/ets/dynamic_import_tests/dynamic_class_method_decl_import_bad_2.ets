@@ -22,4 +22,5 @@ import { A } from "dynamic_import_tests/modules/module"
 function foo(): void {
     let x: string = /* @@ label */A.bar()
 }
-/* @@@ label Error TypeError: Type 'Double' cannot be assigned to type 'String'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'String' */

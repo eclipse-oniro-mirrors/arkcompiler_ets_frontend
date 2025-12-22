@@ -23,4 +23,5 @@ namespace NS {
 
 overload foo {NS.foo1, NS.A.foo2, /* @@ label1 */NS.A.foo2}
 
-/* @@@ label1 Error TypeError: Duplicate overloaded method. */
+
+/* @@@ label1 Error Semantic error ESE0385: Duplicate overloaded method. */

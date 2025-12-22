@@ -22,4 +22,5 @@ class szeretettek implements ősz {
     private /* @@ label */field: int; 
 }
 
-/* @@@ label Error TypeError: Interface property implementation cannot be generated as non-public  */
+
+/* @@@ label Error Semantic error ESE0217: Interface property implementation cannot be generated as non-public */

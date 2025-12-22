@@ -19,7 +19,8 @@ class A {
 
 function main() {
   let arr: A[] = [new A()];
-  arr[0]./* @@ label */foo();
+  arr[0].foo();
 }
 
-/* @@@ label Error TypeError: 'foo' is a static property of 'A' */
+
+/* @@? 22:10 Error Semantic error ESE0207: 'foo' is a static property of 'A' */

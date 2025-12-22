@@ -15,5 +15,6 @@
 
 try /* @@ label */} catch (/* @@ label1 */) {}
 
-/* @@@ label Error SyntaxError: Expected '{', got '}'. */
-/* @@@ label1 Error SyntaxError: Unexpected token, expected an identifier. */
+
+/* @@@ label Error Syntax error ESY0230: Expected '{', got '}'. */
+/* @@@ label1 Error Syntax error ESY0112: Unexpected token, expected an identifier. */

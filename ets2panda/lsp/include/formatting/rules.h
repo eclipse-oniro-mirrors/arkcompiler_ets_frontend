@@ -23,8 +23,10 @@ namespace ark::es2panda::lsp {
 
 struct RuleSpec {
 public:
-    explicit RuleSpec(Rule &rule, std::vector<TokenRange> &leftTokenRange, std::vector<TokenRange> &rightTokenRange)
-        : rule_(rule), leftTokenRange_(leftTokenRange), rightTokenRange_(rightTokenRange)
+    explicit RuleSpec(Rule rule, TokenRange leftTokenRange, TokenRange rightTokenRange)
+        : rule_(std::move(rule)),
+          leftTokenRange_(std::move(leftTokenRange)),
+          rightTokenRange_(std::move(rightTokenRange))
     {
     }
 
@@ -38,30 +40,30 @@ public:
         return rule_;
     }
 
-    std::vector<TokenRange> &GetLeftTokenRange()
+    TokenRange &GetLeftTokenRange()
     {
         return leftTokenRange_;
     }
 
-    const std::vector<TokenRange> &GetLeftTokenRange() const
+    const TokenRange &GetLeftTokenRange() const
     {
         return leftTokenRange_;
     }
 
-    std::vector<TokenRange> &GetRightTokenRange()
+    TokenRange &GetRightTokenRange()
     {
         return rightTokenRange_;
     }
 
-    const std::vector<TokenRange> &GetRightTokenRange() const
+    const TokenRange &GetRightTokenRange() const
     {
         return rightTokenRange_;
     }
 
 private:
     Rule rule_;
-    std::vector<TokenRange> leftTokenRange_;
-    std::vector<TokenRange> rightTokenRange_;
+    TokenRange leftTokenRange_;
+    TokenRange rightTokenRange_;
 };
 
 std::vector<RuleSpec> GetAllRules();

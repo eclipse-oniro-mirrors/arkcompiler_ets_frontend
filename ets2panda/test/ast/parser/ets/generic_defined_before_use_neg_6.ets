@@ -14,4 +14,5 @@
  */
 class SomeType<T>{}
 function foo<T=SomeType</* @@ label */T2>, T2=SomeType<T>>(){}
-/* @@@ label Error TypeError: Type Parameter T2 should be defined before use.  */
+
+/* @@@ label Error Semantic error ESE0183: Type Parameter T2 should be defined before use. */

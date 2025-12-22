@@ -23,4 +23,5 @@ function main(): void {
     let x : Object = /* @@ label */foo();
 }
 
-/* @@@ label Error TypeError: Type 'A|null' cannot be assigned to type 'Object'  */
+
+/* @@@ label Error Semantic error ESE0318: Type 'A|null' cannot be assigned to type 'Object' */

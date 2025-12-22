@@ -26,18 +26,18 @@ function foo(x: A | B) {
     x.foo("123")
 }
 
-/* @@? 17:8 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:14 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:18 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:27 Error SyntaxError: Field type annotation expected. */
-/* @@? 17:28 Error SyntaxError: Unexpected token '{'. */
-/* @@? 18:5 Error TypeError: No matching call signature for foo(v) */
-/* @@? 18:9 Error TypeError: Unresolved reference v */
-/* @@? 18:10 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:10 Error SyntaxError: Unexpected token, expected ',' or ')'. */
-/* @@? 18:12 Error SyntaxError: Unexpected token 'int'. */
-/* @@? 18:15 Error SyntaxError: Unexpected token ')'. */
-/* @@? 18:16 Error SyntaxError: Unexpected token ':'. */
-/* @@? 18:18 Error SyntaxError: Unexpected token 'void'. */
-/* @@? 18:23 Error SyntaxError: Unexpected token '{'. */
-/* @@? 19:1 Error SyntaxError: Unexpected token '}'. */
+
+/* @@? 17:8 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:14 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:18 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:27 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:28 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 18:9 Error Semantic error ESE0143: Unresolved reference v */
+/* @@? 18:10 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 18:12 Error Syntax error ESY0227: Unexpected token 'int'. */
+/* @@? 18:15 Error Syntax error ESY0227: Unexpected token ')'. */
+/* @@? 18:16 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 18:18 Error Syntax error ESY0227: Unexpected token 'void'. */
+/* @@? 18:23 Error Syntax error ESY0227: Unexpected token '{'. */
+/* @@? 19:1 Error Syntax error ESY0227: Unexpected token '}'. */

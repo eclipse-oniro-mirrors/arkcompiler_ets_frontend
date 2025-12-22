@@ -15,7 +15,8 @@
 
 export /* @@ label1 */= /* @@ label2 */Point
 
-/* @@@ label1 Error SyntaxError: 'export = ...' syntax is not supported, use regular import/export instead! */
-/* @@@ label1 Error SyntaxError: Unexpected token '='. */
-/* @@@ label2 Error SyntaxError: Unexpected token 'Point'. */
-/* @@@ label2 Error TypeError: Unresolved reference Point */
+
+/* @@@ label1 Error Syntax error ESY0307: 'export = ...' syntax is not supported, use regular import/export instead! */
+/* @@@ label1 Error Syntax error ESY0227: Unexpected token '='. */
+/* @@@ label2 Error Syntax error ESY0227: Unexpected token 'Point'. */
+/* @@@ label2 Error Semantic error ESE0143: Unresolved reference Point */

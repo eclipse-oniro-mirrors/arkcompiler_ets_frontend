@@ -20,21 +20,8 @@
     "declgenBridgeCodePath": "./dist/declgen/ets",
     "hasMainModule": true,
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
+
     "dependencyModuleList": [
-        {
-            "packageName": "entry",
-            "moduleName": "entry",
-            "moduleType": "feature",
-            "modulePath": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.2_hsp1.2/entry",
-            "sourceRoots": [
-                "./"
-            ],
-            "entryFile": "${absolute_path_to_build_system}/test/e2e/demo_entry1.1_har1.2_hsp1.2/entry",
-            "dependencies": [
-                "harA"
-            ],
-            "language": "1.2"
-        },
         {
             "packageName": "harA",
             "moduleName": "harA",

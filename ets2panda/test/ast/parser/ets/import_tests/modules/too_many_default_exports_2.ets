@@ -15,4 +15,5 @@
 
 export default let a = 2, /* @@ label */b = 3;
 
-/* @@@ label Error TypeError: Only one default export is allowed in a module  */
+
+/* @@@ label Error Semantic error ESE0374: Only one default export is allowed in a module */

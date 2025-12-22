@@ -27,7 +27,7 @@
             "kind": "get",
             "accessibility": "public",
             "static": false,
-            "optional": false,
+            "optional": true,
             "computed": false,
             "value": {
               "type": "FunctionExpression",
@@ -240,6 +240,54 @@
                     }
                   }
                 },
+                "body": {
+                  "type": "BlockStatement",
+                  "statements": [
+                    {
+                      "type": "ReturnStatement",
+                      "argument": {
+                        "type": "UndefinedLiteral",
+                        "value": "undefined",
+                        "loc": {
+                          "start": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          },
+                          "end": {
+                            "line": 1,
+                            "column": 1,
+                            "program": null
+                          }
+                        }
+                      },
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        }
+                      }
+                    }
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    },
+                    "end": {
+                      "line": 1,
+                      "column": 1,
+                      "program": null
+                    }
+                  }
+                },
                 "loc": {
                   "start": {
                     "line": 18,
@@ -288,7 +336,7 @@
                 "kind": "set",
                 "accessibility": "public",
                 "static": false,
-                "optional": false,
+                "optional": true,
                 "computed": false,
                 "value": {
                   "type": "FunctionExpression",
@@ -533,6 +581,70 @@
                         }
                       }
                     ],
+                    "body": {
+                      "type": "BlockStatement",
+                      "statements": [
+                        {
+                          "type": "ThrowStatement",
+                          "argument": {
+                            "type": "ETSNewClassInstanceExpression",
+                            "typeReference": {
+                              "type": "Identifier",
+                              "name": "InvalidStoreAccessError",
+                              "loc": {
+                                "start": {
+                                  "line": 1,
+                                  "column": 1,
+                                  "program": null
+                                },
+                                "end": {
+                                  "line": 1,
+                                  "column": 1,
+                                  "program": null
+                                }
+                              }
+                            },
+                            "arguments": [],
+                            "loc": {
+                              "start": {
+                                "line": 1,
+                                "column": 1,
+                                "program": null
+                              },
+                              "end": {
+                                "line": 1,
+                                "column": 1,
+                                "program": null
+                              }
+                            }
+                          },
+                          "loc": {
+                            "start": {
+                              "line": 1,
+                              "column": 1,
+                              "program": null
+                            },
+                            "end": {
+                              "line": 1,
+                              "column": 1,
+                              "program": null
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        },
+                        "end": {
+                          "line": 1,
+                          "column": 1,
+                          "program": null
+                        }
+                      }
+                    },
                     "loc": {
                       "start": {
                         "line": 18,

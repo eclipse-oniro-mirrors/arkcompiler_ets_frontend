@@ -22,5 +22,5 @@ let array: @Anno @Anno FixedArray<FixedArray<Int>>
 let deepArray: @Anno @Anno FixedArray<FixedArray<FixedArray<FixedArray<FixedArray<Number>>>>>
 
 
-/* @@? 21:19 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
-/* @@? 22:23 Error TypeError: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element.  */
+/* @@? 21:19 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */
+/* @@? 22:23 Error Semantic error ESE0041: Duplicate annotations are not allowed. The annotation 'Anno' has already been applied to this element. */

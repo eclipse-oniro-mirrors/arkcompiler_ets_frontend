@@ -21,10 +21,11 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/util.h"
+#include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/helpers.h"
-#include "libpandabase/utils/small_vector.h"
+#include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::compiler {
 
@@ -106,7 +107,7 @@ static bool IsMultiplicativeExpression(const ir::BinaryExpression *expr)
 {
     auto opType = expr->OperatorType();
     return opType == lexer::TokenType::PUNCTUATOR_MULTIPLY || opType == lexer::TokenType::PUNCTUATOR_DIVIDE ||
-           opType == lexer::TokenType::PUNCTUATOR_MOD;
+           opType == lexer::TokenType::PUNCTUATOR_MOD || opType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION;
 }
 
 static bool IsRelationalExpression(const ir::BinaryExpression *expr)
@@ -149,6 +150,36 @@ static bool TestLiteral(const ir::Literal *lit)
         return !lit->AsNumberLiteral()->Number().IsZero();
     }
     ES2PANDA_UNREACHABLE();
+}
+// NOTE(recep) To avoid bad accumulator verifier
+static void HandleUndefinedInLogicalExpression(public_lib::Context *context, ir::Expression *node, ir::Expression *init)
+{
+    if (init == nullptr || !init->IsUndefinedLiteral()) {
+        return;
+    }
+
+    auto parent = node->Parent();
+    if (parent == nullptr || !parent->IsBinaryExpression()) {
+        return;
+    }
+
+    auto *bexpr = parent->AsBinaryExpression();
+
+    if (!IsLogicalExpression(bexpr)) {
+        return;
+    }
+
+    if (bexpr->Left() == node || bexpr->Right() == node) {
+        auto *undef = util::NodeAllocator::Alloc<ir::UndefinedLiteral>(context->allocator);
+        undef->SetTsType(context->GetChecker()->AsETSChecker()->GlobalETSUndefinedType());
+        undef->SetParent(parent);
+
+        if (bexpr->Left() == node) {
+            bexpr->SetLeft(undef);
+        } else {
+            bexpr->SetRight(undef);
+        }
+    }
 }
 
 class NodeCalculator {
@@ -199,8 +230,7 @@ private:
             if (i < inputs_.size()) {
                 if (inputs_[i]->IsCharLiteral()) {
                     LogError(diagnostic::CHAR_TO_STR_CONVERSION, {}, expr->Start());
-                }
-                if (inputs_[i]->IsNumberLiteral() || inputs_[i]->IsBooleanLiteral()) {
+                } else if (inputs_[i]->IsNumberLiteral() || inputs_[i]->IsBooleanLiteral()) {
                     tmpStr += inputs_[i]->ToString();
                 } else if (inputs_[i]->IsStringLiteral()) {
                     tmpStr += inputs_[i]->AsStringLiteral()->Str().Utf8();
@@ -230,7 +260,6 @@ private:
             }
         }
 
-        LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, lit->Start());
         return {};
     }
 
@@ -328,14 +357,12 @@ private:
     {
         using Limits = std::numeric_limits<OperandType>;
         static_assert(std::is_integral_v<OperandType> && std::is_signed_v<OperandType>);
-        bool overflowOccurred = false;
         if constexpr (std::is_same_v<OperatorType, std::divides<>> || std::is_same_v<OperatorType, std::modulus<>>) {
             if (rhs == 0) {
                 LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
                 *res = Limits::max();
             } else if ((lhs == Limits::min()) && rhs == -1) {
                 // Note: Handle corner cases
-                overflowOccurred = true;
                 *res = std::is_same_v<OperatorType, std::divides<>> ? Limits::min() : 0;
             } else {
                 *res = OperatorType {}(lhs, rhs);
@@ -343,21 +370,16 @@ private:
         } else {
             if constexpr (sizeof(OperandType) >= sizeof(int32_t)) {
                 if constexpr (std::is_same_v<OperatorType, std::multiplies<>>) {
-                    overflowOccurred = __builtin_mul_overflow(lhs, rhs, res);
+                    __builtin_mul_overflow(lhs, rhs, res);
                 } else if constexpr (std::is_same_v<OperatorType, std::plus<>>) {
-                    overflowOccurred = __builtin_add_overflow(lhs, rhs, res);
+                    __builtin_add_overflow(lhs, rhs, res);
                 } else if constexpr (std::is_same_v<OperatorType, std::minus<>>) {
-                    overflowOccurred = __builtin_sub_overflow(lhs, rhs, res);
+                    __builtin_sub_overflow(lhs, rhs, res);
                 }
             } else {
                 auto tmpRes = OperatorType {}(static_cast<int32_t>(lhs), static_cast<int32_t>(rhs));
                 *res = static_cast<OperandType>(tmpRes);
-                overflowOccurred = tmpRes < Limits::min() || Limits::max() < tmpRes;
             }
-        }
-
-        if (overflowOccurred) {
-            LogError(diagnostic::OVERFLOW_ARITHMETIC, {}, expr->Start());
         }
     }
 
@@ -368,31 +390,26 @@ private:
         if constexpr (std::is_integral_v<OperandType>) {
             PerformArithmeticIntegral<OperatorType>(expr, lhs, rhs, res);
             return;
-        } else if constexpr (std::is_floating_point_v<OperandType>) {
-            if constexpr (std::is_same_v<OperatorType, std::divides<>>) {
-                if ((rhs == 0) && (lhs == 0)) {
-                    *res = std::numeric_limits<OperandType>::quiet_NaN();
-                } else if ((rhs == 0) && (lhs > 0)) {
-                    *res = std::numeric_limits<OperandType>::infinity();
-                } else if ((rhs == 0) && (lhs < 0)) {
-                    *res = -std::numeric_limits<OperandType>::infinity();
-                } else {
-                    *res = OperatorType {}(lhs, rhs);
-                }
-            } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
-                if (rhs == 0) {
-                    LogError(diagnostic::DIVISION_BY_ZERO, {}, expr->Start());
-                    *res = std::numeric_limits<OperandType>::quiet_NaN();
-                } else {
-                    *res = std::fmod(lhs, rhs);
-                }
+        }
+
+        ES2PANDA_ASSERT(std::is_floating_point_v<OperandType>);
+
+        if constexpr (std::is_same_v<OperatorType, std::divides<>>) {
+            if (rhs == 0) {
+                *res = lhs == 0 ? std::numeric_limits<OperandType>::quiet_NaN()
+                                : std::copysign(std::numeric_limits<OperandType>::infinity(), lhs / rhs);
             } else {
                 *res = OperatorType {}(lhs, rhs);
             }
-
-            return;
+        } else if constexpr (std::is_same_v<OperatorType, std::modulus<>>) {
+            if (rhs == 0) {
+                *res = std::numeric_limits<OperandType>::quiet_NaN();
+            } else {
+                *res = std::fmod(lhs, rhs);
+            }
+        } else {
+            *res = OperatorType {}(lhs, rhs);
         }
-        ES2PANDA_UNREACHABLE();
     }
 
     template <typename TargetType>
@@ -413,6 +430,13 @@ private:
             case lexer::TokenType::PUNCTUATOR_MOD: {
                 PerformArithmetic<std::modulus<>>(expr, leftNum, rightNum, &resNum);
                 break;
+            }
+            case lexer::TokenType::PUNCTUATOR_EXPONENTIATION: {
+                if (leftNum < 0 && !std::is_integral_v<TargetType>) {
+                    LogError(diagnostic::EXPONENTIATION_BASE_LESS_ZERO, {}, expr->Start());
+                    resNum = std::numeric_limits<TargetType>::quiet_NaN();
+                }
+                return CreateNumberLiteral(std::pow(leftNum, rightNum));
             }
             default:
                 ES2PANDA_UNREACHABLE();
@@ -791,28 +815,31 @@ private:
         return CreateBooleanLiteral(res);
     }
 
-    ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, const ir::Literal *left,
-                                         const ir::Literal *right)
+    ir::Literal *HandleLogicalExpression(const ir::BinaryExpression *expr, ir::Literal *left, ir::Literal *right)
     {
+        auto allocator = context_->allocator;
+        auto parent = const_cast<ir::BinaryExpression *>(expr)->Parent();
         bool lhs = TestLiteral(left);
-        bool rhs = TestLiteral(right);
 
-        bool res {};
         auto opType = expr->OperatorType();
         switch (opType) {
             case lexer::TokenType::PUNCTUATOR_LOGICAL_AND: {
-                res = lhs && rhs;
-                break;
+                if (lhs) {
+                    return right->Clone(allocator, parent)->AsExpression()->AsLiteral();
+                }
+                return left->Clone(allocator, parent)->AsExpression()->AsLiteral();
             }
             case lexer::TokenType::PUNCTUATOR_LOGICAL_OR: {
-                res = lhs || rhs;
-                break;
+                if (lhs) {
+                    return left->Clone(allocator, parent)->AsExpression()->AsLiteral();
+                }
+                return right->Clone(allocator, parent)->AsExpression()->AsLiteral();
             }
             default: {
                 ES2PANDA_UNREACHABLE();
             }
         }
-        return CreateBooleanLiteral(res);
+        ES2PANDA_UNREACHABLE();
     }
 
     ir::Literal *Calculate(const ir::BinaryExpression *expr)
@@ -1101,6 +1128,9 @@ static ir::Expression *AsRValue(ir::Identifier *ident)
     if (auto callexp = Cast<ir::CallExpression>(parent); (callexp != nullptr) && isIn(callexp->Arguments())) {
         return rvnode;
     }
+    if (auto arrexp = Cast<ir::ArrayExpression>(parent); (arrexp != nullptr) && isIn(arrexp->Elements())) {
+        return rvnode;
+    }
     if (auto newarr = Cast<ir::ETSNewArrayInstanceExpression>(parent);
         (newarr != nullptr) && (newarr->Dimension() == rvnode)) {
         return rvnode;
@@ -1254,6 +1284,7 @@ void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
                 init = vardecl->Init();
             }
             if (init != nullptr) {
+                HandleUndefinedInLogicalExpression(context_, node, init);
                 AddDNode(identOrMExp, init);
             }
         }
@@ -1332,10 +1363,6 @@ static void PostCheckGlobalIfPackage(public_lib::Context *context, ir::ClassDefi
 
 bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, std::string_view name)
 {
-    if (program->GetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED)) {
-        return true;
-    }
-
     program->Ast()->IterateRecursively([this](ir::AstNode *node) {
         if (node->IsExpression()) {
             PopulateDAGs(node->AsExpression());
@@ -1360,6 +1387,9 @@ bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, 
             auto folded = replacements_[expr];
             folded->SetParent(expr->Parent());
             folded->SetRange(expr->Range());
+            if (folded->IsNumberLiteral()) {
+                folded->AsNumberLiteral()->SetFolded();
+            }
             return folded;
         },
         name);
@@ -1367,8 +1397,6 @@ bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, 
     if (program->IsPackage()) {
         PostCheckGlobalIfPackage(context_, program->GlobalClass());
     }
-
-    program->SetFlag(parser::ProgramFlags::AST_CONSTANT_EXPRESSION_LOWERED);
     return true;
 }
 

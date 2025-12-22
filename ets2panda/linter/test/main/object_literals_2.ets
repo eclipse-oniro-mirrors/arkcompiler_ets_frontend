@@ -134,7 +134,7 @@ class Derived extends Base {
 
 let d2: Derived = {n: 42, s: ''};
 
-// Interface should not declare methods, only properties are allowed. 
+// Interface should not declare methods, only properties are allowed.
 interface I {
   n: number;
   s: string;
@@ -162,7 +162,7 @@ const options: CompilerOptions = { // OK, as 'targetPath' field is optional
   sourcePath: './src',
 };
 
-// Function parameter with union type. 
+// Function parameter with union type.
 function funcWithUnionParam(x: C | number): void { }
 funcWithUnionParam({ n: 1, s: '2' }) // OK, union type is supported
 
@@ -283,3 +283,14 @@ new DCl({a: new CCl(), b: new CCl2(), c: new CCl2(), d: new CCl2()})
 let oo1: Object = {}
 
 let oo2: Object = {a: 12}
+
+
+interface ABC {
+    foo: number[]
+}
+
+const foo = [];
+
+let a: ABC = {
+    foo // should not be scanned
+}
