@@ -16,12 +16,12 @@
     "result": [
         {
             "line": 16,
-            "column": 1,
+            "column": 10,
             "endLine": 16,
-            "endColumn": 56,
-            "problem": "InterOpImportJs",
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
             "suggest": "",
-            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
             "severity": "ERROR"
         },
         {
@@ -36,12 +36,12 @@
         },
         {
             "line": 17,
-            "column": 1,
+            "column": 8,
             "endLine": 17,
-            "endColumn": 54,
-            "problem": "InterOpImportJs",
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
             "suggest": "",
-            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
             "severity": "ERROR"
         },
         {
@@ -56,19 +56,29 @@
         },
         {
             "line": 18,
-            "column": 1,
+            "column": 19,
             "endLine": 18,
-            "endColumn": 67,
-            "problem": "InterOpImportJs",
+            "endColumn": 28,
+            "problem": "DeclWithDuplicateName",
             "suggest": "",
-            "rule": "Importing directly from \"JS\" module is not supported (arkts-interop-js2s-import-js)",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
             "severity": "ERROR"
         },
         {
             "line": 21,
             "column": 7,
             "endLine": 21,
-            "endColumn": 9,
+            "endColumn": 15,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
+            "column": 7,
+            "endLine": 21,
+            "endColumn": 15,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
@@ -78,17 +88,7 @@
             "line": 23,
             "column": 7,
             "endLine": 23,
-            "endColumn": 13,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 7,
-            "endLine": 24,
-            "endColumn": 12,
+            "endColumn": 10,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
@@ -98,7 +98,27 @@
             "line": 25,
             "column": 7,
             "endLine": 25,
-            "endColumn": 10,
+            "endColumn": 9,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 7,
+            "endLine": 25,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 26,
+            "column": 15,
+            "endLine": 26,
+            "endColumn": 21,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
@@ -108,26 +128,6 @@
             "line": 27,
             "column": 7,
             "endLine": 27,
-            "endColumn": 12,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
-            "column": 7,
-            "endLine": 33,
-            "endColumn": 14,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 7,
-            "endLine": 34,
             "endColumn": 13,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -135,29 +135,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 35,
+            "line": 28,
             "column": 7,
-            "endLine": 35,
-            "endColumn": 16,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 40,
-            "column": 13,
-            "endLine": 40,
-            "endColumn": 13,
-            "problem": "SwitchExpression",
-            "suggest": "",
-            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 41,
-            "column": 7,
-            "endLine": 41,
+            "endLine": 28,
             "endColumn": 12,
             "problem": "ThrowStatement",
             "suggest": "",
@@ -165,9 +145,69 @@
             "severity": "ERROR"
         },
         {
-            "line": 44,
+            "line": 29,
+            "column": 7,
+            "endLine": 29,
+            "endColumn": 12,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 30,
+            "column": 16,
+            "endLine": 30,
+            "endColumn": 22,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 10,
+            "endLine": 31,
+            "endColumn": 10,
+            "problem": "DynamicCtorCall",
+            "suggest": "",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 7,
+            "endLine": 33,
+            "endColumn": 12,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 7,
+            "endLine": 38,
+            "endColumn": 12,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 39,
+            "column": 7,
+            "endLine": 39,
+            "endColumn": 15,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
             "column": 13,
-            "endLine": 44,
+            "endLine": 41,
             "endColumn": 19,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -175,9 +215,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 50,
-            "column": 11,
-            "endLine": 50,
+            "line": 43,
+            "column": 7,
+            "endLine": 43,
+            "endColumn": 15,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 7,
+            "endLine": 44,
             "endColumn": 16,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -185,10 +235,50 @@
             "severity": "ERROR"
         },
         {
+            "line": 47,
+            "column": 7,
+            "endLine": 47,
+            "endColumn": 14,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 49,
+            "column": 14,
+            "endLine": 49,
+            "endColumn": 20,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
             "line": 51,
-            "column": 15,
+            "column": 7,
             "endLine": 51,
-            "endColumn": 21,
+            "endColumn": 16,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 52,
+            "column": 7,
+            "endLine": 52,
+            "endColumn": 18,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 7,
+            "endLine": 53,
+            "endColumn": 17,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
@@ -196,7 +286,7 @@
         },
         {
             "line": 54,
-            "column": 10,
+            "column": 7,
             "endLine": 54,
             "endColumn": 13,
             "problem": "InvalidIdentifier",
@@ -205,49 +295,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
-            "column": 10,
-            "endLine": 57,
-            "endColumn": 15,
-            "problem": "LimitedReturnTypeInference",
-            "suggest": "",
-            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 57,
-            "column": 32,
-            "endLine": 57,
-            "endColumn": 36,
-            "problem": "VoidOperator",
-            "suggest": "",
-            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 57,
-            "column": 37,
-            "endLine": 57,
-            "endColumn": 38,
-            "problem": "ObjectLiteralNoContextType",
-            "suggest": "",
-            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
-            "column": 10,
-            "endLine": 63,
-            "endColumn": 14,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 63,
+            "line": 56,
             "column": 15,
-            "endLine": 63,
+            "endLine": 56,
             "endColumn": 21,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -255,19 +305,89 @@
             "severity": "ERROR"
         },
         {
-            "line": 67,
-            "column": 11,
-            "endLine": 67,
-            "endColumn": 15,
+            "line": 58,
+            "column": 16,
+            "endLine": 58,
+            "endColumn": 22,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 68,
-            "column": 3,
-            "endLine": 68,
+            "line": 59,
+            "column": 7,
+            "endLine": 59,
+            "endColumn": 9,
+            "problem": "InOperator",
+            "suggest": "",
+            "rule": "\"in\" operator is not supported (arkts-no-in)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 60,
+            "column": 7,
+            "endLine": 60,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 13,
+            "endLine": 63,
+            "endColumn": 13,
+            "problem": "SwitchExpression",
+            "suggest": "",
+            "rule": "The switch expression type must be of type number, string or enum (arkts-switch-expr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 64,
+            "column": 13,
+            "endLine": 64,
+            "endColumn": 19,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 7,
+            "endLine": 65,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 7,
+            "endLine": 65,
+            "endColumn": 16,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 7,
+            "endLine": 67,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 7,
+            "endLine": 67,
             "endColumn": 10,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -275,9 +395,79 @@
             "severity": "ERROR"
         },
         {
+            "line": 68,
+            "column": 7,
+            "endLine": 68,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 7,
+            "endLine": 68,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
             "line": 69,
-            "column": 3,
+            "column": 7,
             "endLine": 69,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 7,
+            "endLine": 69,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 70,
+            "column": 7,
+            "endLine": 70,
+            "endColumn": 14,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 7,
+            "endLine": 71,
+            "endColumn": 14,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 7,
+            "endLine": 72,
+            "endColumn": 11,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 7,
+            "endLine": 72,
             "endColumn": 11,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -286,48 +476,8 @@
         },
         {
             "line": 73,
-            "column": 3,
+            "column": 7,
             "endLine": 73,
-            "endColumn": 5,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 74,
-            "column": 3,
-            "endLine": 74,
-            "endColumn": 9,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 78,
-            "column": 14,
-            "endLine": 78,
-            "endColumn": 19,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 83,
-            "column": 8,
-            "endLine": 83,
-            "endColumn": 17,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 85,
-            "column": 3,
-            "endLine": 85,
             "endColumn": 11,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -335,59 +485,49 @@
             "severity": "ERROR"
         },
         {
-            "line": 86,
-            "column": 3,
-            "endLine": 86,
-            "endColumn": 8,
+            "line": 74,
+            "column": 7,
+            "endLine": 74,
+            "endColumn": 11,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 96,
-            "column": 3,
-            "endLine": 96,
-            "endColumn": 7,
+            "line": 75,
+            "column": 7,
+            "endLine": 75,
+            "endColumn": 11,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 102,
-            "column": 8,
-            "endLine": 102,
-            "endColumn": 14,
+            "line": 76,
+            "column": 7,
+            "endLine": 76,
+            "endColumn": 13,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 113,
-            "column": 13,
-            "endLine": 113,
-            "endColumn": 16,
+            "line": 77,
+            "column": 7,
+            "endLine": 77,
+            "endColumn": 13,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 118,
-            "column": 12,
-            "endLine": 118,
-            "endColumn": 15,
-            "problem": "InvalidIdentifier",
-            "suggest": "",
-            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 133,
-            "column": 10,
-            "endLine": 133,
+            "line": 78,
+            "column": 7,
+            "endLine": 78,
             "endColumn": 12,
             "problem": "InvalidIdentifier",
             "suggest": "",
@@ -395,30 +535,470 @@
             "severity": "ERROR"
         },
         {
-            "line": 134,
-            "column": 14,
-            "endLine": 134,
-            "endColumn": 20,
+            "line": 79,
+            "column": 7,
+            "endLine": 79,
+            "endColumn": 12,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 135,
-            "column": 14,
-            "endLine": 135,
-            "endColumn": 20,
+            "line": 80,
+            "column": 7,
+            "endLine": 80,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 7,
+            "endLine": 80,
+            "endColumn": 10,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
             "severity": "ERROR"
         },
         {
-            "line": 136,
+            "line": 81,
+            "column": 7,
+            "endLine": 81,
+            "endColumn": 10,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 82,
+            "column": 7,
+            "endLine": 82,
+            "endColumn": 11,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 83,
+            "column": 7,
+            "endLine": 83,
+            "endColumn": 11,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 84,
+            "column": 7,
+            "endLine": 84,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 7,
+            "endLine": 85,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 7,
+            "endLine": 85,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 7,
+            "endLine": 85,
+            "endColumn": 13,
+            "problem": "NoImportNamespaceStarAsVar",
+            "suggest": "",
+            "rule": "The namespace imported by import * as cannot be used as a variable (arkts-no-import-namespace-with-star-as-var)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 86,
+            "column": 7,
+            "endLine": 86,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 7,
+            "endLine": 87,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 7,
+            "endLine": 87,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 7,
+            "endLine": 88,
+            "endColumn": 12,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 7,
+            "endLine": 89,
+            "endColumn": 12,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 7,
+            "endLine": 89,
+            "endColumn": 12,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 90,
+            "column": 7,
+            "endLine": 90,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 91,
+            "column": 7,
+            "endLine": 91,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 92,
+            "column": 7,
+            "endLine": 92,
+            "endColumn": 11,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 1,
+            "endLine": 97,
+            "endColumn": 27,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 8,
+            "endLine": 97,
+            "endColumn": 11,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 8,
+            "endLine": 97,
+            "endColumn": 11,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 1,
+            "endLine": 98,
+            "endColumn": 40,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 9,
+            "endLine": 98,
+            "endColumn": 15,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 18,
+            "endLine": 98,
+            "endColumn": 24,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 1,
+            "endLine": 99,
+            "endColumn": 34,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 16,
+            "endLine": 99,
+            "endColumn": 19,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 16,
+            "endLine": 99,
+            "endColumn": 19,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 1,
+            "endLine": 100,
+            "endColumn": 33,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
             "column": 13,
-            "endLine": 136,
-            "endColumn": 18,
+            "endLine": 100,
+            "endColumn": 19,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 13,
+            "endLine": 100,
+            "endColumn": 19,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 1,
+            "endLine": 101,
+            "endColumn": 44,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 8,
+            "endLine": 101,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 8,
+            "endLine": 101,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 18,
+            "endLine": 101,
+            "endColumn": 24,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 26,
+            "endLine": 101,
+            "endColumn": 28,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 105,
+            "column": 16,
+            "endLine": 105,
+            "endColumn": 22,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 108,
+            "column": 16,
+            "endLine": 108,
+            "endColumn": 22,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 111,
+            "column": 16,
+            "endLine": 111,
+            "endColumn": 23,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 116,
+            "column": 10,
+            "endLine": 116,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 116,
+            "column": 10,
+            "endLine": 116,
+            "endColumn": 16,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 119,
+            "column": 10,
+            "endLine": 119,
+            "endColumn": 17,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 123,
+            "column": 7,
+            "endLine": 123,
+            "endColumn": 13,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 130,
+            "column": 11,
+            "endLine": 130,
+            "endColumn": 16,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 131,
+            "column": 10,
+            "endLine": 131,
+            "endColumn": 14,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 132,
+            "column": 13,
+            "endLine": 132,
+            "endColumn": 19,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 133,
+            "column": 3,
+            "endLine": 133,
+            "endColumn": 9,
             "problem": "InvalidIdentifier",
             "suggest": "",
             "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
@@ -426,7 +1006,7 @@
         },
         {
             "line": 140,
-            "column": 10,
+            "column": 8,
             "endLine": 140,
             "endColumn": 12,
             "problem": "InvalidIdentifier",
@@ -435,9 +1015,209 @@
             "severity": "ERROR"
         },
         {
-            "line": 81,
+            "line": 150,
+            "column": 6,
+            "endLine": 150,
+            "endColumn": 10,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 157,
+            "column": 3,
+            "endLine": 157,
+            "endColumn": 8,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 158,
+            "column": 3,
+            "endLine": 158,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 159,
+            "column": 3,
+            "endLine": 159,
+            "endColumn": 6,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 162,
+            "column": 11,
+            "endLine": 162,
+            "endColumn": 15,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 167,
+            "column": 13,
+            "endLine": 167,
+            "endColumn": 16,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 182,
+            "column": 5,
+            "endLine": 182,
+            "endColumn": 8,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 183,
+            "column": 5,
+            "endLine": 183,
+            "endColumn": 11,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 6,
+            "endLine": 187,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 6,
+            "endLine": 187,
+            "endColumn": 10,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 189,
+            "column": 14,
+            "endLine": 189,
+            "endColumn": 18,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 190,
+            "column": 5,
+            "endLine": 190,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 191,
+            "column": 5,
+            "endLine": 191,
+            "endColumn": 9,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 17,
+            "endLine": 193,
+            "endColumn": 20,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 193,
+            "column": 30,
+            "endLine": 193,
+            "endColumn": 33,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 195,
+            "column": 19,
+            "endLine": 195,
+            "endColumn": 25,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 195,
+            "column": 38,
+            "endLine": 195,
+            "endColumn": 44,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 3,
+            "endLine": 200,
+            "endColumn": 8,
+            "problem": "LimitedReturnTypeInference",
+            "suggest": "",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 3,
+            "endLine": 200,
+            "endColumn": 6,
+            "problem": "InvalidIdentifier",
+            "suggest": "",
+            "rule": "This keyword cannot be used as identifiers (arkts-invalid-identifier)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 201,
+            "column": 12,
+            "endLine": 201,
+            "endColumn": 16,
+            "problem": "VoidOperator",
+            "suggest": "",
+            "rule": "\"void\" operator is not supported (arkts-no-void-operator)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 138,
             "column": 2,
-            "endLine": 81,
+            "endLine": 138,
             "endColumn": 7,
             "problem": "UIInterfaceImport",
             "suggest": "",
@@ -445,9 +1225,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 82,
+            "line": 139,
             "column": 2,
-            "endLine": 82,
+            "endLine": 139,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
             "suggest": "",
@@ -455,63 +1235,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 84,
+            "line": 141,
             "column": 4,
-            "endLine": 84,
+            "endLine": 141,
             "endColumn": 9,
             "problem": "UIInterfaceImport",
             "suggest": "",
             "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 90,
-            "column": 5,
-            "endLine": 90,
-            "endColumn": 22,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"RelativeContainer\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 91,
-            "column": 7,
-            "endLine": 91,
-            "endColumn": 11,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 103,
-            "column": 4,
-            "endLine": 103,
-            "endColumn": 9,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"State\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 106,
-            "column": 5,
-            "endLine": 106,
-            "endColumn": 22,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"RelativeContainer\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 107,
-            "column": 7,
-            "endLine": 107,
-            "endColumn": 11,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]

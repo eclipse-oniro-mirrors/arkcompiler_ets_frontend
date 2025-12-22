@@ -18,129 +18,185 @@ import abstract from './invalid_identifier_number.js' // invalid import keyword
 import {value1 as interface} from './invalid_identifier_number.js' // invalid import keyword
 
 // invalid keyword declarations
-const as: string = '';
+const abstract: string = '';
 const enum: string = '';
-const static: string = '';
-const async: string = '';
 const let: string = '';
-const super: string = '';
-const await: string = '';
 const this: string = '';
-const break: string = '';
-const class: string = '';
-const function: string = '';
-const package: string = '';
-const private: string = '';
-const public: string = '';
-const protected: string = '';
-const return: string = '';
-const while: string = '';
-const do: string = '';
-const for: string = '';
-const switch: string = '';
+const as: string = '';
+const export: string = '';
+const native: string = '';
 const throw: string = '';
+const async: string = '';
+const extends: string = '';
+const new: string = '';
+const true: string = '';
+const await: string = '';
+const false: string = '';
+const null: string = '';
 const try: string = '';
+const break: string = '';
+const final: string = '';
+const overload: string = '';
+const typeof: string = '';
+const case: string = '';
+const for: string = '';
+const override: string = '';
+const undefined: string = '';
+const class: null = null;
+const function: boolean = true;
+const private: boolean = false;
+const while: string = '';
+const const: string = '';
 const if: string = '';
+const protected: string = '';
+const constructor: string = '';
+const implements: string = '';
+const public: string = '';
+const continue: string = '';
+const import: string = '';
+const return: string = '';
+const default: string = '';
+const in: string = '';
+const static: string = '';
+const do: string = '';
+const instanceof: string = '';
+const switch: string = '';
 const else: string = '';
-const null: null = null;
-const true: boolean = true;
-const false: boolean = false;
+const interface: string = '';
+const super: string = '';
+const Any: string = '';
+const bigint: string = '';
+const BigInt: string = '';
+const boolean: string = '';
+const Boolean: string = '';
+const byte: null = null;
+const Byte: boolean = true;
+const char: boolean = false;
+const Char: string = '';
+const double: string = '';
+const Double: string = '';
+const float: string = '';
+const Float: string = '';
+const int: string = '';
+const Int: string = '';
+const long: string = '';
+const Long : string = '';
+const number: string = '';
+const Number: string = '';
+const Object: string = '';
+const object: null = null;
+const short: boolean = true;
+const Short: boolean = false;
+const string: string = '';
+const String: string = '';
+const void: string = '';
+const Intl: string = '';
+const Global: null = null;
+
+
+import Any   from './test'   //error: default import
+import {bigint , BigInt } from './test'    //Named imports have already reported errors in the test file, so no further reporting is needed
+import {int as int} from './test'    //error: Alias import
+import * as Number from './test'    //error: Alias default import
+import Short , { object, as } from './test'   //error: Short--> default import
+
+
+
+function test1(string: string): string {  // error: function name
+  return string;
+}
+function test2(number: number): number {  // error: function name
+  return number;
+}
+function test3(boolean: boolean): boolean {  // error: function name
+  return boolean;
+}
+
+
+function number(aa: number): number {  // error: function parameters name
+  return aa;
+}
+function boolean(aa: boolean): boolean {  // error: function parameters name
+  return aa;
+}
+
+class String { // error: class name
+  private aa: string = "const";
+  public bb: string = "void";
+  protected cc: string = "static";
+}
 
 class A {
-  private const: string = "const"; // invalid: const as property name
-  constructor(static: string) {} // invalid parameter name
-  get async() { return 1; } // invalid accessor name
-  set async(v: number) {} // invalid accessor name
-  method(let: number) { return let + 1; } // invalid param
-}
-
-function test1(class: string): void { } // invalid param name
-
-const test2: string = (string: string): string => { // invalid param name
-    return string;
-};
-
-function long(string: string): string { // invalid function name
-    return string;
-}
-
-interface char {
-  private: string; // invalid prop name
-  function: string; // invalid prop name
-}
-
-enum C {
-  as = 1, // invalid enum member
-  static = 2
-}
-
-namespace launch {
-  export let await = 1; // invalid in module scope
+  private const: string = "const";  // error: class property name
+  public void: string = "void";  // error: class property name
+  protected static: string = "static";  // error: class property name
+  number(aa: number){   // error: class method name
+    console.log('' + aa);
+  }
 }
 
 @Entry
 @Component
-struct protected { // invalid struct name.
+struct Char { // error: struct name
   @State message: string = 'Hello World';
-  abstract: number = 123; // invalid property name.
-  async: number = 123; // invalid property name.
-  internal: number = 123; // invalid property name.
-
+  aa:number = 123;
+  bb:number = 123;
+  cc:number = 123;
   build() {
-    RelativeContainer() {
-      Text(this.message)
-        .onClick(() => {
-        })
-    }
-  }
-  char() { // invalid method name
-  }
-  func() {
+
   }
 }
 
-struct object { //  invalid struct name.
-  @State message: string = 'Hello World';
+enum char { // error: enum name
+  aa,
+  bb = 2,
+  cc = 3,
+}
 
-  build() {
-    RelativeContainer() {
-      Text(this.message)
-    }
+enum AA {
+  short,  // error: enum member name
+  number = 2, // error: enum member name
+  int = 3,  // error: enum member name
+}
+
+namespace char {  // error: namespace name
+  let aa : number
+}
+
+namespace quarantine {
+  interface int {// error: interface name
+    aa: number
+  }
+
+  interface test {
+    aa: number
   }
 }
 
 namespace quarantine {
-  interface int { //  invalid interface name.
-      test: short
+  interface A {
+    test: number
   }
 
-  class SyncPrimitives {
-    public int: int = 0 //  invalid property name.
+  interface B {
+    int: number  // error: interface property name
+    number():void  // error: interface method name
   }
 }
 
-// Reserved identifiers used in exports
-let _if = null;
-let _import = null;
-let _export = null;
-let _await = null;
-let _arguments = null;
-let _eval = null;
-let _default = null;
-let _as = null;
+type byte  = number;  //error
 
-export {
-  _if as if,
-  _import as import,
-  _export as export,
-  _await as await,
-  _arguments as arguments,
-  _eval as eval,
-  _default as default,
-  _as as as
-};
+export const Byte  = 'int'  //export declarations name
+let long: string = 'long';
+let Long: string = 'Long'
+export {long, Long}    //The export does not report an error because an error was already reported earlier in the file
+export {long as Int, Long as let}    //Rename export error
+export {static, private} from './test'  //The export does not report an error because an error was already reported earlier in the file
+export {static as double, private as Double} from './test'  //Rename export error
+export type { do, in } from './test'  //The export does not report an error because an error was already reported earlier in the file
 
-let taskpool: Record<string, string>[] = []; // 'taskpool' is an invalid keyword
 
-taskpool.forEach(Map => {}) // 'map' is an invalid keyword
-taskpool.forEach(json => {}) // 'json' is an invalid keyword
+interface B{
+  get(){} //error: get keyword in interface
+  set: ()=>void = ()=>{}  //error: set keyword in interface
+}

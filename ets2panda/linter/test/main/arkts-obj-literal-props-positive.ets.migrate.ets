@@ -13,43 +13,13 @@
  * limitations under the License.
  */
 
-interface I {
-  m(): void;
-}
-let i: I = {
-  m() {
-    console.log('100');
-  }
-};
-
-
-interface I3 {
-  a: number;
-  b: () => void;
-}
-let ii: I3 = {
-  a: 1,
-  b() { }
-};
-
-
-class A {
-  foo: () => void = () => { }
+export interface EventData{
+  foo1: ()=>void
+  foo2():void     //is allowed in typescript
 }
 
-let a: A = {
-  foo: () => {
-    console.log('hello')
-  }
+// import EventData from ts file
+let a1: EventData = {
+  foo1(){},   //no error
+  foo2(){}   //no error
 }
-
-
-interface Person {
-  sayHello: () => void;
-}
-
-let p: Person = {
-  sayHello: () => {
-    console.log('Hi');
-  }
-};

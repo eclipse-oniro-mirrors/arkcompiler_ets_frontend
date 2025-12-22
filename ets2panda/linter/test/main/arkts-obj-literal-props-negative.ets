@@ -13,75 +13,21 @@
  * limitations under the License.
  */
 
-interface property {
-  property: string;
+export class Event{
+  foo1: ()=>void = ()=>{}
+  foo2(): void{}     //is allowed in typescript
+  a: number = 1;
 }
 
-let getMethod: property = {
-  get property() { return '2'; } // Object pattern can't contain methods.
-};
 
-let setMethod:property = {
-  set property(value: string) { // Object pattern can't contain methods.
-    console.log(value);
-  }
-};
-
-interface xyz {
-  x:number
-  y:string
-  z:boolean
-}
-let x = 1, y = '2', z = true;
-
-let shorthand: xyz = {
-  x,
-  y,
-  z
-};
-interface IMixed {
-  a:string
-  b:number
-  c:number[]
-  x: number
-  y: string
-
-  property:number
-}
-let mixed: IMixed = {
-  a: "foo",
-  b: 42,
-  c: [1, 2, 3],
-  x,
-  y,
-
-  get property() { // Object pattern can't contain methods.
-    return 0;
+// import EventData from ts file
+let a2: Event = {
+  foo1(){},   //error: method in obj
+  foo2(){},   //error: method in obj
+  get a():number{//error: get method in obj
+    return 1;
   },
-
-  set property(value: number) { // Object pattern can't contain methods.
-    if (value < 0) {
-      throw new Error('Bad value');
-    }
+  set a(a: number){//error: set method in obj
+    this.a = a;
   }
 }
-
-class A {
-  foo: () => void = () => {}
-}
-
-let a: A = {
-  foo() { // Incorrect method definition
-    console.log('hello')
-  }
-}
-
-interface Person {
-  sayHello: () => void;
-}
-
-let p: Person = {
-  sayHello() {  // Incorrect method definition
-    console.log('Hi');
-  }
-};
