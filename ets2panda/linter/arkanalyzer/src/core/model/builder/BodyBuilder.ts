@@ -54,11 +54,8 @@ export class BodyBuilder {
             } else {
                 cfg.buildDefUseStmt(locals, globals);
             }
-            const body = new ArkBody(locals, cfg, aliasTypeMap, traps.length ? traps : undefined);
-            if (globals !== null) {
-                body.setUsedGlobals(globals);
-            }
-            return body;
+
+            return new ArkBody(locals, cfg, aliasTypeMap, traps.length ? traps : undefined);
         }
         return null;
     }
