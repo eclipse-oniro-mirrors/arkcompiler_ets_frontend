@@ -94,7 +94,7 @@ let w: void = curry()();
 function recursive(): void {
   return recursive();
 }
-let ac: void = recursive(); // Error: 'void' used as type annotation / Cannot use type 'void' as value.
+let ac: void = recursive();
 
 // Example 21: Decorator function
 function decorator() {

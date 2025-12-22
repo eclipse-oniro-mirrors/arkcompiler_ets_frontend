@@ -994,7 +994,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     this.handleSdkGlobalApi(tsParam);
     const typeNode = tsParam.type;
-    if (this.options.arkts2 && typeNode && TsUtils.typeContainsVoid(typeNode)) {
+    if (this.options.arkts2 && typeNode?.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(typeNode, FaultID.LimitedVoidType);
     }
     this.handlePropertyDescriptorInScenarios(tsParam);
@@ -2301,7 +2301,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (hasUnfixableReturnType) {
       this.incrementCounters(funcExpr, FaultID.LimitedReturnTypeInference);
     }
-    this.handleLimitedVoidFunction(funcExpr);
   }
 
   private handleArrowFunction(node: ts.Node): void {
@@ -2322,7 +2321,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
     }
     this.checkDefaultParamBeforeRequired(arrowFunc);
-    this.handleLimitedVoidFunction(arrowFunc);
   }
 
   private handleFunctionDeclaration(node: ts.Node): void {
@@ -2356,7 +2354,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleTSOverload(tsFunctionDeclaration);
     this.handleInvalidIdentifier(tsFunctionDeclaration);
     this.checkDefaultParamBeforeRequired(tsFunctionDeclaration);
-    this.handleLimitedVoidFunction(tsFunctionDeclaration);
   }
 
   private processSendableDecoratorFunctionOverload(tsFunctionDeclaration: ts.FunctionDeclaration): void {
@@ -4106,7 +4103,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleMethodOverridingField(tsMethodDecl);
     this.handleMethodInherit(tsMethodDecl);
     this.handleSdkGlobalApi(tsMethodDecl);
-    this.handleLimitedVoidFunction(tsMethodDecl);
     this.checkVoidLifecycleReturn(tsMethodDecl);
     this.handleNoDeprecatedApi(tsMethodDecl);
     this.checkAbstractOverrideReturnType(tsMethodDecl);
@@ -4135,20 +4131,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (actualSignature !== expectedSignature) {
         this.incrementCounters(member, FaultID.NoSignatureDistinctWithObjectPublicApi);
       }
-    }
-  }
-
-  private handleLimitedVoidFunction(node: ts.FunctionLikeDeclaration): void {
-    const typeNode = node.type;
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) {
-      return;
-    }
-    const containsVoid = typeNode.types.some((t) => {
-      return t.kind === ts.SyntaxKind.VoidKeyword;
-    });
-    if (this.options.arkts2 && containsVoid) {
-      const autofix = this.autofixer?.fixLimitedVoidTypeFunction(node);
-      this.incrementCounters(typeNode, FaultID.LimitedVoidType, autofix);
     }
   }
 
@@ -7520,7 +7502,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkPartialType(node);
 
     const typeNameType = this.tsTypeChecker.getTypeAtLocation(typeRef.typeName);
-    if (this.options.arkts2 && (typeNameType.flags & ts.TypeFlags.Void) !== 0) {
+    if (this.options.arkts2 && !ts.isUnionTypeNode(node) && (typeNameType.flags & ts.TypeFlags.Void) !== 0) {
       this.incrementCounters(typeRef, FaultID.LimitedVoidType);
     }
     if (this.tsUtils.isSendableClassOrInterface(typeNameType)) {
@@ -8391,7 +8373,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const typeNode = node.type;
-    if (typeNode && TsUtils.typeContainsVoid(typeNode)) {
+    if (typeNode && typeNode.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(typeNode, FaultID.LimitedVoidType);
     }
   }
@@ -8400,8 +8382,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
-    const targetType = this.tsTypeChecker.getTypeAtLocation(node.type);
-    if (TsUtils.isVoidType(targetType)) {
+    const typeNode = node.type;
+    if (typeNode.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(node.type, FaultID.LimitedVoidType);
     }
   }
@@ -8434,34 +8416,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     if (ts.isReturnStatement(node.parent)) {
-      const functionLike = TypeScriptLinter.findContainingFunction(node);
-      if (functionLike && TypeScriptLinter.isRecursiveCall(node, functionLike)) {
-        this.incrementCounters(node, FaultID.LimitedVoidType);
-      }
       return;
     }
 
     this.incrementCounters(node, FaultID.LimitedVoidType);
-  }
-
-  private static findContainingFunction(node: ts.Node): ts.FunctionLikeDeclaration | undefined {
-    while (node) {
-      if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
-        return node;
-      }
-      node = node.parent;
-    }
-    return undefined;
-  }
-
-  // Helper function to check if a call is recursive
-  private static isRecursiveCall(callExpr: ts.CallExpression, fn: ts.FunctionLikeDeclaration): boolean {
-    return (
-      ts.isIdentifier(callExpr.expression) &&
-      ts.isFunctionDeclaration(fn) &&
-      !!fn.name &&
-      fn.name.text === callExpr.expression.text
-    );
   }
 
   private handleArrayType(arrayType: ts.Node): void {
@@ -8479,27 +8437,26 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleUnionType(unionType: ts.Node): void {
-    if (!this.options.arkts2) {
+    if (!this.options.arkts2 || !unionType || !ts.isUnionTypeNode(unionType)) {
       return;
     }
 
-    if (!unionType || !ts.isUnionTypeNode(unionType)) {
+    const voidType = unionType.types.find((type) => {
+      return type.kind === ts.SyntaxKind.VoidKeyword;
+    });
+    if (!voidType) {
       return;
     }
 
-    if (
-      ts.findAncestor(unionType, ts.isFunctionDeclaration) ||
-      ts.findAncestor(unionType, ts.isMethodDeclaration) ||
-      ts.findAncestor(unionType, ts.isArrowFunction)
-    ) {
-      return;
-    }
-    const types = unionType.types;
-    for (const type of types) {
-      if (type.kind === ts.SyntaxKind.VoidKeyword) {
-        this.incrementCounters(type, FaultID.LimitedVoidType);
+    const parentNode = unionType.parent;
+    if (ts.isFunctionDeclaration(parentNode) || ts.isMethodDeclaration(parentNode) || ts.isArrowFunction(parentNode)) {
+      if (parentNode.type) {
+        const autofix = this.autofixer?.fixLimitedVoidTypeFunction(parentNode);
+        this.incrementCounters(parentNode.type, FaultID.LimitedVoidType, autofix);
+        return;
       }
     }
+    this.incrementCounters(voidType, FaultID.LimitedVoidType);
   }
 
   private handleDebuggerStatement(node: ts.Node): void {
