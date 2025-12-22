@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -407,6 +407,29 @@ checker::Type *ETSChecker::CheckBinaryBitwiseOperatorForNumericEnums(checker::Ty
         return GlobalIntBuiltinType();
     }
     return nullptr;
+}
+
+checker::Type *ETSChecker::CheckBinaryOperatorExponentiation(
+    std::tuple<ir::Expression *, ir::Expression *, lexer::TokenType, lexer::SourcePosition> op, bool isEqualOp,
+    std::tuple<checker::Type *, checker::Type *, Type *, Type *> types)
+{
+    auto [left, right, operationType, pos] = op;
+    auto [leftType, rightType, unboxedL, unboxedR] = types;
+
+    // Try to handle errors on a lower level
+    RepairTypeErrorsInOperands(&leftType, &rightType);
+    RepairTypeErrorsInOperands(&unboxedL, &unboxedR);
+    ERROR_TYPE_CHECK(this, leftType, return GlobalTypeError());
+
+    auto const promotedType = BinaryGetPromotedType(this, leftType, rightType, !isEqualOp);
+    if (promotedType == nullptr || !CheckIfNumeric(leftType) || !CheckIfNumeric(rightType)) {
+        if (operationType == lexer::TokenType::PUNCTUATOR_EXPONENTIATION) {
+            LogError(diagnostic::EXPONENTIATION_TYPE_LIMITATION, {}, pos);
+        }
+        return GlobalTypeError();
+    }
+
+    return promotedType;
 }
 
 static checker::Type *CheckBinaryOperatorPlusForEnums(ETSChecker *checker, checker::Type *const leftType,
@@ -1031,8 +1054,9 @@ std::map<lexer::TokenType, CheckBinaryFunction> &GetCheckMap()
         {lexer::TokenType::PUNCTUATOR_DIVIDE_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
         {lexer::TokenType::PUNCTUATOR_MOD, &ETSChecker::CheckBinaryOperatorMulDivMod},
         {lexer::TokenType::PUNCTUATOR_MOD_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
-        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION, &ETSChecker::CheckBinaryOperatorMulDivMod},
-        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL, &ETSChecker::CheckBinaryOperatorMulDivMod},
+
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION, &ETSChecker::CheckBinaryOperatorExponentiation},
+        {lexer::TokenType::PUNCTUATOR_EXPONENTIATION_EQUAL, &ETSChecker::CheckBinaryOperatorExponentiation},
 
         {lexer::TokenType::PUNCTUATOR_MINUS, &ETSChecker::CheckBinaryOperatorPlus},
         {lexer::TokenType::PUNCTUATOR_MINUS_EQUAL, &ETSChecker::CheckBinaryOperatorPlus},

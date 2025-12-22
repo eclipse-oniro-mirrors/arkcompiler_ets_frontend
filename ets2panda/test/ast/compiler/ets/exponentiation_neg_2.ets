@@ -1,0 +1,26 @@
+/**
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+enum E {
+    A = 1, B = 2;
+}
+
+function foo() {
+    E.A ** E.B
+}
+
+/* @@? 17:17 Error Syntax error ESY0229: Unexpected token, expected ',' or '}'. */
+/* @@? 18:1 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 21:5 Error Semantic error ESE295768: The operands of exponentiation must both be numeric type or bigint type. */
