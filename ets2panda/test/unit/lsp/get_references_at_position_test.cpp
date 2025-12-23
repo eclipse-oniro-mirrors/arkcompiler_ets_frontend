@@ -73,7 +73,7 @@ TEST_F(LSPGetReferencesAtPositionTests, GetReferencesAtPosition1)
     size_t const position = 4;
     References result = MockGetReferencesAtPosition(filePaths[0].c_str(), position, filePaths);
     // NOLINTBEGIN(readability-magic-numbers)
-    std::vector<ReferenceInfo> expectedResult {{filePaths[0], 4, 1}};
+    std::vector<ReferenceInfo> expectedResult {};
     // NOLINTEND(readability-magic-numbers)
     ASSERT_EQ(result.referenceInfos.size(), expectedResult.size());
     for (size_t i = 0; i < expectedResult.size(); i++) {
@@ -103,11 +103,8 @@ console.log(a);)"};
     size_t const position = 26;
     References result = MockGetReferencesAtPosition(filePaths[0].c_str(), position, filePaths);
     // NOLINTBEGIN(readability-magic-numbers)
-    std::vector<ReferenceInfo> expectedResult {{filePaths[0], 11, 1},
-                                               {filePaths[0], 26, 1},
-                                               {filePaths[0], 56, 1},
-                                               {filePaths[1], 8, 1},
-                                               {filePaths[1], 45, 1}};
+    std::vector<ReferenceInfo> expectedResult {
+        {filePaths[0], 26, 1}, {filePaths[0], 56, 1}, {filePaths[1], 8, 1}, {filePaths[1], 45, 1}};
     // NOLINTEND(readability-magic-numbers)
     ASSERT_EQ(result.referenceInfos.size(), expectedResult.size());
     for (size_t i = 0; i < expectedResult.size(); i++) {
@@ -129,7 +126,7 @@ A();)"};
     size_t const position = 16;
     References result = MockGetReferencesAtPosition(filePaths[0].c_str(), position, filePaths);
     // NOLINTBEGIN(readability-magic-numbers)
-    std::vector<ReferenceInfo> expectedResult {{filePaths[0], 16, 1}, {filePaths[1], 8, 1}, {filePaths[1], 33, 1}};
+    std::vector<ReferenceInfo> expectedResult {{filePaths[1], 8, 1}, {filePaths[1], 33, 1}};
     // NOLINTEND(readability-magic-numbers)
     ASSERT_EQ(result.referenceInfos.size(), expectedResult.size());
     for (size_t i = 0; i < expectedResult.size(); i++) {

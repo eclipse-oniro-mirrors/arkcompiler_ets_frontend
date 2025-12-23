@@ -25,14 +25,19 @@ std::vector<SafeDeleteLocation> FindSafeDeleteLocationImpl(es2panda_Context *ctx
                                                            const std::tuple<std::string, std::string> &declInfo)
 {
     std::vector<SafeDeleteLocation> locations;
-    if (std::get<0>(declInfo).empty() || std::get<1>(declInfo).empty()) {
-        return locations;
-    }
-
     std::unordered_set<std::string> seen;
     auto references = GetReferencesAtPositionImpl(ctx, declInfo);
+    auto decl = ResolveInfo(declInfo);
+    if (decl.fileName.empty()) {
+        return locations;
+    }
+    SafeDeleteLocation declLoc;
+    declLoc.uri = decl.fileName;
+    declLoc.start = decl.start;
+    declLoc.length = decl.length;
+    locations.reserve(references.referenceInfos.size() + 1);
 
-    locations.reserve(references.referenceInfos.size());
+    locations.push_back(declLoc);
     for (const auto &ref : references.referenceInfos) {
         std::string key = ref.fileName + ":" + std::to_string(ref.start) + ":" + std::to_string(ref.length);
         if (seen.insert(key).second) {
