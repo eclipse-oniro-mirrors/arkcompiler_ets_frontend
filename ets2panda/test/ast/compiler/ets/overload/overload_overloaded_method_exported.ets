@@ -15,4 +15,6 @@
 
 export function foo1() {}
 function foo2() {}
-export overload foo {foo1, foo2}
+export overload foo {foo1, /* @@ label1 */foo2}
+
+/* @@@ label1 Error Semantic error ESE0456: The overload function must be exported along because the overload alias is exported. */
