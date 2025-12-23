@@ -1343,6 +1343,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       } else {
         this.updateDataSdkJsonInfo(importDeclNode, importClause);
       }
+      this.handleLazyImport(importDeclNode, node);
     }
     if (importDeclNode.parent.statements) {
       for (const stmt of importDeclNode.parent.statements) {
@@ -1371,6 +1372,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkStdLibConcurrencyImport(importDeclNode);
     this.handleInterOpImportJs(importDeclNode);
     this.checkImportJsonFile(importDeclNode);
+  }
+
+  private handleLazyImport(importDeclNode: ts.ImportDeclaration, node: ts.Node): void {
+    const importClause = importDeclNode.importClause;
+    if (!importClause?.isLazy) {
+      return;
+    }
+    const autofix = this.autofixer?.fixImportDeclaration(importDeclNode);
+    this.incrementCounters(node, FaultID.ImportLazyIdentifier, autofix);
   }
 
   private handleSdkSendable(tsStringLiteral: ts.StringLiteral): void {
@@ -3968,10 +3978,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private handleImportClause(node: ts.Node): void {
     const tsImportClause = node as ts.ImportClause;
-    if (this.options.arkts2 && tsImportClause.isLazy) {
-      const autofix = this.autofixer?.fixImportClause(tsImportClause);
-      this.incrementCounters(node, FaultID.ImportLazyIdentifier, autofix);
-    }
     if (tsImportClause.name) {
       this.countDeclarationsWithDuplicateName(tsImportClause.name, tsImportClause);
     }
@@ -16544,11 +16550,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isPropertyAccessExpression(callExpr.expression)) {
       const objectName = callExpr.expression.expression.getText();
       const methodName = callExpr.expression.name.getText();
-      if (objectName === UI_UTILS && 
-        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility || methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)) {
+      if (
+        objectName === UI_UTILS &&
+        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility ||
+          methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)
+      ) {
         if (callExpr.arguments.length === 1) {
-            const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
-            this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
+          const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
+          this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
         }
       }
     }
