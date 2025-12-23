@@ -23,4 +23,5 @@ function mustCallArgSize() {
     });
 }
 
-/* @@? 20:9 Error Semantic error ESE0365: Variable 'xf' is accessed before it's initialization. */
+/* @@? 19:5 Error Semantic error ESE0127: No matching call signature for push((() => void)) */
+/* @@? 20:9 Error Semantic error ESE0289: This expression is not callable. */

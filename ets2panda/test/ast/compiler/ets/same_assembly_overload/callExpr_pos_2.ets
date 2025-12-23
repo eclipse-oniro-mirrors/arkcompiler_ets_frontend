@@ -13,11 +13,24 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve(undefined);
+/**
+ * This test simulates a real SDK usage scenario.
+ * It verifies that during the recheck phase of `declareOverloadLowering`,
+ * the `this` keyword is able to resolve the correct ContainingClass.
+ */
 
-p.then(obj => {
-    const result = typeof obj?.prop;
-});
+declare class A {
+    on(type: 'A', cb: () => void): void
+    on(type: 'B', cb: () => void): void
+}
 
+let a = new A();
 
-/* @@? 19:27 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */
+class B {
+    prop:string = "xxx"
+    foo() {
+        a.on('B', () => {
+            this.prop // test `this` exprssion could be recheck in the lowering
+        })
+    }
+}

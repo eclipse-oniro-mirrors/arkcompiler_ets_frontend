@@ -53,16 +53,6 @@ public:
 
     void SetFunction(ScriptFunction *func);
 
-    void SetPreferredType(checker::Type *preferredType) noexcept
-    {
-        preferredType_ = preferredType;
-    }
-
-    [[nodiscard]] checker::Type *GetPreferredType() noexcept
-    {
-        return preferredType_;
-    }
-
     [[nodiscard]] ArrowFunctionExpression *Clone(ArenaAllocator *allocator, AstNode *parent) override;
 
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
@@ -73,6 +63,7 @@ public:
     void Compile(compiler::ETSGen *etsg) const override;
     checker::Type *Check(checker::TSChecker *checker) override;
     checker::VerifiedType Check(checker::ETSChecker *checker) override;
+    void CleanCheckInformation() override;
     ir::TypeNode *CreateTypeAnnotation(checker::ETSChecker *checker);
     ir::TypeNode *CreateReturnNodeFromType(checker::ETSChecker *checker, checker::Type *returnType);
     bool IsVarFromSubscope(const varbinder::Variable *var) const;
@@ -84,7 +75,6 @@ public:
 
 private:
     ScriptFunction *func_;
-    checker::Type *preferredType_ {};
 };
 }  // namespace ark::es2panda::ir
 

@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve(undefined);
+let nums = [1, 2, 3].map((n) => Promise.resolve(n).finally(() => { }))
 
-p.then(obj => {
-    const result = typeof obj?.prop;
-});
-
-
-/* @@? 19:27 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */
+function main() {
+    for await (let n of nums) {
+        arktest.assertTrue(n instanceof Promise);
+    }
+}
