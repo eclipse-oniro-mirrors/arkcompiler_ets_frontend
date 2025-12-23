@@ -15,79 +15,69 @@
     ],
     "result": [
         {
-            "line": 24,
-            "column": 3,
-            "endLine": 24,
-            "endColumn": 20,
-            "problem": "NoDuplicateFunctionName",
-            "suggest": "",
-            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 17,
-            "column": 3,
-            "endLine": 17,
-            "endColumn": 20,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
             "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 22,
-            "problem": "NoDuplicateFunctionName",
-            "suggest": "",
-            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 5,
-            "endLine": 20,
-            "endColumn": 22,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 22,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
-            "column": 3,
-            "endLine": 24,
-            "endColumn": 20,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 33,
             "column": 4,
-            "endLine": 33,
-            "endColumn": 28,
+            "endLine": 21,
+            "endColumn": 27,
             "problem": "NoDuplicateFunctionName",
             "suggest": "",
             "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
             "severity": "ERROR"
         },
         {
-            "line": 49,
+            "line": 29,
+            "column": 3,
+            "endLine": 29,
+            "endColumn": 19,
+            "problem": "NoDuplicateFunctionName",
+            "suggest": "",
+            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 37,
+            "column": 3,
+            "endLine": 37,
+            "endColumn": 26,
+            "problem": "NoDuplicateFunctionName",
+            "suggest": "",
+            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 3,
+            "endLine": 45,
+            "endColumn": 36,
+            "problem": "NoDuplicateFunctionName",
+            "suggest": "",
+            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 53,
+            "column": 3,
+            "endLine": 53,
+            "endColumn": 27,
+            "problem": "NoDuplicateFunctionName",
+            "suggest": "",
+            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 3,
+            "endLine": 61,
+            "endColumn": 26,
+            "problem": "NoDuplicateFunctionName",
+            "suggest": "",
+            "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 77,
             "column": 5,
-            "endLine": 49,
+            "endLine": 77,
             "endColumn": 29,
             "problem": "NoDuplicateFunctionName",
             "suggest": "",
@@ -95,33 +85,13 @@
             "severity": "ERROR"
         },
         {
-            "line": 56,
+            "line": 91,
             "column": 7,
-            "endLine": 56,
-            "endColumn": 28,
+            "endLine": 91,
+            "endColumn": 24,
             "problem": "NoDuplicateFunctionName",
             "suggest": "",
             "rule": "Duplicate function name in namespace are not allowed (arkts-no-duplicate-function-name)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 55,
-            "column": 7,
-            "endLine": 55,
-            "endColumn": 28,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 56,
-            "column": 7,
-            "endLine": 56,
-            "endColumn": 28,
-            "problem": "TsOverload",
-            "suggest": "",
-            "rule": "Class TS overloading is not supported(arkts-no-ts-overload)",
             "severity": "ERROR"
         }
     ]

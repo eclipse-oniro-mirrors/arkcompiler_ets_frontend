@@ -13,24 +13,52 @@
  * limitations under the License.
  */
 
-namespace ATest {
-  function foo() {}
-
-  namespace BTest {
-    function foo() {}
-    function foo() {} // Duplicate function name
-  }
-
-  function foo() {} // Duplicate function name
+namespace A {
+   function foo(): void {}
 }
 
-
-namespace Ax {
-   function foo1(): void {}
+namespace A {
+   function foo(): void {}  // Error
 }
 
-namespace Ax {
-   function foo1(): void {} // Duplicate function name
+namespace B {
+  class MyClass {} 
+}
+
+namespace B {
+  class MyClass {}  // Error
+}
+
+namespace C {
+  let myVar: number = 42; 
+}
+
+namespace C {
+  let myVar: number = 42;  // Error
+}
+
+namespace D {
+  let a: number = 1, c: number = 2;  
+}
+
+namespace D {
+  let b: number = 3, c: number = 4;  // Error
+}
+
+namespace F {
+  interface MyInterface {} 
+}
+
+namespace F {
+  interface MyInterface {}  // Error
+}
+
+namespace G {
+  enum MyEnum { A, B, C } 
+}
+
+namespace G {
+  enum MyEnum { A, B, C }  // Error
 }
 
 namespace Atest {
@@ -46,14 +74,21 @@ namespace Btest {
 }
 
 namespace Btest {
-    function foo2(): void {} // Duplicate function name
+    function foo2(): void {}  // Error
 }
 
 namespace Root {
   namespace Level1 {
     namespace Level2 {
-      function compute() {}
-      function compute() {} // Duplicate function name
+      function foo() {}
+    }
+  }
+}
+
+namespace Root {
+  namespace Level1 {
+    namespace Level2 {
+      function foo() {}  // Error
     }
   }
 }

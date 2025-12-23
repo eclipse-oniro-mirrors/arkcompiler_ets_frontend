@@ -268,7 +268,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private readonly compatibleSdkVersion: number;
   private readonly compatibleSdkVersionStage: string;
   private static sharedModulesCache: Map<string, boolean>;
-  static nameSpaceFunctionCache: Map<string, Set<string>>;
+  private readonly nameSpaceFunctionCache: Map<string, Set<string>> = new Map<string, Set<string>>();
   private readonly constVariableInitCache: Map<ts.Symbol, number | null> = new Map();
   static funcMap: Map<string, Map<string, Set<ApiInfo>>> = new Map<string, Map<string, Set<ApiInfo>>>();
   static sdkCommonFuncMap: Map<string, Map<string, Set<ApiInfo>>>;
@@ -298,7 +298,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   static initGlobals(): void {
     TypeScriptLinter.sharedModulesCache = new Map<string, boolean>();
-    TypeScriptLinter.nameSpaceFunctionCache = new Map<string, Set<string>>();
     TypeScriptLinter.pathMap = new Map<string, Set<ApiInfo>>();
     TypeScriptLinter.globalApiInfo = new Map<string, Set<ApiListItem>>();
     TypeScriptLinter.builtApiInfo = new Set<ApiListItem>();
@@ -3948,7 +3947,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
 
       const parentNameSpaceName = parentModuleDeclaration.name.escapedText.toString();
-      nameSpaceChain = parentNameSpaceName + nameSpaceChain;
+      nameSpaceChain = parentNameSpaceName + '.' + nameSpaceChain;
       temptNode = temptNode.parent;
     }
 
@@ -3956,11 +3955,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleNameSpaceModuleBlock(moduleBlock: ts.ModuleBlock, nameSpace: string): void {
-    if (!TypeScriptLinter.nameSpaceFunctionCache.has(nameSpace)) {
-      TypeScriptLinter.nameSpaceFunctionCache.set(nameSpace, new Set<string>());
+    if (!this.nameSpaceFunctionCache.has(nameSpace)) {
+      this.nameSpaceFunctionCache.set(nameSpace, new Set<string>());
     }
 
-    const nameSet = TypeScriptLinter.nameSpaceFunctionCache.get(nameSpace)!;
+    const nameSet = this.nameSpaceFunctionCache.get(nameSpace)!;
 
     for (const statement of moduleBlock.statements) {
       const names = TypeScriptLinter.getDeclarationNames(statement);
@@ -3976,9 +3975,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private static getDeclarationNames(statement: ts.Statement): Set<string> {
     const names = new Set<string>();
-    if (ts.isFunctionDeclaration(statement) && statement.name && statement.body) {
+    if (
+      ts.isFunctionDeclaration(statement) && statement.name && statement.body ||
+      ts.isClassDeclaration(statement) && statement.name ||
+      ts.isInterfaceDeclaration(statement) && statement.name ||
+      ts.isEnumDeclaration(statement) && statement.name
+    ) {
       names.add(statement.name.text);
       return names;
+    }
+
+    if (ts.isVariableStatement(statement)) {
+      for (const decl of statement.declarationList.declarations) {
+        if (ts.isIdentifier(decl.name)) {
+          names.add(decl.name.text);
+        }
+      }
     }
     return names;
   }
