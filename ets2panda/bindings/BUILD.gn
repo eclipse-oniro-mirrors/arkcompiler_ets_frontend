@@ -219,9 +219,12 @@ shared_library("public") {
     "./node_modules/node-api-headers/include",
     rebase_path("$root_gen_dir/arkcompiler/ets_frontend/ets2panda/"),
   ]
-
+  deps = []
+  if (!(defined(ark_static_standalone_build) && ark_static_standalone_build)) {
+    deps += [ "../:libes2panda_public_headers" ]
+  }
   if (!is_mac) {
-    deps = [ "../aot:ets2panda" ]
+    deps += [ "../aot:ets2panda" ]
   }
 
   if (ark_standalone_build) {
