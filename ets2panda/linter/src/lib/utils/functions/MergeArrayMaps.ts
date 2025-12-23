@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,12 +22,10 @@ export function mergeArrayMaps<K, V>(lhs: Map<K, V[]>, rhs: Map<K, V[]>): Map<K,
   }
 
   rhs.forEach((values, key) => {
-    if (values.length !== 0) {
-      if (lhs.has(key)) {
-        lhs.get(key)!.push(...values);
-      } else {
-        lhs.set(key, values);
-      }
+    if (lhs.has(key)) {
+      lhs.get(key)!.push(...values);
+    } else {
+      lhs.set(key, values);
     }
   });
   return lhs;
