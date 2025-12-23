@@ -22,7 +22,15 @@ class A<T> {
     static a4: T;
 }
 
-/* @@? 18:12 Error Semantic error ESE0280: Property 'a0' might not have been initialized. */
-/* @@? 19:12 Error Semantic error ESE0280: Property 'a1' might not have been initialized. */
-/* @@? 20:12 Error Semantic error ESE0280: Property 'a2' might not have been initialized. */
-/* @@? 21:12 Error Semantic error ESE0280: Property 'a3' might not have been initialized. */
+/* @@? 1:3 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 18:18 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 18:18 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 20:17 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 20:17 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 21:21 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 21:21 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 21:27 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 21:27 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 22:16 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 22:16 Error Semantic error ESE0371: Cannot find type 'T'. */
