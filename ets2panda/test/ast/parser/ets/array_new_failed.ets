@@ -18,4 +18,4 @@ function foo(): void {
 }
 
 
-/* @@@ label Error Semantic error ESE0197: Index fractional part should be zero. */
+/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */

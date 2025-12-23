@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 
-function foo(): void {
-  let a = new int[5.0]
+function main(): void {
+  let A: Array<number> = new Array<number>();
+  let a: FixedArray<FixedArray<FixedArray<Number>>>;
+  a = new Number[/* @@ label */A.length + 2.][4][/* @@ label1 */A.length + 3.00001];
 }
+
+/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */
+/* @@@ label1 Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */

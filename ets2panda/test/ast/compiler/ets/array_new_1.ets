@@ -13,13 +13,8 @@
  * limitations under the License.
  */
 
-function main(): void {
-   let A: Array<number> = new Array<number>();
-   let a: Number[][][];
-   
-   a = new Number[A.length + 2.][4.00][A.length + 3.0000];
-   
-   arktest.assertEQ(a.length, 2)
-   arktest.assertEQ(a[1].length, 4)
-   arktest.assertEQ(a[0][3].length, 3)
+function foo(): void {
+  let a = new int[/* @@ label */5.0]
 }
+
+/* @@@ label Error Semantic error ESE0236: Type 'Double' cannot be used as an index type. Only primitive or unboxable integral types can be used as index. */

@@ -227,7 +227,7 @@ checker::Type *MemberExpression::TraverseUnionMember(checker::ETSChecker *checke
             }
         }
 
-        if (memberType->IsETSMethodType() && memberType->IsETSMethodType()) {
+        if (memberType->IsETSMethodType()) {
             if (!Parent()->IsCallExpression()) {
                 checker->LogError(diagnostic::UNION_MEMBER_METHOD_REFERENCE, {}, Start());
                 return;
