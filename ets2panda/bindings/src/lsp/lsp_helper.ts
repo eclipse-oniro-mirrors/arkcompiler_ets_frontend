@@ -1827,18 +1827,6 @@ export class Lsp {
     });
   }
 
-  private checkAllTasksDone(queues: Job[], workerPool: WorkerInfo[]): boolean {
-    if (queues.length === 0) {
-      for (let i = 0; i < workerPool.length; i++) {
-        if (!workerPool[i].isIdle) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
   private initGlobalContext(jobs: Record<string, Job>): void {
     let files: string[] = [];
     Object.entries(jobs).forEach(([key, job]) => {
@@ -1904,94 +1892,10 @@ export class Lsp {
     });
   }
 
-  private async invokeWorkers(
-    jobs: Record<string, Job>,
-    queues: Job[],
-    processingJobs: Set<string>,
-    workers: ThreadWorker[],
-    numWorkers: number,
-    dependantJobs?: Record<string, Job>
-  ): Promise<void> {
-    return new Promise<void>((resolve) => {
-      const workerPool = this.createWorkerPool(numWorkers, workers);
-
-      workerPool.forEach((workerInfo) => {
-        this.setupWorkerListeners(workerInfo.worker, workerPool, jobs, queues, processingJobs, resolve, dependantJobs);
-        this.assignTaskToIdleWorker(workerInfo, queues, processingJobs);
-      });
-    });
-  }
-
-  private createWorkerPool(numWorkers: number, workers: ThreadWorker[]): WorkerInfo[] {
-    const workerPool: WorkerInfo[] = [];
-
-    for (let i = 0; i < numWorkers; i++) {
-      const worker = new ThreadWorker(path.resolve(__dirname, 'compile_thread_worker.js'), {
-        workerData: { workerId: i }
-      });
-      workers.push(worker);
-      workerPool.push({ worker, isIdle: true });
-    }
-
-    return workerPool;
-  }
-
-  private setupWorkerListeners(
-    worker: ThreadWorker,
-    workerPool: WorkerInfo[],
-    jobs: Record<string, Job>,
-    queues: Job[],
-    processingJobs: Set<string>,
-    resolve: () => void,
-    dependantJobs?: Record<string, Job>
-  ): void {
-    worker.on('message', (msg) => {
-      if (msg.type !== 'TASK_FINISH') {
-        return;
-      }
-
-      this.handleTaskCompletion(msg.jobId, worker, workerPool, jobs, queues, processingJobs, dependantJobs);
-
-      if (this.checkAllTasksDone(queues, workerPool)) {
-        this.terminateWorkers(workerPool);
-        resolve();
-      }
-    });
-  }
-
-  private handleTaskCompletion(
-    jobId: string,
-    worker: ThreadWorker,
-    workerPool: WorkerInfo[],
-    jobs: Record<string, Job>,
-    queues: Job[],
-    processingJobs: Set<string>,
-    dependantJobs?: Record<string, Job>
-  ): void {
-    const workerInfo = workerPool.find((w) => w.worker === worker);
-    if (workerInfo) {
-      workerInfo.isIdle = true;
-    }
-    processingJobs.delete(jobId);
-    this.updateQueues(jobs, queues, jobId, dependantJobs);
-    workerPool.forEach((workerInfo) => {
-      if (workerInfo.isIdle) {
-        this.assignTaskToIdleWorker(workerInfo, queues, processingJobs);
-      }
-    });
-  }
-
-  private terminateWorkers(workerPool: WorkerInfo[]): void {
-    workerPool.forEach(({ worker }) => {
-      worker.postMessage({ type: 'EXIT' });
-    });
-  }
-
-  private assignTaskToIdleWorker(workerInfo: WorkerInfo, queues: Job[], processingJobs: Set<string>): void {
+  private dealWithJob(jobs: Record<string, Job>, queues: Job[]): void {
     let job: Job | undefined;
     let jobInfo: JobInfo | undefined;
-
-    if (queues.length > 0) {
+    while (queues.length > 0) {
       job = queues.shift()!;
       jobInfo = {
         id: job.id,
@@ -2003,18 +1907,14 @@ export class Lsp {
         buildConfig: Object.values(this.buildConfigs)[0],
         isValid: job.isValid
       };
-    }
-
-    if (job) {
-      processingJobs.add(job.id);
-      workerInfo.worker.postMessage({ type: 'ASSIGN_TASK', jobInfo });
-      workerInfo.isIdle = false;
+      this.compileExternalProgram(jobInfo);
+      this.updateQueues(jobs, queues, job.id);
     }
   }
 
   // AST caching is not enabled by default.
   // Call `initAstCache` before invoking the language service interface to enable AST cache
-  public async initAstCache(numWorkers: number = 1): Promise<void> {
+  public initAstCache(): void {
     const jobs: Record<string, Job> = {};
     const queues: Job[] = [];
     this.collectCompileJobs(jobs);
@@ -2023,9 +1923,7 @@ export class Lsp {
     if (Object.keys(jobs).length === 0 && queues.length === 0) {
       return;
     }
-    const processingJobs = new Set<string>();
-    const workers: ThreadWorker[] = [];
-    await this.invokeWorkers(jobs, queues, processingJobs, workers, numWorkers);
+    this.dealWithJob(jobs, queues);
   }
 
   private compileExternalProgram(jobInfo: JobInfo): void {
@@ -2033,14 +1931,18 @@ export class Lsp {
     let ets2pandaCmd = ['-', '--extension', 'ets', '--arktsconfig', jobInfo.arktsConfigFile];
     let lspDriverHelper = new LspDriverHelper();
     let config = lspDriverHelper.createCfg(ets2pandaCmd, jobInfo.filePath);
+    if (!fs.existsSync(jobInfo.filePath) || fs.statSync(jobInfo.filePath).isDirectory()) {
+      logger.error('File content not found for path: ', jobInfo.filePath);
+      return;
+    }
     const source = fs.readFileSync(jobInfo.filePath, 'utf8').replace(/\r\n/g, '\n');
-    let context = lspDriverHelper.createCtx(source, jobInfo.filePath, config, jobInfo.globalContextPtr, true);
+    let context = lspDriverHelper.createCtx(source, jobInfo.filePath, config, jobInfo.globalContextPtr, true, true);
     PluginDriver.getInstance().getPluginContext().setCodingFilePath(jobInfo.filePath);
     PluginDriver.getInstance().getPluginContext().setProjectConfig(config);
     PluginDriver.getInstance().getPluginContext().setContextPtr(context);
     lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
     PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
-    lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_LOWERED, context);
+    lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, context);
   }
 
   public addFileCache(filename: String): void {
@@ -2062,15 +1964,13 @@ export class Lsp {
     global.es2pandaPublic._RemoveFileCache(this.globalContextPtr!, filename);
   }
 
-  public async updateFileCache(filename: String, numWorkers: number = 1): Promise<void> {
+  public updateFileCache(filename: String) {
     const queues: Job[] = [];
     const jobs: Record<string, Job> = {};
     this.collectCompileJobs(jobs, true);
     const dependantJobs = this.findJobDependants(jobs, filename.valueOf());
     this.initCompileQueues(jobs, queues, dependantJobs);
-    const processingJobs = new Set<string>();
-    const workers: ThreadWorker[] = [];
-    await this.invokeWorkers(jobs, queues, processingJobs, workers, numWorkers, dependantJobs);
+    this.dealWithJob(jobs, queues);
   }
 
   private findJobDependants(jobs: Record<string, Job>, filePath: string): Record<string, Job> {

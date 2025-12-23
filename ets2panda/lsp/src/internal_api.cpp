@@ -33,6 +33,15 @@
 #include "get_class_property_info.h"
 #include "generated/code_fix_register.h"
 #include "quick_info.h"
+
+#if __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#endif
+
 namespace ark::es2panda::lsp {
 
 Initializer::Initializer()
@@ -216,6 +225,24 @@ bool IsTokenRangeValid(const ir::AstNode *node)
     return node->Start().index != 0 || node->End().index != 0;
 }
 
+bool IsETSImportClause(const ir::AstNode *node)
+{
+    if (!node->IsETSImportDeclaration()) {
+        return false;
+    }
+    auto import = node->AsETSImportDeclaration();
+    // Because after parser, the code "import" will be transformed into "import "ERROR_LITERAL" from "ERROR_LITERAL"".
+    // To avoid only entering "import" leads to the completion of the "from" keyword.
+    if (import->Specifiers().size() == 1) {
+        auto specifier = import->Specifiers()[0];
+        if (specifier->IsImportDefaultSpecifier() &&
+            specifier->AsImportDefaultSpecifier()->Local()->Name().Is(ERROR_LITERAL)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ir::AstNode *FindRightmostChildNodeWithTokens(const std::vector<ir::AstNode *> &nodes, int exclusiveStartPosition)
 {
     for (int i = exclusiveStartPosition - 1; i >= 0; --i) {
@@ -301,6 +328,9 @@ ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, 
         }
 
         if (IsNonWhitespaceToken(found)) {
+            return found;
+        }
+        if (IsETSImportClause(found)) {
             return found;
         }
 
