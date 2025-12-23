@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -4209,6 +4209,11 @@ static bool CheckIsValidReturnTypeAnnotation(ir::ReturnStatement *st, ir::Script
     if (containingFunc->GetPreferredReturnType() != nullptr ||
         (returnTypeAnnotation != nullptr && !returnTypeAnnotation->IsTSThisType())) {
         return true;
+    }
+    if (containingFunc->HasReceiver() && containingFunc->ReturnTypeAnnotation()->IsTSThisType()) {
+        checker->LogError(diagnostic::THIS_INCORRECTLY_USED_AS_TYPE_ANNOTAITON, {},
+                          containingFunc->ReturnTypeAnnotation()->Start());
+        return false;
     }
 
     // only extension function and class method could return `this`;

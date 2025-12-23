@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,16 +13,21 @@
  * limitations under the License.
  */
 
-class B {
-    data: int = 1;
+class A {
+    foo(): this {
+        return this;
+    }
 }
 
-function foo(this: B): this {
-    return this
+class B extends A {
+    foo(): this {
+        return this;
+    }
 }
 
-let b = new B();
-arktest.assertEQ(foo(b).data, 1)
-arktest.assertEQ(b.foo().data, 1)
-arktest.assertEQ(new B().foo().data, 1)
-arktest.assertEQ(foo(new B()).data, 1)
+function main() {
+    let a = new A().foo()
+    let b = new B().foo()
+    arktest.assertTrue(a instanceof A)
+    arktest.assertTrue(b instanceof B)
+}

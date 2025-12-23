@@ -13,23 +13,9 @@
  * limitations under the License.
  */
 
-class A {
-    data_:number = 1;
+class A {}
+function foo(this: A): this{
+    return this
 }
 
-let foo = (this: A): this => {
-    this.data_ += 1;
-    return this;
-}
-
-function main() {
-    arktest.assertEQ((new A().foo()).data_, 2)
-    arktest.assertEQ((foo(new A())).data_, 2)
-    arktest.assertEQ((new A().foo().foo()).data_, 3)
-    arktest.assertEQ((foo(new A().foo()).data_), 3)
-    let a = new A();
-    arktest.assertEQ(a.foo().data_, 2)
-    arktest.assertEQ(foo(a).data_, 3)
-    arktest.assertEQ(a.foo().foo().data_, 5)
-    arktest.assertEQ(foo(a.foo().foo()).data_, 8)
-}
+/* @@? 17:24 Error Semantic error ESE0392: type 'this' can be used only as a method return type. */
