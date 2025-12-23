@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { taskpool, ArkTSUtils, stream } from '@kit.ArkTS'
-import { process } from '@kit.ArkTS'
-import {taskpool as tp, ArkTSUtils as AU} from '@kit.ArkTS'
-import { process as pc, stream as st } from '@kit.ArkTS'
+import { taskpool, ArkTSUtils, stream } from './oh_modules/@kit.ArkTS'
+import { process } from './oh_modules/@kit.ArkTS'
+import {taskpool as tp, ArkTSUtils as AU} from './oh_modules/@kit.ArkTS'
+import { process as pc, stream as st } from './oh_modules/@kit.ArkTS'
 
 let func: () => void = () => {};
 taskpool.execute(func);

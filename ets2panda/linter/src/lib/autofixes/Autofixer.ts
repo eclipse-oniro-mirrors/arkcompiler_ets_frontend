@@ -20,7 +20,7 @@ import { NameGenerator } from '../utils/functions/NameGenerator';
 import { isAssignmentOperator } from '../utils/functions/isAssignmentOperator';
 import { SymbolCache } from './SymbolCache';
 import { SENDABLE_DECORATOR } from '../utils/consts/SendableAPI';
-import { ARKTSUTILS_LOCKS_MEMBER } from '../utils/consts/LimitedStdAPI';
+import { ARKTSUTILS_LITERAL, ARKTSUTILS_LOCKS_MEMBER } from '../utils/consts/LimitedStdAPI';
 import { DEFAULT_MODULE_NAME, PATH_SEPARATOR, SRC_AND_MAIN } from '../utils/consts/OhmUrl';
 import {
   DOUBLE_DOLLAR_IDENTIFIER,
@@ -2567,6 +2567,10 @@ export class Autofixer {
   }
 
   replaceIdentifierUsages(importedIdentifier: ts.Identifier, replacementName: string): Autofix[] {
+    // if replacementName is 'ArkTSUtils', skip
+    if (replacementName === ARKTSUTILS_LITERAL) {
+      return [];
+    }
     const fixes: Autofix[] = [];
     const file = importedIdentifier.getSourceFile();
     const originalSymbol = this.typeChecker.getSymbolAtLocation(importedIdentifier);
@@ -2578,14 +2582,6 @@ export class Autofixer {
       if (ts.isIdentifier(node) && !ts.isImportClause(node.parent) && !ts.isImportSpecifier(node.parent)) {
         const nodeSymbol = this.typeChecker.getSymbolAtLocation(node);
         if (nodeSymbol === originalSymbol) {
-          // Skip any identifier that is part of a 'locks' qualification
-          const parent = node.parent;
-          if (
-            ts.isQualifiedName(parent) && parent.right.text === ARKTSUTILS_LOCKS_MEMBER ||
-            ts.isPropertyAccessExpression(parent) && parent.name.text === ARKTSUTILS_LOCKS_MEMBER
-          ) {
-            return;
-          }
           fixes.push({
             start: node.getStart(),
             end: node.getEnd(),

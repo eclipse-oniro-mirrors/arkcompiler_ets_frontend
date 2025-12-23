@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-import * as AT from '@kit.ArkTS'; // ok
-import * as AU from '@arkts.utils'; // ok
-import * as pc from '@ohos.process'; // ok
-import { stream } from '@kit.ArkTS' // ok
-import ArkTSUtils from '@arkts.collections'; // ok
+import * as AT from './oh_modules/@kit.ArkTS'; // ok
+import * as AU from './oh_modules/@arkts.utils'; // ok
+import * as pc from './oh_modules/@ohos.process'; // ok
+import { stream } from './oh_modules/@kit.ArkTS' // ok
+import ArkTSUtils from './oh_modules/@arkts.collections'; // ok
 
 let func: () => void = () => {};
 AT.taskpool.execute(func);

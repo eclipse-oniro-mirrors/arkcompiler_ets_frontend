@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { stream } from '@kit.ArkTS'
+import { stream } from './oh_modules/@kit.ArkTS'
 
 
-import { stream as st } from '@kit.ArkTS'
+import { stream as st } from './oh_modules/@kit.ArkTS'
 
 let func: () => void = () => {};
 taskpool.execute(func);
@@ -24,9 +24,9 @@ taskpool.execute(func)
 let result = process.isIsolatedProcess();
 let result1 = process.isIsolatedProcess();
 let lock: AsyncLock = new AsyncLock()
-let lock1: AU.locks.AsyncLock = new AU.locks.AsyncLock()
+let lock1: AsyncLock = new AsyncLock()
 let lck: AsyncLock = AsyncLock.request("lock")
-let lck1: AU.locks.AsyncLock = AU.locks.AsyncLock.request("lock")
+let lck1: AsyncLock = AsyncLock.request("lock")
 let pro = new SendableLruCache<number, number>()
-let pro1 = new ArkTSUtils.SendableLruCache<number, number>()
+let pro1 = new SendableLruCache<number, number>()
 let write: stream.Writable = new stream.Writable()
