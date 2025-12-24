@@ -101,7 +101,7 @@ void ETSChecker::ReputCheckerData()
 
 static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signature)
 {
-    const auto varMap = checker->VarBinder()->TopScope()->Bindings();
+    const auto &varMap = checker->VarBinder()->TopScope()->Bindings();
     const auto iterator = varMap.find(signature);
     ES2PANDA_ASSERT(iterator != varMap.end());
     auto *var = iterator->second;

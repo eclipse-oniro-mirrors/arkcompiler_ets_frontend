@@ -63,7 +63,6 @@ public:
         : classDefinitions_(allocator->Adapter()),
           interfaceDeclarations_(allocator->Adapter()),
           annotationDeclarations_(allocator->Adapter()),
-          signatures_(allocator->Adapter()),
           program_(program),
           flags_(flags)
     {
@@ -86,10 +85,6 @@ public:
 
         for (auto annoDecl : other->AnnotationDeclarations()) {
             annotationDeclarations_.insert(annoDecl);
-        }
-
-        for (auto sig : other->signatures_) {
-            signatures_.insert(sig);
         }
     }
 
@@ -126,22 +121,6 @@ public:
     const ArenaSet<ir::AnnotationDeclaration *> &AnnotationDeclarations() const
     {
         return annotationDeclarations_;
-    }
-
-    ArenaSet<FunctionScope *> &Signatures()
-    {
-        return signatures_;
-    }
-
-    const ArenaSet<FunctionScope *> &Signatures() const
-    {
-        return signatures_;
-    }
-
-    void EmplaceSignatures(varbinder::FunctionScope *signature, ir::ScriptFunction *func)
-    {
-        func->AddFlag(ir::ScriptFunctionFlags::IN_RECORD);
-        signatures_.insert(signature);
     }
 
     void SetClassDefinition(ir::ClassDefinition *classDefinition)
@@ -221,7 +200,6 @@ public:
         classDefinitions_.clear();
         interfaceDeclarations_.clear();
         annotationDeclarations_.clear();
-        signatures_.clear();
         record_ = nullptr;
         boundCtx_ = nullptr;
         flags_ = RecordTableFlags::NONE;
@@ -235,7 +213,6 @@ private:
     ArenaSet<ir::ClassDefinition *> classDefinitions_;
     ArenaSet<ir::TSInterfaceDeclaration *> interfaceDeclarations_;
     ArenaSet<ir::AnnotationDeclaration *> annotationDeclarations_;
-    ArenaSet<varbinder::FunctionScope *> signatures_;
     RecordHolder record_ {nullptr};
     parser::Program *program_ {};
     BoundContext *boundCtx_ {};
