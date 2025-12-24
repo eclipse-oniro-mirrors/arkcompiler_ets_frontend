@@ -3714,11 +3714,35 @@ checker::Type *ETSAnalyzer::Check(ir::StringLiteral *expr) const
     return expr->TsType();
 }
 
+static bool HasRealSourceLocation(const lexer::SourcePosition &pos)
+{
+    return pos.line > 0 && pos.index > 0;
+}
+
+static void ValidateImportTypeUsage(ETSChecker *checker, ir::ImportDeclaration *st, ir::AstNode *spec)
+{
+    // to prevent auto-generated codes which has invalid sourcePosition (0:0)
+    if (!HasRealSourceLocation(spec->Start())) {
+        return;
+    }
+
+    if (st->IsTypeKind() && spec->IsImportSpecifier()) {
+        auto importSpec = spec->AsImportSpecifier();
+        if (importSpec->Local()->IsIdentifier() && importSpec->Local()->AsIdentifier()->Variable() != nullptr) {
+            auto var = importSpec->Local()->AsIdentifier()->Variable();
+            if (var->Declaration() != nullptr && var->Declaration()->Node()->IsAnnotationDeclaration()) {
+                checker->LogError(diagnostic::IMPORT_TYPE_NOT_ALLOWED, {}, spec->Start());
+            }
+        }
+    }
+}
+
 checker::Type *ETSAnalyzer::Check(ir::ImportDeclaration *st) const
 {
     ETSChecker *checker = GetETSChecker();
     checker::Type *type = nullptr;
     for (auto *spec : st->Specifiers()) {
+        ValidateImportTypeUsage(checker, st, spec);
         if (spec->IsImportNamespaceSpecifier()) {
             type = spec->AsImportNamespaceSpecifier()->Check(checker);
         }
