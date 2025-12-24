@@ -68,7 +68,7 @@ export enum BuilderNodeFunctionName {
 
 export enum UIUtilsDeprecatedFunctionName {
   EnableV2Compatibility = 'enableV2Compatibility',
-  MakeV1Observed = "makeV1Observed"
+  MakeV1Observed = 'makeV1Observed'
 }
 
 export const observedDecoratorName: Set<string> = new Set([

@@ -75,9 +75,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 24,
+            "line": 20,
+            "column": 24,
+            "endLine": 20,
+            "endColumn": 27,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
             "column": 5,
-            "endLine": 24,
+            "endLine": 25,
             "endColumn": 36,
             "problem": "AnyType",
             "suggest": "",
@@ -85,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 25,
+            "line": 26,
             "column": 5,
-            "endLine": 25,
+            "endLine": 26,
             "endColumn": 42,
             "problem": "AnyType",
             "suggest": "",
@@ -95,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
+            "line": 27,
             "column": 11,
-            "endLine": 26,
+            "endLine": 27,
             "endColumn": 21,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -105,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 26,
+            "line": 27,
             "column": 44,
-            "endLine": 26,
+            "endLine": 27,
             "endColumn": 54,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -115,9 +125,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
+            "line": 28,
             "column": 12,
-            "endLine": 27,
+            "endLine": 28,
             "endColumn": 14,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -125,9 +135,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 27,
+            "line": 28,
             "column": 37,
-            "endLine": 27,
+            "endLine": 28,
             "endColumn": 39,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -135,9 +145,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
+            "line": 29,
             "column": 10,
-            "endLine": 28,
+            "endLine": 29,
             "endColumn": 20,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -145,9 +155,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
+            "line": 29,
             "column": 39,
-            "endLine": 28,
+            "endLine": 29,
             "endColumn": 49,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -155,9 +165,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
+            "line": 30,
             "column": 11,
-            "endLine": 29,
+            "endLine": 30,
             "endColumn": 13,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -165,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
+            "line": 30,
             "column": 32,
-            "endLine": 29,
+            "endLine": 30,
             "endColumn": 34,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -175,9 +185,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
+            "line": 31,
             "column": 5,
-            "endLine": 30,
+            "endLine": 31,
             "endColumn": 60,
             "problem": "AnyType",
             "suggest": "",
@@ -185,9 +195,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
+            "line": 31,
             "column": 15,
-            "endLine": 30,
+            "endLine": 31,
             "endColumn": 42,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -195,9 +205,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 30,
+            "line": 31,
             "column": 15,
-            "endLine": 30,
+            "endLine": 31,
             "endColumn": 25,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -205,9 +215,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 32,
             "column": 5,
-            "endLine": 31,
+            "endLine": 32,
             "endColumn": 53,
             "problem": "AnyType",
             "suggest": "",
@@ -215,9 +225,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 32,
             "column": 16,
-            "endLine": 31,
+            "endLine": 32,
             "endColumn": 35,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -225,9 +235,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 31,
+            "line": 32,
             "column": 16,
-            "endLine": 31,
+            "endLine": 32,
             "endColumn": 18,
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
@@ -235,13 +245,33 @@
             "severity": "ERROR"
         },
         {
-            "line": 32,
+            "line": 33,
             "column": 34,
-            "endLine": 32,
+            "endLine": 33,
             "endColumn": 49,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 17,
+            "endLine": 34,
+            "endColumn": 26,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 46,
+            "endLine": 34,
+            "endColumn": 55,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
             "severity": "ERROR"
         }
     ]
