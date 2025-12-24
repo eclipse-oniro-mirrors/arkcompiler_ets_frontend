@@ -1019,7 +1019,8 @@ export class Es2pandaNativeModule {
     source: String,
     filename: String,
     globalContext: KPtr,
-    isExternal: boolean
+    isExternal: boolean,
+    isLspUsage: boolean
   ): KPtr {
     throw new Error('Not implemented');
   }

@@ -1294,19 +1294,26 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
                                                                 bool requireFrom, lexer::SourcePosition startLoc,
                                                                 ir::ImportKinds importKind)
 {
+    util::StringView str = ERROR_LITERAL;
     if (Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_FROM && requireFrom) {
         LogExpectedToken(lexer::TokenType::KEYW_FROM);
+        if (Lexer()->GetToken().KeywordType() == lexer::TokenType::LITERAL_IDENT) {
+            str = Lexer()->GetToken().Ident();
+        } else if (Lexer()->GetToken().KeywordType() == lexer::TokenType::EOS) {
+            str = "";
+        }
     }
     Lexer()->NextToken();  // eat `from`
 
     if (Lexer()->GetToken().Type() != lexer::TokenType::LITERAL_STRING) {
         LogExpectedToken(lexer::TokenType::LITERAL_STRING);
         // Try to create DUMMY import source as error placeholder
-        auto errorLiteral = AllocNode<ir::StringLiteral>(ERROR_LITERAL);
+        auto errorLiteral = AllocNode<ir::StringLiteral>(str);
         ES2PANDA_ASSERT(errorLiteral != nullptr);
         errorLiteral->SetRange(Lexer()->GetToken().Loc());
         auto *const importDeclaration = AllocNode<ir::ETSImportDeclaration>(
             errorLiteral, util::ImportPathManager::ImportMetadata {}, std::move(specifiers), importKind);
+        importDeclaration->SetResolvedSource(ERROR_LITERAL);
         ES2PANDA_ASSERT(importDeclaration != nullptr);
         importDeclaration->SetRange({startLoc, errorLiteral->End()});
         return importDeclaration;

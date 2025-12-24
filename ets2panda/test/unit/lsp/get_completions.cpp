@@ -63,6 +63,57 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 
 namespace {
 
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition26)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition26.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+Ab
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 3;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("AbcFile", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
+                        "AbcFile"),
+        CompletionEntry("AbcFileNotFoundError", ark::es2panda::lsp::CompletionEntryKind::CLASS,
+                        std::string(GLOBALS_OR_KEYWORDS), "AbcFileNotFoundError")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPosition25)
+{
+    std::vector<std::string> files = {"getCompletionsAtPosition25.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+bo
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 3;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("Box", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS), "Box"),
+        CompletionEntry("Boolean", ark::es2panda::lsp::CompletionEntryKind::CLASS, std::string(GLOBALS_OR_KEYWORDS),
+                        "Boolean"),
+        CompletionEntry("BootRuntimeLinker", ark::es2panda::lsp::CompletionEntryKind::CLASS,
+                        std::string(GLOBALS_OR_KEYWORDS), "BootRuntimeLinker")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPositionMemberKeyWord)
 {
     std::vector<std::string> files = {"getCompletionsAtPositionMemberKeyWord.ets"};
@@ -590,6 +641,218 @@ let myColor: Color = Color.)delimiter"};
                                       CompletionEntry("Blue", CompletionEntryKind::ENUM_MEMBER,
                                                       std::string(MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT), "Blue")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getImportStatementCompletion1)
+{
+    std::vector<std::string> files = {"exportFile1.ets", "importStatementCompletion1.ets"};
+    std::vector<std::string> texts = {R"('use static'
+namespace expName {}
+export default expName
+)",
+                                      R"('use static'
+import {} f
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 24;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "from", CompletionEntryKind::KEYWORD, std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "from")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getImportStatementCompletion2)
+{
+    std::vector<std::string> files = {"exportFile2.ets", "importStatementCompletion2.ets"};
+    std::vector<std::string> texts = {R"(
+namespace expName {}
+export default expName
+)",
+                                      R"(
+import {x} f
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 13;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "from", CompletionEntryKind::KEYWORD, std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "from")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getImportStatementCompletion3)
+{
+    std::vector<std::string> files = {"exportFile3.ets", "getImportStatementCompletion3.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A } from './get'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 24;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "getImportStatementCompletion3", CompletionEntryKind::FILE,
+        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "getImportStatementCompletion3")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, importStatementCompletionPath1)
+{
+    std::vector<std::string> files = {"exportFile4.ets", "importStatementCompletionPath1.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A } from './'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 22;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "importStatementCompletionPath1", CompletionEntryKind::FILE,
+        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "importStatementCompletionPath1")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, importStatementCompletionPath2)
+{
+    std::vector<std::string> files = {"exportFile5.ets", "importStatementCompletionPath2.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A }
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 13;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "from", CompletionEntryKind::KEYWORD, std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "from")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, nagetiveGetImportStatementCompletion1)
+{
+    std::vector<std::string> files = {"exportFile6.ets", "nagetiveGetImportStatementCompletion1.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {}
+)",
+                                      R"(
+import
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 7;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, nagetiveGetImportStatementCompletion2)
+{
+    std::vector<std::string> files = {"exportFile7.ets", "nagetiveGetImportStatementCompletion2.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+import { A } from 
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 57;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, nagetiveGetImportStatementCompletion3)
+{
+    std::vector<std::string> files = {"exportFile8.ets", "nagetiveGetImportStatementCompletion3.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A } a
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 15;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
     initializer.DestroyContext(ctx);
 }
 

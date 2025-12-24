@@ -21,6 +21,7 @@
 #include "checker/types/type.h"
 #include "ir/astNode.h"
 #include "public/es2panda_lib.h"
+#include "public/public.h"
 
 namespace ark::es2panda::lsp {
 
@@ -43,6 +44,21 @@ public:
         } else {
             ctx = impl_->CreateContextFromFile(cfg_, fileName);
         }
+        impl_->ProceedToState(ctx, state);
+        return ctx;
+    }
+
+    es2panda_Context *CreateContextWithCache(char const *fileName, es2panda_ContextState state,
+                                             std::vector<std::string> &texts)
+    {
+        es2panda_Context *ctx = nullptr;
+        auto *globalContext = new ark::es2panda::public_lib::GlobalContext();
+        auto globalAllocator = new ark::ThreadSafeArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        globalContext->cachedExternalPrograms.emplace(fileName, nullptr);
+        globalContext->externalProgramAllocators.emplace(fileName, globalAllocator);
+        globalContext->stdLibAllocator = globalAllocator;
+        ctx = impl_->CreateCacheContextFromString(
+            cfg_, texts[0].c_str(), fileName, reinterpret_cast<es2panda_GlobalContext *>(globalContext), true, true);
         impl_->ProceedToState(ctx, state);
         return ctx;
     }

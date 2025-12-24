@@ -279,7 +279,6 @@ export class ArkTSConfigGenerator {
   }
 
   private getDependenciesSection(moduleInfo: ModuleInfo, dependencySection: Record<string, DependencyItem>): void {
-    this.generateSystemSdkDependenciesSection(dependencySection, moduleInfo);
     let depModules: string[] = moduleInfo.dynamicDepModuleInfos;
     depModules.forEach((depModuleName: string) => {
       let depModuleInfo = this.moduleInfos[depModuleName];
