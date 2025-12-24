@@ -780,7 +780,6 @@ public:
     ETSObjectType *GetCachedFunctionalInterface(ir::ETSFunctionType *type);
     void CacheFunctionalInterface(ir::ETSFunctionType *type, ETSObjectType *ifaceType);
     void CollectReturnStatements(ir::AstNode *parent);
-    ir::ETSParameterExpression *AddParam(util::StringView name, ir::TypeNode *type);
 
     evaluate::ScopedDebugInfoPlugin *GetDebugInfoPlugin();
     const evaluate::ScopedDebugInfoPlugin *GetDebugInfoPlugin() const;
@@ -790,15 +789,7 @@ public:
     using ClassBuilder = std::function<void(ArenaVector<ir::AstNode *> &)>;
     using ClassInitializerBuilder =
         std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *)>;
-    using MethodBuilder = std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *, Type **)>;
 
-    ir::ClassStaticBlock *CreateClassStaticInitializer(const ClassInitializerBuilder &builder,
-                                                       ETSObjectType *type = nullptr);
-    ir::MethodDefinition *CreateClassInstanceInitializer(const ClassInitializerBuilder &builder,
-                                                         ETSObjectType *type = nullptr);
-    ir::MethodDefinition *CreateClassMethod(std::string_view name, ir::ScriptFunctionFlags funcFlags,
-                                            ir::ModifierFlags modifierFlags, const MethodBuilder &builder);
-    ir::ClassDeclaration *BuildClass(util::StringView name, const ClassBuilder &builder);
     const varbinder::Variable *GetTargetRef(const ir::MemberExpression *memberExpr);
 
     void LogUnresolvedReferenceError(ir::Identifier *ident);
@@ -917,10 +908,6 @@ private:
 
     template <typename EnumType>
     EnumType *CreateEnumTypeFromEnumDeclaration(ir::TSEnumDeclaration const *const enumDecl);
-
-    std::pair<ir::ScriptFunction *, ir::Identifier *> CreateStaticScriptFunction(
-        ClassInitializerBuilder const &builder);
-    std::pair<ir::ScriptFunction *, ir::Identifier *> CreateScriptFunction(ClassInitializerBuilder const &builder);
 
     using Type2TypeMap = std::unordered_map<varbinder::Variable *, varbinder::Variable *>;
     using TypeSet = std::unordered_set<varbinder::Variable *>;

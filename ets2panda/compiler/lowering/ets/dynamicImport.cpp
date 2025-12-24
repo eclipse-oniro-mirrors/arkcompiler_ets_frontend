@@ -28,6 +28,48 @@ using AstNodePtr = ir::AstNode *;
 static constexpr std::string_view LAZY_IMPORT_OBJECT_PREFIX = "%%lazy_import-";
 static constexpr std::string_view FIELD_NAME = "value";
 
+using ClassInitializerBuilder = std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *)>;
+
+static std::pair<ir::ScriptFunction *, ir::Identifier *> CreateStaticScriptFunction(
+    public_lib::Context *ctx, ClassInitializerBuilder const &builder)
+{
+    ArenaVector<ir::Statement *> statements(ctx->Allocator()->Adapter());
+    ArenaVector<ir::Expression *> params(ctx->Allocator()->Adapter());
+
+    ir::ScriptFunction *func;
+    ir::Identifier *id;
+
+    builder(&statements, nullptr);
+    auto *body = ctx->AllocNode<ir::BlockStatement>(ctx->Allocator(), std::move(statements));
+    id = ctx->AllocNode<ir::Identifier>(compiler::Signatures::CCTOR, ctx->Allocator());
+    auto signature = ir::FunctionSignature(nullptr, std::move(params), nullptr);
+    func = ctx->AllocNode<ir::ScriptFunction>(
+        ctx->Allocator(), ir::ScriptFunction::ScriptFunctionData {
+                              body,
+                              std::move(signature),
+                              ir::ScriptFunctionFlags::STATIC_BLOCK | ir::ScriptFunctionFlags::EXPRESSION,
+                              ir::ModifierFlags::STATIC,
+                          });
+    ES2PANDA_ASSERT(func != nullptr);
+    func->SetIdent(id);
+
+    return std::make_pair(func, id);
+}
+
+static ir::ClassStaticBlock *CreateClassStaticInitializer(public_lib::Context *ctx,
+                                                          const ClassInitializerBuilder &builder)
+{
+    auto [func, id] = CreateStaticScriptFunction(ctx, builder);
+
+    auto *funcExpr = ctx->AllocNode<ir::FunctionExpression>(func);
+
+    auto *staticBlock = ctx->AllocNode<ir::ClassStaticBlock>(funcExpr, ctx->Allocator());
+    ES2PANDA_ASSERT(staticBlock != nullptr);
+    staticBlock->AddModifier(ir::ModifierFlags::STATIC);
+
+    return staticBlock;
+}
+
 static size_t &LazyImportsCount()
 {
     thread_local size_t counter = 0;
@@ -247,9 +289,9 @@ static void BuildLazyImportObject(public_lib::Context *ctx, ir::ETSImportDeclara
     classDecl->Definition()->EmplaceBody(classProp);
     classProp->SetParent(classDecl->Definition());
 
-    auto initializer = checker->CreateClassStaticInitializer(
-        [ctx, importDecl, className](ArenaVector<ir::Statement *> *statements,
-                                     [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
+    auto initializer = CreateClassStaticInitializer(
+        ctx, [ctx, importDecl, className](ArenaVector<ir::Statement *> *statements,
+                                          [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
             AddImportInitializationStatement(ctx, importDecl, statements, className);
         });
 

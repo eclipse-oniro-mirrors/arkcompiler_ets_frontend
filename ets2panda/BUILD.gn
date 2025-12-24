@@ -88,7 +88,6 @@ libes2panda_sources = [
   "checker/ets/boxingConverter.cpp",
   "checker/ets/castingContext.cpp",
   "checker/ets/conversion.cpp",
-  "checker/ets/dynamic.cpp",
   "checker/ets/etsWarningAnalyzer.cpp",
   "checker/ets/function.cpp",
   "checker/ets/helpers.cpp",
