@@ -14,10 +14,12 @@
  */
 
 #include "restArgsLowering.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
+#include "ir/ts/tsAsExpression.h"
 #include <checker/ETSchecker.h>
 #include <cstddef>
 #include <iterator>
@@ -28,7 +30,7 @@ namespace ark::es2panda::compiler {
 using AstNodePtr = ir::AstNode *;
 
 static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *context,
-                                                          ir::SpreadElement *spreadElement)
+                                                          ir::SpreadElement *spreadElement, bool isArrowType)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
@@ -41,40 +43,48 @@ static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *c
     ES2PANDA_ASSERT(argumentSymbol != nullptr);
     const auto iteratorIndex = Gensym(allocator);
     ES2PANDA_ASSERT(iteratorIndex != nullptr);
-    const auto iteratorSymbol = Gensym(allocator);
-    ES2PANDA_ASSERT(iteratorSymbol != nullptr);
     const auto elementType = checker->GetElementTypeOfArray(spreadElement->Argument()->TsType());
     auto *typeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
     blockStatements.push_back(
         parser->CreateFormattedStatement("let @@I1 = @@E2;", argumentSymbol, spreadElement->Argument()));
     blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = 0;", iteratorIndex));
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = new Array<@@T2>(@@I3.length);", arraySymbol,
-                                                               typeNode, argumentSymbol->Clone(allocator, nullptr)));
+    if (isArrowType) {
+        blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: FixedArray<Any> = new Any[@@I2.length];",
+                                                                   arraySymbol,
+                                                                   argumentSymbol->Clone(allocator, nullptr)));
+    } else {
+        blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = new Array<@@T2>(@@I3.length);",
+                                                                   arraySymbol, typeNode,
+                                                                   argumentSymbol->Clone(allocator, nullptr)));
+    }
     std::vector<ir::AstNode *> args;
     std::stringstream ss;
-    ss << "for (let @@I1 of @@I2){";
-    args.emplace_back(iteratorSymbol);
+    ss << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4++){";
+    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
+    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
     args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
-    ss << "@@I3[@@I4] = @@I5;";
-    args.emplace_back(arraySymbol->Clone(allocator, nullptr));
     args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    args.emplace_back(iteratorSymbol->Clone(allocator, nullptr));
-    ss << "@@I6 = @@I7 + 1;";
+    auto *arraySymbolWithoutTypeAnnotation = arraySymbol->Clone(allocator, nullptr)->AsIdentifier();
+    arraySymbolWithoutTypeAnnotation->SetTypeAnnotation(nullptr);
+    ss << "@@I5[@@I6] = @@I7[@@I8];";
+    args.emplace_back(arraySymbolWithoutTypeAnnotation);
     args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
+    args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
     args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
     ss << "}";
     ir::Statement *loopStatement = parser->CreateFormattedStatement(ss.str(), args);
 
     blockStatements.push_back(loopStatement);
-    blockStatements.push_back(parser->CreateFormattedStatement("@@I1", arraySymbol->Clone(allocator, nullptr)));
+    blockStatements.push_back(
+        parser->CreateFormattedStatement("@@I1", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr)));
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
     return blockExpr;
 }
 
 static ir::BlockExpression *ConvertSpreadToBlockExpression(public_lib::Context *context,
-                                                           ir::SpreadElement *spreadElement)
+                                                           ir::SpreadElement *spreadElement, bool isArrowType)
 {
-    auto *blockExpression = CreateRestArgsBlockExpression(context, spreadElement);
+    auto *blockExpression = CreateRestArgsBlockExpression(context, spreadElement, isArrowType);
     ES2PANDA_ASSERT(blockExpression != nullptr);
     blockExpression->SetParent(spreadElement->Parent());
     blockExpression->SetRange(spreadElement->Range());
@@ -143,15 +153,40 @@ bool ShouldSkipParamCheck(checker::Signature *signature, const ArenaVector<ir::E
     return args.size() < (nOptional + nMandatory) && nOptional > 0;
 }
 
-static bool ShouldProcessRestParameters(checker::Signature *signature, const ArenaVector<ir::Expression *> &arguments)
+static bool ShouldProcessRestParameters(checker::Signature *signature, checker::Type *calleeType,
+                                        const ArenaVector<ir::Expression *> &arguments)
 {
-    return signature != nullptr && signature->HasRestParameter() && !signature->RestVar()->TsType()->IsETSArrayType() &&
-           (arguments.size() >= signature->Params().size() || ShouldSkipParamCheck(signature, arguments)) &&
-           !signature->RestVar()->TsType()->IsETSTupleType() && !signature->Function()->IsDynamic();
+    if (signature == nullptr || !signature->HasRestParameter()) {
+        return false;
+    }
+
+    auto *restVar = signature->RestVar();
+    if (restVar == nullptr) {
+        return false;
+    }
+
+    auto *restVarType = restVar->TsType();
+    if (restVarType == nullptr) {
+        return false;
+    }
+
+    bool isRestVarArrayType = restVarType->IsETSArrayType();
+    bool isRestVarTupleType = restVarType->IsETSTupleType();
+    if (isRestVarArrayType || isRestVarTupleType) {
+        return false;
+    }
+
+    bool hasEnoughArguments = arguments.size() >= signature->Params().size();
+    bool shouldSkipParamCheck = ShouldSkipParamCheck(signature, arguments);
+    if (!hasEnoughArguments && !shouldSkipParamCheck) {
+        return false;
+    }
+
+    return calleeType->IsETSArrowType() || !signature->Function()->IsDynamic();
 }
 
 static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVector<ir::Expression *> &arguments,
-                                           checker::Signature *signature)
+                                           checker::Signature *signature, bool isArrowType = false)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
@@ -161,7 +196,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
     const int diffArgs = arguments.size() - signature->Params().size();
     const size_t extraArgs = diffArgs < 0 ? 0 : diffArgs;
     if (extraArgs == 1 && arguments.back()->IsSpreadElement()) {
-        return ConvertSpreadToBlockExpression(context, arguments.back()->AsSpreadElement());
+        return ConvertSpreadToBlockExpression(context, arguments.back()->AsSpreadElement(), isArrowType);
     }
     // Determine array type
     checker::Type *arrayType = signature->RestVar()->TsType();
@@ -200,6 +235,10 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
                                                  checker::Signature *signature, ir::Expression *restArgsArray)
 
 {
+    if (originalCall->Callee()->TsType()->IsETSArrowType()) {
+        restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
+    }
+
     auto *allocator = context->allocator;
     auto *varbinder = context->GetChecker()->VarBinder()->AsETSBinder();
     ArenaVector<ir::Expression *> newArgs(allocator->Adapter());
@@ -230,12 +269,10 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
     newCall->SetTypeParams(originalCall->TypeParams());
-    newCall->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
 
     auto *scope = NearestScope(newCall->Parent());
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
     CheckLoweredNode(context->GetChecker()->VarBinder()->AsETSBinder(), context->GetChecker()->AsETSChecker(), newCall);
-    newCall->RemoveAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
     return newCall;
 }
 
@@ -269,34 +306,155 @@ ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithR
     ir::ETSNewClassInstanceExpression *expr, public_lib::Context *context)
 {
     checker::Signature *signature = expr->GetSignature();
-    if (!ShouldProcessRestParameters(signature, expr->GetArguments())) {
+    if (!ShouldProcessRestParameters(signature, expr->GetTypeRef()->TsType(), expr->GetArguments())) {
         return expr;
     }
 
     auto *restArgsArray = CreateRestArgsArray(context, expr->GetArguments(), signature);
-    restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
-
-    return RebuildNewClassInstanceExpression(context, expr, signature, restArgsArray);
+    auto arg =
+        context->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, context->allocator, restArgsArray);
+    return RebuildNewClassInstanceExpression(context, expr, signature, arg);
 }
 
 ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::CallExpression *callExpr,
                                                                           public_lib::Context *context)
 {
     checker::Type *calleeType = callExpr->Callee()->TsType();
-    if (calleeType == nullptr || calleeType->IsETSArrowType() ||
-        (callExpr->Signature() != nullptr && callExpr->Signature()->Function()->IsDynamic())) {
+    if (calleeType == nullptr) {
         return callExpr;
     }
 
+    bool isArrowType = calleeType->IsETSArrowType();
     checker::Signature *signature = callExpr->Signature();
-    if (!ShouldProcessRestParameters(signature, callExpr->Arguments())) {
+    if (signature == nullptr || (!isArrowType && signature->Function()->IsDynamic())) {
         return callExpr;
     }
 
-    auto *restArgsArray = CreateRestArgsArray(context, callExpr->Arguments(), signature);
-    restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::RESIZABLE_REST);
+    bool hasSpreadArg = !callExpr->Arguments().empty() && callExpr->Arguments().back()->IsSpreadElement();
+    if (isArrowType && !hasSpreadArg) {
+        return callExpr;
+    }
 
-    return RebuildCallExpression(context, callExpr, signature, restArgsArray);
+    if (!ShouldProcessRestParameters(signature, calleeType, callExpr->Arguments())) {
+        return callExpr;
+    }
+
+    auto *restArgsArray = CreateRestArgsArray(context, callExpr->Arguments(), signature, calleeType->IsETSArrowType());
+    auto arg =
+        context->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, context->allocator, restArgsArray);
+    return RebuildCallExpression(context, callExpr, signature, arg);
+}
+
+static bool IsInsideSyntheticFunction(ir::CallExpression *callExpr)
+{
+    // Check if the call is inside a synthetic function (proxy method)
+    for (ir::AstNode *curr = callExpr->Parent(); curr != nullptr; curr = curr->Parent()) {
+        if (curr->IsScriptFunction()) {
+            auto *scriptFunc = curr->AsScriptFunction();
+            if ((scriptFunc->Flags() & ir::ScriptFunctionFlags::SYNTHETIC) != 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+static bool ShouldTransformCallWithSpreadTuple(ir::CallExpression *callExpr)
+{
+    if (IsInsideSyntheticFunction(callExpr)) {
+        return false;
+    }
+
+    auto calleeType = callExpr->Callee()->TsType();
+    if (calleeType->IsETSArrowType()) {
+        return false;
+    }
+
+    if (callExpr->Signature() == nullptr || !callExpr->Signature()->HasRestParameter()) {
+        return false;
+    }
+
+    auto *restVar = callExpr->Signature()->RestVar();
+    if (restVar == nullptr || !restVar->TsType()->IsETSTupleType()) {
+        return false;
+    }
+
+    const auto &args = callExpr->Arguments();
+    if (args.size() != callExpr->Signature()->Params().size() + 1) {
+        return false;
+    }
+
+    return true;
+}
+
+static ir::BlockExpression *CreateTupleRestArgsBlockExpression(public_lib::Context *context,
+                                                               ir::SpreadElement *spreadElement,
+                                                               checker::Signature *signature)
+{
+    auto *allocator = context->allocator;
+    auto *parser = context->parser->AsETSParser();
+    auto *checker = context->GetChecker()->AsETSChecker();
+
+    auto *restVar = signature->RestVar();
+    auto *tupleType = restVar->TsType()->AsETSTupleType();
+    auto *spreadArg = spreadElement->Argument();
+
+    // Save original tuple to variable to avoid repeated evaluation
+    auto *tupleVar = Gensym(allocator);
+
+    ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1= @@E2;", tupleVar, spreadArg));
+
+    // Create new tuple with elements referencing original tuple
+    ArenaVector<ir::Expression *> tupleElements(allocator->Adapter());
+    for (size_t i = 0; i < tupleType->GetTupleSize(); ++i) {
+        auto *elemAccess =
+            parser->CreateFormattedExpression("@@I1[" + std::to_string(i) + "]", tupleVar->Clone(allocator, nullptr));
+        tupleElements.push_back(elemAccess);
+    }
+    auto *newTupleExpr = checker->AllocNode<ir::ArrayExpression>(std::move(tupleElements), allocator);
+
+    // Create type annotation for the new tuple from the type
+    auto *newTypeAnnotation = checker->AllocNode<ir::OpaqueTypeNode>(tupleType, allocator);
+    auto *asExpression = context->AllocNode<ir::TSAsExpression>(newTupleExpr, newTypeAnnotation, false);
+    blockStatements.push_back(parser->CreateFormattedStatement("@@E1", asExpression));
+
+    auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
+    return blockExpr;
+}
+
+static ir::CallExpression *TransformCallWithSpreadTuple(public_lib::Context *ctx, ir::CallExpression *callExpr)
+{
+    auto *allocator = ctx->allocator;
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *signature = callExpr->Signature();
+    auto *spreadElement = callExpr->Arguments().back()->AsSpreadElement();
+
+    auto *restArgsBlock = CreateTupleRestArgsBlockExpression(ctx, spreadElement, signature);
+
+    ArenaVector<ir::Expression *> newCallArgs(allocator->Adapter());
+    for (size_t i = 0; i < signature->Params().size(); ++i) {
+        newCallArgs.push_back(callExpr->Arguments()[i]);
+    }
+
+    auto *spreadArg = ctx->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, allocator, restArgsBlock);
+    newCallArgs.push_back(spreadArg);
+
+    auto *newCall = ctx->AllocNode<ir::CallExpression>(callExpr->Callee(), std::move(newCallArgs),
+                                                       std::move(callExpr->TypeParams()), false);
+    newCall->SetParent(callExpr->Parent());
+    newCall->SetRange(callExpr->Range());
+
+    for (auto *arg : newCall->Arguments()) {
+        arg->SetParent(newCall);
+    }
+
+    auto *scope = NearestScope(newCall->Parent());
+    auto bscope =
+        varbinder::LexicalScope<varbinder::Scope>::Enter(ctx->GetChecker()->VarBinder()->AsETSBinder(), scope);
+    CheckLoweredNode(ctx->GetChecker()->VarBinder()->AsETSBinder(), checker, newCall);
+
+    return newCall;
 }
 
 bool RestArgsLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
@@ -304,7 +462,11 @@ bool RestArgsLowering::PerformForModule(public_lib::Context *ctx, parser::Progra
     program->Ast()->TransformChildrenRecursively(
         [this, ctx](ir::AstNode *node) -> AstNodePtr {
             if (node->IsCallExpression()) {
-                return TransformCallExpressionWithRestArgs(node->AsCallExpression(), ctx);
+                auto *callExpr = node->AsCallExpression();
+                if (ShouldTransformCallWithSpreadTuple(callExpr)) {
+                    return TransformCallWithSpreadTuple(ctx, callExpr);
+                }
+                return TransformCallExpressionWithRestArgs(callExpr, ctx);
             }
             if (node->IsETSNewClassInstanceExpression()) {
                 return TransformCallConstructWithRestArgs(node->AsETSNewClassInstanceExpression(), ctx);

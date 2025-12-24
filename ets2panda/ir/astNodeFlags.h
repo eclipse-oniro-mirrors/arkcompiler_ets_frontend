@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,11 @@ using ENUMBITOPS_OPERATORS;
 
 enum class AstNodeFlags : uint16_t {
     NO_OPTS = 0,
-    CHECKCAST = 1U << 0U,
+    REST_ARGUMENT = 1U << 0U,
     ALLOW_REQUIRED_INSTANTIATION = 1U << 2U,
     GENERATE_VALUE_OF = 1U << 4U,
     RECHECK = 1U << 5U,
     NOCLEANUP = 1U << 6U,
-    RESIZABLE_REST = 1U << 7U,
     // Moved out of the ir::Expression
     IS_GROUPED = 1U << 8U,
     /* do not introduce new flags. all the existing to be removed */

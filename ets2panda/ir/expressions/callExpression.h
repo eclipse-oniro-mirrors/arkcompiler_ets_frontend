@@ -50,7 +50,7 @@ public:
           callee_(callee),
           arguments_(std::move(arguments)),
           typeParams_(typeParams),
-          trailingComma_(trailingComma)
+          trailingLambdaInfo_({nullptr, false, false, trailingComma})
     {
     }
 
@@ -102,7 +102,7 @@ public:
 
     [[nodiscard]] bool HasTrailingComma() const noexcept
     {
-        return trailingComma_;
+        return trailingLambdaInfo_.hasTrailingComma;
     }
 
     [[nodiscard]] checker::Signature *Signature() noexcept
@@ -195,6 +195,7 @@ private:
         ir::BlockStatement *block {nullptr};
         bool isTrailingCall {false};
         bool isBlockInNewLine {false};
+        bool hasTrailingComma {false};
     };
 
 protected:
@@ -203,7 +204,6 @@ protected:
     ArenaVector<Expression *> arguments_;
     TSTypeParameterInstantiation *typeParams_;
     checker::Signature *signature_ {};
-    bool trailingComma_;
     // for trailing lambda feature in ets
     TrailingLambdaInfo trailingLambdaInfo_ {};
     checker::Type *uncheckedType_ {};
