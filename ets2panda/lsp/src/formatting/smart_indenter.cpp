@@ -62,6 +62,9 @@ static size_t GetLineStartPosition(const IndentContext &ctx, size_t line)
 
 static size_t GetLineEndPosition(const IndentContext &ctx, size_t line)
 {
+    if (ctx.index == nullptr) {
+        return 0;
+    }
     size_t nextLineStart = ctx.index->GetOffset(lexer::SourceLocation(line + ONE, ONE, ctx.program));
     if (nextLineStart == ZERO || nextLineStart > ctx.sourceCode->length()) {
         return ctx.sourceCode->length();
@@ -186,17 +189,17 @@ static NextTokenKind NextTokenIsCurlyBraceOnSameLineAsCursor(ir::AstNode *preced
     }
 
     auto nextType = nextToken->Type();
-    if (nextType == ir::AstNodeType::BLOCK_STATEMENT) {
-        return NextTokenKind::OPEN_BRACE;
-    }
-
     size_t nextTokenLine = nextToken->Start().line;
-    if (nextType == ir::AstNodeType::BLOCK_STATEMENT && nextTokenLine == lineAtPosition) {
-        const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
-        size_t pos = nextToken->Start().index;
-        if (pos < sourceCode.length() &&
-            static_cast<char32_t>(static_cast<unsigned char>(sourceCode[pos])) == lexer::LEX_CHAR_RIGHT_BRACE) {
-            return NextTokenKind::CLOSE_BRACE;
+    if (nextType == ir::AstNodeType::BLOCK_STATEMENT) {
+        if (nextTokenLine == lineAtPosition) {
+            const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
+            size_t pos = nextToken->Start().index;
+            if (pos < sourceCode.length() &&
+                static_cast<char32_t>(static_cast<unsigned char>(sourceCode[pos])) == lexer::LEX_CHAR_RIGHT_BRACE) {
+                return NextTokenKind::CLOSE_BRACE;
+            }
+        } else {
+            return NextTokenKind::OPEN_BRACE;
         }
     }
 
@@ -496,6 +499,8 @@ static std::pair<size_t, size_t> GetContainingListOrParentStart(const IndentCont
             ir::AstNode *listParent = child->Parent();
             if (listParent != nullptr) {
                 targetStart = listParent->Start().index;
+            } else {
+                targetStart = 0;
             }
         }
     }
