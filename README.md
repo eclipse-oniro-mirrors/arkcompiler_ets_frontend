@@ -56,7 +56,7 @@ $ ./build.sh --product-name rk3568 --build-target ets_frontend_build
 
 #### Usage For Es2panda ####
 
-convert JS to ARK bytecode via es2abc
+Use the es2abc executable under the ets_frontend component to convert JavaScript files into Ark bytecode files
 
 ```
 $ cd out/rk3568/clang_x64/arkcompiler/ets_frontend/
