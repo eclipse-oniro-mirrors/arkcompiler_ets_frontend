@@ -40,6 +40,8 @@ set(DECLGEN_PLUGIN_TESTS
 
 set(ETS2TS_TESTS
     "./ets2ts/test_ets2ts_ui_decorator.ets"
+    "./ets2ts/test_ets2ts_static_instance_methods.ets"
+    "./ets2ts/test_ets2ts_override_class_methods.ets"
 )
 
 foreach(TEST_DATA IN ITEMS ${DECLGEN_PLUGIN_TESTS_ISOLATED})

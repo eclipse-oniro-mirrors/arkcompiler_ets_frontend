@@ -191,6 +191,7 @@ ast/parser/ets/object_literal_withfunc.ets
 runtime/ets/interfaceObjectLiteral_01.ets
 runtime/ets/interfaceObjectLiteral_02.ets
 runtime/ets/interfaceObjectLiteral_03.ets
+runtime/ets/interfaceObjectLiteral_04.ets
 
 #31069
 type_error_test.ets
