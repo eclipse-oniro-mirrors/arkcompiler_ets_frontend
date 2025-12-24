@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 void 0;       // No void operator
 
 void 'hello';       // No void operator
@@ -48,4 +48,12 @@ function getEmpty() {
 function undefined() {
   let y = getEmpty();       // Can't use void as value
   return y;
+}
+
+class B{
+  s15 = void 'hello';//(arkts-no-void-operator)
+  public s16 = void 1;//(arkts-no-void-operator)
+  private s17 = void 1;//(arkts-no-void-operator)
+  protected s18 = void 1;//(arkts-no-void-operator)
+  static s19 = void 1;//(arkts-no-void-operator)
 }

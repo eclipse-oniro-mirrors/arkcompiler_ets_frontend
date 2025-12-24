@@ -2684,12 +2684,19 @@ export class Autofixer {
     );
 
     let text = this.nonCommentPrinter.printNode(ts.EmitHint.Unspecified, callExpr, voidExpr.getSourceFile());
-    const ancestor = ts.findAncestor(voidExpr, ts.isIfStatement);
-    if (ancestor) {
+    const isInBlock = Autofixer.isInBlock(voidExpr);
+    if (isInBlock) {
       const startPos = this.sourceFile.getLineAndCharacterOfPosition(voidExpr.parent.getStart()).character;
       text = this.adjustIndentation(text, startPos);
     }
     return [{ start: voidExpr.getStart(), end: voidExpr.getEnd(), replacementText: text }];
+  }
+
+  private static isInBlock(expr: ts.Node): boolean {
+    const inIfBlock = ts.findAncestor(expr, ts.isIfStatement);
+    const inFunction = ts.findAncestor(expr, ts.isFunctionLike);
+    const inClass = ts.findAncestor(expr, ts.isClassDeclaration);
+    return !!inIfBlock || !!inFunction || !!inClass;
   }
 
   private static needParenthesesForVoidOperator(expr: ts.Expression): boolean {
