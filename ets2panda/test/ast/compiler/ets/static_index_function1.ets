@@ -31,4 +31,4 @@ function main() {
 /* @@? 24:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
 /* @@? 26:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
 /* @@? 27:13 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@? 27:15 Error Semantic error ESE0207: '$_get' is a static property of 'A' */
+/* @@? 27:13 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */

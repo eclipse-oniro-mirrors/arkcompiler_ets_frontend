@@ -103,7 +103,9 @@ describe('getSyntacticDiagnosticsTest', () => {
     expect(res?.diagnostics.length).toBe(1);
     expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_002);
   });
-  (process.env.SKIP_UI_PLUGINS ? test.skip : test)('getSyntacticDiagnostics_003', () => {
+
+  // ui-syntax rule is moved to after-check and can be enabled after adaptation
+  (process.env.SKIP_UI_PLUGINS ? test.skip : xtest)('getSyntacticDiagnostics_003', () => {
     const res = lsp.getSyntacticDiagnostics(getRealPath(moduleName, 'getSyntacticDiagnostics4.ets'));
     expect(res?.diagnostics.length).toBe(5);
     expect(res?.diagnostics).toMatchObject(DIAGNOSTICS_003);

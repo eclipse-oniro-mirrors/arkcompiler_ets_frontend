@@ -30,8 +30,6 @@ class B{
 
 
 /* @@@ label1 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label1 Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'String' */
 /* @@@ label1 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */
 /* @@@ label2 Error Syntax error ESY0318: Class cannot be used as object. */
-/* @@@ label2 Error Semantic error ESE0318: Type 'A' cannot be assigned to type 'String' */
 /* @@@ label2 Error Semantic error ESE0012: Invalid value for annotation field, expected a constant literal. */

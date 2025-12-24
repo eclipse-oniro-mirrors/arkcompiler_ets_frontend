@@ -439,15 +439,6 @@ public:
                                     const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
                                     TypeRelationFlag resolveFlags, std::string_view signatureKind = "call");
 
-    // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    Signature *ValidateSignatures(ArenaVector<Signature *> &signatures,
-                                  const ir::TSTypeParameterInstantiation *typeArguments,
-                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                  std::string_view signatureKind,
-                                  TypeRelationFlag resolveFlags = TypeRelationFlag::NONE);
-    Signature *ResolveCallExpressionAndTrailingLambda(ArenaVector<Signature *> &signatures,
-                                                      ir::CallExpression *callExpr, const lexer::SourcePosition &pos,
-                                                      TypeRelationFlag reportFlag = TypeRelationFlag::NONE);
     Signature *ResolveConstructExpression(ETSObjectType *type, ir::ETSNewClassInstanceExpression *expr);
     Signature *ComposeSignature(ir::ScriptFunction *func, SignatureInfo *signatureInfo, Type *returnType,
                                 varbinder::Variable *nameVar);
@@ -948,9 +939,6 @@ private:
 
     template <typename... Args>
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
-    Signature *GetMostSpecificSignature(ArenaVector<Signature *> &compatibleSignatures,
-                                        const ArenaVector<ir::Expression *> &arguments,
-                                        const lexer::SourcePosition &pos, TypeRelationFlag resolveFlags);
 
     // Static invoke
     bool SetStaticInvokeValues(ir::Identifier *const ident, ir::Identifier *classId, ir::Identifier *methodId,
