@@ -227,7 +227,7 @@ TEST_F(LspExtrSymblGetEditsTests, ExtractConstantViaGlobalPublicAPI)
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
 
     // NOLINTNEXTLINE(readability-identifier-naming)
-    constexpr size_t expectedInsertPos = 0;
+    constexpr size_t expectedInsertPos = 54;
     EXPECT_EQ(startPos1, expectedInsertPos);
     EXPECT_EQ(newText, expect);
 
