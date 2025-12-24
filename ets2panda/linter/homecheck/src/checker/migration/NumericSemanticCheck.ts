@@ -2611,7 +2611,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 // 原码含有类型注解但是其类型中不含number，无法进行替换
                 return null;
             }
-            ruleFix.text = `${parts[0].trimEnd()}: ${parts[1].trimStart().replace(NumberCategory.number, numberCategory)}`;
+            ruleFix.text = `${parts[0].trimEnd()}: ${parts[1].trimStart().replace(new RegExp(NumberCategory.number, 'g'), numberCategory)}`;
             return ruleFix;
         }
         // 场景2：对于private a = 123，originalText为private开始到行尾的内容，需要替换为private a: int = 123
