@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSParenthesizedTypeBuilder : public AstBuilder<TSParenthesizedType> {
 public:
-    explicit TSParenthesizedTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSParenthesizedTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSParenthesizedTypeBuilder &SetFunctionSignature(TypeNode *type)
     {

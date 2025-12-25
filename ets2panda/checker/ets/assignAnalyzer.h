@@ -19,7 +19,6 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/baseAnalyzer.h"
 
-#include "libarkbase/utils/arena_containers.h"
 #include "libarkbase/utils/small_vector.h"
 
 namespace ark::es2panda::ir {

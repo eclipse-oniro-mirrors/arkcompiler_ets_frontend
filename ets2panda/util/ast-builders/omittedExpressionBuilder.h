@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class OmittedExpressionBuilder : public AstBuilder<ir::OmittedExpression> {
 public:
-    explicit OmittedExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit OmittedExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     OmittedExpression *Build()
     {

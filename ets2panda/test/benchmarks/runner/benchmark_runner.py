@@ -33,7 +33,7 @@ def run_and_parse(command: List) -> Dict:
             print(f"Stdout:\n{e.stdout}\nStderr:\n{e.stderr}")
         return {}
 
-    line_regex = re.compile(r":@(?P<phase>[\w\/-]+)\s*:\s*time=(?P<time>[\d\.\w]+)\s*mem=(?P<mem>[\d\.\w]+)")
+    line_regex = re.compile(r":@(?P<phase>[\w\/-]+)\s*:\s*time=(?P<time>[\d\.\w]+)\s*maxrss=(?P<mem>[\d\.\w]+)")
     metrics = {}
     for line in result.stdout.splitlines():
         match = line_regex.search(line)

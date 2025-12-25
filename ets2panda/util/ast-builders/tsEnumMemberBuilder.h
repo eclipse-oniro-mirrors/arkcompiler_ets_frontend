@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSEnumMemberBuilder : public AstBuilder<ir::TSEnumMember> {
 public:
-    explicit TSEnumMemberBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSEnumMemberBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSEnumMemberBuilder &SetKey(Expression *key)
     {

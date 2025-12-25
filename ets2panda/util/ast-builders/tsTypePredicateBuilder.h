@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypePredicateBuilder : public AstBuilder<TSTypePredicate> {
 public:
-    explicit TSTypePredicateBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypePredicateBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypePredicateBuilder &SetParameterName(Expression *parameterName)
     {

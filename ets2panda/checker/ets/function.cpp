@@ -342,8 +342,8 @@ static bool EnhanceSubstitutionForUnion(ETSChecker *checker, const ArenaVector<T
     }
     auto *const argUn = argumentType->AsETSUnionType();
 
-    std::vector<Type *> paramWlist {};
-    ArenaVector<Type *> argWlist(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> paramWlist;
+    std::vector<Type *> argWlist;
 
     bool isIdenticalUpToTypeParams = false;
     for (auto *pc : paramUn->ConstituentTypes()) {
@@ -1049,25 +1049,6 @@ bool IsSignatureAccessible(Signature *sig, ETSObjectType *containingClass, TypeR
     return false;
 }
 
-// NOLINTNEXTLINE(readability-magic-numbers)
-std::array<TypeRelationFlag, 9U> GetFlagVariants()
-{
-    // NOTE(boglarkahaag): Not in sync with specification, but solves the issues with rest params for now (#17483)
-    return {
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_BOXING |
-            TypeRelationFlag::IGNORE_REST_PARAM | TypeRelationFlag::NO_WIDENING,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_BOXING,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::IGNORE_REST_PARAM | TypeRelationFlag::NO_WIDENING,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_WIDENING,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::WIDENING | TypeRelationFlag::NO_UNBOXING |
-            TypeRelationFlag::NO_BOXING | TypeRelationFlag::IGNORE_REST_PARAM,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::WIDENING | TypeRelationFlag::NO_UNBOXING |
-            TypeRelationFlag::NO_BOXING,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::WIDENING | TypeRelationFlag::IGNORE_REST_PARAM,
-        TypeRelationFlag::NO_THROW | TypeRelationFlag::WIDENING,
-    };
-}
-
 static std::vector<bool> FindTypeInferenceArguments(const ArenaVector<ir::Expression *> &arguments)
 {
     std::vector<bool> argTypeInferenceRequired(arguments.size());
@@ -1368,11 +1349,6 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
 
         auto overloadSig = currentFunc->Function()->Signature();
         funcType->AddCallSignature(overloadSig);
-        if (overloadSig->IsExtensionAccessor()) {
-            funcType->GetExtensionAccessorSigs().emplace_back(overloadSig);
-        } else if (overloadSig->IsExtensionFunction()) {
-            funcType->GetExtensionFunctionSigs().emplace_back(overloadSig);
-        }
         overloads.push_back(overloadType);
 
         ldInfo.minArg = std::min(ldInfo.minArg, currentFunc->Function()->Signature()->MinArgCount());
@@ -2471,9 +2447,7 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
     Signature *notVisibleSignature = nullptr;
     std::vector<bool> argTypeInferenceRequired = FindTypeInferenceArguments(arguments);
 
-    auto const validateFlags = signatures.size() == 1
-                                   ? TypeRelationFlag::WIDENING | resolveFlags
-                                   : TypeRelationFlag::WIDENING | TypeRelationFlag::NO_THROW | resolveFlags;
+    auto const validateFlags = signatures.size() == 1 ? resolveFlags : TypeRelationFlag::NO_THROW | resolveFlags;
 
     const ir::TSTypeParameterInstantiation *typeArguments =
         expr->IsCallExpression() ? expr->AsCallExpression()->TypeParams() : nullptr;
@@ -2652,8 +2626,6 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
     Type *targetType = substitutedSig->Params()[index]->TsType();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     Type *argumentType = argument->Check(checker);
-
-    flags |= TypeRelationFlag::ONLY_CHECK_WIDENING;
 
     auto const invocationCtx =
         checker::InvocationContext(checker->Relation(), argument, argumentType, targetType, argument->Start(),

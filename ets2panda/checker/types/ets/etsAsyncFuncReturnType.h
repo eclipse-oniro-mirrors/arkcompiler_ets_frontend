@@ -23,7 +23,7 @@ class GlobalTypesHolder;
 
 class ETSAsyncFuncReturnType : public ETSObjectType {
 public:
-    ETSAsyncFuncReturnType(ThreadSafeArenaAllocator *allocator, TypeRelation *relation, ETSObjectType *promiseType)
+    ETSAsyncFuncReturnType(ArenaAllocator *allocator, TypeRelation *relation, ETSObjectType *promiseType)
         : ETSObjectType(allocator, "", compiler::Signatures::BUILTIN_OBJECT,
                         std::make_tuple(nullptr, ETSObjectFlags::ASYNC_FUNC_RETURN_TYPE, relation)),
           promiseType_(promiseType)
@@ -31,6 +31,7 @@ public:
         ES2PANDA_ASSERT(promiseType->TypeArguments().size() == 1);
     }
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;

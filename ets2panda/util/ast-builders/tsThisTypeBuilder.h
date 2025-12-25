@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSThisTypeBuilder : public AstBuilder<TSThisType> {
 public:
-    explicit TSThisTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSThisTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSThisType *Build()
     {

@@ -34,7 +34,7 @@ namespace ark::es2panda::compiler {
 
 class ETSGen final : public CodeGen {
 public:
-    explicit ETSGen(ArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
+    explicit ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Context *context,
                     std::tuple<varbinder::FunctionScope *, ProgramElement *, AstCompiler *> toCompile) noexcept;
 
     [[nodiscard]] const checker::ETSChecker *Checker() const noexcept;

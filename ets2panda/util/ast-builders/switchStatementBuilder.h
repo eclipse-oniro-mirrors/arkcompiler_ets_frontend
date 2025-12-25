@@ -24,10 +24,7 @@ namespace ark::es2panda::ir {
 
 class SwitchStatementBuilder : public AstBuilder<ir::SwitchStatement> {
 public:
-    explicit SwitchStatementBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), cases_(allocator->Adapter())
-    {
-    }
+    explicit SwitchStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), cases_(allocator->Adapter()) {}
 
     SwitchStatementBuilder &SetDiscriminant(Expression *discr)
     {

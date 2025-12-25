@@ -32,8 +32,7 @@
 #include "compiler/optimizer/optimizations/regalloc/reg_alloc_linear_scan.h"
 #include "libarkbase/utils/logger.h"
 #include "libarkbase/utils/utils.h"
-#include "libarkbase/mem/arena_allocator.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "optimizer/ir/inst.h"
 #include "bytecode_optimizer/reg_acc_alloc.h"
 #include "bytecode_optimizer/optimize_bytecode.h"
@@ -50,10 +49,9 @@ public:
         ark::compiler::g_options.SetCompilerSupportInitObjectInst(true);
 
         // NOLINTNEXTLINE(readability-magic-numbers)
-        mem::MemConfig::Initialize(128_MB, 64_MB, 64_MB, 32_MB, 0, 0);
-        PoolManager::Initialize();
-        allocator_ = new ArenaAllocator(SpaceType::SPACE_TYPE_INTERNAL);
-        localAllocator_ = new ArenaAllocator(SpaceType::SPACE_TYPE_INTERNAL);
+        es2panda::EHeap::Initialize();
+        allocator_ = es2panda::EHeap::NewScopedAllocator().release();
+        localAllocator_ = es2panda::EHeap::NewScopedAllocator().release();
         builder_ = new compiler::IrConstructor();
 
         Logger::InitializeStdLogging(Logger::Level::ERROR,
@@ -64,8 +62,7 @@ public:
         delete allocator_;
         delete localAllocator_;
         delete builder_;
-        PoolManager::Finalize();
-        mem::MemConfig::Finalize();
+        es2panda::EHeap::Finalize();
 
         Logger::Destroy();
     }
@@ -73,11 +70,11 @@ public:
     NO_COPY_SEMANTIC(EtsOptTest);
     NO_MOVE_SEMANTIC(EtsOptTest);
 
-    ArenaAllocator *GetAllocator()
+    ark::ArenaAllocator *GetAllocator()
     {
         return allocator_;
     }
-    ArenaAllocator *GetLocalAllocator()
+    ark::ArenaAllocator *GetLocalAllocator()
     {
         return localAllocator_;
     }
@@ -114,8 +111,8 @@ protected:
     compiler::IrConstructor *builder_;
 
 private:
-    ArenaAllocator *allocator_;
-    ArenaAllocator *localAllocator_;
+    ark::ArenaAllocator *allocator_;
+    ark::ArenaAllocator *localAllocator_;
     compiler::Graph *graph_ {nullptr};
 };
 

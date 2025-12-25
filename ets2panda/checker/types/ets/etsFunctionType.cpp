@@ -13,30 +13,28 @@
  * limitations under the License.
  */
 
+#include "etsFunctionType.h"
+
 #include "checker/ETSchecker.h"
-#include "checker/types/globalTypesHolder.h"
 #include "checker/types/typeError.h"
 #include "compiler/lowering/phase.h"
+#include "util/perfMetrics.h"
 
 namespace ark::es2panda::checker {
 
 ETSFunctionType::ETSFunctionType([[maybe_unused]] ETSChecker *checker, util::StringView name,
                                  ArenaVector<Signature *> &&signatures)
-    : Type(TypeFlag::FUNCTION | TypeFlag::ETS_METHOD),
-      callSignatures_(std::move(signatures)),
-      extensionFunctionSigs_(ArenaVector<Signature *>(checker->ProgramAllocator()->Adapter())),
-      extensionAccessorSigs_(ArenaVector<Signature *>(checker->ProgramAllocator()->Adapter())),
-      name_(name)
+    : Type(TypeFlag::FUNCTION | TypeFlag::ETS_METHOD), callSignatures_(std::move(signatures)), nameOrAsmName_(name)
 {
     auto flag = TypeFlag::NONE;
     for (auto *sig : callSignatures_) {
         flag |= sig->HasSignatureFlag(SignatureFlags::GETTER) ? TypeFlag::GETTER : TypeFlag::NONE;
         flag |= sig->HasSignatureFlag(SignatureFlags::SETTER) ? TypeFlag::SETTER : TypeFlag::NONE;
-        if (sig->IsExtensionAccessor()) {
-            extensionAccessorSigs_.emplace_back(sig);
-        } else if (sig->IsExtensionFunction()) {
-            extensionFunctionSigs_.emplace_back(sig);
-        }
+
+        // NOTE(vpukhov): extension methods implementation greatly interferes with erroneous
+        // AddCallSignature() method, so it's necessary to compute these predicates in constructor
+        hasExtensionSignatures_ |= sig->IsExtensionFunction() || sig->IsExtensionAccessor();
+        hasExtensionAccessorSignatures_ |= sig->IsExtensionAccessor();
     }
     AddTypeFlag(flag);
 }
@@ -44,10 +42,7 @@ ETSFunctionType::ETSFunctionType([[maybe_unused]] ETSChecker *checker, util::Str
 ETSFunctionType::ETSFunctionType(ETSChecker *checker, Signature *signature)
     : Type(TypeFlag::FUNCTION),
       callSignatures_({{signature->ToArrowSignature(checker)}, checker->ProgramAllocator()->Adapter()}),
-      extensionFunctionSigs_(ArenaVector<Signature *>(checker->ProgramAllocator()->Adapter())),
-      extensionAccessorSigs_(ArenaVector<Signature *>(checker->ProgramAllocator()->Adapter())),
-      name_(""),
-      assemblerName_(checker->GlobalBuiltinFunctionType(signature->MinArgCount(), signature->HasRestParameter()) !=
+      nameOrAsmName_(checker->GlobalBuiltinFunctionType(signature->MinArgCount(), signature->HasRestParameter()) !=
                              nullptr
                          ? checker->GlobalBuiltinFunctionType(signature->MinArgCount(), signature->HasRestParameter())
                                ->AsETSObjectType()
@@ -301,14 +296,14 @@ Type *ETSFunctionType::Instantiate(ArenaAllocator *allocator, TypeRelation *rela
 {
     auto checker = relation->GetChecker()->AsETSChecker();
     if (IsETSArrowType()) {
-        return allocator->New<ETSFunctionType>(checker, ArrowSignature());
+        return checker->CreateETSArrowType(ArrowSignature());
     }
 
     auto signatures = ArenaVector<Signature *>(allocator->Adapter());
     for (auto *const signature : callSignatures_) {
         signatures.emplace_back(signature->Copy(allocator, relation, globalTypes));
     }
-    return allocator->New<ETSFunctionType>(checker, name_, std::move(signatures));
+    return allocator->New<ETSFunctionType>(checker, nameOrAsmName_, std::move(signatures));
 }
 
 ETSFunctionType *ETSFunctionType::Substitute(TypeRelation *relation, const Substitution *substitution)
@@ -328,10 +323,10 @@ ETSFunctionType *ETSFunctionType::Substitute(TypeRelation *relation, const Subst
 
         if (anyChange) {
             if (IsETSArrowType()) {
-                return allocator->New<ETSFunctionType>(checker, signatures[0]);
+                return checker->CreateETSArrowType(signatures[0]);
             }
             auto arenaSigs = ArenaVector<Signature *>(signatures.begin(), signatures.end(), allocator->Adapter());
-            return allocator->New<ETSFunctionType>(checker, name_, std::move(arenaSigs));
+            return checker->CreateETSMethodType(Name(), std::move(arenaSigs));
         }
     }
 
@@ -385,7 +380,7 @@ void ETSFunctionType::IsSubtypeOf(TypeRelation *relation, Type *target)
 
 void ETSFunctionType::ToAssemblerType([[maybe_unused]] std::stringstream &ss) const
 {
-    ss << assemblerName_;
+    ss << nameOrAsmName_;
 }
 
 // #22952: some function types are still in AST
@@ -446,6 +441,17 @@ void ETSFunctionType::CheckVarianceRecursively(TypeRelation *relation, VarianceF
             relation->CheckVarianceRecursively(typeParam->TsType(),
                                                relation->TransferVariant(varianceFlag, VarianceFlag::CONTRAVARIANT));
         }
+    }
+}
+
+void ETSFunctionType::Iterate(const TypeTraverser &func) const
+{
+    if (!callSignatures_.empty()) {
+        auto const *const signature = callSignatures_[0U];
+        for (auto const *const var : signature->Params()) {
+            func(var->TsType());
+        }
+        func(signature->ReturnType());
     }
 }
 

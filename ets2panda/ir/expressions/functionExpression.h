@@ -85,8 +85,8 @@ protected:
 
 private:
     friend class SizeOfNodeTest;
-    ScriptFunction *func_;
-    ir::Identifier *exprName_ {};
+    EPtr<ScriptFunction> func_;
+    EPtr<ir::Identifier> exprName_ {};
 };
 }  // namespace ark::es2panda::ir
 

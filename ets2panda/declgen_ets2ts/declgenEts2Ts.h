@@ -19,8 +19,8 @@
 #include "checker/ETSchecker.h"
 #include "compiler/lowering/phase.h"
 #include "libarkbase/os/file.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "parser/program/program.h"
+#include "util/eheap.h"
 #include "util/options.h"
 #include "util/diagnosticEngine.h"
 #include "isolatedDeclgenChecker.h"
@@ -53,7 +53,7 @@ public:
           isolatedDeclgenChecker_(isolatedDeclgenChecker),
           program_(program),
           diagnosticEngine_(checker->DiagnosticEngine()),
-          allocator_(SpaceType::SPACE_TYPE_COMPILER, nullptr, true),
+          allocator_(EHeap::CreateAllocator()),
           dependencySet_(allocator_.Adapter()),
           importSet_(allocator_.Adapter()),
           exportSet_(allocator_.Adapter()),

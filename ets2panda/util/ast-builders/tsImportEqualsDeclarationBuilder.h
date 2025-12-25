@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSImportEqualsDeclarationBuilder : public AstBuilder<TSImportEqualsDeclaration> {
 public:
-    explicit TSImportEqualsDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSImportEqualsDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSImportEqualsDeclarationBuilder &SetModuleReference(Expression *moduleReference)
     {

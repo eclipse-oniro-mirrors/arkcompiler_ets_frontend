@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSVoidKeywordBuilder : public AstBuilder<TSVoidKeyword> {
 public:
-    explicit TSVoidKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSVoidKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSVoidKeyword *Build()
     {

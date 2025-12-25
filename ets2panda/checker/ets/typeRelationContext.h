@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,6 @@ public:
                       const lexer::SourcePosition &pos, std::optional<util::DiagnosticWithParams> diag = std::nullopt,
                       TypeRelationFlag flags = TypeRelationFlag::NONE)
     {
-        flags_ |= ((flags & TypeRelationFlag::NO_BOXING) != 0) ? TypeRelationFlag::NONE : TypeRelationFlag::BOXING;
-        flags_ |= ((flags & TypeRelationFlag::NO_UNBOXING) != 0) ? TypeRelationFlag::NONE : TypeRelationFlag::UNBOXING;
-        flags_ |= ((flags & TypeRelationFlag::NO_WIDENING) != 0) ? TypeRelationFlag::NONE : TypeRelationFlag::WIDENING;
-
         auto *const etsChecker = relation->GetChecker()->AsETSChecker();
 
         ES2PANDA_ASSERT(target != nullptr);
@@ -56,11 +52,10 @@ public:
             if (relation->IsLegalBoxedPrimitiveConversion(target, source)) {
                 relation->Result(true);
             }
-            if (((flags_ & TypeRelationFlag::UNBOXING) != 0) && !relation->IsTrue() && source->IsETSObjectType() &&
-                !target->IsETSObjectType()) {
+            if (!relation->IsTrue() && source->IsETSObjectType() && !target->IsETSObjectType()) {
                 etsChecker->CheckUnboxedTypesAssignable(relation, source, target);
             }
-            if (((flags_ & TypeRelationFlag::BOXING) != 0) && target->IsETSObjectType() && !relation->IsTrue()) {
+            if (target->IsETSObjectType() && !relation->IsTrue()) {
                 etsChecker->CheckBoxedSourceTypeAssignable(relation, source, target);
             }
         }
@@ -93,11 +88,6 @@ public:
                       const lexer::SourcePosition &pos, const std::optional<util::DiagnosticWithParams> &diag,
                       TypeRelationFlag initialFlags = TypeRelationFlag::NONE)
     {
-        flags_ |=
-            ((initialFlags & TypeRelationFlag::NO_BOXING) != 0) ? TypeRelationFlag::NONE : TypeRelationFlag::BOXING;
-        flags_ |=
-            ((initialFlags & TypeRelationFlag::NO_UNBOXING) != 0) ? TypeRelationFlag::NONE : TypeRelationFlag::UNBOXING;
-
         auto *const etsChecker = relation->GetChecker()->AsETSChecker();
 
         relation->SetNode(node);
@@ -107,11 +97,10 @@ public:
             if (relation->IsLegalBoxedPrimitiveConversion(target, source)) {
                 relation->Result(true);
             }
-            if (((flags_ & TypeRelationFlag::UNBOXING) != 0U) && !relation->IsTrue() && source->IsETSObjectType() &&
-                !target->IsETSObjectType()) {
+            if (!relation->IsTrue() && source->IsETSObjectType() && !target->IsETSObjectType()) {
                 etsChecker->CheckUnboxedSourceTypeWithWideningAssignable(relation, source, target);
             }
-            if (((flags_ & TypeRelationFlag::BOXING) != 0) && target->IsETSObjectType() && !relation->IsTrue()) {
+            if (target->IsETSObjectType() && !relation->IsTrue()) {
                 etsChecker->CheckBoxedSourceTypeAssignable(relation, source, target);
             }
         }

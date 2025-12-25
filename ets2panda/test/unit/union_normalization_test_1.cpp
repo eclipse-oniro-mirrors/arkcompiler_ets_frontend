@@ -25,8 +25,7 @@
 #include "compiler/core/regSpiller.h"
 #include "compiler/lowering/phase.h"
 #include "es2panda.h"
-#include "libarkbase/mem/arena_allocator.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 #include "public/public.h"
 #include "util/arktsconfig.h"
 #include "util/generateBin.h"
@@ -46,7 +45,7 @@ TEST_F(UnionNormalizationTest, UnionWithObject)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(checker->GlobalIntBuiltinType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSObjectType());
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSStringBuiltinType());
@@ -72,7 +71,7 @@ TEST_F(UnionNormalizationTest, UnionWithIdenticalTypes1)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(checker->GlobalDoubleBuiltinType());
     unionConstituents.emplace_back(baseType);
     unionConstituents.emplace_back(checker->GlobalBuiltinETSStringType());
@@ -103,7 +102,7 @@ TEST_F(UnionNormalizationTest, DISABLED_UnionWithIdenticalTypes2)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(baseType);
     unionConstituents.emplace_back(checker->GlobalIntType());
     unionConstituents.emplace_back(baseType);
@@ -129,7 +128,7 @@ TEST_F(UnionNormalizationTest, DISABLED_UnionWithNumeric1)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(checker->GlobalETSBooleanType());
     unionConstituents.emplace_back(checker->GlobalIntType());
     unionConstituents.emplace_back(checker->GlobalDoubleType());
@@ -159,7 +158,7 @@ TEST_F(UnionNormalizationTest, DISABLED_UnionWithNumeric2)
     auto checker = Checker();
     ASSERT(checker);
 
-    ArenaVector<checker::Type *> unionConstituents(checker->Allocator()->Adapter());
+    std::vector<checker::Type *> unionConstituents;
     unionConstituents.emplace_back(checker->GlobalBuiltinETSStringType());
     unionConstituents.emplace_back(checker->GlobalIntType());
     unionConstituents.emplace_back(baseType);

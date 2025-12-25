@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class IfStatementBuilder : public AstBuilder<ir::IfStatement> {
 public:
-    explicit IfStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit IfStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     IfStatementBuilder &SetTest(Expression *test)
     {

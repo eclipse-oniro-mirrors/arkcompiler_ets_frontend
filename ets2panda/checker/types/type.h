@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 #define ES2PANDA_COMPILER_CHECKER_TYPES_TYPE_H
 
-#include <mutex>
 #include "generated/signatures.h"
 #include "checker/types/typeMapping.h"
 #include "checker/types/typeRelation.h"
@@ -45,6 +44,9 @@ class ETSResizableArrayType;
 
 using Substitution = std::map<ETSTypeParameter *, Type *>;
 using ArenaSubstitution = ArenaMap<ETSTypeParameter *, Type *>;
+using TypeTraverser = std::function<void(Type const *)>;
+
+extern void TypeStatsHook(Type *t);
 
 class Type {
 public:
@@ -217,20 +219,6 @@ public:
         return variable_;
     }
 
-    util::StringView ToAssemblerTypeView(ArenaAllocator *allocator) const
-    {
-        std::stringstream ss;
-        ToAssemblerType(ss);
-        return util::UString(ss.str(), allocator).View();
-    }
-
-    util::StringView ToAssemblerTypeWithRankView(ArenaAllocator *allocator) const
-    {
-        std::stringstream ss;
-        ToAssemblerTypeWithRank(ss);
-        return util::UString(ss.str(), allocator).View();
-    }
-
     std::stringstream ToAssemblerName() const
     {
         std::stringstream ss;
@@ -274,6 +262,46 @@ public:
         return 0;
     }
 
+    virtual void Iterate([[maybe_unused]] const TypeTraverser &func) const {};
+
+    void IterateRecursively(TypeTraverser const &func) const
+    {
+        IterateRecursivelyPreorder(func);
+    }
+
+    void IterateRecursivelyPreorder(TypeTraverser const &func) const
+    {
+        std::set<Type const *> types {this};
+        TypeTraverser hcb = [&](Type const *child) {
+            if (child != nullptr && types.find(child) == types.end()) {
+                types.emplace(child);
+                func(child);
+                child->Iterate(hcb);
+            }
+        };
+
+        func(this);
+        Iterate(hcb);
+    }
+
+    void IterateRecursivelyPostorder(TypeTraverser const &func) const
+    {
+        std::set<Type const *> types {};
+        TypeTraverser hcb = [&](Type const *child) {
+            if (child != nullptr && types.find(child) == types.end()) {
+                types.emplace(child);
+                child->Iterate(hcb);
+                func(child);
+            }
+        };
+
+        Iterate(hcb);
+
+        if (types.find(this) == types.end()) {
+            func(this);
+        }
+    }
+
     virtual void Identical(TypeRelation *relation, Type *other);
     virtual void AssignmentTarget(TypeRelation *relation, Type *source) = 0;
     virtual bool AssignmentSource(TypeRelation *relation, Type *target);
@@ -295,7 +323,7 @@ public:
 protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     TypeFlag typeFlags_;
-    varbinder::Variable *variable_ {};  // Variable associated with the type if any
+    EPtr<varbinder::Variable> variable_ {};  // Variable associated with the type if any
     uint32_t id_;
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };

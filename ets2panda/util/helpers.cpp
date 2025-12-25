@@ -167,6 +167,22 @@ util::StringView Helpers::ToStringView(ArenaAllocator *allocator, int32_t number
     return str.View();
 }
 
+util::StringView Helpers::ToStringView(SArenaAllocator *allocator, double number)
+{
+    return util::StringView(std::string_view(*allocator->New<SArenaString>(ToString(number), allocator->Adapter())));
+}
+
+util::StringView Helpers::ToStringView(SArenaAllocator *allocator, uint32_t number)
+{
+    ES2PANDA_ASSERT(number <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()));
+    return ToStringView(allocator, static_cast<int32_t>(number));
+}
+
+util::StringView Helpers::ToStringView(SArenaAllocator *allocator, int32_t number)
+{
+    return util::StringView(std::string_view(*allocator->New<SArenaString>(ToString(number), allocator->Adapter())));
+}
+
 bool Helpers::StartsWith(const std::string_view str, const std::string_view prefix)
 {
     if (str.length() < prefix.length()) {
@@ -661,7 +677,7 @@ std::tuple<util::StringView, bool> Helpers::ParamName(ArenaAllocator *allocator,
             break;
     }
 
-    return {Helpers::ToStringView(allocator, index), true};
+    return {UString(ToString(index), allocator).View(), true};
 }
 
 static std::string GetEscapedCharacter(const unsigned char c)
@@ -903,6 +919,22 @@ void Helpers::CheckValidFileName(const util::StringView &fileName, util::Diagnos
         util::DiagnosticMessageParams diagParams = {std::move(fileNameStr)};
         diagnosticEngine.LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
     }
+}
+
+//  Helper: checks that node or any of its parents was declared exported
+bool Helpers::IsExported(ir::AstNode const *node) noexcept
+{
+    if (node == nullptr) {
+        return true;
+    }
+
+    bool exported;
+    do {
+        exported = node->IsExported() || node->IsDefaultExported();
+        node = node->Parent();
+    } while (!exported && node != nullptr);
+
+    return exported;
 }
 
 std::vector<std::string> Helpers::Split(const std::string &str, const char delimiter)

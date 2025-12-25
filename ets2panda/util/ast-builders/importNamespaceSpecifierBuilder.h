@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ImportNamespaceSpecifierBuilder : public AstBuilder<ir::ImportNamespaceSpecifier> {
 public:
-    explicit ImportNamespaceSpecifierBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ImportNamespaceSpecifierBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ImportNamespaceSpecifierBuilder &SetLocal(Identifier *local)
     {

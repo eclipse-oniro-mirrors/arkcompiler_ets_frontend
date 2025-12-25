@@ -36,7 +36,7 @@ static size_t &LazyImportsCount()
 
 static checker::Type *CreateModuleObjectType(public_lib::Context *ctx, ir::ETSImportDeclaration *importDecl);
 
-static ir::ClassDeclaration *GetOrCreateLazyImportObjectClass(ark::ArenaAllocator *allocator, parser::Program *program)
+static ir::ClassDeclaration *GetOrCreateLazyImportObjectClass(ArenaAllocator *allocator, parser::Program *program)
 {
     auto globalClass = program->GlobalClass();
 

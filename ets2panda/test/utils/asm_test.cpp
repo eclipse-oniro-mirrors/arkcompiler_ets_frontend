@@ -22,7 +22,7 @@
 #include "generated/signatures.h"
 #include "gmock/gmock.h"
 #include "libarkfile/literal_data_accessor.h"
-#include "libarkbase/mem/pool_manager.h"
+#include "util/eheap.h"
 
 // Value printers for tests
 namespace ark::pandasm {
@@ -111,13 +111,11 @@ namespace test::utils {
 
 AsmTest::AsmTest()
 {
-    ark::mem::MemConfig::Initialize(0, 0, ark::es2panda::COMPILER_SIZE, 0, 0, 0);
-    ark::PoolManager::Initialize(ark::PoolType::MMAP);
+    ark::es2panda::EHeap::Initialize();
 }
 AsmTest::~AsmTest()
 {
-    ark::PoolManager::Finalize();
-    ark::mem::MemConfig::Finalize();
+    ark::es2panda::EHeap::Finalize();
 }
 
 ark::pandasm::Function *AsmTest::GetFunction(std::string_view functionName,

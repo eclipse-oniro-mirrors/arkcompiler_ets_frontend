@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSClassLiteralBuilder : public AstBuilder<ETSClassLiteral> {
 public:
-    explicit ETSClassLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSClassLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSClassLiteralBuilder &SetExpression(ir::TypeNode *expr)
     {

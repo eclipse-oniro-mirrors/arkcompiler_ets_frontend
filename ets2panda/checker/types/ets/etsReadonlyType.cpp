@@ -13,13 +13,9 @@
  * limitations under the License.
  */
 
-#include "etsTypeParameter.h"
-#include "etsNullishTypes.h"
 #include "etsReadonlyType.h"
-#include "ir/expressions/identifier.h"
-#include "ir/ts/tsTypeParameter.h"
+
 #include "checker/ETSchecker.h"
-#include "checker/ets/conversion.h"
 
 namespace ark::es2panda::checker {
 
@@ -118,6 +114,11 @@ void ETSReadonlyType::CheckVarianceRecursively(TypeRelation *relation, VarianceF
 {
     relation->CheckVarianceRecursively(GetUnderlying(),
                                        relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
+}
+
+void ETSReadonlyType::Iterate(const TypeTraverser &func) const
+{
+    func(tparam_);
 }
 
 }  // namespace ark::es2panda::checker

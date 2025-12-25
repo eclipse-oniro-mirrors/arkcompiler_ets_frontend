@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class UndefinedLiteralBuilder : public AstBuilder<ir::UndefinedLiteral> {
 public:
-    explicit UndefinedLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit UndefinedLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     UndefinedLiteral *Build()
     {

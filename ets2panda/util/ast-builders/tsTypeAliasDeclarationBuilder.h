@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeAliasDeclarationBuilder : public AstBuilder<TSTypeAliasDeclaration> {
 public:
-    explicit TSTypeAliasDeclarationBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSTypeAliasDeclarationBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSTypeAliasDeclarationBuilder &SetId(Identifier *id)
     {

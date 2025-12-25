@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSNewMultiDivArrayInstanceExpressionBuilder : public AstBuilder<ETSNewMultiDimArrayInstanceExpression> {
 public:
-    explicit ETSNewMultiDivArrayInstanceExpressionBuilder(ark::ArenaAllocator *allocator)
+    explicit ETSNewMultiDivArrayInstanceExpressionBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), dimension_(allocator->Adapter())
     {
     }

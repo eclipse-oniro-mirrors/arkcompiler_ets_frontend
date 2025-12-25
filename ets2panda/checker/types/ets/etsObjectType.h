@@ -32,19 +32,19 @@ inline constexpr auto *PARTIAL_CLASS_PREFIX = "%%partial-";
 
 class ETSObjectType : public Type {
 public:
-    using PropertyMap = ArenaUnorderedMap<util::StringView, varbinder::LocalVariable *>;
-    using InstantiationMap = ArenaUnorderedMap<util::StringView, ETSObjectType *>;
+    using PropertyMap = ArenaUnorderedMap<util::StringView, EPtr<varbinder::LocalVariable>>;
+    using InstantiationMap = ArenaUnorderedMap<util::StringView, EPtr<ETSObjectType>>;
     using PropertyTraverser = std::function<void(const varbinder::LocalVariable *)>;
-    using PropertyHolder = std::array<PropertyMap *, static_cast<size_t>(PropertyType::COUNT)>;
+    using PropertyHolder = std::array<EPtr<PropertyMap>, static_cast<size_t>(PropertyType::COUNT)>;
 
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
                            ir::AstNode *declNode, ETSObjectFlags flags)
         : ETSObjectType(allocator, name, internalName, std::make_tuple(declNode, flags, nullptr),
                         std::make_index_sequence<static_cast<size_t>(PropertyType::COUNT)> {})
     {
     }
 
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView internalName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView internalName,
                            std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info)
         : ETSObjectType(allocator, name, internalName, info,
                         std::make_index_sequence<static_cast<size_t>(PropertyType::COUNT)> {})
@@ -192,7 +192,7 @@ public:
 
     ETSObjectType *OutermostClass()
     {
-        auto *iter = enclosingType_;
+        auto *iter = &*enclosingType_;
 
         while (iter != nullptr && iter->EnclosingType() != nullptr) {
             iter = iter->EnclosingType();
@@ -296,7 +296,7 @@ public:
         return static_cast<checker::ETSObjectFlags>(flags_ & ETSObjectFlags::UNBOXABLE_TYPE);
     }
 
-    ETSObjectType *GetInstantiatedType(util::StringView hash);
+    ETSObjectType *GetTypeInstantiation(ETSChecker *checker, std::string const &hash);
 
     varbinder::Scope *GetTypeArgumentScope() const
     {
@@ -307,7 +307,7 @@ public:
         return typeParams->Scope();
     }
 
-    void InsertInstantiationMap(const util::StringView key, ETSObjectType *value);
+    void InsertTypeInstantiation(ETSChecker *checker, std::string const &hash, ETSObjectType *value);
 
     template <PropertyType TYPE>
     varbinder::LocalVariable *GetOwnProperty(const util::StringView name) const
@@ -383,7 +383,7 @@ public:
     bool ReplaceArgumentInSignature(std::vector<Signature *> &signatures, Signature *sigToInsert,
                                     TypeRelation *relation) const;
     bool CheckIdenticalFlags(ETSObjectType *other) const;
-    void Iterate(const PropertyTraverser &cb) const;
+    void IterateProperties(const PropertyTraverser &cb) const;
     void ToString(std::stringstream &ss, bool precise) const override;
     void Identical(TypeRelation *relation, Type *other) override;
     bool AssignmentSource(TypeRelation *relation, Type *target) override;
@@ -414,7 +414,9 @@ public:
     const ArenaVector<ETSObjectType *> &ReExports() const;
     bool IsSameBasedGeneric(TypeRelation *relation, Type const *other) const;
 
-    ThreadSafeArenaAllocator *Allocator() const
+    void Iterate(const TypeTraverser &func) const override;
+
+    ArenaAllocator *Allocator() const
     {
         return allocator_;
     }
@@ -431,7 +433,7 @@ protected:
 
 private:
     template <size_t... IS>
-    explicit ETSObjectType(ThreadSafeArenaAllocator *allocator, util::StringView name, util::StringView assemblerName,
+    explicit ETSObjectType(ArenaAllocator *allocator, util::StringView name, util::StringView assemblerName,
                            std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info,
                            [[maybe_unused]] std::index_sequence<IS...> s)
         : Type(TypeFlag::ETS_OBJECT),
@@ -509,9 +511,9 @@ private:
 
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
 
-    void SetCopiedTypeProperties(TypeRelation *relation, ETSObjectType *copiedType, ArenaVector<Type *> &&newTypeArgs,
-                                 ETSObjectType *base);
-    bool SubstituteTypeArgs(TypeRelation *relation, ArenaVector<Type *> &newTypeArgs, const Substitution *substitution);
+    void SetCopiedTypeProperties(TypeRelation *relation, ETSObjectType *copiedType,
+                                 std::vector<Type *> const &newTypeArgs, ETSObjectType *base);
+    bool SubstituteTypeArgs(TypeRelation *relation, std::vector<Type *> &newTypeArgs, const Substitution *substitution);
 
     bool TryCastByte(TypeRelation *const relation, Type *const target);
     bool TryCastIntegral(TypeRelation *const relation, Type *const target);
@@ -522,25 +524,25 @@ private:
 
     ir::TSTypeParameterDeclaration *GetTypeParams() const;
 
-    ThreadSafeArenaAllocator *const allocator_;
+    ArenaAllocator *const allocator_;
     util::StringView const name_;
     util::StringView const internalName_;
-    ir::AstNode *const declNode_;
-    mutable ArenaVector<ETSObjectType *> *interfaces_;
-    mutable ArenaVector<ETSObjectType *> *reExports_;
-    mutable ArenaMap<util::StringView, util::StringView> *reExportAlias_;
+    EPtr<ir::AstNode> const declNode_;
+    mutable EPtr<ArenaVector<ETSObjectType *>> interfaces_;
+    mutable EPtr<ArenaVector<ETSObjectType *>> reExports_;
+    mutable EPtr<ArenaMap<util::StringView, util::StringView>> reExportAlias_;
     ETSObjectFlags flags_;
     ArenaVector<Type *> typeArguments_;
-    ETSObjectType *superType_ {};
-    ETSObjectType *enclosingType_ {};
-    ETSObjectType *baseType_ {};
+    EPtr<ETSObjectType> superType_ {};
+    EPtr<ETSObjectType> enclosingType_ {};
+    EPtr<ETSObjectType> baseType_ {};
 
     // optimized subtyping
-    mutable ArenaSet<ETSObjectType *> *transitiveSupertypes_;
+    mutable EPtr<ArenaSet<ETSObjectType *>> transitiveSupertypes_;
 
     // for lazy properties instantiation
-    TypeRelation *relation_ = nullptr;
-    const ArenaSubstitution *effectiveSubstitution_ = nullptr;
+    EPtr<TypeRelation> relation_ = nullptr;
+    EPtr<const ArenaSubstitution> effectiveSubstitution_ = nullptr;
     mutable bool propertiesInstantiated_ = false;
     mutable ArenaVector<Signature *> constructSignatures_;
     mutable PropertyHolder properties_ {};

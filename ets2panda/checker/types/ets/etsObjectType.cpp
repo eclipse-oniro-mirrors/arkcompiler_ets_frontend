@@ -17,11 +17,12 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
+#include "checker/types/typeFlag.h"
 #include "compiler/lowering/phase.h"
 
 namespace ark::es2panda::checker {
 
-void ETSObjectType::Iterate(const PropertyTraverser &cb) const
+void ETSObjectType::IterateProperties(const PropertyTraverser &cb) const
 {
     ForEachAllOwnProperties(cb);
     ForEachAllNonOwnProperties(cb);
@@ -442,12 +443,12 @@ void ETSObjectType::ForEachAllOwnProperties(const PropertyTraverser &cb) const
 void ETSObjectType::ForEachAllNonOwnProperties(const PropertyTraverser &cb) const
 {
     if (superType_ != nullptr) {
-        superType_->Iterate(cb);
+        superType_->IterateProperties(cb);
     }
 
     EnsureInterfacesInitialized();
     for (const auto *interface : *interfaces_) {
-        interface->Iterate(cb);
+        interface->IterateProperties(cb);
     }
 }
 
@@ -1229,7 +1230,7 @@ ETSObjectType const *ETSObjectType::GetConstOriginalBaseType() const noexcept
     return this;
 }
 
-bool ETSObjectType::SubstituteTypeArgs(TypeRelation *const relation, ArenaVector<Type *> &newTypeArgs,
+bool ETSObjectType::SubstituteTypeArgs(TypeRelation *const relation, std::vector<Type *> &newTypeArgs,
                                        const Substitution *const substitution)
 {
     bool anyChange = false;
@@ -1260,7 +1261,7 @@ static ArenaSubstitution *ComputeEffectiveSubstitution(TypeRelation *const relat
 }
 
 void ETSObjectType::SetCopiedTypeProperties(TypeRelation *const relation, ETSObjectType *const copiedType,
-                                            ArenaVector<Type *> &&newTypeArgs, ETSObjectType *base)
+                                            std::vector<Type *> const &newTypeArgs, ETSObjectType *base)
 {
     ES2PANDA_ASSERT(copiedType != nullptr);
     copiedType->typeFlags_ = typeFlags_;
@@ -1274,10 +1275,15 @@ void ETSObjectType::SetCopiedTypeProperties(TypeRelation *const relation, ETSObj
         copiedType->SetBaseType(base);
     }
 
-    auto const &baseTypeParams = base->TypeArguments();
-    copiedType->effectiveSubstitution_ = ComputeEffectiveSubstitution(relation, baseTypeParams, newTypeArgs);
+    auto typeArgs = ArenaVector<Type *>(relation->Allocator()->Adapter());
+    for (auto *const type : newTypeArgs) {
+        typeArgs.emplace_back(type);
+    }
 
-    copiedType->SetTypeArguments(std::move(newTypeArgs));
+    auto const &baseTypeParams = base->TypeArguments();
+    copiedType->effectiveSubstitution_ = ComputeEffectiveSubstitution(relation, baseTypeParams, typeArgs);
+
+    copiedType->SetTypeArguments(std::move(typeArgs));
     ES2PANDA_ASSERT(relation);
     copiedType->relation_ = relation;
 }
@@ -1318,31 +1324,19 @@ void ETSObjectType::UpdateTypeProperties(PropertyProcesser const &func)
     }
 }
 
-static util::StringView GetHashFromSubstitution(const Substitution *substitution, const bool extensionFuncFlag,
-                                                ArenaAllocator *allocator)
+static std::string GetHashFromTArgs(std::vector<Type *> &targs, const bool isReadonly, const bool extensionFuncFlag)
 {
-    std::vector<std::string> fields;
-    for (auto [k, v] : *substitution) {
-        std::stringstream ss;
-        k->ToString(ss, true);
-        ss << ":";
-        v->ToString(ss, true);
-        // NOTE (mmartin): change bare address to something more appropriate unique representation
-        ss << ":" << k << ":" << v;
-        fields.push_back(ss.str());
-    }
-    std::sort(fields.begin(), fields.end());
-
     std::stringstream ss;
-    for (auto &fstr : fields) {
-        ss << fstr;
-        ss << ";";
-    }
-
     if (extensionFuncFlag) {
-        ss << "extensionFunctionType;";
+        ss << "@efn";
     }
-    return util::UString(ss.str(), allocator).View();
+    if (isReadonly) {
+        ss << "@rdo";
+    }
+    for (auto t : targs) {
+        ss << ":" << t;
+    }
+    return ss.str();
 }
 
 // #22951: remove isExtensionFunctionType flag
@@ -1354,9 +1348,9 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
         return this;
     }
 
-    auto *base = GetOriginalBaseType();
+    auto *const base = GetOriginalBaseType();
 
-    ArenaVector<Type *> newTypeArgs {allocator_->Adapter()};
+    std::vector<Type *> newTypeArgs {};
     const bool anyChange = SubstituteTypeArgs(relation, newTypeArgs, substitution);
     // Lambda types can capture type params in their bodies, normal classes cannot.
     // NOTE: gogabr. determine precise conditions where we do not need to copy.
@@ -1365,9 +1359,12 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
         return this;
     }
 
-    const util::StringView hash = GetHashFromSubstitution(substitution, isExtensionFunctionType, allocator_);
+    auto checker = relation->GetChecker()->AsETSChecker();
+
+    auto const cacheSource = UNLIKELY(IsPartial()) ? this : GetOriginalBaseType();
+    auto hash = GetHashFromTArgs(newTypeArgs, HasTypeFlag(TypeFlag::READONLY), isExtensionFunctionType);
     if (cache) {
-        if (auto *inst = GetInstantiatedType(hash); inst != nullptr) {
+        if (auto *inst = cacheSource->GetTypeInstantiation(checker, hash); inst != nullptr) {
             return inst;
         }
     }
@@ -1377,7 +1374,6 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
     }
     relation->IncreaseTypeRecursionCount(base);
 
-    auto checker = relation->GetChecker()->AsETSChecker();
     auto const copiedType = checker->CreateETSObjectType(declNode_, flags_, {{Allocator(), GetRelation()}});
     SetCopiedTypeProperties(relation, copiedType, std::move(newTypeArgs), base);
     if (isExtensionFunctionType) {
@@ -1386,7 +1382,7 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
 
     if (cache) {
         ES2PANDA_ASSERT(copiedType->GetRelation());
-        InsertInstantiationMap(hash, copiedType);
+        cacheSource->InsertTypeInstantiation(checker, std::move(hash), copiedType);
     }
 
     if (superType_ != nullptr) {
@@ -1670,40 +1666,49 @@ void ETSObjectType::CheckVarianceRecursively(TypeRelation *relation, VarianceFla
     }
 }
 
-ETSObjectType *ETSObjectType::GetInstantiatedType(util::StringView hash)
+ETSObjectType *ETSObjectType::GetTypeInstantiation(ETSChecker *checker, std::string const &hash)
 {
-    auto &instantiationMap =
-        compiler::GetPhaseManager()->Context()->GetChecker()->AsETSChecker()->GetObjectInstantiationMap();
-    auto found = instantiationMap.find(this);
-    if (found == instantiationMap.end()) {
+    auto &instantiationMap = checker->GetObjectInstantiationMap();
+
+    auto typeMap = instantiationMap.find(this);
+    if (typeMap == instantiationMap.end()) {
         return nullptr;
     }
 
-    auto found2 = instantiationMap.at(this).find(hash);
-    if (found2 == instantiationMap.at(this).end()) {
+    auto type = typeMap->second.find(hash);
+    if (type == typeMap->second.end()) {
         return nullptr;
     }
-
-    return found2->second;
+    return type->second;
 }
 
-void ETSObjectType::InsertInstantiationMap(util::StringView key, ETSObjectType *value)
+void ETSObjectType::InsertTypeInstantiation(ETSChecker *checker, std::string const &hash, ETSObjectType *value)
 {
-    auto &instantiationMap =
-        compiler::GetPhaseManager()->Context()->GetChecker()->AsETSChecker()->GetObjectInstantiationMap();
-    if (instantiationMap.find(this) == instantiationMap.end()) {
-        ArenaUnorderedMap<util::StringView, ETSObjectType *> instantiation(
-            compiler::GetPhaseManager()->Context()->GetChecker()->AsETSChecker()->Allocator()->Adapter());
-        instantiation.emplace(key, value);
-        instantiationMap.emplace(this, std::move(instantiation));
+    auto &instantiationMap = checker->GetObjectInstantiationMap();
+
+    std::unordered_map<std::string, ETSObjectType *> *typeMap;
+    if (auto it = instantiationMap.find(this); it != instantiationMap.end()) {
+        typeMap = &it->second;
+    } else {
+        std::unordered_map<std::string, ETSObjectType *> newTypeMap;
+        typeMap = &instantiationMap.emplace(this, std::move(newTypeMap)).first->second;
     }
-    compiler::GetPhaseManager()
-        ->Context()
-        ->GetChecker()
-        ->AsETSChecker()
-        ->GetObjectInstantiationMap()
-        .at(this)
-        .try_emplace(key, value);
+
+    typeMap->emplace(hash, value);
 }
 
+void ETSObjectType::Iterate(const TypeTraverser &func) const
+{
+    for (auto const *const type : typeArguments_) {
+        func(type);
+    }
+
+    if (interfaces_ != nullptr) {
+        for (auto const *const interface : *interfaces_) {
+            func(interface);
+        }
+    }
+
+    func(superType_);
+}
 }  // namespace ark::es2panda::checker

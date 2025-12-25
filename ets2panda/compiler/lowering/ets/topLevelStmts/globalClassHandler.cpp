@@ -33,7 +33,6 @@
 #include "ir/statements/expressionStatement.h"
 #include "util/helpers.h"
 #include "util/ustring.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "generated/diagnostic.h"
 
 namespace ark::es2panda::compiler {

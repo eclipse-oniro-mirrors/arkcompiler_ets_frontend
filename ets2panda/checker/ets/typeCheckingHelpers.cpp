@@ -112,7 +112,7 @@ Type *ETSChecker::GetNonNullishType(Type *type)
         return GetGlobalTypesHolder()->GlobalETSNeverType();
     }
 
-    ArenaVector<Type *> copied(ProgramAllocator()->Adapter());
+    std::vector<Type *> copied;
     for (auto const &t : type->AsETSUnionType()->ConstituentTypes()) {
         if (t->IsETSNullType() || t->IsETSUndefinedType()) {
             continue;
@@ -142,7 +142,7 @@ Type *ETSChecker::RemoveNullType(Type *const type)
     }
 
     ES2PANDA_ASSERT(type->IsETSUnionType());
-    ArenaVector<Type *> copiedTypes(ProgramAllocator()->Adapter());
+    std::vector<Type *> copiedTypes;
 
     for (auto *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
         if (!constituentType->IsETSNullType()) {
@@ -174,7 +174,7 @@ Type *ETSChecker::RemoveUndefinedType(Type *const type)
     }
 
     ES2PANDA_ASSERT(type->IsETSUnionType());
-    ArenaVector<Type *> copiedTypes(ProgramAllocator()->Adapter());
+    std::vector<Type *> copiedTypes;
 
     for (auto *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
         if (!constituentType->IsETSUndefinedType()) {
@@ -211,8 +211,8 @@ std::pair<Type *, Type *> ETSChecker::RemoveNullishTypes(Type *type)
     }
 
     ES2PANDA_ASSERT(type->IsETSUnionType());
-    ArenaVector<Type *> nullishTypes(ProgramAllocator()->Adapter());
-    ArenaVector<Type *> notNullishTypes(ProgramAllocator()->Adapter());
+    std::vector<Type *> nullishTypes;
+    std::vector<Type *> notNullishTypes;
 
     for (auto *constituentType : type->AsETSUnionType()->ConstituentTypes()) {
         if (constituentType->IsETSUndefinedType() || constituentType->IsETSNullType()) {
@@ -435,7 +435,11 @@ Type *ETSChecker::GetNonConstantType(Type *type)
     }
 
     if (type->IsETSUnionType()) {
-        return CreateETSUnionType(type->AsETSUnionType()->GetNonConstantTypes(this));
+        std::vector<Type *> nonConstTypes;
+        for (auto *ct : type->AsETSUnionType()->ConstituentTypes()) {
+            nonConstTypes.emplace_back(GetNonConstantType(ct));
+        }
+        return CreateETSUnionType(std::move(nonConstTypes));
     }
 
     if (!type->IsETSPrimitiveType()) {
@@ -725,24 +729,10 @@ Type *ETSChecker::GuaranteedTypeForUncheckedCallReturn(Signature *sig)
     return GuaranteedTypeForUncheckedCast(MaybeBoxType(baseSig->ReturnType()), MaybeBoxType(sig->ReturnType()));
 }
 
-Type *ETSChecker::ResolveUnionUncheckedType(ArenaVector<checker::Type *> &&apparentTypes)
-{
-    if (apparentTypes.empty()) {
-        return nullptr;
-    }
-    auto *unionType = CreateETSUnionType(std::move(apparentTypes));
-    ES2PANDA_ASSERT(unionType != nullptr);
-    if (unionType->IsETSUnionType()) {
-        return unionType->AsETSUnionType();
-    }
-    // Is case of single apparent type, just return itself
-    return unionType;
-}
-
 Type *ETSChecker::GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *memberExpression, ETSUnionType *etsUnionType)
 {
     const auto &types = etsUnionType->ConstituentTypes();
-    ArenaVector<checker::Type *> apparentTypes {ProgramAllocator()->Adapter()};
+    std::vector<checker::Type *> apparentTypes;
     const auto *prop = memberExpression->Property();
     util::StringView propertyName;
     if (prop->IsIdentifier()) {
@@ -769,7 +759,7 @@ Type *ETSChecker::GuaranteedTypeForUnionFieldAccess(ir::MemberExpression *member
             apparentTypes.push_back(fieldType);
         }
     }
-    return ResolveUnionUncheckedType(std::move(apparentTypes));
+    return CreateETSUnionType(std::move(apparentTypes));
 }
 
 bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *typeAliasNode,
@@ -1386,16 +1376,12 @@ Type const *ETSChecker::MaybeUnboxType(Type const *type) const
 
 void ETSChecker::CheckUnboxedTypeWidenable(TypeRelation *relation, Type *target, Type *self)
 {
-    checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(relation, TypeRelationFlag::ONLY_CHECK_WIDENING);
     // NOTE: vpukhov. handle union type
     auto unboxedType = MaybeUnboxInRelation(target);
     if (unboxedType == nullptr) {
         return;
     }
     WideningConverter(this, relation, unboxedType, self);
-    if (!relation->IsTrue()) {
-        relation->Result(relation->IsAssignableTo(self, unboxedType));
-    }
 }
 
 void ETSChecker::CheckUnboxedTypesAssignable(TypeRelation *relation, Type *source, Type *target)
@@ -1411,10 +1397,6 @@ void ETSChecker::CheckUnboxedTypesAssignable(TypeRelation *relation, Type *sourc
 void ETSChecker::CheckBoxedSourceTypeAssignable(TypeRelation *relation, Type *source, Type *target)
 {
     ES2PANDA_ASSERT(relation != nullptr);
-    checker::SavedTypeRelationFlagsContext savedTypeRelationFlagCtx(
-        relation, (relation->ApplyWidening() ? TypeRelationFlag::WIDENING : TypeRelationFlag::NONE) |
-                      (relation->OnlyCheckBoxingUnboxing() ? TypeRelationFlag::ONLY_CHECK_BOXING_UNBOXING
-                                                           : TypeRelationFlag::NONE));
 
     auto *boxedSourceType = relation->GetChecker()->AsETSChecker()->MaybeBoxInRelation(source);
     if (boxedSourceType == nullptr) {
@@ -1438,7 +1420,7 @@ void ETSChecker::CheckUnboxedSourceTypeWithWideningAssignable(TypeRelation *rela
         return;
     }
     relation->IsAssignableTo(unboxedSourceType, target);
-    if (!relation->IsTrue() && relation->ApplyWidening()) {
+    if (!relation->IsTrue()) {
         relation->GetChecker()->AsETSChecker()->CheckUnboxedTypeWidenable(relation, target, unboxedSourceType);
     }
 }

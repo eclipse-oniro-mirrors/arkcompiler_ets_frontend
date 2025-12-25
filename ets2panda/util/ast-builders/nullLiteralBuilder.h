@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class NullLiteralBuilder : public AstBuilder<ir::NullLiteral> {
 public:
-    explicit NullLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit NullLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     NullLiteral *Build()
     {

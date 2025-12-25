@@ -17,7 +17,6 @@
 #include "stringComparison.h"
 #include "checker/ETSchecker.h"
 #include "parser/parserImpl.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
 

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSInterfaceHeritageBuilder : public AstBuilder<TSInterfaceHeritage> {
 public:
-    explicit TSInterfaceHeritageBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSInterfaceHeritageBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSInterfaceHeritageBuilder &SetFunctionSignature(TypeNode *expr)
     {

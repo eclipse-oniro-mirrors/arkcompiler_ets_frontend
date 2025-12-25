@@ -52,7 +52,7 @@ LocalRegScope::LocalRegScope(CodeGen *cg, varbinder::Scope *scope) : RegScope(cg
     prevScope_ = cg_->scope_;
     cg_->scope_ = scope;
 
-    for (const auto &[_, var] : scope->OrderedBindings(cg_->Allocator())) {
+    for (const auto &[_, var] : scope->CodegenOrderedBindings()) {
         (void)_;
         if (!var->LexicalBound() && var->IsLocalVariable()) {
             var->AsLocalVariable()->BindVReg(cg_->AllocReg());
@@ -99,7 +99,7 @@ void FunctionRegScope::InitializeParams(const StoreParamCb &cb)
         paramReg++;
     }
 
-    for (const auto it : funcScope->OrderedBindings(cg_->Allocator())) {
+    for (const auto it : funcScope->CodegenOrderedBindings()) {
         auto *const var = std::get<1>(it);
         if (var->Declaration()->IsParameterDecl() || var->Declaration()->IsTypeAliasDecl()) {
             continue;

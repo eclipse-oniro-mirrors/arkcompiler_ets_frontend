@@ -26,7 +26,6 @@
 #include "ir/ts/tsInterfaceDeclaration.h"
 #include "ir/statements/blockStatement.h"
 #include "types/type.h"
-#include "libarkbase/utils/arena_containers.h"
 #include "varbinder/ETSBinder.h"
 #include "parser/program/program.h"
 #include "checker/ets/aliveAnalyzer.h"
@@ -51,17 +50,17 @@ void ETSChecker::ReputCheckerDataProgram(ETSChecker *eChecker)
         return;
     }
     readdedChecker_.insert(eChecker->readdedChecker_.begin(), eChecker->readdedChecker_.end());
-    auto computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
-    for (auto &[key, value] : *computedAbstractMapToCopy) {
-        if (GetCachedComputedAbstracts()->find(key) != GetCachedComputedAbstracts()->end()) {
+    auto &computedAbstractMapToCopy = eChecker->GetCachedComputedAbstracts();
+    for (auto &[key, value] : computedAbstractMapToCopy) {
+        if (cachedComputedAbstracts_.find(key) != cachedComputedAbstracts_.end()) {
             return;
         }
         auto &[v1, v2] = value;
-        ArenaVector<ETSFunctionType *> newV1(Allocator()->Adapter());
-        ArenaUnorderedSet<ETSObjectType *> newV2(Allocator()->Adapter());
+        std::vector<ETSFunctionType *> newV1;
+        std::unordered_set<ETSObjectType *> newV2;
         newV1.assign(v1.cbegin(), v1.cend());
         newV2.insert(v2.cbegin(), v2.cend());
-        GetCachedComputedAbstracts()->try_emplace(key, newV1, newV2);
+        cachedComputedAbstracts_.try_emplace(key, newV1, newV2);
     }
 
     auto &globalArraySigs = eChecker->globalArraySignatures_;
@@ -718,16 +717,6 @@ GlobalArraySignatureMap &ETSChecker::GlobalArrayTypes()
 const GlobalArraySignatureMap &ETSChecker::GlobalArrayTypes() const
 {
     return globalArraySignatures_;
-}
-
-const ArenaSet<util::StringView> &ETSChecker::UnionAssemblerTypes() const
-{
-    return unionAssemblerTypes_;
-}
-
-ArenaSet<util::StringView> &ETSChecker::UnionAssemblerTypes()
-{
-    return unionAssemblerTypes_;
 }
 
 Type *ETSChecker::GlobalTypeError() const

@@ -60,7 +60,7 @@ void LoopEnvScope::CopyBindings(PandaGen *pg, varbinder::VariableScope *scope, v
 
     ES2PANDA_ASSERT(scope->NeedLexEnv());
 
-    for (const auto &[_, variable] : scope_->OrderedBindings(pg_->Allocator())) {
+    for (const auto &[_, variable] : scope_->CodegenOrderedBindings()) {
         (void)_;
         if (!variable->HasFlag(flag)) {
             continue;

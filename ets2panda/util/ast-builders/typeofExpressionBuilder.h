@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TypeofExpressionBuilder : public AstBuilder<ir::TypeofExpression> {
 public:
-    explicit TypeofExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TypeofExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TypeofExpressionBuilder &SetArgument(Expression *arg)
     {

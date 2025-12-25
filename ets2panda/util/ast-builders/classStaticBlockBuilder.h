@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ClassStaticBlockBuilder : public AstBuilder<ir::ClassStaticBlock> {
 public:
-    explicit ClassStaticBlockBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ClassStaticBlockBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ClassStaticBlockBuilder &Setalue(Expression *value)
     {

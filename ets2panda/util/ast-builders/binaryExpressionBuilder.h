@@ -25,7 +25,7 @@ namespace ark::es2panda::ir {
 
 class BinaryExpressionBuilder : public AstBuilder<ir::BinaryExpression> {
 public:
-    explicit BinaryExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit BinaryExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     BinaryExpressionBuilder &SetOperator(lexer::TokenType op)
     {

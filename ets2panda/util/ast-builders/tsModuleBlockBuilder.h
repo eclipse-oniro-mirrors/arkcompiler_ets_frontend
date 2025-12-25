@@ -24,8 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSModuleBlockBuilder : public AstBuilder<TSModuleBlock> {
 public:
-    explicit TSModuleBlockBuilder(ark::ArenaAllocator *allocator)
-        : AstBuilder(allocator), statements_(allocator->Adapter())
+    explicit TSModuleBlockBuilder(ArenaAllocator *allocator) : AstBuilder(allocator), statements_(allocator->Adapter())
     {
     }
 

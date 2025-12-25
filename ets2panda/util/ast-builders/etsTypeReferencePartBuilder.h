@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSTypeReferencePartBuilder : public AstBuilder<ir::ETSTypeReferencePart> {
 public:
-    explicit ETSTypeReferencePartBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSTypeReferencePartBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSTypeReferencePartBuilder &SetName(Expression *name)
     {

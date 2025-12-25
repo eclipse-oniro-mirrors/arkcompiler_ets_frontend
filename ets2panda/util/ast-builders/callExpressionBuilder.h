@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class CallExpressionBuilder : public AstBuilder<ir::CallExpression> {
 public:
-    explicit CallExpressionBuilder(ark::ArenaAllocator *allocator)
+    explicit CallExpressionBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), arguments_(Allocator()->Adapter())
     {
     }

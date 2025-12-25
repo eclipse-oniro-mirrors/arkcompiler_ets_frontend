@@ -207,8 +207,7 @@ std::optional<CompletionEntryData> CompletionEntryDataToOriginInfo(ark::es2panda
                                                                    const std::string &name);
 std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::CompletionEntryData *data,
                                                   const std::shared_ptr<ArkTsConfig> &config);
-std::vector<ir::AstNode *> FilterFromBody(const ark::ArenaVector<ir::AstNode *> &bodyNodes,
-                                          const std::string &triggerWord);
+std::vector<ir::AstNode *> FilterFromBody(const ArenaVector<ir::AstNode *> &bodyNodes, const std::string &triggerWord);
 
 bool StartsWith(const std::string &str, const std::string &prefix);
 bool IsDefinedClassOrStruct(ir::AstNode *preNode);

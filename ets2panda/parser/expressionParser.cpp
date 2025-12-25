@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-#include "generated/tokenType.h"
 #include "parser/parserFlags.h"
 #include "ir/astNode.h"
 #include "ir/base/classDefinition.h"
@@ -73,6 +72,7 @@
 #include "util/errorRecovery.h"
 #include "util/options.h"
 #include "generated/diagnostic.h"
+#include "generated/tokenType.h"
 
 #include <memory>
 

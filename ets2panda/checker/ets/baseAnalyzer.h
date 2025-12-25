@@ -16,8 +16,8 @@
 #ifndef ES2PANDA_COMPILER_CHECKER_ETS_BASE_ANALYZER_H
 #define ES2PANDA_COMPILER_CHECKER_ETS_BASE_ANALYZER_H
 
-#include "libarkbase/utils/arena_containers.h"
 #include "util/enumbitops.h"
+#include "util/eheap.h"
 
 namespace ark::es2panda::ir {
 class AstNode;

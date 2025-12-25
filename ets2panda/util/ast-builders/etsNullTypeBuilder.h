@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSNullTypeBuilder : public AstBuilder<ETSNullType> {
 public:
-    explicit ETSNullTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSNullTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSNullType *Build()
     {

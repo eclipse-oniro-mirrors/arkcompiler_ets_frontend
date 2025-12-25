@@ -702,6 +702,7 @@ set(ES2PANDA_LIB_SRC
   util/dtoa_helper.cpp
   util/diagnostic.cpp
   util/diagnosticEngine.cpp
+  util/eheap.cpp
   util/errorRecovery.cpp
   util/es2pandaMacros.cpp
   util/helpers.cpp

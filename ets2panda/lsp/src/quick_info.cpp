@@ -750,7 +750,7 @@ std::vector<SymbolDisplayPart> CreateDisplayOfFunctionParams(ir::AstNode *node)
 }
 
 std::vector<SymbolDisplayPart> CreateDisplayOfTypeParams(
-    const ark::ArenaVector<ark::es2panda::ir::TSTypeParameter *> &typeParams)
+    const ArenaVector<ark::es2panda::ir::TSTypeParameter *> &typeParams)
 {
     std::vector<SymbolDisplayPart> displayParts;
     if (typeParams.empty()) {

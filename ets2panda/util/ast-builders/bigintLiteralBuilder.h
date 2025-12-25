@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class BigIntLiteralBuilder : public AstBuilder<ir::BigIntLiteral> {
 public:
-    explicit BigIntLiteralBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit BigIntLiteralBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     BigIntLiteralBuilder &SetValue(util::StringView val)
     {

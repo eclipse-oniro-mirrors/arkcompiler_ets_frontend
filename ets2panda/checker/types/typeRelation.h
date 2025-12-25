@@ -18,8 +18,6 @@
 
 #include <mutex>
 #include "lexer/token/sourceLocation.h"
-#include "generated/tokenType.h"
-#include "util/ustring.h"
 #include "util/enumbitops.h"
 #include "util/diagnosticEngine.h"
 
@@ -37,38 +35,30 @@ using ENUMBITOPS_OPERATORS;
 
 enum class TypeRelationFlag : uint32_t {
     NONE = 0U,
-    WIDENING = 1U << 1U,
-    BOXING = 1U << 2U,
-    UNBOXING = 1U << 3U,
-    CAPTURE = 1U << 4U,
-    STRING = 1U << 5U,
-    VALUE_SET = 1U << 6U,
-    UNCHECKED = 1U << 7U,
-    NO_THROW = 1U << 8U,
-    SELF_REFERENCE = 1U << 9U,
-    NO_RETURN_TYPE_CHECK = 1U << 10U,
-    DIRECT_RETURN = 1U << 11U,
-    NO_WIDENING = 1U << 12U,
-    NO_BOXING = 1U << 13U,
-    NO_UNBOXING = 1U << 14U,
-    ONLY_CHECK_WIDENING = 1U << 15U,
-    ONLY_CHECK_BOXING_UNBOXING = 1U << 16U,
-    IN_ASSIGNMENT_CONTEXT = 1U << 17U,
-    IN_CASTING_CONTEXT = 1U << 18U,
-    UNCHECKED_CAST = 1U << 19U,
-    IGNORE_TYPE_PARAMETERS = 1U << 20U,
-    CHECK_PROXY = 1U << 21U,
-    NO_CHECK_TRAILING_LAMBDA = 1U << 23U,
-    NO_THROW_GENERIC_TYPEALIAS = 1U << 24U,
-    OVERRIDING_CONTEXT = 1U << 25U,
-    IGNORE_REST_PARAM = 1U << 26U,
-    STRING_TO_CHAR = 1U << 27U,
-    OVERLOADING_CONTEXT = 1U << 28U,
-    NO_SUBSTITUTION_NEEDED = 1U << 29U,
+    CAPTURE = 1U << 1U,
+    STRING = 1U << 2U,
+    VALUE_SET = 1U << 3U,
+    UNCHECKED = 1U << 4U,
+    NO_THROW = 1U << 5U,
+    SELF_REFERENCE = 1U << 6U,
+    NO_RETURN_TYPE_CHECK = 1U << 7U,
+    DIRECT_RETURN = 1U << 8U,
+    IN_ASSIGNMENT_CONTEXT = 1U << 9U,
+    IN_CASTING_CONTEXT = 1U << 10U,
+    UNCHECKED_CAST = 1U << 11U,
+    IGNORE_TYPE_PARAMETERS = 1U << 12U,
+    CHECK_PROXY = 1U << 13U,
+    NO_CHECK_TRAILING_LAMBDA = 1U << 14U,
+    NO_THROW_GENERIC_TYPEALIAS = 1U << 15U,
+    OVERRIDING_CONTEXT = 1U << 16U,
+    IGNORE_REST_PARAM = 1U << 17U,
+    STRING_TO_CHAR = 1U << 18U,
+    OVERLOADING_CONTEXT = 1U << 19U,
+    NO_SUBSTITUTION_NEEDED = 1U << 20U,
 
-    ASSIGNMENT_CONTEXT = WIDENING | BOXING | UNBOXING,
+    ASSIGNMENT_CONTEXT = NONE,
     BRIDGE_CHECK = OVERRIDING_CONTEXT | IGNORE_TYPE_PARAMETERS,
-    CASTING_CONTEXT = WIDENING | BOXING | UNBOXING | UNCHECKED_CAST,
+    CASTING_CONTEXT = UNCHECKED_CAST,
 };
 
 enum class RelationResult : uint8_t { TRUE, FALSE, UNKNOWN, MAYBE, CACHE_MISS, ERROR };
@@ -95,7 +85,7 @@ public:
         RelationType type;
     };
 
-    explicit RelationHolder(ThreadSafeArenaAllocator *allocator) : cached_(allocator->Adapter()) {}
+    explicit RelationHolder(ArenaAllocator *allocator) : cached_(allocator->Adapter()) {}
 
     static RelationKey MakeKey(uint32_t sourceId, uint32_t targetId)
     {
@@ -143,21 +133,6 @@ public:
         return result_ == RelationResult::ERROR;
     }
 
-    bool ApplyWidening() const
-    {
-        return (flags_ & TypeRelationFlag::WIDENING) != 0;
-    }
-
-    bool ApplyBoxing() const
-    {
-        return (flags_ & TypeRelationFlag::BOXING) != 0;
-    }
-
-    bool ApplyUnboxing() const
-    {
-        return (flags_ & TypeRelationFlag::UNBOXING) != 0;
-    }
-
     bool NoReturnTypeCheck() const
     {
         return (flags_ & TypeRelationFlag::NO_RETURN_TYPE_CHECK) != 0;
@@ -174,16 +149,6 @@ public:
                  static_cast<std::underlying_type_t<TypeRelationFlag>>(0U)) ||
                 ((flags_ & TypeRelationFlag::ASSIGNMENT_CONTEXT) ==
                  static_cast<std::underlying_type_t<TypeRelationFlag>>(TypeRelationFlag::ASSIGNMENT_CONTEXT)));
-    }
-
-    bool OnlyCheckWidening() const
-    {
-        return (flags_ & TypeRelationFlag::ONLY_CHECK_WIDENING) != 0;
-    }
-
-    bool OnlyCheckBoxingUnboxing() const
-    {
-        return (flags_ & TypeRelationFlag::ONLY_CHECK_BOXING_UNBOXING) != 0;
     }
 
     bool IgnoreTypeParameters() const

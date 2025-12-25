@@ -14,6 +14,7 @@
  */
 
 #include "etsPartialTypeParameter.h"
+
 #include "checker/ETSchecker.h"
 
 namespace ark::es2panda::checker {
@@ -116,6 +117,11 @@ void ETSPartialTypeParameter::CheckVarianceRecursively(TypeRelation *relation, V
 {
     relation->CheckVarianceRecursively(GetUnderlying(),
                                        relation->TransferVariant(varianceFlag, VarianceFlag::COVARIANT));
+}
+
+void ETSPartialTypeParameter::Iterate(const TypeTraverser &func) const
+{
+    func(typeParameter_);
 }
 
 }  // namespace ark::es2panda::checker

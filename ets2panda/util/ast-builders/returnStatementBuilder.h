@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ReturnStatementBuilder : public AstBuilder<ir::ReturnStatement> {
 public:
-    explicit ReturnStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ReturnStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ReturnStatement *Build()
     {

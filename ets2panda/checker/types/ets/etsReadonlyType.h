@@ -17,7 +17,6 @@
 #define ES2PANDA_COMPILER_CHECKER_TYPES_ETS_READONLY_TYPE_H
 
 #include "checker/types/type.h"
-#include "ir/astNode.h"
 
 namespace ark::es2panda::checker {
 
@@ -41,6 +40,7 @@ public:
     Type *Substitute(TypeRelation *relation, const Substitution *substitution) override;
     void CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag) override;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void ToAssemblerType(std::stringstream &ss) const override;
     void ToDebugInfoType(std::stringstream &ss) const override;

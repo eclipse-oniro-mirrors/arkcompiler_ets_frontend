@@ -17,7 +17,6 @@
 #define ES2PANDA_PARSER_INCLUDE_PROGRAM_H
 
 #include "util/es2pandaMacros.h"
-#include "libarkbase/mem/pool_manager.h"
 #include "libarkbase/os/filesystem.h"
 #include "util/ustring.h"
 #include "util/path.h"

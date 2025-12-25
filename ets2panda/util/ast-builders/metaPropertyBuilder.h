@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class MetaPropertyBuilder : public AstBuilder<ir::MetaProperty> {
 public:
-    explicit MetaPropertyBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit MetaPropertyBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     MetaPropertyBuilder &SetKind(MetaProperty::MetaPropertyKind kind)
     {

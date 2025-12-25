@@ -17,7 +17,6 @@
 #define ES2PANDA_IR_STATEMENT_BLOCK_STATEMENT_H
 
 #include "ir/statement.h"
-#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::es2panda::checker {
 class ETSAnalyzer;
@@ -150,7 +149,7 @@ public:
 
 private:
     friend class SizeOfNodeTest;
-    varbinder::Scope *scope_ {};
+    EPtr<varbinder::Scope> scope_ {};
     ArenaVector<Statement *> statements_;
     ArenaUnorderedMap<AstNode *, BlockStatement *> trailingBlocks_;
 };

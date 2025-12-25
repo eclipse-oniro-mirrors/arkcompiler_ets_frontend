@@ -23,7 +23,7 @@ namespace ark::es2panda::checker {
 
 class ETSResizableArrayType : public ETSObjectType {
 public:
-    explicit ETSResizableArrayType(ThreadSafeArenaAllocator *allocator, ETSObjectType *super)
+    explicit ETSResizableArrayType(ArenaAllocator *allocator, ETSObjectType *super)
         : ETSObjectType(allocator, "", compiler::Signatures::BUILTIN_ARRAY, nullptr,
                         ETSObjectFlags::CLASS | ETSObjectFlags::BUILTIN_ARRAY | ETSObjectFlags::RESOLVED_SUPER),
           element_(nullptr)
@@ -31,13 +31,13 @@ public:
         SetSuperType(super);
     }
 
-    explicit ETSResizableArrayType(ThreadSafeArenaAllocator *allocator, util::StringView name,
+    explicit ETSResizableArrayType(ArenaAllocator *allocator, util::StringView name,
                                    std::tuple<ir::AstNode *, ETSObjectFlags, TypeRelation *> info)
         : ETSObjectType(allocator, name, compiler::Signatures::BUILTIN_ARRAY, info), element_(nullptr)
     {
     }
 
-    explicit ETSResizableArrayType(ThreadSafeArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation,
+    explicit ETSResizableArrayType(ArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation,
                                    Type *element)
         : ETSObjectType(
               allocator, "", compiler::Signatures::BUILTIN_ARRAY,
@@ -76,6 +76,7 @@ public:
 
     ETSResizableArrayType *Substitute(TypeRelation *relation, const Substitution *substitution) override;
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, [[maybe_unused]] bool precise) const override;
 
 private:

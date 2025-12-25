@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSAsExpressionBuilder : public AstBuilder<TSAsExpression> {
 public:
-    explicit TSAsExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSAsExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSAsExpressionBuilder &SetExpression(Expression *expression)
     {

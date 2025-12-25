@@ -584,25 +584,25 @@ private:
     bool RegisterUnexportedForDeclGen(ir::SrcDumper *dumper) const;
 
     friend class SizeOfNodeTest;
-    varbinder::LocalScope *scope_ {nullptr};
+    EPtr<varbinder::LocalScope> scope_ {nullptr};
     util::StringView internalName_ {};
-    Identifier *ident_ {};
-    TSTypeParameterDeclaration *typeParams_ {};
-    TSTypeParameterInstantiation *superTypeParams_ {};
+    EPtr<Identifier> ident_ {};
+    EPtr<TSTypeParameterDeclaration> typeParams_ {};
+    EPtr<TSTypeParameterInstantiation> superTypeParams_ {};
     ArenaVector<TSClassImplements *> implements_;
-    MethodDefinition *ctor_ {};
-    Expression *superClass_ {};
+    EPtr<MethodDefinition> ctor_ {};
+    EPtr<Expression> superClass_ {};
     ArenaVector<AstNode *> body_;
     ClassDefinitionModifiers modifiers_;
     es2panda::Language lang_;
     ArenaSet<varbinder::Variable *> capturedVars_;
     ArenaSet<varbinder::Variable *> localVariableIsNeeded_;
-    TSEnumDeclaration *origEnumDecl_ {};
-    ClassDeclaration *anonClass_ {nullptr};
+    EPtr<TSEnumDeclaration> origEnumDecl_ {};
+    EPtr<ClassDeclaration> anonClass_ {nullptr};
     static std::atomic<int> classCounter_;
     int localIndex_ {};
     std::string localPrefix_ {};
-    MethodDefinition *functionalReferenceReferencedMethod_ {};
+    EPtr<MethodDefinition> functionalReferenceReferencedMethod_ {};
     ArenaVector<const ir::ClassDeclaration *> exportedClasses_;
 };
 }  // namespace ark::es2panda::ir

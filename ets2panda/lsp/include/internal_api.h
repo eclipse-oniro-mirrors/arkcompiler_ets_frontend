@@ -22,6 +22,7 @@
 #include "ir/astNode.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
+#include "util/eheap.h"
 
 namespace ark::es2panda::lsp {
 
@@ -31,7 +32,7 @@ public:
 
     ~Initializer();
 
-    ark::ArenaAllocator *Allocator()
+    ArenaAllocator *Allocator()
     {
         return allocator_;
     }
@@ -53,7 +54,7 @@ public:
     {
         es2panda_Context *ctx = nullptr;
         auto *globalContext = new ark::es2panda::public_lib::GlobalContext();
-        auto globalAllocator = new ark::ThreadSafeArenaAllocator(ark::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        auto globalAllocator = ark::es2panda::EHeap::NewAllocator().release();
         globalContext->cachedExternalPrograms.emplace(fileName, nullptr);
         globalContext->externalProgramAllocators.emplace(fileName, globalAllocator);
         globalContext->stdLibAllocator = globalAllocator;
@@ -126,7 +127,7 @@ public:
 private:
     es2panda_Impl const *impl_;
     es2panda_Config *cfg_;
-    ark::ArenaAllocator *allocator_;
+    ArenaAllocator *allocator_;
 };
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);

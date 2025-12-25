@@ -121,8 +121,9 @@ struct TupleTypeInfo {
 class TSChecker : public Checker {
 public:
     // NOLINTNEXTLINE(readability-redundant-member-init)
-    explicit TSChecker([[maybe_unused]] ThreadSafeArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
-        : Checker(allocator, diagnosticEngine)
+    explicit TSChecker([[maybe_unused]] ArenaAllocator *allocator, util::DiagnosticEngine &diagnosticEngine)
+        : Checker(allocator, diagnosticEngine),
+          magicCheckedType_(reinterpret_cast<Type *>(allocator->Alloc(sizeof(void *))))
     {
     }
 
@@ -387,10 +388,19 @@ public:
                             ir::AstNode *expr);
     void CheckAssignmentOperator(lexer::TokenType op, ir::Expression *leftExpr, Type *leftType, Type *valueType);
 
+    Type *GetMagicCheckedType()
+    {
+        return magicCheckedType_;
+    }
+
 private:
     NumberLiteralPool numberLiteralMap_;
     StringLiteralPool stringLiteralMap_;
     StringLiteralPool bigintLiteralMap_;
+
+    /* this *magic* value is used by the TSAnalyzer and is re-initaized in constructor */
+    /* moved out of the TypedStatement */
+    checker::Type *magicCheckedType_;
 
     // Binary like expression
     void CheckBooleanLikeType(Type *leftType, Type *rightType, ir::AstNode *expr, lexer::TokenType op);

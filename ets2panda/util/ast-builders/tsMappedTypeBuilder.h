@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSMappedTypeBuilder : public AstBuilder<TSMappedType> {
 public:
-    explicit TSMappedTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSMappedTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSMappedTypeBuilder &SetTypeParameter(TSTypeParameter *typeParameter)
     {

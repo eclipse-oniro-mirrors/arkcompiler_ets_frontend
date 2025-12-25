@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSParameterExpressionBuilder : public AstBuilder<ETSParameterExpression> {
 public:
-    explicit ETSParameterExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSParameterExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSParameterExpressionBuilder &SetExpression(AnnotatedExpression *identOrSpread)
     {

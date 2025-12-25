@@ -18,7 +18,6 @@
 
 #include "ir/base/classDefinition.h"
 #include "util/ustring.h"
-#include "libarkbase/utils/arena_containers.h"
 
 namespace ark::panda_file {
 class ClassDataAccessor;

@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class DoWhileStatementBuilder : public AstBuilder<ir::DoWhileStatement> {
 public:
-    explicit DoWhileStatementBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit DoWhileStatementBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     DoWhileStatementBuilder &SetTest(Expression *test)
     {

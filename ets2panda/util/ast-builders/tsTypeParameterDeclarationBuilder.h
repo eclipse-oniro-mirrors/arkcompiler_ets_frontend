@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSTypeParameterDeclarationBuilder : public AstBuilder<TSTypeParameterDeclaration> {
 public:
-    explicit TSTypeParameterDeclarationBuilder(ark::ArenaAllocator *allocator)
+    explicit TSTypeParameterDeclarationBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), params_(allocator->Adapter())
     {
     }

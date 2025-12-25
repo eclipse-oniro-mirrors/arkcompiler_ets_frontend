@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class SwitchCaseStatementBuilder : public AstBuilder<ir::SwitchCaseStatement> {
 public:
-    explicit SwitchCaseStatementBuilder(ark::ArenaAllocator *allocator)
+    explicit SwitchCaseStatementBuilder(ArenaAllocator *allocator)
         : AstBuilder(allocator), consequent_(allocator->Adapter())
     {
     }
@@ -49,7 +49,7 @@ public:
 
 private:
     Expression *test_ {};
-    ark::ArenaVector<Statement *> consequent_;
+    ArenaVector<Statement *> consequent_;
 };
 
 }  // namespace ark::es2panda::ir

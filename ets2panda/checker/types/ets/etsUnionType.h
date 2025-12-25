@@ -32,6 +32,7 @@ public:
         return constituentTypes_;
     }
 
+    void Iterate(const TypeTraverser &func) const override;
     void ToString(std::stringstream &ss, bool precise) const override;
     void ToAssemblerType(std::stringstream &ss) const override;
     void ToDebugInfoType(std::stringstream &ss) const override;
@@ -51,8 +52,6 @@ public:
     [[nodiscard]] bool IsOverlapWith(TypeRelation *relation, Type const *type) const noexcept;
 
     static void NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &types);
-
-    [[nodiscard]] ArenaVector<Type *> GetNonConstantTypes(ETSChecker *checker) const noexcept;
 
     const util::StringView &GetAssemblerType() const
     {
@@ -98,7 +97,7 @@ private:
 
     static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types);
     [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::Type *source,
-                                          ArenaVector<Type *> &unionTypes) noexcept;
+                                          std::vector<Type *> &unionTypes) noexcept;
 
     [[nodiscard]] checker::Type *GetAssignableBuiltinType(
         checker::ETSChecker *checker, checker::ETSObjectType *sourceType,

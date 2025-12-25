@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class TSObjectKeywordBuilder : public AstBuilder<TSObjectKeyword> {
 public:
-    explicit TSObjectKeywordBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit TSObjectKeywordBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     TSObjectKeyword *Build()
     {

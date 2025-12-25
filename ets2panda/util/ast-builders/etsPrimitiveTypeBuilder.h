@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ETSPrimitiveTypeBuilder : public AstBuilder<ETSPrimitiveType> {
 public:
-    explicit ETSPrimitiveTypeBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ETSPrimitiveTypeBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ETSPrimitiveTypeBuilder &SetPrimitiveType(PrimitiveType type)
     {

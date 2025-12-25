@@ -15,9 +15,6 @@
 
 #include "type.h"
 
-#include "checker/types/typeFlag.h"
-#include "checker/types/typeRelation.h"
-#include "checker/types/ets/etsObjectType.h"
 #include "checker/checker.h"
 
 namespace ark::es2panda::checker {

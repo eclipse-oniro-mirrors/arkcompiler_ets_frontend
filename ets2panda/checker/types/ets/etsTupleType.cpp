@@ -17,7 +17,6 @@
 
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
-#include "ir/ets/etsTuple.h"
 
 namespace ark::es2panda::checker {
 void ETSTupleType::ToString(std::stringstream &ss, bool precise) const
@@ -125,13 +124,13 @@ void ETSTupleType::AssignmentTarget(TypeRelation *const relation, Type *const so
 Type *ETSTupleType::Substitute(TypeRelation *relation, const Substitution *substitution)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    ArenaVector<Type *> newTypeList(checker->ProgramAllocator()->Adapter());
+    std::vector<Type *> newTypeList;
 
     for (auto *const tupleTypeListElement : GetTupleTypesList()) {
         newTypeList.emplace_back(tupleTypeListElement->Substitute(relation, substitution));
     }
 
-    return checker->ProgramAllocator()->New<ETSTupleType>(checker, std::move(newTypeList));
+    return checker->CreateETSTupleType(std::move(newTypeList), HasTypeFlag(TypeFlag::READONLY));
 }
 
 void ETSTupleType::IsSubtypeOf(TypeRelation *const relation, Type *target)
@@ -162,16 +161,13 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
             return;
         }
 
-        const SavedTypeRelationFlagsContext savedFlagsCtx(
-            relation, TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_WIDENING);
-
-        const bool elementsAssignable =
+        const bool elementsAreSupertypes =
             std::all_of(GetTupleTypesList().begin(), GetTupleTypesList().end(),
                         [&relation, &arrayTarget](auto *const tupleTypeAtIdx) {
-                            return relation->IsAssignableTo(tupleTypeAtIdx, arrayTarget->ElementType());
+                            return relation->IsSupertypeOf(arrayTarget->ElementType(), tupleTypeAtIdx);
                         });
 
-        relation->Result(elementsAssignable);
+        relation->Result(elementsAreSupertypes);
         return;
     }
 
@@ -182,10 +178,7 @@ void ETSTupleType::Cast(TypeRelation *const relation, Type *const target)
     }
 
     for (TupleSizeType idx = 0; idx < GetTupleSize(); ++idx) {
-        const SavedTypeRelationFlagsContext savedFlagsCtx(
-            relation, TypeRelationFlag::NO_BOXING | TypeRelationFlag::NO_UNBOXING | TypeRelationFlag::NO_WIDENING);
-
-        if (!relation->IsAssignableTo(tupleTarget->GetTypeAtIndex(idx), GetTypeAtIndex(idx))) {
+        if (!relation->IsSupertypeOf(GetTypeAtIndex(idx), tupleTarget->GetTypeAtIndex(idx))) {
             return;
         }
     }
@@ -197,7 +190,12 @@ Type *ETSTupleType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[ma
                                 [[maybe_unused]] GlobalTypesHolder *globalTypes)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
-    auto *const tupleType = allocator->New<ETSTupleType>(checker, GetTupleTypesList());
+    ArenaVector<Type *> copiedElements(checker->Allocator()->Adapter());
+    copiedElements.reserve(GetTupleTypesList().size());
+    for (auto t : GetTupleTypesList()) {
+        copiedElements.push_back(t->Instantiate(allocator, relation, globalTypes));
+    }
+    auto *const tupleType = allocator->New<ETSTupleType>(checker, std::move(copiedElements));
     ES2PANDA_ASSERT(tupleType != nullptr);
     tupleType->typeFlags_ = typeFlags_;
     return tupleType;
@@ -207,6 +205,13 @@ void ETSTupleType::CheckVarianceRecursively(TypeRelation *relation, VarianceFlag
 {
     for (auto const &ctype : typeList_) {
         relation->CheckVarianceRecursively(ctype, relation->TransferVariant(varianceFlag, VarianceFlag::INVARIANT));
+    }
+}
+
+void ETSTupleType::Iterate(const TypeTraverser &func) const
+{
+    for (auto const *const type : typeList_) {
+        func(type);
     }
 }
 

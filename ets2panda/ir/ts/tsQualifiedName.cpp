@@ -21,8 +21,8 @@
 #include "compiler/core/pandagen.h"
 
 namespace ark::es2panda::ir {
-TSQualifiedName::TSQualifiedName(Expression *left, Identifier *right, ArenaAllocator *allocator)
-    : Expression(AstNodeType::TS_QUALIFIED_NAME), left_(left), right_(right), allocator_(allocator)
+TSQualifiedName::TSQualifiedName(Expression *left, Identifier *right, [[maybe_unused]] ArenaAllocator *allocator)
+    : Expression(AstNodeType::TS_QUALIFIED_NAME), left_(left), right_(right)
 {
     ES2PANDA_ASSERT(left_ != nullptr && right_ != nullptr);
 }
@@ -33,7 +33,6 @@ TSQualifiedName::TSQualifiedName([[maybe_unused]] Tag const tag, TSQualifiedName
 {
     left_ = other.left_->Clone(allocator, this)->AsExpression();
     right_ = other.right_->Clone(allocator, this)->AsIdentifier();
-    allocator_ = allocator;
 }
 
 void TSQualifiedName::Iterate(const NodeTraverser &cb) const
@@ -88,7 +87,8 @@ checker::VerifiedType TSQualifiedName::Check(checker::ETSChecker *checker)
 
 util::StringView TSQualifiedName::Name() const
 {
-    util::UString packageName(allocator_);
+    EAllocator fakeAlloc;
+    util::UString packageName(&fakeAlloc);
 
     const auto *iter = this;
 

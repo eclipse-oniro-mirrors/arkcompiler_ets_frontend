@@ -24,7 +24,7 @@ namespace ark::es2panda::ir {
 
 class ArrowFunctionExpressionBuilder : public AstBuilder<ir::ArrowFunctionExpression> {
 public:
-    explicit ArrowFunctionExpressionBuilder(ark::ArenaAllocator *allocator) : AstBuilder(allocator) {}
+    explicit ArrowFunctionExpressionBuilder(ArenaAllocator *allocator) : AstBuilder(allocator) {}
 
     ArrowFunctionExpressionBuilder &SetFunction(ScriptFunction *func)
     {
