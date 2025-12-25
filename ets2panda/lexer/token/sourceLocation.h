@@ -211,6 +211,7 @@ public:
     SourceLocation GetLocation(SourcePosition pos) const noexcept;
     std::pair<size_t, size_t> GetLocation(size_t offset) const noexcept;
     size_t GetOffset(SourceLocation loc) const noexcept;
+    size_t GetOffsetOfLine(size_t line) const noexcept;
 
 private:
     std::vector<OffsetEntry> entries_;

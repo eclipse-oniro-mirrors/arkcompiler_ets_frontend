@@ -575,3 +575,28 @@ console.log(p1.age);
     ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result));
     initializer.DestroyContext(ctx);
 }
+
+TEST_F(LspRenameInfoTests, GetConstVariableRenameInfo)
+{
+    const std::string fileContent = R"(
+const demo1 = 1;
+class test {
+    a =  demo1;
+}
+console.log(demo1);
+)";
+    Initializer initializer = Initializer();
+    es2panda_Context *ctx =
+        initializer.CreateContext("GetConstVariableRenameInfo.ets", ES2PANDA_STATE_CHECKED, fileContent.c_str());
+    auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
+    auto consoleNode = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
+        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "console";
+    });
+    auto consoleDecl = consoleNode->Variable()->Declaration()->Node();
+    std::string pandaLibPath = GetPandalibPath(consoleDecl);
+    LSPAPI const *lspApi = GetImpl();
+
+    auto result = lspApi->getRenameInfo(ctx, fileContent.find("demo1;"), const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result));
+    initializer.DestroyContext(ctx);
+}

@@ -171,6 +171,22 @@ size_t LineIndex::GetOffset(SourceLocation loc) const noexcept
     return offset;
 }
 
+size_t LineIndex::GetOffsetOfLine(size_t line) const noexcept
+{
+    if (line >= entries_.size()) {
+        return 0;
+    }
+
+    const auto &entry = entries_[line];
+    size_t offset = entry.lineStart;
+
+    for (const auto &range : entry.ranges) {
+        offset += range.cnt * range.byteSize;
+    }
+
+    return offset;
+}
+
 SourceLocation SourcePosition::ToLocation() const
 {
     return lexer::LineIndex(Program()->SourceCode()).GetLocation(*this);

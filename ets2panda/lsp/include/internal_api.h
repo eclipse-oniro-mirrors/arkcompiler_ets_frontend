@@ -131,6 +131,9 @@ private:
 };
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
+ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange &span, bool flagFindFirstMatch);
+ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &span);
+ir::AstNode *GetTouchingTokenForIdentifier(es2panda_Context *context, size_t pos, bool flagFindFirstMatch);
 References GetFileReferencesImpl(es2panda_Context *referenceFileContext, char const *searchFileName,
                                  bool isPackageModule);
 ir::AstNode *FindPrecedingToken(const size_t pos, const ir::AstNode *startNode, ArenaAllocator *allocator);
@@ -152,7 +155,10 @@ DocumentHighlights GetDocumentHighlightsImpl(es2panda_Context *context, size_t p
 void GetReferenceLocationAtPositionImpl(FileNodeInfo fileNodeInfo, es2panda_Context *referenceFileContext,
                                         ReferenceLocationList *list);
 void RemoveFromFiles(std::vector<std::string> &files, const std::vector<std::string> &autoGenerateFolders);
+ir::AstNode *GetIdentifier(ir::AstNode *node);
+ark::es2panda::varbinder::Variable *ResolveIdentifier(const ark::es2panda::ir::Identifier *ident);
 ir::AstNode *FindRightToken(const size_t pos, const std::vector<ir::AstNode *> &nodes);
+ir::AstNode *GetOwner(ir::AstNode *node);
 std::string GetOwnerId(ir::AstNode *node);
 std::string GetIdentifierName(ir::AstNode *node);
 bool NodeHasTokens(const ir::AstNode *node);

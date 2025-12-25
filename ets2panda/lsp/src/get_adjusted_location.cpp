@@ -591,6 +591,30 @@ AstNode *GetTouchingPropertyName(es2panda_Context *context, size_t pos)
         return nullptr;
     }
 
+    token = token->OriginalNode() == nullptr ? token : token->OriginalNode();
+    if (token->IsCallExpression() && token->AsCallExpression()->Callee()->IsIdentifier()) {
+        return token->AsCallExpression()->Callee()->AsIdentifier();
+    }
+
+    if (token->IsProperty() || token->IsIdentifier()) {
+        return token;
+    }
+
+    if (token->IsClassDeclaration() || token->IsFunctionDeclaration() || token->IsTSConstructorType()) {
+        return token;
+    }
+
+    return nullptr;
+}
+
+AstNode *GetTouchingIdentifierName(es2panda_Context *context, size_t pos)
+{
+    AstNode *token = GetTouchingTokenForIdentifier(context, pos, false);
+    if (token == nullptr) {
+        return nullptr;
+    }
+
+    token = token->OriginalNode() == nullptr ? token : token->OriginalNode();
     if (token->IsCallExpression() && token->AsCallExpression()->Callee()->IsIdentifier()) {
         return token->AsCallExpression()->Callee()->AsIdentifier();
     }

@@ -125,8 +125,7 @@ protected:
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable1)
 {
-    const std::string code = R"('use static'
-
+    const std::string code = R"(
 class AccountingDepartment {
     name: string = '';
 
@@ -135,8 +134,7 @@ class AccountingDepartment {
     }
 }
 )";
-    const std::string expected = R"('use static'
-
+    const std::string expected = R"(
 const newLocal = 'Department name:';
 class AccountingDepartment {
     name: string = '';
@@ -179,7 +177,7 @@ class AccountingDepartment {
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable2)
 {
-    const std::string code = R"('use static'
+    const std::string code = R"(
 
 class AccountingDepartment {
     name: string = '';
@@ -189,7 +187,7 @@ class AccountingDepartment {
     }
 }
 )";
-    const std::string expected = R"('use static'
+    const std::string expected = R"(
 const newLocal = 'Department name:';
 
 class AccountingDepartment {
@@ -234,8 +232,7 @@ class AccountingDepartment {
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable3)
 {
-    const std::string code = R"('use static'
-
+    const std::string code = R"(
 class AccountingDepartment {
     name: string = '';
 
@@ -244,8 +241,7 @@ class AccountingDepartment {
     }
 }
 )";
-    const std::string expected = R"('use static'
-
+    const std::string expected = R"(
 class AccountingDepartment {
     name: string = '';
 
@@ -288,8 +284,7 @@ class AccountingDepartment {
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable6)
 {
-    const std::string code = R"('use static'
-
+    const std::string code = R"(
 class AccountingDepartment {
     name: string = '';
 
@@ -298,11 +293,10 @@ class AccountingDepartment {
     }
 }
 )";
-    const std::string expected = R"('use static'
-
+    const std::string expected = R"(
 class AccountingDepartment {
-private readonly newProperty = 'Department name:';
     name: string = '';
+    private readonly newProperty = 'Department name:';
 
     printName(): void {
 
@@ -343,13 +337,11 @@ private readonly newProperty = 'Department name:';
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable7)
 {
-    const std::string code = R"('use static'
-
+    const std::string code = R"(
 const arr: Int[] = [1]
 const x = arr.filter(x => x == 1).map(x => x + 1).flatMap(x => [x, x * 2]);
 )";
-    const std::string expected = R"('use static'
-
+    const std::string expected = R"(
 const arr: Int[] = [1]
 let newLocal = arr.filter(x => x == 1).map(x => x + 1);
 const x = newLocal.flatMap(x => [x, x * 2]);
@@ -376,8 +368,7 @@ const x = newLocal.flatMap(x => [x, x * 2]);
 
 TEST_F(LspExtrSymblGetEditsTestsVariable, ExtractVariable8)
 {
-    const std::string code = R"('use static'
-
+    const std::string code = R"(
 class A {
   foo(): string {
     return "1";
@@ -394,8 +385,7 @@ class B {
   }
 }
 )";
-    const std::string expected = R"('use static'
-
+    const std::string expected = R"(
 class A {
   foo(): string {
     return "1";

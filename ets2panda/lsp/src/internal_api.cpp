@@ -88,6 +88,157 @@ ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFi
     return found;
 }
 
+ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange &span, bool flagFindFirstMatch)
+{
+    if (context == nullptr) {
+        return nullptr;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return nullptr;
+    }
+    auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    auto checkFunc = [&span](ir::AstNode *node) {
+        return node->Start().index <= span.pos && node->End().index >= span.end;
+    };
+    auto found = ast->FindChild(checkFunc);
+    while (found != nullptr && !flagFindFirstMatch) {
+        auto *nestedFound = found->FindChild(checkFunc);
+        if (nestedFound == nullptr) {
+            break;
+        }
+        found = nestedFound;
+    }
+    return found;
+}
+
+bool IsRangeInNode(const ir::AstNode *node, const TextRange &span)
+{
+    if (!node) {
+        return false;
+    }
+    return node->Start().index <= span.pos && node->End().index >= span.end;
+}
+
+bool IsSyntheticNode(const ir::AstNode *node)
+{
+    return node->Start().index == 0 && node->End().index == 0;
+}
+
+bool IsExactMatch(const ir::AstNode *node, const TextRange &span)
+{
+    return node && node->Start().index == span.pos && node->End().index == span.end;
+}
+
+bool IsOverlapping(const ir::AstNode *child, const TextRange &span)
+{
+    return child && child->Start().index <= span.end && child->End().index >= span.pos;
+}
+
+bool IsContained(const ir::AstNode *child, const TextRange &span)
+{
+    return child && child->Start().index >= span.pos && child->End().index <= span.end;
+}
+
+ir::AstNode *FindDeepestContainingNode(ir::AstNode *node, const TextRange &span)
+{
+    ir::AstNode *current = node;
+    while (current) {
+        ir::AstNode *next = nullptr;
+        ir::AstNode *synthetic = nullptr;
+        current = current->OriginalNode() ? current->OriginalNode() : current;
+        current->Iterate([&](ir::AstNode *child) {
+            if (IsRangeInNode(child, span)) {
+                next = child;
+            } else if (IsSyntheticNode(child)) {
+                synthetic = child;
+            }
+        });
+
+        if (!next && !synthetic) {
+            break;
+        }
+        current = next ? next : synthetic;
+    }
+    return current;
+}
+
+ir::AstNode *ResolveAmbiguousChildren(ir::AstNode *parent, const std::vector<ir::AstNode *> &contained,
+                                      const std::vector<ir::AstNode *> &overlapping, size_t totalChildren)
+{
+    if (totalChildren == 0)
+        return parent;
+    if (totalChildren == 1) {
+        return contained.empty() ? nullptr : contained[0];
+    }
+
+    if (contained.size() == totalChildren) {
+        return parent;
+    }
+    if (overlapping.size() == 1) {
+        return overlapping[0];
+    }
+    return nullptr;
+}
+ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &span)
+{
+    if (!node || !IsRangeInNode(node, span)) {
+        return nullptr;
+    }
+
+    ir::AstNode *candidate = FindDeepestContainingNode(const_cast<ir::AstNode *>(node), span);
+
+    if (IsExactMatch(candidate, span)) {
+        return candidate;
+    }
+
+    std::vector<ir::AstNode *> contained;
+    std::vector<ir::AstNode *> overlapping;
+    size_t total = 0;
+
+    candidate->Iterate([&](ir::AstNode *child) {
+        if (!child) {
+            return;
+        }
+        total++;
+        if (IsOverlapping(child, span)) {
+            overlapping.push_back(child);
+        }
+        if (IsContained(child, span)) {
+            contained.push_back(child->OriginalNode() ? child->OriginalNode() : child);
+        }
+    });
+
+    return ResolveAmbiguousChildren(candidate, contained, overlapping, total);
+}
+
+ir::AstNode *GetTouchingTokenForIdentifier(es2panda_Context *context, size_t pos, bool flagFindFirstMatch)
+{
+    if (context == nullptr) {
+        return nullptr;
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    if (ctx->parserProgram == nullptr || ctx->parserProgram->Ast() == nullptr) {
+        return nullptr;
+    }
+    auto ast = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
+    auto checkFunc = [&pos](ir::AstNode *node) { return pos >= node->Start().index && pos < node->End().index; };
+
+    auto found = ast->FindChild(checkFunc);
+    for (auto *stmt : ast->AsETSModule()->Statements()) {
+        found = stmt->FindChild(checkFunc);
+        while (found != nullptr && !flagFindFirstMatch) {
+            auto *nestedFound = found->FindChild(checkFunc);
+            auto *origin = found->OriginalNode() != nullptr ? found->OriginalNode() : found;
+            if (nestedFound == nullptr && origin->IsIdentifier()) {
+                return found;
+            }
+            found = nestedFound;
+        }
+    }
+    return found;
+}
+
 Position TransSourcePositionToPosition(lexer::SourcePosition sourcePos)
 {
     return Position(sourcePos.line, sourcePos.index);
@@ -518,10 +669,51 @@ void SaveNode(ir::AstNode *node, public_lib::Context *ctx, ReferenceLocationList
 
 ir::AstNode *GetIdentifier(ir::AstNode *node)
 {
-    if (!node->IsIdentifier()) {
-        return node->FindChild([](ir::AstNode *node1) { return node1->IsIdentifier(); });
+    if (node == nullptr) {
+        return nullptr;
     }
-    return node;
+    auto find = node->OriginalNode() == nullptr ? node : node->OriginalNode();
+    if (find != nullptr && !find->IsIdentifier()) {
+        find = node->FindChild([](ir::AstNode *node1) {
+            return node1->IsIdentifier() || (node1->OriginalNode() != nullptr && node1->OriginalNode()->IsIdentifier());
+        });
+        if (find == nullptr) {
+            return nullptr;
+        }
+    }
+    if (find != nullptr) {
+        find = find->OriginalNode() == nullptr ? find : find->OriginalNode();
+    }
+    return find;
+}
+
+ark::es2panda::varbinder::Variable *ResolveIdentifier(const ark::es2panda::ir::Identifier *ident)
+{
+    if (ident->Variable() != nullptr) {
+        return ident->Variable();
+    }
+
+    static constexpr ark::es2panda::varbinder::ResolveBindingOptions option =
+        ark::es2panda::varbinder::ResolveBindingOptions::ALL_DECLARATION |
+        ark::es2panda::varbinder::ResolveBindingOptions::ALL_VARIABLES;
+
+    ark::es2panda::varbinder::Scope *scope = ark::es2panda::compiler::NearestScope(ident);
+    do {
+        ark::es2panda::varbinder::Variable *res = scope->Find(ident->Name(), option).variable;
+        if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr) {
+            auto *declNode = res->Declaration()->Node();
+            auto *scopeNode = res->GetScope()->Node();
+
+            if (ident->Parent()->IsMemberExpression() || !declNode->IsClassProperty() ||
+                !scopeNode->IsClassDefinition() ||
+                (scopeNode->IsClassDefinition() && scopeNode->AsClassDefinition()->IsGlobal())) {
+                return res;
+            }
+        }
+        scope = scope->Parent();
+    } while (scope != nullptr);
+
+    return nullptr;
 }
 
 std::string GetIdentifierName(ir::AstNode *node)
@@ -539,15 +731,12 @@ ir::AstNode *GetOwner(ir::AstNode *node)
     if (id == nullptr) {
         return nullptr;
     }
-    auto var = id->AsIdentifier()->Variable();
+    auto var = ResolveIdentifier(id->AsIdentifier());
     if (var == nullptr) {
         return nullptr;
     }
-    auto decl = id->AsIdentifier()->Variable()->Declaration();
-    if (decl == nullptr) {
-        return nullptr;
-    }
-    return decl->Node();
+
+    return GetIdentifier(var->Declaration()->Node());
 }
 
 std::string GetOwnerId(ir::AstNode *node)
