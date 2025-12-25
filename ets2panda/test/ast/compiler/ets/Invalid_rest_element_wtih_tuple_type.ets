@@ -23,5 +23,8 @@ function main() {
 }
 
 /* @@? 16:19 Error Semantic error ESE0127: No matching call signature for restMethod(...) */
+/* @@? 17:23 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 17:38 Error Semantic error ESE170021: Static members cannot reference class type parameters 'B' */
 /* @@? 17:38 Error Semantic error ESE0371: Cannot find type 'B'. */
+/* @@? 17:41 Error Semantic error ESE170021: Static members cannot reference class type parameters 'C' */
 /* @@? 17:41 Error Semantic error ESE0371: Cannot find type 'C'. */

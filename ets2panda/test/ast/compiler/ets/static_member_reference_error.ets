@@ -22,3 +22,17 @@ class A<T> {
     static foo4<U = T>(a0: U): void { }
     static foo5(a0: (a1: T) => T): void { }
 }
+
+/* @@? 1:3 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 1:3 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 18:23 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 18:23 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 20:17 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 21:22 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 21:22 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 22:21 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 22:21 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 23:26 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 23:26 Error Semantic error ESE0371: Cannot find type 'T'. */
+/* @@? 23:32 Error Semantic error ESE170021: Static members cannot reference class type parameters 'T' */
+/* @@? 23:32 Error Semantic error ESE0371: Cannot find type 'T'. */

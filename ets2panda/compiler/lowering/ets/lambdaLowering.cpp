@@ -268,6 +268,66 @@ static std::pair<ir::TSTypeParameterDeclaration *, checker::Substitution> CloneT
     return {newIrTypeParams, std::move(substitution)};
 }
 
+static std::pair<ir::TSTypeParameterDeclaration *, checker::Substitution> CloneTypeParamsForClassFromClass(
+    public_lib::Context *ctx, ir::ClassDefinition *classDef, varbinder::Scope *enclosingScope)
+{
+    auto *oldIrTypeParams = classDef->TypeParams();
+    if (oldIrTypeParams == nullptr) {
+        return {nullptr, {}};
+    }
+
+    auto *allocator = ctx->allocator;
+
+    auto *newScope = allocator->New<varbinder::LocalScope>(allocator, enclosingScope);
+    auto newTypeParams = ArenaVector<checker::ETSTypeParameter *>(allocator->Adapter());
+    auto newTypeParamNodes = ArenaVector<ir::TSTypeParameter *>(allocator->Adapter());
+    auto substitution = checker::Substitution {};
+
+    for (size_t ix = 0; ix < oldIrTypeParams->Params().size(); ix++) {
+        auto *oldTypeParamNode = oldIrTypeParams->Params()[ix];
+
+        auto *classType = classDef->TsType()->AsETSObjectType();
+        auto *oldTypeParam = classType->TypeArguments()[ix]->AsETSTypeParameter();
+
+        auto *newTypeParamId = allocator->New<ir::Identifier>(oldTypeParamNode->Name()->Name(), allocator);
+
+        auto *newTypeParamNode = util::NodeAllocator::ForceSetParent<ir::TSTypeParameter>(allocator, newTypeParamId,
+                                                                                          nullptr, nullptr, allocator);
+
+        auto *newTypeParam = allocator->New<checker::ETSTypeParameter>();
+        auto *newTypeParamDecl = allocator->New<varbinder::TypeParameterDecl>(newTypeParamId->Name());
+        auto *newTypeParamVar =
+            allocator->New<varbinder::LocalVariable>(newTypeParamDecl, varbinder::VariableFlags::TYPE_PARAMETER);
+
+        ES2PANDA_ASSERT(newTypeParam != nullptr && newScope != nullptr && newTypeParamDecl != nullptr &&
+                        newTypeParamVar != nullptr);
+
+        newTypeParam->SetDeclNode(newTypeParamNode);
+        newTypeParamDecl->BindNode(newTypeParamNode);
+        newTypeParamVar->SetTsType(newTypeParam);
+        newScope->InsertBinding(newTypeParamId->Name(), newTypeParamVar);
+        newTypeParamId->SetVariable(newTypeParamVar);
+
+        newTypeParams.push_back(newTypeParam);
+        newTypeParamNodes.push_back(newTypeParamNode);
+        substitution.emplace(oldTypeParam, newTypeParam);
+    }
+
+    for (size_t ix = 0; ix < oldIrTypeParams->Params().size(); ix++) {
+        auto *classType = classDef->TsType()->AsETSObjectType();
+        auto *oldTypeParam = classType->TypeArguments()[ix]->AsETSTypeParameter();
+
+        ProcessTypeParameterProperties(oldTypeParam, newTypeParams[ix], newTypeParamNodes[ix], &substitution, ctx);
+    }
+
+    auto *newIrTypeParams = util::NodeAllocator::ForceSetParent<ir::TSTypeParameterDeclaration>(
+        allocator, std::move(newTypeParamNodes), oldIrTypeParams->RequiredParams());
+    ES2PANDA_ASSERT(newIrTypeParams != nullptr);
+    newIrTypeParams->SetScope(newScope);
+
+    return {newIrTypeParams, std::move(substitution)};
+}
+
 using ParamsAndVarMap =
     std::pair<ArenaVector<ir::Expression *>, ArenaMap<varbinder::Variable *, varbinder::Variable *>>;
 
@@ -452,6 +512,22 @@ static ir::MethodDefinition *SetUpCalleeMethod(public_lib::Context *ctx, LambdaI
     return CheckCalleeMethodCtx(ctx, info, func, method);
 }
 
+std::pair<ir::TSTypeParameterDeclaration *, checker::Substitution> CloneTypeParameters(public_lib::Context *ctx,
+                                                                                       LambdaInfo const *info,
+                                                                                       varbinder::Scope *enclosingScope)
+{
+    auto *oldTypeParams = (info->enclosingFunction != nullptr) ? info->enclosingFunction->TypeParams() : nullptr;
+    auto [newTypeParams, subst0] = CloneTypeParamsForClass(ctx, oldTypeParams, info->enclosingFunction, enclosingScope);
+
+    if (newTypeParams == nullptr && info->callReceiver == nullptr &&
+        info->calleeClass->Definition()->TypeParams() != nullptr) {
+        std::tie(newTypeParams, subst0) =
+            CloneTypeParamsForClassFromClass(ctx, info->calleeClass->Definition(), enclosingScope);
+    }
+
+    return {newTypeParams, std::move(subst0)};
+}
+
 using ISS = ir::ScriptFunction::ScriptFunctionData;
 static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::ArrowFunctionExpression *lambda,
                                                 LambdaInfo const *info, CalleeMethodInfo const *cmInfo)
@@ -463,11 +539,11 @@ static ir::MethodDefinition *CreateCalleeMethod(public_lib::Context *ctx, ir::Ar
     auto *classScope = info->calleeClass != nullptr ? info->calleeClass->Definition()->Scope()->AsClassScope()
                                                     : info->calleeInterface->Scope()->AsClassScope();
 
-    auto *oldTypeParams = (info->enclosingFunction != nullptr) ? info->enclosingFunction->TypeParams() : nullptr;
     auto enclosingScope =
         info->callReceiver != nullptr ? classScope->InstanceMethodScope() : classScope->StaticMethodScope();
 
-    auto [newTypeParams, subst0] = CloneTypeParamsForClass(ctx, oldTypeParams, info->enclosingFunction, enclosingScope);
+    auto [newTypeParams, subst0] = CloneTypeParameters(ctx, info, enclosingScope);
+
     auto &substitution = subst0;  // NOTE(gogabr): needed to capture in a lambda later.
     auto *scopeForMethod = newTypeParams != nullptr ? newTypeParams->Scope() : enclosingScope;
 
@@ -1342,9 +1418,7 @@ static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
 
-    auto *oldTypeParams = (info->enclosingFunction != nullptr) ? info->enclosingFunction->TypeParams() : nullptr;
-    auto [newTypeParams, subst0] =
-        CloneTypeParamsForClass(ctx, oldTypeParams, info->enclosingFunction, ctx->parserProgram->GlobalClassScope());
+    auto [newTypeParams, subst0] = CloneTypeParameters(ctx, info, ctx->parserProgram->GlobalClassScope());
     auto &substitution = subst0;  // NOTE(gogabr): needed to capture in a lambda later.
 
     auto signature = fntype->ArrowSignature();
@@ -1406,8 +1480,11 @@ static ir::ETSNewClassInstanceExpression *CreateConstructorCall(public_lib::Cont
 
     checker::ETSObjectType *constructedType = lambdaClass->Definition()->TsType()->AsETSObjectType();
     if (info->enclosingFunction != nullptr) {
-        constructedType = constructedType->SubstituteArguments(checker->Relation(),
-                                                               info->enclosingFunction->Signature()->TypeParams());
+        constructedType = constructedType->SubstituteArguments(
+            checker->Relation(),
+            (info->enclosingFunction->Signature()->TypeParams().empty() && info->callReceiver == nullptr)
+                ? info->calleeClass->Definition()->TsType()->AsETSObjectType()->TypeArguments()
+                : info->enclosingFunction->Signature()->TypeParams());
     }
     auto *newExpr = util::NodeAllocator::ForceSetParent<ir::ETSNewClassInstanceExpression>(
         allocator, allocator->New<ir::OpaqueTypeNode>(constructedType, allocator), std::move(args));
