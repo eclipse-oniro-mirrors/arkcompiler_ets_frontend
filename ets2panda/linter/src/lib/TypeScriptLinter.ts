@@ -268,7 +268,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private readonly compatibleSdkVersion: number;
   private readonly compatibleSdkVersionStage: string;
   private static sharedModulesCache: Map<string, boolean>;
-  static nameSpaceFunctionCache: Map<string, Set<string>>;
+  private readonly nameSpaceFunctionCache: Map<string, Set<string>> = new Map<string, Set<string>>();
   private readonly constVariableInitCache: Map<ts.Symbol, number | null> = new Map();
   static funcMap: Map<string, Map<string, Set<ApiInfo>>> = new Map<string, Map<string, Set<ApiInfo>>>();
   static sdkCommonFuncMap: Map<string, Map<string, Set<ApiInfo>>>;
@@ -298,7 +298,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   static initGlobals(): void {
     TypeScriptLinter.sharedModulesCache = new Map<string, boolean>();
-    TypeScriptLinter.nameSpaceFunctionCache = new Map<string, Set<string>>();
     TypeScriptLinter.pathMap = new Map<string, Set<ApiInfo>>();
     TypeScriptLinter.globalApiInfo = new Map<string, Set<ApiListItem>>();
     TypeScriptLinter.builtApiInfo = new Set<ApiListItem>();
@@ -989,12 +988,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
     this.handleDeclarationDestructuring(tsParam);
     this.handleDeclarationInferredType(tsParam);
-    if (!ts.isArrowFunction(node.parent)) {
-      this.handleInvalidIdentifier(tsParam);
-    }
+    this.handleInvalidIdentifier(tsParam);
     this.handleSdkGlobalApi(tsParam);
     const typeNode = tsParam.type;
-    if (this.options.arkts2 && typeNode && TsUtils.typeContainsVoid(typeNode)) {
+    if (this.options.arkts2 && typeNode?.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(typeNode, FaultID.LimitedVoidType);
     }
     this.handlePropertyDescriptorInScenarios(tsParam);
@@ -1642,39 +1639,42 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private checkUsageOfTsTypes(baseType: ts.Type, node: ts.Node): void {
-    const typeString = this.tsTypeChecker.typeToStringForLinter(baseType);
-
-    const symbol = baseType.getSymbol();
-    if (symbol && !isStdLibrarySymbol(symbol)) {
-      return;
-    }
-
     if (
-      TsUtils.isAnyType(baseType) ||
+      TsUtils.isAnyType(baseType) && !this.isDeclaredWithNameSpace(baseType, node) ||
       TsUtils.isUnknownType(baseType) ||
       this.tsUtils.isStdFunctionType(baseType) ||
-      typeString === 'symbol' ||
-      this.isMixedEnum(baseType) ||
-      this.isSpecialType(baseType, node) ||
+      TsUtils.isSymbolType(baseType) ||
+      this.isIntersectionType(node) ||
+      this.isDeclaredWithTypeOf(node) ||
+      this.isDeclaredWithKeyOf(node) ||
+      this.isMixedEnum(node) ||
+      this.isSpecialType(node) ||
+      this.isSpecialSignature(baseType, node) ||
       this.isStdUtilityTools(node)
     ) {
       this.incrementCounters(node, FaultID.InteropDirectAccessToTSTypes);
     }
   }
 
-  private isSpecialType(baseType: ts.Type, node: ts.Node): boolean {
-    const baseTypeStr = this.tsTypeChecker.typeToStringForLinter(baseType);
-    if (TypeScriptLinter.extractKeyofFromString(baseTypeStr)) {
-      return true;
-    }
+  private isDeclaredWithNameSpace(baseType: ts.Type, node: ts.Node): boolean {
     let symbol = baseType.getSymbol();
     if (!symbol) {
       symbol = this.tsUtils.trueSymbolAtLocation(node);
     }
     const decl = TsUtils.getDeclaration(symbol);
+    if (decl) {
+      return ts.isModuleDeclaration(decl);
+    }
+    return false;
+  }
+
+  private isSpecialType(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
     if (!decl) {
       return false;
     }
+
     if (
       ts.isTypeAliasDeclaration(decl) && this.checkSpecialTypeNode(decl.type, true) ||
       this.checkSpecialTypeNode(decl, true)
@@ -1704,18 +1704,55 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
-  private isMixedEnum(type: ts.Type): boolean {
-    const symbol = type.getSymbol();
-    if (!symbol) {
+  private isIntersectionType(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+
+    return (
+      !!decl &&
+      (ts.isVariableDeclaration(decl) && decl.type && ts.isIntersectionTypeNode(decl.type) ||
+        ts.isIntersectionTypeNode(decl))
+    );
+  }
+
+  private isSpecialSignature(baseType: ts.Type, node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
       return false;
     }
 
-    const declarations = symbol.getDeclarations();
+    if (!ts.isVariableDeclaration(decl) && !ts.isTypeAliasDeclaration(decl)) {
+      return false;
+    }
+    const typeNode = decl.type;
+    if (!typeNode || !ts.isTypeLiteralNode(typeNode) || typeNode.members.length === 0) {
+      return false;
+    }
+
+    return typeNode.members.some((member) => {
+      return (
+        ts.isCallSignatureDeclaration(member) ||
+        ts.isConstructSignatureDeclaration(member) ||
+        ts.isIndexSignatureDeclaration(member)
+      );
+    });
+  }
+
+  private isMixedEnum(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const declarations = symbol?.getDeclarations();
     if (!declarations) {
       return false;
     }
 
+    const declarationKinds = new Set<number>();
     for (const decl of declarations) {
+      declarationKinds.add(decl.kind);
+      if (declarationKinds.size > 1) {
+        // mixed-kind declarations
+        return true;
+      }
       if (ts.isEnumDeclaration(decl)) {
         const initializerTypes = new Set<string>();
 
@@ -1727,14 +1764,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
             );
             initializerTypes.add(baseTypeStr);
           }
-        }
 
-        if (initializerTypes.size > 1) {
-          return true;
+          if (initializerTypes.size > 1) {
+            // mixed-type enum
+            return true;
+          }
         }
       }
     }
-
     return false;
   }
 
@@ -1767,6 +1804,37 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
     traverse(decl);
     return isStdUtilityType;
+  }
+
+  private isObjectLiteralExpression(decl: ts.Node): boolean {
+    const isVariableWithInitializer =
+      ts.isVariableDeclaration(decl) && decl.initializer && ts.isObjectLiteralExpression(decl.initializer);
+
+    const isVariableWithTypeLiteral = ts.isVariableDeclaration(decl) && decl.type && this.checkIsTypeLiteral(decl.type);
+    const isObjectLiteralExpression =
+      ts.isObjectLiteralExpression(decl) ||
+      this.checkIsTypeLiteral(decl) ||
+      isVariableWithInitializer ||
+      isVariableWithTypeLiteral;
+    return !!isObjectLiteralExpression;
+  }
+
+  private static hasObjectLiteralReturn(funcNode: ts.FunctionLikeDeclaration): boolean {
+    let found = false;
+    function visit(node: ts.Node): void {
+      if (found) {
+        return;
+      }
+
+      if (ts.isReturnStatement(node) && node.expression && ts.isObjectLiteralExpression(node.expression)) {
+        found = true;
+        return;
+      }
+
+      ts.forEachChild(node, visit);
+    }
+    visit(funcNode);
+    return found;
   }
 
   private checkIsTypeLiteral(node: ts.Node): boolean {
@@ -1807,39 +1875,37 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return specialType;
   }
 
-  private isObjectLiteralExpression(decl: ts.Node): boolean {
-    const isVariableWithInitializer =
-      ts.isVariableDeclaration(decl) && decl.initializer && ts.isObjectLiteralExpression(decl.initializer);
-
-    const isVariableWithTypeLiteral = ts.isVariableDeclaration(decl) && decl.type && this.checkIsTypeLiteral(decl.type);
-    const isObjectLiteralExpression =
-      ts.isObjectLiteralExpression(decl) ||
-      this.checkIsTypeLiteral(decl) ||
-      isVariableWithInitializer ||
-      isVariableWithTypeLiteral;
-    return !!isObjectLiteralExpression;
-  }
-
-  private static hasObjectLiteralReturn(funcNode: ts.FunctionLikeDeclaration): boolean {
-    let found = false;
-    function visit(node: ts.Node): void {
-      if (found) {
-        return;
-      }
-
-      if (ts.isReturnStatement(node) && node.expression && ts.isObjectLiteralExpression(node.expression)) {
-        found = true;
-        return;
-      }
-
-      ts.forEachChild(node, visit);
+  private isDeclaredWithKeyOf(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
+      return false;
     }
-    visit(funcNode);
-    return found;
+    type NodeWithOptionalType = ts.Node & {
+      type?: ts.TypeNode;
+    };
+    const nodeWithType: NodeWithOptionalType = decl;
+    if (
+      nodeWithType.type &&
+      ts.isTypeOperatorNode(nodeWithType.type) &&
+      nodeWithType.type.operator === ts.SyntaxKind.KeyOfKeyword
+    ) {
+      return true;
+    }
+    return false;
   }
 
-  private static extractKeyofFromString(typeString: string): boolean {
-    return (/\bkeyof\b/).test(typeString);
+  private isDeclaredWithTypeOf(node: ts.Node): boolean {
+    const symbol = this.tsUtils.trueSymbolAtLocation(node);
+    const decl = TsUtils.getDeclaration(symbol);
+    if (!decl) {
+      return false;
+    }
+    type NodeWithOptionalType = ts.Node & {
+      type?: ts.TypeNode;
+    };
+    const nodeWithType: NodeWithOptionalType = decl;
+    return !!nodeWithType.type && ts.isTypeQueryNode(nodeWithType.type);
   }
 
   checkUnionTypes(propertyAccessNode: ts.PropertyAccessExpression): void {
@@ -1852,23 +1918,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
-    const baseExprType = this.tsTypeChecker.getTypeAtLocation(propertyAccessNode.expression);
-    const baseExprSym = baseExprType.aliasSymbol || baseExprType.getSymbol();
-    const symbolName = baseExprSym ? baseExprSym.name : this.tsTypeChecker.typeToStringForLinter(baseExprType);
+    const propName = propertyAccessNode.name.getText();
+    const type = this.tryToGetUnionType(propertyAccessNode.expression);
 
-    if (!baseExprType.isUnion() || COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(symbolName)) {
+    if (!type?.isUnion()) {
       return;
     }
 
-    const allTypes = baseExprType.types;
-    const propName = propertyAccessNode.name.getText();
-
     // Only keep union members that have the property
-    const typesWithProp = allTypes.filter((type) => {
+    const typesWithProp = type.types.filter((type) => {
       return this.tsUtils.findProperty(type, propName) !== undefined;
     });
 
-    if (typesWithProp.length !== allTypes.length) {
+    if (typesWithProp.length !== type.types.length) {
       // Not all members have this property, nothing to check
       return;
     }
@@ -1888,6 +1950,36 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (distinctPropTypes.size > 1) {
       this.incrementCounters(propertyAccessNode, FaultID.AvoidUnionTypes);
     }
+  }
+
+  private tryToGetUnionType(expression: ts.Expression): ts.Type | null {
+    const exprType = this.tsTypeChecker.getTypeAtLocation(expression);
+    if (exprType.isUnion() && !this.isWhitelistedType(exprType)) {
+      return exprType;
+    }
+
+    return this.getDeclaredUnionType(expression);
+  }
+
+  private getDeclaredUnionType(expression: ts.Expression): ts.Type | null {
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(expression);
+    if (!symbol) {
+      return null;
+    }
+
+    const decl = symbol.getDeclarations()?.[0];
+    if (!decl || !ts.isVariableDeclaration(decl) || !decl.type) {
+      return null;
+    }
+
+    const type = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
+    return type.isUnion() && !this.isWhitelistedType(type) ? type : null;
+  }
+
+  private isWhitelistedType(type: ts.Type): boolean {
+    const sym = type.aliasSymbol || type.getSymbol();
+    const name = sym ? sym.name : this.tsTypeChecker.typeToStringForLinter(type);
+    return COMMON_UNION_MEMBER_ACCESS_WHITELIST.has(name);
   }
 
   private handleLiteralAsPropertyName(node: ts.PropertyDeclaration | ts.PropertySignature): void {
@@ -2275,7 +2367,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (hasUnfixableReturnType) {
       this.incrementCounters(funcExpr, FaultID.LimitedReturnTypeInference);
     }
-    this.handleLimitedVoidFunction(funcExpr);
   }
 
   private handleArrowFunction(node: ts.Node): void {
@@ -2296,7 +2387,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
     }
     this.checkDefaultParamBeforeRequired(arrowFunc);
-    this.handleLimitedVoidFunction(arrowFunc);
   }
 
   private handleFunctionDeclaration(node: ts.Node): void {
@@ -2330,7 +2420,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleTSOverload(tsFunctionDeclaration);
     this.handleInvalidIdentifier(tsFunctionDeclaration);
     this.checkDefaultParamBeforeRequired(tsFunctionDeclaration);
-    this.handleLimitedVoidFunction(tsFunctionDeclaration);
   }
 
   private processSendableDecoratorFunctionOverload(tsFunctionDeclaration: ts.FunctionDeclaration): void {
@@ -3857,7 +3946,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
 
       const parentNameSpaceName = parentModuleDeclaration.name.escapedText.toString();
-      nameSpaceChain = parentNameSpaceName + nameSpaceChain;
+      nameSpaceChain = parentNameSpaceName + '.' + nameSpaceChain;
       temptNode = temptNode.parent;
     }
 
@@ -3865,11 +3954,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleNameSpaceModuleBlock(moduleBlock: ts.ModuleBlock, nameSpace: string): void {
-    if (!TypeScriptLinter.nameSpaceFunctionCache.has(nameSpace)) {
-      TypeScriptLinter.nameSpaceFunctionCache.set(nameSpace, new Set<string>());
+    if (!this.nameSpaceFunctionCache.has(nameSpace)) {
+      this.nameSpaceFunctionCache.set(nameSpace, new Set<string>());
     }
 
-    const nameSet = TypeScriptLinter.nameSpaceFunctionCache.get(nameSpace)!;
+    const nameSet = this.nameSpaceFunctionCache.get(nameSpace)!;
 
     for (const statement of moduleBlock.statements) {
       const names = TypeScriptLinter.getDeclarationNames(statement);
@@ -3885,9 +3974,22 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private static getDeclarationNames(statement: ts.Statement): Set<string> {
     const names = new Set<string>();
-    if (ts.isFunctionDeclaration(statement) && statement.name && statement.body) {
+    if (
+      ts.isFunctionDeclaration(statement) && statement.name && statement.body ||
+      ts.isClassDeclaration(statement) && statement.name ||
+      ts.isInterfaceDeclaration(statement) && statement.name ||
+      ts.isEnumDeclaration(statement) && statement.name
+    ) {
       names.add(statement.name.text);
       return names;
+    }
+
+    if (ts.isVariableStatement(statement)) {
+      for (const decl of statement.declarationList.declarations) {
+        if (ts.isIdentifier(decl.name)) {
+          names.add(decl.name.text);
+        }
+      }
     }
     return names;
   }
@@ -4080,7 +4182,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleMethodOverridingField(tsMethodDecl);
     this.handleMethodInherit(tsMethodDecl);
     this.handleSdkGlobalApi(tsMethodDecl);
-    this.handleLimitedVoidFunction(tsMethodDecl);
     this.checkVoidLifecycleReturn(tsMethodDecl);
     this.handleNoDeprecatedApi(tsMethodDecl);
     this.checkAbstractOverrideReturnType(tsMethodDecl);
@@ -4109,20 +4210,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (actualSignature !== expectedSignature) {
         this.incrementCounters(member, FaultID.NoSignatureDistinctWithObjectPublicApi);
       }
-    }
-  }
-
-  private handleLimitedVoidFunction(node: ts.FunctionLikeDeclaration): void {
-    const typeNode = node.type;
-    if (!typeNode || !ts.isUnionTypeNode(typeNode)) {
-      return;
-    }
-    const containsVoid = typeNode.types.some((t) => {
-      return t.kind === ts.SyntaxKind.VoidKeyword;
-    });
-    if (this.options.arkts2 && containsVoid) {
-      const autofix = this.autofixer?.fixLimitedVoidTypeFunction(node);
-      this.incrementCounters(typeNode, FaultID.LimitedVoidType, autofix);
     }
   }
 
@@ -7497,7 +7584,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.checkPartialType(node);
 
     const typeNameType = this.tsTypeChecker.getTypeAtLocation(typeRef.typeName);
-    if (this.options.arkts2 && (typeNameType.flags & ts.TypeFlags.Void) !== 0) {
+    if (this.options.arkts2 && !ts.isUnionTypeNode(node) && (typeNameType.flags & ts.TypeFlags.Void) !== 0) {
       this.incrementCounters(typeRef, FaultID.LimitedVoidType);
     }
     if (this.tsUtils.isSendableClassOrInterface(typeNameType)) {
@@ -8368,7 +8455,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const typeNode = node.type;
-    if (typeNode && TsUtils.typeContainsVoid(typeNode)) {
+    if (typeNode && typeNode.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(typeNode, FaultID.LimitedVoidType);
     }
   }
@@ -8377,8 +8464,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!this.options.arkts2) {
       return;
     }
-    const targetType = this.tsTypeChecker.getTypeAtLocation(node.type);
-    if (TsUtils.isVoidType(targetType)) {
+    const typeNode = node.type;
+    if (typeNode.kind === ts.SyntaxKind.VoidKeyword) {
       this.incrementCounters(node.type, FaultID.LimitedVoidType);
     }
   }
@@ -8411,34 +8498,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     if (ts.isReturnStatement(node.parent)) {
-      const functionLike = TypeScriptLinter.findContainingFunction(node);
-      if (functionLike && TypeScriptLinter.isRecursiveCall(node, functionLike)) {
-        this.incrementCounters(node, FaultID.LimitedVoidType);
-      }
       return;
     }
 
     this.incrementCounters(node, FaultID.LimitedVoidType);
-  }
-
-  private static findContainingFunction(node: ts.Node): ts.FunctionLikeDeclaration | undefined {
-    while (node) {
-      if (ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node)) {
-        return node;
-      }
-      node = node.parent;
-    }
-    return undefined;
-  }
-
-  // Helper function to check if a call is recursive
-  private static isRecursiveCall(callExpr: ts.CallExpression, fn: ts.FunctionLikeDeclaration): boolean {
-    return (
-      ts.isIdentifier(callExpr.expression) &&
-      ts.isFunctionDeclaration(fn) &&
-      !!fn.name &&
-      fn.name.text === callExpr.expression.text
-    );
   }
 
   private handleArrayType(arrayType: ts.Node): void {
@@ -8456,27 +8519,26 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private handleUnionType(unionType: ts.Node): void {
-    if (!this.options.arkts2) {
+    if (!this.options.arkts2 || !unionType || !ts.isUnionTypeNode(unionType)) {
       return;
     }
 
-    if (!unionType || !ts.isUnionTypeNode(unionType)) {
+    const voidType = unionType.types.find((type) => {
+      return type.kind === ts.SyntaxKind.VoidKeyword;
+    });
+    if (!voidType) {
       return;
     }
 
-    if (
-      ts.findAncestor(unionType, ts.isFunctionDeclaration) ||
-      ts.findAncestor(unionType, ts.isMethodDeclaration) ||
-      ts.findAncestor(unionType, ts.isArrowFunction)
-    ) {
-      return;
-    }
-    const types = unionType.types;
-    for (const type of types) {
-      if (type.kind === ts.SyntaxKind.VoidKeyword) {
-        this.incrementCounters(type, FaultID.LimitedVoidType);
+    const parentNode = unionType.parent;
+    if (ts.isFunctionDeclaration(parentNode) || ts.isMethodDeclaration(parentNode) || ts.isArrowFunction(parentNode)) {
+      if (parentNode.type) {
+        const autofix = this.autofixer?.fixLimitedVoidTypeFunction(parentNode);
+        this.incrementCounters(parentNode.type, FaultID.LimitedVoidType, autofix);
+        return;
       }
     }
+    this.incrementCounters(voidType, FaultID.LimitedVoidType);
   }
 
   private handleDebuggerStatement(node: ts.Node): void {
@@ -16573,11 +16635,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (ts.isPropertyAccessExpression(callExpr.expression)) {
       const objectName = callExpr.expression.expression.getText();
       const methodName = callExpr.expression.name.getText();
-      if (objectName === UI_UTILS && 
-        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility || methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)) {
+      if (
+        objectName === UI_UTILS &&
+        (methodName === UIUtilsDeprecatedFunctionName.EnableV2Compatibility ||
+          methodName === UIUtilsDeprecatedFunctionName.MakeV1Observed)
+      ) {
         if (callExpr.arguments.length === 1) {
-            const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
-            this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
+          const autofix = Autofixer.removeUIUtilsDeprecatedApiForCallExpression(callExpr);
+          this.incrementCounters(callExpr, FaultID.EnableV2CompatibilityFunctionNotSupported, autofix);
         }
       }
     }

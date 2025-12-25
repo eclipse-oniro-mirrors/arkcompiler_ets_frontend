@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-不支持debugger语句。
+ArkTS-Sta不支持debugger语句。
 
 **变更原因：**
 
@@ -20,18 +20,17 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-// ArkTS1.1 
 // ...
 debugger;
 // ...
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-// ArkTS1.2   移除debugger语句
+// 移除debugger语句
 // ...
 ```

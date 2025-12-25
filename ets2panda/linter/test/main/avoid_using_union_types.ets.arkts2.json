@@ -15,10 +15,40 @@
     ],
     "result": [
         {
-            "line": 34,
+            "line": 36,
             "column": 5,
-            "endLine": 34,
+            "endLine": 36,
             "endColumn": 8,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 62,
+            "column": 18,
+            "endLine": 62,
+            "endColumn": 23,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 63,
+            "column": 18,
+            "endLine": 63,
+            "endColumn": 22,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 65,
+            "column": 18,
+            "endLine": 65,
+            "endColumn": 24,
             "problem": "AvoidUnionTypes",
             "suggest": "",
             "rule": "Avoid using union types (arkts-common-union-member-access)",

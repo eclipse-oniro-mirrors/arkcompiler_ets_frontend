@@ -2,11 +2,21 @@
 
 **规则：** `arkui-no-prop-function`、`arkui-no-setandprop-function`
 
-**级别：** error
+**规则解释：**
 
-在ArkTS1.2中，由于`LocalStorage.prop`、`LocalStorage.setAndProp`、`AppStorage.prop`和`AppStorage.setAndProp`接口被废弃，所以需使用`LocalStorage.ref`、`LocalStorage.setAndRef`、`AppStorage.ref`和`AppStorage.setAndRef`接口替代。
+在ArkTS-Sta中，不支持`LocalStorage.prop`、`LocalStorage.setAndProp`、`AppStorage.prop`和`AppStorage.setAndProp`接口，要分别用`LocalStorage.ref`、`LocalStorage.setAndRef`、`AppStorage.ref`和`AppStorage.setAndRef`接口替代。
 
-**ArkTS1.1**
+**变更原因：**
+
+在ArkTS-Sta中，`LocalStorage.prop`、`LocalStorage.setAndProp`、`AppStorage.prop`和`AppStorage.setAndProp`接口被废弃。
+
+**适配建议：**
+
+分别用`LocalStorage.ref`、`LocalStorage.setAndRef`、`AppStorage.ref`和`AppStorage.setAndRef`接口去替代`LocalStorage.prop`、`LocalStorage.setAndProp`、`AppStorage.prop`和`AppStorage.setAndProp`接口。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 AppStorage.setOrCreate('PropA', 47);
@@ -29,7 +39,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

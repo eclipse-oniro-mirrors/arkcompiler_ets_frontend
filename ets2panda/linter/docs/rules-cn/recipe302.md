@@ -1,10 +1,22 @@
-### ArkTS1.2Object内置方法作用在ArkTS1.1对象
+### ArkTS-Sta的Object内置方法作用在ArkTS-Dyn对象
 
 **规则：** `arkts-interop-d2s-static-object-on-dynamic-instance`
 
-Object的接口参数类型为静态Object。ArkTS1.1对象在ArkTS1.2中不是静态Object实例，因此参数类型不匹配。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta的Object内置方法作用在ArkTS-Dyn对象时参数类型不匹配。
+
+**变更原因：**
+
+Object的接口参数类型为静态Object。ArkTS-Dyn对象在ArkTS-Sta中不是静态Object实例，因此参数类型不匹配。
+
+**适配建议：**
+
+使用动态Object的接口。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.ets
 export class X {
@@ -21,14 +33,14 @@ export function foo(prx: Object) {
 foo(new X());
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
-// file1.ets  ArkTS1.1
+// file1.ets  ArkTS-Dyn
 export class X {
   a = 1;
 }
 
-// file2.ets  ArkTS1.2
+// file2.ets  ArkTS-Sta
 'use static'
 import { X } from 'file1';
 export function foo(prx: Object) {

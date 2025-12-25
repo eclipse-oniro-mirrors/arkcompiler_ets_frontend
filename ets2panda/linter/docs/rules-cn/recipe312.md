@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2中，`attributeValue`方法不再需要传入泛型参数。
+ArkTS-Sta中，`attributeValue`方法不再需要传入泛型参数。
 
 **变更原因：**
 
@@ -16,28 +16,30 @@ ArkTS1.2中，`attributeValue`方法不再需要传入泛型参数。
 
 **示例：**
 
-**ArkTS1.1**
+**ArkTS-Dyn**
 ```typescript
-// ArkTS1.1API定义
-declare interface ElementAttributeValues {
-    description: string;
-    checkable: boolean;
+// a.ts ArkTS-Dyn API定义 
+export declare interface ElementAttributeValues {
+  description: string;
+  checkable: boolean;
 }
-declare function attributeValue<T extends keyof ElementAttributeValues>(p: ElementAttributeValues[T]): void;
+export declare function attributeValue<T extends keyof ElementAttributeValues>(p: ElementAttributeValues[T]): void;
 
-// ArkTS1.1应用代码
+// ArkTS-Dyn应用代码
+import { ElementAttributeValues, attributeValue } from './a';
 attributeValue<'checkable'>(true);
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
-// ArkTS1.2API定义
-declare interface ElementAttributeValues {
-    description: string;
+// a.ets ArkTS-Sta API定义
+export declare interface ElementAttributeValues {
+    description: string; 
     checkable: boolean;
 }
-declare function attributeValue(p: string | boolean): void;
+export declare function attributeValue(p: string | boolean): void;
 
-// ArkTS1.2应用代码
+// ArkTS-Sta应用代码
+import { ElementAttributeValues, attributeValue } from './a.ets';
 attributeValue(true);
 ```

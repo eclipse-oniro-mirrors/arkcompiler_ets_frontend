@@ -1,10 +1,23 @@
-### ArkTS1.2转换js对象类型
+### ArkTS-Sta转换JS对象类型
 
 **规则：** `arkts-interop-js2s-convert-js-type`
 
-ArkTS1.2使用ESValue接口转换js对象类型。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta不支持直接转换JS对象类型。
+
+**变更原因：**
+
+ArkTS-Sta中只能和有类型声明的文件进行交互。
+ArkTS-Sta中限制ESValue的动态行为，形成动静态更清晰的界限，减少开发者滥用ESValue导致性能劣化的场景。
+
+**适配建议：**
+
+使用ESValue的接口转换类型。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.js
 export let foo1 = { num: 123 };
@@ -20,7 +33,7 @@ let c: string = foo3.str as string;
 let d: bigint = foo4.big as bigint;
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.js
 export let foo1 = { num: 123 };
@@ -28,7 +41,7 @@ export let foo2 = { bool: true };
 export let foo3 = { str: '123' };
 export let foo4 = { big: 123n };
 
-// file2.ets  // ArkTS1.2
+// file2.ets  // ArkTS-Sta
 'use static'
 let mod = ESValue.load('./file1');
 let foo1 = mod.getProperty('foo1');

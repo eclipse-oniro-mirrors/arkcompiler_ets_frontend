@@ -2,9 +2,22 @@
 
 **规则：** `arkts-limited-stdlib-no-setTransferList`
 
-内存默认共享，不需要提供setTransferList来跨线程传递ArrayBuffer对象。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta内存默认共享，不需要提供setTransferList来跨线程传递ArrayBuffer对象。
+
+**变更原因：**
+
+ArkTS-Sta为内存默认共享模型，ArrayBuffer等对象默认支持跨线程安全访问，无需再提供setTransferList接口手动设置传输列表。
+
+**适配建议：**
+
+删除setTransferList调用。
+
+**示例：**
+
+ArkTS-Dyn
+
 ```typescript
 import { taskpool } from '@kit.ArkTS';
 
@@ -27,7 +40,7 @@ console.info('testTransfer view1 byteLength: ' + view1.byteLength);
 // testTransfer view1 byteLength: 16
 
 let task: taskpool.Task = new taskpool.Task(testTransfer, view, view1);
-task.setTransferList([view.buffer, view1.buffer]);
+task.setTransferList([view.buffer, view1.buffer]);    // setTransferList调用在ArkTS-Sta中已被删除
 taskpool.execute(task).then((res: Object) => {
   console.info('test result: ' + res);
 }).catch((e: string) => {
@@ -40,7 +53,8 @@ console.info('testTransfer view3 byteLength: ' + view1.byteLength);
 // testTransfer view3 byteLength: 0
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
+
 ```typescript
 function testTransfer(arg1: Uint8Array, arg2: Uint8Array): number {
   console.info('testTransfer arg1 byteLength: ' + arg1.byteLength);
@@ -48,34 +62,37 @@ function testTransfer(arg1: Uint8Array, arg2: Uint8Array): number {
   return 100.0;
 }
 
-let buffer: ArrayBuffer = new ArrayBuffer(8);
-let view: Uint8Array = new Uint8Array(buffer);
-let buffer1: ArrayBuffer = new ArrayBuffer(16);
-let view1: Uint8Array = new Uint8Array(buffer1);
+// 这段代码不应该执行在顶层作用域，注意异步事件环境。
+async function removeSetTransferList() {
+  let buffer: ArrayBuffer = new ArrayBuffer(8);
+  let view: Uint8Array = new Uint8Array(buffer);
+  let buffer1: ArrayBuffer = new ArrayBuffer(16);
+  let view1: Uint8Array = new Uint8Array(buffer1);
 
-console.info('testTransfer view byteLength: ' + view.byteLength);
-console.info('testTransfer view1 byteLength: ' + view1.byteLength);
-// 执行结果为：
-// testTransfer view byteLength: 8
-// testTransfer view1 byteLength: 16
+  console.info('testTransfer view byteLength: ' + view.byteLength);
+  console.info('testTransfer view1 byteLength: ' + view1.byteLength);
+  // 执行结果为：
+  // testTransfer view byteLength: 8
+  // testTransfer view1 byteLength: 16
 
-let task: taskpool.Task = new taskpool.Task(testTransfer, view, view1);
-taskpool.execute(task).then((res: Any):void => {
-  console.info('test result: ' + res);
-}).catch((e: Error): void => {
-  console.error('test catch: ' + e);
-})
-// 内存共享，此处可直接访问view,view1的内容，不需要使用setTransferList
-// 执行结果为：
-// testTransfer arg1 byteLength: 8
-// testTransfer arg2 byteLength: 16
-// test result: 100
+  let task: taskpool.Task = new taskpool.Task(testTransfer, view, view1);
+  taskpool.execute(task).then((res: Any):void => {
+    console.info('test result: ' + res);
+  }).catch((e: Error): void => {
+    console.error('test catch: ' + e);
+  })
+  // 内存共享，此处可直接访问view,view1的内容，不需要使用setTransferList
+  // 执行结果为：
+  // testTransfer arg1 byteLength: 8
+  // testTransfer arg2 byteLength: 16
+  // test result: 100
 
-// 如果需要保持原有传递语义，需要手动拷贝并清理原数组
-let task2: taskpool.Task = new taskpool.Task(testTransfer, Uint8Array.from(view), Uint8Array.from(view1));
-taskpool.execute(task2).then((res: Any) => {
-  console.info('test result: ' + res);
-})
-view = new Uint8Array(0);
-view1 = new Uint8Array(0);
+  // 如果需要保持原有传递语义，需要手动拷贝并清理原数组
+  let task2: taskpool.Task = new taskpool.Task(testTransfer, Uint8Array.from(view), Uint8Array.from(view1));
+  taskpool.execute(task2).then((res: Any) => {
+    console.info('test result: ' + res);
+  })
+  view = new Uint8Array(0);
+  view1 = new Uint8Array(0);
+}
 ```

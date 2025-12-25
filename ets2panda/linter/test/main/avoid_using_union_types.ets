@@ -17,11 +17,13 @@ class A {
     x: number = 1;
     y: number = 2;
     z: number = 3;
+    public v2: number = 1;
 }
 
 class B {
     y: string = '1';
     z: number = 2;
+    public v2: string = '';
 }
 
 class C {
@@ -51,3 +53,13 @@ declare interface TextPickerResult {
 }
 const result: TextPickerResult = { value: 'a' };
 result.value.toString() // no error - ok
+
+class F {
+  static a2: A | B = new A();
+}
+
+let a1: A | B = new A();
+console.log('' + a1.v2) //Report error here
+console.log('' + a1.y)  //Report error here
+console.log('' + a1.z)  //No error, the code is valid 
+console.log('' + F.a2.y)  //Report error here

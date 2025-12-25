@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-在ArkTS1.2中，相同namespace中的方法不能重名。
+在ArkTS-Sta中，相同namespace中的方法不能重名。
 
 **变更原因：**
 
-由于ArkTS1.2中会将名称相同的namespace合并成一个namespace，同名方法会导致冲突。
+由于ArkTS-Sta中会将名称相同的namespace合并成一个namespace，同名方法会导致冲突。
 
 **适配建议：**
 
@@ -16,35 +16,34 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 namespace A {
-  export function foo() {  // 错误：命名空间 'A' 中重复导出函数 'foo'
-    console.log('test1');
+  function foo() {
+    console.info('test1');
   }
 }
 
 namespace A {
-  export function foo() {  // 错误：命名空间 'A' 中重复导出函数 'foo'
-    console.log('test2');
+  function foo() {
+    console.info('test2');
   }
 }
-
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 namespace A {
-  export function foo1() {  // 修改函数名称，避免命名冲突
-    console.log('test1');
+  function foo1() {
+    console.info('test1');
   }
 }
 
 namespace A {
-  export function foo2() {
-    console.log('test2');
+  function foo2() {
+    console.info('test2'); // 修改函数名称，避免命名冲突
   }
 }
 ```

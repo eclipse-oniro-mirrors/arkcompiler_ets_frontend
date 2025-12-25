@@ -1,10 +1,23 @@
-### ArkTS1.2对js数据进行相等判断
+### ArkTS-Sta对JS数据进行相等判断
 
 **规则：** `arkts-interop-js2s-equality-judgment`
 
-ArkTS1.2对js数据进行相等判断时，使用ESValue接口判断。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Sta不支持直接对JS数据进行相等判断。
+
+**变更原因：**
+
+ArkTS-Sta中只能和有类型声明的文件进行交互。
+ArkTS-Sta中限制ESValue的动态行为，形成动静态更清晰的界限，减少开发者滥用ESValue导致性能劣化的场景。
+
+**适配建议：**
+
+使用ESValue的接口进行判断。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.js
 class A {}
@@ -19,14 +32,14 @@ a === b;
 a !== b;
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.js
 class A {}
 export let a = new A();
 export let b = new A();
 
-// file2.ets  // ArkTS1.2
+// file2.ets  // ArkTS-Sta
 'use static'
 let mod = ESValue.load('./file1');
 let a = mod.getProperty('a');

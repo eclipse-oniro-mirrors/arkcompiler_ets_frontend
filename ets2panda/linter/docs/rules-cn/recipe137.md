@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不支持globalThis。
+ArkTS-Sta不支持globalThis。
 
 **变更原因：**
  
-ArkTS1.2不支持动态更改对象布局，因此不支持全局作用域和globalThis。
+ArkTS-Sta不支持动态更改对象布局，因此不支持全局作用域和globalThis。
 
 **适配建议：**
 
@@ -16,17 +16,17 @@ ArkTS1.2不支持动态更改对象布局，因此不支持全局作用域和glo
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-// 全局文件中
-var abc = 100;
+// globalThis里设置abc
+globalThis.abc = 123;
 
-// 从上面引用'abc'
-let x = globalThis.abc;
+// 从globalThis引用'abc'
+const x: number = globalThis.abc;
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 // file1

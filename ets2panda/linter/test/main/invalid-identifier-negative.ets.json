@@ -15,9 +15,59 @@
     ],
     "result": [
         {
-            "line": 41,
+            "line": 16,
+            "column": 10,
+            "endLine": 16,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 17,
+            "column": 8,
+            "endLine": 17,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 18,
+            "column": 19,
+            "endLine": 18,
+            "endColumn": 28,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 21,
             "column": 7,
-            "endLine": 41,
+            "endLine": 21,
+            "endColumn": 15,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 7,
+            "endLine": 25,
+            "endColumn": 9,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 7,
+            "endLine": 28,
             "endColumn": 12,
             "problem": "ThrowStatement",
             "suggest": "",
@@ -25,23 +75,263 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
-            "column": 10,
-            "endLine": 57,
-            "endColumn": 15,
-            "problem": "LimitedReturnTypeInference",
+            "line": 59,
+            "column": 7,
+            "endLine": 59,
+            "endColumn": 9,
+            "problem": "InOperator",
             "suggest": "",
-            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "rule": "\"in\" operator is not supported (arkts-no-in)",
             "severity": "ERROR"
         },
         {
-            "line": 57,
-            "column": 37,
-            "endLine": 57,
-            "endColumn": 38,
-            "problem": "ObjectLiteralNoContextType",
+            "line": 65,
+            "column": 7,
+            "endLine": 65,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
             "suggest": "",
-            "rule": "Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals)",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 67,
+            "column": 7,
+            "endLine": 67,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 68,
+            "column": 7,
+            "endLine": 68,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 7,
+            "endLine": 69,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 72,
+            "column": 7,
+            "endLine": 72,
+            "endColumn": 11,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 80,
+            "column": 7,
+            "endLine": 80,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 85,
+            "column": 7,
+            "endLine": 85,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 7,
+            "endLine": 87,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 7,
+            "endLine": 89,
+            "endColumn": 12,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 1,
+            "endLine": 97,
+            "endColumn": 27,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 97,
+            "column": 8,
+            "endLine": 97,
+            "endColumn": 11,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 1,
+            "endLine": 98,
+            "endColumn": 40,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 9,
+            "endLine": 98,
+            "endColumn": 15,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 98,
+            "column": 18,
+            "endLine": 98,
+            "endColumn": 24,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 1,
+            "endLine": 99,
+            "endColumn": 34,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 99,
+            "column": 16,
+            "endLine": 99,
+            "endColumn": 19,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 1,
+            "endLine": 100,
+            "endColumn": 33,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
+            "column": 13,
+            "endLine": 100,
+            "endColumn": 19,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 1,
+            "endLine": 101,
+            "endColumn": 44,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 8,
+            "endLine": 101,
+            "endColumn": 13,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 18,
+            "endLine": 101,
+            "endColumn": 24,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 101,
+            "column": 26,
+            "endLine": 101,
+            "endColumn": 28,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 116,
+            "column": 10,
+            "endLine": 116,
+            "endColumn": 16,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 187,
+            "column": 6,
+            "endLine": 187,
+            "endColumn": 10,
+            "problem": "DeclWithDuplicateName",
+            "suggest": "",
+            "rule": "Use unique names for types and namespaces. (arkts-unique-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 200,
+            "column": 3,
+            "endLine": 200,
+            "endColumn": 8,
+            "problem": "LimitedReturnTypeInference",
+            "suggest": "",
+            "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
             "severity": "ERROR"
         }
     ]

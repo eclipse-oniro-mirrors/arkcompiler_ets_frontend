@@ -1,10 +1,22 @@
-### ArkTS1.1创建ArkTS1.2对象字面量
+### ArkTS-Dyn创建ArkTS-Sta对象字面量
 
 **规则：** `arkts-interop-s2d-object-literal`
 
-ArkTS1.1的对象字面量是动态对象，不是真正的标注类型，所以ArkTS1.1中使用构造函数创建ArkTS1.2对象字面量。
+**规则解释：**
 
-**ArkTS1.1**
+ArkTS-Dyn中使用构造函数创建ArkTS-Sta对象字面量。
+
+**变更原因：**
+
+ArkTS-Dyn的对象字面量是动态对象，不是真正的标注类型，所以ArkTS-Dyn中使用构造函数创建ArkTS-Sta对象字面量。
+
+**适配建议：**
+
+使用构造函数创建对象字面量。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.ets
 export class X {
@@ -34,9 +46,9 @@ interface Z {
 let z: Z = {x: { name: 'hello' }};
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
-// file1.ets ArkTS1.2
+// file1.ets ArkTS-Sta
 'use static'
 export class X { name: string = '' }
 export interface Y { data: number }
@@ -47,7 +59,7 @@ export function createY(d: number): Y {
   return y
 }
 
-// file2.ets ArkTS1.1
+// file2.ets ArkTS-Dyn
 import { X, Y, createY } from "./file1"
 let x: X = new X("hello")
 let y: Y = createY(123)

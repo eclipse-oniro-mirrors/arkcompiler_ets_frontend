@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2不支持TS-like的重载。
+ArkTS-Sta不支持TS-like的重载。
 
 **变更原因：**
  
@@ -16,48 +16,38 @@ ArkTS1.2不支持TS-like的重载。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
-function foo(): void
-function foo(x: string): void
-function foo(x?: string): void { // 违反规则
-  /*body*/
+function foo(): void;
+
+function foo(x: string): void;
+
+function foo(x?: string): void {
+  console.info(x);
 }
 
-function sum(x: number, y: number): number;
-function sum(x: number, y: number, z: number): number;
-function sum(x: number, y: number, z?: number): number {  // 违反规则
-  return z ? x + y + z : x + y;
-}
+class A {
+  public foo(): void;
 
-function foo(): string;
-function foo(x: number): number;
-function foo(x?: number): string | number {  // 违反规则
-  return x !== undefined ? x * 2 : "default";
+  public foo(x: string): void;  
+
+  public foo(x?: string): void {  
+    console.info(x);
+  }
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-function foo(x?: string): void {
-  /*body*/
+function foo(x?: string): void {  // ArkTS-Sta中声明与实现一一对应，删除多余声明
+  console.info(x);
 }
 
-function sumTwo(x: number, y: number): number {  // 独立实现
-  return x + y;
-}
-
-function sumThree(x: number, y: number, z: number): number {  // 独立实现
-  return x + y + z;
-}
-
-function fooString(): string {  // 独立实现
-  return "default";
-}
-
-function fooNumber(x: number): number {  // 独立实现
-  return x * 2;
+class A {
+  public foo(x?: string): void {  // ArkTS-Sta中声明与实现一一对应，删除多余声明
+    console.info(x);
+  }
 }
 ```

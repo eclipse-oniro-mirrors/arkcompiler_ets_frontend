@@ -2,9 +2,21 @@
 
 **规则：** `arkui-modular-interface`
 
-在ArkTS1.2中，使用UI接口前必须先导入，否则会违反该规则导致报错，非UI接口不会有报错信息。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，使用UI接口前必须先导入，否则会违反该规则导致报错，非UI接口不会有报错信息。
+
+**变更原因：**
+
+在ArkTS-Sta中，使用UI接口时如果不导入，编译会报错。
+
+**适配建议：**
+
+使用UI接口前先导入。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -18,7 +30,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

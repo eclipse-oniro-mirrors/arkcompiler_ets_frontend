@@ -4,13 +4,13 @@
 
 **规则解释：**
 
-在ArkTS1.2中，类在实现接口时，lambda属性和方法不能混用。即不能用方法实现属性，也不能用属性实现方法。
+在ArkTS-Sta中，类在实现接口时，lambda属性和方法不能混用。即不能用方法实现属性，也不能用属性实现方法。
 
 **变更原因：**
  
-在ArkTS1.1中，方法类型与函数属性类型兼容，类实现接口时可以混用。
+在ArkTS-Dyn中，方法类型与函数属性类型兼容，类实现接口时可以混用。
 
-在ArkTS1.2中，属性和方法有本质区别，函数属性类型与方法类型不再兼容，因此不支持这种写法。
+在ArkTS-Sta中，属性和方法有本质区别，函数属性类型与方法类型不再兼容，因此不支持这种写法。
 
 **适配建议：**
 
@@ -18,7 +18,7 @@
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 interface Person {
@@ -26,12 +26,12 @@ interface Person {
   cb2(): void;
 }
 class Student implements Person {
-  cb1() { }          // 用方法实现lambda属性，ArkTS1.2编译错误
-  cb2:() => void = () => {}   // 用lambda属性实现方法，ArkTS1.2编译错误
+  cb1() { }          // 用方法实现lambda属性，ArkTS-Sta编译错误
+  cb2:() => void = () => {}   // 用lambda属性实现方法，ArkTS-Sta编译错误
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 interface Person {

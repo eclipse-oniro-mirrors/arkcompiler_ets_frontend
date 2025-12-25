@@ -2,9 +2,21 @@
 
 **规则：** `arkui-no-extend-decorator`
 
-在ArkTS1.2中，不支持`@Extend`装饰器，使用`@Extend`装饰的函数需要进行修改。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，不支持`@Extend`装饰器，使用`@Extend`装饰的函数需要进行修改。
+
+**变更原因：**
+
+在ArkTS-Sta中，`@Extend`装饰器被废弃。
+
+**适配建议：**
+
+使用`@Extend`装饰的函数需要按照示例进行修改。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Extend(Text)
@@ -24,7 +36,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

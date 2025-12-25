@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2不需要lazy关键字。
+ArkTS-Sta不需要lazy关键字。
 
 **变更原因：**
  
-ArkTS1.2默认支持懒加载，无需使用lazy关键字。
+ArkTS-Sta默认支持懒加载，无需使用lazy关键字。
 
 **适配建议：**
 
@@ -16,7 +16,7 @@ ArkTS1.2默认支持懒加载，无需使用lazy关键字。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 // file1.ets
@@ -30,7 +30,7 @@ import lazy { a } from './file1';
 import lazy { b, c } from './file1'; // 违反规则
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 // file1.ets

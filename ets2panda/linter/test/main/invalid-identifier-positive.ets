@@ -82,3 +82,13 @@ const f1 = (_switch: number): number => _switch + 1;
 
 let records: Record<string, string>[] = [];
 records.forEach(item => console.log(item));
+
+import type { Intl } from './test'
+
+export {default as Logger} from './test'
+export {byte as default}
+
+class AAA{
+  get(){}
+  set: ()=>void = ()=>{}
+}

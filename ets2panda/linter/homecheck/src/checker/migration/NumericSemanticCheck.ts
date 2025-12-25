@@ -420,7 +420,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 continue;
             }
             const rightOp = stmt.getRightOp();
-            if (rightOp instanceof Local && rightOp.getName().startsWith(TEMP_LOCAL_PREFIX)) {
+            if (rightOp instanceof Local && (rightOp.getName().startsWith(TEMP_LOCAL_PREFIX) || rightOp instanceof ArkNormalBinopExpr)) {
                 // 类属性的初始化语句使用Local赋值，且Local为临时变量，则可能涉及除法运算
                 // 整型字面量参与除法运算的告警和自动修复信息在检查过程中就已生成，无需在此处额外生成
                 this.checkValueOnlyUsedAsIntLong(stmt, rightOp, new Map<Local, IssueInfo>(), NumberCategory.int);
@@ -1201,6 +1201,9 @@ export class NumericSemanticCheck implements BaseChecker {
 
     private isNumberConstantActuallyFloat(constant: NumberConstant): boolean {
         const valueStr = constant.getValue().toLowerCase();
+        if (this.isScientificStr(valueStr)) {
+            return true;
+        }
         if (valueStr.includes('.') && !valueStr.includes('e')) {
             // 数字字面量非科学计数的写法，并且有小数点，则一定是浮点数，1.0也认为是float
             return true;
@@ -1213,6 +1216,11 @@ export class NumericSemanticCheck implements BaseChecker {
         return !Number.isInteger(num);
     }
 
+    private  isScientificStr(str: string): boolean {
+        const scientificRegex =
+            /^[+-]?(?:\d+\.?\d*|\.\d+)[eE][+-]?\d+$/;
+        return scientificRegex.test(str);
+    }
     // 判断number constant是否为1.0、2.0这种可以转成1、2的整型形式
     private isFloatActuallyInt(constant: NumberConstant): boolean {
         const parts = constant.getValue().split('.');
@@ -2844,20 +2852,22 @@ export class NumericSemanticCheck implements BaseChecker {
     }
 
     private handleGlobalLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>): void {
-        if (local.getDeclaringStmt() === null) {
-            const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
-            if (globals && globals.get(local.getName())) {
-                const global = globals.get(local.getName());
-                if (global instanceof GlobalRef) {
-                    const newLocal = global.getRef();
-                    if (newLocal instanceof Local) {
-                        hasChecked.set(newLocal, { 
-                            issueReason: IssueReason.UsedWithOtherType, 
-                            numberCategory: NumberCategory.number 
-                        });
-                    }
-                } 
-            }
+        if (local.getDeclaringStmt() !== null) {
+            return;
+        }
+
+        const globals = stmt.getCfg().getDeclaringMethod().getBody()?.getUsedGlobals();
+        const global = globals?.get(local.getName());
+
+        if (!(global instanceof GlobalRef)) {
+            return;
+        }
+        const newLocal = global.getRef();
+        if (newLocal instanceof Local) {
+            hasChecked.set(newLocal, {
+                issueReason: IssueReason.UsedWithOtherType,
+                numberCategory: NumberCategory.number
+            });
         }
     }
 }

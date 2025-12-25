@@ -2,9 +2,21 @@
 
 **规则：** `arkui-no-$$-bidirectional-data-binding`
 
-在ArkTS1.2中，不支持`$$this.value`形式的双向绑定，应改为`$$(this.value)`的形式。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，不支持`$$this.value`形式的双向绑定，应改为`$$(this.value)`的形式。
+
+**变更原因：**
+
+在ArkTS-Sta中，不支持`$$this.value`形式的双向绑定。
+
+**适配建议：**
+
+把`$$this.value`改为`$$(this.value)`的形式。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -22,7 +34,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

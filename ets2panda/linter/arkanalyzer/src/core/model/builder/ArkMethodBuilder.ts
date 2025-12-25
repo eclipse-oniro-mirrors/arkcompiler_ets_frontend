@@ -90,7 +90,11 @@ export function buildArkMethodFromArkClass(
     declaringMethod?: ArkMethod
 ): void {
     mtd.setDeclaringArkClass(declaringClass);
-    declaringMethod !== undefined && mtd.setOuterMethod(declaringMethod);
+    if (declaringMethod !== undefined && !declaringMethod.isGenerated() && !declaringMethod.isDefaultArkMethod()) {
+        // If declaringMethod is %dflt, %instInit, %statInit, then the method should be taken as nested method of them.
+        // Otherwise, it will fail to handle global vars of this method or failed to do the free of bodyBuilder.
+        mtd.setOuterMethod(declaringMethod);
+    }
 
     ts.isFunctionDeclaration(methodNode) && mtd.setAsteriskToken(methodNode.asteriskToken !== undefined);
 

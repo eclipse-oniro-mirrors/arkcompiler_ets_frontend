@@ -13,86 +13,53 @@
  * limitations under the License.
  */
 
-namespace ATest {
-  function foo() {}
-
-  namespace BTest {
-    function foo() {}
-    function foo1() {}
-  }
-
-  function foo2() {}
-}
-
-
-namespace Ax {
+namespace A {
    function foo1(): void {}
 }
 
-namespace Ax {
+namespace A {
    function foo2(): void {}
 }
 
-namespace Cx {
-   function foo2(): void {}
-}
-
-namespace Cx {
-   function foo3(): void {}
+namespace B {
+  class MyClass1 {} 
 }
 
 namespace B {
-  class MyClass {} // OK
-}
-
-namespace B {
-  class MyClass {} // REPORT NO ERROR
+  class MyClass2 {} 
 }
 
 namespace C {
-  let myVar: number = 42; // OK
+  let myVar1: number = 42; 
 }
 
 namespace C {
-  let myVar: number = 42; // REPORT NO ERROR
+  let myVar2: number = 42; 
 }
 
 namespace D {
-  let y: number = 1, z: number = 2; // OK
+  let a: number = 1, b: number = 2;  
+}
+
+namespace D {
+  let c: number = 3, d: number = 4; 
 }
 
 namespace F {
-  interface MyInterface {} // OK
+  interface MyInterface1 {} 
 }
 
 namespace F {
-  interface MyInterface {} // REPORT NO ERROR
+  interface MyInterface2 {} 
 }
 
 namespace G {
-  enum MyEnum { A, B, C } // OK
+  enum MyEnum1 { A, B, C } 
 }
 
 namespace G {
-  enum MyEnum { A, B, C } // REPORT NO ERROR
+  enum MyEnum2 { A, B, C } 
 }
-
-namespace H {
-  let a: number = 1, b: number = 2; // OK
-}
-
-namespace H {
-  let c: number = 3, d: number = 4; // OK
-}
-
-namespace I {
-  let a: number = 1, c: number = 2;
-}
-
-namespace I {
-  let b: number = 3, c: number = 4; // REPORT NO ERROR
-}
-
 
 namespace Atest {
    function foo1(): void {}
@@ -113,8 +80,15 @@ namespace Btest {
 namespace Root {
   namespace Level1 {
     namespace Level2 {
-      function compute() {}
-      function compute2() {}
+      function foo1() {}
+    }
+  }
+}
+
+namespace Root {
+  namespace Level1 {
+    namespace Level2 {
+      function foo2() {}
     }
   }
 }

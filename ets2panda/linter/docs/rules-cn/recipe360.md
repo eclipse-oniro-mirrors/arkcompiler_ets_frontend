@@ -2,11 +2,23 @@
 
 **规则：** `arkui-repeat-disable-default-virtualscroll`
 
-在ArkTS1.1中，`Repate`默认渲染全部子组件。
+**规则解释：**
 
-在ArkTS1.2中，`Repeat`默认支持懒加载，如果想要渲染全部子组件，需要禁用默认的懒加载。
+在ArkTS-Sta中，如果想要渲染全部子组件，需要禁用`Repeat`的默认懒加载。
 
-**ArkTS1.1**
+**变更原因：**
+
+在ArkTS-Dyn中，`Repate`默认渲染全部子组件。
+
+在ArkTS-Sta中，`Repeat`默认支持懒加载，如果想要渲染全部子组件，需要禁用默认的懒加载。
+
+**适配建议：**
+
+禁用`Repeat`的默认懒加载。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -38,7 +50,7 @@ struct Index {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

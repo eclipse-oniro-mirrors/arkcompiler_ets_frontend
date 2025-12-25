@@ -1,6 +1,12 @@
-### ArkTS1.2访问TS独有类型的实体
+### ArkTS-Sta访问TS独有类型的实体
 
 **规则：** `arkts-interop-ts2s-static-access-ts-type`
+
+**规则解释：**
+
+ArkTS-Sta中不支持TS中独有的类型。
+
+**变更原因：**
 
 TS独有类型包括如下类型：
 - any
@@ -37,9 +43,15 @@ TS独有类型包括如下类型：
 - Capitalize<StringType>
 - Uncapitalize<StringType>
 
-ArkTS1.2使用ESValue接口进行交互，不支持以上类型。
+ArkTS-Sta中不支持这些类型。
 
-**ArkTS1.1**
+**适配建议：**
+
+使用ESValue接口进行交互。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.ts
 export let obj: Symbol;
@@ -52,14 +64,14 @@ obj.foo();
 let item = obj[0];
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.ts
 export let obj: Symbol;
-// 从ArkTS1.2看来，这个声明为
+// 从ArkTS-Sta看来，这个声明为
 // export let obj: ESValue
 
-// file2.ets ArkTS1.2
+// file2.ets ArkTS-Sta
 'use static'
 import { obj } from './file1';
 obj.setProperty('prop', ESValue.wrap(1));

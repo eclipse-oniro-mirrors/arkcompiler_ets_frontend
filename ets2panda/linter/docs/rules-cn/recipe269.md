@@ -1,10 +1,22 @@
-### js对ArkTS1.2对象进行展开语法
+### JS对ArkTS-Sta对象进行展开语法
 
 **规则：** `arkts-interop-js2s-js-expand-static-instance`
 
-js对ArkTS1.2对象进行展开语法时，需重新适配代码。
+**规则解释：**
 
-**ArkTS1.1**
+JS对ArkTS-Sta对象进行展开语法时，需重新适配代码。
+
+**变更原因：**
+
+ArkTS-Sta对象在动态上下文中没有自有属性，相关解构操作会失效。
+
+**适配建议：**
+
+根据变化重新适配代码，或者避免使用解构语法。
+
+**示例：**
+
+**ArkTS-Dyn**
 ```typescript
 // file1.js
 export function foo(obj) {
@@ -19,7 +31,7 @@ foo(new X())
 // class interface Record
 ```
 
-**ArkTS1.2**
+**ArkTS-Sta**
 ```typescript
 // file1.js
 export function foo(obj) {
@@ -29,7 +41,7 @@ let x = {...obj} // x会是空对象{}，因为静态对象没有自有属性
 let {a, b, ...rest} = obj  // a会是1，b会是2，rest会是空对象{}，因为静态对象没有自有属性
 // 解决方案: let rest = {c: obj.c}
 
-// file2.ets  // ArkTS1.2
+// file2.ets  // ArkTS-Sta
 'use static'
 let mod = ESValue.load('./file1')
 let foo = mod.getProperty('foo')

@@ -316,22 +316,22 @@
         },
         {
             "line": 42,
-            "column": 31,
-            "endLine": 42,
-            "endColumn": 54,
-            "problem": "LimitedVoidType",
-            "suggest": "",
-            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 42,
             "column": 19,
             "endLine": 42,
             "endColumn": 28,
             "problem": "NoDeprecatedApi",
             "suggest": "",
             "rule": "The ArkUI interface \"RouteInfo\" is deprecated (arkui-deprecated-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 31,
+            "endLine": 42,
+            "endColumn": 54,
+            "problem": "LimitedVoidType",
+            "suggest": "",
+            "rule": "Type \"void\" has no instances.(arkts-limited-void-type)",
             "severity": "ERROR"
         },
         {

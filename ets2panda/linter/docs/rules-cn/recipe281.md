@@ -2,9 +2,21 @@
 
 **规则：** `arkui-no-prop-decorator`、`arkui-no-storageprop-decorator`、`arkui-no-localstorageprop-decorator`
 
-在ArkTS1.2中，不支持`@Prop`、`@StorageProp`和`@LocalStrorageProp`装饰器，要分别用`@PropRef`、`@StoragePropRef`和`@LocalStroragePropRef`装饰器替代。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，不支持`@Prop`、`@StorageProp`和`@LocalStrorageProp`装饰器，要分别用`@PropRef`、`@StoragePropRef`和`@LocalStroragePropRef`装饰器替代。
+
+**变更原因：**
+
+在ArkTS-Sta中，`@Prop`、`@StorageProp`和`@LocalStrorageProp`装饰器被废弃。
+
+**适配建议：**
+
+分别用`@PropRef`、`@StoragePropRef`和`@LocalStroragePropRef`装饰器去替代`@Prop`、`@StorageProp`和`@LocalStrorageProp`装饰器。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 class User {
@@ -33,7 +45,7 @@ struct ChildComponent {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

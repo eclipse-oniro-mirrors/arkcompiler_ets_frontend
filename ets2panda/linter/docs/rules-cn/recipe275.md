@@ -2,9 +2,21 @@
 
 **规则：** `arkui-custom-layout-need-add-decorator`
 
-在ArkTS1.2中，自定义组件需要组件加上`@CustomLayout`装饰器，才能获得自定义布局能力。
+**规则解释：**
 
-**ArkTS1.1**
+在ArkTS-Sta中，自定义组件需要加上`@CustomLayout`装饰器，才能获得自定义布局能力。
+
+**变更原因：**
+
+受ArkTS-Sta静态类型系统的影响，自定义组件需要组件加上`@CustomLayout`装饰器，才能获得自定义布局能力。
+
+**适配建议：**
+
+为自定义组件加上`@CustomLayout`装饰器。
+
+**示例：**
+
+ArkTS-Dyn
 
 ```typescript
 @Entry
@@ -67,7 +79,7 @@ struct MyComponent {
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 'use static'

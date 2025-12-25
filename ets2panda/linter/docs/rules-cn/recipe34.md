@@ -4,17 +4,19 @@
 
 **规则解释：**
 
-ArkTS1.2中，创建泛型实例时需要指定类型实参。
+在ArkTS-Sta中，创建泛型实例时需要指定类型实参。
 
 **变更原因：**
  
-ArkTS1.2遵循空安全，未指定泛型类型实参时，创建实例时无法明确元素或属性类型。
+ArkTS-Sta遵循空安全，未指定泛型类型实参时，创建实例时无法明确元素或属性类型。
 
 **适配建议：**
 
 创建泛型实例时指定类型实参。
 
 **示例：**
+
+ArkTS-Dyn
 
 ```typescript
 // 类型定义
@@ -27,18 +29,25 @@ class B {
     return 'res';
   }
 }
-```
 
-**ArkTS1.1**
-
-```typescript
 let a = new A(42); // 可省略泛型类型
 let b = B.get('param');  // 可省略泛型类型
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
-let a = new A<number>(42); // 需要显式指定类型
-let b = B.get<string>('param');  // 需要显式指定类型
+// 类型定义
+class A<T> {
+  constructor(value: T) {
+  }
+}
+class B {
+  static get<T>(value:T): string {
+    return 'res';
+  }
+}
+
+let a = new A<number>(42); // 创建泛型实例，需要显式指定类型
+let b = B.get('param');  // 调用泛型函数，可省略泛型类型
 ```

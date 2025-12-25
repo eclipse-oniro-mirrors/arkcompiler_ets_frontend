@@ -4,11 +4,11 @@
 
 **规则解释：**
 
-ArkTS1.2在编译时会对联合类型的同名属性进行编译检查，要求同名属性具有相同的类型。
+ArkTS-Sta在编译时会对联合类型的同名属性进行编译检查，要求同名属性具有相同的类型。
 
 **变更原因：**
 
-在ArkTS1.2中，对象的结构在编译时确定。为了避免运行时错误，ArkTS1.2在编译时会检查联合类型的同名属性，确保它们具有相同的类型。
+在ArkTS-Sta中，对象的结构在编译时确定。为了避免运行时错误，ArkTS-Sta在编译时会检查联合类型的同名属性，确保它们具有相同的类型。
 
 **适配建议：**
 
@@ -16,39 +16,38 @@ ArkTS1.2在编译时会对联合类型的同名属性进行编译检查，要求
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 class A {
-  v: number = 1
+  v: number = 1;
 }
 
 class B {
-  u: string = ''
+  v: string = '';
 }
 
 function foo(a: A | B) {
-  console.log(a.v) // 违反规则
-  console.log(a.u) // 违反规则
+  console.info(a.v.toString());
 }
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 class A {
-  v: number = 1
+  v: number = 1;
 }
 
 class B {
-  u: string = ''
+  u: string = '';
 }
 
 function foo(a: A) {
-  console.log(a.v)
+  console.info(a.v);
 }
 
 function foo(a: B) {
-  console.log(a.u)
+  console.info(a.u);
 }
 ```

@@ -4,7 +4,7 @@
 
 **规则解释：**
 
-ArkTS1.2中不支持在对象字面量中定义方法。
+ArkTS-Sta中不支持在对象字面量中定义方法。
 
 **变更原因：**
  
@@ -16,16 +16,17 @@ ArkTS1.2中不支持在对象字面量中定义方法。
 
 **示例：**
 
-**ArkTS1.1**
+ArkTS-Dyn
 
 ```typescript
 class A {
-  foo: () => void = () => {}
+  foo: () => void = () => {
+  }
 }
 
 let a: A = {
-  foo() { // 违反规则
-    console.log('hello')
+  foo() {
+    console.info('hello');
   }
 }
 
@@ -34,32 +35,23 @@ interface Person {
 }
 
 let p: Person = {
-  sayHello() {  // 违反规则，方法定义方式错误
-    console.log('Hi');
-  }
-};
-
-type Handler = {
-  foo(): void; 
-};
-
-let handler: Handler = {
-  foo() {  // 违反规则
-    console.log("Executing handler");
+  sayHello() {
+    console.info('Hi');
   }
 };
 ```
 
-**ArkTS1.2**
+ArkTS-Sta
 
 ```typescript
 class A {
-  foo : () => void = () => {}
+  foo: () => void = () => {
+  }
 }
 
 let a: A = {
-  foo: () => {
-    console.log('hello')
+  foo: () => { // 使用属性赋值方式
+    console.info('hello')
   }
 }
 
@@ -68,16 +60,8 @@ interface Person {
 }
 
 let p: Person = {
-  sayHello: () => {  // 使用属性赋值方式
-    console.log('Hi');
-  }
-};
-
-type Handler = A;
-
-let handler: Handler = {
-  foo: () => {  // 修正方法定义方式
-    console.log("Executing handler");
+  sayHello: () => { // 使用属性赋值方式
+    console.info('Hi');
   }
 };
 ```
