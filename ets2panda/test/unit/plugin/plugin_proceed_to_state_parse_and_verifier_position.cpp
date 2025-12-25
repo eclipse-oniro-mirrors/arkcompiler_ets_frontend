@@ -112,6 +112,14 @@ export declare interface InterfaceTest {
 declare type tpAlise1 = () => int
 
 declare type tpAlise2 = NS.innerClass
+
+class ClassTest {
+    constructor(
+        a: int,
+        b: int
+    ) {}
+}
+
 )";
 
 constexpr size_t NS_START_LINE = 11;
@@ -146,6 +154,8 @@ constexpr size_t FUNCTION_PARAM3_START_LINE = 43;
 constexpr size_t FUNCTION_DECL_START_LINE = 66;
 constexpr size_t TPALIAS_START_LINE = 89;
 constexpr size_t TPALIAS2_START_LINE = 91;
+constexpr size_t CLASS_TEST_START_LINE = 93;
+constexpr size_t CLASS_TEST_CONSTRUCTOR_START_LINE = 94;
 
 constexpr size_t NS_END_LINE = 30;
 constexpr size_t INNERNS_END_LINE = 29;
@@ -179,6 +189,8 @@ constexpr size_t FUNCTION_PARAM3_END_LINE = 43;
 constexpr size_t FUNCTION_DECL_END_LINE = 69;
 constexpr size_t TPALIAS_END_LINE = 89;
 constexpr size_t TPALIAS2_END_LINE = 91;
+constexpr size_t CLASS_TEST_END_LINE = 100;
+constexpr size_t CLASS_TEST_CONSTRUCTOR_END_LINE = 97;
 
 constexpr size_t NS_START_COL = 1;
 constexpr size_t INNERNS_START_COL = 3;
@@ -212,6 +224,8 @@ constexpr size_t FUNCTION_PARAM3_START_COL = 11;
 constexpr size_t FUNCTION_DECL_START_COL = 8;
 constexpr size_t TPALIAS_START_COL = 9;
 constexpr size_t TPALIAS2_START_COL = 9;
+constexpr size_t CLASS_TEST_START_COL = 1;
+constexpr size_t CLASS_TEST_CONSTRUCTOR_START_COL = 5;
 
 constexpr size_t NS_END_COL = 2;
 constexpr size_t INNERNS_END_COL = 23;
@@ -245,6 +259,10 @@ constexpr size_t FUNCTION_PARAM3_END_COL = 21;
 constexpr size_t FUNCTION_DECL_END_COL = 8;
 constexpr size_t TPALIAS_END_COL = 34;
 constexpr size_t TPALIAS2_END_COL = 38;
+constexpr size_t CLASS_TEST_END_COL = 1;
+constexpr size_t CLASS_TEST_CONSTRUCTOR_END_COL = 9;
+
+const std::string CLASS_TEST_NAME = "ClassTest";
 
 static std::map<std::string, size_t> startLineMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_START_LINE},
                                                      {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_START_LINE},
@@ -277,7 +295,9 @@ static std::map<std::string, size_t> startLineMap = {{"exportNamedDecl", EXPORT_
                                                      {"fooDecl", FUNCTION_DECL_START_LINE},
                                                      {"$_instantiate", CLASS_INSTANTIATE_START_LINE},
                                                      {"tpAlise1", TPALIAS_START_LINE},
-                                                     {"tpAlise2", TPALIAS2_START_LINE}};
+                                                     {"tpAlise2", TPALIAS2_START_LINE},
+                                                     {"ClassTest", CLASS_TEST_START_LINE},
+                                                     {"constructor", CLASS_TEST_CONSTRUCTOR_START_LINE}};
 
 static std::map<std::string, size_t> startColMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_START_COL},
                                                     {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_START_COL},
@@ -310,7 +330,9 @@ static std::map<std::string, size_t> startColMap = {{"exportNamedDecl", EXPORT_N
                                                     {"fooDecl", FUNCTION_DECL_START_COL},
                                                     {"$_instantiate", CLASS_INSTANTIATE_START_COL},
                                                     {"tpAlise1", TPALIAS_START_COL},
-                                                    {"tpAlise2", TPALIAS2_START_COL}};
+                                                    {"tpAlise2", TPALIAS2_START_COL},
+                                                    {"ClassTest", CLASS_TEST_START_COL},
+                                                    {"constructor", CLASS_TEST_CONSTRUCTOR_START_COL}};
 
 static std::map<std::string, size_t> endLineMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_END_LINE},
                                                    {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_END_LINE},
@@ -343,7 +365,9 @@ static std::map<std::string, size_t> endLineMap = {{"exportNamedDecl", EXPORT_NA
                                                    {"fooDecl", FUNCTION_DECL_END_LINE},
                                                    {"$_instantiate", CLASS_INSTANTIATE_END_LINE},
                                                    {"tpAlise1", TPALIAS_END_LINE},
-                                                   {"tpAlise2", TPALIAS2_END_LINE}};
+                                                   {"tpAlise2", TPALIAS2_END_LINE},
+                                                   {"ClassTest", CLASS_TEST_END_LINE},
+                                                   {"constructor", CLASS_TEST_CONSTRUCTOR_END_LINE}};
 
 static std::map<std::string, size_t> endColMap = {{"exportNamedDecl", EXPORT_NAMED_DECL_END_COL},
                                                   {"exportSingleNamedDecl", EXPORT_SINGLE_NAMED_DECL_END_COL},
@@ -376,7 +400,9 @@ static std::map<std::string, size_t> endColMap = {{"exportNamedDecl", EXPORT_NAM
                                                   {"fooDecl", FUNCTION_DECL_END_COL},
                                                   {"$_instantiate", CLASS_INSTANTIATE_END_COL},
                                                   {"tpAlise1", TPALIAS_END_COL},
-                                                  {"tpAlise2", TPALIAS2_END_COL}};
+                                                  {"tpAlise2", TPALIAS2_END_COL},
+                                                  {"ClassTest", CLASS_TEST_END_COL},
+                                                  {"constructor", CLASS_TEST_CONSTRUCTOR_END_COL}};
 
 static es2panda_Impl *impl = nullptr;
 es2panda_Context *context = nullptr;
@@ -457,7 +483,8 @@ static void FindInterface(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
     }
 }
 
-static std::map<std::string, es2panda_AstNode *> classMap = {{"ClassOutside", nullptr}, {"innerClass", nullptr}};
+static std::map<std::string, es2panda_AstNode *> classMap = {
+    {"ClassOutside", nullptr}, {"innerClass", nullptr}, {"ClassTest", nullptr}};
 static void FindClass(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
 {
     if (!impl->IsClassDeclaration(ast)) {
@@ -510,9 +537,9 @@ static void FindEnumMember(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
 }
 
 static std::map<std::string, es2panda_AstNode *> methodMap = {
-    {"interfaceFoo1", nullptr}, {"interfaceFoo2", nullptr}, {"interfaceFoo3", nullptr},
-    {"interfaceFoo4", nullptr}, {"interfaceFoo5", nullptr}, {"classFoo1", nullptr},
-    {"classFoo2", nullptr},     {"classFoo3", nullptr},     {"$_instantiate", nullptr}};
+    {"interfaceFoo1", nullptr}, {"interfaceFoo2", nullptr}, {"interfaceFoo3", nullptr}, {"interfaceFoo4", nullptr},
+    {"interfaceFoo5", nullptr}, {"classFoo1", nullptr},     {"classFoo2", nullptr},     {"classFoo3", nullptr},
+    {"$_instantiate", nullptr}, {"constructor", nullptr}};
 static void FindMethodDef(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
 {
     if (!impl->IsMethodDefinition(ast)) {
@@ -531,6 +558,24 @@ static void FindMethodDef(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
     if (methodMap.find(name) != methodMap.end()) {
         methodMap[name] = ast;
     }
+}
+
+static void FindConstructorTest(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
+{
+    if (!impl->IsClassDeclaration(ast)) {
+        return;
+    }
+    auto *ident = impl->ClassDefinitionIdent(context, impl->ClassDeclarationDefinition(context, ast));
+    if (ident == nullptr) {
+        return;
+    }
+    auto name = std::string(impl->IdentifierName(context, ident));
+    if (name != CLASS_TEST_NAME) {
+        return;
+    }
+    auto *classDef = impl->ClassDeclarationDefinition(context, ast);
+
+    impl->AstNodeForEach(classDef, FindMethodDef, context);
 }
 
 static std::map<std::string, es2panda_AstNode *> etsParamsMap = {
@@ -578,6 +623,7 @@ static void FindTargetAst(es2panda_AstNode *ast, [[maybe_unused]] void *ctx)
     impl->AstNodeForEach(ast, FindEnumMember, context);
     impl->AstNodeForEach(ast, FindFunctionDecl, context);
     impl->AstNodeForEach(ast, FindTypeAlias, context);
+    impl->AstNodeForEach(ast, FindConstructorTest, context);
 }
 
 static bool CheckLineAndCol(es2panda_AstNode *ast, std::string name)

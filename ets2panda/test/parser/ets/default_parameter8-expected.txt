@@ -83,13 +83,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 18,
+                  "column": 5,
                   "program": "default_parameter8.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 18,
+                  "column": 16,
                   "program": "default_parameter8.ets"
                 }
               }
@@ -108,13 +108,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 5,
                       "program": "default_parameter8.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 16,
                       "program": "default_parameter8.ets"
                     }
                   }
@@ -316,13 +316,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 5,
                       "program": "default_parameter8.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 16,
                       "program": "default_parameter8.ets"
                     }
                   }
@@ -341,13 +341,13 @@
                       "name": "constructor",
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 18,
+                          "column": 5,
                           "program": "default_parameter8.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
+                          "line": 18,
+                          "column": 16,
                           "program": "default_parameter8.ets"
                         }
                       }

@@ -30,13 +30,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 5,
                   "program": "constructor_super_call3.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 16,
                   "program": "constructor_super_call3.ets"
                 }
               }
@@ -55,13 +55,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 5,
                       "program": "constructor_super_call3.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 16,
                       "program": "constructor_super_call3.ets"
                     }
                   }
@@ -227,13 +227,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 21,
+                  "column": 5,
                   "program": "constructor_super_call3.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 21,
+                  "column": 16,
                   "program": "constructor_super_call3.ets"
                 }
               }
@@ -252,13 +252,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 5,
                       "program": "constructor_super_call3.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 21,
+                      "column": 16,
                       "program": "constructor_super_call3.ets"
                     }
                   }

@@ -30,13 +30,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 5,
                   "program": "new_expressions.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 16,
                   "program": "new_expressions.ets"
                 }
               }
@@ -55,13 +55,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 5,
                       "program": "new_expressions.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 16,
                       "program": "new_expressions.ets"
                     }
                   }

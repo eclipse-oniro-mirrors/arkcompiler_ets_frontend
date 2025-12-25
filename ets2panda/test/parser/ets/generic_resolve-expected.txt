@@ -78,13 +78,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 13,
                   "program": "generic_resolve.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 24,
                   "program": "generic_resolve.ets"
                 }
               }
@@ -103,13 +103,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 13,
                       "program": "generic_resolve.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 24,
                       "program": "generic_resolve.ets"
                     }
                   }
@@ -1255,7 +1255,7 @@
                   },
                   "end": {
                     "line": 29,
-                    "column": 27,
+                    "column": 43,
                     "program": "generic_resolve.ets"
                   }
                 }
@@ -1268,7 +1268,7 @@
                 },
                 "end": {
                   "line": 29,
-                  "column": 27,
+                  "column": 43,
                   "program": "generic_resolve.ets"
                 }
               }
@@ -1282,7 +1282,7 @@
               },
               "end": {
                 "line": 29,
-                "column": 27,
+                "column": 43,
                 "program": "generic_resolve.ets"
               }
             }

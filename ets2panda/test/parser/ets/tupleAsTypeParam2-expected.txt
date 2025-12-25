@@ -225,13 +225,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 18,
+                  "column": 12,
                   "program": "tupleAsTypeParam2.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 18,
+                  "column": 23,
                   "program": "tupleAsTypeParam2.ets"
                 }
               }
@@ -250,13 +250,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 12,
                       "program": "tupleAsTypeParam2.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 18,
+                      "column": 23,
                       "program": "tupleAsTypeParam2.ets"
                     }
                   }

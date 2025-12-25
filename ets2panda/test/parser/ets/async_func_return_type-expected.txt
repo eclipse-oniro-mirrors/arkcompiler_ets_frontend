@@ -259,7 +259,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 30,
+                    "column": 49,
                     "program": "async_func_return_type.ets"
                   }
                 }
@@ -272,7 +272,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 30,
+                  "column": 49,
                   "program": "async_func_return_type.ets"
                 }
               }
@@ -286,7 +286,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 30,
+                "column": 49,
                 "program": "async_func_return_type.ets"
               }
             }

@@ -548,13 +548,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 23,
+                  "column": 5,
                   "program": "generics_interface_bounds_1.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 23,
+                  "column": 16,
                   "program": "generics_interface_bounds_1.ets"
                 }
               }
@@ -573,13 +573,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 23,
+                      "column": 5,
                       "program": "generics_interface_bounds_1.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 23,
+                      "column": 16,
                       "program": "generics_interface_bounds_1.ets"
                     }
                   }

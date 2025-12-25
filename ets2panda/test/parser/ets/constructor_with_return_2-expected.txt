@@ -83,13 +83,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 10,
                   "program": "constructor_with_return_2.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 19,
+                  "column": 21,
                   "program": "constructor_with_return_2.ets"
                 }
               }
@@ -108,13 +108,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 10,
                       "program": "constructor_with_return_2.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 19,
+                      "column": 21,
                       "program": "constructor_with_return_2.ets"
                     }
                   }

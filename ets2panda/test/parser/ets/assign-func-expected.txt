@@ -30,13 +30,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 5,
                   "program": "assign-func.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 16,
                   "program": "assign-func.ets"
                 }
               }
@@ -55,13 +55,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 5,
                       "program": "assign-func.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 16,
                       "program": "assign-func.ets"
                     }
                   }

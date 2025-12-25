@@ -124,7 +124,7 @@
                   },
                   "end": {
                     "line": 17,
-                    "column": 20,
+                    "column": 30,
                     "program": "infer_overriding_method_return_type.ets"
                   }
                 }
@@ -137,7 +137,7 @@
                 },
                 "end": {
                   "line": 17,
-                  "column": 20,
+                  "column": 30,
                   "program": "infer_overriding_method_return_type.ets"
                 }
               }
@@ -151,7 +151,7 @@
               },
               "end": {
                 "line": 17,
-                "column": 20,
+                "column": 30,
                 "program": "infer_overriding_method_return_type.ets"
               }
             }

@@ -278,13 +278,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 22,
+                  "column": 5,
                   "program": "Line.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 22,
+                  "column": 16,
                   "program": "Line.ets"
                 }
               }
@@ -303,13 +303,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 22,
+                      "column": 5,
                       "program": "Line.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 22,
+                      "column": 16,
                       "program": "Line.ets"
                     }
                   }

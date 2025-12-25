@@ -30,13 +30,13 @@
               "name": "constructor",
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 5,
                   "program": "regression-target-type-context.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
+                  "line": 17,
+                  "column": 16,
                   "program": "regression-target-type-context.ets"
                 }
               }
@@ -55,13 +55,13 @@
                   "name": "constructor",
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 5,
                       "program": "regression-target-type-context.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
+                      "line": 17,
+                      "column": 16,
                       "program": "regression-target-type-context.ets"
                     }
                   }
