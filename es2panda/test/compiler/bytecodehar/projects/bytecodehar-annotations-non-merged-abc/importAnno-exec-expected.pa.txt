@@ -10,7 +10,7 @@ slotNum = 0x3
 .function any &importAnnoPgName/exportAnno&2.0.0.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, &importAnnoPgName/exportAnno&2.0.0.#~A=#A, &importAnnoPgName/exportAnno&2.0.0_1378, 0x0, v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/exportAnno&2.0.0.#~A=#A, &importAnnoPgName/exportAnno&2.0.0_1297, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }
@@ -18,9 +18,9 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1338
+slot &importAnnoPgName/exportAnno&2.0.0_1257
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1342
+slot &importAnnoPgName/exportAnno&2.0.0_1261
 {
   index: 0
     tag: 2
@@ -62,7 +62,7 @@ slot &importAnnoPgName/exportAnno&2.0.0_1342
     val: 0
 },
 ------------------------------------
-slot &importAnnoPgName/exportAnno&2.0.0_1378
+slot &importAnnoPgName/exportAnno&2.0.0_1297
 {
   index: 0
     tag: 0
@@ -103,7 +103,7 @@ slotNum = 0x3
 .function any &importAnnoPgName/importAnno-exec&2.0.0.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B, &importAnnoPgName/importAnno-exec&2.0.0_1451, 0x0, v0
+	defineclasswithbuffer 0x0, &importAnnoPgName/importAnno-exec&2.0.0.#~B=#B, &importAnnoPgName/importAnno-exec&2.0.0_1370, 0x0, v0
 	sta v0
 	ldobjbyname 0x1, prototype
 	lda v0
@@ -114,9 +114,9 @@ slotNum = 0x3
 
 ======> literal array buffer <======
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1387
+slot &importAnnoPgName/importAnno-exec&2.0.0_1306
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1391
+slot &importAnnoPgName/importAnno-exec&2.0.0_1310
 {
   index: 0
     tag: 2
@@ -193,7 +193,7 @@ slot &importAnnoPgName/importAnno-exec&2.0.0_1391
     val: 0
 },
 ------------------------------------
-slot &importAnnoPgName/importAnno-exec&2.0.0_1451
+slot &importAnnoPgName/importAnno-exec&2.0.0_1370
 {
   index: 0
     tag: 0

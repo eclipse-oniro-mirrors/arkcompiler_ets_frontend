@@ -15,6 +15,7 @@
 
 #include <program_dump.h>
 #include <mem/pool_manager.h>
+#include "utils/perfMetrics.h"
 #include "utils/timers.h"
 
 #include <emitFiles.h>
@@ -114,8 +115,9 @@ static void DumpPandaFileSizePctStatistic(std::map<std::string, size_t> &stat)
     std::cout << "total: " << totalSize << std::endl;
 }
 
-static bool GenerateProgramsByWorkers(const std::map<std::string, panda::es2panda::util::ProgramCache*> &programsInfo,
-    const std::unique_ptr<panda::es2panda::aot::Options> &options, std::map<std::string, size_t> *statp)
+static bool GenerateProgramsByWorkers(const std::map<std::string, panda::es2panda::util::ProgramCache *> &programsInfo,
+                                      const std::unique_ptr<panda::es2panda::aot::Options> &options,
+                                      std::map<std::string, size_t> *statp)
 {
     auto queue = new panda::es2panda::aot::EmitFileQueue(options, statp, programsInfo);
 
@@ -131,6 +133,16 @@ static bool GenerateProgramsByWorkers(const std::map<std::string, panda::es2pand
 
     delete queue;
     queue = nullptr;
+
+    if (options->CompilerOptions().mergeAbc) {
+        try {
+            EmitMergedAbcJob emitMergedAbcJob(options, programsInfo, statp);
+            emitMergedAbcJob.Run();
+        } catch (const class Error &e) {
+            emitResult = false;
+            std::cerr << "Error: Failed to emit merged abc: " << e.Message() << std::endl;
+        }
+    }
 
     return emitResult;
 }
@@ -278,81 +290,108 @@ static bool ResolveDepsRelations(const std::map<std::string, panda::es2panda::ut
     return depsRelationResolver.Resolve();
 }
 
-static bool ResolveAndGenerate(std::map<std::string, panda::es2panda::util::ProgramCache*> &programsInfo,
+static bool ResolveAndGenerate(std::map<std::string, panda::es2panda::util::ProgramCache *> &programsInfo,
                                const std::unique_ptr<panda::es2panda::aot::Options> &options)
 {
-    panda::Timer::timerStart(panda::EVENT_RESOLVE_DEPS, "");
     // A mapping of program to its records which are resolved and collected as valid dependencies.
     std::map<std::string, std::unordered_set<std::string>> resolvedDepsRelation {};
-
-    if (options->NeedCollectDepsRelation() &&
-        !ResolveDepsRelations(programsInfo, options, resolvedDepsRelation)) {
-        return false;
+    {
+        ES2ABC_PERF_SCOPE("@EVENT_RESOLVE_DEPS");
+        panda::Timer::timerStart(panda::EVENT_RESOLVE_DEPS, "");
+        if (options->NeedCollectDepsRelation() && !ResolveDepsRelations(programsInfo, options, resolvedDepsRelation)) {
+            return false;
+        }
+        panda::Timer::timerEnd(panda::EVENT_RESOLVE_DEPS, "");
     }
-    panda::Timer::timerEnd(panda::EVENT_RESOLVE_DEPS, "");
 
-    panda::Timer::timerStart(panda::EVENT_EMIT_ABC, "");
-    if (!GenerateAbcFiles(programsInfo, options, Compiler::GetExpectedProgsCount(), resolvedDepsRelation)) {
-        return false;
+    {
+        ES2ABC_PERF_SCOPE("@EVENT_EMIT_ABC");
+        panda::Timer::timerStart(panda::EVENT_EMIT_ABC, "");
+        if (!GenerateAbcFiles(programsInfo, options, Compiler::GetExpectedProgsCount(), resolvedDepsRelation)) {
+            return false;
+        }
+        panda::Timer::timerEnd(panda::EVENT_EMIT_ABC, "");
     }
-    panda::Timer::timerEnd(panda::EVENT_EMIT_ABC, "");
 
     return true;
+}
+
+static bool HandleBcVersion(const std::unique_ptr<panda::es2panda::aot::Options> &options)
+{
+    if (options->CompilerOptions().targetBcVersion) {
+        auto bcVersionByApi = panda::panda_file::GetVersionByApi(options->CompilerOptions().targetApiVersion,
+                                                                 options->CompilerOptions().targetApiSubVersion);
+        std::cout << panda::panda_file::GetVersion(bcVersionByApi.value());
+        return true;
+    }
+
+    if (options->CompilerOptions().bcVersion || options->CompilerOptions().bcMinVersion) {
+        std::string version = options->CompilerOptions().bcVersion
+                                  ? panda::panda_file::GetVersion(panda::panda_file::version)
+                                  : panda::panda_file::GetVersion(panda::panda_file::minVersion);
+        std::cout << version;
+        return true;
+    }
+    return false;
+}
+
+static void DumpPerfInfo(const std::unique_ptr<panda::es2panda::aot::Options> &options)
+{
+    if (!options->PerfFile().empty()) {
+        panda::Timer::PrintTimers();
+    }
+    if (options->CompilerOptions().dumpPerfMetrics) {
+        panda::DumpPerfMetrics();
+    }
 }
 
 int Run(int argc, const char **argv)
 {
     auto options = std::make_unique<Options>();
-    if (!options->Parse(argc, argv)) {
-        std::cerr << options->ErrorMsg() << std::endl;
-        return 1;
-    }
+    {
+        ES2ABC_PERF_SCOPE("@TOTAL");
+        if (!options->Parse(argc, argv)) {
+            std::cerr << options->ErrorMsg() << std::endl;
+            return 1;
+        }
+        panda::Timer::timerStart(panda::EVENT_TOTAL, "");
 
-    if (options->CompilerOptions().targetBcVersion) {
-        auto bcVersionByApi = panda::panda_file::GetVersionByApi(options->CompilerOptions().targetApiVersion,
-            options->CompilerOptions().targetApiSubVersion);
-        std::cout << panda::panda_file::GetVersion(bcVersionByApi.value());
-        return 0;
-    }
+        if (HandleBcVersion(options)) {
+            return 0;
+        }
 
-    panda::Timer::timerStart(panda::EVENT_TOTAL, "");
-    if (options->CompilerOptions().bcVersion || options->CompilerOptions().bcMinVersion) {
-        std::string version = options->CompilerOptions().bcVersion ?
-            panda::panda_file::GetVersion(panda::panda_file::version) :
-            panda::panda_file::GetVersion(panda::panda_file::minVersion);
-        std::cout << version;
-        return 0;
-    }
+        std::map<std::string, panda::es2panda::util::ProgramCache *> programsInfo;
+        panda::ArenaAllocator allocator(panda::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
 
-    std::map<std::string, panda::es2panda::util::ProgramCache*> programsInfo;
-    panda::ArenaAllocator allocator(panda::SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+        Compiler::SetExpectedProgsCount(options->CompilerOptions().sourceFiles.size());
+        {
+            ES2ABC_PERF_SCOPE("@EVENT_COMPILE");
+            panda::Timer::timerStart(panda::EVENT_COMPILE, "");
+            int ret = Compiler::CompileFiles(options->CompilerOptions(), programsInfo, &allocator);
 
-    Compiler::SetExpectedProgsCount(options->CompilerOptions().sourceFiles.size());
-    panda::Timer::timerStart(panda::EVENT_COMPILE, "");
-    int ret = Compiler::CompileFiles(options->CompilerOptions(), programsInfo, &allocator);
+            if (!CheckMergeModeConsistency(options->CompilerOptions().mergeAbc, programsInfo)) {
+                return 1;
+            }
 
-    if (!CheckMergeModeConsistency(options->CompilerOptions().mergeAbc, programsInfo)) {
-        return 1;
-    }
+            if (options->ParseOnly()) {
+                return ret;
+            }
 
-    if (options->ParseOnly()) {
-        return ret;
-    }
+            if (!options->NpmModuleEntryList().empty()) {
+                es2panda::util::ModuleHelpers::CompileNpmModuleEntryList(
+                    options->NpmModuleEntryList(), options->CompilerOptions(), programsInfo, &allocator);
+                Compiler::SetExpectedProgsCount(Compiler::GetExpectedProgsCount() + 1);
+            }
+            panda::Timer::timerEnd(panda::EVENT_COMPILE, "");
+        }
 
-    if (!options->NpmModuleEntryList().empty()) {
-        es2panda::util::ModuleHelpers::CompileNpmModuleEntryList(options->NpmModuleEntryList(),
-            options->CompilerOptions(), programsInfo, &allocator);
-        Compiler::SetExpectedProgsCount(Compiler::GetExpectedProgsCount() + 1);
-    }
-    panda::Timer::timerEnd(panda::EVENT_COMPILE, "");
+        if (!ResolveAndGenerate(programsInfo, options)) {
+            return 1;
+        }
 
-    if (!ResolveAndGenerate(programsInfo, options)) {
-        return 1;
+        panda::Timer::timerEnd(panda::EVENT_TOTAL, "");
     }
-    panda::Timer::timerEnd(panda::EVENT_TOTAL, "");
-    if (!options->PerfFile().empty()) {
-        panda::Timer::PrintTimers();
-    }
+    DumpPerfInfo(options);
     return 0;
 }
 }  // namespace panda::es2panda::aot

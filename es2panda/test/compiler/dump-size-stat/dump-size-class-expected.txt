@@ -7,11 +7,11 @@ debug_info_item section: 27
 foreign_item section: 0
 header_item section: 60
 index_section_item section: 92
-line_number_program_idx_item section: 12
+line_number_program_idx_item section: 13
 line_number_program_item section: 22
 literal_array_item section: 26
 literalarray_idx section: 0
-string_item section: 248
+string_item section: 195
 instructions_number: 36
 codesize: 118
-total: 1020
+total: 968

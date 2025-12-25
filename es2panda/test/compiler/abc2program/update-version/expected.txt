@@ -39,9 +39,9 @@ slotNum = 0x7
 
 ======> literal array buffer <======
 ------------------------------------
-slot original_686
+slot original_677
 ------------------------------------
-slot original_690
+slot original_681
 {
   index: 0
     tag: 2

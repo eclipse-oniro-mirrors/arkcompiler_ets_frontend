@@ -47,6 +47,7 @@ panda::pandasm::Program *CompilerImpl::Compile(parser::Program *program, const e
     queue_->Wait();
 
     if (context.IsMergeAbc()) {
+        context.GetEmitter()->SetSourceFile(debugInfoSourceFile);
         context.GetEmitter()->GenRecordNameInfo();
     }
 

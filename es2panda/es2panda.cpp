@@ -15,6 +15,7 @@
 
 #include "es2panda.h"
 
+#include "utils/perfMetrics.h"
 #include "utils/timers.h"
 
 #include <compiler/core/compileQueue.h>
@@ -140,7 +141,7 @@ void Compiler::CompileAbcFileInParallel(SourceFile *src, const CompilerOptions &
 }
 
 panda::pandasm::Program *Compiler::Compile(const SourceFile &input, const CompilerOptions &options,
-    util::SymbolTable *symbolTable)
+                                           util::SymbolTable *symbolTable)
 {
     ASSERT(input.isSourceMode);
     /* TODO(dbatyai): pass string view */
@@ -157,6 +158,7 @@ panda::pandasm::Program *Compiler::Compile(const SourceFile &input, const Compil
     }
 
     try {
+        ES2ABC_PERF_SCOPE("@EVENT_EMIT_SINGLE_PROGRAM" + fname);
         panda::Timer::timerStart(panda::EVENT_PARSE, fname);
         auto ast = parser_->Parse(input, options);
         ast.Binder()->SetProgram(&ast);
@@ -172,14 +174,16 @@ panda::pandasm::Program *Compiler::Compile(const SourceFile &input, const Compil
         }
         panda::Timer::timerEnd(panda::EVENT_PARSE, fname);
 
-        panda::Timer::timerStart(panda::EVENT_COMPILE_TO_PROGRAM, fname);
-        std::string debugInfoSourceFile = options.debugInfoSourceFile.empty() ?
-                                          sourcefile : options.debugInfoSourceFile;
-        auto *prog = compiler_->Compile(&ast, options, debugInfoSourceFile, pkgName);
-        panda::Timer::timerEnd(panda::EVENT_COMPILE_TO_PROGRAM, fname);
-
-        CleanPatchFixHelper(patchFixHelper);
-        return prog;
+        {
+            ES2ABC_PERF_SCOPE("@EVENT_COMPILE_TO_PROGRAM" + fname);
+            panda::Timer::timerStart(panda::EVENT_COMPILE_TO_PROGRAM, fname);
+            std::string debugInfoSourceFile =
+                options.debugInfoSourceFile.empty() ? sourcefile : options.debugInfoSourceFile;
+            auto *prog = compiler_->Compile(&ast, options, debugInfoSourceFile, pkgName);
+            panda::Timer::timerEnd(panda::EVENT_COMPILE_TO_PROGRAM, fname);
+            CleanPatchFixHelper(patchFixHelper);
+            return prog;
+        }
     } catch (const class Error &e) {
         error_ = e;
 

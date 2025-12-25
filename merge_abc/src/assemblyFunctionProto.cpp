@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -86,7 +86,7 @@ void Function::Serialize(const panda::pandasm::Function &function, protoPanda::F
     protoFunction.set_bodypresence(function.body_presence);
 
     auto *protoReturnType = protoFunction.mutable_returntype();
-    Type::Serialize(function.return_type, *protoReturnType);
+    Type::Serialize(function.ReturnType(), *protoReturnType);
 
     auto *protoBodyLocation = protoFunction.mutable_bodylocation();
     SourceLocation::Serialize(function.body_location, *protoBodyLocation);
@@ -170,7 +170,6 @@ void Function::Deserialize(const protoPanda::Function &protoFunction, panda::pan
     }
 
     function.body_presence = protoFunction.bodypresence();
-    function.return_type = Type::Deserialize(protoFunction.returntype(), allocator);
     SourceLocation::Deserialize(protoFunction.bodylocation(), function.body_location);
 
     if (protoFunction.has_filelocation()) {

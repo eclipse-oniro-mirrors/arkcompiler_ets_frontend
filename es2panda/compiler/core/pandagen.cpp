@@ -103,7 +103,7 @@ void PandaGen::SetInSendable()
     inSendable_ = func->InSendable();
 }
 
-size_t PandaGen::GetExpectedPropertyCount() const
+uint32_t PandaGen::GetExpectedPropertyCount() const
 {
     if (rootNode_->IsProgram() ||
         !util::Helpers::IsEnableExpectedPropertyCountApiVersion(context_->Binder()->Program()->TargetApiVersion())) {

@@ -51,7 +51,7 @@ FunctionEmitter::FunctionEmitter(ArenaAllocator *allocator, const PandaGen *pg)
     func_ = allocator->New<panda::pandasm::Function>(pg->InternalName().Mutf8(), pg->SourceLang());
     CHECK_NOT_NULL(func_);
 
-    size_t paramCount = pg->InternalParamCount();
+    uint32_t paramCount = pg->InternalParamCount();
     func_->params.reserve(paramCount);
 
     for (uint32_t i = 0; i < paramCount; ++i) {
@@ -59,7 +59,6 @@ FunctionEmitter::FunctionEmitter(ArenaAllocator *allocator, const PandaGen *pg)
     }
 
     func_->regs_num = pg->TotalRegsNum();
-    func_->return_type = panda::pandasm::Type("any", 0);
 }
 
 void FunctionEmitter::Generate(util::PatchFix *patchFixHelper)
@@ -173,13 +172,13 @@ static size_t GetIRNodeWholeLength(const IRNode *node)
 // This is for supporting setting breakpoint on the right parenthesis of a scriptFunciton.
 uint32_t FunctionEmitter::UpdateForReturnIns(const ir::AstNode *astNode, panda::pandasm::Ins *pandaIns)
 {
-    constexpr size_t INVALID_LINE = -1;
+    constexpr uint32_t INVALID_LINE = -1;
     constexpr uint32_t INVALID_COL = -1;
     // The GetLocation method calculated position starts with 1, and
     // the column number in pandaIns->ins_debug starts with 0
     constexpr uint32_t OFFSET_COL = 1;
     uint32_t columnNum = INVALID_COL;
-    if (pandaIns->opcode == pandasm::Opcode::RETURNUNDEFINED || pandaIns->opcode == pandasm::Opcode::RETURN) {
+    if (pandaIns->GetOpcode() == pandasm::Opcode::RETURNUNDEFINED || pandaIns->GetOpcode() == pandasm::Opcode::RETURN) {
         while (astNode != nullptr && !astNode->IsScriptFunction()) {
             if (astNode->IsBlockStatement() &&
                 astNode->AsBlockStatement()->Scope() &&
@@ -206,19 +205,24 @@ bool FunctionEmitter::NeedToAddColumnForPandaIns(panda::pandasm::Ins *pandaIns)
     }
     // In other mode, adds column numbers to the call instructions can include the column numbers in the backstack info
     // of the 'not a callable' type errors.
-    return pg_->EnableColumn() && (pandaIns->opcode == pandasm::Opcode::CALLTHIS0 ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS1 || pandaIns->opcode == pandasm::Opcode::CALLTHIS2 ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS3 || pandaIns->opcode == pandasm::Opcode::CALLTHISRANGE ||
-        pandaIns->opcode == pandasm::Opcode::WIDE_CALLTHISRANGE ||
-        pandaIns->opcode == pandasm::Opcode::CALLARG0 || pandaIns->opcode == pandasm::Opcode::CALLARG1 ||
-        pandaIns->opcode == pandasm::Opcode::CALLARGS2 || pandaIns->opcode == pandasm::Opcode::CALLARGS3 ||
-        pandaIns->opcode == pandasm::Opcode::CALLRANGE || pandaIns->opcode == pandasm::Opcode::WIDE_CALLRANGE ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS0WITHNAME ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS1WITHNAME ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS2WITHNAME ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHIS3WITHNAME ||
-        pandaIns->opcode == pandasm::Opcode::CALLTHISRANGEWITHNAME ||
-        pandaIns->opcode == pandasm::Opcode::WIDE_CALLTHISRANGEWITHNAME);
+    return pg_->EnableColumn() &&
+           (pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS0 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS1 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS2 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS3 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHISRANGE ||
+            pandaIns->GetOpcode() == pandasm::Opcode::WIDE_CALLTHISRANGE ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLARG0 || pandaIns->GetOpcode() == pandasm::Opcode::CALLARG1 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLARGS2 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLARGS3 ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLRANGE ||
+            pandaIns->GetOpcode() == pandasm::Opcode::WIDE_CALLRANGE ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS0WITHNAME ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS1WITHNAME ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS2WITHNAME ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHIS3WITHNAME ||
+            pandaIns->GetOpcode() == pandasm::Opcode::CALLTHISRANGEWITHNAME ||
+            pandaIns->GetOpcode() == pandasm::Opcode::WIDE_CALLTHISRANGEWITHNAME);
 }
 
 void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, panda::pandasm::Ins *pandaIns)
@@ -546,8 +550,6 @@ void FunctionEmitter::GenScopeVariableInfo(const binder::Scope *scope)
 
                 auto &variableDebug = func_->local_variable_debug.emplace_back();
                 variableDebug.name = name.Mutf8();
-                variableDebug.signature = "any";
-                variableDebug.signature_type = "any";
                 // Register spill causes an offset being applied to all registers in all instructions (refer to
                 // RegAllocator::AdjustInsRegWhenHasSpill for more details). Therefore, we also add this offset
                 // to the variable-to-register mapping before dumping it to the debug information of the abc file
@@ -712,6 +714,12 @@ void Emitter::SetPkgNameField(const std::string &pkgName)
     pkgNameField.metadata->SetValue(
         panda::pandasm::ScalarValue::Create<panda::pandasm::Value::Type::U8>(static_cast<uint8_t>(0)));
     rec_->field_list.emplace_back(std::move(pkgNameField));
+}
+
+void Emitter::SetSourceFile(const std::string &sourceFile)
+{
+    ASSERT(rec_ != nullptr);
+    rec_->source_file = sourceFile;
 }
 
 void Emitter::GenRecordNameInfo() const

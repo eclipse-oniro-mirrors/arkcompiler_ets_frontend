@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,6 @@ void Record::Serialize(const panda::pandasm::Record &record, protoPanda::Record 
         Field::Serialize(field, *proto_field);
     }
 
-    protoRecord.set_paramsnum(record.params_num);
     protoRecord.set_bodypresence(record.body_presence);
     protoRecord.set_sourcefile(record.source_file);
 
@@ -51,7 +50,6 @@ void Record::Deserialize(const protoPanda::Record &protoRecord, panda::pandasm::
         Field::Deserialize(protoField, recordField, allocator);
         record.field_list.emplace_back(std::move(recordField));
     }
-    record.params_num = protoRecord.paramsnum();
     record.body_presence = protoRecord.bodypresence();
     record.source_file = protoRecord.sourcefile();
     if (protoRecord.has_filelocation()) {

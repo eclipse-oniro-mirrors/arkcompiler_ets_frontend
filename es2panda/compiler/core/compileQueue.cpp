@@ -17,6 +17,7 @@
 
 #include <regex>
 
+#include "utils/perfMetrics.h"
 #include "utils/timers.h"
 
 #include <compiler/core/compilerContext.h>
@@ -137,19 +138,22 @@ void CompileFileJob::Run()
 {
     std::stringstream ss;
     std::string buffer;
-    panda::Timer::timerStart(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
-    if (!src_->fileName.empty()) {
-        if (!util::Helpers::ReadFileToBuffer(src_->fileName, ss)) {
-            return;
+    {
+        ES2ABC_PERF_SCOPE("@EVENT_READ_INPUT_AND_CACHE");
+        panda::Timer::timerStart(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
+        if (!src_->fileName.empty()) {
+            if (!util::Helpers::ReadFileToBuffer(src_->fileName, ss)) {
+                return;
+            }
+            buffer = ss.str();
+            src_->source = buffer;
+            if (RetrieveProgramFromCacheFiles(buffer, !src_->isSourceMode)) {
+                panda::Timer::timerEnd(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
+                return;
+            }
         }
-        buffer = ss.str();
-        src_->source = buffer;
-        if (RetrieveProgramFromCacheFiles(buffer, !src_->isSourceMode)) {
-            panda::Timer::timerEnd(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
-            return;
-        }
+        panda::Timer::timerEnd(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
     }
-    panda::Timer::timerEnd(panda::EVENT_READ_INPUT_AND_CACHE, src_->fileName);
 
     CompileProgram();
 }
@@ -160,10 +164,12 @@ void CompileFileJob::CompileProgram()
     panda::pandasm::Program *prog = nullptr;
 
     if (src_->isSourceMode) {
+        ES2ABC_PERF_SCOPE("@EVENT_COMPILE_FILE" + src_->fileName);
         panda::Timer::timerStart(panda::EVENT_COMPILE_FILE, src_->fileName);
         prog = compiler.CompileFile(*options_, src_, symbolTable_);
         panda::Timer::timerEnd(panda::EVENT_COMPILE_FILE, src_->fileName);
     } else if (!options_->mergeAbc) {
+        ES2ABC_PERF_SCOPE("@EVENT_COMPILE_ABC_FILE" + src_->fileName);
         // If input is an abc file, in non merge-abc mode, compile classes one by one.
         panda::Timer::timerStart(panda::EVENT_COMPILE_ABC_FILE, src_->fileName);
         prog = compiler.CompileAbcFile(src_->fileName, *options_);
@@ -259,6 +265,7 @@ void CompileFileJob::OptimizeAndCacheProgram(panda::pandasm::Program *prog)
     // When cross-program optimizations are required, skip program-local optimization at this stage
     // and perform it later after the analysis of all programs has been completed
     if (src_->isSourceMode && options_->transformLib.empty()) {
+        ES2ABC_PERF_SCOPE("@EVENT_OPTIMIZE_PROGRAM" + src_->fileName);
         if (options_->requireGlobalOptimization) {
             panda::Timer::timerStart(panda::EVENT_OPTIMIZE_PROGRAM, src_->fileName);
             util::Helpers::AnalysisProgram(prog, src_->fileName);

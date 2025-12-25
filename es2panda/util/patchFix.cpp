@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -177,11 +177,11 @@ std::vector<std::pair<std::string, std::string>> PatchFix::GenerateFunctionAndCl
 
     for (const auto &ins : func->ins) {
         ss << (ins->IsLabel() ? "" : "\t") << ins->ToString("", true, func->GetTotalRegs()) << " ";
-        if (ins->opcode == panda::pandasm::Opcode::CREATEARRAYWITHBUFFER ||
-            ins->opcode == panda::pandasm::Opcode::CREATEOBJECTWITHBUFFER) {
+        if (ins->GetOpcode() == panda::pandasm::Opcode::CREATEARRAYWITHBUFFER ||
+            ins->GetOpcode() == panda::pandasm::Opcode::CREATEOBJECTWITHBUFFER) {
             int64_t bufferIdx = GetLiteralIdxFromStringId(ins->GetId(0));
             ss << ExpandLiteral(bufferIdx, literalBuffers) << " ";
-        } else if (ins->opcode == panda::pandasm::Opcode::DEFINECLASSWITHBUFFER) {
+        } else if (ins->GetOpcode() == panda::pandasm::Opcode::DEFINECLASSWITHBUFFER) {
             CollectFunctionsWithDefinedClasses(func->name, ins->GetId(0));
             int64_t bufferIdx = GetLiteralIdxFromStringId(ins->GetId(1));
             std::string literalStr = ExpandLiteral(bufferIdx, literalBuffers);
@@ -321,9 +321,9 @@ uint32_t PatchFix::GetPatchLexicalIdx(const std::string &variableName)
 
 bool IsFunctionOrClassDefineIns(panda::pandasm::Ins *ins)
 {
-    if (ins->opcode == panda::pandasm::Opcode::DEFINEMETHOD ||
-        ins->opcode == panda::pandasm::Opcode::DEFINEFUNC ||
-        ins->opcode == panda::pandasm::Opcode::DEFINECLASSWITHBUFFER) {
+    if (ins->GetOpcode() == panda::pandasm::Opcode::DEFINEMETHOD ||
+        ins->GetOpcode() == panda::pandasm::Opcode::DEFINEFUNC ||
+        ins->GetOpcode() == panda::pandasm::Opcode::DEFINECLASSWITHBUFFER) {
         return true;
     }
     return false;
@@ -331,7 +331,7 @@ bool IsFunctionOrClassDefineIns(panda::pandasm::Ins *ins)
 
 bool IsStPatchVarIns(panda::pandasm::Ins *ins)
 {
-    return ins->opcode == panda::pandasm::Opcode::WIDE_STPATCHVAR;
+    return ins->GetOpcode() == panda::pandasm::Opcode::WIDE_STPATCHVAR;
 }
 
 void PatchFix::CollectFuncDefineIns(panda::pandasm::Function *func)
@@ -430,9 +430,6 @@ void PatchFix::CreateFunctionPatchMain0AndMain1(panda::pandasm::Function &patchF
 
     patchFuncMain0.ins = std::move(patchMain0DefineIns);
     patchFuncMain1.ins = std::move(patchMain1DefineIns);
-
-    patchFuncMain0.return_type = panda::pandasm::Type("any", 0);
-    patchFuncMain1.return_type = panda::pandasm::Type("any", 0);
 }
 
 void PatchFix::Finalize(panda::pandasm::Program **prog)

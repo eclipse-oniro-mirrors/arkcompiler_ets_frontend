@@ -539,6 +539,7 @@ bool Options::Parse(int argc, const char **argv)
         " during compilation process, default to 'perf.txt' in the current directory");
     panda::PandArg<int> opPerfLevel("perf-level", 0, "Specify the performance data output level:"\
         "  0: Output compilation time data(default)");
+    panda::PandArg<bool> opDumpPerfMetrics("dump-perf-metrics", false, "Dump performance metrics");
     panda::PandArg<bool> opuseDefineSemantic("use-define-semantic", false, "Compile ts class fields "\
         "in accordance with ECMAScript2022");
     panda::PandArg<std::string> moduleRecordFieldName("module-record-field-name", "", "Specify the field name "\
@@ -650,6 +651,7 @@ bool Options::Parse(int argc, const char **argv)
     argparser_->Add(&opMergeAbc);
     argparser_->Add(&opPerfLevel);
     argparser_->Add(&opPerfFile);
+    argparser_->Add(&opDumpPerfMetrics);
     argparser_->Add(&opuseDefineSemantic);
     argparser_->Add(&moduleRecordFieldName);
     argparser_->Add(&opBranchElimination);
@@ -892,6 +894,7 @@ bool Options::Parse(int argc, const char **argv)
     compilerOptions_.enableCallableName = targetApiVersion.GetValue() >= FUNCNAME_NOT_CALLABLE_SUPPORTED_API_VERSION &&
                                           opEnableCallableName.GetValue();
     compilerOptions_.moduleRecordFieldName = moduleRecordFieldName.GetValue();
+    compilerOptions_.dumpPerfMetrics = opDumpPerfMetrics.GetValue();
 
     compilerOptions_.patchFixOptions.dumpSymbolTable = opDumpSymbolTable.GetValue();
     compilerOptions_.patchFixOptions.symbolTable = opInputSymbolTable.GetValue();

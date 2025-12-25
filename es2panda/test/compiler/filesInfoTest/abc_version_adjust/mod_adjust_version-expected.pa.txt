@@ -16,7 +16,7 @@ slotNum = 0x3
 .function any &library/annotation-test&2.0.0.func_main_0(any a0, any a1, any a2) {
 	ldhole
 	sta v0
-	defineclasswithbuffer 0x0, &library/annotation-test&2.0.0.#~C=#C, &library/annotation-test&2.0.0_1506, 0x0, v0
+	defineclasswithbuffer 0x0, &library/annotation-test&2.0.0.#~C=#C, &library/annotation-test&2.0.0_1442, 0x0, v0
 	ldobjbyname 0x1, prototype
 	returnundefined
 }

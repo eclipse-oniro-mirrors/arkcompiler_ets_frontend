@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,6 +137,7 @@ public:
     panda::pandasm::Program *GetProgram() const;
     void GenJsonContentRecord(const CompilerContext *context);
     void GenRecordNameInfo() const;
+    void SetSourceFile(const std::string &sourceFile);
     std::mutex &GetEmitterLock()
     {
         return m_;
