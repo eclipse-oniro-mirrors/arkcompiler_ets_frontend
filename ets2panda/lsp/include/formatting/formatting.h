@@ -48,6 +48,7 @@ private:
 
 CAPI_EXPORT FormatContext GetFormatContext(FormatCodeSettings &options);
 std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext formatContext);
+std::vector<TextChange> FormatRange(es2panda_Context *context, FormatContext formatContext, const TextSpan &span);
 
 }  // namespace ark::es2panda::lsp
 

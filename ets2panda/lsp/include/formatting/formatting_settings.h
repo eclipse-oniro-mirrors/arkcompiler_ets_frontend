@@ -21,7 +21,7 @@
 
 namespace ark::es2panda::lsp {
 
-static const std::string DEFAULT_NEWLINE_CHARACTER = "\n";
+constexpr const char *DEFAULT_NEWLINE_CHARACTER = "\n";
 
 enum class IndentStyle { NONE, BLOCK, SMART };
 
@@ -140,11 +140,6 @@ public:
         return insertSpaceAfterKeywordsInControlFlowStatements_;
     }
 
-    bool GetInsertSpaceAfterFunctionKeywordForAnonymousFunctions() const
-    {
-        return insertSpaceAfterFunctionKeywordForAnonymousFunctions_;
-    }
-
     bool GetInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis() const
     {
         return insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis_;
@@ -163,11 +158,6 @@ public:
     bool GetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces() const
     {
         return insertSpaceAfterOpeningAndBeforeClosingEmptyBraces_;
-    }
-
-    bool GetInsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces() const
-    {
-        return insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces_;
     }
 
     bool GetInsertSpaceAfterTypeAssertion() const
@@ -230,11 +220,6 @@ public:
         insertSpaceAfterKeywordsInControlFlowStatements_ = value;
     }
 
-    void SetInsertSpaceAfterFunctionKeywordForAnonymousFunctions(bool value)
-    {
-        insertSpaceAfterFunctionKeywordForAnonymousFunctions_ = value;
-    }
-
     void SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis(bool value)
     {
         insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis_ = value;
@@ -253,11 +238,6 @@ public:
     void SetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(bool value)
     {
         insertSpaceAfterOpeningAndBeforeClosingEmptyBraces_ = value;
-    }
-
-    void SetInsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces(bool value)
-    {
-        insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces_ = value;
     }
 
     void SetInsertSpaceAfterTypeAssertion(bool value)
@@ -301,12 +281,10 @@ private:
     bool insertSpaceBeforeAndAfterBinaryOperators_ = true;
     bool insertSpaceAfterConstructor_ = false;
     bool insertSpaceAfterKeywordsInControlFlowStatements_ = true;
-    bool insertSpaceAfterFunctionKeywordForAnonymousFunctions_ = false;
     bool insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis_ = false;
     bool insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets_ = false;
     bool insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces_ = true;
     bool insertSpaceAfterOpeningAndBeforeClosingEmptyBraces_ = false;
-    bool insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces_ = false;
     bool insertSpaceAfterTypeAssertion_ = false;
     bool insertSpaceBeforeFunctionParenthesis_ = false;
     bool placeOpenBraceOnNewLineForFunctions_ = false;

@@ -94,6 +94,12 @@ export const basicCases: TestCases = {
     '2': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport1_import.ets')],
     '3': [resolveTestPath('test/testcases/getOrganizeImports/ExtractDefaultImport2_import.ets')]
   },
+  getFormattingEdits: {
+    expectedFilePath: resolveTestPath('test/expected/getFormattingEdits.json'),
+    '1': [resolveTestPath('test/testcases/getFormattingEdits/getFormattingEdits1.ets')],
+    '2': [resolveTestPath('test/testcases/getFormattingEdits/getFormattingEdits2.ets')],
+    '3': [resolveTestPath('test/testcases/getFormattingEdits/getFormattingEdits3.ets')]
+  },
   getQuickInfoAtPosition: {
     expectedFilePath: resolveTestPath('test/expected/getQuickInfoAtPosition.json'),
     '1': [resolveTestPath('test/testcases/getQuickInfoAtPosition/getQuickInfoAtPosition1.ets'), 626],

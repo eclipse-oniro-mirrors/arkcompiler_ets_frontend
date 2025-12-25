@@ -102,7 +102,7 @@ bool FormattingContext::ContextNodeBlockIsOnOneLine() const
 
 bool FormattingContext::TokensAreOnSameLine() const
 {
-    return prevToken_.Loc().end.line == currentToken_.Loc().start.line;
+    return currentToken_.Loc().start.line == nextToken_.Loc().start.line;
 }
 
 bool FormattingContext::BlockIsOnOneLine(ir::AstNode *node) const

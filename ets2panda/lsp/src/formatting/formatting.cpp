@@ -19,7 +19,10 @@
 #include "internal_api.h"
 #include "public/public.h"
 #include "lexer/lexer.h"
+#include "lexer/ETSLexer.h"
+#include "lexer/TSLexer.h"
 #include "lexer/token/token.h"
+#include "es2panda.h"
 
 namespace ark::es2panda::lsp {
 
@@ -30,9 +33,13 @@ bool TokenMatch(TokenRange &tokenRange, lexer::TokenType tokenType)
     return tokens.empty() || std::find(tokens.begin(), tokens.end(), tokenType) != tokens.end();
 }
 
-void ApplyInsertSpace(RuleAction action, const TextSpan &span, std::vector<TextChange> &changes)
+void ApplyInsertSpace(RuleAction action, const TextSpan &span, const std::string &sourceText,
+                      std::vector<TextChange> &changes)
 {
     if ((static_cast<uint16_t>(RuleAction::INSERT_SPACE) & static_cast<uint16_t>(action)) != 0) {
+        if (span.length == 1 && span.start < sourceText.length() && sourceText[span.start] == ' ') {
+            return;
+        }
         changes.emplace_back(TextChange {span, " "});
     }
 }
@@ -46,10 +53,16 @@ void ApplyDeleteSpace(RuleAction action, const TextSpan &span, std::vector<TextC
     }
 }
 
-void ApplyInsertNewline(RuleAction action, const TextSpan &span, std::vector<TextChange> &changes)
+void ApplyInsertNewline(RuleAction action, const TextSpan &span, const std::string &sourceText,
+                        const std::string &newLineCharacter, std::vector<TextChange> &changes)
 {
     if ((static_cast<uint16_t>(RuleAction::INSERT_NEWLINE) & static_cast<uint16_t>(action)) != 0) {
-        changes.emplace_back(TextChange {span, "\n"});
+        auto nlLen = newLineCharacter.length();
+        if (span.length == nlLen && span.start + nlLen <= sourceText.length() &&
+            sourceText.compare(span.start, nlLen, newLineCharacter) == 0) {
+            return;
+        }
+        changes.emplace_back(TextChange {span, newLineCharacter});
     }
 }
 
@@ -71,25 +84,32 @@ void ApplyInsertSemicolon(RuleAction action, const lexer::SourceRange &tokenLoc,
 
 void ExecuteRuleAction(FormattingContext &context, std::vector<TextChange> &changes, Rule &rule)
 {
-    const auto &prevToken = context.GetPreviousToken();
     const auto &currentToken = context.GetCurrentToken();
+    const auto &nextToken = context.GetNextToken();
+    const auto &sourceText = context.GetSourceText();
+    const auto &newLineCharacter = context.GetOptions().GetNewLineCharacter();
     auto action = rule.GetRuleAction();
 
-    auto prevLoc = prevToken.Loc();
     auto currLoc = currentToken.Loc();
+    auto nextLoc = nextToken.Loc();
 
-    size_t start = prevLoc.end.index;
-    size_t end = currLoc.start.index;
+    size_t start = currLoc.end.index;
+    size_t end = nextLoc.start.index;
+
+    bool tokensOnDifferentLines = currLoc.end.line != nextLoc.start.line;
+    bool canDeleteNewlines = rule.GetRuleFlags() == RuleFlags::CAN_DELETE_NEWLINES;
 
     if (start <= end) {
         TextSpan whitespaceSpan {start, end - start};
-        ApplyInsertSpace(action, whitespaceSpan, changes);
+        if (!tokensOnDifferentLines || canDeleteNewlines) {
+            ApplyInsertSpace(action, whitespaceSpan, sourceText, changes);
+            ApplyInsertNewline(action, whitespaceSpan, sourceText, newLineCharacter, changes);
+        }
         ApplyDeleteSpace(action, whitespaceSpan, changes);
-        ApplyInsertNewline(action, whitespaceSpan, changes);
     }
 
-    ApplyDeleteToken(action, currLoc, changes);
-    ApplyInsertSemicolon(action, currLoc, changes);
+    ApplyDeleteToken(action, nextLoc, changes);
+    ApplyInsertSemicolon(action, nextLoc, changes);
 }
 
 void ApplyRulesOnRange(FormattingContext &context, std::vector<TextChange> &changes, RulesMap &rulesMap)
@@ -130,66 +150,117 @@ void ApplyRulesOnRange(FormattingContext &context, std::vector<TextChange> &chan
     }
 }
 
+struct RangeFormat {
+    size_t start;
+    size_t end;
+};
+
+static void AdvanceTokens(lexer::Lexer &lex, lexer::Token &prev, lexer::Token &curr, lexer::Token &next)
+{
+    prev = curr;
+    curr = next;
+    if (curr.Type() != lexer::TokenType::EOS) {
+        lex.NextToken();
+        next = lex.GetToken();
+    } else {
+        next.SetTokenType(lexer::TokenType::EOS);
+    }
+}
+
+static std::unique_ptr<lexer::Lexer> CreateLexer(parser::ParserContext *parserCtx, util::DiagnosticEngine &diagEngine,
+                                                 ScriptExtension extension)
+{
+    if (extension == ScriptExtension::ETS) {
+        return std::make_unique<lexer::ETSLexer>(parserCtx, diagEngine);
+    }
+    if (extension == ScriptExtension::TS) {
+        return std::make_unique<lexer::TSLexer>(parserCtx, diagEngine);
+    }
+    return std::make_unique<lexer::Lexer>(parserCtx, diagEngine);
+}
+
+static std::vector<TextChange> FormatSpan(es2panda_Context *context, public_lib::Context *publicContext,
+                                          FormatContext &formatContext, const std::string &sourceText,
+                                          const RangeFormat &range)
+{
+    RulesMap &rulesMap = formatContext.GetRulesMap();
+    parser::ParserContext parserCtx(publicContext->parserProgram, parser::ParserStatus::NO_OPTS);
+    auto extension = publicContext->parserProgram->Extension();
+    auto lex = CreateLexer(&parserCtx, *publicContext->diagnosticEngine, extension);
+    FormattingContext fmtCtx(sourceText);
+    fmtCtx.SetOptions(formatContext.GetFormatCodeSettings());
+    std::vector<TextChange> changes;
+
+    lexer::Token prev;
+    lexer::Token curr;
+    lexer::Token next;
+    prev.SetTokenType(lexer::TokenType::EOS);
+    lex->NextToken();
+    curr = lex->GetToken();
+    if (curr.Type() == lexer::TokenType::EOS) {
+        return {};
+    }
+    lex->NextToken();
+    next = lex->GetToken();
+
+    while (curr.Type() != lexer::TokenType::EOS) {
+        if (curr.Loc().end.index < range.start) {
+            AdvanceTokens(*lex, prev, curr, next);
+            continue;
+        }
+        if (curr.Loc().start.index > range.end) {
+            break;
+        }
+
+        fmtCtx.SetPreviousToken(prev);
+        fmtCtx.SetCurrentToken(curr);
+        fmtCtx.SetNextToken(next);
+        fmtCtx.SetCurrentTokenParent(GetTouchingToken(context, curr.Loc().start.index, false));
+        auto *nextParent =
+            next.Type() != lexer::TokenType::EOS ? GetTouchingToken(context, next.Loc().start.index, false) : nullptr;
+        fmtCtx.SetNextTokenParent(nextParent);
+
+        ApplyRulesOnRange(fmtCtx, changes, rulesMap);
+        AdvanceTokens(*lex, prev, curr, next);
+    }
+    return changes;
+}
+
 std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext formatContext)
 {
     if (context == nullptr) {
         return {};
     }
+    auto *publicContext = reinterpret_cast<public_lib::Context *>(context);
+    if (publicContext == nullptr || publicContext->parserProgram == nullptr) {
+        return {};
+    }
+    std::string sourceText(publicContext->parserProgram->SourceCode().Utf8());
+    return FormatSpan(context, publicContext, formatContext, sourceText, {0, sourceText.length()});
+}
 
+std::vector<TextChange> FormatRange(es2panda_Context *context, FormatContext formatContext, const TextSpan &span)
+{
+    if (context == nullptr) {
+        return {};
+    }
     auto *publicContext = reinterpret_cast<public_lib::Context *>(context);
     if (publicContext == nullptr || publicContext->parserProgram == nullptr) {
         return {};
     }
 
-    RulesMap &rulesMap = formatContext.GetRulesMap();
-    [[maybe_unused]] const FormatCodeSettings &options = formatContext.GetFormatCodeSettings();
-
-    parser::ParserContext parserCtx(publicContext->parserProgram, parser::ParserStatus::NO_OPTS);
-    lexer::Lexer lexer(&parserCtx, *publicContext->diagnosticEngine);
-
-    std::string sourceText(publicContext->parserProgram->SourceCode().Utf8());
-
-    FormattingContext formattingContext(sourceText);
-    std::vector<TextChange> changes;
-
-    lexer::Token prevToken;
-    prevToken.SetTokenType(lexer::TokenType::EOS);
-
-    lexer.NextToken();
-    lexer::Token currentToken = lexer.GetToken();
-    if (currentToken.Type() == lexer::TokenType::EOS) {
+    util::StringView sourceCode = publicContext->parserProgram->SourceCode();
+    std::string sourceText(sourceCode.Utf8());
+    size_t rangeEnd = span.start + span.length;
+    if (rangeEnd > sourceText.length()) {
         return {};
     }
-    lexer.NextToken();
-    lexer::Token nextToken = lexer.GetToken();
 
-    while (currentToken.Type() != lexer::TokenType::EOS) {
-        formattingContext.SetPreviousToken(prevToken);
-        formattingContext.SetCurrentToken(currentToken);
-        formattingContext.SetNextToken(nextToken);
+    lexer::LineIndex lineIndex(sourceCode);
+    auto [line, col] = lineIndex.GetLocation(span.start);
+    size_t rangeStart = lineIndex.GetOffset(lexer::SourceLocation(line, 1, nullptr));
 
-        auto *currentTokenParent = GetTouchingToken(context, currentToken.Loc().start.index, false);
-        formattingContext.SetCurrentTokenParent(currentTokenParent);
-
-        ir::AstNode *nextTokenParent = nullptr;
-        if (nextToken.Type() != lexer::TokenType::EOS) {
-            nextTokenParent = GetTouchingToken(context, nextToken.Loc().start.index, false);
-        }
-        formattingContext.SetNextTokenParent(nextTokenParent);
-
-        ApplyRulesOnRange(formattingContext, changes, rulesMap);
-
-        prevToken = currentToken;
-        currentToken = nextToken;
-
-        if (currentToken.Type() != lexer::TokenType::EOS) {
-            lexer.NextToken();
-            nextToken = lexer.GetToken();
-        } else {
-            nextToken.SetTokenType(lexer::TokenType::EOS);
-        }
-    }
-    return changes;
+    return FormatSpan(context, publicContext, formatContext, sourceText, {rangeStart, rangeEnd});
 }
 
 FormatContext GetFormatContext(FormatCodeSettings &options)

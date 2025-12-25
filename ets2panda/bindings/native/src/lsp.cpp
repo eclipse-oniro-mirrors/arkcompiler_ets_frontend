@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2033,3 +2033,254 @@ KNativePointer impl_GetTypeFromTypeInfo(KNativePointer typePtr)
     return new std::string(typeInfo->type);
 }
 TS_INTEROP_1(GetTypeFromTypeInfo, KNativePointer, KNativePointer)
+
+KNativePointer impl_createFormatCodeSettings()
+{
+    return new ark::es2panda::lsp::FormatCodeSettings();
+}
+TS_INTEROP_0(createFormatCodeSettings, KNativePointer)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterCommaDelimiter(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterCommaDelimiter(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterCommaDelimiter, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterSemicolonInForStatements(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceBeforeAndAfterBinaryOperators(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterConstructor(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterConstructor(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterConstructor, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements(KNativePointer settingsPtr,
+                                                                               KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterKeywordsInControlFlowStatements(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis(KNativePointer settingsPtr,
+                                                                                          KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis, KInt, KNativePointer,
+             KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets(KNativePointer settingsPtr,
+                                                                                       KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets, KInt, KNativePointer,
+             KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(KNativePointer settingsPtr,
+                                                                                     KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(KNativePointer settingsPtr,
+                                                                                  KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceAfterTypeAssertion(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceAfterTypeAssertion(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceAfterTypeAssertion, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceBeforeFunctionParenthesis(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetPlaceOpenBraceOnNewLineForFunctions(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetPlaceOpenBraceOnNewLineForControlBlocks(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetInsertSpaceBeforeTypeAnnotation(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsIndentSize(KNativePointer settingsPtr, KInt value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetIndentSize(value);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsIndentSize, KInt, KNativePointer, KInt)
+
+KInt impl_setFormatCodeSettingsTabSize(KNativePointer settingsPtr, KInt value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetTabSize(value);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsTabSize, KInt, KNativePointer, KInt)
+
+KInt impl_setFormatCodeSettingsConvertTabsToSpaces(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetConvertTabsToSpaces(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsConvertTabsToSpaces, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsBaseIndentSize(KNativePointer settingsPtr, KInt value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetBaseIndentSize(value);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsBaseIndentSize, KInt, KNativePointer, KInt)
+
+KInt impl_setFormatCodeSettingsNewLineCharacter(KNativePointer settingsPtr, KStringPtr &value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetNewLineCharacter(std::string(value.CStr()));
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsNewLineCharacter, KInt, KNativePointer, KStringPtr)
+
+KInt impl_setFormatCodeSettingsIndentStyle(KNativePointer settingsPtr, KInt value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetIndentStyle(static_cast<ark::es2panda::lsp::IndentStyle>(value));
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsIndentStyle, KInt, KNativePointer, KInt)
+
+KInt impl_setFormatCodeSettingsTrimTrailingWhitespace(KNativePointer settingsPtr, KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetTrimTrailingWhitespace(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsTrimTrailingWhitespace, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine(KNativePointer settingsPtr,
+                                                                                KBoolean value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetIndentMultiLineObjectLiteralBeginningOnBlankLine(value != 0);
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine, KInt, KNativePointer, KBoolean)
+
+KInt impl_setFormatCodeSettingsSemicolons(KNativePointer settingsPtr, KInt value)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    settings->SetSemicolons(static_cast<ark::es2panda::lsp::SemicolonPreference>(value));
+    return 0;
+}
+TS_INTEROP_2(setFormatCodeSettingsSemicolons, KInt, KNativePointer, KInt)
+
+KInt impl_destroyFormatCodeSettings(KNativePointer settingsPtr)
+{
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    delete settings;
+    return 0;
+}
+TS_INTEROP_1(destroyFormatCodeSettings, KInt, KNativePointer)
+
+KNativePointer impl_getFormattingEditsForDocument(KNativePointer context, KNativePointer settingsPtr)
+{
+    LSPAPI const *impl = GetImpl();
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    auto result = impl->getFormattingEditsForDocument(reinterpret_cast<es2panda_Context *>(context), *settings);
+    return new std::vector<TextChange>(result);
+}
+TS_INTEROP_2(getFormattingEditsForDocument, KNativePointer, KNativePointer, KNativePointer)
+
+KNativePointer impl_getFormattingEditsForRange(KNativePointer context, KNativePointer settingsPtr, KInt start,
+                                               KInt length)
+{
+    LSPAPI const *impl = GetImpl();
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    TextSpan span(start, length);
+    auto result = impl->getFormattingEditsForRange(reinterpret_cast<es2panda_Context *>(context), *settings, span);
+    return new std::vector<TextChange>(result);
+}
+TS_INTEROP_4(getFormattingEditsForRange, KNativePointer, KNativePointer, KNativePointer, KInt, KInt)
+
+KNativePointer impl_getFormattingTextChangeAt(KNativePointer textChangesVecPtr, KInt index)
+{
+    auto *vec = reinterpret_cast<std::vector<TextChange> *>(textChangesVecPtr);
+    if (index < 0 || static_cast<size_t>(index) >= vec->size()) {
+        return nullptr;
+    }
+    return &(*vec)[index];
+}
+TS_INTEROP_2(getFormattingTextChangeAt, KNativePointer, KNativePointer, KInt)
+
+KInt impl_getFormattingTextChangesSize(KNativePointer textChangesVecPtr)
+{
+    auto *vec = reinterpret_cast<std::vector<TextChange> *>(textChangesVecPtr);
+    return static_cast<KInt>(vec->size());
+}
+TS_INTEROP_1(getFormattingTextChangesSize, KInt, KNativePointer)
+
+KInt impl_destroyFormattingTextChanges(KNativePointer textChangesVecPtr)
+{
+    auto *vec = reinterpret_cast<std::vector<TextChange> *>(textChangesVecPtr);
+    delete vec;
+    return 0;
+}
+TS_INTEROP_1(destroyFormattingTextChanges, KInt, KNativePointer)

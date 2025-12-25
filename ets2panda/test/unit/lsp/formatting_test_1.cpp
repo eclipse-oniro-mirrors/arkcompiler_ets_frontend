@@ -17,8 +17,21 @@
 #include "lsp/include/formatting/formatting_settings.h"
 #include "lsp_api_test.h"
 #include <gtest/gtest.h>
+#include <algorithm>
 
 namespace {
+
+std::string ApplyChanges(const std::string &source, const std::vector<TextChange> &changes)
+{
+    std::string result = source;
+    std::vector<TextChange> sortedChanges = changes;
+    std::sort(sortedChanges.begin(), sortedChanges.end(),
+              [](const TextChange &a, const TextChange &b) { return a.span.start > b.span.start; });
+    for (const auto &change : sortedChanges) {
+        result.replace(change.span.start, change.span.length, change.newText);
+    }
+    return result;
+}
 
 class LSPFormattingTests1 : public LSPAPITests {};
 
@@ -38,6 +51,12 @@ function foo() {
 let obj = { a: 1, b: 2 };
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function foo() {
+let obj = {a: 1, b: 2};
+}
+)";
 
     auto tempFiles = CreateTempFile({"delete_space_before_right_brace.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -54,6 +73,9 @@ let obj = { a: 1, b: 2 };
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -61,6 +83,14 @@ TEST_F(LSPFormattingTests1, FormatDocument_InsertSpaceInsideEmptyBraces_WhenSett
 {
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
+function emptyFn() { }
+let emptyObj = { };
+class A {
+method() { }
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
 function emptyFn() {}
 let emptyObj = {};
 class A {
@@ -83,6 +113,9 @@ method() {}
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -94,6 +127,14 @@ function emptyFn() { }
 let emptyObj = { };
 class A {
 method() { }
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function emptyFn() {}
+let emptyObj = {};
+class A {
+method() {}
 }
 )";
 
@@ -112,6 +153,9 @@ method() { }
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -120,6 +164,12 @@ TEST_F(LSPFormattingTests1, FormatDocument_InsertSpaceAfterSemicolonInFor_WhenSe
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
 for (let i = 0;i < 10;i++) {
+console.log(i);
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+for (let i = 0; i < 10; i++) {
 console.log(i);
 }
 )";
@@ -139,6 +189,9 @@ console.log(i);
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -147,6 +200,12 @@ TEST_F(LSPFormattingTests1, FormatDocument_DeleteSpaceAfterSemicolonInFor_WhenSe
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
 for (let i = 0; i < 10; i++) {
+console.log(i);
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+for (let i = 0;i < 10;i++) {
 console.log(i);
 }
 )";
@@ -166,6 +225,9 @@ console.log(i);
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -174,6 +236,12 @@ TEST_F(LSPFormattingTests1, FormatDocument_InsertSpaceBeforeFunctionParenthesis_
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
 function foo() {
+return 42;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function foo () {
 return 42;
 }
 )";
@@ -193,6 +261,9 @@ return 42;
 
     ASSERT_FALSE(changes.empty());
 
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -201,6 +272,12 @@ TEST_F(LSPFormattingTests1, FormatDocument_DeleteSpaceBeforeFunctionParenthesis_
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
 function foo () {
+return 42;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function foo() {
 return 42;
 }
 )";
@@ -219,6 +296,9 @@ return 42;
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
     ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
 
     initializer.DestroyContext(ctx);
 }
@@ -244,7 +324,7 @@ doSomething();
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    ASSERT_FALSE(changes.empty());
+    ASSERT_TRUE(changes.empty());
 
     initializer.DestroyContext(ctx);
 }
@@ -271,7 +351,7 @@ return x + 1;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    ASSERT_FALSE(changes.empty());
+    ASSERT_TRUE(changes.empty());
 
     initializer.DestroyContext(ctx);
 }
@@ -306,7 +386,7 @@ export let x = 1;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    ASSERT_FALSE(changes.empty());
+    ASSERT_TRUE(changes.empty());
 
     initializer.DestroyContext(ctx);
 }
@@ -318,6 +398,14 @@ TEST_F(LSPFormattingTests1, FormatDocumentColonSpacingTest)
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 function typeTest(param:string,value:number):boolean{
 let result:boolean=false;
+return result;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+function typeTest(param: string, value: number): boolean {
+let result: boolean = false;
 return result;
 }
 )";
@@ -333,7 +421,11 @@ return result;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -349,6 +441,16 @@ let result:number=a+b*c-d;
 return result;
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+function mathTest(a: number, b: number): number {
+let c: number = 3;
+let d: number = 4;
+let result: number = a + b * c - d;
+return result;
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_binary_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -361,7 +463,11 @@ return result;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -372,6 +478,12 @@ TEST_F(LSPFormattingTests1, FormatDocumentFunctionSpacingTest)
 function normalFunction(param:string):number{return 5;}
 function getTest():string{return"test";}
 function setTest(value:string):void{}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function normalFunction(param: string): number { return 5; }
+function getTest(): string { return "test"; }
+function setTest(value: string): void {}
 )";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_function_test.ets"}, {testCode});
@@ -385,7 +497,11 @@ function setTest(value:string):void{}
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -410,6 +526,25 @@ constructor(){this.value=10;}
 method():number{return this.value;}
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function braceTest(): number {
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+if (true) {
+let result: number = 10;
+return result;
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+} else {
+return 5;
+}
+}
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+class TestClass {
+private value: number;
+constructor() { this.value = 10; }
+method(): number { return this.value; }
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_brace_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -422,7 +557,11 @@ method():number{return this.value;}
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -438,6 +577,16 @@ let d:number=val--;
 return a+b+c+d;
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function unaryTest(val: number): number {
+let a: number = ++val;
+let b: number = val++;
+let c: number = --val;
+let d: number = val--;
+return a + b + c + d;
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_unary_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -450,7 +599,11 @@ return a+b+c+d;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -462,6 +615,13 @@ let arrow1=(x:number)=>x*2;
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 let arrow2=(a:number,b:number)=>{return a+b;};
 let arrow3=(param:number)=>param+5;
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+let arrow1 = (x: number) => x * 2;
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+let arrow2 = (a: number, b: number) => { return a + b; };
+let arrow3 = (param: number) => param + 5;
 )";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_arrow_test.ets"}, {testCode});
@@ -475,7 +635,11 @@ let arrow3=(param:number)=>param+5;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -487,6 +651,14 @@ function keywordTest():number{
 let var1:number=10;
 const var2:number=20;
 return var1+var2;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function keywordTest(): number {
+let var1: number = 10;
+const var2: number = 20;
+return var1 + var2;
 }
 )";
     const int index0 = 0;
@@ -501,7 +673,11 @@ return var1+var2;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -520,6 +696,19 @@ return param as U;
 }
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+class GenericTest<T, U> {
+method<V>(param: T): U {
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+let array: Array<string>=[];
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+let map: Map<string, number>=new Map<string, number>();
+return param as U;
+}
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_generic_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -532,7 +721,11 @@ return param as U;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -547,6 +740,15 @@ public publicMethod():void{}
 private privateMethod():void{}
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+class TestClass {
+static staticMethod(): void {}
+public publicMethod(): void {}
+private privateMethod(): void {}
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_import_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -559,7 +761,11 @@ private privateMethod():void{}
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -570,6 +776,13 @@ TEST_F(LSPFormattingTests1, FormatDocumentDotAndOptionalTest)
 function dotTest():string{
 let numVal:number=123.456;
 return"test";
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function dotTest(): string {
+let numVal: number = 123.456;
+return "test";
 }
 )";
     const int index0 = 0;
@@ -584,7 +797,11 @@ return"test";
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -593,13 +810,10 @@ TEST_F(LSPFormattingTests1, FormatDocumentControlFlowTest)
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(
 // CC-OFFNXT(G.FMT.16-CPP) test logic
-function controlTest(condition:boolean):void{     
+function controlTest(condition:boolean):void{
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 if(condition){
 let x:number=1;
-// CC-OFFNXT(G.FMT.16-CPP) test logic
-}else{
-let y:number=2;
 }
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 while(condition){
@@ -611,19 +825,34 @@ let z:number=i;
 }
 }
 )";
-    const int index0 = 0;
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+function controlTest(condition: boolean): void {
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+if (condition) {
+let x: number = 1;
+}
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+while (condition) {
+condition = false;
+}
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+for (let i: number = 0; i < 10; i++) {
+let z: number = i;
+}
+}
+)";
     auto tempFiles = CreateTempFile({"format_control_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
-
     ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
-    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(index0).c_str(), ES2PANDA_STATE_PARSED);
-
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(0).c_str(), ES2PANDA_STATE_PARSED);
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
-
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
-
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
     initializer.DestroyContext(ctx);
 }
 
@@ -638,6 +867,15 @@ let c:number=3;
 return a+b+c;
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function spreadTest(): number {
+let a: number = 1;
+let b: number = 2;
+let c: number = 3;
+return a + b + c;
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_spread_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -650,7 +888,11 @@ return a+b+c;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -660,6 +902,13 @@ TEST_F(LSPFormattingTests1, FormatDocumentNonNullAssertionTest)
     std::string testCode = R"(
 function assertionTest(value:string):number{
 let result:number=5;
+return result;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function assertionTest(value: string): number {
+let result: number = 5;
 return result;
 }
 )";
@@ -675,7 +924,11 @@ return result;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -703,6 +956,28 @@ return instance;
 }
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+class ConstructorTest {
+private value: number;
+public name: string;
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+constructor(value: number, name: string) {
+this.value = value;
+this.name = name;
+}
+
+getValue(): number { return this.value; }
+setValue(val: number): void { this.value = val; }
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+static create(): ConstructorTest {
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+let instance: ConstructorTest = new ConstructorTest(10, "test");
+return instance;
+}
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_constructor_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -715,7 +990,11 @@ return instance;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -730,6 +1009,15 @@ method():void;
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 enum TestEnum{FIRST,SECOND,THIRD}
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+interface TestInterface {
+name: string;
+method(): void;
+}
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+enum TestEnum { FIRST, SECOND, THIRD }
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_interface_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -742,7 +1030,11 @@ enum TestEnum{FIRST,SECOND,THIRD}
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -752,6 +1044,13 @@ TEST_F(LSPFormattingTests1, FormatDocumentCommaSpacingTest)
     std::string testCode = R"(
 // CC-OFFNXT(G.FMT.16-CPP) test logic
 function commaTest(a:number,b:string,c:boolean):number{
+return a;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+function commaTest(a: number, b: string, c: boolean): number {
 return a;
 }
 )";
@@ -767,7 +1066,11 @@ return a;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 
@@ -785,6 +1088,18 @@ let x:number=i;
 }
 }
 )";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function semicolonTest(): void {
+let a: number = 10; let b: number = 20;
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+if (true) return;
+// CC-OFFNXT(G.FMT.16-CPP) test logic
+for (let i: number = 0; i < 10; i++) {
+let x: number = i;
+}
+}
+)";
     const int index0 = 0;
     auto tempFiles = CreateTempFile({"format_semicolon_test.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -797,7 +1112,209 @@ let x:number=i;
 
     auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
 
-    EXPECT_FALSE(changes.empty());
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingTests1, FormatDocumentSpaceBetweenStatementsTest)
+{
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string testCode = R"(
+function testSpaceBetweenStatements():void{
+if(x>0)return;
+if(x>0)throw new Error("test");
+if(x>0)x=10;
+while(true)break;
+switch(x){
+case 1:return;
+case 2:break;
+default:x=0;
+}
+do{x++;}while(x<10);
+if(x>0){x=1;}else{x=2;}
+if(x>0)if(y>0)return;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function testSpaceBetweenStatements(): void {
+if (x > 0) return;
+if (x > 0) throw new Error("test");
+if (x > 0) x = 10;
+while (true) break;
+switch (x) {
+case 1: return;
+case 2: break;
+default: x = 0;
+}
+do { x++; } while (x < 10);
+if (x > 0) { x = 1; } else { x = 2; }
+if (x > 0) if (y > 0) return;
+}
+)";
+    const int index0 = 0;
+    auto tempFiles = CreateTempFile({"format_space_between_statements.ets"}, {testCode});
+    ASSERT_FALSE(tempFiles.empty());
+
+    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(index0).c_str(), ES2PANDA_STATE_PARSED);
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
+
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingTests1, FormatDocumentNoSpaceAfterCloseBracketTest)
+{
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string testCode = R"(
+function testBrackets():void{
+let arr:number[]=[1,2,3];
+let val:number=arr[0] ;
+let matrix:number[][]=[[1,2],[3,4]];
+let first:number=matrix[0] [0] ;
+let item:number=arr[1] ;
+let sum:number=arr[0]+arr[1] ;
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+function testBrackets(): void {
+let arr: number[] = [1, 2, 3];
+let val: number = arr[0];
+let matrix: number[][] = [[1, 2], [3, 4]];
+let first: number = matrix[0][0];
+let item: number = arr[1];
+let sum: number = arr[0] + arr[1];
+}
+)";
+    const int index0 = 0;
+    auto tempFiles = CreateTempFile({"format_no_space_after_bracket.ets"}, {testCode});
+    ASSERT_FALSE(tempFiles.empty());
+
+    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(index0).c_str(), ES2PANDA_STATE_PARSED);
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
+
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingTests1, FormatDocumentForAwaitTest)
+{
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string testCode = R"(
+async function testForAwait():Promise<void>{
+let items:AsyncIterable<number>;
+for  await(let item of items){
+console.log(item);
+}
+for await(let x of items){
+console.log(x);
+}
+for   await  (let y of items){
+console.log(y);
+}
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+async function testForAwait(): Promise<void> {
+let items: AsyncIterable<number>;
+for await (let item of items) {
+console.log(item);
+}
+for await (let x of items) {
+console.log(x);
+}
+for await (let y of items) {
+console.log(y);
+}
+}
+)";
+    const int index0 = 0;
+    auto tempFiles = CreateTempFile({"format_for_await_test.ets"}, {testCode});
+    ASSERT_FALSE(tempFiles.empty());
+
+    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(index0).c_str(), ES2PANDA_STATE_PARSED);
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
+
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingTests1, FormatDocumentExportDefaultTest)
+{
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string testCode = R"(
+export default class MyClass{
+value:number=10;
+constructor(){
+this.value=20;
+}
+}
+export default function myFunc():void{
+console.log("hello");
+}
+)";
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string expectedCode = R"(
+export default class MyClass {
+value: number = 10;
+constructor() {
+this.value = 20;
+}
+}
+export default function myFunc(): void {
+console.log("hello");
+}
+)";
+    const int index0 = 0;
+    auto tempFiles = CreateTempFile({"format_export_default_test.ets"}, {testCode});
+    ASSERT_FALSE(tempFiles.empty());
+
+    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles.at(index0).c_str(), ES2PANDA_STATE_PARSED);
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    auto changes = ark::es2panda::lsp::FormatDocument(ctx, formatContext);
+
+    ASSERT_FALSE(changes.empty());
+
+    std::string result = ApplyChanges(testCode, changes);
+    ASSERT_EQ(result, expectedCode);
+
     initializer.DestroyContext(ctx);
 }
 

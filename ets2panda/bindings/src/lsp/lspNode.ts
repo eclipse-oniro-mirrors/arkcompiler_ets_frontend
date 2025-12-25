@@ -1052,3 +1052,67 @@ export class LspTokenNativeInfo {
   readonly name: string;
   readonly isNative: boolean;
 }
+
+export enum IndentStyle {
+  NONE = 0,
+  BLOCK = 1,
+  SMART = 2
+}
+
+export enum SemicolonPreference {
+  IGNORE = 0,
+  INSERT = 1,
+  REMOVE = 2
+}
+
+export interface FormatCodeSettingsOptions {
+  insertSpaceAfterCommaDelimiter?: boolean;
+  insertSpaceAfterSemicolonInForStatements?: boolean;
+  insertSpaceBeforeAndAfterBinaryOperators?: boolean;
+  insertSpaceAfterConstructor?: boolean;
+  insertSpaceAfterKeywordsInControlFlowStatements?: boolean;
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis?: boolean;
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets?: boolean;
+  insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces?: boolean;
+  insertSpaceAfterOpeningAndBeforeClosingEmptyBraces?: boolean;
+  insertSpaceAfterTypeAssertion?: boolean;
+  insertSpaceBeforeFunctionParenthesis?: boolean;
+  placeOpenBraceOnNewLineForFunctions?: boolean;
+  placeOpenBraceOnNewLineForControlBlocks?: boolean;
+  insertSpaceBeforeTypeAnnotation?: boolean;
+  indentMultiLineObjectLiteralBeginningOnBlankLine?: boolean;
+  baseIndentSize?: number;
+  indentSize?: number;
+  tabSize?: number;
+  newLineCharacter?: string;
+  convertTabsToSpaces?: boolean;
+  indentStyle?: IndentStyle;
+  trimTrailingWhitespace?: boolean;
+  semicolons?: SemicolonPreference;
+}
+
+export class LspFormattingTextChanges extends LspNode {
+  readonly textChanges: TextChange[];
+
+  constructor(peer: KNativePointer) {
+    super(peer);
+    const size = global.es2panda._getFormattingTextChangesSize(peer);
+    this.textChanges = [];
+    for (let i = 0; i < size; i++) {
+      const elPeer = global.es2panda._getFormattingTextChangeAt(peer, i);
+      if (!isNullPtr(elPeer)) {
+        this.textChanges.push(new TextChange(elPeer));
+      }
+    }
+  }
+
+  get size(): number {
+    return global.es2panda._getFormattingTextChangesSize(this.peer);
+  }
+
+  dispose(): void {
+    if (!isNullPtr(this.peer)) {
+      global.es2panda._destroyFormattingTextChanges(this.peer);
+    }
+  }
+}

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@
 #include "get_signature.h"
 #include "node_matchers.h"
 #include "compiler/lowering/util.h"
+#include "formatting/formatting.h"
 
 using ark::es2panda::lsp::details::GetCompletionEntryDetailsImpl;
 
@@ -624,6 +625,31 @@ TokenTypeInfo GetTokenTypes(es2panda_Context *context, size_t offset)
     return {name, result};
 }
 
+std::vector<TextChange> GetFormattingEditsForDocument(es2panda_Context *context, FormatCodeSettings &options)
+{
+    if (context == nullptr) {
+        return {};
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+
+    FormatContext formatContext = GetFormatContext(options);
+    return FormatDocument(context, formatContext);
+}
+
+std::vector<TextChange> GetFormattingEditsForRange(es2panda_Context *context, FormatCodeSettings &options,
+                                                   const TextSpan &span)
+{
+    if (context == nullptr) {
+        return {};
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+
+    FormatContext formatContext = GetFormatContext(options);
+    return FormatRange(context, formatContext, span);
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetEditsForRefactor,
@@ -675,7 +701,9 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetIdentifier,
                     GetDefinitionDataFromNode,
                     FindRenameLocationsFromNode,
-                    GetTokenTypes};
+                    GetTokenTypes,
+                    GetFormattingEditsForDocument,
+                    GetFormattingEditsForRange};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()
