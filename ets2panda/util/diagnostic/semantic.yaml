@@ -445,6 +445,10 @@ semantic:
   id: 22843
   message: "Exponent must be an integer if base is less than 0."
 
+- name: EXPONENTIATION_TYPE_LIMITATION
+  id: 295768
+  message: "The operands of exponentiation must both be numeric type or bigint type."
+
 - name: EXPORT_INCORRECT
   id: 361
   message: "Incorrect export '{}'"
