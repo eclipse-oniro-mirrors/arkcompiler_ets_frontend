@@ -126,10 +126,9 @@ export class ThisBindCheck implements BaseChecker {
                 isLocalBuilder = method.hasDecorator('LocalBuilder');
             }
             const leftOp = stmt.getLeftOp();
-            if (i + 1 >= stmts.length || !this.hasBindThis(leftOp, stmts[i + 1])) {
-                if (!this.isSafeUse(leftOp)) {
-                    this.addIssueReport(stmt, isBuilder, isLocalBuilder, base, scene);
-                }
+
+            if (i + 1 >= stmts.length || !this.hasBindThis(leftOp, stmt)) {
+                this.addIssueReport(stmt, isBuilder, isLocalBuilder, base, scene);
             }
         }
     };
@@ -183,21 +182,12 @@ export class ThisBindCheck implements BaseChecker {
             return false;
         }
         const rightOp = next.getRightOp();
-        if (rightOp instanceof ArkInstanceFieldRef && rightOp.getBase() === base) {
-            // const method = a.foo.name
+        const txt = next.getOriginalText();
+        if (rightOp instanceof ArkInstanceFieldRef && txt?.includes('.bind')) {
+            // const method = a.foo.bind()
             return true;
         }
-        if (!(rightOp instanceof ArkInstanceInvokeExpr)) {
-            return false;
-        }
-        if (rightOp.getBase() !== base) {
-            return false;
-        }
-
-        if (rightOp.getMethodSignature().getMethodSubSignature().getMethodName() !== 'bind') {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     private addIssueReport(stmt: ArkAssignStmt, isBuilder: boolean, isLocalBuilder: boolean, operand: Value, scene: Scene): void {
