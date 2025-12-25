@@ -19,3 +19,18 @@ export const BIT_VECTOR = 'BitVector';
 export const COLLECTIONS_MODULES = ['@arkts.collections', '@kit.ArkTS'];
 
 export type BitVectorUsage = undefined | { ns: string; used: boolean };
+
+export const DEPRECATED_SENDABLE_CONTAINER_LIST = [
+  'Array',
+  'Map',
+  'Set',
+  'ArrayBuffer',
+  'Int8Array',
+  'Uint8ClampedArray',
+  'Uint8Array',
+  'Int16Array',
+  'Uint16Array',
+  'Int32Array',
+  'Uint32Array',
+  'Float32Array'
+];

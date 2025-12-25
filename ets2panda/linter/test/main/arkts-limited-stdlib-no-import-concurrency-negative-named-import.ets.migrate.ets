@@ -18,6 +18,7 @@ import { stream } from './oh_modules/@kit.ArkTS'
 
 import { stream as st } from './oh_modules/@kit.ArkTS'
 
+
 let func: () => void = () => {};
 taskpool.execute(func);
 taskpool.execute(func)
@@ -30,3 +31,4 @@ let lck1: AsyncLock = AsyncLock.request("lock")
 let pro = new SendableLruCache<number, number>()
 let pro1 = new SendableLruCache<number, number>()
 let write: stream.Writable = new stream.Writable()
+let map126: Map<Array<number>, number> = new Map<Array<number>, number>();

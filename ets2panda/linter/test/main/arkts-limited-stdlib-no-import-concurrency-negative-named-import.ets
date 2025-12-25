@@ -17,6 +17,7 @@ import { taskpool, ArkTSUtils, stream } from './oh_modules/@kit.ArkTS'
 import { process } from './oh_modules/@kit.ArkTS'
 import {taskpool as tp, ArkTSUtils as AU} from './oh_modules/@kit.ArkTS'
 import { process as pc, stream as st } from './oh_modules/@kit.ArkTS'
+import {collections as cos }  from './oh_modules/@kit.ArkTS';
 
 let func: () => void = () => {};
 taskpool.execute(func);
@@ -30,3 +31,4 @@ let lck1: AU.locks.AsyncLock = AU.locks.AsyncLock.request("lock")
 let pro = new ArkTSUtils.SendableLruCache<number, number>()
 let pro1 = new AU.SendableLruCache<number, number>()
 let write: stream.Writable = new stream.Writable()
+let map126: Map<cos.Array<number>, number> = new Map();

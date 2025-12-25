@@ -70,7 +70,11 @@ import {
 } from '../utils/consts/InteropAPI';
 import path from 'node:path';
 import { propertyAccessReplacements, identifierReplacements } from '../utils/consts/DeprecatedApi';
-import { ARKTS_COLLECTIONS_MODULE, BIT_VECTOR } from '../utils/consts/CollectionsAPI';
+import {
+  ARKTS_COLLECTIONS_MODULE,
+  BIT_VECTOR,
+  DEPRECATED_SENDABLE_CONTAINER_LIST
+} from '../utils/consts/CollectionsAPI';
 import { ON_KEY_EVENT } from '../utils/consts/OverloadCommon';
 
 const UNDEFINED_NAME = 'undefined';
@@ -4855,11 +4859,21 @@ export class Autofixer {
 
     const srcFile = node.getSourceFile();
     const typeArgsText = this.printGenericCallTypeArgs(srcFile, typeNode.typeArguments);
-    if (!typeArgsText) {
+    if (!typeArgsText || Autofixer.isIncompatibleTypeArgs(typeArgsText)) {
       return undefined;
     }
     const insertPos = node.expression.getEnd();
     return [{ start: insertPos, end: insertPos, replacementText: typeArgsText }];
+  }
+
+  private static isIncompatibleTypeArgs(typeArgs: string): boolean {
+    return Autofixer.hasDeprecatedSendableContainer(typeArgs);
+  }
+
+  private static hasDeprecatedSendableContainer(typeArgs: string): boolean {
+    return DEPRECATED_SENDABLE_CONTAINER_LIST.some((container) => {
+      return typeArgs.includes('.' + container);
+    });
   }
 
   private static getTypeName(type: ts.TypeNode): string {
@@ -5270,11 +5284,9 @@ export class Autofixer {
       constructorName in shapeMap
     ) {
       const shapeType = shapeMap[constructorName as keyof typeof shapeMap];
-      const newExpression = ts.factory.createCallExpression(
-        ts.factory.createIdentifier('clipShape'),
-        undefined,
-        [ts.factory.createNewExpression(ts.factory.createIdentifier(shapeType), undefined, argsExpr)]
-      );
+      const newExpression = ts.factory.createCallExpression(ts.factory.createIdentifier('clipShape'), undefined, [
+        ts.factory.createNewExpression(ts.factory.createIdentifier(shapeType), undefined, argsExpr)
+      ]);
 
       const newText = this.printer.printNode(ts.EmitHint.Unspecified, newExpression, callExpr.getSourceFile());
       return [
