@@ -332,23 +332,6 @@
       "file_path": "lib.es5.d.ts",
       "api_info": {
         "line": 576,
-        "problem": "BuiltinNoCtorFunc",
-        "api_type": "CallSignature",
-        "parent_api": [
-          {
-            "api_name": "NumberConstructor",
-            "api_type": "InterfaceDeclaration"
-          }
-        ],
-        "code_kind": 179
-      },
-      "import_path": [],
-      "is_global": true
-    },
-    {
-      "file_path": "lib.es5.d.ts",
-      "api_info": {
-        "line": 576,
         "problem": "BuiltinNewCtor",
         "api_type": "CallSignature",
         "parent_api": [
