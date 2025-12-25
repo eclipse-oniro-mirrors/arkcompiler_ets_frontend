@@ -1,0 +1,57 @@
+{
+  "1": {
+    "textChanges": [
+      {
+        "span": {
+          "start": 633,
+          "length": 0
+        },
+        "newText": " "
+      },
+      {
+        "span": {
+          "start": 635,
+          "length": 0
+        },
+        "newText": " "
+      }
+    ]
+  },
+  "2": {
+    "textChanges": [
+      {
+        "span": {
+          "start": 672,
+          "length": 0
+        },
+        "newText": " "
+      },
+      {
+        "span": {
+          "start": 680,
+          "length": 0
+        },
+        "newText": " "
+      }
+    ]
+  },
+  "3": {
+    "textChanges": [
+      {
+        "span": {
+          "start": 632,
+          "length": 0
+        },
+        "newText": " "
+      },
+      {
+        "span": {
+          "start": 641,
+          "length": 0
+        },
+        "newText": " "
+      }
+    ]
+  }
+}
+

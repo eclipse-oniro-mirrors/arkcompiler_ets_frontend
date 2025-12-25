@@ -412,6 +412,11 @@ typedef struct LSPAPI {
     ark::es2panda::lsp::RenameLocation (*findRenameLocationsFromNode)(es2panda_Context *context,
                                                                       const std::vector<NodeInfo *> &nodeInfos);
     TokenTypeInfo (*getTokenTypes)(es2panda_Context *context, size_t offset);
+    std::vector<TextChange> (*getFormattingEditsForDocument)(es2panda_Context *context,
+                                                             ark::es2panda::lsp::FormatCodeSettings &options);
+    std::vector<TextChange> (*getFormattingEditsForRange)(es2panda_Context *context,
+                                                          ark::es2panda::lsp::FormatCodeSettings &options,
+                                                          const TextSpan &span);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

@@ -155,18 +155,20 @@ RulesMap RulesMapCache::CreateRulesMap(const std::vector<RuleSpec> &ruleSpecs)
         lexer::TokenType leftKind = ctx.GetCurrentToken().Type();
         lexer::TokenType rightKind = ctx.GetNextToken().Type();
         int index = GetRuleBucketIndex(leftKind, rightKind);
+
         auto it = buckets.find(index);
         if (it == buckets.end()) {
             return {};
         }
 
         const auto &bucket = it->second;
+
         std::vector<RuleSpec> result;
         RuleAction mask = RuleAction::NONE;
 
         for (const auto &spec : bucket) {
-            auto action = spec.GetRule().GetRuleAction();
-            auto exclusion = GetRuleActionExclusion(mask);
+            RuleAction action = spec.GetRule().GetRuleAction();
+            RuleAction exclusion = GetRuleActionExclusion(mask);
             auto allowed = static_cast<RuleAction>(~exclusion);
             auto bitCheck = static_cast<RuleAction>(action & allowed);
 
@@ -176,8 +178,7 @@ RulesMap RulesMapCache::CreateRulesMap(const std::vector<RuleSpec> &ruleSpecs)
 
             bool allPass = true;
             for (const auto &pred : spec.GetRule().GetContext()) {
-                bool ok = pred(const_cast<FormattingContext *>(&ctx));
-                if (!ok) {
+                if (!pred(const_cast<FormattingContext *>(&ctx))) {
                     allPass = false;
                     break;
                 }

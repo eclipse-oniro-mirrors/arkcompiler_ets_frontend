@@ -53,7 +53,10 @@ import {
   LspTokenTypeInfo,
   LspTokenNativeInfo,
   LspNode,
-  ConstructorInfoFileTextChanges
+  ConstructorInfoFileTextChanges,
+  FormatCodeSettingsOptions,
+  LspFormattingTextChanges,
+  TextChange
 } from './lspNode';
 import { passStringArray, unpackString } from '../common/private';
 import { Es2pandaContextState } from '../generated/Es2pandaEnums';
@@ -2034,6 +2037,171 @@ export class Lsp {
       },
       {} as Record<string, Job>
     );
+  }
+
+  private boolToInt(value: boolean): number {
+    return value ? 1 : 0;
+  }
+
+  private createFormatCodeSettings(options?: FormatCodeSettingsOptions): KNativePointer {
+    const settingsPtr = global.es2panda._createFormatCodeSettings();
+
+    if (options) {
+      const booleanSettings: Array<[keyof FormatCodeSettingsOptions,
+        (ptr: KNativePointer, val: number) => void]> = [
+        ['insertSpaceAfterCommaDelimiter',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterCommaDelimiter],
+        ['insertSpaceAfterSemicolonInForStatements',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements],
+        ['insertSpaceBeforeAndAfterBinaryOperators',
+          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators],
+        ['insertSpaceAfterConstructor',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterConstructor],
+        ['insertSpaceAfterKeywordsInControlFlowStatements',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements],
+        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis],
+        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets],
+        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces],
+        ['insertSpaceAfterOpeningAndBeforeClosingEmptyBraces',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces],
+        ['insertSpaceAfterTypeAssertion',
+          global.es2panda._setFormatCodeSettingsInsertSpaceAfterTypeAssertion],
+        ['insertSpaceBeforeFunctionParenthesis',
+          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis],
+        ['placeOpenBraceOnNewLineForFunctions',
+          global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions],
+        ['placeOpenBraceOnNewLineForControlBlocks',
+          global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks],
+        ['insertSpaceBeforeTypeAnnotation',
+          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation],
+        ['convertTabsToSpaces',
+          global.es2panda._setFormatCodeSettingsConvertTabsToSpaces],
+        ['trimTrailingWhitespace',
+          global.es2panda._setFormatCodeSettingsTrimTrailingWhitespace],
+        ['indentMultiLineObjectLiteralBeginningOnBlankLine',
+          global.es2panda._setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine]
+      ];
+
+      for (const [key, setter] of booleanSettings) {
+        const value = options[key];
+        if (value !== undefined) {
+          setter.call(global.es2panda, settingsPtr, this.boolToInt(value as boolean));
+        }
+      }
+
+      const numberSettings: Array<[keyof FormatCodeSettingsOptions,
+        (ptr: KNativePointer, val: number) => void]> = [
+        ['indentSize', global.es2panda._setFormatCodeSettingsIndentSize],
+        ['tabSize', global.es2panda._setFormatCodeSettingsTabSize],
+        ['baseIndentSize', global.es2panda._setFormatCodeSettingsBaseIndentSize],
+        ['indentStyle', global.es2panda._setFormatCodeSettingsIndentStyle],
+        ['semicolons', global.es2panda._setFormatCodeSettingsSemicolons]
+      ];
+
+      for (const [key, setter] of numberSettings) {
+        const value = options[key];
+        if (value !== undefined) {
+          setter.call(global.es2panda, settingsPtr, value as number);
+        }
+      }
+
+      if (options.newLineCharacter !== undefined) {
+        global.es2panda._setFormatCodeSettingsNewLineCharacter(settingsPtr, options.newLineCharacter);
+      }
+    }
+
+    return settingsPtr;
+  }
+
+  getFormattingEditsForDocument(
+    filename: String,
+    options?: FormatCodeSettingsOptions
+  ): TextChange[] | undefined {
+    let ptr: KNativePointer;
+    const settingsPtr = this.createFormatCodeSettings(options);
+
+    try {
+      let fileCache = this.filesMap.get(filename.valueOf());
+      if (fileCache) {
+        try {
+          ptr = global.es2panda._getFormattingEditsForDocument(fileCache.fileContext, settingsPtr);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsForDocument by fileCache', error);
+          return;
+        }
+      } else {
+        const [cfg, ctx] = this.createContext(filename) ?? [];
+        if (!cfg || !ctx) {
+          return;
+        }
+        try {
+          ptr = global.es2panda._getFormattingEditsForDocument(ctx, settingsPtr);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsForDocument', error);
+          return;
+        } finally {
+          this.destroyContext(cfg, ctx);
+        }
+      }
+
+      const result = new LspFormattingTextChanges(ptr);
+      const changes = result.textChanges;
+      result.dispose();
+      return changes;
+    } finally {
+      global.es2panda._destroyFormatCodeSettings(settingsPtr);
+    }
+  }
+
+  getFormattingEditsForRange(
+    filename: String,
+    start: number,
+    length: number,
+    options?: FormatCodeSettingsOptions
+  ): TextChange[] | undefined {
+    let ptr: KNativePointer;
+    const settingsPtr = this.createFormatCodeSettings(options);
+    const byteStart = this.charOffsetToByteOffset(filename.valueOf(), start);
+    const byteLength = this.charOffsetToByteOffset(filename.valueOf(), start + length) - byteStart;
+
+    try {
+      let fileCache = this.filesMap.get(filename.valueOf());
+      if (fileCache) {
+        try {
+          ptr = global.es2panda._getFormattingEditsForRange(fileCache.fileContext, settingsPtr, byteStart, byteLength);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsForRange by fileCache', error);
+          return;
+        }
+      } else {
+        const [cfg, ctx] = this.createContext(filename) ?? [];
+        if (!cfg || !ctx) {
+          return;
+        }
+        try {
+          ptr = global.es2panda._getFormattingEditsForRange(ctx, settingsPtr, byteStart, byteLength);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsForRange', error);
+          return;
+        } finally {
+          this.destroyContext(cfg, ctx);
+        }
+      }
+
+      const result = new LspFormattingTextChanges(ptr);
+      const changes = result.textChanges;
+      result.dispose();
+      return changes;
+    } finally {
+      global.es2panda._destroyFormatCodeSettings(settingsPtr);
+    }
   }
 
   public dispose(): void {

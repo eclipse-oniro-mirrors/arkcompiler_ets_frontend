@@ -971,13 +971,13 @@ export class Es2pandaNativeModule {
   }
 
   _getEditsForRefactor(
-      ctx: KPtr,
-      refactorName: string,
-      actionName: string,
-      start: number,
-      end: number,
-      userPrefsPtr?: KPtr | 0,
-      formattingSettings?: KPtr | 0
+    ctx: KPtr,
+    refactorName: string,
+    actionName: string,
+    start: number,
+    end: number,
+    userPrefsPtr?: KPtr | 0,
+    formattingSettings?: KPtr | 0
   ): KPtr {
     throw new Error('Not implemented');
   }
@@ -1091,6 +1091,135 @@ export class Es2pandaNativeModule {
   }
 
   _GetTypeFromTypeInfo(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _createFormatCodeSettings(): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterCommaDelimiter(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterConstructor(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis(
+    settingsPtr: KPtr,
+    value: KBoolean
+  ): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets(
+    settingsPtr: KPtr,
+    value: KBoolean
+  ): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(
+    settingsPtr: KPtr,
+    value: KBoolean
+  ): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceAfterTypeAssertion(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsIndentSize(settingsPtr: KPtr, value: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsTabSize(settingsPtr: KPtr, value: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsConvertTabsToSpaces(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsBaseIndentSize(settingsPtr: KPtr, value: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsNewLineCharacter(settingsPtr: KPtr, value: String): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsIndentStyle(settingsPtr: KPtr, value: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsTrimTrailingWhitespace(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine(settingsPtr: KPtr, value: KBoolean): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _setFormatCodeSettingsSemicolons(settingsPtr: KPtr, value: KInt): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _destroyFormatCodeSettings(settingsPtr: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _getFormattingEditsForDocument(context: KNativePointer, settingsPtr: KPtr): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getFormattingEditsForRange(context: KNativePointer, settingsPtr: KPtr, start: KInt, length: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getFormattingTextChangeAt(textChangesVecPtr: KPtr, index: KInt): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getFormattingTextChangesSize(textChangesVecPtr: KPtr): KInt {
+    throw new Error('Not implemented');
+  }
+
+  _destroyFormattingTextChanges(textChangesVecPtr: KPtr): KInt {
     throw new Error('Not implemented');
   }
 }
