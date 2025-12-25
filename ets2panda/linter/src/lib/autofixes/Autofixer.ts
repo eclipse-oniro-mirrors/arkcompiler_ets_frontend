@@ -4563,10 +4563,10 @@ export class Autofixer {
     return [{ start: express.operand.getStart(), end: express.operand.getEnd(), replacementText: text }];
   }
 
-  fixImportClause(tsImportClause: ts.ImportClause): Autofix[] {
+  fixImportDeclaration(tsImportDecl: ts.ImportDeclaration): Autofix[] {
     void this;
-    const replacementText = tsImportClause.getText().replace(/\blazy\b\s*/, '');
-    return [{ start: tsImportClause.getStart(), end: tsImportClause.getEnd(), replacementText }];
+    const replacementText = tsImportDecl.getText().replace(/\blazy\b\s*/, '');
+    return [{ start: tsImportDecl.getStart(), end: tsImportDecl.getEnd(), replacementText }];
   }
 
   fixInteropEqualityOperator(

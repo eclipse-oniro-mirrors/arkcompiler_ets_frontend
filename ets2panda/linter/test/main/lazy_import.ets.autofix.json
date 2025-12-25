@@ -16,19 +16,19 @@
     "result": [
         {
             "line": 16,
-            "column": 8,
+            "column": 1,
             "endLine": 16,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 612,
-                    "end": 622,
-                    "replacementText": "{ m }",
+                    "start": 605,
+                    "end": 636,
+                    "replacementText": "import { m } from 'module'",
                     "line": 16,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 16,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -37,19 +37,19 @@
         },
         {
             "line": 18,
-            "column": 8,
+            "column": 1,
             "endLine": 18,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 645,
-                    "end": 658,
-                    "replacementText": "{ a, b }",
+                    "start": 638,
+                    "end": 673,
+                    "replacementText": "import { a, b } from 'module1'",
                     "line": 18,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 18,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -58,19 +58,19 @@
         },
         {
             "line": 21,
-            "column": 8,
+            "column": 1,
             "endLine": 21,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 710,
-                    "end": 723,
-                    "replacementText": "{worker}",
+                    "start": 703,
+                    "end": 742,
+                    "replacementText": "import {worker} from '@kit.ArkTS';",
                     "line": 21,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 21,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -79,19 +79,19 @@
         },
         {
             "line": 23,
-            "column": 8,
+            "column": 1,
             "endLine": 23,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 779,
-                    "end": 793,
-                    "replacementText": "{harTest}",
+                    "start": 772,
+                    "end": 805,
+                    "replacementText": "import {harTest} from \"har1\"",
                     "line": 23,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 23,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -100,19 +100,19 @@
         },
         {
             "line": 25,
-            "column": 8,
+            "column": 1,
             "endLine": 25,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 840,
-                    "end": 850,
-                    "replacementText": "{add}",
+                    "start": 833,
+                    "end": 862,
+                    "replacementText": "import {add} from \"hsp1\"",
                     "line": 25,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 25,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -121,19 +121,19 @@
         },
         {
             "line": 27,
-            "column": 19,
+            "column": 12,
             "endLine": 27,
-            "endColumn": 23,
+            "endColumn": 16,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 908,
-                    "end": 934,
-                    "replacementText": "{WorkerEventListener}",
+                    "start": 901,
+                    "end": 953,
+                    "replacementText": "import {WorkerEventListener} from '@kit.ArkTS';",
                     "line": 27,
-                    "column": 19,
+                    "column": 12,
                     "endLine": 27,
-                    "endColumn": 23
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -142,19 +142,19 @@
         },
         {
             "line": 29,
-            "column": 19,
+            "column": 1,
             "endLine": 29,
-            "endColumn": 23,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 999,
-                    "end": 1023,
-                    "replacementText": "{WorkerEventTarget}",
+                    "start": 981,
+                    "end": 1042,
+                    "replacementText": "import /* test */ {WorkerEventTarget} from '@kit.ArkTS';",
                     "line": 29,
-                    "column": 19,
+                    "column": 1,
                     "endLine": 29,
-                    "endColumn": 23
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -163,19 +163,19 @@
         },
         {
             "line": 31,
-            "column": 31,
+            "column": 12,
             "endLine": 31,
-            "endColumn": 35,
+            "endColumn": 16,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 1100,
-                    "end": 1132,
-                    "replacementText": "/* test */ {WorkerOptions}",
+                    "start": 1081,
+                    "end": 1163,
+                    "replacementText": "import /* test */  /* test */ {WorkerOptions} /* test */  from '@kit.ArkTS';",
                     "line": 31,
-                    "column": 31,
+                    "column": 12,
                     "endLine": 31,
-                    "endColumn": 35
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -184,19 +184,19 @@
         },
         {
             "line": 33,
-            "column": 8,
+            "column": 1,
             "endLine": 33,
-            "endColumn": 12,
+            "endColumn": 5,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 1198,
-                    "end": 1217,
-                    "replacementText": "{worker as wk}",
+                    "start": 1191,
+                    "end": 1236,
+                    "replacementText": "import {worker as wk} from '@kit.ArkTS';",
                     "line": 33,
-                    "column": 8,
+                    "column": 1,
                     "endLine": 33,
-                    "endColumn": 12
+                    "endColumn": 5
                 }
             ],
             "suggest": "",
@@ -204,20 +204,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 36,
-            "column": 1,
-            "endLine": 36,
-            "endColumn": 5,
+            "line": 35,
+            "column": 12,
+            "endLine": 35,
+            "endColumn": 16,
             "problem": "ImportLazyIdentifier",
             "autofix": [
                 {
-                    "start": 1293,
-                    "end": 1355,
-                    "replacementText": "// (arkts-no-lazy-import)\n/* test */ {worker as ttt}",
-                    "line": 36,
-                    "column": 1,
-                    "endLine": 36,
-                    "endColumn": 5
+                    "start": 1275,
+                    "end": 1386,
+                    "replacementText": "import /* test */\n// (arkts-no-lazy-import)\n/* test */ {worker as ttt} /* test */  from '@kit.ArkTS';",
+                    "line": 35,
+                    "column": 12,
+                    "endLine": 35,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
