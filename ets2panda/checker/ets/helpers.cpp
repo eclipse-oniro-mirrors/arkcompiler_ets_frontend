@@ -1341,6 +1341,10 @@ std::pair<Type *, Type *> ETSChecker::CheckTestObjectCondition(ETSObjectType *te
         return actualType->AsETSUnionType()->GetComplimentaryType(this, testedType);
     }
 
+    if (actualType->IsETSFunctionType()) {
+        return {actualType, actualType};
+    }
+
     // Both testing and actual (smart) types are objects. Set types according to their relation.
     // NOTE: probably the rules of type extraction should be modified later on!
     if (actualType->IsETSObjectType()) {
