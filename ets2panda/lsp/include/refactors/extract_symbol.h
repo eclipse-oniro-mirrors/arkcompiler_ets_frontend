@@ -22,19 +22,19 @@
 
 namespace ark::es2panda::lsp {
 constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_GLOBAL {
-    "extract_constant_scope_2", "Extract to constant in global scope", "refactor.extract.constant"};
+    "extract_constant_scope_2", "Extract Constant in Global Scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_GLOBAL {
-    "extract_function_scope_2", "Extract to function in global scope", "refactor.extract.function"};
-constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_CLASS {
-    "extract_function_scope_1", "Extract to function in class scope", "refactor.extract.function"};
-constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_CLASS {
-    "extract_constant_scope_1", "Extract to constant in class scope", "refactor.extract.constant"};
+    "extract_function_scope_2", "Extract Function in Global Scope", "refactor.extract.function"};
+constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_CLASS {"extract_function_scope_1", "Extract Function in ",
+                                                            "refactor.extract.function"};
+constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_CLASS {"extract_constant_scope_1", "Extract Constant in ",
+                                                            "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_ENCLOSE {
-    "extract_constant_scope_0", "Extract to constant in enclosing scope", "refactor.extract.constant"};
+    "extract_constant_scope_0", "Extract Constant in Enclose Scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_GLOBAL {
-    "extract_variable_scope_2", "Extract to variable in global scope", "refactor.extract.variable"};
+    "extract_variable_scope_2", "Extract Variable in Global Scope", "refactor.extract.variable"};
 constexpr RefactorActionView EXTRACT_VARIABLE_ACTION_ENCLOSE {
-    "extract_variable_scope_0", "Extract to variable in enclosing scope", "refactor.extract.variable"};
+    "extract_variable_scope_0", "Extract Variable in Enclose Scope", "refactor.extract.variable"};
 
 struct RangeToExtract {
     TextRange range;
@@ -51,7 +51,7 @@ struct FunctionExtraction {
 
 const auto REFACTOR_NAME = "ExtractSymbolRefactor";
 const auto REFACTOR_DESCRIPTION = "Extract Symbol";
-constexpr std::string_view ETSGLOBAL_CLASS_NAME = "ETSGLOBAL";
+
 class ExtractSymbolRefactor : public Refactor {
 public:
     ExtractSymbolRefactor();
@@ -59,12 +59,6 @@ public:
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actionName) const override;
 };
-std::vector<FunctionExtraction> GetPossibleFunctionExtractions(const RefactorContext &context);
-std::string GenerateInlineEdits(const RefactorContext &context, ir::AstNode *extractedText);
-void CollectFunctionParameters(FunctionExtraction &funExt);
-std::string BuildFunctionText(const FunctionExtraction &candidate, const RefactorContext &context);
-ir::AstNode *FindRefactor(const RefactorContext &context);
-std::string ReplaceWithFunctionCall(const FunctionExtraction &candidate, const std::string &functionText);
 
 }  // namespace ark::es2panda::lsp
 
