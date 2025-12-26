@@ -25,26 +25,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 17,
-            "column": 1,
-            "endLine": 17,
-            "endColumn": 7,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 18,
-            "column": 13,
-            "endLine": 18,
-            "endColumn": 19,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 20,
             "column": 8,
             "endLine": 20,
