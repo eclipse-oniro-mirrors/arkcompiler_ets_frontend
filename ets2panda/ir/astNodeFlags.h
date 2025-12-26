@@ -121,6 +121,7 @@ enum class ScriptFunctionFlags : uint32_t {
     RETURN_PROMISEVOID = 1U << 25U,
     EXPLICIT_THIS_CALL = 1U << 26U,
     EXPLICIT_SUPER_CALL = 1U << 27U,
+    INTERFACE_PROPERTY = 1U << 28U,
 };
 
 enum class TSOperatorType { READONLY, KEYOF, UNIQUE };

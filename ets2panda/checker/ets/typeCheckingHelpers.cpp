@@ -19,6 +19,7 @@
 #include "checker/types/globalTypesHolder.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "checker/types/ets/etsPartialTypeParameter.h"
+#include "checker/types/type.h"
 #include "ir/base/catchClause.h"
 #include "ir/base/scriptFunction.h"
 #include "ir/base/classProperty.h"
@@ -38,6 +39,8 @@
 #include "ir/ts/tsTypeParameter.h"
 #include "ir/ets/etsUnionType.h"
 #include "ir/ets/etsTuple.h"
+#include "ir/statements/annotationDeclaration.h"
+#include "util/es2pandaMacros.h"
 #include "varbinder/declaration.h"
 #include "checker/ETSchecker.h"
 #include "varbinder/ETSBinder.h"
@@ -1109,11 +1112,205 @@ void ETSChecker::CheckAnnotations(const ArenaVector<ir::AnnotationUsage *> &anno
     for (const auto &anno : annotations) {
         anno->Check(this);
         CheckAnnotationRetention(anno);
+        CheckAnnotationTarget(anno);
+
         auto annoName = anno->GetBaseName()->Name();
         if (seenAnnotations.find(annoName) != seenAnnotations.end()) {
             LogError(diagnostic::ANNOT_DUPLICATE, {annoName}, anno->Start());
         }
         seenAnnotations.insert(annoName);
+    }
+}
+
+std::optional<ir::AnnotationTargets> ETSChecker::GetFunctionTarget(ir::ScriptFunction *func)
+{
+    if (func == nullptr) {
+        return std::nullopt;
+    }
+
+    auto declNode = Context().ContainingClass()->GetDeclNode();
+    ES2PANDA_ASSERT(declNode->IsClassDefinition() || declNode->IsTSInterfaceDeclaration());
+    if (declNode->IsTSInterfaceDeclaration()) {
+        if (func->IsInterfaceProperty()) {
+            return ir::AnnotationTargets::INTERFACE_PROPERTY;
+        }
+        if (func->IsGetter()) {
+            return ir::AnnotationTargets::INTERFACE_GETTER;
+        }
+        if (func->IsSetter()) {
+            return ir::AnnotationTargets::INTERFACE_SETTER;
+        }
+        return ir::AnnotationTargets::INTERFACE_METHOD;
+    }
+
+    auto *classDef = declNode->AsClassDefinition();
+    if (classDef->IsModule()) {
+        return func->HasReceiver() ? ir::AnnotationTargets::FUNCTION_WITH_RECEIVER : ir::AnnotationTargets::FUNCTION;
+    }
+    if (func->IsGetter()) {
+        return ir::AnnotationTargets::CLASS_GETTER;
+    }
+    if (func->IsSetter()) {
+        return ir::AnnotationTargets::CLASS_SETTER;
+    }
+    return ir::AnnotationTargets::CLASS_METHOD;
+}
+
+std::optional<ir::AnnotationTargets> ETSChecker::GetParentNodeTarget(ir::AstNode *parent)
+{
+    if (parent == nullptr) {
+        ES2PANDA_UNREACHABLE();
+    }
+
+    // Top-Level Declarations
+    if (parent->IsClassDefinition()) {
+        auto *classDef = parent->AsClassDefinition();
+        if (classDef->IsNamespaceTransformed()) {
+            return ir::AnnotationTargets::NAMESPACE;
+        }
+
+        if (classDef->IsEnumTransformed()) {
+            return ir::AnnotationTargets::ENUMERATION;
+        }
+
+        if (classDef->IsFromStruct()) {
+            return ir::AnnotationTargets::STRUCT;
+        }
+        return ir::AnnotationTargets::CLASS;
+    }
+
+    if (parent->IsTSInterfaceDeclaration()) {
+        return ir::AnnotationTargets::INTERFACE;
+    }
+
+    if (parent->IsTSTypeAliasDeclaration()) {
+        return ir::AnnotationTargets::TYPE_ALIAS;
+    }
+
+    if (parent->IsVariableDeclaration() || (parent->IsClassProperty() && parent->Parent()->IsClassDefinition() &&
+                                            parent->Parent()->AsClassDefinition()->IsModule())) {
+        return ir::AnnotationTargets::VARIABLE;
+    }
+
+    // Class Members
+    if (parent->IsClassProperty()) {
+        return ir::AnnotationTargets::CLASS_FIELD;
+    }
+    if (parent->IsScriptFunction()) {
+        return GetFunctionTarget(parent->AsScriptFunction());
+    }
+
+    // Other targets
+    if (parent->IsArrowFunctionExpression()) {
+        return ir::AnnotationTargets::LAMBDA;
+    }
+    if (parent->IsETSParameterExpression()) {
+        return ir::AnnotationTargets::PARAMETER;
+    }
+    if (parent->IsETSTypeReference() || parent->IsTSTypeParameter() || parent->IsETSFunctionType()) {
+        return ir::AnnotationTargets::TYPE;
+    }
+    return std::nullopt;
+}
+
+static const std::unordered_map<std::string_view, ir::AnnotationTargets> &GetAnnotationTargetMap()
+{
+    static const std::unordered_map<std::string_view, ir::AnnotationTargets> TARGET_MAP = {
+        {"CLASS", ir::AnnotationTargets::CLASS},
+        {"ENUMERATION", ir::AnnotationTargets::ENUMERATION},
+        {"FUNCTION", ir::AnnotationTargets::FUNCTION},
+        {"FUNCTION_WITH_RECEIVER", ir::AnnotationTargets::FUNCTION_WITH_RECEIVER},
+        {"INTERFACE", ir::AnnotationTargets::INTERFACE},
+        {"NAMESPACE", ir::AnnotationTargets::NAMESPACE},
+        {"TYPE_ALIAS", ir::AnnotationTargets::TYPE_ALIAS},
+        {"VARIABLE", ir::AnnotationTargets::VARIABLE},
+        {"CLASS_FIELD", ir::AnnotationTargets::CLASS_FIELD},
+        {"CLASS_METHOD", ir::AnnotationTargets::CLASS_METHOD},
+        {"CLASS_GETTER", ir::AnnotationTargets::CLASS_GETTER},
+        {"CLASS_SETTER", ir::AnnotationTargets::CLASS_SETTER},
+        {"INTERFACE_PROPERTY", ir::AnnotationTargets::INTERFACE_PROPERTY},
+        {"INTERFACE_METHOD", ir::AnnotationTargets::INTERFACE_METHOD},
+        {"INTERFACE_GETTER", ir::AnnotationTargets::INTERFACE_GETTER},
+        {"INTERFACE_SETTER", ir::AnnotationTargets::INTERFACE_SETTER},
+        {"LAMBDA", ir::AnnotationTargets::LAMBDA},
+        {"PARAMETER", ir::AnnotationTargets::PARAMETER},
+        {"STRUCT", ir::AnnotationTargets::STRUCT},
+        {"TYPE", ir::AnnotationTargets::TYPE},
+    };
+    return TARGET_MAP;
+}
+
+static const std::unordered_map<ir::AnnotationTargets, std::string_view> &GetAnnotationTargetNameMap()
+{
+    static const std::unordered_map<ir::AnnotationTargets, std::string_view> TARGET_NAME_MAP = []() {
+        std::unordered_map<ir::AnnotationTargets, std::string_view> reverseMap;
+        const auto &forwardMap = GetAnnotationTargetMap();
+        for (const auto &[name, target] : forwardMap) {
+            reverseMap[target] = name;
+        }
+        return reverseMap;
+    }();
+    return TARGET_NAME_MAP;
+}
+
+static std::string FormatAnnotationTargets(const ArenaVector<ir::AnnotationTargets> &targets)
+{
+    if (targets.empty()) {
+        ES2PANDA_UNREACHABLE();
+    }
+
+    const auto &targetNameMap = GetAnnotationTargetNameMap();
+    std::string result;
+    for (size_t i = 0; i < targets.size(); ++i) {
+        if (i > 0) {
+            result += ", ";
+        }
+        auto it = targetNameMap.find(targets[i]);
+        if (it != targetNameMap.end()) {
+            result += it->second;
+        }
+    }
+    return result;
+}
+
+void ETSChecker::CheckAnnotationTarget(ir::AnnotationUsage *anno)
+{
+    if (anno->GetBaseName()->Name().Utf8() == compiler::Signatures::BUILTIN_TARGET &&
+        !anno->Parent()->IsAnnotationDeclaration()) {
+        LogError(diagnostic::INVALID_STANDARD_ANNOTATION, {compiler::Signatures::BUILTIN_TARGET}, anno->Start());
+        return;
+    }
+    if (anno->GetBaseName()->Variable() == nullptr ||
+        !anno->GetBaseName()->Variable()->Declaration()->Node()->IsAnnotationDeclaration()) {
+        return;
+    }
+    auto *annoDecl = anno->GetBaseName()->Variable()->Declaration()->Node()->AsAnnotationDeclaration();
+    annoDecl->Check(this);
+
+    // Check if annotation targets match the parent node type
+    const auto &targets = annoDecl->Targets();
+    if (targets.empty()) {
+        // No target restriction, annotation can be used anywhere
+        return;
+    }
+
+    auto parentTarget = GetParentNodeTarget(anno->Parent());
+    if (!parentTarget.has_value()) {
+        return;
+    }
+
+    // Check if the parent target is in the allowed targets list
+    auto targetMatches = std::any_of(targets.begin(), targets.end(),
+                                     [&parentTarget](const auto &target) { return target == parentTarget.value(); });
+    if (!targetMatches) {
+        auto annoName = annoDecl->GetBaseName()->Name();
+        const auto &targetNameMap = GetAnnotationTargetNameMap();
+        auto currentTargetIt = targetNameMap.find(parentTarget.value());
+        ES2PANDA_ASSERT(currentTargetIt != targetNameMap.end());
+        auto currentTargetStr = currentTargetIt->second;
+        auto targetsStr = FormatAnnotationTargets(targets);
+        LogError(diagnostic::ANNOTATION_TARGET_MISMATCH, {annoName, std::string(currentTargetStr), targetsStr},
+                 anno->Start());
     }
 }
 
@@ -1133,7 +1330,7 @@ void ETSChecker::CheckAnnotationRetention(ir::AnnotationUsage *anno)
 {
     if (anno->GetBaseName()->Name().Mutf8() == compiler::Signatures::BUILTIN_RETENTION &&
         !anno->Parent()->IsAnnotationDeclaration()) {
-        LogError(diagnostic::INVALID_ANNOTATION_RETENTION, {}, anno->Start());
+        LogError(diagnostic::INVALID_STANDARD_ANNOTATION, {compiler::Signatures::BUILTIN_RETENTION}, anno->Start());
         return;
     }
     if (anno->GetBaseName()->Variable() == nullptr ||
@@ -1171,6 +1368,49 @@ void ETSChecker::HandleAnnotationRetention(ir::AnnotationUsage *anno, ir::Annota
     LogError(diagnostic::ANNOTATION_POLICY_INVALID, {}, anno->Properties()[0]->Start());
 }
 
+void ETSChecker::HandleAnnotationTarget(ir::AnnotationUsage *anno, ir::AnnotationDeclaration *annoDecl)
+{
+    if (anno->Properties().size() != 1) {
+        return;
+    }
+    const auto value = anno->Properties()[0]->AsClassProperty()->Value();
+    if (!value->IsArrayExpression()) {
+        return;
+    }
+
+    const auto &targetMap = GetAnnotationTargetMap();
+    const auto elements = value->AsArrayExpression()->Elements();
+    ArenaVector<ir::AnnotationTargets> targets(Allocator()->Adapter());
+    std::unordered_set<ir::AnnotationTargets> seenTargets;
+
+    for (auto elem : elements) {
+        if (!elem->IsMemberExpression()) {
+            continue;
+        }
+        const auto *memberExpr = elem->AsMemberExpression();
+        if (!memberExpr->Property()->IsIdentifier()) {
+            continue;
+        }
+        const auto targetName = memberExpr->Property()->AsIdentifier()->Name().Utf8();
+        const auto it = targetMap.find(targetName);
+        if (it == targetMap.end()) {
+            continue;
+        }
+
+        auto targetVal = it->second;
+        auto res = seenTargets.insert(targetVal);
+        if (!res.second) {
+            LogError(diagnostic::ANNOTATION_TARGET_DUPLICATE, {it->first}, memberExpr->Start());
+            continue;
+        }
+        targets.push_back(targetVal);
+    }
+
+    if (!targets.empty()) {
+        annoDecl->AddTargets(std::move(targets));
+    }
+}
+
 void ETSChecker::CheckStandardAnnotation(ir::AnnotationUsage *anno)
 {
     if (anno->GetBaseName()->Variable() == nullptr || IsTypeError(anno->GetBaseName()->TsType())) {
@@ -1184,6 +1424,8 @@ void ETSChecker::CheckStandardAnnotation(ir::AnnotationUsage *anno)
     }
     if (annoName == compiler::Signatures::STD_ANNOTATIONS_RETENTION) {
         HandleAnnotationRetention(anno, anno->Parent()->AsAnnotationDeclaration());
+    } else if (annoName == compiler::Signatures::STD_ANNOTATIONS_TARGET) {
+        HandleAnnotationTarget(anno, anno->Parent()->AsAnnotationDeclaration());
     }
 }
 
@@ -1227,6 +1469,7 @@ static bool ValidateAnnotationPropertyType(checker::Type *type, ETSChecker *chec
     if (type->IsETSArrayType() || type->IsETSResizableArrayType()) {
         return ValidateAnnotationPropertyType(checker->GetElementTypeOfArray(type), checker);
     }
+
     auto relation = checker->Relation();
     return type->IsETSEnumType() || type->IsETSStringType() ||
            (type->IsETSObjectType() && (relation->IsSupertypeOf(checker->GlobalETSBooleanBuiltinType(), type) ||

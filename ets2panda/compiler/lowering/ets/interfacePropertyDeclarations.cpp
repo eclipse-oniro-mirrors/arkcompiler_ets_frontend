@@ -135,14 +135,17 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
 
     ir::FunctionSignature signature = GenerateGetterOrSetterSignature(ctx, field, isSetter, paramScope);
 
+    auto scriptFunctionFlags = ir::ScriptFunctionFlags::INTERFACE_PROPERTY;
+    if (isSetter) {
+        scriptFunctionFlags |= ir::ScriptFunctionFlags::SETTER;
+    } else {
+        scriptFunctionFlags |= ir::ScriptFunctionFlags::GETTER;
+    }
     auto *func = ctx->AllocNode<ir::ScriptFunction>(
         ctx->Allocator(),
         ir::ScriptFunction::ScriptFunctionData {
-            // CC-OFFNXT(G.FMT.02) project code style
             ctx->GetChecker()->AsETSChecker()->CreateGetterOrSetterBodyForOptional(isSetter, isOptional && !isDeclare),
-            std::move(signature),  // CC-OFF(G.FMT.02) project code style
-                                   // CC-OFFNXT(G.FMT.02) project code style
-            isSetter ? ir::ScriptFunctionFlags::SETTER : ir::ScriptFunctionFlags::GETTER, flags,
+            std::move(signature), scriptFunctionFlags, flags,
             classScope->Node()->AsTSInterfaceDeclaration()->Language()});
 
     // Since optional prop has default body, need to set scope.

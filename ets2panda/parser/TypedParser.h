@@ -73,9 +73,6 @@ protected:
     bool CheckClassElement(ir::AstNode *property, ir::MethodDefinition *&ctor,
                            ArenaVector<ir::AstNode *> &properties) override;
     bool IsNamespaceDecl();
-    bool IsPrimitiveType(const lexer::TokenType &tokenType);
-    bool IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType);
-    bool EatArrowFunctionParams(lexer::Lexer *lexer);
 
     ir::ModifierFlags ParseModifiers() override;
     ParserStatus ValidateArrowParameter(ir::Expression *expr, bool *seenOptional) override;

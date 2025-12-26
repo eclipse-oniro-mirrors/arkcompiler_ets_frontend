@@ -27,11 +27,46 @@ namespace ark::es2panda::ir {
 
 using ENUMBITOPS_OPERATORS;
 
-enum class RetentionPolicy : uint32_t { SOURCE = 1U << 0U, BYTECODE = 1U << 1U, RUNTIME = 1U << 2U };
+enum class RetentionPolicy : uint8_t { SOURCE = 1U << 0U, BYTECODE = 1U << 1U, RUNTIME = 1U << 2U };
+
+enum class AnnotationTargets : uint32_t {
+    NONE = 0U,
+    // Top-Level Declarations
+    CLASS = 1U << 0U,
+    ENUMERATION = 1U << 1U,
+    FUNCTION = 1U << 2U,
+    FUNCTION_WITH_RECEIVER = 1U << 3U,
+    INTERFACE = 1U << 4U,
+    NAMESPACE = 1U << 5U,
+    TYPE_ALIAS = 1U << 6U,
+    VARIABLE = 1U << 7U,
+
+    // Class Members
+    CLASS_FIELD = 1U << 8U,
+    CLASS_METHOD = 1U << 9U,
+    CLASS_GETTER = 1U << 10U,
+    CLASS_SETTER = 1U << 11U,
+
+    // Interface Members
+    INTERFACE_PROPERTY = 1U << 12U,
+    INTERFACE_METHOD = 1U << 13U,
+    INTERFACE_GETTER = 1U << 14U,
+    INTERFACE_SETTER = 1U << 15U,
+
+    // Other targets
+    LAMBDA = 1U << 16U,
+    PARAMETER = 1U << 17U,
+    STRUCT = 1U << 18U,
+    TYPE = 1U << 19U
+};
 }  // namespace ark::es2panda::ir
 
 template <>
 struct enumbitops::IsAllowedType<ark::es2panda::ir::RetentionPolicy> : std::true_type {
+};
+
+template <>
+struct enumbitops::IsAllowedType<ark::es2panda::ir::AnnotationTargets> : std::true_type {
 };
 
 namespace ark::es2panda::ir {
@@ -40,14 +75,16 @@ public:
     explicit AnnotationDeclaration(Expression *expr, ArenaAllocator *allocator)
         : AnnotationAllowed<Statement>(AstNodeType::ANNOTATION_DECLARATION, allocator),
           expr_(expr),
-          properties_(allocator->Adapter())
+          properties_(allocator->Adapter()),
+          targets_(allocator->Adapter())
     {
         InitHistory();
     }
     explicit AnnotationDeclaration(Expression *expr, ArenaVector<AstNode *> &&properties, ArenaAllocator *allocator)
         : AnnotationAllowed<Statement>(AstNodeType::ANNOTATION_DECLARATION, allocator),
           expr_(expr),
-          properties_(std::move(properties))
+          properties_(std::move(properties)),
+          targets_(allocator->Adapter())
     {
         InitHistory();
     }
@@ -118,6 +155,17 @@ public:
         GetOrCreateHistoryNodeAs<AnnotationDeclaration>()->policy_ = RetentionPolicy::RUNTIME;
     }
 
+    [[nodiscard]] const ArenaVector<AnnotationTargets> &Targets() const noexcept
+    {
+        return GetHistoryNodeAs<AnnotationDeclaration>()->targets_;
+    }
+
+    void AddTargets(ArenaVector<AnnotationTargets> &&targets)
+    {
+        auto newNode = reinterpret_cast<AnnotationDeclaration *>(this->GetOrCreateHistoryNode());
+        newNode->targets_ = std::move(targets);
+    }
+
     void TransformChildren(const NodeTransformer &cb, std::string_view transformationName) override;
     void Iterate(const NodeTraverser &cb) const override;
     void Dump(ir::AstDumper *dumper) const override;
@@ -175,6 +223,7 @@ private:
     varbinder::LocalScope *scope_ {};
     Expression *expr_;
     ArenaVector<AstNode *> properties_;
+    ArenaVector<AnnotationTargets> targets_;
     RetentionPolicy policy_ = RetentionPolicy::BYTECODE;
 };
 }  // namespace ark::es2panda::ir

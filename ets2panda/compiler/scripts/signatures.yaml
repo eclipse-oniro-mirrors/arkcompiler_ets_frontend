@@ -188,6 +188,10 @@ defines:
     ref: STD_ANNOTATIONS_RETENTION
   - name: Retention
     ref: BUILTIN_RETENTION
+  - name: 'std.annotations.Target'
+    ref: STD_ANNOTATIONS_TARGET
+  - name: Target
+    ref: BUILTIN_TARGET
   - name: 'Symbol'
     ref: SYMBOL
   - name: 'std.core.Array'

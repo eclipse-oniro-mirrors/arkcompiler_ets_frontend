@@ -31,6 +31,6 @@ function foo(){}
 @interface ClassAuthor{} // Ok
 
 /* @@? 18:2 Error Semantic error ESE0006: Only standard annotations are allowed to be applied on annotations. */
-/* @@? 21:2 Error Semantic error ESE0003: Annotation '@Retention' can only be applied to annotation declarations. */
-/* @@? 24:2 Error Semantic error ESE0003: Annotation '@Retention' can only be applied to annotation declarations. */
+/* @@? 21:2 Error Semantic error ESE1122645: Annotation '@Retention' can only be applied to annotation declarations. */
+/* @@? 24:2 Error Semantic error ESE1122645: Annotation '@Retention' can only be applied to annotation declarations. */
 /* @@? 27:12 Error Semantic error ESE0004: Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'. */

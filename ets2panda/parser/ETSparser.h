@@ -287,6 +287,9 @@ private:
     std::string GetNameForETSUnionType(const ir::TypeNode *typeAnnotation) const;
     ir::TSInterfaceDeclaration *ParseInterfaceBody(ir::Identifier *name, bool isStatic);
     bool IsArrowFunctionExpressionStart();
+    bool IsValidTokenTypeOfArrowFunctionStart(lexer::TokenType tokenType);
+    bool EatArrowFunctionParams(lexer::Lexer *lexer);
+    bool IsPrimitiveType(const lexer::TokenType &tokenType);
     ir::ArrowFunctionExpression *ParseArrowFunctionExpression();
     void ReportIfVarDeclaration(VariableParsingFlags flags) override;
     ir::TypeNode *ParsePotentialFunctionalType(TypeAnnotationParsingOptions *options);

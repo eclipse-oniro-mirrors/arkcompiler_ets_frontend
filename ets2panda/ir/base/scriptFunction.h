@@ -271,6 +271,11 @@ public:
         return (Flags() & ir::ScriptFunctionFlags::SYNTHETIC) != 0;
     }
 
+    [[nodiscard]] bool IsInterfaceProperty() const noexcept
+    {
+        return (Flags() & ir::ScriptFunctionFlags::INTERFACE_PROPERTY) != 0;
+    }
+
     [[nodiscard]] bool IsDynamic() const noexcept
     {
         return Language().IsDynamic();

@@ -129,6 +129,14 @@ semantic:
   id: 4
   message: "Invalid value for 'policy' field. The policy must be one of the following:'SOURCE', 'CLASS', or 'RUNTIME'."
 
+- name: ANNOTATION_TARGET_DUPLICATE
+  id: 263981
+  message: "Annotation target '{}' is duplicated."
+
+- name: ANNOTATION_TARGET_MISMATCH
+  id: 495032
+  message: "Annotation '{}' cannot be used on {}. It is only allowed on: {}."
+
 - name: ANNOTATION_UNUSED_GENERIC_ALIAS
   id: 71
   message: "Type alias generic parameter '{}' is not used in type annotation"
@@ -699,10 +707,6 @@ semantic:
   id: 256
   message: "Interface has methods"
 
-- name: INVALID_ANNOTATION_RETENTION
-  id: 3
-  message: "Annotation '@Retention' can only be applied to annotation declarations."
-
 - name: INVALID_ASSIGNMNENT
   id: 318
   message: "Type '{}' cannot be assigned to type '{}'"
@@ -770,6 +774,10 @@ semantic:
 - name: INVALID_SPREAD_IN_TUPLE
   id: 55
   message: "'{}' cannot be spread in tuple."
+
+- name: INVALID_STANDARD_ANNOTATION
+  id: 1122645
+  message: "Annotation '@{}' can only be applied to annotation declarations."
 
 - name: INVALID_TYPE_AS_VALUE
   id: 134683

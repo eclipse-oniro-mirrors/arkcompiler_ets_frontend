@@ -25,6 +25,7 @@
 #include "checker/types/ets/etsResizableArrayType.h"
 #include "checker/types/ets/types.h"
 #include "checker/resolveResult.h"
+#include "ir/statements/annotationDeclaration.h"
 #include "ir/expressions/callExpression.h"
 #include "ir/visitor/AstVisitor.h"
 #include "types/type.h"
@@ -552,7 +553,11 @@ public:
     bool CheckAmbientAnnotationFieldInitializerValue(ir::Expression *init, ir::Expression *expected);
     bool CheckAmbientAnnotationFieldInitializer(ir::Expression *init, ir::Expression *expected);
     void CheckAnnotationRetention(ir::AnnotationUsage *anno);
+    void CheckAnnotationTarget(ir::AnnotationUsage *anno);
+    std::optional<ir::AnnotationTargets> GetFunctionTarget(ir::ScriptFunction *func);
+    std::optional<ir::AnnotationTargets> GetParentNodeTarget(ir::AstNode *parent);
     void HandleAnnotationRetention(ir::AnnotationUsage *anno, ir::AnnotationDeclaration *annoDecl);
+    void HandleAnnotationTarget(ir::AnnotationUsage *anno, ir::AnnotationDeclaration *annoDecl);
     void CheckStandardAnnotation(ir::AnnotationUsage *anno);
     void CheckAnnotationPropertyType(ir::ClassProperty *property);
     void CheckSinglePropertyAnnotation(ir::AnnotationUsage *st, ir::AnnotationDeclaration *annoDecl);
