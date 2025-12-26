@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 #ifndef ES2PANDA_COMPILER_CORE_CODEGEN_H
 #define ES2PANDA_COMPILER_CORE_CODEGEN_H
 
+#include <cstdint>
 #include "compiler/base/literals.h"
 #include "compiler/core/ASTCompiler.h"
 #include "compiler/core/regAllocator.h"
@@ -154,6 +155,8 @@ public:
 
     [[nodiscard]] virtual checker::Type const *TypeForVar(varbinder::Variable const *var) const noexcept;
 
+    [[nodiscard]] uint32_t GetSpillDebugOffset() const noexcept;
+
     compiler::AstCompiler *GetAstCompiler() const;
 
     const SArenaList<IRNode *> &GetInsns() const noexcept
@@ -172,6 +175,7 @@ public:
         totalRegs_ -= spillRegs;
         ES2PANDA_ASSERT(usedRegs_ >= spillRegs);
         usedRegs_ -= spillRegs;
+        spillDebugOffset_ += spillRegs;
     }
 
     uint32_t GetRegsNum() const
@@ -233,6 +237,7 @@ private:
 
     std::uint32_t usedRegs_ {VReg::REG_START};
     std::uint32_t totalRegs_ {VReg::REG_START};
+    std::uint32_t spillDebugOffset_ {0};
     friend class ScopeContext;
     friend class RegScope;
     friend class LocalRegScope;

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,8 +145,8 @@ std::uint32_t CodeGen::FormalParametersCount() const noexcept
 
 std::uint32_t CodeGen::InternalParamCount() const noexcept
 {
-    static constexpr std::uint32_t HIDDEN_PARAMS = 3U;
-    return ParamCount() + HIDDEN_PARAMS;
+    constexpr std::uint32_t hiddenParams = 3U;
+    return ParamCount() + hiddenParams;
 }
 
 const util::StringView &CodeGen::InternalName() const noexcept
@@ -353,5 +353,10 @@ const CodeGen::TypeMap &CodeGen::GetTypeMap() const noexcept
 compiler::AstCompiler *CodeGen::GetAstCompiler() const
 {
     return astCompiler_;
+}
+
+std::uint32_t CodeGen::GetSpillDebugOffset() const noexcept
+{
+    return spillDebugOffset_;
 }
 }  // namespace ark::es2panda::compiler
