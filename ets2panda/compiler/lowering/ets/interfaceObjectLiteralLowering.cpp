@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,95 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/typeRelationContext.h"
 #include "compiler/lowering/util.h"
+#include "compiler/lowering/scopesInit/scopesInitPhase.h"
 
 namespace ark::es2panda::compiler {
+
+static ir::ETSParameterExpression *AddParam(public_lib::Context *ctx, util::StringView name, ir::TypeNode *type)
+{
+    auto *paramIdent = ctx->AllocNode<ir::Identifier>(name, ctx->Allocator());
+    if (type != nullptr) {
+        paramIdent->SetTsTypeAnnotation(type);
+        type->SetParent(paramIdent);
+    }
+    return ctx->AllocNode<ir::ETSParameterExpression>(paramIdent, false, ctx->Allocator());
+}
+
+using ClassInitializerBuilder = std::function<void(ArenaVector<ir::Statement *> *, ArenaVector<ir::Expression *> *)>;
+using ClassBuilder = std::function<void(ArenaVector<ir::AstNode *> &)>;
+
+static std::pair<ir::ScriptFunction *, ir::Identifier *> CreateScriptFunction(public_lib::Context *ctx,
+                                                                              ClassInitializerBuilder const &builder)
+{
+    ArenaVector<ir::Statement *> statements(ctx->Allocator()->Adapter());
+    ArenaVector<ir::Expression *> params(ctx->Allocator()->Adapter());
+
+    ir::ScriptFunction *func;
+    ir::Identifier *id;
+
+    builder(&statements, &params);
+    auto *body = ctx->AllocNode<ir::BlockStatement>(ctx->Allocator(), std::move(statements));
+    id = ctx->AllocNode<ir::Identifier>(compiler::Signatures::CTOR, ctx->Allocator());
+    auto funcSignature = ir::FunctionSignature(nullptr, std::move(params), nullptr);
+    func = ctx->AllocNode<ir::ScriptFunction>(
+        ctx->Allocator(), ir::ScriptFunction::ScriptFunctionData {body, std::move(funcSignature),
+                                                                  ir::ScriptFunctionFlags::CONSTRUCTOR |
+                                                                      ir::ScriptFunctionFlags::EXPRESSION,
+                                                                  ir::ModifierFlags::PUBLIC});
+    ES2PANDA_ASSERT(func != nullptr);
+    func->SetIdent(id);
+
+    return std::make_pair(func, id);
+}
+
+static ir::MethodDefinition *CreateClassInstanceInitializer(public_lib::Context *ctx,
+                                                            const ClassInitializerBuilder &builder)
+{
+    auto [func, id] = CreateScriptFunction(ctx, builder);
+
+    auto *funcExpr = ctx->AllocNode<ir::FunctionExpression>(func);
+
+    auto *ctor = ctx->AllocNode<ir::MethodDefinition>(ir::MethodDefinitionKind::CONSTRUCTOR,
+                                                      id->Clone(ctx->Allocator(), nullptr), funcExpr,
+                                                      ir::ModifierFlags::NONE, ctx->Allocator(), false);
+    return ctor;
+}
+
+static ir::ClassDeclaration *BuildClass(checker::ETSChecker *checker, util::StringView name,
+                                        const ClassBuilder &builder)
+{
+    auto *allocator = checker->ProgramAllocator();
+    auto *classId = checker->ProgramAllocNode<ir::Identifier>(name, allocator);
+
+    auto *classDef =
+        checker->ProgramAllocNode<ir::ClassDefinition>(allocator, classId, ir::ClassDefinitionModifiers::CLASS_DECL,
+                                                       ir::ModifierFlags::NONE, Language(Language::Id::ETS));
+
+    auto *classDecl = checker->ProgramAllocNode<ir::ClassDeclaration>(classDef, allocator);
+
+    auto *const varBinder = checker->VarBinder()->AsETSBinder();
+    auto *const program = varBinder->Program();
+
+    program->Ast()->AddStatement(classDecl);
+    classDecl->SetParent(program->Ast());
+
+    bool isExternal = program != varBinder->GetGlobalRecordTable()->Program();
+    auto recordTable = isExternal ? varBinder->GetExternalRecordTable().at(program) : varBinder->GetGlobalRecordTable();
+    varbinder::BoundContext boundCtx(recordTable, classDef);
+
+    ArenaVector<ir::AstNode *> classBody(allocator->Adapter());
+
+    builder(classBody);
+
+    classDef->AddProperties(std::move(classBody));
+
+    compiler::InitScopesPhaseETS::RunExternalNode(classDecl, varBinder);
+    varBinder->ResolveReference(classDecl);
+
+    classDecl->Check(checker);
+
+    return classDecl;
+}
 
 static constexpr std::string_view OBJECT_LITERAL_SUFFIX = "$ObjectLiteral";
 
@@ -54,23 +141,21 @@ static inline bool IsAbstractClassType(const checker::Type *type)
 
 static ir::AstNode *CreateAnonClassImplCtor(public_lib::Context *ctx, ReadonlyFields &readonlyFields)
 {
-    auto *const checker = ctx->GetChecker()->AsETSChecker();
     auto *const parser = ctx->parser->AsETSParser();
     checker::ETSChecker::ClassInitializerBuilder initBuilder =
-        [ctx, checker, parser, readonlyFields](ArenaVector<ir::Statement *> *statements,
-                                               ArenaVector<ir::Expression *> *params) {
+        [ctx, parser, readonlyFields](ArenaVector<ir::Statement *> *statements, ArenaVector<ir::Expression *> *params) {
             for (auto [anonClassFieldName, paramName, retType] : readonlyFields) {
                 ir::ETSParameterExpression *param =
-                    checker->AddParam(paramName, ctx->AllocNode<ir::OpaqueTypeNode>(retType, ctx->Allocator()));
+                    AddParam(ctx, paramName, ctx->AllocNode<ir::OpaqueTypeNode>(retType, ctx->Allocator()));
                 params->push_back(param);
                 auto *paramIdent = ctx->AllocNode<ir::Identifier>(paramName, ctx->Allocator());
                 statements->push_back(
                     parser->CreateFormattedStatement("this.@@I1 = @@I2;", anonClassFieldName, paramIdent));
             }
-            checker->AddParam(varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
+            AddParam(ctx, varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
         };
 
-    return checker->CreateClassInstanceInitializer(initBuilder);
+    return CreateClassInstanceInitializer(ctx, initBuilder);
 }
 
 static ir::ClassProperty *CreateAnonClassField(public_lib::Context *ctx, ir::MethodDefinition *ifaceMethod,
@@ -261,7 +346,7 @@ ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringVi
     auto scopeCtx = checker::ScopeContext(checker, scope);
     auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
 
-    auto *classDecl = checker->BuildClass(className, bodyBuilder);
+    auto *classDecl = BuildClass(checker, className, bodyBuilder);
     RefineSourceRanges(classDecl);
 
     auto *classDef = classDecl->Definition();
@@ -332,20 +417,18 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
 
 static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::ClassDefinition *abstractClassNode)
 {
-    auto *checker = ctx->GetChecker()->AsETSChecker();
-
     if (abstractClassNode->GetAnonClass() != nullptr) {
         return;
     }
 
-    auto classBodyBuilder = [checker](ArenaVector<ir::AstNode *> &classBody) -> void {
+    auto classBodyBuilder = [ctx](ArenaVector<ir::AstNode *> &classBody) -> void {
         checker::ETSChecker::ClassInitializerBuilder initBuilder =
-            [checker]([[maybe_unused]] ArenaVector<ir::Statement *> *statements,
-                      [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
-                checker->AddParam(varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
+            [ctx]([[maybe_unused]] ArenaVector<ir::Statement *> *statements,
+                  [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
+                AddParam(ctx, varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
             };
 
-        auto *ctor = checker->CreateClassInstanceInitializer(initBuilder);
+        auto *ctor = CreateClassInstanceInitializer(ctx, initBuilder);
         classBody.emplace_back(ctor);
     };
 
