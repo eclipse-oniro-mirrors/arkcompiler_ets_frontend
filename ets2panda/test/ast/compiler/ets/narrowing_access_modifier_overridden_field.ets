@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-class aaa {
-    /* @@ label */x: ()=>string
-}
-class bbb extends aaa {
-    x: ()=>string
+class Base {
+    public field: number;
 }
 
+class Derived extends Base {
+    private field: number;
+}
 
-/* @@@ label Error Semantic error ESE0280: Property 'x' might not have been initialized. */
+/* @@? 21:13 Error Semantic error ESE771273: `field` narrows the access modifier of the implemented field. */

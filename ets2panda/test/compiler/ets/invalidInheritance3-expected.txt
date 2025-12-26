@@ -906,3 +906,4 @@
     }
   }
 }
+[invalidInheritance3.ets:21:5] Semantic error ESE0141: a in B cannot override a in A because overriding type is not compatible with the base type.

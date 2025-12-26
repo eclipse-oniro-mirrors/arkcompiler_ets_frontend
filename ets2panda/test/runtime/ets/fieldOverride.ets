@@ -13,12 +13,18 @@
  * limitations under the License.
  */
 
-class aaa {
-    /* @@ label */x: ()=>string
+class Parent {
+    overridedField: int = 2;
 }
-class bbb extends aaa {
-    x: ()=>string
+class Child extends Parent {
+    overridedField: int = 4;
 }
 
+function main() {
+    let a: Child = new Child()
+    foo(a)
+}
 
-/* @@@ label Error Semantic error ESE0280: Property 'x' might not have been initialized. */
+function foo(parent: Parent){
+    arktest.assertEQ(parent.overridedField, 4)
+}

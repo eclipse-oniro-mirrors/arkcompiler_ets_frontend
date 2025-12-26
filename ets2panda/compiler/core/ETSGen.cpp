@@ -355,6 +355,12 @@ util::StringView ETSGen::FormClassOwnPropReference(const checker::ETSObjectType 
 
 util::StringView ETSGen::FormClassPropReference(varbinder::Variable const *const var)
 {
+    auto *node = var->Declaration()->Node();
+    ES2PANDA_ASSERT(node->IsClassProperty());
+    if (node->IsOverride()) {
+        ES2PANDA_ASSERT(node->AsClassProperty()->BasePropertyVar() != nullptr);
+        return FormClassPropReference(node->AsClassProperty()->BasePropertyVar());
+    }
     auto containingObjectType = util::Helpers::GetContainingObjectType(var->Declaration()->Node());
     return FormClassOwnPropReference(containingObjectType, var->Name());
 }

@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -686,28 +686,31 @@ void ETSChecker::CreatePartialClassDeclaration(ir::ClassDefinition *const newCla
             // Put the new property into the class declaration
             newClassDefinition->EmplaceBody(newProp);
         }
-        if (prop->IsMethodDefinition() && prop->AsMethodDefinition()->Function() != nullptr &&
-            (prop->AsMethodDefinition()->Function()->IsGetter() ||
-             prop->AsMethodDefinition()->Function()->IsSetter())) {
-            auto *method = prop->AsMethodDefinition();
-            ES2PANDA_ASSERT(method->Id() != nullptr);
-            auto isBrokenSetter = method->Function()->IsSetter() && method->Function()->Params().size() != 1;
-            auto isBrokenGetter = method->Function()->IsGetter() && !method->Function()->Params().empty();
-            if (newClassDefinition->Scope()->FindLocal(method->Id()->Name(),
-                                                       varbinder::ResolveBindingOptions::VARIABLES) != nullptr ||
-                isBrokenSetter || isBrokenGetter) {
-                ES2PANDA_ASSERT(IsAnyError());
-                continue;
-            }
+        if (classDef->Implements().empty() || !prop->IsMethodDefinition() ||
+            prop->AsMethodDefinition()->Function() == nullptr ||
+            (!prop->AsMethodDefinition()->Function()->IsGetter() &&
+             !prop->AsMethodDefinition()->Function()->IsSetter())) {
+            continue;
+        }
 
-            if (method->TsType() == nullptr) {
-                method->Parent()->Check(this);
-            }
+        auto *method = prop->AsMethodDefinition();
+        ES2PANDA_ASSERT(method->Id() != nullptr);
+        auto isBrokenSetter = method->Function()->IsSetter() && method->Function()->Params().size() != 1;
+        auto isBrokenGetter = method->Function()->IsGetter() && !method->Function()->Params().empty();
+        if (newClassDefinition->Scope()->FindLocal(method->Id()->Name(), varbinder::ResolveBindingOptions::VARIABLES) !=
+                nullptr ||
+            isBrokenSetter || isBrokenGetter) {
+            ES2PANDA_ASSERT(IsAnyError());
+            continue;
+        }
 
-            if (method->TsType() != nullptr && !method->TsType()->IsTypeError()) {
-                // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-                newClassDefinition->EmplaceBody(CreateNullishPropertyFromAccessor(method, newClassDefinition));
-            }
+        if (method->TsType() == nullptr) {
+            method->Parent()->Check(this);
+        }
+
+        if (method->TsType() != nullptr && !method->TsType()->IsTypeError()) {
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            newClassDefinition->EmplaceBody(CreateNullishPropertyFromAccessor(method, newClassDefinition));
         }
     }
     if (classDef->IsDeclare()) {
@@ -1116,36 +1119,42 @@ Type *ETSChecker::CreatePartialTypeClassDef(ir::ClassDefinition *const partialCl
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CreatePartialClassDeclaration(partialClassDef, classDef);
 
+    // Create partial type for super type
+    if (typeToBePartial == GlobalETSObjectType()) {
+        // Run checker
+        auto *const partialType = partialClassDef->Check(this)->AsETSObjectType();
+
+        partialType->SetBaseType(typeToBePartial);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        CreateConstructorForPartialType(partialClassDef, partialType, recordTableToUse);
+        return partialType;
+    }
+
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    auto *const partialSuper = CreatePartialType((classDef->Super() == nullptr || !classDef->Super()->IsTypeNode())
+                                                     ? GlobalETSObjectType()
+                                                     : classDef->Super()->TsType());
+    if (partialSuper->IsTypeError()) {
+        return GlobalTypeError();
+    }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    partialClassDef->SetSuper(ProgramAllocator()->New<ir::OpaqueTypeNode>(partialSuper, ProgramAllocator()));
+
     // Run checker
     auto *const partialType = partialClassDef->Check(this)->AsETSObjectType();
-
+    partialType->SetBaseType(typeToBePartial);
     for (auto *interface : typeToBePartial->Interfaces()) {
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         partialType->AddInterface(CreatePartialType(interface)->AsETSObjectType());
     }
 
-    partialType->SetBaseType(typeToBePartial);
+    if (IsTypeIdenticalTo(partialSuper, partialType)) {
+        LogError(diagnostic::CYCLIC_CLASS_SUPER_TYPE, {}, classDef->Start());
+        return GlobalTypeError();
+    }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CreateConstructorForPartialType(partialClassDef, partialType, recordTableToUse);
-
-    // Create partial type for super type
-    if (typeToBePartial != GlobalETSObjectType()) {
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *const partialSuper = CreatePartialType((classDef->Super() == nullptr || !classDef->Super()->IsTypeNode())
-                                                         ? GlobalETSObjectType()
-                                                         : classDef->Super()->TsType());
-
-        if (partialSuper == partialType) {
-            LogError(diagnostic::CYCLIC_CLASS_SUPER_TYPE, {}, classDef->Start());
-            return partialType;
-        }
-        if (partialSuper->IsTypeError()) {
-            return partialType;
-        }
-        partialType->SetSuperType(partialSuper->AsETSObjectType());
-    }
-
     return partialType;
 }
 

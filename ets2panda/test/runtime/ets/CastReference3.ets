@@ -37,7 +37,7 @@ function main() {
     // Accumulator type 'C[]' is always a subtype of 'FixedArray<B>'. Checkcast is redundant here.
     // It may be a sign of possible error here.
     let Bs: FixedArray<B> = As as FixedArray<B>;
-    arktest.assertEQ(Bs[0].name, c'B')
+    arktest.assertEQ(Bs[0].name, c'C')
   }
 
   {

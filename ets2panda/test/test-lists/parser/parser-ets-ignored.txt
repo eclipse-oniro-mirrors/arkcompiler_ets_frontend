@@ -12,3 +12,6 @@ parser/ts/test_decorator.ts
 parser/ts/test_decorator3.ts
 #32155
 ast/compiler/ets/annotation_new.ets
+
+#32379
+compiler/ets/invalidInheritance3.ets

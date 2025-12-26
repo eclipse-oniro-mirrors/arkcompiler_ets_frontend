@@ -49,7 +49,7 @@ void ETSCompiler::Compile(const ir::CatchClause *st) const
 void ETSCompiler::Compile(const ir::ClassProperty *st) const
 {
     ETSGen *etsg = GetETSGen();
-    if (st->Value() == nullptr && st->TsType()->IsETSPrimitiveType()) {
+    if (st->Value() == nullptr && (st->TsType()->IsETSPrimitiveType() || st->IsOverride())) {
         return;
     }
 
@@ -66,7 +66,7 @@ void ETSCompiler::Compile(const ir::ClassProperty *st) const
         etsg->ApplyConversion(st->Value(), st->TsType());
     }
 
-    auto fullName = etsg->FormClassOwnPropReference(etsg->ContainingObjectType(), st->Key()->AsIdentifier()->Name());
+    auto fullName = etsg->FormClassPropReference(st->Key()->Variable());
     if (st->IsStatic()) {
         etsg->StoreStaticProperty(st, st->TsType(), fullName);
     } else {
