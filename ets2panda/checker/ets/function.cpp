@@ -2297,7 +2297,6 @@ static ArenaVector<ir::Expression *> ExtendArgumentsWithFakeLamda(ETSChecker *ch
     ArenaVector<ir::Expression *> params(checker->ProgramAllocator()->Adapter());
 
     ArenaVector<ir::Statement *> statements(checker->ProgramAllocator()->Adapter());
-    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *body = checker->ProgramAllocNode<ir::BlockStatement>(checker->ProgramAllocator(), std::move(statements));
     ES2PANDA_ASSERT(body != nullptr);
     body->SetScope(funcScope);
