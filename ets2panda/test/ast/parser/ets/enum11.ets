@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,6 @@ function main(): void {
 }
 
 
-/* @@? 21:22 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
-/* @@? 22:13 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */
+/* @@? 21:22 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
+/* @@? 22:13 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */
 /* @@@ label Error Semantic error ESE0144: Enum name 'Color' used in the wrong context */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,15 +22,16 @@ enum EE {
 }
 
 function foo(e: E, i: int) {
-//   i = e  // OK if widening, otherwise - CTE
+  i = e  // OK if widening, otherwise - CTE
   i = e as int  // CTE
-//   e = i  // CTE
+  e = i  // CTE
   e = 1 as E  // CTE
-//   e = E.fromValue(i)  // RTE, if i is not equal to one of enum constants, otherwise OK
-//   e = 1  // OK, 1 can be E.b
-//   e = 10 // CTE, 10 is out of range
+  e = E.fromValue(i)  // RTE, if i is not equal to one of enum constants, otherwise OK
+  e = 1  // CTE
 }
 
 
-/* @@? 26:7 Warning Warning W0030: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. */
-/* @@? 28:7 Warning Warning W0030: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. */
+/* @@? 26:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. */
+/* @@? 27:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'E' */
+/* @@? 28:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. */
+/* @@? 30:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'E' */

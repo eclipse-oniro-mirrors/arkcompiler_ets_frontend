@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +36,6 @@ function foo(a : boolean) : NSOuter.NSInner.XXXType | int | string {
 function main() {
     const res : NSOuter.NSInner.XXXType = foo(true) as NSOuter.NSInner.XXXType
     arktest.assertEQ(res, NSOuter.NSInner.XXXType.TAP)
-    const res1 : NSOuter.NSInner.XXXType = 1 as NSOuter.NSInner.XXXType
+    const res1 : NSOuter.NSInner.XXXType = NSOuter.NSInner.XXXType.fromValue(1)
     arktest.assertEQ(res1, NSOuter.NSInner.XXXType.PAT)
 }

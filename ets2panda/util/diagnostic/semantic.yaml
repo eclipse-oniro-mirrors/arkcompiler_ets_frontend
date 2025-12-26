@@ -1389,7 +1389,7 @@ semantic:
 - name: THIS_INCORRECTLY_USED_AS_TYPE_ANNOTAITON
   id: 392
   message: "type 'this' can be used only as a method return type."
-  
+
 - name: THIS_OR_SUPER_IN_CTOR
   id: 235
   message: "Using {} is not allowed in constructor"

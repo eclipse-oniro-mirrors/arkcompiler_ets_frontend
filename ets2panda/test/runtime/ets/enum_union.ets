@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,17 +37,17 @@ function foo1(b : boolean) : int | Color | string | ColorInt {
 }
 
 function testOptional(b ?: ColorInt | int | string) : int {
-    const v1 : int = b ? b as int : 0;
+    const v1 : int = b ? b as ColorInt : 0;
     return v1;
 }
 
 function main() {
   const v1: Color = foo(false) as Color
-	const v2: ColorInt = foo(true) as ColorInt
-	const v3: string = foo(false) as string
+	const v2: ColorInt = ColorInt.fromValue(foo(true) as int)
+	const v3: string = foo(false) as Color
 	const v4: int = foo1(false) as int
 	const v5: Color = foo1(true) as Color
-	const v6: ColorInt = foo1(false) as ColorInt
+	const v6: ColorInt = ColorInt.fromValue(foo1(false) as int)
 
 	arktest.assertEQ(v1, Color.Red)
 	arktest.assertEQ(v2, ColorInt.A)

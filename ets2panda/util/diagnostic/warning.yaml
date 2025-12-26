@@ -62,10 +62,11 @@ warning:
 - name: EMPTY_SOURCE_FILE
   id: 20000
   message: "The source file '{}' is empty."
-
+ 
 - name: ENUM_DEPRECATED_CAST
   id: 30
   message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed."
+  strict: true
 
 - name: EXTENSION_MISMATCH
   id: 25
