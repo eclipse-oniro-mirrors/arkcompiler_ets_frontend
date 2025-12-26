@@ -552,11 +552,8 @@ checker::Type *ETSAnalyzer::Check(ir::SpreadElement *expr) const
     }
 
     auto const exprType = expr->Argument()->Check(checker);
-    if (exprType->IsETSResizableArrayType()) {
-        return expr->SetTsType(exprType->AsETSObjectType()->TypeArguments().front());
-    }
-
-    if (!exprType->IsETSArrayType() && !exprType->IsETSTupleType() && !exprType->IsETSReadonlyArrayType()) {
+    if (!exprType->IsETSResizableArrayType() && !exprType->IsETSArrayType() && !exprType->IsETSTupleType() &&
+        !exprType->IsETSReadonlyArrayType()) {
         if (!exprType->IsTypeError()) {
             // Don't duplicate error messages for the same error
             checker->LogError(diagnostic::SPREAD_OF_INVALID_TYPE, {exprType}, expr->Start());
@@ -564,8 +561,7 @@ checker::Type *ETSAnalyzer::Check(ir::SpreadElement *expr) const
         return checker->InvalidateType(expr);
     }
 
-    checker::Type *const elementType = exprType->IsETSTupleType() ? exprType : checker->GetElementTypeOfArray(exprType);
-    return expr->SetTsType(elementType);
+    return expr->SetTsType(exprType);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::TemplateElement *expr) const
@@ -965,15 +961,14 @@ static void AddSpreadElementTypes(ETSChecker *checker, ir::SpreadElement *const 
 }
 
 static bool ValidArrayExprSizeForTupleSize(ETSChecker *checker, Type *possibleTupleType,
-                                           ir::Expression *possibleArrayExpr,
-                                           TypeRelationFlag const flags = TypeRelationFlag::NONE)
+                                           ir::Expression *possibleArrayExpr)
 {
     if (!possibleArrayExpr->IsArrayExpression() || !possibleTupleType->IsETSTupleType()) {
         return true;
     }
 
     return checker->IsArrayExprSizeValidForTuple(possibleArrayExpr->AsArrayExpression(),
-                                                 possibleTupleType->AsETSTupleType(), flags);
+                                                 possibleTupleType->AsETSTupleType());
 }
 
 static std::vector<std::pair<Type *, ir::Expression *>> GetElementTypes(ETSChecker *checker, ir::ArrayExpression *expr)
@@ -1043,16 +1038,15 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
         }
 
         auto ctx = AssignmentContext(checker->Relation(), currentElement, elementType, compareType,
-                                     currentElement->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
+                                     currentElement->Start(), {{diagnostic::TUPLE_UNASSIGNABLE_ARRAY, {idx}}});
         if (!ctx.IsAssignable()) {
-            checker->LogError(diagnostic::TUPLE_UNASSIGNABLE_ARRAY, {idx}, currentElement->Start());
             return false;
         }
 
-        const CastingContext castCtx(
-            checker->Relation(), diagnostic::CAST_FAIL_UNREACHABLE, {},
-            CastingContext::ConstructorData {currentElement, compareType, checker->MaybeBoxType(compareType),
-                                             currentElement->Start(), TypeRelationFlag::NO_THROW});
+        const CastingContext castCtx(checker->Relation(), diagnostic::CAST_FAIL_UNREACHABLE, {},
+                                     CastingContext::ConstructorData {currentElement, compareType,
+                                                                      checker->MaybeBoxType(compareType),
+                                                                      currentElement->Start(), TypeRelationFlag::NONE});
 
         targetType = compareType;
     } else {
@@ -1060,10 +1054,8 @@ static bool CheckElement(ETSChecker *checker, Type *const preferredType,
     }
 
     auto ctx = AssignmentContext(checker->Relation(), currentElement, elementType, targetType, currentElement->Start(),
-                                 {}, TypeRelationFlag::NO_THROW);
+                                 {{diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT, {idx, elementType, targetType}}});
     if (!ctx.IsAssignable()) {
-        checker->LogError(diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT, {idx, elementType, targetType},
-                          currentElement->Start());
         return false;
     }
 
@@ -1084,8 +1076,9 @@ static Type *InferPreferredTypeFromElements(ETSChecker *checker, ir::ArrayExpres
             continue;
         }
 
-        if (element->IsSpreadElement() && elementType->IsETSArrayType()) {
-            elementType = elementType->AsETSArrayType()->ElementType();
+        if (element->IsSpreadElement() && (elementType->IsETSArrayType() || elementType->IsETSResizableArrayType() ||
+                                           elementType->IsETSReadonlyArrayType())) {
+            elementType = checker->GetElementTypeOfArray(elementType);
         }
 
         arrayExpressionElementTypes.emplace_back(elementType);
@@ -1175,7 +1168,7 @@ static bool CheckCandidateCompatibility(ETSChecker *checker, ir::ArrayExpression
             return false;
         }
         AssignmentContext ctx(checker->Relation(), el, elTy, candElem, arrayLiteral->Start(), std::nullopt,
-                              TypeRelationFlag::NO_THROW);
+                              TypeRelationFlag::NONE);
         return ctx.IsAssignable();
     });
 }
@@ -1183,7 +1176,7 @@ static bool CheckCandidateCompatibility(ETSChecker *checker, ir::ArrayExpression
 static bool CheckElementTypeAssignabilityToTuple(ETSChecker *checker, ETSTupleType *tupleType,
                                                  ir::ArrayExpression *arrayExpr)
 {
-    if (!ValidArrayExprSizeForTupleSize(checker, tupleType, arrayExpr, TypeRelationFlag::NO_THROW)) {
+    if (!ValidArrayExprSizeForTupleSize(checker, tupleType, arrayExpr)) {
         return false;
     }
 
@@ -1193,7 +1186,7 @@ static bool CheckElementTypeAssignabilityToTuple(ETSChecker *checker, ETSTupleTy
         auto *elementType = *element->Check(checker);
         auto *targetType = tupleType->GetTypeAtIndex(i);
         if (const auto ctx = AssignmentContext(checker->Relation(), element, elementType, targetType,
-                                               arrayExpr->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
+                                               arrayExpr->Start(), std::nullopt, TypeRelationFlag::NONE);
             !ctx.IsAssignable()) {
             return false;
         }
@@ -1881,8 +1874,6 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
     if (rightType->IsTypeError()) {
         return expr->SetTsType(leftType);
     }
-
-    CastPossibleTupleOnRHS(checker, expr);
 
     if (leftType->IsETSUnionType()) {
         IsAmbiguousUnionInit(leftType->AsETSUnionType(), expr->Right(), checker);
@@ -3294,8 +3285,7 @@ static std::optional<util::StringView> GetNameForProperty(ETSChecker *checker, i
 
 //  Helper function extracted from 'ETSAnalyzer::IsPropertyAssignable(...)' to reduce its size
 static bool IsMethodPropertyAssignable(ETSChecker *const checker, std::string_view const propertyName,
-                                       Type const *const propertyType, ir::Expression *const value,
-                                       TypeRelationFlag const flags)
+                                       Type const *const propertyType, ir::Expression *const value)
 {
     ES2PANDA_ASSERT(propertyType->IsETSMethodType() && !propertyType->AsETSFunctionType()->CallSignatures().empty());
 
@@ -3325,11 +3315,9 @@ static bool IsMethodPropertyAssignable(ETSChecker *const checker, std::string_vi
         methodType += targetSignature->ToString() + " | ";
     }
 
-    if ((flags & TypeRelationFlag::NO_THROW) == std::underlying_type_t<TypeRelationFlag>(0U)) {
-        methodType.resize(methodType.size() - 3U);
-        checker->LogError(diagnostic::PROP_INCOMPAT, {sourceSignature->ToString(), methodType, propertyName},
-                          value->Start());
-    }
+    methodType.resize(methodType.size() - 3U);
+    checker->LogError(diagnostic::PROP_INCOMPAT, {sourceSignature->ToString(), methodType, propertyName},
+                      value->Start());
 
     return false;
 }
@@ -3364,12 +3352,11 @@ static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *cons
     bool assignable;
     if (!propType->IsETSMethodType()) {
         assignable = checker::AssignmentContext(checker->Relation(), value, valueType, propType, value->Start(),
-                                                {{diagnostic::PROP_INCOMPAT, {valueType, propType, pname}}},
-                                                TypeRelationFlag::NONE)
+                                                {{diagnostic::PROP_INCOMPAT, {valueType, propType, pname}}})
                          // CC-OFFNXT(G.FMT.06-CPP) project code style
                          .IsAssignable();
     } else {
-        assignable = IsMethodPropertyAssignable(checker, pname.Utf8(), propType, value, TypeRelationFlag::NONE);
+        assignable = IsMethodPropertyAssignable(checker, pname.Utf8(), propType, value);
     }
 
     if (!assignable) {
@@ -4196,9 +4183,8 @@ static bool ValidateAndProcessIteratorType(ETSChecker *checker, Type *elemType, 
     relation->SetFlags(checker::TypeRelationFlag::ASSIGNMENT_CONTEXT);
     relation->SetNode(ident);
     if (auto ctx = checker::AssignmentContext(checker->Relation(), ident, elemType, iterType, ident->Start(),
-                                              std::nullopt, TypeRelationFlag::NO_THROW);
-        !ctx.IsAssignable() && !relation->IsLegalBoxedPrimitiveConversion(iterType, elemType)) {
-        checker->LogError(diagnostic::ITERATOR_ELEMENT_TYPE_MISMATCH, {elemType, iterType}, st->Start());
+                                              {{diagnostic::ITERATOR_ELEMENT_TYPE_MISMATCH, {elemType, iterType}}});
+        !ctx.IsAssignable()) {
         return false;
     }
 

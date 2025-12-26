@@ -384,9 +384,11 @@ void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, 
         if (elem->IsSpreadElement() && elemType->IsETSTupleType()) {
             auto *tupleType = elemType->AsETSTupleType();
             elemType = util::Helpers::CreateUnionOfTupleConstituentTypes(checker, tupleType);
+        } else if (elem->IsSpreadElement()) {
+            elemType = checker->GetElementTypeOfArray(elemType);
         }
         checker::AssignmentContext assignCtx(checker->Relation(), elem, elemType, targetType, elem->Start(),
-                                             std::nullopt, checker::TypeRelationFlag::NO_THROW | flags);
+                                             std::nullopt, flags);
         isAssignable &= assignCtx.IsAssignable();
     }
 

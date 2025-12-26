@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -167,7 +167,7 @@ checker::Type *ForOfStatement::CheckIteratorMethodForObject(checker::ETSChecker 
     auto &signatures = checker->GetTypeOfVariable(method)->AsETSFunctionType()->CallSignatures();
     checker::Signature *signature =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        checker->MatchOrderSignatures(signatures, arguments, right_, checker::TypeRelationFlag::NO_THROW, "iterator");
+        checker->MatchOrderSignatures(signatures, arguments, right_, checker::TypeRelationFlag::NONE, "iterator");
     if (signature == nullptr) {
         checker->LogError(diagnostic::MISSING_ITERATOR_METHOD_WITH_SIG, {}, position);
         return checker->GlobalTypeError();
@@ -195,8 +195,8 @@ checker::Type *ForOfStatement::CheckIteratorMethodForObject(checker::ETSChecker 
 
     auto &nextSignatures = checker->GetTypeOfVariable(nextMethod)->AsETSFunctionType()->CallSignatures();
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto const *const nextSignature = checker->MatchOrderSignatures(nextSignatures, arguments, right_,
-                                                                    checker::TypeRelationFlag::NO_THROW, "iterator");
+    auto const *const nextSignature =
+        checker->MatchOrderSignatures(nextSignatures, arguments, right_, checker::TypeRelationFlag::NONE, "iterator");
     if (nextSignature != nullptr && nextSignature->ReturnType()->IsETSObjectType()) {
         if (auto const *const resultType = nextSignature->ReturnType()->AsETSObjectType();
             resultType->Name().Is(ITERATOR_RESULT_NAME)) {

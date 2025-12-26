@@ -17,6 +17,7 @@
 #include "ir/expression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/ets/etsUnionType.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -197,7 +198,7 @@ static void CreateFunctionOverload(ir::MethodDefinition *method, ArenaVector<ir:
 
     ES2PANDA_ASSERT(overloadMethod != nullptr && overloadMethod->Function() != nullptr);
     overloadMethod->Function()->AddFlag(ir::ScriptFunctionFlags::OVERLOAD | ir::ScriptFunctionFlags::SYNTHETIC);
-    overloadMethod->SetRange(funcExpression->Range());
+    SetSourceRangesRecursively(overloadMethod, method->Range());
 
     if (!method->IsDeclare() && method->Parent()->IsTSInterfaceBody()) {
         overloadMethod->Function()->Body()->AsBlockStatement()->ClearStatements();

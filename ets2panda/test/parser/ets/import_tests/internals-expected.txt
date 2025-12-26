@@ -217,7 +217,7 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 12,
+                          "column": 5,
                           "program": "internals.ets"
                         },
                         "end": {
@@ -230,7 +230,7 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 12,
+                        "column": 5,
                         "program": "internals.ets"
                       },
                       "end": {
@@ -243,7 +243,7 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 12,
+                      "column": 5,
                       "program": "internals.ets"
                     },
                     "end": {
@@ -342,7 +342,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 12,
+                                    "column": 5,
                                     "program": "internals.ets"
                                   },
                                   "end": {
@@ -355,7 +355,7 @@
                               "loc": {
                                 "start": {
                                   "line": 20,
-                                  "column": 12,
+                                  "column": 5,
                                   "program": "internals.ets"
                                 },
                                 "end": {
@@ -368,7 +368,7 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 12,
+                                "column": 5,
                                 "program": "internals.ets"
                               },
                               "end": {
@@ -386,7 +386,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 9,
+                              "column": 18,
                               "program": "internals.ets"
                             }
                           }
@@ -399,7 +399,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 18,
                             "program": "internals.ets"
                           }
                         }

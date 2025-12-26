@@ -791,12 +791,19 @@ extern "C" __attribute__((unused)) es2panda_Context *ProceedToState(es2panda_Con
             break;
     }
 
+    if (ctx->config != nullptr) {
+        ctx->config->diagnosticEngine->EnsureLocations();
+    }
+
     return reinterpret_cast<es2panda_Context *>(ctx);
 }
 
 extern "C" __attribute__((unused)) void DestroyContext(es2panda_Context *context)
 {
     auto *ctx = reinterpret_cast<Context *>(context);
+    if (ctx->config != nullptr) {
+        ctx->config->diagnosticEngine->EnsureLocations();
+    }
     delete ctx->program;
     if (ctx->emitter != nullptr) {
         FreeCompilerPartMemory(context);
@@ -1063,7 +1070,8 @@ extern "C" void LogDiagnosticWithSuggestion(es2panda_Context *context, const es2
     auto posE2p = reinterpret_cast<lexer::SourcePosition *>(diagnosticInfo->pos);
     auto suggestion = ctx->diagnosticEngine->CreateSuggestion(
         suggestionkind, suggestionParams, suggestionInfo->substitutionCode, suggestionInfo->title, E2pRange);
-    ctx->diagnosticEngine->LogDiagnostic(*diagnostickind, diagnosticParams, *posE2p, suggestion);
+    auto *diag = ctx->diagnosticEngine->LogDiagnostic(*diagnostickind, diagnosticParams, *posE2p, suggestion);
+    diag->EnsureLocation();
 }
 
 extern "C" void LogDiagnostic(es2panda_Context *context, const es2panda_DiagnosticKind *ekind, const char **args,
@@ -1076,7 +1084,8 @@ extern "C" void LogDiagnostic(es2panda_Context *context, const es2panda_Diagnost
         params.push_back(args[i]);
     }
     auto posE2p = reinterpret_cast<lexer::SourcePosition *>(pos);
-    ctx->diagnosticEngine->LogDiagnostic(*kind, params, *posE2p);
+    auto *diag = ctx->diagnosticEngine->LogDiagnostic(*kind, params, *posE2p);
+    diag->EnsureLocation();
 }
 
 const es2panda_DiagnosticStorage *GetDiagnostics(es2panda_Context *context, size_t etype)

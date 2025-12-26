@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -114,16 +114,14 @@ void SwitchCaseStatement::CheckAndTestCase(checker::ETSChecker *checker, checker
         } else if (caseType->IsETSEnumType() || comparedExprType->IsETSEnumType()) {
             validCaseType = checker->Relation()->IsIdenticalTo(caseType, comparedExprType);
         } else {
-            const checker::AssignmentContext ctx {checker->Relation(),
-                                                  node,
-                                                  caseType,
-                                                  unboxedDiscType,
-                                                  test_->Start(),
-                                                  std::nullopt,
-                                                  checker::TypeRelationFlag::NO_THROW};
+            const checker::AssignmentContext ctx {
+                checker->Relation(),
+                node,
+                caseType,
+                unboxedDiscType,
+                test_->Start(),
+                util::DiagnosticWithParams {diagnostic::SWITCH_CASE_TYPE_INCOMPARABLE, {caseType, comparedExprType}}};
             if (!ctx.IsAssignable()) {
-                checker->LogError(diagnostic::SWITCH_CASE_TYPE_INCOMPARABLE, {caseType, comparedExprType},
-                                  test_->Start());
                 return;
             }
         }

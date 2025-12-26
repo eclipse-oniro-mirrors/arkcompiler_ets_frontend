@@ -427,8 +427,12 @@ checker::Type *MemberExpression::ResolveReturnTypeFromSignature(checker::ETSChec
                                                                 std::string_view const methodName)
 {
     auto flags = checker::TypeRelationFlag::NONE;
+    auto *exprForMatching = isSetter ? this->Parent()->AsExpression()  // assignment expression
+                                     : this;
+
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    checker::Signature *signature = checker->MatchOrderSignatures(signatures, arguments, this, flags, "indexing");
+    checker::Signature *signature =
+        checker->MatchOrderSignatures(signatures, arguments, exprForMatching, flags, "indexing");
     if (signature == nullptr) {
         if (isSetter) {
             Parent()->AsAssignmentExpression()->Right()->SetParent(Parent());
@@ -516,7 +520,7 @@ static void CastTupleElementFromClassMemberType(checker::ETSChecker *checker,
     const checker::CastingContext tupleCast(
         checker->Relation(), diagnostic::CAST_FAIL_UNREACHABLE, {},
         checker::CastingContext::ConstructorData {tupleElementAccessor, storedTupleType, typeOfTuple,
-                                                  tupleElementAccessor->Start(), checker::TypeRelationFlag::NO_THROW});
+                                                  tupleElementAccessor->Start(), checker::TypeRelationFlag::NONE});
 }
 
 checker::Type *MemberExpression::CheckComputed(checker::ETSChecker *checker, checker::Type *baseType)

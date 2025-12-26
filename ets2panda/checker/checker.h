@@ -485,7 +485,7 @@ private:
 
 class InferMatchContext {
 public:
-    explicit InferMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, const lexer::SourceRange &range,
+    explicit InferMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, lexer::SourceRange const &range,
                                bool isLogError = true)
         : diagnosticEngine_(checker->DiagnosticEngine()),
           diagnosticCheckpoint_(),
@@ -541,7 +541,7 @@ private:
     util::DiagnosticEngine &diagnosticEngine_;
     std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint_;
     util::DiagnosticType diagnosticKind_;
-    const lexer::SourceRange &range_;
+    const lexer::SourceRange range_;
     bool isLogError_;
     util::DiagnosticStorage validUpdatedDiagnostics_;
 };

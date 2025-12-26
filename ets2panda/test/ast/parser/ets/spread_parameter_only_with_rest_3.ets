@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,8 +33,8 @@ args_array = [2, 3]
 /* @@@ label1 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
 /* @@@ label1 Error Semantic error ESE0127: No matching call signature for foo([Double, Double]) */
 /* @@@ label2 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(Double) */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for foo(Array<Double>) */
 /* @@@ label3 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
 /* @@@ label3 Error Semantic error ESE0127: No matching call signature for moo(Int, [Double, Double]) */
 /* @@@ label4 Error Semantic error ESE44192: The function or method being called needs a rest parameter to accept arguments passed via the spread operator. */
-/* @@@ label4 Error Semantic error ESE0127: No matching call signature for moo(Int, Double) */
+/* @@@ label4 Error Semantic error ESE0127: No matching call signature for moo(Int, Array<Double>) */

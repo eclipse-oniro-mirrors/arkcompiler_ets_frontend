@@ -58,7 +58,7 @@
                   "loc": {
                     "start": {
                       "line": 19,
-                      "column": 9,
+                      "column": 5,
                       "program": "test_interface.ets"
                     },
                     "end": {
@@ -152,7 +152,7 @@
                             "loc": {
                               "start": {
                                 "line": 19,
-                                "column": 9,
+                                "column": 5,
                                 "program": "test_interface.ets"
                               },
                               "end": {
@@ -170,7 +170,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 6,
+                              "column": 12,
                               "program": "test_interface.ets"
                             }
                           }
@@ -183,7 +183,7 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 6,
+                            "column": 12,
                             "program": "test_interface.ets"
                           }
                         }
@@ -295,7 +295,7 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 10,
+                      "column": 5,
                       "program": "test_interface.ets"
                     },
                     "end": {
@@ -389,7 +389,7 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 10,
+                                "column": 5,
                                 "program": "test_interface.ets"
                               },
                               "end": {
@@ -407,7 +407,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 7,
+                              "column": 16,
                               "program": "test_interface.ets"
                             }
                           }
@@ -420,7 +420,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 7,
+                            "column": 16,
                             "program": "test_interface.ets"
                           }
                         }

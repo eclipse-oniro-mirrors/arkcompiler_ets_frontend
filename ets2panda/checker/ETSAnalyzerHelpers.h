@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -59,7 +59,6 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
 bool HasSingleReturnStatement(const ir::AstNode *node);
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument);
 bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *arrayExprPreferredType);
-void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr);
 checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
                                        ir::Expression *stArgument);
 bool CheckReturnTypeNecessity(ir::MethodDefinition *node);

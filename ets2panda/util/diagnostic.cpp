@@ -224,20 +224,27 @@ std::string DiagnosticBase::ToStringUniqueNumber() const
 
 DiagnosticBase::DiagnosticBase(const lexer::SourcePosition &pos)
 {
-    if (pos.Program() != nullptr) {
-        lexer::SourceLocation loc = pos.ToLocation();
-        file_ = pos.Program()->SourceFilePath().Utf8();
-        line_ = loc.line;
-        offset_ = loc.col;
-    }
+    posData_ = pos;
 }
 
 DiagnosticBase::DiagnosticBase(const lexer::SourceLocation &loc)
 {
+    posData_ = loc;
     if (loc.Program() != nullptr) {
         file_ = loc.Program()->SourceFilePath().Utf8();
-        line_ = loc.line;
-        offset_ = loc.col;
+    }
+}
+
+void DiagnosticBase::EnsureLocation()
+{
+    if (HasPosition()) {
+        if (Position()->Program() != nullptr) {
+            file_ = Position()->Program()->SourceFilePath().Utf8();
+            posData_ = Position()->ToLocation();
+        } else {
+            file_ = "";
+            posData_ = lexer::SourceLocation();
+        }
     }
 }
 

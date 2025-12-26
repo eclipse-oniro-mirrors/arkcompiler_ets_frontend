@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,15 +20,15 @@ interface A {
     }
 }
 
-
 /* @@? 17:16 Error Syntax error ESY0180: Interface member initialization is prohibited. */
-/* @@? 17:18 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 17:18 Error Syntax error ESY0224: Identifier expected, got 'string literal'. */
-/* @@? 18:12 Error Semantic error ESE0371: Cannot find type 'B'. */
-/* @@? 18:14 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 17:18 Error Syntax error ESY0228: Unexpected token, expected ','. */
+/* @@? 18:5 Error Semantic error ESE0371: Cannot find type 'B'. */
 /* @@? 18:14 Error Syntax error ESY0224: Identifier expected, got 'end of stream'. */
+/* @@? 18:14 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 19:20 Error Syntax error ESY0180: Interface member initialization is prohibited. */
-/* @@? 19:22 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 19:22 Error Syntax error ESY0224: Identifier expected, got 'string literal'. */
+/* @@? 19:22 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 20:5 Error Syntax error ESY0122: Identifier expected. */
 /* @@? 21:1 Error Syntax error ESY0227: Unexpected token '}'. */
+

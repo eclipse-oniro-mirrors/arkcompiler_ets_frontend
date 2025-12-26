@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +20,8 @@ console.log(Objct.keys(object1));
 
 /* @@? 19:1 Error Semantic error ESE0127: No matching call signature for log(Obj) */
 /* @@? 19:13 Error Semantic error ESE165326: Interface 'Obj' cannot be used as object */
-/* @@? 19:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
-/* @@? 19:16 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 19:16 Error Syntax error ESY0227: Unexpected token 'ct'. */
+/* @@? 19:16 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 19:16 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 19:16 Error Semantic error ESE0143: Unresolved reference ct */
 /* @@? 19:33 Error Syntax error ESY0227: Unexpected token ')'. */

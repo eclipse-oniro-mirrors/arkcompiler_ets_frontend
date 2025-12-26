@@ -321,8 +321,8 @@
                       "program": "default_parameter8.ets"
                     },
                     "end": {
-                      "line": 18,
-                      "column": 16,
+                      "line": 20,
+                      "column": 6,
                       "program": "default_parameter8.ets"
                     }
                   }
@@ -346,8 +346,8 @@
                           "program": "default_parameter8.ets"
                         },
                         "end": {
-                          "line": 18,
-                          "column": 16,
+                          "line": 20,
+                          "column": 6,
                           "program": "default_parameter8.ets"
                         }
                       }
@@ -367,14 +367,14 @@
                               "type": "ThisExpression",
                               "loc": {
                                 "start": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
+                                  "line": 18,
+                                  "column": 5,
+                                  "program": "default_parameter8.ets"
                                 },
                                 "end": {
-                                  "line": 1,
-                                  "column": 1,
-                                  "program": null
+                                  "line": 20,
+                                  "column": 6,
+                                  "program": "default_parameter8.ets"
                                 }
                               }
                             },
@@ -385,12 +385,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 18,
-                                    "column": 28,
+                                    "column": 5,
                                     "program": "default_parameter8.ets"
                                   },
                                   "end": {
-                                    "line": 18,
-                                    "column": 31,
+                                    "line": 20,
+                                    "column": 6,
                                     "program": "default_parameter8.ets"
                                   }
                                 }
@@ -412,28 +412,28 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
+                              "line": 18,
+                              "column": 5,
+                              "program": "default_parameter8.ets"
                             },
                             "end": {
-                              "line": 1,
-                              "column": 1,
-                              "program": null
+                              "line": 20,
+                              "column": 6,
+                              "program": "default_parameter8.ets"
                             }
                           }
                         }
                       ],
                       "loc": {
                         "start": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
+                          "line": 18,
+                          "column": 5,
+                          "program": "default_parameter8.ets"
                         },
                         "end": {
-                          "line": 1,
-                          "column": 1,
-                          "program": null
+                          "line": 20,
+                          "column": 6,
+                          "program": "default_parameter8.ets"
                         }
                       }
                     },
@@ -444,8 +444,8 @@
                         "program": "default_parameter8.ets"
                       },
                       "end": {
-                        "line": 18,
-                        "column": 5,
+                        "line": 20,
+                        "column": 6,
                         "program": "default_parameter8.ets"
                       }
                     }
@@ -457,8 +457,8 @@
                       "program": "default_parameter8.ets"
                     },
                     "end": {
-                      "line": 18,
-                      "column": 5,
+                      "line": 20,
+                      "column": 6,
                       "program": "default_parameter8.ets"
                     }
                   }
@@ -471,8 +471,8 @@
                     "program": "default_parameter8.ets"
                   },
                   "end": {
-                    "line": 18,
-                    "column": 5,
+                    "line": 20,
+                    "column": 6,
                     "program": "default_parameter8.ets"
                   }
                 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -119,7 +119,7 @@ let res = add(n, n);)");
     ASSERT_EQ(result.diagnostic[0].severity_, DiagnosticSeverity::Error);
     ASSERT_NE(std::get<int>(result.diagnostic[0].code_), 0);
     auto const expectedSecondStartLine = 1;
-    auto const expectedSecondStartCharacter = 14;
+    auto const expectedSecondStartCharacter = 9;
     auto const expectedSecondEndLine = 1;
     auto const expectedSecondEndCharacter = 15;
     ASSERT_EQ(result.diagnostic[1].range_.start.line_, expectedSecondStartLine);
@@ -130,7 +130,7 @@ let res = add(n, n);)");
     ASSERT_NE(std::get<int>(result.diagnostic[1].code_), 0);
     auto const thirdIndex = 2;
     auto const expectedThirdStartLine = 1;
-    auto const expectedThirdStartCharacter = 14;
+    auto const expectedThirdStartCharacter = 9;
     auto const expectedThirdEndLine = 1;
     auto const expectedThirdEndCharacter = 15;
     ASSERT_EQ(result.diagnostic[thirdIndex].range_.start.line_, expectedThirdStartLine);

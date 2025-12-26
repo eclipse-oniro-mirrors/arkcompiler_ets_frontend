@@ -457,9 +457,9 @@ public:
     [[nodiscard]] std::optional<Substitution> CheckTypeParamsAndBuildSubstitutionIfValid(
         Signature *signature, const ArenaVector<ir::TypeNode *> &params, const lexer::SourcePosition &pos);
     void AssignTypeParameterConstraints(ir::TSTypeParameterDeclaration const *typeParams);
-    void ThrowSignatureMismatch(ArenaVector<Signature *> const &signatures,
-                                const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                std::string_view signatureKind);
+    void LogSignatureMismatch(ArenaVector<Signature *> const &signatures,
+                              const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+                              std::string_view signatureKind);
     Signature *FirstMatchSignatures(ArenaVector<Signature *> &signatures, ir::CallExpression *expr);
     Signature *MatchOrderSignatures(ArenaVector<Signature *> &signatures,
                                     const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
@@ -655,8 +655,7 @@ public:
     void SetArrayPreferredTypeForNestedMemberExpressions(ir::MemberExpression *expr, Type *annotationType);
     bool IsExtensionETSFunctionType(const checker::Type *type);
     bool IsExtensionAccessorFunctionType(const checker::Type *type);
-    bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple,
-                                      TypeRelationFlag flags = TypeRelationFlag::NONE);
+    bool IsArrayExprSizeValidForTuple(const ir::ArrayExpression *arrayExpr, const ETSTupleType *tuple);
     void ModifyPreferredType(ir::ArrayExpression *arrayExpr, Type *newPreferredType);
     Type *SelectGlobalIntegerTypeForNumeric(Type *type) const;
 

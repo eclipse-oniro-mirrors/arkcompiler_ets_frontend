@@ -58,7 +58,7 @@
                   "loc": {
                     "start": {
                       "line": 17,
-                      "column": 8,
+                      "column": 3,
                       "program": "interfaces.ets"
                     },
                     "end": {
@@ -152,7 +152,7 @@
                             "loc": {
                               "start": {
                                 "line": 17,
-                                "column": 8,
+                                "column": 3,
                                 "program": "interfaces.ets"
                               },
                               "end": {
@@ -170,7 +170,7 @@
                             },
                             "end": {
                               "line": 17,
-                              "column": 6,
+                              "column": 11,
                               "program": "interfaces.ets"
                             }
                           }
@@ -183,7 +183,7 @@
                           },
                           "end": {
                             "line": 17,
-                            "column": 6,
+                            "column": 11,
                             "program": "interfaces.ets"
                           }
                         }
@@ -295,7 +295,7 @@
                   "loc": {
                     "start": {
                       "line": 18,
-                      "column": 8,
+                      "column": 3,
                       "program": "interfaces.ets"
                     },
                     "end": {
@@ -389,7 +389,7 @@
                             "loc": {
                               "start": {
                                 "line": 18,
-                                "column": 8,
+                                "column": 3,
                                 "program": "interfaces.ets"
                               },
                               "end": {
@@ -407,7 +407,7 @@
                             },
                             "end": {
                               "line": 18,
-                              "column": 7,
+                              "column": 11,
                               "program": "interfaces.ets"
                             }
                           }
@@ -420,7 +420,7 @@
                           },
                           "end": {
                             "line": 18,
-                            "column": 7,
+                            "column": 11,
                             "program": "interfaces.ets"
                           }
                         }

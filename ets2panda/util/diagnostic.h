@@ -62,7 +62,7 @@ const char *DiagnosticTypeToString(DiagnosticType type);
 class DiagnosticBase {
 public:
     explicit DiagnosticBase(std::string_view file = "", size_t line = 0, size_t offset = 0)
-        : file_(file), line_(line), offset_(offset)
+        : posData_ {lexer::SourceLocation(line, offset, nullptr)}, file_ {file}
     {
     }
 
@@ -80,32 +80,60 @@ public:
     bool operator<(const DiagnosticBase &rhs) const;
     bool operator==(const DiagnosticBase &rhs) const;
 
+    bool HasPosition() const
+    {
+        return std::holds_alternative<lexer::SourcePosition>(posData_);
+    }
+
+    bool HasLocation() const
+    {
+        return std::holds_alternative<lexer::SourceLocation>(posData_);
+    }
+
+    lexer::SourcePosition const *Position() const
+    {
+        ES2PANDA_ASSERT(HasPosition());
+        return &std::get<lexer::SourcePosition>(posData_);
+    }
+
+    lexer::SourceLocation const *Location() const
+    {
+        ES2PANDA_ASSERT(HasLocation());
+        return &std::get<lexer::SourceLocation>(posData_);
+    }
+
+    void EnsureLocation();
+
     const std::string &File() const
     {
+        ES2PANDA_ASSERT(HasLocation());
         return file_;
     }
 
     std::pair<size_t, size_t> GetLoc() const
     {
-        return {line_, offset_};
+        ES2PANDA_ASSERT(HasLocation());
+        auto loc = Location();
+        return {loc->line, loc->col};
     }
 
     size_t Line() const
     {
-        return line_;
+        ES2PANDA_ASSERT(HasLocation());
+        return Location()->line;
     }
 
     size_t Offset() const
     {
-        return offset_;
+        ES2PANDA_ASSERT(HasLocation());
+        return Location()->col;
     }
 
     std::string ToStringUniqueNumber() const;
 
 private:
+    std::variant<lexer::SourceLocation, lexer::SourcePosition> posData_;
     std::string file_;
-    size_t line_ {};
-    size_t offset_ {};
 };
 
 class AsSrc {

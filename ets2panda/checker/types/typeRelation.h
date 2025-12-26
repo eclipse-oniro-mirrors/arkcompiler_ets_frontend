@@ -39,22 +39,21 @@ enum class TypeRelationFlag : uint32_t {
     STRING = 1U << 2U,
     VALUE_SET = 1U << 3U,
     UNCHECKED = 1U << 4U,
-    NO_THROW = 1U << 5U,
-    SELF_REFERENCE = 1U << 6U,
-    NO_RETURN_TYPE_CHECK = 1U << 7U,
-    DIRECT_RETURN = 1U << 8U,
-    IN_ASSIGNMENT_CONTEXT = 1U << 9U,
-    IN_CASTING_CONTEXT = 1U << 10U,
-    UNCHECKED_CAST = 1U << 11U,
-    IGNORE_TYPE_PARAMETERS = 1U << 12U,
-    CHECK_PROXY = 1U << 13U,
-    NO_CHECK_TRAILING_LAMBDA = 1U << 14U,
-    NO_THROW_GENERIC_TYPEALIAS = 1U << 15U,
-    OVERRIDING_CONTEXT = 1U << 16U,
-    IGNORE_REST_PARAM = 1U << 17U,
-    STRING_TO_CHAR = 1U << 18U,
-    OVERLOADING_CONTEXT = 1U << 19U,
-    NO_SUBSTITUTION_NEEDED = 1U << 20U,
+    SELF_REFERENCE = 1U << 5U,
+    NO_RETURN_TYPE_CHECK = 1U << 6U,
+    DIRECT_RETURN = 1U << 7U,
+    IN_ASSIGNMENT_CONTEXT = 1U << 8U,
+    IN_CASTING_CONTEXT = 1U << 9U,
+    UNCHECKED_CAST = 1U << 10U,
+    IGNORE_TYPE_PARAMETERS = 1U << 11U,
+    CHECK_PROXY = 1U << 12U,
+    NO_CHECK_TRAILING_LAMBDA = 1U << 13U,
+    NO_THROW_GENERIC_TYPEALIAS = 1U << 14U,
+    OVERRIDING_CONTEXT = 1U << 15U,
+    IGNORE_REST_PARAM = 1U << 16U,
+    STRING_TO_CHAR = 1U << 17U,
+    OVERLOADING_CONTEXT = 1U << 18U,
+    NO_SUBSTITUTION_NEEDED = 1U << 19U,
 
     ASSIGNMENT_CONTEXT = NONE,
     BRIDGE_CHECK = OVERRIDING_CONTEXT | IGNORE_TYPE_PARAMETERS,
@@ -164,11 +163,6 @@ public:
     [[nodiscard]] bool UncheckedCast() const noexcept
     {
         return (flags_ & TypeRelationFlag::UNCHECKED_CAST) != 0;
-    }
-
-    [[nodiscard]] bool NoThrow() const noexcept
-    {
-        return (flags_ & TypeRelationFlag::NO_THROW) != 0;
     }
 
     [[nodiscard]] bool NoThrowGenericTypeAlias() const noexcept

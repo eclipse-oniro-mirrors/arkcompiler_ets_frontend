@@ -188,7 +188,7 @@ ir::MethodDefinition *InterfacePropertyDeclarationsPhase::GenerateGetterOrSetter
     paramScope->BindNode(func);
     functionScope->BindNode(func);
     auto *funcExpr = Context()->AllocNode<ir::FunctionExpression>(func);
-    funcExpr->SetRange(func->Range());
+    SetSourceRangesRecursively(funcExpr, func->Range());
 
     auto const &name = field->Key()->AsIdentifier()->Name();
     auto methodIdent = Context()->AllocNode<ir::Identifier>(name, Context()->Allocator());

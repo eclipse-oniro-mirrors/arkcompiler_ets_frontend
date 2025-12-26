@@ -364,6 +364,8 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
     // Create only class 'header' (no properties and methods, but base type created)
     BuildBasicClassProperties(partialClassDef);
 
+    compiler::SetSourceRangesRecursively(partialClassDef, typeDeclNode->Range());
+
     // If class prototype was created before, then we cached it's type. In that case return it.
     // This handles cases where a Partial<T> presents in class T, because during generating %%partial-T we'd need the
     // complete class %%partial-T which is not present at the time. Binding it's own type for it however will make it
@@ -1004,6 +1006,8 @@ Type *ETSChecker::CreatePartialTypeInterfaceDecl(ir::TSInterfaceDeclaration *con
             partialInterface->Extends().back()->SetParent(partialInterface);
         }
     }
+
+    compiler::SetSourceRangesRecursively(partialInterface, interfaceDecl->Range());
 
     auto *const partialType = partialInterface->Check(this)->AsETSObjectType();
     partialType->SetBaseType(typeToBePartial);
