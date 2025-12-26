@@ -15,24 +15,28 @@
 
 
 import { KOALA_WRAPPER_PATH_FROM_SDK, MEMO_PLUGIN_PATH_FROM_SDK, UI_PLUGIN_PATH_FROM_SDK } from '../pre_define';
-import { BuildConfig } from '../types';
+import { BuildConfig, KoalaModule } from '../types';
 import path from 'path'
 
 
-let koalaModule: any;
+let koalaModule: KoalaModule | undefined;
 
-export function initKoalaModules(buildConfig: BuildConfig) {
-    if (!koalaModule) {
+export function initKoalaModules(buildConfig: BuildConfig): KoalaModule {
+    if (koalaModule === undefined) {
         if (buildConfig.plugins === undefined) {
             koalaModule = require('../util/koala_wrapper');
-            return koalaModule;
+            return koalaModule!;
         }
         const koalaWrapperPath =
             process.env.KOALA_WRAPPER_PATH ??
             path.resolve(buildConfig.buildSdkPath, KOALA_WRAPPER_PATH_FROM_SDK);
 
         koalaModule = require(koalaWrapperPath);
-        koalaModule.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+        koalaModule!.arktsGlobal.es2panda._SetUpSoPath(buildConfig.pandaSdkPath);
+    }
+
+    if (koalaModule === undefined) {
+        throw new Error('KoalaWrapper is not initialized');
     }
 
     return koalaModule;
@@ -54,10 +58,10 @@ export function initKoalaPlugins(projectConfig: BuildConfig): void {
 }
 
 export function cleanKoalaModule(): void {
-    koalaModule = null;
+    koalaModule = undefined;
 }
 
 // for ut
-export function getKoalaModule(): any {
+export function getKoalaModule(): KoalaModule | undefined {
     return koalaModule;
 }

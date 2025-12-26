@@ -69,7 +69,7 @@ export class Graph<T> {
             throw new DriverError(
                 LogDataFactory.newInstance(
                     ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
-                    `Corrupted graph`
+                    'Corrupted graph'
                 )
             )
         }
@@ -109,7 +109,7 @@ export class Graph<T> {
                 throw new DriverError(
                     LogDataFactory.newInstance(
                         ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
-                        `Corrupted adjacency matrix`
+                        'Corrupted adjacency matrix'
                     )
                 )
             }
@@ -119,7 +119,7 @@ export class Graph<T> {
                     throw new DriverError(
                         LogDataFactory.newInstance(
                             ErrorCode.BUILDSYSTEM_GRAPH_ERROR,
-                            `Corrupted adjacency matrix`
+                            'Corrupted adjacency matrix'
                         )
                     )
                 }
