@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2600,12 +2600,9 @@ void ETSGen::LoadResizableArrayLength(const ir::AstNode *node)
 
 void ETSGen::LoadResizableArrayElement(const ir::AstNode *node, const VReg arrObj, const VReg arrIndex)
 {
-    auto *vRegType = GetVRegType(arrObj);
-    ES2PANDA_ASSERT(vRegType != nullptr);
-    auto *elementType = vRegType->AsETSResizableArrayType()->ElementType();
     Ra().Emit<CallVirtShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_ARRAY_GET_ELEMENT), arrObj,
                              arrIndex);
-    SetAccumulatorType(elementType);
+    // #32345 - GuardUncheckedType is missing
 }
 
 void ETSGen::LoadArrayLength(const ir::AstNode *node, VReg arrayReg)

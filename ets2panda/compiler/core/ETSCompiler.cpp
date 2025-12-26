@@ -208,6 +208,8 @@ static void HandleUnionTypeInForOf(compiler::ETSGen *etsg, checker::Type const *
     }
 
     labels.push_back(etsg->AllocLabel());
+    // #32345
+    bool reftypeElem = false;
 
     for (size_t i = 0; i < exprType->AsETSUnionType()->ConstituentTypes().size(); i++) {
         compiler::VReg unionReg = etsg->AllocReg();
@@ -230,7 +232,10 @@ static void HandleUnionTypeInForOf(compiler::ETSGen *etsg, checker::Type const *
                 etsg->LoadAccumulator(st, *countReg);
                 etsg->LoadArrayElement(st, unionReg);
             } else if (currentType->IsETSResizableArrayType()) {
+                reftypeElem = true;
                 etsg->LoadResizableArrayElement(st, unionReg, *countReg);
+                // #32345 retain the broken code behavior
+                etsg->SetAccumulatorType(currentType->AsETSResizableArrayType()->ElementType());
             } else {
                 etsg->LoadStringChar(st, unionReg, *countReg, true);
             }
@@ -242,6 +247,13 @@ static void HandleUnionTypeInForOf(compiler::ETSGen *etsg, checker::Type const *
     }
 
     etsg->SetLabel(st->Right(), labels.back());
+    if (reftypeElem) {
+        auto elemType = (st->Left()->IsIdentifier() ? st->Left()->AsIdentifier()
+                                                    : st->Left()->AsVariableDeclaration()->Declarators().front()->Id())
+                            ->TsType();
+        // #32345
+        etsg->GuardUncheckedType(st, etsg->Checker()->GlobalETSAnyType(), elemType);
+    }
 }
 
 static void GetSizeInForOf(compiler::ETSGen *etsg, checker::Type const *const exprType, const ir::ForOfStatement *st,

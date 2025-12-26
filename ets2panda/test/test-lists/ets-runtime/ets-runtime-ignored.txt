@@ -138,6 +138,9 @@ union_call.ets
 #31475
 as_string.ets
 
+#32346
+namespace_tests/namespace_import_type_test/namespace_import.ets
+
 #31475
 readonly_array/readonly_array_arg.ets
 readonly_array/readonly_array_field.ets
