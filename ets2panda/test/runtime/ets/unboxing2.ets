@@ -17,7 +17,7 @@ let global_boolean_: boolean = new Boolean(true);
 let global_byte_: byte = new Byte(20 as byte);
 let global_char_: char = new Char(c'a');
 let global_double_: double = new Double(2.2222222222);
-let global_float_: float = new Float(2.22 as float);
+let global_float_: float = new Float(2.22f);
 let global_int_: int = new Int(200000);
 let global_long_: long = new Long(2147483647);
 let global_short_: short = new Short(20 as short);
@@ -27,7 +27,7 @@ class A {
   public byte_: byte = new Byte(20 as byte);
   public char_: char = new Char(c'a');
   public double_: double = new Double(2.2222222222);
-  public float_: float = new Float(2.22 as float);
+  public float_: float = new Float(2.22f);
   public int_: int = new Int(200000);
   public long_: long = new Long(2147483647);
   public short_: short = new Short(20 as short);
@@ -38,7 +38,7 @@ function main() {
   arktest.assertEQ(global_byte_, 20)
   arktest.assertEQ(global_char_, c'a')
   arktest.assertEQ(global_double_, 2.2222222222)
-  arktest.assertEQ(global_float_, 2.22 as float)
+  arktest.assertEQ(global_float_, 2.22f)
   arktest.assertEQ(global_int_, 200000)
   arktest.assertEQ(global_long_, 2147483647)
   arktest.assertEQ(global_short_, 20)
@@ -48,7 +48,7 @@ function main() {
   arktest.assertEQ(a.byte_, 20)
   arktest.assertEQ(a.char_, c'a')
   arktest.assertEQ(a.double_, 2.2222222222)
-  arktest.assertEQ(a.float_, 2.22 as float)
+  arktest.assertEQ(a.float_, 2.22f)
   arktest.assertEQ(a.int_, 200000)
   arktest.assertEQ(a.long_, 2147483647)
   arktest.assertEQ(a.short_, 20)

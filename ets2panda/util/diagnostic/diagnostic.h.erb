@@ -26,8 +26,12 @@ namespace ark::es2panda::diagnostic {
 class DiagnosticKind {
 public:
     constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message) :
+#ifdef ES2PANDA_STRICT
+        // NOTE(lirismankarina): delete id for warnings when merge #32460
+        type_((type == util::DiagnosticType::WARNING && id == 29) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message) {}
+#else
         type_(type), id_(id), message_(message) {}
-
+#endif
     bool operator==(const DiagnosticKind &other) const
     {
         return std::tie(type_, id_) == std::tie(other.type_, other.id_);

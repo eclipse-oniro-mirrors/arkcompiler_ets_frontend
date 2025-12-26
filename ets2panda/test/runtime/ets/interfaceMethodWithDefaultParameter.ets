@@ -32,7 +32,7 @@ class JohannSebastianBach implements Composer {
             "Passacaglia and Fugue in C minor"
         ]
 
-        let max: int = min(compositions.length, count) as int
+        let max: int = min(compositions.length, count).toInt()
         return [...compositions.slice(0, max)]
     }
 
@@ -51,7 +51,7 @@ class JohannSebastianBach implements Composer {
             "Johann Christian Bach III" 
         ]
 
-        let max: int = min(children.length, count) as int
+        let max: int = min(children.length, count).toInt()
         return excludeLast ? [...children.slice(0, max - 1)] : [...children.slice(0, max)] 
     }
  }

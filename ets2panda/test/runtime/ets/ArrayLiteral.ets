@@ -25,7 +25,7 @@ function main(): void {
     arktest.assertEQ(g[1], 20000)
     arktest.assertEQ(g[2], 2000000)
     arktest.assertEQ(g[3], 200000000000)
-    arktest.assertEQ(g[4], (2.2 as float))
+    arktest.assertEQ(g[4], (2.2f))
     arktest.assertEQ(g[5], 2.2222222222)
 
     const h: byte = 2;

@@ -35,7 +35,7 @@ function main() {
     arktest.assertEQ(a.foo(1 as int), "invoke2")
     arktest.assertEQ(a.foo(1 as number), "invoke4")
     arktest.assertEQ(a.foo(1.0), "invoke3")
-    arktest.assertEQ(a.foo(1.0 as float), "invoke3")
+    arktest.assertEQ(a.foo((1.0).toFloat()), "invoke3")
     arktest.assertEQ(a.foo('a'), "invoke6")
     arktest.assertEQ(a.foo("abcd"), "invoke6")
 
