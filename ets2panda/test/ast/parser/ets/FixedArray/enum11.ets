@@ -24,6 +24,6 @@ function main(): void {
 }
 
 
-/* @@? 21:22 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. Please use 'valueOf' or 'fromValue'. */
-/* @@? 22:13 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. Please use 'valueOf' or 'fromValue'. */
+/* @@? 21:22 Error Semantic error ESE593372: Conversion from 'Color' to 'Int' is not supported. Please use implicit conversion of enum value to 'Int' value or call 'enumValue.valueOf()' */
+/* @@? 22:13 Error Semantic error ESE593373: Conversion from 'Int' to 'Color' is not supported. Please use 'EnumType.fromValue(value)' */
 /* @@@ label Error Semantic error ESE0144: Enum name 'Color' used in the wrong context */

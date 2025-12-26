@@ -249,6 +249,7 @@ void ETSUnionType::Cast(TypeRelation *relation, Type *target)
 
     if (relation->InCastingContext()) {
         relation->Result(
+            HasSpecificType([relation, target](auto *t) { return relation->IsIdenticalTo(t, target); }) ||
             AnyOfConstituentTypes([relation, target](auto *t) { return relation->IsCastableTo(t, target); }));
         return;
     }

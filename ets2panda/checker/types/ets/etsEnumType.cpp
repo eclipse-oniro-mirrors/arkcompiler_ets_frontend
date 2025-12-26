@@ -90,7 +90,8 @@ void ETSStringEnumType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
     if (target->IsETSStringType()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {this, target}, relation->GetNode()->Start());
+        relation->RaiseError(diagnostic::ENUM_CONVERSION_ERROR_TO, {this, target, target},
+                             relation->GetNode()->Start());
         relation->Result(true);
         return;
     }
@@ -100,7 +101,7 @@ void ETSStringEnumType::Cast(TypeRelation *const relation, Type *const target)
 void ETSStringEnumType::CastTarget(TypeRelation *relation, Type *source)
 {
     if (source->IsETSStringType()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {source, this}, relation->GetNode()->Start());
+        relation->RaiseError(diagnostic::ENUM_CONVERSION_ERROR_FROM, {source, this}, relation->GetNode()->Start());
         relation->Result(true);
         return;
     }
@@ -169,7 +170,8 @@ void ETSNumericEnumType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
     if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC) || target->IsBuiltinNumeric()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {this, target}, relation->GetNode()->Start());
+        relation->RaiseError(diagnostic::ENUM_CONVERSION_ERROR_TO, {this, target, target},
+                             relation->GetNode()->Start());
         relation->Result(true);
         return;
     }
@@ -179,7 +181,7 @@ void ETSNumericEnumType::Cast(TypeRelation *const relation, Type *const target)
 void ETSNumericEnumType::CastTarget(TypeRelation *relation, Type *source)
 {
     if (source->IsIntType() || source->IsBuiltinNumeric()) {
-        relation->RaiseError(diagnostic::ENUM_DEPRECATED_CAST, {source, this}, relation->GetNode()->Start());
+        relation->RaiseError(diagnostic::ENUM_CONVERSION_ERROR_FROM, {source, this}, relation->GetNode()->Start());
         relation->Result(true);
         return;
     }
