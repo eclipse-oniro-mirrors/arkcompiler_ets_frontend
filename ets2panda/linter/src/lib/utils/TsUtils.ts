@@ -4040,4 +4040,25 @@ export class TsUtils {
         toLowerCase().
         includes('e');
   }
+
+  static getMemberKind(symbol: ts.Symbol): string {
+    const decls = symbol.valueDeclaration;
+    if (!decls) {
+      return 'unknown';
+    }
+
+    if (ts.isMethodDeclaration(decls) || ts.isMethodSignature(decls)) {
+      return 'method';
+    }
+
+    if (ts.isPropertyDeclaration(decls) || ts.isPropertySignature(decls)) {
+      return 'property';
+    }
+
+    if (ts.isGetAccessorDeclaration(decls) || ts.isSetAccessorDeclaration(decls)) {
+      return 'accessor';
+    }
+
+    return 'unknown';
+  }
 }

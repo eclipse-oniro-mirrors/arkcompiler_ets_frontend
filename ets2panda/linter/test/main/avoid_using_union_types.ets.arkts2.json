@@ -53,6 +53,56 @@
             "suggest": "",
             "rule": "Avoid using union types (arkts-common-union-member-access)",
             "severity": "ERROR"
+        },
+        {
+            "line": 103,
+            "column": 3,
+            "endLine": 103,
+            "endColumn": 12,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 104,
+            "column": 3,
+            "endLine": 104,
+            "endColumn": 12,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 105,
+            "column": 3,
+            "endLine": 105,
+            "endColumn": 12,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 106,
+            "column": 3,
+            "endLine": 106,
+            "endColumn": 12,
+            "problem": "ExplicitFunctionType",
+            "suggest": "",
+            "rule": "The function type should be explicit (arkts-no-ts-like-function-call)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 106,
+            "column": 3,
+            "endLine": 106,
+            "endColumn": 12,
+            "problem": "AvoidUnionTypes",
+            "suggest": "",
+            "rule": "Avoid using union types (arkts-common-union-member-access)",
+            "severity": "ERROR"
         }
     ]
 }
