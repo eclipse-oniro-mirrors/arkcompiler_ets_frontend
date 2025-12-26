@@ -17,14 +17,15 @@
 #define ADD_MISSING_DECLARE_PROPERTY_H
 
 #include <cstddef>
+#include <vector>
 #include "lsp/include/code_fixes/code_fix_types.h"
 #include "lsp/include/services/text_change/change_tracker.h"
 #include "lsp/include/types.h"
 
 namespace ark::es2panda::lsp {
 
-void MakeChange(ChangeTracker changeTracker, es2panda_Context *context, size_t pos,
-                std::vector<ark::es2panda::ir::AstNode *> &fixedNodes);
+void MakeChangeAddMissing(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos,
+                          std::vector<ir::AstNode *> &fixedNodes);
 
 std::vector<FileTextChanges> GetCodeActionsToAddMissingDeclareOnProperty(const CodeFixContext &context);
 

@@ -578,7 +578,9 @@ ets2panda_add_gtest(lsp_api_test_fix_property_assignment CPP_SOURCES
 ets2panda_add_gtest(lsp_api_test_convert_function_to_class CPP_SOURCES
     convert_function_to_class_test.cpp
 )
-
+ets2panda_add_gtest(lsp_api_test_add_missing_declare_property CPP_SOURCES
+    add_missing_declare_property_test.cpp
+)
 ets2panda_add_gtest(lsp_api_test_refactors_generate_constructor CPP_SOURCES
     refactors_generate_constructor_test.cpp
 )

@@ -14,26 +14,53 @@
  */
 
 #include "lsp/include/register_code_fix/add_missing_declare_property.h"
-#include <iostream>
+#include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
+#include "public/es2panda_lib.h"
 
 namespace ark::es2panda::lsp {
 
-const int G_ADD_MISSING_DECLARE_PROPERTY_CODE = 1001;  // change this to the error code you want to handle
+using codefixes::ADD_MISSING_DECLARE_PROPERTY;
 
-void MakeChange(ChangeTracker changeTracker, es2panda_Context *context, size_t pos,
-                std::vector<ark::es2panda::ir::AstNode *> &fixedNodes)
+AddMissingDeclareProperty::AddMissingDeclareProperty()
 {
-    const auto token = GetTouchingToken(context, pos, false);
-    if (token == nullptr || !token->IsIdentifier()) {
+    auto errorCodes = ADD_MISSING_DECLARE_PROPERTY.GetSupportedCodeNumbers();
+    SetErrorCodes({errorCodes.begin(), errorCodes.end()});
+    SetFixIds({ADD_MISSING_DECLARE_PROPERTY.GetFixId().data()});
+}
+
+void MakeChangeAddMissing(ChangeTracker &changeTracker, es2panda_Context *context, size_t pos,
+                          std::vector<ark::es2panda::ir::AstNode *> &fixedNodes)
+{
+    if (context == nullptr) {
         return;
     }
-    const auto declaration = token->Parent();
-    if (declaration->IsProperty()) {
-        fixedNodes.push_back(declaration);
-        changeTracker.InsertModifierBefore(context, token, declaration);
+
+    auto targetNode = GetTouchingToken(context, pos, false);
+    if (targetNode == nullptr || !targetNode->IsIdentifier()) {
+        return;
     }
+
+    auto node = targetNode;
+    ir::AstNode *propertyNode = nullptr;
+
+    while (node != nullptr) {
+        if (node->IsStatement()) {
+            propertyNode = node;
+            break;
+        }
+        node = node->Parent();
+    }
+
+    if (propertyNode == nullptr) {
+        return;
+    }
+
+    fixedNodes.push_back(propertyNode);
+
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    changeTracker.InsertText(ctx->sourceFile, pos, "declare ");
 }
 
 std::vector<FileTextChanges> GetCodeActionsToAddMissingDeclareOnProperty(const CodeFixContext &context)
@@ -41,16 +68,10 @@ std::vector<FileTextChanges> GetCodeActionsToAddMissingDeclareOnProperty(const C
     TextChangesContext textChangesContext = {context.host, context.formatContext, context.preferences};
     std::vector<ark::es2panda::ir::AstNode *> fixedNodes;
 
-    auto fileTextChanges = ChangeTracker::With(
-        textChangesContext, [&](ChangeTracker &tracker) { MakeChange(tracker, context.context, 3, fixedNodes); });
+    auto fileTextChanges = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
+        MakeChangeAddMissing(tracker, context.context, context.span.start, fixedNodes);
+    });
     return fileTextChanges;
-}
-
-AddMissingDeclareProperty::AddMissingDeclareProperty()
-{
-    const char *addMissingDeclarationPropertyId = "AddMissingDeclareProperty";
-    SetErrorCodes({G_ADD_MISSING_DECLARE_PROPERTY_CODE});
-    SetFixIds({addMissingDeclarationPropertyId});
 }
 
 std::vector<CodeFixAction> AddMissingDeclareProperty::GetCodeActions(const CodeFixContext &context)
@@ -59,7 +80,7 @@ std::vector<CodeFixAction> AddMissingDeclareProperty::GetCodeActions(const CodeF
     auto changes = GetCodeActionsToAddMissingDeclareOnProperty(context);
     if (!changes.empty()) {
         CodeFixAction codeAction;
-        codeAction.fixName = "Fix";
+        codeAction.fixName = ADD_MISSING_DECLARE_PROPERTY.GetFixId().data();
         codeAction.description = "Fix Description";
         codeAction.changes = changes;
         codeAction.fixId = "AddMissingDeclareProperty";
@@ -78,16 +99,17 @@ CombinedCodeActions AddMissingDeclareProperty::GetAllCodeActions(const CodeFixAl
     std::vector<ark::es2panda::ir::AstNode *> fixedNodes;
     CodeFixProvider provider;
 
-    const auto changes = provider.CodeFixAll(codeFixAll, GetErrorCodes(),
-                                             [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
-                                                 MakeChange(tracker, codeFixAll.context, diag.GetStart(), fixedNodes);
-                                             });
+    const auto changes = provider.CodeFixAll(
+        codeFixAll, GetErrorCodes(), [&](ChangeTracker &tracker, const DiagnosticWithLocation &diag) {
+            MakeChangeAddMissing(tracker, codeFixAll.context, diag.GetStart(), fixedNodes);
+        });
 
     CombinedCodeActions combinedCodeActions;
     combinedCodeActions.changes = changes.changes;
     combinedCodeActions.commands = changes.commands;
     return combinedCodeActions;
 }
+
 // NOLINTNEXTLINE(fuchsia-statically-constructed-objects, cert-err58-cpp)
 AutoCodeFixRegister<AddMissingDeclareProperty> g_addMissingDeclareProperty("AddMissingDeclareProperty");
 }  // namespace ark::es2panda::lsp
