@@ -5666,8 +5666,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const typeName = tsIdentifier.getText();
-    const isWrapperObject = typeName === 'Number' || typeName === 'String' || typeName === 'Boolean';
-    if (isWrapperObject) {
+    const isWrapperObject = typeName === 'String' || typeName === 'Number' || typeName === 'Boolean';
+    if (isWrapperObject && ts.isCallExpression(tsIdentifier.parent)) {
       return;
     }
 
