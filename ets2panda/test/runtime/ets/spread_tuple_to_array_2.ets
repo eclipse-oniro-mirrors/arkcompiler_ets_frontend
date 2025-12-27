@@ -13,17 +13,19 @@
  * limitations under the License.
  */
 
-class A {
-    static readonly myField1: number
-    static readonly myField2: number
-    static readonly myField3: number
-    constructor() {
-        A.myField1 = 0;
-        A.myField2 = A.myField1 + 1
-        A.myField3++
-    }
-}
+function main() {
+  let tuple: [string, int] = ["a", 1]
+  let array1: (string | int)[] = [...tuple]
+  arktest.assertEQ(array1[0], "a")
+  arktest.assertEQ(array1[1], 1)
+  array1 = [...[...tuple]]
+  arktest.assertEQ(array1[0], "a")
+  arktest.assertEQ(array1[1], 1)
 
-/* @@? 21:9 Error Semantic error ESE4002: Cannot assign to a readonly field myField1 */
-/* @@? 22:9 Error Semantic error ESE4002: Cannot assign to a readonly field myField2 */
-/* @@? 23:9 Error Semantic error ESE4002: Cannot assign to a readonly field myField3 */
+  let array2: FixedArray<string | int> = [...tuple]
+  arktest.assertEQ(array2[0], "a")
+  arktest.assertEQ(array2[1], 1)
+  array2 = [...[...tuple]]
+  arktest.assertEQ(array2[0], "a")
+  arktest.assertEQ(array2[1], 1)
+}

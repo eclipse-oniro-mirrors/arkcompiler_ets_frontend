@@ -17,9 +17,11 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
+#include "ir/expression.h"
 #include "ir/expressions/arrayExpression.h"
 #include "ir/expressions/literals/undefinedLiteral.h"
 #include "ir/ts/tsAsExpression.h"
+#include "ir/typeNode.h"
 #include <checker/ETSchecker.h>
 #include <cstddef>
 #include <iterator>
@@ -28,71 +30,213 @@
 namespace ark::es2panda::compiler {
 
 using AstNodePtr = ir::AstNode *;
+constexpr size_t ARRAY_INDEX_FOR_ACCESS_OFFSET = 1;
+constexpr size_t ARGUMENT_SYMBOL_OFFSET = 2;
+constexpr size_t ARRAY_INDEX_FOR_ASSIGNMENT_OFFSET = 3;
+constexpr size_t ARRAY_INDEX_FOR_INCREMENT_OFFSET = 4;
+constexpr size_t TUPLE_SPREAD_ARG_COUNT = 5;
+
+struct RestArgsBlockExpressionData {
+    std::string spreadArgsArray;
+    std::string arrayLength;
+    ir::Identifier *arraySymbol;
+    ir::Identifier *arrayIndex;
+    ir::Identifier *argumentIndex;
+};
+
+RestArgsBlockExpressionData CreateRestArgsBlockExpressionData(public_lib::Context *context)
+{
+    auto *allocator = context->allocator;
+
+    const auto spreadArgsArray = GenName();
+    const auto arrayLength = GenName();
+    const auto arraySymbol = Gensym(allocator);
+    ES2PANDA_ASSERT(arraySymbol != nullptr);
+    const auto arrayIndex = Gensym(allocator);
+    ES2PANDA_ASSERT(arrayIndex != nullptr);
+    const auto argumentIndex = Gensym(allocator);
+    ES2PANDA_ASSERT(argumentIndex != nullptr);
+    return {spreadArgsArray, arrayLength, arraySymbol, arrayIndex, argumentIndex};
+}
+
+static ir::Statement *FillArrayWithSpreadElement(public_lib::Context *context, ir::Expression *argument,
+                                                 ir::Identifier *arraySymbolWithoutTypeAnnotation,
+                                                 ir::Identifier *argumentSymbol,
+                                                 const RestArgsBlockExpressionData &data)
+{
+    auto *allocator = context->allocator;
+    auto *parser = context->parser->AsETSParser();
+
+    std::vector<ir::AstNode *> args;
+    std::stringstream ss;
+    auto spreadType = argument->AsSpreadElement()->Argument()->TsType();
+    if (spreadType->IsETSTupleType()) {
+        size_t index = 1;
+        for (size_t j = 0; j < spreadType->AsETSTupleType()->GetTupleSize(); j++) {
+            ss << "@@I" << index << "[@@I" << (index + ARRAY_INDEX_FOR_ACCESS_OFFSET) << "] = @@I"
+               << (index + ARGUMENT_SYMBOL_OFFSET) << "[" << j << "];";
+            args.emplace_back(arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr));
+            args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+            args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
+            ss << "@@I" << (index + ARRAY_INDEX_FOR_ASSIGNMENT_OFFSET) << " = @@I"
+               << (index + ARRAY_INDEX_FOR_INCREMENT_OFFSET) << " + 1;";
+            args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+            args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+            index += TUPLE_SPREAD_ARG_COUNT;
+        }
+    } else {
+        ss << "for (let @@I1: int = 0; @@I2 < @@I3.length; @@I4++){";
+        args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
+        args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
+        args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
+        args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
+        ss << "@@I5[@@I6] = @@I7[@@I8];";
+        args.emplace_back(arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr));
+        args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+        args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
+        args.emplace_back(data.argumentIndex->Clone(allocator, nullptr));
+        ss << "@@I9 = @@I10 + 1;";
+        args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+        args.emplace_back(data.arrayIndex->Clone(allocator, nullptr));
+        ss << "}";
+    }
+    return parser->CreateFormattedStatement(ss.str(), args);
+}
+
+static ir::Expression *FillArrayWithArguments(public_lib::Context *context,
+                                              ArenaVector<ir::Statement *> &blockStatements,
+                                              const ArenaVector<ir::Expression *> &arguments,
+                                              const RestArgsBlockExpressionData &data)
+{
+    auto *allocator = context->allocator;
+    auto *parser = context->parser->AsETSParser();
+
+    auto *arraySymbolWithoutTypeAnnotation = data.arraySymbol->Clone(allocator, nullptr)->AsIdentifier();
+    arraySymbolWithoutTypeAnnotation->SetTypeAnnotation(nullptr);
+
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = 0;", data.arrayIndex));
+    size_t spreadArgIndex = 0;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        const auto argumentSymbol = Gensym(allocator);
+        ES2PANDA_ASSERT(argumentSymbol != nullptr);
+        if (arguments[i]->IsSpreadElement()) {
+            auto spreadType = arguments[i]->AsSpreadElement()->Argument()->TsType();
+            auto spreadTypeNode = allocator->New<ir::OpaqueTypeNode>(spreadType, allocator);
+            blockStatements.push_back(
+                parser->CreateFormattedStatement("let @@I1 = @@I2[" + std::to_string(spreadArgIndex) + "] as @@T3;",
+                                                 argumentSymbol, data.spreadArgsArray, spreadTypeNode));
+            spreadArgIndex++;
+            blockStatements.push_back(FillArrayWithSpreadElement(
+                context, arguments[i], arraySymbolWithoutTypeAnnotation, argumentSymbol, data));
+        } else {
+            auto *argTypeNode = allocator->New<ir::OpaqueTypeNode>(arguments[i]->TsType(), allocator);
+            blockStatements.push_back(parser->CreateFormattedStatement(
+                "@@I1[@@I2] = @@E3 as @@T4;", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr),
+                data.arrayIndex->Clone(allocator, nullptr), arguments[i]->Clone(allocator, nullptr), argTypeNode));
+            blockStatements.push_back(parser->CreateFormattedStatement("@@I1 = @@I2 + 1;",
+                                                                       data.arrayIndex->Clone(allocator, nullptr),
+                                                                       data.arrayIndex->Clone(allocator, nullptr)));
+        }
+    }
+
+    return arraySymbolWithoutTypeAnnotation;
+}
+
+static size_t GetNonSpreadArgCount(const ArenaVector<ir::Expression *> &arguments,
+                                   ArenaVector<ir::Expression *> &arrayElements)
+{
+    size_t nonSpreadArgCount = 0;
+    for (auto *argExpr : arguments) {
+        if (argExpr->IsSpreadElement()) {
+            arrayElements.push_back(argExpr->AsSpreadElement()->Argument());
+        } else {
+            nonSpreadArgCount++;
+        }
+    }
+    return nonSpreadArgCount;
+}
+
+static ir::TypeNode *GetConstraintTypeNode(checker::ETSChecker *checker, checker::Type *constraintType,
+                                           bool useConstraintType, checker::Type *arrayType)
+{
+    auto *allocator = checker->Allocator();
+    const auto elementType = checker->GetElementTypeOfArray(arrayType);
+    ir::TypeNode *constraintTypeNode = nullptr;
+    if (useConstraintType) {
+        // For rest parameter in arrow function and generic FixedArray rest parameter in normal function, we need to use
+        // the constraint type.
+        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(constraintType, allocator);
+    } else if (arrayType->IsETSArrayType()) {
+        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
+    } else {
+        constraintTypeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
+    }
+
+    return constraintTypeNode;
+}
 
 static ir::BlockExpression *CreateRestArgsBlockExpression(public_lib::Context *context,
-                                                          ir::SpreadElement *spreadElement, bool isArrowType)
+                                                          ArenaVector<ir::Expression *> &arguments,
+                                                          checker::Type *constraintType, checker::Type *arrayType,
+                                                          bool useConstraintType)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
     auto *checker = context->GetChecker()->AsETSChecker();
 
     ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
-    const auto arraySymbol = Gensym(allocator);
-    ES2PANDA_ASSERT(arraySymbol != nullptr);
-    const auto argumentSymbol = Gensym(allocator);
-    ES2PANDA_ASSERT(argumentSymbol != nullptr);
-    const auto iteratorIndex = Gensym(allocator);
-    ES2PANDA_ASSERT(iteratorIndex != nullptr);
-    const auto elementType = checker->GetElementTypeOfArray(spreadElement->Argument()->TsType());
-    auto *typeNode = allocator->New<ir::OpaqueTypeNode>(elementType, allocator);
-    blockStatements.push_back(
-        parser->CreateFormattedStatement("let @@I1 = @@E2;", argumentSymbol, spreadElement->Argument()));
-    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = 0;", iteratorIndex));
-    if (isArrowType) {
-        blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: FixedArray<Any> = new Any[@@I2.length];",
-                                                                   arraySymbol,
-                                                                   argumentSymbol->Clone(allocator, nullptr)));
-    } else {
-        blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = new Array<@@T2>(@@I3.length);",
-                                                                   arraySymbol, typeNode,
-                                                                   argumentSymbol->Clone(allocator, nullptr)));
-    }
-    std::vector<ir::AstNode *> args;
-    std::stringstream ss;
-    ss << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4++){";
-    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
-    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    auto *arraySymbolWithoutTypeAnnotation = arraySymbol->Clone(allocator, nullptr)->AsIdentifier();
-    arraySymbolWithoutTypeAnnotation->SetTypeAnnotation(nullptr);
-    ss << "@@I5[@@I6] = @@I7[@@I8];";
-    args.emplace_back(arraySymbolWithoutTypeAnnotation);
-    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    args.emplace_back(argumentSymbol->Clone(allocator, nullptr));
-    args.emplace_back(iteratorIndex->Clone(allocator, nullptr));
-    ss << "}";
-    ir::Statement *loopStatement = parser->CreateFormattedStatement(ss.str(), args);
+    auto data = CreateRestArgsBlockExpressionData(context);
 
-    blockStatements.push_back(loopStatement);
+    ArenaVector<ir::Expression *> spreadElements(allocator->Adapter());
+
+    auto nonSpreadArgCount = GetNonSpreadArgCount(arguments, spreadElements);
+
+    // tmp array to store spread arguments for avoiding repeated evaluation
+    blockStatements.push_back(parser->CreateFormattedStatement(
+        "let @@I1: FixedArray<Any> = new Any[" + std::to_string(spreadElements.size()) + "];", data.spreadArgsArray));
+
+    // calculate the length of array to be created
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1: int = 0;", data.arrayLength));
+    for (size_t i = 0; i < spreadElements.size(); ++i) {
+        auto arg = spreadElements[i];
+        auto argType = arg->TsType();
+        auto argTypeNode = allocator->New<ir::OpaqueTypeNode>(argType, allocator);
+        blockStatements.push_back(parser->CreateFormattedStatement("@@I1[" + std::to_string(i) + "] = @@E2 as @@T3;",
+                                                                   data.spreadArgsArray, arg, argTypeNode));
+        if (argType->IsETSTupleType() && argType->AsETSTupleType()->GetTupleSize() > 0) {
+            blockStatements.push_back(parser->CreateFormattedStatement(
+                "@@I1 = @@I2 + " + std::to_string(argType->AsETSTupleType()->GetTupleSize()) + " ;", data.arrayLength,
+                data.arrayLength));
+        } else {
+            blockStatements.push_back(parser->CreateFormattedStatement(
+                "@@I1 = @@I2 + (@@I3[" + std::to_string(i) + "] as @@T4).length;", data.arrayLength, data.arrayLength,
+                data.spreadArgsArray, argTypeNode->Clone(allocator, nullptr)));
+        }
+    }
+    if (nonSpreadArgCount > 0) {
+        blockStatements.push_back(parser->CreateFormattedStatement(
+            "@@I1 = @@I2 + " + std::to_string(nonSpreadArgCount) + ";", data.arrayLength, data.arrayLength));
+    }
+
+    auto constraintTypeNode = GetConstraintTypeNode(checker, constraintType, useConstraintType, arrayType);
+    // For rest paramter in arrow function(whether it is FixedArray or Array), we need to create a FixedArray, for
+    // normal function it depends on the type of the rest parameter.
+    if (useConstraintType || arrayType->IsETSArrayType()) {
+        blockStatements.push_back(parser->CreateFormattedStatement(
+            "let @@I1: FixedArray<@@T2> = new @@T3[@@I4];", data.arraySymbol, constraintTypeNode,
+            constraintTypeNode->Clone(allocator, nullptr), data.arrayLength));
+    } else {
+        blockStatements.push_back(parser->CreateFormattedStatement(
+            "let @@I1 = new Array<@@T2>(@@I3);", data.arraySymbol, constraintTypeNode, data.arrayLength));
+    }
+
+    // fill the array with the arguments in original callExpression.
+    auto *arraySymbolWithoutTypeAnnotation = FillArrayWithArguments(context, blockStatements, arguments, data);
+
     blockStatements.push_back(
         parser->CreateFormattedStatement("@@I1", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr)));
     auto *blockExpr = util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
     return blockExpr;
-}
-
-static ir::BlockExpression *ConvertSpreadToBlockExpression(public_lib::Context *context,
-                                                           ir::SpreadElement *spreadElement, bool isArrowType)
-{
-    auto *blockExpression = CreateRestArgsBlockExpression(context, spreadElement, isArrowType);
-    ES2PANDA_ASSERT(blockExpression != nullptr);
-    blockExpression->SetParent(spreadElement->Parent());
-    blockExpression->SetRange(spreadElement->Range());
-
-    for (auto *statement : blockExpression->Statements()) {
-        SetSourceRangesRecursively(statement, spreadElement->Range());
-    }
-    return blockExpression;
 }
 
 bool ShouldSkipParamCheck(checker::Signature *signature, const ArenaVector<ir::Expression *> &args)
@@ -170,9 +314,8 @@ static bool ShouldProcessRestParameters(checker::Signature *signature, checker::
         return false;
     }
 
-    bool isRestVarArrayType = restVarType->IsETSArrayType();
     bool isRestVarTupleType = restVarType->IsETSTupleType();
-    if (isRestVarArrayType || isRestVarTupleType) {
+    if (isRestVarTupleType) {
         return false;
     }
 
@@ -185,28 +328,14 @@ static bool ShouldProcessRestParameters(checker::Signature *signature, checker::
     return calleeType->IsETSArrowType() || !signature->Function()->IsDynamic();
 }
 
-static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVector<ir::Expression *> &arguments,
-                                           checker::Signature *signature, bool isArrowType = false)
+static ir::Expression *CreateRestArgsArrayWithoutSpread(public_lib::Context *context,
+                                                        ArenaVector<ir::Expression *> &copiedArguments,
+                                                        ir::TypeNode *arrayTypeNode)
 {
     auto *allocator = context->allocator;
     auto *parser = context->parser->AsETSParser();
     auto *checker = context->GetChecker()->AsETSChecker();
-
-    // Handle single spread element case
-    const int diffArgs = arguments.size() - signature->Params().size();
-    const size_t extraArgs = diffArgs < 0 ? 0 : diffArgs;
-    if (extraArgs == 1 && arguments.back()->IsSpreadElement()) {
-        return ConvertSpreadToBlockExpression(context, arguments.back()->AsSpreadElement(), isArrowType);
-    }
-    // Determine array type
-    checker::Type *arrayType = signature->RestVar()->TsType();
-    auto *type = checker->AllocNode<ir::OpaqueTypeNode>(checker->GetElementTypeOfArray(arrayType), allocator);
-    if (extraArgs == 0) {
-        return parser->CreateFormattedExpression("new Array<@@T1>(0)", type);
-    }
-
-    ArenaVector<ir::Expression *> copiedArguments(arguments.begin() + signature->Params().size(), arguments.end(),
-                                                  allocator->Adapter());
+    const lexer::SourceRange range = {copiedArguments.front()->Start(), copiedArguments.back()->End()};
 
     std::stringstream ss;
     auto *genSymIdent = Gensym(allocator);
@@ -222,24 +351,155 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
     ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
     ss << "@@I11;";
     auto *arrayExpr = checker->AllocNode<ir::ArrayExpression>(std::move(copiedArguments), allocator);
-    ES2PANDA_ASSERT(type != nullptr);
+    ES2PANDA_ASSERT(arrayTypeNode != nullptr);
     auto *loweringResult = parser->CreateFormattedExpression(
-        ss.str(), genSymIdent, type->Clone(allocator, nullptr), arrayExpr, genSymIdent2, type,
-        type->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
-        genSymIdent2->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
-        genSymIdent2->Clone(allocator, nullptr));
-    loweringResult->SetRange({arguments[signature->Params().size()]->Range().start, arguments.back()->Range().end});
+        ss.str(), genSymIdent, arrayTypeNode->Clone(allocator, nullptr), arrayExpr, genSymIdent2, arrayTypeNode,
+        arrayTypeNode->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
+        genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr),
+        genSymIdent->Clone(allocator, nullptr), genSymIdent2->Clone(allocator, nullptr));
+
+    loweringResult->SetRange(range);
     return loweringResult;
+}
+
+static std::pair<checker::Type *, bool> CalculateRestArgsConstraintInfo(checker::ETSChecker *checker,
+                                                                        const checker::Signature *signature,
+                                                                        bool isArrowType)
+{
+    // Due to the defects left after the Primitive Type refactoring, the type of FixedArray here must be constraintType
+    // to prevent unboxing.
+    checker::Type *constraintType = nullptr;
+    bool needsConstraintType = false;
+    if (isArrowType) {
+        // the arrow function will be lowered in LambdaLowering, so the corresponding rest parameter type is
+        // FixedArray<Any>.
+        constraintType = checker->GlobalETSAnyType();
+        needsConstraintType = true;
+    } else {
+        auto originalRestParamType = signature->Function()->Signature()->RestVar()->TsType();
+        auto paramRestType = checker->GetElementTypeOfArray(originalRestParamType);
+        needsConstraintType = originalRestParamType->IsETSArrayType() && paramRestType->IsETSTypeParameter();
+        constraintType = originalRestParamType->IsETSTypeParameter()
+                             ? originalRestParamType->AsETSTypeParameter()->GetConstraintType()
+                             : checker->GlobalETSAnyType();
+    }
+
+    return {constraintType, needsConstraintType};
+}
+
+static bool IsSameArrayType(checker::Type *arrayType1, checker::Type *arrayType2)
+{
+    return (arrayType1->IsETSArrayType() && arrayType2->IsETSArrayType()) ||
+           (arrayType1->IsETSResizableArrayType() && arrayType2->IsETSResizableArrayType()) ||
+           (arrayType1->IsETSReadonlyArrayType() && arrayType2->IsETSReadonlyArrayType());
+}
+
+// desc: The following cases we can skip lowering:
+// Definition side: - Case 1: "function foo(...arr: FixedArray<T>) { ... }"
+//   - Case 2: "let foo = (...arr: FixedArray<T>) => { ... }"
+//   - Case 3: "let foo = (...arr: T[]) => { ... }"
+// Call side: - Direct arguments: "foo(arg1, arg2, arg3, ...)"
+//   - Only one spread argument: "let arr: FixedArray<T> = ...; foo(...arr);"
+static bool CanSkipRestArgsLowering(checker::ETSChecker *checker, const checker::Signature *signature,
+                                    checker::Type *restParamType, const ArenaVector<ir::Expression *> &copiedArguments,
+                                    bool isArrowType)
+{
+    auto isElementTypePrimitive =
+        checker->MaybeUnboxType(checker->GetElementTypeOfArray(restParamType))->IsETSPrimitiveType();
+    bool hasSpreadArg = std::any_of(copiedArguments.begin(), copiedArguments.end(),
+                                    [](ir::Expression *arg) { return arg->IsSpreadElement(); });
+    bool hasOnlyOneSpreadArg = hasSpreadArg && copiedArguments.size() == 1;
+    bool hasIncompatibleArrayType =
+        std::any_of(copiedArguments.begin(), copiedArguments.end(), [&](ir::Expression *arg) {
+            if (arg->IsSpreadElement()) {
+                return !IsSameArrayType(arg->AsSpreadElement()->Argument()->TsType(),
+                                        isArrowType ? checker->CreateETSArrayType(checker->GlobalETSAnyType())
+                                                    : restParamType);
+            }
+            return false;
+        });
+
+    // Due to the defects left after the Primitive Type refactoring, we can't skip lowering for generic rest
+    // parameter. Should be removed after the bug is fixed.
+    if ((isElementTypePrimitive && restParamType->IsETSArrayType()) || isArrowType) {
+        if (!hasSpreadArg) {
+            return true;
+        }
+        bool isRestParamGeneric =
+            isArrowType || checker->GetElementTypeOfArray(signature->Function()->Signature()->RestVar()->TsType())
+                               ->IsETSTypeParameter();
+        if (isRestParamGeneric) {
+            return false;
+        }
+        if (hasOnlyOneSpreadArg && !hasIncompatibleArrayType) {
+            return true;
+        }
+        return false;
+    }
+
+    if (!isArrowType && (restParamType->IsETSResizableArrayType() || restParamType->IsETSReadonlyArrayType())) {
+        return false;
+    }
+    if (!hasSpreadArg) {
+        return true;
+    }
+    if (hasOnlyOneSpreadArg && !hasIncompatibleArrayType) {
+        return true;
+    }
+    return false;
+}
+
+static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ir::Expression *expr, bool isArrowType = false)
+{
+    auto *allocator = context->allocator;
+    auto *parser = context->parser->AsETSParser();
+    auto *checker = context->GetChecker()->AsETSChecker();
+
+    const auto &arguments = expr->IsCallExpression() ? expr->AsCallExpression()->Arguments()
+                                                     : expr->AsETSNewClassInstanceExpression()->GetArguments();
+    const auto *signature = expr->IsCallExpression() ? expr->AsCallExpression()->Signature()
+                                                     : expr->AsETSNewClassInstanceExpression()->GetSignature();
+
+    checker::Type *restParamType = signature->RestVar()->TsType();
+    auto arrayTypeNode =
+        checker->AllocNode<ir::OpaqueTypeNode>(checker->GetElementTypeOfArray(restParamType), allocator);
+
+    const size_t numRegularParams = signature->Params().size();
+    const size_t numExtraArgs = arguments.size() > numRegularParams ? arguments.size() - numRegularParams : 0;
+    // If the rest parameter is resizable array and there are no extra arguments, return an empty array.For fixed array,
+    // we don't need to handle it here.
+    if (!restParamType->IsETSArrayType() && numExtraArgs == 0) {
+        return parser->CreateFormattedExpression("new Array<@@T1>(0)", arrayTypeNode);
+    }
+
+    ArenaVector<ir::Expression *> copiedArguments(arguments.begin() + numRegularParams, arguments.end(),
+                                                  allocator->Adapter());
+
+    bool hasSpreadArg = std::any_of(copiedArguments.begin(), copiedArguments.end(),
+                                    [](ir::Expression *arg) { return arg->IsSpreadElement(); });
+
+    if (CanSkipRestArgsLowering(checker, signature, restParamType, copiedArguments, isArrowType)) {
+        return nullptr;
+    }
+
+    if (hasSpreadArg) {
+        auto [constraintType, needsConstraintType] = CalculateRestArgsConstraintInfo(checker, signature, isArrowType);
+        const lexer::SourceRange range = {copiedArguments.front()->Start(), copiedArguments.back()->End()};
+        auto *blockExpression =
+            CreateRestArgsBlockExpression(context, copiedArguments, constraintType, restParamType, needsConstraintType);
+        ES2PANDA_ASSERT(blockExpression != nullptr);
+        blockExpression->SetParent(arguments.back()->Parent());
+        blockExpression->SetRange(range);
+        return blockExpression;
+    }
+
+    return CreateRestArgsArrayWithoutSpread(context, copiedArguments, arrayTypeNode);
 }
 
 static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, ir::CallExpression *originalCall,
                                                  checker::Signature *signature, ir::Expression *restArgsArray)
 
 {
-    if (originalCall->Callee()->TsType()->IsETSArrowType()) {
-        restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
-    }
-
     auto *allocator = context->allocator;
     auto *varbinder = context->GetChecker()->VarBinder()->AsETSBinder();
     ArenaVector<ir::Expression *> newArgs(allocator->Adapter());
@@ -270,7 +530,7 @@ static ir::CallExpression *RebuildCallExpression(public_lib::Context *context, i
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
     newCall->SetTypeParams(originalCall->TypeParams());
-
+    restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
     auto *scope = NearestScope(newCall->Parent());
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
     CheckLoweredNode(context->GetChecker()->VarBinder()->AsETSBinder(), context->GetChecker()->AsETSChecker(), newCall);
@@ -292,7 +552,7 @@ static ir::ETSNewClassInstanceExpression *RebuildNewClassInstanceExpression(
 
     auto *newCall = util::NodeAllocator::ForceSetParent<ir::ETSNewClassInstanceExpression>(
         allocator, originalCall->GetTypeRef()->Clone(allocator, nullptr)->AsETSTypeReference(), std::move(newArgs));
-
+    restArgsArray->AddAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT);
     restArgsArray->SetParent(newCall);
     newCall->SetParent(originalCall->Parent());
     newCall->AddModifier(originalCall->Modifiers());
@@ -311,7 +571,11 @@ ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithR
         return expr;
     }
 
-    auto *restArgsArray = CreateRestArgsArray(context, expr->GetArguments(), signature);
+    auto *restArgsArray = CreateRestArgsArray(context, expr);
+    if (restArgsArray == nullptr) {
+        return expr;
+    }
+
     auto arg =
         context->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, context->allocator, restArgsArray);
     return RebuildNewClassInstanceExpression(context, expr, signature, arg);
@@ -331,7 +595,8 @@ ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::Ca
         return callExpr;
     }
 
-    bool hasSpreadArg = !callExpr->Arguments().empty() && callExpr->Arguments().back()->IsSpreadElement();
+    bool hasSpreadArg = std::any_of(callExpr->Arguments().begin(), callExpr->Arguments().end(),
+                                    [](ir::Expression *arg) { return arg->IsSpreadElement(); });
     if (isArrowType && !hasSpreadArg) {
         return callExpr;
     }
@@ -340,7 +605,10 @@ ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::Ca
         return callExpr;
     }
 
-    auto *restArgsArray = CreateRestArgsArray(context, callExpr->Arguments(), signature, calleeType->IsETSArrowType());
+    auto *restArgsArray = CreateRestArgsArray(context, callExpr, calleeType->IsETSArrowType());
+    if (restArgsArray == nullptr) {
+        return callExpr;
+    }
     auto arg =
         context->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, context->allocator, restArgsArray);
     arg->SetRange(restArgsArray->Range());

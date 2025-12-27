@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@
 #include <iomanip>
 
 #include "checker/ETSchecker.h"
+#include "checker/types/ets/etsTupleType.h"
 
 #include "parser/program/program.h"
 #include "util/ustring.h"
@@ -989,6 +990,18 @@ std::string Helpers::CalcRelativePath(const std::string &target, const std::stri
         ret += *itP + "/";
     }
     return ret;
+}
+
+bool Helpers::IsArrayType(checker::Type *type)
+{
+    return type->IsETSArrayType() || type->IsETSResizableArrayType() || type->IsETSReadonlyArrayType();
+}
+
+checker::Type *Helpers::CreateUnionOfTupleConstituentTypes(checker::ETSChecker *checker,
+                                                           const checker::ETSTupleType *type)
+{
+    std::vector<checker::Type *> tupleTypes(type->GetTupleTypesList().begin(), type->GetTupleTypesList().end());
+    return checker->CreateETSUnionType(std::move(tupleTypes));
 }
 
 }  // namespace ark::es2panda::util

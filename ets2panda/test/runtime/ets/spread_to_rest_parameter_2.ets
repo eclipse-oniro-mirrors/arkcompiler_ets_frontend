@@ -14,14 +14,20 @@
  */
 
 function main() {
-    let arg: number[] = [1, 2, 3, 4]
-    let fn = (...args: number[]) => {
-        return args;
+    let arg1: string[] = ["a", "b"]
+    let arg2: FixedArray<string> = ["c", "d"]
+    let arg3: [string, string] = ["e", "f"]
+    let fn = (...args: string[]) => {
+        let result = "";
+        for (let e of args) {
+            result += e;
+        }
+        return result;
     }
-    let result = fn(...arg);
-    arktest.assertEQ(result[0], 1);
-    arktest.assertEQ(result[1], 2);
-    arktest.assertEQ(result[2], 3);
-    arktest.assertEQ(result[3], 4);
+    arktest.assertEQ(fn("a", "b"), "ab");
+    arktest.assertEQ(fn(...arg1), "ab");
+    arktest.assertEQ(fn(...[...arg1]), "ab");
+    arktest.assertEQ(fn("a", "b", ...arg1), "abab");
+    arktest.assertEQ(fn(...arg1, ...arg2, "g", ...arg3, "h"), "abcdgefh");
 }
 

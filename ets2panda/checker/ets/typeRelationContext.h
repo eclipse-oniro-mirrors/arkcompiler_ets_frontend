@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,9 @@
 #define ES2PANDA_COMPILER_CHECKER_ETS_TYPE_RELATION_CONTEXT_H
 
 #include "checker/ETSchecker.h"
+#include "checker/types/type.h"
 #include "checker/types/typeRelation.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "ir/expression.h"
 
 namespace ark::es2panda::checker {
@@ -35,9 +37,8 @@ public:
         ES2PANDA_ASSERT(target != nullptr);
         ES2PANDA_ASSERT(node != nullptr);
         ES2PANDA_ASSERT(source != nullptr);
-        if (target->IsETSArrayType() && node->IsArrayExpression()) {
-            assignable_ =
-                ValidateArrayTypeInitializerByElement(relation, node->AsArrayExpression(), target->AsETSArrayType());
+        if (util::Helpers::IsArrayType(target) && node->IsArrayExpression()) {
+            assignable_ = etsChecker->ValidateArrayTypeInitializerByElement(node->AsArrayExpression(), target);
             relation->Result(assignable_);
             return;
         }
@@ -73,8 +74,6 @@ public:
     {
         return assignable_;
     }
-
-    bool ValidateArrayTypeInitializerByElement(TypeRelation *relation, ir::ArrayExpression *node, ETSArrayType *target);
 
 private:
     TypeRelationFlag flags_ = TypeRelationFlag::IN_ASSIGNMENT_CONTEXT;

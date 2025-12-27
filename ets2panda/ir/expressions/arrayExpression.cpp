@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -378,24 +378,35 @@ void ArrayExpression::SetPreferredTypeOnFuncParam(checker::ETSChecker *checker, 
         return;
     }
 
-    checker::Type *elementType = nullptr;
+    checker::Type *targetType = nullptr;
     if (param->IsETSArrayType()) {
-        elementType = param->AsETSArrayType()->ElementType();
+        targetType = param->AsETSArrayType()->ElementType();
     } else {
-        elementType = param->AsETSResizableArrayType()->ElementType();
+        targetType = param->AsETSResizableArrayType()->ElementType();
     }
 
     bool isAssignable = true;
 
     for (auto *const elem : elements_) {
-        elem->SetPreferredType(elementType);
-        checker::AssignmentContext assignCtx(checker->Relation(), elem, elem->Check(checker), elementType,
-                                             elem->Start(), std::nullopt, checker::TypeRelationFlag::NO_THROW | flags);
+        if (!elem->IsSpreadElement()) {
+            elem->SetPreferredType(targetType);
+        }
+        checker::Type *elemType = elem->Check(checker);
+        if (elem->IsSpreadElement() && elemType->IsETSTupleType()) {
+            auto *tupleType = elemType->AsETSTupleType();
+            elemType = util::Helpers::CreateUnionOfTupleConstituentTypes(checker, tupleType);
+        }
+        checker::AssignmentContext assignCtx(checker->Relation(), elem, elemType, targetType, elem->Start(),
+                                             std::nullopt, checker::TypeRelationFlag::NO_THROW | flags);
         isAssignable &= assignCtx.IsAssignable();
     }
 
     if (isAssignable) {
         SetPreferredType(param);
+    } else {
+        for (auto *const elem : elements_) {
+            elem->CleanCheckInformation();
+        }
     }
 }
 

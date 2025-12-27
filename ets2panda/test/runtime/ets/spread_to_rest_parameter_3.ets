@@ -17,7 +17,7 @@ function main() {
     let arg1: number[] = [1, 2]
     let arg2: FixedArray<number> = [3, 4]
     let arg3: [number, number] = [5, 6]
-    let fn = (...args: number[]) => {
+    let fn = (...args: FixedArray<number>) => {
         let sum = 0;
         for (let e of args) {
             sum += e;
