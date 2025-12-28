@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -255,10 +255,18 @@ void RegAllocator::AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, SA
         VReg spillReg(spillIndex--);
 
         OperandType ty;
-        if (idx == 0 && (ins->FirstArgIsThis() || ins->IsDevirtual())) {
-            ty = OperandType::REF;
+        if (ins->IsDevirtual()) {
+            if (idx == 0) {
+                ty = OperandType::REF;
+            } else {
+                ty = ins->GetOperandRegType(idx - 1);
+            }
         } else {
-            ty = ins->GetOperandRegType(idx);
+            if (idx == 0 && ins->FirstArgIsThis()) {
+                ty = OperandType::REF;
+            } else {
+                ty = ins->GetOperandRegType(idx);
+            }
         }
 
         auto kind = ins->GetOperandRegKind(idx);
