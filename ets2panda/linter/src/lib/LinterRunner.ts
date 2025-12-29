@@ -55,7 +55,7 @@ import { clearPathHelperCache, pathContainsDirectory } from './utils/functions/P
 import { processSyncErr } from './utils/functions/ProcessWrite';
 import type { LinterInputInfo } from './LinterInputInfo';
 import { collectCommonApiInfo, clearCommonApiInfoCache } from './utils/functions/CommonApiInfo';
-import { tryCallGC } from './utils/functions/GarbageCollectorUtils';
+import { tryCallGC, tryForceCallGC } from './utils/functions/GarbageCollectorUtils';
 
 function prepareInputFilesList(cmdOptions: CommandLineOptions): string[] {
   let inputFiles = cmdOptions.inputFiles.map((x) => {
@@ -250,6 +250,7 @@ function migrate(
   const updatedSourceTexts: Map<string, string> = new Map();
   let lintResult: LintRunResult = initialLintResult;
   const problemsInfosBeforeMigrate = lintResult.problemsInfos;
+  tryForceCallGC();
 
   const migrationMaxPass = cmdOptions.linterOptions.migrationMaxPass ?? qEd.DEFAULT_MAX_AUTOFIX_PASSES;
   for (let pass = 0; pass < migrationMaxPass; pass++) {

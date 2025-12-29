@@ -18,3 +18,10 @@ export function tryCallGC(): void {
     global.gc();
   }
 }
+
+export function tryForceCallGC(): void {
+  if (global.gc) {
+    global.gc();
+    global.gc();
+  }
+}
