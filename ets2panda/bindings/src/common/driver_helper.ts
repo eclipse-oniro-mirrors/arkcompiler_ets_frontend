@@ -246,4 +246,10 @@ export class LspDriverHelper {
         }
         global.es2pandaPublic._DestroyConfig(cfg.peer);
     }
+    public destroyConfigWithoutLog(cfg: Config): void {
+        if (cfg === undefined) {
+            return;
+        }
+        global.es2pandaPublic._DestroyConfigWithoutLog(cfg.peer);
+    }
 }

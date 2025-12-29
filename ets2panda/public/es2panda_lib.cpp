@@ -247,7 +247,7 @@ extern "C" es2panda_Config *CreateConfig(int args, char const *const *argv)
     return reinterpret_cast<es2panda_Config *>(res);
 }
 
-extern "C" void DestroyConfig(es2panda_Config *config)
+extern "C" void DestroyConfigControl(es2panda_Config *config, bool logFlag)
 {
     auto *cfg = reinterpret_cast<ConfigImpl *>(config);
     if (cfg == nullptr) {
@@ -258,9 +258,21 @@ extern "C" void DestroyConfig(es2panda_Config *config)
         util::DumpPerfMetrics();
     }
     delete cfg->options;
-    cfg->diagnosticEngine->FlushDiagnostic();
+    if (logFlag) {
+        cfg->diagnosticEngine->FlushDiagnostic();
+    }
     delete cfg->diagnosticEngine;
     delete cfg;
+}
+
+extern "C" void DestroyConfig(es2panda_Config *config)
+{
+    DestroyConfigControl(config, true);
+}
+
+extern "C" void DestroyConfigWithoutLog(es2panda_Config *config)
+{
+    DestroyConfigControl(config, false);
 }
 
 extern "C" __attribute__((unused)) char const *GetAllErrorMessages(es2panda_Context *context)
@@ -1445,6 +1457,7 @@ es2panda_Impl g_impl = {
     MemFinalize,
     CreateConfig,
     DestroyConfig,
+    DestroyConfigWithoutLog,
     GetAllErrorMessages,
     ConfigGetOptions,
     CreateContextFromFile,
