@@ -48,6 +48,19 @@ struct TypeExtractionTarget {
     TextRange range {0, 0};
 };
 
+struct SourceContext {
+    std::string_view fileSource;
+    const public_lib::Context *pub;
+};
+
+struct DeclarationContext {
+    bool isInterfaceAction;
+    std::string declarationName;
+    std::string selectedType;
+    std::string newLine;
+    size_t insertionPos;
+};
+
 /// @brief Heuristic check to determine if @p text can be treated as an inline object type literal.
 bool IsObjectTypeLiteralCandidate(std::string_view text)
 {
@@ -128,19 +141,55 @@ std::string_view GetSelectionText(const RefactorContext &context, const public_l
     return fileSource.substr(start, end - start);
 }
 
+/// @brief Walks up the AST from the given position to find an extractable type node that contains the selection.
 ir::AstNode *FindCandidateNode(const RefactorContext &context, size_t position)
 {
-    ir::AstNode *node = GetTouchingToken(context.context, position, false);
-    while (node != nullptr) {
-        if (NodeContainsSpan(*node, context.span) && ExtractableTypeNode(*node)) {
+    ir::AstNode *overlapping = nullptr;
+
+    for (ir::AstNode *node = GetTouchingToken(context.context, position, false); node != nullptr;
+         node = node->Parent()) {
+        if (!ExtractableTypeNode(*node)) {
+            continue;
+        }
+        if (NodeContainsSpan(*node, context.span)) {
             return node;
         }
-        node = node->Parent();
+        bool nodeEndsBeforeSpan = node->End().index <= context.span.pos;
+        bool nodeStartsAfterSpan = node->Start().index >= context.span.end;
+        const bool nodeOverlaps = !(nodeEndsBeforeSpan || nodeStartsAfterSpan);
+        if (overlapping == nullptr && nodeOverlaps) {
+            overlapping = node;
+        }
+    }
+    return overlapping;
+}
+
+/// @brief Walk up the AST tree to find a containing type node for the given position
+ir::AstNode *WalkUpTreeToFindContainingTypeNode(const RefactorContext &context, size_t position)
+{
+    ir::AstNode *leafNode = GetTouchingToken(context.context, position, false);
+    if (leafNode == nullptr) {
+        return nullptr;
+    }
+
+    for (ir::AstNode *ancestor = leafNode; ancestor != nullptr; ancestor = ancestor->Parent()) {
+        if (!ancestor->IsExpression() || !ancestor->AsExpression()->IsTypeNode()) {
+            continue;
+        }
+
+        bool ancestorStartsBeforeSpan = ancestor->Start().index <= context.span.pos;
+        bool ancestorEndsAfterSpan = ancestor->End().index >= context.span.end;
+        const bool ancestorContainsEntireSelection = ancestorStartsBeforeSpan && ancestorEndsAfterSpan;
+        if (ancestorContainsEntireSelection && ExtractableTypeNode(*ancestor)) {
+            return ancestor;
+        }
     }
     return nullptr;
 }
 
 /// @brief Locate the AST expression that best matches the selection span.
+/// @details First attempts standard candidate lookup, then falls back to parent lookup
+///          for inline selections that don't align with AST node boundaries.
 TypeExtractionTarget FindTypeExtractionTarget(const RefactorContext &context)
 {
     TypeExtractionTarget target {};
@@ -159,6 +208,13 @@ TypeExtractionTarget FindTypeExtractionTarget(const RefactorContext &context)
         candidate = FindCandidateNode(context, context.span.end - 1);
     }
 
+    if (candidate == nullptr) {
+        candidate = WalkUpTreeToFindContainingTypeNode(context, context.span.pos);
+        if (candidate == nullptr && context.span.end > context.span.pos) {
+            candidate = WalkUpTreeToFindContainingTypeNode(context, context.span.end - 1);
+        }
+    }
+
     if (candidate != nullptr) {
         target.typeExpr = candidate->AsExpression();
         target.range = {candidate->Start().index, candidate->End().index};
@@ -166,19 +222,81 @@ TypeExtractionTarget FindTypeExtractionTarget(const RefactorContext &context)
     return target;
 }
 
+/// @brief Extracts the text of the user's selection that intersects with the target type node.
+std::string_view GetIntersectedSelection(const TypeExtractionTarget &target, const RefactorContext &context,
+                                         const SourceContext &srcCtx)
+{
+    if (target.typeExpr == nullptr || srcCtx.pub == nullptr || srcCtx.pub->sourceFile == nullptr) {
+        return {};
+    }
+    const size_t start = std::max(context.span.pos, target.range.pos);
+    const size_t end = std::min(context.span.end, target.range.end);
+    if (start < end && start < srcCtx.fileSource.size()) {
+        const size_t actualEnd = std::min(end, srcCtx.fileSource.size());
+        return srcCtx.fileSource.substr(start, actualEnd - start);
+    }
+    return {};
+}
+
+/// @brief Check if a broken type node should be treated as an object type based on source text
+bool IsBrokenNodeObjectType(const TypeExtractionTarget &target, const public_lib::Context *pub)
+{
+    if (pub == nullptr || pub->sourceFile == nullptr) {
+        return false;
+    }
+    const std::string_view fileSource(pub->sourceFile->source);
+    const size_t nodeStart = std::min(target.range.pos, fileSource.size());
+    const size_t nodeEnd = std::min(target.range.end, fileSource.size());
+    if (nodeStart >= nodeEnd) {
+        return false;
+    }
+    std::string_view nodeText = fileSource.substr(nodeStart, nodeEnd - nodeStart);
+    return !nodeText.empty() && nodeText.front() == '{';
+}
+
+/// @brief Determines whether the target should be extracted as an interface (object type) or type alias.
+bool ShouldTreatAsObjectType(const TypeExtractionTarget &target, std::string_view selection,
+                             const public_lib::Context *pub)
+{
+    if (target.typeExpr == nullptr) {
+        return IsObjectTypeLiteralCandidate(selection);
+    }
+
+    if (!target.typeExpr->IsTSTypeLiteral() && !target.typeExpr->IsBrokenTypeNode()) {
+        return false;
+    }
+
+    if (IsObjectTypeLiteralCandidate(selection)) {
+        return true;
+    }
+
+    return target.typeExpr->IsBrokenTypeNode() && IsBrokenNodeObjectType(target, pub);
+}
+
 /// @brief Enumerate refactor actions that make sense for the current selection.
 std::vector<RefactorAction> FindAvailableTypeRefactors(const RefactorContext &context)
 {
     const auto target = FindTypeExtractionTarget(context);
     const auto *pub = reinterpret_cast<public_lib::Context *>(context.context);
-    const std::string_view selection = GetSelectionText(context, pub);
-    if (ContainsOnlyIdentifierChars(selection)) {
+
+    std::string_view fileSource {};
+    if (pub != nullptr && pub->sourceFile != nullptr) {
+        fileSource = std::string_view(pub->sourceFile->source);
+    }
+    SourceContext srcCtx {fileSource, pub};
+
+    std::string_view selection = GetIntersectedSelection(target, context, srcCtx);
+    if (selection.empty()) {
+        selection = GetSelectionText(context, pub);
+    }
+
+    const bool hasTypeNode = target.typeExpr != nullptr;
+    if (ContainsOnlyIdentifierChars(selection) && !hasTypeNode) {
         return {};
     }
-    const bool hasTypeNode = target.typeExpr != nullptr;
-    const bool looksObject = IsObjectTypeLiteralCandidate(selection);
-    const bool nodeIsObjectType = hasTypeNode && target.typeExpr->IsTSTypeLiteral();
-    const bool treatAsObject = nodeIsObjectType || looksObject;
+
+    bool treatAsObject = ShouldTreatAsObjectType(target, selection, pub);
+
     auto makeAction = [](const RefactorActionView &view) -> RefactorAction {
         return RefactorAction {std::string(view.name), std::string(view.description), std::string(view.kind)};
     };
@@ -233,6 +351,7 @@ bool DeclarationExistsInAst(es2panda_Context *ctx, const std::string &candidate)
     return match != nullptr;
 }
 
+/// @brief Generates a unique type name by appending numeric suffixes if necessary to avoid conflicts.
 std::string GenerateUniqueName(const ir::Expression &typeExpr, es2panda_Context *ctx, std::string_view baseName)
 {
     varbinder::Scope *scope = ir::AstNode::EnclosingScope(&typeExpr);
@@ -254,20 +373,6 @@ std::string GenerateUniqueName(const ir::Expression &typeExpr, es2panda_Context 
             return next;
         }
     }
-}
-
-/// @brief Generates a unique alias name that does not shadow existing declarations.
-std::string GenerateAliasName(const ir::Expression &typeExpr, es2panda_Context *ctx)
-{
-    constexpr std::string_view K_ALIAS_BASE_NAME = "ExtractedType";
-    return GenerateUniqueName(typeExpr, ctx, K_ALIAS_BASE_NAME);
-}
-
-/// @brief Generates a unique interface name that does not shadow existing declarations.
-std::string GenerateInterfaceName(const ir::Expression &typeExpr, es2panda_Context *ctx)
-{
-    constexpr std::string_view K_INTERFACE_BASE_NAME = "ExtractedInterface";
-    return GenerateUniqueName(typeExpr, ctx, K_INTERFACE_BASE_NAME);
 }
 
 /// @brief Finds the anchor position to insert the synthesized type alias.
@@ -292,6 +397,127 @@ size_t FindTopLevelInsertionPos(const TypeExtractionTarget &target)
     }
     return statement->Start().index;
 }
+
+/// @brief Returns true if inserting at @p pos should be prefixed with a newline.
+bool NeedsLeadingNewline(std::string_view source, size_t pos)
+{
+    if (pos == 0 || pos > source.size()) {
+        return false;
+    }
+
+    auto view = source.substr(pos - 1, 1);
+    std::string prev(view.data(), view.size());
+    return prev != "\n";
+}
+
+/// @brief Remove trailing whitespace from text
+void TrimTrailingWhitespace(std::string &text)
+{
+    while (!text.empty() && (std::isspace(static_cast<unsigned char>(text.back())) != 0)) {
+        text.pop_back();
+    }
+}
+
+/// @brief Remove leading whitespace from text
+void TrimLeadingWhitespace(std::string &text)
+{
+    size_t start = 0;
+    while (start < text.size() && (std::isspace(static_cast<unsigned char>(text[start])) != 0)) {
+        ++start;
+    }
+    if (start > 0) {
+        text = text.substr(start);
+    }
+}
+
+/// @brief Remove method body artifacts if present
+void RemoveMethodBodyArtifacts(std::string &text)
+{
+    if (text.empty()) {
+        return;
+    }
+    char lastChar = text.back();
+    if (lastChar != '{' && lastChar != '=' && lastChar != ')') {
+        return;
+    }
+    size_t pos = text.size() - 2;
+    while (pos < text.size() && (std::isspace(static_cast<unsigned char>(text[pos])) != 0)) {
+        if (pos == 0) {
+            break;
+        }
+        --pos;
+    }
+    if (pos < text.size() && text[pos] == '}') {
+        text.pop_back();
+        TrimTrailingWhitespace(text);
+    }
+}
+
+/// @brief Check if broken type node looks like object type from source text
+bool CheckBrokenTypeNodeText(std::string_view fileSource, const TextRange &targetRange)
+{
+    const size_t nodeStart = std::min(targetRange.pos, fileSource.size());
+    const size_t nodeEnd = std::min(targetRange.end, fileSource.size());
+    if (nodeStart >= nodeEnd) {
+        return false;
+    }
+    std::string_view nodeText = fileSource.substr(nodeStart, nodeEnd - nodeStart);
+    return !nodeText.empty() && nodeText.front() == '{';
+}
+
+/// @brief Checks if the type expression represents an object-like type suitable for interface extraction.
+bool IsObjectLikeTypeNode(const ir::Expression *typeExpr, std::string_view selectedType, const SourceContext &srcCtx,
+                          const TextRange &targetRange)
+{
+    if (typeExpr->IsTSTypeLiteral()) {
+        return true;
+    }
+    if (!typeExpr->IsBrokenTypeNode()) {
+        return false;
+    }
+
+    if (!selectedType.empty() && selectedType.front() == '{') {
+        return true;
+    }
+
+    return CheckBrokenTypeNodeText(srcCtx.fileSource, targetRange);
+}
+
+/// @brief Normalize the selected type text for interface extraction by cleaning up method bodies
+std::string NormalizeInterfaceSelection(std::string_view fileSource, const TextRange &targetRange)
+{
+    const size_t nodeStart = std::min(targetRange.pos, fileSource.size());
+    const size_t nodeEnd = std::min(targetRange.end, fileSource.size());
+    if (nodeStart >= nodeEnd) {
+        return {};
+    }
+    std::string normalized(fileSource.substr(nodeStart, nodeEnd - nodeStart));
+    TrimTrailingWhitespace(normalized);
+    RemoveMethodBodyArtifacts(normalized);
+    TrimLeadingWhitespace(normalized);
+    return normalized;
+}
+
+/// @brief Constructs the declaration text for the extracted type alias or interface.
+std::string BuildDeclarationText(const DeclarationContext &declCtx, std::string_view fileSource)
+{
+    std::string declaration;
+    bool needsNewline = NeedsLeadingNewline(fileSource, declCtx.insertionPos);
+    bool hasNewlineChar = !declCtx.newLine.empty();
+    if (needsNewline && hasNewlineChar) {
+        declaration = declCtx.newLine;
+    }
+
+    if (declCtx.isInterfaceAction) {
+        declaration += "interface " + declCtx.declarationName + " " + declCtx.selectedType;
+        declaration += declCtx.newLine + declCtx.newLine;
+    } else {
+        declaration += "type " + declCtx.declarationName + " = " + declCtx.selectedType + ";";
+        declaration += declCtx.newLine + declCtx.newLine;
+    }
+    return declaration;
+}
+
 }  // namespace
 
 std::vector<ApplicableRefactorInfo> ExtractTypeRefactor::GetAvailableActions(const RefactorContext &refContext) const
@@ -323,31 +549,40 @@ std::vector<ApplicableRefactorInfo> ExtractTypeRefactor::GetAvailableActions(con
     return applicableRefactors;
 }
 
-std::unique_ptr<RefactorEditInfo> ExtractTypeRefactor::GetEditsForAction(const RefactorContext &ctx,
-                                                                         const std::string &actName) const
+std::unique_ptr<RefactorEditInfo> ExtractTypeRefactor::GetEditsForAction(const RefactorContext &context,
+                                                                         const std::string &actionName) const
 {
-    auto pub = reinterpret_cast<public_lib::Context *>(ctx.context);
+    auto pub = reinterpret_cast<public_lib::Context *>(context.context);
     if (pub == nullptr) {
         return std::make_unique<RefactorEditInfo>();
     }
     const std::string_view fileSource(pub->sourceFile->source);
-    const auto target = FindTypeExtractionTarget(ctx);
-    const bool isInterfaceAction = actName == std::string(EXTRACT_INTERFACE_ACTION.name);
+    const auto target = FindTypeExtractionTarget(context);
+    const bool isInterfaceAction = actionName == std::string(EXTRACT_INTERFACE_ACTION.name);
     if (target.typeExpr == nullptr) {
         return std::make_unique<RefactorEditInfo>();
     }
-    TextRange ordered {std::min(ctx.span.pos, ctx.span.end), std::max(ctx.span.pos, ctx.span.end)};
+
+    TextRange ordered {std::min(context.span.pos, context.span.end), std::max(context.span.pos, context.span.end)};
     size_t start = ordered.pos < target.range.pos ? target.range.pos : ordered.pos;
     size_t end = ordered.end > target.range.end ? target.range.end : ordered.end;
+    std::string selectedType(fileSource.substr(start, end - start));
 
-    const std::string selectedType(fileSource.substr(start, end - start));
-    if (isInterfaceAction && !target.typeExpr->IsTSTypeLiteral() && !IsObjectTypeLiteralCandidate(selectedType)) {
+    SourceContext srcCtx {fileSource, pub};
+    bool isObjectLikeType = IsObjectLikeTypeNode(target.typeExpr, selectedType, srcCtx, target.range);
+    if (isInterfaceAction && !isObjectLikeType) {
         return std::make_unique<RefactorEditInfo>();
     }
 
-    std::string declarationName = isInterfaceAction ? GenerateInterfaceName(*target.typeExpr, ctx.context)
-                                                    : GenerateAliasName(*target.typeExpr, ctx.context);
-    const std::string newLine = ctx.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
+    if (isInterfaceAction && isObjectLikeType) {
+        std::string normalized = NormalizeInterfaceSelection(fileSource, target.range);
+        if (!normalized.empty()) {
+            selectedType = normalized;
+        }
+    }
+
+    std::string declarationName = GenerateUniqueName(*target.typeExpr, context.context, "NewType");
+    const std::string newLine = context.textChangesContext->formatContext.GetFormatCodeSettings().GetNewLineCharacter();
     size_t insertionPos = FindTopLevelInsertionPos(target);
     if (insertionPos == 0) {
         auto *program = pub->parserProgram->Ast();
@@ -356,13 +591,11 @@ std::unique_ptr<RefactorEditInfo> ExtractTypeRefactor::GetEditsForAction(const R
         }
     }
     const size_t boundedInsertionPos = std::min(insertionPos, fileSource.size());
-    std::string extractedDeclaration;
-    if (isInterfaceAction) {
-        extractedDeclaration += "interface " + declarationName + " " + selectedType + newLine + newLine;
-    } else {
-        extractedDeclaration += "type " + declarationName + " = " + selectedType + ";" + newLine + newLine;
-    }
-    auto edits = ChangeTracker::With(*ctx.textChangesContext, [&](ChangeTracker &tracker) {
+
+    DeclarationContext declCtx {isInterfaceAction, declarationName, selectedType, newLine, boundedInsertionPos};
+    std::string extractedDeclaration = BuildDeclarationText(declCtx, fileSource);
+
+    auto edits = ChangeTracker::With(*context.textChangesContext, [&](ChangeTracker &tracker) {
         tracker.InsertText(pub->sourceFile, boundedInsertionPos, extractedDeclaration);
         TextRange trackerRange {start, end};
         tracker.ReplaceRangeWithText(pub->sourceFile, trackerRange, declarationName);

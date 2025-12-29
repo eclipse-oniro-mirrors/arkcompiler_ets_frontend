@@ -94,7 +94,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceViaPublicAPI)
     ASSERT_FALSE(fileEdit.textChanges.empty());
 
     std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "interface ExtractedInterface { a: number; b: string }\n\n";
+    std::string_view expect = "interface NewType { a: number; b: string }\n\n";
     EXPECT_EQ(newText, expect);
 
     initializer->DestroyContext(refactorContext->context);
@@ -135,11 +135,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeAliasViaPublicAPI)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType = Array<string>;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType = Array<string>;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -179,11 +179,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForInlineObjectVariable)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { n: number; s: string }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { n: number; s: string }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -223,11 +223,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForObjectParameter)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { x: number; y: number }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { x: number; y: number }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -267,11 +267,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForPromiseReturn)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType = Promise<{ ok: boolean }>;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType = Promise<{ ok: boolean }>;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -311,11 +311,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForClassProperty)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { id: number; active: boolean }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { id: number; active: boolean }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -355,11 +355,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForUnionType)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType = number | string | boolean;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType = number | string | boolean;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -399,11 +399,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForExampleVariable)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { v: number; active: boolean }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { v: number; active: boolean }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -443,11 +443,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForFunctionVariable)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType = (value: string) => number;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType = (value: string) => number;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -487,11 +487,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForTypeAssertionObject)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { n: number; s: string }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { n: number; s: string }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -541,11 +541,11 @@ class Circle {
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "interface ExtractedInterface { width: number; height: number }\n\n");
+    EXPECT_EQ(insertChange.newText, "interface NewType { width: number; height: number }\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedInterface");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -585,11 +585,11 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForFirstArrayVariable)
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType = Array<string>;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType = Array<string>;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType");
+    EXPECT_EQ(replaceChange.newText, "NewType");
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -598,7 +598,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractTypeForFirstArrayVariable)
 // CASE 12: Sequential array alias
 TEST_F(LspExtrTypeGetEditsTests, ExtractTypeGeneratesUniqueNameForSecondArrayVariable)
 {
-    const std::string code = R"(type ExtractedType = Array<string>;
+    const std::string code = R"(type NewType = Array<string>;
 const second: Array<number> = [];)";
     const size_t spanStart = 50;
     const size_t spanEnd = 63;
@@ -630,13 +630,61 @@ const second: Array<number> = [];)";
 
     const auto &insertChange = fileEdit.textChanges.at(0);
     EXPECT_EQ(insertChange.span.length, 0U);
-    EXPECT_EQ(insertChange.newText, "type ExtractedType1 = Array<number>;\n\n");
+    EXPECT_EQ(insertChange.newText, "type NewType1 = number;\n\n");
 
     const auto &replaceChange = fileEdit.textChanges.at(1);
     EXPECT_GT(replaceChange.span.length, 0U);
-    EXPECT_EQ(replaceChange.newText, "ExtractedType1");
+    EXPECT_EQ(replaceChange.newText, "NewType1");
 
     initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForMethodReturnType)
+{
+    const std::string code =
+        "class Circle {\n    radius: number;\n    constructor(radius: number) {\n        this.radius = radius;\n    "
+        "}\n\n    getBoundingBox(): { width: number; height: number } {\n        return {\n            width: "
+        "this.radius * 2,\n            height: this.radius * 2,\n        }\n    }\n}";
+    struct Selection {
+        size_t start;
+        size_t end;
+        std::string label;
+    };
+    std::vector<Selection> selections = {
+        {128, 161, "full"},                // { width: number; height: number }
+        {130, 159, "inline"},              // width: number; height: number
+        {128, 132, "partial_start"},       // { wi
+        {135, 153, "partial_middle"},      // : number; height:
+        {143, 149, "partial_semicolon"},   // ; heig
+        {130, 143, "first_property"},      // width: number
+        {144, 161, "second_property"},     // height: number }
+        {128, 140, "partial_first_prop"},  // { width: num
+        {149, 161, "partial_last_prop"},   // ht: number }
+    };
+    for (const auto &sel : selections) {
+        auto *initializer = new Initializer();
+        auto *refactorContext = CreateExtractContext(initializer, code, sel.start, sel.end);
+        auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+        ASSERT_FALSE(applicable.empty()) << "No refactors for: " << sel.label;
+        const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
+        const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_TYPE_NAME;
+        const bool found = std::any_of(
+            applicable.begin(), applicable.end(),
+            [&](const ark::es2panda::lsp::ApplicableRefactorInfo &info) { return info.action.name == target; });
+        ASSERT_TRUE(found) << "Extract interface not found for: " << sel.label;
+        auto edits = ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName),
+                                                                  std::string(target));
+        ASSERT_EQ(edits->GetFileTextChanges().size(), 1);
+        const auto &fileEdit = edits->GetFileTextChanges().at(0);
+        ASSERT_EQ(fileEdit.textChanges.size(), 2U);
+        const auto &insertChange = fileEdit.textChanges.at(0);
+        EXPECT_EQ(insertChange.span.length, 0U);
+        EXPECT_EQ(insertChange.newText, "interface NewType { width: number; height: number }\n\n");
+        const auto &replaceChange = fileEdit.textChanges.at(1);
+        EXPECT_GT(replaceChange.span.length, 0U);
+        EXPECT_EQ(replaceChange.newText, "NewType");
+        initializer->DestroyContext(refactorContext->context);
+    }
 }
 
 }  // namespace
