@@ -2260,6 +2260,18 @@ KNativePointer impl_getFormattingEditsForRange(KNativePointer context, KNativePo
 }
 TS_INTEROP_4(getFormattingEditsForRange, KNativePointer, KNativePointer, KNativePointer, KInt, KInt)
 
+KNativePointer impl_getFormattingEditsAfterKeystroke(KNativePointer context, KNativePointer settingsPtr, KInt start,
+                                                     KInt length, KInt keyCode)
+{
+    LSPAPI const *impl = GetImpl();
+    auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
+    TextSpan span(start, length);
+    auto result = impl->getFormattingEditsAfterKeystroke(reinterpret_cast<es2panda_Context *>(context), *settings,
+                                                         static_cast<char>(keyCode), span);
+    return new std::vector<TextChange>(result);
+}
+TS_INTEROP_5(getFormattingEditsAfterKeystroke, KNativePointer, KNativePointer, KNativePointer, KInt, KInt, KInt)
+
 KNativePointer impl_getFormattingTextChangeAt(KNativePointer textChangesVecPtr, KInt index)
 {
     auto *vec = reinterpret_cast<std::vector<TextChange> *>(textChangesVecPtr);

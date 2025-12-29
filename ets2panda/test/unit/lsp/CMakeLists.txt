@@ -300,6 +300,10 @@ ets2panda_add_gtest(lsp_api_test_formatting_3 CPP_SOURCES
     formatting_test_3.cpp
 )
 
+ets2panda_add_gtest(lsp_api_test_formatting_after_keystroke CPP_SOURCES
+    formatting_after_keystroke_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_test_rulesmap CPP_SOURCES
     rules_map_cache_test.cpp
 )

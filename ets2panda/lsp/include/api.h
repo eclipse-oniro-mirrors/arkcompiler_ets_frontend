@@ -417,6 +417,9 @@ typedef struct LSPAPI {
     std::vector<TextChange> (*getFormattingEditsForRange)(es2panda_Context *context,
                                                           ark::es2panda::lsp::FormatCodeSettings &options,
                                                           const TextSpan &span);
+    std::vector<TextChange> (*getFormattingEditsAfterKeystroke)(es2panda_Context *context,
+                                                                ark::es2panda::lsp::FormatCodeSettings &options,
+                                                                char key, const TextSpan &span);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

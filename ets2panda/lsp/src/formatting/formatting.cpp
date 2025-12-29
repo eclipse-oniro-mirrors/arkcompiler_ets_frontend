@@ -22,6 +22,7 @@
 #include "lexer/ETSLexer.h"
 #include "lexer/TSLexer.h"
 #include "lexer/token/token.h"
+#include <algorithm>
 #include "es2panda.h"
 
 namespace ark::es2panda::lsp {
@@ -155,6 +156,39 @@ struct RangeFormat {
     size_t end;
 };
 
+struct FormatInputs {
+    es2panda_Context *ctx;
+    public_lib::Context *publicCtx;
+    FormatContext &formatCtx;
+    const std::string &sourceText;
+    ir::AstNode *ast;
+    ArenaAllocator *allocator;
+};
+
+enum class KeystrokeType {
+    OPEN_BRACE,
+    CLOSE_BRACE,
+    SEMICOLON,
+    NEWLINE,
+    OTHER,
+};
+
+static KeystrokeType ClassifyKeystroke(char key)
+{
+    switch (key) {
+        case '{':
+            return KeystrokeType::OPEN_BRACE;
+        case '}':
+            return KeystrokeType::CLOSE_BRACE;
+        case ';':
+            return KeystrokeType::SEMICOLON;
+        case '\n':
+            return KeystrokeType::NEWLINE;
+        default:
+            return KeystrokeType::OTHER;
+    }
+}
+
 static void AdvanceTokens(lexer::Lexer &lex, lexer::Token &prev, lexer::Token &curr, lexer::Token &next)
 {
     prev = curr;
@@ -172,9 +206,6 @@ static std::unique_ptr<lexer::Lexer> CreateLexer(parser::ParserContext *parserCt
 {
     if (extension == ScriptExtension::ETS) {
         return std::make_unique<lexer::ETSLexer>(parserCtx, diagEngine);
-    }
-    if (extension == ScriptExtension::TS) {
-        return std::make_unique<lexer::TSLexer>(parserCtx, diagEngine);
     }
     return std::make_unique<lexer::Lexer>(parserCtx, diagEngine);
 }
@@ -261,6 +292,158 @@ std::vector<TextChange> FormatRange(es2panda_Context *context, FormatContext for
     size_t rangeStart = lineIndex.GetOffset(lexer::SourceLocation(line, 1, nullptr));
 
     return FormatSpan(context, publicContext, formatContext, sourceText, {rangeStart, rangeEnd});
+}
+
+static bool IsCommentPosition(es2panda_Context *context, size_t position)
+{
+    CommentRange commentRange {};
+    commentRange.pos_ = 0;
+    commentRange.end_ = 0;
+    commentRange.kind_ = CommentKind::SINGLE_LINE;
+    GetRangeOfEnclosingComment(context, position, &commentRange);
+    return commentRange.end_ != 0 || commentRange.pos_ != 0;
+}
+
+static bool IsListElement(ir::AstNode *parent, ir::AstNode *node, ArenaAllocator *allocator)
+{
+    if (parent == nullptr || node == nullptr) {
+        return false;
+    }
+    auto children = GetChildren(parent, allocator);
+    if (children.size() <= 1) {
+        return false;
+    }
+    return std::find(children.begin(), children.end(), node) != children.end();
+}
+
+static ir::AstNode *FindOutermostNodeWithinListLevel(ir::AstNode *node, ArenaAllocator *allocator)
+{
+    auto *current = node;
+    while (current != nullptr) {
+        auto *parent = current->Parent();
+        if (parent == nullptr) {
+            break;
+        }
+        if (parent->End().index != current->End().index) {
+            break;
+        }
+        if (IsListElement(parent, current, allocator)) {
+            break;
+        }
+        current = parent;
+    }
+    return current;
+}
+
+static std::vector<TextChange> FormatNodeLines(const FormatInputs &inputs, ir::AstNode *node, size_t endExclusive)
+{
+    if (node == nullptr) {
+        return {};
+    }
+
+    util::StringView sourceCode = inputs.publicCtx->parserProgram->SourceCode();
+    lexer::LineIndex lineIndex(sourceCode);
+    size_t startLineOffset = lineIndex.GetOffset(lexer::SourceLocation(node->Start().line, 1, nullptr));
+    if (startLineOffset > endExclusive) {
+        return {};
+    }
+    return FormatSpan(inputs.ctx, inputs.publicCtx, inputs.formatCtx, inputs.sourceText,
+                      {startLineOffset, endExclusive});
+}
+
+static std::vector<TextChange> FormatAfterOpenBrace(const FormatInputs &inputs, size_t position)
+{
+    auto *precedingToken = FindPrecedingToken(position, inputs.ast, inputs.allocator);
+    if (precedingToken == nullptr && position > 0) {
+        precedingToken = FindPrecedingToken(position - 1, inputs.ast, inputs.allocator);
+    }
+    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken, inputs.allocator);
+    return FormatNodeLines(inputs, outermostNode, position);
+}
+
+static std::vector<TextChange> FormatAfterCloseBraceOrSemicolon(const FormatInputs &inputs, size_t position)
+{
+    size_t searchPos = position > 0 ? position - 1 : position;
+    auto *precedingToken = FindPrecedingToken(searchPos, inputs.ast, inputs.allocator);
+    if (precedingToken == nullptr) {
+        precedingToken = GetTouchingToken(inputs.ctx, searchPos, false);
+    }
+    if (precedingToken == nullptr) {
+        return {};
+    }
+    auto *outermostNode = FindOutermostNodeWithinListLevel(precedingToken, inputs.allocator);
+    if (outermostNode == nullptr) {
+        return {};
+    }
+    size_t endExclusive = std::min(inputs.sourceText.length(), outermostNode->End().index + 1);
+    return FormatNodeLines(inputs, outermostNode, endExclusive);
+}
+
+static std::vector<TextChange> FormatAfterNewline(const FormatInputs &inputs, lexer::LineIndex &lineIndex,
+                                                  size_t position)
+{
+    auto [line, col] = lineIndex.GetLocation(position);
+    if (line <= 1) {
+        return {};
+    }
+
+    size_t startCurrentLine = lineIndex.GetOffset(lexer::SourceLocation(line, 1, nullptr));
+    size_t startPrevLine = lineIndex.GetOffset(lexer::SourceLocation(line - 1, 1, nullptr));
+    size_t startNextLine = inputs.sourceText.length();
+    if (position < inputs.sourceText.length()) {
+        startNextLine = std::min(startNextLine, lineIndex.GetOffset(lexer::SourceLocation(line + 1, 1, nullptr)));
+    }
+    size_t endOfFormatSpan = startNextLine > 0 ? startNextLine - 1 : inputs.sourceText.length();
+    while (endOfFormatSpan > startCurrentLine &&
+           (inputs.sourceText[endOfFormatSpan] == '\n' || inputs.sourceText[endOfFormatSpan] == '\r')) {
+        endOfFormatSpan--;
+    }
+    while (endOfFormatSpan > startCurrentLine &&
+           (inputs.sourceText[endOfFormatSpan] == ' ' || inputs.sourceText[endOfFormatSpan] == '\t')) {
+        endOfFormatSpan--;
+    }
+    size_t endExclusive = endOfFormatSpan + 1;
+    return FormatSpan(inputs.ctx, inputs.publicCtx, inputs.formatCtx, inputs.sourceText, {startPrevLine, endExclusive});
+}
+
+std::vector<TextChange> FormatAfterKeystroke(es2panda_Context *context, FormatContext formatContext, char key,
+                                             const TextSpan &span)
+{
+    if (context == nullptr) {
+        return {};
+    }
+    auto *publicContext = reinterpret_cast<public_lib::Context *>(context);
+    if (publicContext == nullptr || publicContext->parserProgram == nullptr) {
+        return {};
+    }
+
+    util::StringView sourceCode = publicContext->parserProgram->SourceCode();
+    std::string sourceText(sourceCode.Utf8());
+    auto *ast = publicContext->parserProgram->Ast();
+    auto *allocator = publicContext->allocator;
+    FormatInputs inputs {context, publicContext, formatContext, sourceText, ast, allocator};
+
+    if (span.start > sourceText.length()) {
+        return {};
+    }
+
+    size_t position = span.start;
+    if (IsCommentPosition(context, position)) {
+        return {};
+    }
+
+    lexer::LineIndex lineIndex(sourceCode);
+    switch (ClassifyKeystroke(key)) {
+        case KeystrokeType::OPEN_BRACE:
+            return FormatAfterOpenBrace(inputs, position);
+        case KeystrokeType::CLOSE_BRACE:
+        case KeystrokeType::SEMICOLON:
+            return FormatAfterCloseBraceOrSemicolon(inputs, position);
+        case KeystrokeType::NEWLINE:
+            return FormatAfterNewline(inputs, lineIndex, position);
+        default:
+            return {};
+    }
 }
 
 FormatContext GetFormatContext(FormatCodeSettings &options)
