@@ -111,11 +111,11 @@ namespace test::utils {
 
 AsmTest::AsmTest()
 {
-    ark::es2panda::EHeap::Initialize();
+    ark::es2panda::ScopedAllocatorsManager::Initialize();
 }
 AsmTest::~AsmTest()
 {
-    ark::es2panda::EHeap::Finalize();
+    ark::es2panda::ScopedAllocatorsManager::Finalize();
 }
 
 ark::pandasm::Function *AsmTest::GetFunction(std::string_view functionName,

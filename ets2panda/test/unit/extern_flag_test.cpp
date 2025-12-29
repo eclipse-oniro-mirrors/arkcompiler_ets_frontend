@@ -90,11 +90,11 @@ class DeclareTest : public testing::Test {
 public:
     DeclareTest()
     {
-        EHeap::Initialize();
+        ScopedAllocatorsManager::Initialize();
     }
     ~DeclareTest() override
     {
-        EHeap::Finalize();
+        ScopedAllocatorsManager::Finalize();
     }
 
 protected:

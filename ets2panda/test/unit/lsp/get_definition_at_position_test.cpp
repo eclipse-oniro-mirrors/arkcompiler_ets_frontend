@@ -329,6 +329,7 @@ TEST_F(LspGetDefTests, DisableLoweringTest1)
 
     LSPAPI const *lspApi = GetImpl();
     size_t const offset = 100;
+    ark::es2panda::EHeap::Scope eheapScope;  // remove this line #32069
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
@@ -355,6 +356,7 @@ TEST_F(LspGetDefTests, DisableLoweringTest2)
 
     LSPAPI const *lspApi = GetImpl();
     size_t const offset = 123;
+    ark::es2panda::EHeap::Scope eheapScope;  // remove this line #32069
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
@@ -382,6 +384,7 @@ TEST_F(LspGetDefTests, DisableLoweringTest3)
 
     LSPAPI const *lspApi = GetImpl();
     size_t const offset = 62;
+    ark::es2panda::EHeap::Scope eheapScope;  // remove this line #32069
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);
@@ -409,6 +412,7 @@ TEST_F(LspGetDefTests, DisableLoweringTest4)
 
     LSPAPI const *lspApi = GetImpl();
     size_t const offset = 45;
+    ark::es2panda::EHeap::Scope eheapScope;  // remove this line #32069
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContextWithCache(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED, texts);
     auto result = lspApi->getDefinitionAtPosition(ctx, offset);

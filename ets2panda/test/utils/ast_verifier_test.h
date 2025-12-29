@@ -206,6 +206,7 @@ private:
     es2panda_Impl const *impl_ {};
     es2panda_Config *cfg_ {};
     es2panda_Context *ctx_ {};
+    ark::es2panda::EHeap::Scope eheapScope_;
     ark::es2panda::ArenaAllocator *allocator_;
     ark::es2panda::compiler::PhaseManager *phaseManager_;
 

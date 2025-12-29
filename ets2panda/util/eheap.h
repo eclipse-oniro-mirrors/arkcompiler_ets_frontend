@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,19 +36,34 @@ namespace ark::es2panda {
 class EAllocator;
 using SArenaAllocator = ark::ArenaAllocator;
 
-class EHeap {
+class ScopedAllocatorsManager {
 public:
     static void Initialize();
     static void Finalize();
-
     // legacy API
     static bool IsInitialized();
 
+    static SArenaAllocator CreateAllocator()
+    {
+        return SArenaAllocator {SpaceType::SPACE_TYPE_COMPILER, nullptr, true};
+    }
+
+    static std::unique_ptr<SArenaAllocator> NewAllocator()
+    {
+        return std::make_unique<SArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
+    }
+
+private:
+    ScopedAllocatorsManager() = delete;
+    ~ScopedAllocatorsManager() = delete;
+};
+
+class EHeap {
+    class EHeapSpace;
+
+public:
     static inline EAllocator CreateAllocator();
     static inline std::unique_ptr<EAllocator> NewAllocator();
-
-    static SArenaAllocator CreateScopedAllocator();
-    static std::unique_ptr<SArenaAllocator> NewScopedAllocator();
 
     [[nodiscard]] __attribute__((returns_nonnull)) static void *Alloc(size_t sz)
     {
@@ -57,24 +72,23 @@ public:
 
     ALWAYS_INLINE static void Free([[maybe_unused]] void *ptr, [[maybe_unused]] size_t sz)
     {
-#ifndef NDEBUG
+        // #32069 - the container is destroyed too late
         if (LIKELY(gEHeapSpace != nullptr)) {
             gEHeapSpace->Free(ptr, sz);
         }
-#endif
     }
 
     static size_t AllocatedSize();
     static size_t FreedSize();
 
-    // legacy API
-    static bool IsEHeapInitialized()
-    {
-        return EHeap::gEHeapSpace != nullptr;
-    }
+    class Scope {
+    public:
+        Scope();
+        ~Scope();
 
-    static void ForceInitializeEHeapSpace();
-    static void ForceFinalizeEHeapSpace();
+        NO_COPY_SEMANTIC(Scope);
+        NO_MOVE_SEMANTIC(Scope);
+    };
 
     template <typename T>
     class EPtr {
@@ -114,7 +128,10 @@ public:
             if (raw == 0) {
                 return nullptr;
             }
-            return reinterpret_cast<T *>(ToUintPtr(gEHeapSpace->BaseAddr()) + (raw << EHeapSpace::ALLOC_LOG_ALIGNMENT));
+            auto ptr =
+                reinterpret_cast<T *>(ToUintPtr(gEHeapSpace->BaseAddr()) + (raw << EHeapSpace::ALLOC_LOG_ALIGNMENT));
+            gEHeapSpace->AssertInRange(ptr);
+            return ptr;
         }
 
         static uint32_t compress(T *ptr)
@@ -136,6 +153,11 @@ private:
     static void InitializeEHeapSpace();
     static void FinalizeEHeapSpace();
 
+    static ALWAYS_INLINE bool IsEHeapInitialized()
+    {
+        return EHeap::gEHeapSpace != nullptr;
+    }
+
     [[noreturn]] __attribute__((noinline)) static void OOMAction();
     [[noreturn]] __attribute__((noinline)) static void BrokenEHeapPointerAction(void const *ptr);
 
@@ -149,7 +171,9 @@ private:
         ALWAYS_INLINE void Free([[maybe_unused]] void *ptr, size_t sz)
         {
             ASAN_POISON_MEMORY_REGION(ptr, sz);
+#ifndef NDEBUG
             freedSize_ += sz;
+#endif
         }
 
         ALWAYS_INLINE void *BaseAddr()
@@ -183,7 +207,7 @@ private:
 
         uintptr_t current_ {};
         uintptr_t top_ {};
-        uintptr_t current_committed_ {};
+        uintptr_t currentCommitted_ {};
 
         size_t freedSize_ {};
     };
@@ -201,8 +225,14 @@ class EAllocatorAdapter;
 
 class EAllocator {
 public:
-    EAllocator();
-    ~EAllocator();
+    EAllocator()
+    {
+        ES2PANDA_ASSERT(EHeap::IsEHeapInitialized());
+    }
+    ~EAllocator()
+    {
+        ES2PANDA_ASSERT(EHeap::IsEHeapInitialized());
+    }
 
     NO_COPY_SEMANTIC(EAllocator);
     NO_MOVE_SEMANTIC(EAllocator);
@@ -212,9 +242,11 @@ public:
         return EHeap::Alloc(size);
     }
 
-    static void Free(void *ptr, size_t sz)
+    static ALWAYS_INLINE void Free(void *ptr, size_t sz)
     {
-        return EHeap::Free(ptr, sz);
+        if (LIKELY(EHeap::IsEHeapInitialized())) {
+            return EHeap::Free(ptr, sz);
+        }
     }
 
     template <typename T, typename... Args>
@@ -255,16 +287,6 @@ inline EAllocator EHeap::CreateAllocator()
 inline std::unique_ptr<EAllocator> EHeap::NewAllocator()
 {
     return std::make_unique<EAllocator>();
-}
-
-inline SArenaAllocator EHeap::CreateScopedAllocator()
-{
-    return SArenaAllocator {SpaceType::SPACE_TYPE_COMPILER, nullptr, true};
-}
-
-inline std::unique_ptr<SArenaAllocator> EHeap::NewScopedAllocator()
-{
-    return std::make_unique<SArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
 }
 
 template <>

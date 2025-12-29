@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,32 +23,32 @@
 
 namespace ark::es2panda {
 
-EHeap::EHeapSpace *EHeap::gEHeapSpace {};
-
-void EHeap::Initialize()
+void ScopedAllocatorsManager::Initialize()
 {
-    constexpr size_t ARENA_POOL_SIZE = 2_GB;
+    constexpr size_t ARENA_POOL_SIZE = 1_GB;
 
     mem::MemConfig::Initialize(0, 0, ARENA_POOL_SIZE, 0, 0, 0);
     PoolManager::Initialize(PoolType::MALLOC);
 }
 
-void EHeap::Finalize()
+void ScopedAllocatorsManager::Finalize()
 {
     PoolManager::Finalize();
     mem::MemConfig::Finalize();
 }
 
-bool EHeap::IsInitialized()
+bool ScopedAllocatorsManager::IsInitialized()
 {
     return mem::MemConfig::IsInitialized();
 }
+
+EHeap::EHeapSpace *EHeap::gEHeapSpace {};
 
 void EHeap::InitializeEHeapSpace()
 {
     ES2PANDA_ASSERT(gEHeapSpace == nullptr);
 
-    constexpr size_t EHEAP_SIZE = sizeof(void *) <= 4U ? 2_GB : 32_GB;
+    constexpr size_t EHEAP_SIZE = sizeof(void *) <= 4U ? 1_GB : 32_GB;
 
     // pointer compression
     static_assert(EHEAP_SIZE <= (4_GB * EHeap::EHeapSpace::ALLOC_ALIGNMENT));
@@ -63,16 +63,6 @@ void EHeap::FinalizeEHeapSpace()
 {
     delete gEHeapSpace;
     gEHeapSpace = nullptr;
-}
-
-void EHeap::ForceInitializeEHeapSpace()
-{
-    InitializeEHeapSpace();
-}
-
-void EHeap::ForceFinalizeEHeapSpace()
-{
-    FinalizeEHeapSpace();
 }
 
 [[noreturn]] __attribute__((noinline)) void EHeap::OOMAction()
@@ -149,15 +139,15 @@ EHeap::EHeapSpace::EHeapSpace(size_t size) : bufferSize_(size)
     buffer_ = ReserveMapping(bufferSize_);
     current_ = ToUintPtr(buffer_);
     top_ = current_ + bufferSize_;
-    current_committed_ = current_;
+    currentCommitted_ = current_;
 
     ES2PANDA_ASSERT(IsAligned(current_, ALLOC_ALIGNMENT));
 }
 
 EHeap::EHeapSpace::~EHeapSpace()
 {
-    if (current_committed_ > ToUintPtr(buffer_)) {
-        ASAN_UNPOISON_MEMORY_REGION(buffer_, current_committed_ - ToUintPtr(buffer_));
+    if (currentCommitted_ > ToUintPtr(buffer_)) {
+        ASAN_UNPOISON_MEMORY_REGION(buffer_, currentCommitted_ - ToUintPtr(buffer_));
     }
     ReleaseMapping(buffer_, bufferSize_);
 }
@@ -168,16 +158,16 @@ EHeap::EHeapSpace::~EHeapSpace()
     static_assert(COMMIT_GRANNULARITY >= PAGE_SIZE);
 
     uintptr_t updCurrent = current_ + AlignUp(sz, ALLOC_ALIGNMENT);
-    if (UNLIKELY(updCurrent > current_committed_)) {
+    if (UNLIKELY(updCurrent > currentCommitted_)) {
         if (UNLIKELY(updCurrent > top_)) {
             OOMAction();
             ES2PANDA_UNREACHABLE();
         }
         uintptr_t updComitted = std::min(RoundUp(updCurrent, COMMIT_GRANNULARITY), top_);
-        size_t commitSize = updComitted - current_committed_;
-        CommitMapping(ToVoidPtr(current_committed_), commitSize);
-        ASAN_POISON_MEMORY_REGION(ToVoidPtr(current_committed_), commitSize);
-        current_committed_ = updComitted;
+        size_t commitSize = updComitted - currentCommitted_;
+        CommitMapping(ToVoidPtr(currentCommitted_), commitSize);
+        ASAN_POISON_MEMORY_REGION(ToVoidPtr(currentCommitted_), commitSize);
+        currentCommitted_ = updComitted;
     }
     uintptr_t res = current_;
     current_ = updCurrent;
@@ -201,21 +191,24 @@ size_t EHeap::FreedSize()
     return gEHeapSpace == nullptr ? 0 : gEHeapSpace->FreedSize();
 }
 
-// while the allocator management in *es2panda_lib* is completely chaotic
-// the reasonable way to track the usage of heap is to count the number of active allocators
-static size_t gAllocatorCount = 0;
+// #32069 - there should be a single scope created within the single es2panda context
+static long g_eheapScopeCount = 0;
 
-EAllocator::EAllocator()
+EHeap::Scope::Scope()
 {
-    if (gAllocatorCount++ == 0 && !EHeap::IsEHeapInitialized()) {
-        EHeap::InitializeEHeapSpace();
+    if (g_eheapScopeCount++ == 0) {
+        InitializeEHeapSpace();
+    } else {
+        ES2PANDA_ASSERT(IsEHeapInitialized());
     }
 }
 
-EAllocator::~EAllocator()
+EHeap::Scope::~Scope()
 {
-    if (--gAllocatorCount == 0 && EHeap::IsEHeapInitialized()) {
-        EHeap::FinalizeEHeapSpace();
+    if (--g_eheapScopeCount == 0) {
+        FinalizeEHeapSpace();
+    } else {
+        ES2PANDA_ASSERT(IsEHeapInitialized());
     }
 }
 

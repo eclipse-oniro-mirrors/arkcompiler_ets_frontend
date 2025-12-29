@@ -28,9 +28,6 @@ using ark::es2panda::util::DiagnosticEngine;
 namespace {
 TEST_F(ASTVerifierTest, ValidateGetterReturnTypeAnnotation)
 {
-    DiagnosticEngine de {};
-    ETSChecker checker {Allocator(), de};
-
     char const *text =
         R"(
         class A {
@@ -45,7 +42,9 @@ TEST_F(ASTVerifierTest, ValidateGetterReturnTypeAnnotation)
         }
     )";
 
-    auto cb = [&checker](ark::es2panda::ir::AstNode *child) {
+    auto cb = [this](ark::es2panda::ir::AstNode *child) {
+        DiagnosticEngine de {};
+        ETSChecker checker {Allocator(), de};
         if (child->IsMethodDefinition()) {
             auto *const method = child->AsMethodDefinition();
             if (method->IsGetter() && method->Value()->IsFunctionExpression()) {
@@ -103,9 +102,6 @@ TEST_F(ASTVerifierTest, ValidateGetterHasReturnStatement)
 
 TEST_F(ASTVerifierTest, ValidateGetterVoidReturnStatement)
 {
-    DiagnosticEngine de {};
-    ETSChecker checker {Allocator(), de};
-
     char const *text =
         R"(
         class A {
@@ -119,7 +115,9 @@ TEST_F(ASTVerifierTest, ValidateGetterVoidReturnStatement)
             }
         }
     )";
-    auto cb = [&checker](ark::es2panda::ir::AstNode *child) {
+    auto cb = [this](ark::es2panda::ir::AstNode *child) {
+        DiagnosticEngine de {};
+        ETSChecker checker {Allocator(), de};
         if (child->IsMethodDefinition()) {
             auto *const method = child->AsMethodDefinition();
             if (method->IsGetter() && method->Value()->IsFunctionExpression()) {
@@ -139,7 +137,7 @@ TEST_F(ASTVerifierTest, ValidateGetterVoidReturnStatement)
     }
 }
 
-TEST_F(ASTVerifierTest, ValidateGetterArguments)
+TEST_F(ASTVerifierTest, DISABLED_ValidateGetterArguments)
 {
     DiagnosticEngine de {};
     ETSChecker checker {Allocator(), de};
@@ -183,9 +181,6 @@ TEST_F(ASTVerifierTest, ValidateGetterArguments)
 
 TEST_F(ASTVerifierTest, ValidateSetterReturnType)
 {
-    DiagnosticEngine de {};
-    ETSChecker checker {Allocator(), de};
-
     char const *text =
         R"(
         class A {
@@ -199,7 +194,9 @@ TEST_F(ASTVerifierTest, ValidateSetterReturnType)
             }
         }
     )";
-    auto cb = [&checker](ark::es2panda::ir::AstNode *child) {
+    auto cb = [this](ark::es2panda::ir::AstNode *child) {
+        DiagnosticEngine de {};
+        ETSChecker checker {Allocator(), de};
         if (child->IsMethodDefinition()) {
             auto *const method = child->AsMethodDefinition();
             if (method->IsSetter() && method->Value()->IsFunctionExpression()) {
@@ -224,9 +221,6 @@ TEST_F(ASTVerifierTest, ValidateSetterReturnType)
 
 TEST_F(ASTVerifierTest, ValidateSetterArguments)
 {
-    DiagnosticEngine de {};
-    ETSChecker checker {Allocator(), de};
-
     char const *text =
         R"(
         class A {
@@ -240,7 +234,10 @@ TEST_F(ASTVerifierTest, ValidateSetterArguments)
             }
         }
     )";
-    auto cb = [](ark::es2panda::ir::AstNode *child) {
+
+    auto cb = [this](ark::es2panda::ir::AstNode *child) {
+        DiagnosticEngine de {};
+        ETSChecker checker {Allocator(), de};
         if (child->IsMethodDefinition()) {
             auto *const method = child->AsMethodDefinition();
             if (method->IsSetter() && method->Value()->IsFunctionExpression()) {

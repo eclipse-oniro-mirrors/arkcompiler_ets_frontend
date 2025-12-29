@@ -305,8 +305,8 @@ int main(int argc, char **argv)
     impl->ProceedToState(newCtx, ES2PANDA_STATE_BIN_GENERATED);
     CheckForErrors("BIN", newCtx);
 
-    impl->DestroyContext(ctx);
     impl->DestroyContext(newCtx);
+    impl->DestroyContext(ctx);
     impl->DestroyConfig(config);
 
     return 0;

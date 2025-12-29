@@ -37,7 +37,7 @@ class MemManager {
 public:
     explicit MemManager()
     {
-        EHeap::Initialize();
+        ScopedAllocatorsManager::Initialize();
     }
 
     NO_COPY_SEMANTIC(MemManager);
@@ -45,7 +45,7 @@ public:
 
     ~MemManager()
     {
-        EHeap::Finalize();
+        ScopedAllocatorsManager::Finalize();
     }
 };
 
