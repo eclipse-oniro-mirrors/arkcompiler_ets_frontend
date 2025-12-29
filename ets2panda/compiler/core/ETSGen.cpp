@@ -1949,9 +1949,8 @@ void ETSGen::HandlePossiblyNullishEquality(const ir::AstNode *node, VReg lhs, VR
     SetAccumulatorType(nullptr);
 }
 
-static std::optional<std::pair<checker::Type const *, util::StringView>> SelectLooseObjComparator(ETSGen *etsg,
-                                                                                                  checker::Type *lhs,
-                                                                                                  checker::Type *rhs)
+static std::optional<std::tuple<checker::Type const *, util::StringView, bool>> SelectLooseObjComparator(
+    ETSGen *etsg, checker::Type *lhs, checker::Type *rhs)
 {
     auto checker = const_cast<checker::ETSChecker *>(etsg->Checker());
     auto alhs = checker->GetApparentType(checker->GetNonNullishType(lhs));
@@ -1971,9 +1970,10 @@ static std::optional<std::pair<checker::Type const *, util::StringView>> SelectL
         return std::nullopt;
     }
     // NOTE(vpukhov): emit faster code
+    bool isFinal = obj->GetDeclNode()->IsFinal();
     auto methodSig =
         MakeView(etsg, etsg->Emitter()->AddDependence(obj->AssemblerName().Mutf8()) + ".equals:std.core.Object;u1;");
-    return std::make_pair(checker->GetNonConstantType(obj), methodSig);
+    return std::make_tuple(checker->GetNonConstantType(obj), methodSig, isFinal);
 }
 
 template <typename LongOp, typename IntOp, typename DoubleOp, typename FloatOp>
@@ -2040,16 +2040,21 @@ void ETSGen::RefEqualityLoose(const ir::AstNode *node, VReg lhs, VReg rhs, Label
                    this, const_cast<checker::Type *>(ltype),
                    const_cast<checker::Type *>(rtype));  // CC-OFF(G.FMT.02) project code style
                spec.has_value()) {                       // CC-OFF(G.FMT.02-CPP) project code style
+        auto &[assumeType, methodSig, isDevirtual] = *spec;
         auto ifTrue = AllocLabel();
         if (ltype->PossiblyETSNullish() || rtype->PossiblyETSNullish()) {
             HandlePossiblyNullishEquality<IS_STRICT>(node, lhs, rhs, ifFalse, ifTrue);
         }
         LoadAccumulator(node, rhs);
-        AssumeNonNullish(node, spec->first);
+        AssumeNonNullish(node, assumeType);
         StoreAccumulator(node, rhs);
         LoadAccumulator(node, lhs);
-        AssumeNonNullish(node, spec->first);
-        CallExact(node, spec->second, lhs, rhs);
+        AssumeNonNullish(node, assumeType);
+        if (!isDevirtual) {
+            CallExact(node, methodSig, lhs, rhs);
+        } else {
+            CallExactDevirtual(node, methodSig, lhs, rhs);
+        }
         BranchIfFalse(node, ifFalse);
         SetLabel(node, ifTrue);
     } else {
