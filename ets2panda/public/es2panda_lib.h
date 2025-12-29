@@ -180,6 +180,7 @@ struct CAPI_EXPORT es2panda_Impl {
 
     es2panda_Config *(*CreateConfig)(int argc, char const *const *argv);
     void (*DestroyConfig)(es2panda_Config *config);
+    void (*DestroyConfigWithoutLog)(es2panda_Config *config);
     char const *(*GetAllErrorMessages)(es2panda_Context *context);
     const es2panda_Options *(*ConfigGetOptions)(es2panda_Config *config);
 

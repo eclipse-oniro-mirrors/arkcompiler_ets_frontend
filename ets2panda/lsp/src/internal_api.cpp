@@ -44,8 +44,10 @@ namespace fs = std::experimental::filesystem;
 
 namespace ark::es2panda::lsp {
 
-Initializer::Initializer()
+// CC-OFFNXT(G.NAM.03-CPP) project code style
+Initializer::Initializer(bool isLogAwaible)
 {
+    logFlag = isLogAwaible;
     impl_ = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
     std::string buildDir;
 #ifdef BUILD_FOLDER
@@ -61,7 +63,11 @@ Initializer::Initializer()
 
 Initializer::~Initializer()
 {
-    impl_->DestroyConfig(cfg_);
+    if (logFlag) {
+        impl_->DestroyConfig(cfg_);
+    } else {
+        impl_->DestroyConfigWithoutLog(cfg_);
+    }
 }
 
 ir::AstNode *GetTouchingToken(es2panda_Context *context, size_t pos, bool flagFindFirstMatch)

@@ -71,6 +71,9 @@ export class Es2pandaNativeModule {
   _DestroyConfig(config: KPtr): void {
     throw new Error('Not implemented');
   }
+  _DestroyConfigWithoutLog(config: KPtr): void {
+    throw new Error('Not implemented');
+  }
   _CreateContextFromString(config: KPtr, source: String, filename: String): KPtr {
     throw new Error('Not implemented');
   }
