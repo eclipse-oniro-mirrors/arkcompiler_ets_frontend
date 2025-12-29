@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ public:
             allowBigint = true;
         }
 
-        if (!ScanNumberLeadingZeroImpl<uint32_t>(leadingMinus)) {
+        if (!ScanNumberLeadingZeroImpl<int32_t>(leadingMinus)) {
             Rewind(savedLexerPosition);
-            if (!ScanNumberLeadingZeroImpl<uint64_t>(leadingMinus)) {
+            if (!ScanNumberLeadingZeroImpl<int64_t>(leadingMinus)) {
                 LogError(diagnostic::TOO_LARGE_NUM);
             }
         }

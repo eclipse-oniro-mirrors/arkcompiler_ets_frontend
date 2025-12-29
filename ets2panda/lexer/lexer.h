@@ -373,6 +373,7 @@ protected:
     void CheckOctal();
 
     inline static uint32_t HexValue(char32_t ch);
+    inline static int32_t SignedHexValue(char32_t ch);
     inline static bool IsDecimalDigit(uint32_t cp);
     inline static bool IsHexDigit(char32_t ch);
     inline static bool IsBinaryDigit(char32_t ch);
@@ -559,12 +560,14 @@ bool Lexer::ScanNumberLeadingZeroImpl(bool const leadingMinus)
 }
 
 template <int RADIX, typename RadixType, typename RadixLimit>
-bool ScanTooLargeNumber([[maybe_unused]] RadixType const number, [[maybe_unused]] std::uint32_t const digit)
+bool ScanTooLargeNumber(RadixType const number, std::int32_t const digit, bool leadingMinus = false)
 {
     // NOTE (DZ): probably more sophisticates check will be required for general usage
     if constexpr (std::is_integral_v<RadixLimit>) {
-        if (static_cast<RadixType>(std::numeric_limits<RadixLimit>::max()) / RADIX < number ||
-            static_cast<RadixType>(std::numeric_limits<RadixLimit>::max()) - number * RADIX < digit) {
+        RadixType const Limit = static_cast<RadixType>(leadingMinus ? std::numeric_limits<RadixLimit>::min()
+                                                                    : std::numeric_limits<RadixLimit>::max());
+        if ((leadingMinus ? number < (Limit / RADIX) : number > (Limit / RADIX)) ||
+            (number == (Limit / RADIX) && digit > Limit % RADIX)) {
             return false;
         }
     }
@@ -586,12 +589,12 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
     do {
         cp = Iterator().Peek();
         if (RANGE_CHECK(cp)) {
-            auto const digit = HexValue(cp);
-            if (!ScanTooLargeNumber<RADIX, RadixType, RadixLimit>(number, digit)) {
+            auto const digit = SignedHexValue(cp);
+            if (!ScanTooLargeNumber<RADIX, RadixType, RadixLimit>(number, digit, leadingMinus)) {
                 GetToken().number_ = lexer::Number();
                 return false;
             }
-            number = number * RADIX + digit;
+            number = number * RADIX + (leadingMinus ? (-digit) : digit);
 
             Iterator().Forward(1);
             allowNumericOnNext = true;
@@ -617,14 +620,6 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
         break;
     } while (true);
 
-    if (leadingMinus) {
-        if constexpr (std::is_integral_v<RadixType>) {
-            number = ~number + static_cast<RadixType>(1);
-        } else {
-            number = -number;
-        }
-    }
-
     GetToken().number_ = lexer::Number(number);
     GetToken().number_.SetStr(SourceView(GetToken().Start().index, Iterator().Index()));
     return true;
@@ -634,6 +629,13 @@ inline uint32_t Lexer::HexValue(char32_t ch)
 {
     constexpr uint32_t HEX_MASK = 0xF;
     constexpr uint32_t DEC_OFFSET = 10;
+    return ch < LEX_CHAR_UPPERCASE_A ? ch - LEX_CHAR_0 : ((ch - LEX_CHAR_UPPERCASE_A + DEC_OFFSET) & HEX_MASK);
+}
+
+inline int32_t Lexer::SignedHexValue(char32_t ch)
+{
+    constexpr int32_t HEX_MASK = 0xF;
+    constexpr int32_t DEC_OFFSET = 10;
     return ch < LEX_CHAR_UPPERCASE_A ? ch - LEX_CHAR_0 : ((ch - LEX_CHAR_UPPERCASE_A + DEC_OFFSET) & HEX_MASK);
 }
 
