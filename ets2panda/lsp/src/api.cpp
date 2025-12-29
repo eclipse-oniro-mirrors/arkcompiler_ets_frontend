@@ -650,6 +650,19 @@ std::vector<TextChange> GetFormattingEditsForRange(es2panda_Context *context, Fo
     return FormatRange(context, formatContext, span);
 }
 
+std::vector<TextChange> GetFormattingEditsAfterKeystroke(es2panda_Context *context, FormatCodeSettings &options,
+                                                         char key, const TextSpan &span)
+{
+    if (context == nullptr) {
+        return {};
+    }
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
+
+    FormatContext formatContext = GetFormatContext(options);
+    return FormatAfterKeystroke(context, formatContext, key, span);
+}
+
 LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetApplicableRefactors,
                     GetEditsForRefactor,
@@ -703,7 +716,8 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     FindRenameLocationsFromNode,
                     GetTokenTypes,
                     GetFormattingEditsForDocument,
-                    GetFormattingEditsForRange};
+                    GetFormattingEditsForRange,
+                    GetFormattingEditsAfterKeystroke};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

@@ -1211,6 +1211,16 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
 
+  _getFormattingEditsAfterKeystroke(
+    context: KNativePointer,
+    settingsPtr: KPtr,
+    start: KInt,
+    length: KInt,
+    keyCode: KInt
+  ): KPtr {
+    throw new Error('Not implemented');
+  }
+
   _getFormattingTextChangeAt(textChangesVecPtr: KPtr, index: KInt): KPtr {
     throw new Error('Not implemented');
   }

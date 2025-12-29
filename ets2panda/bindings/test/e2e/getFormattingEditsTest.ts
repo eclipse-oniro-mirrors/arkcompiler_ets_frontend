@@ -141,4 +141,24 @@ describe('getFormattingEditsTest', () => {
       }
     });
   });
+
+  describe('getFormattingEditsAfterKeystroke', () => {
+    test('getFormattingEditsAfterKeystroke_001 - semicolon trigger returns array', () => {
+      const filePath = getRealPath(moduleName, 'getFormattingEdits1.ets');
+      const res = lsp.getFormattingEditsAfterKeystroke(filePath, 120, ';', {
+        insertSpaceAfterCommaDelimiter: true
+      });
+
+      expect(res).toBeDefined();
+      expect(Array.isArray(res)).toBe(true);
+    });
+
+    test('getFormattingEditsAfterKeystroke_002 - newline trigger returns array', () => {
+      const filePath = getRealPath(moduleName, 'getFormattingEdits1.ets');
+      const res = lsp.getFormattingEditsAfterKeystroke(filePath, 140, '\n');
+
+      expect(res).toBeDefined();
+      expect(Array.isArray(res)).toBe(true);
+    });
+  });
 });

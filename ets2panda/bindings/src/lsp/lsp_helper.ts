@@ -627,7 +627,7 @@ export class Lsp {
         } finally {
           this.destroyContext(declFileCfg, declFileCtx);
         }
-      }  
+      }
     }
     return nodeInfos;
   }
@@ -820,7 +820,7 @@ export class Lsp {
       } finally {
         this.destroyContext(cfg, ctx);
       }
-    } 
+    }
     return kind;
   }
 
@@ -842,7 +842,7 @@ export class Lsp {
       if (path.resolve(filename.valueOf()) === filePath) {
         continue;
       }
-      
+
       let searchFileCache = this.filesMap.get(filePath);
       if (searchFileCache) {
         global.es2panda._pushBackToNativeContextVector(searchFileCache.fileContext, nativeContextList, 0);
@@ -916,7 +916,7 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    
+
     return new LspFileTextChanges(ptr);
   }
 
@@ -998,7 +998,7 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    
+
     return new CompletionEntryDetails(ptr);
   }
 
@@ -1272,7 +1272,7 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    
+
     return new LspLineAndCharacter(ptr);
   }
 
@@ -1346,10 +1346,10 @@ export class Lsp {
     if (nodeInfos) {
       return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
     }
-    
+
     let fileCache = this.filesMap.get(filename.valueOf());
     const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
-    
+
     const processRenameLocations = (ctx: KNativePointer, isCached: boolean = false, cfg?: Config) => {
       const needsCrossFileRename = global.es2panda._needsCrossFileRename(ctx, byteOffset);
       if (!needsCrossFileRename) {
@@ -1376,7 +1376,7 @@ export class Lsp {
         if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
           this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
         }
-        
+
         const fileContexts: KPointer[] = [];
         const fileConfigs: Config[] = [];
         const tempContexts: {ctx: KNativePointer, cfg: Config}[] = [];
@@ -1392,15 +1392,15 @@ export class Lsp {
             fileContexts.push(searchFileCache.fileContext);
           } else {
             const [compileFileCfg, compileFileCtx] = this.createContext(compileFiles[i]) ?? [];
-            if (!compileFileCfg || !compileFileCtx) { 
+            if (!compileFileCfg || !compileFileCtx) {
               tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
-              return undefined; 
+              return undefined;
             }
             fileContexts.push(compileFileCtx);
             tempContexts.push({ctx: compileFileCtx, cfg: compileFileCfg});
           }
         }
-        
+
         let ptr: KPointer;
         try {
           ptr = global.es2panda._findRenameLocations(
@@ -1417,27 +1417,27 @@ export class Lsp {
           }
           return undefined;
         }
-        
+
         const result: LspRenameLocation[] = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
           return new LspRenameLocation(elPeer);
         });
-        
+
         result.forEach((ref) => {
           const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, ref.fileName, ref.start);
           if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
             ref.nodeInfos = nodeInfoTemp;
           }
         });
-        
+
         tempContexts.forEach(item => this.destroyContext(item.cfg, item.ctx));
         if (!isCached && cfg) {
           this.destroyContext(cfg, ctx);
         }
-        
+
         return Array.from(new Set(result));
       }
     };
-    
+
     if (fileCache) {
       return processRenameLocations(fileCache.fileContext, true);
     } else {
@@ -1450,7 +1450,7 @@ export class Lsp {
   getRenameInfo(filename: String, offset: number): LspRenameInfoType | undefined {
     let ptr: KPointer;
     let res: LspRenameInfoType;
-    
+
     let fileCache = this.filesMap.get(filename.valueOf());
     const byteOffset = this.charOffsetToByteOffset(filename.valueOf(), offset);
     if (fileCache) {
@@ -2194,6 +2194,55 @@ export class Lsp {
           PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
         } catch (error) {
           logger.error('failed to getFormattingEditsForRange', error);
+          return;
+        } finally {
+          this.destroyContext(cfg, ctx);
+        }
+      }
+
+      const result = new LspFormattingTextChanges(ptr);
+      const changes = result.textChanges;
+      result.dispose();
+      return changes;
+    } finally {
+      global.es2panda._destroyFormatCodeSettings(settingsPtr);
+    }
+  }
+
+  getFormattingEditsAfterKeystroke(
+    filename: String,
+    position: number,
+    key: string,
+    options?: FormatCodeSettingsOptions
+  ): TextChange[] | undefined {
+    if (!key || key.length === 0) {
+      return;
+    }
+    let ptr: KNativePointer;
+    const settingsPtr = this.createFormatCodeSettings(options);
+    const bytePos = this.charOffsetToByteOffset(filename.valueOf(), position);
+    const keyCode = key.charCodeAt(0);
+
+    try {
+      let fileCache = this.filesMap.get(filename.valueOf());
+      if (fileCache) {
+        try {
+          ptr = global.es2panda._getFormattingEditsAfterKeystroke(fileCache.fileContext, settingsPtr, bytePos, 0, keyCode);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsAfterKeystroke by fileCache', error);
+          return;
+        }
+      } else {
+        const [cfg, ctx] = this.createContext(filename) ?? [];
+        if (!cfg || !ctx) {
+          return;
+        }
+        try {
+          ptr = global.es2panda._getFormattingEditsAfterKeystroke(ctx, settingsPtr, bytePos, 0, keyCode);
+          PluginDriver.getInstance().runPluginHook(PluginHook.CLEAN);
+        } catch (error) {
+          logger.error('failed to getFormattingEditsAfterKeystroke', error);
           return;
         } finally {
           this.destroyContext(cfg, ctx);
