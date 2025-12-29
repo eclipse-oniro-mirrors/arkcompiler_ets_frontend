@@ -63,3 +63,45 @@ console.log('' + a1.v2) //Report error here
 console.log('' + a1.y)  //Report error here
 console.log('' + a1.z)  //No error, the code is valid 
 console.log('' + F.a2.y)  //Report error here
+
+
+class Cat1 {
+  meow() {
+    console.log("Cat1!")
+  }
+  meow2() {
+    console.log("Cat1!")
+  }
+  meow3() {
+    console.log("Cat1!")
+  }
+  meow4 = ()=>{};
+  meow5:Function = ()=>{};
+}
+
+class Dog1 {
+  meow() {
+    console.log("Dog1!")
+  }
+  meow2():string {
+    console.log("Dog1!")
+    return "123"
+  }
+  meow3(str:string) {
+    console.log("Cat1!")
+  }
+  meow4() {
+    console.log("Cat1!")
+  }
+  meow5() {
+    console.log("Cat1!")
+  }
+}
+
+function makeSound1(pet: Cat1 | Dog1) {
+  pet.meow();       //  [arkts-common-union-member-access]  correct
+  pet.meow2();       // (arkts-common-union-member-access)    missing report
+  pet.meow3("123");       // (arkts-common-union-member-access)    missing report
+  pet.meow4();       // (arkts-common-union-member-access)    missing report
+  pet.meow5();       // (arkts-common-union-member-access)      missing report
+}

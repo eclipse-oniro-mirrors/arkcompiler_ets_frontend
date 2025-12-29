@@ -1950,8 +1950,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     for (const t of typesWithProp) {
       const propSym = this.tsUtils.findProperty(t, propName);
       if (propSym) {
+        const propKind = TsUtils.getMemberKind(propSym);
         const propType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propSym, propertyAccessNode);
-        propTypes.push(this.tsTypeChecker.typeToStringForLinter(propType));
+        propTypes.push(this.tsTypeChecker.typeToStringForLinter(propType) + '_' + propKind);
       }
     }
 
@@ -6253,7 +6254,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const isSameApi = callSignatures.some((callSignature) => {
       const callSignatureDecl = callSignature.getDeclaration();
-      if (!ts.isCallSignatureDeclaration(callSignatureDecl)) {
+      if (!callSignatureDecl || !ts.isCallSignatureDeclaration(callSignatureDecl)) {
         return false;
       }
       const parentDecl = callSignatureDecl.parent;
