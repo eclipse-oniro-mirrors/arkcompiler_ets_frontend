@@ -22,9 +22,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 864,
-                    "end": 884,
-                    "replacementText": "a.offRemove(234)",
+                    "start": 870,
+                    "end": 880,
+                    "replacementText": "",
+                    "line": 23,
+                    "column": 3,
+                    "endLine": 23,
+                    "endColumn": 6
+                },
+                {
+                    "start": 866,
+                    "end": 869,
+                    "replacementText": "offRemove",
                     "line": 23,
                     "column": 3,
                     "endLine": 23,
@@ -43,9 +52,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 902,
-                    "end": 922,
-                    "replacementText": "a.offChange(234)",
+                    "start": 908,
+                    "end": 918,
+                    "replacementText": "",
+                    "line": 24,
+                    "column": 3,
+                    "endLine": 24,
+                    "endColumn": 6
+                },
+                {
+                    "start": 904,
+                    "end": 907,
+                    "replacementText": "offChange",
                     "line": 24,
                     "column": 3,
                     "endLine": 24,
@@ -64,9 +82,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1152,
-                    "end": 1199,
-                    "replacementText": "systemShare.offWaterMarkFlagChange('cihat')",
+                    "start": 1168,
+                    "end": 1191,
+                    "replacementText": "",
+                    "line": 31,
+                    "column": 13,
+                    "endLine": 31,
+                    "endColumn": 16
+                },
+                {
+                    "start": 1164,
+                    "end": 1167,
+                    "replacementText": "offWaterMarkFlagChange",
                     "line": 31,
                     "column": 13,
                     "endLine": 31,
@@ -85,9 +112,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1214,
-                    "end": 1242,
-                    "replacementText": "systemShare.onKnockShare()",
+                    "start": 1229,
+                    "end": 1241,
+                    "replacementText": "",
+                    "line": 32,
+                    "column": 13,
+                    "endLine": 32,
+                    "endColumn": 15
+                },
+                {
+                    "start": 1226,
+                    "end": 1228,
+                    "replacementText": "onKnockShare",
                     "line": 32,
                     "column": 13,
                     "endLine": 32,
@@ -106,9 +142,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1413,
-                    "end": 1435,
-                    "replacementText": "test2.onceAdd(234)",
+                    "start": 1424,
+                    "end": 1431,
+                    "replacementText": "",
+                    "line": 40,
+                    "column": 7,
+                    "endLine": 40,
+                    "endColumn": 11
+                },
+                {
+                    "start": 1419,
+                    "end": 1423,
+                    "replacementText": "onceAdd",
                     "line": 40,
                     "column": 7,
                     "endLine": 40,
@@ -127,9 +172,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1443,
-                    "end": 1465,
-                    "replacementText": "test2.onSlice(234)",
+                    "start": 1452,
+                    "end": 1461,
+                    "replacementText": "",
+                    "line": 41,
+                    "column": 7,
+                    "endLine": 41,
+                    "endColumn": 9
+                },
+                {
+                    "start": 1449,
+                    "end": 1451,
+                    "replacementText": "onSlice",
                     "line": 41,
                     "column": 7,
                     "endLine": 41,
@@ -148,9 +202,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1533,
-                    "end": 1554,
-                    "replacementText": "test2.offObj(234)",
+                    "start": 1543,
+                    "end": 1550,
+                    "replacementText": "",
+                    "line": 43,
+                    "column": 7,
+                    "endLine": 43,
+                    "endColumn": 10
+                },
+                {
+                    "start": 1539,
+                    "end": 1542,
+                    "replacementText": "offObj",
                     "line": 43,
                     "column": 7,
                     "endLine": 43,
@@ -169,9 +232,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1624,
-                    "end": 1671,
-                    "replacementText": "sharesystem.offWaterMarkFlagChange('cihat')",
+                    "start": 1640,
+                    "end": 1663,
+                    "replacementText": "",
+                    "line": 47,
+                    "column": 13,
+                    "endLine": 47,
+                    "endColumn": 16
+                },
+                {
+                    "start": 1636,
+                    "end": 1639,
+                    "replacementText": "offWaterMarkFlagChange",
                     "line": 47,
                     "column": 13,
                     "endLine": 47,
@@ -190,9 +262,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1679,
-                    "end": 1707,
-                    "replacementText": "sharesystem.onKnockShare()",
+                    "start": 1694,
+                    "end": 1706,
+                    "replacementText": "",
+                    "line": 48,
+                    "column": 13,
+                    "endLine": 48,
+                    "endColumn": 15
+                },
+                {
+                    "start": 1691,
+                    "end": 1693,
+                    "replacementText": "onKnockShare",
                     "line": 48,
                     "column": 13,
                     "endLine": 48,
@@ -211,9 +292,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1715,
-                    "end": 1739,
-                    "replacementText": "sharesystem.onChange()",
+                    "start": 1730,
+                    "end": 1738,
+                    "replacementText": "",
+                    "line": 49,
+                    "column": 13,
+                    "endLine": 49,
+                    "endColumn": 15
+                },
+                {
+                    "start": 1727,
+                    "end": 1729,
+                    "replacementText": "onChange",
                     "line": 49,
                     "column": 13,
                     "endLine": 49,
