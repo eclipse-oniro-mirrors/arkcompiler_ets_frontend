@@ -78,3 +78,7 @@ function localTest(){
 const lds = new LocalDataSource();
 lds.prefetch(999); 
 lds.cancel(222);
+
+interface localInterface extends IDataSourcePrefetching {
+  prefetch(index: number): void | Promise<void>;
+}

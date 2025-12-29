@@ -1072,6 +1072,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.countDeclarationsWithDuplicateName(interfaceNode.name, interfaceNode);
     this.handleLocalDeclarationOfClassAndIface(interfaceNode);
     this.checkObjectPublicApiMethods(interfaceNode);
+    this.handleSdkMethod(interfaceNode);
   }
 
   private handleTryStatement(node: ts.TryStatement): void {
@@ -3647,7 +3648,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private processSdkMethodClauseTypes(
-    tsClassDecl: ts.ClassDeclaration,
+    tsClassDecl: ts.ClassDeclaration | ts.InterfaceDeclaration,
     heritageClause: ts.HeritageClause,
     methodName?: string
   ): boolean {
@@ -3677,7 +3678,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
   }
 
-  private handleSdkMethod(tsClassDecl: ts.ClassDeclaration): void {
+  private handleSdkMethod(tsClassDecl: ts.ClassDeclaration | ts.InterfaceDeclaration): void {
     if (
       !this.options.arkts2 ||
       !tsClassDecl.heritageClauses ||
@@ -3698,11 +3699,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private processSdkInfoWithMembers(
     sdkInfo: ApiInfo,
-    members: ts.NodeArray<ts.ClassElement>,
-    tsClassDecl: ts.ClassDeclaration
+    members: ts.NodeArray<ts.ClassElement> | ts.NodeArray<ts.TypeElement>,
+    tsClassDecl: ts.ClassDeclaration | ts.InterfaceDeclaration
   ): void {
     for (const member of members) {
-      if (!ts.isMethodDeclaration(member)) {
+      if (!ts.isMethodDeclaration(member) && !ts.isMethodSignature(member)) {
         continue;
       }
 
@@ -3797,11 +3798,8 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private static areGenericsParametersEqual(
     sdkFuncArgs: { name: string; type: string }[],
-    node: ts.ClassDeclaration
+    node: ts.ClassDeclaration | ts.InterfaceDeclaration
   ): boolean {
-    if (!ts.isClassDeclaration(node)) {
-      return false;
-    }
     const apiParamCout = sdkFuncArgs.length;
     const typeParameters = node.typeParameters;
     if (!typeParameters) {
