@@ -26,19 +26,10 @@ namespace {
 using ark::es2panda::lsp::Initializer;
 using ark::es2panda::lsp::codefixes::CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS;
 
-constexpr std::string_view EXPECTED_FIX_NAME = CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS.GetFixId();
 constexpr auto ERROR_CODES = CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS.GetSupportedCodeNumbers();
-constexpr std::string_view EXPECTED_FIX_DESCRIPTION = "Fix 'super' access before 'this'";
-constexpr size_t ERROR_LINE = 8;
-constexpr size_t ERROR_COLUMN = 9;
-constexpr size_t ERROR_LENGTH = 4;
-constexpr std::string_view EXPECTED_INSERTED_TEXT = "super(name)";
-constexpr size_t EXPECTED_INSERT_POS = 126;
-constexpr size_t EXPECTED_INSERT_LENGTH = 0;
-
-constexpr size_t EXPECTED_DELETE_POS = 147;
-constexpr size_t EXPECTED_DELETE_LENGTH = 5;
 constexpr int DEFAULT_THROTTLE = 20;
+constexpr size_t DEFAULT_LENGTH = 4;
+constexpr size_t SUPER_KEYWORD_LENGTH = 5;
 
 class FixClassSuperMustPrecedeThisAccessTests : public LSPAPITests {
 public:
@@ -52,6 +43,85 @@ public:
         auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
         auto index = ark::es2panda::lexer::LineIndex(ctx->parserProgram->SourceCode());
         return index.GetOffset(ark::es2panda::lexer::SourceLocation(line, col, ctx->parserProgram));
+    }
+
+protected:
+    void RunCodeFixTest(const std::string &initialContent, const std::string &expectedContent, size_t errLine,
+                        size_t errCol, size_t length = DEFAULT_LENGTH)
+    {
+        std::vector<std::string> fileNames = {"test_case.ets"};
+        std::vector<std::string> fileContents = {initialContent};
+
+        auto filePaths = CreateTempFile(fileNames, fileContents);
+        ASSERT_EQ(fileNames.size(), filePaths.size());
+
+        Initializer initializer;
+        auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+        size_t start = LineColToPos(context, errLine, errCol);
+        std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
+        ark::es2panda::lsp::FormatCodeSettings settings;
+        settings.SetNewLineCharacter("\n");
+        CodeFixOptions options = {CreateNonCancellationToken(), settings, {}};
+
+        const std::string expectedFixName(CLASS_SUPER_MUST_PRECEDE_THIS_ACCESS.GetFixId());
+        const std::string expectedFixDescription = "Fix 'super' access before 'this'";
+        const size_t expectedFixCount = 1;
+        const size_t expectedTextChangesCount = 2;
+
+        auto fixResult =
+            ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + length, errorCodes, options);
+
+        ASSERT_EQ(fixResult.size(), expectedFixCount);
+        ASSERT_EQ(fixResult[0].description_, expectedFixDescription);
+        ASSERT_EQ(fixResult[0].fixName_, expectedFixName);
+        const auto &changes = fixResult[0].changes_[0].textChanges;
+        ASSERT_EQ(changes.size(), expectedTextChangesCount);
+
+        std::string actualContent = ApplyTextChanges(initialContent, changes);
+        std::string actualClean = RemoveEmptyLines(actualContent);
+        std::string expectedClean = RemoveEmptyLines(expectedContent);
+        EXPECT_EQ(actualClean, expectedClean);
+
+        initializer.DestroyContext(context);
+    }
+
+    static std::string ApplyTextChanges(const std::string &source, const std::vector<TextChange> &changes)
+    {
+        std::string result = source;
+        auto sortedChanges = changes;
+        std::sort(sortedChanges.begin(), sortedChanges.end(),
+                  [](const auto &a, const auto &b) { return a.span.start > b.span.start; });
+
+        for (const auto &change : sortedChanges) {
+            result.replace(change.span.start, change.span.length, change.newText);
+        }
+        return result;
+    }
+
+    static std::string RemoveEmptyLines(const std::string &input)
+    {
+        std::string result;
+        std::stringstream ss(input);
+        std::string line;
+        bool first = true;
+        while (std::getline(ss, line)) {
+            bool isEmpty = true;
+            for (char c : line) {
+                if (std::isspace(c) == 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+            if (!isEmpty) {
+                if (!first) {
+                    result += "\n";
+                }
+                result += line;
+                first = false;
+            }
+        }
+        result += "\n";
+        return result;
     }
 
 private:
@@ -72,8 +142,7 @@ private:
 
 TEST_F(FixClassSuperMustPrecedeThisAccessTests, TestSuperMustPrecedeThisAccess)
 {
-    std::vector<std::string> fileNames = {"TestSuperMustPrecedeThisAccess.ets"};
-    std::vector<std::string> fileContents = {R"(
+    std::string initialContent = R"(
 class Animal {
     constructor(public name: string) {}
 }
@@ -85,38 +154,99 @@ class Dog extends Animal {
     }
     bark() { console.log("Woof!"); }
 }
-)"};
+)";
+    std::string expectedContent = R"(
+class Animal {
+    constructor(public name: string) {}
+}
 
-    auto filePaths = CreateTempFile(fileNames, fileContents);
-    ASSERT_EQ(fileNames.size(), filePaths.size());
+class Dog extends Animal {
+    constructor(name: string) {
+super(name);
+        this.bark();
+    }
+    bark() { console.log("Woof!"); }
+}
+)";
+    const size_t errLine = 8;
+    const size_t errCol = 9;
+    RunCodeFixTest(initialContent, expectedContent, errLine, errCol);
+}
 
-    Initializer initializer;
-    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    size_t start = LineColToPos(context, ERROR_LINE, ERROR_COLUMN);
-    std::vector<int> errorCodes(ERROR_CODES.begin(), ERROR_CODES.end());
-    CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
-    auto fixResult =
-        ark::es2panda::lsp::GetCodeFixesAtPositionImpl(context, start, start + ERROR_LENGTH, errorCodes, emptyOptions);
-    int resSize = 1;
-    int changeSize = 2;
-    ASSERT_EQ(fixResult.size(), resSize);
-    const auto &changes = fixResult[0].changes_[0].textChanges;
-    ASSERT_EQ(changes.size(), changeSize);
-    auto insertIt = std::find_if(changes.begin(), changes.end(), [](const auto &tc) { return !tc.newText.empty(); });
-    auto deleteIt = std::find_if(changes.begin(), changes.end(), [](const auto &tc) { return tc.newText.empty(); });
+TEST_F(FixClassSuperMustPrecedeThisAccessTests, TestPropertyAssignmentBeforeSuper)
+{
+    std::string initialContent = R"(
+class Base {}
+class Derived extends Base {
+    prop: number;
+    constructor() {
+        this.prop = 5;
+        super();
+    }
+}
+)";
+    std::string expectedContent = R"(
+class Base {}
+class Derived extends Base {
+    prop: number;
+    constructor() {
+super();
+        this.prop = 5;
+    }
+}
+)";
+    const size_t errLine = 6;
+    const size_t errCol = 9;
+    RunCodeFixTest(initialContent, expectedContent, errLine, errCol);
+}
 
-    ASSERT_NE(insertIt, changes.end());
-    ASSERT_NE(deleteIt, changes.end());
-    EXPECT_EQ(insertIt->newText, EXPECTED_INSERTED_TEXT);
-    EXPECT_EQ(insertIt->span.start, EXPECTED_INSERT_POS);
-    EXPECT_EQ(insertIt->span.length, EXPECTED_INSERT_LENGTH);
-    EXPECT_EQ(deleteIt->newText, "");
-    EXPECT_EQ(deleteIt->span.start, EXPECTED_DELETE_POS);
-    EXPECT_EQ(deleteIt->span.length, EXPECTED_DELETE_LENGTH);
-    ASSERT_EQ(fixResult[0].fixName_, EXPECTED_FIX_NAME);
-    ASSERT_EQ(fixResult[0].description_, EXPECTED_FIX_DESCRIPTION);
-    ASSERT_EQ(fixResult[0].changes_[0].fileName, filePaths[0]);
+TEST_F(FixClassSuperMustPrecedeThisAccessTests, TestThisAccessInArgumentBeforeSuper)
+{
+    std::string initialContent = R"(
+class Base {}
+class Derived extends Base {
+    constructor() {
+        console.log(this);
+        super();
+    }
+}
+)";
+    std::string expectedContent = R"(
+class Base {}
+class Derived extends Base {
+    constructor() {
+super();
+        console.log(this);
+    }
+}
+)";
+    const size_t errLine = 5;
+    const size_t errCol = 21;
+    RunCodeFixTest(initialContent, expectedContent, errLine, errCol);
+}
 
-    initializer.DestroyContext(context);
+TEST_F(FixClassSuperMustPrecedeThisAccessTests, TestTriggerOnSuper)
+{
+    std::string initialContent = R"(
+class Base {}
+class Derived extends Base {
+    constructor() {
+        console.log(1);
+        super();
+    }
+}
+)";
+    std::string expectedContent = R"(
+class Base {}
+class Derived extends Base {
+    constructor() {
+super();
+        console.log(1);
+    }
+}
+)";
+    const size_t errLine = 6;
+    const size_t errCol = 9;
+    RunCodeFixTest(initialContent, expectedContent, errLine, errCol, SUPER_KEYWORD_LENGTH);
 }
 }  // namespace
