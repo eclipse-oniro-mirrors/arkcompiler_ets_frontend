@@ -1372,4 +1372,3 @@
     }
   }
 }
-TypeError: Variable var1 implicitly has an any type. [test-keyword-declare.ts:17:5]
