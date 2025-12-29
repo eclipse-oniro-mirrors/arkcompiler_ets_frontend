@@ -1123,4 +1123,3 @@
     }
   }
 }
-TypeError: Parameter k implicitly has any type. [test-type-literal.ts:17:70]
