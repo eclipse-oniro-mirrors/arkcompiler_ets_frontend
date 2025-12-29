@@ -14,10 +14,7 @@
  */
 
 #include "lsp/include/register_code_fix/fix_class_super_must_precede_this_access.h"
-
-#include <iostream>
 #include <string>
-#include "compiler/lowering/util.h"
 #include "generated/code_fix_register.h"
 #include "lsp/include/code_fix_provider.h"
 #include "lsp/include/internal_api.h"
@@ -41,7 +38,7 @@ void FixClassSuperMustPrecedeThisAccess::MakeChangeForClassSuperMustPrecedeThisA
                                                                                       size_t pos)
 {
     auto *token = GetTouchingToken(context, pos, false);
-    if (token == nullptr || !token->IsThisExpression()) {
+    if (token == nullptr || (!token->IsThisExpression() && !token->IsSuperExpression())) {
         return;
     }
 
@@ -72,16 +69,28 @@ void FixClassSuperMustPrecedeThisAccess::MakeChangeForClassSuperMustPrecedeThisA
         return;
     }
 
-    if (token->Start().index > superCall->Start().index) {
+    ir::AstNode *callExpr = superCall->Parent();
+    if (callExpr == nullptr || !callExpr->IsCallExpression()) {
+        return;
+    }
+
+    ir::AstNode *statement = callExpr->Parent();
+    if (statement == nullptr || !statement->IsExpressionStatement()) {
+        return;
+    }
+
+    if (!token->IsSuperExpression() && token->Start().index > superCall->Start().index) {
         return;
     }
 
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
 
-    changeTracker.DeleteRange(ctx->sourceFile, {superCall->Start().index, superCall->End().index});
+    changeTracker.DeleteRange(ctx->sourceFile, {statement->Start().index, statement->End().index});
 
-    auto *exprStmt = ctx->allocator->New<ir::ExpressionStatement>(superCall->Parent()->AsExpression());
-    changeTracker.InsertNodeAtConstructorStart(context, blockStatement, exprStmt);
+    auto *exprStmt = ctx->allocator->New<ir::ExpressionStatement>(callExpr->AsExpression());
+
+    std::string text = "\n" + exprStmt->DumpEtsSrc() + ";";
+    changeTracker.InsertText(ctx->sourceFile, blockStatement->Start().index + 1, text);
 }
 
 std::vector<FileTextChanges> FixClassSuperMustPrecedeThisAccess::GetCodeActionsForClassSuperMustPrecedeThisAccess(

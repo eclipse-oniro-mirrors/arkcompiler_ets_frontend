@@ -373,7 +373,6 @@ syntax:
 - name: FIELD_IN_PARAM
   id: 319
   message: "Declaring fields in parameter list is not supported"
-  code_fix_ids: [ClassSuperMustPrecedeThisAccess]
 
 - name: FIELD_TYPE_ANNOTATION_MISSING
   id: 121

@@ -331,6 +331,7 @@ semantic:
 - name: CTOR_CLASS_NOT_FIRST
   id: 201
   message: "Call to '{}' must be first statement in constructor"
+  code_fix_ids: [ClassSuperMustPrecedeThisAccess]
 
 - name: CTOR_MISSING_SUPER_CALL
   id: 192
