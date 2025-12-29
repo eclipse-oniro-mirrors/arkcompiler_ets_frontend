@@ -23,16 +23,6 @@
             "suggest": "",
             "rule": "The \"update\" interface of \"BuilderNode\" does not accept an object literal. Please replace it with an instance of the class specified in the generic when creating a new \"BuilderNode\", and ensure that the instance has the same field values as the literal (arkui-buildernode-update-no-literal)",
             "severity": "ERROR"
-        },
-        {
-            "line": 16,
-            "column": 10,
-            "endLine": 16,
-            "endColumn": 18,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Animator\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
         }
     ]
 }

@@ -15,13 +15,23 @@
     ],
     "result": [
         {
-            "line": 28,
-            "column": 10,
-            "endLine": 28,
-            "endColumn": 16,
-            "problem": "NoDeprecatedApi",
+            "line": 18,
+            "column": 2,
+            "endLine": 18,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
             "suggest": "",
-            "rule": "The ArkUI interface \"create\" is deprecated (arkui-deprecated-interface)",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 19,
+            "column": 2,
+            "endLine": 19,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]
