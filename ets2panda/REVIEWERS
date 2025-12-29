@@ -24,7 +24,7 @@
 /ets2panda/ast_verifier ^mbolshov @dkofanov ^igelhaus ^Prof
 /ets2panda/bindings ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
 /ets2panda/lexer @akmaevaleksey ^csabaosztrogonac @igelhaus ^zelentsovdmitry @Prof
-/ets2panda/lsp ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu @doneyildiz
+/ets2panda/lsp ^igelhaus ^Prof @Nojpg @Ascnbio @jokerxd-liu
 /ets2panda/public @mbolshov @zhelyapovaleksey ^igelhaus ^Prof
 /ets2panda/test ^akmaevaleksey ^igelhaus ^Prof
 /legacy_bin/ @ctw-ian @jokerxd-liu
@@ -39,8 +39,8 @@
 /ets2panda/checker/ETSAnalyzer.cpp @xingshunxiang ^akmaevaleksey @zhelyapovaleksey  ^igelhaus ^Prof
 /ets2panda/checker/ETSAnalyzerHelpers.* @xingshunxiang @lirismankarina ^igelhaus ^Prof
 /ets2panda/compiler/ @xuxjeeee @gogabr ^igelhaus ^Prof ^zelentsovdmitry
-/ets2panda/declgen_ets2ts/ @Nojpg ^trubachevilya ^ivagin ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
-/ets2panda/driver/ @trubachevilya @Nojpg ^igelhaus ^Prof @luobohua ^luchenxu ^Wangyuzhong11
+/ets2panda/declgen_ets2ts/ ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
+/ets2panda/driver/ @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof @luobohua ^luchenxu ^Wangyuzhong11
 /ets2panda/ir/ @ziziziiziziz @zhelyapovaleksey ^igelhaus ^Prof
 /ets2panda/linter/ @cy917474985 @rosinskiyigor @okolnovevgeny ^utkugursel ^fouckttt
 /ets2panda/parser/ @ziziziiziziz @shimenkovmikhail ^igelhaus ^Prof @zelentsovdmitry ^xuxjeeee
@@ -48,16 +48,16 @@
 /ets2panda/scripts/arkui* @titova_tatiana ^igelhaus ^Prof
 /ets2panda/test/ast @ozerovnikita ^igelhaus ^Prof
 /ets2panda/test/benchmarks @pishin
-/ets2panda/test/depanalyzer @trubachevilya @Nojpg ^igelhaus ^Prof
+/ets2panda/test/depanalyzer @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/test/srcdump @xingshunxiang @mbolshov ^igelhaus ^Prof
 /ets2panda/test/test-lists @igelhaus ^Prof
 /ets2panda/test/utils @mbolshov ^igelhaus ^Prof
 /ets2panda/util/ @shimenkovmikhail @dkofanov ^igelhaus ^Prof
-/ets2panda/util/arktsconfig* @Nojpg @trubachevilya ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
+/ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
 /ets2panda/util/diagnostic* @alexey-kanatov @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/diagnostic*yaml @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* @chernykhsergey @shimenkovmikhail ^igelhaus ^Prof
-/ets2panda/util/importPathManager* @Nojpg @trubachevilya ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
+/ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin @shimenkovmikhail @trubachevilya ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
 /ets2panda/util/plugin.* @zhelyapovaleksey @mbolshov ^igelhaus ^Prof
 /ets2panda/varbinder/ @lirismankarina @akmaevaleksey  ^zelentsovdmitry ^igelhaus ^Prof
 /ets2panda/varbinder/ETSBinder.* @ozerovnikita ^zelentsovdmitry ^igelhaus ^Prof
@@ -87,10 +87,10 @@
 /ets2panda/ir/statements/annotation* @lirismankarina @xuxjeeee ^igelhaus ^Prof
 /ets2panda/scripts/check_ets_warning/xts_static_whitelist.yaml @Prof @xumoheng @xuxjeeee @@dddzzzhhh @tengtengh
 /ets2panda/test/test-lists/astchecker @chernykhsergey ^igelhaus ^Prof
-/ets2panda/test/test-lists/declgenets2ts @Nojpg ^igelhaus ^Prof ^luobohua @luchenxu ^Wangyuzhong11
+/ets2panda/test/test-lists/declgenets2ts ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof ^luobohua @luchenxu ^Wangyuzhong11
 /ets2panda/test/test-lists/parser @chernykhsergey ^igelhaus ^Prof
-/ets2panda/test/unit/arktsconfig-parser @trubachevilya @Nojpg ^igelhaus ^Prof
-/ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof @doneyildiz
+/ets2panda/test/unit/arktsconfig-parser @trubachevilya ^Nojpg ^v-cherkashin @shimenkovmikhail ^igelhaus ^Prof
+/ets2panda/test/unit/lsp @Nojpg @Ascnbio @jokerxd-liu ^igelhaus ^Prof
 /ets2panda/test/unit/plugin* @xingshunxiang @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/test/unit/public @zhelyapovaleksey ^mbolshov ^igelhaus ^Prof
 /ets2panda/checker/types/ets/Nullish.* ^vpukhov ^victor_petukhov @gogabr ^igelhaus ^Prof
