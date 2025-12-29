@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1371,9 +1371,14 @@ ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
         if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_MULTIPLY) {
             ParseNameSpaceSpecifier(&specifiers);
         } else if (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_LEFT_BRACE) {
+            auto saveLoc = Lexer()->GetToken().Start();
             auto specs = ParseNamedSpecifiers(importKind);
             specifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.result);
             defaultSpecifiers = util::Helpers::ConvertVector<ir::AstNode>(specs.resultDefault);
+            if (specifiers.empty() && defaultSpecifiers.empty()) {
+                specifiers.push_back(AllocBrokenExpression({saveLoc, specs.rightBackPos}));
+                LogError(diagnostic::EMPTY_IMPORT_SPECIFIER_LIST);
+            }
         } else {
             ParseImportDefaultSpecifier(&specifiers);
         }
@@ -1607,6 +1612,7 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers(const ir::ImportKinds importKind)
     ArenaVector<ir::ImportSpecifier *> result(Allocator()->Adapter());
     ArenaVector<ir::ImportDefaultSpecifier *> resultDefault(Allocator()->Adapter());
     ArenaVector<ir::ExportSpecifier *> resultExportDefault(Allocator()->Adapter());
+    lexer::SourcePosition sourceEnd;
 
     auto token = Lexer()->GetToken();
     if (token.Ident() == (lexer::TokenToString(lexer::TokenType::KEYW_IMPORT)) &&
@@ -1632,8 +1638,8 @@ SpecifiersInfo ETSParser::ParseNamedSpecifiers(const ir::ImportKinds importKind)
             typeKeywordOnSpecifier = false;
             return true;
         },
-        nullptr, ParseListOptions::ALLOW_TRAILING_SEP | ParseListOptions::ALLOW_TYPE_KEYWORD);
-    return {result, resultDefault, resultExportDefault};
+        &sourceEnd, ParseListOptions::ALLOW_TRAILING_SEP | ParseListOptions::ALLOW_TYPE_KEYWORD);
+    return {result, resultDefault, resultExportDefault, sourceEnd};
 }
 
 SpecifiersInfo ETSParser::ParseExportNamedSpecifiers(const ir::ExportKinds exportKind)

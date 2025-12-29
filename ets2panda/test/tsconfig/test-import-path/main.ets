@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,9 +14,3 @@
  */
 
 import { * } from './module';
-
-
-/* @@? 16:10 Error Syntax error ESY0102: The '*' token is not allowed as a selective binding (between braces). */
-/* @@? 16:10 Error Syntax error ESY0227: Unexpected token '*'. */
-/* @@? 16:14 Error Semantic error ESE0143: Unresolved reference from */
-/* @@? 16:19 Error Syntax error ESY0227: Unexpected token './module'. */

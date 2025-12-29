@@ -11,27 +11,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_custom_target(es2panda-unit-test-fatal-error-unsupported_file_name1
-    COMMENT "Testing test-fatal-error for: unsupported_file_name1"
+add_custom_target(es2panda-unit-test-fatal-error-check-import-path
+    COMMENT "Testing test-fatal-error for: check_import_path"
     DEPENDS es2panda
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/../test_fatal_script.py
         --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
         --config arktsconfig.json
-        --filepath test.ets
+        --filepath main.ets
         --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
 )
 
-add_custom_target(es2panda-unit-test-fatal-error-unsupported_file_name2
-    COMMENT "Testing test-fatal-error for: unsupported_file_name2"
-    DEPENDS es2panda
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/../test_fatal_script.py
-        --es2panda '${PANDA_RUN_PREFIX} $<TARGET_FILE:es2panda>'
-        --config arktsconfig.json
-        --filepath test.ets
-        --stdlib ${PANDA_ROOT}/plugins/ets/stdlib
-)
-
-add_dependencies(es2panda_tests es2panda-unit-test-fatal-error-unsupported_file_name1)
-add_dependencies(es2panda_tests es2panda-unit-test-fatal-error-unsupported_file_name2)
+add_dependencies(es2panda_tests es2panda-unit-test-fatal-error-check-import-path)

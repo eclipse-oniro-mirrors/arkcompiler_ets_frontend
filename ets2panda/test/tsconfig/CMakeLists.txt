@@ -1,4 +1,4 @@
-# Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2023-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -19,6 +19,8 @@ add_subdirectory(test-class-from)
 add_subdirectory(test-config)
 add_subdirectory(test-name-conflict)
 add_subdirectory(test-unsupported-file-name)
+add_subdirectory(test-empty-import-path)
+add_subdirectory(test-import-path)
 # 25872
 # add_subdirectory(test-build)
 # add_subdirectory(test-decl)

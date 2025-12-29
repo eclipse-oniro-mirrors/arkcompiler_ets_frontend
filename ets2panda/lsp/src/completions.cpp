@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -133,34 +133,37 @@ CompletionEntry GetDeclarationEntry(ir::AstNode *node)
     return CompletionEntry();
 }
 
-static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries)
+static void GetExportFromClass(ir::ClassDefinition *classDef, std::vector<CompletionEntry> &exportEntries,
+                               const std::string &fileName = "")
 {
     for (auto &prop : classDef->Body()) {
         if (prop->IsClassDeclaration() && prop->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
-            GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries);
+            GetExportFromClass(prop->AsClassDeclaration()->Definition(), exportEntries, fileName);
         }
         if (prop->IsExported()) {
             auto entry = GetDeclarationEntry(prop);
-            if (!entry.GetName().empty()) {
+            if (!entry.GetName().empty() &&
+                (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
             }
         }
     }
 }
 
-std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program)
+std::vector<CompletionEntry> GetExportsFromProgram(parser::Program *program, const std::string &fileName = "")
 {
     std::vector<CompletionEntry> exportEntries;
     for (auto &stmt : program->Ast()->Statements()) {
         if (stmt->IsClassDeclaration()) {
             auto classDef = stmt->AsClassDeclaration()->Definition();
             if (classDef->IsGlobal() || classDef->IsNamespaceTransformed()) {
-                GetExportFromClass(classDef, exportEntries);
+                GetExportFromClass(classDef, exportEntries, fileName);
             }
         }
         if (stmt->IsExported()) {
             auto entry = GetDeclarationEntry(stmt);
-            if (!entry.GetName().empty()) {
+            if (!entry.GetName().empty() &&
+                (fileName.empty() || entry.GetName().compare(0, fileName.length(), fileName) == 0)) {
                 exportEntries.emplace_back(entry);
             }
         }
@@ -853,11 +856,75 @@ bool IsAnnotationBeginning(std::string sourceCode, size_t pos)
     return sourceCode.at(pos - 1) == '@';
 }
 
-std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *context, ir::AstNode *node)
+std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, std::vector<CompletionEntry> &completions,
+                                                   ir::ETSImportDeclaration *importDecl, ir::AstNode *node = nullptr)
+{
+    if (importDecl == nullptr || !importDecl->IsValid()) {
+        return completions;
+    }
+    auto importText = importDecl->Source()->Str().Utf8();
+    size_t lastSlashPos = importText.find_last_of("/\\");
+    auto fileName = util::StringView(importText.substr(lastSlashPos + 1));
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    if (!ctx->parserProgram->DirectExternalSources().count(fileName)) {
+        return completions;
+    }
+    auto specifiers = importDecl->Specifiers();
+    std::unordered_set<std::string> hasImported;
+    for (auto &specifier : specifiers) {
+        if (specifier->IsImportSpecifier()) {
+            auto name = specifier->AsImportSpecifier()->Imported()->AsIdentifier()->Name();
+            hasImported.emplace(name.Utf8());
+        }
+    }
+    auto &programs = ctx->parserProgram->DirectExternalSources().at(fileName);
+    std::string specStr = "";
+    if (node != nullptr && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
+        specStr = node->AsIdentifier()->Name().Utf8();
+    }
+    for (auto &program : programs) {
+        auto ans = GetExportsFromProgram(program, specStr);
+        for (auto &entry : ans) {
+            if (!hasImported.count(entry.GetName())) {
+                completions.emplace_back(std::move(entry));
+            }
+        }
+    }
+    return completions;
+}
+
+std::vector<CompletionEntry> GetImportStatementPathCompletions(std::vector<CompletionEntry> &completions,
+                                                               fs::path &searchDir, std::string &prefix)
+{
+    if (!fs::exists(searchDir) || !fs::is_directory(searchDir)) {
+        return completions;
+    }
+    for (const auto &entry : fs::directory_iterator(searchDir)) {
+        std::string name = entry.path().stem().string();
+        bool isPrefix = prefix.empty() || (name.rfind(prefix, 0) == 0);
+        if (IsDirectory(entry) && isPrefix) {
+            completions.emplace_back(name, CompletionEntryKind::FOLDER, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                                     name);
+        } else if (IsRegularFile(entry) && entry.path().extension() == ".ets" && isPrefix) {
+            completions.emplace_back(name, CompletionEntryKind::FILE, std::string(sort_text::GLOBALS_OR_KEYWORDS),
+                                     name);
+        }
+    }
+    return completions;
+}
+
+std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *context, ir::AstNode *node, size_t pos)
 {
     std::vector<CompletionEntry> completions;
     if (node->IsETSImportDeclaration()) {
-        auto sourceStr = node->AsETSImportDeclaration()->Source()->Str();
+        auto importDecl = node->AsETSImportDeclaration();
+        auto source = GetCurrentTokenValueImpl(context, pos, importDecl);
+        if (source.find('}') == std::string::npos) {
+            // When the cursor is positioned within the {} brackets, like "import {a,} from './xxx'".
+            // Get completion of export var from import path
+            return GetCompletionFromPath(context, completions, importDecl);
+        }
+        auto sourceStr = importDecl->Source()->Str();
         // Handle the input code "import {x} from " again reminder "from" keyword.
         if (sourceStr.Is(ERROR_LITERAL)) {
             return completions;
@@ -884,22 +951,18 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
             searchDir = normalized;
             prefix.clear();
         }
-        if (!fs::exists(searchDir) || !fs::is_directory(searchDir)) {
-            return completions;
+        return GetImportStatementPathCompletions(completions, searchDir, prefix);
+    } else if (node->IsIdentifier()) {
+        // Get completion of export var from import path
+        auto parent = node->Parent();
+        ir::ETSImportDeclaration *importDecl = nullptr;
+        if (parent->IsETSImportDeclaration()) {
+            importDecl = parent->AsETSImportDeclaration();
+        } else if (parent->IsImportSpecifier()) {
+            importDecl = parent->Parent()->AsETSImportDeclaration();
         }
-        for (const auto &entry : fs::directory_iterator(searchDir)) {
-            std::string name = entry.path().stem().string();
-            bool isPrefix = prefix.empty() || (name.rfind(prefix, 0) == 0);
-            if (IsDirectory(entry) && isPrefix) {
-                completions.emplace_back(name, CompletionEntryKind::FOLDER, std::string(sort_text::GLOBALS_OR_KEYWORDS),
-                                         name);
-            } else if (IsRegularFile(entry) && entry.path().extension() == ".ets" && isPrefix) {
-                completions.emplace_back(name, CompletionEntryKind::FILE, std::string(sort_text::GLOBALS_OR_KEYWORDS),
-                                         name);
-            }
-        }
+        return GetCompletionFromPath(context, completions, importDecl, node);
     }
-
     return completions;
 }
 
@@ -1013,7 +1076,7 @@ std::vector<CompletionEntry> GetGlobalCompletions(es2panda_Context *context, siz
         return {};
     }
     auto scopePath = BuildScopePath(compiler::NearestScope(precedingToken), allocator);
-    auto prefix = GetCurrentTokenValueImpl(context, position);
+    auto prefix = GetCurrentTokenValueImpl(context, position, precedingToken);
     auto decls = GetDeclByScopePath(scopePath, position, allocator);
     std::vector<CompletionEntry> completions;
 
@@ -1112,31 +1175,26 @@ std::vector<CompletionEntry> GetPropertyCompletionsWithValidPoint(ir::AstNode *p
 
 bool IsInETSImportStatement(size_t pos, ir::AstNode *node)
 {
+    auto parent = node->Parent();
     if (!node->IsETSImportDeclaration() &&
-        !(node->IsStringLiteral() && node->Parent() != nullptr && node->Parent()->IsETSImportDeclaration())) {
+        !(node->IsStringLiteral() && parent != nullptr && parent->IsETSImportDeclaration()) &&
+        !(node->IsIdentifier() && parent != nullptr &&
+          (parent->IsETSImportDeclaration() || parent->IsImportSpecifier()))) {
         return false;
     }
-    size_t end = 0;
     ir::ETSImportDeclaration *importDecl = nullptr;
     if (node->IsETSImportDeclaration()) {
         importDecl = node->AsETSImportDeclaration();
-        end = importDecl->Range().end.index;
     } else if (node->IsStringLiteral()) {
-        importDecl = node->Parent()->AsETSImportDeclaration();
-        end = importDecl->Range().end.index;
-    } else {
-        end = node->Range().end.index;
+        importDecl = parent->AsETSImportDeclaration();
+    } else if (node->IsIdentifier() && parent->IsETSImportDeclaration()) {
+        importDecl = parent->AsETSImportDeclaration();
+    } else if (node->IsIdentifier() && parent->IsImportSpecifier()) {
+        importDecl = parent->Parent()->AsETSImportDeclaration();
     }
+    size_t end = importDecl->Range().end.index;
     if (pos > end) {
         return false;
-    }
-    if (importDecl != nullptr) {
-        for (auto &specifier : importDecl->Specifiers()) {
-            size_t specifierEnd = specifier->Range().end.index;
-            if (pos < specifierEnd) {
-                return false;
-            }
-        }
     }
     return true;
 }
@@ -1161,12 +1219,12 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
         return {};
     }
     if (IsInETSImportStatement(pos, precedingToken)) {
-        return GetImportStatementCompletions(context, precedingToken);
+        return GetImportStatementCompletions(context, precedingToken, pos);
     }
     if (IsAnnotationBeginning(sourceCode, precedingToken->Start().index)) {
         return GetAnnotationCompletions(context, pos, precedingToken);  // need to filter annotation
     }
-    auto triggerValue = GetCurrentTokenValueImpl(context, pos);
+    auto triggerValue = GetCurrentTokenValueImpl(context, pos, precedingToken);
     if (IsEndWithValidPoint(triggerValue)) {
         return GetPropertyCompletionsWithValidPoint(precedingToken, "");
     }
