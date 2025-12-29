@@ -30,6 +30,7 @@ add_subdirectory(relative_path)
 add_subdirectory(any_ins_test)
 add_subdirectory(source_file_message)
 add_subdirectory(reg_allocator)
+add_subdirectory(debug_info)
 
 ets2panda_add_gtest(es2panda_astdumper_tests
     CPP_SOURCES ast_dumper_test.cpp

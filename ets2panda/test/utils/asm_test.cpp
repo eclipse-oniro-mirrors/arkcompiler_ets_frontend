@@ -12,8 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <gtest/gtest.h>
-
 #include "asm_test.h"
 #include "assembly-field.h"
 #include "assembly-literals.h"
@@ -23,6 +21,12 @@
 #include "gmock/gmock.h"
 #include "libarkfile/literal_data_accessor.h"
 #include "util/eheap.h"
+
+#include <gtest/gtest.h>
+
+#ifndef ES2PANDA_BIN_PATH
+#error "ES2PANDA_BIN_PATH is not defined (pass it from CMakeLists.txt)"
+#endif
 
 // Value printers for tests
 namespace ark::pandasm {
@@ -388,21 +392,29 @@ void AsmTest::CheckClassFieldWithoutAnnotations(ark::pandasm::Program *program, 
 
 void AsmTest::SetCurrentProgram(std::string_view src)
 {
-    int argc = 1;
-    const char *argv = "../../../../bin/es2panda";  // NOLINT(modernize-avoid-c-arrays)
     static constexpr std::string_view FILE_NAME = "dummy.ets";
 
-    program_ = GetProgram(argc, &argv, FILE_NAME, src);
+    std::array args = {ES2PANDA_BIN_PATH};
+    program_ = GetProgram({args.data(), args.size()}, FILE_NAME, src);
+
     ASSERT_NE(program_.get(), nullptr);
 }
 
 std::unique_ptr<ark::pandasm::Program> AsmTest::GetCurrentProgram(std::string_view src)
 {
     static constexpr std::string_view FILE_NAME = "dummy.ets";
-    std::array<char const *, 2> args = {"../../../../../bin/es2panda",
-                                        "--ets-unnamed"};  // NOLINT(modernize-avoid-c-arrays)
+    std::array args = {ES2PANDA_BIN_PATH, "--ets-unnamed"};
 
-    auto program = GetProgram(args.size(), args.data(), FILE_NAME, src);
+    auto program = GetProgram({args.data(), args.size()}, FILE_NAME, src);
+    return program;
+}
+
+std::unique_ptr<ark::pandasm::Program> AsmTest::GetCurrentProgramWithArgs(ark::Span<const char *const> args,
+                                                                          std::string_view src)
+{
+    static constexpr std::string_view FILE_NAME = "dummy.ets";
+
+    auto program = GetProgram(args, FILE_NAME, src);
     return program;
 }
 

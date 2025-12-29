@@ -14,19 +14,10 @@
  */
 
 #include <gtest/gtest.h>
-#include <algorithm>
-#include "libarkbase/macros.h"
 
 #include "assembler/assembly-program.h"
-#include "ir/astDump.h"
-#include "ir/expressions/literals/stringLiteral.h"
-#include "bytecode_optimizer/bytecodeopt_options.h"
-#include "compiler/compiler_logger.h"
 #include "util/eheap.h"
 #include "es2panda.h"
-#include "util/arktsconfig.h"
-#include "util/generateBin.h"
-#include "libarkbase/mem/mem.h"
 #include "test/utils/panda_executable_path_getter.h"
 #include "test/utils/asm_test.h"
 
@@ -125,7 +116,7 @@ TEST_P(ASTDumperTest, CheckJsonDump)
     auto param = GetParam();
     auto argsList = param.GetArgs();
     auto program = std::unique_ptr<ark::pandasm::Program> {
-        test::utils::AsmTest::GetProgram(argsList.size(), argsList.data(), param.GetFilename(), param.GetSrc())};
+        test::utils::AsmTest::GetProgram({argsList.data(), argsList.size()}, param.GetFilename(), param.GetSrc())};
     ASSERT(program);
 
     auto dumpStr = program->JsonDump();
@@ -143,7 +134,7 @@ TEST_F(ASTDumperTest, CheckSrcDump)
     auto param = DumpEtsSrcSimple();
     auto argsList = param.GetArgs();
     auto program = std::unique_ptr<ark::pandasm::Program> {
-        test::utils::AsmTest::GetProgram(argsList.size(), argsList.data(), param.GetFilename(), param.GetSrc())};
+        test::utils::AsmTest::GetProgram({argsList.data(), argsList.size()}, param.GetFilename(), param.GetSrc())};
     ASSERT(program);
 
     std::cout.rdbuf(prevcoutbuf);

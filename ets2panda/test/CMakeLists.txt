@@ -77,6 +77,9 @@ function(ets2panda_add_gtest TARGET)
                 es2panda
             ${ARG_UNPARSED_ARGUMENTS}
     )
+    panda_target_compile_definitions(${TARGET} PRIVATE
+        ES2PANDA_BIN_PATH=\"\$<TARGET_FILE:es2panda>\"
+    )
 endfunction(ets2panda_add_gtest)
 
 

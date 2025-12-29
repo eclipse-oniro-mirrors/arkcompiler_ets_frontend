@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 
 #include "regScope.h"
 
-#include "varbinder/varbinder.h"
 #include "varbinder/scope.h"
 #include "varbinder/variable.h"
 #include "compiler/base/hoisting.h"
@@ -40,7 +39,18 @@ void RegScope::DebuggerCloseScope()
         return;
     }
 
-    cg_->ScopeInsnRange(cg_->scope_).second = cg_->insns_.back();
+    auto &insns = cg_->insns_;
+    if (insns.empty()) {
+        return;
+    }
+
+    auto &range = cg_->ScopeInsnRange(cg_->scope_);
+    if (range.first == nullptr && insStartIndex_ < insns.size()) {
+        auto it = insns.begin();
+        std::advance(it, insStartIndex_);
+        range.first = *it;
+    }
+    range.second = insns.back();
 }
 
 // LocalRegScope
@@ -59,9 +69,15 @@ LocalRegScope::LocalRegScope(CodeGen *cg, varbinder::Scope *scope) : RegScope(cg
         }
     }
 
-    if (cg_->IsDebug() && !cg_->insns_.empty()) {
-        cg_->ScopeInsnRange(cg_->scope_).first = cg_->insns_.back();
-        cg_->debugInfo_.VariableDebugInfo().push_back(cg_->scope_);
+    insStartIndex_ = cg_->Insns().size();
+
+    if (cg_->IsDebug()) {
+        auto &scopes = cg_->debugInfo_.VariableDebugInfo();
+        if (std::find(scopes.begin(), scopes.end(), scope) == scopes.end()) {
+            scopes.push_back(scope);
+        }
+        cg_->ScopeInsnRange(scope).first = nullptr;
+        cg_->ScopeInsnRange(scope).second = nullptr;
     }
 }
 

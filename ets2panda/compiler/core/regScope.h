@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 #ifndef ES2PANDA_COMPILER_CORE_REG_SCOPE_H
 #define ES2PANDA_COMPILER_CORE_REG_SCOPE_H
 
-#include "util/es2pandaMacros.h"
 #include "varbinder/scope.h"
 #include "vReg.h"
 
@@ -45,6 +44,7 @@ protected:
     // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
     CodeGen *cg_;
     uint32_t regBase_;
+    std::size_t insStartIndex_ {0};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };
 
