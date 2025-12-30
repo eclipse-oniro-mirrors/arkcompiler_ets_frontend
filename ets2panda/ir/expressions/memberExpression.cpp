@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -150,10 +150,31 @@ checker::Type *MemberExpression::Check(checker::TSChecker *checker)
     return checker->GetAnalyzer()->Check(this);
 }
 
+bool MemberExpression::CheckRequiredCallError(checker::ETSChecker *checker,
+                                              const std::vector<checker::ResolveResult *> &resolveRes) const
+{
+    for (auto *res : resolveRes) {
+        auto *var = res->Variable();
+        if (var == nullptr || !checker->IsVariableGetterSetter(var)) {
+            continue;
+        }
+        auto *parentNode = var->Declaration()->Node()->Parent();
+        if (parentNode != nullptr && parentNode->IsClassDefinition()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 std::pair<checker::Type *, varbinder::LocalVariable *> MemberExpression::ResolveObjectMember(
     checker::ETSChecker *checker) const
 {
     auto resolveRes = checker->ResolveMemberReference(this, objType_);
+    if (objType_ != nullptr && objType_->HasObjectFlag(checker::ETSObjectFlags::REQUIRED) &&
+        CheckRequiredCallError(checker, resolveRes)) {
+        checker->LogError(diagnostic::REQUIRED_CALL, {}, Start());
+        return {checker->GlobalTypeError(), nullptr};
+    }
     switch (resolveRes.size()) {
         case 0U: {
             /* resolution failed, error already reported */
