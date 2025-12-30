@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -418,8 +418,7 @@ ir::ClassProperty *ETSChecker::CreateNullishPropertyFromAccessor(ir::MethodDefin
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *ident = id->Clone(ProgramAllocator(), nullptr);
     ES2PANDA_ASSERT(accessor->Function() != nullptr);
-    auto modifierFlag = accessor->Function()->IsGetter() && accessor->Overloads().empty() ? ir::ModifierFlags::READONLY
-                                                                                          : ir::ModifierFlags::NONE;
+    auto modifierFlag = ir::ModifierFlags::NONE;
 
     auto *prop =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
