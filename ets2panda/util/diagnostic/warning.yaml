@@ -132,10 +132,6 @@ warning:
   id: 17
   message: "{} '{}' might already have been assigned."
 
-- name: MULTI_CATCH_DEPRECATED
-  id: 33781
-  message: "The catch statement with type annotation is deprecated, use catch(e)."
-
 - name: NO_OHMURL
   id: 11
   message: "'ohmUrl' for module '{}' wasn't specified"

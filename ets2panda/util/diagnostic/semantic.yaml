@@ -935,6 +935,10 @@ semantic:
   id: 123
   message: "Spread argument for the rest parameter can be only one."
 
+- name: MULTI_CATCH_DEPRECATED
+  id: 33781
+  message: "The catch statement with type annotation is deprecated, use catch(e) instead."
+
 - name: MUST_BE_CLASS_INTERFACE_TYPE
   id: 124644
   message: "T in {}<T> must be a class or an interface type."
