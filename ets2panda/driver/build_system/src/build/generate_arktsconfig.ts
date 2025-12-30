@@ -29,7 +29,6 @@ import {
     ensurePathExists,
     getInteropFilePathByApi,
     getOhmurlByApi,
-    hasEntry,
     isSubPathOf,
     safeRealpath,
     toUnixPath
@@ -50,7 +49,6 @@ import {
     LANGUAGE_VERSION,
     SYSTEM_SDK_PATH_FROM_SDK,
     sdkConfigPrefix,
-    ENABLE_DECL_CACHE
 } from '../pre_define';
 
 export class ArkTSConfig {
@@ -63,7 +61,7 @@ export class ArkTSConfig {
                 baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
                 paths: {},
                 dependencies: {},
-                cacheDir: ENABLE_DECL_CACHE ? cacheDir : '',
+                cacheDir: path.resolve(cacheDir),
                 projectRootPath: projectRootPath,
             }
         };
@@ -133,9 +131,8 @@ export class ArkTSConfig {
 
 export class ArkTSConfigGenerator {
     private static instance: ArkTSConfigGenerator | undefined;
-    private stdlibStdPath: string;
-    private stdlibEscompatPath: string;
     private systemSdkPath: string;
+    private stdlibAbcPath: string;
 
     private buildConfig: BuildConfig;
 
@@ -148,10 +145,8 @@ export class ArkTSConfigGenerator {
         this.logger = Logger.getInstance();
         const realPandaSdkPath = safeRealpath(buildConfig.pandaSdkPath!!);
         const realBuildSdkPath = safeRealpath(buildConfig.buildSdkPath);
-        const realPandaStdlibPath = buildConfig.pandaStdlibPath ?? path.resolve(realPandaSdkPath, 'lib', 'stdlib');
-        this.stdlibStdPath = path.resolve(realPandaStdlibPath, 'std');
-        this.stdlibEscompatPath = path.resolve(realPandaStdlibPath, 'escompat');
         this.systemSdkPath = path.resolve(realBuildSdkPath, SYSTEM_SDK_PATH_FROM_SDK);
+        this.stdlibAbcPath = path.resolve(realPandaSdkPath, 'lib', 'etsstdlib.abc');
         this.buildConfig = buildConfig;
 
         this.systemPathSection = {}
@@ -233,8 +228,6 @@ export class ArkTSConfigGenerator {
             let kitsPath: string = path.resolve(this.systemSdkPath, 'kits');
             fs.existsSync(kitsPath) ? traverse(kitsPath) : this.logger.printWarn(`sdk path ${kitsPath} not exist.`);
         }
-        pathSection.std = [this.stdlibStdPath];
-        pathSection.escompat = [this.stdlibEscompatPath];
     }
 
     private addPathSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
@@ -259,6 +252,29 @@ export class ArkTSConfigGenerator {
     private getDependencyKey(file: string, moduleInfo: ModuleInfo): string {
         let unixFilePath: string = file.replace(/\\/g, '/');
         return moduleInfo.packageName + '/' + unixFilePath;
+    }
+
+    private addEtsStdLibToDependencySection(arktsconfig: ArkTSConfig): void {
+        const etsstdlibPackageNames: string[] = [
+            'std/core',
+            'std/math',
+            'std/math/consts',
+            'std/containers',
+            'std/interop/js',
+            'std/time',
+            'std/debug',
+            'std/debug/concurrency',
+            'std/testing',
+            'std/concurrency',
+            'std/annotations',
+            'std/interop',
+            'escompat'
+        ]
+
+        etsstdlibPackageNames.forEach((currentName: string) => {
+            const etsstdlibItem: DependencyItem = { language: 'ets', path: this.stdlibAbcPath, ohmUrl: currentName };
+            arktsconfig.addDependency({ name: etsstdlibItem.ohmUrl, item: etsstdlibItem });
+        });
     }
 
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
@@ -318,6 +334,7 @@ export class ArkTSConfigGenerator {
         if (!enableDeclgenEts2Ts) {
             this.addDependenciesSection(moduleInfo, arktsConfig);
         }
+        this.addEtsStdLibToDependencySection(arktsConfig);
 
         this.processAlias(arktsConfig);
 

@@ -66,7 +66,6 @@ namespace fs = std::experimental::filesystem;
 namespace ark::es2panda::util {
 
 constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 8;
-constexpr size_t ALLOWED_EXTENSIONS_SIZE = 8;
 
 static bool IsCompatibleExtension(const std::string &extension)
 {
@@ -80,15 +79,6 @@ static bool IsAbsolute(const std::string &path)
 #else
     return fs::path(path).is_absolute();
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
-}
-
-void RemoveEscapedNewlines(std::string &s)
-{
-    std::string pattern = "\\n";
-    size_t pos = 0;
-    while ((pos = s.find(pattern, pos)) != std::string::npos) {
-        s.erase(pos, pattern.size());
-    }
 }
 
 size_t HandleSpecialSymbols(const std::string &input, std::string &output, const size_t &i)
@@ -133,6 +123,15 @@ std::string DeleteEscapeSymbols(const std::string &input)
         }
     }
     return output;
+}
+
+void RemoveEscapedNewlines(std::string &s)
+{
+    std::string pattern = "\\n";
+    size_t pos = 0;
+    while ((pos = s.find(pattern, pos)) != std::string::npos) {
+        s.erase(pos, pattern.size());
+    }
 }
 
 ImportPathManager::ImportPathManager(const parser::ETSParser *parser)
@@ -189,7 +188,7 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
     ES2PANDA_ASSERT(it != arktsConfig_->Dependencies().cend());
     const auto &externalModuleImportData = it->second;
     std::replace(resSource.begin(), resSource.end(), '/', '.');
-    auto fileNameToCheck = arktsConfig_->CacheDir() + "/" + resSource + CACHE_SUFFIX.data();
+    auto fileNameToCheck = arktsConfig_->CacheDir() + std::string(pathDelimiter_) + resSource + CACHE_SUFFIX.data();
     // memory cache checking
     if (parser::DeclarationCache::GetFromCache(fileNameToCheck) != parser::DeclarationCache::ABSENT) {
         importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
@@ -329,8 +328,16 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
 #include <sys/file.h>
 static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
 {
-    std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
+    // NOTE: On Mac platform semName 'decl_sem_std.core.etscache' is invalid
+    // That's why semName consists of 'decl_sem_' prefix and a number
+    // Should be refactored
+    static std::map<std::string, int> semMap;
+    static int semCnt = 0;
+
+    if (semMap.find(absDecl) == semMap.end()) {
+        semMap.emplace(absDecl, semCnt++);
+    }
+    std::string semName = "/decl_sem_" + std::to_string(semMap.at(absDecl));
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     sem_wait(sem);
     if (sem == SEM_FAILED) {
@@ -398,7 +405,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromEtsstdlib(ImportMetadata
         auto ohmUrl = moduleName;
 
         // create a name for d.ets file - related on module name and cache dir
-        auto declFileName = arktsConfig_->CacheDir() + "/" + moduleName + CACHE_SUFFIX.data();
+        auto declFileName = arktsConfig_->CacheDir() + std::string(pathDelimiter_) + moduleName + CACHE_SUFFIX.data();
         // the module name`s separators are '.' now, but for resolvedSource we have '/'
         std::replace(moduleName.begin(), moduleName.end(), '.', '/');
         if (importData.resolvedSource != moduleName) {
@@ -864,41 +871,24 @@ ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFile
     return {""};
 }
 
-static std::string FormUnitName(std::string_view name)
-{
-    // this policy may change
-    return std::string(name);
-}
-
-std::string ImportPathManager::TruncateFileExtension(std::string path, bool &hasExtension)
-{
-    hasExtension = false;
-    // Supported extensions: keep this checking order, and source files should follow header files
-    std::array<std::string, ALLOWED_EXTENSIONS_SIZE> supportedExtensionsDesc = {".d.ets", ".ets", ".d.sts", ".sts",
-                                                                                ".d.ts",  ".ts",  ".js",    ".abc"};
-    for (const auto &ext : supportedExtensionsDesc) {
-        if (path.size() >= ext.size() && path.compare(path.size() - ext.size(), ext.size(), ext) == 0) {
-            path = path.substr(0, path.size() - ext.size());
-            hasExtension = true;
-            break;
-        }
-    }
-    return path;
-}
-
 // Transform /a/b/c.ets to a.b.c
 static std::string FormRelativeModuleName(std::string relPath)
 {
-    bool hasExtension = false;
-    relPath = ImportPathManager::TruncateFileExtension(relPath, hasExtension);
+    bool isMatched = false;
+    for (const auto &ext : ImportPathManager::supportedExtensionsInversed) {
+        if (relPath.size() >= ext.size() && relPath.compare(relPath.size() - ext.size(), ext.size(), ext) == 0) {
+            relPath = relPath.substr(0, relPath.size() - ext.size());
+            isMatched = true;
+            break;
+        }
+    }
     if (relPath.empty()) {
         return "";
     }
 
-    if (!hasExtension) {
+    if (!isMatched) {
         ASSERT_PRINT(false, "Invalid relative filename: " + relPath);
     }
-
     while (relPath[0] == util::PATH_DELIMITER) {
         relPath = relPath.substr(1);
     }
@@ -922,25 +912,30 @@ util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const uti
 static std::optional<std::string> TryFormModuleName(const std::string &filePath, std::string_view unitName,
                                                     std::string_view unitPath, std::string_view cachePath)
 {
-    if (cachePath.empty() && filePath.rfind(unitPath, 0) != 0) {
-        return std::nullopt;
+    // First check the cache path, since there might be a situation when
+    // unitPath is a part of cachePath
+    // cachePath === <unitPath>/build/cache/<some-dirs>/
+
+    // Resides in cache
+    if (!cachePath.empty() && filePath.find(cachePath) == 0U) {
+        return FormRelativeModuleName(filePath.substr(cachePath.size()));
     }
-    if (!cachePath.empty() && filePath.rfind(cachePath, 0) != 0 && filePath.rfind(unitPath, 0) != 0) {
-        return std::nullopt;
+
+    // Resides in unitPath
+    if (filePath.find(unitPath) == 0U) {
+        auto relativePath = FormRelativeModuleName(filePath.substr(unitPath.size()));
+        if (relativePath.empty() || unitName.empty()) {
+            return std::string(unitName) + relativePath;
+        }
+        return std::string(unitName) + "." + relativePath;
     }
-    std::string_view actualUnitPath = unitPath;
-    if (!cachePath.empty() && filePath.rfind(cachePath, 0) == 0) {
-        actualUnitPath = cachePath;
-    }
-    auto relativePath = FormRelativeModuleName(filePath.substr(actualUnitPath.size()));
-    if (relativePath.empty() || FormUnitName(unitName).empty()) {
-        return FormUnitName(unitName) + relativePath;
-    }
-    return FormUnitName(unitName) + "." + relativePath;
+
+    // Failed to resolved
+    return std::nullopt;
 }
 
-template <typename DynamicPaths>
-static std::string TryFormDynamicModuleName(const DynamicPaths &dynPaths, std::string const filePath)
+using DynamicPathsMap = const std::map<std::string, ArkTsConfig::ExternalModuleData, CompareByLength>;
+static std::string TryFormDynamicModuleName(const DynamicPathsMap &dynPaths, std::string const filePath)
 {
     for (auto const &[unitName, did] : dynPaths) {
         if (did.Path().empty()) {
