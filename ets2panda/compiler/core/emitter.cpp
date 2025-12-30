@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -154,8 +154,9 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
         }
     }
 
+    constexpr std::uint32_t invalidLineNo = static_cast<std::uint32_t>(-1);
     auto nodeRange = astNode->Range();
-    pandaIns->insDebug.SetLineNumber(nodeRange.start.line + 1U);
+    pandaIns->insDebug.SetLineNumber(nodeRange.start.line == 0 ? invalidLineNo : nodeRange.start.line + 1U);
 }
 
 void FunctionEmitter::GenFunctionInstructions(pandasm::Function *func)
