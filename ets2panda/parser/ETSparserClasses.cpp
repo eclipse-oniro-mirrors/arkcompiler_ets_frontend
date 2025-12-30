@@ -978,8 +978,8 @@ ir::ModifierFlags ETSParser::ParseInterfaceMethodModifiers()
         }
     }
     Lexer()->NextToken();
-    return isDefaultInAmbient ? ir::ModifierFlags::DEFAULT
-                              : (isPrivate ? ir::ModifierFlags::PRIVATE : ir::ModifierFlags::PUBLIC);
+    const auto accessFlag = isPrivate ? ir::ModifierFlags::PRIVATE : ir::ModifierFlags::PUBLIC;
+    return isDefaultInAmbient ? ir::ModifierFlags::DEFAULT | accessFlag : accessFlag;
 }
 
 ir::TypeNode *ETSParser::ParseInterfaceTypeAnnotation(ir::Identifier *name)
@@ -1196,7 +1196,7 @@ ir::MethodDefinition *ETSParser::ParseInterfaceMethod(ir::ModifierFlags flags, i
         Allocator(), ir::ScriptFunction::ScriptFunctionData {body, std::move(signature), functionContext.Flags(), flags,
                                                              GetContext().GetLanguage()});
     ES2PANDA_ASSERT(func != nullptr);
-    if ((flags & ir::ModifierFlags::STATIC) == 0 && body == nullptr) {
+    if ((flags & ir::ModifierFlags::STATIC) == 0 && (flags & ir::ModifierFlags::DEFAULT) == 0 && body == nullptr) {
         func->AddModifier(ir::ModifierFlags::ABSTRACT);
     }
     func->SetRange({name->Start(), GetEndLoc(body, func, Lexer())});
