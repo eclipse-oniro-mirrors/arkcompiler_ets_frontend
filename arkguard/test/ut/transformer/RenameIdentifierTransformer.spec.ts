@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -92,6 +92,13 @@ describe('Teste Cases for <RenameFileNameTransformer>.', function () {
       const fileContent2 = `
       import {A as B} from './file1.ts';
       export {C as D} from './file1.ts';
+      `;
+
+      const fileContentAvailable = `
+      @Available({minApiVersion: '23'})
+      export let numA = 111;
+      @Available({minApiVersion: '23'})
+      export let strA = "111";
       `;
       let transformer: ts.TransformerFactory<ts.Node>;
 
@@ -709,6 +716,40 @@ describe('Teste Cases for <RenameFileNameTransformer>.', function () {
         const expectContent = `export @interface __$$ETS_ANNOTATION$$__Anno1 {
             prop1: number = 1;
         }`;
+        assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
+        PropCollections.clearPropsCollections();
+      })
+
+      it('should reserve available when enable obfuscation', function () {
+        let options: IOptions = {
+          'mNameObfuscation': {
+            'mEnable': true,
+            'mRenameProperties': false,
+            'mReservedProperties': ['Available','minApiVersion'],
+            'mTopLevel': true,
+            'mKeepParameterNames': false
+          },
+          'mAllowEtsAnnotations': true,
+          'mExportObfuscation': true,
+        };
+        assert.strictEqual(options !== undefined, true);
+        const renameIdentifierFactory = secharmony.transformerPlugin.createTransformerFactory(options);
+        const textWriter = ts.createTextWriter('\n');
+        let arkobfuscator = new ArkObfuscatorForTest();
+        arkobfuscator.init(options);
+        const sourceFile: ts.SourceFile = ts.createSourceFile('demo.ts', fileContentAvailable, ts.ScriptTarget.ES2015, true, undefined, {
+          'etsAnnotationsEnable': true
+        }, true);
+        let transformedResult: ts.TransformationResult<ts.Node> = ts.transform(sourceFile, [renameIdentifierFactory], {});
+        let ast: ts.SourceFile = transformedResult.transformed[0] as ts.SourceFile;
+        arkobfuscator.createObfsPrinter(ast.isDeclarationFile).writeFile(ast, textWriter, undefined);
+        const actualContent = textWriter.getText();
+        const expectContent = `
+        @Available({minApiVersion: '23'})
+        export let a = 111;
+        @Available({minApiVersion: '23'})
+        export let b = "111";
+        `;
         assert.strictEqual(compareStringsIgnoreNewlines(actualContent, expectContent), true);
         PropCollections.clearPropsCollections();
       })

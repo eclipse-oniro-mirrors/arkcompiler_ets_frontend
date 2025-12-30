@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,10 @@ import {
   isPrivateIdentifier,
   isParameter,
   isPropertyAccessExpression,
-  isAnnotationDeclaration
+  isAnnotationDeclaration,
+  isVariableStatement,
+  getIllegalDecorators,
+  getAnnotationsFromIllegalDecorators
 } from 'typescript';
 
 import type {
@@ -628,6 +631,15 @@ namespace secharmony {
           handlePositionInfo(node);
         }
         endSingleFileForMoreTimeEvent(EventList.HANDLE_POSITION_INFO);
+
+        if (isVariableStatement(node)) {
+          const reservedDecorators = factory.createNodeArray([
+            ...(getIllegalDecorators(node) ?? []),
+            ...(getAnnotationsFromIllegalDecorators(node) ?? []),
+          ]);
+          let updated = visitEachChild(node, renameIdentifiers, context);
+          return factory.updateIllegalDecorators(updated, reservedDecorators);
+        }
 
         if (!isIdentifier(node) || !node.parent) {
           return visitEachChild(node, renameIdentifiers, context);
