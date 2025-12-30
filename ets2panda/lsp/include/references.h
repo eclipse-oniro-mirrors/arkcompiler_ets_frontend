@@ -26,6 +26,7 @@ namespace ark::es2panda::lsp {
 using DeclInfoType = std::tuple<std::string, std::string>;
 
 bool IsValidReference(ir::AstNode *astNode);
+ReferenceInfo ResolveInfo(const std::tuple<std::string, std::string> &info);
 DeclInfoType GetDeclInfoImpl(ir::AstNode *astNode);
 template <typename T, typename Compare>
 void RemoveDuplicates(std::vector<T> &vec, Compare comp)
