@@ -22,9 +22,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 897,
-                    "end": 935,
-                    "replacementText": "typeNode.createTextNode(uiContext)",
+                    "start": 926,
+                    "end": 934,
+                    "replacementText": "",
+                    "line": 22,
+                    "column": 25,
+                    "endLine": 22,
+                    "endColumn": 35
+                },
+                {
+                    "start": 906,
+                    "end": 916,
+                    "replacementText": "createTextNode",
                     "line": 22,
                     "column": 25,
                     "endLine": 22,
@@ -43,9 +52,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1017,
-                    "end": 1070,
-                    "replacementText": "typeNode.createXComponentNodeWithOptions(uiContext, options)",
+                    "start": 1048,
+                    "end": 1062,
+                    "replacementText": "",
+                    "line": 25,
+                    "column": 31,
+                    "endLine": 25,
+                    "endColumn": 41
+                },
+                {
+                    "start": 1026,
+                    "end": 1036,
+                    "replacementText": "createXComponentNodeWithOptions",
                     "line": 25,
                     "column": 31,
                     "endLine": 25,
@@ -64,9 +82,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1124,
-                    "end": 1162,
-                    "replacementText": "typeNode.createGridNode(uiContext)",
+                    "start": 1153,
+                    "end": 1161,
+                    "replacementText": "",
+                    "line": 27,
+                    "column": 27,
+                    "endLine": 27,
+                    "endColumn": 37
+                },
+                {
+                    "start": 1133,
+                    "end": 1143,
+                    "replacementText": "createGridNode",
                     "line": 27,
                     "column": 27,
                     "endLine": 27,
@@ -85,9 +112,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1169,
-                    "end": 1209,
-                    "replacementText": "typeNode.getTextAttribute(uiContext)",
+                    "start": 1200,
+                    "end": 1208,
+                    "replacementText": "",
+                    "line": 29,
+                    "column": 14,
+                    "endLine": 29,
+                    "endColumn": 26
+                },
+                {
+                    "start": 1178,
+                    "end": 1190,
+                    "replacementText": "getTextAttribute",
                     "line": 29,
                     "column": 14,
                     "endLine": 29,
@@ -137,9 +173,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1542,
-                    "end": 1601,
-                    "replacementText": "appManager.onApplicationStateChange(applicationStateObserver)",
+                    "start": 1556,
+                    "end": 1576,
+                    "replacementText": "",
+                    "line": 41,
+                    "column": 26,
+                    "endLine": 41,
+                    "endColumn": 28
+                },
+                {
+                    "start": 1553,
+                    "end": 1555,
+                    "replacementText": "onApplicationStateChange",
                     "line": 41,
                     "column": 26,
                     "endLine": 41,
@@ -158,9 +203,18 @@
             "problem": "SdkApiStaticOverload",
             "autofix": [
                 {
-                    "start": 1741,
-                    "end": 1816,
-                    "replacementText": "appManager.onApplicationStateChange(applicationStateObserver, bundleNameList)",
+                    "start": 1755,
+                    "end": 1775,
+                    "replacementText": "",
+                    "line": 45,
+                    "column": 28,
+                    "endLine": 45,
+                    "endColumn": 30
+                },
+                {
+                    "start": 1752,
+                    "end": 1754,
+                    "replacementText": "onApplicationStateChange",
                     "line": 45,
                     "column": 28,
                     "endLine": 45,

@@ -5443,23 +5443,32 @@ export class Autofixer {
       }
     });
 
-    const newArgs =
-      removeIndex !== undefined ?
-        callExpr.arguments.filter((_, i) => {
-          return i !== removeIndex;
-        }) :
-        callExpr.arguments;
-    const newPropAccess = ts.factory.createPropertyAccessExpression(
-      propAccess.expression,
-      ts.factory.createIdentifier(replacementName)
-    );
+    void this;
+    const args = callExpr.arguments;
+    if (removeIndex === undefined) {
+      return undefined;
+    }
+    if (!args[removeIndex]) {
+      return undefined;
+    }
+    const targetArg = args[removeIndex];
 
-    const newCall = ts.factory.createCallExpression(newPropAccess, callExpr.typeArguments, newArgs);
-    const replacementText = this.nonCommentPrinter.printNode(
-      ts.EmitHint.Unspecified,
-      newCall,
-      callExpr.getSourceFile()
-    );
-    return [{ start: callExpr.getStart(), end: callExpr.getEnd(), replacementText: replacementText }];
+    let deletionStart = targetArg.getStart();
+    let deletionEnd = targetArg.getEnd();
+
+    const isLastArgument = removeIndex === args.length - 1;
+    const hasMultipleArguments = args.length > 1;
+
+    if (hasMultipleArguments) {
+      if (isLastArgument) {
+        deletionStart = args[removeIndex - 1].getEnd();
+      } else {
+        deletionEnd = args[removeIndex + 1].getStart();
+      }
+    }
+    return [
+      { start: deletionStart, end: deletionEnd, replacementText: '' },
+      { start: propAccess.name.getStart(), end: propAccess.name.getEnd(), replacementText: replacementName }
+    ];
   }
 }
