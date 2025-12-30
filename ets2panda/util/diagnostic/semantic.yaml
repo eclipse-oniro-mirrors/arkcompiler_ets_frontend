@@ -1185,6 +1185,7 @@ semantic:
 - name: PROPERTY_MAYBE_MISSING_INIT
   id: 280
   message: "Property '{}' might not have been initialized."
+  code_fix_ids: [AddMissingDeclareProperty]
 
 - name: PROPERTY_NONEXISTENT
   id: 87
