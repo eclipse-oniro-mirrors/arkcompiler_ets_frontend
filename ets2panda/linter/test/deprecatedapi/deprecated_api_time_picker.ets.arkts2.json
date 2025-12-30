@@ -35,26 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 21,
-            "column": 5,
-            "endLine": 21,
-            "endColumn": 21,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"TimePickerDialog\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 21,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"TimePickerDialog\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 26,
             "column": 5,
             "endLine": 26,

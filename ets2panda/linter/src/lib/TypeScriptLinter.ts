@@ -10008,6 +10008,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    if (identifier.parent && ts.isImportSpecifier(identifier.parent)) {
+      return;
+    }
+
     if (!this.isInterfaceImportNeeded(identifier)) {
       return;
     }

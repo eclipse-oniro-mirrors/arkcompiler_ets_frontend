@@ -65,16 +65,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 28,
-            "column": 11,
-            "endLine": 28,
-            "endColumn": 27,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"TextPickerDialog\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
             "line": 31,
             "column": 7,
             "endLine": 31,

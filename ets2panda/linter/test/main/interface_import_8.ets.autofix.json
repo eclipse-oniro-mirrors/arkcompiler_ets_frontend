@@ -15,53 +15,45 @@
     ],
     "result": [
         {
-            "line": 16,
+            "line": 18,
             "column": 2,
-            "endLine": 16,
+            "endLine": 18,
             "endColumn": 7,
             "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
+                    "line": 19,
+                    "column": 2,
+                    "endLine": 19,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         },
         {
-            "line": 17,
+            "line": 19,
             "column": 2,
-            "endLine": 17,
+            "endLine": 19,
             "endColumn": 11,
             "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n} from '@kit.ArkUI';",
+                    "line": 19,
+                    "column": 2,
+                    "endLine": 19,
+                    "endColumn": 11
+                }
+            ],
             "suggest": "",
             "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 22,
-            "column": 5,
-            "endLine": 22,
-            "endColumn": 11,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Column\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 7,
-            "endLine": 23,
-            "endColumn": 13,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"Button\" should be imported before it is used (arkui-modular-interface)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 32,
-            "column": 7,
-            "endLine": 32,
-            "endColumn": 17,
-            "problem": "UIInterfaceImport",
-            "suggest": "",
-            "rule": "The ArkUI interface \"DatePicker\" should be imported before it is used (arkui-modular-interface)",
             "severity": "ERROR"
         }
     ]
