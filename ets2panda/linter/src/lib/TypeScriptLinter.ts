@@ -4669,6 +4669,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     derivedMethod: ts.MethodDeclaration,
     baseMethod: ts.MethodDeclaration | ts.MethodSignature
   ): boolean {
+    if (baseMethod.type?.kind === ts.SyntaxKind.AnyKeyword) {
+      return true;
+    }
+
     const baseMethodType = this.getActualReturnType(baseMethod);
     const derivedMethodType = this.getActualReturnType(derivedMethod);
 
