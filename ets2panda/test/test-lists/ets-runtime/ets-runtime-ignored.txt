@@ -73,9 +73,6 @@ GenericBridges_01.ets
 GenericBridges_02.ets
 override_for_partial_01.ets
 
-# Overloads involving primitives
-Override-4.ets
-
 # Arrays of primitives used interchangeably with arrays of reference (in generics and forOf)
 GenericArray_1.ets
 array-object.ets
@@ -84,11 +81,6 @@ async_lambda_return_type_test.ets
 #HEAD FILE NO NEED TO RUN
 import_self_head_tests/B/test.d.ets
 
-#Issue 25550
-enum-initialize-with-enum3.ets
-
-# 27159 Recursive type alias with generics
-RecursiveTypeAlias10.ets
 #24986
 RecordKeyTypeCheck.ets
 nullishTypeCodesamples.ets
@@ -115,34 +107,26 @@ first_match/namespace.ets
 first_match/namespace2.ets
 first_match/namespace3.ets
 
-# Issue #28214
-large_number_parse.ets
-
 # Issue #28914
 non_null_number_as_index.ets
 
 #31069
 type_error_test.ets
 
-#31442
-import_namespaces.ets
-
-# 74119 fail after tests-u-runner-2 update
-fields_with_late_initialization/class_late_initialization_with_unionType.ets.ets
-finallyExecutedAbruptly.ets
-generic_union.ets
-register_overflow.ets
-spill_fill_virtual_range.ets
-union_call.ets
-
 #31475
 as_string.ets
 
-#32346
-namespace_tests/namespace_import_type_test/namespace_import.ets
+#31895
+objliteral_method_returntype_infer.ets
+#31894
+set_keys_next.ets
+array_enum_access.ets
 
 #31475
 readonly_array/readonly_array_arg.ets
 readonly_array/readonly_array_field.ets
 readonly_array/readonly_array_var.ets
 finallyClauseThrow.ets
+
+#31690 to review after merge
+namespace_tests/namespace_import_type_test/namespace_import.ets
