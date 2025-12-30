@@ -22,7 +22,7 @@ describe('getOrganizeImportsTest', () => {
     textChanges: [
       {
         span: { start: 608, length: 306 },
-        newText: `import { Entry, Component } from '@ohos.arkui.component';\nimport { State } from '@ohos.arkui.stateManagement';\nimport { B, C } from './getOrganizeImports2';`
+        newText: `import { Entry, Component } from '@ohos.arkui.component';\nimport { State } from '@ohos.arkui.stateManagement';\n\nimport { B, C } from './getOrganizeImports2';\n\n`
       }
     ]
   };

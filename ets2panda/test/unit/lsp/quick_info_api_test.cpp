@@ -50,6 +50,145 @@ void AssertQuickInfo(const QuickInfo &expectedQuickInfo, const QuickInfo &actual
     ASSERT_EQ(expectedQuickInfo.GetTags(), actualQuickInfo.GetTags()) << "Tags Assertion Failed";
 }
 
+const std::vector<std::string> &GetFileContentsOfInterface()
+{
+    static const std::vector<std::string> CONTENTS = {
+        R"('use static'
+        interface InterfaceTest {
+            a: number;
+        })"};
+    return CONTENTS;
+}
+
+QuickInfo ExpectResultInterface()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetFileContentsOfInterface.ets";
+    const std::string kind = "get";
+    size_t const start = 59;
+    size_t const length = 1;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "public abstract";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("InterfaceTest", "interface");
+    expected.emplace_back(".", "punctuation");
+    expected.emplace_back("a", "property");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("number", "returnType");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+TEST_F(LspQuickInfoTests, GetFileContentsOfInterface)
+{
+    std::vector<std::string> fileNames = {"GetFileContentsOfInterface.ets"};
+
+    auto filePaths = CreateTempFile(fileNames, GetFileContentsOfInterface());
+    ASSERT_TRUE(filePaths.size() == GetFileContentsOfInterface().size());
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset = 59;
+    auto quickInfo = lspApi->getQuickInfoAtPosition("GetFileContentsOfInterface.ets", ctx, offset);
+    auto expectedQuickInfo = ExpectResultInterface();
+    AssertQuickInfo(expectedQuickInfo, quickInfo);
+
+    initializer.DestroyContext(ctx);
+}
+
+const std::vector<std::string> &GetFileContentsOfKeywordsClass()
+{
+    static const std::vector<std::string> CONTENTS = {
+        R"('use static'
+        class A {}
+        )"};
+    return CONTENTS;
+}
+
+QuickInfo ExpectResultKeywordsClass()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetFileContentsOfKeywordsClass.ets";
+    const std::string kind = "class";
+    size_t const start = 21;
+    size_t const length = 19;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "static public";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("class", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("A", "className");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+TEST_F(LspQuickInfoTests, GetFileContentsOfKeywordsClass)
+{
+    std::vector<std::string> fileNames = {"GetFileContentsOfKeywordsClass.ets"};
+
+    auto filePaths = CreateTempFile(fileNames, GetFileContentsOfKeywordsClass());
+    ASSERT_TRUE(filePaths.size() == GetFileContentsOfKeywordsClass().size());
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset = 21;
+    auto quickInfo = lspApi->getQuickInfoAtPosition("GetFileContentsOfKeywordsClass.ets", ctx, offset);
+    auto expectedQuickInfo = ExpectResultKeywordsClass();
+    AssertQuickInfo(expectedQuickInfo, quickInfo);
+
+    initializer.DestroyContext(ctx);
+}
+
+const std::vector<std::string> &GetFileContentsOfKeywordsEnum()
+{
+    static const std::vector<std::string> CONTENTS = {
+        R"('use static'
+        enum A {}
+        )"};
+    return CONTENTS;
+}
+
+QuickInfo ExpectResultKeywordsEnum()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetFileContentsOfKeywordsEnum.ets";
+    const std::string kind = "enum";
+    size_t const start = 21;
+    size_t const length = 9;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("enum", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("A", "enumName");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+TEST_F(LspQuickInfoTests, GetFileContentsOfKeywordsEnum)
+{
+    std::vector<std::string> fileNames = {"GetFileContentsOfKeywordsEnum.ets"};
+
+    auto filePaths = CreateTempFile(fileNames, GetFileContentsOfKeywordsEnum());
+    ASSERT_TRUE(filePaths.size() == GetFileContentsOfKeywordsEnum().size());
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset = 21;
+    auto quickInfo = lspApi->getQuickInfoAtPosition("GetFileContentsOfKeywordsEnum.ets", ctx, offset);
+    auto expectedQuickInfo = ExpectResultKeywordsEnum();
+    AssertQuickInfo(expectedQuickInfo, quickInfo);
+
+    initializer.DestroyContext(ctx);
+}
+
 const std::vector<std::string> &GetFileContentsOfEnum()
 {
     static const std::vector<std::string> CONTENTS = {
@@ -403,6 +542,82 @@ TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionImport)
     auto quickInfo2 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionImport.ets", ctx, offset2);
     auto expectedQuickInfo2 = ExpectResultImport2();
     AssertQuickInfo(expectedQuickInfo2, quickInfo2);
+
+    initializer.DestroyContext(ctx);
+}
+
+const std::vector<std::string> &GetFileContentsOfImport1()
+{
+    static const std::vector<std::string> CONTENTS = {
+        R"('use static'
+        export @interface B {})",
+        R"('use static'
+        import { B } from "./GetQuickInfoAtPositionImportText1")"};
+    return CONTENTS;
+}
+
+QuickInfo ExpectResultImport3()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetQuickInfoAtPositionImport1.ets";
+    const std::string kind = "annotation";
+    size_t const start = 30;
+    size_t const length = 1;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "static public abstract export annotation_declaration";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("@", "punctuation");
+    expected.emplace_back("interface", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("GetQuickInfoAtPositionImportText1.B", "className");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("{", "punctuation");
+    expected.emplace_back("}", "punctuation");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+QuickInfo ExpectResultImport4()
+{
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    const std::string expectedFileName = "GetQuickInfoAtPositionImport1.ets";
+    const std::string kind = "import";
+    size_t const start = 39;
+    size_t const length = 37;
+    TextSpan span(start, length);
+    const std::string kindModifiers = "";
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("module", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("/tmp/GetQuickInfoAtPositionImportText1.ets", "className");
+    return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionImport1)
+{
+    std::vector<std::string> fileNames = {"GetQuickInfoAtPositionImportText1.ets", "GetQuickInfoAtPositionImport1.ets"};
+
+    auto filePaths = CreateTempFile(fileNames, GetFileContentsOfImport1());
+    ASSERT_TRUE(filePaths.size() == GetFileContentsOfImport1().size());
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t const offset1 = 30;
+    auto quickInfo1 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionImport1.ets", ctx, offset1);
+
+    QuickInfo expectedQuickInfo3 = ExpectResultImport3();
+
+    AssertQuickInfo(expectedQuickInfo3, quickInfo1);
+
+    size_t const offset2 = 39;
+    auto quickInfo2 = lspApi->getQuickInfoAtPosition("GetQuickInfoAtPositionImport1.ets", ctx, offset2);
+
+    QuickInfo expectedQuickInfo4 = ExpectResultImport4();
+
+    AssertQuickInfo(expectedQuickInfo4, quickInfo2);
 
     initializer.DestroyContext(ctx);
 }
