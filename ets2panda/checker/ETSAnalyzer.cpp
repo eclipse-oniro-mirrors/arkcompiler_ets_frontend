@@ -14,7 +14,6 @@
  */
 
 #include "ETSAnalyzer.h"
-
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "checker/types/ets/etsObjectTypeConstants.h"
@@ -28,6 +27,10 @@
 #include "compiler/lowering/util.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "ir/ets/etsDestructuring.h"
+#include "generated/diagnostic.h"
+#include "ir/ets/etsPrimitiveType.h"
+#include "ir/ts/tsAsExpression.h"
+#include "libarkbase/utils/logger.h"
 
 namespace ark::es2panda::checker {
 
@@ -1652,8 +1655,8 @@ static bool FitsNumericType(Type *ctype, const lexer::Number &number)
     };
 
     for (const auto &f : fitCases) {
-        if (obj->HasObjectFlag(f.flag) && ((f.isInteger && number.IsInteger()) || (!f.isInteger && number.IsReal())) &&
-            f.canFit()) {
+        if (obj->HasObjectFlag(f.flag) && f.canFit() &&
+            ((f.isInteger && number.IsInteger()) || (!f.isInteger && number.IsReal()))) {
             return true;
         }
     }
@@ -4708,6 +4711,50 @@ checker::Type *ETSAnalyzer::Check(ir::TSArrayType *node) const
     return node->TsType();
 }
 
+static bool ValueFitsTargetType(ir::TSAsExpression *expr)
+{
+    if (!expr->Expr()->IsNumberLiteral() || !expr->TypeAnnotation()->IsETSPrimitiveType()) {
+        return true;
+    }
+
+    auto primitiveType = expr->TypeAnnotation()->AsETSPrimitiveType()->GetPrimitiveType();
+    lexer::Number number = expr->Expr()->AsNumberLiteral()->Number();
+    if (!std::isfinite(number.GetValue<double>())) {
+        return true;
+    }
+
+    if (number.IsReal() && primitiveType != ir::PrimitiveType::FLOAT && primitiveType != ir::PrimitiveType::DOUBLE) {
+        auto val = number.GetDouble();
+        val = val < 0 ? std::floor(val) : std::ceil(val);
+        number.SetValue(int64_t(val));
+    }
+
+    switch (primitiveType) {
+        case ir::PrimitiveType::BYTE:
+            return number.CanGetValue<int8_t>();
+            break;
+        case ir::PrimitiveType::SHORT:
+            return number.CanGetValue<int16_t>();
+            break;
+        case ir::PrimitiveType::INT:
+            return number.CanGetValue<int32_t>();
+            break;
+        case ir::PrimitiveType::LONG:
+            return number.CanGetValue<int64_t>();
+            break;
+        case ir::PrimitiveType::FLOAT:
+            return number.CanGetValue<float>();
+            break;
+        case ir::PrimitiveType::DOUBLE:
+            return number.CanGetValue<double>();
+            break;
+        default:
+            break;
+    }
+
+    return true;
+}
+
 static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Type *sourceType,
                                            checker::Type *targetType, ETSChecker *checker)
 {
@@ -4737,6 +4784,13 @@ static bool CheckTSAsExpressionInvalidCast(ir::TSAsExpression *expr, checker::Ty
         }
     }
 
+    if (!ValueFitsTargetType(expr)) {
+        expr->SetTsType(checker->TypeError(
+            expr, diagnostic::TOO_LARGE_TO_CAST,
+            {expr->Expr()->AsNumberLiteral()->ToString(), expr->TypeAnnotation()->AsETSPrimitiveType()->DumpEtsSrc()},
+            expr->Expr()->Start()));
+        return false;
+    }
     return true;
 }
 
