@@ -73,6 +73,11 @@ bool IsNodeInRange(const TextRange &range, ir::AstNode *node)
     return flag;
 }
 
+bool IsConstantExtractionInClassAction(const std::string &actionName)
+{
+    return actionName == EXTRACT_CONSTANT_ACTION_CLASS.name || actionName == EXTRACT_CONSTANT_ACTION_CLASS.kind;
+}
+
 bool IsNodeInExtractScope(ir::AstNode *node)
 {
     bool flag = false;
@@ -179,6 +184,14 @@ ir::ClassDefinition *FindEnclosingClassDefinition(ir::AstNode *node)
         }
     }
     return nullptr;
+}
+
+std::string GetNodeText(public_lib::Context *ctx, const ir::AstNode *node)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr || node == nullptr) {
+        return "";
+    }
+    return GetSourceTextOfNodeFromSourceFile(ctx->sourceFile->source, const_cast<ir::AstNode *>(node));
 }
 
 bool IsClassMethodContext(ir::AstNode *node)
@@ -312,6 +325,141 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
     return resList;
 }
 
+ir::ClassDefinition *FindClassDefinitionFromNode(ir::AstNode *node)
+{
+    while (node != nullptr) {
+        if (node->IsClassDeclaration()) {
+            return node->AsClassDeclaration()->Definition();
+        }
+        node = node->Parent();
+    }
+    return nullptr;
+}
+
+static bool ClassHasProperty(ir::ClassDefinition *classDef, const std::string &name)
+{
+    if (classDef == nullptr) {
+        return false;
+    }
+    for (auto *member : classDef->Body()) {
+        if (!member->IsClassProperty()) {
+            continue;
+        }
+        auto *prop = member->AsClassProperty();
+        if (prop->Key()->IsIdentifier() && prop->Key()->AsIdentifier()->Name().Mutf8() == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
+{
+    if (scopeNode == nullptr) {
+        return false;
+    }
+    bool found = false;
+    scopeNode->Iterate([&](ir::AstNode *child) {
+        if (!child->IsVariableDeclaration()) {
+            return;
+        }
+        for (auto *decl : child->AsVariableDeclaration()->Declarators()) {
+            if (decl->Id() && decl->Id()->IsIdentifier() && decl->Id()->AsIdentifier()->Name().Mutf8() == name) {
+                found = true;
+            }
+        }
+    });
+    return found;
+}
+
+static bool ProgramHasGlobalVar(public_lib::Context *ctx, const std::string &name)
+{
+    if (ctx == nullptr || ctx->parserProgram == nullptr) {
+        return false;
+    }
+    auto *ast = ctx->parserProgram->Ast();
+    for (auto *stmt : ast->Statements()) {
+        if (!stmt->IsClassDeclaration()) {
+            continue;
+        }
+        auto *clsDef = stmt->AsClassDeclaration()->Definition();
+        if (clsDef->IsGlobal() && ClassHasProperty(clsDef, name)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static std::string GenerateUniqueClassPropertyName(const RefactorContext &context)
+{
+    std::string baseName = "newProperty";
+    int counter = 0;
+    std::string tryName = baseName;
+    auto *node = GetTouchingToken(context.context, context.span.pos, false);
+    auto *classDef = FindClassDefinitionFromNode(node);
+    if (classDef == nullptr) {
+        return baseName;
+    }
+    while (ClassHasProperty(classDef, tryName)) {
+        ++counter;
+        tryName = baseName + std::to_string(counter);
+    }
+    return tryName;
+}
+
+static std::string GenerateUniqueGlobalVarName(const RefactorContext &context)
+{
+    std::string baseName = "newLocal";
+    int counter = 0;
+    std::string tryName = baseName;
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    while (ProgramHasGlobalVar(ctx, tryName)) {
+        ++counter;
+        tryName = baseName + std::to_string(counter);
+    }
+    return tryName;
+}
+
+static std::string GenerateUniqueEncloseVarName(const RefactorContext &context)
+{
+    std::string baseName = "newLocal";
+    int counter = 0;
+    std::string tryName = baseName;
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    auto *node = GetTouchingToken(context.context, context.span.pos, false);
+    ir::AstNode *scopeNode = nullptr;
+    while (node != nullptr) {
+        if (node->IsBlockStatement() || node->IsFunctionDeclaration() || node->IsFunctionExpression() ||
+            node->IsArrowFunctionExpression() || node->IsProgram()) {
+            scopeNode = node;
+            break;
+        }
+        node = node->Parent();
+    }
+    if (scopeNode == nullptr) {
+        scopeNode = ctx->parserProgram->Ast();
+    }
+    while (ScopeHasVar(scopeNode, tryName)) {
+        ++counter;
+        tryName = baseName + std::to_string(counter);
+    }
+    return tryName;
+}
+
+std::string GenerateUniqueExtractedVarName(const RefactorContext &context, const std::string &actionName)
+{
+    if (IsConstantExtractionInClassAction(actionName)) {
+        return GenerateUniqueClassPropertyName(context);
+    }
+    if (actionName == EXTRACT_CONSTANT_ACTION_GLOBAL.name || actionName == EXTRACT_VARIABLE_ACTION_GLOBAL.name) {
+        return GenerateUniqueGlobalVarName(context);
+    }
+    if (actionName == EXTRACT_VARIABLE_ACTION_ENCLOSE.name || actionName == EXTRACT_CONSTANT_ACTION_ENCLOSE.name) {
+        return GenerateUniqueEncloseVarName(context);
+    }
+    return "";
+}
+
 std::string CreateVariableRefactorText(const RefactorContext &context, const std::string &actionName)
 {
     std::string resText;
@@ -331,7 +479,8 @@ std::string CreateVariableRefactorText(const RefactorContext &context, const std
     } else if (actionName == std::string(EXTRACT_VARIABLE_ACTION_ENCLOSE.name)) {
         resText += "\nlet ";
     }
-    resText += "extractedVar = ";
+    std::string extractedName = GenerateUniqueExtractedVarName(context, actionName);
+    resText = resText + extractedName + " = ";
     for (ir::AstNode *node : nodeList) {
         if (node->IsStatement() && !node->IsVariableDeclaration() && !node->IsExpression()) {
             continue;
@@ -471,13 +620,126 @@ std::vector<ParamTexts> FindExactFunctionParams(const RefactorContext &context,
     return params;
 }
 
-std::string GetFunctionNameAndType(std::string refactorName)
+bool SourceContainsFunctionDefinition(public_lib::Context *ctx, const std::string &name)
+{
+    if (ctx == nullptr || ctx->sourceFile == nullptr) {
+        return false;
+    }
+
+    const auto &src = ctx->sourceFile->source;
+    if (src.empty()) {
+        return false;
+    }
+
+    const std::string needle = "function " + name;
+    size_t pos = src.find(needle);
+    while (pos != std::string::npos) {
+        size_t next = pos + needle.size();
+        while (next < src.size() && (std::isspace(static_cast<unsigned char>(src[next])) != 0)) {
+            ++next;
+        }
+        if (next < src.size() && (src[next] == '(' || src[next] == '<')) {
+            return true;
+        }
+        pos = src.find(needle, pos + 1);
+    }
+
+    return false;
+}
+
+bool ProgramHasFunction(public_lib::Context *ctx, const std::string &name)
+{
+    if (ctx == nullptr || ctx->parserProgram == nullptr) {
+        return false;
+    }
+    bool found = false;
+    ctx->parserProgram->Ast()->FindChild([&](ir::AstNode *node) {
+        if (found || node == nullptr || !node->IsFunctionDeclaration()) {
+            return false;
+        }
+        auto *decl = node->AsFunctionDeclaration();
+        auto *func = decl->Function();
+        if (func != nullptr && func->Id() != nullptr && func->Id()->Name().Mutf8() == name) {
+            found = true;
+            return true;
+        }
+        auto text = GetNodeText(ctx, decl);
+        std::string prefix = "function " + name;
+        auto it = std::search(text.begin(), text.end(), prefix.begin(), prefix.end());
+        if (it != text.end()) {
+            found = true;
+            return true;
+        }
+        return false;
+    });
+    if (found) {
+        return true;
+    }
+
+    return SourceContainsFunctionDefinition(ctx, name);
+}
+
+static bool ClassHasMethod(ir::ClassDefinition *classDef, const std::string &name)
+{
+    if (classDef == nullptr) {
+        return false;
+    }
+    for (auto *method : classDef->Body()) {
+        if (method->Type() != ir::AstNodeType::METHOD_DEFINITION) {
+            continue;
+        }
+        auto *func = method->AsMethodDefinition()->Function();
+        if (func && func->Id() && func->Id()->Name().Mutf8() == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::string GenerateUniqueFuncName(const RefactorContext &context, const std::string &baseName,
+                                   const std::string &actionName)
+{
+    auto *ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    if (ctx == nullptr) {
+        return baseName;
+    }
+    int counter = 0;
+    std::string tryName = baseName;
+
+    if (actionName == EXTRACT_FUNCTION_ACTION_GLOBAL.name) {
+        while (ProgramHasFunction(ctx, tryName)) {
+            ++counter;
+            tryName = baseName + std::to_string(counter);
+        }
+        return tryName;
+    }
+
+    if (actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
+        auto *node = GetTouchingToken(context.context, context.span.pos, false);
+        auto *classDef = FindClassDefinitionFromNode(node);
+        if (classDef == nullptr) {
+            return baseName;
+        }
+        while (ClassHasMethod(classDef, tryName)) {
+            ++counter;
+            tryName = baseName + std::to_string(counter);
+        }
+        return tryName;
+    }
+
+    return baseName;
+}
+
+std::string GetFunctionNameAndType(const RefactorContext &context, std::string refactorName)
 {
     std::string resText;
+    std::string helperName;
     if (refactorName == std::string(EXTRACT_FUNCTION_ACTION_GLOBAL.name)) {
-        resText += "function newFunction(";
+        helperName = GenerateUniqueFuncName(context, "newFunction", refactorName);
+        resText += "function " + helperName + "(";
     } else if (refactorName == std::string(EXTRACT_FUNCTION_ACTION_CLASS.name)) {
-        resText += "private newFunction(";
+        helperName = GenerateUniqueFuncName(context, "newMethod", refactorName);
+        resText += "private " + helperName + "(";
     }
     return resText;
 }
@@ -535,7 +797,7 @@ std::string CreateFunctionRefactorText(const RefactorContext &context, const std
     bool needParams = false;
     std::vector<ParamTexts> params = FindExactFunctionParams(context, nodeList, needParams);
     resText += "\n";
-    resText += GetFunctionNameAndType(refactorName);
+    resText += GetFunctionNameAndType(context, refactorName);
     resText += GetFunctionParamsText(params);
     auto returnNode = FindReturnValueNode(nodeList);
     auto retNode = returnNode;
@@ -686,10 +948,13 @@ std::string GetCallTextForFunction(const RefactorContext &context, const std::st
     }
     bool needParams = false;
     std::vector<ParamTexts> params = FindExactFunctionParams(context, nodeList, needParams);
+    std::string helperName;
     if (actionName == EXTRACT_FUNCTION_ACTION_CLASS.name) {
-        funcCallText += "this.newMethod(";
+        helperName = GenerateUniqueFuncName(context, "newMethod", actionName);
+        funcCallText = "this." + helperName + "(";
     } else {
-        funcCallText += "newMethod(";
+        helperName = GenerateUniqueFuncName(context, "newFunction", actionName);
+        funcCallText = helperName + "(";
     }
     if (needParams && !params.empty()) {
         for (auto &param : params) {
@@ -723,16 +988,72 @@ RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &contex
     return refactorEdits;
 }
 
+ir::AstNode *FindExtractedVals(const RefactorContext &context)
+{
+    const auto rangeToExtract = context.span;
+    if (rangeToExtract.pos >= rangeToExtract.end) {
+        return nullptr;
+    }
+
+    const auto ast = reinterpret_cast<public_lib::Context *>(context.context)->parserProgram->Ast();
+    if (ast == nullptr) {
+        return nullptr;
+    }
+
+    auto node = GetTouchingToken(context.context, rangeToExtract.pos, false);
+    if (node == nullptr) {
+        return nullptr;
+    }
+    while (node != nullptr && (!node->IsExpression() && !node->IsVariableDeclaration())) {
+        node = node->Parent();
+    }
+
+    if (node != nullptr) {
+        return node;
+    }
+    return nullptr;
+}
+
+ir::AstNode *IsReplaceRangeRequired(const RefactorContext &context, ir::AstNode *ExtractedValsNode)
+{
+    if (ExtractedValsNode == nullptr) {
+        return nullptr;
+    }
+    ir::AstNode *exprStmt = nullptr;
+    for (ir::AstNode *parent = ExtractedValsNode->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (parent->IsExpressionStatement() &&
+            (parent->Start().index <= context.span.pos && parent->End().index >= context.span.end)) {
+            exprStmt = parent;
+        }
+    }
+    for (ir::AstNode *parent = ExtractedValsNode->Parent(); parent != nullptr; parent = parent->Parent()) {
+        if (!(parent->IsCallExpression() || parent->IsAssignmentExpression())) {
+            continue;
+        }
+        if ((parent->Start().index != context.span.pos || parent->End().index != context.span.end) ||
+            exprStmt == nullptr) {
+            return nullptr;
+        }
+    }
+    return exprStmt;
+}
+
 RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, const std::string &extractedText,
                                                const std::string &actionName)
 {
     std::vector<FileTextChanges> edits;
     TextChangesContext textChangesContext = *context.textChangesContext;
     const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
-    std::string extractedName("newLocal");
+    std::string extractedName = GenerateUniqueExtractedVarName(context, actionName);
     edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {
         tracker.InsertText(src, GetVarAndFunctionPosToWriteNode(context, actionName, extractedText.size()).pos,
                            extractedText);
+        auto ExtractedValsNode = FindExtractedVals(context);
+        auto exprStmt = IsReplaceRangeRequired(context, ExtractedValsNode);
+        if (exprStmt != nullptr) {
+            tracker.DeleteRange(src, TextRange {exprStmt->Start().index, exprStmt->End().index});
+            return;
+        }
         tracker.ReplaceRangeWithText(src, GetCallPositionOfExtraction(context), extractedName);
     });
     RefactorEditInfo refactorEdits(std::move(edits));
