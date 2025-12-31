@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -30,6 +30,54 @@ ohos_unittest("lexer_test") {
   testonly = true
   sources = [
     "lexer/lexer_test.cpp",
+  ]
+
+  configs = [
+    "../:es2abc_config_common",
+    "../../merge_abc:panda_assembly_proto_public_config",
+  ]
+
+  include_dirs = [
+    "../",
+    "${target_out_dir}",
+  ]
+
+  deps = [
+    "../:es2panda_lib",
+    "../../merge_abc:panda_assembly_proto_static",
+  ]
+
+  external_deps = [
+    "googletest:gtest_main",
+  ]
+
+  external_deps += [ sdk_libc_secshared_dep ]
+
+  external_deps += [
+    "icu:static_icuuc",
+    "runtime_core:arkabc2program_public_headers",
+    "runtime_core:arkassembler_public_headers",
+    "runtime_core:arkbase_public_headers",
+    "runtime_core:arkfile_public_headers",
+  ]
+
+  external_deps += [
+      "json:nlohmann_json_static",
+      "runtime_core:abc2program_frontend_static",
+      "runtime_core:libarkassembler_frontend_static",
+      "runtime_core:libarkbase_frontend_static",
+      "runtime_core:libarkfile_frontend_static",
+      "runtime_core:libarkziparchive_frontend_static",
+    ]
+
+  module_out_path = "arkcompiler/ets_frontend"
+}
+
+ohos_unittest("parser_test") {
+  use_exceptions = true
+  testonly = true
+  sources = [
+    "parser/parser_test.cpp",
   ]
 
   configs = [
