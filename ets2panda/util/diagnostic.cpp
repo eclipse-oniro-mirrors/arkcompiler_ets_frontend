@@ -119,7 +119,7 @@ bool DiagnosticBase::operator<(const DiagnosticBase &rhs) const
     if (Type() != rhs.Type()) {
         return Type() < rhs.Type();
     }
-    return false;
+    return Message() < rhs.Message();
 }
 
 bool DiagnosticBase::operator==(const DiagnosticBase &rhs) const

@@ -87,3 +87,10 @@ first_match2/same_name3.ets
 first_match2/same_name4.ets
 first_match2/static_same_name.ets
 first_match2/static_same_name3.ets
+
+#31992 TSC Fail
+overload_interface/overload_interface_1.ets
+overload_interface/overload_interface_2.ets
+overload_interface/overload_interface_3.ets
+overload_interface/overload_interface_4.ets
+overload_interface/overload_interface_5.ets

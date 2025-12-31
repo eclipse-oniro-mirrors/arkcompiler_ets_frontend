@@ -696,6 +696,10 @@ semantic:
   id: 24143
   message: "{} {} can not {} {} {} which is from dynamic declaration file."
 
+- name: INTERFACE_PROPERTY_COLLISION
+  id: 73710
+  message: "Property '{}' is declared in {} and {} interfaces."
+
 - name: INTERFACE_PROPERTY_REQUIRES_SETTER
   id: 337
   message: "Cannot implement interface {}: property '{}' must have a setter, but the implementation is readonly"
@@ -876,6 +880,10 @@ semantic:
 - name: METHOD_ASSIGNMENT
   id: 394
   message: "Class methods cannot be overwritten."
+
+- name: METHOD_OVERLOAD_PROPERTY
+  id: 567795
+  message: "Method '{}' in {} cannot overload property {} in {}."
 
 - name: MISSING_EXTENSION_ACCESSOR
   id: 246

@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <iterator>
 #include <string_view>
 #include "checker/ETSchecker.h"
 #include "checker/checkerContext.h"
@@ -1100,6 +1101,11 @@ void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Sig
     if (AreOverrideCompatible(this, sigFunc, sig) && sigFunc->Function()->IsStatic() == sig->Function()->IsStatic()) {
         SavedTypeRelationFlagsContext const savedFlags(Relation(), Relation()->GetTypeRelationFlags() |
                                                                        TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+        // optional property has no ABSTRACT flag, and abstract method may not has GETTER_OR_SETTER flag
+        if (sig->HasSignatureFlag(SignatureFlags::ABSTRACT | SignatureFlags::GETTER_OR_SETTER) ||
+            sigFunc->HasSignatureFlag(SignatureFlags::ABSTRACT | SignatureFlags::GETTER_OR_SETTER)) {
+            return;
+        }
         if (CheckIfInterfaceCanBeFoundOnDifferentPaths(classType, sigFunc->Owner(), this) &&
             (Relation()->IsSupertypeOf(sigFunc->Owner(), sig->Owner()) ||
              Relation()->IsSupertypeOf(sig->Owner(), sigFunc->Owner()))) {
@@ -1118,9 +1124,16 @@ void ETSChecker::CheckIfOverrideIsValidInInterface(ETSObjectType *classType, Sig
         }
     }
     if (throwError) {
-        LogError(diagnostic::INTERFACE_METHOD_COLLISION,
-                 {sig->Function()->Id()->Name(), sig->Owner()->Name(), sigFunc->Owner()->Name()},
-                 classType->GetDeclNode()->Start());
+        if (sigFunc->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER) &&
+            sig->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER)) {
+            LogError(diagnostic::INTERFACE_PROPERTY_COLLISION,
+                     {sig->Function()->Id()->Name(), sig->Owner()->Name(), sigFunc->Owner()->Name()},
+                     classType->GetDeclNode()->Start());
+        } else {
+            LogError(diagnostic::INTERFACE_METHOD_COLLISION,
+                     {sig->Function()->Id()->Name(), sig->Owner()->Name(), sigFunc->Owner()->Name()},
+                     classType->GetDeclNode()->Start());
+        }
     }
 }
 
@@ -1133,6 +1146,17 @@ void ETSChecker::CheckFunctionRedeclarationInInterface(ETSObjectType *classType,
         }
         ES2PANDA_ASSERT(sigFunc != nullptr);
         if (sigFunc->Function()->Id()->Name() == sig->Function()->Id()->Name()) {
+            bool isSigFuncProp = sigFunc->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER);
+            bool isSigProp = sig->HasSignatureFlag(SignatureFlags::GETTER_OR_SETTER);
+            if (isSigFuncProp != isSigProp) {
+                auto prop = isSigFuncProp ? sigFunc : sig;
+                auto method = isSigFuncProp ? sig : sigFunc;
+                LogError(diagnostic::METHOD_OVERLOAD_PROPERTY,
+                         {method->Function()->Id()->Name(), method->Owner()->Name(), prop->Function()->Id()->Name(),
+                          prop->Owner()->Name()},
+                         classType->GetDeclNode()->Start());
+                continue;
+            }
             if (classType->IsSameBasedGeneric(Relation(), sig->Owner())) {
                 return;
             }
@@ -1153,6 +1177,9 @@ static void CallRedeclarationCheckForCorrectSignature(ir::MethodDefinition *meth
     ir::ScriptFunction *func = method->Function();
     ES2PANDA_ASSERT(func != nullptr);
     if (!func->IsAbstract() && !func->IsSetter() && !func->IsGetter()) {
+        auto *sigFunc = funcType->FindSignature(func);
+        checker->CheckFunctionRedeclarationInInterface(classType, similarSignatures, sigFunc);
+    } else if (!classType->IsPartial() && classType->IsInterface() && !func->IsExternal()) {
         auto *sigFunc = funcType->FindSignature(func);
         checker->CheckFunctionRedeclarationInInterface(classType, similarSignatures, sigFunc);
     }
