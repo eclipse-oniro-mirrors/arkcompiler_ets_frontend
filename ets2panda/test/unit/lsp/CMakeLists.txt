@@ -220,6 +220,10 @@ ets2panda_add_gtest(lsp_api_completions_test_1 CPP_SOURCES
     get_completions_1.cpp
 )
 
+ets2panda_add_gtest(lsp_api_completions_module_test CPP_SOURCES
+    get_completions_module_test.cpp
+)
+
 ets2panda_add_gtest(lsp_api_ui_suggest_test CPP_SOURCES
     code_fix/ui_plugin_suggest.cpp
 )
