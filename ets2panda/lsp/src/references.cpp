@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,7 @@
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "internal_api.h"
-#include <charconv>
+#include <cstdlib>
 
 namespace ark::es2panda::lsp {
 
@@ -58,12 +58,10 @@ ReferenceInfo ResolveInfo(const std::tuple<std::string, std::string> &info)
     size_t startPos = 0;
     size_t endPos = 0;
 
-    auto result1 = std::from_chars(posStr1.data(), posStr1.data() + posStr1.size(), startPos);
-    if (result1.ec != std::errc {}) {
-        return ReferenceInfo();
-    }
-    auto result2 = std::from_chars(posStr2.data(), posStr2.data() + posStr2.size(), endPos);
-    if (result2.ec != std::errc {}) {
+    try {
+        startPos = std::stoull(std::string(posStr1));
+        endPos = std::stoull(std::string(posStr2));
+    } catch (const std::exception &) {
         return ReferenceInfo();
     }
     if (endPos < startPos) {
