@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,25 +13,18 @@
  * limitations under the License.
  */
 
-interface A {
-  name?: string;
-
-  foo(): string {
-    return this.name!;
-  }
-  
-  foo(a: string): string;
+interface I<T> {
+    a: T;
+    geta(): T;
 }
-
-interface B extends A {
-  value: string;
-}
-
-interface C extends B {
-}
-
 
 function main() {
-  let b = {name: "name", value: "value", foo(): string { return this.value; }} as B;
-  let c = {name: "name", value: "value", foo(): string { return this.value; }} as C;
+    const x:I<number> = {
+        a: 1,
+        geta() {
+            return this.a;
+        },
+    };
+
+    arktest.assertEQ(x.geta(), 1);
 }

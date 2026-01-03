@@ -164,9 +164,9 @@ std::vector<Phase *> GetETSPhaseList()
         new StringConstructorLowering,
         new StringComparisonLowering,
         new OptionalArgumentsLowering, // #22952 could be moved to earlier phase
-        new GenericBridgesPhase,
         new InterfaceObjectLiteralLowering,
         new ObjectLiteralLowering,
+        new GenericBridgesPhase,
         new TypeFromLowering,
         new ClassFromExpressionLowering,
         new PrimitiveConversionPhase,

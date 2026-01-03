@@ -21,14 +21,14 @@ interface A {
   foo(a: string): string;
 }
 
-/* @@ label1 */interface B extends A {
+interface B extends A {
   value: string;
   foo(): string {
     return this.value;
   }
 }
 
-/* @@ label2 */interface C extends B {
+interface C extends B {
 }
 
 
@@ -36,9 +36,3 @@ function main() {
   let b = {name: "name", value: "value", foo(): string { return this.name!; }} as B;
   let c = {name: "name", value: "value", foo(): string { return this.name!; }} as C;
 }
-
-
-/* @@@ label1 Error Semantic error ESE0256: Interface has methods */
-/* @@@ label2 Error Semantic error ESE0256: Interface has methods */
-
-

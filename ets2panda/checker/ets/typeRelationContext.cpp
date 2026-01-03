@@ -131,6 +131,9 @@ void InstantiationContext::InstantiateType(ETSObjectType *type, ArenaVector<Type
 
     auto substitution = Substitution {};
     for (size_t idx = 0; idx < typeParams.size(); idx++) {
+        if (!substitution.empty()) {
+            typeArgTypes[idx] = typeArgTypes[idx]->Substitute(checker_->Relation(), &substitution);
+        }
         if (!typeParams[idx]->IsETSTypeParameter()) {
             continue;
         }

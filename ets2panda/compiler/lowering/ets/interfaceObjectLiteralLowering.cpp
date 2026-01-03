@@ -336,7 +336,7 @@ static void AnnotateGeneratedAnonClass(checker::ETSChecker *checker, ir::ClassDe
 
 ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringView const className,
                                         ir::AstNode const *const decl,
-                                        const checker::ETSChecker::ClassBuilder &bodyBuilder)
+                                        const checker::ETSChecker::ClassBuilder &bodyBuilder, checker::Type *declTsType)
 {
     ES2PANDA_ASSERT(decl != nullptr && (decl->IsTSInterfaceDeclaration() || decl->IsClassDefinition()));
     auto *checker = ctx->GetChecker()->AsETSChecker();
@@ -377,14 +377,14 @@ ir::ClassDeclaration *GenerateAnonClass(public_lib::Context *ctx, util::StringVi
     if (decl->IsTSInterfaceDeclaration()) {
         AnnotateGeneratedAnonClass(checker, classDef);
         // Class implements
-        auto *classImplements = ctx->AllocNode<ir::TSClassImplements>(ctx->AllocNode<ir::OpaqueTypeNode>(
-            const_cast<checker::Type *>(decl->AsTSInterfaceDeclaration()->TsType()), allocator));
+        auto *classImplements =
+            ctx->AllocNode<ir::TSClassImplements>(ctx->AllocNode<ir::OpaqueTypeNode>((declTsType), allocator));
         classImplements->SetParent(classDef);
         classDef->EmplaceImplements(classImplements);
         classType->RemoveObjectFlag(checker::ETSObjectFlags::RESOLVED_INTERFACES);
         checker->GetInterfacesOfClass(classType);
     } else {
-        classType->SetSuperType(const_cast<checker::Type *>(decl->AsClassDefinition()->TsType())->AsETSObjectType());
+        classType->SetSuperType(declTsType->AsETSObjectType());
     }
 
     return classDecl;
@@ -406,7 +406,8 @@ static checker::Type *GenerateAnonClassFromInterface(public_lib::Context *ctx, i
     };
 
     auto anonClassName = util::UString(GenerateAnonClassName(ifaceNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder);
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), ifaceNode, classBodyBuilder,
+                                        ifaceNode->AsTSInterfaceDeclaration()->TsType());
 
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         ifaceNode->SetAnonClass(classDecl);
@@ -434,8 +435,8 @@ static void GenerateAnonClassFromAbstractClass(public_lib::Context *ctx, ir::Cla
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8()), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder);
-
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                                        abstractClassNode->AsClassDefinition()->TsType());
     if (!classDecl->Definition()->TsType()->AsETSObjectType()->IsGradual()) {
         abstractClassNode->SetAnonClass(classDecl);
     }
@@ -674,18 +675,36 @@ static checker::Type *GenerateAnonClassFromInterfaceWithMethods(public_lib::Cont
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(interfaceDecl->InternalName().Utf8(), true), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), interfaceDecl, classBodyBuilder);
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), interfaceDecl, classBodyBuilder,
+                                        objectExpr->AsObjectExpression()->TsType());
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
                                                                                       : checker->GlobalTypeError();
 }
 
+static ArenaVector<ark::es2panda::checker::Signature *> GetInterfaceGenericSignature(checker::ETSObjectType *targetType,
+                                                                                     util::StringView name)
+{
+    if (targetType != nullptr) {
+        varbinder::LocalVariable *lv =
+            targetType->GetProperty(name, checker::PropertySearchFlags::SEARCH_INSTANCE_FIELD |
+                                              checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
+                                              checker::PropertySearchFlags::SEARCH_INSTANCE_DECL |
+                                              checker::PropertySearchFlags::SEARCH_IN_INTERFACES);
+        if (lv != nullptr && lv->TsType() != nullptr && lv->TsType()->IsETSFunctionType()) {
+            return lv->TsType()->AsETSFunctionType()->CallSignatures();
+        }
+    }
+    return ArenaVector<ark::es2panda::checker::Signature *>();
+}
+
 static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDeclaration *interfaceDecl,
                            ir::ObjectExpression *objectExpr, InterfaceMethods &methods)
 {
     //  Lambda checks if any method defined in object literal overrides empty method declared in interface.
-    auto const checkOverriding = [&methods, objectExpr, relation](ir::ScriptFunction const *const function) -> void {
+    auto const checkOverriding = [&methods, objectExpr, relation](ir::ScriptFunction const *const function,
+                                                                  checker::Signature *sig) -> void {
         auto const &name = function->Id()->Name();
         auto *const signature = const_cast<checker::Signature *>(function->Signature());
         auto const hasBody = function->HasBody();
@@ -718,7 +737,7 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
             checker::SavedTypeRelationFlagsContext savedCtx(relation, checker::TypeRelationFlag::OVERRIDING_CONTEXT);
             checker::Type *const valueType = propExpr->AsProperty()->Value()->TsType();
             if (valueType->IsETSArrowType() &&
-                relation->SignatureIsSupertypeOf(signature, valueType->AsETSFunctionType()->ArrowSignature())) {
+                relation->SignatureIsSupertypeOf(sig, valueType->AsETSFunctionType()->ArrowSignature())) {
                 std::get<2U>(*it) = true;
             }
         }
@@ -729,15 +748,13 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
         if (node->IsOverloadDeclaration()) {
             continue;
         }
-
         auto methodDef = node->AsMethodDefinition();
-        if (!methodDef->Function()->IsGetterOrSetter()) {
-            checkOverriding(methodDef->Function());
-        }
+        auto targetType = objectExpr->TsType()->AsETSObjectType();
+        auto signatures = GetInterfaceGenericSignature(targetType, methodDef->Key()->AsIdentifier()->Name());
 
-        for (auto const *const overload : methodDef->Overloads()) {
-            if (!overload->Function()->IsGetterOrSetter()) {
-                checkOverriding(overload->Function());
+        for (auto sig : signatures) {
+            if (!methodDef->Function()->IsGetterOrSetter()) {
+                checkOverriding(methodDef->Function(), sig);
             }
         }
     }
@@ -824,7 +841,8 @@ static checker::Type *GenerateAnonClassFromAbstractClassWithMethods(public_lib::
 
     auto anonClassName =
         util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8(), true), ctx->Allocator());
-    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder);
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder,
+                                        abstractClassNode->AsClassDefinition()->TsType());
 
     checker::Type *const classType = classDecl->Definition()->Check(checker);
     return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType

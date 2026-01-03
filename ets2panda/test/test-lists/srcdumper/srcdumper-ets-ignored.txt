@@ -129,6 +129,12 @@ type_error_test.ets
 #31721 FailKind.SRC_DUMPER_FAI
 runtime/ets/objliteral_method_returntype_infer.ets
 
+#32907
+runtime/ets/interface_method_generic_init.ets
+ast/compiler/ets/interfaceObjectLiteral_02.ets
+ast/compiler/ets/interfaceObjectLiteral_04.ets
+ast/compiler/ets/interfaceObjectLiteral_05.ets
+
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
 
