@@ -117,20 +117,19 @@ export class Utils {
         if (checkType instanceof NumberType) {
             return true;
         }
-        if (checkType instanceof UnionType) {
-            for (const t of checkType.getTypes()) {
-                if (t instanceof NumberType || t instanceof UndefinedType || t instanceof NullType) {
-                    continue;
-                }
-                if (t instanceof UnionType) {
-                    if (!this.isNearlyNumberType(t)) {
-                        return false;
-                    }
-                }
+        if (!(checkType instanceof UnionType)) {
+            return false;
+        }
+        const types = checkType.getTypes();
+        return !types.some(t => {
+            if (t instanceof NumberType || t instanceof UndefinedType || t instanceof NullType) {
+                return false;
+            }
+            if (t instanceof UnionType) {
+                return !this.isNearlyNumberType(t);
             }
             return true;
-        }
-        return false;
+        });
     }
 
     /**
