@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 export declare final class Direction extends BaseEnum<int> {
   
   
-  public constructor(ordinal: int, value: int);
+  public constructor(ordinal: int, value: int, name: String);
   
   public static readonly Up: Direction;
   
@@ -30,15 +30,10 @@ export declare final class Direction extends BaseEnum<int> {
   
   
   
-  public getName(): String;
   
   public static getValueOf(name: String): Direction;
   
   public static fromValue(value: int): Direction;
-  
-  public valueOf(): int;
-  
-  public toString(): String;
   
   public static values(): FixedArray<Direction>;
   
@@ -50,7 +45,7 @@ export declare final class Direction extends BaseEnum<int> {
 export declare final class Message extends BaseEnum<String> {
   
   
-  public constructor(ordinal: int, value: String);
+  public constructor(ordinal: int, value: String, name: String);  
   
   public static readonly Success: Message;
   
@@ -61,15 +56,9 @@ export declare final class Message extends BaseEnum<String> {
   
   
   
-  public getName(): String;
-  
   public static getValueOf(name: String): Message;
   
   public static fromValue(value: String): Message;
-  
-  public valueOf(): String;
-  
-  public toString(): String;
   
   public static values(): FixedArray<Message>;
   
