@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,6 @@ function main(): void {
 
 /* @@? 20:5 Error Semantic error ESE0127: No matching call signature for foo(...) */
 /* @@? 20:10 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 20:10 Error Semantic error ESE0289: This expression is not callable. */
-/* @@? 30:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 30:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
-/* @@? 30:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 30:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 28:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 28:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 28:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

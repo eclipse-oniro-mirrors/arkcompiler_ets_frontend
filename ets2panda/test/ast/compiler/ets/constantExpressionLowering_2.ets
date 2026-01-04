@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,5 @@ enum CCCCCCCCC {}
 CCCCCCCCC[foo()].foo();
 
 /* @@? 18:1 Error Semantic error ESE0127: No matching indexing signature for $_get(...) */
-/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference foo */
-/* @@? 18:11 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 18:11 Error Semantic error ESE0251: Cannot find index access method with the required signature. */
+/* @@? 18:11 Error Semantic error ESE0143: Unresolved reference foo */

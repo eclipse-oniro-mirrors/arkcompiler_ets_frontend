@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,19 +37,19 @@ export const updateIfChanged = (t: Record<string, Object>) => {
 /* @@? 21:19 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 21:19 Error Semantic error ESE0143: Unresolved reference u */
 /* @@? 22:26 Error Semantic error ESE0127: No matching call signature for reduce(..., ((p1: Record<String,Object>) => void)) */
+/* @@? 25:23 Error Semantic error ESE0143: Unresolved reference u */
 /* @@? 27:11 Error Semantic error ESE0393: Invalid record property */
 /* @@? 28:11 Error Syntax error ESY0016: Unexpected token. */
 /* @@? 28:12 Error Syntax error ESY0228: Unexpected token, expected '('. */
 /* @@? 28:12 Error Semantic error ESE0046: Type '*ERROR_TYPE*' is not compatible with type 'String' at index 1 */
-/* @@? 28:15 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 28:15 Error Syntax error ESY0230: Expected '{', got ']'. */
-/* @@? 28:15 Error Syntax error ESY0016: Unexpected token. */
 /* @@? 28:15 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 28:15 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 28:15 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 28:15 Error Syntax error ESY0016: Unexpected token. */
 /* @@? 28:16 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 28:18 Error Syntax error ESY0227: Unexpected token 'v'. */
 /* @@? 29:10 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 30:16 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 30:16 Error Semantic error ESE0143: Unresolved reference update */
 /* @@? 32:5 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 33:12 Error Semantic error ESE0143: Unresolved reference reduceResult */

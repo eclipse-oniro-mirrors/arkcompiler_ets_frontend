@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -344,16 +344,7 @@ Type *ETSChecker::ResolveIdentifier(ir::Identifier *ident)
     if (resolved == nullptr) {
         resolved = ExtraCheckForResolvedError(ident);
         if (resolved == nullptr) {
-            if (VarBinder()->GetScope()->IsClassScope() && this->IsAnyError()) {
-                return ident->SetTsType(GlobalTypeError());
-            }
-            auto [decl, var] = VarBinder()->NewVarDecl<varbinder::LetDecl>(
-                ident->Start(),
-                !ident->IsErrorPlaceHolder() ? ident->Name() : compiler::GenName(ProgramAllocator()).View());
-            var->SetScope(VarBinder()->GetScope());
-            ident->SetVariable(var);
-            decl->BindNode(ident);
-            return ident->SetTsType(var->SetTsType(GlobalTypeError()));
+            return ident->SetTsType(GlobalTypeError());
         }
         ident->SetVariable(resolved);
         return GetTypeOfVariable(resolved);

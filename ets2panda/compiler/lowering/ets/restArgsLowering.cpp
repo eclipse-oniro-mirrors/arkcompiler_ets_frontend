@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -228,6 +228,7 @@ static ir::Expression *CreateRestArgsArray(public_lib::Context *context, ArenaVe
         type->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
         genSymIdent2->Clone(allocator, nullptr), genSymIdent->Clone(allocator, nullptr),
         genSymIdent2->Clone(allocator, nullptr));
+    loweringResult->SetRange({arguments[signature->Params().size()]->Range().start, arguments.back()->Range().end});
     return loweringResult;
 }
 
@@ -342,6 +343,7 @@ ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::Ca
     auto *restArgsArray = CreateRestArgsArray(context, callExpr->Arguments(), signature, calleeType->IsETSArrowType());
     auto arg =
         context->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, context->allocator, restArgsArray);
+    arg->SetRange(restArgsArray->Range());
     return RebuildCallExpression(context, callExpr, signature, arg);
 }
 

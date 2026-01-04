@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,18 +50,18 @@ function relationalStoreCustomDirTest() {
 /* @@? 17:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 17:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
 /* @@? 17:23 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 17:31 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 17:31 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 17:31 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
-/* @@? 19:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 17:31 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
+/* @@? 19:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 19:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
 /* @@? 19:23 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 19:31 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 19:31 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
+/* @@? 19:31 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 19:31 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
-/* @@? 31:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 31:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 31:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
 /* @@? 31:23 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 31:31 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 31:31 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 31:31 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 31:31 Error Syntax error ESY0112: Unexpected token, expected an identifier. */

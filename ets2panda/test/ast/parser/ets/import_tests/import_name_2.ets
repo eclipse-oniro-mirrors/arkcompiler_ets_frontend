@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,5 @@ import {foo, flt} from "import_tests/packages";
 // Throw error: "dbl" is not visible.
 let x = foo(dbl);
 
-/* @@? 19:9 Error Semantic error ESE0318: Type 'Double' cannot be assigned to type 'Float' */
+/* @@? 19:9 Error Semantic error ESE0127: No matching call signature for foo(dbl) */
+/* @@? 19:13 Error Semantic error ESE0143: Unresolved reference dbl */

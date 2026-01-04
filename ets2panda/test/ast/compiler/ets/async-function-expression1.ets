@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 function relationalStoreCustomDirTest() {
-    it(async function () {})
+    it(async function () { })
 
     it(async function () {
         let storestore = null;
@@ -49,7 +49,7 @@ function relationalStoreCustomDirTest() {
 
 /* @@? 17:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 17:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
-/* @@? 19:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 19:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 19:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */
-/* @@? 31:5 Error Semantic error ESE0289: This expression is not callable. */
+/* @@? 31:5 Error Semantic error ESE0143: Unresolved reference it */
 /* @@? 31:14 Error Syntax error ESY0320: Function expressions are not supported, use arrow functions instead */

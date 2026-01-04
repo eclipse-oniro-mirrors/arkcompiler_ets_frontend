@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-const mustChecks: Array<Function> = new Array<Function>();
+const matrix1: number[] = [1, 2];
+const matrix2: string[] = ['a', 'b'];
+const arr = new Array<number[] | string[]>(matrix1, matrix2);
 
-function mustCallArgSize() {
-    mustChecks.push(() => {
-        xf(){
+console.log(arr.length)
+console.log(arr[0][1]+"")
+console.log(arr[1][0]+"")
 
-        }
-    });
-}
-
-/* @@? 19:5 Error Semantic error ESE0127: No matching call signature for push((() => void)) */
-/* @@? 20:9 Error Semantic error ESE0143: Unresolved reference xf */
+/* @@? 21:1 Error Semantic error ESE0127: No matching call signature for log("") */
+/* @@? 21:13 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
+/* @@? 22:1 Error Semantic error ESE0127: No matching call signature for log("") */
+/* @@? 22:13 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
