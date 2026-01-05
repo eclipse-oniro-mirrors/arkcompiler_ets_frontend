@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -441,7 +441,23 @@ class CommonEventRegister {
   subscriber: CommonEventManager.CommonEventSubscriber | null = null;
   public subscribeInfo: SubscribeInfoType;
 }
-)"};
+)",
+    R"(
+//中文测试
+class B {
+  //中文测试
+  p1
+  //中文测试
+  p2
+  //中文测试
+  static p3
+  //中文测试
+  readonly p4
+  //中文测试
+  private p5
+}
+)",
+};
 
 std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult1 = {};
 
@@ -457,7 +473,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod1)
         "get_class_property_info_test_m1_07.ets", "get_class_property_info_test_m1_08.ets",
         "get_class_property_info_test_m1_09.ets", "get_class_property_info_test_m1_10.ets",
         "get_class_property_info_test_m1_11.ets", "get_class_property_info_test_m1_12.ets",
-        "get_class_property_info_test_m1_13.ets", "get_class_property_info_test_m1_14.ets"};
+        "get_class_property_info_test_m1_13.ets", "get_class_property_info_test_m1_14.ets",
+        "get_class_property_info_test_m1_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -499,8 +516,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod2)
         "get_class_property_info_test_m2_07.ets", "get_class_property_info_test_m2_08.ets",
         "get_class_property_info_test_m2_09.ets", "get_class_property_info_test_m2_10.ets",
         "get_class_property_info_test_m2_11.ets", "get_class_property_info_test_m2_12.ets",
-        "get_class_property_info_test_m2_13.ets", "get_class_property_info_test_m2_14.ets"};
-
+        "get_class_property_info_test_m2_13.ets", "get_class_property_info_test_m2_14.ets",
+        "get_class_property_info_test_m2_15.ets"};
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
 
@@ -535,7 +552,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod3)
         "get_class_property_info_test_m3_07.ets", "get_class_property_info_test_m3_08.ets",
         "get_class_property_info_test_m3_09.ets", "get_class_property_info_test_m3_10.ets",
         "get_class_property_info_test_m3_11.ets", "get_class_property_info_test_m3_12.ets",
-        "get_class_property_info_test_m3_13.ets", "get_class_property_info_test_m3_14.ets"};
+        "get_class_property_info_test_m3_13.ets", "get_class_property_info_test_m3_14.ets",
+        "get_class_property_info_test_m3_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -572,7 +590,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod4)
         "get_class_property_info_test_m4_07.ets", "get_class_property_info_test_m4_08.ets",
         "get_class_property_info_test_m4_09.ets", "get_class_property_info_test_m4_10.ets",
         "get_class_property_info_test_m4_11.ets", "get_class_property_info_test_m4_12.ets",
-        "get_class_property_info_test_m4_13.ets", "get_class_property_info_test_m4_14.ets"};
+        "get_class_property_info_test_m4_13.ets", "get_class_property_info_test_m4_14.ets",
+        "get_class_property_info_test_m4_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -609,7 +628,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod5)
         "get_class_property_info_test_m5_07.ets", "get_class_property_info_test_m5_08.ets",
         "get_class_property_info_test_m5_09.ets", "get_class_property_info_test_m5_10.ets",
         "get_class_property_info_test_m5_11.ets", "get_class_property_info_test_m5_12.ets",
-        "get_class_property_info_test_m5_13.ets", "get_class_property_info_test_m5_14.ets"};
+        "get_class_property_info_test_m5_13.ets", "get_class_property_info_test_m5_14.ets",
+        "get_class_property_info_test_m5_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -646,7 +666,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod6)
         "get_class_property_info_test_m6_07.ets", "get_class_property_info_test_m6_08.ets",
         "get_class_property_info_test_m6_09.ets", "get_class_property_info_test_m6_10.ets",
         "get_class_property_info_test_m6_11.ets", "get_class_property_info_test_m6_12.ets",
-        "get_class_property_info_test_m6_13.ets", "get_class_property_info_test_m6_14.ets"};
+        "get_class_property_info_test_m6_13.ets", "get_class_property_info_test_m6_14.ets",
+        "get_class_property_info_test_m6_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -683,7 +704,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod7)
         "get_class_property_info_test_m7_07.ets", "get_class_property_info_test_m7_08.ets",
         "get_class_property_info_test_m7_09.ets", "get_class_property_info_test_m7_10.ets",
         "get_class_property_info_test_m7_11.ets", "get_class_property_info_test_m7_12.ets",
-        "get_class_property_info_test_m7_13.ets", "get_class_property_info_test_m7_14.ets"};
+        "get_class_property_info_test_m7_13.ets", "get_class_property_info_test_m7_14.ets",
+        "get_class_property_info_test_m7_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -720,7 +742,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod8)
         "get_class_property_info_test_m8_07.ets", "get_class_property_info_test_m8_08.ets",
         "get_class_property_info_test_m8_09.ets", "get_class_property_info_test_m8_10.ets",
         "get_class_property_info_test_m8_11.ets", "get_class_property_info_test_m8_12.ets",
-        "get_class_property_info_test_m8_13.ets", "get_class_property_info_test_m8_14.ets"};
+        "get_class_property_info_test_m8_13.ets", "get_class_property_info_test_m8_14.ets",
+        "get_class_property_info_test_m8_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -757,7 +780,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod9)
         "get_class_property_info_test_m9_07.ets", "get_class_property_info_test_m9_08.ets",
         "get_class_property_info_test_m9_09.ets", "get_class_property_info_test_m9_10.ets",
         "get_class_property_info_test_m9_11.ets", "get_class_property_info_test_m9_12.ets",
-        "get_class_property_info_test_m9_13.ets", "get_class_property_info_test_m9_14.ets"};
+        "get_class_property_info_test_m9_13.ets", "get_class_property_info_test_m9_14.ets",
+        "get_class_property_info_test_m9_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -794,7 +818,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod10)
         "get_class_property_info_test_m10_07.ets", "get_class_property_info_test_m10_08.ets",
         "get_class_property_info_test_m10_09.ets", "get_class_property_info_test_m10_10.ets",
         "get_class_property_info_test_m10_11.ets", "get_class_property_info_test_m10_12.ets",
-        "get_class_property_info_test_m10_13.ets", "get_class_property_info_test_m10_14.ets"};
+        "get_class_property_info_test_m10_13.ets", "get_class_property_info_test_m10_14.ets",
+        "get_class_property_info_test_m10_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -831,7 +856,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod11)
         "get_class_property_info_test_m11_07.ets", "get_class_property_info_test_m11_08.ets",
         "get_class_property_info_test_m11_09.ets", "get_class_property_info_test_m11_10.ets",
         "get_class_property_info_test_m11_11.ets", "get_class_property_info_test_m11_12.ets",
-        "get_class_property_info_test_m11_13.ets", "get_class_property_info_test_m11_14.ets"};
+        "get_class_property_info_test_m11_13.ets", "get_class_property_info_test_m11_14.ets",
+        "get_class_property_info_test_m11_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -870,7 +896,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod12)
         "get_class_property_info_test_m12_07.ets", "get_class_property_info_test_m12_08.ets",
         "get_class_property_info_test_m12_09.ets", "get_class_property_info_test_m12_10.ets",
         "get_class_property_info_test_m12_11.ets", "get_class_property_info_test_m12_12.ets",
-        "get_class_property_info_test_m12_13.ets", "get_class_property_info_test_m12_14.ets"};
+        "get_class_property_info_test_m12_13.ets", "get_class_property_info_test_m12_14.ets",
+        "get_class_property_info_test_m12_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -907,7 +934,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod13)
         "get_class_property_info_test_m13_07.ets", "get_class_property_info_test_m13_08.ets",
         "get_class_property_info_test_m13_09.ets", "get_class_property_info_test_m13_10.ets",
         "get_class_property_info_test_m13_11.ets", "get_class_property_info_test_m13_12.ets",
-        "get_class_property_info_test_m13_13.ets", "get_class_property_info_test_m13_14.ets"};
+        "get_class_property_info_test_m13_13.ets", "get_class_property_info_test_m13_14.ets",
+        "get_class_property_info_test_m13_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -944,7 +972,8 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod14)
         "get_class_property_info_test_m14_07.ets", "get_class_property_info_test_m14_08.ets",
         "get_class_property_info_test_m14_09.ets", "get_class_property_info_test_m14_10.ets",
         "get_class_property_info_test_m14_11.ets", "get_class_property_info_test_m14_12.ets",
-        "get_class_property_info_test_m14_13.ets", "get_class_property_info_test_m14_14.ets"};
+        "get_class_property_info_test_m14_13.ets", "get_class_property_info_test_m14_14.ets",
+        "get_class_property_info_test_m14_15.ets"};
 
     auto filePaths = CreateTempFile(fileNames3, fileContents3);
     std::vector<ark::es2panda::SourceFile> sourceFiles;
@@ -964,6 +993,50 @@ TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod14)
     ASSERT_EQ(EXPECTED_CLASS_COUNT, infos.size());
     ASSERT_EQ(EXPECTED_PROP_COUNT, infos[0].properties.size());
     CheckClassPropertiesMatch(infos[0].properties, expectedResult14);
+}
+
+std::vector<std::tuple<std::string, size_t, size_t, std::string, std::vector<std::string>>> expectedResult15 = {
+    {"p1", 29, 31, "classField", {"public"}},
+    {"p2", 43, 45, "classField", {"public"}},
+    {"p3", 64, 66, "classField", {"public", "static"}},
+    {"p4", 87, 89, "classField", {"public", "readonly"}},
+    {"p5", 109, 111, "classField", {"private"}}};
+
+TEST_F(LspGetClassPropertyInfoTests, GetClassPropertyInfoMethod15)
+{
+    constexpr size_t EXPECTED_CLASS_COUNT = 1;
+    constexpr size_t EXPECTED_PROP_COUNT = 5;
+
+    std::vector<std::string> fileNames3 = {
+        "get_class_property_info_test_m2_01.ets", "get_class_property_info_test_m2_02.ets",
+        "get_class_property_info_test_m2_03.ets", "get_class_property_info_test_m2_04.ets",
+        "get_class_property_info_test_m2_05.ets", "get_class_property_info_test_m2_06.ets",
+        "get_class_property_info_test_m2_07.ets", "get_class_property_info_test_m2_08.ets",
+        "get_class_property_info_test_m2_09.ets", "get_class_property_info_test_m2_10.ets",
+        "get_class_property_info_test_m2_11.ets", "get_class_property_info_test_m2_12.ets",
+        "get_class_property_info_test_m2_13.ets", "get_class_property_info_test_m2_14.ets",
+        "get_class_property_info_test_m2_15.ets"};
+
+    auto filePaths = CreateTempFile(fileNames3, fileContents3);
+    std::vector<ark::es2panda::SourceFile> sourceFiles;
+
+    for (size_t i = 0; i < filePaths.size(); ++i) {
+        sourceFiles.emplace_back(filePaths[i], fileContents3[i]);
+    }
+    ASSERT_EQ(fileNames3.size(), sourceFiles.size());
+
+    Initializer initializer;
+    size_t sourceIndex = 14;
+    size_t tokenOffset = 113;
+    auto filePath = std::string {sourceFiles[sourceIndex].filePath};
+    auto fileContent = std::string {sourceFiles[sourceIndex].source};
+    auto context = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED, fileContent.c_str());
+
+    LSPAPI const *lspApi = GetImpl();
+    auto infos = lspApi->getClassPropertyInfo(context, tokenOffset, true);
+    ASSERT_EQ(EXPECTED_CLASS_COUNT, infos.size());
+    ASSERT_EQ(EXPECTED_PROP_COUNT, infos[0].properties.size());
+    CheckClassPropertiesMatch(infos[0].properties, expectedResult15);
 }
 
 // NOLINTEND

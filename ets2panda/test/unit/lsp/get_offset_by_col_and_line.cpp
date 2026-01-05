@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +49,39 @@ let aaa = 'default string';
                                              offset);
     const size_t expectedLine = 4;
     const size_t expectedCol = 6;
+    ASSERT_EQ(res.first, expectedLine);
+    ASSERT_EQ(res.second, expectedCol);
+}
+
+TEST_F(LSPOffsetTests, getOffsetCommentForSpecialCharacters)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const size_t line = 5;
+    const size_t col = 15;
+    auto res = lspApi->getOffsetByColAndLine(R"delimiter(
+// comment of line 2
+
+//中文测试
+let aaa = '中文测试';
+)delimiter",
+                                             line, col);
+    const size_t expectedOffset = 44;
+    ASSERT_EQ(res, expectedOffset);
+}
+
+TEST_F(LSPOffsetTests, getLineAndColByOffsetForSpecialCharacters)
+{
+    LSPAPI const *lspApi = GetImpl();
+    const size_t offset = 42;
+    auto res = lspApi->getColAndLineByOffset(R"delimiter(
+// comment of line 2
+
+//中文测试
+let aaa = '中文测试';
+)delimiter",
+                                             offset);
+    const size_t expectedLine = 5;
+    const size_t expectedCol = 13;
     ASSERT_EQ(res.first, expectedLine);
     ASSERT_EQ(res.second, expectedCol);
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -295,6 +295,24 @@ TEST_F(LspScriptElementKindTests, GetAliasScriptElementKind_14)
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext("aliasScriptElementKind_14.ets", ES2PANDA_STATE_CHECKED, text.c_str());
+    auto result = lspApi->getAliasScriptElementKind(context, pos);
+    EXPECT_EQ(result, CompletionEntryKind::TYPE_PARAMETER);
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LspScriptElementKindTests, GetAliasScriptElementKind_15)
+{
+    LSPAPI const *lspApi = GetImpl();
+    ASSERT_TRUE(lspApi != nullptr);
+
+    const std::string text = R"(
+    //中文测试
+    type TestB<T>/*1*/ = string | Array<TestB<T>>;)";
+
+    size_t pos = 29;
+    ASSERT_NE(pos, std::string::npos);
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext("aliasScriptElementKind_15.ets", ES2PANDA_STATE_CHECKED, text.c_str());
     auto result = lspApi->getAliasScriptElementKind(context, pos);
     EXPECT_EQ(result, CompletionEntryKind::TYPE_PARAMETER);
     initializer.DestroyContext(context);

@@ -138,6 +138,7 @@ ohos_source_set("libes2panda_lsp_static") {
     "src/suggestion_diagnostics.cpp",
     "src/todo_comments.cpp",
     "src/types.cpp",
+    "src/lsp_utils.cpp",
   ]
   if ((defined(ark_standalone_build) && ark_standalone_build) ||
       (defined(ark_static_standalone_build) && ark_static_standalone_build)) {

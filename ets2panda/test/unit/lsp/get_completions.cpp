@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -917,6 +917,49 @@ import { A } a
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
     ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsAtPositionForSpecialCharacters)
+{
+    std::vector<std::string> files = {"getCompletionsAtPositionForSpecialCharacters.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class Person {
+    name: string = '';
+    age: number = 0;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    //中文测试
+    introduce(name: string, age: number): void {}
+ }
+
+ //中文测试
+ let p: Person = new Person("中文测试", 18);
+ //中文测试
+ p.int
+ //中文测试
+ p.in
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset1 = 291;  // p.int
+    size_t const offset2 = 305;  // p.in
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res1 = lspApi->getCompletionsAtPosition(ctx, offset1);
+    auto res2 = lspApi->getCompletionsAtPosition(ctx, offset2);
+    auto expectedEntries1 = std::vector<CompletionEntry> {CompletionEntry(
+        "introduce", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "introduce()")};
+    AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
+    AssertCompletionsContainAndNotContainEntries(res2.GetEntries(), expectedEntries1, {});
     initializer.DestroyContext(ctx);
 }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -83,6 +83,71 @@ std::vector<std::string> fileContents = {
         console.log(myfoo.name)
     )"};
 
+std::vector<std::string> fileNamesForSpecialCharacters = {"findRenameLocsThree.ets", "findRenameLocsFour.ets"};
+std::vector<std::string> fileContentsForSpecialCharacters = {
+    R"(
+        //中文测试
+        export function abc(x: string): void {
+        }
+
+        export function dummy(x: number): void {
+        }
+
+        //中文测试
+        export class Foo {
+            name: string = "中文测试";
+            x: number = 1;
+            y: number = 2;
+            z: number = 3;
+            constructor(name: string, x: number, y: number, z: number) {
+                this.name = name;
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
+        };
+
+        export class Oranges {
+            name: string = "unassigned";
+            x: number = 1;
+            y: number = 2;
+            z: number = 3;
+            constructor(name: string, x: number, y: number, z: number) {
+                this.name = name;
+                this.x = x;
+                this.y = y;
+                this.z = z;
+            }
+        };
+
+        dummy(0);
+        dummy(1);
+        //中文测试
+        abc("中文测试");
+        //中文测试
+        abc("中文测试");
+        //中文测试
+        abc("中文测试");
+        )",
+    R"(
+        //中文测试
+        import { dummy, abc, Foo  } from "./findRenameLocsThree.ets";
+
+        dummy(4);
+        dummy(44);
+        abc("5");
+        abc("55");
+        abc("555");
+        //中文测试
+        let myfoo = new Foo("中文测试", 1, 2, 3);
+        //中文测试
+        let otherfoo = new Foo("中文测试", 4, 5, 6);
+
+        console.log(myfoo)
+        console.log(otherfoo)
+        console.log(myfoo.name)
+    )"};
+
 static size_t getLine(std::string source, size_t pos)
 {
     size_t line = 0;
@@ -154,6 +219,24 @@ std::set<RenameLocation> expected_name = {
     {R"(/tmp/findRenameLocsOne.ets)", 158, 162, 8},
     {R"(/tmp/findRenameLocsOne.ets)", 362, 366, 13},
     {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14},
+};
+std::set<RenameLocation> expected_Foo_ForSpecialCharacters = {
+    {R"(/tmp/findRenameLocsFour.ets)", 45, 48, 3},
+    {R"(/tmp/findRenameLocsFour.ets)", 220, 223, 3},
+    {R"(/tmp/findRenameLocsFour.ets)", 284, 287, 3},
+    {R"(/tmp/findRenameLocsThree.ets)", 170, 173, 3},
+};
+std::set<RenameLocation> expected_abc_ForSpecialCharacters = {
+    {R"(/tmp/findRenameLocsThree.ets)", 40, 43, 3},
+    {R"(/tmp/findRenameLocsThree.ets)", 938, 941, 3},
+    {R"(/tmp/findRenameLocsThree.ets)", 974, 977, 3},
+    {R"(/tmp/findRenameLocsThree.ets)", 1010, 1013, 3},
+};
+std::set<RenameLocation> expected_abc_WithCancellation_ForSpecialCharacters = {
+    {R"(/tmp/findRenameLocsThree.ets)", 40, 43, 3},   {R"(/tmp/findRenameLocsThree.ets)", 938, 941, 3},
+    {R"(/tmp/findRenameLocsThree.ets)", 974, 977, 3}, {R"(/tmp/findRenameLocsThree.ets)", 1010, 1013, 3},
+    {R"(/tmp/findRenameLocsFour.ets)", 40, 43, 3},    {R"(/tmp/findRenameLocsFour.ets)", 132, 135, 3},
+    {R"(/tmp/findRenameLocsFour.ets)", 150, 153, 3},  {R"(/tmp/findRenameLocsFour.ets)", 169, 172, 3},
 };
 
 TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsConstantName)
@@ -271,6 +354,78 @@ TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsClassMemberName)
     for (auto renameLoc : res) {
         auto found = expected_name.find(renameLoc);
         ASSERT_TRUE(found != expected_name.end());
+    }
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsForSpecialCharacters)
+{
+    // Create the files
+    auto filePaths = CreateTempFile(fileNamesForSpecialCharacters, fileContentsForSpecialCharacters);
+    Initializer initializer = Initializer();
+
+    auto context = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
+    }
+    LSPAPI const *lspApi = GetImpl();
+    size_t position = 46;
+    auto res = lspApi->findRenameLocations(fileContexts, context, position);
+    ASSERT_EQ(res.size(), expected_Foo_ForSpecialCharacters.size());
+    for (size_t i = 0; i < fileContexts.size(); ++i) {
+        initializer.DestroyContext(fileContexts[i]);
+    }
+    for (auto renameLoc : res) {
+        auto found = expected_Foo_ForSpecialCharacters.find(renameLoc);
+        ASSERT_TRUE(found != expected_Foo_ForSpecialCharacters.end());
+    }
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsInCurrentFileForSpecialCharacters)
+{
+    // Create the files
+    auto filePaths = CreateTempFile(fileNamesForSpecialCharacters, fileContentsForSpecialCharacters);
+    Initializer initializer = Initializer();
+
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+    size_t position = 40;
+    auto res = lspApi->findRenameLocationsInCurrentFile(context, position);
+    ASSERT_EQ(res.size(), expected_abc_ForSpecialCharacters.size());
+    for (auto renameLoc : res) {
+        auto found = expected_abc_ForSpecialCharacters.find(renameLoc);
+        ASSERT_TRUE(found != expected_abc_ForSpecialCharacters.end());
+    }
+    initializer.DestroyContext(context);
+}
+
+TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsWithCancellationForSpecialCharacters)
+{
+    // Create the files
+    auto filePaths = CreateTempFile(fileNamesForSpecialCharacters, fileContentsForSpecialCharacters);
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto fileContexts = std::vector<es2panda_Context *>();
+    for (const auto &filePath : filePaths) {
+        auto fileContext = initializer.CreateContext(filePath.c_str(), ES2PANDA_STATE_CHECKED);
+        fileContexts.push_back(fileContext);
+    }
+
+    // Search for rename locations
+    ark::es2panda::lsp::CancellationToken cancellationToken {123, nullptr};
+    LSPAPI const *lspApi = GetImpl();
+    size_t position = 40;
+    auto res = lspApi->findRenameLocationsWithCancellationToken(&cancellationToken, fileContexts, context, position);
+    ASSERT_EQ(res.size(), expected_abc_WithCancellation_ForSpecialCharacters.size());
+    for (auto renameLoc : res) {
+        auto found = expected_abc_WithCancellation_ForSpecialCharacters.find(renameLoc);
+        ASSERT_TRUE(found != expected_abc_WithCancellation_ForSpecialCharacters.end());
     }
     for (size_t i = 0; i < fileContexts.size(); ++i) {
         initializer.DestroyContext(fileContexts[i]);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -243,6 +243,50 @@ function process() {
         expectedNewText2,         EXPECTED_FUNCTION_FIX_NAME, EXPECTED_FUNCTION_FIX_DESCRIPTION};
     ValidateCodeFixActionInfo(fixResult1[0], expected1);
     ValidateCodeFixActionInfo(fixResult2[0], expected2);
+
+    initializer.DestroyContext(context);
+}
+
+TEST_F(AddLocalVariableTests, TestAddLocalForSpecialCharacters)
+{
+    std::vector<std::string> fileNames = {"TestAddLocalForSpecialCharacters.ets"};
+    std::vector<std::string> fileContents = {R"(
+//中文测试
+class MyComponent {
+    name: String = "中文测试";
+    age: Double = 25;
+     
+    constructor() {
+    }
+     
+    build() {
+        //中文测试
+        this.title = "中文测试";
+    }
+}
+)"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_EQ(fileNames.size(), filePaths.size());
+
+    Initializer initializer = Initializer();
+    auto *context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    const size_t start = 157;
+    const size_t length = 5;
+    const size_t expectedTextChangeStart = 27;
+    const size_t expectedTextChangeLength = 0;
+    const std::string expectedNewText = "  title: String;";
+    const int expectedFixResultSize = 1;
+
+    std::vector<int> errorCodes(CLASS_ERROR_CODES.begin(), CLASS_ERROR_CODES.end());
+    CodeFixOptions emptyOptions = {CreateNonCancellationToken(), ark::es2panda::lsp::FormatCodeSettings(), {}};
+    LSPAPI const *lspApi = GetImpl();
+    auto fixResult = lspApi->getCodeFixesAtPosition(context, start, start + length, errorCodes, emptyOptions);
+
+    ASSERT_EQ(fixResult.size(), expectedFixResultSize);
+
+    ExpectedCodeFixInfo expected = {expectedTextChangeStart, expectedTextChangeLength, filePaths[0],
+                                    expectedNewText,         EXPECTED_CLASS_FIX_NAME,  EXPECTED_CLASS_FIX_DESCRIPTION};
+    ValidateCodeFixActionInfo(fixResult[0], expected);
 
     initializer.DestroyContext(context);
 }

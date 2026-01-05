@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,6 +45,36 @@ TEST_F(LspGetDefinitionFromNodeTest, GetDefinitionFromNode1)
     auto res = lspApi->getDefinitionDataFromNode(context, nodeInfoPtrs);
     initializer.DestroyContext(context);
     size_t const expectedStart = 16;
+    size_t const expectedLength = 3;
+    ASSERT_EQ(res.start, expectedStart);
+    ASSERT_EQ(res.length, expectedLength);
+}
+
+TEST_F(LspGetDefinitionFromNodeTest, GetDefinitionFromNode2)
+{
+    std::vector<std::string> files = {"GetDefinitionFromNode2.ets"};
+    std::vector<std::string> texts = {R"(
+    //中文测试
+    class Foo {
+        //中文测试
+        Foo = 1;
+})"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    Initializer initializer = Initializer();
+    auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_PARSED);
+    LSPAPI const *lspApi = GetImpl();
+    const std::string nodeName = "Foo";
+    std::vector<NodeInfo> nodeInfos;
+    nodeInfos.emplace_back(NodeInfo {nodeName, ark::es2panda::ir::AstNodeType::CLASS_PROPERTY});
+    std::vector<NodeInfo *> nodeInfoPtrs;
+    nodeInfoPtrs.push_back(&nodeInfos[0]);
+
+    auto res = lspApi->getDefinitionDataFromNode(context, nodeInfoPtrs);
+    initializer.DestroyContext(context);
+    size_t const expectedStart = 51;
     size_t const expectedLength = 3;
     ASSERT_EQ(res.start, expectedStart);
     ASSERT_EQ(res.length, expectedLength);

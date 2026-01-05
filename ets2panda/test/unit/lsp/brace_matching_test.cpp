@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -180,4 +180,30 @@ TEST_F(BraceMatchingTests, GetBraceMatchingAtPositionInnerBlock)
     ASSERT_EQ(result[1].start, expectedEnd);
 
     initializer.DestroyContext(ctx);
+}
+
+TEST_F(BraceMatchingTests, GetBraceMatchingAtPositionForSpecialCharacters)
+{
+    std::vector<std::string> fileNames = {"aa1.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+        //中文测试
+        export class B<T>{}
+    )"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_TRUE(filePaths.size() == fileContents.size());
+
+    // Test '<'
+    const size_t pos = 38;
+    const int expectedMapSize = 2;
+
+    LSPAPI const *lspApi = GetImpl();
+    std::vector<TextSpan> result = lspApi->getBraceMatchingAtPosition(filePaths[0].c_str(), pos);
+
+    int const expectedStart = 38;  // '<' position
+    int const expectedEnd = 41;    // Matching '>'
+
+    ASSERT_EQ(result.size(), expectedMapSize);
+    ASSERT_EQ(result[0].start, expectedStart);
+    ASSERT_EQ(result[1].start, expectedEnd);
 }

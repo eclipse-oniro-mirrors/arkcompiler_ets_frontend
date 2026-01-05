@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -598,5 +598,50 @@ console.log(demo1);
 
     auto result = lspApi->getRenameInfo(ctx, fileContent.find("demo1;"), const_cast<char *>(pandaLibPath.c_str()));
     ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result));
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspRenameInfoTests, RenameInfoGetRenameInfoForSpecialCharacters)
+{
+    Initializer initializer = Initializer();
+    std::vector<std::string> files = {"rename.ets"};
+    std::vector<std::string> texts = {R"(
+    //中文测试
+    let aaa = "123";
+    //中文测试
+    let bbb = "中文测试" + aaa;
+    //中文测试
+    console.log("中文测试")
+)"};
+
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto ast = GetAstFromContext<ark::es2panda::ir::AstNode>(ctx);
+    auto consoleNode = ast->FindChild([](ark::es2panda::ir::AstNode *childNode) {
+        return childNode->IsIdentifier() && childNode->AsIdentifier()->Name() == "console";
+    });
+    auto consoleDecl = consoleNode->Variable()->Declaration()->Node();
+    std::string pandaLibPath = GetPandalibPath(consoleDecl);
+    LSPAPI const *lspApi = GetImpl();
+    const size_t varIndex = 21;
+    auto varResult = lspApi->getRenameInfo(ctx, varIndex, const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(varResult));
+    auto varRenameInfo = std::get<ark::es2panda::lsp::RenameInfoSuccess>(varResult);
+    const size_t expectedStart = 20;
+    const size_t expectedLength = 3;
+    ASSERT_EQ(varRenameInfo.GetCanRenameSuccess(), true);
+    ASSERT_EQ(varRenameInfo.GetKind(), "property");
+    ASSERT_EQ(varRenameInfo.GetDisplayName(), "aaa");
+    ASSERT_EQ(varRenameInfo.GetFullDisplayName(), "aaa");
+    ASSERT_EQ(varRenameInfo.GetTriggerSpan().start, expectedStart);
+    ASSERT_EQ(varRenameInfo.GetTriggerSpan().length, expectedLength);
+    const size_t consoleIndex = 90;
+    auto consoleResult = lspApi->getRenameInfo(ctx, consoleIndex, const_cast<char *>(pandaLibPath.c_str()));
+    ASSERT(std::holds_alternative<ark::es2panda::lsp::RenameInfoFailure>(consoleResult));
+    auto consoleRenameInfo = std::get<ark::es2panda::lsp::RenameInfoFailure>(consoleResult);
+    ASSERT_EQ(consoleRenameInfo.GetCanRenameFailure(), false);
+    ASSERT_EQ(consoleRenameInfo.GetLocalizedErrorMessage(), "You cannot rename this element");
     initializer.DestroyContext(ctx);
 }

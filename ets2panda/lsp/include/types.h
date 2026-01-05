@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -233,12 +233,10 @@ public:
     {
         items_.push_back(item);
     }
-    void SetApplicableSpan(const size_t &start, const size_t &line)
+    void SetApplicableSpan(const size_t &start, const size_t &length)
     {
         applicableSpan_.start = start;
-        applicableSpan_.length = line;
-        applicableSpan_.start = start;
-        applicableSpan_.length = line;
+        applicableSpan_.length = length;
     }
     void SetSelectedItemIndex(const size_t &index)
     {

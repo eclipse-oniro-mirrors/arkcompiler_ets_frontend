@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,6 +70,45 @@ TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_001)
     auto res = ark::es2panda::lsp::GetTypeHierarchiesImpl(context, position);
     initializer.DestroyContext(context);
     const size_t parentNum1 = 3;
+    const size_t parentNum2 = 1;
+    ASSERT_EQ(res.superHierarchies.subOrSuper.size(), parentNum1);
+    ASSERT_EQ(res.superHierarchies.subOrSuper[0].subOrSuper.size(), parentNum2);
+}
+
+TEST_F(LspClassHierarchyTests, GetTypeHierarchiesImpl_002)
+{
+    std::vector<std::string> fileNames = {"aa1.ets", "bb1.ets", "cc1.ets"};
+    std::vector<std::string> fileContents = {
+        R"(
+        //中文测试
+        export class AAA {}
+        )",
+        R"(
+        //中文测试
+        import { AAA } from "./aa1"
+        //中文测试
+        export class BBB extends AAA {}
+    )",
+        R"(
+        //中文测试
+        import { BBB } from "./bb1"
+        //中文测试
+        import { NNN } from "./nn1"
+        //中文测试
+        import { PPP } from "./pp1"
+        //中文测试
+        class CCC extends BBB implements NNN, PPP {}
+    )"};
+    auto filePaths = CreateTempFile(fileNames, fileContents);
+    ASSERT_TRUE(filePaths.size() == fileContents.size());
+    ark::es2panda::lsp::Initializer initializer = ark::es2panda::lsp::Initializer();
+    LSPAPI const *lspApi = GetImpl();
+    const int position = 189;
+    const int fileIndex = 2;
+    auto context = initializer.CreateContext(filePaths[fileIndex].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getTypeHierarchies(context, context, position);
+    initializer.DestroyContext(context);
+    const size_t parentNum1 = 1;
     const size_t parentNum2 = 1;
     ASSERT_EQ(res.superHierarchies.subOrSuper.size(), parentNum1);
     ASSERT_EQ(res.superHierarchies.subOrSuper[0].subOrSuper.size(), parentNum2);

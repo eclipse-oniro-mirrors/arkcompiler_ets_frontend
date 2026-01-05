@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +43,52 @@ TEST_F(OrganizeImportsTest, NormalImports)
     es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
 
     std::vector<FileTextChanges> changes = OrganizeImports::Organize(ctx, filePaths[0]);
+
+    ASSERT_EQ(changes.size(), 1);
+    ASSERT_EQ(changes[0].textChanges.size(), 1);
+
+    std::string result = changes[0].textChanges[0].newText;
+
+    EXPECT_TRUE(result.find("import { X } from \'./organize-imports-2\';") == std::string::npos);
+    EXPECT_TRUE(result.find("import { B, C } from \'./organize-imports-1\';") != std::string::npos);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(OrganizeImportsTest, SpecialCharactersNormalImports)
+{
+    std::vector<std::string> files = {"normal-imports-test.ets", "organize-imports-1.ets", "organize-imports-2.ets"};
+    std::vector<std::string> texts = {
+        R"(
+        //中文测试
+        import {B, C, A} from "./organize-imports-1";
+        //中文测试
+        import { X } from "./organize-imports-2";
+        //中文测试
+        const a = B;
+        //中文测试
+        const b = C;
+        )",
+        R"(
+        //中文测试
+        export const A = 1;
+        //中文测试
+        export const B = 2;
+        //中文测试
+        export const C = 3;)",
+        R"(
+        //中文测试
+        export const X = 1;)"};
+    auto filePaths = CreateTempFile(files, texts);
+    size_t const expectedFileCount = 3;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+
+    Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    std::vector<FileTextChanges> changes = lspApi->OrganizeImportsImpl(ctx, filePaths[0].c_str());
 
     ASSERT_EQ(changes.size(), 1);
     ASSERT_EQ(changes[0].textChanges.size(), 1);

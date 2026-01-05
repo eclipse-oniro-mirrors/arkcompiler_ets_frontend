@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -604,6 +604,43 @@ doSomethingElse();
     ASSERT_FALSE(changes.empty());
     std::string result = ApplyChanges(testCode, changes);
     ASSERT_EQ(result, expectedCode);
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPFormattingTests3, FormatRange_ForSpecialCharacters)
+{
+    // CC-OFFNXT(G.FMT.16-CPP) test logic
+    std::string testCode = R"(let arr1 = ["中文测试","2","3"];
+let arr2 = [4,5,6];
+let arr3 = [7,8,9];)";
+
+    constexpr size_t rangeStart = 0;
+    constexpr size_t rangeLength = 29;
+
+    auto tempFiles = CreateTempFile({"lsp_format_for_special_characters.ets"}, {testCode});
+    ASSERT_FALSE(tempFiles.empty());
+
+    ark::es2panda::lsp::Initializer initializer;
+    es2panda_Context *ctx = initializer.CreateContext(tempFiles[0].c_str(), ES2PANDA_STATE_PARSED);
+    ASSERT_NE(ctx, nullptr);
+
+    ark::es2panda::lsp::FormatCodeSettings settings;
+    settings.SetInsertSpaceAfterCommaDelimiter(true);
+    auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
+
+    TextSpan span(rangeStart, rangeLength);
+    LSPAPI const *lspApi = GetImpl();
+    auto changes = lspApi->getFormattingEditsForRange(ctx, formatContext.GetFormatCodeSettings(), span);
+
+    ASSERT_FALSE(changes.empty());
+    ASSERT_EQ(changes.size(), 2u);
+    EXPECT_EQ(changes[0].span.start, 19u);
+    EXPECT_EQ(changes[0].span.length, 0u);
+    EXPECT_EQ(changes[0].newText, " ");
+    EXPECT_EQ(changes[1].span.start, 23u);
+    EXPECT_EQ(changes[1].span.length, 0u);
+    EXPECT_EQ(changes[1].newText, " ");
 
     initializer.DestroyContext(ctx);
 }
