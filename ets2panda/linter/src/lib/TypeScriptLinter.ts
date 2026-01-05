@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -7601,9 +7601,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     this.checkNoEnumProp(typeRef);
-    if (ts.isQualifiedName(typeRef.typeName)) {
-      this.handleSdkForConstructorFuncs(typeRef.typeName);
-    }
   }
 
   private checkNoEnumProp(typeRef: ts.TypeReferenceNode): void {
@@ -10551,8 +10548,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return false;
     }
     const declaration = symbol.getDeclarations()?.[0];
-    if (declaration && ts.isImportClause(declaration)) {
-      const importDecl = declaration.parent;
+    if (declaration && (ts.isImportClause(declaration) || ts.isImportSpecifier(declaration))) {
+      const importDecl = TypeScriptLinter.findClosestImportDeclaration(declaration);
+      if (!importDecl) {
+        return false;
+      }
       const importPath = TsUtils.removeOrReplaceQuotes(importDecl.moduleSpecifier.getText(), false);
       const import_path = TypeScriptLinter.getLocalApiListItemByKey(SdkNameInfo.ImportPath, apiList);
       if (import_path.includes(importPath)) {
@@ -10560,6 +10560,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
     }
     return false;
+  }
+
+  private static findClosestImportDeclaration(node: ts.Node): ts.ImportDeclaration | undefined {
+    while (node) {
+      if (ts.isImportDeclaration(node)) {
+        return node;
+      }
+      node = node.parent;
+    }
+    return undefined;
   }
 
   private static getLocalApiListItemByKey(key: string, apiList: ApiListItem): string | string[] {
@@ -10574,6 +10584,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private handleSdkForConstructorFuncs(node: ts.PropertyAccessExpression | ts.QualifiedName): void {
     if (!this.options.arkts2) {
+      return;
+    }
+    if (node.parent && !ts.isNewExpression(node.parent)) {
       return;
     }
     const rightNode = ts.isPropertyAccessExpression(node) ? node.name : node.right;
