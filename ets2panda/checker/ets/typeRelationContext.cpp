@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,35 +14,9 @@
  */
 
 #include "typeRelationContext.h"
+#include "checker/types/type.h"
 
 namespace ark::es2panda::checker {
-bool AssignmentContext::ValidateArrayTypeInitializerByElement(TypeRelation *relation, ir::ArrayExpression *node,
-                                                              ETSArrayType *target)
-{
-    bool ok = true;
-    ES2PANDA_ASSERT(node != nullptr);
-    ES2PANDA_ASSERT(target != nullptr);
-    if (target->IsETSTupleType()) {
-        return true;
-    }
-
-    for (uint32_t index = 0; index < node->Elements().size(); index++) {
-        ir::Expression *currentArrayElem = node->Elements()[index];
-        auto const currentArrayElementType = currentArrayElem->Check(relation->GetChecker()->AsETSChecker());
-
-        if (!AssignmentContext(relation, currentArrayElem,
-                               currentArrayElem->Check(relation->GetChecker()->AsETSChecker()), target->ElementType(),
-                               currentArrayElem->Start(), std::nullopt, TypeRelationFlag::NO_THROW)
-                 // CC-OFFNXT(G.FMT.06-CPP,G.FMT.02-CPP) project code style
-                 .IsAssignable()) {
-            relation->GetChecker()->LogError(diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT,
-                                             {index, currentArrayElementType, target->ElementType()},
-                                             currentArrayElem->Start());
-            ok = false;
-        }
-    }
-    return ok;
-}
 
 bool InstantiationContext::ValidateTypeArguments(ETSObjectType *type, ir::TSTypeParameterInstantiation *typeArgs,
                                                  const lexer::SourcePosition &pos)

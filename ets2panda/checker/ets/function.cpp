@@ -15,6 +15,7 @@
 
 #include <cstddef>
 
+#include "checker/types/type.h"
 #include "checker/types/typeRelation.h"
 #include "lexer/token/sourceLocation.h"
 #include "util/ustring.h"
@@ -92,6 +93,40 @@ static Type *MaybeBoxedType(ETSChecker *checker, Type *type, ir::Expression *exp
     return res;
 }
 
+static Type *GetParamTypeForArgument(Signature const *signature, ETSChecker *checker, const SignatureInfo *sigInfo,
+                                     size_t argIndex)
+{
+    auto maybeRestParam = argIndex >= signature->ArgCount();
+    if (!maybeRestParam) {
+        return sigInfo->params[argIndex]->TsType();
+    }
+
+    if (sigInfo->restVar == nullptr) {
+        return nullptr;
+    }
+
+    auto *restType = sigInfo->restVar->TsType();
+    if (util::Helpers::IsArrayType(restType)) {
+        return checker->GetElementTypeOfArray(restType);
+    }
+
+    return restType;
+}
+
+static Type *GetArgumentType(ETSChecker *checker, ir::Expression *arg)
+{
+    if (arg->IsSpreadElement()) {
+        auto spreadArg = arg->AsSpreadElement()->Argument();
+        auto type = spreadArg->Check(checker);
+        while (util::Helpers::IsArrayType(spreadArg->TsType())) {
+            return checker->GetElementTypeOfArray(type);
+        }
+        return type;
+    }
+
+    return arg->Check(checker);
+}
+
 static void InferUntilFail(Signature const *const signature, const ArenaVector<ir::Expression *> &arguments,
                            ETSChecker *checker, Substitution *substitution)
 {
@@ -117,23 +152,17 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
                 continue;
             }
 
-            auto *const paramType = (ix < signature->ArgCount())  ? sigInfo->params[ix]->TsType()
-                                    : sigInfo->restVar != nullptr ? sigInfo->restVar->TsType()
-                                                                  : nullptr;
+            Type *paramType = GetParamTypeForArgument(signature, checker, sigInfo, ix);
             if (paramType == nullptr) {
                 continue;
             }
 
             // note: case in #31893 should be fixed later
-            if (!ETSChecker::ContainsTypeParameter(paramType)) {
+            if (!checker->ContainsTypeParameter(paramType)) {
                 arg->SetPreferredType(paramType);
             }
 
-            auto *const argType = arg->IsSpreadElement()
-                                      ? MaybeBoxedType(checker, arg->AsSpreadElement()->Argument()->Check(checker),
-                                                       arg->AsSpreadElement()->Argument())
-                                      : MaybeBoxedType(checker, arg->Check(checker), arg);
-
+            Type *argType = GetArgumentType(checker, arg);
             if (arg->IsArrowFunctionExpression()) {
                 checker->Relation()->SetNode(arg);
             }
@@ -952,14 +981,17 @@ static bool SetPreferredTypeForArrayArgument(ETSChecker *checker, ir::ArrayExpre
     return true;
 }
 
-static void ExtractArrayElementTypes(ETSChecker *checker, Type *&argumentType, Type *&targetType)
+static void PrepareComparisonTypes(ETSChecker *checker, Type **argumentType, Type **targetType)
 {
-    auto isArrayType = [](Type *type) -> bool {
-        return type->IsETSArrayType() || type->IsETSResizableArrayType() || type->IsETSReadonlyArrayType();
-    };
-    while (isArrayType(argumentType) && isArrayType(targetType)) {
-        argumentType = checker->GetElementTypeOfArray(argumentType);
-        targetType = checker->GetElementTypeOfArray(targetType);
+    while (util::Helpers::IsArrayType(*targetType) &&
+           (util::Helpers::IsArrayType(*argumentType) || (*argumentType)->IsETSTupleType())) {
+        if ((*argumentType)->IsETSTupleType()) {
+            *argumentType =
+                util::Helpers::CreateUnionOfTupleConstituentTypes(checker, (*argumentType)->AsETSTupleType());
+        } else {
+            *argumentType = checker->GetElementTypeOfArray(*argumentType);
+        }
+        *targetType = checker->GetElementTypeOfArray(*targetType);
     }
 }
 
@@ -977,7 +1009,7 @@ static bool ValidateSpreadRestArgument(ETSChecker *checker, ir::Expression *argu
         return true;
     }
 
-    ExtractArrayElementTypes(checker, argumentType, targetType);
+    PrepareComparisonTypes(checker, &argumentType, &targetType);
     auto const invocationCtx = checker::InvocationContext(
         checker->Relation(), restArgument, argumentType, targetType, argument->Start(),
         {{diagnostic::REST_PARAM_INCOMPAT_AT, {argumentType, targetType, index + 1}}}, flags);
@@ -991,32 +1023,32 @@ static bool ValidateSpreadRestArgument(ETSChecker *checker, ir::Expression *argu
     return true;
 }
 
+static bool SetPreferredTypeBeforeValidate(ETSChecker *checker, ir::Expression *argument, Type *paramType,
+                                           TypeRelationFlag flags, bool isRestParam = false);
+
 static bool ValidateSignatureRestParams(ETSChecker *checker, Signature *substitutedSig,
-                                        const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags,
-                                        bool reportError)
+                                        const ArenaVector<ir::Expression *> &arguments, TypeRelationFlag flags)
 {
     size_t const argumentCount = arguments.size();
     auto const commonArity = std::min(substitutedSig->ArgCount(), argumentCount);
-    auto const restCount = argumentCount - commonArity;
-    if (argumentCount == commonArity && substitutedSig->RestVar()->TsType()->IsETSTupleType()) {
+    auto restParamType = substitutedSig->RestVar()->TsType();
+    if (argumentCount == commonArity && restParamType->IsETSTupleType()) {
         return false;
     }
 
     for (size_t index = commonArity; index < argumentCount; ++index) {
         auto &argument = arguments[index];
+        auto preferredType =
+            restParamType->IsETSTupleType() ? restParamType : checker->GetElementTypeOfArray(restParamType);
+        if (!SetPreferredTypeBeforeValidate(checker, argument, preferredType, flags, true)) {
+            return false;
+        }
 
         if (!argument->IsSpreadElement()) {
             if (!IsValidRestArgument(checker, argument, substitutedSig, flags, index)) {
                 return false;
             }
             continue;
-        }
-
-        if (restCount > 1U) {
-            if (reportError) {
-                checker->LogError(diagnostic::MULTIPLE_SPREADS, {}, argument->Start());
-            }
-            return false;
         }
 
         if (!ValidateSpreadRestArgument(checker, argument, substitutedSig, flags, index)) {
@@ -1600,7 +1632,8 @@ SignatureInfo *ETSChecker::ComposeSignatureInfo(ir::TSTypeParameterDeclaration *
             signatureInfo->restVar = SetupSignatureParameter(param, restParamType);
             ES2PANDA_ASSERT(signatureInfo->restVar != nullptr);
 
-            // NOTE(muhammet): Have to add optional arguments again so it doesn't break the assertion for rest tuples
+            // NOTE(muhammet): Have to add optional arguments again so it doesn't break the assertion for rest
+            // tuples
             size_t nOpt = std::count_if(signatureInfo->params.begin(), signatureInfo->params.end(),
                                         [](varbinder::LocalVariable *var) {
                                             return var->Declaration()->Node()->AsETSParameterExpression()->IsOptional();
@@ -2015,8 +2048,9 @@ bool ETSChecker::IsReturnTypeSubstitutable(Signature *const s1, Signature *const
     // A method declaration d1 with return type R1 is return-type-substitutable for another method d2 with return
     // type R2 if any of the following is true:
 
-    // NOTE(vpukhov): void type leaks into type arguments, so we have to check the original signature if the return type
-    // is parametrized or not to use a proper subtyping check. To be replaced with IsETSPrimitiveType after #19701.
+    // NOTE(vpukhov): void type leaks into type arguments, so we have to check the original signature if the return
+    // type is parametrized or not to use a proper subtyping check. To be replaced with IsETSPrimitiveType after
+    // #19701.
     auto const hasPrimitiveReturnType = [](Signature *s) {
         bool origIsRef = s->Function()->Signature()->ReturnType()->IsETSReferenceType();
         ES2PANDA_ASSERT_POS(origIsRef == s->ReturnType()->IsETSReferenceType(), s->Function()->Start());
@@ -2554,7 +2588,7 @@ static Signature *ValidateOrderSignature(
     if (!hasRestParameter || (count >= argCount && !signature->RestVar()->TsType()->IsETSTupleType())) {
         return signature;
     }
-    if (!ValidateSignatureRestParams(checker, signature, arguments, flags, true) ||
+    if (!ValidateSignatureRestParams(checker, signature, arguments, flags) ||
         !signatureMatchContext.ValidSignatureMatchStatus()) {
         return nullptr;
     }
@@ -2562,17 +2596,16 @@ static Signature *ValidateOrderSignature(
     return signature;
 }
 
-static bool SetPreferredTypeBeforeValidate(ETSChecker *checker, Signature *substitutedSig, ir::Expression *argument,
-                                           size_t index, TypeRelationFlag flags)
+static bool SetPreferredTypeBeforeValidate(ETSChecker *checker, ir::Expression *argument, Type *paramType,
+                                           TypeRelationFlag flags, bool isRestParam)
 {
-    auto const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
     if (argument->IsObjectExpression()) {
         argument->AsObjectExpression()->SetPreferredType(paramType);
     }
 
     if (argument->IsMemberExpression()) {
         checker->SetArrayPreferredTypeForNestedMemberExpressions(argument->AsMemberExpression(), paramType);
-    } else if (argument->IsSpreadElement()) {
+    } else if (argument->IsSpreadElement() && !isRestParam) {
         checker->LogError(diagnostic::SPREAD_ONTO_SINGLE_PARAM, {}, argument->Start());
         return false;
     } else if (argument->IsNumberLiteral()) {
@@ -2613,7 +2646,8 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
     }
     for (size_t index = 0; index < commonArity; ++index) {
         auto &argument = arguments[index];
-        if (!SetPreferredTypeBeforeValidate(checker, substitutedSig, argument, index, flags)) {
+        auto const paramType = checker->GetNonNullishType(substitutedSig->Params()[index]->TsType());
+        if (!SetPreferredTypeBeforeValidate(checker, argument, paramType, flags)) {
             return false;
         }
 

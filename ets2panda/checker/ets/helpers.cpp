@@ -24,11 +24,13 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "checker/ets/typeRelationContext.h"
 #include "checker/ets/typeConverter.h"
+#include "checker/types/type.h"
 #include "evaluate/scopedDebugInfoPlugin.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "checker/types/ets/etsAsyncFuncReturnType.h"
 #include "compiler/lowering/util.h"
 #include "generated/diagnostic.h"
+#include "ir/astNode.h"
 #include "util/es2pandaMacros.h"
 #include "util/helpers.h"
 #include "util/nameMangler.h"
@@ -2546,6 +2548,34 @@ bool ETSChecker::CheckNumberOfTypeArguments(ETSObjectType *const type, ir::TSTyp
         return false;
     }
     return true;
+}
+
+bool ETSChecker::ValidateArrayTypeInitializerByElement(ir::ArrayExpression *node, Type *target)
+{
+    bool ok = true;
+    ES2PANDA_ASSERT(node != nullptr);
+    ES2PANDA_ASSERT(target != nullptr);
+    if (target->IsETSTupleType()) {
+        return true;
+    }
+
+    for (uint32_t index = 0; index < node->Elements().size(); index++) {
+        ir::Expression *currentArrayElem = node->Elements()[index];
+        Type *currentArrayElementType = currentArrayElem->Check(this);
+        if (currentArrayElem->IsSpreadElement() && currentArrayElementType->IsETSTupleType()) {
+            currentArrayElementType =
+                util::Helpers::CreateUnionOfTupleConstituentTypes(this, currentArrayElementType->AsETSTupleType());
+        }
+        auto assignCtx =
+            AssignmentContext(Relation(), currentArrayElem, currentArrayElementType, GetElementTypeOfArray(target),
+                              currentArrayElem->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
+        if (!assignCtx.IsAssignable()) {
+            LogError(diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT,
+                     {index, currentArrayElementType, GetElementTypeOfArray(target)}, currentArrayElem->Start());
+            ok = false;
+        }
+    }
+    return ok;
 }
 
 bool ETSChecker::NeedTypeInference(const ir::ScriptFunction *lambda)

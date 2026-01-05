@@ -13,21 +13,22 @@
  * limitations under the License.
  */
 
-function main() {
-    let arg1: number[] = [1, 2]
-    let arg2: FixedArray<number> = [3, 4]
-    let arg3: [number, number] = [5, 6]
-    let fn = (...args: number[]) => {
-        let sum = 0;
-        for (let e of args) {
-            sum += e;
-        }
-        return sum;
+function fn(...args: string[]) {
+    let result = "";
+    for (let e of args) {
+        result += e;
     }
-    arktest.assertEQ(fn(1, 2, 3, 4), 10);
-    arktest.assertEQ(fn(...arg1), 3);
-    arktest.assertEQ(fn(...[...arg1]), 3);
-    arktest.assertEQ(fn(1, 2, 3, 4, ...arg1), 13);
-    arktest.assertEQ(fn(...arg1, ...arg2, 7, ...arg3, 8), 36);
+    return result;
+}
+
+function main() {
+    let arg1: string[] = ["a", "b"]
+    let arg2: FixedArray<string> = ["c", "d"]
+    let arg3: [string, string] = ["e", "f"]
+    arktest.assertEQ(fn("a", "b"), "ab");
+    arktest.assertEQ(fn(...arg1), "ab");
+    arktest.assertEQ(fn(...[...arg1]), "ab");
+    arktest.assertEQ(fn("a", "b", ...arg1), "abab");
+    arktest.assertEQ(fn(...arg1, ...arg2, "g", ...arg3, "h"), "abcdgefh");
 }
 

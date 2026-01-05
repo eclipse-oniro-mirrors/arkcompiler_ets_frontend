@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ class ETSBinder;
 namespace ark::es2panda::checker {
 class ETSObjectType;
 class Type;
+class ETSTupleType;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::compiler {
@@ -165,6 +166,9 @@ public:
                                                         std::uint32_t index);
     static bool IsAsyncMethod(ir::AstNode const *node);
     static bool IsExported(ir::AstNode const *) noexcept;
+    static bool IsArrayType(checker::Type *type);
+    static checker::Type *CreateUnionOfTupleConstituentTypes(checker::ETSChecker *checker,
+                                                             const checker::ETSTupleType *type);
 
     static bool IsGlobalVar(const ark::es2panda::varbinder::Variable *var);
 

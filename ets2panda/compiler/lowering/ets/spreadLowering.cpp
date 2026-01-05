@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -196,15 +196,17 @@ static ir::Statement *CreateElementsAssignStatementBySpreadArr(public_lib::Conte
     auto *const newArrayIndexId = newArrayAndIndex[1];
 
     std::stringstream elementsAssignStr;
-    elementsAssignStr << "for (let @@I1 of @@I2) {";
-    elementsAssignStr << "@@I3[@@I4] = @@I5 as @@T6;";
-    elementsAssignStr << "@@I7++;";
+    elementsAssignStr << "for (let @@I1 = 0; @@I2 < @@I3.length; @@I4++) {";
+    elementsAssignStr << "@@I5[@@I6] = @@I7[@@I8] as @@T9;";
+    elementsAssignStr << "@@I10++;";
     elementsAssignStr << "}";
 
     ES2PANDA_ASSERT(spreadArrIterator != nullptr);
     ir::Statement *elementsAssignStatement = parser->CreateFormattedStatement(
-        elementsAssignStr.str(), spreadArrIterator->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
-        newArrayId->Clone(allocator, nullptr), newArrayIndexId->Clone(allocator, nullptr),
+        elementsAssignStr.str(), spreadArrIterator->Clone(allocator, nullptr),
+        spreadArrIterator->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
+        spreadArrIterator->Clone(allocator, nullptr), newArrayId->Clone(allocator, nullptr),
+        newArrayIndexId->Clone(allocator, nullptr), spId->Clone(allocator, nullptr),
         spreadArrIterator->Clone(allocator, nullptr), arrayElementType, newArrayIndexId->Clone(allocator, nullptr));
 
     return elementsAssignStatement;

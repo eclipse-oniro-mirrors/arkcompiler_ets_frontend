@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -428,6 +428,7 @@ public:
     bool CheckIfNumeric(Type *type);
     bool CheckIfFloatingPoint(Type *type);
 
+    bool ValidateArrayTypeInitializerByElement(ir::ArrayExpression *node, Type *target);
     Type *HandleArithmeticOperationOnTypes(Type *left, Type *right, lexer::TokenType operationType);
     void SetGenerateValueOfFlags(std::tuple<checker::Type *, checker::Type *, Type *, Type *> types,
                                  std::tuple<ir::Expression *, ir::Expression *> nodes);
@@ -436,7 +437,7 @@ public:
 
     // Function
     static bool NeedTypeInference(const ir::ScriptFunction *lambda);
-    static bool ContainsTypeParameter(checker::Type *type);
+    bool ContainsTypeParameter(checker::Type *type);
     void InferTypesForLambda(ir::ScriptFunction *lambda, ir::ETSFunctionType *calleeType,
                              Signature *maybeSubstitutedFunctionSig = nullptr);
     void InferTypesForLambda(ir::ScriptFunction *lambda, Signature *signature);
