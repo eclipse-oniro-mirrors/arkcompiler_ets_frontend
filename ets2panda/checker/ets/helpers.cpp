@@ -580,6 +580,31 @@ void ETSChecker::ResolveReturnStatement(ETSChecker *checker, checker::Type *func
     }
 }
 
+static Type *GetElementTypeFromNumericLiterals(ETSChecker *checker, ArenaVector<ir::Expression *> &elements)
+{
+    ES2PANDA_ASSERT(!elements.empty());
+
+    lexer::Number::TypeRank inferredTypeRank = elements[0]->AsNumberLiteral()->Number().GetTypeRank();
+    for (auto *e : elements) {
+        ES2PANDA_ASSERT(e->IsNumberLiteral());
+        if (inferredTypeRank != e->AsNumberLiteral()->Number().GetTypeRank()) {
+            inferredTypeRank = lexer::Number::TypeRank::DOUBLE;
+            break;
+        }
+    }
+    switch (inferredTypeRank) {
+        case lexer::Number::TypeRank::INT32:
+            return checker->GlobalIntBuiltinType();
+        case lexer::Number::TypeRank::INT64:
+            return checker->GlobalLongBuiltinType();
+        case lexer::Number::TypeRank::FLOAT:
+            return checker->GlobalFloatBuiltinType();
+        case lexer::Number::TypeRank::DOUBLE:
+        default:
+            return checker->GlobalDoubleBuiltinType();
+    }
+}
+
 checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
 {
     std::vector<checker::Type *> elementTypes;
@@ -619,11 +644,12 @@ checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
     auto const isChar = [this](checker::Type *ct) {
         return Relation()->IsSupertypeOf(GetGlobalTypesHolder()->GlobalCharBuiltinType(), ct);
     };
-    auto const elementType = std::all_of(elementTypes.begin(), elementTypes.end(), isNumericLiteral)
-                                 ? std::all_of(elementTypes.begin(), elementTypes.end(), isChar)
-                                       ? GlobalCharBuiltinType()
-                                       : GlobalDoubleBuiltinType()
-                                 : CreateETSUnionType(std::move(elementTypes));
+    auto const elementType =
+        std::all_of(elementTypes.begin(), elementTypes.end(), isNumericLiteral)
+            ? (std::all_of(elementTypes.begin(), elementTypes.end(), isChar)
+                   ? GlobalCharBuiltinType()
+                   : GetElementTypeFromNumericLiterals(this, init->AsArrayExpression()->Elements()))
+            : CreateETSUnionType(std::move(elementTypes));
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return CreateETSResizableArrayType(elementType);

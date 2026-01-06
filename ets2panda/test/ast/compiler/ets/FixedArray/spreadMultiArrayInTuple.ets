@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,5 +26,5 @@ function main() {
 /* @@@ label1 Error Semantic error ESE0055: 'Array<Int|String>' cannot be spread in tuple. */
 /* @@@ label2 Error Semantic error ESE0055: 'Array<Int|String>' cannot be spread in tuple. */
 /* @@@ label3 Error Semantic error ESE0231: Initializer has 3 elements, but tuple requires 4 */
-/* @@@ label4 Error Semantic error ESE0055: 'Array<Double>' cannot be spread in tuple. */
+/* @@@ label4 Error Semantic error ESE0055: 'Array<Int>' cannot be spread in tuple. */
 /* @@@ label5 Error Semantic error ESE0055: 'Array<String>' cannot be spread in tuple. */
