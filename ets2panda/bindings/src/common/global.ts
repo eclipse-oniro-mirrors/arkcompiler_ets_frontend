@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +66,7 @@ export class global {
   private static _es2pandaPublic: Es2pandaNativeModule | undefined = undefined;
   public static get es2panda(): Es2pandaNativeModule {
     if (this._es2panda === undefined) {
-      this._es2panda = initEs2panda();
+      this._es2panda = initPublicEs2panda();
     }
     return this._es2panda;
   }
@@ -82,7 +82,7 @@ export class global {
   private static _generatedEs2pandaPublic: GeneratedEs2pandaNativeModule | undefined = undefined;
   public static get generatedEs2panda(): GeneratedEs2pandaNativeModule {
     if (this._generatedEs2panda === undefined) {
-      this._generatedEs2panda = initGeneratedEs2panda();
+      this._generatedEs2panda = initPublicGeneratedEs2panda();
     }
     return this._generatedEs2panda;
   }
@@ -98,7 +98,7 @@ export class global {
   private static _interopPublic: InteropNativeModule | undefined = undefined;
   public static get interop(): InteropNativeModule {
     if (this._interop === undefined) {
-      this._interop = initInterop();
+      this._interop = initPublicInterop();
     }
     return this._interop;
   }

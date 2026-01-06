@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ private privateMethod(): void {
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
 
     ASSERT_EQ(classHierarchy.size(), 1);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "Parent");
+    ASSERT_EQ(classHierarchy[0].GetName(), "Parent");
     auto methods = classHierarchy[0].GetMethodItemList();
     auto it = methods.find("publicMethod(): void");
     ASSERT_TRUE(it != methods.end());
@@ -108,7 +108,7 @@ class Magpie extends Bird {
     auto context = initializer.CreateContext("class_hierarchy_info_2.ets", ES2PANDA_STATE_CHECKED, text.c_str());
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     ASSERT_EQ(classHierarchy.size(), 1);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "Animal");
+    ASSERT_EQ(classHierarchy[0].GetName(), "Animal");
 
     auto methods = classHierarchy[0].GetMethodItemList();
     auto it = methods.find("sleep(): void");
@@ -175,7 +175,7 @@ TEST_F(LspGetClassHierarchyInfoTests, GetClassHierarchyInfo_4)
     auto context = initializer.CreateContext("class_hierarchy_info_4.ets", ES2PANDA_STATE_CHECKED, text.c_str());
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     ASSERT_EQ(classHierarchy.size(), 1);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "ii");
+    ASSERT_EQ(classHierarchy[0].GetName(), "ii");
 
     auto methods = classHierarchy[0].GetMethodItemList();
     auto it = methods.find("Body(): string");
@@ -225,8 +225,8 @@ class A extends B<string, number> {/*1*/};)";
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     size_t expectInfoListSize = 2;
     ASSERT_EQ(classHierarchy.size(), expectInfoListSize);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "B");
-    ASSERT_EQ(classHierarchy[1].GetClassName(), "C");
+    ASSERT_EQ(classHierarchy[0].GetName(), "B");
+    ASSERT_EQ(classHierarchy[1].GetName(), "C");
     auto classBItems = classHierarchy[0].GetMethodItemList();
     ASSERT_TRUE(classBItems.find("method1(): void") != classBItems.end());
     ASSERT_TRUE(classBItems.find("method2(parameter1: string, callBack: (() => void)): void") != classBItems.end());
@@ -265,7 +265,7 @@ class A extends B {/*1*/};)";
     auto context = initializer.CreateContext("class_hierarchy_info_6.ets", ES2PANDA_STATE_CHECKED, text.c_str());
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     ASSERT_FALSE(classHierarchy.empty());
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "B");
+    ASSERT_EQ(classHierarchy[0].GetName(), "B");
     auto classBItems = classHierarchy[0].GetMethodItemList();
     ASSERT_TRUE(classBItems.find("method1(parameter1: number): parameter") != classBItems.end());
     ASSERT_TRUE(classBItems.find("method2(parameter1: number): number") != classBItems.end());
@@ -310,8 +310,8 @@ class A extends B<string, number> {
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     size_t expectInfoListSize = 2;
     ASSERT_EQ(classHierarchy.size(), expectInfoListSize);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "B");
-    ASSERT_EQ(classHierarchy[1].GetClassName(), "C");
+    ASSERT_EQ(classHierarchy[0].GetName(), "B");
+    ASSERT_EQ(classHierarchy[1].GetName(), "C");
     auto classBItems = classHierarchy[0].GetMethodItemList();
     ASSERT_EQ(classBItems.size(), 1);
     ASSERT_TRUE(classBItems.find("func2(): boolean") != classBItems.end());
@@ -351,8 +351,8 @@ class GrandSon extends Son {/*1*/
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
     size_t expectInfoListSize = 2;
     ASSERT_EQ(classHierarchy.size(), expectInfoListSize);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "Son");
-    ASSERT_EQ(classHierarchy[1].GetClassName(), "Parent");
+    ASSERT_EQ(classHierarchy[0].GetName(), "Son");
+    ASSERT_EQ(classHierarchy[1].GetName(), "Parent");
     auto sonItems = classHierarchy[0].GetPropertyItemList();
     size_t expectPropertyListSize = 2;
     ASSERT_EQ(sonItems.size(), expectPropertyListSize);
@@ -396,7 +396,7 @@ private privateMethod(): void {
     auto classHierarchy = lspApi->getClassHierarchyInfo(context, pos);
 
     ASSERT_EQ(classHierarchy.size(), 1);
-    ASSERT_EQ(classHierarchy[0].GetClassName(), "Parent");
+    ASSERT_EQ(classHierarchy[0].GetName(), "Parent");
     auto methods = classHierarchy[0].GetMethodItemList();
     auto it = methods.find("publicMethod(): void");
     ASSERT_TRUE(it != methods.end());

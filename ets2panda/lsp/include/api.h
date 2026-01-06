@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,6 +42,7 @@
 #include "todo_comments.h"
 #include "types.h"
 #include "formatting/formatting_settings.h"
+#include "formatting/formatting.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -420,6 +421,8 @@ typedef struct LSPAPI {
     std::vector<TextChange> (*getFormattingEditsAfterKeystroke)(es2panda_Context *context,
                                                                 ark::es2panda::lsp::FormatCodeSettings &options,
                                                                 char key, const TextSpan &span);
+    ark::es2panda::lsp::FormatContext (*getFormatContext)(ark::es2panda::lsp::FormatCodeSettings &options);
+    ark::es2panda::lsp::FormatCodeSettings (*getDefaultFormatCodeSettings)(const std::string &newLineCharacter);
 } LSPAPI;
 CAPI_EXPORT LSPAPI const *GetImpl();
 // NOLINTEND

@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -206,7 +206,17 @@ shared_library("public") {
     "./native/src/common-interop.cpp",
     "./native/src/common.cpp",
     "./native/src/convertors-napi.cpp",
+    "./native/src/lsp.cpp",
   ]
+
+  if ((defined(ark_standalone_build) && ark_standalone_build) ||
+      (defined(ark_static_standalone_build) && ark_static_standalone_build)) {
+    configs += [ "$ark_root:ark_config" ]
+  } else {
+    configs += [
+      "//build/config/components/runtime_core/static_core:ark_common_config",
+    ]
+  }
 
   configs += [
     "../:libes2panda_public_config",
@@ -233,11 +243,15 @@ shared_library("public") {
       "$ark_root/libarkbase:arkbase_public_config",
       "$ark_root/libarkfile:arkfile_public_config",
     ]
-    deps += [ "$ark_third_party_root/bounds_checking_function:libsec_shared" ]
+    deps += [
+      "$ark_root/bytecode_optimizer:libarktsbytecodeopt_frontend_static",
+      "$ark_third_party_root/bounds_checking_function:libsec_shared",
+    ]
     include_dirs += [ "//third_party/node/src" ]
   } else {
     external_deps = [
       "runtime_core:assembler_headers",
+      "runtime_core:libarktsbytecodeopt_package",
       "runtime_core:libpandabase_headers",
       "runtime_core:libpandafile_headers",
       sdk_libc_secshared_dep,

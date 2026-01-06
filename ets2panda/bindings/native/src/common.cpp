@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,35 +17,11 @@
 #include <string>
 #include <iostream>
 #include "public/es2panda_lib.h"
-#include "dynamic-loader.h"
 
 // NOLINTNEXTLINE(misc-unused-using-decls)
 using std::string, std::cout, std::endl;
 
 static es2panda_Impl const *g_impl = nullptr;
-
-// NOLINTBEGIN
-#ifdef _WIN32
-#include <windows.h>
-#define PLUGIN_DIR "windows_host_tools"
-#define LIB_PREFIX "lib"
-#define LIB_SUFFIX ".dll"
-#else
-#include <dlfcn.h>
-
-#ifdef __x86_64__
-#define PLUGIN_DIR "linux_host_tools"
-#else
-#define PLUGIN_DIR "linux_arm64_host_tools"
-#endif
-
-#define LIB_PREFIX "lib"
-#define LIB_SUFFIX ".so"
-#endif
-// NOLINTEND
-
-constexpr const char *G_LIB_ES2_PANDA_PUBLIC_OHOS = LIB_PREFIX "es2panda_public" LIB_SUFFIX;
-constexpr const char *G_LIB_ES2_PANDA_PUBLIC = LIB_PREFIX "es2panda-public" LIB_SUFFIX;
 
 void *FindLibrary()
 {
@@ -144,6 +120,14 @@ KNativePointer impl_DestroyConfig(KNativePointer configPtr)
     return nullptr;
 }
 TS_INTEROP_1(DestroyConfig, KNativePointer, KNativePointer)
+
+KNativePointer impl_DestroyConfigWithoutLog(KNativePointer configPtr)
+{
+    auto config = reinterpret_cast<es2panda_Config *>(configPtr);
+    GetPublicImpl()->DestroyConfigWithoutLog(config);
+    return nullptr;
+}
+TS_INTEROP_1(DestroyConfigWithoutLog, KNativePointer, KNativePointer)
 
 KNativePointer impl_DestroyContext(KNativePointer contextPtr)
 {

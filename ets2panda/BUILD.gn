@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -1257,7 +1257,10 @@ ohos_source_set("libes2panda_frontend_static") {
 
 ohos_shared_library("libes2panda_public") {
   configs = [ ":libes2panda_config" ]
-  deps = [ ":libes2panda_public_frontend_static" ]
+  deps = [
+    ":libes2panda_public_frontend_static",
+    "./lsp:libes2panda_lsp_static",
+  ]
   if (is_mingw || is_win) {
     output_extension = "dll"
   } else {

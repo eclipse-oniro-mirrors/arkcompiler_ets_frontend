@@ -1014,7 +1014,9 @@ LSPAPI g_lspImpl = {GetDefinitionAtPosition,
                     GetTokenTypes,
                     GetFormattingEditsForDocument,
                     GetFormattingEditsForRange,
-                    GetFormattingEditsAfterKeystroke};
+                    GetFormattingEditsAfterKeystroke,
+                    GetFormatContext,
+                    GetDefaultFormatCodeSettings};
 }  // namespace ark::es2panda::lsp
 
 CAPI_EXPORT LSPAPI const *GetImpl()

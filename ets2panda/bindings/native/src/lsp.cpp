@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 #include "convertors-napi.h"
 #include "ir/astNode.h"
 #include "lsp/include/api.h"
+#include "lsp.h"
 #include "common.h"
 #include "panda_types.h"
 #include "public/es2panda_lib.h"
@@ -36,7 +37,7 @@ using ark::es2panda::lsp::ClassPropertyItem;
 
 KNativePointer impl_getCurrentTokenValue(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     return new std::string(
         ctx->getCurrentTokenValue(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position)));
 }
@@ -45,7 +46,7 @@ TS_INTEROP_2(getCurrentTokenValue, KNativePointer, KNativePointer, KInt)
 // diagnostics related
 KNativePointer impl_getSemanticDiagnostics(KNativePointer context)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ptrDiag =
         new DiagnosticReferences(ctx->getSemanticDiagnostics(reinterpret_cast<es2panda_Context *>(context)));
     return ptrDiag;
@@ -54,7 +55,7 @@ TS_INTEROP_1(getSemanticDiagnostics, KNativePointer, KNativePointer)
 
 KNativePointer impl_getClassPropertyInfo(KNativePointer context, KInt position, KBoolean shouldCollectInherited)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto info = ctx->getClassPropertyInfo(reinterpret_cast<es2panda_Context *>(context),
                                           static_cast<std::size_t>(position), shouldCollectInherited != 0);
     return new std::vector<FieldsInfo>(info);
@@ -169,7 +170,7 @@ KNativePointer impl_findRenameLocations(KInt argc, KStringArray pointerArrayPtr,
             fileContexts.push_back(contextPtr);
         }
     }
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto result = ctx->findRenameLocations(fileContexts, reinterpret_cast<es2panda_Context *>(context),
                                            static_cast<std::size_t>(position));
     auto ptrs = std::make_unique<std::vector<void *>>();
@@ -183,7 +184,7 @@ TS_INTEROP_4(findRenameLocations, KNativePointer, KInt, KStringArray, KNativePoi
 
 KNativePointer impl_findRenameLocationsInCurrentFile(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto result = ctx->findRenameLocationsInCurrentFile(reinterpret_cast<es2panda_Context *>(context),
                                                         static_cast<std::size_t>(position));
     auto ptrs = std::make_unique<std::vector<void *>>();
@@ -197,7 +198,7 @@ TS_INTEROP_2(findRenameLocationsInCurrentFile, KNativePointer, KNativePointer, K
 
 KBoolean impl_needsCrossFileRename(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto res = ctx->needsCrossFileRename(reinterpret_cast<es2panda_Context *>(context), position);
     return res ? 1 : 0;
 }
@@ -277,7 +278,7 @@ TS_INTEROP_1(getRenameInfoFailure, KNativePointer, KNativePointer)
 
 KNativePointer impl_getRenameInfo(KNativePointer context, KInt position, KStringPtr &pandaLibPath)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto result = ctx->getRenameInfo(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position),
                                      GetStringCopy(pandaLibPath));
     if (std::holds_alternative<ark::es2panda::lsp::RenameInfoSuccess>(result)) {
@@ -359,7 +360,7 @@ TS_INTEROP_1(getEndFromPropertyInfo, KInt, KNativePointer)
 
 KNativePointer impl_getSyntacticDiagnostics(KNativePointer context)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ptrDiag =
         new DiagnosticReferences(ctx->getSyntacticDiagnostics(reinterpret_cast<es2panda_Context *>(context)));
     return ptrDiag;
@@ -514,14 +515,14 @@ TS_INTEROP_1(getDiagSource, KNativePointer, KNativePointer)
 
 KBoolean impl_isPackageModule(KNativePointer context)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     return static_cast<KBoolean>(ctx->isPackageModule(reinterpret_cast<es2panda_Context *>(context)));
 }
 TS_INTEROP_1(isPackageModule, KBoolean, KNativePointer)
 
 KNativePointer impl_getFileReferences(KStringPtr &filenamePtr, KNativePointer context, KBoolean isPackageModule)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ref = new References(ctx->getFileReferences(
         GetStringCopy(filenamePtr), reinterpret_cast<es2panda_Context *>(context), isPackageModule != 0));
     return ref;
@@ -530,7 +531,7 @@ TS_INTEROP_3(getFileReferences, KNativePointer, KStringPtr, KNativePointer, KBoo
 
 KNativePointer impl_getDeclInfo(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *declInfo = new DeclInfo(
         ctx->getDeclInfo(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position)));
     return declInfo;
@@ -543,7 +544,7 @@ KNativePointer impl_getClassConstructorInfo(KNativePointer context, KInt positio
     for (const auto &el : MakeStringVector(strArrayPtr)) {
         properties.emplace_back(GetStringCopy(const_cast<KStringPtr &>(el)));
     }
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *info = new ark::es2panda::lsp::RefactorEditInfo(ctx->getClassConstructorInfo(
         reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position), properties));
     return info;
@@ -634,7 +635,7 @@ TS_INTEROP_1(getCompletionEntryDetailsEntryName, KNativePointer, KNativePointer)
 
 KNativePointer impl_findSafeDeleteLocation(KNativePointer context, KNativePointer declInfo)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *result = new std::vector<SafeDeleteLocation>(
         ctx->FindSafeDeleteLocation(reinterpret_cast<es2panda_Context *>(context),
                                     reinterpret_cast<std::tuple<std::string, std::string> *>(declInfo)));
@@ -676,7 +677,7 @@ TS_INTEROP_1(getSafeDeleteLocationLength, KInt, KNativePointer)
 
 KNativePointer impl_getReferencesAtPosition(KNativePointer context, KNativePointer declInfo)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ref = new References(ctx->getReferencesAtPosition(reinterpret_cast<es2panda_Context *>(context),
                                                             reinterpret_cast<DeclInfo *>(declInfo)));
     return ref;
@@ -731,7 +732,7 @@ TS_INTEROP_1(getDeclInfoFileText, KNativePointer, KNativePointer)
 
 KNativePointer impl_getQuickInfoAtPosition(KStringPtr &filenamePtr, KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *qi = new QuickInfo(ctx->getQuickInfoAtPosition(GetStringCopy(filenamePtr),
                                                          reinterpret_cast<es2panda_Context *>(context), position));
     return qi;
@@ -740,7 +741,7 @@ TS_INTEROP_3(getQuickInfoAtPosition, KNativePointer, KStringPtr, KNativePointer,
 
 KNativePointer impl_getCompletionAtPosition(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ci = new ark::es2panda::lsp::CompletionInfo(
         ctx->getCompletionsAtPosition(reinterpret_cast<es2panda_Context *>(context), position));
     return ci;
@@ -749,7 +750,7 @@ TS_INTEROP_2(getCompletionAtPosition, KNativePointer, KNativePointer, KInt)
 
 KNativePointer impl_organizeImports(KNativePointer context, KStringPtr &filenamePtr)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto result = ctx->OrganizeImportsImpl(reinterpret_cast<es2panda_Context *>(context), GetStringCopy(filenamePtr));
     return new std::vector<FileTextChanges>(result);
 }
@@ -801,7 +802,7 @@ TS_INTEROP_1(getNewTextFromTextChange, KNativePointer, KNativePointer)
 KNativePointer impl_getCompletionEntryDetails(KStringPtr &entrynamePtr, KStringPtr &filenamePtr, KNativePointer context,
                                               KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ci = new CompletionEntryDetails(
         ctx->getCompletionEntryDetails(GetStringCopy(entrynamePtr), GetStringCopy(filenamePtr),
                                        reinterpret_cast<es2panda_Context *>(context), position));
@@ -811,7 +812,7 @@ TS_INTEROP_4(getCompletionEntryDetails, KNativePointer, KStringPtr, KStringPtr, 
 
 KNativePointer impl_getImplementationAtPosition(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *defInfo = new DefinitionInfo(ctx->getImplementationAtPosition(reinterpret_cast<es2panda_Context *>(context),
                                                                         static_cast<std::size_t>(position)));
     return defInfo;
@@ -820,7 +821,7 @@ TS_INTEROP_2(getImplementationAtPosition, KNativePointer, KNativePointer, KInt)
 
 KNativePointer impl_getDefinitionAtPosition(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *defInfo = new DefinitionInfo(ctx->getDefinitionAtPosition(reinterpret_cast<es2panda_Context *>(context),
                                                                     static_cast<std::size_t>(position)));
     return defInfo;
@@ -850,7 +851,7 @@ TS_INTEROP_1(getLengthFromDef, KInt, KNativePointer)
 
 KNativePointer impl_getDocumentHighlights(KNativePointer context, KInt pos)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *docs = new DocumentHighlightsReferences(
         ctx->getDocumentHighlights(reinterpret_cast<es2panda_Context *>(context), pos));
     return docs;
@@ -870,7 +871,7 @@ TS_INTEROP_1(getDocumentHighs, KNativePointer, KNativePointer)
 
 KNativePointer impl_getSuggestionDiagnostics(KNativePointer context)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ptrDiag =
         new DiagnosticReferences(ctx->getSuggestionDiagnostics(reinterpret_cast<es2panda_Context *>(context)));
     return ptrDiag;
@@ -914,7 +915,7 @@ TS_INTEROP_1(getQuickInfoFileName, KNativePointer, KNativePointer)
 
 KNativePointer impl_getClassHierarchyInfo(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     if (ctx == nullptr) {
         return nullptr;
     }
@@ -944,7 +945,7 @@ KNativePointer impl_getClassNameFromClassHierarchyInfo(KNativePointer info)
     if (infoPtr == nullptr) {
         return nullptr;
     }
-    return new std::string(infoPtr->GetClassName());
+    return new std::string(infoPtr->GetName());
 }
 TS_INTEROP_1(getClassNameFromClassHierarchyInfo, KNativePointer, KNativePointer)
 
@@ -1014,7 +1015,7 @@ TS_INTEROP_1(getAccessModifierStyleFromClassHierarchyItem, KInt, KNativePointer)
 
 KInt impl_getAliasScriptElementKind(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     if (ctx == nullptr) {
         return 1;
     }
@@ -1040,7 +1041,7 @@ TS_INTEROP_3(pushBackToNativeContextVector, KNativePointer, KNativePointer, KNat
 
 KNativePointer impl_getClassHierarchies(KNativePointer context, KStringPtr &fileNamePtr, KInt pos)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     if (ctx == nullptr) {
         return nullptr;
     }
@@ -1057,7 +1058,7 @@ TS_INTEROP_3(getClassHierarchies, KNativePointer, KNativePointer, KStringPtr, KI
 
 KNativePointer impl_getApplicableRefactors(KNativePointer context, KStringPtr &kindPtr, KInt startPos, KInt endPos)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *result = new std::vector<ark::es2panda::lsp::ApplicableRefactorInfo>(
         ctx->getApplicableRefactors(reinterpret_cast<es2panda_Context *>(context), GetStringCopy(kindPtr),
                                     static_cast<std::size_t>(startPos), static_cast<std::size_t>(endPos)));
@@ -1070,14 +1071,14 @@ static TextChangesContext *ResolveTextChangesContext(KNativePointer userPrefsPtr
     if (userPrefsPtr != nullptr) {
         return reinterpret_cast<TextChangesContext *>(userPrefsPtr);
     }
-
+    LSPAPI const *ctx = GetLspApiImpl();
     static auto prefs = ark::es2panda::lsp::UserPreferences::GetDefaultUserPreferences();
 
     auto settings = formattingSettingsPtr != nullptr
                         ? *reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(formattingSettingsPtr)
-                        : ark::es2panda::lsp::GetDefaultFormatCodeSettings();
+                        : ctx->getDefaultFormatCodeSettings(ark::es2panda::lsp::DEFAULT_NEWLINE_CHARACTER);
 
-    auto fmt = ark::es2panda::lsp::GetFormatContext(settings);
+    auto fmt = ctx->getFormatContext(settings);
 
     static LanguageServiceHost host;
     static TextChangesContext defaultTextChangesContext {host, fmt, prefs};
@@ -1088,7 +1089,7 @@ KNativePointer impl_getEditsForRefactor(KNativePointer context, KStringPtr &refa
                                         KInt startPos, KInt endPos, KNativePointer userPrefsPtr,
                                         KNativePointer formattingSettingsPtr)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     if (ctx == nullptr) {
         return nullptr;
     }
@@ -1511,14 +1512,14 @@ TS_INTEROP_1(getLocationFromList, KNativePointer, KNativePointer)
 
 KBoolean impl_getSafeDeleteInfo(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     return static_cast<KBoolean>(ctx->getSafeDeleteInfo(reinterpret_cast<es2panda_Context *>(context), position));
 }
 TS_INTEROP_2(getSafeDeleteInfo, KBoolean, KNativePointer, KInt)
 
 KNativePointer impl_toLineColumnOffset(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *ptrDiag = new ark::es2panda::lsp::LineAndCharacter(
         ctx->toLineColumnOffset(reinterpret_cast<es2panda_Context *>(context), position));
     return ptrDiag;
@@ -1541,7 +1542,7 @@ TS_INTEROP_1(getChar, KInt, KNativePointer)
 
 KNativePointer impl_getTypeHierarchies(KNativePointer searchContext, KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *info = new TypeHierarchiesInfo(ctx->getTypeHierarchies(reinterpret_cast<es2panda_Context *>(searchContext),
                                                                  reinterpret_cast<es2panda_Context *>(context),
                                                                  static_cast<std::size_t>(position)));
@@ -1641,7 +1642,7 @@ KNativePointer impl_getCodeFixesAtPosition(KNativePointer context, KInt startPos
                                          reinterpret_cast<int *>(errorCodesPtr) + codeLength);
         // NOLINTEND(cppcoreguidelines-pro-bounds-pointer-arithmetic,-warnings-as-errors)
     }
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto autofix = ctx->getCodeFixesAtPosition(reinterpret_cast<es2panda_Context *>(context), startPosition,
                                                endPosition, errorCodesInt, emptyOptions);
     return new std::vector<CodeFixActionInfo>(autofix);
@@ -1700,7 +1701,7 @@ TS_INTEROP_1(getFixAllDescriptionFromCodeFixActionInfo, KNativePointer, KNativeP
 
 KNativePointer impl_getSpanOfEnclosingComment(KNativePointer context, KInt position, KBoolean onlyMultiLine)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *textSpan = new TextSpan(
         ctx->getSpanOfEnclosingComment(reinterpret_cast<es2panda_Context *>(context), position, onlyMultiLine != 0));
     return textSpan;
@@ -1755,7 +1756,7 @@ TS_INTEROP_1(getInlayHints, KNativePointer, KNativePointer)
 
 KNativePointer impl_getInlayHintList(KNativePointer context, KNativePointer span)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *inlayHints = new InlayHintList(
         ctx->provideInlayHints(reinterpret_cast<es2panda_Context *>(context), reinterpret_cast<TextSpan *>(span)));
     return inlayHints;
@@ -1887,7 +1888,7 @@ TS_INTEROP_1(getArgumentCount, KInt, KNativePointer)
 
 KNativePointer impl_getSignatureHelpItems(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     auto *textSpan =
         new SignatureHelpItems(ctx->getSignatureHelpItems(reinterpret_cast<es2panda_Context *>(context), position));
     return textSpan;
@@ -1896,7 +1897,7 @@ TS_INTEROP_2(getSignatureHelpItems, KNativePointer, KNativePointer, KInt)
 
 KInt impl_getOffsetByColAndLine(KStringPtr &sourceCodePtr, KInt line, KInt column)
 {
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return impl->getOffsetByColAndLine(sourceCodePtr.Data(), line, column);
 }
 TS_INTEROP_3(getOffsetByColAndLine, KInt, KStringPtr, KInt, KInt)
@@ -1904,7 +1905,7 @@ TS_INTEROP_3(getOffsetByColAndLine, KInt, KStringPtr, KInt, KInt)
 KNativePointer impl_getClassDefinition(KNativePointer astNodePtr, KStringPtr &nodeNamePtr)
 {
     auto ast = reinterpret_cast<es2panda_AstNode *>(astNodePtr);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return impl->getClassDefinition(ast, nodeNamePtr.Data());
 }
 TS_INTEROP_2(getClassDefinition, KNativePointer, KNativePointer, KStringPtr)
@@ -1912,7 +1913,7 @@ TS_INTEROP_2(getClassDefinition, KNativePointer, KNativePointer, KStringPtr)
 KNativePointer impl_getIdentifier(KNativePointer astNodePtr, KStringPtr &nodeNamePtr)
 {
     auto ast = reinterpret_cast<es2panda_AstNode *>(astNodePtr);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return impl->getIdentifier(ast, nodeNamePtr.Data());
 }
 TS_INTEROP_2(getIdentifier, KNativePointer, KNativePointer, KStringPtr)
@@ -1920,7 +1921,7 @@ TS_INTEROP_2(getIdentifier, KNativePointer, KNativePointer, KStringPtr)
 KNativePointer impl_getProgramAst(KNativePointer contextPtr)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return impl->getProgramAst(context);
 }
 TS_INTEROP_1(getProgramAst, KNativePointer, KNativePointer)
@@ -1928,7 +1929,7 @@ TS_INTEROP_1(getProgramAst, KNativePointer, KNativePointer)
 KNativePointer impl_getNodeInfosByDefinitionData(KNativePointer context, KInt position)
 {
     auto ctx = reinterpret_cast<es2panda_Context *>(context);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     std::vector<void *> ptrs;
     for (auto &item : impl->getNodeInfosByDefinitionData(ctx, position)) {
         ptrs.push_back(new NodeInfo(item));
@@ -1950,13 +1951,6 @@ KNativePointer impl_CreateNodeInfoPtr(KStringPtr &nodeName, KInt nodeKind)
 }
 TS_INTEROP_2(CreateNodeInfoPtr, KNativePointer, KStringPtr, KInt)
 
-KNativePointer impl_getKindByNodeInfo(KNativePointer nodeInfo)
-{
-    auto *info = reinterpret_cast<NodeInfo *>(nodeInfo);
-    return new std::string(ark::es2panda::ir::ToString(info->kind));
-}
-TS_INTEROP_1(getKindByNodeInfo, KNativePointer, KNativePointer)
-
 KNativePointer impl_getDefinitionDataFromNode(KNativePointer context, KStringArray pointerArrayPtr, KInt arraySize)
 {
     auto pointerArray = ParsePointerArray(arraySize, pointerArrayPtr);
@@ -1969,7 +1963,7 @@ KNativePointer impl_getDefinitionDataFromNode(KNativePointer context, KStringArr
         }
     }
     auto ctx = reinterpret_cast<es2panda_Context *>(context);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return new DefinitionInfo(impl->getDefinitionDataFromNode(ctx, nodeInfos));
 }
 TS_INTEROP_3(getDefinitionDataFromNode, KNativePointer, KNativePointer, KStringArray, KInt)
@@ -1986,7 +1980,7 @@ KNativePointer impl_findRenameLocationsFromNode(KNativePointer context, KStringA
         }
     }
     auto ctx = reinterpret_cast<es2panda_Context *>(context);
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return new ark::es2panda::lsp::RenameLocation(impl->findRenameLocationsFromNode(ctx, nodeInfos));
 }
 TS_INTEROP_3(findRenameLocationsFromNode, KNativePointer, KNativePointer, KStringArray, KInt)
@@ -2007,14 +2001,14 @@ TS_INTEROP_1(getSourceLocationColumn, KInt, KNativePointer)
 
 KNativePointer impl_getColAndLineByOffset(KStringPtr &sourceCodePtr, KInt offset)
 {
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     return new std::pair<size_t, size_t>(impl->getColAndLineByOffset(sourceCodePtr.Data(), offset));
 }
 TS_INTEROP_2(getColAndLineByOffset, KNativePointer, KStringPtr, KInt)
 
 KNativePointer impl_getTokenTypes(KNativePointer context, KInt position)
 {
-    LSPAPI const *ctx = GetImpl();
+    LSPAPI const *ctx = GetLspApiImpl();
     return new TokenTypeInfo(
         ctx->getTokenTypes(reinterpret_cast<es2panda_Context *>(context), static_cast<std::size_t>(position)));
 }
@@ -2242,7 +2236,7 @@ TS_INTEROP_1(destroyFormatCodeSettings, KInt, KNativePointer)
 
 KNativePointer impl_getFormattingEditsForDocument(KNativePointer context, KNativePointer settingsPtr)
 {
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
     auto result = impl->getFormattingEditsForDocument(reinterpret_cast<es2panda_Context *>(context), *settings);
     return new std::vector<TextChange>(result);
@@ -2252,7 +2246,7 @@ TS_INTEROP_2(getFormattingEditsForDocument, KNativePointer, KNativePointer, KNat
 KNativePointer impl_getFormattingEditsForRange(KNativePointer context, KNativePointer settingsPtr, KInt start,
                                                KInt length)
 {
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
     TextSpan span(start, length);
     auto result = impl->getFormattingEditsForRange(reinterpret_cast<es2panda_Context *>(context), *settings, span);
@@ -2263,7 +2257,7 @@ TS_INTEROP_4(getFormattingEditsForRange, KNativePointer, KNativePointer, KNative
 KNativePointer impl_getFormattingEditsAfterKeystroke(KNativePointer context, KNativePointer settingsPtr, KInt start,
                                                      KInt length, KInt keyCode)
 {
-    LSPAPI const *impl = GetImpl();
+    LSPAPI const *impl = GetLspApiImpl();
     auto *settings = reinterpret_cast<ark::es2panda::lsp::FormatCodeSettings *>(settingsPtr);
     TextSpan span(start, length);
     auto result = impl->getFormattingEditsAfterKeystroke(reinterpret_cast<es2panda_Context *>(context), *settings,
