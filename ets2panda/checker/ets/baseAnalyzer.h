@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,7 @@ public:
     DEFAULT_COPY_SEMANTIC(PendingExit);
     DEFAULT_NOEXCEPT_MOVE_SEMANTIC(PendingExit);
 
-    virtual void ResolveJump()
+    virtual void ResolveJump() const
     {
         jumpResolver_();
     }
@@ -53,6 +53,11 @@ public:
     const ir::AstNode *Node() const
     {
         return node_;
+    }
+
+    bool operator<(const PendingExit &other) const
+    {
+        return node_ < other.Node();
     }
 
 private:
@@ -63,7 +68,7 @@ private:
 template <typename T>
 class BaseAnalyzer {
 public:
-    using PendingExitsVector = std::vector<T>;
+    using PendingExitsSet = std::set<T>;
 
     explicit BaseAnalyzer() = default;
 
@@ -71,7 +76,7 @@ public:
 
     void RecordExit(const T &pe)
     {
-        pendingExits_.push_back(pe);
+        pendingExits_.insert(pe);
         MarkDead();
     }
 
@@ -87,14 +92,14 @@ public:
 
 protected:
     void ClearPendingExits();
-    PendingExitsVector &PendingExits();
-    void SetPendingExits(const PendingExitsVector &pendingExits);
-    PendingExitsVector &OldPendingExits();
-    void SetOldPendingExits(const PendingExitsVector &oldPendingExits);
+    PendingExitsSet &PendingExits();
+    void SetPendingExits(const PendingExitsSet &pendingExits);
+    PendingExitsSet &OldPendingExits();
+    void SetOldPendingExits(const PendingExitsSet &oldPendingExits);
 
 private:
-    PendingExitsVector pendingExits_;
-    PendingExitsVector oldPendingExits_;
+    PendingExitsSet pendingExits_;
+    PendingExitsSet oldPendingExits_;
 };
 }  // namespace ark::es2panda::checker
 
