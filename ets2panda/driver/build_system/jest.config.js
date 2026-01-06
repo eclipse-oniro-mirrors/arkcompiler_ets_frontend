@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,11 +19,17 @@ module.exports = {
   verbose: true,
   collectCoverage: true,
   coverageDirectory: '<rootDir>/dist/coverage',
+  coveragePathIgnorePatterns: [
+    "<rootDir>/test/"
+  ],
   setupFilesAfterEnv: [
     '<rootDir>/test/testHook/jest.memory-usage.js',
     '<rootDir>/test/testHook/jest.time-usage.js',
     '<rootDir>/test/testHook/jest.abc-size.js'
   ],
-  testMatch: [],
+  testMatch: [
+    "<rootDir>/test/ut/compile_process_workerTest/**/*.test.ts",
+    "<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts"
+  ],
   testPathIgnorePatterns: [],
 };
