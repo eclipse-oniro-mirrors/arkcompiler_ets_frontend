@@ -3718,15 +3718,15 @@ checker::Type *ETSAnalyzer::Check(ir::StringLiteral *expr) const
     return expr->TsType();
 }
 
-static bool HasRealSourceLocation(const lexer::SourcePosition &pos)
+static bool HasRealSourceLocation(const lexer::SourceRange &range)
 {
-    return pos.line > 0 && pos.index > 0;
+    return range.start.line != 0 || range.start.index != 0 || range.end.line != 0 || range.end.index != 0;
 }
 
 static void ValidateImportTypeUsage(ETSChecker *checker, ir::ImportDeclaration *st, ir::AstNode *spec)
 {
     // to prevent auto-generated codes which has invalid sourcePosition (0:0)
-    if (!HasRealSourceLocation(spec->Start())) {
+    if (!HasRealSourceLocation(spec->Range())) {
         return;
     }
 
