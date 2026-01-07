@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -447,6 +447,8 @@ private:
     const ir::AstNode *GetDeclaringNode(const ir::AstNode *node);
     varbinder::Variable *GetBoundVariable(const ir::AstNode *node);
     bool VariableHasDefaultValue(const ir::AstNode *node);
+    bool CheckStaticFieldInit(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr);
+    bool CheckClassProperty(const ir::AstNode *node, const ir::AstNode *declNode);
 
     ETSChecker *checker_;
     Set inits_ {};
@@ -469,6 +471,7 @@ private:
     NodeIdMap nodeIdMap_;
     int numErrors_ {};
     std::unordered_set<const ir::AstNode *> foundErrors_;
+    bool inStaticFieldInit_ {false};
 };
 
 }  // namespace ark::es2panda::checker

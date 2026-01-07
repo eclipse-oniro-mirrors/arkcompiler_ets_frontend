@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -391,9 +391,18 @@ void AssignAnalyzer::ProcessClassDefStaticFields(const ir::ClassDefinition *clas
         if (it->IsClassProperty() && it->IsStatic()) {
             const auto prop = it->AsClassProperty();
             NewVar(prop);
+        }
+    }
+
+    for (const auto it : classDef->Body()) {
+        if (it->IsClassProperty() && it->IsStatic()) {
+            const auto prop = it->AsClassProperty();
             if (prop->Value() != nullptr) {
+                inStaticFieldInit_ = true;
+                AnalyzeNode(prop->Value());
                 LetInit(prop);
             }
+            inStaticFieldInit_ = false;
         }
     }
 
@@ -1034,6 +1043,9 @@ void AssignAnalyzer::AnalyzeCallExpr(const ir::CallExpression *callExpr)
 
 void AssignAnalyzer::AnalyzeMemberExpr(const ir::MemberExpression *membExpr)
 {
+    if (inStaticFieldInit_) {
+        CheckInit(membExpr);
+    }
     if (membExpr->Object()->IsThisExpression() && membExpr->HasMemberKind(ir::MemberExpressionKind::PROPERTY_ACCESS)) {
         CheckInit(membExpr);
     } else {
@@ -1384,6 +1396,56 @@ void AssignAnalyzer::LetInit(const ir::AstNode *node)
     inits_.Incl(adr);
 }
 
+bool AssignAnalyzer::CheckStaticFieldInit(const ir::AstNode *node, const ir::AstNode *declNode, NodeId adr)
+{
+    if (node == nullptr || declNode == nullptr) {
+        return true;
+    }
+
+    if (!inStaticFieldInit_) {
+        return true;
+    }
+
+    if (!node->IsMemberExpression()) {
+        return true;
+    }
+
+    if (declNode->Parent() != classDef_) {
+        return true;
+    }
+
+    if (inits_.IsMember(adr)) {
+        return true;
+    }
+
+    util::StringView type = GetVariableType(declNode);
+    util::StringView name = GetVariableName(declNode);
+    const lexer::SourcePosition pos = GetVariablePosition(node);
+
+    checker_->LogError(diagnostic::USE_BEFORE_INIT, {Capitalize(type), name}, pos);
+
+    return false;
+}
+
+bool AssignAnalyzer::CheckClassProperty(const ir::AstNode *node, const ir::AstNode *declNode)
+{
+    if (declNode->IsClassProperty()) {
+        if (!CHECK_ALL_PROPERTIES && !declNode->IsConst()) {
+            // non readonly property
+            return false;
+        }
+
+        if (node->IsDefinite() || node->IsOverride()) {
+            return false;
+        }
+
+        if (declNode->AsClassProperty()->IsImmediateInit()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void AssignAnalyzer::CheckInit(const ir::AstNode *node)
 {
     const ir::AstNode *declNode = GetDeclaringNode(node);
@@ -1396,6 +1458,10 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         return;
     }
 
+    if (!CheckStaticFieldInit(node, declNode, adr)) {
+        return;
+    }
+
     if (VariableHasDefaultValue(declNode)) {
         // no explicit init is required (primitive, nullish)
         return;
@@ -1405,19 +1471,8 @@ void AssignAnalyzer::CheckInit(const ir::AstNode *node)
         return;
     }
 
-    if (declNode->IsClassProperty()) {
-        if (!CHECK_ALL_PROPERTIES && !declNode->IsConst()) {
-            // non readonly property
-            return;
-        }
-
-        if (node->IsDefinite() || node->IsOverride()) {
-            return;
-        }
-
-        if (declNode->AsClassProperty()->IsImmediateInit()) {
-            return;
-        }
+    if (!CheckClassProperty(node, declNode)) {
+        return;
     }
 
     if ((classDef_ == globalClass_ || (adr < classFirstAdr_ || adr >= firstAdr_)) && !inits_.IsMember(adr)) {
