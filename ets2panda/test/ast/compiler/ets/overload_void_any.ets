@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,7 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {foo} from './async_import_4'
-let prop: int = foo<number>()
 
-/* @@? 16:17 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+function foo() {}
+
+function bar(a: int) {}
+function bar(...args: Any[]) {}
+
+function main() {
+    bar(foo())
+}
+
+/* @@? 22:5 Error Semantic error ESE0127: No matching call signature for bar(...) */
+/* @@? 22:9 Error Semantic error ESE0078: Cannot use type 'void' as value. */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,5 @@ function main(): void {
 }
 
 
-/* @@? 20:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean|void) */
-/* @@? 20:22 Error Semantic error ESE0046: Type 'Boolean|void' is not compatible with type 'Boolean' at index 1 */
+/* @@? 20:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
 /* @@? 20:31 Error Semantic error ESE0078: Cannot use type 'void' as value. */

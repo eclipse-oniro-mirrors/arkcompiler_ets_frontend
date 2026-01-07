@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,3 +54,5 @@ Promise.allSettled(thenable).then<void, void>((values: PromiseSettledResult<stri
 }).catch((e: Error): void => {
     console.log('Test failed: ' + e);
 });
+
+/* @@? 32:1 Error Semantic error ESE0127: No matching call signature for then(((p1: Array<PromiseFulfilledResult<String>|PromiseRejectedResult>) => void), ((p1: Error) => void)) */
