@@ -164,6 +164,7 @@ std::vector<ClassHierarchyItemInfo> GetClassHierarchies(std::vector<es2panda_Con
     std::string source;
     if (!ctxList->empty()) {
         auto ctx = reinterpret_cast<public_lib::Context *>((*ctxList)[0]);
+        SetPhaseManager(ctx->phaseManager);
         source = std::string(ctx->parserProgram->SourceCode());
     }
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, pos);
@@ -346,6 +347,7 @@ DiagnosticReferences GetCompilerOptionsDiagnostics(char const *fileName, Cancell
 TypeHierarchiesInfo GetTypeHierarchies(es2panda_Context *searchContext, es2panda_Context *context, const size_t pos)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, pos);
     auto declaration = GetTargetDeclarationNodeByPosition(context, byteOffset);
@@ -355,6 +357,7 @@ TypeHierarchiesInfo GetTypeHierarchies(es2panda_Context *searchContext, es2panda
 DocumentHighlightsReferences GetDocumentHighlights(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
 
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
@@ -400,6 +403,7 @@ std::vector<ark::es2panda::lsp::ReferencedNode> FindReferencesWrapper(
 RenameInfoType GetRenameInfoWrapper(es2panda_Context *context, size_t pos, const char *pandaLibPath)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, pos);
     RenameInfoType info = GetRenameInfo(context, byteOffset, std::string(pandaLibPath));
@@ -423,6 +427,7 @@ std::vector<TextSpan> GetBraceMatchingAtPositionWrapper(char const *fileName, si
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED);
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto result = GetBraceMatchingAtPosition(context, byteOffset);
@@ -441,6 +446,7 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWrapper(
     const std::vector<es2panda_Context *> &fileContexts, es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto locations = FindRenameLocations(fileContexts, context, byteOffset);
@@ -468,6 +474,7 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWrapper(
 std::set<RenameLocation> FindRenameLocationsInCurrentFileWrapper(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto locations = FindRenameLocationsInCurrentFile(context, byteOffset);
@@ -483,6 +490,8 @@ std::set<RenameLocation> FindRenameLocationsInCurrentFileWrapper(es2panda_Contex
 
 bool NeedsCrossFileRenameWrapper(es2panda_Context *context, size_t position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     return NeedsCrossFileRename(context, position);
 }
 
@@ -491,6 +500,7 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWithCancellat
     es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto locations = FindRenameLocations(tkn, fileContexts, context, byteOffset);
@@ -519,6 +529,7 @@ std::vector<FieldsInfo> GetClassPropertyInfoWrapper(es2panda_Context *context, s
                                                     bool shouldCollectInherited)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto result = GetClassPropertyInfo(context, byteOffset, shouldCollectInherited);
@@ -560,6 +571,7 @@ ark::es2panda::lsp::CompletionInfo GetCompletionsAtPosition(es2panda_Context *co
 ClassHierarchy GetClassHierarchyInfo(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto result = GetClassHierarchyInfoImpl(context, byteOffset);
@@ -568,6 +580,8 @@ ClassHierarchy GetClassHierarchyInfo(es2panda_Context *context, size_t position)
 
 std::vector<Location> GetImplementationLocationAtPositionWrapper(es2panda_Context *context, int position)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     return GetImplementationLocationAtPosition(context, position);
 }
 
@@ -575,6 +589,7 @@ RefactorEditInfo GetClassConstructorInfo(es2panda_Context *context, size_t posit
                                          const std::vector<std::string> &properties)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     RefactorEditInfo info = RefactorEditInfo(GetRefactorActionsToGenerateConstructor(context, byteOffset, properties));
@@ -596,6 +611,7 @@ RefactorEditInfo GetClassConstructorInfo(es2panda_Context *context, size_t posit
 LineAndCharacter ToLineColumnOffsetWrapper(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto result = ToLineColumnOffset(context, byteOffset);
@@ -610,6 +626,7 @@ std::vector<ApplicableRefactorInfo> GetApplicableRefactors(es2panda_Context *con
                                                            size_t endPos)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t startByteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, startPos);
     size_t endByteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, endPos);
@@ -627,6 +644,7 @@ std::unique_ptr<ark::es2panda::lsp::RefactorEditInfo> GetEditsForRefactor(
     const ark::es2panda::lsp::RefactorContext &context, const std::string &refactorName, const std::string &actionName)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context.context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
 
     RefactorContext newContext = context;
@@ -649,6 +667,8 @@ std::vector<ark::es2panda::lsp::TodoComment> GetTodoComments(
 
 InlayHintList ProvideInlayHints(es2panda_Context *context, const TextSpan *span)
 {
+    auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     const size_t defaultTime = 20;
     auto cancellationToken = CancellationToken(defaultTime, nullptr);
     UserPreferences preferences = UserPreferences::GetDefaultUserPreferences();
@@ -659,6 +679,7 @@ InlayHintList ProvideInlayHints(es2panda_Context *context, const TextSpan *span)
 SignatureHelpItems GetSignatureHelpItems(es2panda_Context *context, size_t position)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
     auto items = ark::es2panda::lsp::GetSignature(context, byteOffset);
@@ -695,6 +716,7 @@ std::vector<CodeFixActionInfo> GetCodeFixesAtPosition(es2panda_Context *context,
                                                       CodeFixOptions &codeFixOptions)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t startByteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, startPosition);
     size_t endByteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, endPosition);
@@ -793,6 +815,7 @@ DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::v
         return result;
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     if (rootNode == nullptr) {
         return result;
@@ -836,6 +859,7 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
         return result;
     }
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     auto rootNode = reinterpret_cast<ir::AstNode *>(ctx->parserProgram->Ast());
     if (rootNode == nullptr) {
         return result;
@@ -876,6 +900,7 @@ ark::es2panda::lsp::RenameLocation FindRenameLocationsFromNode(es2panda_Context 
 TokenTypeInfo GetTokenTypes(es2panda_Context *context, size_t offset)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
+    SetPhaseManager(ctx->phaseManager);
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, offset);
 

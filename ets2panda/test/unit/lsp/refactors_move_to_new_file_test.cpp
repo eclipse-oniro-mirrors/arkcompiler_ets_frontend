@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -378,7 +378,7 @@ ret(): Base }
 export const X = 1;
 )"};
     std::vector<std::string> files = {"MoveToNewFileTests_import_case2.ets", "MoveToNewFileTests_import_21.ets",
-                                      "MoveToNewFileTests_import_22"};
+                                      "MoveToNewFileTests_import_22.ets"};
     auto filePaths = CreateTempFile(files, texts);
     Initializer init;
     es2panda_Context *ctx = init.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);

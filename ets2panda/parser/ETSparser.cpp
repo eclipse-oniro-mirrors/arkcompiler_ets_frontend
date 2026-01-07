@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -320,7 +320,10 @@ void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &
     }
 
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
-    ES2PANDA_ASSERT(!extSrc.empty());
+    if (extSrc.empty()) {
+        util::DiagnosticMessageParams param = {std::string {src}};
+        DiagnosticEngine().LogDiagnostic(diagnostic::EMPTY_SOURCE_FILE, param);
+    }
 
     bool isDynamic = importData.lang != Language::Id::ETS;
     SourceFile sf {src, extSrc, importData.resolvedSource, false, isDynamic};

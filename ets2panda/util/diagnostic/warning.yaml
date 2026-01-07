@@ -46,6 +46,7 @@ warning:
   message: "Duplicated export aliases for '{}'."
 
 
+
 - name: DUPLICATE_IMPORT
   id: 125428
   message: "'{}' has already imported"
@@ -57,6 +58,10 @@ warning:
 - name: EMPTY_EXPORT_SPECIFIER_LIST
   id: 3614
   message: "Nothing is exported."
+
+- name: EMPTY_SOURCE_FILE
+  id: 20000
+  message: "The source file '{}' is empty."
 
 - name: ENUM_DEPRECATED_CAST
   id: 30
