@@ -2354,8 +2354,6 @@ built-ins/TypedArray/prototype/values/return-itor.js
 built-ins/TypedArray/prototype/values/this-is-not-typedarray-instance.js
 built-ins/TypedArray/Symbol.species/name.js
 built-ins/TypedArray/Symbol.species/result.js
-built-ins/IteratorPrototype/Symbol.iterator/length.js					
-built-ins/IteratorPrototype/Symbol.iterator/prop-desc.js
 built-ins/Map/constructor.js
 built-ins/Map/iterable-calls-set.js
 built-ins/Map/iterator-next-failure.js
@@ -2526,8 +2524,6 @@ built-ins/WeakSet/prototype/delete/this-not-object-throw-undefined.js
 built-ins/WeakSet/prototype/has/does-not-have-weaksetdata-internal-slot-set.js
 built-ins/WeakSet/prototype/has/not-a-constructor.js
 built-ins/WeakSet/prototype/has/has.js
-built-ins/IteratorPrototype/Symbol.iterator/length.js
-built-ins/IteratorPrototype/Symbol.iterator/prop-desc.js
 built-ins/parseInt/S15.1.2.2_A3.1_T6.js
 built-ins/GeneratorFunction/prototype/Symbol.toStringTag.js
 built-ins/GeneratorFunction/prototype/prop-desc.js
