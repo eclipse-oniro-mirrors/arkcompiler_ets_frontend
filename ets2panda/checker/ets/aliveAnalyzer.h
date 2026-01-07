@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@ class ClassDefinition;
 class MethodDefinition;
 class DoWhileStatement;
 class VariableDeclaration;
+class ScriptFunction;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::checker {
@@ -63,7 +64,12 @@ private:
     void AnalyzeStructDecl(const ir::ETSStructDeclaration *structDecl);
     void AnalyzeClassDecl(const ir::ClassDeclaration *classDecl);
     void AnalyzeMethodDef(const ir::MethodDefinition *methodDef);
+    void AnalyzeArrFuncExp(const ir::ArrowFunctionExpression *arrFuncExp);
+    void AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnType, const lexer::SourcePosition &errorPos,
+                        bool isArrow = false);
     void AnalyzeVarDef(const ir::VariableDeclaration *varDef);
+    void AnalyzeAssignExp(const ir::AssignmentExpression *assignExp);
+    void AnalyzeClassProp(const ir::ClassProperty *prop);
     void AnalyzeDoLoop(const ir::DoWhileStatement *doWhile);
     void AnalyzeWhileLoop(const ir::WhileStatement *whileStmt);
     void AnalyzeForLoop(const ir::ForUpdateStatement *forStmt);

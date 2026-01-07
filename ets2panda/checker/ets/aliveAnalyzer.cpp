@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +49,7 @@
 #include "varbinder/variable.h"
 #include "varbinder/declaration.h"
 #include "checker/ETSchecker.h"
+#include "checker/types/ts/voidType.h"
 #include "ir/base/catchClause.h"
 
 namespace ark::es2panda::checker {
@@ -81,8 +82,20 @@ void AliveAnalyzer::AnalyzeNode(const ir::AstNode *node)
             AnalyzeMethodDef(node->AsMethodDefinition());
             break;
         }
+        case ir::AstNodeType::ARROW_FUNCTION_EXPRESSION: {
+            AnalyzeArrFuncExp(node->AsArrowFunctionExpression());
+            break;
+        }
         case ir::AstNodeType::VARIABLE_DECLARATION: {
             AnalyzeVarDef(node->AsVariableDeclaration());
+            break;
+        }
+        case ir::AstNodeType::ASSIGNMENT_EXPRESSION: {
+            AnalyzeAssignExp(node->AsAssignmentExpression());
+            break;
+        }
+        case ir::AstNodeType::CLASS_PROPERTY: {
+            AnalyzeClassProp(node->AsClassProperty());
             break;
         }
         case ir::AstNodeType::BLOCK_STATEMENT: {
@@ -227,14 +240,9 @@ void AliveAnalyzer::AnalyzeClassDecl(const ir::ClassDeclaration *classDecl)
     status_ = prevStatus;
 }
 
-void AliveAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
+void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnType,
+                                   const lexer::SourcePosition &errorPos, bool isArrow)
 {
-    for (ir::MethodDefinition *overload : methodDef->Overloads()) {
-        AnalyzeNode(overload);
-    }
-
-    auto *func = methodDef->Function();
-
     ES2PANDA_ASSERT(func != nullptr);
     if (func->Body() == nullptr || func->IsProxy()) {
         return;
@@ -242,33 +250,84 @@ void AliveAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
 
     status_ = LivenessStatus::ALIVE;
     AnalyzeStat(func->Body());
-    ES2PANDA_ASSERT(methodDef->TsType() && methodDef->TsType()->IsETSFunctionType());
-    const auto *signature = methodDef->TsType()->AsETSFunctionType()->FindSignature(func);
-    ES2PANDA_ASSERT(signature != nullptr);
-    const auto *returnType = signature->ReturnType();
-    const auto isVoid = returnType->IsETSVoidType() || returnType == checker_->GlobalVoidType();
 
-    auto isPromiseVoid = false;
-
-    if (returnType->IsETSObjectType() &&
-        returnType->AsETSObjectType()->AssemblerName() == compiler::Signatures::BUILTIN_PROMISE) {
-        const auto *asAsync = returnType->AsETSObjectType();
-        isPromiseVoid = asAsync->TypeArguments().front() == checker_->GlobalETSUndefinedType() ||
-                        asAsync->TypeArguments().front() == checker_->GlobalVoidType();
+    if (status_ == LivenessStatus::ALIVE && returnType->IsETSUndefinedType()) {
+        if (func->HasReturnStatement()) {
+            checker_->LogError(diagnostic::NONRETURNING_PATHS, {}, func->Start());
+            ClearPendingExits();
+            return;
+        }
     }
 
-    if (status_ == LivenessStatus::ALIVE && !isVoid && !isPromiseVoid) {
-        ES2PANDA_ASSERT(methodDef->Function() != nullptr);
-        if (!methodDef->Function()->HasReturnStatement()) {
-            checker_->LogError(diagnostic::MISSING_RETURN_STMT, {}, func->Start());
+    const auto isSupertypeOfUndefined =
+        checker_->Relation()->IsSupertypeOf(returnType, checker_->GlobalETSUndefinedType());
+
+    auto isSupertypeOfPromiseUndefined = false;
+
+    if (checker_->IsPromiseType(returnType)) {
+        auto unWrapReturnType = checker_->UnwrapPromiseType(returnType);
+        isSupertypeOfPromiseUndefined =
+            checker_->Relation()->IsSupertypeOf(unWrapReturnType, checker_->GlobalETSUndefinedType());
+    }
+
+    bool checkReturn = !isSupertypeOfUndefined && !isSupertypeOfPromiseUndefined;
+    if (isArrow && func->IsAsync()) {
+        checkReturn = false;
+    }
+
+    if (status_ == LivenessStatus::ALIVE && checkReturn) {
+        if (!func->HasReturnStatement()) {
+            if (isArrow) {
+                checker_->LogDiagnostic(diagnostic::Lambda_MISSING_RETURN_STMT, errorPos);
+            } else {
+                checker_->LogError(diagnostic::MISSING_RETURN_STMT, {}, errorPos);
+            }
             ClearPendingExits();
             return;
         }
 
-        checker_->LogError(diagnostic::NONRETURNING_PATHS, {}, func->Start());
+        checker_->LogError(diagnostic::NONRETURNING_PATHS, {}, errorPos);
     }
 
+    if (isArrow) {
+        status_ = LivenessStatus::ALIVE;
+    }
     ClearPendingExits();
+}
+
+void AliveAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)
+{
+    for (ir::MethodDefinition *overload : methodDef->Overloads()) {
+        AnalyzeNode(overload);
+    }
+
+    auto *func = methodDef->Function();
+    ES2PANDA_ASSERT(func != nullptr);
+
+    if (func->Body() == nullptr || func->IsProxy()) {
+        return;
+    }
+
+    ES2PANDA_ASSERT(methodDef->TsType() && methodDef->TsType()->IsETSFunctionType());
+    auto *signature = methodDef->TsType()->AsETSFunctionType()->FindSignature(func);
+    ES2PANDA_ASSERT(signature != nullptr);
+    auto *returnType = signature->ReturnType();
+
+    AnalyzeFuncDef(func, returnType, func->Start());
+}
+
+void AliveAnalyzer::AnalyzeArrFuncExp(const ir::ArrowFunctionExpression *arrFuncExp)
+{
+    auto *func = arrFuncExp->Function();
+
+    if (func->Body() == nullptr || func->IsProxy() || arrFuncExp->TsType() == nullptr) {
+        return;
+    }
+
+    ES2PANDA_ASSERT(arrFuncExp->TsType()->IsETSFunctionType());
+    auto *returnType = arrFuncExp->TsType()->AsETSFunctionType()->ArrowSignature()->ReturnType();
+
+    AnalyzeFuncDef(func, returnType, arrFuncExp->Start(), true);
 }
 
 void AliveAnalyzer::AnalyzeVarDef(const ir::VariableDeclaration *varDef)
@@ -279,6 +338,25 @@ void AliveAnalyzer::AnalyzeVarDef(const ir::VariableDeclaration *varDef)
         }
 
         AnalyzeNode(it->Init());
+    }
+}
+
+void AliveAnalyzer::AnalyzeAssignExp(const ir::AssignmentExpression *assignExp)
+{
+    if (assignExp->Left() != nullptr) {
+        AnalyzeNode(assignExp->Left());
+    }
+    if (assignExp->Right() != nullptr) {
+        AnalyzeNode(assignExp->Right());
+    }
+}
+
+void AliveAnalyzer::AnalyzeClassProp(const ir::ClassProperty *prop)
+{
+    if (!prop->NeedInitInStaticBlock()) {
+        if (prop->Value() != nullptr) {
+            AnalyzeNode(prop->Value());
+        }
     }
 }
 
@@ -381,7 +459,8 @@ void AliveAnalyzer::AnalyzeCall(const ir::CallExpression *callExpr)
     for (const auto *it : callExpr->Arguments()) {
         AnalyzeNode(it);
     }
-    if (callExpr->Signature()->ReturnType() == checker_->GetGlobalTypesHolder()->GlobalETSNeverType()) {
+    if (callExpr->Signature() != nullptr &&
+        callExpr->Signature()->ReturnType() == checker_->GetGlobalTypesHolder()->GlobalETSNeverType()) {
         MarkDead();
     }
 }
