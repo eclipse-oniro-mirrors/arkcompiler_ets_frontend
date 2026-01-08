@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -531,7 +531,6 @@ ir::Expression *ParserImpl::ParseTsTemplateLiteralType(bool throwError)
 ir::Expression *ParserImpl::ParseTsTypeAnnotationElement(ir::Expression *typeAnnotation,
                                                          TypeAnnotationParsingOptions *options)
 {
-    // ParseTsUnionType(), ParseTsIntersectionType(), ParseTsConditionalType()
     CHECK_PARSER_STACK_OVER_FLOW
     switch (lexer_->GetToken().Type()) {
         case lexer::TokenType::PUNCTUATOR_BITWISE_OR: {
@@ -761,7 +760,6 @@ ir::Expression *ParserImpl::ParseTsConditionalType(ir::Expression *checkType, bo
 
     lexer_->NextToken();  // eat 'extends'
 
-    // ParseTsTypeAnnotation()
     CHECK_PARSER_STACK_OVER_FLOW
 
     ParserStatus savedStatus = context_.Status();
@@ -802,7 +800,6 @@ ir::Expression *ParserImpl::ParseTsConditionalType(ir::Expression *checkType, bo
 
 ir::Expression *ParserImpl::ParseTsTypeAnnotation(TypeAnnotationParsingOptions *options)
 {
-    // ParseTsTypeAnnotationElement() ->  ParseTsTypeAnnotation()
     CHECK_PARSER_STACK_OVER_FLOW
     ir::Expression *typeAnnotation = nullptr;
 
@@ -831,7 +828,6 @@ ir::Expression *ParserImpl::ParseTsTypeAnnotation(TypeAnnotationParsingOptions *
 
 ir::Expression *ParserImpl::ParseTsTypeOperatorOrTypeReference(bool throwError)
 {
-    // -> ParseTsTypeAnnotation()
     CHECK_PARSER_STACK_OVER_FLOW
 
     TypeAnnotationParsingOptions options = throwError ?
@@ -1732,7 +1728,6 @@ ir::TSArrayType *ParserImpl::ParseTsArrayType(ir::Expression *elementType)
 
 ir::TSUnionType *ParserImpl::ParseTsUnionType(ir::Expression *type, bool restrictExtends, bool throwError)
 {
-    // -> ParseTsTypeAnnotation()
     CHECK_PARSER_STACK_OVER_FLOW
 
     ArenaVector<ir::Expression *> types(Allocator()->Adapter());
@@ -1782,7 +1777,6 @@ ir::TSUnionType *ParserImpl::ParseTsUnionType(ir::Expression *type, bool restric
 ir::TSIntersectionType *ParserImpl::ParseTsIntersectionType(ir::Expression *type, bool inUnion, bool restrictExtends,
                                                             bool throwError)
 {
-    // -> ParseTsTypeAnnotation()
     CHECK_PARSER_STACK_OVER_FLOW
 
     ArenaVector<ir::Expression *> types(Allocator()->Adapter());
@@ -4096,7 +4090,6 @@ ir::ScriptFunction *ParserImpl::ParseFunction(ParserStatus newStatus,
                                               bool isDeclare,
                                               ArenaVector<ir::ParamDecorators> *paramDecorators)
 {
-    // -> ParseFunctionBody() → ParseStatementList()
     CHECK_PARSER_STACK_OVER_FLOW
 
     FunctionContext functionContext(this, newStatus | ParserStatus::FUNCTION | ParserStatus::ALLOW_NEW_TARGET);
