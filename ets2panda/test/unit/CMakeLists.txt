@@ -1,4 +1,4 @@
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -72,6 +72,12 @@ if (NOT PANDA_QEMU_BUILD)
     )
     ets2panda_add_gtest(es2panda_extern_flag_tests
         CPP_SOURCES extern_flag_test.cpp
+    )
+endif()
+
+if (PANDA_TARGET_LINUX AND NOT PANDA_TARGET_MOBILE)
+    ets2panda_add_gtest(es2panda_import_path_manager_tests
+        CPP_SOURCES import_path_manager_linux_test.cpp
     )
 endif()
 
