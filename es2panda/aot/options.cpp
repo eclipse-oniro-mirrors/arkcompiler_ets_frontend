@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -418,15 +418,8 @@ bool Options::ParseCompileEntries(nlohmann::json &compileContextInfoJson)
 
 bool Options::ParseCompileContextInfo(const std::string compileContextInfoPath)
 {
-    std::stringstream ss;
     std::string buffer;
-    if (!util::Helpers::ReadFileToBuffer(compileContextInfoPath, ss)) {
-        return false;
-    }
-
-    buffer = ss.str();
-    if (buffer.empty() || !nlohmann::json::accept(buffer)) {
-        std::cerr << "The input file '" << compileContextInfoPath <<"' is incomplete format of json" << std::endl;
+    if (!ReadFileToJsonString(compileContextInfoPath, buffer)) {
         return false;
     }
     // Parser compile context info base on the input json file.
