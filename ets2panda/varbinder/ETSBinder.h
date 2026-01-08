@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -225,12 +225,12 @@ public:
         reExportImports_.insert(reExport);
     }
 
-    [[nodiscard]] const ArenaUnorderedSet<ir::ETSReExportDeclaration *> &ReExportImports() const noexcept
+    [[nodiscard]] const ArenaSet<ir::ETSReExportDeclaration *> &ReExportImports() const noexcept
     {
         return reExportImports_;
     }
 
-    [[nodiscard]] ArenaUnorderedSet<ir::ETSReExportDeclaration *> &ReExportImports() noexcept
+    [[nodiscard]] ArenaSet<ir::ETSReExportDeclaration *> &ReExportImports() noexcept
     {
         return reExportImports_;
     }
@@ -315,7 +315,7 @@ private:
     ArenaMap<parser::Program *, RecordTable *> externalRecordTable_;
     ArenaVector<ir::ETSImportDeclaration *> defaultImports_;  // 1
     ArenaVector<ir::ETSImportDeclaration *> dynamicImports_;
-    ArenaUnorderedSet<ir::ETSReExportDeclaration *> reExportImports_;
+    ArenaSet<ir::ETSReExportDeclaration *> reExportImports_;
     ArenaSet<util::StringView> reexportedNames_;
     ir::Identifier *thisParam_ {};  // 2
     ir::AstNode *defaultExport_ {};

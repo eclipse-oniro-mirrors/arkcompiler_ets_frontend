@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -945,7 +945,7 @@ std::pair<ir::ETSImportDeclaration *, ir::AstNode *> ETSBinder::FindImportDeclIn
             if (IsExportedVariable(var)) {
                 implDecl = item->GetETSImportDeclarations();
                 specifier = GetSpecifier(imported, implDecl);
-                continue;
+                return std::make_pair(implDecl, specifier);
             }
             auto reExportImport = item->GetETSImportDeclarations();
             auto reExportImportPath = reExportImport->Source();
