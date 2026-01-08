@@ -135,8 +135,8 @@ function main() {
 
   let e0 = Color.Red
   let e1: Color = Color.Green
-  arktest.assertEQ(typeof e0, "number")
-  arktest.assertEQ(typeof e1, "number")
+  arktest.assertEQ(typeof e0, "int")
+  arktest.assertEQ(typeof e1, "int")
 
   // ===============
   // for expressions
