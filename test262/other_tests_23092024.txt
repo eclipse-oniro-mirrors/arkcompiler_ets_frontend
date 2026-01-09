@@ -4799,7 +4799,6 @@ test262/data/other_tests/built-ins/Object/prototype/toString/proxy-function.js
 test262/data/other_tests/built-ins/Object/prototype/toString/proxy-revoked.js
 test262/data/other_tests/built-ins/Object/prototype/toString/symbol-tag-non-str-bigint.js
 test262/data/other_tests/built-ins/Object/prototype/toString/symbol-tag-non-str-proxy-function.js
-test262/data/other_tests/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js
 test262/data/other_tests/built-ins/Object/prototype/toString/symbol-tag-override-bigint.js
 test262/data/other_tests/built-ins/Object/prototype/valueOf/not-a-constructor.js
 test262/data/other_tests/built-ins/Promise/prototype/catch/not-a-constructor.js
