@@ -26,3 +26,5 @@ test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T4.js
 test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T5.js
 test262/data/other_tests/built-ins/Date/S15.9.3.1_A5_T6.js
 # --- end of Issue 11781
+
+test262/data/other_tests/built-ins/Object/prototype/toString/symbol-tag-non-str-builtin.js
