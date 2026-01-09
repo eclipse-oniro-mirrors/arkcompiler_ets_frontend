@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -201,12 +201,16 @@ ir::TypeNode *ETSParser::ParseFunctionType(TypeAnnotationParsingOptions *options
         }
         return nullptr;
     }
+
+    TypeAnnotationParsingOptions returnTypeOptions = *options;
+    returnTypeOptions &= ~TypeAnnotationParsingOptions::DISALLOW_UNION;
+
     ir::TypeNode *returnTypeAnnotation = nullptr;
     if (hasReceiver) {
         SavedParserContext contextAfterParseParams(this, GetContext().Status() | ParserStatus::HAS_RECEIVER);
-        returnTypeAnnotation = ParseTypeAnnotation(options);
+        returnTypeAnnotation = ParseTypeAnnotation(&returnTypeOptions);
     } else {
-        returnTypeAnnotation = ParseTypeAnnotation(options);
+        returnTypeAnnotation = ParseTypeAnnotation(&returnTypeOptions);
     }
     if (returnTypeAnnotation == nullptr) {
         return nullptr;
@@ -250,7 +254,9 @@ ir::TypeNode *ETSParser::ParseETSTupleType(TypeAnnotationParsingOptions *const o
     auto *const tupleType = AllocNode<ir::ETSTuple>(Allocator());
 
     auto parseElem = [this, options, &tupleTypeList, &tupleType](bool &) {
-        auto *const currentTypeAnnotation = ParseTypeAnnotation(options);
+        TypeAnnotationParsingOptions elemOptions = *options;
+        elemOptions &= ~(TypeAnnotationParsingOptions::DISALLOW_UNION);
+        auto *const currentTypeAnnotation = ParseTypeAnnotation(&elemOptions);
         if (currentTypeAnnotation == nullptr) {  // Error processing.
             Lexer()->NextToken();
             return false;
