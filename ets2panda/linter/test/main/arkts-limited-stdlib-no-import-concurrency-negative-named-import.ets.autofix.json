@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -145,8 +145,8 @@
                     "endColumn": 23
                 },
                 {
-                    "start": 1024,
-                    "end": 1026,
+                    "start": 1025,
+                    "end": 1027,
                     "replacementText": "process",
                     "line": 19,
                     "column": 10,
@@ -156,27 +156,6 @@
             ],
             "suggest": "",
             "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 24,
-            "endLine": 20,
-            "endColumn": 27,
-            "problem": "NoNeedStdLibSendableContainer",
-            "autofix": [
-                {
-                    "start": 874,
-                    "end": 935,
-                    "replacementText": "",
-                    "line": 20,
-                    "column": 24,
-                    "endLine": 20,
-                    "endColumn": 27
-                }
-            ],
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -207,8 +186,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1101,
-                    "end": 1127,
+                    "start": 1102,
+                    "end": 1128,
                     "replacementText": "AsyncLock",
                     "line": 27,
                     "column": 11,
@@ -228,8 +207,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1134,
-                    "end": 1160,
+                    "start": 1135,
+                    "end": 1161,
                     "replacementText": "AsyncLock",
                     "line": 27,
                     "column": 44,
@@ -249,8 +228,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1174,
-                    "end": 1192,
+                    "start": 1176,
+                    "end": 1194,
                     "replacementText": "AsyncLock",
                     "line": 28,
                     "column": 12,
@@ -270,8 +249,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1199,
-                    "end": 1217,
+                    "start": 1201,
+                    "end": 1219,
                     "replacementText": "AsyncLock",
                     "line": 28,
                     "column": 37,
@@ -291,8 +270,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1229,
-                    "end": 1255,
+                    "start": 1232,
+                    "end": 1258,
                     "replacementText": "AsyncLock",
                     "line": 29,
                     "column": 10,
@@ -312,8 +291,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1258,
-                    "end": 1284,
+                    "start": 1261,
+                    "end": 1287,
                     "replacementText": "AsyncLock",
                     "line": 29,
                     "column": 39,
@@ -333,8 +312,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1311,
-                    "end": 1329,
+                    "start": 1315,
+                    "end": 1333,
                     "replacementText": "AsyncLock",
                     "line": 30,
                     "column": 11,
@@ -354,8 +333,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1332,
-                    "end": 1350,
+                    "start": 1336,
+                    "end": 1354,
                     "replacementText": "AsyncLock",
                     "line": 30,
                     "column": 32,
@@ -395,8 +374,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1381,
-                    "end": 1408,
+                    "start": 1386,
+                    "end": 1413,
                     "replacementText": "SendableLruCache",
                     "line": 31,
                     "column": 15,
@@ -436,8 +415,8 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "autofix": [
                 {
-                    "start": 1442,
-                    "end": 1461,
+                    "start": 1448,
+                    "end": 1467,
                     "replacementText": "SendableLruCache",
                     "line": 32,
                     "column": 16,
@@ -461,33 +440,33 @@
         },
         {
             "line": 34,
-            "column": 17,
-            "endLine": 34,
-            "endColumn": 26,
-            "problem": "NoNeedStdLibSendableContainer",
-            "autofix": [
-                {
-                    "start": 1547,
-                    "end": 1556,
-                    "replacementText": "Array",
-                    "line": 34,
-                    "column": 17,
-                    "endLine": 34,
-                    "endColumn": 26
-                }
-            ],
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
             "column": 46,
             "endLine": 34,
             "endColumn": 55,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 9,
+            "endLine": 20,
+            "endColumn": 27,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 874,
+                    "end": 935,
+                    "replacementText": "",
+                    "line": 20,
+                    "column": 9,
+                    "endLine": 20,
+                    "endColumn": 27
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         }
     ]

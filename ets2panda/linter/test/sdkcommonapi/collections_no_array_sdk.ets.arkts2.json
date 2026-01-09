@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -14,16 +14,6 @@
         "limitations under the License."
     ],
     "result": [
-        {
-            "line": 15,
-            "column": 8,
-            "endLine": 15,
-            "endColumn": 19,
-            "problem": "NoNeedStdLibSendableContainer",
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
         {
             "line": 17,
             "column": 10,
@@ -166,22 +156,22 @@
         },
         {
             "line": 24,
-            "column": 11,
-            "endLine": 24,
-            "endColumn": 28,
-            "problem": "NoNeedStdLibSendableContainer",
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 24,
             "column": 39,
             "endLine": 24,
             "endColumn": 63,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 24,
+            "column": 11,
+            "endLine": 24,
+            "endColumn": 28,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -196,22 +186,22 @@
         },
         {
             "line": 25,
-            "column": 11,
-            "endLine": 25,
-            "endColumn": 28,
-            "problem": "NoNeedStdLibSendableContainer",
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 25,
             "column": 39,
             "endLine": 25,
             "endColumn": 62,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 25,
+            "column": 11,
+            "endLine": 25,
+            "endColumn": 28,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {

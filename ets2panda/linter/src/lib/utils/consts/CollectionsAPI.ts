@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,12 @@
  * limitations under the License.
  */
 
+export const SPECIAL_CONTAINERS = ['Array'];
 export const COLLECTIONS_TEXT = 'collections';
 export const ARKTS_COLLECTIONS_MODULE = '@arkts.collections';
 export const BIT_VECTOR = 'BitVector';
 export const COLLECTIONS_MODULES = ['@arkts.collections', '@kit.ArkTS'];
+export const IMPORT_CAUSE_KEY = 'importCause';
 
 export type BitVectorUsage = undefined | { ns: string; used: boolean };
 
