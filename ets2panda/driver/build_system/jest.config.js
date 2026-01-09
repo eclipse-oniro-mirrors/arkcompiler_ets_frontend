@@ -20,7 +20,7 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: '<rootDir>/dist/coverage',
   coveragePathIgnorePatterns: [
-    "<rootDir>/test/"
+    '<rootDir>/test/'
   ],
   setupFilesAfterEnv: [
     '<rootDir>/test/testHook/jest.memory-usage.js',
@@ -28,8 +28,9 @@ module.exports = {
     '<rootDir>/test/testHook/jest.abc-size.js'
   ],
   testMatch: [
-    "<rootDir>/test/ut/compile_process_workerTest/**/*.test.ts",
-    "<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts"
+    '<rootDir>/test/ut/generate_arktsconfigTest/**/*.test.ts',
+    '<rootDir>/test/ut/compile_process_workerTest/**/*.test.ts',
+    '<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts'
   ],
   testPathIgnorePatterns: [],
 };
