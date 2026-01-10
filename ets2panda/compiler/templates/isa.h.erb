@@ -12,7 +12,7 @@
 %   return "#{mnemonic.gsub('.', '_').upcase}" + "_OPERAND_REG_KIND"
 % end
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,39 +97,6 @@ private:
     std::string id_;
 };
 
-static bool IsAccessor(const std::string &calleeInternalName)
-{
-    auto methodEndPos = calleeInternalName.find(Signatures::MANGLE_BEGIN);
-    if (methodEndPos == std::string::npos) {
-        return false;
-    }
-    auto pos = calleeInternalName.rfind(Signatures::METHOD_SEPARATOR, methodEndPos);
-    if (pos == std::string::npos) {
-        return false;
-    }
-    auto methodBeginPos = pos + 1;
-    // case 1. getter: "xxx.%%get-PropName:PropType;"  name start with '%%get-'
-    auto checkGetterPos = calleeInternalName.find(Signatures::GETTER_METHOD_BEGIN, methodBeginPos);
-    if (checkGetterPos == methodBeginPos) {
-        return true;
-    }
-    // case 2. setter: "xxx.%%set-PropName:PropType;void;"  name start with '%%set-'
-    auto checkSetterPos = calleeInternalName.find(Signatures::SETTER_METHOD_BEGIN, methodBeginPos);
-    if (checkSetterPos == methodBeginPos) {
-        return true;
-    }
-
-    // case 3. indexed getter: "xxx.$_get:ValueType;"  name is '$_get'
-    // case 4. indexed setter: "xxx.$_set:IndexType;ValueType;void;"  name is '$_set'
-    ES2PANDA_ASSERT(Signatures::GET_INDEX_METHOD.length() == Signatures::SET_INDEX_METHOD.length());
-    const auto indexMethodLen = Signatures::GET_INDEX_METHOD.length();
-    if (methodEndPos != methodBeginPos + indexMethodLen) {
-        return false;
-    }
-    auto methodName = calleeInternalName.substr(methodBeginPos, indexMethodLen);
-    return methodName == Signatures::GET_INDEX_METHOD || methodName == Signatures::SET_INDEX_METHOD;
-}
-
 static OperandType GetOperandRegTypeForNormalCall(const std::string &calleeInternalName, size_t argIdx)
 {
     const std::string &str = calleeInternalName;
@@ -151,30 +118,6 @@ static OperandType GetOperandRegTypeForNormalCall(const std::string &calleeInter
         return OperandType::B64;
     }
     return OperandType::REF;
-}
-
-static OperandType GetOperandRegTypeForAccessor(const std::string &calleeInternalName, size_t argIdx,
-                                                bool hadCalculatedThis)
-{
-    // the first arg may be the omitted 'this', but it may calculated in `GetOperandRegType`
-    // do not calculate twice.
-    ES2PANDA_ASSERT(IsAccessor(calleeInternalName));
-    if (argIdx == 0 && !hadCalculatedThis) {
-        return OperandType::REF;
-    }
-
-    ES2PANDA_ASSERT(hadCalculatedThis || argIdx > 0);
-    argIdx = hadCalculatedThis ? argIdx : argIdx - 1;
-    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
-}
-
-static OperandType GetOperandRegTypeForCall(const std::string &calleeInternalName, size_t argIdx,
-                                            bool hadCalculatedThis = false)
-{
-    if (IsAccessor(calleeInternalName)) {  // in such cases method signatures lacks the first arg 'this'
-        return GetOperandRegTypeForAccessor(calleeInternalName, argIdx, hadCalculatedThis);
-    }
-    return GetOperandRegTypeForNormalCall(calleeInternalName, argIdx);
 }
 
 // NOLINTBEGIN(readability-identifier-naming)
@@ -299,21 +242,32 @@ public:
 %   raise "invalid reg type #{type}"
 % end
 %
-    OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override {
-% if insn.mnemonic.start_with?('call.virt')
+
+% need_with_this = insn.properties.any? { |prop| prop.include?('method_id') }
+
+% if need_with_this
+    OperandType GetOperandRegTypeWithThis(const std::string &calleeInternalName, size_t idx) const
+    {
         if (idx == 0) {
             return OperandType::REF;
         }
-        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx - 1, true);
+        return GetOperandRegTypeForNormalCall(calleeInternalName, idx - 1);
+    }
+% end
 
+    OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override {
+% if insn.mnemonic.start_with?('call.virt')
+        return GetOperandRegTypeWithThis(string_id_.Mutf8(), idx);
 % elsif insn.mnemonic.start_with?('call.acc')
         {
             size_t argIdx = (idx >= static_cast<size_t>(imm0_)) ? idx + 1 : idx;
-            return GetOperandRegTypeForCall(string_id_.Mutf8(), argIdx);
+            return GetOperandRegTypeForNormalCall(string_id_.Mutf8(), argIdx);
         }
-
-% elsif insn.properties.any? { |prop| prop.include?('method_id') }  # 从 method_id 解析
-        return GetOperandRegTypeForCall(string_id_.Mutf8(), idx);
+% elsif insn.properties.any? { |prop| prop.include?('method_id') } # method_id present in call.* instructions
+        if (IsDevirtual()) {
+            return GetOperandRegTypeWithThis(string_id_.Mutf8(), idx);
+        }
+        return GetOperandRegTypeForNormalCall(string_id_.Mutf8(), idx);
 % elsif insn.mnemonic.start_with?('any.') && insn.mnemonic.end_with?('.range') # any.x.range always have operand type REG
         ES2PANDA_ASSERT(imm0_ >= 0);
         ES2PANDA_ASSERT(idx < static_cast<size_t>(imm0_));
