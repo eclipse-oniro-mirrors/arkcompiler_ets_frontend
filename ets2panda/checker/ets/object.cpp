@@ -2127,6 +2127,25 @@ bool IsExpressionInClassProperty(ir::Expression const *expr)
 
 }  // namespace
 
+static Type *TryResolveTypeFromAncestors(ir::Expression *node, std::string_view msg, ETSChecker *checker)
+{
+    if (ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::OBJECT_EXPRESSION)) {
+        ES2PANDA_ASSERT(ancestor->AsObjectExpression()->PreferredType() != nullptr &&
+                        ancestor->AsObjectExpression()->PreferredType()->IsETSObjectType());
+        return ancestor->AsObjectExpression()->PreferredType()->AsETSObjectType();
+    }
+
+    if (auto *containingClass = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION);
+        containingClass != nullptr && !containingClass->AsClassDefinition()->IsGlobal()) {
+        ES2PANDA_ASSERT(containingClass->AsClassDefinition()->TsType() != nullptr &&
+                        containingClass->AsClassDefinition()->TsType()->IsETSObjectType());
+        return containingClass->AsClassDefinition()->TsType()->AsETSObjectType();
+    }
+
+    checker->LogError(diagnostic::CTOR_REF_INVALID_CTX_GLOBAL, {msg}, node->Start());
+    return checker->GlobalTypeError();
+}
+
 Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg)
 {
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
@@ -2170,15 +2189,7 @@ Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *cl
     }
 
     if (classType == nullptr || util::Helpers::IsGlobalClass(classType->GetDeclNode())) {
-        if (ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(node, ir::AstNodeType::OBJECT_EXPRESSION);
-            ancestor != nullptr) {
-            ES2PANDA_ASSERT(ancestor->AsObjectExpression()->PreferredType() != nullptr &&
-                            ancestor->AsObjectExpression()->PreferredType()->IsETSObjectType());
-            return ancestor->AsObjectExpression()->PreferredType()->AsETSObjectType();
-        }
-
-        LogError(diagnostic::CTOR_REF_INVALID_CTX_GLOBAL, {msg}, node->Start());
-        return GlobalTypeError();
+        return TryResolveTypeFromAncestors(node, msg, this);
     }
 
     return classType;
