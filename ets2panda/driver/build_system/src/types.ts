@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -213,6 +213,11 @@ export interface DependencyModuleConfig {
     byteCodeHar?: boolean;
 }
 
+export interface ModuleFile {
+    packageName: string;
+    staticFiles: string[];
+}
+
 export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfig, ModuleConfig, PathConfig, FrameworkConfig {
     plugins: PluginsConfig;
     paths: PathsConfig; // paths config passed from template to generate arktsconfig.json "paths" configs.
@@ -222,6 +227,7 @@ export interface BuildConfig extends BuildBaseConfig, DeclgenConfig, LoggerConfi
     // NOTE: left to be backward compatible with old version of build config
     // TO BE REMOVED!!
     dependentModuleList: DependencyModuleConfig[];
+    moduleFiles: ModuleFile[];
 }
 // ProjectConfig ends
 
@@ -245,6 +251,7 @@ export interface ModuleInfo {
     frameworkMode?: boolean;
     useEmptyPackage?: boolean;
     byteCodeHar?: boolean;
+    staticFiles: string[];
 }
 
 export type SetupClusterOptions = {

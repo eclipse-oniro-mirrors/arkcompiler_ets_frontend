@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -124,10 +124,13 @@ const varbinder::GlobalScope *Program::GlobalScope() const
 void Program::SetPackageInfo(const util::StringView &name, util::ModuleKind kind)
 {
     moduleInfo_.moduleName = name;
+    std::string modifiedName(name);
+    std::replace(modifiedName.begin(), modifiedName.end(), util::PATH_DELIMITER, '.');
     moduleInfo_.modulePrefix =
         name.Empty()
             ? ""
-            : util::UString(std::string(name).append(compiler::Signatures::METHOD_SEPARATOR), allocator_).View();
+            : util::UString(std::string(modifiedName).append(compiler::Signatures::METHOD_SEPARATOR), allocator_)
+                  .View();
 
     moduleInfo_.kind = kind;
 }

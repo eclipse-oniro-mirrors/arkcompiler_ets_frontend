@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -126,6 +126,37 @@ export class ArkTSConfig {
         }
         this.addDependencies(source.dependencies);
         this.addPathMappings(source.pathSection);
+
+    }
+
+    // if a dependenciesSets is like 
+    // 'entry' : dependencies: ['hsp1' , 'har1']
+    // 'hsp1': dependencies: ['hsp2','har2']
+    // 'har1': dependencies: []
+    // 'hsp2': dependencies: []
+    // 'har2': dependencies: []
+    // and mainPackageName is 'entry'
+    // The following comments explain the situation when the function is called for the first time
+    mergeArktsConfigByDependencies(dependencies: Set<string>, dependenciesSets: Map<string, Set<string>>): void {
+        if (dependencies.size === 0) {
+            return;
+        }
+
+        // dependencies: ['hsp1' , 'har1']
+        dependencies.forEach((dependency) => {
+            // dependency: 'hsp1'
+            // dependencydependencies: ['hsp2','har2']
+            let dependencydependencies: Set<string> = dependenciesSets.get(dependency)!;
+            let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(dependency)!;
+            if (dependencydependencies.size !== 0) {
+                // hsp1 combines the arktsConfig of hsp2 and har2
+                arktsConfig.mergeArktsConfigByDependencies(dependencydependencies, dependenciesSets);
+            }
+
+            // entry combines the arktsConfig of hsp1
+            this.addDependencies(arktsConfig.dependencies);
+            this.addPathMappings(arktsConfig.pathSection);
+        });
     }
 }
 
@@ -230,23 +261,43 @@ export class ArkTSConfigGenerator {
         }
     }
 
-    private addPathSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
-        arktsconfig.addPathMappings(this.systemPathSection);
+    private getAllModuleFilesToPathSection(moduleInfo: ModuleInfo, arktsConfig: ArkTSConfig): void {
+        if (!moduleInfo.staticFiles || moduleInfo.staticFiles.length === 0) {
+            return;
+        }
+        const moduleRoot = toUnixPath(moduleInfo.moduleRootPath) + '/';
+        for (const file of moduleInfo.staticFiles) {
+            const unixFilePath: string = toUnixPath(file);
+            if (!isSubPathOf(unixFilePath, moduleRoot)) {
+                continue;
+            }
+            let relativePath = unixFilePath.substring(moduleRoot.length);
+            // remove extension and if it is declaration file, remove .d too
+            const keyWithoutExtension = relativePath.replace(/\.(?:d\.)?[^/.]+$/, '');
+            const pathKey = `${moduleInfo.packageName}/${keyWithoutExtension}`;
+            arktsConfig.addPathMappings({ [pathKey]: [file] });
+        }
+    }
+
+    private addPathSection(moduleInfo: ModuleInfo, arktsConfig: ArkTSConfig): void {
+        arktsConfig.addPathMappings(this.systemPathSection);
         // NOTE: workaround
         // NOTE: to be refactored
         if (moduleInfo.language === LANGUAGE_VERSION.ARKTS_1_1) {
             return
         }
 
+        this.getAllFilesToPathSection(moduleInfo, arktsConfig);
+        this.getAllModuleFilesToPathSection(moduleInfo, arktsConfig);
         // NOTE: is some test cases somehow packageName can be an empty string
         // NOTE: to be refactored
         if (moduleInfo.packageName) {
-            arktsconfig.addPathMappings({
+            arktsConfig.addPathMappings({
                 [moduleInfo.packageName]: [moduleInfo.moduleRootPath]
             });
         }
 
-        this.logger.printDebug(`Collected path section: ${JSON.stringify(arktsconfig.compilerOptions.paths, null, 1)}`)
+        this.logger.printDebug(`Collected path section: ${JSON.stringify(arktsConfig.compilerOptions.paths, null, 1)}`)
     }
 
     private getDependencyKey(file: string, moduleInfo: ModuleInfo): string {
@@ -504,7 +555,6 @@ export class ArkTSConfigGenerator {
         });
     }
 
-    // Seems to be redundant
     private getAllFilesToPathSection(
         moduleInfo: ModuleInfo,
         arktsConfig: ArkTSConfig
