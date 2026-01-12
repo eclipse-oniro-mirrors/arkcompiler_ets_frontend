@@ -184,7 +184,7 @@ TEST_F(BraceMatchingTests, GetBraceMatchingAtPositionInnerBlock)
 
 TEST_F(BraceMatchingTests, GetBraceMatchingAtPositionForSpecialCharacters)
 {
-    std::vector<std::string> fileNames = {"aa1.ets"};
+    std::vector<std::string> fileNames = {"paramdec.ets"};
     std::vector<std::string> fileContents = {
         R"(
         //中文测试
