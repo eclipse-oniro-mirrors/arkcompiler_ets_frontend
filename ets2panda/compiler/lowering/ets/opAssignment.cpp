@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@
 #include "ir/expressions/blockExpression.h"
 #include "ir/statements/blockStatement.h"
 #include "ir/statements/expressionStatement.h"
+#include "util/helpers.h"
 
 namespace ark::es2panda::compiler {
 
@@ -384,7 +385,8 @@ ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentExpressi
     InitScopesPhaseETS::RunExternalNode(loweringResult, ctx->parserProgram->VarBinder());
     checker->VarBinder()->AsETSBinder()->ResolveReferencesForScopeWithContext(loweringResult, scope);
 
-    checker::SavedCheckerContext scc {checker, checker::CheckerStatus::IGNORE_VISIBILITY, ContainingClass(assignment)};
+    checker::SavedCheckerContext scc {checker, checker::CheckerStatus::IGNORE_VISIBILITY,
+                                      util::Helpers::GetContainingObjectType(assignment)};
     checker::ScopeContext sc {checker, scope};
 
     loweringResult->Check(checker);
@@ -494,7 +496,8 @@ static ir::AstNode *HandleUpdate(public_lib::Context *ctx, ir::UpdateExpression 
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
     auto expressionCtx = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(), scope);
-    checker::SavedCheckerContext scc {checker, checker::CheckerStatus::IGNORE_VISIBILITY, ContainingClass(upd)};
+    checker::SavedCheckerContext scc {checker, checker::CheckerStatus::IGNORE_VISIBILITY,
+                                      util::Helpers::GetContainingObjectType(upd)};
     checker::ScopeContext sc {checker, scope};
 
     loweringResult->SetParent(upd->Parent());
