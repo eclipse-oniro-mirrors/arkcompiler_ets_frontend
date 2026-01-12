@@ -326,6 +326,61 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
 #else
 #ifndef USE_UNIX_SYSCALL
 #include <sys/file.h>
+
+class DeclResourceGuard {
+public:
+    DeclResourceGuard(sem_t *sem, std::string semName) : sem_(sem), semName_(std::move(semName)) {}
+    DeclResourceGuard(const DeclResourceGuard &) = delete;
+    DeclResourceGuard &operator=(const DeclResourceGuard &) = delete;
+    ~DeclResourceGuard()
+    {
+        Cleanup();
+    }
+
+    void MarkSemAcquired()
+    {
+        semAcquired_ = true;
+    }
+
+    void SetFile(FILE *fp, int fd)
+    {
+        fp_ = fp;
+        fd_ = fd;
+    }
+
+    void MarkLockAcquired()
+    {
+        unlockFd_ = true;
+    }
+
+private:
+    void Cleanup()
+    {
+        if (fd_ != -1 && unlockFd_) {
+            flock(fd_, LOCK_UN);
+        }
+        if (fp_ != nullptr) {
+            fclose(fp_);
+            fp_ = nullptr;
+        }
+        if (sem_ != nullptr) {
+            if (semAcquired_) {
+                sem_post(sem_);
+            }
+            sem_close(sem_);
+            sem_ = nullptr;
+            sem_unlink(semName_.c_str());
+        }
+    }
+
+    sem_t *sem_ {nullptr};
+    std::string semName_;
+    FILE *fp_ {nullptr};
+    int fd_ {-1};
+    bool unlockFd_ {false};
+    bool semAcquired_ {false};
+};
+
 static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
 {
     // NOTE: On Mac platform semName 'decl_sem_std.core.etscache' is invalid
@@ -339,35 +394,40 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
     }
     std::string semName = "/decl_sem_" + std::to_string(semMap.at(absDecl));
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
-    sem_wait(sem);
     if (sem == SEM_FAILED) {
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
         return;
     }
-    auto flags = O_CREAT | O_WRONLY | O_EXCL;
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
-    int fd = open(absDecl.c_str(), flags, 0644);
-    if (fd == -1) {
-        sem_post(sem);
-        sem_close(sem);
-        sem_unlink(semName.c_str());
+    DeclResourceGuard guard(sem, semName);
+    if (sem_wait(sem) == -1) {
         return;
     }
-    flock(fd, LOCK_EX);
+    guard.MarkSemAcquired();
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
+    FILE *fp = fopen(absDecl.c_str(), "wx");
+    if (fp == nullptr) {
+        return;
+    }
 
-    int res = write(fd, processed.data(), processed.size());
-    if (res == -1) {
+    int fd = fileno(fp);
+    if (fd == -1) {
+        return;
+    }
+    guard.SetFile(fp, fd);
+    flock(fd, LOCK_EX);
+    guard.MarkLockAcquired();
+
+    size_t written = fwrite(processed.data(), 1, processed.size(), fp);
+    if (written != processed.size() || ferror(fp)) {
         LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
     }
-    int fdres = fsync(fd);
-    if (fdres == -1) {
+    if (fflush(fp) != 0 || ferror(fp)) {
+        LOG(FATAL, ES2PANDA) << "Failed to flush a file for declaration: " << absDecl;
+    }
+
+    if (fsync(fd) == -1) {
         LOG(FATAL, ES2PANDA) << "Failed to sync a file for declaration: " << absDecl;
     }
-    flock(fd, LOCK_UN);
-    close(fd);
-    sem_post(sem);
-    sem_close(sem);
-    sem_unlink(semName.c_str());
 }
 #endif
 #endif
