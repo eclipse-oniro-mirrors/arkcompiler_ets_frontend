@@ -38,10 +38,12 @@ import {
     classSignatureCompare,
     ClassType,
     ClosureFieldRef,
+    ClosureType,
     CONSTRUCTOR_NAME,
     DVFGBuilder,
     FileSignature,
     FullPosition,
+    FunctionType,
     GlobalRef,
     INSTANCE_INIT_METHOD_NAME,
     LexicalEnvType,
@@ -99,6 +101,8 @@ const gMetaData: BaseMetaData = {
 };
 
 const INT32_BOUNDARY: number = 0x80000000;
+const PROMISE_CLASS_NAME: string = 'Promise';
+const THEN_METHOD_NAME: string = 'then';
 
 enum NumberCategory {
     int = 'int',
@@ -416,7 +420,7 @@ export class NumericSemanticCheck implements BaseChecker {
                 continue;
             }
             const leftOp = stmt.getLeftOp();
-            if (!(leftOp instanceof AbstractFieldRef) || !Utils.isNearlyNumberType(leftOp.getType())) {
+            if (!(leftOp instanceof AbstractFieldRef) || (!Utils.isNearlyNumberType(leftOp.getType()) && !(stmt.getRightOp().getType() instanceof NumberType))) {
                 continue;
             }
             const rightOp = stmt.getRightOp();
@@ -876,6 +880,15 @@ export class NumericSemanticCheck implements BaseChecker {
                     this.checkAllLocalsAroundLocal(declaringStmt, leftOp, hasChecked, numberCategory);
                     return;
                 }
+                // If the left-hand side value is assigned from a closure, it indicates that the closure is marked as a number,
+                // and the outer variables captured by the closure need to be rechecked
+                const leftOpDeclaringStmt = leftOp.getDeclaringStmt();
+                if (leftOpDeclaringStmt !== null && leftOpDeclaringStmt instanceof ArkAssignStmt) {
+                    const valueFromClosure = leftOpDeclaringStmt.getRightOp();
+                    if (valueFromClosure !== null && valueFromClosure instanceof ClosureFieldRef) {
+                        this.isLocalOnlyUsedAsIntLong(stmt, leftOp, hasChecked, NumberCategory.number);
+                    }
+                }
                 hasChecked.set(leftOp, { issueReason: IssueReason.UsedWithOtherType, numberCategory: NumberCategory.number });
                 return;
             }
@@ -1263,13 +1276,14 @@ export class NumericSemanticCheck implements BaseChecker {
         if (currentInfo) {
             if (currentInfo.numberCategory === NumberCategory.int && numberCategory === NumberCategory.long) {
                 hasChecked.set(local, { issueReason: IssueReason.OnlyUsedAsIntLong, numberCategory: NumberCategory.long });
+            } else if (!(currentInfo.issueReason === IssueReason.OnlyUsedAsIntLong && numberCategory === NumberCategory.number)) {
+                return IssueReason.OnlyUsedAsIntLong;
             }
-            return IssueReason.OnlyUsedAsIntLong;
         }
-        // 在之前的语句检测中已查找过此local并生成相应的issue，直接根据issue的内容返回结果，
-        // 1. 如果issue中是int，检查的是long，则结果为long
-        // 2. 如果issue中是int，检查的是int，则结果为int
-        // 3. 如果issue中是int，检查的是number，则需要重新检查与此local相关的所有变量，全部为number
+        // The local variable has already been detected and an issue generated in previous checks. Return the result directly based on the issue content,
+        // 1.  If the issue is of type int and the check is for long, the result will be long
+        // 2.  If the issue involves an int and the check is for an int, the result will be an int
+        // 3.  If the issue involves an integer and the check is for a number, then all variables related to this local must be rechecked to ensure they are all numbers
         const currentIssue = this.getLocalIssueFromIssueList(local, stmt);
         if (currentIssue && currentIssue.fix instanceof RuleFix) {
             const issueReason = this.getIssueReasonFromDefectInfo(currentIssue.defect);
@@ -1373,7 +1387,9 @@ export class NumericSemanticCheck implements BaseChecker {
     private checkRelatedStmtForLocal(stmt: Stmt, local: Local, hasChecked: Map<Local, IssueInfo>, numberCategory: NumberCategory): IssueInfo {
         if (stmt instanceof ArkAssignStmt && stmt.getLeftOp() === local) {
             const issueReason = this.checkValueOnlyUsedAsIntLong(stmt, stmt.getRightOp(), hasChecked, numberCategory);
-            if (issueReason === IssueReason.OnlyUsedAsIntLong) {
+            if (issueReason === IssueReason.OnlyUsedAsIntLong && numberCategory === NumberCategory.number) {
+                return { issueReason: IssueReason.UsedWithOtherType, numberCategory };
+            }else if (issueReason === IssueReason.OnlyUsedAsIntLong && numberCategory !== NumberCategory.number) {
                 return { issueReason, numberCategory };
             } else {
                 return { issueReason, numberCategory: NumberCategory.number };
@@ -2044,7 +2060,16 @@ export class NumericSemanticCheck implements BaseChecker {
             const paramRef = this.isFromParameter(currentStmt);
             if (paramRef) {
                 const paramIdx = paramRef.getIndex();
-                const callsites = this.cg.getInvokeStmtByMethod(currentStmt.getCfg().getDeclaringMethod().getSignature());
+                const arrowMethod = currentStmt.getCfg().getDeclaringMethod();
+                const callsites = this.cg.getInvokeStmtByMethod(arrowMethod.getSignature());
+                
+                if (this.isArrowFunctionUsedAsPromiseThenArg(arrowMethod, callsites, paramIdx)) {
+                    const paramLocal = arrowMethod.getParameterInstances()[paramIdx];
+                    if (paramLocal instanceof Local) {
+                        return IssueReason.UsedWithOtherType;
+                    }
+                }
+                
                 this.processCallsites(callsites);
                 const argMap = this.collectCallSiteArgs(paramIdx, callsites);
                 this.callDepth++;
@@ -2096,9 +2121,40 @@ export class NumericSemanticCheck implements BaseChecker {
         return argMap;
     }
 
+    private isArrowFunctionUsedAsPromiseThenArg(arrowMethod: ArkMethod, callsites: Stmt[], paramIdx: number): boolean {
+        const arrowMethodSignature = arrowMethod.getSignature();
+        for (const callsite of callsites) {
+            const invokeExpr = callsite.getInvokeExpr();
+            if (!invokeExpr) {
+                continue;
+            }
+            if (invokeExpr.getMethodSignature().getDeclaringClassSignature().getClassName() === PROMISE_CLASS_NAME &&
+                invokeExpr.getMethodSignature().getMethodSubSignature().getMethodName() === THEN_METHOD_NAME) {
+                const args = invokeExpr.getArgs();
+                if (!args || args.length === 0) {
+                    continue;
+                }
+                const arg = args[0];
+                if (!arg) {
+                    continue;
+                }
+                const argType = arg.getType();
+                if (!(argType instanceof ClosureType || argType instanceof FunctionType)) {
+                    continue;
+                }
+                const methodSignature = argType.getMethodSignature();
+                if (methodSignature && methodSignature.toString() === arrowMethodSignature.toString()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private getIssueReasonFromDefectInfo(defect: Defects): IssueReason | null {
         const issueProblem = defect.problem;
-        // 一定要将IssueReason.UsedWithOtherType放在IssueReason.OnlyUsedAsIntLong之前判断，因为他俩有包含关系，位置调换会导致错误
+        // Ensure that IssueReason.UsedWithOtherType is evaluated before IssueReason.OnlyUsedAsIntLong,
+        // as they have an inclusion relationship, and switching their order would lead to errors
         if (issueProblem.includes(IssueReason.UsedWithOtherType)) {
             return IssueReason.UsedWithOtherType;
         }
