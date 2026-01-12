@@ -28,12 +28,15 @@ import {
     DECL_ETS_SUFFIX,
     MERGED_INTERMEDIATE_FILE,
     ENABLE_CLUSTERS,
-    DEFAULT_WORKER_NUMS
+    DEFAULT_WORKER_NUMS,
+    DECL_FILE_MAP_NAME,
+    TS_SUFFIX
 } from '../pre_define';
 import {
     ensurePathExists,
     isMac,
-    checkDependencyModuleInfoCorrectness
+    checkDependencyModuleInfoCorrectness,
+    changeDeclgenFileExtension
 } from '../util/utils';
 import {
     Logger,
@@ -53,7 +56,8 @@ import {
     DeclgenV1JobInfo,
     ES2PANDA_MODE,
     OHOS_MODULE_TYPE,
-    ModuleFile
+    ModuleFile,
+    DeclFileInfo
 } from '../types';
 import {
     ArkTSConfigGenerator
@@ -100,6 +104,7 @@ export abstract class BaseMode {
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
     private readonly moduleType: OHOS_MODULE_TYPE;
+    public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
 
     constructor(buildConfig: BuildConfig) {
         this.buildConfig = buildConfig;
@@ -111,15 +116,174 @@ export abstract class BaseMode {
         this.abcFiles = new Set<string>();
         this.moduleType = buildConfig.moduleType;
 
-        this.statsRecorder = new StatisticsRecorder(
-            path.resolve(this.cacheDir, BS_PERF_FILE_NAME),
-            this.recordType,
-            `Build system with mode: ${this.es2pandaMode}`
-        );
+        this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_FILE_NAME), this.recordType,
+                                                    `Build system with mode: ${this.es2pandaMode}`);
 
         this.processBuildConfig();
         this.statsRecorder.record(formEvent(BuildSystemEvent.BACKWARD_COMPAT));
         this.backwardCompatibilityWorkaroundStub()
+    }
+
+    public loadDeclFileMap(): void {
+        const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
+        if (!fs.existsSync(declMapFile)) {
+            return;
+        }
+        try {
+            const content = fs.readFileSync(declMapFile, 'utf-8');
+            const data: Record<string, DeclFileInfo> = JSON.parse(content);
+
+            for (const [key, value] of Object.entries(data)) {
+                this.declFileMap.set(key, value);
+            }
+        } catch (error) {
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                `Failed to load decl file map from ${declMapFile}.`,
+                error instanceof Error ? error.message : String(error)
+            );
+            this.logger.printError(logData);
+        }
+    }
+
+    private needsRegeneration(job: DeclgenV1JobInfo): boolean {
+        const sourceFilePath = job.fileList[0];
+        const sourceStat = fs.statSync(sourceFilePath);
+        const currentModified = sourceStat.mtimeMs;
+        const fileInfo = this.declFileMap.get(sourceFilePath);
+        if (!fileInfo || fileInfo.sourceFileLastModified === null) {
+            return true;
+        }
+        return currentModified > fileInfo.sourceFileLastModified;
+    }
+
+    public async saveDeclFileMap(): Promise<void> {
+        const declMapFile = path.join(this.cacheDir, DECL_FILE_MAP_NAME);
+        const data: Record<string, DeclFileInfo> = {};
+        this.declFileMap.forEach((value, key) => {
+            data[key] = value;
+        });
+        try {
+            await fs.promises.mkdir(path.dirname(declMapFile), { recursive: true });
+            await fs.promises.writeFile(declMapFile, JSON.stringify(data, null, 2));
+        } catch (error) {
+            this.logger.printError(LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                `Failed to save decl file map to disk.`,
+                error instanceof Error ? error.message : String(error)
+            ));
+            throw error;
+        }
+    }
+
+    public getOutputFilePaths(job: DeclgenV1JobInfo): {declEtsOutputPath: string, glueCodeOutputPath: string} {
+        const inputFilePath = job.fileInfo.input;
+        const filePathFromModuleRoot: string = path.relative(job.fileInfo.moduleRoot, inputFilePath);
+        const declEtsOutputPath: string = changeDeclgenFileExtension(
+            path.resolve(job.declgenConfig.output, job.fileInfo.moduleName, filePathFromModuleRoot), DECL_ETS_SUFFIX);
+        const glueCodeOutputPath: string = changeDeclgenFileExtension(
+            path.resolve(job.declgenConfig.bridgeCode, job.fileInfo.moduleName, filePathFromModuleRoot), TS_SUFFIX);
+        ensurePathExists(declEtsOutputPath);
+        ensurePathExists(glueCodeOutputPath);
+        return {declEtsOutputPath, glueCodeOutputPath};
+    }
+
+    public async needsBackup(job: DeclgenV1JobInfo): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
+        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(job);
+        let needsDeclBackup = false;
+        let needsGlueCodeBackup = false;
+        const declInfo = this.declFileMap.get(job.fileList[0]);
+        const isFileExists = async(path: string): Promise<boolean> => {
+            try {
+                const stat = await fs.promises.stat(path);
+                return stat.isFile();
+            } catch {
+                return false;
+            }
+        };
+        const [declFileExists, glueCodeExists] =
+            await Promise.all([isFileExists(declEtsOutputPath), isFileExists(glueCodeOutputPath)]);
+        if (declFileExists) {
+            if (declInfo?.declLastModified != null) {
+                const declStat = await fs.promises.stat(declEtsOutputPath);
+                const declModified = declStat.mtimeMs;
+                if (declModified > declInfo.declLastModified) {
+                    needsDeclBackup = true;
+                }
+            }
+        }
+        if (glueCodeExists) {
+            if (declInfo?.glueCodeLastModified != null) {
+                const glueStat = await fs.promises.stat(glueCodeOutputPath);
+                const glueCodeModified = glueStat.mtimeMs;
+                if (glueCodeModified > declInfo.glueCodeLastModified) {
+                    needsGlueCodeBackup = true;
+                }
+            }
+        }
+        return {needsDeclBackup, needsGlueCodeBackup};
+    }
+
+    public async backupFiles(job: DeclgenV1JobInfo, needsDecl: boolean, needsGlue: boolean): Promise<void> {
+        const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(job);
+        const doCopy = async (filePath: string, type: string): Promise<void> => {
+            if (!fs.existsSync(filePath)) {
+                return;
+            }
+            const backupPath = `${filePath}.backup`;
+            try {
+                await fs.promises.copyFile(filePath, backupPath);
+                this.logger.printDebug(`Backup completed for ${type}: ${backupPath}`);
+            } catch (error) {
+                const logData = LogDataFactory.newInstance(
+                    ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                    `Critical: Failed to backup ${type} at ${filePath}.`,
+                    error instanceof Error ? error.message : String(error)
+                );
+                this.logger.printError(logData);
+                throw error;
+            }
+        };
+
+        const backups = [];
+        if (needsDecl) {
+            backups.push(doCopy(declEtsOutputPath, 'declaration file'));
+        }
+        if (needsGlue) {
+            backups.push(doCopy(glueCodeOutputPath, 'glue code file'));
+        }
+        await Promise.all(backups);
+    }
+
+    public async updateDeclFileMapAsync(job: DeclgenV1JobInfo): Promise<void> {
+        const sourceFilePath = job.fileList[0];
+        const { declEtsOutputPath, glueCodeOutputPath } = this.getOutputFilePaths(job);
+        const [sourceFileStat, declStat, glueCodeStat] = await Promise.all([
+            fs.promises.stat(sourceFilePath),
+            fs.promises.stat(declEtsOutputPath).catch(() => null),
+            fs.promises.stat(glueCodeOutputPath).catch(() => null)
+        ]);
+
+        if (declStat || glueCodeStat) {
+            this.declFileMap.set(sourceFilePath, {
+                delFilePath: declEtsOutputPath,
+                declLastModified: declStat?.mtimeMs ?? null,
+                glueCodeFilePath: glueCodeOutputPath,
+                glueCodeLastModified: glueCodeStat?.mtimeMs ?? null,
+                sourceFilePath: sourceFilePath,
+                sourceFileLastModified: sourceFileStat.mtimeMs ?? null,
+            });
+            this.logger.printDebug(`Updated decl file map for: ${sourceFilePath}`);
+        } else {
+            const detail = `Expected outputs missing: ${declEtsOutputPath} or ${glueCodeOutputPath}`;
+            const logData = LogDataFactory.newInstance(
+                ErrorCode.BUILDSYSTEM_ERRORS_OCCURRED,
+                `Build integrity error for ${sourceFilePath}`,
+                detail
+            );
+            this.logger.printError(logData);
+            throw new Error(detail);
+        }
     }
 
     public get abcLinkerPath(): string | undefined {
@@ -786,6 +950,7 @@ export abstract class BaseMode {
 
     public async generateDeclarationV1Parallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
+        this.loadDeclFileMap();
         const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
@@ -797,38 +962,49 @@ export abstract class BaseMode {
 
         const taskManager = new TaskManager<ProcessDeclgenV1Task>(handleDeclgenWorkerExit, true);
         const workerFactory = new DriverProcessFactory(
-            path.resolve(__dirname, 'declgen_process_worker.js'),
-            ['process child:' + __filename],
-            {
-                stdio: ['inherit', 'inherit', 'inherit', 'ipc']
-            }
-        );
+             path.resolve(__dirname, 'declgen_process_worker.js'),
+             ['process child:' + __filename],
+             {
+                 stdio: ['inherit', 'inherit', 'inherit', 'ipc']
+             }
+         );
         taskManager.startWorkers(workerFactory);
 
         const newNodes: GraphNode<ProcessDeclgenV1Task>[] = [];
+        const declgenJobs: DeclgenV1JobInfo[] = [];
         for (const node of buildGraph.nodes) {
             const module = this.fileToModule.get(node.data.fileList[0]!)!
             const declgenV1OutPath: string = module.declgenV1OutPath!
             const declgenBridgeCodePath: string = module.declgenBridgeCodePath!
-            newNodes.push({
+            const declgenJob: DeclgenV1JobInfo = {
+                        ...node.data,
+                        declgenConfig: {output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath}
+                    };
+            if(this.needsRegeneration(declgenJob)){
+                newNodes.push({
                 id: node.id,
-                data: {
-                    ...node.data,
-                    declgenConfig: {
-                        output: declgenV1OutPath,
-                        bridgeCode: declgenBridgeCodePath
-                    },
-                    buildConfig: this.buildConfig
-                },
+                data: {...declgenJob, buildConfig: this.buildConfig},
                 predecessors: node.predecessors,
                 descendants: node.descendants,
-            })
+                });
+                declgenJobs.push(declgenJob);
+            }
         }
+        await Promise.all(declgenJobs.map(async (declgenJob) => {
+            const {needsDeclBackup, needsGlueCodeBackup} = await this.needsBackup(declgenJob);
+                if (needsDeclBackup || needsGlueCodeBackup) {
+                    await this.backupFiles(declgenJob, needsDeclBackup, needsGlueCodeBackup);
+                }
+        }));
         const newGraph: Graph<ProcessDeclgenV1Task> = Graph.createGraphFromNodes(newNodes);
 
         taskManager.buildGraph = newGraph;
         taskManager.initTaskQueue();
         // Ignore the result
         await taskManager.finish();
+        await Promise.all(declgenJobs.map(async (declgenJob) => {
+            await this.updateDeclFileMapAsync(declgenJob);
+        }));
+        await this.saveDeclFileMap();
     }
 }
