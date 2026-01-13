@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -287,17 +287,17 @@ static bool ResolveAndGenerate(std::map<std::string, panda::es2panda::util::Prog
 
     if (options->NeedCollectDepsRelation() &&
         !ResolveDepsRelations(programsInfo, options, resolvedDepsRelation)) {
-        return true;
+        return false;
     }
     panda::Timer::timerEnd(panda::EVENT_RESOLVE_DEPS, "");
 
     panda::Timer::timerStart(panda::EVENT_EMIT_ABC, "");
     if (!GenerateAbcFiles(programsInfo, options, Compiler::GetExpectedProgsCount(), resolvedDepsRelation)) {
-        return true;
+        return false;
     }
     panda::Timer::timerEnd(panda::EVENT_EMIT_ABC, "");
 
-    return false;
+    return true;
 }
 
 int Run(int argc, const char **argv)
@@ -346,7 +346,7 @@ int Run(int argc, const char **argv)
     }
     panda::Timer::timerEnd(panda::EVENT_COMPILE, "");
 
-    if (ResolveAndGenerate(programsInfo, options)) {
+    if (!ResolveAndGenerate(programsInfo, options)) {
         return 1;
     }
     panda::Timer::timerEnd(panda::EVENT_TOTAL, "");

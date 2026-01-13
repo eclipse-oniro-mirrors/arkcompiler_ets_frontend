@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -651,12 +651,12 @@ class CompilerTest(Test):
         return success
 
     def run(self, runner):
-        test_abc_name = ("%s.abc" % (path.splitext(self.path)[0])).replace("/", "_")
+        relative_path = os.path.relpath(self.path)
+        test_abc_name = ("%s.abc" % (path.splitext(relative_path)[0])).replace("/", "_")
         test_abc_path = path.join(runner.build_dir, test_abc_name)
         es2abc_cmd = runner.cmd_prefix + [runner.es2panda]
         es2abc_cmd.extend(self.flags)
         es2abc_cmd.extend(["--output=" + test_abc_path])
-        relative_path = os.path.relpath(self.path)
         es2abc_cmd.append(relative_path)
         enable_arkguard = runner.args.enable_arkguard
         if enable_arkguard:
@@ -681,7 +681,7 @@ class CompilerTest(Test):
                 if os.path.exists(test_abc_path):
                     os.remove(test_abc_path)
                 return self
-        if "--dump-debug-info" in self.flags:
+        if "--dump-debug-info" in self.flags or "--dump-size-stat" in self.flags:
             self.output = out.decode("utf-8", errors="ignore") + err.decode("utf-8", errors="ignore")
             try:
                 with open(self.get_path_to_expected(), 'r') as fp:
@@ -3109,6 +3109,8 @@ def add_directory_for_compiler(runners, args):
                                                 ["--merge-abc", "--module", "--dump-assembly", "--enable-abc-input",
                                                  "--dump-literal-buffer", "--dump-string", "--source-file=source.ts",
                                                  "--module-record-field-name=source"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/dump-size-stat", "js",
+                                                ["--merge-abc", "--dump-size-stat"]))
 
     if args.enable_arkguard:
         prepare_for_obfuscation(compiler_test_infos, runner.test_root)
