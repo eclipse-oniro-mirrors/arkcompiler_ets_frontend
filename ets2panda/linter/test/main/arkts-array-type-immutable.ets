@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -188,10 +188,20 @@ function AliasTest2(): AliasedTupleType {
 
 function AliasTest3(): AliasedTupleType {
     const arr: [(number|string)] = [1];
-    return arr;
+    return arr; 
 }
 
 function AliasTest4(): AliasedType {
     const arr: (number|string)[] = [1];
     return arr;
+}
+
+function AliasTest5(): AliasedTupleType1 {
+    const arr: [(number|string), (string | number)] = [1, 1];
+    return arr; 
+}
+
+function AliasTest6(): AliasedType {
+    const arr: number[] = [1, 1];
+    return arr; 
 }
