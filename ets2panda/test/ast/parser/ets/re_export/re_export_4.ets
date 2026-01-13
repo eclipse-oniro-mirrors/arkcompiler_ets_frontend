@@ -17,4 +17,4 @@ export {foo} from "./export"
 export {foo} from "./export_2"
 
 /* @@? 17:8 Warning Warning W0000: Duplicated export aliases for 'foo'. */
-/* @@? 16:8 Error Semantic error ESE0362: Ambiguous export 'foo' */
+/* @@? 17:8 Error Semantic error ESE0362: Ambiguous export 'foo' */
