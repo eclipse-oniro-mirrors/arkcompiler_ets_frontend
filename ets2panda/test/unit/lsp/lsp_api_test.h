@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include "public/public.h"
 #include <gtest/gtest.h>
 #include <cstdio>
+#include <unistd.h>
 
 class LSPAPITests : public testing::Test {
 public:
@@ -31,8 +32,22 @@ public:
             if (file.empty()) {
                 continue;
             }
-            if (remove(file.c_str()) != 0) {
-                std::cerr << "Failed to delete file: " << file << std::endl;
+
+            std::filesystem::path path = file;
+
+            if (!std::filesystem::exists(path)) {
+                std::cerr << "Path does not exist: " << file << std::endl;
+                continue;
+            }
+
+            try {
+                if (std::filesystem::is_directory(path)) {
+                    std::filesystem::remove_all(path);
+                } else {
+                    std::filesystem::remove(path);
+                }
+            } catch (const std::filesystem::filesystem_error &e) {
+                std::cerr << "Failed to delete " << file << ": " << e.what() << std::endl;
             }
         }
     }
@@ -54,13 +69,25 @@ public:
         return ast;
     }
 
+    std::string GetExecutableName()
+    {
+        char exe_path[PATH_MAX] = {0};
+        ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+        if (len == -1) {
+            return "unknown_exe";
+        }
+        return std::filesystem::path(std::string(exe_path, len)).filename().string();
+    }
+
     std::vector<std::string> CreateTempFile(std::vector<std::string> files, std::vector<std::string> texts)
     {
         std::vector<std::string> result = {};
-        auto tempDir = testing::TempDir();
+        std::filesystem::path tempDir = testing::TempDir();
+        tempDir.append(GetExecutableName());
+        std::filesystem::create_directory(tempDir);
         for (size_t i = 0; i < files.size(); i++) {
-            auto outPath = tempDir + files[i];
-            std::ofstream outStream(outPath);
+            std::filesystem::path outPath = tempDir;
+            std::ofstream outStream(outPath.append(files[i]));
             if (outStream.fail()) {
                 std::cerr << "Failed to open file: " << outPath << std::endl;
                 return result;
@@ -69,7 +96,7 @@ public:
             outStream.close();
             result.push_back(outPath);
         }
-        tempFiles_.insert(tempFiles_.end(), result.begin(), result.end());
+        tempFiles_.push_back(tempDir);
         return result;
     }
 

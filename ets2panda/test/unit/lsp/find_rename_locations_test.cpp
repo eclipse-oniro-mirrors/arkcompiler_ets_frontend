@@ -199,44 +199,46 @@ public:
     }
 };
 
+const std::string tempDir = "/tmp/lsp_api_test_find_rename_locations/";
+
 std::set<RenameLocation> expected_Foo = {
-    {R"(/tmp/findRenameLocsTwo.ets)", 30, 33, 1, "Foo as "},
-    {R"(/tmp/findRenameLocsTwo.ets)", 183, 186, 9},
-    {R"(/tmp/findRenameLocsTwo.ets)", 234, 237, 10},
+    {tempDir + "findRenameLocsTwo.ets", 30, 33, 1, "Foo as "},
+    {tempDir + "findRenameLocsTwo.ets", 183, 186, 9},
+    {tempDir + "findRenameLocsTwo.ets", 234, 237, 10},
 };
 std::set<RenameLocation> expected_abc = {
-    {R"(/tmp/findRenameLocsOne.ets)", 25, 28, 1},    {R"(/tmp/findRenameLocsOne.ets)", 899, 902, 35},
-    {R"(/tmp/findRenameLocsOne.ets)", 915, 918, 36}, {R"(/tmp/findRenameLocsOne.ets)", 931, 934, 37},
-    {R"(/tmp/findRenameLocsTwo.ets)", 25, 28, 1},    {R"(/tmp/findRenameLocsTwo.ets)", 115, 118, 5},
-    {R"(/tmp/findRenameLocsTwo.ets)", 131, 134, 6},  {R"(/tmp/findRenameLocsTwo.ets)", 148, 151, 7},
+    {tempDir + "findRenameLocsOne.ets", 25, 28, 1},    {tempDir + "findRenameLocsOne.ets", 899, 902, 35},
+    {tempDir + "findRenameLocsOne.ets", 915, 918, 36}, {tempDir + "findRenameLocsOne.ets", 931, 934, 37},
+    {tempDir + "findRenameLocsTwo.ets", 25, 28, 1},    {tempDir + "findRenameLocsTwo.ets", 115, 118, 5},
+    {tempDir + "findRenameLocsTwo.ets", 131, 134, 6},  {tempDir + "findRenameLocsTwo.ets", 148, 151, 7},
 };
 std::set<RenameLocation> expected_dummy = {
-    {R"(/tmp/findRenameLocsOne.ets)", 83, 88, 4},    {R"(/tmp/findRenameLocsOne.ets)", 863, 868, 33},
-    {R"(/tmp/findRenameLocsOne.ets)", 881, 886, 34}, {R"(/tmp/findRenameLocsTwo.ets)", 18, 23, 1},
-    {R"(/tmp/findRenameLocsTwo.ets)", 78, 83, 3},    {R"(/tmp/findRenameLocsTwo.ets)", 96, 101, 4},
+    {tempDir + "findRenameLocsOne.ets", 83, 88, 4},    {tempDir + "findRenameLocsOne.ets", 863, 868, 33},
+    {tempDir + "findRenameLocsOne.ets", 881, 886, 34}, {tempDir + "findRenameLocsTwo.ets", 18, 23, 1},
+    {tempDir + "findRenameLocsTwo.ets", 78, 83, 3},    {tempDir + "findRenameLocsTwo.ets", 96, 101, 4},
 };
 std::set<RenameLocation> expected_name = {
-    {R"(/tmp/findRenameLocsOne.ets)", 158, 162, 8},
-    {R"(/tmp/findRenameLocsOne.ets)", 362, 366, 13},
-    {R"(/tmp/findRenameLocsTwo.ets)", 343, 347, 14},
+    {tempDir + "findRenameLocsOne.ets", 158, 162, 8},
+    {tempDir + "findRenameLocsOne.ets", 362, 366, 13},
+    {tempDir + "findRenameLocsTwo.ets", 343, 347, 14},
 };
 std::set<RenameLocation> expected_Foo_ForSpecialCharacters = {
-    {R"(/tmp/findRenameLocsFour.ets)", 45, 48, 3},
-    {R"(/tmp/findRenameLocsFour.ets)", 220, 223, 3},
-    {R"(/tmp/findRenameLocsFour.ets)", 284, 287, 3},
-    {R"(/tmp/findRenameLocsThree.ets)", 170, 173, 3},
+    {tempDir + "findRenameLocsFour.ets", 45, 48, 3},
+    {tempDir + "findRenameLocsFour.ets", 220, 223, 3},
+    {tempDir + "findRenameLocsFour.ets", 284, 287, 3},
+    {tempDir + "findRenameLocsThree.ets", 170, 173, 3},
 };
 std::set<RenameLocation> expected_abc_ForSpecialCharacters = {
-    {R"(/tmp/findRenameLocsThree.ets)", 40, 43, 3},
-    {R"(/tmp/findRenameLocsThree.ets)", 938, 941, 3},
-    {R"(/tmp/findRenameLocsThree.ets)", 974, 977, 3},
-    {R"(/tmp/findRenameLocsThree.ets)", 1010, 1013, 3},
+    {tempDir + "findRenameLocsThree.ets", 40, 43, 3},
+    {tempDir + "findRenameLocsThree.ets", 938, 941, 3},
+    {tempDir + "findRenameLocsThree.ets", 974, 977, 3},
+    {tempDir + "findRenameLocsThree.ets", 1010, 1013, 3},
 };
 std::set<RenameLocation> expected_abc_WithCancellation_ForSpecialCharacters = {
-    {R"(/tmp/findRenameLocsThree.ets)", 40, 43, 3},   {R"(/tmp/findRenameLocsThree.ets)", 938, 941, 3},
-    {R"(/tmp/findRenameLocsThree.ets)", 974, 977, 3}, {R"(/tmp/findRenameLocsThree.ets)", 1010, 1013, 3},
-    {R"(/tmp/findRenameLocsFour.ets)", 40, 43, 3},    {R"(/tmp/findRenameLocsFour.ets)", 132, 135, 3},
-    {R"(/tmp/findRenameLocsFour.ets)", 150, 153, 3},  {R"(/tmp/findRenameLocsFour.ets)", 169, 172, 3},
+    {tempDir + "findRenameLocsThree.ets", 40, 43, 3},   {tempDir + "findRenameLocsThree.ets", 938, 941, 3},
+    {tempDir + "findRenameLocsThree.ets", 974, 977, 3}, {tempDir + "findRenameLocsThree.ets", 1010, 1013, 3},
+    {tempDir + "findRenameLocsFour.ets", 40, 43, 3},    {tempDir + "findRenameLocsFour.ets", 132, 135, 3},
+    {tempDir + "findRenameLocsFour.ets", 150, 153, 3},  {tempDir + "findRenameLocsFour.ets", 169, 172, 3},
 };
 
 TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsConstantName)

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -590,7 +590,7 @@ QuickInfo ExpectResultImport4()
     std::vector<SymbolDisplayPart> expected;
     expected.emplace_back("module", "keyword");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("/tmp/GetQuickInfoAtPositionImportText1.ets", "className");
+    expected.emplace_back("/tmp/lsp_quick_info_api_test_api/GetQuickInfoAtPositionImportText1.ets", "className");
     return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
 }
 
