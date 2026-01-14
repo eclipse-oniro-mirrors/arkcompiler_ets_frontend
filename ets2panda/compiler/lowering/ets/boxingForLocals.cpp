@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -283,7 +283,8 @@ static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
     // `as` is needed to account for smart types
-    auto *res = parser->CreateFormattedExpression("@@I1.get() as @@T2", var->Name(), id->Variable()->TsType());
+    // proper fix should be done in the #32366
+    auto *res = parser->CreateFormattedExpression("@@I1.get() as @@T2", var->Name(), id->TsType());
     res->SetParent(id->Parent());
     res->AsTSAsExpression()
         ->Expr()
@@ -298,7 +299,7 @@ static ir::AstNode *HandleReference(public_lib::Context *ctx, ir::Identifier *id
     // adjustment later.
     res->Check(checker);
 
-    ES2PANDA_ASSERT(res->TsType() == id->Variable()->TsType());
+    ES2PANDA_ASSERT(res->TsType() == id->TsType());
 
     return res;
 }
