@@ -232,7 +232,8 @@ bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &im
 #endif
 }
 
-static bool NeedToExtractDeclarations([[maybe_unused]] std::string cachePath, [[maybe_unused]] std::string abcPath)
+static bool NeedToExtractDeclarations([[maybe_unused]] const std::string &cachePath,
+                                      [[maybe_unused]] const std::string &abcPath)
 {
 #ifdef USE_UNIX_SYSCALL
     // hack for builds when no filesystem is included
@@ -297,6 +298,7 @@ static void CreateDeclarationFileWindows(const std::string &processed, const std
 #ifndef USE_UNIX_SYSCALL
 #include <sys/file.h>
 
+// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
 class DeclResourceGuard {
 public:
     DeclResourceGuard(sem_t *sem, std::string semName) : sem_(sem), semName_(std::move(semName)) {}
@@ -363,6 +365,7 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
         semMap.emplace(absDecl, semCnt++);
     }
     std::string semName = "/decl_sem_" + std::to_string(semMap.at(absDecl));
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
     sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
     if (sem == SEM_FAILED) {
         LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
@@ -374,7 +377,7 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
     }
     guard.MarkSemAcquired();
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
-    FILE *fp = fopen(absDecl.c_str(), "wx");
+    FILE *fp = fopen(absDecl.c_str(), "wxe");
     if (fp == nullptr) {
         return;
     }
@@ -388,10 +391,10 @@ static void CreateDeclarationFileLinux(const std::string &processed, const std::
     guard.MarkLockAcquired();
 
     size_t written = fwrite(processed.data(), 1, processed.size(), fp);
-    if (written != processed.size() || ferror(fp)) {
+    if (written != processed.size() || (ferror(fp) != 0)) {
         LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
     }
-    if (fflush(fp) != 0 || ferror(fp)) {
+    if (fflush(fp) != 0 || (ferror(fp) != 0)) {
         LOG(FATAL, ES2PANDA) << "Failed to flush a file for declaration: " << absDecl;
     }
 
@@ -435,7 +438,7 @@ void ImportPathManager::ProcessAbcFile(std::string abcFilePath)
         std::replace(moduleNameFile.begin(), moduleNameFile.end(), '.', util::Path::GetPathDelimiter());
         std::string declFileName =
             arktsConfig_->CacheDir() + std::string(pathDelimiter_) + moduleNameFile + std::string(CACHE_SUFFIX);
-        FileToModuleName_[declFileName] = moduleName;
+        fileToModuleName_[declFileName] = moduleName;
 
         if (!NeedToExtractDeclarations(declFileName, abcFilePath)) {
             continue;
@@ -462,7 +465,7 @@ void ImportPathManager::ProcessAbcFile(std::string abcFilePath)
     processedAbcFiles_.insert(abcFilePath);
 }
 
-void ImportPathManager::ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, std::string importPath)
+void ImportPathManager::ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, const std::string &importPath)
 {
     auto externalModuleImportData = arktsConfig_->FindInDependencies(std::string(importData.resolvedSource));
     ES2PANDA_ASSERT(externalModuleImportData != std::nullopt);
@@ -491,7 +494,7 @@ void ImportPathManager::ProcessExternalLibraryImportFromAbc(ImportMetadata &impo
         arktsConfig_->CacheDir() + std::string(pathDelimiter_) + relPath + std::string(CACHE_SUFFIX);
 
     importData.declPath = UString(resultedImportPath, allocator_).View().Utf8();
-    importData.ohmUrl = UString(FileToModuleName_[resultedImportPath], allocator_).View().Utf8();
+    importData.ohmUrl = UString(fileToModuleName_[resultedImportPath], allocator_).View().Utf8();
     importData.importFlags |= ImportFlags::EXTERNAL_BINARY_IMPORT;
 }
 
@@ -1006,8 +1009,8 @@ util::StringView ImportPathManager::FormModuleName(const util::Path &path)
     }
 
     std::string const filePath(path.GetAbsolutePath());
-    if (FileToModuleName_.count(filePath) > 0) {
-        return util::UString(FileToModuleName_[filePath], allocator_).View();
+    if (fileToModuleName_.count(filePath) > 0) {
+        return util::UString(fileToModuleName_[filePath], allocator_).View();
     }
 
     if (arktsConfig_->Package().empty() && !arktsConfig_->UseUrl()) {

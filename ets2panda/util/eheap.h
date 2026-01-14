@@ -36,6 +36,7 @@ namespace ark::es2panda {
 class EAllocator;
 using SArenaAllocator = ark::ArenaAllocator;
 
+// NOLINTBEGIN
 class ScopedAllocatorsManager {
 public:
     static void Initialize();
@@ -67,14 +68,14 @@ public:
 
     [[nodiscard]] __attribute__((returns_nonnull)) static void *Alloc(size_t sz)
     {
-        return gEHeapSpace->Alloc(sz);
+        return gEHeapSpace_->Alloc(sz);
     }
 
     ALWAYS_INLINE static void Free([[maybe_unused]] void *ptr, [[maybe_unused]] size_t sz)
     {
         // #32069 - the container is destroyed too late
-        if (LIKELY(gEHeapSpace != nullptr)) {
-            gEHeapSpace->Free(ptr, sz);
+        if (LIKELY(gEHeapSpace_ != nullptr)) {
+            gEHeapSpace_->Free(ptr, sz);
         }
     }
 
@@ -93,9 +94,9 @@ public:
     template <typename T>
     class EPtr {
     public:
-        EPtr(T *ptr) : raw_(compress(ptr))
+        EPtr(T *ptr) : raw_(Compress(ptr))
         {
-            ES2PANDA_ASSERT(decompress(raw_) == ptr);
+            ES2PANDA_ASSERT(Decompress(raw_) == ptr);
         }
         EPtr() : EPtr(nullptr) {}
 
@@ -104,43 +105,43 @@ public:
 
         T *operator->()
         {
-            return decompress(raw_);
+            return Decompress(raw_);
         }
 
         T *operator->() const
         {
-            return decompress(raw_);
+            return Decompress(raw_);
         }
 
         operator T *()
         {
-            return decompress(raw_);
+            return Decompress(raw_);
         }
 
         operator T *() const
         {
-            return decompress(raw_);
+            return Decompress(raw_);
         }
 
     private:
-        static T *decompress(uint32_t raw)
+        static T *Decompress(uint32_t raw)
         {
             if (raw == 0) {
                 return nullptr;
             }
-            auto ptr = reinterpret_cast<T *>(ToUintPtr(gEHeapSpace->BaseAddr()) +
+            auto ptr = reinterpret_cast<T *>(ToUintPtr(gEHeapSpace_->BaseAddr()) +
                                              (static_cast<uintptr_t>(raw) << EHeapSpace::ALLOC_LOG_ALIGNMENT));
-            gEHeapSpace->AssertInRange(ptr);
+            gEHeapSpace_->AssertInRange(ptr);
             return ptr;
         }
 
-        static uint32_t compress(T *ptr)
+        static uint32_t Compress(T *ptr)
         {
             if (ptr == nullptr) {
                 return 0;
             }
-            gEHeapSpace->AssertInRange(static_cast<void const *>(ptr));
-            return (ToUintPtr(ptr) - ToUintPtr(gEHeapSpace->BaseAddr())) >> EHeapSpace::ALLOC_LOG_ALIGNMENT;
+            gEHeapSpace_->AssertInRange(static_cast<void const *>(ptr));
+            return (ToUintPtr(ptr) - ToUintPtr(gEHeapSpace_->BaseAddr())) >> EHeapSpace::ALLOC_LOG_ALIGNMENT;
         }
 
         uint32_t raw_;
@@ -155,7 +156,7 @@ private:
 
     static ALWAYS_INLINE bool IsEHeapInitialized()
     {
-        return EHeap::gEHeapSpace != nullptr;
+        return EHeap::gEHeapSpace_ != nullptr;
     }
 
     [[noreturn]] __attribute__((noinline)) static void OOMAction();
@@ -214,8 +215,9 @@ private:
 
     friend class EAllocator;
 
-    static EHeapSpace *gEHeapSpace;
+    static EHeapSpace *gEHeapSpace_;
 };
+// NOLINTEND
 
 template <typename T>
 using EPtr = EHeap::EPtr<T>;
@@ -478,7 +480,7 @@ using SArenaString = std::basic_string<char, std::char_traits<char>, ark::ArenaA
 
 }  // namespace eallocator_replacer
 
-using namespace ark::es2panda::eallocator_replacer;
+using namespace ark::es2panda::eallocator_replacer;  // NOLINT
 }  // namespace ark::es2panda
 
 #endif  // ES2PANDA_UTIL_EHEAP_H

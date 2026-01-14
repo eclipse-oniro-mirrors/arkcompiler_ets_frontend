@@ -513,7 +513,8 @@ static bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
             return;
         }
         for (auto *decl : child->AsVariableDeclaration()->Declarators()) {
-            if (decl->Id() && decl->Id()->IsIdentifier() && decl->Id()->AsIdentifier()->Name().Mutf8() == name) {
+            if ((decl->Id() != nullptr) && decl->Id()->IsIdentifier() &&
+                decl->Id()->AsIdentifier()->Name().Mutf8() == name) {
                 found = true;
             }
         }

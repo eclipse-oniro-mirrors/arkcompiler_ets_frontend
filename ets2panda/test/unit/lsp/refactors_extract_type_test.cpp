@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -520,6 +520,7 @@ class Circle {
 
     // Step 1: get applicable refactors
     auto applicable = ark::es2panda::lsp::GetApplicableRefactorsImpl(refactorContext);
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     ASSERT_FALSE(applicable.empty());
 
     const std::string_view target = ark::es2panda::lsp::EXTRACT_INTERFACE_ACTION.name;
@@ -650,6 +651,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForMethodReturnType)
         size_t end;
         std::string label;
     };
+    // NOLINTBEGIN(readability-magic-numbers)
     std::vector<Selection> selections = {
         {128, 161, "full"},                // { width: number; height: number }
         {130, 159, "inline"},              // width: number; height: number
@@ -661,6 +663,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForMethodReturnType)
         {128, 140, "partial_first_prop"},  // { width: num
         {149, 161, "partial_last_prop"},   // ht: number }
     };
+    // NOLINTENDk(readability-magic-numbers)
     for (const auto &sel : selections) {
         auto *initializer = new Initializer();
         auto *refactorContext = CreateExtractContext(initializer, code, sel.start, sel.end);

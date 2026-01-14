@@ -36,9 +36,11 @@
 
 #if __has_include(<filesystem>)
 #include <filesystem>
+// NOLINTNEXTLINE(misc-unused-alias-decls)
 namespace fs = std::filesystem;
 #elif __has_include(<experimental/filesystem>)
 #include <experimental/filesystem>
+// NOLINTNEXTLINE(misc-unused-alias-decls)
 namespace fs = std::experimental::filesystem;
 #endif
 
@@ -47,7 +49,7 @@ namespace ark::es2panda::lsp {
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 Initializer::Initializer(bool isLogAwaible)
 {
-    logFlag = isLogAwaible;
+    logFlag_ = isLogAwaible;
     impl_ = es2panda_GetImpl(ES2PANDA_LIB_VERSION);
     std::string buildDir;
 #ifdef BUILD_FOLDER
@@ -63,7 +65,7 @@ Initializer::Initializer(bool isLogAwaible)
 
 Initializer::~Initializer()
 {
-    if (logFlag) {
+    if (logFlag_) {
         impl_->DestroyConfig(cfg_);
     } else {
         impl_->DestroyConfigWithoutLog(cfg_);
@@ -128,7 +130,7 @@ ir::AstNode *GetTouchingTokenByRange(es2panda_Context *context, const TextRange 
 
 bool IsRangeInNode(const ir::AstNode *node, const TextRange &span)
 {
-    if (!node) {
+    if (node == nullptr) {
         return false;
     }
     return node->Start().index <= span.pos && node->End().index >= span.end;
@@ -141,26 +143,26 @@ bool IsSyntheticNode(const ir::AstNode *node)
 
 bool IsExactMatch(const ir::AstNode *node, const TextRange &span)
 {
-    return node && node->Start().index == span.pos && node->End().index == span.end;
+    return (node != nullptr) && node->Start().index == span.pos && node->End().index == span.end;
 }
 
 bool IsOverlapping(const ir::AstNode *child, const TextRange &span)
 {
-    return child && child->Start().index <= span.end && child->End().index >= span.pos;
+    return (child != nullptr) && child->Start().index <= span.end && child->End().index >= span.pos;
 }
 
 bool IsContained(const ir::AstNode *child, const TextRange &span)
 {
-    return child && child->Start().index >= span.pos && child->End().index <= span.end;
+    return (child != nullptr) && child->Start().index >= span.pos && child->End().index <= span.end;
 }
 
 ir::AstNode *FindDeepestContainingNode(ir::AstNode *node, const TextRange &span)
 {
     ir::AstNode *current = node;
-    while (current) {
+    while (current != nullptr) {
         ir::AstNode *next = nullptr;
         ir::AstNode *synthetic = nullptr;
-        current = current->OriginalNode() ? current->OriginalNode() : current;
+        current = current->OriginalNode() != nullptr ? current->OriginalNode() : current;
         current->Iterate([&](ir::AstNode *child) {
             if (IsRangeInNode(child, span)) {
                 next = child;
@@ -169,10 +171,10 @@ ir::AstNode *FindDeepestContainingNode(ir::AstNode *node, const TextRange &span)
             }
         });
 
-        if (!next && !synthetic) {
+        if ((next == nullptr) && (synthetic == nullptr)) {
             break;
         }
-        current = next ? next : synthetic;
+        current = next != nullptr ? next : synthetic;
     }
     return current;
 }
@@ -180,8 +182,9 @@ ir::AstNode *FindDeepestContainingNode(ir::AstNode *node, const TextRange &span)
 ir::AstNode *ResolveAmbiguousChildren(ir::AstNode *parent, const std::vector<ir::AstNode *> &contained,
                                       const std::vector<ir::AstNode *> &overlapping, size_t totalChildren)
 {
-    if (totalChildren == 0)
+    if (totalChildren == 0) {
         return parent;
+    }
     if (totalChildren == 1) {
         return contained.empty() ? nullptr : contained[0];
     }
@@ -196,7 +199,7 @@ ir::AstNode *ResolveAmbiguousChildren(ir::AstNode *parent, const std::vector<ir:
 }
 ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &span)
 {
-    if (!node || !IsRangeInNode(node, span)) {
+    if ((node == nullptr) || !IsRangeInNode(node, span)) {
         return nullptr;
     }
 
@@ -211,7 +214,7 @@ ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &spa
     size_t total = 0;
 
     candidate->Iterate([&](ir::AstNode *child) {
-        if (!child) {
+        if (child == nullptr) {
             return;
         }
         total++;
@@ -219,7 +222,7 @@ ir::AstNode *GetOptimumNodeByRange(const ir::AstNode *node, const TextRange &spa
             overlapping.push_back(child);
         }
         if (IsContained(child, span)) {
-            contained.push_back(child->OriginalNode() ? child->OriginalNode() : child);
+            contained.push_back(child->OriginalNode() != nullptr ? child->OriginalNode() : child);
         }
     });
 
@@ -713,13 +716,13 @@ ark::es2panda::varbinder::Variable *ResolveIdentifier(const ark::es2panda::ir::I
         return ident->Variable();
     }
 
-    static constexpr ark::es2panda::varbinder::ResolveBindingOptions option =
+    static constexpr ark::es2panda::varbinder::ResolveBindingOptions OPTION =
         ark::es2panda::varbinder::ResolveBindingOptions::ALL_DECLARATION |
         ark::es2panda::varbinder::ResolveBindingOptions::ALL_VARIABLES;
 
     ark::es2panda::varbinder::Scope *scope = ark::es2panda::compiler::NearestScope(ident);
     do {
-        ark::es2panda::varbinder::Variable *res = scope->Find(ident->Name(), option).variable;
+        ark::es2panda::varbinder::Variable *res = scope->Find(ident->Name(), OPTION).variable;
         if (res != nullptr && res->GetScope() != nullptr && res->Declaration() != nullptr) {
             auto *declNode = res->Declaration()->Node();
             auto *scopeNode = res->GetScope()->Node();

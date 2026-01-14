@@ -514,11 +514,8 @@ public:
                 break;
             }
         }
-        if (allErrorsOutsideRange) {
-            return true;
-        }
 
-        return false;
+        return allErrorsOutsideRange;
     }
 
     void CheckErrorInRange();

@@ -34,7 +34,7 @@ size_t CodePointOffsetToByteOffset(const std::string &content, size_t charOffset
     size_t byteOffset = 0;
     size_t chars = 0;
     while (byteOffset < content.size() && chars < charOffset) {
-        unsigned char c = static_cast<unsigned char>(content[byteOffset]);
+        auto c = static_cast<unsigned char>(content[byteOffset]);
         size_t charLen = UTF8_1BYTE_LEN;
         if (c >= UTF8_4BYTE_LEAD) {
             charLen = UTF8_4BYTE_LEN;
@@ -54,7 +54,7 @@ size_t ByteOffsetToCodePointOffset(const std::string &content, size_t byteOffset
     size_t chars = 0;
     size_t bytes = 0;
     while (bytes < content.size() && bytes < byteOffset) {
-        unsigned char c = static_cast<unsigned char>(content[bytes]);
+        auto c = static_cast<unsigned char>(content[bytes]);
         size_t charLen = UTF8_1BYTE_LEN;
         if (c >= UTF8_4BYTE_LEAD) {
             charLen = UTF8_4BYTE_LEN;

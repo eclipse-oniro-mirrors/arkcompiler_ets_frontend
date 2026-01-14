@@ -309,7 +309,7 @@ TEST_F(LspScriptElementKindTests, GetAliasScriptElementKind_15)
     //中文测试
     type TestB<T>/*1*/ = string | Array<TestB<T>>;)";
 
-    size_t pos = 29;
+    const size_t pos = 29;
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();
     auto context = initializer.CreateContext("aliasScriptElementKind_15.ets", ES2PANDA_STATE_CHECKED, text.c_str());

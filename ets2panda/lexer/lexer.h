@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -564,10 +564,10 @@ bool ScanTooLargeNumber(RadixType const number, std::int32_t const digit, bool l
 {
     // NOTE (DZ): probably more sophisticates check will be required for general usage
     if constexpr (std::is_integral_v<RadixLimit>) {
-        RadixType const Limit = static_cast<RadixType>(leadingMinus ? std::numeric_limits<RadixLimit>::min()
-                                                                    : std::numeric_limits<RadixLimit>::max());
-        if ((leadingMinus ? number < (Limit / RADIX) : number > (Limit / RADIX)) ||
-            (number == (Limit / RADIX) && digit > Limit % RADIX)) {
+        auto const limit = static_cast<RadixType>(leadingMinus ? std::numeric_limits<RadixLimit>::min()
+                                                               : std::numeric_limits<RadixLimit>::max());
+        if ((leadingMinus ? number < (limit / RADIX) : number > (limit / RADIX)) ||
+            (number == (limit / RADIX) && digit > limit % RADIX)) {
             return false;
         }
     }
@@ -634,7 +634,7 @@ inline uint32_t Lexer::HexValue(char32_t ch)
 
 inline int32_t Lexer::SignedHexValue(char32_t ch)
 {
-    constexpr int32_t HEX_MASK = 0xF;
+    constexpr uint32_t HEX_MASK = 0xF;
     constexpr int32_t DEC_OFFSET = 10;
     return ch < LEX_CHAR_UPPERCASE_A ? ch - LEX_CHAR_0 : ((ch - LEX_CHAR_UPPERCASE_A + DEC_OFFSET) & HEX_MASK);
 }

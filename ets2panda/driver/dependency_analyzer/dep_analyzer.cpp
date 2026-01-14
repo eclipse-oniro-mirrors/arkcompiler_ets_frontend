@@ -114,7 +114,7 @@ void DepAnalyzer::CollectDependencies(const ark::es2panda::parser::Program::File
 int DepAnalyzer::AnalyzeDeps(const DepAnalyzerArgs &daArgs)
 {
     std::vector<std::string> fileList {};
-    if (CollectFilesToProcess(daArgs.inputFile, fileList)) {
+    if (CollectFilesToProcess(daArgs.inputFile, fileList) != 0) {
         return 1;
     }
 

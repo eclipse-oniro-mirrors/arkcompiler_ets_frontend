@@ -71,12 +71,12 @@ public:
 
     std::string GetExecutableName()
     {
-        char exe_path[PATH_MAX] = {0};
-        ssize_t len = readlink("/proc/self/exe", exe_path, sizeof(exe_path) - 1);
+        std::array<char, PATH_MAX> exePath {};
+        ssize_t len = readlink("/proc/self/exe", exePath.data(), sizeof(exePath) - 1);
         if (len == -1) {
             return "unknown_exe";
         }
-        return std::filesystem::path(std::string(exe_path, len)).filename().string();
+        return std::filesystem::path(std::string(exePath.data(), len)).filename().string();
     }
 
     std::vector<std::string> CreateTempFile(std::vector<std::string> files, std::vector<std::string> texts)

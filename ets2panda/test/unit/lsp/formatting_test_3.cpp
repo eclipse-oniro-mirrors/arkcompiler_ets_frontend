@@ -46,8 +46,9 @@ let arr3 = [7,8,9];)";
 let arr2 = [4,5,6];
 let arr3 = [7,8,9];)";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 20;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 20;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_comma.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -60,7 +61,7 @@ let arr3 = [7,8,9];)";
     settings.SetInsertSpaceAfterCommaDelimiter(true);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -81,8 +82,9 @@ function test3(z:boolean):void {})";
 function test2(y:number):number { return 0; }
 function test3(z:boolean):void {})";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 50;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 50;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_type.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -94,7 +96,7 @@ function test3(z:boolean):void {})";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -117,8 +119,10 @@ let b: number=30-40;
 let c:number=50*60;
 let d:number=70/80;)";
 
-    constexpr size_t rangeStart = 4;
-    constexpr size_t rangeLength = 21;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_START = 4;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 21;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_binary.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -130,7 +134,7 @@ let d:number=70/80;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -151,8 +155,9 @@ let fn3 = (z)=>z * 4;)";
 let fn2 = (y)=>y * 3;
 let fn3 = (z)=>z * 4;)";
 
-    constexpr size_t rangeStart = 10;
-    constexpr size_t rangeLength = 15;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_START = 10;
+    constexpr size_t RANGE_LENGTH = 15;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_arrow.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -164,7 +169,7 @@ let fn3 = (z)=>z * 4;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -191,8 +196,9 @@ class B{
 method():void{}
 })";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 8;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 8;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_class.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -204,7 +210,7 @@ method():void{}
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -227,8 +233,9 @@ let b: number = 20 + 30;
 let c: number =40;
 let d:number=50;)";
 
-    constexpr size_t rangeStart = 18;
-    constexpr size_t rangeLength = 25;
+    constexpr size_t RANGE_START = 18;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 25;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_middle.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -240,7 +247,7 @@ let d:number=50;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -265,8 +272,10 @@ let c: number = 30;
 let d:number=40;
 let e:number=50;)";
 
-    constexpr size_t rangeStart = 18;
-    constexpr size_t rangeLength = 30;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_START = 18;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 30;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_multiple.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -278,7 +287,7 @@ let e:number=50;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -305,8 +314,9 @@ interface B{
 method():void;
 })";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 12;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 12;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_interface.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -318,7 +328,7 @@ method():void;
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -339,8 +349,9 @@ class C{})";
 class B{}
 class C{})";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 9;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 9;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_empty_braces.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -353,7 +364,7 @@ class C{})";
     settings.SetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(true);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -374,8 +385,9 @@ let z:number=value>0?value:-value;)";
 let y: number=value>0?value:-value;
 let z:number=value>0?value:-value;)";
 
-    constexpr size_t rangeStart = 4;
-    constexpr size_t rangeLength = 36;
+    constexpr size_t RANGE_START = 4;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 36;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_ternary.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -387,7 +399,7 @@ let z:number=value>0?value:-value;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -404,8 +416,9 @@ TEST_F(LSPFormattingTests3, FormatRange_NoChangeWhenAlreadyFormatted)
 let arr = [1, 2, 3];
 let x: number = 10;)";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 100;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 100;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_no_change.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -417,7 +430,7 @@ let x: number = 10;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     EXPECT_TRUE(changes.empty());
@@ -431,8 +444,9 @@ TEST_F(LSPFormattingTests3, FormatRange_NoChangeWhenRangeIsEmpty)
     std::string testCode = R"(let x:number=10;
 let y:number=20;)";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 0;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 0;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_empty_range.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -444,7 +458,7 @@ let y:number=20;)";
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     EXPECT_TRUE(changes.empty());
@@ -457,8 +471,9 @@ TEST_F(LSPFormattingTests3, FormatRange_InvalidRangeBeyondFileLength)
     // CC-OFFNXT(G.FMT.16-CPP) test logic
     std::string testCode = R"(let x = 1;)";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 10000;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 10000;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_invalid.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -470,7 +485,7 @@ TEST_F(LSPFormattingTests3, FormatRange_InvalidRangeBeyondFileLength)
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     EXPECT_TRUE(changes.empty());
@@ -483,10 +498,11 @@ TEST_F(LSPFormattingTests3, FormatRange_NullContext)
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 10;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 10;
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(nullptr, formatContext, span);
 
     EXPECT_TRUE(changes.empty());
@@ -503,8 +519,10 @@ function test3(p:number,q:number):number{return p-q;})";
 function test2(a:number,b:number):number{return a*b;}
 function test3(p:number,q:number):number{return p-q;})";
 
-    constexpr size_t rangeStart = 9;
-    constexpr size_t rangeLength = 41;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_START = 9;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 41;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_complex.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -517,7 +535,7 @@ function test3(p:number,q:number):number{return p-q;})";
     settings.SetInsertSpaceAfterCommaDelimiter(true);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -544,8 +562,8 @@ namespace C{
 export class D{}
 })";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 30;
+    constexpr size_t RANGE_START = 0;
+    constexpr size_t RANGE_LENGTH = 30;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_namespace.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -558,7 +576,7 @@ export class D{}
     settings.SetInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces(true);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -585,8 +603,9 @@ if(condition){
 doSomethingElse();
 })";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 15;
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 15;
 
     auto tempFiles = CreateTempFile({"lsp_format_range_control.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -598,7 +617,7 @@ doSomethingElse();
     ark::es2panda::lsp::FormatCodeSettings settings;
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     auto changes = ark::es2panda::lsp::FormatRange(ctx, formatContext, span);
 
     ASSERT_FALSE(changes.empty());
@@ -615,8 +634,10 @@ TEST_F(LSPFormattingTests3, FormatRange_ForSpecialCharacters)
 let arr2 = [4,5,6];
 let arr3 = [7,8,9];)";
 
-    constexpr size_t rangeStart = 0;
-    constexpr size_t rangeLength = 29;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_START = 0;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t RANGE_LENGTH = 29;
 
     auto tempFiles = CreateTempFile({"lsp_format_for_special_characters.ets"}, {testCode});
     ASSERT_FALSE(tempFiles.empty());
@@ -629,17 +650,17 @@ let arr3 = [7,8,9];)";
     settings.SetInsertSpaceAfterCommaDelimiter(true);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    TextSpan span(rangeStart, rangeLength);
+    TextSpan span(RANGE_START, RANGE_LENGTH);
     LSPAPI const *lspApi = GetImpl();
     auto changes = lspApi->getFormattingEditsForRange(ctx, formatContext.GetFormatCodeSettings(), span);
 
     ASSERT_FALSE(changes.empty());
-    ASSERT_EQ(changes.size(), 2u);
-    EXPECT_EQ(changes[0].span.start, 19u);
-    EXPECT_EQ(changes[0].span.length, 0u);
+    ASSERT_EQ(changes.size(), 2U);
+    EXPECT_EQ(changes[0].span.start, 19U);
+    EXPECT_EQ(changes[0].span.length, 0U);
     EXPECT_EQ(changes[0].newText, " ");
-    EXPECT_EQ(changes[1].span.start, 23u);
-    EXPECT_EQ(changes[1].span.length, 0u);
+    EXPECT_EQ(changes[1].span.start, 23U);
+    EXPECT_EQ(changes[1].span.length, 0U);
     EXPECT_EQ(changes[1].newText, " ");
 
     initializer.DestroyContext(ctx);

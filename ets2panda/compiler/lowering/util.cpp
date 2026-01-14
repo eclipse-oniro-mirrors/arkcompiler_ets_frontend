@@ -332,7 +332,7 @@ static RecheckGraph::Node *RecheckGraphCreatorHelper(parser::Program *globalProg
         CollectDirectExtSources(globalProg, program, progsFromPath);
     }
 
-    auto RunOnSources = [&](auto &sources) {
+    auto runOnSources = [&](auto &sources) {
         for (auto [_, program_list] : sources) {
             for (auto prog : program_list) {
                 RecheckGraph::Node *importedNode = nullptr;
@@ -342,8 +342,8 @@ static RecheckGraph::Node *RecheckGraphCreatorHelper(parser::Program *globalProg
             }
         }
     };
-    RunOnSources(program->DirectExternalSources());
-    RunOnSources(program->ExternalSources());
+    runOnSources(program->DirectExternalSources());
+    runOnSources(program->ExternalSources());
 
     if (program->IsProgramModified()) {
         graph->FoundModifiedProgs().emplace(node);

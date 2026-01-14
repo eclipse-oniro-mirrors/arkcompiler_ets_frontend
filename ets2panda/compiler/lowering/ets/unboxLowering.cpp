@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -515,6 +515,7 @@ static ir::Expression *InsertBoxing(UnboxContext *uctx, ir::Expression *expr)
     ES2PANDA_ASSERT(signature != nullptr);
 
     /* Ensure that the constructor signature is updated to accept an unboxed value */
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     auto *constructor = signature->Function();
     HandleDeclarationNode(uctx, constructor);
     constrCall->SetTsType(boxedType);

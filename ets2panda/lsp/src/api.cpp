@@ -844,7 +844,7 @@ DefinitionInfo GetDefinitionDataFromNode(es2panda_Context *context, const std::v
         ir::AstNode *identifierNode = ExtractIdentifierFromNode(lastFoundNode, lastNodeInfo);
         size_t startCharOffset = 0;
         size_t lengthChar = 0;
-        ir::AstNode *target = identifierNode ? identifierNode : lastFoundNode;
+        ir::AstNode *target = identifierNode != nullptr ? identifierNode : lastFoundNode;
         GetNodeCharOffsets(target, ctx, startCharOffset, lengthChar);
         result = {"", startCharOffset, lengthChar};
     }

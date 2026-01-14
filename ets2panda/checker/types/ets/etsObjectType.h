@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -307,7 +307,7 @@ public:
         return typeParams->Scope();
     }
 
-    void InsertTypeInstantiation(ETSChecker *checker, std::string const &hash, ETSObjectType *value);
+    void InsertTypeInstantiation(ETSChecker *checker, std::string &hash, ETSObjectType *value);
 
     template <PropertyType TYPE>
     varbinder::LocalVariable *GetOwnProperty(const util::StringView name) const
@@ -511,8 +511,8 @@ private:
 
     varbinder::LocalVariable *SearchFieldsDecls(util::StringView name, PropertySearchFlags flags) const;
 
-    void SetCopiedTypeProperties(TypeRelation *relation, ETSObjectType *copiedType,
-                                 std::vector<Type *> const &newTypeArgs, ETSObjectType *base);
+    void SetCopiedTypeProperties(TypeRelation *const relation, ETSObjectType *const copiedType,
+                                 std::vector<Type *> &&newTypeArgs, ETSObjectType *base);
     bool SubstituteTypeArgs(TypeRelation *relation, std::vector<Type *> &newTypeArgs, const Substitution *substitution);
 
     bool TryCastByte(TypeRelation *const relation, Type *const target);

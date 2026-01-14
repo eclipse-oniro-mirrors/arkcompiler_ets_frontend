@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1262,7 +1262,7 @@ static ArenaSubstitution *ComputeEffectiveSubstitution(TypeRelation *const relat
 }
 
 void ETSObjectType::SetCopiedTypeProperties(TypeRelation *const relation, ETSObjectType *const copiedType,
-                                            std::vector<Type *> const &newTypeArgs, ETSObjectType *base)
+                                            std::vector<Type *> &&newTypeArgs, ETSObjectType *base)
 {
     ES2PANDA_ASSERT(copiedType != nullptr);
     copiedType->typeFlags_ = typeFlags_;
@@ -1383,7 +1383,7 @@ ETSObjectType *ETSObjectType::Substitute(TypeRelation *relation, const Substitut
 
     if (cache) {
         ES2PANDA_ASSERT(copiedType->GetRelation());
-        cacheSource->InsertTypeInstantiation(checker, std::move(hash), copiedType);
+        cacheSource->InsertTypeInstantiation(checker, hash, copiedType);
     }
 
     if (superType_ != nullptr) {
@@ -1683,7 +1683,7 @@ ETSObjectType *ETSObjectType::GetTypeInstantiation(ETSChecker *checker, std::str
     return type->second;
 }
 
-void ETSObjectType::InsertTypeInstantiation(ETSChecker *checker, std::string const &hash, ETSObjectType *value)
+void ETSObjectType::InsertTypeInstantiation(ETSChecker *checker, std::string &hash, ETSObjectType *value)
 {
     auto &instantiationMap = checker->GetObjectInstantiationMap();
 

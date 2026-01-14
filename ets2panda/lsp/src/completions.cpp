@@ -1298,7 +1298,7 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
         std::string prefix = importPath.filename().string();
         fs::path searchDir = NormalizePath(baseDir / importPath.parent_path());
         // Determine whether the scene ends with '/' or './xx'
-        if (importText.size() > 0 && importText.back() == '/') {
+        if (!importText.empty() && importText.back() == '/') {
             searchDir = normalized;
             prefix.clear();
         }

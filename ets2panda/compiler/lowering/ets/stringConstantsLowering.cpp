@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -115,13 +115,14 @@ bool StringConstantsLowering::PerformForModule(public_lib::Context *ctx, parser:
                     auto resNode = ReorderConcat(ctx, firstFoundSL, currNodeSL);
                     firstFoundSL = resNode->AsStringLiteral();
                     return resNode;
-                } else {
-                    firstFoundSL = currNodeSL;
-                    return node;
                 }
+
+                firstFoundSL = currNodeSL;
+                return node;
             }
-            if (firstFoundSL != nullptr && !IsBinaryExpressionPlus(node))
+            if (firstFoundSL != nullptr && !IsBinaryExpressionPlus(node)) {
                 firstFoundSL = nullptr;
+            }
 
             return node;
         },

@@ -15,6 +15,7 @@
 
 #include <gtest/gtest.h>
 #include <chrono>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -37,13 +38,13 @@ std::string ReadFile(const std::filesystem::path &path)
 std::filesystem::path MakeTempDeclPath()
 {
     auto now = std::chrono::steady_clock::now().time_since_epoch().count();
-    auto pid = static_cast<long>(getpid());
+    auto pid = static_cast<std::int64_t>(getpid());
     auto base = std::string("import_decl_") + std::to_string(pid) + "_" + std::to_string(now) + ".etscache";
     return std::filesystem::temp_directory_path() / base;
 }
 }  // namespace
 
-using namespace ark::es2panda::util;
+using namespace ark::es2panda::util;  // NOLINT
 
 TEST(CreateDeclarationFileLinuxTest, CreatesOnceAndKeepsContent)
 {

@@ -154,9 +154,10 @@ void FunctionEmitter::GenInstructionDebugInfo(const IRNode *ins, pandasm::Ins *p
         }
     }
 
-    constexpr std::uint32_t invalidLineNo = static_cast<std::uint32_t>(-1);
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr auto INVALID_LINE_NO = static_cast<std::uint32_t>(-1);
     auto nodeRange = astNode->Range();
-    pandaIns->insDebug.SetLineNumber(nodeRange.start.line == 0 ? invalidLineNo : nodeRange.start.line + 1U);
+    pandaIns->insDebug.SetLineNumber(nodeRange.start.line == 0 ? INVALID_LINE_NO : nodeRange.start.line + 1U);
 }
 
 void FunctionEmitter::GenFunctionInstructions(pandasm::Function *func)

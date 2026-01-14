@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -30,7 +30,7 @@ class ExtractTypeRefactor : public Refactor {
 public:
     ExtractTypeRefactor();
     std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
-    std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &ctx,
+    std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
                                                         const std::string &actName) const override;
 };
 

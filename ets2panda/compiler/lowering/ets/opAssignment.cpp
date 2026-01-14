@@ -251,7 +251,7 @@ static ir::Expression *GenerateElementAccessLowering(const lexer::TokenType opEq
 {
     auto *allocator = checker->Allocator();
     std::vector<ir::Expression *> tempDeclExpressions {};
-    std::string tempDeclStr = "";
+    std::string tempDeclStr;
     size_t counter = 1;
 
     ir::Expression *objectExpr = expr->Object();
@@ -285,7 +285,7 @@ static ir::Expression *GeneratePropertyAccessLowering(const lexer::TokenType opE
 {
     auto *allocator = checker->Allocator();
     std::vector<ir::Expression *> tempDeclExpressions {};
-    std::string tempDeclStr = "";
+    std::string tempDeclStr;
     size_t counter = 1;
 
     ir::Expression *objectExpr = expr->Object();
