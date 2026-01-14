@@ -24,8 +24,10 @@ import {
     ArkInstanceOfExpr,
     ArkMethod,
     ArkNamespace,
+    ArkNewExpr,
     ArkNormalBinopExpr,
     ArkParameterRef,
+    ArkReturnStmt,
     ArkUnopExpr,
     BasicBlock,
     CallGraph,
@@ -45,6 +47,7 @@ import {
     Type,
     UnaryOperator,
     UnionType,
+    UnknownType,
     Value,
 } from 'arkanalyzer/lib';
 import Logger, { LOG_MODULE_TYPE } from 'arkanalyzer/lib/utils/logger';
@@ -170,9 +173,14 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 this.visited.add(target);
             }
 
+            // Check if castExpr.op.getType() is a parent type of castExpr.getType()
+            if (!this.isOpTypeSuperTypeOfCastType(opType, castType)) {
+                return;
+            }
+
             let checkAll = { value: true };
             let visited: Set<Stmt> = new Set();
-            const result = this.checkFromStmt(stmt, globalVarMap, checkAll, visited);
+            const result = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, 0, castType);
             if (result !== null) {
                 this.addIssueReport(stmt, castExpr, result);
             } else {
@@ -432,7 +440,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return null;
     }
 
-    private checkFromStmt(stmt: Stmt, globalVarMap: Map<string, Stmt[]>, checkAll: { value: boolean }, visited: Set<Stmt>, depth: number = 0): Stmt | null {
+    private checkFromStmt(stmt: Stmt, globalVarMap: Map<string, Stmt[]>, checkAll: { value: boolean }, visited: Set<Stmt>, depth: number = 0, castType: Type): Stmt | null {
         if (depth > CALL_DEPTH_LIMIT) {
             checkAll.value = false;
             return null;
@@ -446,24 +454,44 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 continue;
             }
             visited.add(currentStmt);
-            if (this.isWithInterfaceAnnotation(currentStmt)) {
+            if (!this.isOriginTypeSameWithCastType(currentStmt, castType)) {
                 return currentStmt;
             }
 
-            const fieldDeclareStmt = this.isCastOpFieldWithInterfaceType(currentStmt);
+            const fieldDeclareStmt = this.isCastOpFieldWithInterfaceType(currentStmt, castType);
             if (fieldDeclareStmt) {
                 return fieldDeclareStmt;
             }
             const gv = this.checkIfCastOpIsGlobalVar(currentStmt);
-            if (gv) {
+            if (!gv) {
+                // Not a global variable, continue to next iteration
+            } else {
                 const globalDefs = globalVarMap.get(gv.getName());
-                if (globalDefs === undefined) {
-                    const importValue = this.checkIfCastOpIsFromImport(currentStmt);
-                    if (importValue && importValue.getDeclaringStmt() !== null) {
-                        worklist.push(this.dvfg.getOrNewDVFGNode(importValue.getDeclaringStmt()!));
-                    }
-                } else {
+                if (globalDefs !== undefined) {
                     globalDefs.forEach(d => worklist.push(this.dvfg.getOrNewDVFGNode(d)));
+                    continue;
+                }
+                
+                // Check if it's an imported value
+                const importValue = this.checkIfCastOpIsFromImport(currentStmt);
+                if (!importValue || !importValue.getDeclaringStmt()) {
+                    continue;
+                }
+                
+                const originStmt = importValue.getDeclaringStmt()!;
+                const originMethod = originStmt.getCfg().getDeclaringMethod();
+                if (!originMethod) {
+                    continue;
+                }
+                
+                if (!this.visited.has(originMethod)) {
+                    this.dvfgBuilder.buildForSingleMethod(originMethod);
+                    this.visited.add(originMethod);
+                }
+                
+                const res = this.checkFromStmt(originStmt, globalVarMap, checkAll, visited, depth + 1, castType);
+                if (res !== null) {
+                    return res;
                 }
                 continue;
             }
@@ -480,7 +508,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 }
                 const returnStmts = declaringMtd.getReturnStmt();
                 for (const stmt of returnStmts) {
-                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1);
+                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
                     if (res !== null) {
                         return res;
                     }
@@ -493,7 +521,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
                 this.processCallsites(callsites);
                 const argDefs = this.collectArgDefs(paramIdx, callsites);
                 for (const stmt of argDefs) {
-                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1);
+                    const res = this.checkFromStmt(stmt, globalVarMap, checkAll, visited, depth + 1, castType);
                     if (res !== null) {
                         return res;
                     }
@@ -504,7 +532,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return null;
     }
 
-    private isCastOpFieldWithInterfaceType(stmt: Stmt): Stmt | undefined {
+    private isCastOpFieldWithInterfaceType(stmt: Stmt, castType: Type): Stmt | undefined {
         const obj = this.getCastOp(stmt);
         if (obj === null || !(obj instanceof Local)) {
             return undefined;
@@ -523,13 +551,59 @@ export class NoTSLikeAsCheck implements BaseChecker {
             if (!field) {
                 return undefined;
             }
-            const fieldInitializer = field.getInitializer();
-            const lastStmt = fieldInitializer[fieldInitializer.length - 1];
-            if (this.isWithInterfaceAnnotation(lastStmt)) {
-                return lastStmt;
+            // find the origin define stmt of the field
+            const originStmt = this.traceFieldInitializerToOrigin(field, new Set<ArkField>());
+            if (originStmt && !this.isOriginTypeSameWithCastType(originStmt, castType)) {
+                return originStmt;
             }
         }
         return undefined;
+    }
+
+    private traceFieldInitializerToOrigin(field: ArkField, visited: Set<ArkField>): Stmt | undefined {
+        // avoid circular reference
+        if (visited.has(field)) {
+            return undefined;
+        }
+        visited.add(field);
+
+        const fieldInitializer = field.getInitializer();
+        if (fieldInitializer.length === 0) {
+            return undefined;
+        }
+
+        // get the first initialize stmt
+        const firstStmt = fieldInitializer[0];
+        if (!(firstStmt instanceof ArkAssignStmt)) {
+            // if the first stmt is not an assign stmt, return the last stmt
+            return fieldInitializer[fieldInitializer.length - 1];
+        }
+
+        const rightOp = firstStmt.getRightOp();
+
+        // if rightOp is an ArkInstanceFieldRef, continue to trace the origin define stmt
+        if (!rightOp || !(rightOp instanceof ArkInstanceFieldRef)) {
+            return fieldInitializer[fieldInitializer.length - 1];
+        }
+
+        const fieldSig = rightOp.getFieldSignature();
+        const declaringSig = fieldSig.getDeclaringSignature();
+        if (!(declaringSig instanceof ClassSignature)) {
+            return fieldInitializer[fieldInitializer.length - 1];
+        }
+
+        const targetField = this.scene.getClass(declaringSig)?.getField(fieldSig);
+        if (!targetField) {
+            return fieldInitializer[fieldInitializer.length - 1];
+        }
+
+        const originStmt = this.traceFieldInitializerToOrigin(targetField, visited);
+        if (originStmt) {
+            return originStmt;
+        }
+
+        // if cannot trace anymore, return the last stmt
+        return fieldInitializer[fieldInitializer.length - 1];
     }
 
     private checkIfCastOpIsGlobalVar(stmt: Stmt): Local | undefined {
@@ -575,27 +649,58 @@ export class NoTSLikeAsCheck implements BaseChecker {
         });
     }
 
-    // 判断语句是否为赋值语句，且左值的类型注解为Interface，右值的类型与左值不一样
-    private isWithInterfaceAnnotation(stmt: Stmt): boolean {
-        if (!(stmt instanceof ArkAssignStmt)) {
-            return false;
-        }
-        const leftOpType = stmt.getLeftOp().getType();
-        if (!(leftOpType instanceof ClassType)) {
-            return false;
-        }
-        const leftOpTypeclass = this.scene.getClass(leftOpType.getClassSignature());
-        if (leftOpTypeclass === null) {
-            return false;
-        }
-        if (leftOpTypeclass.getCategory() !== ClassCategory.INTERFACE) {
-            return false;
-        }
-        const rightOpType = stmt.getRightOp().getType();
-        if (!(rightOpType instanceof ClassType)) {
+    private isOriginTypeSameWithCastType(stmt: Stmt, castType: Type): boolean {
+        if (!(stmt instanceof ArkAssignStmt) && !(stmt instanceof ArkReturnStmt)) {
             return true;
         }
-        return !classSignatureCompare(leftOpType.getClassSignature(), rightOpType.getClassSignature());
+    
+        const newExprType = this.extractNewExprClassType(stmt);
+        if (!newExprType) {
+            return true;
+        }
+    
+        return this.compareOriginTypeWithCastType(stmt, newExprType, castType);
+    }
+    
+    private extractNewExprClassType(stmt: Stmt): ClassType | null {
+        const targetLocal = stmt instanceof ArkAssignStmt 
+            ? stmt.getRightOp() as Local 
+            : (stmt as ArkReturnStmt).getOp() as Local;
+    
+        if (!(targetLocal instanceof Local)) {
+            return null;
+        }
+    
+        const declaringStmt = targetLocal.getDeclaringStmt();
+        if (!(declaringStmt instanceof ArkAssignStmt)) {
+            return null;
+        }
+    
+        const declaringRightOp = declaringStmt.getRightOp();
+        if (!(declaringRightOp instanceof ArkNewExpr)) {
+            return null;
+        }
+    
+        return declaringRightOp.getClassType();
+    }
+
+    private compareOriginTypeWithCastType(stmt: Stmt, newExprClassType: ClassType, castType: Type): boolean {
+        let originType: Type;
+        if (stmt instanceof ArkAssignStmt) {
+            const classSig = newExprClassType.getClassSignature();
+            const arkClass = this.scene.getClass(classSig);
+            const isAutoGenerated = arkClass?.isAnonymousClass();
+            originType = isAutoGenerated ? stmt.getLeftOp().getType() : newExprClassType;
+        } else {
+            originType = newExprClassType;
+        }
+    
+        if (!(originType instanceof ClassType) || !(castType instanceof ClassType)) {
+            return true;
+        }
+    
+        return classSignatureCompare(originType.getClassSignature(), castType.getClassSignature()) 
+            || this.isOpTypeSuperTypeOfCastType(castType, originType);
     }
 
     private isFromParameter(stmt: Stmt): ArkParameterRef | undefined {
@@ -691,5 +796,54 @@ export class NoTSLikeAsCheck implements BaseChecker {
             false
         );
         this.issues.push(new IssueReport(defects, undefined));
+    }
+
+    private isOpTypeSuperTypeOfCastType(opType: Type, castType: Type): boolean {
+        if (opType instanceof UnknownType) {
+            return true;
+        }
+        if (opType instanceof UnionType) {
+            const unionTypes = opType.getTypes();
+            return unionTypes.some(memberType => this.isOpTypeSuperTypeOfCastType(memberType, castType));
+        }
+
+        if (!(opType instanceof ClassType) || !(castType instanceof ClassType)) {
+            return false;
+        }
+
+        const opClass = this.scene.getClass(opType.getClassSignature());
+        const castClass = this.scene.getClass(castType.getClassSignature());
+
+        if (opClass === null || castClass === null) {
+            return false;
+        }
+
+        // if the types are the same, return false
+        if (classSignatureCompare(opType.getClassSignature(), castType.getClassSignature())) {
+            return false;
+        }
+
+        // recursively check all parent classes of castType
+        return this.isClassDerivedFrom(castClass, opType.getClassSignature());
+    }
+
+    private isClassDerivedFrom(arkClass: ArkClass, targetClassSignature: ClassSignature, visited: Set<ArkClass> = new Set()): boolean {
+        if (visited.has(arkClass)) {
+            return false;
+        }
+        visited.add(arkClass);
+
+        const superClasses = arkClass.getAllHeritageClasses();
+        if (superClasses === null) {
+            return false;
+        }
+        for (const superClass of superClasses) {
+            if (classSignatureCompare(superClass.getSignature(), targetClassSignature)) {
+                return true;
+            }
+            // recursively check the parent class of the parent class
+            return this.isClassDerivedFrom(superClass, targetClassSignature, visited);
+        }
+        return false;
     }
 }
