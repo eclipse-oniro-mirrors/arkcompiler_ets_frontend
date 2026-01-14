@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -297,7 +297,6 @@ static SignatureFlags ConvertToSignatureFlags(ir::ModifierFlags inModifiers, ir:
     convertModifier(ir::ModifierFlags::STATIC, SignatureFlags::STATIC);
     convertModifier(ir::ModifierFlags::PUBLIC, SignatureFlags::PUBLIC);
     convertModifier(ir::ModifierFlags::PRIVATE, SignatureFlags::PRIVATE);
-    convertModifier(ir::ModifierFlags::INTERNAL, SignatureFlags::INTERNAL);
     convertModifier(ir::ModifierFlags::DEFAULT, SignatureFlags::DEFAULT);
 
     return outFlags;

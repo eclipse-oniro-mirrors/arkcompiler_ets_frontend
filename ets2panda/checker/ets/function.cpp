@@ -1064,13 +1064,7 @@ bool IsSignatureAccessible(Signature *sig, ETSObjectType *containingClass, TypeR
 {
     // NOTE(vivienvoros): this check can be removed if signature is implicitly declared as public according to the
     // spec.
-    if (!sig->HasSignatureFlag(SignatureFlags::PUBLIC | SignatureFlags::PROTECTED | SignatureFlags::PRIVATE |
-                               SignatureFlags::INTERNAL)) {
-        return true;
-    }
-
-    // NOTE(vivienvoros): take care of SignatureFlags::INTERNAL and SignatureFlags::INTERNAL_PROTECTED
-    if (sig->HasSignatureFlag(SignatureFlags::INTERNAL) && !sig->HasSignatureFlag(SignatureFlags::PROTECTED)) {
+    if (!sig->HasSignatureFlag(SignatureFlags::PUBLIC | SignatureFlags::PROTECTED | SignatureFlags::PRIVATE)) {
         return true;
     }
 
@@ -1736,8 +1730,7 @@ static bool IsOverridableIn(Signature *signature)
         return false;
     }
 
-    // NOTE: #15095 workaround, separate internal visibility check
-    if (signature->HasSignatureFlag(SignatureFlags::PUBLIC | SignatureFlags::INTERNAL)) {
+    if (signature->HasSignatureFlag(SignatureFlags::PUBLIC)) {
         return true;
     }
 
@@ -1780,7 +1773,6 @@ enum class OverrideErrorCode {
     INCOMPATIBLE_RETURN,
     INCOMPATIBLE_TYPEPARAM,
     OVERRIDDEN_WEAKER,
-    OVERRIDDEN_INTERNAL,
 };
 
 static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature, Signature *other)
@@ -1808,9 +1800,6 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
 
     if (signature->ProtectionFlag() > other->ProtectionFlag()) {
         return OverrideErrorCode::OVERRIDDEN_WEAKER;
-    }
-    if (signature->HasProtectionFlagInternal() != other->HasProtectionFlagInternal()) {
-        return OverrideErrorCode::OVERRIDDEN_INTERNAL;
     }
 
     return OverrideErrorCode::NO_ERROR;
@@ -1851,12 +1840,6 @@ static void ReportOverrideError(ETSChecker *checker, Signature *signature, Signa
         }
         case OverrideErrorCode::OVERRIDDEN_WEAKER: {
             reason = "overridden method has weaker access privilege.";
-            break;
-        }
-        case OverrideErrorCode::OVERRIDDEN_INTERNAL: {
-            reason =
-                "internal members can only be overridden by internal members, "
-                "and non-internal members cannot be overridden by internal members.";
             break;
         }
         case OverrideErrorCode::INCOMPATIBLE_TYPEPARAM: {

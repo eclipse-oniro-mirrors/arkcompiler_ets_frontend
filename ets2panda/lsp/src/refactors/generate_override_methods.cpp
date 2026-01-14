@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,7 @@
  *  - Compares existing methods in the class/interface with those in superclasses/interfaces.
  *  - Generates missing override methods automatically.
  *
- * The override methods include proper access modifiers (public, protected, internal), async/generator
+ * The override methods include proper access modifiers (public, protected), async/generator
  * handling, getter/setter keywords, parameter types, and return types.
  *
  * Main classes and functions:
@@ -252,8 +252,6 @@ static std::string SignaturePrefix(ir::MethodDefinition *m)
     std::string out;
     if (m->IsPublic() || m->IsProtected()) {
         out += "public ";
-    } else if (m->IsInternal()) {
-        out += "internal ";
     }
     out += "override ";
     if (m->IsGetter()) {

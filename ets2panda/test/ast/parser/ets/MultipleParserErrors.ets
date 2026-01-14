@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -168,7 +168,7 @@ function main(): void {
 
 /* @@? 18:16 Error Syntax error ESY0096: Optional variable is not allowed in for of statements. */
 /* @@? 28:29 Error Semantic error ESE0083: Native, Abstract and Declare methods cannot have body. */
-/* @@? 34:14 Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers. */
+/* @@? 34:14 Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, protected, public), and 'native' modifiers. */
 /* @@? 37:33 Error Syntax error ESY0227: Unexpected token 'rethrows'. */
 /* @@? 37:33 Error Semantic error ESE0143: Unresolved reference rethrows */
 /* @@? 39:14 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */

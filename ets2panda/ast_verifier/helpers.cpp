@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -121,27 +121,6 @@ bool IsStringType(const ir::AstNode *ast)
     return type->HasTypeFlag(checker::TypeFlag::STRING_LIKE);
 }
 
-bool IsVisibleInternalNode(const ir::AstNode *ast, const ir::AstNode *objTypeDeclNode)
-{
-    if (!ast->GetTopStatement()->IsETSModule()) {
-        return false;
-    }
-    auto *currentTopStatement = ast->GetTopStatement()->AsETSModule();
-    auto *currentProgram = currentTopStatement->Program();
-    if (currentProgram == nullptr) {
-        return false;
-    }
-    if (!objTypeDeclNode->GetTopStatement()->IsETSModule()) {
-        return false;
-    }
-    auto *objectTopStatement = objTypeDeclNode->GetTopStatement()->AsETSModule();
-    auto *objectProgram = objectTopStatement->Program();
-    if (objectProgram == nullptr) {
-        return false;
-    }
-    return currentTopStatement == objectTopStatement || currentProgram->ModuleName() == objectProgram->ModuleName();
-}
-
 const checker::Type *GetClassDefinitionType(const ir::AstNode *ast)
 {
     const ir::AstNode *tmpNode = ast;
@@ -167,7 +146,7 @@ const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast)
 }
 
 bool ValidateMethodAccessForClass(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,
-                                  checker::Signature *signature, const ir::AstNode *memberObjTypeDeclNode)
+                                  checker::Signature *signature)
 {
     // Check if the method is used where it is declared
     if (IsContainedIn<const ir::AstNode>(ast, ownerSignDeclNode)) {
@@ -185,14 +164,11 @@ bool ValidateMethodAccessForClass(const ir::AstNode *ast, const ir::AstNode *own
         auto *classObjectType = classDefinitionType->AsETSObjectType();
         return classObjectType->IsDescendantOf(signature->Owner());
     }
-    if (signature->HasSignatureFlag(checker::SignatureFlags::INTERNAL)) {
-        return IsVisibleInternalNode(ast, memberObjTypeDeclNode);
-    }
     return true;
 }
 
 bool ValidateMethodAccessForTSInterface(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,
-                                        checker::Signature *signature, const ir::AstNode *memberObjTypeDeclNode)
+                                        checker::Signature *signature)
 {
     // Check if the method is used where it is declared
     if (IsContainedIn<const ir::AstNode>(ast, ownerSignDeclNode)) {
@@ -210,15 +186,11 @@ bool ValidateMethodAccessForTSInterface(const ir::AstNode *ast, const ir::AstNod
         auto *tsInterfaceObjectType = tsInterfaceDeclarationType->AsETSObjectType();
         return tsInterfaceObjectType->IsDescendantOf(signature->Owner());
     }
-    if (signature->HasSignatureFlag(checker::SignatureFlags::INTERNAL)) {
-        return IsVisibleInternalNode(ast, memberObjTypeDeclNode);
-    }
     return true;
 }
 
 bool ValidatePropertyAccessForClass(const ir::AstNode *ast, const ir::AstNode *propVarDeclNode,
-                                    const ir::AstNode *propVarDeclNodeParent, const varbinder::LocalVariable *propVar,
-                                    const ir::AstNode *objTypeDeclNode)
+                                    const ir::AstNode *propVarDeclNodeParent, const varbinder::LocalVariable *propVar)
 {
     // Check if the variable is used where it is declared
     if (IsContainedIn<const ir::AstNode>(ast, propVarDeclNodeParent)) {
@@ -239,9 +211,6 @@ bool ValidatePropertyAccessForClass(const ir::AstNode *ast, const ir::AstNode *p
             return interfaceObjectType->IsPropertyOfAscendant(propVar);
         }
         return false;
-    }
-    if (propVarDeclNode->IsInternal()) {
-        return IsVisibleInternalNode(ast, objTypeDeclNode);
     }
     return true;
 }
@@ -290,7 +259,7 @@ bool ValidateVariableAccess(const varbinder::LocalVariable *propVar, const ir::M
     }
     if ((propVarDeclNodeParent->IsClassDefinition() && objTypeDeclNode->IsClassDefinition()) ||
         (propVarDeclNodeParent->IsTSInterfaceDeclaration() && objTypeDeclNode->IsTSInterfaceDeclaration())) {
-        return ValidatePropertyAccessForClass(ast, propVarDeclNode, propVarDeclNodeParent, propVar, objTypeDeclNode);
+        return ValidatePropertyAccessForClass(ast, propVarDeclNode, propVarDeclNodeParent, propVar);
     }
     return false;
 }
@@ -348,9 +317,9 @@ bool ValidateMethodAccess(const ir::MemberExpression *memberExpression, const ir
     }
     bool ret = false;
     if (memberObjTypeDeclNode->IsClassDefinition()) {
-        ret = ValidateMethodAccessForClass(ast, ownerSignDeclNode, signature, memberObjTypeDeclNode);
+        ret = ValidateMethodAccessForClass(ast, ownerSignDeclNode, signature);
     } else if (memberObjTypeDeclNode->IsTSInterfaceDeclaration()) {
-        ret = ValidateMethodAccessForTSInterface(ast, ownerSignDeclNode, signature, memberObjTypeDeclNode);
+        ret = ValidateMethodAccessForTSInterface(ast, ownerSignDeclNode, signature);
     }
     return ret;
 }

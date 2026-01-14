@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,7 @@ bool Token::IsAccessability() const
 {
     return (type_ == TokenType::LITERAL_IDENT &&
             (keywordType_ == TokenType::KEYW_PUBLIC || keywordType_ == TokenType::KEYW_PROTECTED ||
-             keywordType_ == TokenType::KEYW_PRIVATE || keywordType_ == TokenType::KEYW_INTERNAL) &&
+             keywordType_ == TokenType::KEYW_PRIVATE) &&
             ((flags_ & TokenFlags::HAS_ESCAPE) == 0));
 }
 

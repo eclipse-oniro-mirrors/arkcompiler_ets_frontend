@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,16 +27,14 @@ bool IsExportLike(const ir::AstNode *ast);
 bool IsBooleanType(const ir::AstNode *ast);
 bool IsValidTypeForBinaryOp(const ir::AstNode *ast, bool isBitwise);
 bool IsStringType(const ir::AstNode *ast);
-bool IsVisibleInternalNode(const ir::AstNode *ast, const ir::AstNode *objTypeDeclNode);
 const checker::Type *GetClassDefinitionType(const ir::AstNode *ast);
 const checker::Type *GetTSInterfaceDeclarationType(const ir::AstNode *ast);
 bool ValidateMethodAccessForClass(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,
-                                  checker::Signature *signature, const ir::AstNode *memberObjTypeDeclNode);
+                                  checker::Signature *signature);
 bool ValidateMethodAccessForTSInterface(const ir::AstNode *ast, const ir::AstNode *ownerSignDeclNode,
-                                        checker::Signature *signature, const ir::AstNode *memberObjTypeDeclNode);
+                                        checker::Signature *signature);
 bool ValidatePropertyAccessForClass(const ir::AstNode *ast, const ir::AstNode *propVarDeclNode,
-                                    const ir::AstNode *propVarDeclNodeParent, const varbinder::LocalVariable *propVar,
-                                    const ir::AstNode *objTypeDeclNode);
+                                    const ir::AstNode *propVarDeclNodeParent, const varbinder::LocalVariable *propVar);
 bool ValidateVariableAccess(const varbinder::LocalVariable *propVar, const ir::MemberExpression *ast);
 bool ValidateMethodAccess(const ir::MemberExpression *memberExpression, const ir::CallExpression *ast);
 
