@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -103,9 +103,11 @@ std::string LSPMoveToNewFileTests::ReadFile(const std::string &fullPath)
     return buffer.str();
 }
 
+const std::string TEMP_DIR = "/tmp/lsp_api_test_refactors_move_to_new_file/";
+
 TEST_F(LSPMoveToNewFileTests, ExportCase1)
 {
-    std::string strNewFilePath = "/tmp/MoveToNewFile_sum.ets";
+    std::string strNewFilePath = TEMP_DIR + "MoveToNewFile_sum.ets";
     std::vector<std::string> files = {"MoveToNewFileTests_export_case1.ets"};
     std::vector<std::string> texts = {R"(
 function MoveToNewFile_sum(a: number, b: number): number {
@@ -150,7 +152,7 @@ let result = sum(1, 2);
 
 TEST_F(LSPMoveToNewFileTests, ExportCase2)
 {
-    std::string strNewFilePath = "/tmp/MoveToNewFile_PI.ets";
+    std::string strNewFilePath = TEMP_DIR + "MoveToNewFile_PI.ets";
     std::vector<std::string> files = {"MoveToNewFileTests_export_case2.ets"};
     std::vector<std::string> texts = {R"(const MoveToNewFile_PI = 3.14;
 let version = "1.0";
@@ -220,7 +222,7 @@ constexpr size_t INTERFACE_DERIVED_LENGTH = 53;
 
 TEST_F(LSPMoveToNewFileTests, MoveToNewFile1)
 {
-    std::string strNewFilePath = "/tmp/MoveToNewFile_Base.ets";
+    std::string strNewFilePath = TEMP_DIR + "MoveToNewFile_Base.ets";
     DeleteFile(strNewFilePath);
     const std::string src = R"(
 interface MoveToNewFile_Base {
@@ -269,7 +271,7 @@ interface Derived extends MoveToNewFile_Base {/*2*/
 
 TEST_F(LSPMoveToNewFileTests, MoveToNewFile2)
 {
-    std::string strNewFilePath = "/tmp/MoveToNewFile_Derived.ets";
+    std::string strNewFilePath = TEMP_DIR + "MoveToNewFile_Derived.ets";
     DeleteFile(strNewFilePath);
     const std::string src = R"(
 interface Base {
@@ -314,7 +316,7 @@ interface MoveToNewFile_Derived /*1*/extends Base {/*2*/
 
 TEST_F(LSPMoveToNewFileTests, ImportCase1)
 {
-    DeleteFile("/tmp/MoveToNewFile_Derived.ets");
+    DeleteFile(TEMP_DIR + "MoveToNewFile_Derived.ets");
     std::vector<std::string> files = {"MoveToNewFileTests_import_case1.ets", "MoveToNewFileTests_import_11.ets",
                                       "MoveToNewFileTests_import_12.ets"};
     std::vector<std::string> texts = {
@@ -360,7 +362,7 @@ interface MoveToNewFile_Derived extends Base {
 
 TEST_F(LSPMoveToNewFileTests, ImportCase2)
 {
-    DeleteFile("/tmp/MoveToNewFileDerived.ets");
+    DeleteFile(TEMP_DIR + "MoveToNewFileDerived.ets");
     std::vector<std::string> texts = {R"(
 import {B, C, A, Test1} from "./MoveToNewFileTests_import_21";
 import { Base, X } from "./MoveToNewFileTests_import_22";

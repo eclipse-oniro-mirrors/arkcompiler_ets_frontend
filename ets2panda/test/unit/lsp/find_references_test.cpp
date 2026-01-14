@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -104,36 +104,38 @@ vector<string> fileContents = {
         console.log(myfoo.name)
     )"};
 
+const std::string tempDir = "/tmp/lsp_api_test_find_references/";
+
 std::set<ark::es2panda::lsp::ReferencedNode> expected_dummy = {
-    {"/tmp/findReferencesOne.ets", 83, 88, 4, true},     {"/tmp/findReferencesOne.ets", 863, 868, 33, false},
-    {"/tmp/findReferencesOne.ets", 881, 886, 34, false}, {"/tmp/findReferencesTwo.ets", 18, 23, 1, false},
-    {"/tmp/findReferencesTwo.ets", 78, 83, 3, false},    {"/tmp/findReferencesTwo.ets", 96, 101, 4, false},
+    {tempDir + "findReferencesOne.ets", 83, 88, 4, true},     {tempDir + "findReferencesOne.ets", 863, 868, 33, false},
+    {tempDir + "findReferencesOne.ets", 881, 886, 34, false}, {tempDir + "findReferencesTwo.ets", 18, 23, 1, false},
+    {tempDir + "findReferencesTwo.ets", 78, 83, 3, false},    {tempDir + "findReferencesTwo.ets", 96, 101, 4, false},
 };
 
 std::set<ark::es2panda::lsp::ReferencedNode> expected_abc = {
-    {"/tmp/findReferencesOne.ets", 25, 28, 1, true},     {"/tmp/findReferencesOne.ets", 899, 902, 35, false},
-    {"/tmp/findReferencesOne.ets", 915, 918, 36, false}, {"/tmp/findReferencesOne.ets", 931, 934, 37, false},
-    {"/tmp/findReferencesTwo.ets", 25, 28, 1, false},    {"/tmp/findReferencesTwo.ets", 115, 118, 5, false},
-    {"/tmp/findReferencesTwo.ets", 131, 134, 6, false},  {"/tmp/findReferencesTwo.ets", 148, 151, 7, false},
+    {tempDir + "findReferencesOne.ets", 25, 28, 1, true},     {tempDir + "findReferencesOne.ets", 899, 902, 35, false},
+    {tempDir + "findReferencesOne.ets", 915, 918, 36, false}, {tempDir + "findReferencesOne.ets", 931, 934, 37, false},
+    {tempDir + "findReferencesTwo.ets", 25, 28, 1, false},    {tempDir + "findReferencesTwo.ets", 115, 118, 5, false},
+    {tempDir + "findReferencesTwo.ets", 131, 134, 6, false},  {tempDir + "findReferencesTwo.ets", 148, 151, 7, false},
 };
 
 std::set<ark::es2panda::lsp::ReferencedNode> expected_myfoo = {
-    {"/tmp/findReferencesTwo.ets", 171, 176, 9, true},
-    {"/tmp/findReferencesTwo.ets", 280, 285, 12, false},
-    {"/tmp/findReferencesTwo.ets", 337, 342, 14, false},
+    {tempDir + "findReferencesTwo.ets", 171, 176, 9, true},
+    {tempDir + "findReferencesTwo.ets", 280, 285, 12, false},
+    {tempDir + "findReferencesTwo.ets", 337, 342, 14, false},
 };
 
 std::set<ark::es2panda::lsp::ReferencedNode> expected_Foo = {
-    {"/tmp/findReferencesOne.ets", 140, 143, 7, true},
-    {"/tmp/findReferencesTwo.ets", 30, 33, 1, false},
-    {"/tmp/findReferencesTwo.ets", 183, 186, 9, false},
-    {"/tmp/findReferencesTwo.ets", 234, 237, 10, false},
+    {tempDir + "findReferencesOne.ets", 140, 143, 7, true},
+    {tempDir + "findReferencesTwo.ets", 30, 33, 1, false},
+    {tempDir + "findReferencesTwo.ets", 183, 186, 9, false},
+    {tempDir + "findReferencesTwo.ets", 234, 237, 10, false},
 };
 
 std::set<ark::es2panda::lsp::ReferencedNode> expected_name = {
-    {"/tmp/findReferencesOne.ets", 158, 162, 8, true},
-    {"/tmp/findReferencesOne.ets", 362, 366, 13, false},
-    {"/tmp/findReferencesTwo.ets", 343, 347, 14, false},
+    {tempDir + "findReferencesOne.ets", 158, 162, 8, true},
+    {tempDir + "findReferencesOne.ets", 362, 366, 13, false},
+    {tempDir + "findReferencesTwo.ets", 343, 347, 14, false},
 };
 
 class LspFindRefTests : public LSPAPITests {};
