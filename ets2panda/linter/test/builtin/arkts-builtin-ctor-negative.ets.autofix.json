@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -35,16 +35,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 18,
-            "column": 16,
-            "endLine": 18,
-            "endColumn": 21,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 22,
             "column": 46,
             "endLine": 22,
@@ -59,16 +49,6 @@
             "column": 10,
             "endLine": 23,
             "endColumn": 14,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 23,
-            "column": 16,
-            "endLine": 23,
-            "endColumn": 21,
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
@@ -95,16 +75,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 29,
-            "column": 18,
-            "endLine": 29,
-            "endColumn": 23,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 33,
             "column": 34,
             "endLine": 33,
@@ -119,16 +89,6 @@
             "column": 19,
             "endLine": 34,
             "endColumn": 23,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
-            "column": 25,
-            "endLine": 34,
-            "endColumn": 30,
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
@@ -155,16 +115,6 @@
             "severity": "ERROR"
         },
         {
-            "line": 39,
-            "column": 16,
-            "endLine": 39,
-            "endColumn": 21,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
             "line": 45,
             "column": 16,
             "endLine": 45,
@@ -179,16 +129,6 @@
             "column": 12,
             "endLine": 46,
             "endColumn": 16,
-            "problem": "BuiltinNoCtorFunc",
-            "suggest": "",
-            "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 46,
-            "column": 18,
-            "endLine": 46,
-            "endColumn": 23,
             "problem": "BuiltinNoCtorFunc",
             "suggest": "",
             "rule": "API is not support ctor signature and func (arkts-builtin-cotr)",
