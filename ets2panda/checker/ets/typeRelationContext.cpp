@@ -23,7 +23,7 @@ bool InstantiationContext::ValidateTypeArguments(ETSObjectType *type, ir::TSType
 {
     if (checker_->HasStatus(CheckerStatus::IN_INSTANCEOF_CONTEXT)) {
         if (typeArgs != nullptr) {
-            checker_->LogDiagnostic(diagnostic::INSTANCEOF_ERASED, {type->Name()}, pos);
+            checker_->LogError(diagnostic::INSTANCEOF_ERASED, {type->Name()}, pos);
         } else {
             result_ = type;
             return true;

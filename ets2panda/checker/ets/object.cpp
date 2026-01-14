@@ -550,7 +550,11 @@ void ETSChecker::SetUpTypeParameterConstraint(ir::TSTypeParameter *const param)
 
     if (param->Constraint() != nullptr) {
         traverseReferenced(param->Constraint());
+        CheckerStatus status = CheckerStatus::IN_INSTANCEOF_CONTEXT;
+        status &= this->Context().Status();
+        this->Context().Status() &= ~CheckerStatus::IN_INSTANCEOF_CONTEXT;
         auto *constraintType = param->Constraint()->GetType(this);
+        this->Context().Status() |= status;
         if (constraintType == paramType) {
             LogError(diagnostic::TYPE_PARAM_CIRCULAR_CONSTRAINT, {param->Name()->Name().Utf8()},
                      param->Constraint()->Start());

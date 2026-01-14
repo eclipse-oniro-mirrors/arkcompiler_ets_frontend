@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1165,7 +1165,7 @@ class A44<T44> {
             return this.D(a44);
         } else if (a44 instanceof undefined) {
             return this.B(a44);
-        } else if (a44 instanceof number[]) {
+        } else if (a44 instanceof Array) {
             return this.E(a44);
         } else {
             return this.C(a44);
