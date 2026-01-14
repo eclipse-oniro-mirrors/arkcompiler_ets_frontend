@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,6 +76,7 @@ import {
   DEPRECATED_SENDABLE_CONTAINER_LIST
 } from '../utils/consts/CollectionsAPI';
 import { ON_KEY_EVENT } from '../utils/consts/OverloadCommon';
+import type { FaultID } from '../Problems';
 
 const UNDEFINED_NAME = 'undefined';
 
@@ -134,6 +135,14 @@ export interface Autofix {
   column?: number;
   endLine?: number;
   endColumn?: number;
+}
+
+export interface AutofixInfo {
+  autofix: Autofix[] | undefined;
+  node: ts.Node;
+  faultId: FaultID;
+  isExistBitVector: boolean;
+  isExistSpecialScene: boolean;
 }
 
 export class Autofixer {

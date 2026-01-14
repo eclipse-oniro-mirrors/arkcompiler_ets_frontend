@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,14 +21,14 @@ import {collections as cos }  from './oh_modules/@kit.ArkTS';
 
 let func: () => void = () => {};
 taskpool.execute(func);
-tp.execute(func)
+tp.execute(func);
 let result = pc.isIsolatedProcess();
 let result1 = process.isIsolatedProcess();
-let lock: ArkTSUtils.locks.AsyncLock = new ArkTSUtils.locks.AsyncLock()
-let lock1: AU.locks.AsyncLock = new AU.locks.AsyncLock()
-let lck: ArkTSUtils.locks.AsyncLock = ArkTSUtils.locks.AsyncLock.request("lock")
-let lck1: AU.locks.AsyncLock = AU.locks.AsyncLock.request("lock")
-let pro = new ArkTSUtils.SendableLruCache<number, number>()
-let pro1 = new AU.SendableLruCache<number, number>()
-let write: stream.Writable = new stream.Writable()
+let lock: ArkTSUtils.locks.AsyncLock = new ArkTSUtils.locks.AsyncLock();
+let lock1: AU.locks.AsyncLock = new AU.locks.AsyncLock();
+let lck: ArkTSUtils.locks.AsyncLock = ArkTSUtils.locks.AsyncLock.request("lock");
+let lck1: AU.locks.AsyncLock = AU.locks.AsyncLock.request("lock");
+let pro = new ArkTSUtils.SendableLruCache<number, number>();
+let pro1 = new AU.SendableLruCache<number, number>();
+let write: stream.Writable = new stream.Writable();
 let map126: Map<cos.Array<number>, number> = new Map();

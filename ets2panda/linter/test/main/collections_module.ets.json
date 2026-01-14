@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,33 +15,83 @@
     ],
     "result": [
         {
-            "line": 41,
-            "column": 11,
-            "endLine": 41,
-            "endColumn": 50,
-            "problem": "AnyType",
+            "line": 68,
+            "column": 1,
+            "endLine": 68,
+            "endColumn": 85,
+            "problem": "ImportAfterStatement",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
             "severity": "ERROR"
         },
         {
-            "line": 41,
-            "column": 29,
-            "endLine": 41,
-            "endColumn": 32,
-            "problem": "ClassAsObject",
+            "line": 69,
+            "column": 1,
+            "endLine": 69,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
             "suggest": "",
-            "rule": "Classes cannot be used as objects (arkts-no-classes-as-obj)",
-            "severity": "WARNING"
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
         },
         {
-            "line": 45,
-            "column": 11,
-            "endLine": 45,
-            "endColumn": 58,
-            "problem": "AnyType",
+            "line": 70,
+            "column": 1,
+            "endLine": 70,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
             "suggest": "",
-            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 71,
+            "column": 1,
+            "endLine": 71,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 87,
+            "column": 1,
+            "endLine": 87,
+            "endColumn": 82,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 88,
+            "column": 1,
+            "endLine": 88,
+            "endColumn": 83,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 89,
+            "column": 1,
+            "endLine": 89,
+            "endColumn": 83,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 90,
+            "column": 1,
+            "endLine": 90,
+            "endColumn": 83,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
             "severity": "ERROR"
         }
     ]

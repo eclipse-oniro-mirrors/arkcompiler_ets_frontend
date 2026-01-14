@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -72,16 +72,6 @@
             "problem": "LimitedStdLibNoImportConcurrency",
             "suggest": "",
             "rule": "Import Concurrency is not required (arkts-limited-stdlib-no-import-concurrency)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 20,
-            "column": 24,
-            "endLine": 20,
-            "endColumn": 27,
-            "problem": "NoNeedStdLibSendableContainer",
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         },
         {
@@ -256,22 +246,22 @@
         },
         {
             "line": 34,
-            "column": 17,
-            "endLine": 34,
-            "endColumn": 26,
-            "problem": "NoNeedStdLibSendableContainer",
-            "suggest": "",
-            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 34,
             "column": 46,
             "endLine": 34,
             "endColumn": 55,
             "problem": "GenericCallNoTypeArgs",
             "suggest": "",
             "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 20,
+            "column": 9,
+            "endLine": 20,
+            "endColumn": 27,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
             "severity": "ERROR"
         }
     ]

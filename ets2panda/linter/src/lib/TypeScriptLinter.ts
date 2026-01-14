@@ -17,7 +17,7 @@ import * as path from 'node:path';
 import * as ts from 'typescript';
 import { FaultID } from './Problems';
 import { TypeScriptLinterConfig } from './TypeScriptLinterConfig';
-import type { Autofix } from './autofixes/Autofixer';
+import type { Autofix, AutofixInfo } from './autofixes/Autofixer';
 import { Autofixer } from './autofixes/Autofixer';
 import {
   PROMISE_METHODS,
@@ -117,7 +117,7 @@ import {
 } from './utils/consts/InValidIndentifierKeywords';
 import { WORKER_MODULES, WORKER_TEXT } from './utils/consts/WorkerAPI';
 import type { BitVectorUsage } from './utils/consts/CollectionsAPI';
-import { COLLECTIONS_TEXT, COLLECTIONS_MODULES, BIT_VECTOR } from './utils/consts/CollectionsAPI';
+import { COLLECTIONS_TEXT, COLLECTIONS_MODULES, BIT_VECTOR, SPECIAL_CONTAINERS } from './utils/consts/CollectionsAPI';
 import { ASON_TEXT, ASON_MODULES, ARKTS_UTILS_TEXT, JSON_TEXT, ASON_WHITE_SET } from './utils/consts/ArkTSUtilsAPI';
 import { interanlFunction } from './utils/consts/InternalFunction';
 import { ETS_PART, PATH_SEPARATOR } from './utils/consts/OhmUrl';
@@ -262,9 +262,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   autofixer: Autofixer | undefined;
   private fileExportDeclCaches: Set<ts.Node> | undefined;
-
+  private readonly importNodeForCollectionsSet: Set<ts.Node> = new Set<ts.Node>();
   private useStatic?: boolean;
-
+  private readonly nodeToAutofixInfoMap: Map<string, AutofixInfo> = new Map<string, AutofixInfo>();
   private readonly compatibleSdkVersion: number;
   private readonly compatibleSdkVersionStage: string;
   private static sharedModulesCache: Map<string, boolean>;
@@ -625,6 +625,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.visitSourceFile(this.sourceFile);
     this.handleCommentDirectives(this.sourceFile);
     this.processInterfacesToImport(this.sourceFile);
+    this.handleImportCauseForCollections();
   }
 
   private visitSourceFile(sf: ts.SourceFile): void {
@@ -9763,11 +9764,143 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
     if (this.isBitVector(ident)) {
+      this.updateImportAutofix(node, BIT_VECTOR);
       return;
     }
+
+    if (ts.isQualifiedName(node)) {
+      this.processQualifiedNameForCollections(node, ident);
+      return;
+    }
+
+    this.processPropertyAccessExprForCollections(node, ident);
+  }
+
+  private processQualifiedNameForCollections(node: ts.Node, ident: ts.Node): void {
+    const vaiableDeclaration = ts.findAncestor(node, ts.isVariableDeclaration);
+    const propertyDeclaration = ts.findAncestor(node, ts.isPropertyDeclaration);
+    const declaration = vaiableDeclaration !== undefined ? vaiableDeclaration : propertyDeclaration;
     const autofix = this.autofixer?.replaceNode(node, ident.getText());
+    if (declaration) {
+      const initalizer = declaration.initializer;
+      if (initalizer && ts.isNewExpression(initalizer)) {
+        const autofixInfo: AutofixInfo = {
+          autofix: autofix,
+          node: node,
+          faultId: FaultID.NoNeedStdLibSendableContainer,
+          isExistBitVector: false,
+          isExistSpecialScene: false
+        };
+        this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
+        return;
+      }
+    }
+    this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+  }
+
+  private processPropertyAccessExprForCollections(node: ts.Node, ident: ts.Node): void {
+    let isSpecailScene: boolean = false;
+    if (TypeScriptLinter.isSpecailContainerScene(node, ident)) {
+      isSpecailScene = true;
+      this.updateImportAutofix(node, '');
+    }
+
+    this.checkCorrespondingQualifiedName(node, isSpecailScene);
+
+    const autofix = isSpecailScene ? undefined : this.autofixer?.replaceNode(node, ident.getText());
 
     this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+  }
+
+  private updateImportAutofix(node: ts.Node, updateFlag: string): void {
+    const nsForPropertyAccessExpr = TypeScriptLinter.getNamespaceOnAccessExpress(node);
+    const autofixInfoOnImport = this.nodeToAutofixInfoMap.get(nsForPropertyAccessExpr);
+    if (autofixInfoOnImport) {
+      if (updateFlag === BIT_VECTOR) {
+        autofixInfoOnImport.isExistBitVector = true;
+      } else {
+        autofixInfoOnImport.isExistSpecialScene = true;
+      }
+    }
+  }
+
+  private static getNamespaceOnAccessExpress(node: ts.Node): string {
+    if (ts.isPropertyAccessExpression(node) && ts.isIdentifier(node.expression)) {
+      return node.expression.text;
+    }
+
+    if (ts.isQualifiedName(node) && ts.isIdentifier(node.left)) {
+      return node.left.text;
+    }
+    return '';
+  }
+
+  private processImportCauseForCollections(node: ts.Node): void {
+    const nsForPropertyAccessExpr = ts.isImportSpecifier(node) ? node.name.text : '';
+    const autofixInfoOnImport = this.nodeToAutofixInfoMap.get(nsForPropertyAccessExpr);
+    if (autofixInfoOnImport) {
+      const node = autofixInfoOnImport.node;
+      const autofix = autofixInfoOnImport.autofix;
+      if (autofixInfoOnImport.isExistBitVector) {
+        return;
+      }
+
+      if (autofixInfoOnImport.isExistSpecialScene) {
+        this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer);
+        return;
+      }
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+    }
+  }
+
+  private handleImportCauseForCollections(): void {
+    this.importNodeForCollectionsSet.forEach((node) => {
+      this.processImportCauseForCollections(node);
+    });
+  }
+
+  private static isSpecailContainerScene(node: ts.Node, ident: ts.Node): boolean {
+    const parent = node.parent;
+    if (!ts.isNewExpression(parent)) {
+      return false;
+    }
+    const isIncludeSpecailContainer = SPECIAL_CONTAINERS.some((container) => {
+      return container === ident.getText();
+    });
+
+    if (!isIncludeSpecailContainer) {
+      return false;
+    }
+
+    const args = parent.arguments;
+    if (args && args.length > 0) {
+      const arg = args[0];
+      if (!ts.isSpreadElement(arg)) { 
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkCorrespondingQualifiedName(node: ts.Node, isSpecailScene: boolean): void {
+    const vaiableDeclaration = ts.findAncestor(node, ts.isVariableDeclaration);
+    const propertyDeclaration = ts.findAncestor(node, ts.isPropertyDeclaration);
+    const declaration = vaiableDeclaration !== undefined ? vaiableDeclaration : propertyDeclaration;
+    if (!declaration) {
+      return;
+    }
+    if (declaration.type && ts.isTypeReferenceNode(declaration.type)) {
+      const typeReferenceNode = declaration.type;
+      const typeName = typeReferenceNode.typeName;
+      if (ts.isQualifiedName(typeName)) {
+        const autofixInfoOnQualified = this.nodeToAutofixInfoMap.get(typeName.getText());
+        if (autofixInfoOnQualified) {
+          const node = autofixInfoOnQualified.node;
+          const autofix = isSpecailScene ? undefined : autofixInfoOnQualified.autofix;
+          this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+        }
+      }
+    }
   }
 
   private checkCollectionsSymbol(node: ts.Node): void {
@@ -9780,42 +9913,29 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       if (!parent) {
         return;
       }
+
+      if (ts.isImportSpecifier(parent) && ts.isIdentifier(node)) {
+        const autofix = this.autofixer?.removeImport(node, parent);
+        const autofixInfo: AutofixInfo = {
+          autofix: autofix,
+          node: parent,
+          faultId: FaultID.NoNeedStdLibSendableContainer,
+          isExistBitVector: false,
+          isExistSpecialScene: false
+        };
+
+        this.nodeToAutofixInfoMap.set(parent.name.text, autofixInfo);
+        this.importNodeForCollectionsSet.add(parent);
+        return;
+      }
+
       if (ts.isPropertyAccessExpression(parent)) {
         this.checkCollectionsForPropAccess(parent, parent.name);
         return;
       }
       if (ts.isQualifiedName(parent)) {
         this.checkCollectionsForPropAccess(parent, parent.right);
-        return;
       }
-
-      if (ts.isImportSpecifier(parent) && ts.isIdentifier(node)) {
-        const bitVectorUsed = this.checkBitVector(node.getSourceFile());
-
-        if (bitVectorUsed?.used) {
-          const ns = bitVectorUsed.ns;
-          if (parent.name.text === ns) {
-            return;
-          }
-        }
-
-        if (parent.propertyName && node.text === parent.propertyName.text) {
-          return;
-        }
-
-        const autofix = this.autofixer?.removeImport(node, parent);
-        this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
-
-        return;
-      }
-
-      const importDecl = ts.findAncestor(node, ts.isImportDeclaration);
-      if (!importDecl) {
-        return;
-      }
-
-      const autofix = this.autofixer?.removeNode(importDecl);
-      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
     };
 
     this.checkNodeForUsage(node, COLLECTIONS_TEXT, COLLECTIONS_MODULES, cb);
@@ -9956,12 +10076,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const symbol = this.tsUtils.trueSymbolAtLocation(node);
     if (symbol && symbol.name !== 'unknown') {
       this.checkSymbolAndExecute(symbol, [symbolName], modules, cb);
-
-      return;
-    }
-
-    if (node.getText() === symbolName) {
-      cb();
     }
   }
 

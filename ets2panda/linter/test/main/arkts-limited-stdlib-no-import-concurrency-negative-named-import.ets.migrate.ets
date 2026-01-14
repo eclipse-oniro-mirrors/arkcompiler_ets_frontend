@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,14 +21,14 @@ import { stream as st } from './oh_modules/@kit.ArkTS'
 
 let func: () => void = () => {};
 taskpool.execute(func);
-taskpool.execute(func)
+taskpool.execute(func);
 let result = process.isIsolatedProcess();
 let result1 = process.isIsolatedProcess();
-let lock: AsyncLock = new AsyncLock()
-let lock1: AsyncLock = new AsyncLock()
-let lck: AsyncLock = AsyncLock.request("lock")
-let lck1: AsyncLock = AsyncLock.request("lock")
-let pro = new SendableLruCache<number, number>()
-let pro1 = new SendableLruCache<number, number>()
-let write: stream.Writable = new stream.Writable()
-let map126: Map<Array<number>, number> = new Map<Array<number>, number>();
+let lock: AsyncLock = new AsyncLock();
+let lock1: AsyncLock = new AsyncLock();
+let lck: AsyncLock = AsyncLock.request("lock");
+let lck1: AsyncLock = AsyncLock.request("lock");
+let pro = new SendableLruCache<number, number>();
+let pro1 = new SendableLruCache<number, number>();
+let write: stream.Writable = new stream.Writable();
+let map126: Map<cos.Array<number>, number> = new Map();
