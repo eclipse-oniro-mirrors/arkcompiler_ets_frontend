@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,8 @@
 #include "util/language.h"
 #include "util/diagnosticEngine.h"
 #include "generated/signatures.h"
+#include "util/helpers.h"
+#include "importPathManager.h"
 
 #include <fstream>
 #include <memory>
@@ -196,6 +198,25 @@ std::optional<ArkTsConfig> ArkTsConfig::ParseExtends(const std::string &configPa
 }
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
 
+std::optional<std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>> ArkTsConfig::FindInDependencies(
+    const std::string &importString)
+{
+    auto res = std::find_if(dependencies_.begin(), dependencies_.end(), [importString](auto &dep) {
+        if (dep.first == importString) {
+            return true;
+        }
+        if (importString.rfind(dep.first, 0) == 0 &&
+            util::Helpers::EndsWith(dep.second.Path(), util::ImportPathManager::ABC_SUFFIX)) {
+            return true;
+        }
+        return false;
+    });
+    if (res != dependencies_.end()) {
+        return std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>(res->first, res->second);
+    }
+    return std::nullopt;
+}
+
 static std::string ValidLanguages()
 {
     JsonArrayBuilder builder;
@@ -244,6 +265,7 @@ static constexpr auto PATH = "path";          // CC-OFF(G.NAM.03-CPP) project co
 static constexpr auto OHM_URL = "ohmUrl";     // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto ALIAS = "alias";        // CC-OFF(G.NAM.03-CPP) project code style
 static constexpr auto SOURCEFILEPATH = "sourceFilePath";
+static constexpr auto MAIN_FILE = "mainFile";
 
 static void ParseLanguage(const std::string *langValue, std::optional<Language> &lang)
 {
@@ -252,6 +274,11 @@ static void ParseLanguage(const std::string *langValue, std::optional<Language> 
     } else {
         lang = Language {Language::Id::ETS};
     }
+}
+
+static std::string MakeAbsolutePath(const std::string &path, const std::string &base)
+{
+    return IsAbsolute(path) ? ark::os::GetAbsolutePath(path) : MakeAbsolute(path, base);
 }
 
 bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
@@ -291,8 +318,7 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
     std::string normalizedPath {};
     // NOTE(itrubachev): path in dependencies must be mandatory. Need to fix interop tests
     if (pathValue != nullptr) {
-        normalizedPath =
-            IsAbsolute(*pathValue) ? ark::os::GetAbsolutePath(*pathValue) : MakeAbsolute(*pathValue, baseUrl_);
+        normalizedPath = MakeAbsolutePath(*pathValue, baseUrl_);
         if (!Check(ark::os::IsFileExists(normalizedPath), diagnostic::INVALID_PATH, {normalizedPath, key, baseUrl_})) {
             return false;
         }
@@ -302,15 +328,19 @@ bool ArkTsConfig::ParseDependency(size_t keyIdx, const std::unique_ptr<ark::Json
             return false;
         }
     }
+
+    auto mainFile = data->get()->GetValue<JsonObject::StringT>(MAIN_FILE);
+    std::string mainFilevalue = (mainFile == nullptr) ? "" : *mainFile;
+
     auto sourcePathValue = data->get()->GetValue<JsonObject::StringT>(SOURCEFILEPATH);
     std::string sourcePath {};
     if (sourcePathValue != nullptr) {
-        sourcePath = IsAbsolute(*sourcePathValue) ? ark::os::GetAbsolutePath(*sourcePathValue)
-                                                  : MakeAbsolute(*sourcePathValue, baseUrl_);
+        sourcePath = MakeAbsolutePath(*sourcePathValue, baseUrl_);
     }
     std::vector<std::string> aliases = ParseStringArray(data, ALIAS);
-    auto res = dependenciesMap.insert(
-        {key, ArkTsConfig::ExternalModuleData(*lang, normalizedPath, sourcePath, ohmUrlValue, std::move(aliases))});
+    auto res =
+        dependenciesMap.insert({key, ArkTsConfig::ExternalModuleData(*lang, normalizedPath, sourcePath, ohmUrlValue,
+                                                                     mainFilevalue, std::move(aliases))});
     return Check(res.second, diagnostic::DUPLICATED_DEPENDENCIES, {normalizedPath, key});
 }
 
@@ -527,6 +557,13 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
     auto tryResolveWithDependencies = [this, &path]() -> std::optional<std::string> {
         for (const auto &[dynPath, dependence] : dependencies_) {
             if (path == dynPath) {
+                return dynPath;
+            }
+
+            // Such imports are allowed in ohos:
+            // <package name>/<relative path>
+            if (path.rfind(dynPath, 0) == 0 &&
+                util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
                 return dynPath;
             }
         }

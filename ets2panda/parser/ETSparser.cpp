@@ -440,18 +440,14 @@ std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPat
 
         auto preservedLang = GetContext().SetLanguage(data.lang);
 
-        if (data.IsExternalBinaryImport()) {
-            ParseParseListElement(*notParsedElement, data.declText, directImportsFromMainSource, &programs);
-        } else {
-            auto declaration = GetDeclarationSource(std::string {parseCandidate});
-            if (!declaration.has_value()) {
-                GetContext().SetLanguage(preservedLang);
-                notParsedElement = findNotParsed();
-                continue;
-            }
-
-            ParseParseListElement(*notParsedElement, *declaration, directImportsFromMainSource, &programs);
+        auto declaration = GetDeclarationSource(std::string {parseCandidate});
+        if (!declaration.has_value()) {
+            GetContext().SetLanguage(preservedLang);
+            notParsedElement = findNotParsed();
+            continue;
         }
+
+        ParseParseListElement(*notParsedElement, *declaration, directImportsFromMainSource, &programs);
 
         GetContext().SetLanguage(preservedLang);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -92,11 +92,12 @@ public:
     class ExternalModuleData {
     public:
         explicit ExternalModuleData(Language lang, std::string path, std::string sourceFilePath, std::string ohmUrl,
-                                    std::vector<std::string> alias = {})
+                                    std::string mainFile, std::vector<std::string> alias = {})
             : lang_(lang),
               path_(std::move(path)),
               sourceFilePath_(std::move(sourceFilePath)),
               ohmUrl_(std::move(ohmUrl)),
+              mainFile_(std::move(mainFile)),
               alias_(std::move(alias))
         {
         }
@@ -120,6 +121,11 @@ public:
             return ohmUrl_;
         }
 
+        std::string_view MainFile() const
+        {
+            return mainFile_;
+        }
+
         const std::vector<std::string> &Alias() const
         {
             return alias_;
@@ -130,6 +136,7 @@ public:
         std::string path_ {};
         std::string sourceFilePath_ {};
         std::string ohmUrl_ {};
+        std::string mainFile_ {};
         std::vector<std::string> alias_;
     };
 
@@ -188,6 +195,8 @@ public:
     {
         return sourcePathMap_;
     }
+    std::optional<std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>> FindInDependencies(
+        const std::string &importString);
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     const std::vector<Pattern> &Include() const
     {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -322,11 +322,23 @@ static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *
 
     if (context->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
         context->config->options->GetExtension() == ScriptExtension::ETS) {
-        std::unordered_set<std::string> sourceFileNamesSet;
-        util::UString absolutePath(os::GetAbsolutePath(context->sourceFile->filePath), context->allocator);
-        sourceFileNamesSet.insert(absolutePath.View().Mutf8());
-        context->sourceFileNames.emplace_back(absolutePath.View().Utf8());
+        if (!context->sourceFile->filePath.empty()) {
+            context->sourceFileNames.emplace_back(os::GetAbsolutePath(context->sourceFile->filePath));
+        } else if (auto compilationList = FindProjectSources(context->config->options->ArkTSConfig());
+                   !compilationList.empty()) {
+            for (auto &[src, _] : compilationList) {
+                context->sourceFileNames.push_back(os::GetAbsolutePath(src));
+            }
+        }
+
+        if (context->sourceFileNames.empty()) {
+            context->diagnosticEngine->LogDiagnostic(diagnostic::NO_INPUT, util::DiagnosticMessageParams {});
+            return false;
+        }
+
         parser::ETSParser::AddGenExtenralSourceToParseList(context);
+        std::unordered_set<std::string> sourceFileNamesSet {context->sourceFileNames.begin(),
+                                                            context->sourceFileNames.end()};
         context->MarkGenAbcForExternal(sourceFileNamesSet, context->parserProgram->ExternalSources());
     } else {
         context->parser->ParseScript(unit.input, unit.options.GetCompilationMode() == CompilationMode::GEN_STD_LIB);

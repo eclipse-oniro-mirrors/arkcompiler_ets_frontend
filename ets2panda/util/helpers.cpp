@@ -56,6 +56,8 @@
 #include "libarkbase/os/file.h"
 #include "libarkbase/utils/utf.h"
 
+#include "importPathManager.h"
+
 namespace ark::es2panda::util {
 // Helpers
 
@@ -822,10 +824,20 @@ bool Helpers::IsNumericGlobalBuiltIn(checker::Type *type, checker::ETSChecker *c
 
 bool Helpers::IsStdLib(const parser::Program *program)
 {
-    if (program->AbsoluteName().Utf8().find("stdlib") != std::string_view::npos ||
-        program->AbsoluteName().Utf8().find("std.") != std::string_view::npos ||
-        program->AbsoluteName().Utf8().find("escompat.") != std::string_view::npos) {
+    auto filePath = program->AbsoluteName().Mutf8();
+    std::replace(filePath.begin(), filePath.end(), util::Path::GetPathDelimiter(), '.');
+    if (filePath.find("stdlib") != std::string_view::npos) {
         return true;
+    }
+
+    // check etscache
+    auto const &stdlib = StdLib();
+    for (const auto &stdlibPackage : stdlib) {
+        auto stdlibPackageCache = stdlibPackage + std::string(ImportPathManager::CACHE_SUFFIX);
+        std::replace(stdlibPackageCache.begin(), stdlibPackageCache.end(), '/', '.');
+        if (filePath.find(stdlibPackageCache) != std::string::npos) {
+            return true;
+        }
     }
 
     // NOTE(rsipka): early check: if program is not in a package then it is not part of the stdlib either
@@ -836,8 +848,6 @@ bool Helpers::IsStdLib(const parser::Program *program)
     auto fileFolder = program->ModuleName().Mutf8();
     std::replace(fileFolder.begin(), fileFolder.end(), *compiler::Signatures::METHOD_SEPARATOR.begin(),
                  *compiler::Signatures::NAMESPACE_SEPARATOR.begin());
-
-    auto const &stdlib = StdLib();
     return std::count(stdlib.begin(), stdlib.end(), fileFolder) != 0;
 }
 
