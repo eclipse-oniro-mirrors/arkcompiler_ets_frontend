@@ -1549,6 +1549,11 @@ __attribute__((unused)) static void GenerateStdLibCache(es2panda_Config *config,
     DestroyContext(ctx);
 }
 
+extern "C" int ExtractDeclarationsFromAbcFile(const char *abcFile, const char *cacheDir)
+{
+    return util::ImportPathManager::UnpackAbc(abcFile, cacheDir);
+}
+
 es2panda_Impl g_impl = {
     ES2PANDA_LIB_VERSION,
 
@@ -1630,6 +1635,7 @@ es2panda_Impl g_impl = {
     AddFileCache,
     FreeCompilerPartMemory,
     ResetCounters,
+    ExtractDeclarationsFromAbcFile,
 
 #include "generated/es2panda_lib/es2panda_lib_list.inc"
 

@@ -395,12 +395,18 @@ export class ArkTSConfigGenerator {
 
     private addBinaryDependencySection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.staticDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
+            // Hack to fix interop binary import. See hap2_harmix2 and har2_harmix2 tests
+            // Btw, runtime names are generated incorrectly in these cases.
+            if (depModuleInfo.packageName in arktsconfig.dependencies) {
+                return;
+            }
             if (depModuleInfo.moduleType === OHOS_MODULE_TYPE.HAR && depModuleInfo.abcPath) {
                 const depItem: DependencyItem = {
                     language: 'ets',
                     path: depModuleInfo.abcPath,
                     ohmUrl: depModuleInfo.packageName,
-                    mainFile: path.relative(depModuleInfo.moduleRootPath, depModuleInfo.entryFile)
+                    // hack, should be fixed, probably bug in hvigor
+                    mainFile: 'Index'
                 };
                 arktsconfig.addDependency({
                     name: depModuleInfo.packageName,

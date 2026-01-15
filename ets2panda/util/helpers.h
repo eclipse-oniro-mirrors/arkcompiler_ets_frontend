@@ -211,6 +211,7 @@ public:
 
     static std::vector<std::string> const &StdLib();
     static bool IsStdLib(const parser::Program *program);
+    static bool IsStdLib(std::string_view path);
     [[nodiscard]] static checker::Type *CheckReturnTypeOfCheck([[maybe_unused]] const ir::AstNode *const node,
                                                                checker::Type *const type);
 

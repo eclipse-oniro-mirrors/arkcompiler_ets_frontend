@@ -161,3 +161,9 @@ KNativePointer impl_FreeCompilerPartMemory(KNativePointer contextPtr)
     return nullptr;
 }
 TS_INTEROP_1(FreeCompilerPartMemory, KNativePointer, KNativePointer)
+
+KInt impl_ExtractDeclarationsFromAbcFile(KStringPtr &abcFile, KStringPtr &cacheDir)
+{
+    return GetPublicImpl()->ExtractDeclarationsFromAbcFile(abcFile.Data(), cacheDir.Data());
+}
+TS_INTEROP_2(ExtractDeclarationsFromAbcFile, KInt, KStringPtr, KStringPtr)

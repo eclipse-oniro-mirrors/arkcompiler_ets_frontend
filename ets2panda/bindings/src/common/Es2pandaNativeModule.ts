@@ -1246,6 +1246,10 @@ export class Es2pandaNativeModule {
   _destroyFormattingTextChanges(textChangesVecPtr: KPtr): KInt {
     throw new Error('Not implemented');
   }
+
+  _ExtractDeclarationsFromAbcFile(abcFile: string, cacheDir: string): KInt {
+    throw new Error('Not implemented');
+  }
 }
 
 export function initEs2panda(): Es2pandaNativeModule {

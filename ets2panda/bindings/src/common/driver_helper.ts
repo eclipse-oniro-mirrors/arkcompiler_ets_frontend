@@ -179,6 +179,10 @@ export class DriverHelper {
     public memFinalize(): void {
         global.es2panda._MemFinalize();
     }
+
+    public ExtractDeclarationsFromAbcFile(abcFile: string, cacheDir: string): number {
+        return global.es2panda._ExtractDeclarationsFromAbcFile(abcFile, cacheDir);
+    }
 }
 
 export class LspDriverHelper {

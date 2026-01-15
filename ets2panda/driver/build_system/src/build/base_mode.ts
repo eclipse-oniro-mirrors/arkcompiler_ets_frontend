@@ -30,13 +30,15 @@ import {
     ENABLE_CLUSTERS,
     DEFAULT_WORKER_NUMS,
     DECL_FILE_MAP_NAME,
-    TS_SUFFIX
+    TS_SUFFIX,
+    ETSCACHE_SUFFIX
 } from '../pre_define';
 import {
     ensurePathExists,
     isMac,
     checkDependencyModuleInfoCorrectness,
-    changeDeclgenFileExtension
+    changeDeclgenFileExtension,
+    traverseDirAndFindFilesWithRegExp
 } from '../util/utils';
 import {
     Logger,
@@ -56,7 +58,6 @@ import {
     DeclgenV1JobInfo,
     ES2PANDA_MODE,
     OHOS_MODULE_TYPE,
-    ModuleFile,
     DeclFileInfo
 } from '../types';
 import {
@@ -100,6 +101,9 @@ export abstract class BaseMode {
     private fileToModule: Map<string, ModuleInfo>;
     private moduleInfos: Map<string, ModuleInfo>;
     private abcFiles: Set<string>;
+    // hack for extraction declarations from .abc files
+    // since fileToModule in this scenario is filled incorrectly
+    private abcDeclarationMap: Map<string, DependencyModuleConfig>;
     protected mergedAbcFile: string;
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
@@ -112,6 +116,7 @@ export abstract class BaseMode {
         this.fileToModule = new Map<string, ModuleInfo>();
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
+        this.abcDeclarationMap = new Map<string, DependencyModuleConfig>();
         this.logger = Logger.getInstance();
         this.abcFiles = new Set<string>();
         this.moduleType = buildConfig.moduleType;
@@ -175,23 +180,24 @@ export abstract class BaseMode {
         }
     }
 
-    public getOutputFilePaths(file: string): {declEtsOutputPath: string, glueCodeOutputPath: string} {
-        const module = this.fileToModule.get(file)!;
-        const filePathFromModuleRoot: string = path.relative(module.moduleRootPath, file);
+    // logic for forming delcaration paths here and in ets2panda.ts must be unified
+    public getOutputFilePaths(declgenJob: DeclgenV1JobInfo): {declEtsOutputPath: string, glueCodeOutputPath: string} {
+        const filePathFromModuleRoot: string = path.relative(declgenJob.fileInfo.moduleRoot, declgenJob.fileInfo.input);
         const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(module.declgenV1OutPath!, module.packageName, filePathFromModuleRoot), DECL_ETS_SUFFIX);
+            path.resolve(declgenJob.declgenConfig.output, declgenJob.fileInfo.moduleName, filePathFromModuleRoot), DECL_ETS_SUFFIX);
         const glueCodeOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(module.declgenBridgeCodePath!, module.packageName, filePathFromModuleRoot), TS_SUFFIX);
+            path.resolve(declgenJob.declgenConfig.bridgeCode, declgenJob.fileInfo.moduleName, filePathFromModuleRoot), TS_SUFFIX);
         ensurePathExists(declEtsOutputPath);
         ensurePathExists(glueCodeOutputPath);
         return {declEtsOutputPath, glueCodeOutputPath};
     }
 
-    public async needsBackup(file: string): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
+    public async needsBackup(declgenJob: DeclgenV1JobInfo): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
+        const file = declgenJob.fileInfo.input;
         if (!this.fileToModule.has(file)) {
             return {needsDeclBackup: false, needsGlueCodeBackup: false};
         }
-        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(file);
+        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(declgenJob);
         let needsDeclBackup = false;
         let needsGlueCodeBackup = false;
         const declInfo = this.declFileMap.get(file);
@@ -230,11 +236,11 @@ export abstract class BaseMode {
         return {needsDeclBackup, needsGlueCodeBackup};
     }
 
-    public async backupFiles(file: string, needsDecl: boolean, needsGlue: boolean): Promise<void> {
-        if (!this.fileToModule.has(file)) {
+    public async backupFiles(declgenJob: DeclgenV1JobInfo, needsDecl: boolean, needsGlue: boolean): Promise<void> {
+        if (!this.fileToModule.has(declgenJob.fileInfo.input)) {
             return;
         }
-        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(file);
+        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(declgenJob);
 
         const doCopy = async(filePath: string, type: string): Promise<void> => {
             if (!fs.existsSync(filePath)) {
@@ -265,12 +271,13 @@ export abstract class BaseMode {
         await Promise.all(backups);
     }
 
-    public async updateDeclFileMapAsync(file: string): Promise<void> {
+    public async updateDeclFileMapAsync(declgenJob: DeclgenV1JobInfo): Promise<void> {
+        const file = declgenJob.fileInfo.input;
         if (!this.fileToModule.has(file)) {
             return;
         }
         const {declEtsOutputPath, glueCodeOutputPath} =
-            this.getOutputFilePaths(file);
+            this.getOutputFilePaths(declgenJob);
 
         const [sourceFileStat, declStat, glueCodeStat] = await Promise.all([
             fs.promises.stat(file), fs.promises.stat(declEtsOutputPath).catch(() => null),
@@ -774,7 +781,7 @@ export abstract class BaseMode {
             );
         });
         if (!this.buildConfig.enableDeclgenEts2Ts && !this.buildConfig.frameworkMode) {
-            this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX)));
+            this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX) && !file.endsWith(ETSCACHE_SUFFIX)));
         }
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
     }
@@ -783,6 +790,8 @@ export abstract class BaseMode {
         this.statsRecorder.record(formEvent(BuildSystemEvent.COLLECT_MODULES));
         this.collectModuleInfos();
         this.collectModuleFiles();
+        // called here, since processing of entryFiles goes further in processEntryFiles
+        this.extractDeclarationsFromAbcFile();
         this.logger.printDebug(`ModuleInfos: ${JSON.stringify([...this.moduleInfos], null, 1)}`)
         this.statsRecorder.record(formEvent(BuildSystemEvent.GEN_CONFIGS));
         this.generateArkTSConfigForModules();
@@ -987,6 +996,41 @@ export abstract class BaseMode {
         }
     }
 
+    private extractDeclarationsFromAbcFile(): void {
+        if (this.buildConfig.dependentModuleList === undefined) {
+            return;
+        }
+        const ets2panda: Ets2panda = Ets2panda.getInstance(this.buildConfig)
+        const currentPackage = this.mainPackageName;
+        const currentPackageDependenciesNames = this.buildConfig.dependentModuleList.find(pack => pack.packageName === currentPackage)?.dependencies;
+        const currentPackageDependencies = this.buildConfig.dependentModuleList.filter(pack => currentPackageDependenciesNames?.includes(pack.packageName));
+        let extractedDeclarations: string[] = [];
+        // transitive dependencies currently are not processed 
+        for (const dep of currentPackageDependencies) {
+            // better to move this check to projectionConfig validation
+            if (dep.language != LANGUAGE_VERSION.ARKTS_1_2 && dep.language != LANGUAGE_VERSION.ARKTS_HYBRID) {
+                continue;
+            }
+            if (dep.abcPath) {
+                // this.cacheDir points to the cache for current package
+                // etscache should be stored in the cache for the whole application,
+                // since several packages may depend on the same package
+                ets2panda.extractDeclarationsFromAbcFile(dep.abcPath, this.cacheDir);
+                const packageCache = path.resolve(this.cacheDir, dep.packageName);
+                let currentDecls = traverseDirAndFindFilesWithRegExp(packageCache, /\.etscache$/);
+                for (const decl of currentDecls) {
+                    this.abcDeclarationMap.set(decl, dep);
+                }
+                extractedDeclarations = extractedDeclarations.concat(currentDecls);
+            }
+        }
+        Ets2panda.destroyInstance();
+
+        if (extractedDeclarations.length > 0) {
+            this.entryFiles = new Set<string>([...this.entryFiles, ...extractedDeclarations]);
+        }
+    }
+
     public async generateDeclarationV1Parallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         this.loadDeclFileMap();
@@ -1014,13 +1058,29 @@ export abstract class BaseMode {
         const needRegenNodeIds = new Set<string>();
         for (const node of buildGraph.nodes) {
             const needsRegen = this.nodeNeedsRegeneration(node);
-            const module = this.fileToModule.get(node.data.fileList[0]!)!
-            const declgenV1OutPath: string = module.declgenV1OutPath!
-            const declgenBridgeCodePath: string = module.declgenBridgeCodePath!
+            let declgenV1OutPath: string;
+            let declgenBridgeCodePath: string;
+            const currentFile = node.data.fileList[0]!;
+            // usage of abcDeclarationMap should be removed
+            if (this.abcDeclarationMap.has(currentFile)) {
+                const module = this.abcDeclarationMap.get(currentFile)!
+                declgenV1OutPath = module.declgenV1OutPath!;
+                declgenBridgeCodePath = this.abcDeclarationMap.get(currentFile)?.declgenBridgeCodePath!;
+            } else {
+                const module = this.fileToModule.get(currentFile)!
+                declgenV1OutPath = module.declgenV1OutPath!
+                declgenBridgeCodePath = module.declgenBridgeCodePath!
+            }
             const declgenJob: DeclgenV1JobInfo = {
                         ...node.data,
                         declgenConfig: {output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath}
                     };
+            // usage of abcDeclarationMap should be removed
+            if (this.abcDeclarationMap.has(currentFile)) {
+                let filePackage = this.abcDeclarationMap.get(currentFile)!;
+                declgenJob.fileInfo.moduleRoot = path.resolve(this.cacheDir, filePackage.packageName);
+                declgenJob.fileInfo.moduleName = filePackage.packageName;
+            }
             if (needsRegen) {
                 declgenJobs.push(declgenJob);
                 needRegenNodeIds.add(node.id);
@@ -1035,14 +1095,12 @@ export abstract class BaseMode {
 
         const backupTasks: Array<Promise<void>> = [];
         for (const declgenJob of declgenJobs) {
-            for (const file of declgenJob.fileList) {
-                backupTasks.push((async(): Promise<void> => {
-                    const {needsDeclBackup, needsGlueCodeBackup} = await this.needsBackup(file);
-                    if (needsDeclBackup || needsGlueCodeBackup) {
-                        await this.backupFiles(file, needsDeclBackup, needsGlueCodeBackup);
-                    }
-                })());
-            }
+            backupTasks.push((async(): Promise<void> => {
+                const {needsDeclBackup, needsGlueCodeBackup} = await this.needsBackup(declgenJob);
+                if (needsDeclBackup || needsGlueCodeBackup) {
+                    await this.backupFiles(declgenJob, needsDeclBackup, needsGlueCodeBackup);
+                }
+            })());
         }
         await Promise.all(backupTasks);
 
@@ -1057,9 +1115,7 @@ export abstract class BaseMode {
 
         const updateTasks: Array<Promise<void>> = [];
         for (const declgenJob of declgenJobs) {
-            for (const file of declgenJob.fileList) {
-                updateTasks.push(this.updateDeclFileMapAsync(file));
-            }
+            updateTasks.push(this.updateDeclFileMapAsync(declgenJob));
         }
         await Promise.all(updateTasks);
         await this.saveDeclFileMap();
