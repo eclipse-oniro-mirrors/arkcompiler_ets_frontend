@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -46,7 +46,7 @@ private:
     RulesMap getRules_;
 };
 
-CAPI_EXPORT FormatContext GetFormatContext(FormatCodeSettings &options);
+FormatContext GetFormatContext(FormatCodeSettings &options);
 std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext formatContext);
 std::vector<TextChange> FormatRange(es2panda_Context *context, FormatContext formatContext, const TextSpan &span);
 std::vector<TextChange> FormatAfterKeystroke(es2panda_Context *context, FormatContext formatContext, char key,

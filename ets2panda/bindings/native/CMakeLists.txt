@@ -66,7 +66,7 @@ set(NODE_THIRD_PARTY_SOURCES_DIR ${PANDA_THIRD_PARTY_SOURCES_DIR}/nodejs)
 set(NAPI_HEADERS_PATH ${NODE_THIRD_PARTY_SOURCES_DIR}/node-${NODE_VERSION}-${DISTRO}/include/node)
 set(NODE_BINARY ${PANDA_ROOT}/third_party/nodejs/node-${NODE_VERSION}-${DISTRO}/bin/node)
 
-set(NAPI_BINDINGS_LIB "ts_bindings")
+set(NAPI_BINDINGS_LIB "public")
 
 set(BINDINGS_NAPI_SRC
   ./src/common-interop.cpp
@@ -85,7 +85,7 @@ set(ES2PANDA_LIBS
 set(TS_INTEROP_MODULE 
   "-DTS_INTEROP_MODULE=NativeModule"
   "-DTS_USE_NODE_VM"
-  "-DINTEROP_LIBRARY_NAME=ts_bindings"
+  "-DINTEROP_LIBRARY_NAME=public"
   "-DTS_NAPI"
 )
 

@@ -167,6 +167,9 @@ export class Lsp {
   }
 
   modifyFilesMap(fileName: string, fileContent: TextDocumentChangeInfo): void {
+    this.filesMap.forEach((value, key) => {
+      this.deleteFromFilesMap(key);
+    });
     if (!fs.existsSync(fileName) || fs.statSync(fileName).isDirectory()) {
       return;
     }
@@ -236,6 +239,7 @@ export class Lsp {
 
       if (processToCheck) {
         this.lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, localCtx);
+        PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
       }
       return [localCfg, localCtx];
     } catch (error) {
@@ -1861,7 +1865,8 @@ export class Lsp {
   public initAstCache(): void {
     const jobs: Record<string, Job> = {};
     const queues: Job[] = [];
-    this.collectCompileJobs(jobs);
+    // #15318:Temp disable AstCache 
+    // this.collectCompileJobs(jobs);
     this.initGlobalContext(jobs);
     this.initCompileQueues(jobs, queues);
     if (Object.keys(jobs).length === 0 && queues.length === 0) {
@@ -1887,6 +1892,7 @@ export class Lsp {
     lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_PARSED, context);
     PluginDriver.getInstance().runPluginHook(PluginHook.PARSED);
     lspDriverHelper.proceedToState(Es2pandaContextState.ES2PANDA_STATE_CHECKED, context);
+    PluginDriver.getInstance().runPluginHook(PluginHook.CHECKED);
   }
 
   public addFileCache(filename: String): void {

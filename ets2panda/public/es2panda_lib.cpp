@@ -260,6 +260,8 @@ extern "C" void DestroyConfigControl(es2panda_Config *config, bool logFlag)
     delete cfg->options;
     if (logFlag) {
         cfg->diagnosticEngine->FlushDiagnostic();
+    } else {
+        cfg->diagnosticEngine->ClearDiagnostics();
     }
     delete cfg->diagnosticEngine;
     delete cfg;
