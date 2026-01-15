@@ -1217,11 +1217,11 @@ std::tuple<Type *, Type *> ETSChecker::CheckArithmeticOperations(
     }
     CheckEnumInOperatorContext(expr, operationType, left, right, this);
 
-    auto checkMap = GetCheckMap();
-    if (checkMap.find(operationType) != checkMap.end()) {
-        auto check = checkMap[operationType];
-        auto tsType = check(this, std::make_tuple(left, right, operationType, pos), isEqualOp,
-                            std::make_tuple(leftType, rightType, unboxedL, unboxedR));
+    const auto &checkMap = GetCheckMap();
+    if (const auto &checkMapEntry = checkMap.find(operationType); checkMapEntry != checkMap.end()) {
+        const auto &checkFunc = checkMapEntry->second;
+        auto tsType = checkFunc(this, std::make_tuple(left, right, operationType, pos), isEqualOp,
+                                std::make_tuple(leftType, rightType, unboxedL, unboxedR));
         if (tsType == nullptr) {
             return {leftType, rightType};
         }

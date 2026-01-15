@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,6 +55,7 @@ class Program {
 public:
     using ExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<Program *>>;
     using DirectExternalSource = ArenaUnorderedMap<util::StringView, ArenaVector<Program *>>;
+    using FileDependenciesMap = ArenaUnorderedMap<util::StringView, ArenaSet<util::StringView>>;
 
     using ETSNolintsCollectionMap = ArenaUnorderedMap<const ir::AstNode *, ArenaSet<ETSWarnings>>;
 
@@ -337,18 +338,17 @@ public:
     compiler::CFG *GetCFG();
     const compiler::CFG *GetCFG() const;
 
-    std::unordered_map<std::string, std::unordered_set<std::string>> &GetFileDependencies()
+    const FileDependenciesMap &GetFileDependencies() const
     {
         return fileDependencies_;
     }
 
-    void AddFileDependencies(const std::string &file, const std::string &depFile)
+    FileDependenciesMap &GetFileDependencies()
     {
-        if (fileDependencies_.count(file) == 0U) {
-            fileDependencies_[file] = std::unordered_set<std::string>();
-        }
-        fileDependencies_[file].insert(depFile);
+        return fileDependencies_;
     }
+
+    void AddFileDependencies(const util::StringView &file, const util::StringView &depFile);
 
     ArenaMap<int32_t, varbinder::VarBinder *> &VarBinders()
     {
@@ -378,7 +378,7 @@ private:
 
     lexer::SourcePosition packageStartPosition_ {};
     compiler::CFG *cfg_;
-    std::unordered_map<std::string, std::unordered_set<std::string>> fileDependencies_;
+    FileDependenciesMap fileDependencies_;
 
 private:
     ArenaMap<int32_t, varbinder::VarBinder *> varbinders_;

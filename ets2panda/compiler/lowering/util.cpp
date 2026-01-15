@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -263,17 +263,20 @@ static void CollectDirectExtSources(parser::Program *globalProg, parser::Program
                                     std::map<std::string, parser::Program *> &progsFromPath)
 {
     auto &directSources = program->DirectExternalSources();
-    for (const auto &fileDepends : globalProg->GetFileDependencies()[program->SourceFilePath().Mutf8()]) {
-        if (progsFromPath.find(fileDepends) == progsFromPath.end()) {
+    for (const auto &fileDepends : globalProg->GetFileDependencies()[program->SourceFilePath()]) {
+        if (progsFromPath.find(std::string {fileDepends}) == progsFromPath.end()) {
             continue;
         }
-        util::StringView fileDependsV(fileDepends);
-        if (directSources.find(fileDependsV) == directSources.end()) {
-            auto arena = ArenaVector<parser::Program *>(program->Allocator()->Adapter());
-            directSources.emplace(fileDependsV, arena);
+
+        ArenaVector<parser::Program *> extSources;
+
+        if (const auto &it = directSources.find(fileDepends); it != directSources.end()) {
+            extSources = it->second;
+        } else {
+            extSources = ArenaVector<parser::Program *>(program->Allocator()->Adapter());
         }
-        auto &arena = directSources.at(fileDependsV);
-        arena.emplace_back(progsFromPath[fileDepends]);
+        extSources.emplace_back(progsFromPath[std::string {fileDepends}]);
+        directSources.try_emplace(fileDepends, extSources);
     }
 }
 
