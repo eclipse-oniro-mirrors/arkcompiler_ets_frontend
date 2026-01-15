@@ -9781,33 +9781,47 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const propertyDeclaration = ts.findAncestor(node, ts.isPropertyDeclaration);
     const declaration = vaiableDeclaration !== undefined ? vaiableDeclaration : propertyDeclaration;
     const autofix = this.autofixer?.replaceNode(node, ident.getText());
-    if (declaration) {
-      const initalizer = declaration.initializer;
-      if (initalizer && ts.isNewExpression(initalizer)) {
-        const autofixInfo: AutofixInfo = {
-          autofix: autofix,
-          node: node,
-          faultId: FaultID.NoNeedStdLibSendableContainer,
-          isExistBitVector: false,
-          isExistSpecialScene: false
-        };
-        this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
-        return;
-      }
+    if (!declaration) {
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+      return;
     }
-    this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+
+    if (!declaration.initializer || !ts.isNewExpression(declaration.initializer)) {
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+      return;
+    }
+
+    const parent = node.parent;
+    const grandPa = parent.parent;
+    if (grandPa && !ts.isVariableDeclaration(grandPa) && !ts.isPropertyDeclaration(grandPa)) {
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+      return;
+    }
+
+    const initalizer = declaration.initializer;
+    if (initalizer && ts.isNewExpression(initalizer)) {
+      const autofixInfo: AutofixInfo = {
+        autofix: autofix,
+        node: node,
+        faultId: FaultID.NoNeedStdLibSendableContainer,
+        isExistBitVector: false,
+        isExistSpecialScene: false
+      };
+      this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
+
+    }
   }
 
   private processPropertyAccessExprForCollections(node: ts.Node, ident: ts.Node): void {
-    let isSpecailScene: boolean = false;
-    if (TypeScriptLinter.isSpecailContainerScene(node, ident)) {
-      isSpecailScene = true;
+    let isSpecialScene: boolean = false;
+    if (TypeScriptLinter.isSpecialContainerScene(node, ident)) {
+      isSpecialScene = true;
       this.updateImportAutofix(node, '');
     }
 
-    this.checkCorrespondingQualifiedName(node, isSpecailScene);
+    this.checkCorrespondingQualifiedName(node, isSpecialScene);
 
-    const autofix = isSpecailScene ? undefined : this.autofixer?.replaceNode(node, ident.getText());
+    const autofix = isSpecialScene ? undefined : this.autofixer?.replaceNode(node, ident.getText());
 
     this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
   }
@@ -9859,7 +9873,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
   }
 
-  private static isSpecailContainerScene(node: ts.Node, ident: ts.Node): boolean {
+  private static isSpecialContainerScene(node: ts.Node, ident: ts.Node): boolean {
     const parent = node.parent;
     if (!ts.isNewExpression(parent)) {
       return false;
@@ -9873,16 +9887,16 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const args = parent.arguments;
-    if (args && args.length > 0) {
+    if (args && args.length === 1) {
       const arg = args[0];
-      if (!ts.isSpreadElement(arg)) { 
+      if (ts.isNumericLiteral(arg)) {
         return true;
       }
     }
     return false;
   }
 
-  private checkCorrespondingQualifiedName(node: ts.Node, isSpecailScene: boolean): void {
+  private checkCorrespondingQualifiedName(node: ts.Node, isSpecialScene: boolean): void {
     const vaiableDeclaration = ts.findAncestor(node, ts.isVariableDeclaration);
     const propertyDeclaration = ts.findAncestor(node, ts.isPropertyDeclaration);
     const declaration = vaiableDeclaration !== undefined ? vaiableDeclaration : propertyDeclaration;
@@ -9896,7 +9910,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         const autofixInfoOnQualified = this.nodeToAutofixInfoMap.get(typeName.getText());
         if (autofixInfoOnQualified) {
           const node = autofixInfoOnQualified.node;
-          const autofix = isSpecailScene ? undefined : autofixInfoOnQualified.autofix;
+          const autofix = isSpecialScene ? undefined : autofixInfoOnQualified.autofix;
           this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
         }
       }

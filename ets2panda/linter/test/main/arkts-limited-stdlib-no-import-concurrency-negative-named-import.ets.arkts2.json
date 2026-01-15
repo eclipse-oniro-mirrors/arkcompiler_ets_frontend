@@ -246,6 +246,16 @@
         },
         {
             "line": 34,
+            "column": 17,
+            "endLine": 34,
+            "endColumn": 26,
+            "problem": "NoNeedStdLibSendableContainer",
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
             "column": 46,
             "endLine": 34,
             "endColumn": 55,

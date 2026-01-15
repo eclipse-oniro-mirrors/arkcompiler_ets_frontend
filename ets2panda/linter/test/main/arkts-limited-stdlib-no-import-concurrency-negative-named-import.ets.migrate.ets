@@ -31,4 +31,4 @@ let lck1: AsyncLock = AsyncLock.request("lock");
 let pro = new SendableLruCache<number, number>();
 let pro1 = new SendableLruCache<number, number>();
 let write: stream.Writable = new stream.Writable();
-let map126: Map<cos.Array<number>, number> = new Map();
+let map126: Map<Array<number>, number> = new Map<Array<number>, number>();
