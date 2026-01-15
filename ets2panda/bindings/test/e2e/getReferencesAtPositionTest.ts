@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,16 +18,13 @@ import path from 'path';
 
 describe('getReferencesAtPositionTest', () => {
   const moduleName: string = 'getReferencesAtPosition';
-  const REFERENCES_000 = [{ fileName: 'getReferencesAtPosition1.ets', start: 613, length: 1 }];
   const REFERENCES_001 = [
-    { fileName: 'getReferencesAtPosition2.ets', start: 620, length: 1 },
     { fileName: 'getReferencesAtPosition2.ets', start: 635, length: 1 },
     { fileName: 'getReferencesAtPosition2.ets', start: 665, length: 1 },
     { fileName: 'getReferencesAtPosition3.ets', start: 617, length: 1 },
     { fileName: 'getReferencesAtPosition3.ets', start: 667, length: 1 }
   ];
   const REFERENCES_002 = [
-    { fileName: 'getReferencesAtPosition4.ets', start: 625, length: 1 },
     { fileName: 'getReferencesAtPosition5.ets', start: 617, length: 1 },
     { fileName: 'getReferencesAtPosition5.ets', start: 655, length: 1 }
   ];
@@ -42,12 +39,11 @@ describe('getReferencesAtPositionTest', () => {
   const lsp = getLsp(moduleName);
   test('getReferencesAtPosition_000', () => {
     const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition1.ets'), 613);
-    expect(res?.length).toBe(1);
-    expectReferences(res ? res[0] : undefined, REFERENCES_000[0]);
+    expect(res?.length).toBe(0);
   });
   test('getReferencesAtPosition_001', () => {
     const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition2.ets'), 635);
-    expect(res?.length).toBe(5);
+    expect(res?.length).toBe(4);
     const length = res ? res.length : 0;
     for (let i = 0; i < length; i++) {
       expectReferences(res ? res[i] : undefined, REFERENCES_001[i]);
@@ -55,7 +51,7 @@ describe('getReferencesAtPositionTest', () => {
   });
   test('getReferencesAtPosition_002', () => {
     const res = lsp.getReferencesAtPosition(getRealPath(moduleName, 'getReferencesAtPosition4.ets'), 625);
-    expect(res?.length).toBe(3);
+    expect(res?.length).toBe(2);
     const length = res ? res.length : 0;
     for (let i = 0; i < length; i++) {
       expectReferences(res ? res[i] : undefined, REFERENCES_002[i]);

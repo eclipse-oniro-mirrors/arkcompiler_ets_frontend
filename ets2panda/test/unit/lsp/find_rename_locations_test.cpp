@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -223,22 +223,22 @@ std::set<RenameLocation> expected_name = {
     {tempDir + "findRenameLocsTwo.ets", 343, 347, 14},
 };
 std::set<RenameLocation> expected_Foo_ForSpecialCharacters = {
-    {tempDir + "findRenameLocsFour.ets", 45, 48, 3},
-    {tempDir + "findRenameLocsFour.ets", 220, 223, 3},
-    {tempDir + "findRenameLocsFour.ets", 284, 287, 3},
-    {tempDir + "findRenameLocsThree.ets", 170, 173, 3},
+    {tempDir + "findRenameLocsFour.ets", 45, 48, 2},
+    {tempDir + "findRenameLocsFour.ets", 220, 223, 10},
+    {tempDir + "findRenameLocsFour.ets", 284, 287, 12},
+    {tempDir + "findRenameLocsThree.ets", 170, 173, 9},
 };
 std::set<RenameLocation> expected_abc_ForSpecialCharacters = {
-    {tempDir + "findRenameLocsThree.ets", 40, 43, 3},
-    {tempDir + "findRenameLocsThree.ets", 938, 941, 3},
-    {tempDir + "findRenameLocsThree.ets", 974, 977, 3},
-    {tempDir + "findRenameLocsThree.ets", 1010, 1013, 3},
+    {tempDir + "findRenameLocsThree.ets", 40, 43, 2},
+    {tempDir + "findRenameLocsThree.ets", 938, 941, 38},
+    {tempDir + "findRenameLocsThree.ets", 974, 977, 40},
+    {tempDir + "findRenameLocsThree.ets", 1010, 1013, 42},
 };
 std::set<RenameLocation> expected_abc_WithCancellation_ForSpecialCharacters = {
-    {tempDir + "findRenameLocsThree.ets", 40, 43, 3},   {tempDir + "findRenameLocsThree.ets", 938, 941, 3},
-    {tempDir + "findRenameLocsThree.ets", 974, 977, 3}, {tempDir + "findRenameLocsThree.ets", 1010, 1013, 3},
-    {tempDir + "findRenameLocsFour.ets", 40, 43, 3},    {tempDir + "findRenameLocsFour.ets", 132, 135, 3},
-    {tempDir + "findRenameLocsFour.ets", 150, 153, 3},  {tempDir + "findRenameLocsFour.ets", 169, 172, 3},
+    {tempDir + "findRenameLocsThree.ets", 40, 43, 2},    {tempDir + "findRenameLocsThree.ets", 938, 941, 38},
+    {tempDir + "findRenameLocsThree.ets", 974, 977, 40}, {tempDir + "findRenameLocsThree.ets", 1010, 1013, 42},
+    {tempDir + "findRenameLocsFour.ets", 40, 43, 2},     {tempDir + "findRenameLocsFour.ets", 132, 135, 6},
+    {tempDir + "findRenameLocsFour.ets", 150, 153, 7},   {tempDir + "findRenameLocsFour.ets", 169, 172, 8},
 };
 
 TEST_F(LspFindRenameLocationsTests1, FindRenameLocationsConstantName)
