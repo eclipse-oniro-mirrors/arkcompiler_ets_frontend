@@ -3470,7 +3470,8 @@ static checker::Type *GetTypeOfStringType(checker::Type *argType, ETSChecker *ch
         return checker->CreateETSStringLiteralType("function");
     }
     if (argType->IsETSNumericEnumType()) {
-        return checker->CreateETSStringLiteralType("number");
+        auto unboxedType = argType->AsETSEnumType()->GetBaseEnumElementType(checker);
+        return checkUnboxedTypeKind(checker->TypeKind(unboxedType), checker);
     }
     if (argType->IsETSStringEnumType()) {
         return checker->CreateETSStringLiteralType("string");

@@ -18,7 +18,7 @@ enum Fruit {Apple="Apple", Pearl="Pearl", Peach="Peach"}
 
 function main():void {
     let c: Color = Color.Green
-    arktest.assertEQ(typeof c, "number")
+    arktest.assertEQ(typeof c, "int")
     let f: Fruit = Fruit.Pearl
     arktest.assertEQ(typeof f, "string")
 }
