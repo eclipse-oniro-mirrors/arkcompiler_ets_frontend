@@ -895,7 +895,11 @@ std::string_view ImportPathManager::DirOrDirWithIndexFile(StringView dir) const
         "index.ets", "index.sts", "index.ts", "index.d.ets", "Index.ets", "Index.sts", "Index.ts", "Index.d.ets"};
     for (const auto &indexFile : supportedIndexFiles) {
         std::string indexFilePath = dir.Mutf8() + ark::os::file::File::GetPathDelim().at(0) + indexFile;
+#if defined(PANDA_TARGET_WINDOWS)
+        if (ark::os::file::File::IsRegularFileCaseSensitive(indexFilePath)) {
+#else
         if (ark::os::file::File::IsRegularFile(indexFilePath)) {
+#endif
             return GetRealPath(UString(indexFilePath, allocator_).View()).Utf8();
         }
     }
