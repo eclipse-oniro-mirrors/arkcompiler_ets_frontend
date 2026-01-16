@@ -665,7 +665,7 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
     }
     containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
     if (stArgument != nullptr && stArgument->IsIdentifier() && stArgument->OriginalNode() != nullptr &&
-        stArgument->OriginalNode()->IsThisExpression()) {
+        stArgument->OriginalNode()->IsThisExpression() && containingFunc->IsMethod()) {
         containingFunc->Signature()->AddSignatureFlag(SignatureFlags::THIS_RETURN_TYPE);
     } else {
         containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
