@@ -36,10 +36,12 @@ let array1: Array<number> = new Array<number>(); // no-argument scenario, both p
 let arr: string[] = ["aa", "bb"];
 let array2: Array<string> = new Array<string>(...arr);  // array argument scenario, both places (arkts-no-need-stdlib-sendable-containers)
 
-// Scenario 2.2: Array was used, and constructor call was with length
+// Scenario 2.2: Array was used, and constructor call was with length. (Special Scene)
 // Need to check but not to auto-fix for Array
 let bitVector3: col2.BitVector = new col2.BitVector(0);   // No need to check, [arkts-no-need-stdlib-sendable-containers]
-let array3: col2.Array<number> = new col2.Array<number>(5); // both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array3: col2.Array<number> = new col2.Array<number>(5); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array31: Array<string> = new Array<string>('5'); // Not Special Scene: Both scan and autofix are needed, (arkts-no-need-stdlib-sendable-containers)
+let array32: Array<number> = new Array<number>(5, 1); //Not Special Scene: Both scan and autofix are needed, (arkts-no-need-stdlib-sendable-containers)
 
 // Scenario 2.3: Array was not used, other containers were used
 // Need to check and auto-fix for Non-Array
@@ -51,6 +53,8 @@ let map1: Map<string, boolean> = new Map<string, boolean>();  // Non-Array scena
 // Scenario 3.1: Array was used, and constructor call was not with length
 // Need to check and auto-fix for Array
 let array4: Array<number> = new Array<number>();   // both places (arkts-no-need-stdlib-sendable-containers)
+let a: ArrayFromMapFn<number, string>;  // No newExpression scenario, (arkts-no-need-stdlib-sendable-containers)
+let nestedArray : Array<Array<number>> = new Array<Array<number>>(); // Nested scenario: both places,  (arkts-no-need-stdlib-sendable-containers)
 
 // Scenario 3.2: Array was used, and constructor call was with length
 // Need to check but not to auto-fix for Array
@@ -59,8 +63,6 @@ let array5: col5.Array<number> = new col5.Array<number>(5);  // both places (ark
 // Scenario 3.3: Array was not used, other containers were used
 // Need to check and auto-fix for Array
 let map2: Map<string, boolean> = new Map<string, boolean>();  // both places (arkts-no-need-stdlib-sendable-containers)
-
-
 
 
 // Large Scenario Ⅱ: collections declaration file comes from user-defined
@@ -79,7 +81,6 @@ let array7 : definedCol2.Array<number> = new definedCol2.Array<number>();
 let array8 : definedCol3.Array<number> = new definedCol3.Array<number>(0);
 
 let array9 : definedCol4.Array<number> = new definedCol4.Array<number>();
-
 
 
 // Large Scenario Ⅲ: collections declaration file cannot be found

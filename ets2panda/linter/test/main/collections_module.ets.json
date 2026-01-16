@@ -15,30 +15,10 @@
     ],
     "result": [
         {
-            "line": 68,
-            "column": 1,
-            "endLine": 68,
-            "endColumn": 85,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 1,
-            "endLine": 69,
-            "endColumn": 86,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
             "line": 70,
             "column": 1,
             "endLine": 70,
-            "endColumn": 86,
+            "endColumn": 85,
             "problem": "ImportAfterStatement",
             "suggest": "",
             "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
@@ -55,10 +35,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 87,
+            "line": 72,
             "column": 1,
-            "endLine": 87,
-            "endColumn": 82,
+            "endLine": 72,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 73,
+            "column": 1,
+            "endLine": 73,
+            "endColumn": 86,
             "problem": "ImportAfterStatement",
             "suggest": "",
             "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
@@ -68,7 +58,7 @@
             "line": 88,
             "column": 1,
             "endLine": 88,
-            "endColumn": 83,
+            "endColumn": 82,
             "problem": "ImportAfterStatement",
             "suggest": "",
             "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
@@ -88,6 +78,16 @@
             "line": 90,
             "column": 1,
             "endLine": 90,
+            "endColumn": 83,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 91,
+            "column": 1,
+            "endLine": 91,
             "endColumn": 83,
             "problem": "ImportAfterStatement",
             "suggest": "",

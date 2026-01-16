@@ -149,9 +149,93 @@
             "severity": "ERROR"
         },
         {
-            "line": 46,
+            "line": 43,
+            "column": 14,
+            "endLine": 43,
+            "endColumn": 24,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 3019,
+                    "end": 3029,
+                    "replacementText": "Array",
+                    "line": 43,
+                    "column": 14,
+                    "endLine": 43,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 43,
+            "column": 39,
+            "endLine": 43,
+            "endColumn": 49,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 3044,
+                    "end": 3054,
+                    "replacementText": "Array",
+                    "line": 43,
+                    "column": 39,
+                    "endLine": 43,
+                    "endColumn": 49
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 14,
+            "endLine": 44,
+            "endColumn": 24,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 3181,
+                    "end": 3191,
+                    "replacementText": "Array",
+                    "line": 44,
+                    "column": 14,
+                    "endLine": 44,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 39,
+            "endLine": 44,
+            "endColumn": 49,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 3206,
+                    "end": 3216,
+                    "replacementText": "Array",
+                    "line": 44,
+                    "column": 39,
+                    "endLine": 44,
+                    "endColumn": 49
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
             "column": 38,
-            "endLine": 46,
+            "endLine": 48,
             "endColumn": 52,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -159,19 +243,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 47,
+            "line": 49,
             "column": 11,
-            "endLine": 47,
+            "endLine": 49,
             "endColumn": 19,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 3230,
-                    "end": 3238,
+                    "start": 3586,
+                    "end": 3594,
                     "replacementText": "Map",
-                    "line": 47,
+                    "line": 49,
                     "column": 11,
-                    "endLine": 47,
+                    "endLine": 49,
                     "endColumn": 19
                 }
             ],
@@ -180,19 +264,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 47,
+            "line": 49,
             "column": 43,
-            "endLine": 47,
+            "endLine": 49,
             "endColumn": 51,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 3262,
-                    "end": 3270,
+                    "start": 3618,
+                    "end": 3626,
                     "replacementText": "Map",
-                    "line": 47,
+                    "line": 49,
                     "column": 43,
-                    "endLine": 47,
+                    "endLine": 49,
                     "endColumn": 51
                 }
             ],
@@ -201,19 +285,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 53,
+            "line": 55,
             "column": 13,
-            "endLine": 53,
+            "endLine": 55,
             "endColumn": 23,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 3584,
-                    "end": 3594,
+                    "start": 3940,
+                    "end": 3950,
                     "replacementText": "Array",
-                    "line": 53,
+                    "line": 55,
                     "column": 13,
-                    "endLine": 53,
+                    "endLine": 55,
                     "endColumn": 23
                 }
             ],
@@ -222,19 +306,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 53,
+            "line": 55,
             "column": 38,
-            "endLine": 53,
+            "endLine": 55,
             "endColumn": 48,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 3609,
-                    "end": 3619,
+                    "start": 3965,
+                    "end": 3975,
                     "replacementText": "Array",
-                    "line": 53,
+                    "line": 55,
                     "column": 38,
-                    "endLine": 53,
+                    "endLine": 55,
                     "endColumn": 48
                 }
             ],
@@ -243,9 +327,114 @@
             "severity": "ERROR"
         },
         {
+            "line": 56,
+            "column": 8,
+            "endLine": 56,
+            "endColumn": 34,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 4054,
+                    "end": 4080,
+                    "replacementText": "ArrayFromMapFn",
+                    "line": 56,
+                    "column": 8,
+                    "endLine": 56,
+                    "endColumn": 34
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
             "line": 57,
-            "column": 13,
+            "column": 37,
             "endLine": 57,
+            "endColumn": 54,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 4208,
+                    "end": 4225,
+                    "replacementText": "Array",
+                    "line": 57,
+                    "column": 37,
+                    "endLine": 57,
+                    "endColumn": 54
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 19,
+            "endLine": 57,
+            "endColumn": 36,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 4190,
+                    "end": 4207,
+                    "replacementText": "Array",
+                    "line": 57,
+                    "column": 19,
+                    "endLine": 57,
+                    "endColumn": 36
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 70,
+            "endLine": 57,
+            "endColumn": 87,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 4241,
+                    "end": 4258,
+                    "replacementText": "Array",
+                    "line": 57,
+                    "column": 70,
+                    "endLine": 57,
+                    "endColumn": 87
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 57,
+            "column": 88,
+            "endLine": 57,
+            "endColumn": 105,
+            "problem": "NoNeedStdLibSendableContainer",
+            "autofix": [
+                {
+                    "start": 4259,
+                    "end": 4276,
+                    "replacementText": "Array",
+                    "line": 57,
+                    "column": 88,
+                    "endLine": 57,
+                    "endColumn": 105
+                }
+            ],
+            "suggest": "",
+            "rule": "Sendable containers are not supported (arkts-no-need-stdlib-sendable-containers)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
+            "column": 13,
+            "endLine": 61,
             "endColumn": 23,
             "problem": "NoNeedStdLibSendableContainer",
             "suggest": "",
@@ -253,9 +442,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 57,
+            "line": 61,
             "column": 38,
-            "endLine": 57,
+            "endLine": 61,
             "endColumn": 48,
             "problem": "NoNeedStdLibSendableContainer",
             "suggest": "",
@@ -263,19 +452,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 61,
+            "line": 65,
             "column": 11,
-            "endLine": 61,
+            "endLine": 65,
             "endColumn": 19,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 4073,
-                    "end": 4081,
+                    "start": 4748,
+                    "end": 4756,
                     "replacementText": "Map",
-                    "line": 61,
+                    "line": 65,
                     "column": 11,
-                    "endLine": 61,
+                    "endLine": 65,
                     "endColumn": 19
                 }
             ],
@@ -284,19 +473,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 61,
+            "line": 65,
             "column": 43,
-            "endLine": 61,
+            "endLine": 65,
             "endColumn": 51,
             "problem": "NoNeedStdLibSendableContainer",
             "autofix": [
                 {
-                    "start": 4105,
-                    "end": 4113,
+                    "start": 4780,
+                    "end": 4788,
                     "replacementText": "Map",
-                    "line": 61,
+                    "line": 65,
                     "column": 43,
-                    "endLine": 61,
+                    "endLine": 65,
                     "endColumn": 51
                 }
             ],
@@ -305,30 +494,10 @@
             "severity": "ERROR"
         },
         {
-            "line": 68,
-            "column": 1,
-            "endLine": 68,
-            "endColumn": 85,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 69,
-            "column": 1,
-            "endLine": 69,
-            "endColumn": 86,
-            "problem": "ImportAfterStatement",
-            "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
-            "severity": "ERROR"
-        },
-        {
             "line": 70,
             "column": 1,
             "endLine": 70,
-            "endColumn": 86,
+            "endColumn": 85,
             "problem": "ImportAfterStatement",
             "suggest": "",
             "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
@@ -345,20 +514,30 @@
             "severity": "ERROR"
         },
         {
-            "line": 73,
-            "column": 44,
-            "endLine": 73,
-            "endColumn": 64,
-            "problem": "DynamicCtorCall",
+            "line": 72,
+            "column": 1,
+            "endLine": 72,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
             "suggest": "",
-            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
             "severity": "ERROR"
         },
         {
-            "line": 74,
-            "column": 45,
-            "endLine": 74,
-            "endColumn": 61,
+            "line": 73,
+            "column": 1,
+            "endLine": 73,
+            "endColumn": 86,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 75,
+            "column": 44,
+            "endLine": 75,
+            "endColumn": 64,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
@@ -368,17 +547,17 @@
             "line": 76,
             "column": 45,
             "endLine": 76,
-            "endColumn": 66,
+            "endColumn": 61,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         },
         {
-            "line": 77,
-            "column": 46,
-            "endLine": 77,
-            "endColumn": 63,
+            "line": 78,
+            "column": 45,
+            "endLine": 78,
+            "endColumn": 66,
             "problem": "DynamicCtorCall",
             "suggest": "",
             "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
@@ -405,20 +584,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 87,
-            "column": 1,
-            "endLine": 87,
-            "endColumn": 82,
-            "problem": "ImportAfterStatement",
+            "line": 83,
+            "column": 46,
+            "endLine": 83,
+            "endColumn": 63,
+            "problem": "DynamicCtorCall",
             "suggest": "",
-            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "rule": "\"new\" expression with dynamic constructor type is not supported (arkts-no-dynamic-ctor-call)",
             "severity": "ERROR"
         },
         {
             "line": 88,
             "column": 1,
             "endLine": 88,
-            "endColumn": 83,
+            "endColumn": 82,
             "problem": "ImportAfterStatement",
             "suggest": "",
             "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
@@ -445,9 +624,19 @@
             "severity": "ERROR"
         },
         {
-            "line": 92,
+            "line": 91,
+            "column": 1,
+            "endLine": 91,
+            "endColumn": 83,
+            "problem": "ImportAfterStatement",
+            "suggest": "",
+            "rule": "\"import\" statements after other statements are not allowed (arkts-no-misplaced-imports)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 93,
             "column": 45,
-            "endLine": 92,
+            "endLine": 93,
             "endColumn": 66,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -455,9 +644,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 93,
+            "line": 94,
             "column": 47,
-            "endLine": 93,
+            "endLine": 94,
             "endColumn": 64,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -465,9 +654,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 95,
+            "line": 96,
             "column": 46,
-            "endLine": 95,
+            "endLine": 96,
             "endColumn": 68,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -475,9 +664,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 96,
+            "line": 97,
             "column": 48,
-            "endLine": 96,
+            "endLine": 97,
             "endColumn": 66,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -485,9 +674,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 98,
+            "line": 99,
             "column": 48,
-            "endLine": 98,
+            "endLine": 99,
             "endColumn": 66,
             "problem": "DynamicCtorCall",
             "suggest": "",
@@ -495,9 +684,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 100,
+            "line": 101,
             "column": 48,
-            "endLine": 100,
+            "endLine": 101,
             "endColumn": 66,
             "problem": "DynamicCtorCall",
             "suggest": "",
