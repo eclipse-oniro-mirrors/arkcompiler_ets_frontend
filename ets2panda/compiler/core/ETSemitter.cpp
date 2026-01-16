@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -688,12 +688,6 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
         interfaceRecord.metadata->SetAnnotations(
             GenCustomAnnotations(interfaceDecl->Annotations(), interfaceRecord.name));
     }
-    if (std::any_of(interfaceDecl->Body()->Body().begin(), interfaceDecl->Body()->Body().end(),
-                    [](const ir::AstNode *node) { return node->IsOverloadDeclaration(); })) {
-        std::vector<pandasm::AnnotationData> annotations {};
-        annotations.emplace_back(GenAnnotationFunctionOverload(interfaceDecl->Body()->Body()));
-        interfaceRecord.metadata->AddAnnotations(annotations);
-    }
 
     Program()->AddToRecordTable(std::move(interfaceRecord));
 }
@@ -719,11 +713,6 @@ std::vector<pandasm::AnnotationData> ETSEmitter::GenAnnotations(const ir::ClassD
             break;
         }
         parent = parent->Parent();
-    }
-
-    if (std::any_of(classDef->Body().begin(), classDef->Body().end(),
-                    [](const ir::AstNode *node) { return node->IsOverloadDeclaration(); })) {
-        annotations.push_back(GenAnnotationFunctionOverload(classDef->Body()));
     }
 
     return annotations;
@@ -1147,32 +1136,6 @@ pandasm::AnnotationData ETSEmitter::GenAnnotationModule(const ir::ClassDefinitio
         std::make_unique<pandasm::ArrayValue>(pandasm::Value::Type::RECORD, std::move(exportedClasses)));
     moduleAnno.AddElement(std::move(value));
     return moduleAnno;
-}
-
-pandasm::AnnotationData ETSEmitter::GenAnnotationFunctionOverload(const ArenaVector<ir::AstNode *> &body)
-{
-    GenAnnotationRecord(Signatures::ETS_ANNOTATION_FUNCTION_OVERLOAD);
-    pandasm::AnnotationData overloadAnno(Signatures::ETS_ANNOTATION_FUNCTION_OVERLOAD);
-
-    for (auto *node : body) {
-        if (!node->IsOverloadDeclaration()) {
-            continue;
-        }
-        std::vector<pandasm::ScalarValue> overloadDeclRecords {};
-
-        for (auto *overloadedName : node->AsOverloadDeclaration()->OverloadedList()) {
-            auto *methodDef = overloadedName->Variable()->Declaration()->Node()->AsMethodDefinition();
-            overloadDeclRecords.emplace_back(pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(
-                methodDef->Function()->Scope()->InternalName().Mutf8()));
-        }
-
-        pandasm::AnnotationElement value(
-            node->AsOverloadDeclaration()->Id()->Name().Mutf8(),
-            std::make_unique<pandasm::ArrayValue>(pandasm::Value::Type::RECORD, std::move(overloadDeclRecords)));
-
-        overloadAnno.AddElement(std::move(value));
-    }
-    return overloadAnno;
 }
 
 pandasm::AnnotationData ETSEmitter::GenAnnotationEnclosingMethod(const ir::MethodDefinition *methodDef)
