@@ -126,7 +126,7 @@ void Program::SetPackageInfo(const util::StringView &name, util::ModuleKind kind
 {
     moduleInfo_.moduleName = name;
     std::string modifiedName(name);
-    std::replace(modifiedName.begin(), modifiedName.end(), util::PATH_DELIMITER, '.');
+    std::replace(modifiedName.begin(), modifiedName.end(), '/', '.');
     moduleInfo_.modulePrefix =
         name.Empty()
             ? ""
