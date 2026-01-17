@@ -154,9 +154,9 @@ warning:
   id: 2
   message: "Suggest 'final' modifier for method."
 
-- name: THIS_IN_FIELD_INITIALIZER
+- name: THIS_OR_SUPER_IN_FIELD_INITIALIZER
   id: 10
-  message: "The instance field initializer expression cannot use the this."
+  message: "The instance field initializer expression cannot use the {}."
 
 - name: UNREACHABLE_STMT
   id: 26

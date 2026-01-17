@@ -2115,10 +2115,20 @@ bool ETSChecker::ValidateTupleIndexFromEtsObject(const ETSTupleType *const tuple
 
 namespace {
 
+bool IsNotInStruct(ir::AstNode const *node)
+{
+    for (ir::AstNode const *current = node; current != nullptr; current = current->Parent()) {
+        if (current->IsClassDefinition() && current->AsClassDefinition()->IsFromStruct()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool IsExpressionInClassProperty(ir::Expression const *expr)
 {
     for (ir::AstNode const *node = expr; node != nullptr && !node->IsClassDefinition(); node = node->Parent()) {
-        if (node->IsClassProperty()) {
+        if (node->IsClassProperty() && IsNotInStruct(node)) {
             return true;
         }
     }
@@ -2185,7 +2195,11 @@ Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *cl
     }
 
     if (node->IsThisExpression() && IsExpressionInClassProperty(node)) {
-        LogDiagnostic(diagnostic::THIS_IN_FIELD_INITIALIZER, {}, node->Start());
+        LogDiagnostic(diagnostic::THIS_OR_SUPER_IN_FIELD_INITIALIZER, {"this"}, node->Start());
+    }
+
+    if (node->IsSuperExpression() && IsExpressionInClassProperty(node)) {
+        LogDiagnostic(diagnostic::THIS_OR_SUPER_IN_FIELD_INITIALIZER, {"super"}, node->Start());
     }
 
     if (classType == nullptr || util::Helpers::IsGlobalClass(classType->GetDeclNode())) {
