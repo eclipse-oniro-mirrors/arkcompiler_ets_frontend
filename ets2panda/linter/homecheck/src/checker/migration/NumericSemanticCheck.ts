@@ -92,6 +92,7 @@ import { SdkUtils } from '../../utils/common/SDKUtils';
 import { ClassCategory } from 'arkanalyzer/lib/core/model/ArkClass';
 import { ArkAwaitExpr } from 'arkanalyzer/lib/core/base/Expr';
 import { COLON, QUESTION_MARK, ENDS_WITH_EQUALS, UNDEFINED_PART } from '../../utils/common/ArrayIndexConstants';
+import { Builtin } from 'arkanalyzer/lib/core/common/Builtin';
 
 const logger = Logger.getLogger(LOG_MODULE_TYPE.HOMECHECK, 'NumericSemanticCheck');
 const gMetaData: BaseMetaData = {
@@ -103,6 +104,7 @@ const gMetaData: BaseMetaData = {
 const INT32_BOUNDARY: number = 0x80000000;
 const PROMISE_CLASS_NAME: string = 'Promise';
 const THEN_METHOD_NAME: string = 'then';
+const LENGTH_FIELD_NAME: string = 'length';
 
 enum NumberCategory {
     int = 'int',
@@ -658,22 +660,11 @@ export class NumericSemanticCheck implements BaseChecker {
         if (fieldRef === undefined || !(fieldRef instanceof ArkInstanceFieldRef)) {
             return null;
         }
-        const fieldBaseType = fieldRef.getBase().getType();
-        if (!(fieldBaseType instanceof UnionType)) {
-            return null;
-        }
-        let containArray = false;
-        for (const t of fieldBaseType.getTypes()) {
-            if (t instanceof ArrayType) {
-                containArray = true;
-                break;
-            }
-        }
-        if (!containArray) {
+        if (!fieldRef.isDynamic()) {
             return null;
         }
         const fieldName = fieldRef.getFieldName();
-        if (fieldName === 'length') {
+        if (fieldName === LENGTH_FIELD_NAME) {
             return null;
         }
         return fieldRef;
@@ -1764,6 +1755,12 @@ export class NumericSemanticCheck implements BaseChecker {
         const baseClass = this.scene.getClass(fieldBase);
         if (baseClass === null) {
             return IssueReason.CannotFindAll;
+        }
+        const fieldName = fieldRef.getFieldName();
+        if (fieldName === LENGTH_FIELD_NAME) {
+            if (this.isClassDerivedFromArray(baseClass)) {
+                return IssueReason.OnlyUsedAsIntLong;
+            }
         }
         if (baseClass.getLanguage() !== Language.ARKTS1_2) {
             return IssueReason.RelatedWithNonETS2;
@@ -2925,5 +2922,29 @@ export class NumericSemanticCheck implements BaseChecker {
                 numberCategory: NumberCategory.number
             });
         }
+    }
+
+    private isClassDerivedFromArray(arkClass: ArkClass, visited: Set<ArkClass> = new Set()): boolean {
+        if (visited.has(arkClass)) {
+            return false;
+        }
+        visited.add(arkClass);
+
+        if (classSignatureCompare(arkClass.getSignature(), Builtin.ARRAY_CLASS_SIGNATURE)) {
+            return true;
+        }
+
+        const heritageClasses = arkClass.getAllHeritageClasses();
+        if (heritageClasses === null || heritageClasses.length === 0) {
+            return false;
+        }
+
+        for (const parentClass of heritageClasses) {
+            if (this.isClassDerivedFromArray(parentClass, visited)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

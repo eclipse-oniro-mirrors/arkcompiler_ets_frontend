@@ -21,6 +21,7 @@ import {
     ArkField,
     ArkIfStmt,
     ArkInstanceFieldRef,
+    ArkStaticFieldRef,
     ArkInstanceOfExpr,
     ArkMethod,
     ArkNamespace,
@@ -175,7 +176,7 @@ export class NoTSLikeAsCheck implements BaseChecker {
 
             // Check if castExpr.op.getType() is a parent type of castExpr.getType()
             if (!this.isOpTypeSuperTypeOfCastType(opType, castType)) {
-                return;
+                continue;
             }
 
             let checkAll = { value: true };
@@ -440,7 +441,14 @@ export class NoTSLikeAsCheck implements BaseChecker {
         return null;
     }
 
-    private checkFromStmt(stmt: Stmt, globalVarMap: Map<string, Stmt[]>, checkAll: { value: boolean }, visited: Set<Stmt>, depth: number = 0, castType: Type): Stmt | null {
+    private checkFromStmt(
+        stmt: Stmt,
+        globalVarMap: Map<string, Stmt[]>,
+        checkAll: { value: boolean },
+        visited: Set<Stmt>,
+        depth: number = 0,
+        castType: Type
+    ): Stmt | null {
         if (depth > CALL_DEPTH_LIMIT) {
             checkAll.value = false;
             return null;
@@ -581,8 +589,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
 
         const rightOp = firstStmt.getRightOp();
 
-        // if rightOp is an ArkInstanceFieldRef, continue to trace the origin define stmt
-        if (!rightOp || !(rightOp instanceof ArkInstanceFieldRef)) {
+        // if rightOp is an ArkInstanceFieldRef or ArkStaticFieldRef, continue to trace the origin define stmt
+        if (!rightOp || !(rightOp instanceof ArkInstanceFieldRef || rightOp instanceof ArkStaticFieldRef)) {
             return fieldInitializer[fieldInitializer.length - 1];
         }
 
@@ -664,9 +672,12 @@ export class NoTSLikeAsCheck implements BaseChecker {
     
     private extractNewExprClassType(stmt: Stmt): ClassType | null {
         const targetLocal = stmt instanceof ArkAssignStmt 
-            ? stmt.getRightOp() as Local 
-            : (stmt as ArkReturnStmt).getOp() as Local;
-    
+            ? stmt.getRightOp() 
+            : (stmt as ArkReturnStmt).getOp();
+        if (targetLocal instanceof ArkNewExpr) {
+            return targetLocal.getClassType();
+        }
+
         if (!(targetLocal instanceof Local)) {
             return null;
         }
@@ -699,8 +710,8 @@ export class NoTSLikeAsCheck implements BaseChecker {
             return true;
         }
     
-        return classSignatureCompare(originType.getClassSignature(), castType.getClassSignature()) 
-            || this.isOpTypeSuperTypeOfCastType(castType, originType);
+        return classSignatureCompare(originType.getClassSignature(), castType.getClassSignature()) ||
+            this.isOpTypeSuperTypeOfCastType(castType, originType);
     }
 
     private isFromParameter(stmt: Stmt): ArkParameterRef | undefined {
