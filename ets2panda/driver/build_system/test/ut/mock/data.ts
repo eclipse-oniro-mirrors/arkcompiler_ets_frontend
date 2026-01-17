@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,9 +38,9 @@ export function getMockedBuildConfig(): BuildConfig {
 
         // DeclGenConfig
         enableDeclgenEts2Ts: false,
-        declgenV1OutPath: undefined,
-        declgenV2OutPath: undefined,
-        declgenBridgeCodePath: undefined,
+        declgenV1OutPath: "",
+        declgenV2OutPath: "",
+        declgenBridgeCodePath: "",
         skipDeclCheck: undefined,
 
         // LoggerConfig
@@ -78,7 +78,9 @@ export function getMockedBuildConfig(): BuildConfig {
         paths: {},
         compileFiles: ["test/path/index.ets"],
         dependencyModuleList: [],
-        aliasConfig: {}
+        aliasConfig: {},
+        dependentModuleList: [],
+        hasMainModule: false
     };
 }
 
@@ -103,9 +105,9 @@ export const moduleInfoWithNullSourceRoots: ModuleInfo = {
     sourceRoots: [],
     entryFile: 'index.ets',
     arktsConfigFile: 'arktsconfig.json',
-    declgenV1OutPath: undefined,
-    declgenV2OutPath: undefined,
-    declgenBridgeCodePath: undefined,
+    declgenV1OutPath: "",
+    declgenV2OutPath: "",
+    declgenBridgeCodePath: "",
     byteCodeHar: false,
     dependencies: [],
     staticDependencyModules: new Map(),
@@ -120,9 +122,9 @@ export const moduleInfoWithFalseEts2Ts: ModuleInfo = {
     sourceRoots: ['/src/moduleA'],
     entryFile: 'index.ets',
     arktsConfigFile: 'arktsconfig.json',
-    declgenV1OutPath: undefined,
-    declgenV2OutPath: undefined,
-    declgenBridgeCodePath: undefined,
+    declgenV1OutPath: "",
+    declgenV2OutPath: "",
+    declgenBridgeCodePath: "",
     byteCodeHar: false,
     dependencies: [],
     staticDependencyModules: new Map(),

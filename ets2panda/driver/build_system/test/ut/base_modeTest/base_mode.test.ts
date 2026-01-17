@@ -860,8 +860,28 @@ describe('BaseMode', () => {
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            moduleType: 'hap',
+            loadDeclFileMap: jest.fn(),
+            saveDeclFileMap: jest.fn(),
+            needsRegeneration: jest.fn(),
+            needsBackup: jest.fn(),
+            backupFiles: jest.fn(),
+            updateDeclFileMapAsync: jest.fn(),
+            getOutputFilePaths: jest.fn(),
+            declFileMap: new Map()
         };
+        ctx.needsRegeneration.mockReturnValue(true);
+        ctx.needsBackup.mockResolvedValue({
+            needsDeclBackup: false,
+            needsGlueCodeBackup: false
+        });
+        ctx.backupFiles.mockResolvedValue(undefined);
+        ctx.updateDeclFileMapAsync.mockResolvedValue(undefined);
+        ctx.saveDeclFileMap.mockResolvedValue(undefined);
+        ctx.getOutputFilePaths.mockReturnValue({
+            declEtsOutputPath: '/tmp/test.d.ts',
+            glueCodeOutputPath: '/tmp/test.ts'
+        });
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
         expect(loggerInstance.printWarn).toHaveBeenCalledWith('Nothing to compile. Exiting...');
@@ -918,17 +938,32 @@ describe('BaseMode', () => {
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
-            fileToModule: new Map<string, any>([['/mock/module/a.ets', {
-                declgenV1OutPath: '/mock/declgen/out',
-                declgenBridgeCodePath: '/mock/declgen/bridge'
-            }]]),
+            fileToModule: new Map<string, any>([[
+                '/mock/module/a.ets',
+                {declgenV1OutPath: '/mock/declgen/out', declgenBridgeCodePath: '/mock/declgen/bridge'}
+            ]]),
             moduleInfos: new Map(),
             abcFiles: new Set(),
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
-            statsRecorder: { record: jest.fn() },
-            moduleType: 'hap'
+            statsRecorder: {record: jest.fn()},
+            moduleType: 'hap',
+            loadDeclFileMap: jest.fn(),
+            saveDeclFileMap: jest.fn(),
+            needsRegeneration: jest.fn(),
+            needsBackup: jest.fn(),
+            backupFiles: jest.fn(),
+            updateDeclFileMapAsync: jest.fn(),
+            getOutputFilePaths: jest.fn(),
+            declFileMap: new Map()
         };
+        ctx.needsRegeneration.mockReturnValue(true);
+        ctx.needsBackup.mockResolvedValue({needsDeclBackup: false, needsGlueCodeBackup: false});
+        ctx.backupFiles.mockResolvedValue(undefined);
+        ctx.updateDeclFileMapAsync.mockResolvedValue(undefined);
+        ctx.saveDeclFileMap.mockResolvedValue(undefined);
+        ctx.getOutputFilePaths.mockReturnValue(
+            {declEtsOutputPath: '/tmp/test.d.ts', glueCodeOutputPath: '/tmp/test.ts'});
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
         expect(startWorkersSpy).toHaveBeenCalled();

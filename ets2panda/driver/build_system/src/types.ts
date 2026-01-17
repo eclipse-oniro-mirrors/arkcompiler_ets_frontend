@@ -384,3 +384,11 @@ export interface DeclgenV1JobInfo extends JobInfo {
 export interface ProcessDeclgenV1Task extends DeclgenV1JobInfo {
     buildConfig: BuildConfig;
 }
+export interface DeclFileInfo {
+    delFilePath: string;
+    declLastModified: number|null;
+    glueCodeFilePath: string;
+    glueCodeLastModified: number|null;
+    sourceFilePath: string;
+    sourceFileLastModified: number|null;
+}
