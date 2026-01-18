@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 import { LspDriverHelper } from '../common/driver_helper';
 import { global } from '../common/global';
+import { PerfMetricScope } from '../common/perf_helper';
 import {
   LspDefinitionData,
   LspDiagsNode,
@@ -125,6 +126,8 @@ export class Lsp {
   private pathConfig: PathConfig;
   private lspDriverHelper = new LspDriverHelper();
   private declFileMap: Record<string, string> = {}; // Map<declFilePath, sourceFilePath>
+  private enablePerfMetric: boolean = false;
+  private perfMetricLogFilePath: string = "";
 
   constructor(
     pathConfig: PathConfig,
@@ -310,8 +313,12 @@ export class Lsp {
   }
 
   getDefinitionAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspDefinitionData | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDefinitionAtPosition', this.perfMetricLogFilePath) : undefined;
+ 	  let result: LspDefinitionData;
     if (nodeInfos) {
-      return this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
+      result = this.getAtPositionByNodeInfos(filename, nodeInfos, 'definition') as LspDefinitionData;
+      perfScope?.end();
+ 	    return result;
     }
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -336,11 +343,12 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    const result = new LspDefinitionData(ptr);
+    result = new LspDefinitionData(ptr);
     const nodeInfoTemp: NodeInfo[] | undefined = this.getNodeInfos(filename, result.fileName, result.start);
     if (nodeInfoTemp !== undefined && nodeInfoTemp.length > 0) {
       result.nodeInfos = nodeInfoTemp;
     }
+    perfScope?.end();
     return result;
   }
 
@@ -380,6 +388,7 @@ export class Lsp {
   }
 
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSemanticDiagnostics', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -401,10 +410,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspDiagsNode(ptr);
+    const result = new LspDiagsNode(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getCurrentTokenValue(filename: String, offset: number): string | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCurrentTokenValue', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -426,10 +438,12 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    perfScope?.end();
     return unpackString(ptr);
   }
 
   getImplementationAtPosition(filename: String, offset: number): LspDefinitionData | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getImplementationAtPosition', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -452,10 +466,12 @@ export class Lsp {
       }
     }
     const result = new LspDefinitionData(ptr);
+    perfScope?.end();
     return result;
   }
 
   getFileReferences(filename: String): LspReferenceData[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFileReferences', this.perfMetricLogFilePath) : undefined;
     let isPackageModule: boolean;
     let searchFileCache = this.filesMap.get(filename.valueOf());
     if (searchFileCache) {
@@ -508,12 +524,17 @@ export class Lsp {
         }
       }
     }
+    perfScope?.end();
     return result;
   }
 
   getReferencesAtPosition(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspReferenceData[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getReferencesAtPosition', this.perfMetricLogFilePath) : undefined;
+ 	  let result: LspDefinitionData[] = [];
     if (nodeInfos) {
-      return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
+      result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'reference') as LspReferenceData];
+ 	    perfScope?.end();
+ 	    return result;
     }
     let declInfo: KPointer;
     let searchFileCache = this.filesMap.get(filename.valueOf());
@@ -537,8 +558,7 @@ export class Lsp {
       }
     }
 
-    let result: LspReferenceData[] = [];
-    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
+    let compileFiles = this.getMergedCompileFiles(filename);
     const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
     if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
       this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
@@ -577,7 +597,9 @@ export class Lsp {
         result.push(ref);
       });
     }
-    return Array.from(new Set(result));
+    result = Array.from(new Set(result));
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   private addDynamicDeclFilePaths(declFilesJson: string, compileFiles: string[]): void {
@@ -598,6 +620,7 @@ export class Lsp {
   }
 
   private getNodeInfos(paramFileName: String, fileName: String, start: number): LspNodeInfo[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getNodeInfos', this.perfMetricLogFilePath) : undefined;
     let nodeInfos: LspNodeInfo[] = [];
     const moduleInfo = this.moduleInfos[path.resolve(paramFileName.valueOf())];
     if (!moduleInfo) {
@@ -635,6 +658,7 @@ export class Lsp {
         }
       }
     }
+    perfScope?.end();
     return nodeInfos;
   }
 
@@ -702,6 +726,7 @@ export class Lsp {
   }
 
   getTypeHierarchies(filename: String, offset: number): LspTypeHierarchiesInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getTypeHierarchies', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let ctxFile: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -774,10 +799,12 @@ export class Lsp {
         );
       }
     }
+    perfScope?.end();
     return result[0];
   }
 
   getClassHierarchyInfo(filename: String, offset: number): LspClassHierarchy | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassHierarchyInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -799,10 +826,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspClassHierarchy(ptr);
+    const result = new LspClassHierarchy(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getAliasScriptElementKind(filename: String, offset: number): LspCompletionEntryKind | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getAliasScriptElementKind', this.perfMetricLogFilePath) : undefined;
     let kind: KInt;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -824,10 +854,12 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    perfScope?.end();
     return kind;
   }
 
   getClassHierarchies(filename: String, offset: number): LspClassHierarchies | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassHierarchies', this.perfMetricLogFilePath) : undefined;
     let contextList = [];
     let nativeContextList: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -861,7 +893,9 @@ export class Lsp {
     for (const { ctx, cfg } of contextList) {
       this.destroyContext(cfg, ctx);
     }
-    return new LspClassHierarchies(ptr);
+    const result = new LspClassHierarchies(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getClassPropertyInfo(
@@ -869,6 +903,7 @@ export class Lsp {
     offset: number,
     shouldCollectInherited: boolean = false
   ): LspClassPropertyInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassPropertyInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -890,10 +925,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspClassPropertyInfo(ptr);
+    const result = new LspClassPropertyInfo(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getOrganizeImports(filename: String): LspFileTextChanges | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getOrganizeImports', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -917,11 +955,14 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    const result = new LspFileTextChanges(ptr);
+ 	  perfScope?.end();
 
-    return new LspFileTextChanges(ptr);
+    return result;
   }
 
   findSafeDeleteLocation(filename: String, offset: number): LspSafeDeleteLocationInfo[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('findSafeDeleteLocation', this.perfMetricLogFilePath) : undefined;
     let declInfo: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -971,10 +1012,13 @@ export class Lsp {
       let refs = new LspSafeDeleteLocation(ptr);
       result.push(...refs.safeDeleteLocationInfos);
     }
-    return Array.from(new Set(result));
+    const locInfo = Array.from(new Set(result));
+ 	  perfScope?.end();
+ 	  return locInfo;
   }
 
   getCompletionEntryDetails(filename: String, offset: number, entryName: String): CompletionEntryDetails | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionEntryDetails', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -996,8 +1040,10 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-
-    return new CompletionEntryDetails(ptr);
+    const result = new CompletionEntryDetails(ptr);
+ 	  perfScope?.end();
+ 	 
+ 	  return result;
   }
 
   getApplicableRefactors(
@@ -1006,6 +1052,7 @@ export class Lsp {
     startPos: number,
     endPos: number
   ): ApplicableRefactorItemInfo[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getApplicableRefactors', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let result: ApplicableRefactorItemInfo[] = [];
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -1030,7 +1077,9 @@ export class Lsp {
     }
     let refs = new LspApplicableRefactorInfo(ptr);
     result.push(...refs.applicableRefactorInfo);
-    return Array.from(new Set(result));
+    const RefactorItemInfo = Array.from(new Set(result));
+ 	  perfScope?.end();
+ 	  return RefactorItemInfo;
   }
 
   getEditsForRefactor(
@@ -1044,6 +1093,7 @@ export class Lsp {
       FormattingSettings?: KNativePointer | null;
     }
   ): LspRefactorEditInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getEditsForRefactor', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let up = opts?.userPrefsPtr ?? BigInt(0);
     let fmt = opts?.FormattingSettings ?? BigInt(0);
@@ -1072,10 +1122,13 @@ export class Lsp {
       );
       this.destroyContext(cfg, ctx);
     }
-    return new LspRefactorEditInfo(ptr);
+    const result = new LspRefactorEditInfo(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getClassConstructorInfo(filename: String, offset: number, properties: string[]): LspClassConstructorInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getClassConstructorInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1097,10 +1150,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspClassConstructorInfo(ptr);
+    const result = new LspClassConstructorInfo(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getSyntacticDiagnostics(filename: String): LspDiagsNode | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSyntacticDiagnostics', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1122,10 +1178,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspDiagsNode(ptr);
+    const result = new LspDiagsNode(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getSuggestionDiagnostics(filename: String): LspDiagsNode | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSuggestionDiagnostics', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1147,10 +1206,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspDiagsNode(ptr);
+    const result = new LspDiagsNode(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   getQuickInfoAtPosition(filename: String, offset: number): LspQuickInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getQuickInfoAtPosition', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1173,10 +1235,12 @@ export class Lsp {
       }
     }
     const result = new LspQuickInfo(ptr);
+    perfScope?.end();
     return result;
   }
 
   getDocumentHighlights(filename: String, offset: number): LspDocumentHighlightsReferences | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getDocumentHighlights', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1201,10 +1265,12 @@ export class Lsp {
       }
     }
     const result = new LspDocumentHighlightsReferences(ptr);
+    perfScope?.end();
     return result;
   }
 
   getCompletionAtPosition(filename: String, offset: number): LspCompletionInfo | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCompletionAtPosition', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1226,10 +1292,13 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspCompletionInfo(ptr);
+    const result = new LspCompletionInfo(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   toLineColumnOffset(filename: String, offset: number): LspLineAndCharacter | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('toLineColumnOffset', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1253,11 +1322,14 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-
-    return new LspLineAndCharacter(ptr);
+    const result = new LspLineAndCharacter(ptr);
+ 	  perfScope?.end();
+ 	 
+ 	  return result;
   }
 
   getSafeDeleteInfo(filename: String, position: number): boolean | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSafeDeleteInfo', this.perfMetricLogFilePath) : undefined;
     let result: boolean;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1280,10 +1352,12 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    perfScope?.end();
     return result;
   }
 
   getTokenNative(filename: String, position: number): LspTokenNativeInfo {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getTokenNative', this.perfMetricLogFilePath) : undefined;
     let result = new LspTokenNativeInfo();
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1319,12 +1393,16 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    perfScope?.end();
     return result;
   }
 
   findRenameLocations(filename: String, offset: number, nodeInfos?: NodeInfo[]): LspRenameLocation[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('findRenameLocations', this.perfMetricLogFilePath) : undefined;
     if (nodeInfos) {
-      return [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
+      const result = [this.getAtPositionByNodeInfos(filename, nodeInfos, 'renameLocation') as LspRenameLocation];
+ 	    perfScope?.end();
+ 	    return result;
     }
 
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -1348,7 +1426,9 @@ export class Lsp {
         const result = new NativePtrDecoder().decode(ptr).map((elPeer: KPointer) => {
           return new LspRenameLocation(elPeer);
         });
-        return Array.from(new Set(result));
+        const uniqueResult = Array.from(new Set(result));
+ 	      perfScope?.end();
+ 	      return uniqueResult;
       } else {
         let compileFiles = this.getMergedCompileFiles(filename);
         const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
@@ -1413,7 +1493,9 @@ export class Lsp {
           this.destroyContext(cfg, ctx);
         }
 
-        return Array.from(new Set(result));
+        const uniqueResult = Array.from(new Set(result));
+ 	      perfScope?.end();
+ 	      return uniqueResult;
       }
     };
 
@@ -1427,6 +1509,7 @@ export class Lsp {
   }
 
   getRenameInfo(filename: String, offset: number): LspRenameInfoType | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getRenameInfo', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let res: LspRenameInfoType;
 
@@ -1456,10 +1539,12 @@ export class Lsp {
     } else {
       res = new LspRenameInfoFailure(global.es2panda._getRenameInfoFailure(ptr));
     }
+    perfScope?.end();
     return res;
   }
 
   getSpanOfEnclosingComment(filename: String, offset: number, onlyMultiLine: boolean): LspTextSpan | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSpanOfEnclosingComment', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1481,6 +1566,7 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
+    perfScope?.end();
     return new LspTextSpan(ptr);
   }
 
@@ -1490,6 +1576,7 @@ export class Lsp {
     end: number,
     errorCodes: number[]
   ): CodeFixActionInfo[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getCodeFixesAtPosition', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1514,10 +1601,12 @@ export class Lsp {
     const codeFixActionInfoList = new CodeFixActionInfoList(ptr);
     const codeFixActionInfos: CodeFixActionInfo[] = [];
     codeFixActionInfos.push(...codeFixActionInfoList.codeFixActionInfos);
+    perfScope?.end();
     return codeFixActionInfos;
   }
 
   provideInlayHints(filename: String, span: TextSpan): LspInlayHint[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('provideInlayHints', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1544,10 +1633,12 @@ export class Lsp {
     const inlayHintList = new LspInlayHintList(ptr);
     const inlayHints: LspInlayHint[] = [];
     inlayHints.push(...inlayHintList.inlayHints);
+    perfScope?.end();
     return inlayHints;
   }
 
   getSignatureHelpItems(filename: String, offset: number): LspSignatureHelpItems | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getSignatureHelpItems', this.perfMetricLogFilePath) : undefined;
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
     if (fileCache) {
@@ -1569,7 +1660,9 @@ export class Lsp {
         this.destroyContext(cfg, ctx);
       }
     }
-    return new LspSignatureHelpItems(ptr);
+    const result = new LspSignatureHelpItems(ptr);
+ 	  perfScope?.end();
+ 	  return result;
   }
 
   // Use AST cache start
@@ -2097,6 +2190,7 @@ export class Lsp {
     filename: String,
     options?: FormatCodeSettingsOptions
   ): TextChange[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFormattingEditsForDocument', this.perfMetricLogFilePath) : undefined;
     let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
 
@@ -2132,6 +2226,7 @@ export class Lsp {
       return changes;
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
+      perfScope?.end();
     }
   }
 
@@ -2141,6 +2236,7 @@ export class Lsp {
     length: number,
     options?: FormatCodeSettingsOptions
   ): TextChange[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFormattingEditsForRange', this.perfMetricLogFilePath) : undefined;
     let ptr: KNativePointer;
     const settingsPtr = this.createFormatCodeSettings(options);
 
@@ -2176,6 +2272,7 @@ export class Lsp {
       return changes;
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
+      perfScope?.end();
     }
   }
 
@@ -2185,6 +2282,7 @@ export class Lsp {
     key: string,
     options?: FormatCodeSettingsOptions
   ): TextChange[] | undefined {
+    const perfScope = this.enablePerfMetric ? new PerfMetricScope('getFormattingEditsAfterKeystroke', this.perfMetricLogFilePath) : undefined;
     if (!key || key.length === 0) {
       return;
     }
@@ -2224,6 +2322,7 @@ export class Lsp {
       return changes;
     } finally {
       global.es2panda._destroyFormatCodeSettings(settingsPtr);
+      perfScope?.end();
     }
   }
 
