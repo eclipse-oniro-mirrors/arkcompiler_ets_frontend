@@ -17,8 +17,6 @@
  * Can not moved into ast/parser while #19557 isn't resolved
  */ 
 
-package xml
-
 export enum EventType {
     START_DOCUMENT =0,
     END_DOCUMENT = 1,

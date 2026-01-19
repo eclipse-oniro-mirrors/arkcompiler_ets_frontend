@@ -1,3 +1,8 @@
+# The package keyword is not used anylonger
+# Issue: https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
+mypackage/implicit_package_import_1.ets
+mypackage/implicit_package_import_2.ets
+
 # Deprecated operations on char #27402
 ArrayLiteral.ets
 MaxBoundInt.ets

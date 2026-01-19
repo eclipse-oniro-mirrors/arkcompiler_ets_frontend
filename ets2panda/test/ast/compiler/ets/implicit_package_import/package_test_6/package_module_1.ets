@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-package mypackage;
-
 let myvar: number = /* @@ label */exist_but_checker_fails_in_file;
 
 

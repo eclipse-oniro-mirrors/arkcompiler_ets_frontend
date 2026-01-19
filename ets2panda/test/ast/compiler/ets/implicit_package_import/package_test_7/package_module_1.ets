@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-package mypackage;
+// Seems the test can be deleted
 
 function foo(): void {}

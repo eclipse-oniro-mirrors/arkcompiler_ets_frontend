@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 #
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -18,6 +18,7 @@ import argparse
 import os
 import json
 import subprocess
+from common_output import get_common_output, remove_common_part
 
 
 def ensure_exists(path):
@@ -38,9 +39,10 @@ def es2panda_command(es2panda_path, stdlib_path, arktsconfig_path, target_path):
     ]
 
 
-def compare_output(lhs, rhs):
+def compare_output(lhs, rhs, ignore_parts):
     for k in rhs:
         attr = getattr(lhs, k)
+        attr = remove_common_part(attr, ignore_parts, k)
         if attr != rhs[k]:
             message = "\n".join([f'In {k} field',
                                  f'Expected: {rhs[k]}',
@@ -73,4 +75,5 @@ actual = subprocess.run(cmd,
 
 with open(expected_path, "r", encoding="utf-8") as expected_file:
     expected = json.load(expected_file)
-    compare_output(actual, expected)
+    common_parts = get_common_output(expected_path)
+    compare_output(actual, expected, common_parts)

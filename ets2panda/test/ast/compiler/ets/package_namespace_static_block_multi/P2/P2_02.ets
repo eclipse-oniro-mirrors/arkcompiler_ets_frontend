@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-package P2;
-
 export namespace NS {
     static {
         /* @@ label */a = 3

@@ -193,10 +193,10 @@ parser/ets/import_tests/packages/import_package_with_alias/package/package_modul
 parser/ets/import_tests/packages/import_package_with_alias/import_package_with_alias.ets
 parser/ets/import_tests/packages/different-header/subpackage_module_2.ets
 parser/ets/import_tests/packages/different-header/subpackage_module_1.ets
-parser/ets/import_tests/packages/var-duplication/subpackage_module_2.ets
-parser/ets/import_tests/packages/var-duplication/subpackage_module_1.ets
-parser/ets/import_tests/packages/subpackage-1/package_module_1.ets
-parser/ets/import_tests/packages/subpackage-2/package_module_1.ets
+parser/ets/import_tests/packages/var_duplication/subpackage_module_2.ets
+parser/ets/import_tests/packages/var_duplication/subpackage_module_1.ets
+parser/ets/import_tests/packages/subpackage_1/package_module_1.ets
+parser/ets/import_tests/packages/subpackage_2/package_module_1.ets
 parser/ets/import_tests/packages/subpackage/package_module_1.ets
 parser/ets/import_tests/import_name_conflicts/imported_module_2.ets
 parser/ets/import_tests/import_name_conflicts/imported_module_1.ets

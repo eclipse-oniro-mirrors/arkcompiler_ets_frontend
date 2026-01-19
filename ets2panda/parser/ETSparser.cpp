@@ -79,7 +79,10 @@ class FunctionContext;
 
 using namespace std::literals::string_literals;
 
-ETSParser::ETSParser(public_lib::Context *context, ParserStatus status) : TypedParser(context, status) {}
+ETSParser::ETSParser(public_lib::Context *context, ParserStatus status)
+    : TypedParser(context, status), packageDeprecationWarned_(false)
+{
+}
 
 Program *ETSParser::GetGlobalProgram() const
 {
@@ -1074,6 +1077,8 @@ ir::ETSPackageDeclaration *ETSParser::ParsePackageDeclaration()
     auto startLoc = Lexer()->GetToken().Start();
 
     if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_PACKAGE)) {
+        RaisePackageDeprecatedMessage();
+
         ir::Expression *packageNameNode = ParseQualifiedName();
         ir::ETSPackageDeclaration *packageDeclaration = AllocNode<ir::ETSPackageDeclaration>(packageNameNode);
         ES2PANDA_ASSERT(packageDeclaration != nullptr);
@@ -2201,6 +2206,23 @@ void ETSParser::CheckDeclare()
             }
             LogUnexpectedToken(Lexer()->GetToken());
         }
+    }
+}
+
+void ETSParser::WarnPackageDeprecated()
+{
+    if (!packageDeprecationWarned_) {
+        LogError(diagnostic::PACKAGE_DEPRECATED_WARNING);
+        packageDeprecationWarned_ = true;
+    }
+}
+
+void ETSParser::RaisePackageDeprecatedMessage()
+{
+    if (util::Helpers::IsStdLib(GetProgram())) {
+        WarnPackageDeprecated();
+    } else {
+        LogError(diagnostic::PACKAGE_DEPRECATED);
     }
 }
 

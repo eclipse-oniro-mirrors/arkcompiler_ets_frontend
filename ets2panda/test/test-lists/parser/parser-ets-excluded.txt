@@ -1,0 +1,14 @@
+# Exclude the test as the 'package' keyword is no in the language anymore
+# https://gitcode.com/openharmony/arkcompiler_ets_frontend/issues/8924
+compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
+compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_1.ets
+compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_2.ets
+parser/ets/import_tests/import_alias_and_without_alias_2.ets
+parser/ets/import_tests/import_alias_and_without_alias_3.ets
+parser/ets/import_tests/import_all.ets
+parser/ets/import_tests/packages/aliasWithoutAlias/import1/import1.ets
+parser/ets/import_tests/packages/aliasWithoutAlias/import2/import2.ets
+parser/ets/import_tests/packages/package_module_1.ets
+parser/ets/import_tests/packages/package_module_2.ets
+parser/ets/import_tests/packages/subpackage/package_module_1.ets
