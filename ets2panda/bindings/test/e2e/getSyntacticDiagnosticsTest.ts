@@ -23,11 +23,11 @@ describe('getSyntacticDiagnosticsTest', () => {
       range: { start: { line: 16, character: 9 }, end: { line: 16, character: 12 } }
     },
     {
-      message: `Unexpected token, expected ',' or ')'.`,
+      message: `Unexpected token ':'.`,
       range: { start: { line: 16, character: 14 }, end: { line: 16, character: 15 } }
     },
     {
-      message: `Unexpected token ':'.`,
+      message: `Unexpected token, expected ',' or ')'.`,
       range: { start: { line: 16, character: 14 }, end: { line: 16, character: 15 } }
     },
     {

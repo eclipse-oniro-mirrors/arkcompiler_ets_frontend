@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -454,13 +454,12 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWrapper(
 
     std::vector<ark::es2panda::lsp::RenameLocation> result;
     result.reserve(locations.size());
-    for (const auto &loc : locations) {
+    for (auto loc : locations) {
         auto it = fileSourceMap.find(std::string(loc.fileName));
         std::string fileSource = (it != fileSourceMap.end()) ? it->second : "";
-        size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.start);
-        size_t endCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.end);
-        result.emplace_back(ark::es2panda::lsp::RenameLocation {loc.fileName, startCharOffset, endCharOffset,
-                                                                endCharOffset - startCharOffset});
+        loc.start = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.start);
+        loc.end = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.end);
+        result.push_back(loc);
     }
     return result;
 }
@@ -473,10 +472,10 @@ std::set<RenameLocation> FindRenameLocationsInCurrentFileWrapper(es2panda_Contex
     auto locations = FindRenameLocationsInCurrentFile(context, byteOffset);
 
     std::set<RenameLocation> result;
-    for (const auto &loc : locations) {
-        size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, loc.start);
-        size_t endCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, loc.end);
-        result.emplace(RenameLocation {loc.fileName, startCharOffset, endCharOffset, endCharOffset - startCharOffset});
+    for (auto loc : locations) {
+        loc.start = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, loc.start);
+        loc.end = ark::es2panda::lsp::ByteOffsetToCodePointOffset(source, loc.end);
+        result.insert(loc);
     }
     return result;
 }
@@ -504,13 +503,12 @@ std::vector<ark::es2panda::lsp::RenameLocation> FindRenameLocationsWithCancellat
 
     std::vector<ark::es2panda::lsp::RenameLocation> res;
     res.reserve(locations.size());
-    for (const auto &loc : locations) {
+    for (auto loc : locations) {
         auto it = fileSourceMap.find(std::string(loc.fileName));
         std::string fileSource = (it != fileSourceMap.end()) ? it->second : "";
-        size_t startCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.start);
-        size_t endCharOffset = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.end);
-        res.emplace_back(ark::es2panda::lsp::RenameLocation {loc.fileName, startCharOffset, endCharOffset,
-                                                             endCharOffset - startCharOffset});
+        loc.start = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.start);
+        loc.end = ark::es2panda::lsp::ByteOffsetToCodePointOffset(fileSource, loc.end);
+        res.push_back(loc);
     }
     return res;
 }
