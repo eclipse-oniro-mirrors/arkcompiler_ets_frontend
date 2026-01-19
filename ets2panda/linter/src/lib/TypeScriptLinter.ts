@@ -9808,7 +9808,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         isExistSpecialScene: false
       };
       this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
-
     }
   }
 
@@ -13881,7 +13880,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
     const indexExpr = accessExpr.argumentExpression;
-    const loopVarName = ts.isIdentifier(indexExpr) ? indexExpr.text : undefined;
+    const loopVarName = ts.isIdentifier(indexExpr) ?
+      indexExpr.text :
+      ts.isNumericLiteral(indexExpr) ?
+        indexExpr.text :
+        undefined;
     if (ts.isPrefixUnaryExpression(indexExpr) && indexExpr.operator === ts.SyntaxKind.PlusPlusToken) {
       this.incrementCounters(arrayIdent.parent, FaultID.RuntimeArrayCheck);
       return;
@@ -14067,6 +14070,10 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return true;
     }
 
+    if (this.checkVarEqualsArrayLength(left, right, operatorToken, varName, arraySym)) {
+      return true;
+    }
+
     return this.checkArrayLengthGreaterThanVar(left, right, operatorToken, varName, arraySym);
   }
 
@@ -14102,8 +14109,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (
       ts.isPropertyAccessExpression(left) &&
       left.name.text === LENGTH_IDENTIFIER &&
-      ts.isIdentifier(right) &&
-      right.text === varName
+      (ts.isIdentifier(right) && right.text === varName || ts.isNumericLiteral(right))
     ) {
       const leftArraySym = this.tsUtils.trueSymbolAtLocation(left.expression);
       if (leftArraySym === arraySym) {
@@ -14116,6 +14122,35 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return false;
   }
 
+  private checkVarEqualsArrayLength(
+    left: ts.Expression,
+    right: ts.Expression,
+    operatorToken: ts.Token<ts.BinaryOperator>,
+    varName: string,
+    arraySym: ts.Symbol
+  ): boolean {
+    let propertyAccessExpr;
+    let isVariableInRight: boolean = true;
+    if (ts.isPropertyAccessExpression(left)) {
+      propertyAccessExpr = left;
+    } else if (ts.isPropertyAccessExpression(right)) {
+      propertyAccessExpr = right;
+      isVariableInRight = false;
+    } else {
+      propertyAccessExpr = undefined;
+      return false;
+    }
+
+    const variable = isVariableInRight ? right : left;
+    return (
+      (ts.isIdentifier(variable) && variable.text === varName || ts.isNumericLiteral(variable)) &&
+      propertyAccessExpr.name.text === LENGTH_IDENTIFIER &&
+      (operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken ||
+        operatorToken.kind === ts.SyntaxKind.EqualsEqualsToken) &&
+      this.tsUtils.trueSymbolAtLocation(propertyAccessExpr.expression) === arraySym
+    );
+  }
+
   private checkVarLessThanArrayLength(
     left: ts.Expression,
     right: ts.Expression,
@@ -14124,8 +14159,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     arraySym: ts.Symbol
   ): boolean {
     return (
-      ts.isIdentifier(left) &&
-      left.text === varName &&
+      (ts.isIdentifier(left) && left.text === varName || ts.isNumericLiteral(left)) &&
       ts.isPropertyAccessExpression(right) &&
       right.name.text === LENGTH_IDENTIFIER &&
       (operatorToken.kind === ts.SyntaxKind.LessThanToken ||

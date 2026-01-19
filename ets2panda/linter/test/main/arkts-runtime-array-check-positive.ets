@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,4 +81,41 @@ for(let i = 0; i < arr1.length; i++) {
 let i = 0;
 while(i < arr1.length) {
     arr1[i]; //legal
+}
+
+let aa: number[] = [];
+aa.length = 101;
+
+if (100 < aa.length) {
+  aa[99] = 1;
+}
+
+if (aa.length > 100) {
+  aa[99] = 2;
+}
+
+if (aa.length == 100) {
+  aa[99] = 3;
+}
+
+if (aa.length === 100) {
+  aa[99] = 4;
+}
+
+let indexa = 100;
+
+if (indexa < aa.length) {
+  aa[indexa] = 5;
+}
+
+if (aa.length > indexa) {
+  aa[indexa] = 6;
+}
+
+if (aa.length == indexa) {
+  aa[indexa] = 7;
+}
+
+if (aa.length === indexa) {
+  aa[indexa] = 8;
 }
