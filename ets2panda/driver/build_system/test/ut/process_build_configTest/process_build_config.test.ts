@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -204,6 +204,15 @@ describe('test processBuildConfig in different scenarios', () => {
         require('path').resolve.mockImplementation((...args: string[]) => args.filter(Boolean).join('/'));
         initBuildEnv(config);
         expect(process.env.DYLD_LIBRARY_PATH).toContain('/sdk/panda/lib');
+    });
+
+    test('set process.env.PATH', () => {
+        jest.resetModules();
+        const { processBuildConfig, initBuildEnv } = require('../../../src/init/process_build_config');
+        const config = { ...buildConfigBase };
+        require('path').resolve.mockImplementation((...args: string[]) => args.filter(Boolean).join('/'));
+        initBuildEnv(config);
+        expect(process.env.PATH).not.toContain('undefined');
     });
 
     test('use KOALA_WRAPPER_PATH env if set', () => {
