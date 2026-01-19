@@ -3326,8 +3326,9 @@ static bool IsPropertyAssignable(ETSChecker *const checker, ir::Expression *cons
     ir::Expression *value = propExpr->AsProperty()->Value();
     value->SetPreferredType(propType);
 
-    // NOTE (DZ): now method re-definition is allowed only in interface object literals!
-    if (propType->IsETSMethodType() && !objectType->HasObjectFlag(checker::ETSObjectFlags::INTERFACE)) {
+    // NOTE (DZ): now method re-definition is allowed only in object literals of interface and abstract class!
+    if (propType->IsETSMethodType() &&
+        !objectType->HasObjectFlag(ETSObjectFlags::INTERFACE | ETSObjectFlags::ABSTRACT)) {
         checker->LogError(diagnostic::OBJECT_LITERAL_METHOD_KEY, {}, propExpr->Start());
         propExpr->SetTsType(checker->GlobalTypeError());
         return false;

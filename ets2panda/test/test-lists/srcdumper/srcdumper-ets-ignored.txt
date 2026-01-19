@@ -127,3 +127,8 @@ runtime/ets/objliteral_method_returntype_infer.ets
 
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets
+
+#Issue 32584 FailKind.SRC_DUMPER_FAIL
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_1.ets
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_2.ets
+runtime/ets/object_literal_abstract_class_method/objectLiteral_abstract_class_methods_3.ets

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -758,6 +758,34 @@ static checker::Type *ProcessInterfaceWithMethods(public_lib::Context *ctx, ir::
 
 //==========[ Processing of object interface literals with re-defined methods =>  end  ]==========//
 
+static checker::Type *GenerateAnonClassFromAbstractClassWithMethods(public_lib::Context *ctx,
+                                                                    ir::ClassDefinition *abstractClassNode,
+                                                                    ir::ObjectExpression *objectExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+
+    auto classBodyBuilder = [ctx, objectExpr](ArenaVector<ir::AstNode *> &classBody) -> void {
+        AddMethodsFromLiteral(ctx, classBody, objectExpr);
+
+        checker::ETSChecker::ClassInitializerBuilder initBuilder =
+            [ctx]([[maybe_unused]] ArenaVector<ir::Statement *> *statements,
+                  [[maybe_unused]] ArenaVector<ir::Expression *> *params) {
+                AddParam(ctx, varbinder::VarBinder::MANDATORY_PARAM_THIS, nullptr);
+            };
+
+        auto *ctor = CreateClassInstanceInitializer(ctx, initBuilder);
+        classBody.emplace_back(ctor);
+    };
+
+    auto anonClassName =
+        util::UString(GenerateAnonClassName(abstractClassNode->InternalName().Utf8(), true), ctx->Allocator());
+    auto *classDecl = GenerateAnonClass(ctx, anonClassName.View(), abstractClassNode, classBodyBuilder);
+
+    checker::Type *const classType = classDecl->Definition()->Check(checker);
+    return classType->IsETSObjectType() && !classType->AsETSObjectType()->IsGradual() ? classType
+                                                                                      : checker->GlobalTypeError();
+}
+
 static checker::Type *ProcessDeclNode(public_lib::Context *ctx, checker::ETSObjectType *targetType,
                                       ir::ObjectExpression *objExpr)
 {
@@ -770,6 +798,10 @@ static checker::Type *ProcessDeclNode(public_lib::Context *ctx, checker::ETSObje
 
     auto *classDef = declNode->AsClassDefinition();
     ES2PANDA_ASSERT(classDef->IsAbstract());
+
+    if (objExpr->HasMethodDefinition()) {
+        return GenerateAnonClassFromAbstractClassWithMethods(ctx, classDef, objExpr);
+    }
 
     if (classDef->GetAnonClass() == nullptr) {
         for (auto it : classDef->Body()) {
