@@ -781,6 +781,10 @@ static bool CheckLambdaTypeParameter(ETSChecker *checker, ir::ScriptFunction *la
 static bool CheckLambdaAssignable(ETSChecker *checker, ir::Expression *expr, Type *paramType,
                                   ir::ScriptFunction *lambda)
 {
+    if (paramType->IsETSTypeAliasType()) {
+        paramType = paramType->AsETSTypeAliasType()->GetTargetType();
+    }
+
     if (!paramType->IsETSArrowType()) {
         // the surrounding function is made so we can *bypass* the typecheck in the "inference" context,
         // however the body of the function has to be checked in any case
@@ -1131,6 +1135,7 @@ static bool CheckLambdaTypeAnnotation(ETSChecker *checker, ir::ETSParameterExpre
         typeAnnotation = util::Helpers::DerefETSTypeReference(typeAnnotation);
     }
     auto checkInvocable = [&arrowFuncExpr, &parameterType, checker](TypeRelationFlag functionFlags) {
+        arrowFuncExpr->SetPreferredType(parameterType);
         Type *const argumentType = arrowFuncExpr->Check(checker);
         functionFlags |= TypeRelationFlag::NO_THROW;
 
@@ -2567,8 +2572,8 @@ static Signature *ValidateOrderSignature(
     lexer::SourceRange argumentsRange = BuildArgumentsRange(arguments, range);
 
     // When process first match, if current signature is not matched, do not log TypeError
-    SignatureMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC, argumentsRange,
-                                                (flags & TypeRelationFlag::NO_THROW) == 0);
+    InferMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC, argumentsRange,
+                                            (flags & TypeRelationFlag::NO_THROW) == 0);
 
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
@@ -2581,7 +2586,7 @@ static Signature *ValidateOrderSignature(
     // Check all required formal parameter(s) first
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     if (!ValidateOrderSignatureRequiredParams(checker, signature, arguments, flags, argTypeInferenceRequired) ||
-        !signatureMatchContext.ValidSignatureMatchStatus()) {
+        !signatureMatchContext.ValidMatchStatus()) {
         return nullptr;
     }
 
@@ -2590,7 +2595,7 @@ static Signature *ValidateOrderSignature(
         return signature;
     }
     if (!ValidateSignatureRestParams(checker, signature, arguments, flags) ||
-        !signatureMatchContext.ValidSignatureMatchStatus()) {
+        !signatureMatchContext.ValidMatchStatus()) {
         return nullptr;
     }
 

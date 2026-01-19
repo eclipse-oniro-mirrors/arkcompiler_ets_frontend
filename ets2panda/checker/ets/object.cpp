@@ -3162,7 +3162,12 @@ Type *ETSChecker::GetApparentType(Type *type)
             newConstituent.push_back(GetApparentType(ct));
             differ |= (newConstituent.back() != ct);
         }
-        return cached(differ ? CreateETSUnionType(std::move(newConstituent)) : type);
+
+        if (!differ) {
+            return cached(type->AsETSUnionType()->NormalizedType());
+        }
+        auto *un = CreateETSUnionType(std::move(newConstituent));
+        return cached(un->IsETSUnionType() ? un->AsETSUnionType()->NormalizedType() : un);
     }
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     return cached(GetApparentTypeUtilityTypes(this, type));

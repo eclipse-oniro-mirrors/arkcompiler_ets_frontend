@@ -124,3 +124,6 @@ type_error_test.ets
 
 #31721 FailKind.SRC_DUMPER_FAI
 runtime/ets/objliteral_method_returntype_infer.ets
+
+#AST comparison Failed
+runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets

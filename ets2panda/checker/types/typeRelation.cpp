@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -297,6 +297,20 @@ bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
         checker_->SupertypeResults().Insert(key, {result_, RelationType::SUPERTYPE});
     }
 
+    return result_ == RelationResult::TRUE;
+}
+
+bool TypeRelation::IsReadonlyTypeOf(Type *source, Type *target)
+{
+    if (!source->HasTypeFlag(TypeFlag::READONLY)) {
+        return Result(false);
+    }
+
+    if (IsIdenticalTo(source, target)) {
+        return Result(true);
+    }
+
+    IsSupertypeOf(source, target);
     return result_ == RelationResult::TRUE;
 }
 

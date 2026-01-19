@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,17 @@
  * limitations under the License.
  */
 
-enum Color { Red }
-
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
+type voidCallback = () => void;
+interface A {
+    foo ?: voidCallback;
 }
+
+class B {
+    proxy: A | undefined = undefined;
+    foo() {
+        arktest.assertTrue(true);
+        return this.proxy?.foo!();
+    }
+}
+
+new B().foo()

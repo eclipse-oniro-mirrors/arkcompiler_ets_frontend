@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -453,7 +453,7 @@ bool ETSChecker::IsClassStaticMethod(checker::ETSObjectType *objType, checker::S
     // These types were not present in the ETS_TYPE list. Some of them are omitted intentionally, other are just bugs
     static constexpr auto TO_CLEAR = TypeFlag::CONSTANT | TypeFlag::GENERIC | TypeFlag::ETS_NUMERIC_ENUM |
                                      TypeFlag::ETS_STRING_ENUM | TypeFlag::READONLY | TypeFlag::BIGINT_LITERAL |
-                                     TypeFlag::ETS_TYPE_ALIAS | TypeFlag::TYPE_ERROR;
+                                     TypeFlag::ETS_TYPE_ALIAS | TypeFlag::TYPE_ERROR | TypeFlag::STRING_LITERAL;
 
     CHECK_NOT_NULL(type);
     auto res = static_cast<checker::TypeFlag>(type->TypeFlags() & ~(TO_CLEAR));

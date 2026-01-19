@@ -365,7 +365,7 @@ void ETSChecker::ValidateGenericTypeAliasForClonedNode(ir::TSTypeAliasDeclaratio
 }
 
 bool ETSChecker::IsArrayExprSizeValidForTuple(const ir::ArrayExpression *const arrayExpr,
-                                              const ETSTupleType *const tuple)
+                                              const ETSTupleType *const tuple, TypeRelationFlag const flags)
 {
     std::size_t size = 0;
 
@@ -376,16 +376,20 @@ bool ETSChecker::IsArrayExprSizeValidForTuple(const ir::ArrayExpression *const a
                 size += argType->AsETSTupleType()->GetTupleSize();
                 continue;
             }
-            LogError(diagnostic::INVALID_SPREAD_IN_TUPLE, {argType}, element->Start());
+            if ((flags & TypeRelationFlag::NO_THROW) == 0) {
+                LogError(diagnostic::INVALID_SPREAD_IN_TUPLE, {argType}, element->Start());
+            }
         }
         ++size;
     }
 
-    if (size != tuple->GetTupleSize()) {
-        LogError(diagnostic::TUPLE_WRONG_NUMBER_OF_ELEMS, {size, tuple->GetTupleSize()}, arrayExpr->Start());
-        return false;
+    if (size == tuple->GetTupleSize()) {
+        return true;
     }
 
-    return true;
+    if ((flags & TypeRelationFlag::NO_THROW) == 0) {
+        LogError(diagnostic::TUPLE_WRONG_NUMBER_OF_ELEMS, {size, tuple->GetTupleSize()}, arrayExpr->Start());
+    }
+    return false;
 }
 }  // namespace ark::es2panda::checker

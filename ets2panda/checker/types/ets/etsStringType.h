@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +26,7 @@ public:
                         ETSObjectFlags::CLASS | ETSObjectFlags::STRING | ETSObjectFlags::RESOLVED_SUPER)
     {
         SetSuperType(super);
+        AddTypeFlag(TypeFlag::STRING_LITERAL);
     }
 
     explicit ETSStringType(ArenaAllocator *allocator, ETSObjectType *super, TypeRelation *relation)
@@ -34,6 +35,7 @@ public:
                                         ETSObjectFlags::CLASS | ETSObjectFlags::STRING | ETSObjectFlags::RESOLVED_SUPER,
                                         relation))
     {
+        AddTypeFlag(TypeFlag::STRING_LITERAL);
         SetSuperType(super);
     }
 
@@ -47,6 +49,7 @@ public:
     {
         SetSuperType(super);
         AddTypeFlag(TypeFlag::CONSTANT);
+        AddTypeFlag(TypeFlag::STRING_LITERAL);
         variable_ = super->Variable();
     }
 

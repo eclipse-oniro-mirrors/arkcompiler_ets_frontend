@@ -193,7 +193,7 @@ void Checker::CleanUp()
     namedTypeStack_.clear();
 }
 
-void SignatureMatchContext::CheckErrorInRange()
+void InferMatchContext::CheckErrorInRange()
 {
     std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
     const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
@@ -211,7 +211,7 @@ void SignatureMatchContext::CheckErrorInRange()
     }
 }
 
-bool SignatureMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const
+bool InferMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const
 {
     if (range_.start.Program()->SourceFilePath().Mutf8() != errorLog.File()) {
         return false;
@@ -239,5 +239,4 @@ bool SignatureMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog)
 
     return true;
 }
-
 }  // namespace ark::es2panda::checker

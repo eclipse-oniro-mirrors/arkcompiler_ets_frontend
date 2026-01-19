@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -142,13 +142,14 @@ ETSArrayType *ETSChecker::CreateETSArrayType(Type *elementType, bool isCachePoll
     return arrayType;
 }
 
-Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
+Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes, bool needSubtypeReduction)
 {
     if (constituentTypes.empty()) {
         return nullptr;
     }
 
     std::stringstream ss;
+    ss << needSubtypeReduction;
     for (auto t : constituentTypes) {
         ss << ":" << t;
     }
@@ -161,18 +162,27 @@ Type *ETSChecker::CreateETSUnionType(Span<Type *const> constituentTypes)
 
     ArenaVector<Type *> newConstituentTypes(ProgramAllocator()->Adapter());
     newConstituentTypes.assign(constituentTypes.begin(), constituentTypes.end());
-
-    ETSUnionType::NormalizeTypes(Relation(), newConstituentTypes);
+    ETSUnionType::LinearizeAndEraseIdentical(Relation(), newConstituentTypes, needSubtypeReduction);
     if (newConstituentTypes.size() == 1) {
-        return newConstituentTypes[0];
+        cache.insert({hash, newConstituentTypes.front()});
+        return newConstituentTypes.front();
     }
-    auto type = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
-    auto ut = type->GetAssemblerType().Mutf8();
+
+    if (!needSubtypeReduction) {
+        std::vector<Type *> tobeNormalized(constituentTypes.begin(), constituentTypes.end());
+        auto normalizedUnion = CreateETSUnionType(Span<Type *const>(tobeNormalized), true);
+        auto type = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes), normalizedUnion);
+        cache.insert({hash, type});
+        return type;
+    }
+
+    auto *normalizedUnion = ProgramAllocator()->New<ETSUnionType>(this, std::move(newConstituentTypes));
+    auto ut = normalizedUnion->GetAssemblerType().Mutf8();
     if (std::count_if(ut.begin(), ut.end(), [](char c) { return c == ','; }) > 0) {
-        unionAssemblerTypes_.insert(type->GetAssemblerType());
+        UnionAssemblerTypes().insert(normalizedUnion->GetAssemblerType());
     }
-    cache.insert({hash, type});
-    return type;
+    cache.insert({hash, normalizedUnion});
+    return normalizedUnion;
 }
 
 ETSTupleType *ETSChecker::CreateETSTupleType(Span<Type *const> elements, bool readonly)

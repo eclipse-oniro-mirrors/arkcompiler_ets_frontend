@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,9 +18,9 @@ function f(c?: ()=>void) {
 }
 
 function main() {
-    f() {
-        return /* @@ label */1
+    f() /* @@ label */{
+        return 1
     }
 }
 
-/* @@@ label Error Semantic error ESE0091: Type 'Int' is not compatible with the enclosing method's return type 'void' */
+/* @@@ label Error Semantic error ESE0046: Type '(() => Int)' is not compatible with type '((() => void))|undefined' at index 1 */

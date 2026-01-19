@@ -483,10 +483,10 @@ private:
     Type *type_ {};
 };
 
-class SignatureMatchContext {
+class InferMatchContext {
 public:
-    explicit SignatureMatchContext(Checker *checker, util::DiagnosticType diagnosticKind,
-                                   const lexer::SourceRange &range, bool isLogError = true)
+    explicit InferMatchContext(Checker *checker, util::DiagnosticType diagnosticKind, const lexer::SourceRange &range,
+                               bool isLogError = true)
         : diagnosticEngine_(checker->DiagnosticEngine()),
           diagnosticCheckpoint_(),
           diagnosticKind_(diagnosticKind),
@@ -496,7 +496,7 @@ public:
         diagnosticCheckpoint_ = diagnosticEngine_.Save();
     }
 
-    bool ValidSignatureMatchStatus()
+    bool ValidMatchStatus()
     {
         std::array<size_t, util::DiagnosticType::COUNT> diagnosticCheckpoint = diagnosticEngine_.Save();
         const size_t currentErrorCnt = diagnosticCheckpoint[diagnosticKind_];
@@ -524,7 +524,7 @@ public:
     void CheckErrorInRange();
     bool IsErrorInRange(const util::DiagnosticBase &errorLog) const;
 
-    ~SignatureMatchContext()
+    ~InferMatchContext()
     {
         if (isLogError_) {
             return;
@@ -537,8 +537,8 @@ public:
         }
     }
 
-    NO_COPY_SEMANTIC(SignatureMatchContext);
-    NO_MOVE_SEMANTIC(SignatureMatchContext);
+    NO_COPY_SEMANTIC(InferMatchContext);
+    NO_MOVE_SEMANTIC(InferMatchContext);
 
 private:
     util::DiagnosticEngine &diagnosticEngine_;
@@ -594,7 +594,6 @@ private:
     varbinder::LocalVariable *preOverloadDeclaration_;
     varbinder::LocalVariable *syntheticVar_ = nullptr;
 };
-
 }  // namespace ark::es2panda::checker
 
 #endif /* CHECKER_H */

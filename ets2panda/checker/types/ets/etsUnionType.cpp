@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,13 +137,32 @@ void ETSUnionType::CanonicalizedAssemblerType(ETSChecker *checker)
               [](Type *a, Type *b) { return GetAssemblerTypeString(a) < GetAssemblerTypeString(b); });
 }
 
-ETSUnionType::ETSUnionType(ETSChecker *checker, ArenaVector<Type *> &&constituentTypes)
+ETSUnionType::ETSUnionType(ETSChecker *checker, ArenaVector<Type *> &&constituentTypes, Type *normalizedType)
     : Type(TypeFlag::ETS_UNION),
       constituentTypes_(std::move(constituentTypes)),
-      assemblerConstituentTypes_(checker->ProgramAllocator()->Adapter())
+      assemblerConstituentTypes_(checker->ProgramAllocator()->Adapter()),
+      normalizedType_(normalizedType == nullptr ? this : normalizedType)
+{
+    // Issue #1 all fields in ETSUnionType should be const.
+    InitCanonicalAsmTypeCache(checker);
+}
+
+void ETSUnionType::InitCanonicalAsmTypeCache(ETSChecker *checker)
 {
     ES2PANDA_ASSERT(constituentTypes_.size() > 1);
-    CanonicalizedAssemblerType(checker);
+    if (IsNormalizedUnion()) {
+        CanonicalizedAssemblerType(checker);
+        InitAssemblerTypeCache(checker);
+        return;
+    }
+
+    if (!normalizedType_->IsETSUnionType()) {
+        assemblerTypeCache_ = util::UString(normalizedType_->ToAssemblerType(), checker->ProgramAllocator()).View();
+        return;
+    }
+
+    assemblerConstituentTypes_.assign(normalizedType_->AsETSUnionType()->assemblerConstituentTypes_.begin(),
+                                      normalizedType_->AsETSUnionType()->assemblerConstituentTypes_.end());
     InitAssemblerTypeCache(checker);
 }
 
@@ -245,23 +264,70 @@ void ETSUnionType::CastTarget(TypeRelation *relation, Type *source)
     RelationTarget(relation, source, relFn);
 }
 
-static std::optional<Type *> TryMergeTypes(TypeRelation *relation, Type *const t1, Type *const t2)
+static std::optional<Type *> LightMerge(TypeRelation *relation, Type *const t1, Type *const t2)
 {
     auto *const checker = relation->GetChecker()->AsETSChecker();
     auto *const never = checker->GetGlobalTypesHolder()->GlobalETSNeverType();
 
-    if (relation->IsSupertypeOf(t1, t2) || t2 == never) {
+    // Merge the same type to one in the union.
+    if (relation->IsIdenticalTo(t1, t2)) {
         return t1;
     }
-    if (relation->IsSupertypeOf(t2, t1) || t1 == never) {
+
+    // Clear the non-readonly type or the never type in the union.
+    if (relation->IsReadonlyTypeOf(t1, t2) || t2 == never) {
+        return t1;
+    }
+
+    if (relation->IsReadonlyTypeOf(t2, t1) || t1 == never) {
+        return t2;
+    }
+
+    // Merge the string literal types to string type in the union.
+    if (!t1->IsETSStringType() || !t2->IsETSStringType()) {
+        return std::nullopt;
+    }
+
+    if (t1->HasTypeFlag(TypeFlag::STRING_LITERAL) && t2->HasTypeFlag(TypeFlag::STRING_LITERAL)) {
+        // type identical situation had been excluded before.
+        return std::nullopt;
+    }
+    return t1->HasTypeFlag(TypeFlag::STRING_LITERAL) ? t2 : t1;
+}
+
+static std::optional<Type *> MergeSubTypes(TypeRelation *relation, Type *const t1, Type *const t2)
+{
+    // Do Super-Sub type merge.
+    if (relation->IsSupertypeOf(t1, t2)) {
+        return t1;
+    }
+    if (relation->IsSupertypeOf(t2, t1)) {
         return t2;
     }
     return std::nullopt;
 }
 
-void ETSUnionType::LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types)
+template <typename MergeFn>
+static void MergeTypes(ArenaVector<Type *> &types, TypeRelation *relation, MergeFn &&tryMerge)
 {
-    // Linearize
+    for (auto cmpIt = types.begin(); cmpIt != types.end(); ++cmpIt) {
+        auto it = std::next(cmpIt);
+        while (it != types.end()) {
+            if (auto merged = tryMerge(relation, *cmpIt, *it); !merged) {
+                ++it;
+            } else if (*merged == *cmpIt) {
+                it = types.erase(it);
+            } else {
+                cmpIt = types.erase(cmpIt);
+                it = cmpIt != types.end() ? std::next(cmpIt) : cmpIt;
+            }
+        }
+    }
+}
+
+void ETSUnionType::LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types,
+                                              bool needSubtypeReduction)
+{
     std::size_t const initialSz = types.size();
     for (std::size_t i = 0U; i < initialSz; ++i) {
         auto ct = types[i];
@@ -278,19 +344,11 @@ void ETSUnionType::LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVecto
     // Remove nullptrs
     types.erase(std::remove_if(types.begin(), types.end(), [](Type *ct) { return ct == nullptr; }), types.end());
 
-    // Reduce subtypes
-    for (auto cmpIt = types.begin(); cmpIt != types.end(); ++cmpIt) {
-        auto it = std::next(cmpIt);
-        while (it != types.end()) {
-            if (auto merged = TryMergeTypes(relation, *cmpIt, *it); !merged) {
-                ++it;
-            } else if (*merged == *cmpIt) {
-                it = types.erase(it);
-            } else {
-                cmpIt = types.erase(cmpIt);
-                it = cmpIt != types.end() ? std::next(cmpIt) : cmpIt;
-            }
-        }
+    // Do normalization
+    if (!needSubtypeReduction) {
+        MergeTypes(types, relation, LightMerge);
+    } else {
+        MergeTypes(types, relation, MergeSubTypes);
     }
 }
 
@@ -300,7 +358,7 @@ void ETSUnionType::NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &t
         return;
     }
 
-    LinearizeAndEraseIdentical(relation, types);
+    LinearizeAndEraseIdentical(relation, types, true);
 }
 
 Type *ETSUnionType::Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes)

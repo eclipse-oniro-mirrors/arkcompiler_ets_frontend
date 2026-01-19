@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ class GlobalTypesHolder;
 class ETSUnionType : public Type {
 public:
     // constituentTypes must be normalized
-    explicit ETSUnionType(ETSChecker *checker, ArenaVector<Type *> &&constituentTypes);
+    explicit ETSUnionType(ETSChecker *checker, ArenaVector<Type *> &&constituentTypes, Type *normalizedType = nullptr);
 
     [[nodiscard]] const ArenaVector<Type *> &ConstituentTypes() const noexcept
     {
@@ -46,6 +46,8 @@ public:
     void IsSupertypeOf(TypeRelation *relation, Type *source) override;
     void IsSubtypeOf(TypeRelation *relation, Type *target) override;
     void CheckVarianceRecursively(TypeRelation *relation, VarianceFlag varianceFlag) override;
+    static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types,
+                                           bool needSubtypeReduction);
 
     [[nodiscard]] Type *FindUnboxableType() const noexcept;
 
@@ -87,6 +89,15 @@ public:
                                                    std::optional<double> value) const;
     [[nodiscard]] std::pair<checker::Type *, checker::Type *> GetComplimentaryType(ETSChecker *checker,
                                                                                    checker::Type *sourceType);
+    [[nodiscard]] Type *NormalizedType() const
+    {
+        return normalizedType_;
+    }
+
+    [[nodiscard]] bool IsNormalizedUnion() const
+    {
+        return normalizedType_ == this;
+    }
 
 private:
     static bool EachTypeRelatedToSomeType(TypeRelation *relation, ETSUnionType *source, ETSUnionType *target);
@@ -94,8 +105,6 @@ private:
 
     template <typename RelFN>
     void RelationTarget(TypeRelation *relation, Type *source, RelFN const &relFn);
-
-    static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types);
     [[nodiscard]] static bool ExtractType(ETSChecker *checker, checker::Type *source,
                                           std::vector<Type *> &unionTypes) noexcept;
 
@@ -103,6 +112,7 @@ private:
         checker::ETSChecker *checker, checker::ETSObjectType *sourceType,
         std::map<std::uint32_t, checker::ETSObjectType *> &numericTypes) const;
 
+    void InitCanonicalAsmTypeCache(ETSChecker *checker);
     void CanonicalizedAssemblerType(ETSChecker *checker);
     void InitAssemblerTypeCache(ETSChecker *checker);
 
@@ -114,6 +124,7 @@ private:
     ArenaVector<Type *> const constituentTypes_;
     ArenaVector<Type *> assemblerConstituentTypes_;
     util::StringView assemblerTypeCache_;
+    Type *const normalizedType_;
 };
 }  // namespace ark::es2panda::checker
 

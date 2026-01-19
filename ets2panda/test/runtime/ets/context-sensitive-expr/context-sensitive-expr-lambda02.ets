@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-enum Color { Red }
+// lamda assign to union with `Function` `Object` `Any`
+let a: Function | Object = (a: number, b: number):number => {return a + b};
+let b: Any | Function = (a: number): number => {return a};
+let c: Any | Function | ((a: number, b: number, c: number) => number) = (a, b, c) => {return a + b + c};
 
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
-}
+arktest.assertEQ((a as Function).unsafeCall(1.0, 1.0), 2);
+arktest.assertEQ((b as Function).unsafeCall(1.1), 1.1);
+arktest.assertEQ((c as (a: number, b: number, c: number) => number)(1.0, 1.0, 1.0), 3);

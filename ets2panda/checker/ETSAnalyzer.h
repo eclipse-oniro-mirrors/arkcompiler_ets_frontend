@@ -45,6 +45,9 @@ public:
     std::tuple<Type *, ir::Expression *> CheckAssignmentExprOperatorType(ir::AssignmentExpression *expr,
                                                                          Type *leftType) const;
     [[nodiscard]] checker::Type *ReturnTypeForStatement([[maybe_unused]] const ir::Statement *const st) const;
+    checker::Type *CheckObjectExprBaseOnObjectType(ir::ObjectExpression *expr, checker::ETSObjectType *objType) const;
+    checker::Type *CheckObjectExprBaseOnUnionType(ir::ObjectExpression *expr,
+                                                  checker::ETSUnionType *preferredType) const;
 
 private:
     ETSChecker *GetETSChecker() const;

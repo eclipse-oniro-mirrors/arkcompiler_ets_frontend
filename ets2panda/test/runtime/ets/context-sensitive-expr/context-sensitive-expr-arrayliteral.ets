@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-enum Color { Red }
+// arrayliteral in variable assignment type infer.
+type U = double[] | string[] | [int, string]
 
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
-}
+let x: U = [33, 44.0]; // choose double[]
+let y: U = ['aa', 'bb']; // choose string[]
+let z: U = [33, 'aa']; // choose [int, string]
+let w: U = [1] // choose int[]

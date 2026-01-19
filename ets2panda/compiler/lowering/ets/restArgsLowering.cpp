@@ -584,7 +584,7 @@ ir::ETSNewClassInstanceExpression *RestArgsLowering::TransformCallConstructWithR
 ir::CallExpression *RestArgsLowering::TransformCallExpressionWithRestArgs(ir::CallExpression *callExpr,
                                                                           public_lib::Context *context)
 {
-    checker::Type *calleeType = callExpr->Callee()->TsType();
+    checker::Type *calleeType = context->GetChecker()->AsETSChecker()->GetNormalizedType(callExpr->Callee()->TsType());
     if (calleeType == nullptr) {
         return callExpr;
     }

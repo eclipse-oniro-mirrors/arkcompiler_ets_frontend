@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,18 @@
  * limitations under the License.
  */
 
-enum Color { Red }
-
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
+// SpecificTypeMatchContext test, the error log in class Z must be throw.
+class C {
+    z: object = 1.2
 }
+
+class D {
+    z: number
+}
+
+class Z {
+    zoo(): int { return 1};
+    a = /* @@ label1 */b;
+}
+
+/* @@@ label1 Error Semantic error ESE0143: Unresolved reference b */

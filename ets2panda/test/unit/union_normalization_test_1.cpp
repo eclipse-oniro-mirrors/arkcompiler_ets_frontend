@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +51,9 @@ TEST_F(UnionNormalizationTest, UnionWithObject)
     unionConstituents.emplace_back(checker->GetGlobalTypesHolder()->GlobalETSStringBuiltinType());
 
     // Create union type, which will be normalized inside creation function
-    auto *const normalizedType = checker->CreateETSUnionType(std::move(unionConstituents));
+    auto *const un = checker->CreateETSUnionType(std::move(unionConstituents));
+    ASSERT_TRUE(un->IsETSUnionType());
+    auto *const normalizedType = un->AsETSUnionType()->NormalizedType();
     ASSERT_NE(normalizedType, nullptr);
     ASSERT_TRUE(normalizedType->IsETSObjectType());
     ASSERT_EQ(normalizedType, checker->GlobalETSObjectType());

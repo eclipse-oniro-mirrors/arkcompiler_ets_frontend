@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 
-enum Color { Red }
-
-function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
-}
+type U = int[] | double[] | string[] | [int, string] | (int | string)[]
+let z: U = /* @@ label */[33, 'aa'];
+/* @@@ label Error Semantic error ESE146473: Cannot infer a specific type of the Array Expression, ambiguous between type `[Int, String]` and type `Array<Int|String>`. */

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -275,6 +275,7 @@ public:
     bool IsIdenticalTo(IndexInfo *source, IndexInfo *target);
     bool SignatureIsSupertypeOf(Signature *super, Signature *sub);
     bool CheckVarianceRecursively(Type *type, VarianceFlag varianceFlag);
+    bool IsReadonlyTypeOf(Type *source, Type *target);
     VarianceFlag TransferVariant(VarianceFlag variance, VarianceFlag posVariance);
 
     void RaiseError(const diagnostic::DiagnosticKind &kind, const lexer::SourcePosition &loc) const;

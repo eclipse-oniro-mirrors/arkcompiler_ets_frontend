@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-enum Color { Red }
-
+ 
 function main() {
-    let b : Array<Number> = [Color.Red];
-    arktest.assertEQ(b[0], 0);
-    let c : Array<Color> = [Color.Red];  
-    arktest.assertEQ(c[0], Color.Red);
+    let arr: ReadonlyArray<Number> | Array<Number> = new Array<Number>(1,2,3);
+    let arr2: readonly Array<Number> | Array<Number> = new Array<Number>(1,2,3);
+    /* @@ label1 */arr[0] = 4;
+    /* @@ label2 */arr2[0] = 4;
 }
+
+/* @@@ label1 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
+/* @@@ label2 Error Semantic error ESE0058: Cannot modify an array or tuple content that has the readonly parameter */
