@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,6 @@
  */
 
 #include "ETSCompiler.h"
-
 #include "compiler/base/catchTable.h"
 #include "compiler/base/condition.h"
 #include "compiler/base/lreference.h"
@@ -928,7 +927,7 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     etsg->ApplyConversion(expr->Object());
     compiler::VReg objReg = etsg->AllocReg();
     etsg->StoreAccumulator(expr, objReg);
-
+    ES2PANDA_ASSERT(expr->TsType() != nullptr);
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
     ES2PANDA_ASSERT(expr->PropVar()->TsType() != nullptr);
     const checker::Type *const variableType = expr->PropVar()->TsType();
@@ -944,7 +943,12 @@ void ETSCompiler::Compile(const ir::MemberExpression *expr) const
     } else {
         etsg->LoadProperty(expr, variableType, objReg, etsg->FormClassPropReference(expr->PropVar()));
     }
+
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
+
+    if (expr->TsType()->IsETSUndefinedType()) {
+        etsg->CastToReftype(expr, expr->TsType(), false);
+    }
 
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
