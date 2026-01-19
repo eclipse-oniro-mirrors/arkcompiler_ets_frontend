@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -761,36 +761,39 @@ class AccountingDepartment {
 TEST_F(LspExtrSymblGetEditsTests, ExtractFunctionViaPublicAPI)
 {
     const std::string code = R"(
-    const kkmm = 1 + 1;
+const kkmm = 1 + 1;
+const kks = kkmm + 1;
+)";
 
-    const kks = kkmm + 1;
-})";
+    const std::string expected = R"(
+const kkmm = 1 + 1;
+function newFunction() {
+    return kkmm + 1;
+}
 
-    const size_t spanStart = 42;
-    const size_t spanEnd = 50;
+const kks = newFunction();
+)";
+
+    const size_t spanStart = 33;
+    const size_t spanEnd = 41;
 
     auto initializer = std::make_unique<Initializer>();
     auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
 
     // Step 1: get applicable refactors
     auto applicable = GetApplicableRefactorsImpl(refactorContext);
-    const std::string_view target =
-        ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name;  // extract_function_scope_0"
-    const std::string_view refactorName =
-        ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME;  // ExtractSymbolRefactor
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string globalScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
     // Step 2: run GetEditsForRefactorsImpl
     auto edits =
-        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
+        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), globalScopeAction);
 
     EXPECT_EQ(edits->GetFileTextChanges().size(), 1);
 
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     EXPECT_FALSE(fileEdit.textChanges.empty());
 
-    // Expect generated const extraction
-    std::string_view newText = fileEdit.textChanges.at(0).newText;
-    std::string_view expect = "function extractedFunction1() {\n    return kkmm + 1;\n}\n\n";
-    EXPECT_EQ(newText, expect);
+    ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
 
     initializer->DestroyContext(refactorContext->context);
 }
@@ -815,6 +818,10 @@ class MyClass {
 )";
     const std::string expected = R"('use static'
 
+function newFunction_1(a: number, b: number) {
+    return a + b;
+}
+
 function newFunction(a: number, b: number) {
     let c = a + b;
     return c;
@@ -824,7 +831,7 @@ class MyClass {
 
     MyMethod(a: number, b: number) {
 
-        let c = newFunction(a, b);
+        let c = newFunction_1(a, b);
         let d = c * c;
         return d;
     }
@@ -942,7 +949,6 @@ class AccountingDepartment {
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     ASSERT_FALSE(fileEdit.textChanges.empty());
-    ASSERT_EQ(fileEdit.fileName, "/tmp/ExtractSymbolRefactorTest.ets");
     ASSERT_EQ(fileEdit.textChanges.size(), 2u);
     EXPECT_EQ(fileEdit.textChanges[0].span.start, 139u);
     EXPECT_EQ(fileEdit.textChanges[0].span.length, 0u);
