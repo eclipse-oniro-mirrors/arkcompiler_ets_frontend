@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,7 @@ try {
 }
 function get(err: AggregateError):Error { //NoPropertyDescriptor
   const a = AggregateError.name;
-  const errr = Error() //BuiltinNoCtorFunc
+  const errr = Error()
   return new Error; //lib.es2022.error.d.ts
 }
 const err3 = new AggregateError([1, "two", new Error("fail")]); //NoPropertyDescriptor
