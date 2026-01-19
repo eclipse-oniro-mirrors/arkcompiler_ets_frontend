@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -254,20 +254,7 @@ void RegAllocator::AdjustInsSpill(const Span<VReg *> &registers, IRNode *ins, SA
         const VReg originReg = *reg;
         VReg spillReg(spillIndex--);
 
-        OperandType ty;
-        if (ins->IsDevirtual()) {
-            if (idx == 0) {
-                ty = OperandType::REF;
-            } else {
-                ty = ins->GetOperandRegType(idx - 1);
-            }
-        } else {
-            if (idx == 0 && ins->FirstArgIsThis()) {
-                ty = OperandType::REF;
-            } else {
-                ty = ins->GetOperandRegType(idx);
-            }
-        }
+        OperandType ty = ins->GetOperandRegType(idx);
 
         auto kind = ins->GetOperandRegKind(idx);
         if (kind == OperandKind::SRC_VREG || kind == OperandKind::SRC_DST_VREG) {
