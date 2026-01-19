@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -224,6 +224,10 @@ syntax:
 - name: DUPLICATE_PROTO_FIELDS
   id: 119997
   message: "Duplicate __proto__ fields are not allowed in object literals"
+
+- name: EMPTY_IMPORT_SPECIFIER_LIST
+  id: 10292
+  message: "The import clause contains an empty list."
 
 - name: ENUM_INVALID_INIT
   id: 36

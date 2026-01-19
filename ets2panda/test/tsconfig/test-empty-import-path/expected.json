@@ -1,0 +1,5 @@
+{
+    "returncode": 1,
+    "stdout": "[main.ets:16:9] Syntax error ESY73297: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module!\n[main.ets:16:11] Syntax error ESY10292: The import clause contains an empty list.\n[main.ets:16:16] Fatal error F0016: Can't find prefix for 'module' in arktsconfig.json\n",
+    "stderr": ""
+}

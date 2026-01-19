@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -283,6 +283,8 @@ void ImportExportDecls::VisitETSImportDeclaration(ir::ETSImportDeclaration *impo
         } else if (spec->IsImportNamespaceSpecifier()) {
             importedSpecifiersForExportCheck_.emplace(spec->AsImportNamespaceSpecifier()->Local()->Name(),
                                                       spec->AsImportNamespaceSpecifier()->Local()->Name());
+        } else if (spec->IsExpression() && spec->AsExpression()->IsBrokenExpression()) {
+            continue;
         } else {
             ES2PANDA_UNREACHABLE();
         }

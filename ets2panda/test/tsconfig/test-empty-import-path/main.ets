@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,4 @@
  * limitations under the License.
  */
 
-import {/* @@ label1 */} /* @@ label2 */from /* @@ label3 */'module'
-
-
-/* @@@ label1 Error Syntax error ESY73297: Importing for side-effect only is prohibited! Please provide objects to be imported explicitly or use * to import all objects declared in the module! */
-/* @@@ label2 Error Semantic error ESE0143: Unresolved reference from */
-/* @@@ label3 Error Syntax error ESY0227: Unexpected token 'module'. */
+import {} from 'module'

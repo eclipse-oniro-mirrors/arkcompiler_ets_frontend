@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -137,7 +137,7 @@ ir::AstNode *GetOriginalNode(ir::AstNode *astNode);
 checker::VerifiedType GetTypeOfSymbolAtLocation(checker::ETSChecker *checker, ir::AstNode *astNode);
 FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic, es2panda_Context *context,
                                        const std::vector<std::string> &args = std::vector<std::string>());
-std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position);
+std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *node);
 void GetRangeOfEnclosingComment(es2panda_Context *context, size_t pos, CommentRange *result);
 Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error);
 Diagnostic CreateDiagnosticWithoutFile(const util::DiagnosticBase &error);

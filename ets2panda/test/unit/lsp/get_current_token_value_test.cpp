@@ -42,7 +42,7 @@ TEST_F(LSPAPITests, GetCurrentTokenValue1)
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext("file1.ets", ES2PANDA_STATE_CHECKED, "\"ab\"");
     size_t offset = 3;
-    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset);
+    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset, nullptr);
     std::string expect = "ab";
     ASSERT_EQ(result, expect);
     initializer.DestroyContext(ctx);
@@ -53,7 +53,7 @@ TEST_F(LSPAPITests, GetCurrentTokenValue2)
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext("file1.ets", ES2PANDA_STATE_CHECKED, "\'ab\'");
     size_t offset = 3;
-    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset);
+    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset, nullptr);
     std::string expect = "ab";
     ASSERT_EQ(result, expect);
     initializer.DestroyContext(ctx);
@@ -64,7 +64,7 @@ TEST_F(LSPAPITests, GetCurrentTokenValue3)
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext("file1.ets", ES2PANDA_STATE_CHECKED, "abc");
     size_t offset = 2;
-    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset);
+    std::string result = ark::es2panda::lsp::GetCurrentTokenValueImpl(ctx, offset, nullptr);
     std::string expect = "ab";
     ASSERT_EQ(result, expect);
     initializer.DestroyContext(ctx);

@@ -963,4 +963,234 @@ class Person {
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsTests, getCompletionFromIndex1)
+{
+    std::vector<std::string> files = {"exportIndex1.ets", "getCompletionFromIndex1.ets"};
+    std::vector<std::string> texts = {R"(
+export class AAA {
+}
+)",
+                                      R"(
+import { A, } from './exportIndex1'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 11;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "AAA", CompletionEntryKind::CLASS, std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "AAA")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionFromIndex2)
+{
+    std::vector<std::string> files = {"exportIndex2.ets", "getCompletionFromIndex2.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import {  } from './exportIndex2'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 9;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "A", CompletionEntryKind::CLASS, std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "A")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionFromIndex3)
+{
+    std::vector<std::string> files = {"exportIndex3.ets", "getCompletionFromIndex3.ets"};
+    std::vector<std::string> texts = {R"(
+export interface AAA {
+}
+export class BBB {
+}
+export function CCC() {
+}
+)",
+                                      R"(
+import { AAA, } from './exportIndex3'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 15;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("BBB", CompletionEntryKind::CLASS,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "BBB"),
+        CompletionEntry("CCC", CompletionEntryKind::METHOD,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "CCC()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionFromIndex4)
+{
+    std::vector<std::string> files = {"exportIndex4.ets", "getCompletionFromIndex4.ets"};
+    std::vector<std::string> texts = {R"(
+export interface AAA {
+}
+export class BBB {
+}
+export function BB() {
+}
+)",
+                                      R"(
+import { AAA, B } from './exportIndex4'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 16;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("BBB", CompletionEntryKind::CLASS,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "BBB"),
+        CompletionEntry("BB", CompletionEntryKind::METHOD,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "BB()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, negativeGetCompletionFromIndex1)
+{
+    std::vector<std::string> files = {"negativeExportIndex1.ets", "negativeGetCompletionFromIndex1.ets"};
+    std::vector<std::string> texts = {R"(
+export class AAA {
+}
+)",
+                                      R"(
+import { A, } from './exportIndex'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 11;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, negativeGetCompletionFromIndex2)
+{
+    std::vector<std::string> files = {"negativeExportIndex2.ets", "negativeGetCompletionFromIndex2.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import {  } from './exportIndex'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 9;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, negativeGetCompletionFromIndex3)
+{
+    std::vector<std::string> files = {"negativeExportIndex3.ets", "negativeGetCompletionFromIndex3.ets"};
+    std::vector<std::string> texts = {R"(
+export interface AAA {
+}
+export class BBB {
+}
+export function CCC() {
+}
+)",
+                                      R"(
+import { AAA, } from './exportIndex'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 15;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, negativeGetCompletionFromIndex4)
+{
+    std::vector<std::string> files = {"negativeExportIndex4.ets", "negativeGetCompletionFromIndex4.ets"};
+    std::vector<std::string> texts = {R"(
+export interface AAA {
+}
+export class BBB {
+}
+export function BB() {
+}
+)",
+                                      R"(
+import { AAA, B } from './exportIndex'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 16;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    ASSERT_EQ(entries.size(), 0);
+    initializer.DestroyContext(ctx);
+}
+
 }  // namespace

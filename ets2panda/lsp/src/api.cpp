@@ -220,7 +220,7 @@ std::string GetCurrentTokenValue(es2panda_Context *context, size_t position)
     std::string source = std::string(ctx->parserProgram->SourceCode());
     size_t byteOffset = ark::es2panda::lsp::CodePointOffsetToByteOffset(source, position);
 
-    auto result = GetCurrentTokenValueImpl(context, byteOffset);
+    auto result = GetCurrentTokenValueImpl(context, byteOffset, nullptr);
     return result;
 }
 

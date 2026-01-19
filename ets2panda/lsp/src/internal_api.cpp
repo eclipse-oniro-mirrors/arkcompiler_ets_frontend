@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -537,12 +537,17 @@ std::string ReplaceQuotation(ark::es2panda::util::StringView strView)
     return str;
 }
 
-std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position)
+std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *preceding)
 {
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     auto program = ctx->parserProgram;
     auto ast = program->Ast();
-    ir::AstNode *node = FindPrecedingToken(position, ast, ctx->allocator);
+    ir::AstNode *node = nullptr;
+    if (preceding != nullptr) {
+        node = preceding;
+    } else {
+        node = FindPrecedingToken(position, ast, ctx->allocator);
+    }
     return node != nullptr ? ReplaceQuotation(program->SourceCode().Substr(node->Start().index, position)) : "";
 }
 
