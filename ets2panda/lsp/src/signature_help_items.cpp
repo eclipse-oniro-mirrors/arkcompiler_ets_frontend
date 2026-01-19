@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,8 +38,9 @@ SignatureHelpItems CreateSignatureHelpItems(std::vector<checker::Signature *> &s
         }
         itemsSeen++;
     }
-    ES2PANDA_ASSERT(signatures.size() != 0);
-    ES2PANDA_ASSERT(selectedItemIndex != static_cast<size_t>(-1));
+    if (signatures.size() == 0 || selectedItemIndex == static_cast<size_t>(-1)) {
+        return items;
+    }
 
     for (const auto &helpItem : GetSignatureHelpItem(signatures)) {
         items.SetItems(helpItem);

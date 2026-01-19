@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -127,8 +127,7 @@ FunctionInfo GetInfoInferRet(const RefactorContext &context)
     auto token = GetTouchingToken(context.context, context.span.pos, false);
     auto cb = [](ir::AstNode *node) {
         return node->Parent()->IsArrowFunctionExpression() || node->Parent()->IsFunctionDeclaration() ||
-               node->Parent()->IsFunctionExpression() || node->Parent()->IsFunctionDeclaration() ||
-               node->Parent()->IsMethodDefinition();
+               node->Parent()->IsFunctionExpression() || node->Parent()->IsMethodDefinition();
     };
     const auto declaration = FindAncestor(token, cb);
     if (declaration == nullptr) {
