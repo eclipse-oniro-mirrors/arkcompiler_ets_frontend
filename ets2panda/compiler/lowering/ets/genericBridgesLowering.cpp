@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -258,14 +258,12 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
     //  or have type parameters that are not modified in the derived class
     ES2PANDA_ASSERT(baseFunction);
     auto const *baseSignature1 = baseFunction->Signature()->Substitute(relation, &substitutions.baseConstraints);
-    if (baseSignature1 == baseFunction->Signature() &&
-        !baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
+    if (baseSignature1 == baseFunction->Signature()) {
         return;
     }
 
     auto *baseSignature2 = baseFunction->Signature()->Substitute(relation, &substitutions.derivedSubstitutions);
-    if (baseSignature2 == baseFunction->Signature() &&
-        !baseSignature2->HasSignatureFlag(checker::SignatureFlags::DEFAULT)) {
+    if (baseSignature2 == baseFunction->Signature()) {
         return;
     }
     baseSignature2 = baseSignature2->Substitute(relation, &substitutions.derivedConstraints);
@@ -286,8 +284,7 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
             // This derived overload already handles the base union signature.
             return;
         }
-        if ((derivedFunction == nullptr && overrides(signature, baseSignature2)) ||
-            (baseSignature1 == baseSignature2 && baseSignature1->HasSignatureFlag(checker::SignatureFlags::DEFAULT))) {
+        if ((derivedFunction == nullptr && overrides(signature, baseSignature2))) {
             //  NOTE: we don't care the possible case of mapping several derived function to the same bridge
             //  signature. Probably sometimes we will process it correctly or issue warning notification here...
             derivedFunction = signature->Function();
@@ -457,8 +454,10 @@ void GenericBridgesPhase::ProcessClassWithGenericSupertype(const ir::ClassDefini
     CreateGenericBridges(classDefinition, substitutions, superClassBody);
     const ArenaVector<checker::ETSObjectType *> &interfaces = superType->Interfaces();
     for (const checker::ETSObjectType *const interface : interfaces) {
+        Substitutions interfaceSubstitutions =
+            GetSubstitutions(interface, interface->GetConstOriginalBaseType()->AsETSObjectType()->TypeArguments());
         const auto &interfaceBody = interface->GetDeclNode()->AsTSInterfaceDeclaration()->Body()->Body();
-        CreateGenericBridges(classDefinition, substitutions, interfaceBody);
+        CreateGenericBridges(classDefinition, interfaceSubstitutions, interfaceBody);
     }
 }
 
