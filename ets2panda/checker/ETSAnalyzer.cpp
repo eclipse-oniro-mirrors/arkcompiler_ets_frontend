@@ -1147,7 +1147,10 @@ static Type *GetAppropriatePreferredType(Type *originalType, std::function<bool(
     }
 
     Type *preferredType = nullptr;
-    for (auto &type : originalType->AsETSUnionType()->ConstituentTypes()) {
+    for (Type *type : originalType->AsETSUnionType()->ConstituentTypes()) {
+        while (type->IsETSTypeAliasType()) {
+            type = type->AsETSTypeAliasType()->GetTargetType();
+        }
         if (predicate(type)) {
             if (preferredType != nullptr) {
                 return nullptr;  // ambiguity

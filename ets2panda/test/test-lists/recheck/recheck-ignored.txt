@@ -114,3 +114,6 @@ runtime/ets/non_null_number_as_index.ets
 runtime/ets/re_export_default/import_reexport3.ets
 #32155
 ast/compiler/ets/annotation_new.ets
+
+# Tests that fails after recheck: Issue # 838
+ runtime/ets/nested_array_2.ets

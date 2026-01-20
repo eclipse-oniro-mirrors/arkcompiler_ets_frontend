@@ -102,3 +102,8 @@ context-sensitive-expr/RecordRecursiveTest-Lambda03.ets
 context-sensitive-expr/RecordRecursiveTest-Lambda04.ets
 context-sensitive-expr/RecordRecursiveTest-OriginalTdd.ets
 context-sensitive-expr/context-sensitive-expr-arrayliteral02.ets
+
+#32594 TSC Fail
+nested_array_1.ets
+nested_array_2.ets
+nested_array_3.ets
