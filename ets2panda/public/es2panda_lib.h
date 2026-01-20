@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -247,6 +247,8 @@ struct CAPI_EXPORT es2panda_Impl {
     es2panda_SuggestionInfo *(*CreateSuggestionInfo)(es2panda_Context *context, const es2panda_DiagnosticKind *kind,
                                                      const char **args, size_t argc, const char *substitutionCode,
                                                      const char *title, es2panda_SourceRange *range);
+    void (*LogDiagnosticWithSuggestions)(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
+                                         es2panda_SuggestionInfo **suggestionInfos, size_t suggestionCount);
     void (*LogDiagnosticWithSuggestion)(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
                                         const es2panda_SuggestionInfo *suggestionInfo);
     void (*LogDiagnostic)(es2panda_Context *context, const es2panda_DiagnosticKind *kind, const char **args,

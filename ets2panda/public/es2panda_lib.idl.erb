@@ -205,6 +205,8 @@ interface es2panda_Impl {
     es2panda_SuggestionInfo CreateSuggestionInfo(es2panda_Context context, es2panda_DiagnosticKind kind,
                                         sequence<String> args, u32 argc, String substitutionCode,
                                         String message, es2panda_SourceRange range);
+    void LogDiagnosticWithSuggestions(es2panda_Context context, es2panda_DiagnosticInfo diagnosticInfo,
+                                        sequence<es2panda_SuggestionInfo> suggestionInfos, u32 suggestionCount);
     void LogDiagnosticWithSuggestion(es2panda_Context context, es2panda_DiagnosticInfo diagnosticInfo,
                                         es2panda_SuggestionInfo suggestionInfo);
     void LogDiagnostic(es2panda_Context context, es2panda_DiagnosticKind kind, sequence<String> args,
