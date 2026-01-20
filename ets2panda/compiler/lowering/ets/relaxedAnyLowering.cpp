@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -129,7 +129,7 @@ static ir::AstNode *TransformCallExpression(public_lib::Context *ctx, ir::CallEx
     auto checker = ctx->GetChecker()->AsETSChecker();
 
     auto const callee = node->Callee();
-    if (callee->IsMemberExpression()) {
+    if (callee->IsMemberExpression() && !callee->TsType()->IsETSArrowType()) {
         if (!IsLoweringCandidate(checker, callee->AsMemberExpression()->Object()->TsType())) {
             return node;
         }
