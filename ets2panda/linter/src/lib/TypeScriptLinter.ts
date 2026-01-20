@@ -9045,6 +9045,40 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
   }
 
+  private static isAliasTypeArray(nowType: ts.Type): boolean {
+    if (nowType.aliasSymbol) {
+      const aliasSymbol = nowType.aliasSymbol;
+
+      const symbolDeclarations = aliasSymbol?.declarations;
+
+      const declarationSymbol = symbolDeclarations?.[0].symbol;
+      if (!declarationSymbol) {
+        return false;
+      }
+
+      const declarationList = declarationSymbol?.declarations;
+      if (!declarationList) {
+        return false;
+      }
+
+      const typeAliasDeclaration = declarationList[0] as ts.TypeAliasDeclaration;
+      const typeNode = typeAliasDeclaration.type;
+      if (!typeNode) {
+        return false;
+      }
+
+      return ts.isArrayTypeNode(typeNode);
+    }
+    return false;
+  }
+
+  private isAllArray(lhsType: ts.Type, rhsType: ts.Type): boolean {
+    return (
+      (TypeScriptLinter.isAliasTypeArray(lhsType) || this.tsUtils.isArray(lhsType)) &&
+      (TypeScriptLinter.isAliasTypeArray(rhsType) || this.tsUtils.isArray(rhsType))
+    );
+  }
+
   private handleArrayTypeImmutable(node: ts.Node, lhsType: ts.Type, rhsType: ts.Type, rhsExpr?: ts.Expression): void {
     if (!this.options.arkts2) {
       return;
@@ -9055,7 +9089,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       lhsType = possibleLhsType;
     }
 
-    const isArray = this.tsUtils.isArray(lhsType) && this.tsUtils.isArray(rhsType);
+    const isArray = this.isAllArray(lhsType, rhsType);
     if (isArray && this.tsTypeChecker.typeToStringForLinter(lhsType) === 'never[]') {
       return;
     }
@@ -9064,11 +9098,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (!((isArray || isTuple) && lhsType !== rhsType)) {
       return;
     }
-
     const aliasedTypes = this.checkForAliasedTypes(lhsType, rhsType);
     const rhsTypeStr = aliasedTypes[1];
     let lhsTypeStr = aliasedTypes[0];
-
     if (rhsExpr && (this.isNullOrEmptyArray(rhsExpr) || ts.isArrayLiteralExpression(rhsExpr))) {
       return;
     }
@@ -9094,11 +9126,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     let typeString = '';
     const lhsTypeDecl = this.tsUtils.getTypeAliasOriginalDecl(type);
     if (lhsTypeDecl) {
-      typeString = lhsTypeDecl.type.getText().replace('(', '').
-        replace(')', '');
+      typeString = lhsTypeDecl.type.getText();
     } else {
       typeString = this.tsTypeChecker.typeToStringForLinter(type);
     }
+    typeString = typeString.replace(/[()]/g, '');
 
     /*
      * at this point we already now that these types match, we need to know if they match exactly
