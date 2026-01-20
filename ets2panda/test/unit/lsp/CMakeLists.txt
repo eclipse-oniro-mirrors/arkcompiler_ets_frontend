@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -110,6 +110,14 @@ ets2panda_add_gtest(lsp_api_classifier_test CPP_SOURCES
 
 ets2panda_add_gtest(lsp_api_test_class_hierarchies CPP_SOURCES
     class_hierarchys_test.cpp
+)
+
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol CPP_SOURCES	 
+    refactor_extract_symbol_test.cpp 
+)
+
+ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_variable CPP_SOURCES 
+    refactor_extract_symbol_test_variable.cpp 
 )
 
 ets2panda_add_gtest(lsp_api_test_refactor_extract_symbol_function CPP_SOURCES
