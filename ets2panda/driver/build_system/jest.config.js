@@ -29,6 +29,7 @@ module.exports = {
   ],
   testMatch: [
     "<rootDir>/test/ut/base_modeTest/**/*.test.ts",
+    '<rootDir>/test/ut/entryTest/**/*.test.ts',
     '<rootDir>/test/ut/generate_arktsconfigTest/**/*.test.ts',
     '<rootDir>/test/ut/compile_process_workerTest/**/*.test.ts',
     '<rootDir>/test/ut/declgen_process_workerTest/**/*.test.ts'

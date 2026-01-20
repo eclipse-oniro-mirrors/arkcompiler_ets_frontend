@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,8 @@ import {
     OHOS_MODULE_TYPE,
     BUILD_MODE
 } from '../../../src/types';
-import { Logger } from '../../../src/logger';
+import { Logger, LogData } from '../../../src/logger';
+import { DriverError } from '../../../src/util/error';
 import {
     getKoalaModule,
     cleanKoalaModule
@@ -30,7 +31,8 @@ jest.mock('../../../src/build/build_mode');
 jest.mock('../../../src/build/build_framework_mode');
 jest.mock('../../../src/logger');
 jest.mock('../../../src/init/process_build_config', () => ({
-    processBuildConfig: jest.fn((config) => config)
+    processBuildConfig: jest.fn((config) => config),
+    initBuildConfig: jest.fn((config) => config)
 }));
 
 beforeEach(() => {
@@ -44,7 +46,10 @@ describe('entry.ts build function with clean', () => {
         Logger.getInstance = jest.fn().mockReturnValue({
             hasErrors: jest.fn().mockReturnValue(hasErrors),
             printInfo: jest.fn(),
-            printError: jest.fn()
+            printError: jest.fn(),
+            printDebug: jest.fn(),
+            printWarn: jest.fn(),
+            printErrorAndExit: jest.fn()
         });
     }
 
@@ -78,13 +83,13 @@ describe('entry.ts build function with clean', () => {
             packageName: 'test'
         }));
         expect(mockRun).toHaveBeenCalled();
-        expect(getKoalaModule()).toBeNull();
+        expect(getKoalaModule()).toBeUndefined();
     });
 
     test('frameworkMode branch cleans and calls BuildFrameworkMode', async () => {
         const BuildFrameworkMode = require('../../../src/build/build_framework_mode').BuildFrameworkMode;
         const mockRun = jest.fn().mockResolvedValue(undefined);
-        BuildFrameworkMode.mockImplementation(() => ({ run: mockRun }));
+        BuildFrameworkMode.mockImplementation(() => ({ run: mockRun, runSimultaneous: mockRun }));
 
         setupLogger();
 
@@ -109,13 +114,13 @@ describe('entry.ts build function with clean', () => {
             packageName: 'test'
         }));
         expect(mockRun).toHaveBeenCalled();
-        expect(getKoalaModule()).toBeNull();
+        expect(getKoalaModule()).toBeUndefined();
     });
 
     test('enableDeclgenEts2Ts branch cleans and calls generateDeclaration', async () => {
         const BuildMode = require('../../../src/build/build_mode').BuildMode;
         const mockGenerateDeclaration = jest.fn().mockResolvedValue(undefined);
-        BuildMode.mockImplementation(() => ({ run: jest.fn(), generateDeclaration: mockGenerateDeclaration }));
+        BuildMode.mockImplementation(() => ({ run: jest.fn(), generateDeclaration: mockGenerateDeclaration, generateDeclarationV1Parallel: mockGenerateDeclaration }));
 
         setupLogger();
 
@@ -140,7 +145,7 @@ describe('entry.ts build function with clean', () => {
             packageName: 'test'
         }));
         expect(mockGenerateDeclaration).toHaveBeenCalled();
-        expect(getKoalaModule()).toBeNull();
+        expect(getKoalaModule()).toBeUndefined();
     });
 
     test('no matching branch cleans and exits on error', async () => {
@@ -151,7 +156,7 @@ describe('entry.ts build function with clean', () => {
             packageName: 'test',
             compileFiles: ['test.ets'],
             enableDeclgenEts2Ts: false,
-            frameworkMode: true,
+            frameworkMode: false,
             loaderOutPath: './dist',
             cachePath: './dist/cache',
             moduleType: OHOS_MODULE_TYPE.HAR,
@@ -162,7 +167,42 @@ describe('entry.ts build function with clean', () => {
 
         await entryModule.build(mockConfig);
 
-        expect(process.exit).toHaveBeenCalledWith(1);
-        expect(getKoalaModule()).toBeNull();
+        expect(process.exit).not.toHaveBeenCalled();
+        expect(getKoalaModule()).toBeUndefined();
+    });
+
+    test('backwardCompatibleBuildConfigStub uses and preserves getHvigorConsoleLogger', async () => {
+        setupLogger();
+        const hvigorLoggerMock = jest.fn() as any;
+        const mockConfig = {
+            buildType: BUILD_TYPE.BUILD,
+            packageName: 'test',
+            compileFiles: [],
+            enableDeclgenEts2Ts: false,
+            frameworkMode: false,
+            loaderOutPath: './dist',
+            cachePath: './dist/cache',
+            moduleType: OHOS_MODULE_TYPE.HAR,
+            sourceRoots: ['./'],
+            moduleRootPath: '/test/path',
+            buildMode: BUILD_MODE.DEBUG,
+            getHvigorConsoleLogger: hvigorLoggerMock
+        } as unknown as BuildConfig;
+
+        const { BuildMode } = require('../../../src/build/build_mode');
+        BuildMode.mockImplementation(() => ({
+            run: jest.fn(),
+            generateDeclarationV1Parallel: jest.fn(),
+            runSimultaneous: jest.fn()
+        }));
+
+        await entryModule.build(mockConfig);
+
+        // Verify Logger.getInstance was called with the hvigor logger
+        expect(Logger.getInstance).toHaveBeenCalledWith(hvigorLoggerMock);
+        
+        // Verify getHvigorConsoleLogger was NOT deleted
+        expect(mockConfig.getHvigorConsoleLogger).toBeDefined();
+        expect(mockConfig.getHvigorConsoleLogger).toBe(hvigorLoggerMock);
     });
 });

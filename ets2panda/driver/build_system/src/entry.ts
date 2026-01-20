@@ -33,7 +33,6 @@ function backwardCompatibleBuildConfigStub(projectConfig: BuildConfig, loggerGet
     }
 
     const hvigorLogger = projectConfig.getHvigorConsoleLogger as LoggerGetter
-    delete projectConfig.getHvigorConsoleLogger
     Logger.getInstance(hvigorLogger ?? (loggerGetter ?? getConsoleLogger));
 }
 
