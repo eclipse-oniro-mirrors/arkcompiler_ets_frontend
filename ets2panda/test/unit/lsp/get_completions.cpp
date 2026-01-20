@@ -790,6 +790,74 @@ import { A } from './get'
     initializer.DestroyContext(ctx);
 }
 
+TEST_F(LSPCompletionsTests, importStatementCompletionPath1Conflict)
+{
+    std::vector<std::string> files = {"exportFile4.ets", "importStatementCompletionPath1Conflict.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A } from './'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    // Reproduce concurrency bug: unexpected file without extension in scanned directory
+    std::filesystem::path dir = std::filesystem::path(filePaths[0]).parent_path();
+    std::filesystem::path conflictFile = dir / "MoveToNewFileTests_import_22";
+    std::ofstream badOfs(conflictFile);
+    badOfs.close();
+
+    int const expectedFileCount = 2;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 22;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "importStatementCompletionPath1Conflict", CompletionEntryKind::FILE,
+        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "importStatementCompletionPath1Conflict")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, importStatementCompletionPath1Conflict1)
+{
+    std::vector<std::string> files = {"exportFileEmpty.ets", "importStatementCompletionPath1Conflict1.ets"};
+    std::vector<std::string> texts = {R"(
+export class A {
+}
+)",
+                                      R"(
+import { A } from './'
+)"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    // Create an empty file with .ets extension
+    std::filesystem::path dir = std::filesystem::path(filePaths[0]).parent_path();
+    std::filesystem::path emptyFile = dir / "EmptyTarget.ets";
+    std::ofstream emptyOfs(emptyFile);
+    emptyOfs.close();
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 22;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[1].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    // Expect "EmptyTarget" to be present in completions (as a file/module)
+    auto entries = res.GetEntries();
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("EmptyTarget", CompletionEntryKind::FILE,
+                        std::string(ark::es2panda::lsp::sort_text::GLOBALS_OR_KEYWORDS), "EmptyTarget")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+
+    initializer.DestroyContext(ctx);
+}
+
 TEST_F(LSPCompletionsTests, importStatementCompletionPath1)
 {
     std::vector<std::string> files = {"exportFile4.ets", "importStatementCompletionPath1.ets"};

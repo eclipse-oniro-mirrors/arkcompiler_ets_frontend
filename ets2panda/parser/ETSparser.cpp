@@ -311,7 +311,10 @@ void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &
     const auto &importData = parseListElem.importData;
 
     auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
-    ES2PANDA_ASSERT(!extSrc.empty());
+    if (extSrc.empty()) {
+        util::DiagnosticMessageParams param = {std::string {src}};
+        DiagnosticEngine().LogDiagnostic(diagnostic::EMPTY_SOURCE_FILE, param);
+    }
 
     bool isDynamic = importData.lang != Language::Id::ETS;
     SourceFile sf {src, extSrc, importData.resolvedSource, false, isDynamic};

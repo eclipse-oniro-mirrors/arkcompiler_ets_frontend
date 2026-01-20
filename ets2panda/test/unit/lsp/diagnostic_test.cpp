@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,8 @@
 #include "lsp/include/internal_api.h"
 #include "public/es2panda_lib.h"
 #include "public/public.h"
+#include "util/diagnosticEngine.h"
+#include "generated/diagnostic.h"
 
 namespace {
 
@@ -183,6 +185,47 @@ TEST_F(LSPAPITests, CreateDiagnosticForNode3)
     ASSERT_EQ(result.diagnostic.range_.end.line_, endLine);
     ASSERT_EQ(result.diagnostic.range_.start.character_, startChar);
     ASSERT_EQ(result.diagnostic.range_.end.character_, endChar);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPAPITests, ImportEmptyFileHasWarning)
+{
+    std::vector<std::string> files = {"empty.ets", "main.ets"};
+    std::vector<std::string> contents = {"", "import * as ns from \"./empty\""};
+    auto paths = CreateTempFile(files, contents);
+    ASSERT_EQ(paths.size(), files.size());
+
+    std::string mainPath = paths[1];
+    std::string mainSource = contents[1];
+    std::string emptyFilePath = paths[0];
+
+    Initializer initializer;
+    auto ctx = initializer.CreateContext(mainPath.c_str(), ES2PANDA_STATE_CHECKED, mainSource.c_str());
+    ASSERT_NE(ctx, nullptr);
+
+    auto *context = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
+
+    ark::es2panda::util::DiagnosticEngine *diagnosticEngine = context->diagnosticEngine;
+    if (diagnosticEngine == nullptr && context->config != nullptr) {
+        diagnosticEngine = context->config->diagnosticEngine;
+    }
+
+    ASSERT_NE(diagnosticEngine, nullptr) << "DiagnosticEngine is null in Context and Config";
+
+    const auto &warnings = diagnosticEngine->GetDiagnosticStorage(ark::es2panda::util::DiagnosticType::WARNING);
+
+    bool found = false;
+    for (const auto &diag : warnings) {
+        if (diag->GetId() == ark::es2panda::diagnostic::EMPTY_SOURCE_FILE.Id()) {
+            found = true;
+            // Verify message content
+            std::string expectedMsg = "The source file '" + emptyFilePath + "' is empty.";
+            ASSERT_EQ(diag->Message(), expectedMsg);
+            break;
+        }
+    }
+    ASSERT_TRUE(found) << "Expected warning EMPTY_SOURCE_FILE (20000) not found";
+
     initializer.DestroyContext(ctx);
 }
 
