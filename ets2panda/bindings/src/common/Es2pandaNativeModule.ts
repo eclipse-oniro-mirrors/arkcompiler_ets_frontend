@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -141,6 +141,14 @@ export class Es2pandaNativeModule {
     throw new Error('Not implemented');
   }
   _VarBinderSetContext(context: KPtr): void {
+    throw new Error('Not implemented');
+  }
+
+  _getRenameFileName(ptr: KNativePointer): KPtr {
+    throw new Error('Not implemented');
+  }
+
+  _getRenameLocation(ptr: KNativePointer): KInt {
     throw new Error('Not implemented');
   }
 
