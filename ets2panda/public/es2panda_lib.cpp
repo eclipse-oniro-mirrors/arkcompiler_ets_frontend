@@ -983,7 +983,7 @@ extern "C" const es2panda_DiagnosticKind *CreateDiagnosticKind(es2panda_Context 
     } else if (etype == ES2PANDA_PLUGIN_ERROR) {
         type = util::DiagnosticType::PLUGIN_ERROR;
     }
-    ctx->config->diagnosticKindStorage.emplace_back(type, id, dmessage);
+    ctx->config->diagnosticKindStorage.emplace_back(type, id, dmessage, false);
     return reinterpret_cast<const es2panda_DiagnosticKind *>(&ctx->config->diagnosticKindStorage.back());
 }
 
@@ -1198,7 +1198,8 @@ extern "C" bool IsImportTypeKind([[maybe_unused]] es2panda_Context *context, es2
     auto id = ctx->config->diagnosticKindStorage.size() + 1;
     auto type = util::DiagnosticType::PLUGIN_WARNING;
     util::DiagnosticMessageParams params {};
-    diagnostic::DiagnosticKind *kind = &ctx->config->diagnosticKindStorage.emplace_back(type, id, "Insert wrong node!");
+    diagnostic::DiagnosticKind *kind =
+        &ctx->config->diagnosticKindStorage.emplace_back(type, id, "Insert wrong node!", false);
     ctx->diagnosticEngine->LogDiagnostic(*kind, params, E2pNode->Start());
     return false;
 }
