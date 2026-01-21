@@ -4192,6 +4192,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleNoDeprecatedApi(tsMethodDecl);
     this.checkAbstractOverrideReturnType(tsMethodDecl);
     this.handleGlobalDepreApis(tsMethodDecl);
+    this.checkIncompatibleFunctionTypes(tsMethodDecl);
   }
 
   private checkObjectPublicApiMethods(node: ts.ClassDeclaration | ts.InterfaceDeclaration): void {
@@ -4348,7 +4349,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (allBaseTypes && allBaseTypes.length > 0) {
       this.checkMethodType(allBaseTypes, methodName, node, isStatic);
     }
-    this.checkIncompatibleFunctionTypes(node);
   }
 
   private handleMethodInheritForCommonApi(node: ts.MethodDeclaration): void {
@@ -4420,6 +4420,19 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       const actualReturnType = this.tsTypeChecker.getTypeAtLocation(returnStmt.expression);
       const actualReturnTypeStr = this.tsTypeChecker.typeToStringForLinter(actualReturnType);
+
+      /**
+       * Handle 'this' type specially: if the expression is 'this' and the class type matches declared type,
+       * they are compatible.
+       */
+      if (actualReturnTypeStr === 'this') {
+        const classType = this.tsTypeChecker.getTypeAtLocation(method.parent);
+        const classTypeStr = this.tsTypeChecker.typeToStringForLinter(classType);
+        if (declaredReturnTypeStr === classTypeStr) {
+          return;
+        }
+      }
+
       if (declaredReturnTypeStr === actualReturnTypeStr) {
         return;
       }

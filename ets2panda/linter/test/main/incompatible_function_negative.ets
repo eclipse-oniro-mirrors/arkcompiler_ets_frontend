@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,3 +55,30 @@ function sleep(time: number): Promise<Object> {
   return new Promise<Object>((resolve) => setTimeout(resolve, time));
 }
 sleep(100);
+
+class A {
+}
+
+class B extends A {
+}
+
+class C {
+  private a = new A();
+  private b = new B();
+
+  test1(): A {
+    return this.b; // OK
+  }
+
+  test2(): B {
+    return this.a; // ERROR
+  }
+
+  test3(): C {
+    return this; // OK
+  }
+
+  test4(): {
+    return this; // OK
+  }
+}
