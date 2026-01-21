@@ -127,6 +127,22 @@ static Type *GetArgumentType(ETSChecker *checker, ir::Expression *arg)
     return arg->Check(checker);
 }
 
+static std::pair<Type *, bool> GetArgumentTypeForInfer(ETSChecker *checker, ir::Expression *arg)
+{
+    if (arg->IsArrowFunctionExpression()) {
+        InferMatchContext inferMatchContext(checker, util::DiagnosticType::SEMANTIC, arg->Range(), false);
+        auto *argType = GetArgumentType(checker, arg);
+        if (!inferMatchContext.ValidMatchStatus()) {
+            arg->CleanCheckInformation();
+            return {nullptr, true};
+        }
+        checker->Relation()->SetNode(arg);
+        return {argType, false};
+    }
+
+    return {GetArgumentType(checker, arg), false};
+}
+
 static void InferUntilFail(Signature const *const signature, const ArenaVector<ir::Expression *> &arguments,
                            ETSChecker *checker, Substitution *substitution)
 {
@@ -157,14 +173,18 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
                 continue;
             }
 
+            if (!substitution->empty()) {
+                paramType = paramType->Substitute(checker->Relation(), substitution);
+            }
+
             // note: case in #31893 should be fixed later
             if (!checker->ContainsTypeParameter(paramType)) {
                 arg->SetPreferredType(paramType);
             }
 
-            Type *argType = GetArgumentType(checker, arg);
-            if (arg->IsArrowFunctionExpression()) {
-                checker->Relation()->SetNode(arg);
+            auto [argType, needContinue] = GetArgumentTypeForInfer(checker, arg);
+            if (needContinue) {
+                continue;
             }
 
             if (checker->EnhanceSubstitutionForType(sigInfo->typeParams, paramType, argType, substitution)) {
