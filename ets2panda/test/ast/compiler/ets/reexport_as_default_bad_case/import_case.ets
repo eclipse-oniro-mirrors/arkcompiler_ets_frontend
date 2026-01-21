@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,5 +18,5 @@ import { A } from "./reexport_case"
 let a = new A()
 let x = a.name
 
-/* @@? 16:19 Error Semantic error ESE0356: Cannot find imported element 'A' */
+/* @@? 16:10 Error Semantic error ESE0356: Cannot find imported element 'A' */
 /* @@? 18:13 Error Semantic error ESE0371: Cannot find type 'A'. */

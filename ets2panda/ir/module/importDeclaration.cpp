@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,12 +52,11 @@ void ImportDeclaration::TransformChildren(const NodeTransformer &cb, std::string
 
 void ImportDeclaration::Iterate(const NodeTraverser &cb) const
 {
-    auto source = GetHistoryNodeAs<ImportDeclaration>()->source_;
-    cb(source);
-
     for (auto *it : VectorIterationGuard(Specifiers())) {
         cb(it);
     }
+    auto source = GetHistoryNodeAs<ImportDeclaration>()->source_;
+    cb(source);
 }
 
 void ImportDeclaration::Dump(ir::AstDumper *dumper) const

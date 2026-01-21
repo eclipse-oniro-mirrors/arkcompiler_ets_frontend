@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -151,15 +151,19 @@ Info GetInfoSpelling(es2panda_Context *context, size_t position)
     if (token == nullptr) {
         return {"", nullptr};
     }
-    const auto parent = token->Parent();
+    auto parent = token->Parent();
     const auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
     const auto astNode = ctx->parserProgram->Ast();
 
-    if (!parent->IsETSImportDeclaration()) {
+    if (!parent->IsETSImportDeclaration() &&
+        !(parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier())) {
         auto findClosestWord = FindClosestWordJaccard(astNode, std::string(token->AsIdentifier()->Name().Utf8()));
         if (!findClosestWord.empty()) {
             return {findClosestWord, token};
         }
+    }
+    if (parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier()) {
+        parent = parent->Parent();
     }
     auto importDecl = parent->AsETSImportDeclaration();
     if (!importDecl->Specifiers().empty()) {

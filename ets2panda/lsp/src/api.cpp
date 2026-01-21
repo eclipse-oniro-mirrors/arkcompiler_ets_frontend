@@ -294,9 +294,12 @@ DiagnosticReferences GetSemanticDiagnostics(es2panda_Context *context)
     DiagnosticReferences result {};
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
     ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::SEMANTIC);
+    ctx->diagnosticEngine->CleanDuplicateLog(util::DiagnosticType::FATAL);
     SetPhaseManager(ctx->phaseManager);
     const auto &diagnostics = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::SEMANTIC);
+    const auto &diagnosticsFatal = ctx->diagnosticEngine->GetDiagnosticStorage(util::DiagnosticType::FATAL);
     MakeDiagnosticReferences(context, diagnostics, result);
+    MakeDiagnosticReferences(context, diagnosticsFatal, result);
     return result;
 }
 
