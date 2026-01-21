@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,16 @@
  * limitations under the License.
  */
 
-
-class A {
-    back(){}
+abstract class C{
+    abstract m(): int
 }
-let a:A = {back:()=>{}}
 
-
-
-/* @@? 20:12 Error Semantic error ESE0074: Class methods cannot be overridden within an object literal. */
+function main(){
+    let x:C = {
+        m(): int {
+            return 100
+        }
+    }
+    arktest.assertEQ(x.m(), 100)
+    arktest.assertTrue(x instanceof C)
+}

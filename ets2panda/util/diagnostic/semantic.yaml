@@ -1067,7 +1067,7 @@ semantic:
 
 - name: OBJECT_LITERAL_METHOD_KEY
   id: 74
-  message: "Class or interface methods cannot be initialized within an object literal."
+  message: "Class methods cannot be overridden within an object literal."
 
 - name: OBJECT_LITERAL_NON_OPTIONAL_PROP_LOST
   id: 400
