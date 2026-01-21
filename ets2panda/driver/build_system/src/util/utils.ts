@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -234,7 +234,8 @@ export function getFileHash(filePath: string): string {
 export function formEts2pandaCmd(
     fileInfo: FileInfo,
     isDebug: boolean = false,
-    simultaneous: boolean = false
+    simultaneous: boolean = false,
+    decl: boolean = false
 ): string[] {
 
     const ets2pandaCmd: string[] = [
@@ -248,7 +249,9 @@ export function formEts2pandaCmd(
     if (simultaneous) {
         ets2pandaCmd.push('--simultaneous')
     }
-
+    if (decl) {
+        ets2pandaCmd.push('--emit-declaration');
+    }
     ets2pandaCmd.push('--output')
     ets2pandaCmd.push(fileInfo.output)
 

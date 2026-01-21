@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -169,8 +169,8 @@ export class Ets2panda {
 
         const { input: inputFilePath, output: outputFilePath }: FileInfo = job.fileInfo;
         const source = fs.readFileSync(inputFilePath, 'utf-8');
-
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug)
+        const isDecl = (job.type & CompileJobType.DECL) !== 0;
+        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, false, isDecl);
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         const { arkts, arktsGlobal } = this.koalaModule;
@@ -274,7 +274,8 @@ export class Ets2panda {
 
         const { output: outputFilePath } = job.fileInfo;
 
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true)
+        const isDecl = (job.type & CompileJobType.DECL) !== 0;
+        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true, isDecl);
         if (dumpPerf) {
             ets2pandaCmd.push('--dump-perf-metrics');
         }

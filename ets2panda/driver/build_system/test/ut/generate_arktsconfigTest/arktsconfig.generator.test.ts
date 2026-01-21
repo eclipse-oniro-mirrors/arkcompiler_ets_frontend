@@ -63,6 +63,7 @@ function createMockModuleInfo(overrides: Partial<ModuleInfo> = {}): ModuleInfo {
         arktsConfigFile: '/test/arktsconfig.json',
         compileFileInfos: [],
         dynamicDependencyModules: new Map(),
+        staticDependencyModules: new Map(),
         entryFile: '/test/module/entry.ts',
         ...overrides
     } as any;

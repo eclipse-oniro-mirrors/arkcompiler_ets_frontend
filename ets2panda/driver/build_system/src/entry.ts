@@ -86,7 +86,8 @@ function validateSingleFieldPaths(projectConfig: BuildConfig): void {
 
     projectConfig.moduleRootPath = getVar(projectConfig.moduleRootPath)
     projectConfig.buildSdkPath = getVar(projectConfig.buildSdkPath)
-
+    projectConfig.loaderOutPath = getVar(projectConfig.loaderOutPath)
+    projectConfig.cachePath = getVar(projectConfig.cachePath)
     projectConfig.entryFile = getVar(projectConfig.entryFile);
 }
 
@@ -115,9 +116,19 @@ function validateDependencyModuleList(projectConfig: BuildConfig): void {
     for (let i = 0; i < projectConfig.dependencyModuleList?.length || 0; i++) {
         projectConfig.dependencyModuleList[i].modulePath = getVar(projectConfig.dependencyModuleList[i].modulePath)
 
+        const currentEntryFile = projectConfig.dependencyModuleList[i].entryFile;
+        if (currentEntryFile) {
+            projectConfig.dependencyModuleList[i].entryFile = getVar(currentEntryFile)
+        }
+
         const currentDeclFilesPath = projectConfig.dependencyModuleList[i].declFilesPath;
         if (currentDeclFilesPath) {
             projectConfig.dependencyModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
+        }
+
+        const currentAbcPath = projectConfig.dependencyModuleList[i].abcPath;
+        if (currentAbcPath) {
+            projectConfig.dependencyModuleList[i].abcPath = getVar(currentAbcPath)
         }
 
         for (let j = 0; j < projectConfig.dependencyModuleList[i].sourceRoots.length; j++) {
@@ -130,9 +141,19 @@ function validateDependentModuleList(projectConfig: BuildConfig): void {
     for (let i = 0; i < projectConfig.dependentModuleList?.length || 0; i++) {
         projectConfig.dependentModuleList[i].modulePath = getVar(projectConfig.dependentModuleList[i].modulePath)
 
+        const currentEntryFile = projectConfig.dependentModuleList[i].entryFile;
+        if (currentEntryFile) {
+            projectConfig.dependentModuleList[i].entryFile = getVar(currentEntryFile)
+        }
+
         const currentDeclFilesPath = projectConfig.dependentModuleList[i].declFilesPath;
         if (currentDeclFilesPath) {
             projectConfig.dependentModuleList[i].declFilesPath = getVar(currentDeclFilesPath)
+        }
+
+        const currentAbcPath = projectConfig.dependentModuleList[i].abcPath;
+        if (currentAbcPath) {
+            projectConfig.dependentModuleList[i].abcPath = getVar(currentAbcPath)
         }
 
         for (let j = 0; j < projectConfig.dependentModuleList[i].sourceRoots.length; j++) {

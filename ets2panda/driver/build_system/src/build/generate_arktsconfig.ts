@@ -41,6 +41,7 @@ import {
     DependencyItem,
     DynamicFileContext,
     ModuleInfo,
+    OHOS_MODULE_TYPE,
 } from '../types';
 import {
     COMPONENT,
@@ -328,6 +329,23 @@ export class ArkTSConfigGenerator {
         });
     }
 
+    private addBinaryDependencySection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
+        moduleInfo.staticDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
+            if (depModuleInfo.moduleType === OHOS_MODULE_TYPE.HAR && depModuleInfo.abcPath) {
+                const depItem: DependencyItem = {
+                    language: 'ets',
+                    path: depModuleInfo.abcPath,
+                    ohmUrl: depModuleInfo.packageName,
+                    mainFile: path.relative(depModuleInfo.moduleRootPath, depModuleInfo.entryFile)
+                };
+                arktsconfig.addDependency({
+                    name: depModuleInfo.packageName,
+                    item: depItem
+                });
+            }
+        });
+    }
+
     private addDependenciesSection(moduleInfo: ModuleInfo, arktsconfig: ArkTSConfig): void {
         moduleInfo.dynamicDependencyModules.forEach((depModuleInfo: ModuleInfo) => {
             if (!depModuleInfo.declFilesPath || !fs.existsSync(depModuleInfo.declFilesPath)) {
@@ -386,6 +404,7 @@ export class ArkTSConfigGenerator {
             this.addDependenciesSection(moduleInfo, arktsConfig);
         }
         this.addEtsStdLibToDependencySection(arktsConfig);
+        this.addBinaryDependencySection(moduleInfo, arktsConfig);
 
         this.processAlias(arktsConfig);
 
