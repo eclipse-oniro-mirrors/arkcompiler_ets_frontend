@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -95,7 +95,7 @@ void SrcDumper::Add(std::string_view const str)
     ss_ << str;
 }
 
-void SrcDumper::Add(char const ch)
+void SrcDumper::Add(char ch)
 {
     ss_ << ch;
 }
