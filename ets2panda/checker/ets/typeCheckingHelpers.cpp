@@ -24,6 +24,7 @@
 #include "ir/base/scriptFunction.h"
 #include "ir/base/classProperty.h"
 #include "ir/base/methodDefinition.h"
+#include "ir/ets/etsDestructuring.h"
 #include "ir/statements/variableDeclarator.h"
 #include "ir/statements/switchCaseStatement.h"
 #include "ir/expressions/identifier.h"
@@ -573,8 +574,23 @@ static Type *GetTypeFromVarLikeVariableDeclaration(ETSChecker *checker, varbinde
     }
 
     auto *declNode = var->Declaration()->Node();
-    if (var->Declaration()->Node()->IsIdentifier()) {
+    if (declNode->IsIdentifier()) {
         declNode = declNode->Parent();
+    } else if (declNode->IsETSDestructuring()) {
+        for (auto *const element : declNode->AsETSDestructuring()->Elements()) {
+            if (element->TsType() == nullptr) {
+                continue;
+            }
+            // NOTE(mozgovoykirill): not supported nested destructuring #275
+            if (element->IsArrayPattern()) {
+                checker->LogError(diagnostic::NOT_IMPLEMENTED, {}, element->Start());
+                return checker->GlobalTypeError();
+            }
+            ES2PANDA_ASSERT(element->IsIdentifier());
+            if (element->AsIdentifier()->Name().Is(var->Name().Utf8())) {
+                return element->TsType();
+            }
+        }
     }
     TypeStackElement tse(
         checker, var->Declaration(),

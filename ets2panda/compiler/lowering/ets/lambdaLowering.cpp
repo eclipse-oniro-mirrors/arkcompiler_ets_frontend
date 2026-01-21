@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -824,13 +824,12 @@ static void CreateInvokeMethodRestParameter(public_lib::Context *ctx, LambdaClas
 
     auto *typeAnnotation = allocator->New<ir::OpaqueTypeNode>(arr, allocator);
 
-    spread->SetTsTypeAnnotation(typeAnnotation);
+    spread->SetTypeAnnotation(typeAnnotation);
     spread->SetTsType(arr);
     restIdent->SetTsType(arr);
     auto *param = allocator->New<ir::ETSParameterExpression>(spread, nullptr, allocator);
 
     restIdent->SetParent(spread);
-    typeAnnotation->SetParent(spread);
     spread->SetParent(param);
     params->push_back(param);
 }

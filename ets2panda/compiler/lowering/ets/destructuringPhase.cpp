@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,12 +65,77 @@ static ir::AstNode *ProcessAssignmentExpression(public_lib::Context *ctx, ir::As
     return blockExpr;
 }
 
+static void ProcessVariableDeclarator(public_lib::Context *ctx, ir::VariableDeclarator *varDecl,
+                                      ArenaVector<ir::VariableDeclarator *> *varDeclarators)
+{
+    auto *allocator = ctx->allocator;
+
+    // Other cases must be catched in the checker
+    auto *dstr = varDecl->Id();
+    auto *init = varDecl->Init();
+    ES2PANDA_ASSERT(dstr->IsETSDestructuring() && init != nullptr);
+
+    auto checker = ctx->GetChecker()->AsETSChecker();
+
+    auto *tmpVar = Gensym(allocator);
+    auto *tmpTypeAnnotation = ctx->AllocNode<ir::OpaqueTypeNode>(init->TsType(), allocator);
+    tmpVar->SetTypeAnnotation(tmpTypeAnnotation);
+    tmpTypeAnnotation->SetParent(tmpVar);
+    auto *tmpDeclarator = ctx->AllocNode<ir::VariableDeclarator>(varDecl->Flag(), tmpVar, init);
+
+    tmpDeclarator->SetParent(varDecl->Parent());
+    varDeclarators->emplace_back(tmpDeclarator);
+    auto varBinder = checker->VarBinder()->AsETSBinder();
+    Recheck(ctx->phaseManager, varBinder, checker, tmpDeclarator);
+
+    uint32_t i = 0U;
+    for (auto *elem : dstr->AsETSDestructuring()->Elements()) {
+        if (elem->IsOmittedExpression()) {
+            i++;
+            continue;
+        }
+
+        auto *number = allocator->New<ir::NumberLiteral>(lexer::Number(i++));
+        auto *clone = tmpVar->Clone(allocator, nullptr);
+        clone->SetTypeAnnotation(nullptr);
+        ir::Expression *newInit =
+            ctx->AllocNode<ir::MemberExpression>(clone, number, ir::MemberExpressionKind::ELEMENT_ACCESS, true, false);
+        auto *newDeclarator = ctx->AllocNode<ir::VariableDeclarator>(varDecl->Flag(), elem, newInit);
+
+        newDeclarator->SetParent(varDecl->Parent());
+        newDeclarator->Check(checker);
+        varDeclarators->emplace_back(newDeclarator);
+    }
+}
+
+static ir::AstNode *ProcessVariableDeclaration(public_lib::Context *ctx, ir::VariableDeclaration *varDecl)
+{
+    auto *allocator = ctx->allocator;
+
+    ArenaVector<ir::VariableDeclarator *> declarators(allocator->Adapter());
+    for (auto *it : varDecl->Declarators()) {
+        if (!it->Id()->IsETSDestructuring()) {
+            declarators.emplace_back(it);
+            continue;
+        }
+
+        ProcessVariableDeclarator(ctx, it, &declarators);
+    }
+
+    varDecl->SetDeclarators(std::move(declarators));
+
+    return varDecl;
+}
+
 bool DestructuringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPreorder(
         [ctx](ir::AstNode *node) {
             if (node->IsAssignmentExpression()) {
                 return ProcessAssignmentExpression(ctx, node->AsAssignmentExpression());
+            }
+            if (node->IsVariableDeclaration()) {
+                return ProcessVariableDeclaration(ctx, node->AsVariableDeclaration());
             }
             return node;
         },

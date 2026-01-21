@@ -26,8 +26,7 @@ static ir::ETSParameterExpression *AddParam(public_lib::Context *ctx, util::Stri
 {
     auto *paramIdent = ctx->AllocNode<ir::Identifier>(name, ctx->Allocator());
     if (type != nullptr) {
-        paramIdent->SetTsTypeAnnotation(type);
-        type->SetParent(paramIdent);
+        paramIdent->SetTypeAnnotation(type);
     }
     return ctx->AllocNode<ir::ETSParameterExpression>(paramIdent, false, ctx->Allocator());
 }

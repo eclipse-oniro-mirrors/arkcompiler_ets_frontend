@@ -320,7 +320,7 @@ private:
     ir::Statement *ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers);
     ir::Statement *ParseImportDeclaration(StatementParsingFlags flags) override;
     ir::Statement *ParseExportDeclaration(StatementParsingFlags flags) override;
-    ir::AnnotatedExpression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
+    ir::Expression *ParseVariableDeclaratorKey(VariableParsingFlags flags) override;
     ir::Statement *ParseAnnotationsInStatement(StatementParsingFlags flags) override;
     ir::Statement *ParseInitModuleStatement() override;
     ir::VariableDeclarator *ParseVariableDeclarator(ir::Expression *init, lexer::SourcePosition startLoc,

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,16 +26,16 @@ class ETSAnalyzer;
 
 namespace ark::es2panda::ir {
 
-class ETSDestructuring : public Expression {
+class ETSDestructuring : public AnnotatedExpression {
 public:
     explicit ETSDestructuring(ArenaAllocator *allocator) noexcept
-        : Expression(AstNodeType::ETS_DESTRUCTURING), elements_(allocator->Adapter())
+        : AnnotatedExpression(AstNodeType::ETS_DESTRUCTURING), elements_(allocator->Adapter())
     {
         InitHistory();
     }
 
     explicit ETSDestructuring(ArenaVector<Expression *> elements) noexcept
-        : Expression(AstNodeType::ETS_DESTRUCTURING), elements_(std::move(elements))
+        : AnnotatedExpression(AstNodeType::ETS_DESTRUCTURING), elements_(std::move(elements))
     {
         // Strip OmittedExpressions from the end
         while (!elements_.empty() && elements_.back()->IsOmittedExpression()) {

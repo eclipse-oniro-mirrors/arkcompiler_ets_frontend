@@ -1739,9 +1739,10 @@ checker::Type *ETSAnalyzer::Check(ir::ETSDestructuring *const expr) const
     return expr->SetTsType(checker->CreateETSTupleType(std::move(tupleTypeList), false));
 }
 
-static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
-                                                                 ir::Expression *initializer)
+static checker::Type *CheckETSArrayOrTupleTypeInDestructuring(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
+                                                              ir::Expression *initializer)
 {
+    bool isVarDecl = dstrNode->Parent()->IsVariableDeclarator();
     auto initType = initializer->Check(checker);
     if (initType->IsAnyETSArrayOrTupleType()) {
         bool isTuple = initType->IsETSTupleType();
@@ -1762,6 +1763,11 @@ static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *che
                 continue;
             }
 
+            if (isVarDecl) {
+                dstrElement->SetTsType(initElementType);
+                continue;
+            }
+
             if (!checker->Relation()->IsAssignableTo(initElementType, dstrElement->TsType())) {
                 checker->LogError(diagnostic::INVALID_ASSIGNMNENT, {initElementType, dstrElement->TsType()},
                                   dstrElement->Start());
@@ -1774,11 +1780,14 @@ static checker::Type *ValidateETSArrayOrTupleTypeInDestructuring(ETSChecker *che
     return initType;
 }
 
-checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
-                                               ir::Expression *initializer)
+checker::Type *CheckDestructuringExpression(ETSChecker *checker, ir::ETSDestructuring *dstrNode,
+                                            ir::Expression *initializer)
 {
-    dstrNode->Check(checker);
+    if (initializer == nullptr) {
+        return checker->GlobalTypeError();
+    }
 
+    bool isVarDecl = dstrNode->Parent()->IsVariableDeclarator();
     if (initializer->IsArrayExpression()) {
         std::vector<Type *> tupleTypeList;
         auto arrayElements = initializer->AsArrayExpression()->Elements();
@@ -1786,9 +1795,21 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
             auto *arrayElement = arrayElements.at(idx);
             auto *dstrElement = dstrNode->GetExpressionAtIndex(idx);
 
+            // NOTE(mozgovoykirill): not supported nested destructuring #275
+            if (dstrElement->IsArrayPattern()) {
+                checker->LogError(diagnostic::NOT_IMPLEMENTED, {}, dstrElement->Start());
+            }
+
             if (dstrElement->IsOmittedExpression() || dstrElement->IsRestElement() ||
                 dstrElement->IsAssignmentPattern()) {
                 tupleTypeList.emplace_back(arrayElements.at(idx)->Check(checker));
+                continue;
+            }
+
+            if (isVarDecl) {
+                auto initElementType = arrayElement->Check(checker);
+                dstrElement->SetTsType(initElementType);
+                tupleTypeList.emplace_back(initElementType);
                 continue;
             }
 
@@ -1804,7 +1825,7 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
         }
 
         if (arrayElements.size() < dstrNode->Size()) {
-            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE, {tupleTypeList.size(), dstrNode->Size()},
+            checker->LogError(diagnostic::INVALID_DESTRUCTURING_INIT_SIZE, {arrayElements.size(), dstrNode->Size()},
                               initializer->Start());
         } else {
             for (uint32_t idx = dstrNode->Size(); idx < arrayElements.size(); idx++) {
@@ -1815,7 +1836,7 @@ checker::Type *ValidateDestructuringExpression(ETSChecker *checker, ir::ETSDestr
         return initializer->SetTsType(checker->CreateETSTupleType(std::move(tupleTypeList), false));
     }
 
-    return ValidateETSArrayOrTupleTypeInDestructuring(checker, dstrNode, initializer);
+    return CheckETSArrayOrTupleTypeInDestructuring(checker, dstrNode, initializer);
 }
 
 checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
@@ -1830,12 +1851,12 @@ checker::Type *ETSAnalyzer::Check(ir::AssignmentExpression *const expr) const
         checker->WarnForEndlessLoopInGetterSetter(expr->Left()->AsMemberExpression());
     }
 
+    checker::Type *leftType = expr->Left()->Check(checker);
+
     if (expr->Left()->IsETSDestructuring()) {
         return expr->SetTsType(
-            ValidateDestructuringExpression(checker, expr->Left()->AsETSDestructuring(), expr->Right()));
+            CheckDestructuringExpression(checker, expr->Left()->AsETSDestructuring(), expr->Right()));
     }
-
-    checker::Type *leftType = expr->Left()->Check(checker);
 
     if (IsInvalidArrayMemberAssignment(expr, checker) || IsInvalidMethodAssignment(expr, checker)) {
         expr->SetTsType(checker->GlobalTypeError());
@@ -4612,6 +4633,11 @@ checker::Type *ETSAnalyzer::Check(ir::VariableDeclarator *st) const
     }
 
     ETSChecker *checker = GetETSChecker();
+
+    if (st->Id()->IsETSDestructuring()) {
+        return st->SetTsType(CheckDestructuringExpression(checker, st->Id()->AsETSDestructuring(), st->Init()));
+    }
+
     ES2PANDA_ASSERT(st->Id()->IsIdentifier());
     auto *const ident = st->Id()->AsIdentifier();
     ir::ModifierFlags flags = ir::ModifierFlags::NONE;
