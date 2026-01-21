@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -117,17 +117,23 @@ private:
     // This is what the Client uses
     std::string insertText_;
     std::optional<CompletionEntryData> data_;
+    std::string typeSig_;
 
 public:
     explicit CompletionEntry(std::string name = "", CompletionEntryKind kind = CompletionEntryKind::TEXT,
                              std::string sortText = "", std::string insertText = "",
-                             std::optional<CompletionEntryData> data = std::nullopt)
+                             std::optional<CompletionEntryData> data = std::nullopt, std::string typeSig = "")
         : name_(std::move(name)),
           kind_(kind),
           sortText_(std::move(sortText)),
           insertText_(std::move(insertText)),
-          data_(std::move(data))
+          data_(std::move(data)),
+          typeSig_(std::move(typeSig))
     {
+    }
+    std::string GetTypeSig() const
+    {
+        return typeSig_;
     }
     std::string GetSortText() const
     {
@@ -207,7 +213,8 @@ std::optional<CompletionEntryData> CompletionEntryDataToOriginInfo(ark::es2panda
                                                                    const std::string &name);
 std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::CompletionEntryData *data,
                                                   const std::shared_ptr<ArkTsConfig> &config);
-std::vector<ir::AstNode *> FilterFromBody(const ArenaVector<ir::AstNode *> &bodyNodes, const std::string &triggerWord);
+std::vector<ir::AstNode *> FilterFromBody(const ArenaVector<ir::AstNode *> &bodyNodes, const std::string &triggerWord,
+                                          bool isStatic = false);
 
 bool StartsWith(const std::string &str, const std::string &prefix);
 bool IsDefinedClassOrStruct(ir::AstNode *preNode);

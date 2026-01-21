@@ -62,6 +62,235 @@ static void AssertCompletionsContainAndNotContainEntries(const std::vector<Compl
 }
 
 namespace {
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingInstance1)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingInstance1.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class BaseClass {
+    baseValue: number = 5;
+    getBaseValue(): number {
+        return this.baseValue;
+    }
+}
+
+class DerivedClass {
+    derivedValue: number = 10;
+    getDerivedValue(): number {
+        return this.derivedValue;
+    }
+}
+
+function testClassDeclaration() {
+    let demo: BaseClass | DerivedClass = new BaseClass();
+    demo = new DerivedClass();
+    demo.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 374;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    // Expect DerivedClass members due to type narrowing
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("derivedValue", ark::es2panda::lsp::CompletionEntryKind::PROPERTY,
+                        std::string(SUGGESTED_CLASS_MEMBERS), "derivedValue", std::nullopt, "number"),
+        CompletionEntry("getDerivedValue", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                        std::string(CLASS_MEMBER_SNIPPETS), "getDerivedValue()", std::nullopt, "():number")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingClassProperty2)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingClassProperty2.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class CC {
+    valueCC: number = 10;
+    getValue(): number {
+        return this.valueCC;
+    }
+}
+class BB {
+    valueBB: number = 10;
+    getValue(): number {
+        return this.valueBB;
+    }
+}
+
+class AA {
+    bb: BB | CC = new BB();
+    name():void{}
+}
+
+function MyFunc() {
+    let demo: AA = new AA();
+    if (demo.bb instanceof BB) {
+        demo.bb.
+    }
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 358;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("getValue", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS),
+                        "getValue()", std::nullopt, "():number")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingClassProperty1)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingClassProperty1.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class CC {
+    valueCC: number = 10;
+    getValue(): number {
+        return this.valueCC;
+    }
+}
+class BB {
+    valueBB: number = 10;
+    getValue(): number {
+        return this.valueBB;
+    }
+}
+
+class AA {
+    bb: BB | CC = new BB();
+    name():void{}
+}
+
+function MyFunc() {
+    let demo: AA = new AA();
+    demo.bb.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 321;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("getValue", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS),
+                        "getValue()", std::nullopt, "():number")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingParam3)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingParam3.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class AA {
+  name():void{}
+}
+function MyFunc(demo: string | AA, demo2: AA | number) {
+  if (demo instanceof string) {
+      demo.
+  }
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 130;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("length", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "length()"),
+                                      CompletionEntry("substring", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "substring()")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "name", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "name()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingParam2)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingParam2.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class AA {
+  name():void{}
+}
+function MyFunc(demo: string | AA, demo2: AA | number) {
+  if (demo instanceof AA) {
+      demo.
+  }
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 126;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto expectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "name", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "name()")};
+    auto unexpectedEntries = std::vector<CompletionEntry> {CompletionEntry(
+        "length", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "length()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsIfTypeNarrowingParam1)
+{
+    std::vector<std::string> files = {"getCompletionsIfTypeNarrowingParam1.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class AA {
+  name():void{}
+}
+function MyFunc(demo: string | AA, demo2: AA | number) {
+    demo.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 96;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto unexpectedEntries =
+        std::vector<CompletionEntry> {CompletionEntry("name", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "name()"),
+                                      CompletionEntry("length", ark::es2panda::lsp::CompletionEntryKind::METHOD,
+                                                      std::string(CLASS_MEMBER_SNIPPETS), "length()")};
+    AssertCompletionsContainAndNotContainEntries(res.GetEntries(), {}, unexpectedEntries);
+    initializer.DestroyContext(ctx);
+}
 
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition26)
 {
@@ -85,6 +314,125 @@ Ab
         CompletionEntry("AbcFileNotFoundError", ark::es2panda::lsp::CompletionEntryKind::CLASS,
                         std::string(GLOBALS_OR_KEYWORDS), "AbcFileNotFoundError")};
     AssertCompletionsContainAndNotContainEntries(res.GetEntries(), expectedEntries, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsUnionSameNameDiffSig)
+{
+    std::vector<std::string> files = {"getCompletionsUnionSameNameDiffSig.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class A {
+  foo(a: number): void {}
+  bar: number = 1;
+}
+
+class B {
+  foo(a: string): void {}
+  bar: string = "s";
+}
+
+function test(o: A | B) {
+    o.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    LSPAPI const *lspApi = GetImpl();
+    // After "o."
+    size_t const offset = 151;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    // Expecting EMPTY because signatures/types do not match across all types in union
+    auto entries = res.GetEntries();
+    // But verify simply checking size or empty
+    ASSERT_TRUE(entries.empty()) << "Expected no completions because signatures differ";
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsUnionSameNameSameSig)
+{
+    std::vector<std::string> files = {"getCompletionsUnionSameNameSameSig.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class A {
+  foo(a: number): void {}
+  bar: number = 1;
+}
+
+class B {
+  foo(x: number): void {} // Param name differs, but type is same -> Should match
+  bar: number = 2;        // Same type -> Should match
+}
+
+function test(o: A | B) {
+    o.
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 241;  // after "o."
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    // Should have foo and bar, exactly once
+    auto entries = res.GetEntries();
+    int fooCount = 0;
+    int barCount = 0;
+    for (const auto &e : entries) {
+        if (e.GetName() == "foo")
+            fooCount++;
+        if (e.GetName() == "bar")
+            barCount++;
+    }
+
+    ASSERT_EQ(fooCount, 1) << "Expected exactly 1 'foo' entry";
+    ASSERT_EQ(barCount, 1) << "Expected exactly 1 'bar' entry";
+
+    auto expectedEntries = std::vector<CompletionEntry> {
+        CompletionEntry("foo", CompletionEntryKind::METHOD, std::string(CLASS_MEMBER_SNIPPETS), "foo()", std::nullopt,
+                        "(number):void"),
+        CompletionEntry("bar", CompletionEntryKind::PROPERTY, std::string(SUGGESTED_CLASS_MEMBERS), "bar", std::nullopt,
+                        "number")};
+    AssertCompletionsContainAndNotContainEntries(entries, expectedEntries, {});
+
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, getCompletionsUnionMixedSig)
+{
+    std::vector<std::string> files = {"getCompletionsUnionMixedSig.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+class A {
+  method(a: number): void {}
+}
+
+class B {
+  method(a: number): void {}
+}
+
+class C {
+  method(a: string): void {}
+}
+
+function test(o: A | B | C) {
+    o.met
+}
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    LSPAPI const *lspApi = GetImpl();
+    size_t const offset = 166;  // after "o.met"
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+
+    auto entries = res.GetEntries();
+    // Intersection of (number) and (number) is (number).
+    // Intersection of that result and (string) is EMPTY.
+
+    ASSERT_TRUE(entries.empty()) << "Expected no completions because C has different signature";
+
     initializer.DestroyContext(ctx);
 }
 
@@ -176,6 +524,7 @@ function json2Array(jsonArr: Array<number>) {
     AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
     initializer.DestroyContext(ctx);
 }
+
 TEST_F(LSPCompletionsTests, getCompletionsAtPosition24)
 {
     std::vector<std::string> files = {"getCompletionsAtPosition25.ets"};
@@ -588,14 +937,13 @@ class JSON {
   }
 }
 let j = new JSON()
-let res = j.
-)delimiter"};
+let res = j.)delimiter"};
     auto filePaths = CreateTempFile(files, texts);
     int const expectedFileCount = 1;
     ASSERT_EQ(filePaths.size(), expectedFileCount);
 
     LSPAPI const *lspApi = GetImpl();
-    size_t const offset = 133;  // after 'let res = j.'
+    size_t const offset = texts[0].length();
     Initializer initializer = Initializer();
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
@@ -1028,6 +1376,57 @@ class Person {
         "introduce", ark::es2panda::lsp::CompletionEntryKind::METHOD, std::string(GLOBALS_OR_KEYWORDS), "introduce()")};
     AssertCompletionsContainAndNotContainEntries(res1.GetEntries(), expectedEntries1, {});
     AssertCompletionsContainAndNotContainEntries(res2.GetEntries(), expectedEntries1, {});
+    initializer.DestroyContext(ctx);
+}
+
+TEST_F(LSPCompletionsTests, ClassStaticAccessShouldNotShowInstanceMembers)
+{
+    std::vector<std::string> files = {"class_repro.ets"};
+    std::string programText = {R"delimiter(
+class MyClass {
+    instanceProp: number = 1;
+    static staticProp: number = 2;
+    method(): void {}
+    static staticMethod(): void {}
+}
+let a = MyClass.
+)delimiter"};
+    std::vector<std::string> texts = {programText};
+    auto filePaths = CreateTempFile(files, texts);
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    LSPAPI const *lspApi = GetImpl();
+
+    size_t offset = 157;
+    auto res = lspApi->getCompletionsAtPosition(ctx, offset);
+    auto entries = res.GetEntries();
+
+    bool hasInstanceProp = false;
+    bool hasStaticProp = false;
+    bool hasMethod = false;
+    bool hasStaticMethod = false;
+
+    for (const auto &entry : entries) {
+        if (entry.GetName() == "instanceProp") {
+            hasInstanceProp = true;
+        }
+        if (entry.GetName() == "staticProp") {
+            hasStaticProp = true;
+        }
+        if (entry.GetName() == "method") {
+            hasMethod = true;
+        }
+        if (entry.GetName() == "staticMethod") {
+            hasStaticMethod = true;
+        }
+    }
+
+    EXPECT_TRUE(hasStaticProp) << "Should have staticProp";
+    EXPECT_TRUE(hasStaticMethod) << "Should have staticMethod";
+
+    EXPECT_FALSE(hasInstanceProp) << "Should NOT have instanceProp";
+    EXPECT_FALSE(hasMethod) << "Should NOT have instance method";
+
     initializer.DestroyContext(ctx);
 }
 
