@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,7 @@ ir::AstNode *GetEnumMemberByName(ir::AstNode *node, const util::StringView &name
 std::string ModifiersToString(ir::ModifierFlags flags);
 std::string GetKindModifiers(ir::AstNode *node);
 bool IsClass(ir::AstNode *node);
+bool IsDeclaration(ir::AstNode *node);
 ir::AstNode *GetContainerNode(ir::AstNode *node);
 
 }  // namespace ark::es2panda::lsp

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -412,4 +412,53 @@ function fib(n: string) {
     ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
     ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
     ASSERT_EQ(result.documentHighlights_[0].highlightSpans_[secondIndex].kind_, HighlightSpanKind::REFERENCE);
+}
+
+TEST_F(LspDocumentHighlights, getDocumentHighlights10)
+{
+    std::vector<std::string> files = {"getDocumentHighlights1.ets"};
+    std::vector<std::string> texts = {R"delimiter(
+function func() {}
+enum aaa{
+a = 1;
+}
+function func1() {}
+bbb = aaa.a;
+)delimiter"};
+    auto filePaths = CreateTempFile(files, texts);
+    int const expectedFileCount = 1;
+    ASSERT_EQ(filePaths.size(), expectedFileCount);
+
+    LSPAPI const *lspApi = GetImpl();
+    auto const firstPos = 26;
+    Initializer initializer = Initializer();
+    auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
+    auto firstResult = lspApi->getDocumentHighlights(ctx, firstPos);
+    auto const firstExpectedHighlightCount = 2;
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_.size(), firstExpectedHighlightCount);
+    ASSERT_EQ(firstResult.documentHighlights_[0].fileName_, filePaths[0]);
+    auto const firstFirstHighlightStart = 25;
+    auto const firstSecondHighlightStart = 65;
+    auto const firstExpectedLength = 3;
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, firstFirstHighlightStart);
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, firstSecondHighlightStart);
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, firstExpectedLength);
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, firstExpectedLength);
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
+    ASSERT_EQ(firstResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
+    auto const secondPos = 66;
+    auto secondResult = lspApi->getDocumentHighlights(ctx, secondPos);
+    initializer.DestroyContext(ctx);
+    auto const secondExpectedHighlightCount = 2;
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_.size(), secondExpectedHighlightCount);
+    ASSERT_EQ(secondResult.documentHighlights_[0].fileName_, filePaths[0]);
+    auto const secondFirstHighlightStart = 25;
+    auto const secondSecondHighlightStart = 65;
+    auto const secondExpectedLength = 3;
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.start, secondFirstHighlightStart);
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.start, secondSecondHighlightStart);
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].textSpan_.length, secondExpectedLength);
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].textSpan_.length, secondExpectedLength);
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[0].kind_, HighlightSpanKind::WRITTEN_REFERENCE);
+    ASSERT_EQ(secondResult.documentHighlights_[0].highlightSpans_[1].kind_, HighlightSpanKind::REFERENCE);
 }

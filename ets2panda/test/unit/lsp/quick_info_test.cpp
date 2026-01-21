@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -372,5 +372,113 @@ TEST_F(LspQuickInfoTests, CreateDisplayForEnumMemberWithStringLiteral)
     expected.emplace_back("\"", "punctuation");
     ASSERT_EQ(expected, display);
     initializer.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionForKeywords1)
+{
+    const std::string src = R"(
+function func() {};
+)";
+    auto files = CreateTempFile({"keywords-test1.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "keywords-test1.ets";
+
+    size_t const offset = 4;
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("function", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("func", "functionName");
+    expected.emplace_back("(", "punctuation");
+    expected.emplace_back(")", "punctuation");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("void", "returnType");
+    const std::string kind = "method";
+    const std::string kindModifiers = "static public";
+    const size_t start = 1;
+    const size_t length = 18;
+    TextSpan span(start, length);
+
+    auto expectedQuickInfo = QuickInfo(kind, kindModifiers, span, expected, document, tags, fileName);
+    ASSERT_EQ(quickInfo, expectedQuickInfo);
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionForKeywords2)
+{
+    const std::string src = R"(
+class A {};
+)";
+    auto files = CreateTempFile({"keywords-test2.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "keywords-test2.ets";
+
+    size_t const offset = 4;
+    auto quickInfo = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset, fileName);
+    ASSERT_NE(quickInfo, QuickInfo());
+    std::vector<DocTagInfo> tags {};
+    std::vector<SymbolDisplayPart> document {};
+    std::vector<SymbolDisplayPart> expected;
+    expected.emplace_back("class", "keyword");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("A", "className");
+    const std::string kind = "class";
+    const std::string kindModifiers = "static public";
+    const size_t start = 1;
+    const size_t length = 11;
+    TextSpan span(start, length);
+
+    auto expectedQuickInfo = QuickInfo(kind, kindModifiers, span, expected, document, tags, fileName);
+    ASSERT_EQ(quickInfo, expectedQuickInfo);
+
+    init.DestroyContext(ctx);
+}
+
+TEST_F(LspQuickInfoTests, GetQuickInfoAtPositionForKeywords3)
+{
+    const std::string src = R"(
+namespace A {};
+interface B {};
+enum C {};
+type D = string;
+)";
+    auto files = CreateTempFile({"keywords-test3.ets"}, {src});
+    ASSERT_FALSE(files.empty());
+
+    ark::es2panda::lsp::Initializer init;
+    es2panda_Context *ctx = init.CreateContext(files[0].c_str(), ES2PANDA_STATE_CHECKED);
+
+    const std::string fileName = "keywords-test3.ets";
+
+    size_t const offset1 = 4;
+    auto quickInfo1 = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset1, fileName);
+    ASSERT_EQ(quickInfo1, QuickInfo());
+
+    size_t const offset2 = 20;
+    auto quickInfo2 = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset2, fileName);
+    ASSERT_EQ(quickInfo2, QuickInfo());
+
+    size_t const offset3 = 35;
+    auto quickInfo3 = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset3, fileName);
+    ASSERT_EQ(quickInfo3, QuickInfo());
+
+    size_t const offset4 = 46;
+    auto quickInfo4 = ark::es2panda::lsp::GetQuickInfoAtPositionImpl(ctx, offset4, fileName);
+    ASSERT_EQ(quickInfo4, QuickInfo());
+
+    init.DestroyContext(ctx);
 }
 }  // namespace

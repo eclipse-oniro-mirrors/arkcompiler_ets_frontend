@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,13 +60,44 @@ bool IsIncludedToken(const ir::AstNode *node)
     return INCLUDED_TOKEN_TYPES.find(type) != INCLUDED_TOKEN_TYPES.end();
 }
 
+bool IsPositionInKeyword(ir::AstNode *node, size_t position, es2panda_Context *context)
+{
+    auto type = node->Type();
+    if (type == ir::AstNodeType::CLASS_DECLARATION) {
+        auto def = node->AsClassDeclaration()->Definition();
+        if (!(def != nullptr && def->OrigEnumDecl() != nullptr &&
+              def->OrigEnumDecl()->Type() == ir::AstNodeType::TS_ENUM_DECLARATION)) {
+            return false;
+        }
+    }
+
+    if (type == ir::AstNodeType::METHOD_DEFINITION) {
+        return false;
+    }
+
+    if (position < node->Start().index || position >= node->End().index) {
+        return false;
+    }
+
+    auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+    ArenaAllocator *allocator = ctx->allocator;
+    auto children = GetChildren(node, allocator);
+    if (children.empty()) {
+        return false;
+    }
+
+    for (auto *child : children) {
+        if (position >= child->Start().index && position < child->End().index) {
+            return false;
+        }
+    }
+    return true;
+}
+
 ir::AstNode *GetTokenForQuickInfo(es2panda_Context *context, size_t position)
 {
     auto node = GetTouchingToken(context, position, false);
-    if (node == nullptr) {
-        return nullptr;
-    }
-    if (!IsIncludedToken(node)) {
+    if (node == nullptr || IsPositionInKeyword(node, position, context) || !IsIncludedToken(node)) {
         return nullptr;
     }
     return node;
