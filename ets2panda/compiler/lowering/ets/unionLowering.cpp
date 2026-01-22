@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,6 +76,43 @@ static ir::ClassDefinition *GetUnionAccessClass(public_lib::Context *ctx, varbin
     return classDef;
 }
 
+static ir::ETSParameterExpression *CloneParamAndProcessType(public_lib::Context *ctx, checker::Signature *signature,
+                                                            ir::ETSParameterExpression *declParam, size_t index)
+{
+    auto *allocator = ctx->Allocator();
+    auto *newParam = declParam->Clone(allocator, nullptr)->AsETSParameterExpression();
+    newParam->SetInitializer(nullptr);
+
+    checker::Type *resolvedType = nullptr;
+    auto *declSignature = (signature->Function() != nullptr) ? signature->Function()->Signature() : nullptr;
+
+    if (declParam->IsRestParameter()) {
+        auto *restVar = (declSignature != nullptr) ? declSignature->RestVar() : signature->RestVar();
+        if (restVar != nullptr) {
+            resolvedType = restVar->TsType();
+        }
+    } else {
+        auto const &sigParams = (declSignature != nullptr) ? declSignature->Params() : signature->Params();
+        if (index < sigParams.size() && sigParams[index] != nullptr) {
+            resolvedType = sigParams[index]->TsType();
+        }
+    }
+
+    if (resolvedType != nullptr) {
+        auto *typeAnno = ctx->AllocNode<ir::OpaqueTypeNode>(resolvedType, allocator);
+        newParam->SetTypeAnnotation(typeAnno);
+
+        if (newParam->IsRestParameter()) {
+            typeAnno->SetParent(newParam->RestParameter());
+        } else if (newParam->Ident() != nullptr) {
+            typeAnno->SetParent(newParam->Ident());
+        } else {
+            typeAnno->SetParent(newParam);
+        }
+    }
+    return newParam;
+}
+
 static std::tuple<varbinder::LocalVariable *, checker::Signature *> CreateNamedAccessMethod(
     public_lib::Context *ctx, varbinder::VarBinder *varbinder, ir::MemberExpression *expr,
     checker::Signature *signature)
@@ -92,10 +129,21 @@ static std::tuple<varbinder::LocalVariable *, checker::Signature *> CreateNamedA
     auto *methodIdent = ctx->AllocNode<ir::Identifier>(methodName, allocator);
 
     ArenaVector<ir::Expression *> params {allocator->Adapter()};
-    for (auto param : signature->Function()->Params()) {
-        params.emplace_back(param->Clone(allocator, nullptr)->AsETSParameterExpression());
+    auto *sigFunc = signature->Function();
+    ES2PANDA_ASSERT(sigFunc != nullptr);
+    auto const &declParams = sigFunc->Params();
+
+    for (size_t i = 0; i < declParams.size(); ++i) {
+        auto *declParam = declParams[i]->AsETSParameterExpression();
+        auto *newParam = CloneParamAndProcessType(ctx, signature, declParam, i);
+        params.emplace_back(newParam);
     }
-    auto returnTypeAnno = ctx->AllocNode<ir::OpaqueTypeNode>(signature->ReturnType(), allocator);
+
+    auto *declSignature = (sigFunc != nullptr) ? sigFunc->Signature() : nullptr;
+    auto *returnType = (declSignature != nullptr && declSignature->ReturnType() != nullptr)
+                           ? declSignature->ReturnType()
+                           : signature->ReturnType();
+    auto *returnTypeAnno = ctx->AllocNode<ir::OpaqueTypeNode>(returnType, allocator);
 
     auto *func = ctx->AllocNode<ir::ScriptFunction>(
         allocator, ir::ScriptFunction::ScriptFunctionData {
