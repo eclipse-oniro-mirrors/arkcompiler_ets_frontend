@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,7 +67,7 @@ void ExportNamedDeclaration::Dump(ir::AstDumper *dumper) const
                  {"specifiers", specifiers_}});
 }
 
-bool ExportNamedDeclaration::HasDumpData(bool const hasDefaultExport) const noexcept
+bool ExportNamedDeclaration::HasDumpData(bool hasDefaultExport) const noexcept
 {
     if (!specifiers_.empty()) {
         if (!hasDefaultExport) {

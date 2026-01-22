@@ -165,7 +165,7 @@ public:
     static std::tuple<util::StringView, bool> ParamName(ArenaAllocator *allocator, const ir::Expression *param,
                                                         std::uint32_t index);
     static bool IsAsyncMethod(ir::AstNode const *node);
-    static bool IsExported(ir::AstNode const *) noexcept;
+    static bool IsExported(ir::AstNode const *node) noexcept;
     static bool IsArrayType(checker::Type *type);
     static checker::Type *CreateUnionOfTupleConstituentTypes(checker::ETSChecker *checker,
                                                              const checker::ETSTupleType *type);
@@ -219,8 +219,8 @@ public:
     [[nodiscard]] static util::UString EscapeHTMLString(ArenaAllocator *allocator, const std::string &str);
     [[nodiscard]] static ir::AstNode *DerefETSTypeReference(ir::AstNode *node);
 
-    static std::vector<std::string> Split(const std::string &str, const char delimiter);
-    static std::string CalcRelativePath(const std::string &targetPath, const std::string &basePath);
+    static std::vector<std::string> Split(const std::string &str, char delimiter);
+    static std::string CalcRelativePath(const std::string &target, const std::string &base);
 };
 
 template <typename T>
