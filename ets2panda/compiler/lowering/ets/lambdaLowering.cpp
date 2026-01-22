@@ -1542,7 +1542,7 @@ static ir::AstNode *ConvertLambda(public_lib::Context *ctx, ir::ArrowFunctionExp
     info.capturedVars = &capturedVars;
     if (auto *thisOrSuper = FindIfNeedThis(lambda, checker); thisOrSuper != nullptr) {
         info.callReceiver = allocator->New<ir::ThisExpression>();
-        info.callReceiver->SetRange(thisOrSuper->Range());
+        info.callReceiver->SetRange(lambda->Parent()->Range());
     } else if (info.calleeInterface != nullptr) {
         info.callReceiver = allocator->New<ir::ThisExpression>();
     }
