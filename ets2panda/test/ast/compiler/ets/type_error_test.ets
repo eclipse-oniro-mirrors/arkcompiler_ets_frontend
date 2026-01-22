@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,10 +16,7 @@
 export class SHA1Hash{
     private _int32(data:Int32Array,offset?:int):void{
         offset=0
-        swap32(data[offset ++] as int)
+        swap32(data[offset ++].toInt())
     }
 }
 const swap32:(num:int)=>int = ((c:int):int =>c)
-
-/* @@? 19:9 Error Semantic error ESE0127: No matching call signature for (Int) */
-/* @@? 19:16 Error Semantic error ESE0029: 'As' expression for cast is deprecated for numeric types. Use explicit conversion function Double.toInt(...) instead. */
