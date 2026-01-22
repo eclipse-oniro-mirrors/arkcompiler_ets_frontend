@@ -537,9 +537,11 @@ private:
 #endif  // PANDA_WITH_ETS
     }
 
-    void EmitCheckCast(const ir::AstNode *node, util::StringView target)
+    void EmitCheckCast(const ir::AstNode *node, util::StringView target, bool isNonnull)
     {
-        if (target != Signatures::BUILTIN_OBJECT) {
+        if (isNonnull) {
+            Sa().Emit<CheckcastNonnull>(node, AssemblerReference(target));
+        } else if (target != Signatures::BUILTIN_OBJECT) {
             Sa().Emit<Checkcast>(node, AssemblerReference(target));
         }
     }
