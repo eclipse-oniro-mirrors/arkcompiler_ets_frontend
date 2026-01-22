@@ -1490,7 +1490,16 @@ std::vector<RefactorAction> FindAvailableRefactors(const RefactorContext &contex
 {
     std::vector<RefactorAction> actions;
 
-    const auto node = GetTouchingToken(context.context, context.span.pos, false);
+    ir::AstNode *node = nullptr;
+    if (context.span.pos == context.span.end) {
+        node = GetTouchingToken(context.context, context.span.pos, false);
+    } else {
+        node = GetTouchingTokenByRange(context.context, context.span, false);
+        if (node != nullptr) {
+            node = GetOptimumNodeByRange(node, context.span);
+        }
+    }
+
     if (node == nullptr) {
         return actions;
     }

@@ -111,6 +111,27 @@ void ExpectExtractionApplies(const std::string &source, ark::es2panda::lsp::Refa
     EXPECT_EQ(result, expected);
 }
 
+TEST_F(LspExtrSymblGetEditsTests, ExtractVariableProhibited)
+{
+    const std::string code = R"(
+const a = 1 + 1 * 3
+)";
+    const size_t spanStart = 11;
+    const size_t spanEnd = 16;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    // Step 1: get applicable refactors
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string_view target = ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name;
+
+    bool found = std::any_of(applicable.begin(), applicable.end(),
+                             [&target](const auto &info) { return info.action.name == target; });
+    EXPECT_FALSE(found);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
 TEST_F(LspExtrSymblGetEditsTests, ExtractConstantAfterAnnotation)
 {
     const std::string code = R"(

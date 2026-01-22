@@ -1497,6 +1497,20 @@ KInt impl_getAccessKindFromLocation(KNativePointer locPtr)
     auto *loc = reinterpret_cast<ReferenceLocation *>(locPtr);
     return static_cast<size_t>(loc->accessKind);
 }
+KNativePointer impl_getRenameFileName(KNativePointer infoPtr)
+{
+    auto *info = reinterpret_cast<ark::es2panda::lsp::RefactorEditInfo *>(infoPtr);
+    return new std::string(info->GetRenameFileName().value_or(""));
+}
+TS_INTEROP_1(getRenameFileName, KNativePointer, KNativePointer)
+
+KInt impl_getRenameLocation(KNativePointer infoPtr)
+{
+    auto *info = reinterpret_cast<ark::es2panda::lsp::RefactorEditInfo *>(infoPtr);
+    return static_cast<KInt>(info->GetRenameLocation().value_or(0));
+}
+TS_INTEROP_1(getRenameLocation, KInt, KNativePointer)
+
 TS_INTEROP_1(getAccessKindFromLocation, KInt, KNativePointer)
 
 KNativePointer impl_getLocationFromList(KNativePointer listPtr)
