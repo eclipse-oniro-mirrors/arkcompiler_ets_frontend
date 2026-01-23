@@ -1004,6 +1004,12 @@ signatures:
     return_type: PRIMITIVE_VOID
     ref: BUILTIN_STRING_BUILDER_CTOR
 
+  - callee: BUILTIN_STRING_BUILDER
+    method_name: $CTOR
+    params: [BUILTIN_STRING]
+    return_type: PRIMITIVE_VOID
+    ref: BUILTIN_STRING_BUILDER_CTOR_STRING
+
   #26986
   - callee: BUILTIN_STRING_BUILDER
     method_name: append

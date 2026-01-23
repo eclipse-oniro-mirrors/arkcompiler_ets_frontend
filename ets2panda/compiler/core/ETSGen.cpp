@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2453,24 +2453,31 @@ void ETSGen::BuildString(const ir::BinaryExpression *node, VReg lhs)
         ConcatStrings(node, lhs);
         return;
     }
-    CreateStringBuilder(node);
+    auto builder = AllocReg();
+    CreateStringBuilder(node, lhs, builder);
+    CallExact(node, Signatures::BUILTIN_STRING_BUILDER_TO_STRING, builder);
+    SetAccumulatorType(node->TsType());
 }
 
-void ETSGen::CreateStringBuilder(const ir::Expression *node)
+void ETSGen::CreateStringBuilder(const ir::BinaryExpression *node, VReg lhs, VReg builder)
 {
-    RegScope rs(this);
+    ES2PANDA_ASSERT(node->OperationType()->IsETSStringType());
 
-    Ra().Emit<InitobjShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_BUILDER_CTOR), dummyReg_,
-                               dummyReg_);
-    SetAccumulatorType(Checker()->GlobalStringBuilderBuiltinType());
+    if (node->Left()->IsBinaryExpression()) {
+        CreateStringBuilder(node->Left()->AsBinaryExpression(), lhs, builder);
+        StringBuilderAppend(node->Right(), builder);
+    } else {
+        node->Left()->Compile(this);
+        ApplyConversionAndStoreAccumulator(node->Left(), lhs, node->OperationType());
+        ES2PANDA_ASSERT(GetVRegType(lhs)->IsETSStringType());
 
-    auto builder = AllocReg();
-    StoreAccumulator(node, builder);
-
-    AppendString(node, builder);
-    CallExact(node, Signatures::BUILTIN_STRING_BUILDER_TO_STRING, builder);
-
-    SetAccumulatorType(node->TsType());
+        RegScope rs(this);
+        Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_STRING_BUILDER_CTOR_STRING), lhs,
+                                dummyReg_);
+        SetAccumulatorType(Checker()->GlobalStringBuilderBuiltinType());
+        StoreAccumulator(node, builder);
+        StringBuilderAppend(node->Right(), builder);
+    }
 }
 
 void ETSGen::CallBigIntUnaryOperator(const ir::Expression *node, VReg arg, const util::StringView signature)
