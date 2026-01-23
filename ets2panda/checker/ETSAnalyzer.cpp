@@ -296,6 +296,13 @@ checker::Type *ETSAnalyzer::Check(ir::ClassStaticBlock *st) const
 }
 
 // Satisfy the Chinese code checker
+
+static bool IsPromiseOrPromiseLikeType(ETSChecker *checker, const ETSObjectType *type)
+{
+    const auto baseType = type->GetOriginalBaseType();
+    return baseType == checker->GlobalBuiltinPromiseLikeType() || baseType == checker->GlobalBuiltinPromiseType();
+}
+
 static void HandleNativeAndAsyncMethods(ETSChecker *checker, ir::MethodDefinition *node)
 {
     auto *scriptFunc = node->Function();
@@ -307,7 +314,7 @@ static void HandleNativeAndAsyncMethods(ETSChecker *checker, ir::MethodDefinitio
             auto *asyncFuncReturnType = scriptFunc->Signature()->ReturnType();
 
             if (!asyncFuncReturnType->IsETSObjectType() ||
-                asyncFuncReturnType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
+                !IsPromiseOrPromiseLikeType(checker, asyncFuncReturnType->AsETSObjectType())) {
                 checker->LogError(diagnostic::ASYNC_FUNCTION_RETURN_TYPE, {}, scriptFunc->Start());
                 scriptFunc->Signature()->SetReturnType(checker->GlobalTypeError());
                 return;
@@ -1327,8 +1334,7 @@ static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checke
         return false;
     }
     for (auto subtype : type->AsETSUnionType()->ConstituentTypes()) {
-        if (subtype->IsETSObjectType() &&
-            subtype->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
+        if (subtype->IsETSObjectType() && IsPromiseOrPromiseLikeType(checker, subtype->AsETSObjectType())) {
             return true;
         }
     }
@@ -1362,8 +1368,7 @@ static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, 
 
     auto *retType = signature->ReturnType();
     if (!IsUnionTypeContainingPromise(retType, checker) &&
-        (!retType->IsETSObjectType() ||
-         retType->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType())) {
+        (!retType->IsETSObjectType() || !IsPromiseOrPromiseLikeType(checker, retType->AsETSObjectType()))) {
         auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
         ES2PANDA_ASSERT(returnType != nullptr);
         expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
@@ -4394,8 +4399,7 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
     if (containingFunc->ReturnTypeAnnotation() != nullptr) {
         if (containingFunc->IsAsyncFunc()) {
             auto *type = containingFunc->ReturnTypeAnnotation()->GetType(checker);
-            if (!type->IsETSObjectType() ||
-                type->AsETSObjectType()->GetOriginalBaseType() != checker->GlobalBuiltinPromiseType()) {
+            if (!type->IsETSObjectType() || !IsPromiseOrPromiseLikeType(checker, type->AsETSObjectType())) {
                 checker->LogError(diagnostic::ASYNC_FUNCTION_RETURN_TYPE, {},
                                   containingFunc->ReturnTypeAnnotation()->Start());
                 return false;

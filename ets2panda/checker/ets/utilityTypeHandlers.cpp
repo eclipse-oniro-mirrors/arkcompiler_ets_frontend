@@ -129,21 +129,28 @@ bool ETSChecker::IsPromiseType(Type *type)
         }
         return true;
     }
-    return type->IsETSObjectType() && type->AsETSObjectType()->GetOriginalBaseType() == GlobalBuiltinPromiseType();
+    return type->IsETSObjectType() &&
+           (type->AsETSObjectType()->GetOriginalBaseType() == GlobalBuiltinPromiseType() ||
+            type->AsETSObjectType()->GetOriginalBaseType() == GlobalBuiltinPromiseLikeType());
 }
 
 Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
 {
     Type *promiseType = GlobalBuiltinPromiseType();
-    while (type->IsETSObjectType() && type->AsETSObjectType()->GetOriginalBaseType() == promiseType) {
+    Type *promiseLikeType = GlobalBuiltinPromiseLikeType();
+    while (type->IsETSObjectType() && (type->AsETSObjectType()->GetOriginalBaseType() == promiseType ||
+                                       type->AsETSObjectType()->GetOriginalBaseType() == promiseLikeType)) {
         type = type->AsETSObjectType()->TypeArguments().at(0);
     }
+
     if (!type->IsETSUnionType()) {
         return type;
     }
     const auto &ctypes = type->AsETSUnionType()->ConstituentTypes();
-    auto it = std::find_if(ctypes.begin(), ctypes.end(), [promiseType](checker::Type *t) {
-        return t == promiseType || (t->IsETSObjectType() && t->AsETSObjectType()->GetBaseType() == promiseType);
+    auto it = std::find_if(ctypes.begin(), ctypes.end(), [promiseType, promiseLikeType](checker::Type *t) {
+        return t == promiseType || t == promiseLikeType ||
+               (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType ||
+                                         t->AsETSObjectType()->GetBaseType() == promiseLikeType));
     });
     if (it == ctypes.end()) {
         return type;
@@ -153,8 +160,10 @@ Type *ETSChecker::UnwrapPromiseType(checker::Type *type)
         size_t index = it - ctypes.begin();
         newCTypes[index] = UnwrapPromiseType(ctypes[index]);
         ++it;
-        it = std::find_if(it, ctypes.end(), [promiseType](checker::Type *t) {
-            return t == promiseType || t->AsETSObjectType()->GetBaseType() == promiseType;
+        it = std::find_if(it, ctypes.end(), [promiseType, promiseLikeType](checker::Type *t) {
+            return t == promiseType || t == promiseLikeType ||
+                   (t->IsETSObjectType() && (t->AsETSObjectType()->GetBaseType() == promiseType ||
+                                             t->AsETSObjectType()->GetBaseType() == promiseLikeType));
         });
     } while (it != ctypes.end());
     return CreateETSUnionType(std::move(newCTypes));

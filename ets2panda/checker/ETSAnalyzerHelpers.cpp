@@ -600,18 +600,47 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
     return true;
 }
 
+static bool IsPromiseOrPromiseLikeType(ETSChecker *checker, const ETSObjectType *type)
+{
+    const auto baseType = type->GetOriginalBaseType();
+    return baseType == checker->GlobalBuiltinPromiseLikeType() || baseType == checker->GlobalBuiltinPromiseType();
+}
+
+static bool CheckAsyncReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
+                                 ir::Expression *stArgument)
+{
+    auto const checkPromiseType = [checker, argumentType, stArgument](checker::Type *type) -> bool {
+        if (type->IsETSObjectType() && IsPromiseOrPromiseLikeType(checker, type->AsETSObjectType())) {
+            auto promiseArg = type->AsETSObjectType()->TypeArguments()[0];
+            checker::AssignmentContext(checker->Relation(), stArgument, argumentType, promiseArg, stArgument->Start(),
+                                       std::nullopt,
+                                       checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW);
+            if (checker->Relation()->IsTrue()) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    if (funcReturnType->IsETSObjectType()) {
+        if (checkPromiseType(funcReturnType)) {
+            return true;
+        }
+    } else if (funcReturnType->IsETSUnionType()) {
+        for (auto *type : funcReturnType->AsETSUnionType()->ConstituentTypes()) {
+            if (checkPromiseType(type)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc)
 {
-    if (containingFunc->IsAsyncFunc() && funcReturnType->IsETSObjectType() &&
-        funcReturnType->AsETSObjectType()->GetOriginalBaseType() == checker->GlobalBuiltinPromiseType()) {
-        auto promiseArg = funcReturnType->AsETSObjectType()->TypeArguments()[0];
-        checker::AssignmentContext(checker->Relation(), stArgument, argumentType, promiseArg, stArgument->Start(),
-                                   std::nullopt,
-                                   checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW);
-        if (checker->Relation()->IsTrue()) {
-            return true;
-        }
+    if (containingFunc->IsAsyncFunc() && CheckAsyncReturnType(checker, funcReturnType, argumentType, stArgument)) {
+        return true;
     }
 
     if (!checker::AssignmentContext(checker->Relation(), stArgument, argumentType, funcReturnType, stArgument->Start(),
