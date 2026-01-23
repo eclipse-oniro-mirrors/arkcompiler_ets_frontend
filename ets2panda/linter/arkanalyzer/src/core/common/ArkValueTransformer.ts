@@ -769,7 +769,7 @@ export class ArkValueTransformer {
         } else {
             // TODO: deal with ArkStaticFieldRef
             const fieldSignature = ArkSignatureBuilder.buildFieldSignatureFromFieldName(argumentValue.toString());
-            elementAccessExpr = new ArkInstanceFieldRef(baseValue as Local, fieldSignature);
+            elementAccessExpr = new ArkInstanceFieldRef(baseValue as Local, fieldSignature, true);
         }
         // reserve positions for field name
         const exprPositions = [FullPosition.buildFromNode(elementAccessExpression, this.sourceFile), ...basePositions, ...arguPositions];
