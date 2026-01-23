@@ -9809,10 +9809,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   }
 
   private processQualifiedNameForCollections(node: ts.Node, ident: ts.Node): void {
+    const autofix = this.autofixer?.replaceNode(node, ident.getText());
+    if (TypeScriptLinter.isNestedQualifiedName(node)) {
+      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
+      return;
+    }
+
     const vaiableDeclaration = ts.findAncestor(node, ts.isVariableDeclaration);
     const propertyDeclaration = ts.findAncestor(node, ts.isPropertyDeclaration);
     const declaration = vaiableDeclaration !== undefined ? vaiableDeclaration : propertyDeclaration;
-    const autofix = this.autofixer?.replaceNode(node, ident.getText());
     if (!declaration) {
       this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
       return;
@@ -9823,24 +9828,23 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    const autofixInfo: AutofixInfo = {
+      autofix: autofix,
+      node: node,
+      faultId: FaultID.NoNeedStdLibSendableContainer,
+      isExistBitVector: false,
+      isExistSpecialScene: false
+    };
+    this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
+  }
+
+  private static isNestedQualifiedName(node: ts.Node): boolean {
     const parent = node.parent;
     const grandPa = parent.parent;
     if (grandPa && !ts.isVariableDeclaration(grandPa) && !ts.isPropertyDeclaration(grandPa)) {
-      this.incrementCounters(node, FaultID.NoNeedStdLibSendableContainer, autofix);
-      return;
+      return true;
     }
-
-    const initalizer = declaration.initializer;
-    if (initalizer && ts.isNewExpression(initalizer)) {
-      const autofixInfo: AutofixInfo = {
-        autofix: autofix,
-        node: node,
-        faultId: FaultID.NoNeedStdLibSendableContainer,
-        isExistBitVector: false,
-        isExistSpecialScene: false
-      };
-      this.nodeToAutofixInfoMap.set(node.getText(), autofixInfo);
-    }
+    return false;
   }
 
   private processPropertyAccessExprForCollections(node: ts.Node, ident: ts.Node): void {
