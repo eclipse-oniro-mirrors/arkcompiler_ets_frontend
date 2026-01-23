@@ -391,7 +391,7 @@ export abstract class BaseMode {
     }
 
     private compile(id: string, job: CompileJobInfo): boolean {
-        job.type = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : job.type;
+        job.type = (this.moduleType === OHOS_MODULE_TYPE.HAR || this.moduleType === OHOS_MODULE_TYPE.SHARED) ? CompileJobType.DECL_ABC : job.type;
         const ets2panda = Ets2panda.getInstance();
         let errOccurred = false;
         ets2panda.initalize();
@@ -465,7 +465,7 @@ export abstract class BaseMode {
     }
 
     private compileSimultaneous(id: string, job: CompileJobInfo): boolean {
-        job.type = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : job.type;
+        job.type = (this.moduleType === OHOS_MODULE_TYPE.HAR || this.moduleType === OHOS_MODULE_TYPE.SHARED) ? CompileJobType.DECL_ABC : job.type;
         const ets2panda = Ets2panda.getInstance(this.buildConfig);
         ets2panda.initalize();
         let errOccurred = false;
@@ -843,7 +843,8 @@ export abstract class BaseMode {
 
         const newNodes: GraphNode<ProcessCompileTask>[] = [];
         for (const node of buildGraph.nodes) {
-            const newType = this.moduleType === OHOS_MODULE_TYPE.HAR ? CompileJobType.DECL_ABC : node.data.type;
+            const newType = (this.moduleType === OHOS_MODULE_TYPE.HAR || this.moduleType === OHOS_MODULE_TYPE.SHARED)
+                ? CompileJobType.DECL_ABC : node.data.type;
             newNodes.push({
                 id: node.id,
                 data: {

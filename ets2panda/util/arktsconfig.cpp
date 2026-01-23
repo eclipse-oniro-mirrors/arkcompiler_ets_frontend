@@ -421,7 +421,7 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     // Parse "package"
     package_ = ValueOrEmptyString(compilerOptions, PACKAGE);
 
-    // Parse "baseUrl", "outDir", "rootDir", "cacheDir"
+    // Parse "baseUrl", "outDir", "rootDir", "cacheDir", "declgenV2OutPath"
     baseUrl_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, BASE_URL), arktsConfigDir);
     outDir_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, OUT_DIR), arktsConfigDir);
     rootDir_ = ValueOrEmptyString(compilerOptions, ROOT_DIR);
@@ -436,6 +436,9 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     if (!cacheDir_.empty() && !ark::os::IsDirExists(cacheDir_)) {
         ark::os::CreateDirectories(cacheDir_);
     }
+
+    declgenV2OutPath_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, declgenV2OutPath), arktsConfigDir);
+
     // Parse "useUrl"
     if (compilerOptions->get()->HasKey(USE_EMPTY_PACKAGE)) {
         auto *useUrl = compilerOptions->get()->GetValue<JsonObject::BoolT>(USE_EMPTY_PACKAGE);
@@ -519,6 +522,7 @@ void ArkTsConfig::Inherit(const ArkTsConfig &base)
     baseUrl_ = base.baseUrl_;
     outDir_ = base.outDir_;
     rootDir_ = base.rootDir_;
+    declgenV2OutPath_ = base.declgenV2OutPath_;
     paths_ = base.paths_;
     files_ = base.files_;
 #ifdef ARKTSCONFIG_USE_FILESYSTEM

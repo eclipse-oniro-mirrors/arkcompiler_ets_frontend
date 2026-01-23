@@ -175,6 +175,10 @@ public:
     {
         return cacheDir_;
     }
+    const std::string &DeclgenV2OutPath() const
+    {
+        return declgenV2OutPath_;
+    }
     const std::vector<std::string> &Files() const
     {
         return files_;
@@ -236,6 +240,8 @@ private:
     static constexpr const char *ROOT_DIR = "rootDir";
     static constexpr const char *DEPENDENCIES = "dependencies";  // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
     static constexpr const char *CACHE_DIR = "cacheDir";         // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
+    static constexpr const char *declgenV2OutPath =              // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
+        "declgenV2OutPath";                                      // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
 
     void Inherit(const ArkTsConfig &base);
     bool ParseDependency(size_t keyIdx, const std::unique_ptr<ark::JsonObject> *dependencies,
@@ -250,6 +256,7 @@ private:
     std::string outDir_ {};
     std::string rootDir_ {};
     std::string cacheDir_ {};
+    std::string declgenV2OutPath_ {};
     PathsMap paths_ {};
     std::map<std::string, ExternalModuleData, CompareByLength> dependencies_ {};
     std::map<std::string_view, std::string_view> sourcePathMap_ {};

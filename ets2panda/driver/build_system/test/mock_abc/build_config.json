@@ -14,6 +14,7 @@
     "declgenV2OutPath": "${absolute_path_to_build_system}/build/cache",
     "buildSdkPath": ".",
     "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/test/mock_abc/loader_out/default/etsFortgz",
     "enableDeclgenEts2Ts": false,
     "dependentModuleList": []
 }

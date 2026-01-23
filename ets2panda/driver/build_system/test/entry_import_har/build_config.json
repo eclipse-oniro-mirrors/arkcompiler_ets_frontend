@@ -16,6 +16,7 @@
     "cachePath": "./build/cache",
     "buildSdkPath": ".",
     "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/test/entry_import_har/loader_out/default/etsFortgz",
     "dependentModuleList": [
         {
             "language": "1.2",
