@@ -2417,7 +2417,7 @@ void ETSGen::StringBuilderAppend(const ir::AstNode *node, VReg builder)
     VReg arg0 = AllocReg();
     StoreAccumulator(node, arg0);
 
-    CallExact(node, signature, builder, arg0);
+    CallExactDevirtual(node, signature, builder, arg0);
     SetAccumulatorType(Checker()->GetGlobalTypesHolder()->GlobalStringBuilderBuiltinType());
 }
 
