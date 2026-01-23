@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -127,8 +127,16 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
 
 export function initBuildEnv(buildConfig: BuildConfig): void {
     const pandaSdkPath: string = path.resolve(buildConfig.pandaSdkPath as string);
-    const currentPath: string | undefined = process.env.PATH;
+
+    // In windows, the env variables are inherited from cmd and setted by hvigor. 
+    // The default key of PATH in cmd is `Path`, not `PATH`. Sometimes process.env.PATH may be undefined.
+    const currentPath: string | undefined = process.env.PATH || process.env.Path || process.env.path;
+
     const logger: Logger = Logger.getInstance();
+
+    if (!currentPath) {
+        logger.printWarn('Current PATH environment variable is undefined.');
+    }
 
     let pandaLibPath: string = path.resolve(pandaSdkPath, 'lib');
 
