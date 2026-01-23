@@ -9862,7 +9862,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
   private processPropertyAccessExprForCollections(node: ts.Node, ident: ts.Node): void {
     let isSpecialScene: boolean = false;
-    if (TypeScriptLinter.isSpecialContainerScene(node, ident)) {
+    if (this.isSpecialContainerScene(node, ident)) {
       isSpecialScene = true;
       this.updateImportAutofix(node, '');
     }
@@ -9921,7 +9921,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     });
   }
 
-  private static isSpecialContainerScene(node: ts.Node, ident: ts.Node): boolean {
+  private isSpecialContainerScene(node: ts.Node, ident: ts.Node): boolean {
     const parent = node.parent;
     if (!ts.isNewExpression(parent)) {
       return false;
@@ -9937,11 +9937,18 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     const args = parent.arguments;
     if (args && args.length === 1) {
       const arg = args[0];
-      if (ts.isNumericLiteral(arg)) {
-        return true;
-      }
+      return this.isNumberTypeExpression(arg);
     }
     return false;
+  }
+
+  private isNumberTypeExpression(arg: ts.Expression): boolean {
+    if (ts.isNumericLiteral(arg)) {
+      return true;
+    }
+
+    const argType = this.tsTypeChecker.getTypeAtLocation(arg);
+    return !!(argType?.flags & ts.TypeFlags.Number);
   }
 
   private checkCorrespondingQualifiedName(node: ts.Node, isSpecialScene: boolean): void {

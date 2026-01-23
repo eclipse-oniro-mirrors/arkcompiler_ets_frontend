@@ -65,6 +65,36 @@ let array5: col5.Array<number> = new col5.Array<number>(5);  // both places (ark
 let map2: Map<string, boolean> = new Map<string, boolean>();  // both places (arkts-no-need-stdlib-sendable-containers)
 
 
+// Supplement Special Scenarios
+function func(length : number) : void {
+  let array: col2.Array<number> = new col2.Array<number>(length);
+}
+
+function getLength() : number {
+  return 1;
+}
+
+let array30: col2.Array<number> = new col2.Array<number>(getLength()); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let aa  = 4;
+let bb  = 5;
+let array33: col2.Array<number> = new col2.Array<number>(aa + bb); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let length  = 9;
+let array34: col2.Array<number> = new col2.Array<number>(length); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array35: col2.Array<number> = new col2.Array<number>(length++); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array36: col2.Array<number> = new col2.Array<number>(++length); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array37: col2.Array<number> = new col2.Array<number>(Math.random()); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+
+class A {
+  static len : number = 5;
+}
+let array38: col2.Array<number> = new col2.Array<number>(A.len); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let array39: col2.Array<number> = new col2.Array<number>(aa | bb); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let flag = true;
+let array40: col2.Array<number> = new col2.Array<number>(flag ? aa : bb); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+let value : any = "10";
+let array41: col2.Array<number> = new col2.Array<number>(value as number); // Special Scene: both places (arkts-no-need-stdlib-sendable-containers), but no need to be auto-fixed
+
+
 // Large Scenario Ⅱ: collections declaration file comes from user-defined
 // The following codes no need to be checked and auto-fixed
 import { collections as definedCol } from './ignore_files/user_defined_collections';
