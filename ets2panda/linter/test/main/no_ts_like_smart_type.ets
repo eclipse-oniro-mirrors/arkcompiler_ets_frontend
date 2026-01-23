@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,6 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// global variables
+let a: number | undefined = 1;
+if (a != undefined) {
+	a++; // Error
+}
+a++; // Error
 
 class AW {
     private static instance:AW = new AW();
@@ -75,9 +82,9 @@ function foo3(spec :string|number){
     foo2(spec) // Error
  }
 }
-function foo3(spec :string|number){
+function foo6(spec :string|number){
  if (typeof spec == "string") {
-    foo22(spec)
+    foo22(spec) // Ok
  }
 }
 
@@ -130,25 +137,25 @@ class B {
     a?:A = new A()
 }
 let b = new B()
-if(b.a && b.a.f() !== null){ //Error
+if(b.a && b.a.f() !== null){ // Error
     console.log('23')
 }
 
-if (b.a.f() !== null) { //Error
+if (b.a.f() !== null) { // Error
   console.log('warn');
 }
 if (b.a?.f() !== null) {
   console.log('ok');
 }
 function check(obj?: A) {
-  if (obj.f() !== null) { //Error
+  if (obj.f() !== null) { // Error
     console.log('warn');
   }
 }
 if ((b.a?.f() ?? 0) > 0) {
   console.log('ok');
 }
-const val = b.a.f(); //Error
+const val = b.a.f(); // Error
 
 
 function foo4(uri: string | number | boolean) : string {
@@ -177,7 +184,7 @@ class ClassA {
 
     static funA(key: string): string | undefined {
         if (ClassA.sA) {
-            return ClassA.sA(key) //error
+            return ClassA.sA(key) // Error
         }
         else {
             return undefined;
@@ -190,7 +197,7 @@ class AT {
 
     isRelease(): boolean {
         if (this.b != undefined) {
-            return this.b //error
+            return this.b; // Error
         }
     }
 }
@@ -258,7 +265,7 @@ f(): number | null {
 }
 }
 
-function check(obj?: AG) {
+function check5(obj?: AG) {
 if (obj) {
   console.log(obj.f()); // valid(guarded)
 }
@@ -275,7 +282,7 @@ if (!obj) {
 obj.f(); // valid(guarded)
 }
 function check2(obj?: AG) {
-obj.f(); // ERROR
+obj.f(); // Error
 
 if (obj == null) return;
 obj.f(); // valid(guarded)
@@ -289,7 +296,7 @@ return obj ? obj.f() : null; // guarded in ternary
 
 function check35(obj?: AG) {
 
-if (obj.h == 3) { //error
+if (obj.h == 3) { // Error
   console.log('3');
 }
 
@@ -479,7 +486,7 @@ class ay {
 
 function boo() {
     let aa: ay = new ay();
-    aa.a++;   //object prop，error
+    aa.a++;   //object prop，Error
 }
 
 class A3 {
@@ -487,7 +494,19 @@ class A3 {
 }
 
 class B3 {
+    static bbb?: number = 1;
     b: A3 | null = new A3();
+    test1(b: A3 | null): number | undefined {
+        return undefined;
+    }
+
+    test2(b: A3): number | undefined {
+        return undefined;
+    }
+
+    test3(a:number, b: A3): number | undefined {
+        return undefined;
+    }
 }
 
 function foo7() {
@@ -496,6 +515,111 @@ function foo7() {
         aObj.a = 2.0;   //smart type, the type of local variable 'a' is narrowed to 'A' and no longer includes 'null', no error
     }
 }
+
+function foo8(bObj: B3 | undefined, ccc: number | undefined) {
+    if (bObj != undefined && bObj.b != undefined) {
+        bObj.b.a = 2.0; // Error
+        bObj.b?.a; // Ok         
+        bObj.b.a; // Error
+        const a1 = bObj.b?.a; // Ok
+        let a2: number = a1; //  Error
+        a2 =  bObj.b?.a;	 //  Error
+        let a3: number | undefined  = a1; // Ok
+        a3 =  bObj.b?.a; // Ok
+        const b1 = bObj.b; // Ok
+        let b2: A3 = b1; //  Error
+        b2 = b1; //  Error
+        let b3: A3 | undefined = b1; //  ok
+        b3 = b1; //  ok
+        const a: A3 | null = bObj.b; // Ok
+        const b: A3 = bObj.b; // Error
+        const c: A3 = bObj.b as A3; // Ok
+        bObj.test1(bObj.b); // Ok
+        bObj.test2(bObj.b); // Error
+        bObj.test2(bObj.b as A3); // Ok
+        bObj.test3(1, bObj.b); // Error
+        bObj.test3(1, bObj.b as A3); // Ok
+
+        if (ccc != undefined) { // Ok
+            const d: number = ccc; // Ok
+        }
+
+        if (B3.bbb != undefined) { // Ok
+            const e: number = B3.bbb; // Error
+        }
+    }
+}
+
+function foo9(ccc: number | undefined) {
+  if (B3.bbb) { // Ok
+		return B3.bbb; // Error
+	}
+	if (!B3.bbb) { // Ok
+		return B3.bbb; // Error
+	}
+	if (B3.bbb != undefined) { // Ok
+		return B3.bbb; // Error
+	}
+	if (B3.bbb instanceof number) { // Ok
+		return B3.bbb; // Error
+	}
+	if (typeof B3.bbb === 'number') { // Ok
+		return B3.bbb; // Error
+	}
+	if (!ccc) { // Ok
+		return ccc; // Ok
+	}
+	if (ccc != undefined) { // Ok
+		return ccc; // Ok
+	}
+	if (ccc instanceof number) { // Ok
+		return ccc; // Ok
+	}
+	if (typeof ccc === 'number') { // Ok
+		return ccc; // Error
+	}
+}
+
+function foo10() {
+    return B3.bbb; // Ok
+}
+
+class A4 {
+    public instance : Number | String | Object= 'smart cast'; // Ok
+    public aaa:Number | undefined = 1;
+    public aClass: A3 | undefined;
+    getInstance(): Number {
+        if (!(this.instance instanceof Number)) { // Ok
+            return 0;
+        }
+
+        if (this.aaa != undefined) { // Ok
+            return this.aaa; //  error,arkts-no-ts-like-smart-type，this.aaa是class内部属性，不支持smart type，需要报错
+        }
+
+        if (this.aClass?.a) { // Ok
+            this.test1(this.aClass?.a); // Ok
+            this.test2(this.aClass?.a); // Ok
+            this.test3(this.aClass?.a); // Ok
+        }
+        return this.instance; // Error
+    }
+
+    test1(a?: number) {}
+    test2(a: number | undefined) {}
+    test3(a: number) {}
+}
+
+class D {
+    test() {}
+}
+
+class E {
+    test() {}
+}
+
+let varD: D | E = new E();
+varD.test(); // Ok
 
 function foo1(aObj: A3 | null) {
     if (aObj != null) {
@@ -552,7 +676,7 @@ class ef {
 
 function roo(aObj: ef | null) {
     if (typeof aObj === 'ef') {
-        aObj.a = 2.0; //error
+        aObj.a = 2.0; // Error
     }
 }
 
