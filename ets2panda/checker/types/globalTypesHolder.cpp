@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -188,6 +188,7 @@ void GlobalTypesHolder::AddEtsSpecificBuiltinTypes()
     builtinNameMappings_.emplace("Type", GlobalTypeId::ETS_TYPE_BUILTIN);
     builtinNameMappings_.emplace("Types", GlobalTypeId::ETS_TYPES_BUILTIN);
     builtinNameMappings_.emplace("Promise", GlobalTypeId::ETS_PROMISE_BUILTIN);
+    builtinNameMappings_.emplace("PromiseLike", GlobalTypeId::ETS_PROMISELIKE_BUILTIN);
     builtinNameMappings_.emplace("Function", GlobalTypeId::ETS_FUNCTION_BUILTIN);
     builtinNameMappings_.emplace("Box", GlobalTypeId::ETS_BOX_BUILTIN);
     builtinNameMappings_.emplace("BooleanBox", GlobalTypeId::ETS_BOOLEAN_BOX_BUILTIN);
@@ -614,6 +615,11 @@ Type *GlobalTypesHolder::GlobalTypesBuiltinType()
 Type *GlobalTypesHolder::GlobalPromiseBuiltinType()
 {
     return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_PROMISE_BUILTIN));
+}
+
+Type *GlobalTypesHolder::GlobalPromiseLikeBuiltinType()
+{
+    return globalTypes_.at(static_cast<size_t>(GlobalTypeId::ETS_PROMISELIKE_BUILTIN));
 }
 
 Type *GlobalTypesHolder::GlobalFunctionBuiltinType()

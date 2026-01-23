@@ -158,6 +158,7 @@ public:
     ETSObjectType *GlobalBuiltinErrorType() const;
     ETSObjectType *GlobalStringBuilderBuiltinType() const;
     ETSObjectType *GlobalBuiltinPromiseType() const;
+    ETSObjectType *GlobalBuiltinPromiseLikeType() const;
     ETSObjectType *GlobalBuiltinFunctionType() const;
     ETSObjectType *GlobalBuiltinBoxType(Type *contents);
 

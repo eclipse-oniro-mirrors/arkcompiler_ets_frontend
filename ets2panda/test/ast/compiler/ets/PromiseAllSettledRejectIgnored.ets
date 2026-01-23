@@ -54,5 +54,3 @@ Promise.allSettled(thenable).then<void, void>((values: PromiseSettledResult<stri
 }).catch((e: Error): void => {
     console.log('Test failed: ' + e);
 });
-
-/* @@? 32:1 Error Semantic error ESE0127: No matching call signature for then(((p1: Array<PromiseFulfilledResult<String>|PromiseRejectedResult>) => void), ((p1: Error) => void)) */
