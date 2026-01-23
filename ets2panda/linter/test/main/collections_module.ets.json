@@ -15,9 +15,19 @@
     ],
     "result": [
         {
-            "line": 70,
+            "line": 94,
+            "column": 13,
+            "endLine": 94,
+            "endColumn": 16,
+            "problem": "AnyType",
+            "suggest": "",
+            "rule": "Use explicit types instead of \"any\", \"unknown\" (arkts-no-any-unknown)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 100,
             "column": 1,
-            "endLine": 70,
+            "endLine": 100,
             "endColumn": 85,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -25,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 71,
+            "line": 101,
             "column": 1,
-            "endLine": 71,
+            "endLine": 101,
             "endColumn": 86,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -35,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 72,
+            "line": 102,
             "column": 1,
-            "endLine": 72,
+            "endLine": 102,
             "endColumn": 86,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -45,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 73,
+            "line": 103,
             "column": 1,
-            "endLine": 73,
+            "endLine": 103,
             "endColumn": 86,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -55,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 88,
+            "line": 118,
             "column": 1,
-            "endLine": 88,
+            "endLine": 118,
             "endColumn": 82,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -65,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 89,
+            "line": 119,
             "column": 1,
-            "endLine": 89,
+            "endLine": 119,
             "endColumn": 83,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -75,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 90,
+            "line": 120,
             "column": 1,
-            "endLine": 90,
+            "endLine": 120,
             "endColumn": 83,
             "problem": "ImportAfterStatement",
             "suggest": "",
@@ -85,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 91,
+            "line": 121,
             "column": 1,
-            "endLine": 91,
+            "endLine": 121,
             "endColumn": 83,
             "problem": "ImportAfterStatement",
             "suggest": "",
