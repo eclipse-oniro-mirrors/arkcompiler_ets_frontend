@@ -60,6 +60,7 @@ module Diagnostic
       end
       diagnostics.each do |diagnostic|
         diagnostic.type = diagnostic_type
+        diagnostic.strict ||= false
         @diagnostics.append(diagnostic)
       end
     end

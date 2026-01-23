@@ -25,12 +25,11 @@ namespace ark::es2panda::diagnostic {
 
 class DiagnosticKind {
 public:
-    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message) :
+    constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict) :
 #ifdef ES2PANDA_STRICT
-        // NOTE(lirismankarina): delete id for warnings when merge #32460
-        type_((type == util::DiagnosticType::WARNING && id == 29) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message) {}
+        type_((type == util::DiagnosticType::WARNING && strict == true) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict) {}
 #else
-        type_(type), id_(id), message_(message) {}
+        type_(type), id_(id), message_(message), strict_(strict) {}
 #endif
     bool operator==(const DiagnosticKind &other) const
     {
@@ -57,14 +56,20 @@ public:
         return message_;
     }
 
+    bool Strict() const
+    {
+        return strict_;
+    }
+
 private:
     const util::DiagnosticType type_;
     const uint32_t id_;
     const std::string_view message_;
+    const bool strict_;
 };
 
 % Diagnostic::diagnostics.each do |desc|
-    constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>"};
+    constexpr static DiagnosticKind <%= desc.name %> {util::DiagnosticType::<%= desc.type.upcase %>, <%= desc.id %>, "<%= desc.message %>", <%= desc.strict %>};
 % end
 } // namespace ark::es2panda::diagnostic
 

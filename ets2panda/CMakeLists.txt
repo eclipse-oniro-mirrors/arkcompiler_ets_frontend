@@ -55,6 +55,7 @@ endif()
 
 if(PANDA_STRICT_MODE)
   add_definitions(-DES2PANDA_STRICT=${PANDA_STRICT_MODE})
+  message(STATUS "PANDA_STRICT_MODE                      = ${PANDA_STRICT_MODE}")
 endif()
 
 file(MAKE_DIRECTORY "${GENERATED_DIR}")

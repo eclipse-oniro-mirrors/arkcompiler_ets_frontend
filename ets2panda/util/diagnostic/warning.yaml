@@ -102,6 +102,7 @@ warning:
 - name: IMPROPER_NUMERIC_CAST
   id: 29
   message: "'As' expression for cast is deprecated for numeric types. Use explicit conversion function {}.to{}(...) instead."
+  strict: true
 
 - name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
   id: 52491
