@@ -148,7 +148,7 @@ const std::vector<std::string> &GetFileContentsOfKeywordsEnum()
 {
     static const std::vector<std::string> CONTENTS = {
         R"('use static'
-        enum A {}
+        enum EnumA {}
         )"};
     return CONTENTS;
 }
@@ -159,14 +159,14 @@ QuickInfo ExpectResultKeywordsEnum()
     std::vector<SymbolDisplayPart> document {};
     const std::string expectedFileName = "GetFileContentsOfKeywordsEnum.ets";
     const std::string kind = "enum";
-    size_t const start = 21;
-    size_t const length = 9;
+    size_t const start = 26;
+    size_t const length = 5;
     TextSpan span(start, length);
-    const std::string kindModifiers = "";
+    const std::string kindModifiers = "final";
     std::vector<SymbolDisplayPart> expected;
     expected.emplace_back("enum", "keyword");
     expected.emplace_back(" ", "space");
-    expected.emplace_back("A", "enumName");
+    expected.emplace_back("EnumA", "enumName");
     return QuickInfo(kind, kindModifiers, span, expected, document, tags, expectedFileName);
 }
 
@@ -181,7 +181,7 @@ TEST_F(LspQuickInfoTests, GetFileContentsOfKeywordsEnum)
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t const offset = 21;
+    size_t const offset = 28;
     auto quickInfo = lspApi->getQuickInfoAtPosition("GetFileContentsOfKeywordsEnum.ets", ctx, offset);
     auto expectedQuickInfo = ExpectResultKeywordsEnum();
     AssertQuickInfo(expectedQuickInfo, quickInfo);

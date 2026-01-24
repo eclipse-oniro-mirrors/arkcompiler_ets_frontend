@@ -954,6 +954,24 @@ ir::AstNode *FindAncestor(ir::AstNode *node, const ir::NodePredicate &cb)
     return node;
 }
 
+bool IsEnumDeclParent(const ir::AstNode *decl)
+{
+    return decl->Parent() != nullptr && decl->Parent()->OriginalNode() != nullptr &&
+           decl->Parent()->OriginalNode()->Type() == ir::AstNodeType::TS_ENUM_DECLARATION;
+}
+
+static ArenaVector<ir::AstNode *> FilterNonTypeReferenceParts(const ArenaVector<ir::AstNode *> &nodes,
+                                                              ArenaAllocator *allocator)
+{
+    ArenaVector<ir::AstNode *> filtered(allocator->Adapter());
+    for (auto *node : nodes) {
+        if (!(node->Parent() != nullptr && node->Parent()->Type() == ir::AstNodeType::ETS_TYPE_REFERENCE_PART)) {
+            filtered.push_back(node);
+        }
+    }
+    return filtered;
+}
+
 ArenaVector<ir::AstNode *> FindReferencesByName(ir::AstNode *ast, ir::AstNode *decl, ir::AstNode *node,
                                                 ArenaAllocator *allocator)
 {
@@ -967,6 +985,11 @@ ArenaVector<ir::AstNode *> FindReferencesByName(ir::AstNode *ast, ir::AstNode *d
     FindAllChild(ast, checkFunc, references);
 
     auto uniqueReferences = RemoveRefDuplicates(references, allocator);
+
+    if (IsEnumDeclParent(decl)) {
+        uniqueReferences = FilterNonTypeReferenceParts(uniqueReferences, allocator);
+    }
+
     std::sort(uniqueReferences.begin(), uniqueReferences.end(), [](const ir::AstNode *a, const ir::AstNode *b) {
         return (a->Start().index != b->Start().index) ? a->Start().index < b->Start().index
                                                       : a->End().index < b->End().index;
