@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -284,6 +284,16 @@ DiagnosticType Suggestion::Type() const
 uint32_t Suggestion::GetId() const
 {
     return kind_->Id();
+}
+
+Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,
+                       const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos,
+                       std::vector<class Suggestion *> &&suggestions)
+    : DiagnosticBase(pos),
+      diagnosticKind_(&diagnosticKind),
+      diagnosticParams_(FormatParams(diagnosticParams)),
+      suggestions_(std::make_unique<std::vector<class Suggestion *>>(std::move(suggestions)))
+{
 }
 
 Diagnostic::Diagnostic(const diagnostic::DiagnosticKind &diagnosticKind,

@@ -1017,6 +1017,40 @@ extern "C" es2panda_SuggestionInfo *CreateSuggestionInfo(es2panda_Context *conte
     return suggestionInfo;
 }
 
+extern "C" void LogDiagnosticWithSuggestions(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
+                                             es2panda_SuggestionInfo **suggestionInfos, size_t suggestionCount)
+{
+    auto *ctx = reinterpret_cast<Context *>(context);
+    auto *diagnosticKind = reinterpret_cast<const diagnostic::DiagnosticKind *>(diagnosticInfo->kind);
+    util::DiagnosticMessageParams diagnosticParams;
+    diagnosticParams.reserve(diagnosticInfo->argc);
+    for (size_t i = 0; i < diagnosticInfo->argc; ++i) {
+        diagnosticParams.push_back(diagnosticInfo->args[i]);
+    }
+    auto *pos = reinterpret_cast<lexer::SourcePosition *>(diagnosticInfo->pos);
+
+    std::vector<util::Suggestion *> suggestions;
+    suggestions.reserve(suggestionCount);
+    for (size_t i = 0; i < suggestionCount; ++i) {
+        const es2panda_SuggestionInfo *info = suggestionInfos[i];
+        if (info == nullptr) {
+            continue;
+        }
+
+        auto *suggestionKind = reinterpret_cast<const diagnostic::DiagnosticKind *>(info->kind);
+        std::vector<std::string> suggestionParams;
+        suggestionParams.reserve(info->argc);
+        for (size_t j = 0; j < info->argc; ++j) {
+            suggestionParams.push_back(info->args[j]);
+        }
+        auto *range = reinterpret_cast<lexer::SourceRange *>(info->range);
+        auto suggestion = ctx->diagnosticEngine->CreateSuggestion(suggestionKind, suggestionParams,
+                                                                  info->substitutionCode, info->title, range);
+        suggestions.push_back(std::move(suggestion));
+    }
+    ctx->diagnosticEngine->LogDiagnostic(*diagnosticKind, diagnosticParams, *pos, std::move(suggestions));
+}
+
 extern "C" void LogDiagnosticWithSuggestion(es2panda_Context *context, const es2panda_DiagnosticInfo *diagnosticInfo,
                                             const es2panda_SuggestionInfo *suggestionInfo)
 {
@@ -1556,6 +1590,7 @@ es2panda_Impl g_impl = {
     CreateDiagnosticKind,
     CreateDiagnosticInfo,
     CreateSuggestionInfo,
+    LogDiagnosticWithSuggestions,
     LogDiagnosticWithSuggestion,
     LogDiagnostic,
     GetSemanticErrors,
