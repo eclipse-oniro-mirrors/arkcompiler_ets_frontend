@@ -349,6 +349,36 @@ export class Lsp {
     return moduleInfo ? [...moduleInfo.compileFiles, ...moduleInfo.depModuleCompileFiles] : [];
   }
 
+  private getMergedCompileFilesCrossModule(filename: String): string[] {
+    const curModuleInfo = this.moduleInfos[path.resolve(filename.valueOf())];
+    if (!curModuleInfo || !Array.isArray(curModuleInfo.compileFiles)) {
+      return [];
+    }
+    const curComplileSet = new Set(curModuleInfo.compileFiles);
+    const result: string[] = [];
+    result.push(...curModuleInfo.compileFiles);
+    result.push(...curModuleInfo.depModuleCompileFiles)
+
+    for (const [modulekey, moduleInfo] of Object.entries(this.moduleInfos)) {
+      if (!moduleInfo || !Array.isArray(moduleInfo.depModuleCompileFiles)) {
+        continue;
+      }
+
+      const hasReference = moduleInfo.depModuleCompileFiles.some((file) =>
+        curComplileSet.has(file)
+      );
+
+      if (hasReference) {
+        if (Array.isArray(moduleInfo.compileFiles)) {
+          result.push(...moduleInfo.compileFiles);
+        }
+        result.push(...moduleInfo.depModuleCompileFiles);
+      }
+    }
+
+    return [...new Set(result)];
+  }
+
   getSemanticDiagnostics(filename: String): LspDiagsNode | undefined {
     let ptr: KPointer;
     let fileCache = this.filesMap.get(filename.valueOf());
@@ -508,7 +538,7 @@ export class Lsp {
     }
 
     let result: LspReferenceData[] = [];
-    let compileFiles = this.getMergedCompileFiles(filename);
+    let compileFiles = this.getMergedCompileFilesCrossModule(filename);
     const declFilesJson = this.moduleInfos[path.resolve(filename.valueOf())].declFilesPath;
     if (declFilesJson && declFilesJson.trim() !== '' && fs.existsSync(declFilesJson)) {
       this.addDynamicDeclFilePaths(declFilesJson, compileFiles);
@@ -1996,41 +2026,41 @@ export class Lsp {
     if (options) {
       const booleanSettings: Array<[keyof FormatCodeSettingsOptions,
         (ptr: KNativePointer, val: number) => void]> = [
-        ['insertSpaceAfterCommaDelimiter',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterCommaDelimiter],
-        ['insertSpaceAfterSemicolonInForStatements',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements],
-        ['insertSpaceBeforeAndAfterBinaryOperators',
-          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators],
-        ['insertSpaceAfterConstructor',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterConstructor],
-        ['insertSpaceAfterKeywordsInControlFlowStatements',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements],
-        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis],
-        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets],
-        ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces],
-        ['insertSpaceAfterOpeningAndBeforeClosingEmptyBraces',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces],
-        ['insertSpaceAfterTypeAssertion',
-          global.es2panda._setFormatCodeSettingsInsertSpaceAfterTypeAssertion],
-        ['insertSpaceBeforeFunctionParenthesis',
-          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis],
-        ['placeOpenBraceOnNewLineForFunctions',
-          global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions],
-        ['placeOpenBraceOnNewLineForControlBlocks',
-          global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks],
-        ['insertSpaceBeforeTypeAnnotation',
-          global.es2panda._setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation],
-        ['convertTabsToSpaces',
-          global.es2panda._setFormatCodeSettingsConvertTabsToSpaces],
-        ['trimTrailingWhitespace',
-          global.es2panda._setFormatCodeSettingsTrimTrailingWhitespace],
-        ['indentMultiLineObjectLiteralBeginningOnBlankLine',
-          global.es2panda._setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine]
-      ];
+          ['insertSpaceAfterCommaDelimiter',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterCommaDelimiter],
+          ['insertSpaceAfterSemicolonInForStatements',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterSemicolonInForStatements],
+          ['insertSpaceBeforeAndAfterBinaryOperators',
+            global.es2panda._setFormatCodeSettingsInsertSpaceBeforeAndAfterBinaryOperators],
+          ['insertSpaceAfterConstructor',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterConstructor],
+          ['insertSpaceAfterKeywordsInControlFlowStatements',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterKeywordsInControlFlowStatements],
+          ['insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis],
+          ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets],
+          ['insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces],
+          ['insertSpaceAfterOpeningAndBeforeClosingEmptyBraces',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterOpeningAndBeforeClosingEmptyBraces],
+          ['insertSpaceAfterTypeAssertion',
+            global.es2panda._setFormatCodeSettingsInsertSpaceAfterTypeAssertion],
+          ['insertSpaceBeforeFunctionParenthesis',
+            global.es2panda._setFormatCodeSettingsInsertSpaceBeforeFunctionParenthesis],
+          ['placeOpenBraceOnNewLineForFunctions',
+            global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForFunctions],
+          ['placeOpenBraceOnNewLineForControlBlocks',
+            global.es2panda._setFormatCodeSettingsPlaceOpenBraceOnNewLineForControlBlocks],
+          ['insertSpaceBeforeTypeAnnotation',
+            global.es2panda._setFormatCodeSettingsInsertSpaceBeforeTypeAnnotation],
+          ['convertTabsToSpaces',
+            global.es2panda._setFormatCodeSettingsConvertTabsToSpaces],
+          ['trimTrailingWhitespace',
+            global.es2panda._setFormatCodeSettingsTrimTrailingWhitespace],
+          ['indentMultiLineObjectLiteralBeginningOnBlankLine',
+            global.es2panda._setFormatCodeSettingsIndentMultiLineObjectLiteralBeginningOnBlankLine]
+        ];
 
       for (const [key, setter] of booleanSettings) {
         const value = options[key];
@@ -2041,12 +2071,12 @@ export class Lsp {
 
       const numberSettings: Array<[keyof FormatCodeSettingsOptions,
         (ptr: KNativePointer, val: number) => void]> = [
-        ['indentSize', global.es2panda._setFormatCodeSettingsIndentSize],
-        ['tabSize', global.es2panda._setFormatCodeSettingsTabSize],
-        ['baseIndentSize', global.es2panda._setFormatCodeSettingsBaseIndentSize],
-        ['indentStyle', global.es2panda._setFormatCodeSettingsIndentStyle],
-        ['semicolons', global.es2panda._setFormatCodeSettingsSemicolons]
-      ];
+          ['indentSize', global.es2panda._setFormatCodeSettingsIndentSize],
+          ['tabSize', global.es2panda._setFormatCodeSettingsTabSize],
+          ['baseIndentSize', global.es2panda._setFormatCodeSettingsBaseIndentSize],
+          ['indentStyle', global.es2panda._setFormatCodeSettingsIndentStyle],
+          ['semicolons', global.es2panda._setFormatCodeSettingsSemicolons]
+        ];
 
       for (const [key, setter] of numberSettings) {
         const value = options[key];
