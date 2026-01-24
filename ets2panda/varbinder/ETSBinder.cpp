@@ -1039,7 +1039,7 @@ Variable *ETSBinder::AddImportSpecifierFromReExport(ir::AstNode *importSpecifier
         return localVar;
     }
 
-    ThrowError(importPath->Start(), diagnostic::IMPORT_NOT_FOUND, {imported});
+    ThrowError(importSpecifier->Start(), diagnostic::IMPORT_NOT_FOUND, {imported});
     return nullptr;
 }
 

@@ -1241,6 +1241,26 @@ std::vector<CompletionEntry> GetImportStatementPathCompletions(std::vector<Compl
     return completions;
 }
 
+bool TryCompleteMissingFromKeyword(std::vector<CompletionEntry> &completions, ir::AstNode *node)
+{
+    auto parent = node->Parent();
+    if (parent == nullptr || !parent->IsETSImportDeclaration()) {
+        return false;
+    }
+    auto importDecl = parent->AsETSImportDeclaration();
+    // When Source has a real range, the import path is already present
+    // (e.g. `import {x} from 'f'`), so don't suggest `from` again.
+    if (importDecl->Source()->Start().index != importDecl->Source()->End().index) {
+        return false;
+    }
+    auto sourceStr = node->AsStringLiteral()->Str();
+    std::string name = lexer::TokenToString(lexer::TokenType::KEYW_FROM);
+    if (name.compare(0, sourceStr.Length(), sourceStr.Utf8()) == 0) {
+        completions.emplace_back(name, CompletionEntryKind::KEYWORD, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
+    }
+    return true;
+}
+
 std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *context, ir::AstNode *node, size_t pos)
 {
     std::vector<CompletionEntry> completions;
@@ -1266,6 +1286,9 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
         }
         completions.emplace_back(name, CompletionEntryKind::KEYWORD, std::string(sort_text::GLOBALS_OR_KEYWORDS), name);
     } else if (node->IsStringLiteral()) {
+        if (TryCompleteMissingFromKeyword(completions, node)) {
+            return completions;
+        }
         auto ctx = reinterpret_cast<public_lib::Context *>(context);
         auto importText = node->AsStringLiteral()->ToString();
         auto filePath = ctx->sourceFile->filePath;
@@ -1286,7 +1309,8 @@ std::vector<CompletionEntry> GetImportStatementCompletions(es2panda_Context *con
         ir::ETSImportDeclaration *importDecl = nullptr;
         if (parent->IsETSImportDeclaration()) {
             importDecl = parent->AsETSImportDeclaration();
-        } else if (parent->IsImportSpecifier()) {
+        } else if (parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() ||
+                   parent->IsImportNamespaceSpecifier()) {
             importDecl = parent->Parent()->AsETSImportDeclaration();
         }
         return GetCompletionFromPath(context, completions, importDecl, node);
@@ -1504,21 +1528,23 @@ std::vector<CompletionEntry> GetPropertyCompletionsWithValidPoint(ir::AstNode *p
 bool IsInETSImportStatement(size_t pos, ir::AstNode *node)
 {
     auto parent = node->Parent();
-    if (!node->IsETSImportDeclaration() &&
-        !(node->IsStringLiteral() && parent != nullptr && parent->IsETSImportDeclaration()) &&
-        !(node->IsIdentifier() && parent != nullptr &&
-          (parent->IsETSImportDeclaration() || parent->IsImportSpecifier()))) {
-        return false;
-    }
     ir::ETSImportDeclaration *importDecl = nullptr;
     if (node->IsETSImportDeclaration()) {
         importDecl = node->AsETSImportDeclaration();
-    } else if (node->IsStringLiteral()) {
+    } else if (parent == nullptr) {
+        return false;
+    } else if (node->IsStringLiteral() && parent->IsETSImportDeclaration()) {
         importDecl = parent->AsETSImportDeclaration();
-    } else if (node->IsIdentifier() && parent->IsETSImportDeclaration()) {
-        importDecl = parent->AsETSImportDeclaration();
-    } else if (node->IsIdentifier() && parent->IsImportSpecifier()) {
-        importDecl = parent->Parent()->AsETSImportDeclaration();
+    } else if (node->IsIdentifier()) {
+        if (parent->IsETSImportDeclaration()) {
+            importDecl = parent->AsETSImportDeclaration();
+        } else if (parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() ||
+                   parent->IsImportNamespaceSpecifier()) {
+            importDecl = parent->Parent()->AsETSImportDeclaration();
+        }
+    }
+    if (importDecl == nullptr) {
+        return false;
     }
     size_t end = importDecl->Range().end.index;
     if (pos > end) {
