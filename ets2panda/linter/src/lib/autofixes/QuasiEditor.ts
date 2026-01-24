@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -133,7 +133,13 @@ export class QuasiEditor {
       }
 
       const consideredAutofix = QuasiEditor.sortAutofixes(problemInfo.autofix);
+
       if (QuasiEditor.intersect(consideredAutofix, acceptedPatches)) {
+        if (QuasiEditor.isContainSame(consideredAutofix, acceptedPatches)) {
+          return;
+        }
+        problemInfo.autofix = undefined;
+        problemInfo.autofixable = undefined;
         return;
       }
 
@@ -142,6 +148,26 @@ export class QuasiEditor {
     });
 
     return acceptedPatches;
+  }
+
+  private static isContainSame(consideredAutofix: readonly Autofix[], acceptedFixes: readonly Autofix[]): boolean {
+    for (const consideredFix of consideredAutofix) {
+      let found = false;
+      for (const acceptedFix of acceptedFixes) {
+        if (
+          consideredFix.start === acceptedFix.start &&
+          consideredFix.end === acceptedFix.end &&
+          consideredFix.replacementText === acceptedFix.replacementText
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private static sortAutofixes(autofixes: Autofix[]): Autofix[] {
