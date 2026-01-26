@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +22,12 @@ class A{
     }
 }
 
-function main(){
-    let res1:string = await A.getData()
-    let res2:string = await A.getData("I'm a static method2 with name 'getData'")
-    arktest.assertEQ(res1, "I'm a static method1 with name 'getData'")
-    arktest.assertEQ(res2, "I'm a static method2 with name 'getData'")
+function main() {
+    waitForCompletion(async () => {
+        let res1:string = await A.getData()
+        let res2:string = await A.getData("I'm a static method2 with name 'getData'")
+        arktest.assertEQ(res1, "I'm a static method1 with name 'getData'")
+        arktest.assertEQ(res2, "I'm a static method2 with name 'getData'")
+    })
 }
 

@@ -1273,12 +1273,12 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_keyword.ets"
                 },
                 "end": {
                   "line": 28,
-                  "column": 13,
+                  "column": 19,
                   "program": "await_keyword.ets"
                 }
               }
@@ -1298,31 +1298,94 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_keyword.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 13,
+                      "column": 19,
                       "program": "await_keyword.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 28,
+                          "column": 23,
+                          "program": "await_keyword.ets"
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 30,
+                          "program": "await_keyword.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 28,
+                              "column": 31,
+                              "program": "await_keyword.ets"
+                            },
+                            "end": {
+                              "line": 28,
+                              "column": 35,
+                              "program": "await_keyword.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 28,
+                          "column": 30,
+                          "program": "await_keyword.ets"
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 36,
+                          "program": "await_keyword.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 28,
+                        "column": 23,
+                        "program": "await_keyword.ets"
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 36,
+                        "program": "await_keyword.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 17,
+                      "column": 23,
                       "program": "await_keyword.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 21,
+                      "column": 36,
                       "program": "await_keyword.ets"
                     }
                   }
@@ -2002,7 +2065,7 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 22,
+                      "column": 37,
                       "program": "await_keyword.ets"
                     },
                     "end": {
@@ -2015,7 +2078,7 @@
                 "loc": {
                   "start": {
                     "line": 28,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_keyword.ets"
                   },
                   "end": {
@@ -2028,7 +2091,7 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_keyword.ets"
                 },
                 "end": {
@@ -2080,7 +2143,70 @@
               "type": "ETSFunctionType",
               "params": [],
               "returnType": {
-                "type": "ETSPrimitiveType",
+                "type": "ETSTypeReference",
+                "part": {
+                  "type": "ETSTypeReferencePart",
+                  "name": {
+                    "type": "Identifier",
+                    "name": "Promise",
+                    "loc": {
+                      "start": {
+                        "line": 33,
+                        "column": 19,
+                        "program": "await_keyword.ets"
+                      },
+                      "end": {
+                        "line": 33,
+                        "column": 26,
+                        "program": "await_keyword.ets"
+                      }
+                    }
+                  },
+                  "typeParams": {
+                    "type": "TSTypeParameterInstantiation",
+                    "params": [
+                      {
+                        "type": "ETSPrimitiveType",
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 27,
+                            "program": "await_keyword.ets"
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 31,
+                            "program": "await_keyword.ets"
+                          }
+                        }
+                      }
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 33,
+                        "column": 26,
+                        "program": "await_keyword.ets"
+                      },
+                      "end": {
+                        "line": 33,
+                        "column": 32,
+                        "program": "await_keyword.ets"
+                      }
+                    }
+                  },
+                  "loc": {
+                    "start": {
+                      "line": 33,
+                      "column": 19,
+                      "program": "await_keyword.ets"
+                    },
+                    "end": {
+                      "line": 33,
+                      "column": 32,
+                      "program": "await_keyword.ets"
+                    }
+                  }
+                },
                 "loc": {
                   "start": {
                     "line": 33,
@@ -2089,7 +2215,7 @@
                   },
                   "end": {
                     "line": 33,
-                    "column": 23,
+                    "column": 32,
                     "program": "await_keyword.ets"
                   }
                 }
@@ -2102,7 +2228,7 @@
                 },
                 "end": {
                   "line": 33,
-                  "column": 23,
+                  "column": 32,
                   "program": "await_keyword.ets"
                 }
               }
@@ -2116,7 +2242,7 @@
               },
               "end": {
                 "line": 33,
-                "column": 26,
+                "column": 41,
                 "program": "await_keyword.ets"
               }
             }
@@ -2443,7 +2569,7 @@
               },
               "end": {
                 "line": 39,
-                "column": 26,
+                "column": 8,
                 "program": "await_keyword.ets"
               }
             }
@@ -2483,12 +2609,9 @@
       "program": "await_keyword.ets"
     },
     "end": {
-      "line": 40,
+      "line": 43,
       "column": 1,
       "program": "await_keyword.ets"
     }
   }
 }
-[await_keyword.ets:30:36] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_keyword.ets:35:36] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_keyword.ets:39:32] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,15 +25,18 @@ let asyncLambda: () => Promise<Object | null> = async (): Promise<Object | null>
     return promise;
 }
 
-function foo(): void {
+async function foo(): Promise<void> {
     let promise: Promise<Object | null> | null = (): Promise<Object | null> | null => { return null; }();
     let obj: Object | null = await promise!;
 }
 
-let lambda: () => void = (): void => {
+let lambda: () => Promise<void> = async (): Promise<void> => {
     let promise: Promise<Object | null> | null = (): Promise<Object | null> | null => { return null; }();
     let obj: Object | null = await promise!;
 }
 
 let promise: Promise<Object | null> | null = null;
-let obj: Object | null = await promise!;
+let obj: Object | null;
+waitForCompletion(async () => {
+    obj = await promise!;
+})

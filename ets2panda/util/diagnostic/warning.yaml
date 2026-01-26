@@ -21,10 +21,6 @@ warning:
   id: 16
   message: "Cannot assign to '{}' because it is a read-only property."
 
-- name: AWAIT_IN_NON_ASYNC_DEPRECATED
-  id: 173979
-  message: "Await in non-aysnc function is deprecated, please move it to async function."
-
 - name: BOOST_EQUALITY_STATEMENT
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."

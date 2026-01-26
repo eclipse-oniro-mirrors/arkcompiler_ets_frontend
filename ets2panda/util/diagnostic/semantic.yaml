@@ -215,6 +215,10 @@ semantic:
   id: 303
   message: "Type '{}' can not be awaited, it is not a Promise."
 
+- name: AWAIT_IN_NON_ASYNC_DEPRECATED
+  id: 173979
+  message: "Await in non-aysnc function is deprecated, please move it to async function."
+
 - name: BINOP_INCOMPARABLE
   id: 114
   message: "Bad operand type, the types of the operands must be numeric, same enumeration, or boolean type."

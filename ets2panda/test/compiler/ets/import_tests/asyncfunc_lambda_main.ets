@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,9 @@ import { DC } from "./asyncfun_lambda_lib"
 
 function main(): void {
     let aClass: AC = new AC();
-    await aClass.foo();
+    waitForCompletion(async () => {
+        await aClass.foo();
+    })
 
     let bClass: BC = new BC();
     bClass.bar();
