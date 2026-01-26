@@ -596,12 +596,11 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
         cp = Iterator().Peek();
         if (RANGE_CHECK(cp)) {
             auto const digit = SignedHexValue(cp);
-            if (!ScanTooLargeNumber<RADIX, RadixType, RadixLimit>(number, digit, leadingMinus)) {
+            if (!ScanTooLargeNumber<RADIX, RadixType, RadixLimit>(number, digit)) {
                 GetToken().number_ = lexer::Number();
                 return false;
             }
-            number = number * RADIX + (leadingMinus ? (-digit) : digit);
-
+            number = number * RADIX + digit;
             Iterator().Forward(1);
             allowNumericOnNext = true;
             continue;
@@ -625,6 +624,10 @@ bool Lexer::ScanNumberRadix(bool leadingMinus, bool allowNumericSeparator)
 
         break;
     } while (true);
+
+    if (leadingMinus) {
+        number = -number;
+    }
 
     GetToken().number_ = lexer::Number(number);
     GetToken().number_.SetStr(SourceView(GetToken().Start().index, Iterator().Index()));
