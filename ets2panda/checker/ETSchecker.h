@@ -218,7 +218,6 @@ public:
     // Object
     void CheckObjectLiteralKeys(const ArenaVector<ir::Expression *> &properties);
     Type *BuildBasicClassProperties(ir::ClassDefinition *classDef);
-    ETSObjectType *BuildAnonymousClassProperties(ir::ClassDefinition *classDef, ETSObjectType *superType);
     Type *BuildBasicInterfaceProperties(ir::TSInterfaceDeclaration *interfaceDecl);
     ETSObjectType *GetSuperType(ETSObjectType *type);
     ArenaVector<ETSObjectType *> const &GetInterfaces(ETSObjectType *type);
@@ -309,12 +308,9 @@ public:
     void CheckReadonlyClassPropertyInImplementedInterface(ETSObjectType *classType, varbinder::LocalVariable *field);
     void TransformProperties(ETSObjectType *classType);
     void CheckGetterSetterProperties(ETSObjectType *classType);
-    void AddElementsToModuleObject(ETSObjectType *moduleObj, const util::StringView &str);
     void ComputeApparentType(Type *type);
     [[nodiscard]] Type *GetApparentType(Type *type);
     [[nodiscard]] Type const *GetApparentType(Type const *type) const;
-    ETSObjectType *GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target);
-    bool HasETSFunctionType(ir::TypeNode *typeAnnotation);
     Type *GetConstantBuiltinType(Type *type);
 
     void VariableTypeFromInitializer(varbinder::Variable *variable, Type *annotationType, Type *initType);

@@ -757,17 +757,6 @@ Type *ETSChecker::BuildBasicClassProperties(ir::ClassDefinition *classDef)
     return classType;
 }
 
-ETSObjectType *ETSChecker::BuildAnonymousClassProperties(ir::ClassDefinition *classDef, ETSObjectType *superType)
-{
-    auto classType = CreateETSObjectType(classDef, checker::ETSObjectFlags::CLASS);
-    classDef->SetTsType(classType);
-    ES2PANDA_ASSERT(classType != nullptr);
-    classType->SetSuperType(superType);
-    classType->AddObjectFlag(checker::ETSObjectFlags::RESOLVED_SUPER);
-
-    return classType;
-}
-
 static void ResolveDeclaredFieldsOfObject(ETSChecker *checker, const ETSObjectType *type, varbinder::ClassScope *scope)
 {
     for (auto &[_, it] : scope->InstanceFieldScope()->Bindings()) {
@@ -908,43 +897,6 @@ void ETSChecker::ResolveDeclaredMembersOfObject(const Type *type)
     ResolveDeclaredMethodsOfObject(this, objectType, scope->AsClassScope());
 }
 
-bool ETSChecker::HasETSFunctionType(ir::TypeNode *typeAnnotation)
-{
-    if (typeAnnotation->IsETSFunctionType()) {
-        return true;
-    }
-    std::unordered_set<ir::TypeNode *> childrenSet;
-
-    if (!typeAnnotation->IsETSTypeReference()) {
-        return false;
-    }
-
-    auto const addTypeAlias = [&childrenSet, &typeAnnotation](varbinder::Decl *typeDecl) {
-        typeAnnotation = typeDecl->Node()->AsTSTypeAliasDeclaration()->TypeAnnotation();
-        if (!typeAnnotation->IsETSUnionType()) {
-            childrenSet.insert(typeAnnotation);
-            return;
-        }
-        for (auto *type : typeAnnotation->AsETSUnionType()->Types()) {
-            if (type->IsETSTypeReference()) {
-                childrenSet.insert(type);
-            }
-        }
-    };
-
-    auto *typeDecl = typeAnnotation->AsETSTypeReference()->Part()->GetIdent()->Variable()->Declaration();
-    if (typeDecl != nullptr && typeDecl->IsTypeAliasDecl()) {
-        addTypeAlias(typeDecl);
-    }
-
-    for (auto *child : childrenSet) {
-        if (HasETSFunctionType(child)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::vector<Signature *> ETSChecker::CollectAbstractSignaturesFromObject(const ETSObjectType *objType)
 {
     std::vector<Signature *> abstracts;
@@ -1053,8 +1005,8 @@ std::vector<ETSFunctionType *> &ETSChecker::GetAbstractsForClass(ETSObjectType *
     return GetCachedComputedAbstracts().insert({classType, {merged, abstractInheritanceTarget}}).first->second.first;
 }
 
-[[maybe_unused]] static bool DoObjectImplementInterface(const ETSObjectType *interfaceType, const ETSObjectType *target,
-                                                        const ETSChecker *checker)
+static bool DoObjectImplementInterface(const ETSObjectType *interfaceType, const ETSObjectType *target,
+                                       const ETSChecker *checker)
 {
     auto &interfaces = interfaceType->Interfaces();
     return std::any_of(interfaces.begin(), interfaces.end(), [&target, checker](auto *it) {
@@ -2849,7 +2801,7 @@ void ETSChecker::WarnForEndlessLoopInGetterSetter(const ir::MemberExpression *co
     }
 }
 
-[[maybe_unused]] static std::unordered_set<util::StringView> CollectInstancePropsTransitive(ETSObjectType *classType)
+static std::unordered_set<util::StringView> CollectInstancePropsTransitive(ETSObjectType *classType)
 {
     std::unordered_set<util::StringView> transitivePropNames;
     for (auto const t : classType->TransitiveSupertypes()) {
@@ -3078,23 +3030,6 @@ void ETSChecker::CheckGetterSetterProperties(ETSObjectType *classType)
     }
 }
 
-void ETSChecker::AddElementsToModuleObject(ETSObjectType *moduleObj, const util::StringView &str)
-{
-    for (const auto &[name, var] : VarBinder()->GetScope()->Bindings()) {
-        if (name.Is(str.Mutf8()) || util::Helpers::IsGlobalVar(var)) {
-            continue;
-        }
-
-        if (var->HasFlag(varbinder::VariableFlags::METHOD)) {
-            moduleObj->AddProperty<checker::PropertyType::STATIC_METHOD>(var->AsLocalVariable());
-        } else if (var->HasFlag(varbinder::VariableFlags::PROPERTY)) {
-            moduleObj->AddProperty<checker::PropertyType::STATIC_FIELD>(var->AsLocalVariable());
-        } else {
-            moduleObj->AddProperty<checker::PropertyType::STATIC_DECL>(var->AsLocalVariable());
-        }
-    }
-}
-
 static Type *GetApparentTypeUtilityTypes(checker::ETSChecker *checker, Type *type)
 {
     if (type->IsETSReadonlyType()) {
@@ -3214,29 +3149,6 @@ Type *ETSChecker::GetConstantBuiltinType(Type *type)
     cloned->AddTypeFlag(TypeFlag::CONSTANT);
     cache.insert({type, cloned});
     return cloned;
-}
-
-ETSObjectType *ETSChecker::GetClosestCommonAncestor(ETSObjectType *source, ETSObjectType *target)
-{
-    if (source->AsETSObjectType()->GetDeclNode() == target->AsETSObjectType()->GetDeclNode()) {
-        return source;
-    }
-    if (target->SuperType() == nullptr) {
-        return GlobalETSObjectType();
-    }
-
-    auto *targetBase = GetOriginalBaseType(target->SuperType());
-    auto *targetType = targetBase == nullptr ? target->SuperType() : targetBase;
-
-    auto *sourceBase = GetOriginalBaseType(source);
-    auto *sourceType = sourceBase == nullptr ? source : sourceBase;
-
-    if (Relation()->IsSupertypeOf(targetType, sourceType)) {
-        // NOTE: TorokG. Extending the search to find intersection types
-        return targetType;
-    }
-
-    return GetClosestCommonAncestor(sourceType, targetType);
 }
 
 void ETSChecker::CheckInvokeMethodsLegitimacy(ETSObjectType *const classType)
