@@ -24,6 +24,6 @@ function main(): void {
 }
 
 
-/* @@? 21:22 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. */
-/* @@? 22:13 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. */
+/* @@? 21:22 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Color' to 'Int' will be removed. Please use 'valueOf' or 'fromValue'. */
+/* @@? 22:13 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'Color' will be removed. Please use 'valueOf' or 'fromValue'. */
 /* @@@ label Error Semantic error ESE0144: Enum name 'Color' used in the wrong context */

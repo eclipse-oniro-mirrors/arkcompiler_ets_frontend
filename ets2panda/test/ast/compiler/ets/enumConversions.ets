@@ -31,7 +31,7 @@ function foo(e: E, i: int) {
 }
 
 
-/* @@? 26:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. */
+/* @@? 26:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'E' to 'Int' will be removed. Please use 'valueOf' or 'fromValue'. */
 /* @@? 27:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'E' */
-/* @@? 28:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. */
+/* @@? 28:7 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Int' to 'E' will be removed. Please use 'valueOf' or 'fromValue'. */
 /* @@? 30:7 Error Semantic error ESE0318: Type 'Int' cannot be assigned to type 'E' */

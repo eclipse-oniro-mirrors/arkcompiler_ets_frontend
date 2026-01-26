@@ -65,7 +65,7 @@ warning:
  
 - name: ENUM_DEPRECATED_CAST
   id: 30
-  message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed."
+  message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed. Please use 'valueOf' or 'fromValue'."
   strict: true
 
 - name: EXTENSION_MISMATCH
