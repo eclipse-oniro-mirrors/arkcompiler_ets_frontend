@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,7 @@ function main(): void {
 
   let red1: Color = Color.Red;
   let red2: Color = Color.Green;
-  arktest.assertEQ(red2 as string, "red")
+  arktest.assertEQ(red2, "red")
   arktest.assertEQ(red2.valueOf(), "red")
   arktest.assertEQ(red2.getName(), "Green")
   arktest.assertEQ(red2.toString(), "red")
@@ -53,12 +53,12 @@ function main(): void {
     arktest.assertTrue( (e as Object).toString().startsWith("No enum constant Color.Red"))
   }
 
-  arktest.assertEQ(red1 as string, "blue")
+  arktest.assertEQ(red1, "blue")
   arktest.assertEQ(red1.valueOf(), "blue")
   arktest.assertEQ(red1.getName(), "Red")
   arktest.assertEQ(red1.toString(), "blue")
 
-  arktest.assertEQ(red2 as string, "blue")
+  arktest.assertEQ(red2, "blue")
   arktest.assertEQ(red2.valueOf(), "blue")
   arktest.assertEQ(red2.getName(), "Red")
   arktest.assertEQ(red2.toString(), "blue")
@@ -68,8 +68,8 @@ function main(): void {
   arktest.assertEQ(red2, red1)
 
   let ord: string = "green";
-  blue = ord as Color;
-  arktest.assertEQ(blue as string, "green")
+  blue = Color.fromValue(ord);
+  arktest.assertEQ(blue, "green")
   arktest.assertEQ(blue.valueOf(), "green")
   arktest.assertEQ(blue.getName(), "Blue")
   arktest.assertEQ(blue.toString(), "green")
@@ -82,20 +82,19 @@ function main(): void {
   }
 
   ord = "red";
-  let green: Color = ord as Color;
-  arktest.assertEQ( green, Color.Green)
+  let green: Color = Color.fromValue(ord);
+  arktest.assertEQ(green, Color.Green)
 
   try {
-    let x = "a" as Color;
+    let x = Color.fromValue("a");
     arktest.assertTrue( false)
   } catch (e) {
-    arktest.assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value a"))
+    arktest.assertTrue((e as Object).toString().startsWith("Error: No enum Color with value a"))
   }
 
-  arktest.assertEQ( "red" as Color as string, "red")
-  arktest.assertEQ( Color.Blue as string as Color, Color.Blue)
+  arktest.assertEQ(Color.fromValue("red"), "red")
   try {
-    arktest.assertEQ( (Color.Green as string) as Color, Color.getValueOf("red"))
+    arktest.assertEQ(Color.fromValue(Color.Green), Color.getValueOf("red"))
   } catch (e) {
   }
 }

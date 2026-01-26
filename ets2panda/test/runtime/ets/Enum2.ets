@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +21,9 @@ class ColorEnumDelegate {
 
   public static values(): Color[] { return ColorEnumDelegate.values_; }
 
-  public static ordinal(x: Color): int { return x as int; }
+  public static ordinal(x: Color): int { return x.valueOf(); }
 
-  public static toString(x: Color): String { return ColorEnumDelegate.names_[x as int]; }
+  public static toString(x: Color): String { return ColorEnumDelegate.names_[x]; }
 
   public static valueOf(name: String): Color {
     for (let i = 0; i < ColorEnumDelegate.values_.length; i++) {

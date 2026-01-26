@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,7 @@ class A {
 }
 
 function colorToInt(c: Color): int {
-  return c as int;
+  return c;
 }
 
 function main(): void {
@@ -35,9 +35,9 @@ function main(): void {
   arktest.assertEQ(red, red2)
   arktest.assertEQ(Color.Red, red2)
 
-  let red_int: int = red as int;
+  let red_int: int = red;
   arktest.assertEQ(red_int, 0)
-  arktest.assertEQ(red_int, Color.Red as int)
+  arktest.assertEQ(red_int, Color.Red)
 
   let a: A = new A(red);
   arktest.assertEQ(a.c, Color.Red)

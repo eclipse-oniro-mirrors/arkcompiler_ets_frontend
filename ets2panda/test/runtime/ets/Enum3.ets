@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,17 +48,16 @@ function main(): void {
   }
 
   let one: int = 1;
-  let green = one as Color;
+  let green = Color.fromValue(one);
   arktest.assertEQ(green, Color.Green)
 
   try {
-    let x = 5 as Color;
+    let x = Color.fromValue(5);
     arktest.assertTrue( false)
   } catch (e) {
     arktest.assertTrue( (e as Object).toString().startsWith("Error: No enum Color with value 5"))
   }
 
-  arktest.assertEQ(2 as Color as int, 2)
-  arktest.assertEQ(Color.Blue as int as Color, Color.Blue)
-  arktest.assertEQ((Color.Red as int + 1) as Color, (Color.Blue as int - 1) as Color)
+  arktest.assertEQ(Color.fromValue(2), 2)
+  arktest.assertEQ(Color.fromValue(Color.Red + 1), Color.fromValue(Color.Blue - 1))
 }
