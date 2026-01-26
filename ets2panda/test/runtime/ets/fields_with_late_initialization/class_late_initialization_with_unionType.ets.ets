@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,14 +14,14 @@
  */
 
 class UnionDemo {
-  value!: string | number;
+  value!: string | boolean;
 }
 
 function main() {
   try {
     const ud = new UnionDemo();
     ud.value.toString();
-    ud.value = 10;
+    ud.value = true;
     console.log(ud.value.toString());
   } catch (e) {
     arktest.assertTrue(e instanceof NullPointerError)

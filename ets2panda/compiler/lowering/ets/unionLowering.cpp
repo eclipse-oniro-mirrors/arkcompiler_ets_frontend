@@ -250,7 +250,6 @@ static void HandleUnionPropertyAccess(public_lib::Context *ctx, varbinder::VarBi
         return;
     }
 
-    [[maybe_unused]] auto const *const parent = expr->Parent();
     expr->SetPropVar(CreateNamedAccess(ctx, vbind, expr));
     ES2PANDA_ASSERT(expr->PropVar() != nullptr);
 }

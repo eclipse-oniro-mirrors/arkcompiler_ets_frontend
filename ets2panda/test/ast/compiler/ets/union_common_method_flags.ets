@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,8 +53,9 @@ function f3(x: B | D) {
 
 /* @@? 43:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 43:5 Error Semantic error ESE0127: No matching call signature for name() */
+/* @@? 43:5 Error Semantic error ESE0139: Signature name(): String is not visible here. */
 /* @@? 47:12 Error Semantic error ESE0244: Member type must be the same for all union objects. */
 /* @@? 47:12 Error Semantic error ESE0127: No matching call signature for name() */
+/* @@? 47:12 Error Semantic error ESE0139: Signature name(): String is not visible here. */
 /* @@? 51:5 Error Semantic error ESE0244: Member type must be the same for all union objects. */
-/* @@? 51:5 Error Semantic error ESE0127: No matching call signature for name() */
 /* @@? 51:7 Error Semantic error ESE0207: 'name' is a static property of 'D' */

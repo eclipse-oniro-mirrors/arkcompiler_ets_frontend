@@ -23,6 +23,7 @@
 #include "compiler/function/functionBuilder.h"
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsTupleType.h"
+#include "checker/types/ets/etsUnionType.h"
 #include "ETSGen-inl.h"
 
 namespace ark::es2panda::compiler {
@@ -639,17 +640,17 @@ void ETSCompiler::EmitCall(const ir::CallExpression *expr, compiler::VReg &calle
             return;
         }
         etsg->CallExact(expr, expr->Signature(), expr->Arguments());
-    } else if (expr->Callee()->IsMemberExpression()) {
-        auto me = expr->Callee()->AsMemberExpression();
+    } else if (const auto callee = expr->Callee(); callee->IsMemberExpression()) {
+        auto me = callee->AsMemberExpression();
         auto obj = me->Object();
+        const auto objApparentType = etsg->Checker()->GetApparentType(obj->TsType());
         if (obj->IsSuperExpression()) {
             etsg->CallExact(expr, signature, calleeReg, expr->Arguments());
-            // NOTE: need to refactor: type of member expression object can be obtained via
-            // me->ObjType() or me->Object()->TsType() and they may differ!!!!
-        } else if (me->ObjType() == etsg->Checker()->GlobalETSObjectType() &&
-                   (etsg->Checker()->GetApparentType(me->Object()->TsType()) != nullptr) &&
-                   (etsg->Checker()->GetApparentType(me->Object()->TsType())->IsETSUnionType())) {
-            etsg->CallByName(expr, signature, calleeReg, expr->Arguments());
+        } else if (objApparentType->IsETSUnionType()) {
+            const auto componentTypeSignatures = me->GetComponentTypeMemberAccessors();
+            ES2PANDA_ASSERT(objApparentType->AsETSUnionType()->ConstituentTypes().size() ==
+                            componentTypeSignatures.size());
+            etsg->CallByName(expr, componentTypeSignatures, calleeReg, expr->Arguments());
         } else {
             etsg->CallVirtual(expr, signature, calleeReg, expr->Arguments());
         }
@@ -658,6 +659,8 @@ void ETSCompiler::EmitCall(const ir::CallExpression *expr, compiler::VReg &calle
     }
 
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
+
+    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
 void ETSCompiler::Compile(const ir::CallExpression *expr) const
@@ -684,21 +687,20 @@ void ETSCompiler::Compile(const ir::CallExpression *expr) const
             etsg->LoadThis(expr);
             etsg->StoreAccumulator(expr, calleeReg);
         }
-        EmitCall(expr, calleeReg, signature);
     } else if (callee->IsMemberExpression()) {
         if (!isStatic) {
             callee->AsMemberExpression()->Object()->Compile(etsg);
             etsg->StoreAccumulator(expr, calleeReg);
         }
-        EmitCall(expr, calleeReg, signature);
     } else if (callee->IsSuperExpression() || callee->IsThisExpression()) {
         ES2PANDA_ASSERT(expr->IsETSConstructorCall());
         callee->Compile(etsg);  // ctor is not a value!
         etsg->StoreAccumulator(expr, calleeReg);
-        EmitCall(expr, calleeReg, signature);
     } else {
         ES2PANDA_UNREACHABLE();
     }
+
+    EmitCall(expr, calleeReg, signature);
 }
 
 void ETSCompiler::Compile(const ir::ConditionalExpression *expr) const
