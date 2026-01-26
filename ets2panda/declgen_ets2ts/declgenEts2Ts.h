@@ -403,6 +403,73 @@ private:
     std::string globalDesc_;
     ArenaMap<util::StringView, util::StringView> paramDefaultMap_;
 };
+
+class TSDeclgenContent {
+public:
+    TSDeclgenContent() = default;
+    void PushImports(const std::string &imports);
+    void PushExports(const std::string &exports);
+    void PushStatements(const std::string &stmts);
+    void PushInitModuleGlues(const std::string &glues);
+    void PushRecordImports(const std::string &recordImports);
+    void RemoveDuplicateExports(const std::string &checkExports);
+    bool HasLocalDeclaredExport(const std::string &line, const std::string &checkExports);
+    bool WriteToFile(const std::string &path);
+
+private:
+    std::string imports_;
+    std::string exports_;
+    std::string statements_;
+    std::string initModuleGlues_;
+    std::string recordImports_;
+};
+
+class TSDeclGenerator {
+public:
+    explicit TSDeclGenerator(public_lib::Context *ctx);
+    TSDeclGenerator(public_lib::Context *ctx, const std::unordered_map<std::string, size_t> &inputFileIndexMap,
+                    const char *const *outputDeclEts, const char *const *outputEts, size_t fileNamesCount);
+    TSDeclGenerator(const TSDeclGenerator &) = delete;
+    TSDeclGenerator &operator=(const TSDeclGenerator &) = delete;
+    ~TSDeclGenerator() = default;
+
+    bool SetDeclgenOptions(const DeclgenOptions &options);
+    bool GenerateTsDeclarationsAfterParsedPhase();
+    bool GenerateTsDeclarationsAfterCheckPhase();
+
+    bool Write();
+
+private:
+    struct PerFileContent {
+        TSDeclgenContent tsContent;
+        TSDeclgenContent dtsContent;
+        std::unique_ptr<TSDeclGen> declBuilder;
+        std::unique_ptr<declgen::IsolatedDeclgenChecker> isolatedDeclgenChecker;
+        DeclgenOptions options;
+    };
+
+    public_lib::Context *context_;
+    TSDeclgenContent tsContent_;
+    TSDeclgenContent dtsContent_;
+    std::unique_ptr<TSDeclGen> declBuilder_;
+    std::unique_ptr<declgen::IsolatedDeclgenChecker> isolatedDeclgenChecker_;
+    std::unordered_map<std::string, size_t> inputFileIndexMap_;
+    std::vector<std::string> outputDeclEts_;
+    std::vector<std::string> outputEts_;
+    bool isSimultaneousMode_;
+    std::unordered_map<size_t, PerFileContent> fileContents_;
+    DeclgenOptions globalOptions_;
+    std::unordered_set<size_t> parsedIdx_;
+    std::unordered_set<size_t> checkedIdx_;
+
+    checker::ETSChecker *GetChecker() const;
+    bool ProcessProgram(parser::Program *prog, bool afterParsed);
+    bool ProcessSingleFile(bool afterParsed);
+    bool GenerateExportsAfterParsed(TSDeclGen *declBuilder, TSDeclgenContent *tsContent, TSDeclgenContent *dtsContent);
+    bool GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSDeclgenContent *tsContent,
+                                        TSDeclgenContent *dtsContent, const DeclgenOptions &options);
+};
+
 }  // namespace ark::es2panda::declgen_ets2ts
 
 #endif  // ES2PANDA_DECLGEN_ETS2TS_H

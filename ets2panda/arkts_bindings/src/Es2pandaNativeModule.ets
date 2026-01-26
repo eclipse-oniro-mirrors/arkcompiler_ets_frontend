@@ -43,7 +43,7 @@ export class Es2pandaNativeModule {
   native _ContextErrorMessage(context: EtsPtr): string;
   native _GetAllErrorMessages(context: EtsPtr): string;
   native _ProgramAst(context: EtsPtr, program: EtsPtr): EtsPtr;
-  native _GenerateTsDeclarationsFromContext(
+native _CreateTsDeclgen(
     config: EtsPtr,
     fileNamesCount: int,
     inputFiles: string[],
@@ -53,7 +53,11 @@ export class Es2pandaNativeModule {
     isolated: boolean,
     recordFile: string,
     genAnnotations: boolean
-  ): int;
+  ): EtsPtr;
+  native _GenerateTsDeclarationsAfterParsed(declgen: EtsPtr): int;
+  native _GenerateTsDeclarationsAfterCheck(declgen: EtsPtr): int;
+  native _WriteTsDeclarations(declgen: EtsPtr): int;
+  native _DestroyTsDeclgen(declgen: EtsPtr): void;
   native _GenerateStaticDeclarationsFromContext(context: EtsPtr, filename: string): EtsPtr;
   native _FreeCompilerPartMemory(context: EtsPtr): EtsPtr;
 }

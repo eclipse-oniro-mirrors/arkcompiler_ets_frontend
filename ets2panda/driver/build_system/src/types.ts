@@ -100,7 +100,11 @@ export interface ArkTS {
         fromContext: Function;
     };
     proceedToState: Function;
-    generateTsDeclarationsFromContext: Function;
+    createTsDeclgen: Function;
+    generateTsDeclarationsAfterParsed: Function;
+    generateTsDeclarationsAfterCheck: Function;
+    writeTsDeclarations: Function;
+    destroyTsDeclgen: Function;
     formOutputPathForFile: Function;
     generateStaticDeclarationsFromContext: Function;
     destroyConfig: Function;

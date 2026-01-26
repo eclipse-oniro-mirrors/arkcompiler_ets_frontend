@@ -15,6 +15,7 @@
 
 #include "common.h"
 
+#include "panda_types.h"
 #include "public/es2panda_lib.h"
 
 // NOLINTBEGIN
@@ -76,9 +77,9 @@ KNativePointer impl_CreateContextFromStringWithHistory(KNativePointer configPtr,
 }
 TS_INTEROP_3(CreateContextFromStringWithHistory, KNativePointer, KNativePointer, KStringPtr, KStringPtr)
 
-KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KUInt fileNamesCount, KStringArray inputFiles,
-                                            KStringArray outputDeclEts, KStringArray outputEts, KBoolean exportAll,
-                                            KBoolean isolated, KStringPtr &recordFile, KBoolean genAnnotations)
+KNativePointer impl_CreateTsDeclgen(KNativePointer contextPtr, KUInt fileNamesCount, KStringArray inputFiles,
+                                    KStringArray outputDeclEts, KStringArray outputEts, KBoolean exportAll,
+                                    KBoolean isolated, KStringPtr &recordFile, KBoolean genAnnotations)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
     const std::size_t headerLen = 4;
@@ -98,19 +99,16 @@ KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KUInt fil
     for (std::size_t i = 0; i < count; ++i) {
         std::size_t strLen = UnpackUInt(inputFiles + inputPosition);
         inputPosition += headerLen;
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         inputFilesStr.emplace_back(reinterpret_cast<const char *>(inputFiles + inputPosition), strLen);
         inputPosition += strLen;
 
         strLen = UnpackUInt(outputDeclEts + declPosition);
         declPosition += headerLen;
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         outputDeclEtsStr.emplace_back(reinterpret_cast<const char *>(outputDeclEts + declPosition), strLen);
         declPosition += strLen;
 
         strLen = UnpackUInt(outputEts + etsPosition);
         etsPosition += headerLen;
-        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         outputEtsStr.emplace_back(reinterpret_cast<const char *>(outputEts + etsPosition), strLen);
         etsPosition += strLen;
     }
@@ -124,12 +122,40 @@ KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KUInt fil
         outputEtsList[i] = outputEtsStr[i].c_str();
     }
 
-    return static_cast<KInt>(GetPublicImpl()->GenerateTsDeclarationsFromContext(
+    return static_cast<KNativePointer>(GetPublicImpl()->CreateTsDeclgen(
         context, fileNamesCount, inputFilesList.data(), outputDeclEtsList.data(), outputEtsList.data(), exportAll != 0,
         isolated != 0, recordFile.Data(), genAnnotations != 0));
 }
-TS_INTEROP_9(GenerateTsDeclarationsFromContext, KInt, KNativePointer, KUInt, KStringArray, KStringArray, KStringArray,
-             KBoolean, KBoolean, KStringPtr, KBoolean)
+TS_INTEROP_9(CreateTsDeclgen, KNativePointer, KNativePointer, KUInt, KStringArray, KStringArray, KStringArray, KBoolean,
+             KBoolean, KStringPtr, KBoolean)
+
+KInt impl_GenerateTsDeclarationsAfterParsed(KNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<KInt>(GetPublicImpl()->GenerateTsDeclarationsAfterParsed(declgen));
+}
+TS_INTEROP_1(GenerateTsDeclarationsAfterParsed, KInt, KNativePointer)
+
+KInt impl_GenerateTsDeclarationsAfterCheck(KNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<KInt>(GetPublicImpl()->GenerateTsDeclarationsAfterCheck(declgen));
+}
+TS_INTEROP_1(GenerateTsDeclarationsAfterCheck, KInt, KNativePointer)
+
+KInt impl_WriteTsDeclarations(KNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    return static_cast<KInt>(GetPublicImpl()->WriteTsDeclarations(declgen));
+}
+TS_INTEROP_1(WriteTsDeclarations, KInt, KNativePointer)
+
+void impl_DestroyTsDeclgen(KNativePointer declgenPtr)
+{
+    auto declgen = reinterpret_cast<es2panda_TsDeclgen *>(declgenPtr);
+    GetPublicImpl()->DestroyTsDeclgen(declgen);
+}
+TS_INTEROP_V1(DestroyTsDeclgen, KNativePointer)
 
 KNativePointer impl_FormOutputPathForFile(KNativePointer contextPtr, KStringPtr &inputPath)
 {

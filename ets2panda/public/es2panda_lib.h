@@ -44,6 +44,7 @@ extern "C" {
 typedef struct es2panda_Config es2panda_Config;
 typedef struct es2panda_Context es2panda_Context;
 typedef struct es2panda_GlobalContext es2panda_GlobalContext;
+typedef struct es2panda_TsDeclgen es2panda_TsDeclgen;
 
 typedef struct es2panda_variantDoubleCharArrayBool {
     int index;
@@ -284,10 +285,15 @@ struct CAPI_EXPORT es2panda_Impl {
     es2panda_AstNode **(*AllDeclarationsByNameFromProgram)(es2panda_Context *ctx, const es2panda_Program *program,
                                                            const char *name, size_t *declsLen);
 
-    int (*GenerateTsDeclarationsFromContext)(es2panda_Context *context, size_t fileNamesCount,
-                                             const char *const *inputFiles, const char *const *outputDeclEts,
-                                             const char *const *outputEts, bool exportAll, bool isolated,
-                                             const char *recordFile, bool genAnnotations);
+    es2panda_TsDeclgen *(*CreateTsDeclgen)(es2panda_Context *context, size_t fileNamesCount,
+                                           const char *const *inputFiles, const char *const *outputDeclEts,
+                                           const char *const *outputEts, bool exportAll, bool isolated,
+                                           const char *recordFile, bool genAnnotations);
+
+    int (*GenerateTsDeclarationsAfterParsed)(es2panda_TsDeclgen *declgen);
+    int (*GenerateTsDeclarationsAfterCheck)(es2panda_TsDeclgen *declgen);
+    int (*WriteTsDeclarations)(es2panda_TsDeclgen *declgen);
+    void (*DestroyTsDeclgen)(es2panda_TsDeclgen *declgen);
     char *(*FormOutputPathForFile)(es2panda_Context *context, const char *inputPath);
     void (*InsertETSImportDeclarationAndParse)(es2panda_Context *context, es2panda_Program *program,
                                                es2panda_AstNode *importDeclaration);

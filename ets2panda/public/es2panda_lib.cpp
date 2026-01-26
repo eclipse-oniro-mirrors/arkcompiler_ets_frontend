@@ -1495,49 +1495,70 @@ extern "C" es2panda_AstNode **AllDeclarationsByNameFromProgram([[maybe_unused]] 
     return apiRes;
 }
 
-extern "C" __attribute__((unused)) int GenerateTsDeclarationsFromContext(
+extern "C" __attribute__((unused)) es2panda_TsDeclgen *CreateTsDeclgen(
     es2panda_Context *ctx, size_t fileNamesCount, const char *const *inputFiles, const char *const *outputDeclEts,
     const char *const *outputEts, bool exportAll, bool isolated, const char *recordFile, bool genAnnotations)
 {
     auto *ctxImpl = reinterpret_cast<Context *>(ctx);
-    auto *checker = reinterpret_cast<ark::es2panda::checker::ETSChecker *>(ctxImpl->GetChecker());
+    if (fileNamesCount == 0) {
+        return nullptr;
+    }
+    if (!ctxImpl->config->options->IsSimultaneous()) {
+        ES2PANDA_ASSERT(fileNamesCount == 1);
+    }
     ark::es2panda::declgen_ets2ts::DeclgenOptions declgenOptions;
     declgenOptions.exportAll = exportAll;
     declgenOptions.isolated = isolated;
     declgenOptions.genAnnotations = genAnnotations;
     declgenOptions.recordFile = recordFile ? recordFile : "";
-    if (!ctxImpl->config->options->IsSimultaneous()) {
-        ES2PANDA_ASSERT(fileNamesCount == 1);
-        declgenOptions.outputDeclEts = outputDeclEts[0] ? outputDeclEts[0] : "";
-        declgenOptions.outputEts = outputEts[0] ? outputEts[0] : "";
-        return ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions)
-                   ? 0
-                   : 1;
-    }
+    declgenOptions.outputDeclEts = outputDeclEts[0] ? outputDeclEts[0] : "";
+    declgenOptions.outputEts = outputEts[0] ? outputEts[0] : "";
 
-    std::unordered_map<std::string_view, size_t> inputFileIndexMap;
+    std::unordered_map<std::string, size_t> inputFileIndexMap;
     for (size_t i = 0; i < fileNamesCount; ++i) {
-        inputFileIndexMap.emplace(inputFiles[i], i);
+        inputFileIndexMap.emplace(std::string(inputFiles[i]), i);
     }
 
-    int result = 0;
-    ctxImpl->parserProgram->GetExternalDecls()->Visit([&](parser::Program *prog) {
-        if (!prog->IsBuiltSimultaneously()) {
-            return;
-        }
-        std::string_view sourcePath = prog->SourceFilePath().Utf8();
-        auto it = inputFileIndexMap.find(sourcePath);
-        if (it == inputFileIndexMap.end()) {
-            return;
-        }
-        size_t idx = it->second;
-        declgenOptions.outputDeclEts = outputDeclEts[idx] ? outputDeclEts[idx] : "";
-        declgenOptions.outputEts = outputEts[idx] ? outputEts[idx] : "";
-        if (!ark::es2panda::declgen_ets2ts::GenerateTsDeclarations(checker, prog, declgenOptions)) {
-            result = 1;
-        }
-    });
-    return result;
+    auto *declgen = new ark::es2panda::declgen_ets2ts::TSDeclGenerator(ctxImpl, inputFileIndexMap, outputDeclEts,
+                                                                       outputEts, fileNamesCount);
+    if (!declgen->SetDeclgenOptions(declgenOptions)) {
+        delete declgen;
+        return nullptr;
+    }
+    return reinterpret_cast<es2panda_TsDeclgen *>(declgen);
+}
+
+extern "C" __attribute__((unused)) void DestroyTsDeclgen(es2panda_TsDeclgen *declgen)
+{
+    auto *declgenImpl = reinterpret_cast<ark::es2panda::declgen_ets2ts::TSDeclGenerator *>(declgen);
+    delete declgenImpl;
+}
+
+extern "C" __attribute__((unused)) int GenerateTsDeclarationsAfterParsed(es2panda_TsDeclgen *declgen)
+{
+    auto *declgenImpl = reinterpret_cast<ark::es2panda::declgen_ets2ts::TSDeclGenerator *>(declgen);
+    if (declgenImpl->GenerateTsDeclarationsAfterParsedPhase()) {
+        return 0;
+    }
+    return 1;
+}
+
+extern "C" __attribute__((unused)) int GenerateTsDeclarationsAfterCheck(es2panda_TsDeclgen *declgen)
+{
+    auto *declgenImpl = reinterpret_cast<ark::es2panda::declgen_ets2ts::TSDeclGenerator *>(declgen);
+    if (declgenImpl->GenerateTsDeclarationsAfterCheckPhase()) {
+        return 0;
+    }
+    return 1;
+}
+
+extern "C" __attribute__((unused)) int WriteTsDeclarations(es2panda_TsDeclgen *declgen)
+{
+    auto *declgenImpl = reinterpret_cast<ark::es2panda::declgen_ets2ts::TSDeclGenerator *>(declgen);
+    if (declgenImpl->Write()) {
+        return 0;
+    }
+    return 1;
 }
 
 inline static parser::Program *FindProgramInContextByPath(Context *ctxImpl, const std::string &inputPathStr)
@@ -1794,7 +1815,11 @@ es2panda_Impl g_impl = {
     FirstDeclarationByNameFromProgram,
     AllDeclarationsByNameFromNode,
     AllDeclarationsByNameFromProgram,
-    GenerateTsDeclarationsFromContext,
+    CreateTsDeclgen,
+    GenerateTsDeclarationsAfterParsed,
+    GenerateTsDeclarationsAfterCheck,
+    WriteTsDeclarations,
+    DestroyTsDeclgen,
     FormOutputPathForFile,
     InsertETSImportDeclarationAndParse,
     GenerateStaticDeclarationsFromContext,

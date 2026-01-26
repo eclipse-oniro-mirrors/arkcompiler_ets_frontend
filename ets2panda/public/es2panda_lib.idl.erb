@@ -20,6 +20,7 @@ typedef (String or f64 or boolean) es2panda_variantDoubleCharArrayBool;
 [Entity=Class] interface es2panda_Config {};
 [Entity=Class] interface es2panda_Context {};
 [Entity=Class] interface es2panda_GlobalContext {};
+[Entity=Class] interface es2panda_TsDeclgen {};
 [Entity=Class] interface es2panda_ExternalSource {};
 [Entity=Class] interface es2panda_SourcePosition {};
 [Entity=Class] interface es2panda_SourceRange {};
@@ -233,11 +234,15 @@ interface es2panda_Impl {
     ir.AstNode FirstDeclarationByNameFromProgram(es2panda_Context ctx, parser.Program program, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromNode(es2panda_Context ctx, ir.AstNode node, String name);
     sequence<ir.AstNode> AllDeclarationsByNameFromProgram(es2panda_Context ctx, parser.Program program, String name);
+    es2panda_TsDeclgen CreateTsDeclgen(es2panda_Context ctx, u32 fileNamesCount, sequence<String> inputFiles,
+                                           sequence<String> outputDeclEts, sequence<String> outputEts,
+                                           boolean exportAll, boolean isolated, String recordFile,
+                                           boolean genAnnotations);
+    i32 GenerateTsDeclarationsAfterParsed(es2panda_TsDeclgen declgen);
+    i32 GenerateTsDeclarationsAfterCheck(es2panda_TsDeclgen declgen);
+    i32 WriteTsDeclarations(es2panda_TsDeclgen declgen);
+    void DestroyTsDeclgen(es2panda_TsDeclgen declgen);
     String FormOutputPathForFile(es2panda_Context context, String inputPath);
-    i32 GenerateTsDeclarationsFromContext(es2panda_Context ctx, u32 fileNamesCount, sequence<String> inputFiles,
-                                            sequence<String> outputDeclEts, sequence<String> outputEts,
-                                            boolean exportAll, boolean isolated, String recordFile, 
-                                            boolean genAnnotations);
     void InsertETSImportDeclarationAndParse(es2panda_Context context, parser.Program program,
                                             ir.ETSImportDeclaration node);
     i32 GenerateStaticDeclarationsFromContext(es2panda_Context context, String outputPath);

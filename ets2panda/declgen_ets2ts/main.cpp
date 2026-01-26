@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <memory>
 #include "public/es2panda_lib.h"
 #include "public/public.h"
 #include "declgenEts2Ts.h"
@@ -94,21 +95,43 @@ static int Run(int argc, const char **argv)
     es2panda_Context *ctx =
         impl->CreateContextFromStringWithHistory(cfg, parserInputCStr, cfgImpl->options->SourceFileName().c_str());
     auto *ctxImpl = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx);
-    auto *checker = reinterpret_cast<checker::ETSChecker *>(ctxImpl->GetChecker());
     ctxImpl->lazyCheck = false;
+
+    impl->ProceedToState(ctx, ES2PANDA_STATE_PARSED);
+
+    TSDeclGenerator *declgen = new TSDeclGenerator(ctxImpl);
+
+    auto destroyContextAndDeclgen = [declgen, impl, ctx, cfg, newArgv]() {
+        delete declgen;
+        impl->DestroyContext(ctx);
+        impl->DestroyConfig(cfg);
+        delete[] newArgv;
+    };
+
+    if (!declgen->SetDeclgenOptions(declgenOptions)) {
+        destroyContextAndDeclgen();
+        return 1;
+    }
+
+    if (!declgen->GenerateTsDeclarationsAfterParsedPhase()) {
+        destroyContextAndDeclgen();
+        return 1;
+    }
 
     impl->ProceedToState(ctx, ES2PANDA_STATE_CHECKED);
 
-    int res = 0;
-    if (!GenerateTsDeclarations(checker, ctxImpl->parserProgram, declgenOptions)) {
-        res = 1;
+    if (!declgen->GenerateTsDeclarationsAfterCheckPhase()) {
+        destroyContextAndDeclgen();
+        return 1;
     }
 
-    impl->DestroyContext(ctx);
-    impl->DestroyConfig(cfg);
-    delete[] newArgv;
+    if (!declgen->Write()) {
+        destroyContextAndDeclgen();
+        return 1;
+    }
 
-    return res;
+    destroyContextAndDeclgen();
+    return 0;
 }
 }  // namespace ark::es2panda::declgen_ets2ts
 

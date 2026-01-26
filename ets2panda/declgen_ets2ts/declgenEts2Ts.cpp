@@ -15,6 +15,7 @@
 
 #include "declgenEts2Ts.h"
 
+#include "checker/ETSchecker.h"
 #include "isolatedDeclgenChecker.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/phase.h"
@@ -33,6 +34,8 @@
 #include "ir/ts/tsTypeAliasDeclaration.h"
 #include "ir/ts/tsTypeParameter.h"
 #include "compiler/lowering/util.h"
+#include "parser/program/program.h"
+#include "public/public.h"
 
 #define DEBUG_PRINT 0
 
@@ -2843,75 +2846,139 @@ bool TSDeclGen::IsDependency(const std::string &assemblerName)
     return dependencySet_.find(assemblerName) != dependencySet_.end();
 }
 
-bool WriteToFile(const std::string &path, const std::string &content, checker::ETSChecker *checker)
+void TSDeclgenContent::PushImports(const std::string &importStr)
 {
-    std::ofstream outStream(path);  // ark::os::GetAbsolutePath(*pathValue)
-    if (outStream.fail()) {
-        checker->DiagnosticEngine().LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {path});
-        return false;
-    }
-    outStream << content;
-    outStream.close();
-    return true;
+    imports_ += importStr;
 }
 
-bool GenerateTsDeclarations(checker::ETSChecker *checker, const ark::es2panda::parser::Program *program,
-                            const DeclgenOptions &declgenOptions)
+void TSDeclgenContent::PushExports(const std::string &exportStr)
 {
-    declgen::IsolatedDeclgenChecker isolatedDeclgenChecker(checker->DiagnosticEngine(), *program);
-    if (declgenOptions.isolated) {
-        isolatedDeclgenChecker.Check();
+    exports_ += exportStr;
+}
+
+void TSDeclgenContent::PushStatements(const std::string &statementStr)
+{
+    statements_ += statementStr;
+}
+
+void TSDeclgenContent::PushInitModuleGlues(const std::string &initModuleGlueStr)
+{
+    initModuleGlues_ += initModuleGlueStr;
+}
+
+void TSDeclgenContent::PushRecordImports(const std::string &recordImportStr)
+{
+    recordImports_ += recordImportStr;
+}
+
+bool TSDeclgenContent::WriteToFile(const std::string &path)
+{
+    std::ofstream outStream(path);
+    if (outStream.fail()) {
+        return false;
+    }
+    outStream << recordImports_ << imports_ << initModuleGlues_ << statements_ << exports_;
+    outStream.close();
+    if (outStream.good()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void TSDeclgenContent::RemoveDuplicateExports(const std::string &checkExports)
+{
+    std::string result;
+    std::string line;
+    std::istringstream iss(exports_);
+
+    while (std::getline(iss, line)) {
+        bool shouldRemove = false;
+
+        if (line.find("export default") != std::string::npos) {
+            shouldRemove = true;
+        } else if ((line.find("export {") != std::string::npos || line.find("export type {") != std::string::npos) &&
+                   line.find("}") != std::string::npos) {
+            shouldRemove = HasLocalDeclaredExport(line, checkExports);
+        }
+
+        if (!shouldRemove) {
+            result += line + "\n";
+        }
     }
 
-    TSDeclGen declBuilder(checker, &isolatedDeclgenChecker, program);
-    declBuilder.SetDeclgenOptions(declgenOptions);
+    exports_ = result;
+}
 
-    if (!ValidateDeclgenOptions(declBuilder.GetDeclgenOptions(), checker)) {
+bool TSDeclgenContent::HasLocalDeclaredExport(const std::string &line, const std::string &checkExports)
+{
+    size_t start = line.find("{");
+    size_t end = line.find("}");
+    if (start == std::string::npos || end == std::string::npos) {
         return false;
     }
 
-    if (!declBuilder.Generate()) {
-        return false;
+    std::string inner = line.substr(start + 1, end - start - 1);
+    std::istringstream nameStream(inner);
+    std::string token;
+
+    while (std::getline(nameStream, token, ',')) {
+        std::string name = token;
+        name.erase(0, name.find_first_not_of(" \t\n\r"));
+        name.erase(name.find_last_not_of(" \t\n\r") + 1);
+
+        if (checkExports.find("export declare ") != std::string::npos && checkExports.find(name) != std::string::npos) {
+            return true;
+        }
     }
 
-    std::string outputEts = declBuilder.GetTsOutput();
-    std::string outputDEts = declBuilder.GetDtsOutput();
+    return false;
+}
 
-    declBuilder.ResetTsOutput();
-    declBuilder.ResetDtsOutput();
+TSDeclGenerator::TSDeclGenerator(public_lib::Context *ctx)
+    : context_(ctx),
+      tsContent_(),
+      dtsContent_(),
+      inputFileIndexMap_(),
+      outputDeclEts_(),
+      outputEts_(),
+      isSimultaneousMode_(false),
+      fileContents_()
+{
+    auto checker = reinterpret_cast<checker::ETSChecker *>(ctx->GetChecker());
+    auto program = ctx->parserProgram;
+    isolatedDeclgenChecker_ = std::make_unique<declgen::IsolatedDeclgenChecker>(checker->DiagnosticEngine(), *program);
+    this->declBuilder_ = std::make_unique<TSDeclGen>(checker, isolatedDeclgenChecker_.get(), program);
+}
 
-    auto afterCheckerId = compiler::GetPhaseManager()->CurrentPhaseId().minor;
-    int32_t firstPhaseId = -1;
-    compiler::GetPhaseManager()->SetCurrentPhaseIdWithoutReCheck(firstPhaseId);
-    declBuilder.GenExportNamedDeclarations();
-
-    std::string exportOutputEts = declBuilder.GetTsOutput();
-    std::string exportOutputDEts = declBuilder.GetDtsOutput();
-
-    declBuilder.ResetTsOutput();
-    declBuilder.ResetDtsOutput();
-
-    declBuilder.GenInitModuleGlueCode();
-    std::string initModuleOutputEts = declBuilder.GetTsOutput();
-    declBuilder.ResetTsOutput();
-
-    compiler::GetPhaseManager()->SetCurrentPhaseIdWithoutReCheck(afterCheckerId);
-    declBuilder.GenImportDeclarations();
-
-    std::string importOutputEts = declBuilder.GetTsOutput();
-    std::string importOutputDEts = declBuilder.GetDtsOutput();
-
-    std::string combineEts = importOutputEts + initModuleOutputEts + outputEts + exportOutputEts;
-    std::string combinedDEts = importOutputDEts + outputDEts + exportOutputDEts;
-
-    if (!declBuilder.GetDeclgenOptions().recordFile.empty()) {
-        declBuilder.ResetDtsOutput();
-        declBuilder.GenImportRecordDeclarations(declBuilder.GetDeclgenOptions().recordFile);
-        std::string recordImportOutputDEts = declBuilder.GetDtsOutput();
-        combinedDEts = recordImportOutputDEts + combinedDEts;
+TSDeclGenerator::TSDeclGenerator(public_lib::Context *ctx,
+                                 const std::unordered_map<std::string, size_t> &inputFileIndexMap,
+                                 const char *const *outputDeclEts, const char *const *outputEts, size_t fileNamesCount)
+    : context_(ctx),
+      tsContent_(),
+      dtsContent_(),
+      inputFileIndexMap_(inputFileIndexMap),
+      outputDeclEts_(),
+      outputEts_(),
+      isSimultaneousMode_(ctx->config->options->IsSimultaneous()),
+      fileContents_()
+{
+    auto checker = reinterpret_cast<checker::ETSChecker *>(ctx->GetChecker());
+    for (size_t i = 0; i < fileNamesCount; ++i) {
+        outputDeclEts_.push_back(outputDeclEts[i] ? outputDeclEts[i] : "");
+        outputEts_.push_back(outputEts[i] ? outputEts[i] : "");
     }
+    if (!isSimultaneousMode_) {
+        auto program = ctx->parserProgram;
+        isolatedDeclgenChecker_ =
+            std::make_unique<declgen::IsolatedDeclgenChecker>(checker->DiagnosticEngine(), *program);
+        this->declBuilder_ = std::make_unique<TSDeclGen>(checker, isolatedDeclgenChecker_.get(), program);
+    }
+}
 
-    return WriteOutputFiles(declBuilder.GetDeclgenOptions(), combineEts, combinedDEts, checker);
+checker::ETSChecker *TSDeclGenerator::GetChecker() const
+{
+    return reinterpret_cast<checker::ETSChecker *>(context_->GetChecker());
 }
 
 bool ValidateDeclgenOptions(const DeclgenOptions &options, checker::ETSChecker *checker)
@@ -2929,20 +2996,165 @@ bool ValidateDeclgenOptions(const DeclgenOptions &options, checker::ETSChecker *
     return true;
 }
 
-bool WriteOutputFiles(const DeclgenOptions &options, const std::string &combinedEts, const std::string &combinedDEts,
-                      checker::ETSChecker *checker)
+bool TSDeclGenerator::SetDeclgenOptions(const DeclgenOptions &declgenOptions)
 {
-    if (!options.outputDeclEts.empty()) {
-        if (!WriteToFile(options.outputDeclEts, combinedDEts, checker)) {
-            return false;
-        }
+    auto checker = GetChecker();
+    if (!ValidateDeclgenOptions(declgenOptions, checker)) {
+        return false;
     }
+    globalOptions_ = declgenOptions;
+    if (isSimultaneousMode_) {
+        return true;
+    }
+    declBuilder_->SetDeclgenOptions(declgenOptions);
+    return true;
+}
 
-    if (!options.outputEts.empty()) {
-        if (!WriteToFile(options.outputEts, combinedEts, checker)) {
-            return false;
-        }
+bool TSDeclGenerator::GenerateTsDeclarationsAfterParsedPhase()
+{
+    if (isSimultaneousMode_) {
+        bool result = true;
+        context_->parserProgram->GetExternalDecls()->Visit([&](parser::Program *prog) {
+            if (!prog->IsBuiltSimultaneously()) {
+                return;
+            }
+            if (!ProcessProgram(prog, true)) {
+                result = false;
+            }
+        });
+        return result;
+    }
+    return ProcessSingleFile(true);
+}
+
+bool TSDeclGenerator::GenerateTsDeclarationsAfterCheckPhase()
+{
+    if (isSimultaneousMode_) {
+        bool result = true;
+        context_->parserProgram->GetExternalDecls()->Visit([&](parser::Program *prog) {
+            if (!prog->IsBuiltSimultaneously()) {
+                return;
+            }
+            if (!ProcessProgram(prog, false)) {
+                result = false;
+            }
+        });
+        return result;
+    }
+    return ProcessSingleFile(false);
+}
+bool TSDeclGenerator::GenerateExportsAfterParsed(TSDeclGen *declBuilder, TSDeclgenContent *tsContent,
+                                                 TSDeclgenContent *dtsContent)
+{
+    declBuilder->ResetDtsOutput();
+    declBuilder->GenExportNamedDeclarations();
+    tsContent->PushExports(declBuilder->GetTsOutput());
+    dtsContent->PushExports(declBuilder->GetDtsOutput());
+    return true;
+}
+bool TSDeclGenerator::GenerateDeclarationsAfterCheck(TSDeclGen *declBuilder, TSDeclgenContent *tsContent,
+                                                     TSDeclgenContent *dtsContent, const DeclgenOptions &options)
+{
+    declBuilder->ResetTsOutput();
+    declBuilder->ResetDtsOutput();
+    if (!declBuilder->Generate()) {
+        return false;
+    }
+    std::string checkTsOutput = declBuilder->GetTsOutput();
+    std::string checkDtsOutput = declBuilder->GetDtsOutput();
+    tsContent->RemoveDuplicateExports(checkTsOutput);
+    dtsContent->RemoveDuplicateExports(checkDtsOutput);
+    tsContent->PushStatements(checkTsOutput);
+    dtsContent->PushStatements(checkDtsOutput);
+    declBuilder->ResetTsOutput();
+    declBuilder->ResetDtsOutput();
+    declBuilder->GenInitModuleGlueCode();
+    tsContent->PushInitModuleGlues(declBuilder->GetTsOutput());
+    declBuilder->ResetTsOutput();
+    declBuilder->GenImportDeclarations();
+    tsContent->PushImports(declBuilder->GetTsOutput());
+    dtsContent->PushImports(declBuilder->GetDtsOutput());
+    if (!options.recordFile.empty()) {
+        declBuilder->ResetDtsOutput();
+        declBuilder->GenImportRecordDeclarations(options.recordFile);
+        dtsContent->PushRecordImports(declBuilder->GetDtsOutput());
     }
     return true;
 }
+bool TSDeclGenerator::ProcessSingleFile(bool afterParsed)
+{
+    if (afterParsed) {
+        return GenerateExportsAfterParsed(declBuilder_.get(), &tsContent_, &dtsContent_);
+    }
+    return GenerateDeclarationsAfterCheck(declBuilder_.get(), &tsContent_, &dtsContent_,
+                                          declBuilder_->GetDeclgenOptions());
+}
+bool TSDeclGenerator::ProcessProgram(parser::Program *prog, bool afterParsed)
+{
+    auto checker = GetChecker();
+    std::string_view sourcePath = prog->SourceFilePath().Utf8();
+    auto it = inputFileIndexMap_.find(std::string(sourcePath));
+    if (it == inputFileIndexMap_.end()) {
+        return true;
+    }
+
+    size_t idx = it->second;
+    if (afterParsed) {
+        if (parsedIdx_.find(idx) != parsedIdx_.end()) {
+            return true;
+        }
+        parsedIdx_.insert(idx);
+    } else {
+        if (checkedIdx_.find(idx) != checkedIdx_.end()) {
+            return true;
+        }
+        checkedIdx_.insert(idx);
+    }
+
+    auto &fileContent = fileContents_[idx];
+    if (fileContent.declBuilder == nullptr) {
+        fileContent.isolatedDeclgenChecker =
+            std::make_unique<declgen::IsolatedDeclgenChecker>(checker->DiagnosticEngine(), *prog);
+        fileContent.declBuilder = std::make_unique<TSDeclGen>(checker, fileContent.isolatedDeclgenChecker.get(), prog);
+        fileContent.options = globalOptions_;
+        fileContent.options.outputDeclEts = outputDeclEts_[idx];
+        fileContent.options.outputEts = outputEts_[idx];
+        fileContent.declBuilder->SetDeclgenOptions(fileContent.options);
+    }
+    if (afterParsed) {
+        return GenerateExportsAfterParsed(fileContent.declBuilder.get(), &fileContent.tsContent,
+                                          &fileContent.dtsContent);
+    }
+    return GenerateDeclarationsAfterCheck(fileContent.declBuilder.get(), &fileContent.tsContent,
+                                          &fileContent.dtsContent, fileContent.options);
+}
+
+bool WriteSingleFile(const std::string &path, TSDeclgenContent &content, checker::ETSChecker *checker)
+{
+    if (path.empty()) {
+        return true;
+    }
+    if (!content.WriteToFile(path)) {
+        checker->DiagnosticEngine().LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {path});
+        return false;
+    }
+    return true;
+}
+bool TSDeclGenerator::Write()
+{
+    auto checker = GetChecker();
+    if (isSimultaneousMode_) {
+        for (auto &[idx, fileContent] : fileContents_) {
+            if (!WriteSingleFile(fileContent.options.outputDeclEts, fileContent.dtsContent, checker) ||
+                !WriteSingleFile(fileContent.options.outputEts, fileContent.tsContent, checker)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    const auto &options = declBuilder_->GetDeclgenOptions();
+    return WriteSingleFile(options.outputDeclEts, dtsContent_, checker) &&
+           WriteSingleFile(options.outputEts, tsContent_, checker);
+}
+
 }  // namespace ark::es2panda::declgen_ets2ts

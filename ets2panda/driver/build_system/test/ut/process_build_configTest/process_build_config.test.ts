@@ -56,7 +56,11 @@ const fakeArkts = {
     },
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
-    generateTsDeclarationsFromContext: jest.fn(),
+    createTsDeclgen: jest.fn(),
+    generateTsDeclarationsAfterParsed: jest.fn(),
+    generateTsDeclarationsAfterCheck: jest.fn(),
+    writeTsDeclarations: jest.fn(),
+    destroyTsDeclgen: jest.fn(),
     destroyConfig: jest.fn(),
     EtsScript: { fromContext: jest.fn(() => ({})) }
 };

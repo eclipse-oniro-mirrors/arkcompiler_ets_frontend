@@ -116,7 +116,7 @@ export class DriverHelper {
         global.resetConfig();
     }
 
-    public generateTsDeclarationsFromContext(
+public createTsDeclgen(
         inputFiles: string[],
         outputDeclEts: string[],
         outputEts: string[],
@@ -124,10 +124,10 @@ export class DriverHelper {
         isolated: boolean,
         recordFile: string,
         genAnnotations: boolean
-    ): KInt {
-        return global.es2panda._GenerateTsDeclarationsFromContext(
+    ): KPointer {
+        return global.es2panda._CreateTsDeclgen(
             global.context,
-            outputDeclEts.length,
+            inputFiles.length,
             passStringArray(inputFiles),
             passStringArray(outputDeclEts),
             passStringArray(outputEts),
@@ -136,6 +136,21 @@ export class DriverHelper {
             passString(recordFile),
             genAnnotations ? 1 : 0
         );
+    }
+    public generateTsDeclarationsAfterParsed(declgen: KNativePointer): KInt {
+        return global.es2panda._GenerateTsDeclarationsAfterParsed(declgen);
+    }
+
+    public generateTsDeclarationsAfterCheck(declgen: KNativePointer): KInt {
+        return global.es2panda._GenerateTsDeclarationsAfterCheck(declgen);
+    }
+
+    public writeTsDeclarations(declgen: KNativePointer): KInt {
+        return global.es2panda._WriteTsDeclarations(declgen);
+    }
+
+    public destroyTsDeclgen(declgen: KNativePointer): void {
+        global.es2panda._DestroyTsDeclgen(declgen);
     }
 
     public formOutputPathForFile(inputPath: string): String {

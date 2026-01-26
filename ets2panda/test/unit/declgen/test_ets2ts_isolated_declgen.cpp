@@ -26,6 +26,25 @@
 
 static es2panda_Impl *impl = nullptr;
 
+int RunDeclgen(es2panda_TsDeclgen *declgen, es2panda_Context *context)
+{
+    if (auto result = impl->GenerateTsDeclarationsAfterParsed(declgen); result != 0) {
+        std::cerr << "FAILED TO GENERATE DECLARATIONS AFTER PARSED" << std::endl;
+        return result;
+    }
+    impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
+    CheckForErrors("CHECKED", context);
+    if (auto result = impl->GenerateTsDeclarationsAfterCheck(declgen); result != 0) {
+        std::cerr << "FAILED TO GENERATE DECLARATIONS AFTER CHECKED" << std::endl;
+        return result;
+    }
+    if (auto result = impl->WriteTsDeclarations(declgen); result != 0) {
+        std::cerr << "FAILED TO WRITE GENERATED DECLARATIONS" << std::endl;
+        return result;
+    }
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     if (argc < MIN_ARGC) {
@@ -43,24 +62,30 @@ int main(int argc, char **argv)
     auto context = impl->CreateContextFromFile(config, argv[argc - 1]);
     if (context == nullptr) {
         std::cerr << "FAILED TO CREATE CONTEXT" << std::endl;
+        impl->DestroyConfig(config);
         return NULLPTR_CONTEXT_ERROR_CODE;
     }
-    impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
-    CheckForErrors("CHECKED", context);
+    impl->ProceedToState(context, ES2PANDA_STATE_PARSED);
+    CheckForErrors("PARSED", context);
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
     const char *inputFiles[] = {argv[argc - 1]};
     const char *outputDeclEts[] = {declName.c_str()};
     const char *outputEts[] = {"dump.ets"};
-    int result = impl->GenerateTsDeclarationsFromContext(context, 1, inputFiles, outputDeclEts, outputEts, false, true,
-                                                         "", false);
-    if (result != 0) {
+    es2panda_TsDeclgen *declgen =
+        impl->CreateTsDeclgen(context, 1, inputFiles, outputDeclEts, outputEts, false, true, "", false);
+    if (declgen == nullptr) {
         std::cerr << "FAILED TO GENERATE DECLARATIONS" << std::endl;
-        return result;
+        impl->DestroyContext(context);
+        impl->DestroyConfig(config);
+        return 1;
     }
 
-    impl->DestroyConfig(config);
+    auto result = RunDeclgen(declgen, context);
 
-    return 0;
+    impl->DestroyTsDeclgen(declgen);
+    impl->DestroyContext(context);
+    impl->DestroyConfig(config);
+    return result;
 }
 
 // NOLINTEND

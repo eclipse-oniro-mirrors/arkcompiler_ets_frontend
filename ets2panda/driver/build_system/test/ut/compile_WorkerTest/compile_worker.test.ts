@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -62,6 +62,11 @@ const fakeArkts = {
     proceedToState: jest.fn(),
     Es2pandaContextState: { ES2PANDA_STATE_PARSED: 1, ES2PANDA_STATE_CHECKED: 2 },
     generateTsDeclarationsFromContext: jest.fn(),
+    createTsDeclgen: jest.fn(),
+    generateTsDeclarationsAfterParsed: jest.fn(),
+    generateTsDeclarationsAfterCheck: jest.fn(),
+    writeTsDeclarations: jest.fn(),
+    destroyTsDeclgen: jest.fn(),
     formOutputPathForFile: jest.fn(),
     generateStaticDeclarationsFromContext: jest.fn(),
     destroyConfig: jest.fn(),
