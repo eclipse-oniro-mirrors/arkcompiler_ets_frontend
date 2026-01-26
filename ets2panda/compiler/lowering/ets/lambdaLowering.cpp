@@ -1051,8 +1051,7 @@ static ir::CallExpression *CreateCallForLambdaClassInvoke(public_lib::Context *c
 
 static void AddReturnStmtToInvokeBodyStatements(public_lib::Context *ctx, LambdaClassInvokeInfo *lciInfo,
                                                 ir::CallExpression *call,
-                                                ArenaVector<ark::es2panda::ir::Statement *> &bodyStmts,
-                                                bool wrapToObject)
+                                                ArenaVector<ark::es2panda::ir::Statement *> &bodyStmts)
 {
     auto *allocator = ctx->allocator;
     auto *parser = ctx->parser->AsETSParser();
@@ -1060,7 +1059,7 @@ static void AddReturnStmtToInvokeBodyStatements(public_lib::Context *ctx, Lambda
     auto *anyType = checker->GlobalETSAnyType();
 
     if (lciInfo->lambdaSignature->ReturnType() != checker->GlobalVoidType()) {
-        auto *returnExpr = wrapToObject ? parser->CreateFormattedExpression("@@E1 as @@T2", call, anyType) : call;
+        auto *returnExpr = parser->CreateFormattedExpression("@@E1 as @@T2", call, anyType);
         auto *returnStmt = util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(allocator, returnExpr);
         bodyStmts.push_back(returnStmt);
         return;
@@ -1068,11 +1067,9 @@ static void AddReturnStmtToInvokeBodyStatements(public_lib::Context *ctx, Lambda
 
     auto *callStmt = util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(allocator, call);
     bodyStmts.push_back(callStmt);
-    if (wrapToObject) {
-        auto *returnStmt =
-            util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(allocator, allocator->New<ir::UndefinedLiteral>());
-        bodyStmts.push_back(returnStmt);
-    }
+    auto *returnStmt =
+        util::NodeAllocator::ForceSetParent<ir::ReturnStatement>(allocator, allocator->New<ir::UndefinedLiteral>());
+    bodyStmts.push_back(returnStmt);
 }
 
 static void AddRestParameterDestructuringToInvokeBodyStatements(public_lib::Context *ctx,
@@ -1106,7 +1103,7 @@ static void AddRestParameterDestructuringToInvokeBodyStatements(public_lib::Cont
 }
 
 static ir::BlockStatement *CreateLambdaClassInvokeBody(public_lib::Context *ctx, LambdaInfo const *info,
-                                                       LambdaClassInvokeInfo *lciInfo, bool wrapToObject)
+                                                       LambdaClassInvokeInfo *lciInfo)
 {
     auto *allocator = ctx->allocator;
 
@@ -1118,15 +1115,14 @@ static ir::BlockStatement *CreateLambdaClassInvokeBody(public_lib::Context *ctx,
         AddRestParameterDestructuringToInvokeBodyStatements(ctx, lciInfo, bodyStmts);
     }
 
-    auto *call = CreateCallForLambdaClassInvoke(ctx, info, lciInfo, wrapToObject);
-    AddReturnStmtToInvokeBodyStatements(ctx, lciInfo, call, bodyStmts, wrapToObject);
+    auto *call = CreateCallForLambdaClassInvoke(ctx, info, lciInfo, true);
+    AddReturnStmtToInvokeBodyStatements(ctx, lciInfo, call, bodyStmts);
 
     return util::NodeAllocator::ForceSetParent<ir::BlockStatement>(allocator, allocator, std::move(bodyStmts));
 }
 
 static void CreateLambdaClassInvokeMethod(public_lib::Context *ctx, LambdaInfo const *info,
-                                          LambdaClassInvokeInfo *lciInfo, util::StringView methodName,
-                                          bool wrapToObject)
+                                          LambdaClassInvokeInfo *lciInfo, util::StringView methodName)
 {
     auto *allocator = ctx->allocator;
     const auto *checker = ctx->GetChecker()->AsETSChecker();
@@ -1137,9 +1133,8 @@ static void CreateLambdaClassInvokeMethod(public_lib::Context *ctx, LambdaInfo c
     auto params = ArenaVector<ir::Expression *>(allocator->Adapter());
     for (size_t idx = 0; idx < lciInfo->arity; ++idx) {
         const auto *lparam = lciInfo->lambdaSignature->Params().at(idx);
-        auto *type = wrapToObject ? anyType : lparam->TsType()->Substitute(checker->Relation(), lciInfo->substitution);
         auto *id = util::NodeAllocator::ForceSetParent<ir::Identifier>(
-            allocator, lparam->Name(), allocator->New<ir::OpaqueTypeNode>(type, allocator), allocator);
+            allocator, lparam->Name(), allocator->New<ir::OpaqueTypeNode>(anyType, allocator), allocator);
         auto *param = util::NodeAllocator::ForceSetParent<ir::ETSParameterExpression>(allocator, id, false, allocator);
         params.push_back(param);
     }
@@ -1149,13 +1144,10 @@ static void CreateLambdaClassInvokeMethod(public_lib::Context *ctx, LambdaInfo c
         lciInfo->restArgumentIdentifier = GenName(allocator).View();
     }
 
-    auto *returnType2 = allocator->New<ir::OpaqueTypeNode>(
-        wrapToObject ? anyType
-                     : lciInfo->lambdaSignature->ReturnType()->Substitute(checker->Relation(), lciInfo->substitution),
-        allocator);
+    auto *returnType2 = allocator->New<ir::OpaqueTypeNode>(anyType, allocator);
     const bool hasReceiver = lciInfo->lambdaSignature->HasSignatureFlag(checker::SignatureFlags::EXTENSION_FUNCTION);
     auto functionFlag = ir::ScriptFunctionFlags::METHOD;
-    auto *const newBody = CreateLambdaClassInvokeBody(ctx, info, lciInfo, wrapToObject);
+    auto *const newBody = CreateLambdaClassInvokeBody(ctx, info, lciInfo);
 
     auto *func = util::NodeAllocator::ForceSetParent<ir::ScriptFunction>(
         allocator, allocator,
@@ -1202,7 +1194,7 @@ static ir::BlockStatement *CreateLambdaClassInvokeNBody(public_lib::Context *ctx
 
     lciInfo->argNames = tempVarNames;
     auto *call = CreateCallForLambdaClassInvoke(ctx, info, lciInfo, false);
-    AddReturnStmtToInvokeBodyStatements(ctx, lciInfo, call, bodyStmts, true);
+    AddReturnStmtToInvokeBodyStatements(ctx, lciInfo, call, bodyStmts);
 
     return util::NodeAllocator::ForceSetParent<ir::BlockStatement>(allocator, allocator, std::move(bodyStmts));
 }
@@ -1376,7 +1368,7 @@ static void GenerateRestInvokeForOptionalParams(public_lib::Context *ctx, Lambda
     auto restInvokeMethodName = GetInvokeMethodNameStringView(ctx, lciInfo.arity, true);
 
     lciInfo.invokeType = InvokeType::OPTIONAL_PARAM_NO_REST;
-    CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, restInvokeMethodName, true);
+    CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, restInvokeMethodName);
     lciInfo.invokeType = InvokeType::CONVENTIONAL;
 }
 
@@ -1391,7 +1383,7 @@ static void GenerateSmallerArityRestInvokesForLambdaN(public_lib::Context *ctx, 
         lciInfo.arity = arity;
         if (signature->HasRestParameter()) {
             const auto invokeMethodName = GetInvokeMethodNameStringView(ctx, arity, signature->HasRestParameter());
-            CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, invokeMethodName, true);
+            CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, invokeMethodName);
         } else {
             GenerateRestInvokeForOptionalParams(ctx, info, lciInfo);
         }
@@ -1415,7 +1407,7 @@ static void GenerateInvokesForDefinedArityLambda(public_lib::Context *ctx, Lambd
     for (size_t arity = signature->MinArgCount(); arity <= signature->ArgCount(); ++arity) {
         lciInfo.arity = arity;
         const auto invokeMethodName = GetInvokeMethodNameStringView(ctx, arity, signature->HasRestParameter());
-        CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, invokeMethodName, true);
+        CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, invokeMethodName);
         GenerateRestInvokeForOptionalParams(ctx, info, lciInfo);
     }
 }
@@ -1456,8 +1448,6 @@ static ir::ClassDeclaration *CreateLambdaClass(public_lib::Context *ctx, checker
     } else {
         GenerateInvokesForLambdaN(ctx, info, lciInfo);
     }
-
-    CreateLambdaClassInvokeMethod(ctx, info, &lciInfo, compiler::Signatures::LAMBDA_OBJECT_INVOKE, false);
 
     InitScopesPhaseETS::RunExternalNode(classDeclaration, varBinder);
     varBinder->ResolveReferencesForScopeWithContext(classDeclaration, varBinder->TopScope());
