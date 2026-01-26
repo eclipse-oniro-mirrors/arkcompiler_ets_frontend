@@ -10127,7 +10127,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     const decl = TsUtils.getDeclaration(symbol);
     if (!decl) {
-      cb();
       return;
     }
 
