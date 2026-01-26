@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -80,6 +80,203 @@ TEST_F(LexerTest, TestIdentifier)
     auto token = lexer.GetToken();
     EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
     EXPECT_EQ(token.Ident().Utf8(), "identifier");
+}
+
+// Identifier scanning via NextToken (covers paths through KeywordsUtil)
+TEST_F(LexerTest, TestScanIdentifierStartValid)
+{
+    auto lexer = CreateLexer("abc");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "abc");
+}
+
+TEST_F(LexerTest, TestScanIdentifierStartInvalid)
+{
+    auto lexer = CreateLexer("123abc");
+    EXPECT_THROW(lexer.NextToken(), es2panda::Error);
+}
+
+TEST_F(LexerTest, TestScanIdContinueSimple)
+{
+    auto lexer = CreateLexer("identifier123");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "identifier123");
+}
+
+TEST_F(LexerTest, TestScanIdContinueWithUnderscore)
+{
+    auto lexer = CreateLexer("_identifier");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "_identifier");
+}
+
+TEST_F(LexerTest, TestScanIdContinueWithDollar)
+{
+    auto lexer = CreateLexer("$identifier");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "$identifier");
+}
+
+TEST_F(LexerTest, TestScanIdContinueStopsAtNonIdentifier)
+{
+    auto lexer = CreateLexer("identifier+123");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "identifier");
+
+    lexer.NextToken();
+    EXPECT_EQ(lexer.GetToken().Type(), TokenType::PUNCTUATOR_PLUS);
+}
+
+TEST_F(LexerTest, TestScanIdContinueWithUnicodeEscape)
+{
+    auto lexer = CreateLexer("\\u0041identifier");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "Aidentifier");
+}
+
+TEST_F(LexerTest, TestScanIdContinueInvalidUnicodeEscape)
+{
+    auto lexer = CreateLexer("\\u004G");
+    EXPECT_THROW(lexer.NextToken(), es2panda::Error);
+}
+
+TEST_F(LexerTest, TestScanIdContinueWithNumbers)
+{
+    auto lexer = CreateLexer("var123");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "var123");
+}
+
+TEST_F(LexerTest, TestScanIdContinueEscapedKeyword)
+{
+    auto lexer = CreateLexer("\\u0069f");
+    EXPECT_THROW(lexer.NextToken(), es2panda::Error);
+}
+
+TEST_F(LexerTest, TestScanIdContinueEscapedNonKeyword)
+{
+    auto lexer = CreateLexer("\\u0061bc");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "abc");
+}
+
+TEST_F(LexerTest, TestIdentifierHasEscape)
+{
+    auto lexer1 = CreateLexer("identifier");
+    lexer1.NextToken();
+    EXPECT_FALSE(lexer1.GetToken().Flags() & TokenFlags::HAS_ESCAPE);
+
+    auto lexer2 = CreateLexer("\\u0069dentifier");
+    lexer2.NextToken();
+    EXPECT_TRUE(lexer2.GetToken().Flags() & TokenFlags::HAS_ESCAPE);
+}
+
+TEST_F(LexerTest, TestScanIdContinueMultipleUnicodeEscapes)
+{
+    auto lexer = CreateLexer("\\u0041\\u0042C");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "ABC");
+}
+
+TEST_F(LexerTest, TestScanIdContinueBoundary)
+{
+    auto lexer = CreateLexer("abc def");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "abc");
+
+    lexer.NextToken();
+    token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_EQ(token.Ident().Utf8(), "def");
+}
+
+TEST_F(LexerTest, TestScanIdContinueUnicodeCodePoint)
+{
+    auto lexer = CreateLexer("\\u{41}BC");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "ABC");
+}
+
+TEST_F(LexerTest, TestScanIdContinueInvalidEscapePart)
+{
+    auto lexer = CreateLexer("a\\u002B");
+    EXPECT_THROW(lexer.NextToken(), es2panda::Error);
+}
+
+TEST_F(LexerTest, TestScanIdContinueMaybeKeywordEmptyMap)
+{
+    auto lexer = CreateLexer("\\u0078yz");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "xyz");
+}
+
+TEST_F(LexerTest, TestScanIdContinueMaybeKeywordRelationGreaterThanZero)
+{
+    auto lexer = CreateLexer("\\u0069z");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "iz");
+}
+
+TEST_F(LexerTest, TestScanIdContinueMaybeKeywordRelationLessThanZero)
+{
+    auto lexer = CreateLexer("\\u0069a");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "ia");
+}
+
+TEST_F(LexerTest, TestScanIdContinueEscapeInMiddle)
+{
+    auto lexer = CreateLexer("a\\u0042c");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "aBc");
+}
+
+TEST_F(LexerTest, TestScanIdContinueHasEscapeFromStart)
+{
+    auto lexer = CreateLexer("\\u0041bc");
+    lexer.NextToken();
+    auto token = lexer.GetToken();
+    EXPECT_EQ(token.Type(), TokenType::LITERAL_IDENT);
+    EXPECT_TRUE(token.Flags() & TokenFlags::HAS_ESCAPE);
+    EXPECT_EQ(token.Ident().Utf8(), "Abc");
 }
 
 // Test numeric literals
