@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,12 +26,12 @@ public:
     static void GenerateSnapshot(const panda::pandasm::Program &program, const std::string &outputName);
     static void GenerateProgram(const std::string &inputName, panda::pandasm::Program &prog,
                                 panda::ArenaAllocator *allocator);
-    static panda::es2panda::util::ProgramCache *GetCacheContext(const std::string &cacheFilePath,
+    static panda::es2panda::util::ProgramCache *GetCacheContext(const std::string &cacheFilePath, uint32_t newFileHash,
         panda::ArenaAllocator *allocator);
     static void UpdateCacheFile(const panda::es2panda::util::ProgramCache *programCache,
         const std::string &cacheFilePath);
     static panda::es2panda::util::AbcProgramsCache *GetAbcInputCacheContext(const std::string &cacheFilePath,
-        panda::ArenaAllocator *allocator);
+        uint32_t newFileHash, panda::ArenaAllocator *allocator);
     static void UpdateAbcCacheFile(const panda::es2panda::util::AbcProgramsCache *abcProgramsCache,
         const std::string &cacheFilePath);
 

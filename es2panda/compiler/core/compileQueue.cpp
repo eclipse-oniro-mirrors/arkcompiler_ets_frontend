@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,13 +84,12 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
         if (!isAbcFile) {
             src_->hash = GetHash32String(reinterpret_cast<const uint8_t *>(bufToHash.c_str()));
             auto *cacheProgramInfo = proto::ProtobufSnapshotGenerator::GetCacheContext(cacheFileIter->second,
-                                                                                       &allocator);
+                                                                                       src_->hash, &allocator);
             // Use cached program when no symbol-table dump is requested.
             // If 'patchFixOption.dumpSymbolTable' is set (non-empty), we must run the full
             // compile pipeline to build the symbol table; using cache would skip compilation
             // and thus cannot produce the requested symbol map.
-            if (cacheProgramInfo != nullptr && cacheProgramInfo->hashCode == src_->hash &&
-                options_->patchFixOptions.dumpSymbolTable.empty()) {
+            if (cacheProgramInfo != nullptr && options_->patchFixOptions.dumpSymbolTable.empty()) {
                 std::unique_lock<std::mutex> lock(globalMutex_);
                 auto *cache = allocator_->New<util::ProgramCache>(src_->hash, std::move(cacheProgramInfo->program));
                 progsInfo_.insert({src_->fileName, cache});
@@ -110,15 +109,11 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
             // An ABC file starts with '\0', but the 'GetHash32String' method does not support this format.
             src_->hash = GetHash32(reinterpret_cast<const uint8_t *>(abcBufToHash.c_str()), abcBufToHash.size());
             auto *cacheAbcProgramsInfo = proto::ProtobufSnapshotGenerator::GetAbcInputCacheContext(
-                cacheFileIter->second, &allocator);
-            if (cacheAbcProgramsInfo != nullptr && cacheAbcProgramsInfo->hashCode == src_->hash) {
+                cacheFileIter->second, src_->hash, &allocator);
+            if (cacheAbcProgramsInfo != nullptr) {
                 InsertAbcCachePrograms(src_->hash, cacheAbcProgramsInfo->programsCache);
-                delete cacheAbcProgramsInfo;
-                cacheAbcProgramsInfo = nullptr;
                 return true;
             }
-            delete cacheAbcProgramsInfo;
-            cacheAbcProgramsInfo = nullptr;
         }
     }
     return false;

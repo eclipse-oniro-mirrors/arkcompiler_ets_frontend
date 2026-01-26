@@ -385,3 +385,10 @@ group("merge_proto_abc_build") {
 group("merge_proto_abc_build_win") {
   deps = [ ":merge_abc(${toolchain_win})" ]
 }
+
+if (!ark_standalone_build && host_os == "linux") {
+  group("merge_abc_tests") {
+    testonly = true
+    deps = [ "unittest:program_cache_test_action(${toolchain_linux})" ]
+  }
+}
