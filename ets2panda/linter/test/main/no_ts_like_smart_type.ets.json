@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,69 +15,9 @@
     ],
     "result": [
         {
-            "line": 339,
-            "column": 9,
-            "endLine": 339,
-            "endColumn": 14,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 340,
-            "column": 9,
-            "endLine": 340,
-            "endColumn": 21,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 341,
-            "column": 9,
-            "endLine": 341,
-            "endColumn": 23,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 344,
-            "column": 9,
-            "endLine": 344,
-            "endColumn": 14,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 345,
-            "column": 9,
-            "endLine": 345,
-            "endColumn": 21,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
             "line": 346,
             "column": 9,
             "endLine": 346,
-            "endColumn": 23,
-            "problem": "LiteralAsPropertyName",
-            "suggest": "",
-            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 349,
-            "column": 9,
-            "endLine": 349,
             "endColumn": 14,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -85,10 +25,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 350,
+            "line": 347,
             "column": 9,
-            "endLine": 350,
+            "endLine": 347,
             "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 348,
+            "column": 9,
+            "endLine": 348,
+            "endColumn": 23,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
             "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
@@ -98,6 +48,26 @@
             "line": 351,
             "column": 9,
             "endLine": 351,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 352,
+            "column": 9,
+            "endLine": 352,
+            "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 353,
+            "column": 9,
+            "endLine": 353,
             "endColumn": 23,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -105,9 +75,39 @@
             "severity": "ERROR"
         },
         {
-            "line": 369,
+            "line": 356,
+            "column": 9,
+            "endLine": 356,
+            "endColumn": 14,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 357,
+            "column": 9,
+            "endLine": 357,
+            "endColumn": 21,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 358,
+            "column": 9,
+            "endLine": 358,
+            "endColumn": 23,
+            "problem": "LiteralAsPropertyName",
+            "suggest": "",
+            "rule": "Objects with property names that are not identifiers are not supported (arkts-identifiers-as-prop-names)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 376,
             "column": 21,
-            "endLine": 369,
+            "endLine": 376,
             "endColumn": 29,
             "problem": "AnyType",
             "suggest": "",
@@ -115,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 385,
+            "line": 392,
             "column": 7,
-            "endLine": 385,
+            "endLine": 392,
             "endColumn": 19,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -125,9 +125,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 386,
+            "line": 393,
             "column": 7,
-            "endLine": 386,
+            "endLine": 393,
             "endColumn": 20,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -135,9 +135,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 389,
+            "line": 396,
             "column": 9,
-            "endLine": 389,
+            "endLine": 396,
             "endColumn": 63,
             "problem": "AnyType",
             "suggest": "",
@@ -145,9 +145,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 417,
+            "line": 424,
             "column": 25,
-            "endLine": 417,
+            "endLine": 424,
             "endColumn": 32,
             "problem": "UnknownType",
             "suggest": "",
@@ -155,9 +155,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 444,
+            "line": 451,
             "column": 39,
-            "endLine": 444,
+            "endLine": 451,
             "endColumn": 42,
             "problem": "AnyType",
             "suggest": "",
@@ -165,9 +165,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 137,
+            "line": 144,
             "column": 5,
-            "endLine": 137,
+            "endLine": 144,
             "endColumn": 8,
             "problem": "StrictDiagnostic",
             "suggest": "'b.a' is possibly 'undefined'.",
@@ -175,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 144,
+            "line": 151,
             "column": 7,
-            "endLine": 144,
+            "endLine": 151,
             "endColumn": 10,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -185,9 +185,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 151,
+            "line": 158,
             "column": 13,
-            "endLine": 151,
+            "endLine": 158,
             "endColumn": 16,
             "problem": "StrictDiagnostic",
             "suggest": "'b.a' is possibly 'undefined'.",
@@ -195,9 +195,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 191,
+            "line": 198,
             "column": 18,
-            "endLine": 191,
+            "endLine": 198,
             "endColumn": 25,
             "problem": "StrictDiagnostic",
             "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
@@ -205,9 +205,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 278,
+            "line": 285,
             "column": 1,
-            "endLine": 278,
+            "endLine": 285,
             "endColumn": 4,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -215,9 +215,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 292,
+            "line": 299,
             "column": 5,
-            "endLine": 292,
+            "endLine": 299,
             "endColumn": 8,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -225,9 +225,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 307,
+            "line": 314,
             "column": 13,
-            "endLine": 307,
+            "endLine": 314,
             "endColumn": 16,
             "problem": "StrictDiagnostic",
             "suggest": "'obj' is possibly 'undefined'.",
@@ -235,10 +235,20 @@
             "severity": "ERROR"
         },
         {
-            "line": 381,
+            "line": 388,
             "column": 9,
-            "endLine": 381,
+            "endLine": 388,
             "endColumn": 21,
+            "problem": "StrictDiagnostic",
+            "suggest": "Not all code paths return a value.",
+            "rule": "Not all code paths return a value.",
+            "severity": "ERROR"
+        },
+        {
+            "line": 553,
+            "column": 10,
+            "endLine": 553,
+            "endColumn": 14,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",
             "rule": "Not all code paths return a value.",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,6 +56,8 @@ export const SYMBOL = 'Symbol';
 export const SYMBOL_CONSTRUCTOR = 'SymbolConstructor';
 const ITERATOR = 'iterator';
 const DEFAULT_SYMBOL_NAME = 'default';
+export const NULL: string = 'null';
+export const UNDEFINED: string = 'undefined';
 
 export type CheckType = (this: TsUtils, t: ts.Type) => boolean;
 
