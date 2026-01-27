@@ -21,6 +21,3 @@ test262/data/test/built-ins/TypedArray/prototype/slice/results-with-different-le
 test262/data/test/built-ins/TypedArray/prototype/copyWithin/BigInt/non-negative-target-and-start.js
 
 test262/data/test/intl402/NumberFormat/prototype/format/units-invalid.js
-
-#356
-test262/data/test/language/module-code/instn-iee-err-circular.js
