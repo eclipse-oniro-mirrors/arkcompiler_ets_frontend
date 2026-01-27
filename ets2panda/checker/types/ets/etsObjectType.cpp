@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -908,6 +908,15 @@ void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
         return;
     }
 
+    //  #16485: Probably temporary solution for generic bridges realization. Allows casting of generic classes
+    //          in the form C<T> as C<U> (where U extends T) or C<T> as D (where D extends C<U>)
+    if ((relation->GetChecker()->Context().Status() & CheckerStatus::IN_BRIDGE_TEST) != 0U) {
+        SavedTypeRelationFlagsContext const savedFlags(relation, relation->GetTypeRelationFlags() |
+                                                                     TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
+        relation->IsSupertypeOf(this, target);
+        return;
+    }
+
     if (CastNumericObject(relation, target)) {
         return;
     }
@@ -932,15 +941,6 @@ void ETSObjectType::Cast(TypeRelation *const relation, Type *const target)
         if (relation->IsTrue()) {
             return;
         }
-    }
-
-    //  #16485: Probably temporary solution for generic bridges realization. Allows casting of generic classes
-    //          in the form C<T> as C<U> (where U extends T) or C<T> as D (where D extends C<U>)
-    if ((relation->GetChecker()->Context().Status() & CheckerStatus::IN_BRIDGE_TEST) != 0U) {
-        SavedTypeRelationFlagsContext const savedFlags(relation, relation->GetTypeRelationFlags() |
-                                                                     TypeRelationFlag::IGNORE_TYPE_PARAMETERS);
-        relation->IsSupertypeOf(this, target);
-        return;
     }
 
     conversion::Forbidden(relation);
