@@ -114,10 +114,7 @@ static bool IsInStaticMember(ir::AstNode *node)
         return false;
     }
     if (node->Parent() != nullptr && node->Parent()->IsClassDefinition()) {
-        if ((node->Modifiers() & ir::ModifierFlags::STATIC) != 0) {
-            return true;
-        }
-        return false;
+        return ((node->Modifiers() & ir::ModifierFlags::STATIC) != 0);
     }
     return IsInStaticMember(node->Parent());
 }
@@ -1123,7 +1120,7 @@ bool ETSBinder::AddImportSpecifiersToTopBindings(Span<parser::Program *const> re
 }
 
 using GlobalBindingItem = std::pair<const util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
-static bool isDefaultExported(const GlobalBindingItem &item)
+static bool CheckIsDefaultExported(const GlobalBindingItem &item)
 {
     if (item.second.second == nullptr) {
         return false;
@@ -1156,7 +1153,7 @@ void ETSBinder::AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *co
     const auto &selectMap = importProgram->VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto selectMap2 = selectMap.find(import->ResolvedSource());
     if (selectMap2 != selectMap.end()) {
-        auto item1 = std::find_if(selectMap2->second.begin(), selectMap2->second.end(), isDefaultExported);
+        auto item1 = std::find_if(selectMap2->second.begin(), selectMap2->second.end(), CheckIsDefaultExported);
         if (item1 != selectMap2->second.end()) {
             auto var = FindImportSpecifiersVariable(item1->first, globalBindings, records);
             if (var == nullptr) {

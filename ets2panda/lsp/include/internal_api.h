@@ -28,7 +28,7 @@ namespace ark::es2panda::lsp {
 
 class Initializer {
 public:
-    Initializer(bool isLogAwaible = false);
+    explicit Initializer(bool isLogAwaible = false);
 
     ~Initializer();
 
@@ -120,7 +120,7 @@ public:
     NO_MOVE_SEMANTIC(Initializer);
 
 private:
-    bool logFlag;
+    bool logFlag_;
     es2panda_Impl const *impl_;
     es2panda_Config *cfg_;
 };

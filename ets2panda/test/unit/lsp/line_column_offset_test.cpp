@@ -99,7 +99,7 @@ TEST_F(LCOTests, LCOPositionIsCorrectForSpecialCharacters)
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();
 
-    size_t position = 74;
+    constexpr size_t position = 74;
     auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     auto lineAndChar = lspApi->toLineColumnOffset(context, position);
 

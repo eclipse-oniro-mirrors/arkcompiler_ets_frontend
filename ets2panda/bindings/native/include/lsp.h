@@ -19,11 +19,10 @@
 #include "common.h"
 #include "lsp/include/api.h"
 
-const LSPAPI *GetLspApiImpl();
-
 static LSPAPI const *g_lspImpl = nullptr;
 
-const LSPAPI *GetLspApiImpl()
+// CC-OFFNXT(G.FUD.06) perf critical, ODR
+inline const LSPAPI *GetLspApiImpl()
 {
     if (g_lspImpl != nullptr) {
         return g_lspImpl;

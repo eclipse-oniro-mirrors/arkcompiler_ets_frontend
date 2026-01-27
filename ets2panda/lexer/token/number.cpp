@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ Number::Number(util::StringView str, NumberFlags flags) noexcept : str_(str), fl
 
     if (!hasPointOrExp && !hasFloatSuffix) {
         const int64_t temp = Lexer::StrToNumeric(&std::strtoll, s.data(), res, 10);
-
+        num_ = temp;
         if (res == Lexer::ConversionResult::SUCCESS) {
             if (temp <= std::numeric_limits<int32_t>::max() && temp >= std::numeric_limits<int32_t>::min()) {
                 num_ = static_cast<int32_t>(temp);

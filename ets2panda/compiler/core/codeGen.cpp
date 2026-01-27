@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -145,8 +145,9 @@ std::uint32_t CodeGen::FormalParametersCount() const noexcept
 
 std::uint32_t CodeGen::InternalParamCount() const noexcept
 {
-    constexpr std::uint32_t hiddenParams = 3U;
-    return ParamCount() + hiddenParams;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr std::uint32_t HIDDEN_PARAMS = 3U;
+    return ParamCount() + HIDDEN_PARAMS;
 }
 
 const util::StringView &CodeGen::InternalName() const noexcept

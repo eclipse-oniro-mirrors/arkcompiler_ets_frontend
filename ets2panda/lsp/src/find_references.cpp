@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at*
@@ -125,7 +125,7 @@ std::set<ark::es2panda::lsp::ReferencedNode> FindReferences(es2panda_Context *co
     ctx->parserProgram->Ast()->IterateRecursively([&tokenName, &pprogram, &filePath, &tokenLocationId,
                                                    &res](ark::es2panda::ir::AstNode *node) {
         auto targetNode = node;
-        if (targetNode->OriginalNode()) {
+        if (targetNode->OriginalNode() != nullptr) {
             targetNode = targetNode->OriginalNode();
         }
         if (!targetNode->IsIdentifier()) {

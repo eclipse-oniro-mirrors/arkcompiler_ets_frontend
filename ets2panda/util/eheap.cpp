@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,18 +42,18 @@ bool ScopedAllocatorsManager::IsInitialized()
     return mem::MemConfig::IsInitialized();
 }
 
-EHeap::EHeapSpace *EHeap::gEHeapSpace {};
+EHeap::EHeapSpace *EHeap::gEHeapSpace_ {};
 
 void EHeap::InitializeEHeapSpace()
 {
-    ES2PANDA_ASSERT(gEHeapSpace == nullptr);
+    ES2PANDA_ASSERT(gEHeapSpace_ == nullptr);
 
     constexpr size_t EHEAP_SIZE = sizeof(void *) <= 4U ? 1_GB : 32_GB;
 
     // pointer compression
     static_assert(EHEAP_SIZE <= (4_GB * EHeap::EHeapSpace::ALLOC_ALIGNMENT));
 
-    gEHeapSpace = new EHeapSpace(EHEAP_SIZE);
+    gEHeapSpace_ = new EHeapSpace(EHEAP_SIZE);
 
     // consume the "nullptr" so the pointer compression may re-use it
     [[maybe_unused]] void *unused = Alloc(1);
@@ -61,8 +61,8 @@ void EHeap::InitializeEHeapSpace()
 
 void EHeap::FinalizeEHeapSpace()
 {
-    delete gEHeapSpace;
-    gEHeapSpace = nullptr;
+    delete gEHeapSpace_;
+    gEHeapSpace_ = nullptr;
 }
 
 [[noreturn]] __attribute__((noinline)) void EHeap::OOMAction()
@@ -183,12 +183,12 @@ void EHeap::BrokenEHeapPointerAction(void const *ptr)
 
 size_t EHeap::AllocatedSize()
 {
-    return gEHeapSpace == nullptr ? 0 : gEHeapSpace->AllocatedSize();
+    return gEHeapSpace_ == nullptr ? 0 : gEHeapSpace_->AllocatedSize();
 }
 
 size_t EHeap::FreedSize()
 {
-    return gEHeapSpace == nullptr ? 0 : gEHeapSpace->FreedSize();
+    return gEHeapSpace_ == nullptr ? 0 : gEHeapSpace_->FreedSize();
 }
 
 // #32069 - there should be a single scope created within the single es2panda context

@@ -21,86 +21,86 @@
 #include <string>
 #include <set>
 
-static es2panda_Impl *impl = nullptr;
+static es2panda_Impl *g_impl = nullptr;
 static constexpr size_t NUM_OF_RECHECKS = 50;
 static constexpr size_t RECHECK_SPEED_IMPROVEMENT = 10;
 std::string g_currFindIdent;
-static es2panda_AstNode *findIdent = nullptr;
+static es2panda_AstNode *g_findIdent = nullptr;
 std::set<std::string> g_modifiedFiles;
 
 static void FindIdentifier(es2panda_AstNode *ast, void *context)
 {
     auto ctx = reinterpret_cast<es2panda_Context *>(context);
-    if (!impl->IsIdentifier(ast) || (!impl->IsVariableDeclarator(impl->AstNodeParent(ctx, ast)) &&
-                                     !impl->IsClassProperty(impl->AstNodeParent(ctx, ast)))) {
+    if (!g_impl->IsIdentifier(ast) || (!g_impl->IsVariableDeclarator(g_impl->AstNodeParent(ctx, ast)) &&
+                                       !g_impl->IsClassProperty(g_impl->AstNodeParent(ctx, ast)))) {
         return;
     }
 
-    if (std::string(impl->IdentifierName(ctx, ast)) == g_currFindIdent) {
-        findIdent = ast;
+    if (std::string(g_impl->IdentifierName(ctx, ast)) == g_currFindIdent) {
+        g_findIdent = ast;
     }
 }
 void InsertChanges([[maybe_unused]] es2panda_Context *context)
 {
-    auto *program = impl->ContextProgram(context);
+    auto *program = g_impl->ContextProgram(context);
 
     g_currFindIdent = "bAssert";
-    impl->AstNodeForEach(impl->ProgramAst(context, program), FindIdentifier, context);
-    if (findIdent == nullptr) {
+    g_impl->AstNodeForEach(g_impl->ProgramAst(context, program), FindIdentifier, context);
+    if (g_findIdent == nullptr) {
         std::cout << "bAssert not found" << std::endl;
     }
-    auto bAssert = findIdent;
-    auto *newStr = impl->CreateStringLiteral1(context, const_cast<char *>("ABC"));
-    impl->VariableDeclaratorSetInit(context, impl->AstNodeParent(context, bAssert), newStr);
-    const char *path = impl->ProgramSourceFilePathConst(context, program);
-    if (path) {
+    auto bAssert = g_findIdent;
+    auto *newStr = g_impl->CreateStringLiteral1(context, const_cast<char *>("ABC"));
+    g_impl->VariableDeclaratorSetInit(context, g_impl->AstNodeParent(context, bAssert), newStr);
+    const char *path = g_impl->ProgramSourceFilePathConst(context, program);
+    if (path != nullptr) {
         g_modifiedFiles.insert(std::string(path));
     }
 
-    findIdent = nullptr;
+    g_findIdent = nullptr;
 
     size_t externalSourceCnt {0};
     size_t programCnt {0};
-    auto **externalSourceList = impl->ProgramExternalSources(context, program, &externalSourceCnt);
+    auto **externalSourceList = g_impl->ProgramExternalSources(context, program, &externalSourceCnt);
     es2panda_Program *foundProgram = nullptr;
     for (size_t i = 0; i < externalSourceCnt; i++) {
         auto *externalSource = externalSourceList[i];
-        auto *programList = impl->ExternalSourcePrograms(externalSource, &programCnt);
+        auto *programList = g_impl->ExternalSourcePrograms(externalSource, &programCnt);
         for (size_t j = 0; j < programCnt; j++) {
             auto *externalProgram = programList[j];
-            if (std::string(impl->ProgramSourceFilePathConst(context, externalProgram)).find("import_A") !=
+            if (std::string(g_impl->ProgramSourceFilePathConst(context, externalProgram)).find("import_A") !=
                 std::string::npos) {
                 foundProgram = externalProgram;
                 break;
             }
         }
     }
-    if (foundProgram) {
-        auto ast = impl->ProgramAst(context, foundProgram);
+    if (foundProgram != nullptr) {
+        auto ast = g_impl->ProgramAst(context, foundProgram);
         g_currFindIdent = "b";
-        impl->AstNodeForEach(ast, FindIdentifier, context);
-        if (findIdent == nullptr) {
+        g_impl->AstNodeForEach(ast, FindIdentifier, context);
+        if (g_findIdent == nullptr) {
             std::cout << "b not found" << std::endl;
         } else {
-            auto b = findIdent;
-            impl->VariableDeclaratorSetInit(context, impl->AstNodeParent(context, b), newStr);
+            auto b = g_findIdent;
+            g_impl->VariableDeclaratorSetInit(context, g_impl->AstNodeParent(context, b), newStr);
 
-            path = impl->ProgramSourceFilePathConst(context, foundProgram);
+            path = g_impl->ProgramSourceFilePathConst(context, foundProgram);
             if (path) {
                 g_modifiedFiles.insert(std::string(path));
             }
         }
-        findIdent = nullptr;
+        g_findIdent = nullptr;
     }
 }
 
-bool severalRechecks(es2panda_Context *context)
+bool SeveralRechecks(es2panda_Context *context)
 {
     g_modifiedFiles.clear();
     auto start = std::chrono::steady_clock::now();
     for (size_t i = 0; i < NUM_OF_RECHECKS; i++) {
         InsertChanges(context);
-        impl->AstNodeRecheck(context, impl->ProgramAst(context, impl->ContextProgram(context)));
+        g_impl->AstNodeRecheck(context, g_impl->ProgramAst(context, g_impl->ContextProgram(context)));
     }
     auto end = std::chrono::steady_clock::now();
     auto localRecheckTime = std::chrono::duration<double>(end - start).count();
@@ -111,8 +111,9 @@ bool severalRechecks(es2panda_Context *context)
     }
     bool checkImportModified = false;
     for (const auto &f : g_modifiedFiles) {
-        if (f.find("import_A") != std::string::npos)
+        if (f.find("import_A") != std::string::npos) {
             checkImportModified = true;
+        }
     }
     if (!checkImportModified) {
         std::cerr << "CRITICAL: file that you search was not modified!" << std::endl;
@@ -125,8 +126,8 @@ bool severalRechecks(es2panda_Context *context)
 int main(int argc, char **argv)
 {
     std::map<es2panda_ContextState, std::vector<std::function<bool(es2panda_Context *)>>> testFunctions;
-    testFunctions[ES2PANDA_STATE_CHECKED] = {severalRechecks};
-    ProccedToStatePluginTestData data = {argc, argv, &impl, testFunctions, false, ""};
+    testFunctions[ES2PANDA_STATE_CHECKED] = {SeveralRechecks};
+    ProccedToStatePluginTestData data = {argc, argv, &g_impl, testFunctions, false, ""};
 
     return RunAllStagesWithTestFunction(data);
 }

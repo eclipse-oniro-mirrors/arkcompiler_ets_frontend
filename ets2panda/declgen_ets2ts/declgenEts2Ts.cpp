@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2353,8 +2353,8 @@ void TSDeclGen::EmitPropGlueCode(const ir::ClassProperty *classProp, const std::
         propAccess = " = (globalThis as any).Panda.getClass('" + state_.currentClassDescriptor + "')." + propName + ";";
     }
     const bool isConst = classProp->IsConst();
-    const bool isDefaultExported = classProp->IsDefaultExported();
-    if (isDefaultExported) {
+    const bool CheckIsDefaultExported = classProp->IsDefaultExported();
+    if (CheckIsDefaultExported) {
         OutTs(isConst ? "const " : "let ", propName, propAccess);
         OutEndlTs();
         OutTs("export default ", propName, ";");
@@ -2495,13 +2495,13 @@ void TSDeclGen::GenGlobalVarDeclaration(const ir::ClassProperty *globalVar)
         varName = varName.substr(prefix.size());
     }
     const bool isConst = globalVar->IsConst();
-    const bool isDefaultExported = globalVar->IsDefaultExported();
+    const bool CheckIsDefaultExported = globalVar->IsDefaultExported();
     DebugPrint("GenGlobalVarDeclaration: " + varName);
 
     GenAnnotations(globalVar);
 
     exportSet_.insert(varName);
-    if (isDefaultExported) {
+    if (CheckIsDefaultExported) {
         OutDts(isConst ? "declare const " : "declare let ", varName, ": ");
     } else {
         OutDts(isConst ? "export declare const " : "export declare let ", varName, ": ");
@@ -2509,7 +2509,7 @@ void TSDeclGen::GenGlobalVarDeclaration(const ir::ClassProperty *globalVar)
     ProcessClassPropertyType(globalVar);
     OutDts(";");
     OutEndlDts();
-    if (isDefaultExported) {
+    if (CheckIsDefaultExported) {
         OutDts("export default ", varName, ";");
         OutEndlDts();
     }

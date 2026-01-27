@@ -515,6 +515,7 @@ static ir::Expression *InsertBoxing(UnboxContext *uctx, ir::Expression *expr)
     ES2PANDA_ASSERT(signature != nullptr);
 
     /* Ensure that the constructor signature is updated to accept an unboxed value */
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     auto *constructor = signature->Function();
     HandleDeclarationNode(uctx, constructor);
     constrCall->SetTsType(boxedType);

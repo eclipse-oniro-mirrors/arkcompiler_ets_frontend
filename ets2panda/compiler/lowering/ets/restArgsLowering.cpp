@@ -116,23 +116,23 @@ static ir::Expression *FillArrayWithArguments(public_lib::Context *context,
 
     blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = 0;", data.arrayIndex));
     size_t spreadArgIndex = 0;
-    for (size_t i = 0; i < arguments.size(); ++i) {
+    for (auto argument : arguments) {
         const auto argumentSymbol = Gensym(allocator);
         ES2PANDA_ASSERT(argumentSymbol != nullptr);
-        if (arguments[i]->IsSpreadElement()) {
-            auto spreadType = arguments[i]->AsSpreadElement()->Argument()->TsType();
+        if (argument->IsSpreadElement()) {
+            auto spreadType = argument->AsSpreadElement()->Argument()->TsType();
             auto spreadTypeNode = allocator->New<ir::OpaqueTypeNode>(spreadType, allocator);
             blockStatements.push_back(
                 parser->CreateFormattedStatement("let @@I1 = @@I2[" + std::to_string(spreadArgIndex) + "] as @@T3;",
                                                  argumentSymbol, data.spreadArgsArray, spreadTypeNode));
             spreadArgIndex++;
-            blockStatements.push_back(FillArrayWithSpreadElement(
-                context, arguments[i], arraySymbolWithoutTypeAnnotation, argumentSymbol, data));
+            blockStatements.push_back(
+                FillArrayWithSpreadElement(context, argument, arraySymbolWithoutTypeAnnotation, argumentSymbol, data));
         } else {
-            auto *argTypeNode = allocator->New<ir::OpaqueTypeNode>(arguments[i]->TsType(), allocator);
+            auto *argTypeNode = allocator->New<ir::OpaqueTypeNode>(argument->TsType(), allocator);
             blockStatements.push_back(parser->CreateFormattedStatement(
                 "@@I1[@@I2] = @@E3 as @@T4;", arraySymbolWithoutTypeAnnotation->Clone(allocator, nullptr),
-                data.arrayIndex->Clone(allocator, nullptr), arguments[i]->Clone(allocator, nullptr), argTypeNode));
+                data.arrayIndex->Clone(allocator, nullptr), argument->Clone(allocator, nullptr), argTypeNode));
             blockStatements.push_back(parser->CreateFormattedStatement("@@I1 = @@I2 + 1;",
                                                                        data.arrayIndex->Clone(allocator, nullptr),
                                                                        data.arrayIndex->Clone(allocator, nullptr)));
@@ -432,10 +432,7 @@ static bool CanSkipRestArgsLowering(checker::ETSChecker *checker, const checker:
         if (isRestParamGeneric) {
             return false;
         }
-        if (hasOnlyOneSpreadArg && !hasIncompatibleArrayType) {
-            return true;
-        }
-        return false;
+        return hasOnlyOneSpreadArg && !hasIncompatibleArrayType;
     }
 
     if (!isArrowType && (restParamType->IsETSResizableArrayType() || restParamType->IsETSReadonlyArrayType())) {
@@ -651,11 +648,7 @@ static bool ShouldTransformCallWithSpreadTuple(ir::CallExpression *callExpr)
     }
 
     const auto &args = callExpr->Arguments();
-    if (args.size() != callExpr->Signature()->Params().size() + 1) {
-        return false;
-    }
-
-    return true;
+    return args.size() == callExpr->Signature()->Params().size() + 1;
 }
 
 static ir::BlockExpression *CreateTupleRestArgsBlockExpression(public_lib::Context *context,
@@ -711,8 +704,8 @@ static ir::CallExpression *TransformCallWithSpreadTuple(public_lib::Context *ctx
     auto *spreadArg = ctx->AllocNode<ir::SpreadElement>(ir::AstNodeType::SPREAD_ELEMENT, allocator, restArgsBlock);
     newCallArgs.push_back(spreadArg);
 
-    auto *newCall = ctx->AllocNode<ir::CallExpression>(callExpr->Callee(), std::move(newCallArgs),
-                                                       std::move(callExpr->TypeParams()), false);
+    auto *newCall =
+        ctx->AllocNode<ir::CallExpression>(callExpr->Callee(), std::move(newCallArgs), callExpr->TypeParams(), false);
     newCall->SetParent(callExpr->Parent());
     newCall->SetRange(callExpr->Range());
 

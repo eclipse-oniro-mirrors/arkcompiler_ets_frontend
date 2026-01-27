@@ -586,7 +586,7 @@ QuickInfo ExpectResultImport4()
     size_t const start = 39;
     size_t const length = 37;
     TextSpan span(start, length);
-    const std::string kindModifiers = "";
+    const std::string kindModifiers;
     std::vector<SymbolDisplayPart> expected;
     expected.emplace_back("module", "keyword");
     expected.emplace_back(" ", "space");

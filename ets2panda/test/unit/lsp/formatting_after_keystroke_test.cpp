@@ -168,18 +168,18 @@ let obj = {a: 1, b: 2};
     settings.SetInsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces(false);
     auto formatContext = ark::es2panda::lsp::GetFormatContext(settings);
 
-    size_t caretPos = 26;
+    constexpr size_t caretPos = 26;
 
     LSPAPI const *lspApi = GetImpl();
     auto changes = lspApi->getFormattingEditsAfterKeystroke(ctx, formatContext.GetFormatCodeSettings(), '\n',
                                                             TextSpan {caretPos, 0});
     ASSERT_FALSE(changes.empty());
-    ASSERT_EQ(changes.size(), 2u);
-    EXPECT_EQ(changes[0].span.start, 36u);
-    EXPECT_EQ(changes[0].span.length, 1u);
+    ASSERT_EQ(changes.size(), 2U);
+    EXPECT_EQ(changes[0].span.start, 36U);
+    EXPECT_EQ(changes[0].span.length, 1U);
     EXPECT_EQ(changes[0].newText, "");
-    EXPECT_EQ(changes[1].span.start, 47u);
-    EXPECT_EQ(changes[1].span.length, 1u);
+    EXPECT_EQ(changes[1].span.start, 47U);
+    EXPECT_EQ(changes[1].span.length, 1U);
     EXPECT_EQ(changes[1].newText, "");
 
     initializer.DestroyContext(ctx);

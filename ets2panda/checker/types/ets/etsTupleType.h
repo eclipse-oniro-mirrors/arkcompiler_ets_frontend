@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ class ETSTupleType : public Type {
     using TupleSizeType = std::size_t;
 
 public:
-    explicit ETSTupleType(ETSChecker *checker, const ArenaVector<Type *> &&typeList)
+    explicit ETSTupleType(ETSChecker *checker, ArenaVector<Type *> &&typeList)
         : Type(checker::TypeFlag::ETS_TUPLE),
           typeList_(std::move(typeList)),
           // NOLINTNEXTLINE(readability-implicit-bool-conversion)

@@ -214,7 +214,7 @@ private:
     void ProcessExternalLibraryImportFromEtsstdlibAbc(ImportMetadata &importData,
                                                       const std::string_view &externalModuleImportData);
     void ProcessExternalLibraryImport(ImportMetadata &importData, std::string importPath);
-    void ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, std::string importPath);
+    void ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, const std::string &importPath);
     void ProcessAbcFile(std::string abcFilePath);
     std::string_view TryImportFromDeclarationCache(std::string_view resolvedImportPath) const;
 
@@ -239,7 +239,7 @@ private:
     std::atomic<bool> cacheCanBeUpdated_ {true};
     std::shared_mutex m_ {};
     std::unordered_set<std::string> processedAbcFiles_;
-    std::unordered_map<std::string, std::string> FileToModuleName_;
+    std::unordered_map<std::string, std::string> fileToModuleName_;
 };
 
 }  // namespace ark::es2panda::util

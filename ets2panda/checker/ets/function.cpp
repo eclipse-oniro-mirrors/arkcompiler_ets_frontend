@@ -845,12 +845,9 @@ static bool CheckOptionalLambdaFunction(ETSChecker *checker, ir::Expression *arg
     auto param = substitutedSig->Params()[index]->Declaration()->Node()->AsETSParameterExpression();
     if (argument->IsArrowFunctionExpression()) {
         auto *const arrowFuncExpr = argument->AsArrowFunctionExpression();
+        ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
 
-        if (ir::ScriptFunction *const lambda = arrowFuncExpr->Function();
-            CheckLambdaAssignable(checker, param, substitutedSig->Params()[index]->TsType(), lambda)) {
-            return true;
-        }
-        return false;
+        return CheckLambdaAssignable(checker, param, substitutedSig->Params()[index]->TsType(), lambda);
     }
 
     return true;

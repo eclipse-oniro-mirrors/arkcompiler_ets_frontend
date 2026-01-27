@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -253,6 +253,7 @@ static void DumpPerfMetricRecord(std::stringstream &ss, PerfMetricRecord const *
         return ss;
     };
 
+    // NOLINTBEGIN(readability-magic-numbers)
     auto const memoryMetric = [&metric](std::string_view name, int64_t mem) {
         auto memUnit = ark::helpers::MemoryConverter(mem);
         metric(name, 10U) << (std::to_string(static_cast<size_t>(memUnit.GetDoubleValue())) +
@@ -260,7 +261,6 @@ static void DumpPerfMetricRecord(std::stringstream &ss, PerfMetricRecord const *
     };
 
     auto const &stats = rec->GetStats();
-    // NOLINTBEGIN(readability-magic-numbers)
     ss << ":" << std::left << std::setw(50U) << rec->GetName() << ": ";
 
     metric("time", 10U) << PrettyTimeNs(stats.GetTimeNanoseconds());

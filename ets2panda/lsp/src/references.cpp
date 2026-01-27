@@ -52,7 +52,9 @@ ReferenceInfo ResolveInfo(const std::tuple<std::string, std::string> &info)
         return ReferenceInfo();
     }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     std::string_view posStr1(positionInfo.c_str() + firstColon + 1, secondColon - firstColon - 1);
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     std::string_view posStr2(positionInfo.c_str() + secondColon + 1, positionInfo.size() - secondColon - 1);
 
     size_t startPos = 0;

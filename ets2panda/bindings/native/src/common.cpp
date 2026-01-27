@@ -194,7 +194,7 @@ KNativePointer impl_CreateCacheContextFromString(KNativePointer configPtr, KStri
     auto config = reinterpret_cast<es2panda_Config *>(configPtr);
     auto context = reinterpret_cast<es2panda_GlobalContext *>(globalContext);
     return GetPublicImpl()->CreateCacheContextFromString(config, sourcePtr.Data(), filenamePtr.Data(), context,
-                                                         isExternal != 0, isLspUsage);
+                                                         isExternal != 0, isLspUsage != 0);
 }
 TS_INTEROP_6(CreateCacheContextFromString, KNativePointer, KNativePointer, KStringPtr, KStringPtr, KNativePointer,
              KBoolean, KBoolean)

@@ -17,7 +17,6 @@
 #include "public/public.h"
 
 #include "util/helpers.h"
-#include "public/public.h"
 #include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::ir {

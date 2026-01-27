@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@ static bool IsInParentsRange(const ir::AstNode *ast, ir::AstNode const *node)
         return false;
     }
     // SUPPRESS_CSA_NEXTLINE(core.CallAndMessage)
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     if (ast->Start().line > node->Start().line || ast->End().line < node->End().line) {
         return false;
     }
