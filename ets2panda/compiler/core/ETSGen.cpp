@@ -1747,9 +1747,16 @@ void ETSGen::EmitNullishException(const ir::AstNode *node)
 {
     RegScope ra(this);
     VReg exception = AllocReg();
+    VReg messageReg = AllocReg();
+    VReg optionsReg = AllocReg();
 
-    Ra().Emit<InitobjShort, 0>(node, AssemblerSignatureReference(Signatures::BUILTIN_NULLPOINTER_ERROR_CTOR), dummyReg_,
-                               dummyReg_);
+    LoadAccumulatorUndefined(node);
+    StoreAccumulator(node, messageReg);
+    LoadAccumulatorUndefined(node);
+    StoreAccumulator(node, optionsReg);
+
+    Ra().Emit<InitobjShort>(node, AssemblerSignatureReference(Signatures::BUILTIN_NULLPOINTER_ERROR_CTOR), messageReg,
+                            optionsReg);
     SetAccumulatorType(Checker()->GlobalETSObjectType());
     StoreAccumulator(node, exception);
 

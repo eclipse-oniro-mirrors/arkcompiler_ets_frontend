@@ -13,14 +13,30 @@
  * limitations under the License.
  */
 
-class C {
-  constructor(x: number, y: string);
-  constructor(s: string);
-  constructor(xs: xny, y?: xny) {}
+function foo(x?: boolean): int {
+  return 1
 }
-let c = new C(10, 'foo');
 
+function foo(): int {
+  return 2
+}
 
-/* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 19:19 Error Semantic error ESE0371: Cannot find type 'xny'. */
-/* @@? 19:28 Error Semantic error ESE0371: Cannot find type 'xny'. */
+class A {
+  field: int
+
+  constructor(x?: boolean) {
+    this.field = 3
+  }
+
+  constructor() {
+    this.field = 4
+  }
+}
+
+function main(): void {
+  arktest.assertEQ(foo(), 1)
+  arktest.assertEQ(foo(true), 1)
+  arktest.assertEQ(new A().field, 3)
+  arktest.assertEQ(new A(true).field, 3)
+}
+

@@ -467,18 +467,19 @@ static bool IsInitialConstructor(const ir::AstNode *node)
         return false;
     }
 
-    const auto *func = node->AsMethodDefinition()->Function();
-    ES2PANDA_ASSERT(func != nullptr);
-    const auto funcBody = func->Body()->AsBlockStatement();
-
-    return !(!funcBody->Statements().empty() && funcBody->Statements()[0]->IsExpressionStatement() &&
-             funcBody->Statements()[0]->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-             funcBody->Statements()[0]
-                 ->AsExpressionStatement()
-                 ->GetExpression()
-                 ->AsCallExpression()
-                 ->Callee()
-                 ->IsThisExpression());
+    auto stmts = methodDef->Function()->Body()->AsBlockStatement()->Statements();
+    if (stmts.empty()) {
+        return true;
+    }
+    auto firstStmt = *std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
+        return !stmt->HasAstNodeFlags(ir::AstNodeFlags::DEFAULT_PARAM);
+    });
+    if (firstStmt == nullptr) {
+        return true;
+    }
+    return !(firstStmt->IsExpressionStatement() &&
+             firstStmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
+             firstStmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsThisExpression());
 }
 
 void AssignAnalyzer::AnalyzeMethodDef(const ir::MethodDefinition *methodDef)

@@ -13,14 +13,15 @@
  * limitations under the License.
  */
 
-class C {
-  constructor(x: number, y: string);
-  constructor(s: string);
-  constructor(xs: xny, y?: xny) {}
+
+class B {
+    s: string;
+
+    constructor(b: boolean = false) {
+        this("Default", undefined)
+    }
+
+    constructor(s: string, b: boolean = false) {
+        this.s = s
+    }
 }
-let c = new C(10, 'foo');
-
-
-/* @@? 17:14 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
-/* @@? 19:19 Error Semantic error ESE0371: Cannot find type 'xny'. */
-/* @@? 19:28 Error Semantic error ESE0371: Cannot find type 'xny'. */

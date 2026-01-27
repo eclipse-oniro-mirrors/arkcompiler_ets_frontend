@@ -2794,7 +2794,7 @@ static bool HasParameterlessConstructor(checker::ETSObjectType *objType, ETSChec
                                         const lexer::SourcePosition &pos)
 {
     for (checker::Signature *sig : objType->ConstructSignatures()) {
-        if (sig->Params().empty()) {
+        if (sig->MinArgCount() == 0) {
             checker->ValidateSignatureAccessibility(objType, sig, pos);
             return true;
         }

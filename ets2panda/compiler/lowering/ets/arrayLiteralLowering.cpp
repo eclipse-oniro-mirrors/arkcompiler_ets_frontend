@@ -18,6 +18,7 @@
 #include <utility>
 #include <vector>
 
+#include "checker/types/signature.h"
 #include "compiler/lowering/util.h"
 #include "ir/astNode.h"
 #include "ir/expressions/literals/numberLiteral.h"
@@ -35,7 +36,8 @@ std::string_view ArrayLiteralLowering::Name() const
 }
 
 ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstructor(ir::Identifier *arraySymbol,
-                                                                                    checker::Type *eleType)
+                                                                                    checker::Type *eleType,
+                                                                                    checker::Signature *sig)
 {
     std::stringstream ss;
     std::vector<ir::AstNode *> newStmts;
@@ -55,7 +57,7 @@ ArenaVector<ir::Statement *> ArrayLiteralLowering::GenerateDefaultCallToConstruc
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
         newStmts.emplace_back(indexSymbol->Clone(Allocator(), nullptr));
 
-        if (checker_->HasParameterlessConstructor(eleType)) {
+        if (!sig->HasRestParameter()) {
             ss << "@@I8[@@I9] = new @@T10();";
         } else {
             ss << "let restArgs = new Array<Any>(0);";
@@ -160,7 +162,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
     auto *newArrStatement = parser_->CreateFormattedStatement(ss.str(), newStmts);
     statements.emplace_back(newArrStatement);
-    auto newArrElementStatements = GenerateDefaultCallToConstructor(genSymIdent, arrayType);
+    auto newArrElementStatements = GenerateDefaultCallToConstructor(genSymIdent, arrayType, newExpr->Signature());
     statements.insert(statements.end(), newArrElementStatements.begin(), newArrElementStatements.end());
     auto returnStmt = parser_->CreateFormattedStatement("@@I1", genSymIdent->Clone(Allocator(), nullptr));
     statements.emplace_back(returnStmt);
@@ -175,7 +177,7 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewArrayExprToRefArray(ir::ETSNew
 
 ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVector<ir::Identifier *> &identDims,
                                                                         size_t currentDim, checker::Type *type,
-                                                                        ir::Expression *expr)
+                                                                        ir::Expression *expr, checker::Signature *sig)
 {
     auto *genSymIdent = Gensym(Allocator());
     auto *arraySymbol = Gensym(Allocator());
@@ -195,11 +197,12 @@ ir::Statement *ArrayLiteralLowering::CreateNestedArrayCreationStatement(ArenaVec
         genSymIdent->Clone(Allocator(), nullptr), arraySymbol, typeNode, currentDimIdent->Clone(Allocator(), nullptr),
         arrayAccessExpr, arraySymbol->Clone(Allocator(), nullptr));
     if (identDims.size() > currentDim + 1) {
-        auto consequentStmt = CreateNestedArrayCreationStatement(identDims, currentDim + 1, arrayType, arrayAccessExpr);
+        auto consequentStmt =
+            CreateNestedArrayCreationStatement(identDims, currentDim + 1, arrayType, arrayAccessExpr, sig);
         forUpdateStmt->AsForUpdateStatement()->Body()->AsBlockStatement()->AddStatement(consequentStmt);
     } else if (identDims.size() == currentDim + 1) {
         // For last dim, initialize the array elements.
-        auto newArrElementStatements = GenerateDefaultCallToConstructor(arraySymbol, arrayType);
+        auto newArrElementStatements = GenerateDefaultCallToConstructor(arraySymbol, arrayType, sig);
         forUpdateStmt->AsForUpdateStatement()->Body()->AsBlockStatement()->AddStatements(newArrElementStatements);
     }
 
@@ -242,7 +245,8 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     auto idents = TransformDimVectorToIdentVector(newExpr->Dimensions(), statements);
     auto newArraystatement =
         parser_->CreateFormattedStatements(newArray, genSymIdent, type, idents[0]->Clone(Allocator(), nullptr));
-    auto nestedArrayCreationStmt = CreateNestedArrayCreationStatement(idents, 1, arrayType, genSymIdent);
+    auto nestedArrayCreationStmt =
+        CreateNestedArrayCreationStatement(idents, 1, arrayType, genSymIdent, newExpr->Signature());
     auto returnStmt = parser_->CreateFormattedStatement("@@I1", genSymIdent->Clone(Allocator(), nullptr));
     statements.insert(statements.end(), newArraystatement.begin(), newArraystatement.end());
     statements.push_back(nestedArrayCreationStmt);
