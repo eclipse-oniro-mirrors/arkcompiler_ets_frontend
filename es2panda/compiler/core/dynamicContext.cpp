@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,10 +77,7 @@ LexEnvContext::~LexEnvContext()
     const auto &labelSet = catchTable_->LabelSet();
     const auto *node = envScope_->Scope()->Node();
 
-    if (!GetTryEndFlag()) {
-        pg_->SetLabel(node, labelSet.TryEnd());
-    }
-    SetTryEndFlag(false);
+    pg_->SetLabel(node, labelSet.TryEnd());
     pg_->Branch(node, labelSet.CatchEnd());
 
     pg_->SetLabel(node, labelSet.CatchBegin());
@@ -95,17 +92,6 @@ bool LexEnvContext::HasTryCatch() const
     return envScope_->HasEnv();
 }
 
-void LexEnvContext::HandleForUpdateDirectReturnContext()
-{
-    if (!envScope_->HasEnv()) {
-        return;
-    }
-    const auto *node = envScope_->Scope()->Node();
-    if (node->IsForUpdateStatement()) {
-        pg_->PopLexEnv(node);
-    }
-}
-
 void LexEnvContext::AbortContext([[maybe_unused]] ControlFlowChange cfc,
                                  const util::StringView &targetLabel)
 {
@@ -116,8 +102,7 @@ void LexEnvContext::AbortContext([[maybe_unused]] ControlFlowChange cfc,
     const auto *node = envScope_->Scope()->Node();
     // Process the continue label in the ForUpdate Statement.
     if (node->IsForUpdateStatement()) {
-        if (targetLabel == LabelTarget::CONTINUE_LABEL || targetLabel == LabelTarget::BREAK_LABEL ||
-            targetLabel == LabelTarget::RETURN_LABEL) {
+        if (targetLabel == LabelTarget::CONTINUE_LABEL || targetLabel == LabelTarget::BREAK_LABEL) {
             return;
         }
 
@@ -131,22 +116,11 @@ void LexEnvContext::AbortContext([[maybe_unused]] ControlFlowChange cfc,
             }
             iter = iter->Prev();
         }
-        SetTryEndLabel(node);
         pg_->PopLexEnv(node);
         return;
     }
 
-    SetTryEndLabel(node);
     pg_->PopLexEnv(node);
-}
-
-void LexEnvContext::SetTryEndLabel(const ir::AstNode *node)
-{
-    if (!GetTryEndFlag()) {
-        SetTryEndFlag(true);
-        const auto &labelSet = catchTable_->LabelSet();
-        pg_->SetLabel(node, labelSet.TryEnd());
-    }
 }
 
 IteratorContext::IteratorContext(PandaGen *pg, const Iterator &iterator, LabelTarget target)

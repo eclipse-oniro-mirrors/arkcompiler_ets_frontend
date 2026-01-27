@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -115,26 +115,10 @@ public:
     bool HasTryCatch() const override;
     void AbortContext([[maybe_unused]] ControlFlowChange cfc,
                       const util::StringView &targetLabel) override;
-    void SetTryEndLabel(const ir::AstNode *node);
-    void SetTryEndFlag(bool flag)
-    {
-        tryEndFlag = flag;
-    }
-
-    bool GetTryEndFlag() const
-    {
-        return tryEndFlag;
-    }
-    /**
-     * Handle for update direct return context
-     * If the lexical environment context is in for update statement, pop the lexical environment
-     */
-    void HandleForUpdateDirectReturnContext();
 
 private:
     VariableEnvScope *envScope_;
     CatchTable *catchTable_ {};
-    bool tryEndFlag {false};
 };
 
 class IteratorContext : public DynamicContext {

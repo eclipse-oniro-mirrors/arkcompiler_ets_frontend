@@ -1,0 +1,6 @@
+[ecmascript] : res000
+[ecmascript] : [Special Value] : Undefined
+
+[ecmascript] : res111
+[ecmascript] : [Special Value] : Undefined
+

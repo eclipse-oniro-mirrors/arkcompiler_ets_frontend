@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -90,6 +90,7 @@ public:
           catchList_(allocator_->Adapter()),
           strings_(allocator_->Adapter()),
           buffStorage_(allocator_->Adapter()),
+          checkSuperLabelPool_(allocator_->Adapter()),
           ra_(this)
     {
     }
@@ -342,6 +343,7 @@ public:
     void EmitRethrow(const ir::AstNode *node);
     void EmitReturn(const ir::AstNode *node);
     void EmitReturnUndefined(const ir::AstNode *node);
+    void CheckIfSuperCorrectCallBeforeReturn(const ir::AstNode *node);
     void ValidateClassDirectReturn(const ir::AstNode *node);
     void DirectReturn(const ir::AstNode *node);
     void ExplicitReturn(const ir::AstNode *node);
@@ -524,6 +526,13 @@ public:
         return icOverFlow_;
     }
 
+    void AddCheckSuperLabelSet(const TryLabelSet &labelSet)
+    {
+        checkSuperLabelPool_.push_back(&labelSet);
+    }
+
+    bool IsDerivedConstructor();
+    void AddCatchBlockForImplicitSuperCallChecks();
 private:
     ArenaAllocator *allocator_;
     CompilerContext *context_;
@@ -540,6 +549,7 @@ private:
     DynamicContext *dynamicContext_ {};
     OptionalChain *optionalChain_ {};
     InlineCache ic_;
+    ArenaVector<const TryLabelSet *> checkSuperLabelPool_;
     RegAllocator ra_;
     IcSizeType currentSlot_ {0};
 
