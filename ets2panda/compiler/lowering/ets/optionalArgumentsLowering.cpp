@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,13 +75,14 @@ bool OptionalArgumentsLowering::PerformForModule(public_lib::Context *ctx, parse
                 callExpr->IsTrailingCall()
                     ? TransformArgumentsForTrailingLambda(ctx, callExpr->AsCallExpression(), callExpr->Signature())
                     : TransformArguments(ctx, callExpr, callExpr->Signature(), callExpr->Arguments());
-            } else if (node->IsETSNewClassInstanceExpression()) {
+            } else if (node->IsETSNewClassInstanceExpression() &&
+                       !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
                 auto newExpr = node->AsETSNewClassInstanceExpression();
-                if (newExpr->GetSignature() == nullptr) {
+                if (newExpr->Signature() == nullptr) {
                     ctx->parser->LogError(diagnostic::NO_MATCHING_SIG_2, {"constructor"}, node->Start());
                     return node;
                 }
-                TransformArguments(ctx, newExpr, newExpr->GetSignature(), newExpr->GetArguments());
+                TransformArguments(ctx, newExpr, newExpr->Signature(), newExpr->GetArguments());
             }
             return node;
         },

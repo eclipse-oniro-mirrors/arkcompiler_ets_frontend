@@ -661,12 +661,10 @@ static Signature *CollectParameterlessConstructor(ETSChecker *checker, ArenaVect
 }
 
 template <typename T, typename = typename std::enable_if_t<std::is_base_of_v<ir::Expression, T>>>
-static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr)
+static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, checker::Type *elementType)
 {
     ES2PANDA_ASSERT(checker != nullptr);
     ES2PANDA_ASSERT(newArrayInstanceExpr != nullptr);
-
-    checker::Type *elementType = newArrayInstanceExpr->TypeReference()->GetType(checker);
     ES2PANDA_ASSERT(elementType != nullptr);
     if (elementType->IsETSPrimitiveType()) {
         return true;
@@ -700,12 +698,6 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr)
     return true;
 }
 
-static bool NeedCreateETSResizableArrayType(ETSChecker *checker, Type *type)
-{
-    return type == nullptr ||
-           checker->Relation()->IsSupertypeOf(type, checker->GetGlobalTypesHolder()->GlobalArrayBuiltinType());
-}
-
 checker::Type *ETSAnalyzer::Check(ir::ETSNewArrayInstanceExpression *expr) const
 {
     if (expr->TsType() != nullptr) {
@@ -716,21 +708,8 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewArrayInstanceExpression *expr) const
 
     auto *elementType = expr->TypeReference()->GetType(checker);
     checker->ValidateArrayIndex(expr->Dimension(), true);
-
-    CheckArrayElementType(checker, expr);
-    auto *preferredType = GetAppropriatePreferredType(
-        expr->PreferredType(), [](Type *tp) -> bool { return tp->IsETSArrayType() || tp->IsETSResizableArrayType(); });
-
-    if (NeedCreateETSResizableArrayType(checker, expr->PreferredType()) || preferredType == nullptr ||
-        preferredType->IsETSResizableArrayType()) {
-        expr->SetTsType(checker->CreateETSResizableArrayType(elementType));
-    } else {
-        expr->SetTsType(checker->CreateETSArrayType(elementType));
-    }
-    if (expr->TsType()->IsETSArrayType()) {
-        checker->CreateBuiltinArraySignature(expr->TsType()->AsETSArrayType(), 1);
-    }
-
+    CheckArrayElementType(checker, expr->AsETSNewArrayInstanceExpression(), elementType);
+    expr->SetTsType(checker->CreateETSResizableArrayType(elementType));
     return expr->TsType();
 }
 
@@ -803,6 +782,21 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
     }
 
     ETSChecker *checker = GetETSChecker();
+
+    expr->GetTypeRef()->Check(checker);
+    auto *type = expr->GetTypeRef()->TsType();
+
+    if (type != nullptr && type->IsETSArrayType()) {
+        if (expr->GetArguments().empty()) {
+            checker->LogError(diagnostic::MISSING_ARRAY_SIZE, {type->ToString()}, expr->Start());
+            return expr->SetTsType(checker->GlobalTypeError());
+        }
+        checker->ValidateArrayIndex(expr->GetArguments()[0], true);
+        CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), type->AsETSArrayType()->ElementType());
+        expr->SetTsType(type);
+        checker->CreateBuiltinArraySignature(expr->TsType()->AsETSArrayType(), 1);
+        return type;
+    }
     auto *calleeType = CheckInstantiatedNewType(checker, expr);
     FORWARD_TYPE_ERROR(checker, calleeType, expr);
 
@@ -831,23 +825,15 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewMultiDimArrayInstanceExpression *exp
     }
     ETSChecker *checker = GetETSChecker();
 
-    CheckArrayElementType(checker, expr);
     auto *elementType = expr->TypeReference()->GetType(checker);
+    CheckArrayElementType(checker, expr->AsETSNewMultiDimArrayInstanceExpression(), elementType);
 
     auto *fixedArrayType = elementType;
     for (auto *dim : expr->Dimensions()) {
         checker->ValidateArrayIndex(dim, true);
         fixedArrayType = checker->CreateETSArrayType(fixedArrayType);
     }
-    auto *preferredType = GetAppropriatePreferredType(
-        expr->PreferredType(), [](Type *tp) -> bool { return tp->IsETSArrayType() || tp->IsETSResizableArrayType(); });
-
-    if (NeedCreateETSResizableArrayType(checker, preferredType) || preferredType->IsETSResizableArrayType()) {
-        expr->SetTsType(checker->CreateETSMultiDimResizableArrayType(elementType, expr->Dimensions().size()));
-    } else {
-        expr->SetTsType(fixedArrayType);
-    }
-
+    expr->SetTsType(checker->CreateETSMultiDimResizableArrayType(elementType, expr->Dimensions().size()));
     if (expr->TsType()->IsETSArrayType()) {
         expr->SetSignature(
             checker->CreateBuiltinArraySignature(expr->TsType()->AsETSArrayType(), expr->Dimensions().size()));

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 let isPrime: FixedArray<int> = new int[[]][[]
 
 
-/* @@? 16:32 Error Semantic error ESE0318: Type 'FixedArray<FixedArray<Int>>' cannot be assigned to type 'FixedArray<Int>' */
+/* @@? 16:32 Error Semantic error ESE0318: Type 'Array<Array<Int>>' cannot be assigned to type 'FixedArray<Int>' */
 /* @@? 16:40 Error Semantic error ESE0301: Can't resolve array type */
 /* @@? 16:44 Error Semantic error ESE0301: Can't resolve array type */
 /* @@? 22:79 Error Syntax error ESY0230: Expected ']', got 'end of stream'. */

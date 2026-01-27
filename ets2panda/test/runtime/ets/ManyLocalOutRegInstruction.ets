@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,6 @@ function main(): int {
     let x14 = 14;
     let x15 = 15;
     let x16 = 16;
-    let x:FixedArray<int> = new int[10];
+    let x: FixedArray<int> = new FixedArray<int>(10);
     return x[0];
 }

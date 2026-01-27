@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,7 @@ function clear_accumlator_type(Is: FixedArray<I>): FixedArray<I> {
 }
 
 function main() {
-  let As: FixedArray<A> = new A[1];
+  let As: FixedArray<A> = new FixedArray<A>(1);
   let Is: FixedArray<I> = As as FixedArray<I>;
 
   let caught = false;

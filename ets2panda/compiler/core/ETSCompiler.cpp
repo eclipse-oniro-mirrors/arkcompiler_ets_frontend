@@ -127,9 +127,7 @@ void ETSCompiler::Compile(const ir::ETSNewArrayInstanceExpression *expr) const
 
     const auto *elementType = expr->TypeReference()->TsType();
     const bool undefAssignable = checker->Relation()->IsSupertypeOf(elementType, checker->GlobalETSUndefinedType());
-    if (elementType->IsETSPrimitiveType() || undefAssignable) {
-        // no-op
-    } else {
+    if (!elementType->IsETSPrimitiveType() && !undefAssignable) {
         compiler::VReg countReg = etsg->AllocReg();
         auto *startLabel = etsg->AllocLabel();
         auto *endLabel = etsg->AllocLabel();
@@ -165,14 +163,14 @@ void ETSCompiler::Compile(const ir::ETSNewArrayInstanceExpression *expr) const
 
 static void ConvertRestArguments(checker::ETSChecker *const checker, const ir::ETSNewClassInstanceExpression *expr)
 {
-    if (expr->GetSignature()->RestVar() == nullptr) {
+    if (expr->Signature()->RestVar() == nullptr) {
         return;
     }
-    auto restType = expr->GetSignature()->RestVar()->TsType();
+    auto restType = expr->Signature()->RestVar()->TsType();
     if (restType->IsETSArrayType() || restType->IsETSTupleType() || restType->IsETSResizableArrayType() ||
         restType->IsETSReadonlyArrayType()) {
         std::size_t const argumentCount = expr->GetArguments().size();
-        std::size_t const parameterCount = expr->GetSignature()->Params().size();
+        std::size_t const parameterCount = expr->Signature()->Params().size();
         ES2PANDA_ASSERT(argumentCount >= parameterCount);
         auto &arguments = const_cast<ArenaVector<ir::Expression *> &>(expr->GetArguments());
         std::size_t i = parameterCount;
@@ -267,10 +265,31 @@ static void GetSizeInForOf(compiler::ETSGen *etsg, checker::Type const *const ex
     }
 }
 
+static void HandleFixedArrayCreation(compiler::ETSGen *etsg, const ir::ETSNewClassInstanceExpression *expr)
+{
+    auto const checker = const_cast<checker::ETSChecker *>(etsg->Checker());
+    compiler::RegScope rs(etsg);
+    compiler::TargetTypeContext ttctx(etsg, checker->GlobalIntType());
+    auto *dimension = expr->GetArguments().front();
+    dimension->Compile(etsg);
+
+    compiler::VReg arr = etsg->AllocReg();
+    compiler::VReg dim = etsg->AllocReg();
+    etsg->ApplyConversionAndStoreAccumulator(expr, dim, dimension->TsType());
+    etsg->NewArray(expr, arr, dim, expr->TsType());
+
+    etsg->SetVRegType(arr, expr->TsType());
+    etsg->LoadAccumulator(expr, arr);
+
+    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
+}
 void ETSCompiler::Compile(const ir::ETSNewClassInstanceExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
 
+    if (expr->TsType()->IsETSArrayType()) {
+        return HandleFixedArrayCreation(etsg, expr);
+    }
     if (expr->TsType()->IsETSAnyType()) {
         compiler::RegScope rs(etsg);
         auto objReg = etsg->AllocReg();

@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -346,6 +346,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/exportAnonymousConst.cpp
   compiler/lowering/ets/lateInitialization.cpp
   compiler/lowering/ets/lambdaLowering.cpp
+  compiler/lowering/ets/fixedarrayLowering.cpp
   compiler/lowering/ets/dynamicImport.cpp
   compiler/lowering/ets/restTupleLowering.cpp
   compiler/lowering/ets/spreadLowering.cpp

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,7 @@ function clear_accumlator_type(As: FixedArray<A>): FixedArray<A> {
 
 function main() {
   {
-    let As: FixedArray<A> = new C[1];
+    let As: FixedArray<A> = new FixedArray<C>(1);
     As[0] = new C();
 
     As = clear_accumlator_type(As); // workaround for:
@@ -43,7 +43,7 @@ function main() {
   {
     let caught = false;
     try {
-      let As: FixedArray<A> = new A[1];
+      let As: FixedArray<A> = new FixedArray<A>(1);
       let Bs = As as FixedArray<B>;
     } catch (e) {
       if (e instanceof ClassCastError) {
