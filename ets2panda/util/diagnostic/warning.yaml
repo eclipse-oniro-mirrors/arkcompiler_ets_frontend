@@ -32,6 +32,7 @@ warning:
 - name: CANNOT_ANNOTATE
   id: 122948
   message: "Cannot annotate this overriden field {} in {}"
+  strict: true
 
 - name: CLASS_COMPOSITE_KEY_USE_STRING
   id: 98268
@@ -107,6 +108,7 @@ warning:
 - name: INCOMPATIBLE_TYPE_FOR_OVERRIDE
   id: 52491
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
+  strict: true
 
 - name: INSTANCEOF_ERASED
   id: 15
