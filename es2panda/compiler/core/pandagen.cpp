@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,7 +69,7 @@ void PandaGen::SetFunctionKind()
         }
 
         funcKind_ = panda::panda_file::FunctionKind::ASYNC_FUNCTION;
-        
+
         if (func->IsSendable() && targetApiVersion >= util::Helpers::SENDABLE_FUNCTION_MIN_SUPPORTED_API_VERSION) {
             funcKind_ |= panda::panda_file::FunctionKind::SENDABLE_FUNCTION;
         }
@@ -1254,12 +1254,47 @@ void PandaGen::ExplicitReturn(const ir::AstNode *node)
 {
     builder_->ExplicitReturn(node);
 }
+// 10.2.2.11 Else, ReturnIfAbrupt(result).
+void PandaGen::CheckIfSuperCorrectCallBeforeReturn(const ir::AstNode *node)
+{
+    TryContext tryCtx(this);
+    const auto &labelSet = tryCtx.LabelSet();
 
+    SetLabel(node, labelSet.TryBegin());
+    ThrowIfSuperNotCorrectCall(node, 0);
+    SetLabel(node, labelSet.TryEnd());
+    AddCheckSuperLabelSet(labelSet);
+}
+
+bool PandaGen::IsDerivedConstructor()
+{
+    return rootNode_->AsScriptFunction()->IsConstructor() &&
+        util::Helpers::GetClassDefiniton(rootNode_->AsScriptFunction())->Super();
+}
+
+void PandaGen::AddCatchBlockForImplicitSuperCallChecks()
+{
+    if (!IsDerivedConstructor()) {
+        return;
+    }
+    for (const auto &labelSet : checkSuperLabelPool_) {
+        SetLabel(rootNode_, labelSet->CatchBegin());
+    }
+    EmitThrow(rootNode_);
+    for (const auto &labelSet : checkSuperLabelPool_) {
+        SetLabel(rootNode_, labelSet->CatchEnd());
+    }
+}
+
+// 10.2.2.10 If result.[[Type]] is return, then
 void PandaGen::ValidateClassDirectReturn(const ir::AstNode *node)
 {
     const ir::ScriptFunction *func = util::Helpers::GetContainingFunction(node);
-
-    if (!func || !func->IsConstructor()) {
+    /** 10.2.2.10.a/b If kind is base,
+     *  If Type(result.[[Value]]) is Object, return result.[[Value]].
+     *  Else return thisArgument.
+     */
+    if (!IsDerivedConstructor()) {
         return;
     }
 
@@ -1269,19 +1304,17 @@ void PandaGen::ValidateClassDirectReturn(const ir::AstNode *node)
 
     auto *notUndefined = AllocLabel();
     auto *condEnd = AllocLabel();
-
+    /** 10.2.2.10.a/c If kind is derived,
+     *  If Type(result.[[Value]]) is Object, return result.[[Value]].
+     *  Else if result.[[Value]] is not undefined,
+     *  throw a TypeError exception(Throw in runtime).
+     */
     BranchIfStrictNotUndefined(node, notUndefined);
     GetThis(func);
-    ThrowIfSuperNotCorrectCall(func, 0);
-
-    auto *iter = dynamicContext_;
-    while (iter) {
-        if (iter->Type() == DynamicContextType::LEX_ENV) {
-            auto *envContext = static_cast<LexEnvContext *>(iter);
-            envContext->HandleForUpdateDirectReturnContext();
-        }
-        iter = iter->Prev();
-    }
+    /** For derived class constructor,
+     *  need to check whether super call is correct before using this
+     */
+    CheckIfSuperCorrectCallBeforeReturn(node);
     Branch(node, condEnd);
 
     SetLabel(node, notUndefined);

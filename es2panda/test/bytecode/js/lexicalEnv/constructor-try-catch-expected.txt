@@ -12,11 +12,11 @@ slotNum = 0xb
 .language ECMAScript
 .function any .#~@1=#C35(any a0, any a1, any a2, any a3, any a4, any a5) {
 	nop
-label_17: 
+label_26: 
 label_0: 
 	newlexenv 0x1
-label_11: 
 label_13: 
+label_17: 
 	ldai 0x19
 	sta v1
 	ldai 0x7
@@ -25,48 +25,55 @@ label_7:
 	lda v1
 	less 0x0, v2
 	jeqz label_8
-label_9: 
+label_11: 
 label_2: 
 	definefunc 0x1, .#~@1=@1*#f43, 0x0
 	stlexvar 0x0, 0x0
 	definefunc 0x2, .#~@1=@1*#f46, 0x2
 	ldundefined
 	sta v3
+	poplexenv
 	ldundefined
 	stricteq 0x3, v3
-	jeqz label_5
-label_4: 
+	jeqz label_32
+label_9: 
+label_19: 
 	lda a2
 	throw.ifsupernotcorrectcall 0x0
-	poplexenv
-	mov v3, a2
-label_5: 
-	lda v3
-	return
 label_10: 
 end_label_10: 
-label_19: 
-label_15: 
+label_31: 
+	mov v4, a2
+	jmp label_5
+label_32: 
+	mov v4, v3
+label_5: 
+	lda v4
+	return
+label_12: 
+end_label_12: 
+label_28: 
+label_23: 
 	lda.str 123
-	sta v3
+	sta v4
 	tryldglobalbyname 0x4, print
-	callarg1 0x5, v3
+	callarg1 0x5, v4
 	ldlexvar 0x0, 0x0
-	sta v3
+	sta v4
 	poplexenv
 	newlexenv 0x1
-	lda v3
+	lda v4
 	stlexvar 0x0, 0x0
 	lda v2
 	tonumeric 0x7
 	inc 0x8
 	sta v2
-label_12: 
-end_label_12: 
+label_14: 
+end_label_14: 
 	jmp label_7
-label_20: 
+label_29: 
 	sta v0
-label_16: 
+label_24: 
 	poplexenv
 	lda v0
 	throw
@@ -74,21 +81,35 @@ label_8:
 	poplexenv
 	ldundefined
 	sta v0
-	mov v4, v0
-	supercallthisrange 0x9, 0x0, v4
+	mov v5, v0
+	supercallthisrange 0x9, 0x0, v5
 	sta v0
 	lda a2
 	throw.ifsupernotcorrectcall 0x1
+label_15: 
+label_21: 
 	lda v0
 	throw.ifsupernotcorrectcall 0x0
+label_16: 
+end_label_16: 
+label_22: 
 	lda v0
 	return
-label_18: 
+label_30: 
+	sta v3
+label_25: 
+	lda v3
+	throw
+label_27: 
 }
 
-.catchall label_9, end_label_10, label_19
+.catchall label_9, end_label_10, label_30
 
-.catchall label_11, end_label_12, label_20
+.catchall label_11, end_label_12, label_28
+
+.catchall label_13, end_label_14, label_29
+
+.catchall label_15, end_label_16, label_30
 
 slotNum = 0x0
 .language ECMAScript
