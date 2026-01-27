@@ -265,31 +265,10 @@ static void GetSizeInForOf(compiler::ETSGen *etsg, checker::Type const *const ex
     }
 }
 
-static void HandleFixedArrayCreation(compiler::ETSGen *etsg, const ir::ETSNewClassInstanceExpression *expr)
-{
-    auto const checker = const_cast<checker::ETSChecker *>(etsg->Checker());
-    compiler::RegScope rs(etsg);
-    compiler::TargetTypeContext ttctx(etsg, checker->GlobalIntType());
-    auto *dimension = expr->GetArguments().front();
-    dimension->Compile(etsg);
-
-    compiler::VReg arr = etsg->AllocReg();
-    compiler::VReg dim = etsg->AllocReg();
-    etsg->ApplyConversionAndStoreAccumulator(expr, dim, dimension->TsType());
-    etsg->NewArray(expr, arr, dim, expr->TsType());
-
-    etsg->SetVRegType(arr, expr->TsType());
-    etsg->LoadAccumulator(expr, arr);
-
-    ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
-}
 void ETSCompiler::Compile(const ir::ETSNewClassInstanceExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
 
-    if (expr->TsType()->IsETSArrayType()) {
-        return HandleFixedArrayCreation(etsg, expr);
-    }
     if (expr->TsType()->IsETSAnyType()) {
         compiler::RegScope rs(etsg);
         auto objReg = etsg->AllocReg();

@@ -433,8 +433,7 @@ static void ProcessCalleeMethodBody(ir::AstNode *body, checker::ETSChecker *chec
             node->AsCallExpression()->SetSignature(
                 node->AsCallExpression()->Signature()->Substitute(checker->Relation(), substitution));
         }
-        if (node->IsETSNewClassInstanceExpression() &&
-            !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
+        if (node->IsETSNewClassInstanceExpression()) {
             node->AsETSNewClassInstanceExpression()->SetSignature(
                 node->AsETSNewClassInstanceExpression()->Signature()->Substitute(checker->Relation(), substitution));
         }
@@ -750,10 +749,10 @@ static std::string GetArrayReallocationStringFixedArray(std::size_t startIdx)
     // rewitten with a runtime intrinsic
     std::stringstream statements;
     statements << "let @@I1: int = @@I2.length > " << startIdx << " ? (@@I3.length - " << startIdx << ") : 0;";
-    statements << "let @@I4: FixedArray<@@T5> = new FixedArray<@@T6>(@@I7);";
-    statements << "let @@I8 = @@I9 as FixedArray<@@T10>;";
-    statements << "for (let i: int = 0; i < @@I11; i = i + 1) {";
-    statements << "    @@I12[i] = @@I13[i + " << startIdx << "] as @@T14;";
+    statements << "let @@I4 = @@E5;";
+    statements << "let @@I6 = @@E7;";
+    statements << "for (let i: int = 0; i < @@I8; i = i + 1) {";
+    statements << "    @@I9[i] = @@I10[i + " << startIdx << "] as @@T11;";
     statements << "}";
     return statements.str();
 }
@@ -786,29 +785,29 @@ static ArenaVector<ark::es2panda::ir::Statement *> CreateRestArgumentsArrayReall
     auto *restParameterType = lciInfo->lambdaSignature->RestVar()->TsType();
     auto *restParameterSubstituteType = restParameterType->Substitute(checker->Relation(), lciInfo->substitution);
     auto *elementType = checker->GetElementTypeOfArray(restParameterSubstituteType);
-    auto *elementTypeWithDefault = checker->TypeHasDefaultValue(elementType)
-                                       ? elementType
-                                       : checker->CreateETSUnionType({elementType, checker->GlobalETSUndefinedType()});
-    auto restParameterLen = GenName(allocator).View();
     ir::Statement *args = nullptr;
     if (restParameterSubstituteType->IsETSArrayType()) {
+        auto restParameterLen = Gensym(allocator);
         auto tmpArray = GenName(allocator).View();
         args = parser->CreateFormattedStatement(
             GetArrayReallocationStringFixedArray(startIdx), restParameterLen, lciInfo->restParameterIdentifier,
-            lciInfo->restParameterIdentifier, tmpArray, elementTypeWithDefault, elementTypeWithDefault,
-            restParameterLen, lciInfo->restArgumentIdentifier, tmpArray, elementType, restParameterLen,
+            lciInfo->restParameterIdentifier, tmpArray,
+            CreateUninitializedFixedArray(ctx, restParameterLen->Clone(allocator, nullptr),
+                                          checker->CreateETSArrayType(elementType)),
+            lciInfo->restArgumentIdentifier, tmpArray, restParameterLen->Clone(allocator, nullptr),
             lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, elementType);
+        std::cout << args->DumpEtsSrc() << std::endl;
     } else {
         ES2PANDA_ASSERT(restParameterSubstituteType->IsETSResizableArrayType() ||
                         restParameterSubstituteType->IsETSReadonlyArrayType());
         auto *typeNode = allocator->New<ir::OpaqueTypeNode>(
             checker->GetElementTypeOfArray(lciInfo->lambdaSignature->RestVar()->TsType()), allocator);
+        auto restParameterLenView = GenName(allocator).View();
         args = parser->CreateFormattedStatement(
-            GetArrayReallocationStringResizableArray(startIdx), restParameterLen, lciInfo->restParameterIdentifier,
-            lciInfo->restParameterIdentifier, lciInfo->restArgumentIdentifier, typeNode, restParameterLen,
-            restParameterLen, lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, typeNode);
+            GetArrayReallocationStringResizableArray(startIdx), restParameterLenView, lciInfo->restParameterIdentifier,
+            lciInfo->restParameterIdentifier, lciInfo->restArgumentIdentifier, typeNode, restParameterLenView,
+            restParameterLenView, lciInfo->restArgumentIdentifier, lciInfo->restParameterIdentifier, typeNode);
     }
-
     ES2PANDA_ASSERT(args != nullptr);
     return ArenaVector<ir::Statement *>(args->AsBlockStatement()->Statements());
 }

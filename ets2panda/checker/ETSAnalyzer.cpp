@@ -688,6 +688,9 @@ static bool CheckArrayElementType(ETSChecker *checker, T *newArrayInstanceExpr, 
             checker->LogError(diagnostic::TYPE_PARAMETER_AS_ARRAY_ELEMENT_TYPE, {}, newArrayInstanceExpr->Start());
             return false;
         }
+        if (elementType->IsETSFunctionType() && newArrayInstanceExpr->IsETSNewClassInstanceExpression()) {
+            return true;
+        }
         if (!checker->Relation()->IsSupertypeOf(elementType, checker->GlobalETSUndefinedType())) {
             checker->LogError(diagnostic::NON_SUPERTYPE_OF_UNDEFINED_AS_ARRAY_ELEMENT_TYPE, {},
                               newArrayInstanceExpr->Start());
@@ -789,6 +792,15 @@ checker::Type *ETSAnalyzer::Check(ir::ETSNewClassInstanceExpression *expr) const
         if (expr->GetArguments().empty()) {
             checker->LogError(diagnostic::MISSING_ARRAY_SIZE, {type->ToString()}, expr->Start());
             return expr->SetTsType(checker->GlobalTypeError());
+        }
+        if (expr->GetArguments().size() > 1) {
+            auto *arg = expr->GetArguments()[1];
+            if (!arg->IsArrowFunctionExpression()) {
+                arg->SetPreferredType(type->AsETSArrayType()->ElementType());
+            }
+        }
+        for (auto arg : expr->GetArguments()) {
+            arg->Check(checker);
         }
         checker->ValidateArrayIndex(expr->GetArguments()[0], true);
         CheckArrayElementType(checker, expr->AsETSNewClassInstanceExpression(), type->AsETSArrayType()->ElementType());

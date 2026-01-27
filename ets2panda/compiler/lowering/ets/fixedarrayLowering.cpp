@@ -15,10 +15,30 @@
 
 #include "fixedarrayLowering.h"
 #include "compiler/lowering/util.h"
+#include "util/helpers.h"
 #include <sstream>
 
 namespace ark::es2panda::compiler {
 
+static ir::Expression *EvaluateInitializer(public_lib::Context *ctx, ir::Expression *idx,
+                                           ir::ETSNewClassInstanceExpression *arrayInstance, int argsSize)
+{
+    auto *allocator = ctx->GetChecker()->Allocator();
+    auto checker = ctx->GetChecker()->AsETSChecker();
+    auto *parser = ctx->parser->AsETSParser();
+
+    if (argsSize == 1) {
+        return parser->CreateFormattedExpression(
+            "new @@T1()", checker->AllocNode<ir::OpaqueTypeNode>(arrayInstance->Signature()->Owner(), allocator));
+    } else {
+        auto *arg = arrayInstance->GetArguments()[1];
+        if (arg->IsArrowFunctionExpression()) {
+            return parser->CreateFormattedExpression("@@E1(@@I2)", arg, idx->Clone(allocator, nullptr));
+        } else {
+            return arg;
+        }
+    }
+}
 ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstNode *node)
 {
     auto *allocator = ctx->GetChecker()->Allocator();
@@ -26,53 +46,76 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
     auto *parser = ctx->parser->AsETSParser();
     auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
     auto *arrayInstance = node->AsETSNewClassInstanceExpression();
-    auto *elementType = arrayInstance->TsType()->AsETSArrayType()->ElementType();
-    bool isprimitiveType = checker->MaybeUnboxType(elementType)->IsETSPrimitiveType();
-    if (arrayInstance->GetArguments().size() == 1 && (isprimitiveType || arrayInstance->Signature() == nullptr)) {
-        return node;
-    }
-
     auto *size = arrayInstance->GetArguments()[0];
-
+    auto argSize = arrayInstance->GetArguments().size();
     ir::Expression *initializer = nullptr;
+    ir::Expression *convertedSize = Gensym(allocator);
+    auto nodeParent = node->Parent();
     auto *genSymArray = Gensym(allocator);
-    auto *type = checker->AllocNode<ir::OpaqueTypeNode>(elementType, allocator);
+    ir::Expression *idx = Gensym(allocator);
+    auto *elemtype = arrayInstance->TsType()->AsETSArrayType()->ElementType();
+    bool isPrimitiveType = checker->MaybeUnboxType(elemtype)->IsETSPrimitiveType();
+
+    std::vector<ir::AstNode *> newStmts;
     std::stringstream sourceCode;
-    if (arrayInstance->GetArguments().size() == 1) {
-        std::string initializerCode = "new @@T1()";
-        initializer = parser->CreateFormattedExpression(
-            initializerCode, checker->AllocNode<ir::OpaqueTypeNode>(arrayInstance->Signature()->Owner(), allocator));
+    sourceCode << "let @@I1 = (@@E2).toInt();";
+    sourceCode << "let @@I3 = @@E4;";
+    newStmts.emplace_back(convertedSize);
+    newStmts.emplace_back(size);
+    newStmts.emplace_back(genSymArray);
+    newStmts.emplace_back(CreateUninitializedFixedArray(ctx, convertedSize->Clone(allocator, nullptr)->AsIdentifier(),
+                                                        arrayInstance->TsType()));
+    // NOTE(klimentievamaria): an attempt to initialize with zeros for primitive types causes an optimizer bug, see
+    // #30675
+    if (argSize == 1 && (isPrimitiveType || arrayInstance->Signature() == nullptr)) {
+        sourceCode << "@@I5;";
+        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
     } else {
-        initializer = arrayInstance->GetArguments()[1];
+        initializer = EvaluateInitializer(ctx, idx, arrayInstance, argSize);
+        sourceCode << "for (let @@I5: int = 0; @@I6 < @@E7; ++@@I8) { @@I9[@@I10] = @@E11}";
+        sourceCode << "@@I12;";
+
+        newStmts.emplace_back(idx);
+        newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        newStmts.emplace_back(convertedSize->Clone(allocator, nullptr));
+        newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
+        newStmts.emplace_back(idx->Clone(allocator, nullptr));
+        newStmts.emplace_back(initializer);
+        newStmts.emplace_back(genSymArray->Clone(allocator, nullptr));
     }
 
-    sourceCode << "let @@I1 : FixedArray<@@T2> = new FixedArray<@@T3>((@@E4));";
-    sourceCode << "for (let i: int = 0; i < (@@E5).toInt(); ++i) { @@I6[i] = @@E7}";
-    sourceCode << "@@I8;";
-
-    auto *loweringResult = parser->CreateFormattedExpression(
-        sourceCode.str(), genSymArray, type, type->Clone(allocator, nullptr), size, size->Clone(allocator, nullptr),
-        genSymArray->Clone(allocator, nullptr), initializer, genSymArray->Clone(allocator, nullptr));
+    auto *loweringResult = parser->CreateFormattedExpression(sourceCode.str(), newStmts);
     ES2PANDA_ASSERT(loweringResult != nullptr);
-    loweringResult->SetRange(node->Range());
-    loweringResult->SetParent(node->Parent());
-
-    auto *scope = NearestScope(node->Parent());
+    SetSourceRangesRecursively(loweringResult, node->Range());
+    loweringResult->SetParent(nodeParent);
+    auto *scope = NearestScope(nodeParent);
     auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
     CheckLoweredNode(varbinder, checker, loweringResult);
-
     return loweringResult;
+}
+
+static bool isLoweringCandidate(ir::AstNode *node)
+{
+    if (!node->IsETSNewClassInstanceExpression()) {
+        return false;
+    }
+    auto *arrayInstanceType = node->AsETSNewClassInstanceExpression()->TsType();
+    ES2PANDA_ASSERT(arrayInstanceType != nullptr);
+    if (!arrayInstanceType->IsETSArrayType()) {
+        return false;
+    }
+    return true;
 }
 bool FixedArrayLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [ctx = Context()](ir::AstNode *node) -> ir::AstNode * {
-            if (!node->IsETSNewClassInstanceExpression() ||
-                node->AsETSNewClassInstanceExpression()->TsType() == nullptr ||
-                !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
+            if (!isLoweringCandidate(node)) {
                 return node;
             }
+
             return ModifyArguments(ctx, node);
         },
         Name());

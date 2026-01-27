@@ -75,8 +75,7 @@ bool OptionalArgumentsLowering::PerformForProgram(parser::Program *program)
                 callExpr->IsTrailingCall()
                     ? TransformArgumentsForTrailingLambda(ctx, callExpr->AsCallExpression(), callExpr->Signature())
                     : TransformArguments(ctx, callExpr, callExpr->Signature(), callExpr->Arguments());
-            } else if (node->IsETSNewClassInstanceExpression() &&
-                       !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
+            } else if (node->IsETSNewClassInstanceExpression()) {
                 auto newExpr = node->AsETSNewClassInstanceExpression();
                 if (newExpr->Signature() == nullptr) {
                     ctx->parser->LogError(diagnostic::NO_MATCHING_SIG_2, {"constructor"}, node->Start());

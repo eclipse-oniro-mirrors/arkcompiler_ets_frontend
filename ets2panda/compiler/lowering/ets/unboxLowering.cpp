@@ -914,12 +914,6 @@ struct UnboxVisitor : public ir::visitor::EmptyAstVisitor {
 
     void VisitETSNewClassInstanceExpression(ir::ETSNewClassInstanceExpression *call) override
     {
-        if (call->TsType()->IsETSArrayType()) {
-            return;
-        }
-        if (!call->Signature()->HasFunction()) {
-            return;
-        }
         auto *func = call->Signature()->Function();
         if (func == nullptr || func->Language() == Language::Id::JS) {
             // For dynamic call to js, all arguments and return type need to be boxed
