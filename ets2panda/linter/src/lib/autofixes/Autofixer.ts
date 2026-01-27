@@ -5480,4 +5480,10 @@ export class Autofixer {
       { start: propAccess.name.getStart(), end: propAccess.name.getEnd(), replacementText: replacementName }
     ];
   }
+
+  fixSdkUnionTypeAmbiguity(objLiteral: ts.ObjectLiteralExpression, typeName: string): Autofix[] {
+    void this;
+    const endPos = objLiteral.getEnd();
+    return [{ start: endPos, end: endPos, replacementText: ` as ${typeName}` }];
+  }
 }

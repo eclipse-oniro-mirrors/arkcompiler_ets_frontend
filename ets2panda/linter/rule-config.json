@@ -138,7 +138,8 @@
     "sdk-no-decl-with-duplicate-name",
     "sdk-ability-asynchronous-lifecycle",
     "sdk-ability-lifecycle-monitor",
-    "sdk-api-static-overload"
+    "sdk-api-static-overload",
+    "sdk-union-type-ambiguity"
   ],
   "concurrent": [
     "arkts-no-need-stdlib-ason",

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -448,6 +448,8 @@ cookBookTag[413] =
 cookBookTag[414] = 'APIs involving overloading within in the SDK must use new names (sdk-api-static-overload)';
 cookBookTag[415] =
   '"enableV2Compatibility" function and "makeV1Observed" function is not supported (arkui-no-enableV2Compatibility-and-makeV1Observed-function)';
+cookBookTag[416] =
+  'Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

@@ -1,0 +1,291 @@
+{
+    "copyright": [
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
+        "Licensed under the Apache License, Version 2.0 (the \"License\");",
+        "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at",
+        "",
+        "http://www.apache.org/licenses/LICENSE-2.0",
+        "",
+        "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an \"AS IS\" BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and",
+        "limitations under the License."
+    ],
+    "result": [
+        {
+            "line": 19,
+            "column": 8,
+            "endLine": 19,
+            "endColumn": 21,
+            "problem": "SdkUnionTypeAmbiguity",
+            "autofix": [
+                {
+                    "start": 786,
+                    "end": 786,
+                    "replacementText": " as ColumnOptions",
+                    "line": 19,
+                    "column": 8,
+                    "endLine": 19,
+                    "endColumn": 21
+                }
+            ],
+            "suggest": "",
+            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 23,
+            "column": 5,
+            "endLine": 23,
+            "endColumn": 18,
+            "problem": "SdkUnionTypeAmbiguity",
+            "autofix": [
+                {
+                    "start": 916,
+                    "end": 916,
+                    "replacementText": " as RowOptions",
+                    "line": 23,
+                    "column": 5,
+                    "endLine": 23,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 27,
+            "column": 8,
+            "endLine": 27,
+            "endColumn": 23,
+            "problem": "SdkUnionTypeAmbiguity",
+            "autofix": [
+                {
+                    "start": 1044,
+                    "end": 1044,
+                    "replacementText": " as ColumnOptions",
+                    "line": 27,
+                    "column": 8,
+                    "endLine": 27,
+                    "endColumn": 23
+                }
+            ],
+            "suggest": "",
+            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 31,
+            "column": 5,
+            "endLine": 31,
+            "endColumn": 18,
+            "problem": "SdkUnionTypeAmbiguity",
+            "autofix": [
+                {
+                    "start": 1164,
+                    "end": 1164,
+                    "replacementText": " as RowOptions",
+                    "line": 31,
+                    "column": 5,
+                    "endLine": 31,
+                    "endColumn": 18
+                }
+            ],
+            "suggest": "",
+            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 41,
+            "column": 14,
+            "endLine": 41,
+            "endColumn": 24,
+            "problem": "SdkUnionTypeAmbiguity",
+            "autofix": [
+                {
+                    "start": 1298,
+                    "end": 1298,
+                    "replacementText": " as ColumnOptions",
+                    "line": 41,
+                    "column": 14,
+                    "endLine": 41,
+                    "endColumn": 24
+                }
+            ],
+            "suggest": "",
+            "rule": "Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 34,
+            "column": 2,
+            "endLine": 34,
+            "endColumn": 7,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Entry\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 35,
+            "column": 2,
+            "endLine": 35,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Component\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 40,
+            "column": 5,
+            "endLine": 40,
+            "endColumn": 22,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"RelativeContainer\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 42,
+            "column": 7,
+            "endLine": 42,
+            "endColumn": 11,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"Text\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 44,
+            "column": 19,
+            "endLine": 44,
+            "endColumn": 21,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"$r\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 45,
+            "column": 21,
+            "endLine": 45,
+            "endColumn": 31,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"FontWeight\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 47,
+            "column": 53,
+            "endLine": 47,
+            "endColumn": 66,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"VerticalAlign\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 48,
+            "column": 53,
+            "endLine": 48,
+            "endColumn": 68,
+            "problem": "UIInterfaceImport",
+            "autofix": [
+                {
+                    "start": 603,
+                    "end": 603,
+                    "replacementText": "\n\nimport {\n  Entry,\n  Component,\n  RelativeContainer,\n  Text,\n  $r,\n  FontWeight,\n  VerticalAlign,\n  HorizontalAlign,\n} from '@kit.ArkUI';",
+                    "line": 48,
+                    "column": 53,
+                    "endLine": 48,
+                    "endColumn": 68
+                }
+            ],
+            "suggest": "",
+            "rule": "The ArkUI interface \"HorizontalAlign\" should be imported before it is used (arkui-modular-interface)",
+            "severity": "ERROR"
+        }
+    ]
+}

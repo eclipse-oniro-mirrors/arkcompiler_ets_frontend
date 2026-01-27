@@ -6473,6 +6473,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleCallExpressionForRepeat(node);
     this.handleNodeForWrappedBuilder(node);
     this.handleCallExpressionForSerialization(node);
+    this.handleSdkUnionTypeAmbiguity(node);
   }
 
   handleNoTsLikeFunctionCall(callExpr: ts.CallExpression): void {
@@ -6728,6 +6729,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     this.handleLibraryTypeCall(etsComponentExpression);
     this.handleNoDeprecatedApi(etsComponentExpression);
     this.checkOnClickCallback(etsComponentExpression);
+    this.handleSdkUnionTypeAmbiguity(etsComponentExpression);
   }
 
   private handleImportCall(tsCallExpr: ts.CallExpression): void {
@@ -17225,6 +17227,119 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     if (node.parent && ts.isTupleTypeNode(node.parent)) {
       this.incrementCounters(node, FaultID.unfixedTuple);
     }
+  }
+
+  private handleSdkUnionTypeAmbiguity(node: ts.CallExpression): void {
+    if (!this.options.arkts2) {
+      return;
+    }
+
+    const signatures = this.getCallSignatures(node);
+    if (signatures.length === 0) {
+      return;
+    }
+
+    this.checkUnionTypeAmbiguity(node, signatures);
+  }
+
+  private getCallSignatures(node: ts.CallExpression): ts.Signature[] {
+    const expr = node.expression;
+    if (!ts.isIdentifier(expr)) {
+      return [];
+    }
+
+    const funcName = expr.text;
+    if (funcName !== 'Column' && funcName !== 'Row') {
+      return [];
+    }
+
+    const firstArg = node.arguments[0];
+    if (!firstArg || !ts.isObjectLiteralExpression(firstArg)) {
+      return [];
+    }
+
+    let allSignatures: ts.Signature[] = [];
+    const exprType = this.tsTypeChecker.getTypeAtLocation(expr);
+    if (exprType) {
+      allSignatures = [...exprType.getCallSignatures()];
+    }
+
+    if (allSignatures.length === 0) {
+      const symbol = this.tsUtils.trueSymbolAtLocation(expr);
+      if (symbol) {
+        const symbolType = this.tsTypeChecker.getTypeOfSymbolAtLocation(symbol, expr);
+        allSignatures = [...symbolType.getCallSignatures()];
+      }
+    }
+
+    const resolvedSignature = this.tsTypeChecker.getResolvedSignature(node);
+    if (resolvedSignature) {
+      const filteredSignatures = allSignatures.filter((s) => {
+        return s !== resolvedSignature;
+      });
+      return [resolvedSignature, ...filteredSignatures];
+    }
+
+    return allSignatures;
+  }
+
+  private checkUnionTypeAmbiguity(node: ts.CallExpression, signatures: ts.Signature[]): void {
+    const firstArg = node.arguments[0] as ts.ObjectLiteralExpression;
+    for (const sig of signatures) {
+      const params = sig.parameters;
+      if (params.length === 0) {
+        continue;
+      }
+      const firstParam = params[0];
+      const firstParamType = this.tsTypeChecker.getTypeOfSymbolAtLocation(firstParam, firstArg);
+      if (firstParamType.isUnion()) {
+        const filteredUnionTypes = firstParamType.types.filter((t) => {
+          return this.tsTypeChecker.typeToStringForLinter(t) !== 'undefined';
+        });
+        const unionTypes = filteredUnionTypes;
+        if (unionTypes.length < 2) {
+          continue;
+        }
+        const firstType = unionTypes[0];
+        const secondType = unionTypes[1];
+        const firstProps = TypeScriptLinter.getPropertiesOfType(firstType);
+        const secondProps = TypeScriptLinter.getPropertiesOfType(secondType);
+        const objLiteralProps = firstArg.properties;
+        let allCommon = true;
+
+        for (const prop of objLiteralProps) {
+          if (!ts.isPropertyAssignment(prop)) {
+            continue;
+          }
+          const propName = prop.name?.getText();
+          if (!propName) {
+            continue;
+          }
+          const inFirstType = firstProps.includes(propName);
+          const inSecondType = secondProps.includes(propName);
+          if (!inFirstType || !inSecondType) {
+            allCommon = false;
+            break;
+          }
+        }
+
+        if (allCommon && objLiteralProps.length > 0) {
+          const firstTypeName = this.tsTypeChecker.typeToStringForLinter(firstType);
+          const autofix = this.autofixer?.fixSdkUnionTypeAmbiguity(firstArg, firstTypeName);
+          this.incrementCounters(firstArg, FaultID.SdkUnionTypeAmbiguity, autofix);
+          return;
+        }
+      }
+    }
+  }
+
+  private static getPropertiesOfType(type: ts.Type): string[] {
+    const props: string[] = [];
+    const properties = type.getProperties();
+    for (const prop of properties) {
+      props.push(prop.name);
+    }
+    return props;
   }
 
   private handleSuperKeyword(node: ts.Node): void {
