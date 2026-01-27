@@ -727,6 +727,12 @@ QuickInfo ExpectResultJSONParse()
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
     expected.emplace_back("string", "typeParameter");
+    expected.emplace_back(",", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("options", "functionParameter");
+    expected.emplace_back(":", "punctuation");
+    expected.emplace_back(" ", "space");
+    expected.emplace_back("jsonx.ParseOptions", "typeParameter");
     expected.emplace_back(")", "punctuation");
     expected.emplace_back(":", "punctuation");
     expected.emplace_back(" ", "space");
