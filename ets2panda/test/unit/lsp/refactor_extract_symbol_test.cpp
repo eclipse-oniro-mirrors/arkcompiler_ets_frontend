@@ -132,6 +132,52 @@ const a = 1 + 1 * 3
     initializer->DestroyContext(refactorContext->context);
 }
 
+TEST_F(LspExtrSymblGetEditsTests, ExtractVariableTrig)
+{
+    const std::string code = R"(
+const b = 1;
+const a = 1;
+)";
+    const size_t spanStart = 24;
+    const size_t spanEnd = 25;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    // Step 1: get applicable refactors
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string_view target = ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name;
+    const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME;
+    // Step 2: run GetEditsForRefactorsImpl
+    auto edits =
+        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
+    int renameLocation = 45;
+    EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractVariableTrig1)
+{
+    const std::string code = R"(
+
+const a = 1;
+)";
+    const size_t spanStart = 12;
+    const size_t spanEnd = 13;
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+    // Step 1: get applicable refactors
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const std::string_view target = ark::es2panda::lsp::EXTRACT_CONSTANT_ACTION_GLOBAL.name;
+    const std::string_view refactorName = ark::es2panda::lsp::refactor_name::EXTRACT_CONSTANT_ACTION_NAME;
+    // Step 2: run GetEditsForRefactorsImpl
+    auto edits =
+        ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
+    int renameLocation = 33;
+    EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
+    initializer->DestroyContext(refactorContext->context);
+}
+
 TEST_F(LspExtrSymblGetEditsTests, ExtractConstantAfterAnnotation)
 {
     const std::string code = R"(
@@ -876,6 +922,73 @@ class MyClass {
     EXPECT_TRUE(hasGlobal);
 
     ExpectExtractionApplies(code, refactorContext, refactorName, globalScopeAction, expected);
+
+    initializer->DestroyContext(refactorContext->context);
+}
+
+TEST_F(LspExtrSymblGetEditsTests, ExtractMethodGlobalForRename)
+{
+    const std::string code = R"('use static'
+
+function newFunction(a: number, b: number) {
+    let c = a + b;
+    return c;
+}
+
+class MyClass {
+
+    MyMethod(a: number, b: number) {
+        let c = a + b;
+        let d = c * c;
+        return d;
+    }
+}
+)";
+    const std::string expected = R"('use static'
+
+function newFunction_1(a: number, b: number) {
+    return a + b;
+}
+
+function newFunction(a: number, b: number) {
+    let c = a + b;
+    return c;
+}
+
+class MyClass {
+
+    MyMethod(a: number, b: number) {
+
+        let c = newFunction_1(a, b);
+        let d = c * c;
+        return d;
+    }
+}
+)";
+
+    const std::string target = "let c = a + b;";
+    const size_t spanStart = code.find(target, code.find("MyMethod"));
+    EXPECT_NE(spanStart, std::string::npos);
+    const size_t spanEnd = spanStart + target.size();
+
+    auto initializer = std::make_unique<Initializer>();
+    auto *refactorContext = CreateExtractContext(initializer.get(), code, spanStart, spanEnd);
+
+    const std::string refactorName = std::string(ark::es2panda::lsp::refactor_name::EXTRACT_FUNCTION_ACTION_NAME);
+    const std::string globalScopeAction = std::string(ark::es2panda::lsp::EXTRACT_FUNCTION_ACTION_GLOBAL.name);
+
+    auto applicable = GetApplicableRefactorsImpl(refactorContext);
+    const bool hasGlobal = std::any_of(applicable.begin(), applicable.end(),
+                                       [&](const auto &info) { return info.action.name == globalScopeAction; });
+    EXPECT_TRUE(hasGlobal);
+
+    LSPAPI const *lspApi = GetImpl();
+
+    auto edits = lspApi->getEditsForRefactor(*refactorContext, refactorName, globalScopeAction);
+
+    int renameLocation = 235;
+
+    EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
 
     initializer->DestroyContext(refactorContext->context);
 }

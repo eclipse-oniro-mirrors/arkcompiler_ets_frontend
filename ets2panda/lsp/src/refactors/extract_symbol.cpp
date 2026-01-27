@@ -931,7 +931,7 @@ size_t FindRenameIndex(HelperPieces &pieces)
     if (newFunctionPos != std::string::npos) {
         index = newFunctionPos;
     }
-    return index + pieces.replaceRange.pos + 1;
+    return index + pieces.replaceRange.pos + pieces.helperText.length() + 1;
 }
 
 bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extractedNode, const std::string &actionName,
@@ -1745,8 +1745,13 @@ RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, i
         tracker.ReplaceRangeWithText(src, extractedRange, uniqueVarName);
     });
 
+    size_t renameLoc = startPos;
+    if (!edits.empty() && !edits[0].textChanges.empty()) {
+        renameLoc += edits[0].textChanges[0].newText.length() + 1;
+    }
+
     RefactorEditInfo refactorEdits(std::move(edits), std::optional<std::string>(fileName),
-                                   std::optional<size_t>(startPos));
+                                   std::optional<size_t>(renameLoc));
     return refactorEdits;
 }
 
@@ -1783,8 +1788,12 @@ RefactorEditInfo GetRefactorEditsToExtractFunction(const RefactorContext &contex
         tracker.InsertText(src, GetVarAndFunctionPosToWriteNode(context, actionName).pos, functionText);
         tracker.ReplaceRangeWithText(src, GetCallPositionOfExtraction(context), funcCallText);
     });
+    size_t renameLoc = GetCallPositionOfExtraction(context).pos + 1;
+    if (!edits.empty() && !edits[0].textChanges.empty()) {
+        renameLoc += edits[0].textChanges[0].newText.length() + 1;
+    }
     RefactorEditInfo refactorEdits(std::move(edits), std::optional<std::string>(src->filePath),
-                                   std::optional<size_t>(GetCallPositionOfExtraction(context).pos + 1));
+                                   std::optional<size_t>(renameLoc));
     return refactorEdits;
 }
 
