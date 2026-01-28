@@ -955,7 +955,8 @@ describe('BaseMode', () => {
             backupFiles: jest.fn(),
             updateDeclFileMapAsync: jest.fn(),
             getOutputFilePaths: jest.fn(),
-            declFileMap: new Map()
+            declFileMap: new Map(),
+            nodeNeedsRegeneration: jest.fn()
         };
         ctx.needsRegeneration.mockReturnValue(true);
         ctx.needsBackup.mockResolvedValue({needsDeclBackup: false, needsGlueCodeBackup: false});
@@ -964,6 +965,7 @@ describe('BaseMode', () => {
         ctx.saveDeclFileMap.mockResolvedValue(undefined);
         ctx.getOutputFilePaths.mockReturnValue(
             {declEtsOutputPath: '/tmp/test.d.ts', glueCodeOutputPath: '/tmp/test.ts'});
+        ctx.nodeNeedsRegeneration.mockReturnValue(true);
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
         expect(startWorkersSpy).toHaveBeenCalled();

@@ -84,6 +84,91 @@ jest.mock('../../../src/build/generate_arktsconfig',
 jest.mock('../../../src/plugins/plugins_driver',
     () => ({PluginDriver: {getInstance: jest.fn(() => ({runPluginHook: jest.fn()}))}}));
 
+jest.mock('../../../src/util/TaskManager', () => {
+    const mockStartWorkers = jest.fn();
+    const mockInitTaskQueue = jest.fn();
+    const mockMarkTaskAsSkipped = jest.fn();
+    const mockFinish = jest.fn().mockResolvedValue(true);
+    const mockShutdownWorkers = jest.fn();
+
+    const MockTaskManager = jest.fn().mockImplementation(() => {
+        return {
+            startWorkers: mockStartWorkers,
+            buildGraph: undefined,
+            initTaskQueue: mockInitTaskQueue,
+            markTaskAsSkipped: mockMarkTaskAsSkipped,
+            finish: mockFinish,
+            shutdownWorkers: mockShutdownWorkers
+        };
+    });
+
+    return {
+        TaskManager: MockTaskManager,
+        DriverProcessFactory: jest.fn().mockImplementation(() => ({
+            spawnWorker: jest.fn().mockReturnValue({
+                on: jest.fn().mockReturnThis(),
+                send: jest.fn(),
+                stop: jest.fn(),
+                getId: jest.fn(),
+                getWorkerPath: jest.fn(),
+                spawnNewInstance: jest.fn()
+            })
+        }))
+    };
+});
+
+jest.mock('../../../src/dependency_analyzer', () => {
+    const createMockDependencyAnalyzerInstance = () => ({
+        getGraph: jest.fn()
+    });
+
+    let mockInstance: any;
+
+    const MockDependencyAnalyzer = jest.fn().mockImplementation(() => {
+        mockInstance = createMockDependencyAnalyzerInstance();
+        return mockInstance;
+    });
+
+    (MockDependencyAnalyzer as any).getLastInstance = () => mockInstance;
+
+    return {
+        DependencyAnalyzer: MockDependencyAnalyzer
+    };
+});
+
+jest.mock('../../../src/util/graph', () => {
+    class MockGraph<T> {
+        nodes: Set<any>;
+
+        constructor(nodes: any[] = []) {
+            this.nodes = new Set(nodes);
+        }
+
+        filter(predicate: (node: any) => boolean): MockGraph<T> {
+            const filteredNodes = Array.from(this.nodes).filter(predicate);
+            return new MockGraph<T>(filteredNodes);
+        }
+
+        getNodeById(id: string): any {
+            return Array.from(this.nodes).find((n: any) => n.id === id);
+        }
+
+        verify(): void {}
+
+        hasNodes(): boolean {
+            return this.nodes.size > 0;
+        }
+    }
+
+    return {
+        Graph: {
+            createGraphFromNodes: jest.fn().mockImplementation((nodes: any[]) => {
+                return new MockGraph(nodes);
+            })
+        }
+    };
+});
+
 class TestableBaseMode extends BaseMode {
     constructor(buildConfig: BuildConfig) {
         super(buildConfig);
@@ -97,24 +182,24 @@ class TestableBaseMode extends BaseMode {
         return this.saveDeclFileMap();
     }
 
-    public testGetOutputFilePaths(job: DeclgenV1JobInfo): {declEtsOutputPath: string, glueCodeOutputPath: string} {
-        return this.getOutputFilePaths(job);
+    public testGetOutputFilePaths(file: string): {declEtsOutputPath: string, glueCodeOutputPath: string} {
+        return (this as any).getOutputFilePaths(file);
     }
 
-    public async testNeedsBackup(job: DeclgenV1JobInfo): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
-        return this.needsBackup(job);
+    public async testNeedsBackup(file: string): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
+        return (this as any).needsBackup(file);
     }
 
-    public async testBackupFiles(job: DeclgenV1JobInfo, needsDecl: boolean, needsGlue: boolean): Promise<void> {
-        return this.backupFiles(job, needsDecl, needsGlue);
+    public async testBackupFiles(file: string, needsDecl: boolean, needsGlue: boolean): Promise<void> {
+        return (this as any).backupFiles(file, needsDecl, needsGlue);
     }
 
-    public async testUpdateDeclFileMapAsync(job: DeclgenV1JobInfo): Promise<void> {
-        return this.updateDeclFileMapAsync(job);
+    public async testUpdateDeclFileMapAsync(file: string): Promise<void> {
+        return (this as any).updateDeclFileMapAsync(file);
     }
 
-    public testNeedsRegeneration(job: DeclgenV1JobInfo): boolean {
-        return (this as any).needsRegeneration(job);
+    public testNeedsRegeneration(file: string): boolean {
+        return (this as any).needsRegeneration(file);
     }
 
     public getDeclFileMap() {
@@ -160,7 +245,6 @@ function createMockBuildConfig(overrides: Partial<BuildConfig> = {}): BuildConfi
         dumpPerf: false,
         recordType: 'OFF',
         isBuildConfigModified: false,
-
         outputDir: '/test/output',
         taskQueueCapacity: 4,
         ...overrides
@@ -265,47 +349,51 @@ describe('BaseMode declaration file map management tests', () => {
     });
 
     test('getOutputFilePaths generates correct paths for ETS file', () => {
-        const job = createMockDeclgenV1JobInfo({
-            fileList: ['/test/module/root/src/components/MyComponent.ets'],
-            fileInfo: {
-                input: '/test/module/root/src/components/MyComponent.ets',
-                output: '',
-                arktsConfig: '',
-                moduleName: 'test-package',
-                moduleRoot: '/test/module/root'
-            },
-            declgenConfig: {output: '/test/declgen/v1', bridgeCode: '/test/bridge/code'}
-        });
+        const file = '/test/module/root/src/components/MyComponent.ets';
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
-        (mockChangeDeclgenFileExtension as jest.Mock)
-            .mockReturnValueOnce('/test/declgen/v1/test-package/src/components/MyComponent.d.ets')
-            .mockReturnValueOnce('/test/bridge/code/test-package/src/components/MyComponent.ts');
-
-        const result = testMode.testGetOutputFilePaths(job);
+        const result = testMode.testGetOutputFilePaths(file);
 
         expect(result.declEtsOutputPath).toBe('/test/declgen/v1/test-package/src/components/MyComponent.d.ets');
         expect(result.glueCodeOutputPath).toBe('/test/bridge/code/test-package/src/components/MyComponent.ts');
     });
 
     test('needsBackup returns false when files do not exist', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
-        const result = await testMode.testNeedsBackup(job);
+        const result = await testMode.testNeedsBackup(file);
 
         expect(result.needsDeclBackup).toBe(false);
         expect(result.needsGlueCodeBackup).toBe(false);
     });
 
     test('needsBackup returns true when declaration file timestamp changed externally', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
-        testMode.getDeclFileMap().set(job.fileList[0], {
+        testMode.getDeclFileMap().set(file, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
             glueCodeLastModified: currentTime - 1000,
-            sourceFilePath: job.fileList[0],
+            sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
         });
 
@@ -319,22 +407,29 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.promises.stat as jest.Mock).mockResolvedValue(mockStat);
 
-        const result = await testMode.testNeedsBackup(job);
+        const result = await testMode.testNeedsBackup(file);
 
         expect(result.needsDeclBackup).toBe(true);
         expect(result.needsGlueCodeBackup).toBe(true);
     });
 
     test('needsBackup returns false when declaration file timestamp unchanged', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
 
-        testMode.getDeclFileMap().set(job.fileList[0], {
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
+
+        testMode.getDeclFileMap().set(file, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
             declLastModified: currentTime - 1000,
             glueCodeFilePath: '/test/bridge/code/test-package/src/file1.ts',
             glueCodeLastModified: currentTime - 1000,
-            sourceFilePath: job.fileList[0],
+            sourceFilePath: file,
             sourceFileLastModified: currentTime - 2000
         });
 
@@ -348,57 +443,83 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.promises.stat as jest.Mock).mockResolvedValue(mockStat);
 
-        const result = await testMode.testNeedsBackup(job);
+        const result = await testMode.testNeedsBackup(file);
 
         expect(result.needsDeclBackup).toBe(false);
         expect(result.needsGlueCodeBackup).toBe(false);
     });
 
-    test('backupFiles does backup when needed', async () => {
-        const job = createMockDeclgenV1JobInfo();
+    test('backupFilesForFile does backup when needed', async () => {
+        const file = '/test/module/root/src/file1.ets';
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(job, true, true);
+        await testMode.testBackupFiles(file, true, true);
 
         expect(fs.existsSync).toHaveBeenCalledTimes(2);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(2);
     });
 
     test('backupFiles only backs up declaration file when needed', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
+
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(job, true, false);
+        await testMode.testBackupFiles(file, true, false);
 
         expect(fs.existsSync).toHaveBeenCalledTimes(1);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
     test('backupFiles only backs up glue code file when needed', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
+
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
 
-        await testMode.testBackupFiles(job, false, true);
+        await testMode.testBackupFiles(file, false, true);
 
         expect(fs.existsSync).toHaveBeenCalledTimes(1);
         expect(fs.promises.copyFile).toHaveBeenCalledTimes(1);
     });
 
     test('updateDeclFileMapAsync updates declaration file map when files exist', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         (fs.promises.stat as jest.Mock)
             .mockResolvedValueOnce({mtimeMs: currentTime - 1000})
             .mockResolvedValueOnce({mtimeMs: currentTime - 500})
             .mockResolvedValueOnce({mtimeMs: currentTime - 200});
 
-        await testMode.testUpdateDeclFileMapAsync(job);
+        await testMode.testUpdateDeclFileMapAsync(file);
 
-        const fileInfo = testMode.getDeclFileMap().get(job.fileList[0]);
+        const fileInfo = testMode.getDeclFileMap().get(file);
 
         expect(fileInfo?.declLastModified).toBe(currentTime - 500);
         expect(fileInfo?.glueCodeLastModified).toBe(currentTime - 200);
@@ -406,17 +527,24 @@ describe('BaseMode declaration file map management tests', () => {
     });
 
     test('updateDeclFileMapAsync handles missing output files gracefully', async () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
+
+        testMode.setFileToModule(file, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         (fs.promises.stat as jest.Mock)
             .mockResolvedValueOnce({mtimeMs: currentTime - 1000})
             .mockRejectedValueOnce(new Error('File not found'))
             .mockResolvedValueOnce({mtimeMs: currentTime - 200});
 
-        await testMode.testUpdateDeclFileMapAsync(job);
+        await testMode.testUpdateDeclFileMapAsync(file);
 
-        const fileInfo = testMode.getDeclFileMap().get(job.fileList[0]);
+        const fileInfo = testMode.getDeclFileMap().get(file);
 
         expect(fileInfo?.declLastModified).toBe(null);
         expect(fileInfo?.glueCodeLastModified).toBe(currentTime - 200);
@@ -424,19 +552,18 @@ describe('BaseMode declaration file map management tests', () => {
     });
 
     test('needsRegeneration returns true when source file not in map', () => {
-        const job = createMockDeclgenV1JobInfo();
+        const file = '/test/module/root/src/file1.ets';
         const currentTime = Date.now();
 
         (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime});
 
-        const result = testMode.testNeedsRegeneration(job);
+        const result = testMode.testNeedsRegeneration(file);
 
         expect(result).toBe(true);
     });
 
     test('needsRegeneration returns true when source file modified', () => {
         const sourceFile = '/test/module/root/src/file1.ets';
-        const job = createMockDeclgenV1JobInfo({fileList: [sourceFile]});
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
@@ -450,14 +577,13 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime - 500});
 
-        const result = testMode.testNeedsRegeneration(job);
+        const result = testMode.testNeedsRegeneration(sourceFile);
 
         expect(result).toBe(true);
     });
 
     test('needsRegeneration returns false when source file unchanged', () => {
         const sourceFile = '/test/module/root/src/file1.ets';
-        const job = createMockDeclgenV1JobInfo({fileList: [sourceFile]});
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
@@ -471,14 +597,13 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime - 1000});
 
-        const result = testMode.testNeedsRegeneration(job);
+        const result = testMode.testNeedsRegeneration(sourceFile);
 
         expect(result).toBe(false);
     });
 
     test('needsRegeneration returns true when sourceFileLastModified is null', () => {
         const sourceFile = '/test/module/root/src/file1.ets';
-        const job = createMockDeclgenV1JobInfo({fileList: [sourceFile]});
         const currentTime = Date.now();
 
         testMode.getDeclFileMap().set(sourceFile, {
@@ -492,32 +617,44 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime});
 
-        const result = testMode.testNeedsRegeneration(job);
+        const result = testMode.testNeedsRegeneration(sourceFile);
 
         expect(result).toBe(true);
     });
 
-    test('first generation scenario: needsRegeneration returns true, needsBackup returns false', async () => {
-        const sourceFile = '/test/module/root/src/file1.ets';
-        const job = createMockDeclgenV1JobInfo({fileList: [sourceFile]});
-        const currentTime = Date.now();
+    test('first generation scenario: needsRegeneration returns true, needsBackupForFile returns false',
+         async () => {
+             const sourceFile = '/test/module/root/src/file1.ets';
+             const currentTime = Date.now();
+             testMode.setFileToModule(sourceFile, createMockModuleInfo({
+                                          packageName: 'test-package',
+                                          moduleRootPath: '/test/module/root',
+                                          declgenV1OutPath: '/test/declgen/v1',
+                                          declgenBridgeCodePath: '/test/bridge/code'
+                                      }));
 
-        testMode.getDeclFileMap().clear();
+             testMode.getDeclFileMap().clear();
 
-        (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime});
+             (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: currentTime});
 
-        const needsGen = testMode.testNeedsRegeneration(job);
-        expect(needsGen).toBe(true);
+             const needsGen = testMode.testNeedsRegeneration(sourceFile);
+             expect(needsGen).toBe(true);
 
-        const backupResult = await testMode.testNeedsBackup(job);
-        expect(backupResult.needsDeclBackup).toBe(false);
-        expect(backupResult.needsGlueCodeBackup).toBe(false);
-    });
+             const backupResult = await testMode.testNeedsBackup(sourceFile);
+             expect(backupResult.needsDeclBackup).toBe(false);
+             expect(backupResult.needsGlueCodeBackup).toBe(false);
+         });
 
     test('regeneration scenario with external modification', async () => {
         const sourceFile = '/test/module/root/src/file1.ets';
-        const job = createMockDeclgenV1JobInfo({fileList: [sourceFile]});
         const currentTime = Date.now();
+
+        testMode.setFileToModule(sourceFile, createMockModuleInfo({
+                                     packageName: 'test-package',
+                                     moduleRootPath: '/test/module/root',
+                                     declgenV1OutPath: '/test/declgen/v1',
+                                     declgenBridgeCodePath: '/test/bridge/code'
+                                 }));
 
         testMode.getDeclFileMap().set(sourceFile, {
             delFilePath: '/test/declgen/v1/test-package/src/file1.d.ets',
@@ -540,17 +677,378 @@ describe('BaseMode declaration file map management tests', () => {
 
         (fs.promises.stat as jest.Mock).mockResolvedValue(mockStat);
 
-        const needsGen = testMode.testNeedsRegeneration(job);
+        const needsGen = testMode.testNeedsRegeneration(sourceFile);
         expect(needsGen).toBe(true);
 
-        const backupResult = await testMode.testNeedsBackup(job);
+        const backupResult = await testMode.testNeedsBackup(sourceFile);
         expect(backupResult.needsDeclBackup).toBe(true);
         expect(backupResult.needsGlueCodeBackup).toBe(true);
 
         (fs.existsSync as jest.Mock).mockReturnValue(true);
-        await testMode.testBackupFiles(job, true, true);
+        await testMode.testBackupFiles(sourceFile, true, true);
 
         expect(fs.existsSync).toHaveBeenCalled();
         expect(fs.promises.copyFile).toHaveBeenCalled();
     });
+    test('should handle partial regeneration in dependency chain without graph corruption', async () => {
+        const basePath = '/test/module/root/src';
+        const moduleRoot = '/test/module/root';
+        const moduleName = 'test-package';
+
+        const fileA = `${basePath}/A.ets`;
+        const fileB = `${basePath}/B.ets`;
+        const fileC = `${basePath}/C.ets`;
+
+        const mockFileToModule = new Map();
+        const mockModuleInfo = createMockModuleInfo({
+            packageName: moduleName,
+            moduleRootPath: moduleRoot,
+            declgenV1OutPath: '/output',
+            declgenBridgeCodePath: '/bridge'
+        });
+
+        mockFileToModule.set(fileA, mockModuleInfo);
+        mockFileToModule.set(fileB, mockModuleInfo);
+        mockFileToModule.set(fileC, mockModuleInfo);
+
+        (testMode as any).fileToModule = mockFileToModule;
+        (testMode as any).entryFiles = [fileA, fileB, fileC];
+        (testMode as any).moduleInfos = new Map();
+
+        const {TaskManager} = require('../../../src/util/TaskManager');
+        const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
+
+        (TaskManager as jest.Mock).mockClear();
+
+        let taskManagerInstance: any;
+        let capturedBuildGraph: any;
+        (TaskManager as jest.Mock).mockImplementation(function() {
+            const instance = {
+                startWorkers: jest.fn(),
+                _buildGraph: undefined as any,
+                initTaskQueue: jest.fn(),
+                finish: jest.fn().mockResolvedValue(true),
+                shutdownWorkers: jest.fn()
+            };
+
+            Object.defineProperty(instance, 'buildGraph', {
+                get: function() {
+                    return this._buildGraph;
+                },
+                set: function(value: any) {
+                    capturedBuildGraph = value;
+                    this._buildGraph = value;
+                },
+                enumerable: true,
+                configurable: true
+            });
+
+            taskManagerInstance = instance;
+            return taskManagerInstance;
+        });
+
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn().mockReturnValue({
+                nodes: [
+                    {
+                        id: 'nodeA',
+                        data: {
+                            fileList: [fileA],
+                            fileInfo: {
+                                input: fileA,
+                                output: '',
+                                arktsConfig: '',
+                                moduleName: moduleName,
+                                moduleRoot: moduleRoot
+                            }
+                        },
+                        predecessors: new Set<string>(),
+                        descendants: new Set<string>(['nodeB'])
+                    },
+                    {
+                        id: 'nodeB',
+                        data: {
+                            fileList: [fileB],
+                            fileInfo: {
+                                input: fileB,
+                                output: '',
+                                arktsConfig: '',
+                                moduleName: moduleName,
+                                moduleRoot: moduleRoot
+                            }
+                        },
+                        predecessors: new Set<string>(['nodeA']),
+                        descendants: new Set<string>(['nodeC'])
+                    },
+                    {
+                        id: 'nodeC',
+                        data: {
+                            fileList: [fileC],
+                            fileInfo: {
+                                input: fileC,
+                                output: '',
+                                arktsConfig: '',
+                                moduleName: moduleName,
+                                moduleRoot: moduleRoot
+                            }
+                        },
+                        predecessors: new Set<string>(['nodeB']),
+                        descendants: new Set<string>()
+                    }
+                ],
+                hasNodes: () => true
+            })
+        };
+
+        (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
+
+        const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
+        (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: any) => {
+            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: node.data.fileList});
+            return node.data.fileList.includes(fileB);
+        });
+
+        const backupFilesCalls: string[] = [];
+        (testMode as any).needsBackup = jest.fn().mockImplementation((file: string) => {
+            backupFilesCalls.push(file);
+            const needsDeclBackup = file === fileB;
+            return Promise.resolve({needsDeclBackup, needsGlueCodeBackup: false});
+        });
+
+        const updateCalls: string[] = [];
+        (testMode as any).updateDeclFileMapAsync = jest.fn().mockImplementation((file: string) => {
+            updateCalls.push(file);
+            return Promise.resolve();
+        });
+
+        (testMode as any).backupFiles = jest.fn();
+        (testMode as any).loadDeclFileMap = jest.fn();
+        (testMode as any).saveDeclFileMap = jest.fn();
+
+        (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: 1000});
+        (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+        testMode.declFileMap = new Map<string, any>([
+            [
+                fileA, {
+                    delFilePath: '/output/test-package/src/A.d.ets',
+                    declLastModified: 1000,
+                    glueCodeFilePath: '/bridge/test-package/src/A.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileA,
+                    sourceFileLastModified: 1000
+                }
+            ],
+            [
+                fileB, {
+                    delFilePath: '/output/test-package/src/B.d.ets',
+                    declLastModified: 1000,
+                    glueCodeFilePath: '/bridge/test-package/src/B.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileB,
+                    sourceFileLastModified: 1000
+                }
+            ],
+            [
+                fileC, {
+                    delFilePath: '/output/test-package/src/C.d.ets',
+                    declLastModified: 1000,
+                    glueCodeFilePath: '/bridge/test-package/src/C.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileC,
+                    sourceFileLastModified: 1000
+                }
+            ]
+        ]);
+
+        await (testMode as any).generateDeclarationV1Parallel();
+
+        expect(TaskManager).toHaveBeenCalled();
+        expect(taskManagerInstance.startWorkers).toHaveBeenCalled();
+        expect(taskManagerInstance.initTaskQueue).toHaveBeenCalled();
+        expect(taskManagerInstance.finish).toHaveBeenCalled();
+
+        expect(capturedBuildGraph).toBeDefined();
+
+        expect(nodeNeedsRegenerationCalls.length).toBe(3);
+
+        expect(backupFilesCalls).toEqual([fileB]);
+        expect(backupFilesCalls.length).toBe(1);
+
+        expect((testMode as any).backupFiles).toHaveBeenCalledTimes(1);
+        expect((testMode as any).backupFiles).toHaveBeenCalledWith(fileB, true, false);
+
+        expect(updateCalls).toEqual([fileB]);
+        expect(updateCalls.length).toBe(1);
+
+        expect((testMode as any).loadDeclFileMap).toHaveBeenCalled();
+        expect((testMode as any).saveDeclFileMap).toHaveBeenCalled();
+    });
+
+    test('should handle partial regeneration in circular dependency C->B->A->C', async () => {
+        const basePath = '/test/module/root/src';
+        const moduleRoot = '/test/module/root';
+        const moduleName = 'test-package';
+
+        const fileA = `${basePath}/A.ets`;
+        const fileB = `${basePath}/B.ets`;
+        const fileC = `${basePath}/C.ets`;
+
+        const mockFileToModule = new Map();
+        const mockModuleInfo = createMockModuleInfo({
+            packageName: moduleName,
+            moduleRootPath: moduleRoot,
+            declgenV1OutPath: '/output',
+            declgenBridgeCodePath: '/bridge'
+        });
+
+        mockFileToModule.set(fileA, mockModuleInfo);
+        mockFileToModule.set(fileB, mockModuleInfo);
+        mockFileToModule.set(fileC, mockModuleInfo);
+
+        (testMode as any).fileToModule = mockFileToModule;
+        (testMode as any).entryFiles = [fileA, fileB, fileC];
+        (testMode as any).moduleInfos = new Map();
+
+        const {TaskManager} = require('../../../src/util/TaskManager');
+        const {DependencyAnalyzer} = require('../../../src/dependency_analyzer');
+
+        (TaskManager as jest.Mock).mockClear();
+
+        let taskManagerInstance: any;
+        (TaskManager as jest.Mock).mockImplementation(function() {
+            taskManagerInstance = {
+                startWorkers: jest.fn(),
+                buildGraph: undefined,
+                initTaskQueue: jest.fn(),
+                markTasksAsSkipped: jest.fn(),
+                finish: jest.fn().mockResolvedValue(true),
+                shutdownWorkers: jest.fn()
+            };
+            return taskManagerInstance;
+        });
+
+        const mockDepAnalyzerInstance = {
+            getGraph: jest.fn().mockReturnValue({
+                nodes: [{
+                    id: 'cluster_ABC',
+                    data: {
+                        fileList: [fileC, fileB, fileA],
+                        fileInfo:
+                            {input: fileC, output: '', arktsConfig: '', moduleName: moduleName, moduleRoot: moduleRoot}
+                    },
+                    predecessors: new Set<string>(),
+                    descendants: new Set<string>()
+                }],
+                hasNodes: () => true
+            })
+        };
+
+        (DependencyAnalyzer as jest.Mock).mockImplementation(() => mockDepAnalyzerInstance);
+
+        const nodeNeedsRegenerationCalls: Array<{nodeId: string, files: string[]}> = [];
+        (testMode as any).nodeNeedsRegeneration = jest.fn().mockImplementation((node: any) => {
+            nodeNeedsRegenerationCalls.push({nodeId: node.id, files: node.data.fileList});
+            return node.data.fileList.includes(fileB);
+        });
+
+        const needsBackupCalls: string[] = [];
+        (testMode as any).needsBackup = jest.fn().mockImplementation((file: string) => {
+            needsBackupCalls.push(file);
+            let needsDeclBackup = false;
+            let needsGlueCodeBackup = false;
+
+            if (file === fileA) {
+                needsDeclBackup = true;
+            } else if (file === fileB) {
+                needsDeclBackup = true;
+            } else if (file === fileC) {
+                needsGlueCodeBackup = true;
+            }
+
+            return Promise.resolve({needsDeclBackup, needsGlueCodeBackup});
+        });
+
+        const backupFilesCalls: string[] = [];
+        (testMode as any).backupFiles =
+            jest.fn().mockImplementation((file: string, needsDecl: boolean, needsGlue: boolean) => {
+                backupFilesCalls.push(file);
+                return Promise.resolve();
+            });
+
+        const updateCalls: string[] = [];
+        (testMode as any).updateDeclFileMapAsync = jest.fn().mockImplementation((file: string) => {
+            updateCalls.push(file);
+            return Promise.resolve();
+        });
+
+        (testMode as any).loadDeclFileMap = jest.fn();
+        (testMode as any).saveDeclFileMap = jest.fn();
+
+        (fs.statSync as jest.Mock).mockReturnValue({mtimeMs: 1000});
+        (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+        testMode.declFileMap = new Map<string, any>([
+            [
+                fileA, {
+                    delFilePath: '/output/test-package/src/A.d.ets',
+                    declLastModified: 1000,
+                    glueCodeFilePath: '/bridge/test-package/src/A.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileA,
+                    sourceFileLastModified: 1000
+                }
+            ],
+            [
+                fileB, {
+                    delFilePath: '/output/test-package/src/B.d.ets',
+                    declLastModified: 900,
+                    glueCodeFilePath: '/bridge/test-package/src/B.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileB,
+                    sourceFileLastModified: 1000
+                }
+            ],
+            [
+                fileC, {
+                    delFilePath: '/output/test-package/src/C.d.ets',
+                    declLastModified: 1000,
+                    glueCodeFilePath: '/bridge/test-package/src/C.ts',
+                    glueCodeLastModified: 1000,
+                    sourceFilePath: fileC,
+                    sourceFileLastModified: 1000
+                }
+            ]
+        ]);
+
+        await (testMode as any).generateDeclarationV1Parallel();
+
+        expect(TaskManager).toHaveBeenCalled();
+        expect(taskManagerInstance.startWorkers).toHaveBeenCalled();
+        expect(taskManagerInstance.initTaskQueue).toHaveBeenCalled();
+        expect(taskManagerInstance.finish).toHaveBeenCalled();
+
+        expect(taskManagerInstance.buildGraph).toBeDefined();
+
+        expect(nodeNeedsRegenerationCalls.length).toBe(1);
+        expect(nodeNeedsRegenerationCalls[0].nodeId).toBe('cluster_ABC');
+
+        expect(needsBackupCalls).toEqual([fileC, fileB, fileA]);
+        expect(needsBackupCalls.length).toBe(3);
+
+        expect(backupFilesCalls).toEqual([fileC, fileB, fileA]);
+        expect(backupFilesCalls.length).toBe(3);
+
+        expect((testMode as any).backupFiles).toHaveBeenCalledTimes(3);
+        expect((testMode as any).backupFiles).toHaveBeenCalledWith(fileC, false, true);
+        expect((testMode as any).backupFiles).toHaveBeenCalledWith(fileB, true, false);
+        expect((testMode as any).backupFiles).toHaveBeenCalledWith(fileA, true, false);
+
+        expect(updateCalls).toEqual([fileC, fileB, fileA]);
+        expect(updateCalls.length).toBe(3);
+
+        expect((testMode as any).loadDeclFileMap).toHaveBeenCalled();
+        expect((testMode as any).saveDeclFileMap).toHaveBeenCalled();
+    });
 });
+
