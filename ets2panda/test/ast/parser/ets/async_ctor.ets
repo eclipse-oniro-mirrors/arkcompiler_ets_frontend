@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,4 +18,4 @@ class Test {
 }
 
 
-/* @@@ label Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and 'native' modifiers. */
+/* @@@ label Error Syntax error ESY0201: The modifier for a constructor should be limited to access modifiers (private, protected, public), and 'native' modifiers. */

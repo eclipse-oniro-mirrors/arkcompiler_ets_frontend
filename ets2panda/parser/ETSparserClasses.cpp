@@ -173,7 +173,7 @@ ir::TypeNode *ETSParser::ParseInterfaceExtendsElement()
 static bool IsClassMemberAccessModifier(lexer::TokenType type)
 {
     return type == lexer::TokenType::KEYW_PUBLIC || type == lexer::TokenType::KEYW_PRIVATE ||
-           type == lexer::TokenType::KEYW_PROTECTED || type == lexer::TokenType::KEYW_INTERNAL;
+           type == lexer::TokenType::KEYW_PROTECTED;
 }
 
 void ETSParser::ReportAccessModifierError(const lexer::Token &token)
@@ -211,15 +211,6 @@ std::tuple<ir::ModifierFlags, bool, bool> ETSParser::ParseClassMemberAccessModif
         }
         case lexer::TokenType::KEYW_PROTECTED: {
             accessFlag = ir::ModifierFlags::PROTECTED;
-            break;
-        }
-        case lexer::TokenType::KEYW_INTERNAL: {
-            Lexer()->NextToken(lexer::NextTokenFlags::KEYWORD_TO_IDENT);
-            if (Lexer()->GetToken().KeywordType() != lexer::TokenType::KEYW_PROTECTED) {
-                ReportAccessModifierError(token);
-                return {ir::ModifierFlags::INTERNAL, true, false};
-            }
-            accessFlag = ir::ModifierFlags::INTERNAL_PROTECTED;
             break;
         }
         case lexer::TokenType::EOS: {  // process invalid tokenType

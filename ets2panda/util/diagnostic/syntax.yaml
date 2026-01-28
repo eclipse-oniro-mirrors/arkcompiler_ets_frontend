@@ -633,7 +633,7 @@ syntax:
 
 - name: INVALID_DECORATOR_CONSTRUCTOR
   id: 201
-  message: "The modifier for a constructor should be limited to access modifiers (private, internal, protected, public), and
+  message: "The modifier for a constructor should be limited to access modifiers (private, protected, public), and
     'native' modifiers."
 
 - name: INVALID_DESTRUCTURING_INIT_SIZE

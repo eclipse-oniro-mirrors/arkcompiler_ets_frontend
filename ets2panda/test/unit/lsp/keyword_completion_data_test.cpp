@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -124,9 +124,8 @@ TEST_F(LspKeywordCompletionTests, GetKeywordCompletionsStartWithI)
     std::string input = "i";
     ark::es2panda::lsp::Request result = ark::es2panda::lsp::KeywordCompletionData(input);
 
-    std::vector<std::string> expected = {"i8",         "i16",    "i31ref", "i32",     "i64",        "if",
-                                         "implements", "import", "in",     "infer",   "instanceof", "int",
-                                         "interface",  "is",     "isize",  "internal"};
+    std::vector<std::string> expected = {"i8", "i16",   "i31ref",     "i32", "i64",       "if", "implements", "import",
+                                         "in", "infer", "instanceof", "int", "interface", "is", "isize"};
 
     std::vector<std::string> actual;
     for (const auto &entry : result.keywordCompletions) {
@@ -140,7 +139,7 @@ TEST_F(LspKeywordCompletionTests, GetKeywordCompletionsStartWithInt)
     std::string input = "int";
     ark::es2panda::lsp::Request result = ark::es2panda::lsp::KeywordCompletionData(input);
 
-    std::vector<std::string> expected = {"int", "interface", "internal"};
+    std::vector<std::string> expected = {"int", "interface"};
 
     std::vector<std::string> actual;
     for (const auto &entry : result.keywordCompletions) {

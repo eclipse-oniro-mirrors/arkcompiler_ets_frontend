@@ -630,8 +630,7 @@ ir::AstNode *ETSParser::ParseInnerTypeDeclaration(ir::ModifierFlags memberModifi
     if (typeDecl == nullptr) {
         return nullptr;
     }
-    memberModifiers &= (ir::ModifierFlags::PUBLIC | ir::ModifierFlags::PROTECTED | ir::ModifierFlags::PRIVATE |
-                        ir::ModifierFlags::INTERNAL);
+    memberModifiers &= (ir::ModifierFlags::PUBLIC | ir::ModifierFlags::PROTECTED | ir::ModifierFlags::PRIVATE);
     typeDecl->AddModifier(memberModifiers);
 
     if (!seenStatic) {

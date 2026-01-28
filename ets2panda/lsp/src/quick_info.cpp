@@ -302,7 +302,6 @@ std::string ModifiersToString(ir::ModifierFlags flags)
     addModifier(ir::ModifierFlags::FUNCTIONAL, "functional");
     addModifier(ir::ModifierFlags::IN, "in");
     addModifier(ir::ModifierFlags::OUT, "out");
-    addModifier(ir::ModifierFlags::INTERNAL, "internal");
     addModifier(ir::ModifierFlags::EXPORT, "export");
     addModifier(ir::ModifierFlags::GETTER, "getter");
     addModifier(ir::ModifierFlags::SETTER, "setter");

@@ -307,7 +307,6 @@ static SignatureFlags ConvertToSignatureFlags(ir::ModifierFlags inModifiers, ir:
     convertModifier(ir::ModifierFlags::STATIC, SignatureFlags::STATIC);
     convertModifier(ir::ModifierFlags::PUBLIC, SignatureFlags::PUBLIC);
     convertModifier(ir::ModifierFlags::PRIVATE, SignatureFlags::PRIVATE);
-    convertModifier(ir::ModifierFlags::INTERNAL, SignatureFlags::INTERNAL);
     convertModifier(ir::ModifierFlags::DEFAULT, SignatureFlags::DEFAULT);
 
     return outFlags;

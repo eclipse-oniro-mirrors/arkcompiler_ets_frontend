@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@ final class TypeCreateCtx {
 }
 
 
+/* @@? 17:13 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:66 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
 /* @@? 17:88 Error Syntax error ESY0228: Unexpected token, expected '>'. */
 /* @@? 17:88 Error Syntax error ESY0227: Unexpected token '>'. */

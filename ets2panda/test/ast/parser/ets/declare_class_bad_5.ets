@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,14 +51,17 @@ declare class E {
 }
 
 /* @@? 17:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 18:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 18:11 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 19:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 20:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 20:3 Error Semantic error ESE0351: Variable 'internal' has already been declared. */
+/* @@? 20:11 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 21:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 22:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 22:3 Error Semantic error ESE0351: Variable 'internal' has already been declared. */
+/* @@? 22:11 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 23:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 24:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 24:3 Error Semantic error ESE0351: Variable 'internal' has already been declared. */
+/* @@? 24:11 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 38:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 42:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 42:11 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 46:3 Error Syntax error ESY0238: Methods or fields should not be decorated with private in ambient class. */
-/* @@? 50:3 Error Syntax error ESY0238: Methods or fields should not be decorated with internal in ambient class. */
+/* @@? 50:11 Error Syntax error ESY0121: Field type annotation expected. */
