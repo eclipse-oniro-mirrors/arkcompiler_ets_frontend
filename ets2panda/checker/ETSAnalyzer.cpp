@@ -2404,7 +2404,22 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     } else if (IsNumericType(GetETSChecker(), consequentType) && IsNumericType(GetETSChecker(), alternateType)) {
         expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentType, alternateType));
     } else {
-        expr->SetTsType(checker->CreateETSUnionType({consequentType, alternateType}));
+        Type *consequentTypeUnderly =
+            consequentType->IsETSNumericEnumType() ? consequentType->AsETSEnumType()->Underlying() : consequentType;
+        Type *alternateTypeUnderly =
+            alternateType->IsETSNumericEnumType() ? alternateType->AsETSEnumType()->Underlying() : alternateType;
+        if (IsNumericType(GetETSChecker(), consequentTypeUnderly) &&
+            IsNumericType(GetETSChecker(), alternateTypeUnderly)) {
+            if (consequentType->IsETSNumericEnumType()) {
+                expr->Consequent()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+            }
+            if (alternateType->IsETSNumericEnumType()) {
+                expr->Alternate()->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
+            }
+            expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentTypeUnderly, alternateTypeUnderly));
+        } else {
+            expr->SetTsType(checker->CreateETSUnionType({consequentType, alternateType}));
+        }
     }
 
     // Restore smart casts to initial state.
