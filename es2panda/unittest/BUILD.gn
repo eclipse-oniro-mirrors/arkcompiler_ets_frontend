@@ -25,12 +25,11 @@ config("unittest_config") {
   cflags = [ "-fexceptions" ]
 }
 
-ohos_unittest("lexer_test") {  
+template("es2panda_unittest") {
+  ohos_unittest(target_name) {  
   use_exceptions = true
   testonly = true
-  sources = [
-    "lexer/lexer_test.cpp",
-  ]
+  sources = invoker.sources
 
   configs = [
     "../:es2abc_config_common",
@@ -72,51 +71,20 @@ ohos_unittest("lexer_test") {
 
   module_out_path = "arkcompiler/ets_frontend"
 }
+}
 
-ohos_unittest("parser_test") {
-  use_exceptions = true
-  testonly = true
-  sources = [
-    "parser/parser_test.cpp",
-  ]
+es2panda_unittest("lexer_test") {
+  sources = [ "lexer/lexer_test.cpp" ]
+}
 
-  configs = [
-    "../:es2abc_config_common",
-    "../../merge_abc:panda_assembly_proto_public_config",
-  ]
+es2panda_unittest("keywordsUtil_test") {
+  sources = [ "lexer/keywordsUtil_test.cpp" ]
+}
 
-  include_dirs = [
-    "../",
-    "${target_out_dir}",
-  ]
+es2panda_unittest("token_test") {
+  sources = [ "lexer/token_test.cpp" ]
+}
 
-  deps = [
-    "../:es2panda_lib",
-    "../../merge_abc:panda_assembly_proto_static",
-  ]
-
-  external_deps = [
-    "googletest:gtest_main",
-  ]
-
-  external_deps += [ sdk_libc_secshared_dep ]
-
-  external_deps += [
-    "icu:static_icuuc",
-    "runtime_core:arkabc2program_public_headers",
-    "runtime_core:arkassembler_public_headers",
-    "runtime_core:arkbase_public_headers",
-    "runtime_core:arkfile_public_headers",
-  ]
-
-  external_deps += [
-      "json:nlohmann_json_static",
-      "runtime_core:abc2program_frontend_static",
-      "runtime_core:libarkassembler_frontend_static",
-      "runtime_core:libarkbase_frontend_static",
-      "runtime_core:libarkfile_frontend_static",
-      "runtime_core:libarkziparchive_frontend_static",
-    ]
-
-  module_out_path = "arkcompiler/ets_frontend"
+es2panda_unittest("parser_test") {
+  sources = [ "parser/parser_test.cpp" ]
 }
