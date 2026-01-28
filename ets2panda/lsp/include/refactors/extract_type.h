@@ -31,7 +31,7 @@ public:
     ExtractTypeRefactor();
     std::vector<ApplicableRefactorInfo> GetAvailableActions(const RefactorContext &context) const override;
     std::unique_ptr<RefactorEditInfo> GetEditsForAction(const RefactorContext &context,
-                                                        const std::string &actName) const override;
+                                                        const std::string &actionName) const override;
 };
 
 }  // namespace ark::es2panda::lsp

@@ -137,7 +137,7 @@ ir::AstNode *GetOriginalNode(ir::AstNode *astNode);
 checker::VerifiedType GetTypeOfSymbolAtLocation(checker::ETSChecker *checker, ir::AstNode *astNode);
 FileDiagnostic CreateDiagnosticForNode(es2panda_AstNode *node, Diagnostic diagnostic, es2panda_Context *context,
                                        const std::vector<std::string> &args = std::vector<std::string>());
-std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *node);
+std::string GetCurrentTokenValueImpl(es2panda_Context *context, size_t position, ir::AstNode *preceding);
 void GetRangeOfEnclosingComment(es2panda_Context *context, size_t pos, CommentRange *result);
 Diagnostic CreateDiagnosticForError(es2panda_Context *context, const util::DiagnosticBase &error);
 Diagnostic CreateDiagnosticWithoutFile(const util::DiagnosticBase &error);

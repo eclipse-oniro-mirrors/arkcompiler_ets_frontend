@@ -99,13 +99,14 @@ TEST_F(LCOTests, LCOPositionIsCorrectForSpecialCharacters)
     LSPAPI const *lspApi = GetImpl();
     Initializer initializer = Initializer();
 
-    constexpr size_t position = 74;
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t POSITION = 74;
     auto context = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
-    auto lineAndChar = lspApi->toLineColumnOffset(context, position);
+    auto lineAndChar = lspApi->toLineColumnOffset(context, POSITION);
 
     auto expectedLine = 4;
     ASSERT_EQ(lineAndChar.GetLine(), expectedLine);
-    ASSERT_EQ(lineAndChar.GetCharacter(), position);
+    ASSERT_EQ(lineAndChar.GetCharacter(), POSITION);
 
     initializer.DestroyContext(context);
 }

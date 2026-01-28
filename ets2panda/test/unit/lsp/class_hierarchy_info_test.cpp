@@ -389,6 +389,7 @@ private privateMethod(): void {
   }
 })";
 
+    // NOLINTNEXTLINE(readability-magic-numbers)
     auto pos = 327;
     ASSERT_NE(pos, std::string::npos);
     Initializer initializer = Initializer();

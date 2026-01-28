@@ -38,7 +38,7 @@ SignatureHelpItems CreateSignatureHelpItems(std::vector<checker::Signature *> &s
         }
         itemsSeen++;
     }
-    if (signatures.size() == 0 || selectedItemIndex == static_cast<size_t>(-1)) {
+    if (signatures.empty() || selectedItemIndex == static_cast<size_t>(-1)) {
         return items;
     }
 

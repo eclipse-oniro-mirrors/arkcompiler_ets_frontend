@@ -459,7 +459,7 @@ bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonOb
     }
     cacheDir_ = ValueOrEmptyString(compilerOptions, CACHE_DIR);
     CreateDirectoriesWithParents(cacheDir_);
-    declgenV2OutPath_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, declgenV2OutPath), arktsConfigDir);
+    declgenV2OutPath_ = MakeAbsolute(ValueOrEmptyString(compilerOptions, DECLGEN_V2_OUT_PATH), arktsConfigDir);
 
     // Parse "useUrl"
     if (compilerOptions->get()->HasKey(USE_EMPTY_PACKAGE)) {
@@ -563,7 +563,7 @@ static std::string TrimPath(const std::string &path)
     return trimmedPath;
 }
 
-static bool CheckFilePath(std::string path)
+static bool CheckFilePath(const std::string &path)
 {
     for (const auto &extension : util::ImportPathManager::supportedExtensions) {
         if (ark::os::file::File::IsRegularFile(path + std::string(extension))) {
@@ -573,12 +573,12 @@ static bool CheckFilePath(std::string path)
     return false;
 }
 
-std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path, std::string alias,
-                                                          std::vector<std::string> filePaths) const
+std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path, const std::string &alias,
+                                                          const std::vector<std::string> &filePaths) const
 {
-    for (auto it = filePaths.begin(); it != filePaths.end(); ++it) {
+    for (const auto &filePath : filePaths) {
         auto resolved = std::string(path);
-        std::string newPrefix = TrimPath(*it);
+        std::string newPrefix = TrimPath(filePath);
         resolved.replace(0, alias.length(), newPrefix);
 
         if (ark::os::file::File::IsDirectory(resolved) || ark::os::file::File::IsRegularFile(resolved)) {

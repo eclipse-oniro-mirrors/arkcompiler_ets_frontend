@@ -97,7 +97,7 @@ protected:
     {
         auto otherImpl = other->AsETSDestructuring();
         otherImpl->elements_ = elements_;
-        Expression::CopyTo(other);
+        AnnotatedExpression::CopyTo(other);
     }
 
 private:

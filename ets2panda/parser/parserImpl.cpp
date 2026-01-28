@@ -942,10 +942,9 @@ ArenaVector<ir::Expression *> ParserImpl::ParseFunctionParams()
     if (lexer_->GetToken().Type() == lexer::TokenType::PUNCTUATOR_FORMAT &&
         lexer_->Lookahead() == static_cast<char32_t>(ARRAY_FORMAT_NODE)) {
         return ParseExpressionsArrayFormatPlaceholder();
-    } else {
-        ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
-                  ParseListOptions::ALLOW_TRAILING_SEP);
     }
+    ParseList(lexer::TokenType::PUNCTUATOR_RIGHT_PARENTHESIS, lexer::NextTokenFlags::NONE, parseFunc, nullptr,
+              ParseListOptions::ALLOW_TRAILING_SEP);
 
     return ArenaVector<ir::Expression *>(params.begin(), params.end(), Allocator()->Adapter());
 }

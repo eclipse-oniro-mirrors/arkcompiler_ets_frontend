@@ -75,8 +75,9 @@ TEST_F(LSPAPITests, GetCurrentTokenValue4)
     Initializer initializer = Initializer();
     es2panda_Context *ctx = initializer.CreateContext("current_token.ets", ES2PANDA_STATE_CHECKED, "//中文测试\nab");
     LSPAPI const *lspApi = GetImpl();
-    constexpr size_t offset = 9;
-    std::string result = lspApi->getCurrentTokenValue(ctx, offset);
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t OFFSET = 9;
+    std::string result = lspApi->getCurrentTokenValue(ctx, OFFSET);
     initializer.DestroyContext(ctx);
     ASSERT_EQ(result, "ab");
 }
@@ -156,8 +157,9 @@ TEST_F(LSPAPITests, GetTokenPosOfNode4)
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
     LSPAPI const *lspApi = GetImpl();
-    constexpr size_t offset = 40;
-    std::string result = lspApi->getCurrentTokenValue(ctx, offset);
+    // CC-OFFNXT(G.NAM.03-CPP) project code style
+    constexpr size_t OFFSET = 40;
+    std::string result = lspApi->getCurrentTokenValue(ctx, OFFSET);
     ASSERT_EQ(result, "1234");
     initializer.DestroyContext(ctx);
 }

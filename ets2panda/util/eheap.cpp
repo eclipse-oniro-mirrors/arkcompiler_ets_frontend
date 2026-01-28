@@ -192,7 +192,7 @@ size_t EHeap::FreedSize()
 }
 
 // #32069 - there should be a single scope created within the single es2panda context
-static long g_eheapScopeCount = 0;
+static int64_t g_eheapScopeCount = 0;
 
 EHeap::Scope::Scope()
 {

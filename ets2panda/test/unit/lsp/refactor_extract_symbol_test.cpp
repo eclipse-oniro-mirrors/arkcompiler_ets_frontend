@@ -150,7 +150,7 @@ const a = 1;
     // Step 2: run GetEditsForRefactorsImpl
     auto edits =
         ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
-    int renameLocation = 45;
+    const int renameLocation = 45;
     EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
     initializer->DestroyContext(refactorContext->context);
 }
@@ -173,7 +173,7 @@ const a = 1;
     // Step 2: run GetEditsForRefactorsImpl
     auto edits =
         ark::es2panda::lsp::GetEditsForRefactorsImpl(*refactorContext, std::string(refactorName), std::string(target));
-    int renameLocation = 33;
+    const int renameLocation = 33;
     EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
     initializer->DestroyContext(refactorContext->context);
 }
@@ -440,7 +440,7 @@ const a: int = 1 + 1;
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "const newLocal = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 14;
+    const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -479,7 +479,7 @@ class test {
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "private readonly newProperty = 1 + 1;\n";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 27;
+    const int insertPos = 27;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -518,7 +518,7 @@ class test {
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "const newLocal = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 14;
+    const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -558,7 +558,7 @@ class test {
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "const newLocal = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 14;
+    const int insertPos = 14;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -598,7 +598,7 @@ class test {
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "private readonly newProperty = 1 + 1;\n";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 50;
+    const int insertPos = 50;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -637,7 +637,7 @@ const f = () => {
     std::string_view newText = fileEdit.textChanges.at(0).newText;
     std::string_view expect = "const newLocal = 1 + 1;";
     auto startPos1 = fileEdit.textChanges.at(0).span.start;
-    int insertPos = 32;
+    const int insertPos = 32;
     EXPECT_EQ(startPos1, insertPos);
     EXPECT_EQ(newText, expect);
 
@@ -986,7 +986,7 @@ class MyClass {
 
     auto edits = lspApi->getEditsForRefactor(*refactorContext, refactorName, globalScopeAction);
 
-    int renameLocation = 235;
+    const int renameLocation = 235;
 
     EXPECT_EQ(edits->GetRenameLocation(), renameLocation);
 
@@ -1083,12 +1083,12 @@ class AccountingDepartment {
     ASSERT_EQ(edits->GetFileTextChanges().size(), 1U);
     const auto &fileEdit = edits->GetFileTextChanges().at(0);
     ASSERT_FALSE(fileEdit.textChanges.empty());
-    ASSERT_EQ(fileEdit.textChanges.size(), 2u);
-    EXPECT_EQ(fileEdit.textChanges[0].span.start, 139u);
-    EXPECT_EQ(fileEdit.textChanges[0].span.length, 0u);
+    ASSERT_EQ(fileEdit.textChanges.size(), 2U);
+    EXPECT_EQ(fileEdit.textChanges[0].span.start, 139U);
+    EXPECT_EQ(fileEdit.textChanges[0].span.length, 0U);
     EXPECT_EQ(fileEdit.textChanges[0].newText, "let newLocal = '中文测试';");
-    EXPECT_EQ(fileEdit.textChanges[1].span.start, 183u);
-    EXPECT_EQ(fileEdit.textChanges[1].span.length, 14u);
+    EXPECT_EQ(fileEdit.textChanges[1].span.start, 183U);
+    EXPECT_EQ(fileEdit.textChanges[1].span.length, 14U);
     EXPECT_EQ(fileEdit.textChanges[1].newText, "newLocal");
 
     initializer->DestroyContext(refactorContext->context);

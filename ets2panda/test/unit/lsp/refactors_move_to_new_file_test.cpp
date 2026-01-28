@@ -103,7 +103,8 @@ std::string LSPMoveToNewFileTests::ReadFile(const std::string &fullPath)
     return buffer.str();
 }
 
-const std::string TEMP_DIR = "/tmp/lsp_api_test_refactors_move_to_new_file/";
+// NOLINTNEXTLINE (fuchsia-statically-constructed-objects)
+static const std::string TEMP_DIR = "/tmp/lsp_api_test_refactors_move_to_new_file/";
 
 TEST_F(LSPMoveToNewFileTests, ExportCase1)
 {

@@ -37,13 +37,15 @@ namespace ark::es2panda {
 class EAllocator;
 using SArenaAllocator = ark::ArenaAllocator;
 
-// NOLINTBEGIN
 class ScopedAllocatorsManager {
 public:
     static void Initialize();
     static void Finalize();
     // legacy API
     static bool IsInitialized();
+
+    NO_COPY_SEMANTIC(ScopedAllocatorsManager);
+    NO_MOVE_SEMANTIC(ScopedAllocatorsManager);
 
     static SArenaAllocator CreateAllocator()
     {
@@ -55,7 +57,6 @@ public:
         return std::make_unique<SArenaAllocator>(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
     }
 
-private:
     ScopedAllocatorsManager() = delete;
     ~ScopedAllocatorsManager() = delete;
 };
@@ -66,6 +67,9 @@ class EHeap {
 public:
     static inline EAllocator CreateAllocator();
     static inline std::unique_ptr<EAllocator> NewAllocator();
+
+    NO_COPY_SEMANTIC(EHeap);
+    NO_MOVE_SEMANTIC(EHeap);
 
     [[nodiscard]] __attribute__((returns_nonnull)) static void *Alloc(size_t sz)
     {
@@ -96,6 +100,7 @@ public:
     template <typename T>
     using EPtr = T *;
 #else
+    // NOLINTBEGIN
     template <typename T>
     class EPtr {
     public:
@@ -151,12 +156,13 @@ public:
 
         uint32_t raw_;
     };
+    // NOLINTEND
 #endif  // NDEBUG
 
-private:
     EHeap() = delete;
     ~EHeap() = delete;
 
+private:
     static void InitializeEHeapSpace();
     static void FinalizeEHeapSpace();
 
@@ -172,6 +178,9 @@ private:
     public:
         explicit EHeapSpace(size_t size);
         ~EHeapSpace();
+
+        NO_COPY_SEMANTIC(EHeapSpace);
+        NO_MOVE_SEMANTIC(EHeapSpace);
 
         [[nodiscard]] __attribute__((returns_nonnull)) void *Alloc(size_t sz);
 
@@ -223,7 +232,6 @@ private:
 
     static EHeapSpace *gEHeapSpace_;
 };
-// NOLINTEND
 
 template <typename T>
 using EPtr = EHeap::EPtr<T>;

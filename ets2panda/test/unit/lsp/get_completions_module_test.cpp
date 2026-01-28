@@ -19,10 +19,8 @@
 
 class LSPCompletionsModuleTests : public LSPAPITests {};
 
-using ark::es2panda::lsp::CompletionEntry;
 using ark::es2panda::lsp::CompletionEntryKind;
 using ark::es2panda::lsp::Initializer;
-using ark::es2panda::lsp::sort_text::MEMBER_DECLARED_BY_SPREAD_ASSIGNMENT;
 
 namespace {
 
@@ -40,7 +38,7 @@ let a = MyModule.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 83;
+    const size_t offset = 83;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
@@ -70,7 +68,7 @@ let a = MyModule.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 86;
+    const size_t offset = 86;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
@@ -100,7 +98,7 @@ let a = MyModule.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 76;
+    const size_t offset = 76;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
@@ -130,7 +128,7 @@ let a = MyModule.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 81;
+    const size_t offset = 81;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 
@@ -160,7 +158,7 @@ let a = MyModule.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 85;
+    const size_t offset = 85;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 

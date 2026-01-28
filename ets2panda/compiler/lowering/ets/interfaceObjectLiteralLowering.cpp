@@ -707,7 +707,7 @@ static void CheckInterface(checker::TypeRelation *relation, ir::TSInterfaceDecla
         auto *const signature = const_cast<checker::Signature *>(function->Signature());
         auto const hasBody = function->HasBody();
 
-        InterfaceMethods::iterator it = std::find_if(
+        auto it = std::find_if(
             methods.begin(), methods.end(), [&name, signature, relation](InterfaceMethod const &item) -> bool {
                 return std::get<0U>(item) == name && relation->SignatureIsSupertypeOf(std::get<1U>(item), signature);
             });

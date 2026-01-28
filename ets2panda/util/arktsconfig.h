@@ -231,8 +231,8 @@ private:
     bool ParseCompilerOptions(std::string &arktsConfigDir, const JsonObject *arktsConfig);
     std::optional<ArkTsConfig> ParseExtends(const std::string &configPath, const std::string &extends,
                                             const std::string &configDir);
-    std::optional<std::string> ResolveImportPath(std::string_view path, std::string alias,
-                                                 std::vector<std::string> filePaths) const;
+    std::optional<std::string> ResolveImportPath(std::string_view path, const std::string &alias,
+                                                 const std::vector<std::string> &filePaths) const;
     bool ParsePaths(const JsonObject::JsonObjPointer *options, PathsMap &pathsMap, const std::string &baseUrl);
     bool ParseDependencies(const JsonObject::JsonObjPointer *options,
                            std::map<std::string, ExternalModuleData, CompareByLength> &dependenciesMap);
@@ -254,7 +254,7 @@ private:
     static constexpr const char *ROOT_DIR = "rootDir";
     static constexpr const char *DEPENDENCIES = "dependencies";  // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
     static constexpr const char *CACHE_DIR = "cacheDir";         // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
-    static constexpr const char *declgenV2OutPath =              // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
+    static constexpr const char *DECLGEN_V2_OUT_PATH =           // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
         "declgenV2OutPath";                                      // CC-OFF(G.NAM.03,G.NAM.03-CPP) project code style
 
     void Inherit(const ArkTsConfig &base);

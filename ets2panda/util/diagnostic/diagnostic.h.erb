@@ -27,7 +27,7 @@ class DiagnosticKind {
 public:
     constexpr DiagnosticKind(util::DiagnosticType type, uint32_t id, std::string_view message, bool strict) :
 #ifdef ES2PANDA_STRICT
-        type_((type == util::DiagnosticType::WARNING && strict == true) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict) {}
+        type_((type == util::DiagnosticType::WARNING && strict) ? util::DiagnosticType::SEMANTIC : type), id_(id), message_(message), strict_(strict) {}
 #else
         type_(type), id_(id), message_(message), strict_(strict) {}
 #endif
