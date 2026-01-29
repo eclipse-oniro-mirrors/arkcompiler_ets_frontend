@@ -135,6 +135,7 @@ set(PLUGIN_TESTS
     "plugin_proceed_to_state_lower_phase compile.ets ${EXPECTED_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_recheck_optimize_test recheck_main.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
     "plugin_proceed_to_state_check_source_range_of_func_on_staticblock compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
+    "plugin_proceed_to_state_check_this_bar_line compile.ets ${COMPILE_MODE} cpp ${EXECUTABLE_PLUGIN}"
 )
 
 set(RUNTIME_ARGUMENTS
