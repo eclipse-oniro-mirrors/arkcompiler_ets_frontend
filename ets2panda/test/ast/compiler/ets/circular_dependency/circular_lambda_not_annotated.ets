@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,8 @@
  */
 
 /*---
-desc: When the lambda function which is not fully annotated, there should be no CTE as well
+desc: >-
+  When the lambda function which is not fully annotated, there should be no CTE as well
   Please refer the issue: #30772
 ---*/
 
@@ -22,4 +23,4 @@ let f = (n: number) => {
     f(5) 
 }
 
-/* @@? 21:5 Error Semantic error ESE0308: Circular dependency detected for identifier: f */
+/* @@? 22:5 Error Semantic error ESE0308: Circular dependency detected for identifier: f */

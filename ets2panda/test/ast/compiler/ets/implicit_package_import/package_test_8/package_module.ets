@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
-/* not a test */
+/*---
+    tags: [not-a-test]
+---*/
 /* file for export */
 
 export let myvar: number = 8;
