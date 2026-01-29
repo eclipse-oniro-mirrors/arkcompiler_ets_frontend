@@ -21,7 +21,7 @@ interface A {
   foo(a: string): string;
 }
 
-/* @@ label */interface B extends A {
+interface B extends A {
   value: string;
 }
 
@@ -36,8 +36,3 @@ function main() {
   let b = {name: "name", value: "value", foo(a: string): string { return a; }} as B;
   let c = {name: "name", value: "value", foo(a: string): string { return a; }} as C;
 }
-
-
-/* @@@ label Error Semantic error ESE0256: Interface has methods */
-
-
