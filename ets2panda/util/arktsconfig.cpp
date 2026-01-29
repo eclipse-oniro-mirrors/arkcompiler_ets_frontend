@@ -537,6 +537,35 @@ static std::string TrimPath(const std::string &path)
     return trimmedPath;
 }
 
+static bool CheckFilePath(std::string path)
+{
+    for (const auto &extension : util::ImportPathManager::supportedExtensions) {
+        if (ark::os::file::File::IsRegularFile(path + std::string(extension))) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path, std::string alias,
+                                                          std::vector<std::string> filePaths) const
+{
+    for (auto it = filePaths.begin(); it != filePaths.end(); ++it) {
+        auto resolved = std::string(path);
+        std::string newPrefix = TrimPath(*it);
+        resolved.replace(0, alias.length(), newPrefix);
+
+        if (ark::os::file::File::IsDirectory(resolved) || ark::os::file::File::IsRegularFile(resolved)) {
+            return resolved;
+        }
+
+        if (CheckFilePath(resolved)) {
+            return resolved;
+        }
+    }
+    return std::nullopt;
+}
+
 std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic) const
 {
     auto tryResolveWithPaths = [this, &path]() -> std::optional<std::string> {
@@ -544,11 +573,7 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
             auto trimmedAlias = TrimPath(alias);
             size_t pos = path.rfind(trimmedAlias, 0);
             if (pos == 0) {
-                auto resolved = std::string(path);
-                // NOTE(ivagin): arktsconfig contains array of paths for each prefix, for now just get first one
-                std::string newPrefix = TrimPath(paths[0]);
-                resolved.replace(pos, trimmedAlias.length(), newPrefix);
-                return resolved;
+                return ResolveImportPath(path, trimmedAlias, paths);
             }
         }
         return std::nullopt;

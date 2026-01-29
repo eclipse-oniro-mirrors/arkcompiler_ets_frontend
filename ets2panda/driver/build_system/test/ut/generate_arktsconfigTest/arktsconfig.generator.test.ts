@@ -621,7 +621,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
-            expect(result.pathSection['myModule']).toEqual(['/my/module']);
+            expect(result.pathSection['myModule']).toEqual(['/my/module/src']);
         });
 
         test('empty package name should skip path mapping', () => {
@@ -681,7 +681,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
 
             expect(result.pathSection['sys']).toBeDefined(); // system
             expect(result.pathSection['custom']).toEqual(['/custom']); // custom
-            expect(result.pathSection['myModule']).toEqual(['/module']); // module
+            expect(result.pathSection['myModule']).toEqual(['/module/src']); // module
         });
     });
 });
@@ -1376,6 +1376,393 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             expect(generator.getArktsConfigByPackageName('module0')).toBeDefined();
             expect(generator.getArktsConfigByPackageName('module50')).toBeDefined();
             expect(generator.getArktsConfigByPackageName('module99')).toBeDefined();
+        });
+    });
+
+    describe('Test arktsconfig', () => {
+        test('should add module source root mapping', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'myModule',
+                moduleRootPath: '/my/module',
+                sourceRoots: ['src', 'lib', 'test', 'official']
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            expect(result.pathSection['myModule']).toEqual(['/my/module/official',
+                '/my/module/test', '/my/module/lib', '/my/module/src']);
+        });
+
+        test('should handle empty sourceRoots gracefully', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'emptyPkg',
+                moduleRootPath: '/mod',
+                sourceRoots: []
+            });
+        
+            expect(() => generator.generateArkTSConfigFile(moduleInfo, false))
+                .toThrow();
+        });
+
+        test('should reverse sourceRoots order in path mappings', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'testPkg',
+                moduleRootPath: '/project/module',
+                sourceRoots: ['first', 'second', 'third']
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+
+            expect(result.pathSection['testPkg']).toEqual([
+                '/project/module/third',
+                '/project/module/second',
+                '/project/module/first'
+            ]);
+        });
+
+        test('should handle single source root correctly', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'singleRoot',
+                moduleRootPath: '/app',
+                sourceRoots: ['src/main']
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            expect(result.pathSection['singleRoot']).toEqual(['/app/src/main']);
+        });
+
+        test('should resolve absolute paths for source roots', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'absPkg',
+                moduleRootPath: '/base/path',
+                sourceRoots: ['rel/path1', './rel/path2', 'rel/path3']
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            expect(result.pathSection['absPkg']).toEqual([
+                '/base/path/rel/path3',
+                '/base/path/rel/path2',
+                '/base/path/rel/path1'
+            ]);
+        });
+
+        test('should handle sourceRoots with various path formats', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mixedPaths',
+                moduleRootPath: '/root',
+                sourceRoots: ['./src', 'lib/', './test/', 'utils']
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            expect(result.pathSection['mixedPaths']).toHaveLength(4);
+
+            expect(result.pathSection['mixedPaths']).toEqual([
+                '/root/utils',
+                '/root/test',
+                '/root/lib',
+                '/root/src'
+            ]);
+        });
+    });
+
+    describe('getDependencyKey with multiple sourceRoots', () => {
+        test('should generate correct dependency keys with single source root', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/utils/helper': {
+                        declPath: '/mock/helper.d.ets',
+                        filePath: '/dep/src/utils/helper.ets',
+                        ohmUrl: 'depModule/utils/helper'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // With sourceRoot 'src', the key should strip 'src/' prefix
+            expect(result.dependencies['depModule/utils/helper']).toBeDefined();
+            expect(result.dependencies['depModule/utils/helper'].ohmUrl).toBe('depModule/utils/helper');
+        });
+
+        test('should generate correct dependency keys with multiple source roots', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/main/ets/pages/Index': {
+                        declPath: '/mock/Index.d.ets',
+                        filePath: '/dep/src/main/ets/pages/Index.ets',
+                        ohmUrl: 'depModule/pages/Index'
+                    },
+                    'lib/utils/common': {
+                        declPath: '/mock/common.d.ets',
+                        filePath: '/dep/lib/utils/common.ets',
+                        ohmUrl: 'depModule/utils/common'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src/main', 'lib'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // sourceRoots are reversed, so 'lib' is checked first, then 'src/main'
+            expect(result.dependencies['depModule/ets/pages/Index']).toBeDefined();
+            expect(result.dependencies['depModule/utils/common']).toBeDefined();
+        });
+
+        test('should handle files not matching any source root', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'other/path/file': {
+                        declPath: '/mock/file.d.ets',
+                        filePath: '/dep/other/path/file.ets',
+                        ohmUrl: 'depModule/other/path/file'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src', 'lib'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // File path doesn't match any source root, should keep full path
+            expect(result.dependencies['depModule/other/path/file']).toBeDefined();
+        });
+
+        test('should strip ./ prefix from source roots when matching', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/main/component': {
+                        declPath: '/mock/component.d.ets',
+                        filePath: '/dep/src/main/component.ets',
+                        ohmUrl: 'depModule/component'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['./src/main'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // ./ should be normalized and stripped correctly
+            expect(result.dependencies['depModule/component']).toBeDefined();
+        });
+
+        test('should handle nested source roots correctly', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/main/ets/pages/Home': {
+                        declPath: '/mock/Home.d.ets',
+                        filePath: '/dep/src/main/ets/pages/Home.ets',
+                        ohmUrl: 'depModule/pages/Home'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src', 'src/main', 'src/main/ets'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // Should match the most specific (longest) root first due to reversal
+            // sourceRoots reversed: ['src/main/ets', 'src/main', 'src']
+            expect(result.dependencies['depModule/pages/Home']).toBeDefined();
+        });
+
+        test('should filter out empty and dot source roots', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/test': {
+                        declPath: '/mock/test.d.ets',
+                        filePath: '/dep/src/test.ets',
+                        ohmUrl: 'depModule/test'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src', '', '.', 'lib'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // Empty and '.' should be filtered out, only 'src' and 'lib' used
+            expect(result.dependencies['depModule/test']).toBeDefined();
+        });
+
+        test('should handle Windows-style backslashes in source roots', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify({
+                files: {
+                    'src/main/index': {
+                        declPath: '/mock/index.d.ets',
+                        filePath: '/dep/src/main/index.ets',
+                        ohmUrl: 'depModule/index'
+                    }
+                }
+            }));
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDepModule = createMockModuleInfo({
+                packageName: 'depModule',
+                moduleRootPath: '/dep',
+                sourceRoots: ['src\\main'],
+                declFilesPath: '/mock/decl.json',
+                entryFile: '/dep/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([['depModule', mockDepModule]])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            // Backslashes should be normalized to forward slashes
+            expect(result.dependencies['depModule/index']).toBeDefined();
+        });
+
+        test('should handle multiple dependency modules with different source roots', () => {
+            (fs.existsSync as jest.Mock).mockReturnValue(true);
+            (fs.readFileSync as jest.Mock).mockImplementation((path: string) => {
+                if (path.includes('dep1')) {
+                    return JSON.stringify({
+                        files: {
+                            'src/utils': {
+                                declPath: '/mock/utils.d.ets',
+                                filePath: '/dep1/src/utils.ets',
+                                ohmUrl: 'dep1/utils'
+                            }
+                        }
+                    });
+                } else {
+                    return JSON.stringify({
+                        files: {
+                            'lib/helpers': {
+                                declPath: '/mock/helpers.d.ets',
+                                filePath: '/dep2/lib/helpers.ets',
+                                ohmUrl: 'dep2/helpers'
+                            }
+                        }
+                    });
+                }
+            });
+
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const mockDep1 = createMockModuleInfo({
+                packageName: 'dep1',
+                moduleRootPath: '/dep1',
+                sourceRoots: ['src'],
+                declFilesPath: '/dep1/decl.json',
+                entryFile: '/dep1/entry.ts'
+            });
+            const mockDep2 = createMockModuleInfo({
+                packageName: 'dep2',
+                moduleRootPath: '/dep2',
+                sourceRoots: ['lib'],
+                declFilesPath: '/dep2/decl.json',
+                entryFile: '/dep2/entry.ts'
+            });
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'mainModule',
+                dynamicDependencyModules: new Map([
+                    ['dep1', mockDep1],
+                    ['dep2', mockDep2]
+                ])
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            
+            expect(result.dependencies['dep1/utils']).toBeDefined();
+            expect(result.dependencies['dep2/helpers']).toBeDefined();
         });
     });
 });
