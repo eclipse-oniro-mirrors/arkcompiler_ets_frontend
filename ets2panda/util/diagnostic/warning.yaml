@@ -113,6 +113,11 @@ warning:
   id: 15
   message: "Type parameter is erased from type '{}' when used in instanceof expression."
 
+- name: Lambda_MISSING_RETURN_STMT
+  id: 57199
+  message: "Lambda with a non void return type must return a value."
+  code_fix_ids: [FixAddFunctionReturnStatement]
+
 - name: MAYBE_FALLTHROUGH
   id: 20
   message: "Possible fall-through into case"
