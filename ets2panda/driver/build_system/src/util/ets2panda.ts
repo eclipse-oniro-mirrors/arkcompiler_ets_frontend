@@ -37,7 +37,7 @@ import {
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
-    formEts2pandaCmd,
+    formEts2pandaCmd
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
@@ -85,6 +85,7 @@ export class Ets2panda {
     private readonly declgenV2OutDir: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
     private readonly recordType?: 'ON' | 'OFF';
+    private readonly projectRootPath: string;
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -99,6 +100,7 @@ export class Ets2panda {
         this.recordType = buildConfig.recordType;
         this.declgenV2OutDir = buildConfig.declgenV2OutPath;
         this.pluginDriver.initPlugins(buildConfig)
+        this.projectRootPath = buildConfig.projectRootPath;
     }
 
     public static getInstance(buildConfig?: BuildConfig): Ets2panda {
@@ -171,6 +173,7 @@ export class Ets2panda {
         const source = fs.readFileSync(inputFilePath, 'utf-8');
         const isDecl = (job.type & CompileJobType.DECL) !== 0;
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, false, isDecl);
+        ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         const { arkts, arktsGlobal } = this.koalaModule;
@@ -276,6 +279,7 @@ export class Ets2panda {
 
         const isDecl = (job.type & CompileJobType.DECL) !== 0;
         const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true, isDecl);
+        ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
         if (dumpPerf) {
             ets2pandaCmd.push('--dump-perf-metrics');
         }

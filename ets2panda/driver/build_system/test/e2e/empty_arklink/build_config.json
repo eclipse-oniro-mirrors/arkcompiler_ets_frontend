@@ -1,0 +1,45 @@
+{
+    "buildType": "build",
+    "buildMode": "Debug",
+    "packageName": "empty_arklink",
+    "moduleType": "har",
+    "moduleRootPath": "${absolute_path_to_build_system}/test/e2e/empty_arklink",
+    "projectRootPath": "/",
+    "sourceRoots": [
+        "./"
+    ],
+    "compileFiles": [
+        "${absolute_path_to_build_system}/test/e2e/empty_arklink/har2/MainPage.ets"
+    ],
+    "loaderOutPath": "./build",	 
+    "cachePath": "./build/cache",
+    "buildSdkPath": ".",
+    "pandaStdlibPath": "${absolute_path_to_stdlib}",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/test/e2e/empty_arklink/loader_out/default/etsFortgz",
+    "dependentModuleList": [
+        {
+            "language": "1.1",
+            "packageName": "empty_arklink",
+            "moduleType": "har",
+            "moduleName": "empty_arklink",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/empty_arklink",
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/empty_arklink",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": ["har2"]
+        },
+        {
+            "language": "1.2",
+            "packageName": "har2",
+            "moduleType": "har",
+            "moduleName": "har2",
+            "modulePath": "${absolute_path_to_build_system}/test/e2e/empty_arklink/har2",	 
+            "entryFile": "${absolute_path_to_build_system}/test/e2e/empty_arklink/har2/Index.ets",
+            "sourceRoots": [
+                "./"
+            ],
+            "dependencies": []
+        }
+    ]
+}

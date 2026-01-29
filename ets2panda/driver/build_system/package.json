@@ -47,6 +47,7 @@
     "build_binary_har_app": "node ./dist/entry.js test/mock_har_abc/build_config.json && node ./dist/entry.js test/har_app/build_config.json",
     "build_hap_ark_link": "node ./dist/entry.js test/mock_abc/build_config.json && node ./dist/entry.js test/entry_import_har/build_config.json",
     "build_hap_hsp": "node ./dist/entry.js test/e2e/demo_entry_hsp_har/build_config.json",
+    "build_empty_files": "node ./dist/entry.js test/e2e/empty_arklink/build_config.json && node ./dist/entry.js test/e2e/empty_entry_files/build_config.json",
     "interop_sdk": "node ./dist/entry.js test/e2e/demo_interop_sdk/build_config.json",
     "ut_test": "jest test/ut",
     "plugin_test": "jest --testMatch='<rootDir>/test/plugin/**/*.test.ts'",
@@ -56,7 +57,7 @@
     "IncrementCompileTest1": "node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/hello world from harA!/hello world from harA! (modified)/' \"$(pwd)/test/e2e/IncrementDemo/harB/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
     "IncrementCompileTest2": "node ./dist/entry.js test/e2e/IncrementDemo/build_config.json && sed -i 's/console.log(strA)/console.log(strA + \"modified\")/' \"$(pwd)/test/e2e/IncrementDemo/entry/index.ets\" && TEST=IncrementDemo:gen_abc jest --testMatch='**/test/e2e/*.test.ts' --testPathIgnorePatterns='test/ut/'",
     "simultaneous_compiling:namespace_import": "node ./dist/entry.js test/simultaneous_compiling/namespace_import/build_config.json",
-    "run_tests:ci": "npm run build && npm run gen_abc_single && npm run gen_abc_two && npm run simultaneous_compiling:namespace_import && npm run interop_sdk && npm run gen_abc_multi && npm run build_hap_hsp && npm run manual_decl_test && npm run demo_multi_source_roots:gen_abc && npm run demo_custom_index:gen_abc"
+    "run_tests:ci": "npm run build && npm run gen_abc_single && npm run gen_abc_two && npm run simultaneous_compiling:namespace_import && npm run interop_sdk && npm run gen_abc_multi && npm run build_hap_hsp && npm run manual_decl_test && npm run demo_multi_source_roots:gen_abc && npm run demo_custom_index:gen_abc && npm run build_empty_files"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",
