@@ -1398,6 +1398,10 @@ semantic:
   id: 235
   message: "Using {} is not allowed in constructor"
 
+- name: TOO_LARGE_TO_CAST
+  id: 1050320
+  message: "{} won't fit in a {}"
+
 - name: TUPLEN_NOT_IMPLEMENTED
   id: 279
   message: "Tuple types with arity >16 are not yet implemented"
