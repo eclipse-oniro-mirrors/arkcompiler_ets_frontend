@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -309,16 +309,6 @@
             "column": 11,
             "endLine": 53,
             "endColumn": 17,
-            "problem": "RuntimeArrayCheck",
-            "suggest": "",
-            "rule": "Array bound not checked. (arkts-runtime-array-check)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 53,
-            "column": 11,
-            "endLine": 53,
-            "endColumn": 17,
             "problem": "InteropJsObjectTraverseJsInstance",
             "suggest": "",
             "rule": "Direct usage of interop JS objects is not supported (arkts-interop-js2s-traverse-js-instance)",
@@ -332,16 +322,6 @@
             "problem": "InterOpImportJsIndex",
             "suggest": "",
             "rule": "Interop objects can't be indexed directly (arkts-interop-js2s-access-js-index)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 54,
-            "column": 3,
-            "endLine": 54,
-            "endColumn": 9,
-            "problem": "RuntimeArrayCheck",
-            "suggest": "",
-            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {

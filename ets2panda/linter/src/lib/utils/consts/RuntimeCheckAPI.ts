@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +21,34 @@ export type ArrayAccess = {
   arrayIdent: ts.Identifier;
 };
 
-export type UncheckedIdentifier = ts.Identifier | typeof NUMBER_LITERAL | undefined;
-export type CheckedIdentifier = ts.Identifier | typeof NUMBER_LITERAL;
-
 export const NUMBER_LITERAL = 'number';
 export const LENGTH_IDENTIFIER = 'length';
+export const ANY_TYPE = 'any';
+
+export const LENGTH_PROPERTY = 'length';
+export const KEYS_METHOD = 'keys';
+export const VALUES_METHOD = 'values';
+export const ENTRIES_METHOD = 'entries';
+export const OBJECT_GLOBAL = 'Object';
+export const RECORD_TYPE = 'Record';
+
+export const MATH_GLOBAL = 'Math';
+export const MAX_METHOD = 'max';
+
+export const ZERO_LITERAL = 0;
+export const ONE_LITERAL = 1;
+
+export const ARRAY_TYPE_SUFFIX = '[]';
+export const ARRAY_TYPE_PREFIX = 'Array<';
+export const ARRAY_TYPE_NAME = 'Array';
+
+export const ARRAY_LENGTH_SOURCE_WHITE_LIST = new Set<string>([
+  `${OBJECT_GLOBAL}.${KEYS_METHOD}`,
+  `${OBJECT_GLOBAL}.${VALUES_METHOD}`,
+  `${OBJECT_GLOBAL}.${ENTRIES_METHOD}`,
+  'Array.from'
+]);
+
 export enum LoopConditionChecked {
   LEFT,
   RIGHT,

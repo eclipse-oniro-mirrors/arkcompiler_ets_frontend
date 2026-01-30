@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2024-2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2024-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -316,6 +316,16 @@
         },
         {
             "line": 107,
+            "column": 18,
+            "endLine": 107,
+            "endColumn": 40,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 107,
             "column": 24,
             "endLine": 107,
             "endColumn": 39,
@@ -355,6 +365,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 110,
+            "column": 15,
+            "endLine": 110,
+            "endColumn": 27,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
             "line": 112,
             "column": 15,
             "endLine": 112,
@@ -362,6 +382,16 @@
             "problem": "BuiltinIteratorResultValue",
             "suggest": "",
             "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 117,
+            "column": 16,
+            "endLine": 117,
+            "endColumn": 36,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
@@ -402,6 +432,16 @@
             "problem": "BuiltinIteratorResultValue",
             "suggest": "",
             "rule": "The property of IteratorResult is not supported (arkts-builtin-iterator-result-value)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 120,
+            "column": 15,
+            "endLine": 120,
+            "endColumn": 25,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {

@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2024-2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2024-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -472,6 +472,16 @@
             "problem": "EsValueTypeError",
             "suggest": "",
             "rule": "Usage of 'ESValue' type is restricted (arkts-limited-esobj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 5,
+            "endLine": 79,
+            "endColumn": 11,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
@@ -955,6 +965,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 188,
+            "column": 5,
+            "endLine": 188,
+            "endColumn": 15,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
             "line": 189,
             "column": 5,
             "endLine": 189,
@@ -962,6 +982,16 @@
             "problem": "EsValueTypeError",
             "suggest": "",
             "rule": "Usage of 'ESValue' type is restricted (arkts-limited-esobj)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 189,
+            "column": 5,
+            "endLine": 189,
+            "endColumn": 10,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
