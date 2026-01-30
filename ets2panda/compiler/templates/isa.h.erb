@@ -258,6 +258,10 @@ public:
     OperandType GetOperandRegType([[maybe_unused]] size_t idx) const override {
 % if insn.mnemonic.start_with?('call.virt')
         return GetOperandRegTypeWithThis(string_id_.Mutf8(), idx);
+% elsif insn.mnemonic.start_with?('ets.call.name')
+        {
+            return GetOperandRegTypeWithThis(string_id_.Mutf8(), idx);
+        }
 % elsif insn.mnemonic.start_with?('call.acc')
         {
             size_t argIdx = (idx >= static_cast<size_t>(imm0_)) ? idx + 1 : idx;
