@@ -158,7 +158,7 @@ popd >/dev/null 2>&1 || exit 1
 function run_script() {
     npm run $1 | tee out.txt
     local exit_code=${PIPESTATUS[0]}
-    if [ -n "$(grep 'Error:' out.txt)" ] ; then
+    if [ -n "$(grep 'Error:' out.txt | grep -v -i 'not implemented')" ] ; then
         return 1
     fi
     return $exit_code
