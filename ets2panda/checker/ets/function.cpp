@@ -1807,17 +1807,9 @@ static OverrideErrorCode CheckOverride(ETSChecker *checker, Signature *signature
     if (other->IsFinal()) {
         return OverrideErrorCode::OVERRIDDEN_FINAL;
     }
-
-    if (!other->ReturnType()->IsETSTypeParameter()) {
-        if (!checker->IsReturnTypeSubstitutable(signature, other)) {
-            return OverrideErrorCode::INCOMPATIBLE_RETURN;
-        }
-    } else {
-        // We need to have this branch to allow generic overriding of the form:
-        // foo<T>(x: T): T -> foo<someClass>(x: someClass): someClass
-        if (!signature->ReturnType()->IsETSReferenceType()) {
-            return OverrideErrorCode::INCOMPATIBLE_RETURN;
-        }
+    // #26838: handle lambdas as normal generics and remove check on IsETSAnyType()
+    if (!signature->ReturnType()->IsETSAnyType() && !checker->IsReturnTypeSubstitutable(signature, other)) {
+        return OverrideErrorCode::INCOMPATIBLE_RETURN;
     }
 
     if (signature->ProtectionFlag() > other->ProtectionFlag()) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,10 +14,10 @@
  */
 
 class A {
-  fn<T>(t: T): T { return t; }
+  fn<T>(t1: T, t2: int): Integral { return t2; }
 }
 
 class B extends A {
-  override fn<Object>(t: Object): int { return 1}
+  override fn<D>(t1: D, t2: Object): int { return 1; }
 }
 
