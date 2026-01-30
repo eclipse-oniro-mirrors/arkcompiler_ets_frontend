@@ -294,17 +294,50 @@ export class ArkTSConfigGenerator {
         // NOTE: is some test cases somehow packageName can be an empty string
         // NOTE: to be refactored
         if (moduleInfo.packageName) {
-            arktsConfig.addPathMappings({
-                [moduleInfo.packageName]: [moduleInfo.moduleRootPath]
-            });
+            this.handleAddSourceRootPath(moduleInfo, arktsConfig);
         }
 
         this.logger.printDebug(`Collected path section: ${JSON.stringify(arktsConfig.compilerOptions.paths, null, 1)}`)
     }
 
+    private handleAddSourceRootPath(moduleInfo: ModuleInfo, arktsConfig: ArkTSConfig): void {
+        let paths: string[] = [];
+        [...moduleInfo.sourceRoots].reverse().forEach((source: string) => {
+            paths.push(path.resolve(moduleInfo.moduleRootPath, source));
+        });
+        this.logger.printDebug(`Collected package: ${moduleInfo.packageName} source root: ${JSON.stringify(paths)}`);
+        arktsConfig.addPathMappings({ [moduleInfo.packageName]: paths });
+        return;
+    }
+
     private getDependencyKey(file: string, moduleInfo: ModuleInfo): string {
         let unixFilePath: string = file.replace(/\\/g, '/');
         return moduleInfo.packageName + '/' + unixFilePath;
+    }
+
+    private getTransformedDependencyKey(file: string, moduleInfo: ModuleInfo): string {
+        let unixFilePath: string = file.replace(/\\/g, '/');
+        // Should reverse the sourceRoots.
+        // Since the later one will replace the previous one in IDE build rule.
+        /**
+         * eg:
+         *  packageName = "entry";
+         *  sourceRoots = ["./src/main"]
+         *  unixFilePath = "src/main/ets/test"
+         *  returnValue = "entry/ets/test"
+         */
+        const normalizedRoots = (moduleInfo.sourceRoots || [])
+            .map(root => root.replace(/\\/g, '/').replace(/^\.\//, ''))
+            .filter(root => root && root !== '.')
+            .reverse();
+
+        for (const root of normalizedRoots) {
+            const prefix = root.endsWith('/') ? root : `${root}/`;
+            if (unixFilePath.startsWith(prefix)) {
+                return `${moduleInfo.packageName}/${unixFilePath.substring(prefix.length)}`;
+            }
+        }
+        return '';
     }
 
     private addEtsStdLibToDependencySection(arktsconfig: ArkTSConfig): void {
@@ -359,7 +392,9 @@ export class ArkTSConfigGenerator {
             const files = declFilesObject.files;
 
             Object.keys(files).forEach((file: string) => {
-                const dependencyKey: string = this.getDependencyKey(file, depModuleInfo);
+                const transformedKey: string = this.getTransformedDependencyKey(file, depModuleInfo);
+                // `legacyKey` is to be removed in future and left for compat.
+                const legacyKey: string = this.getDependencyKey(file, depModuleInfo);
                 const depItem: DependencyItem = {
                     language: 'js',
                     path: files[file].declPath,
@@ -368,9 +403,16 @@ export class ArkTSConfigGenerator {
                 };
 
                 arktsconfig.addDependency({
-                    name: dependencyKey,
+                    name: legacyKey,
                     item: depItem
                 });
+
+                if (transformedKey !== '' && transformedKey !== legacyKey) {
+                    arktsconfig.addDependency({
+                        name: transformedKey,
+                        item: depItem
+                    });
+                }
 
                 // NOTE: workaround
                 // NOTE: to be refactored
