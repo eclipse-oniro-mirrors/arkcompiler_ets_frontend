@@ -305,6 +305,11 @@ export class ArkTSConfigGenerator {
         [...moduleInfo.sourceRoots].reverse().forEach((source: string) => {
             paths.push(path.resolve(moduleInfo.moduleRootPath, source));
         });
+        
+        // hvigor now use 'src/main' as sourceRoot
+        // push './' as the lowest priority for compat, should be removed in future
+        paths.push(path.resolve(moduleInfo.moduleRootPath, './'));
+
         this.logger.printDebug(`Collected package: ${moduleInfo.packageName} source root: ${JSON.stringify(paths)}`);
         arktsConfig.addPathMappings({ [moduleInfo.packageName]: paths });
         return;

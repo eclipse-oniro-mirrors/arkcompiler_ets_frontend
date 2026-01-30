@@ -621,7 +621,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
-            expect(result.pathSection['myModule']).toEqual(['/my/module/src']);
+            expect(result.pathSection['myModule']).toEqual(['/my/module/src', '/my/module']);
         });
 
         test('empty package name should skip path mapping', () => {
@@ -681,7 +681,7 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
 
             expect(result.pathSection['sys']).toBeDefined(); // system
             expect(result.pathSection['custom']).toEqual(['/custom']); // custom
-            expect(result.pathSection['myModule']).toEqual(['/module/src']); // module
+            expect(result.pathSection['myModule']).toEqual(['/module/src', '/module']); // module
         });
     });
 });
@@ -1391,7 +1391,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
             expect(result.pathSection['myModule']).toEqual(['/my/module/official',
-                '/my/module/test', '/my/module/lib', '/my/module/src']);
+                '/my/module/test', '/my/module/lib', '/my/module/src', '/my/module']);
         });
 
         test('should handle empty sourceRoots gracefully', () => {
@@ -1421,7 +1421,8 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             expect(result.pathSection['testPkg']).toEqual([
                 '/project/module/third',
                 '/project/module/second',
-                '/project/module/first'
+                '/project/module/first',
+                '/project/module'
             ]);
         });
 
@@ -1435,7 +1436,7 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
-            expect(result.pathSection['singleRoot']).toEqual(['/app/src/main']);
+            expect(result.pathSection['singleRoot']).toEqual(['/app/src/main', '/app']);
         });
 
         test('should resolve absolute paths for source roots', () => {
@@ -1451,7 +1452,8 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             expect(result.pathSection['absPkg']).toEqual([
                 '/base/path/rel/path3',
                 '/base/path/rel/path2',
-                '/base/path/rel/path1'
+                '/base/path/rel/path1',
+                '/base/path'
             ]);
         });
 
@@ -1465,13 +1467,14 @@ describe('ArkTSConfigGenerator - Integration and Edge Cases', () => {
             });
 
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
-            expect(result.pathSection['mixedPaths']).toHaveLength(4);
+            expect(result.pathSection['mixedPaths']).toHaveLength(5);
 
             expect(result.pathSection['mixedPaths']).toEqual([
                 '/root/utils',
                 '/root/test',
                 '/root/lib',
-                '/root/src'
+                '/root/src',
+                '/root'
             ]);
         });
     });
