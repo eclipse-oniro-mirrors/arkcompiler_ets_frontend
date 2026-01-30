@@ -59,7 +59,7 @@ export class ArkTSConfig {
         this.object = {
             compilerOptions: {
                 package: moduleInfo.packageName,
-                baseUrl: path.resolve(moduleInfo.moduleRootPath, moduleInfo.sourceRoots[0]),
+                baseUrl: path.resolve(moduleInfo.moduleRootPath),
                 paths: {},
                 dependencies: {},
                 cacheDir: path.resolve(cacheDir),
