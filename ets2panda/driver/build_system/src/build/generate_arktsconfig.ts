@@ -144,21 +144,40 @@ export class ArkTSConfig {
             return;
         }
 
+        // Track processed dependencies to prevent duplicate merging
+        const processed: Set<string> = new Set();
         // dependencies: ['hsp1' , 'har1']
         dependencies.forEach((dependency) => {
             // dependency: 'hsp1'
             // dependencydependencies: ['hsp2','har2']
-            let dependencydependencies: Set<string> = dependenciesSets.get(dependency)!;
-            let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(dependency)!;
-            if (dependencydependencies.size !== 0) {
-                // hsp1 combines the arktsConfig of hsp2 and har2
-                arktsConfig.mergeArktsConfigByDependencies(dependencydependencies, dependenciesSets);
-            }
-
-            // entry combines the arktsConfig of hsp1
-            this.addDependencies(arktsConfig.dependencies);
-            this.addPathMappings(arktsConfig.pathSection);
+            this.mergeDependencyRecursive(dependency, dependenciesSets, processed);
         });
+    }
+
+    private mergeDependencyRecursive(
+        dependency: string,
+        dependenciesSets: Map<string, Set<string>>,
+        processed: Set<string>
+    ): void {
+        // Skip if this dependency has already been merged globally
+        if (processed.has(dependency)) {
+            return;
+        }
+        processed.add(dependency);
+
+        let dependencydependencies: Set<string> = dependenciesSets.get(dependency)!;
+        let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(dependency)!;
+
+        if (dependencydependencies.size !== 0) {
+            // Recursively process dependencies first
+            dependencydependencies.forEach((dep) => {
+                this.mergeDependencyRecursive(dep, dependenciesSets, processed);
+            });
+        }
+
+        // Merge the config
+        this.addDependencies(arktsConfig.dependencies);
+        this.addPathMappings(arktsConfig.pathSection);
     }
 }
 
