@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,8 @@
 
 function f1(a: int, ...b: int[] = 47): bool {
     console.log(a, b...);
-    let x = (x instanceof A<string);
-    return x instanceof A<int>;
+    let x = (x instanceof A);
+    return x instanceof A;
 }
 
 function f2(a?: int = 44): void {}
@@ -65,10 +65,6 @@ function f7(a: (b: int = 0) => int): void {
 /* @@? 17:21 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 17:24 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 18:14 Error Semantic error ESE0365: Variable 'x' is accessed before it's initialization. */
-/* @@? 18:35 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 18:36 Error Syntax error ESY0227: Unexpected token ';'. */
-/* @@? 19:5 Error Syntax error ESY0228: Unexpected token, expected ')'. */
-/* @@? 19:12 Error Syntax error ESY0227: Unexpected token 'x'. */
 /* @@? 22:23 Error Syntax error ESY0132: Not enable default value with default undefined. */
 /* @@? 24:10 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 24:22 Error Syntax error ESY0227: Unexpected token ')'. */
@@ -94,22 +90,22 @@ function f7(a: (b: int = 0) => int): void {
 /* @@? 39:5 Error Semantic error ESE0351: Variable 'x' has already been declared. */
 /* @@? 39:16 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 47:15 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 47:17 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 47:17 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
-/* @@? 48:5 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 47:17 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 48:5 Error Syntax error ESY0230: Expected '=>', got '}'. */
 /* @@? 48:5 Error Syntax error ESY0227: Unexpected token '}'. */
+/* @@? 48:5 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 50:5 Error Semantic error ESE0140: No matching call signature with trailing lambda */
 /* @@? 51:13 Error Syntax error ESY0227: Unexpected token '.99'. */
 /* @@? 51:16 Error Syntax error ESY0053: Invalid left-hand side operator. */
 /* @@? 55:1 Error Syntax error ESY0227: Unexpected token 'function'. */
 /* @@? 55:12 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 55:24 Error Syntax error ESY0010: There is no any node to insert at the placeholder position. */
-/* @@? 55:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 55:24 Error Syntax error ESY0227: Unexpected token '@@'. */
+/* @@? 55:24 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
 /* @@? 55:26 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 55:27 Error Syntax error ESY0227: Unexpected token ':'. */
 /* @@? 55:29 Error Syntax error ESY0295: void is a predefined type, cannot be used as an identifier */
 /* @@? 57:1 Error Syntax error ESY0227: Unexpected token 'function'. */
 /* @@? 57:26 Error Syntax error ESY0133: Default value is allowed only for optional parameters. */
-/* @@? 115:80 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 112:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

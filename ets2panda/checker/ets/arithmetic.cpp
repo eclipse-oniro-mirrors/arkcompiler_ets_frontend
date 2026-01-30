@@ -1278,6 +1278,10 @@ std::tuple<Type *, Type *> ETSChecker::CheckBinaryOperator(ir::Expression *left,
         rightType = right->AsTypeNode()->GetType(this);
     }
 
+    if (operationType == lexer::TokenType::KEYW_INSTANCEOF) {
+        RemoveStatus(checker::CheckerStatus::IN_INSTANCEOF_CONTEXT);
+    }
+
     if (rightType == nullptr) {
         LogError(diagnostic::BINOP_UNEXPECTED_ERROR, {}, pos);
         return {leftType, leftType};

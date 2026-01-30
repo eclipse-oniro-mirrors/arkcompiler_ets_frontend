@@ -111,10 +111,6 @@ warning:
   message: "{}{} in {} cannot override {}{} in {} because overriding type is not compatible with the base type."
   strict: true
 
-- name: INSTANCEOF_ERASED
-  id: 15
-  message: "Type parameter is erased from type '{}' when used in instanceof expression."
-
 - name: Lambda_MISSING_RETURN_STMT
   id: 57199
   message: "Lambda with a non void return type must return a value."

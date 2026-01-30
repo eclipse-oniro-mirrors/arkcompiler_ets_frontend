@@ -547,6 +547,10 @@ syntax:
   id: 10
   message: "There is no any node to insert at the placeholder position."
 
+- name: INSTANCEOF_ERASED
+  id: 18871
+  message: "Type parameter is erased from type '{}' when used in instanceof expression."
+
 - name: INSUFFICIENT_PARAM_IN_ARROW_FUN
   id: 64
   message: "Insufficient formal parameter in arrow function."
