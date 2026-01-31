@@ -9148,37 +9148,113 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return;
     }
 
+    if (!this.isArrayOrTupleType(exprType, asType)) {
+      return;
+    }
+
+    const asTypeStr = this.tsTypeChecker.typeToStringForLinter(asType);
+    const isInPropertyAssignment = ts.findAncestor(asExpr, ts.isPropertyAssignment) !== undefined;
+    const shouldSkipForArrayLiteral =
+      ts.isArrayLiteralExpression(asExpr.expression) && !asTypeStr.startsWith('[') && !isInPropertyAssignment;
+    if (shouldSkipForArrayLiteral) {
+      return;
+    }
+
+    const aliasedTypes = this.checkForAliasedTypes(exprType, asType);
+    if (aliasedTypes[0] === aliasedTypes[1]) {
+      return;
+    }
+
+    if (this.checkPropertyArrayTypeMismatch(asExpr, asType, aliasedTypes[1])) {
+      return;
+    }
+
+    this.reportArrayImmutableErrorIfNeeded(asExpr, asType);
+  }
+
+  private isArrayOrTupleType(exprType: ts.Type, asType: ts.Type): boolean {
+    const exprTypeStr = this.tsTypeChecker.typeToStringForLinter(exprType);
+    const asTypeStr = this.tsTypeChecker.typeToStringForLinter(asType);
+    const isTuple = exprTypeStr.startsWith('[') || asTypeStr.startsWith('[');
     const isArray = this.tsUtils.isArray(exprType) || this.tsUtils.isArray(asType);
-    const isTuple =
-      this.tsUtils.isOrDerivedFrom(exprType, TsUtils.isTuple) || this.tsUtils.isOrDerivedFrom(asType, TsUtils.isTuple);
-    if (!isArray && !isTuple) {
-      return;
-    }
+    return isArray || isTuple;
+  }
 
-    if (ts.isArrayLiteralExpression(asExpr.expression)) {
-      return;
-    }
-
+  private reportArrayImmutableErrorIfNeeded(asExpr: ts.AsExpression, asType: ts.Type): void {
     const isMatch = this.isMatchingCastForPropertyAssign(asExpr, asType);
     switch (isMatch) {
       case ArrayAsCastResult.REPORT: {
         this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
-
         return;
       }
-      case ArrayAsCastResult.IGNORE: {
-        break;
-      }
+      case ArrayAsCastResult.IGNORE:
       case ArrayAsCastResult.MATCH: {
-        if (this.isTypeAssignable(exprType, asType)) {
-          return;
-        }
         break;
       }
       default:
     }
 
     this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
+  }
+
+  private checkPropertyArrayTypeMismatch(
+    asExpr: ts.AsExpression,
+    asType: ts.Type,
+    asTypeStrNormalized: string
+  ): boolean {
+    const propertyAssign = ts.findAncestor(asExpr, ts.isPropertyAssignment);
+    if (!propertyAssign) {
+      return false;
+    }
+
+    const propertyType = this.tsTypeChecker.getTypeAtLocation(propertyAssign.name).getNonNullableType();
+    const propertyTypeStr = this.tsTypeChecker.typeToStringForLinter(propertyType);
+    const isPropertyArrayOrTuple =
+      this.tsUtils.isArray(propertyType) ||
+      propertyTypeStr.startsWith('[') ||
+      propertyTypeStr.includes('[]') ||
+      propertyType.isUnion() && propertyTypeStr.includes('[]');
+
+    if (!isPropertyArrayOrTuple) {
+      return false;
+    }
+
+    const shouldReport = this.shouldReportPropertyTypeMismatch(propertyType, asType, asTypeStrNormalized);
+    if (shouldReport) {
+      this.incrementCounters(asExpr, FaultID.ArrayTypeImmutable);
+    }
+    return shouldReport;
+  }
+
+  private shouldReportPropertyTypeMismatch(
+    propertyType: ts.Type,
+    asType: ts.Type,
+    asTypeStrNormalized: string
+  ): boolean {
+    if (!propertyType.isUnion()) {
+      const aliased = this.checkForAliasedTypes(asType, propertyType);
+      return aliased[0] !== aliased[1];
+    }
+
+    for (const unionMember of propertyType.types) {
+      if (this.unionMemberMatches(unionMember, asType, asTypeStrNormalized)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private unionMemberMatches(unionMember: ts.Type, asType: ts.Type, asTypeStrNormalized: string): boolean {
+    const memberStr = this.getTypeString(unionMember);
+    if (memberStr === asTypeStrNormalized) {
+      return true;
+    }
+
+    if (this.tsUtils.isArray(asType) && this.tsUtils.isArray(unionMember)) {
+      const aliased = this.checkForAliasedTypes(asType, unionMember);
+      return aliased[0] === aliased[1];
+    }
+    return false;
   }
 
   private static isAliasTypeArray(nowType: ts.Type): boolean {
@@ -9203,7 +9279,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         return false;
       }
 
-      return ts.isArrayTypeNode(typeNode);
+      if (ts.isArrayTypeNode(typeNode)) {
+        return true;
+      }
+
+      if (ts.isTypeReferenceNode(typeNode)) {
+        const typeName = typeNode.typeName.getText();
+        return typeName === 'Array';
+      }
     }
     return false;
   }
@@ -9266,15 +9349,99 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     } else {
       typeString = this.tsTypeChecker.typeToStringForLinter(type);
     }
-    typeString = typeString.replace(/[()]/g, '');
 
-    /*
-     * at this point we already now that these types match, we need to know if they match exactly
-     * to this point we checked if they are tuples? or arrays etc. so sorting this should be fine
-     */
-    return typeString.split('').sort().
-      join('').
-      trim();
+    typeString = typeString.replace(/\s+/g, '');
+
+    if ((/^\[\(.+\)\]$/).test(typeString)) {
+      typeString = typeString.slice(2, -2);
+      typeString = `[${typeString}]`;
+    }
+
+    typeString = TypeScriptLinter.normalizeArrayTypeString(typeString);
+
+    return typeString.trim();
+  }
+
+  private static normalizeArrayTypeString(typeString: string): string {
+    const genericArrayPattern = /^(.+?)<(.+)>$/;
+    const genericMatch = typeString.match(genericArrayPattern);
+    if (genericMatch) {
+      return TypeScriptLinter.normalizeGenericArrayType(genericMatch[1], genericMatch[2]);
+    }
+
+    if (typeString.endsWith('[]')) {
+      return TypeScriptLinter.postfixArrayTypeString(typeString);
+    }
+
+    if (typeString.includes('|')) {
+      return TypeScriptLinter.normalizeUnionMembers(typeString);
+    }
+
+    return typeString;
+  }
+
+  private static normalizeGenericArrayType(arrayName: string, typeArg: string): string {
+    if (arrayName === 'Array') {
+      const normalizedTypeArg = TypeScriptLinter.normalizeUnionMembers(typeArg);
+      if (typeArg.includes('|')) {
+        return `(${normalizedTypeArg})[]`;
+      }
+      return `${normalizedTypeArg}[]`;
+    }
+
+    const normalizedTypeArg = TypeScriptLinter.normalizeUnionMembers(typeArg);
+    return `${arrayName}<${normalizedTypeArg}>`;
+  }
+
+  private static postfixArrayTypeString(typeString: string): string {
+    const baseType = typeString.slice(0, -2);
+
+    if (baseType.startsWith('(') && baseType.endsWith(')')) {
+      const innerType = baseType.slice(1, -1);
+      const normalizedInnerType = TypeScriptLinter.normalizeUnionMembers(innerType);
+      return `(${normalizedInnerType})[]`;
+    }
+    const normalizedBaseType = TypeScriptLinter.normalizeUnionMembers(baseType);
+    return `${normalizedBaseType}[]`;
+  }
+
+  private static normalizeUnionMembers(typeStr: string): string {
+    const members = TypeScriptLinter.splitUnionMembers(typeStr);
+    const trimmedMembers = members.map((m) => {
+      return m.trim();
+    });
+    const normalizedMembers = trimmedMembers.sort();
+    return normalizedMembers.join('|');
+  }
+
+  private static splitUnionMembers(typeStr: string): string[] {
+    const members: string[] = [];
+    let current = '';
+    let depth = 0;
+    let inAngleBrackets = 0;
+
+    for (let i = 0; i < typeStr.length; i++) {
+      const char = typeStr[i];
+      if (char === '(') {
+        depth++;
+      } else if (char === ')') {
+        depth--;
+      } else if (char === '<') {
+        inAngleBrackets++;
+      } else if (char === '>') {
+        inAngleBrackets--;
+      } else if (char === '|' && depth === 0 && inAngleBrackets === 0) {
+        members.push(current);
+        current = '';
+        continue;
+      }
+      current += char;
+    }
+    if (current) {
+      members.push(current);
+    }
+
+    return members;
   }
 
   private checkLhsTypeString(node: ts.Node, rhsTypeStr: string): string | undefined {
@@ -13759,29 +13926,42 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     declaration?: ts.PropertyDeclaration;
   } {
     while (ts.isPropertyAccessExpression(node) || ts.isPropertyAccessChain(node)) {
-      const nameNode = node.name;
-      const symbol = this.tsTypeChecker.getSymbolAtLocation(nameNode);
-      const declaration = symbol?.valueDeclaration;
-
-      if (declaration && ts.isPropertyDeclaration(declaration)) {
-        if (declaration.questionToken) {
-          return { hasUnionOrOptional: true, declaration };
-        }
-        if (declaration.type && ts.isUnionTypeNode(declaration.type)) {
-          const type = this.tsTypeChecker.getTypeFromTypeNode(declaration.type);
-          if (TsUtils.isNullableUnionType(type)) {
-            return { hasUnionOrOptional: true, declaration };
-          }
-        }
-      }
-
       if (ts.isPropertyAccessChain(node)) {
         return { hasUnionOrOptional: true, declaration: undefined };
+      }
+
+      const declaration = this.getPropertyDeclaration(node);
+      if (!declaration) {
+        node = node.expression;
+        continue;
+      }
+
+      if (this.isOptionalOrNullableProperty(declaration)) {
+        return { hasUnionOrOptional: true, declaration };
       }
 
       node = node.expression;
     }
     return { hasUnionOrOptional: false };
+  }
+
+  private getPropertyDeclaration(node: ts.PropertyAccessExpression): ts.PropertyDeclaration | undefined {
+    const nameNode = node.name;
+    const symbol = this.tsTypeChecker.getSymbolAtLocation(nameNode);
+    const decl = symbol?.valueDeclaration;
+    return decl && ts.isPropertyDeclaration(decl) ? decl : undefined;
+  }
+
+  private isOptionalOrNullableProperty(decl: ts.PropertyDeclaration): boolean {
+    if (decl.questionToken) {
+      return true;
+    }
+
+    if (decl.type && ts.isUnionTypeNode(decl.type)) {
+      const type = this.tsTypeChecker.getTypeFromTypeNode(decl.type);
+      return TsUtils.isNullableUnionType(type);
+    }
+    return false;
   }
 
   private static isNarrowedByTypeOf(expr: ts.Node): { isNarrowed: boolean; isTypeof: boolean } {
@@ -14046,7 +14226,6 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     }
 
     const className = classDecl.name?.getText();
-    const { staticProps, instanceProps } = this.collectClassProperties(classDecl);
 
     classDecl.members.forEach((member) => {
       if (!ts.isMethodDeclaration(member) || !member.body) {
@@ -14054,16 +14233,14 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
 
       const methodReturnType = this.tsTypeChecker.getTypeAtLocation(member);
-      this.checkMethodAndReturnStatements(member.body, className, methodReturnType, staticProps, instanceProps);
+      this.checkMethodAndReturnStatements(member.body, className, methodReturnType);
     });
   }
 
   private checkMethodAndReturnStatements(
     body: ts.Block,
     className: string | undefined,
-    methodReturnType: ts.Type,
-    staticProps: Map<string, ts.Type>,
-    instanceProps: Map<string, ts.Type>
+    methodReturnType: ts.Type
   ): void {
     const stopCondition = (node: ts.Node): boolean => {
       return (
@@ -14099,11 +14276,11 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
       const propExp = getPropertyAccess(node.expression);
       if (className && propExp && isStaticPropertyAccess(propExp, className)) {
-        this.checkPropertyAccess(node, propExp, staticProps, methodReturnType);
+        this.checkPropertyAccess(node, propExp, methodReturnType);
       }
 
       if (isInstancePropertyAccess(node.expression)) {
-        this.checkPropertyAccess(node, node.expression as ts.PropertyAccessExpression, instanceProps, methodReturnType);
+        this.checkPropertyAccess(node, node.expression as ts.PropertyAccessExpression, methodReturnType);
       }
     };
     forEachNodeInSubtree(body, callback, stopCondition);
@@ -14112,46 +14289,58 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   private checkPropertyAccess(
     returnNode: ts.ReturnStatement,
     propAccess: ts.PropertyAccessExpression,
-    propsMap: Map<string, ts.Type>,
     methodReturnType: ts.Type
   ): void {
-    const propName = propAccess.name.getText();
     const decl = this.tsTypeChecker.getSymbolAtLocation(propAccess.name)?.declarations?.[0];
-    if (decl && ts.isPropertyDeclaration(decl) && decl.type) {
-      if (decl.type.kind === ts.SyntaxKind.BooleanKeyword && decl.questionToken === undefined) {
-        return;
-      } else if (!this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion()) {
-        return;
-      }
-    }
 
-    const propType = propsMap.get(propName);
-    if (!propType) {
+    if (!decl || !ts.isPropertyDeclaration(decl)) {
       return;
     }
 
-    if (this.isExactlySameType(propType, methodReturnType)) {
+    const hasUnionOrOptionalType = this.hasUnionOrOptionalType(decl);
+    if (hasUnionOrOptionalType === undefined) {
       return;
     }
 
-    if (propType.isUnion()) {
+    const propTypeUsage = this.tsTypeChecker.getTypeAtLocation(propAccess);
+    if (!propTypeUsage || this.isExactlySameType(propTypeUsage, methodReturnType)) {
+      return;
+    }
+
+    this.reportSmartTypeErrorIfNeeded(returnNode, hasUnionOrOptionalType, propTypeUsage);
+  }
+
+  private hasUnionOrOptionalType(decl: ts.Declaration): boolean | undefined {
+    if (!ts.isPropertyDeclaration(decl) || !decl.type) {
+      return false;
+    }
+
+    if (decl.type.kind === ts.SyntaxKind.BooleanKeyword && decl.questionToken === undefined) {
+      return undefined;
+    }
+
+    return (
+      ts.isUnionTypeNode(decl.type) ||
+      this.tsTypeChecker.getTypeAtLocation(decl.name).isUnion() ||
+      decl.questionToken !== undefined
+    );
+  }
+
+  private reportSmartTypeErrorIfNeeded(
+    returnNode: ts.ReturnStatement,
+    hasUnionOrOptionalType: boolean,
+    propTypeUsage: ts.Type
+  ): void {
+    if (hasUnionOrOptionalType && !propTypeUsage.isUnion()) {
+      this.incrementCounters(returnNode, FaultID.NoTsLikeSmartType);
+      return;
+    }
+
+    if (propTypeUsage.isUnion()) {
       return;
     }
 
     this.incrementCounters(returnNode, FaultID.NoTsLikeSmartType);
-  }
-
-  private collectClassProperties(classDecl: ts.ClassDeclaration): {
-    staticProps: Map<string, ts.Type>;
-    instanceProps: Map<string, ts.Type>;
-  } {
-    const result = {
-      staticProps: new Map<string, ts.Type>(),
-      instanceProps: new Map<string, ts.Type>()
-    };
-
-    this.tsUtils.collectPropertiesFromClass(classDecl, result);
-    return result;
   }
 
   private isExactlySameType(type1: ts.Type, type2: ts.Type): boolean {

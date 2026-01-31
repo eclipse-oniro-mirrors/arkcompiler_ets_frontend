@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
+        "Copyright (c) 2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,9 +15,9 @@
     ],
     "result": [
         {
-            "line": 346,
+            "line": 164,
             "column": 9,
-            "endLine": 346,
+            "endLine": 164,
             "endColumn": 14,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -25,9 +25,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 347,
+            "line": 165,
             "column": 9,
-            "endLine": 347,
+            "endLine": 165,
             "endColumn": 21,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -35,9 +35,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 348,
+            "line": 166,
             "column": 9,
-            "endLine": 348,
+            "endLine": 166,
             "endColumn": 23,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -45,9 +45,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 351,
+            "line": 169,
             "column": 9,
-            "endLine": 351,
+            "endLine": 169,
             "endColumn": 14,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -55,9 +55,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 352,
+            "line": 170,
             "column": 9,
-            "endLine": 352,
+            "endLine": 170,
             "endColumn": 21,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -65,9 +65,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 353,
+            "line": 171,
             "column": 9,
-            "endLine": 353,
+            "endLine": 171,
             "endColumn": 23,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -75,9 +75,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 356,
+            "line": 174,
             "column": 9,
-            "endLine": 356,
+            "endLine": 174,
             "endColumn": 14,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -85,9 +85,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 357,
+            "line": 175,
             "column": 9,
-            "endLine": 357,
+            "endLine": 175,
             "endColumn": 21,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -95,9 +95,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 358,
+            "line": 176,
             "column": 9,
-            "endLine": 358,
+            "endLine": 176,
             "endColumn": 23,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -105,9 +105,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 376,
+            "line": 194,
             "column": 21,
-            "endLine": 376,
+            "endLine": 194,
             "endColumn": 29,
             "problem": "AnyType",
             "suggest": "",
@@ -115,9 +115,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 392,
+            "line": 210,
             "column": 7,
-            "endLine": 392,
+            "endLine": 210,
             "endColumn": 19,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -125,9 +125,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 393,
+            "line": 211,
             "column": 7,
-            "endLine": 393,
+            "endLine": 211,
             "endColumn": 20,
             "problem": "LiteralAsPropertyName",
             "suggest": "",
@@ -135,9 +135,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 396,
+            "line": 214,
             "column": 9,
-            "endLine": 396,
+            "endLine": 214,
             "endColumn": 63,
             "problem": "AnyType",
             "suggest": "",
@@ -145,9 +145,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 424,
+            "line": 242,
             "column": 25,
-            "endLine": 424,
+            "endLine": 242,
             "endColumn": 32,
             "problem": "UnknownType",
             "suggest": "",
@@ -155,9 +155,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 451,
+            "line": 269,
             "column": 39,
-            "endLine": 451,
+            "endLine": 269,
             "endColumn": 42,
             "problem": "AnyType",
             "suggest": "",
@@ -165,79 +165,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 144,
-            "column": 5,
-            "endLine": 144,
-            "endColumn": 8,
-            "problem": "StrictDiagnostic",
-            "suggest": "'b.a' is possibly 'undefined'.",
-            "rule": "'b.a' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 151,
-            "column": 7,
-            "endLine": 151,
-            "endColumn": 10,
-            "problem": "StrictDiagnostic",
-            "suggest": "'obj' is possibly 'undefined'.",
-            "rule": "'obj' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 158,
-            "column": 13,
-            "endLine": 158,
-            "endColumn": 16,
-            "problem": "StrictDiagnostic",
-            "suggest": "'b.a' is possibly 'undefined'.",
-            "rule": "'b.a' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 198,
-            "column": 18,
-            "endLine": 198,
-            "endColumn": 25,
-            "problem": "StrictDiagnostic",
-            "suggest": "Function lacks ending return statement and return type does not include 'undefined'.",
-            "rule": "Function lacks ending return statement and return type does not include 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 285,
-            "column": 1,
-            "endLine": 285,
-            "endColumn": 4,
-            "problem": "StrictDiagnostic",
-            "suggest": "'obj' is possibly 'undefined'.",
-            "rule": "'obj' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 299,
-            "column": 5,
-            "endLine": 299,
-            "endColumn": 8,
-            "problem": "StrictDiagnostic",
-            "suggest": "'obj' is possibly 'undefined'.",
-            "rule": "'obj' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 314,
-            "column": 13,
-            "endLine": 314,
-            "endColumn": 16,
-            "problem": "StrictDiagnostic",
-            "suggest": "'obj' is possibly 'undefined'.",
-            "rule": "'obj' is possibly 'undefined'.",
-            "severity": "ERROR"
-        },
-        {
-            "line": 388,
+            "line": 206,
             "column": 9,
-            "endLine": 388,
+            "endLine": 206,
             "endColumn": 21,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",
@@ -245,9 +175,9 @@
             "severity": "ERROR"
         },
         {
-            "line": 553,
+            "line": 443,
             "column": 10,
-            "endLine": 553,
+            "endLine": 443,
             "endColumn": 14,
             "problem": "StrictDiagnostic",
             "suggest": "Not all code paths return a value.",
