@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -266,7 +266,7 @@ std::vector<TextChange> FormatDocument(es2panda_Context *context, FormatContext 
     if (publicContext == nullptr || publicContext->parserProgram == nullptr) {
         return {};
     }
-    std::string sourceText(publicContext->parserProgram->SourceCode().Utf8());
+    std::string sourceText(publicContext->parserProgram->SourceCode());
     return FormatSpan(context, publicContext, formatContext, sourceText, {0, sourceText.length()});
 }
 

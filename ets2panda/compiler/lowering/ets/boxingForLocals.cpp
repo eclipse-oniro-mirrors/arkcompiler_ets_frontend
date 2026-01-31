@@ -376,10 +376,11 @@ static void HandleScriptFunction(public_lib::Context *ctx, ir::ScriptFunction *f
     func->TransformChildrenRecursivelyPostorder(handleNode, LOWERING_NAME);
 }
 
-bool BoxingForLocals::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool BoxingForLocals::PerformForProgram(parser::Program *program)
 {
-    parser::SavedFormattingFileName savedFormattingName(ctx->parser->AsETSParser(), "boxing-for-lambdas");
+    parser::SavedFormattingFileName savedFormattingName(Context()->parser->AsETSParser(), "boxing-for-lambdas");
 
+    auto ctx = Context();
     std::function<void(ir::AstNode *)> searchForFunctions = [&](ir::AstNode *ast) {
         if (ast->IsScriptFunction()) {
             HandleScriptFunction(ctx, ast->AsScriptFunction());  // no recursion
@@ -392,7 +393,7 @@ bool BoxingForLocals::PerformForModule(public_lib::Context *ctx, parser::Program
     return true;
 }
 
-bool BoxingForLocals::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx, parser::Program const *program)
+bool BoxingForLocals::PostconditionForProgram(parser::Program const *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *node) {
         if (node->IsAssignmentExpression() && node->AsAssignmentExpression()->Left()->IsIdentifier()) {

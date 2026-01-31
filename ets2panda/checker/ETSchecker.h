@@ -511,7 +511,6 @@ public:
                                                                  const util::StringView &importPath);
     void SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjType, const util::StringView &importPath,
                                       ir::ETSImportDeclaration *importDecl = nullptr);
-    parser::Program *SelectEntryOrExternalProgram(varbinder::ETSBinder *etsBinder, const util::StringView &importPath);
     void SetrModuleObjectTsType(ir::Identifier *local, checker::ETSObjectType *moduleObjType);
     Type *GetReferencedTypeFromBase(Type *baseType, ir::Expression *name);
     Type *GetReferencedTypeBase(ir::Expression *name);
@@ -784,8 +783,8 @@ public:
     void CheckTypeParameterVariance(ir::TSInterfaceDeclaration *ifaceDecl);
 
     checker::Type *CheckArrayElements(ir::ArrayExpression *init);
-    void ResolveReturnStatement(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
-                                ir::ScriptFunction *containingFunc, ir::ReturnStatement *st);
+    void ResolveReturnStatement(ir::ScriptFunction *containingFunc, checker::Type *argumentType,
+                                ir::ReturnStatement *st);
 
     std::recursive_mutex *Mutex()
     {

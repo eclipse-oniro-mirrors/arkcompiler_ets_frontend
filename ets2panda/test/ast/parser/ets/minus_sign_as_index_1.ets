@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,12 +13,14 @@
  * limitations under the License.
  */
  
-class URIError extends WebAssembly {WebAssembly : WeakMap [-6]}
+class URIError extends /* @@ label */WebAssembly /* @@ label1 */{
+  WebAssembly : WeakMap [-6]
+}
 
-/* @@? 1:3 Error Semantic error ESE0349: Class 'URIError' is already defined. */
-/* @@? 16:24 Error Semantic error ESE0371: Cannot find type 'WebAssembly'. */
-/* @@? 16:24 Error Semantic error ESE0176: The super type of 'URIError' class is not extensible. */
-/* @@? 16:60 Error Syntax error ESY0228: Unexpected token, expected ']'. */
-/* @@? 16:60 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 16:61 Error Syntax error ESY0227: Unexpected token '6'. */
-/* @@? 16:62 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@@ label Error Semantic error ESE0371: Cannot find type 'WebAssembly'. */
+/* @@@ label Error Semantic error ESE0176: The super type of 'URIError' class is not extensible. */
+/* @@@ label1 Error Semantic error ESE0349: Class 'URIError' is already defined. */
+/* @@? 17:26 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@? 17:26 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@? 17:27 Error Syntax error ESY0227: Unexpected token '6'. */
+/* @@? 17:28 Error Syntax error ESY0227: Unexpected token ']'. */

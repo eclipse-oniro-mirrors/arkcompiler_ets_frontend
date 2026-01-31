@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,9 +24,9 @@
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "util/language.h"
 #include "parser/ETSparser.h"
-#include "test/utils/scope_init_test.h"
+#include "test/utils/ast_verifier_test.h"
 
-using Es2pandaUnitGtest = test::utils::ScopeInitTest;
+using Es2pandaUnitGtest = test::utils::AstVerifierTest;
 
 namespace ark::es2panda::testing {
 
@@ -87,7 +87,7 @@ public:
         ArenaVector<ir::AstNode *> specifiers {Allocator()->Adapter()};
         auto specifier = Allocator()->New<ir::ImportSpecifier>(aIdent, aIdent);
         specifiers.emplace_back(specifier);
-        util::ImportPathManager::ImportMetadata importMetadata {util::ImportFlags::NONE, Language::Id::JS, "", "", ""};
+        util::ImportMetadata importMetadata {util::ImportFlags::NONE, Language::Id::JS, "", "", ""};
         auto importDecl = util::NodeAllocator::Alloc<ir::ETSImportDeclaration>(
             Allocator(), Allocator()->New<ir::StringLiteral>("/tmp"), std::move(importMetadata), std::move(specifiers));
         compiler::InitScopesPhaseETS::RunExternalNode(importDecl, varbinder);

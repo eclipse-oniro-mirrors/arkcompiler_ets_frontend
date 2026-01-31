@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ namespace ark::es2panda::checker {
 bool TSChecker::StartChecker([[maybe_unused]] varbinder::VarBinder *varbinder, const util::Options &options)
 {
     varbinder->IdentifierAnalysis();
+    SetProgram(varbinder->Program());
 
     if (options.IsDumpAst()) {
         std::cout << Program()->Dump() << std::endl;

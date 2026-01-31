@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,19 +24,12 @@ class ScriptFunction;
 class FunctionExpression : public Expression {
 public:
     FunctionExpression() = delete;
-    ~FunctionExpression() override = default;
 
     NO_COPY_SEMANTIC(FunctionExpression);
     NO_MOVE_SEMANTIC(FunctionExpression);
 
-    explicit FunctionExpression(ScriptFunction *const func) : Expression(AstNodeType::FUNCTION_EXPRESSION), func_(func)
-    {
-    }
-
-    FunctionExpression(ir::Identifier *namedExpr, ScriptFunction *const func)
-        : Expression(AstNodeType::FUNCTION_EXPRESSION), func_(func), exprName_(namedExpr)
-    {
-    }
+    explicit FunctionExpression(ScriptFunction *const func) : FunctionExpression(nullptr, func) {}
+    explicit FunctionExpression(ir::Identifier *namedExpr, ScriptFunction *const func);
 
     [[nodiscard]] const ScriptFunction *Function() const noexcept
     {

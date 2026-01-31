@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,10 @@
 #include "ir/expressions/literals/undefinedLiteral.h"
 
 namespace ark::es2panda::compiler {
-ir::BlockStatement *PromiseVoidInferencePhase::HandleAsyncScriptFunctionBody(public_lib::Context *ctx,
-                                                                             ir::BlockStatement *body)
+ir::BlockStatement *PromiseVoidInferencePhase::HandleAsyncScriptFunctionBody(ir::BlockStatement *body)
 {
-    (void)ctx;
     body->TransformChildrenRecursively(
-        [ctx](checker::AstNodePtr ast) -> checker::AstNodePtr {
+        [ctx = Context()](checker::AstNodePtr ast) -> checker::AstNodePtr {
             if (ast->IsReturnStatement()) {
                 auto *returnStmt = ast->AsReturnStatement();
                 const auto *arg = returnStmt->Argument();
@@ -53,16 +51,16 @@ void PromiseVoidInferencePhase::SetRangeRecursively(ir::TypeNode *node, const le
         Name());
 }
 
-ir::TypeNode *PromiseVoidInferencePhase::CreatePromiseVoidType(public_lib::Context *ctx, const lexer::SourceRange &loc)
+ir::TypeNode *PromiseVoidInferencePhase::CreatePromiseVoidType(const lexer::SourceRange &loc)
 {
-    auto *voidParam = [ctx]() {
+    auto *voidParam = [ctx = Context()]() {
         auto paramsVector = ArenaVector<ir::TypeNode *>(ctx->Allocator()->Adapter());
         paramsVector.push_back(ctx->AllocNode<ir::ETSPrimitiveType>(ir::PrimitiveType::VOID, ctx->Allocator()));
         auto *params = ctx->AllocNode<ir::TSTypeParameterInstantiation>(std::move(paramsVector));
         return params;
     }();
 
-    auto *promiseVoidType = [ctx, voidParam]() {
+    auto *promiseVoidType = [ctx = Context(), voidParam]() {
         auto *promiseId = ctx->AllocNode<ir::Identifier>(compiler::Signatures::BUILTIN_PROMISE_CLASS, ctx->Allocator());
         auto *part = ctx->AllocNode<ir::ETSTypeReferencePart>(promiseId, voidParam, nullptr, ctx->Allocator());
         auto *type = ctx->AllocNode<ir::ETSTypeReference>(part, ctx->Allocator());
@@ -114,7 +112,7 @@ using AstNodePtr = ir::AstNode *;
  * async function f(): Promise<void> { return Void; }
  * */
 
-bool PromiseVoidInferencePhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool PromiseVoidInferencePhase::PerformForProgram(parser::Program *program)
 {
     auto genTypeLocation = [](ir::ScriptFunction *function) -> lexer::SourceRange {
         const auto &params = function->Params();
@@ -140,7 +138,7 @@ bool PromiseVoidInferencePhase::PerformForModule(public_lib::Context *ctx, parse
         return {loc.end, loc.end};
     };
 
-    const auto transformer = [this, ctx, genTypeLocation](ir::AstNode *ast) -> AstNodePtr {
+    const auto transformer = [this, genTypeLocation](ir::AstNode *ast) -> AstNodePtr {
         if (!(ast->IsScriptFunction() && ast->AsScriptFunction()->IsAsyncFunc())) {
             return ast;
         }
@@ -153,14 +151,14 @@ bool PromiseVoidInferencePhase::PerformForModule(public_lib::Context *ctx, parse
         if (!hasReturnAnn) {
             if (!function->HasReturnStatement()) {
                 const auto &loc = genTypeLocation(function);
-                function->SetReturnTypeAnnotation(CreatePromiseVoidType(ctx, loc));
+                function->SetReturnTypeAnnotation(CreatePromiseVoidType(loc));
             }
 
             if (function->HasBody() && function->Body()->IsBlockStatement()) {
-                HandleAsyncScriptFunctionBody(ctx, function->Body()->AsBlockStatement());
+                HandleAsyncScriptFunctionBody(function->Body()->AsBlockStatement());
             }
         } else if (hasPromiseVoid && function->HasBody() && function->Body()->IsBlockStatement()) {
-            HandleAsyncScriptFunctionBody(ctx, function->Body()->AsBlockStatement());
+            HandleAsyncScriptFunctionBody(function->Body()->AsBlockStatement());
         }
 
         return ast;
@@ -171,10 +169,8 @@ bool PromiseVoidInferencePhase::PerformForModule(public_lib::Context *ctx, parse
     return true;
 }
 
-bool PromiseVoidInferencePhase::PostconditionForModule(public_lib::Context *ctx, const parser::Program *program)
+bool PromiseVoidInferencePhase::PostconditionForProgram(const parser::Program *program)
 {
-    (void)ctx;
-
     auto checkFunctionBody = [](const ir::BlockStatement *body) -> bool {
         if (!body->IsReturnStatement()) {
             return true;

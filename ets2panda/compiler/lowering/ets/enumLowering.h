@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@
 
 namespace ark::es2panda::compiler {
 
-class EnumLoweringPhase : public PhaseForDeclarations {
+class EnumLoweringPhase : public PhaseForAllPrograms {
 public:
     static constexpr std::string_view STRING_REFERENCE_TYPE {"String"};
     static constexpr std::string_view IDENTIFIER_I {"i"};
@@ -55,7 +55,15 @@ public:
     {
         return "EnumLoweringPhase";
     }
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+
+    void Setup() override
+    {
+        context_ = Context();
+        checker_ = Context()->GetChecker()->AsETSChecker();
+        varbinder_ = Context()->parserProgram->VarBinder()->AsETSBinder();
+    }
+
+    bool PerformForProgram(parser::Program *program) override;
     checker::ETSChecker *Checker()
     {
         return checker_;

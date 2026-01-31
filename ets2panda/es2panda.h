@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -93,7 +93,6 @@ struct SourceFile {
     bool isModule {};
     // NOTE(dkofanov): Should be aligned with 'Program::moduleInfo_'.
     bool isDeclForDynamicStaticInterop {};
-    bool isExternalSourceImport {};
     std::string_view dest {};
     // NOLINTEND(misc-non-private-member-variables-in-classes)
 };

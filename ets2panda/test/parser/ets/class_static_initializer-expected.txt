@@ -105,12 +105,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_static_initializer.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_static_initializer.ets"
                     }
                   }
                 },
@@ -508,40 +508,40 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 19,
+                      "column": 9,
+                      "program": "class_static_initializer.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 22,
+                      "column": 24,
+                      "program": "class_static_initializer.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 19,
+                    "column": 9,
+                    "program": "class_static_initializer.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 22,
+                    "column": 24,
+                    "program": "class_static_initializer.ets"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 19,
+                  "column": 9,
+                  "program": "class_static_initializer.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 22,
+                  "column": 24,
+                  "program": "class_static_initializer.ets"
                 }
               }
             },

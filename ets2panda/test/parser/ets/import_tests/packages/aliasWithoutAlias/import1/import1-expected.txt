@@ -2,147 +2,11 @@
   "type": "Program",
   "statements": [
     {
-      "type": "ETSPackageDeclaration",
-      "name": {
-        "type": "TSQualifiedName",
-        "left": {
-          "type": "TSQualifiedName",
-          "left": {
-            "type": "TSQualifiedName",
-            "left": {
-              "type": "Identifier",
-              "name": "import_tests",
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 9,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 21,
-                  "program": "import1.ets"
-                }
-              }
-            },
-            "right": {
-              "type": "Identifier",
-              "name": "packages",
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 22,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 30,
-                  "program": "import1.ets"
-                }
-              }
-            },
-            "loc": {
-              "start": {
-                "line": 16,
-                "column": 9,
-                "program": "import1.ets"
-              },
-              "end": {
-                "line": 16,
-                "column": 30,
-                "program": "import1.ets"
-              }
-            }
-          },
-          "right": {
-            "type": "Identifier",
-            "name": "aliasWithoutAlias",
-            "loc": {
-              "start": {
-                "line": 16,
-                "column": 31,
-                "program": "import1.ets"
-              },
-              "end": {
-                "line": 16,
-                "column": 48,
-                "program": "import1.ets"
-              }
-            }
-          },
-          "loc": {
-            "start": {
-              "line": 16,
-              "column": 9,
-              "program": "import1.ets"
-            },
-            "end": {
-              "line": 16,
-              "column": 48,
-              "program": "import1.ets"
-            }
-          }
-        },
-        "right": {
-          "type": "Identifier",
-          "name": "import1",
-          "loc": {
-            "start": {
-              "line": 16,
-              "column": 49,
-              "program": "import1.ets"
-            },
-            "end": {
-              "line": 16,
-              "column": 56,
-              "program": "import1.ets"
-            }
-          }
-        },
-        "loc": {
-          "start": {
-            "line": 16,
-            "column": 9,
-            "program": "import1.ets"
-          },
-          "end": {
-            "line": 16,
-            "column": 56,
-            "program": "import1.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 16,
-          "column": 1,
-          "program": "import1.ets"
-        },
-        "end": {
-          "line": 18,
-          "column": 7,
-          "program": "import1.ets"
-        }
-      }
-    },
-    {
       "type": "ClassDeclaration",
       "definition": {
         "id": {
           "type": "Identifier",
-          "name": "ETSGLOBAL",
-          "loc": {
-            "start": {
-              "line": 1,
-              "column": 1,
-              "program": "import1.ets"
-            },
-            "end": {
-              "line": 1,
-              "column": 1,
-              "program": "import1.ets"
-            }
-          }
+          "name": "ETSGLOBAL"
         },
         "superClass": null,
         "implements": [],
@@ -151,19 +15,7 @@
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "foo",
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 17,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 20,
-                  "program": "import1.ets"
-                }
-              }
+              "name": "foo"
             },
             "kind": "method",
             "accessibility": "public",
@@ -176,38 +28,14 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "foo",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 17,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 20,
-                      "program": "import1.ets"
-                    }
-                  }
+                  "name": "foo"
                 },
                 "generator": false,
                 "async": false,
                 "expression": false,
                 "params": [],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 24,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 18,
-                      "column": 27,
-                      "program": "import1.ets"
-                    }
-                  }
+                  "type": "ETSPrimitiveType"
                 },
                 "body": {
                   "type": "BlockStatement",
@@ -216,104 +44,20 @@
                       "type": "ReturnStatement",
                       "argument": {
                         "type": "NumberLiteral",
-                        "value": 100,
-                        "loc": {
-                          "start": {
-                            "line": 19,
-                            "column": 12,
-                            "program": "import1.ets"
-                          },
-                          "end": {
-                            "line": 19,
-                            "column": 15,
-                            "program": "import1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 19,
-                          "column": 5,
-                          "program": "import1.ets"
-                        },
-                        "end": {
-                          "line": 19,
-                          "column": 16,
-                          "program": "import1.ets"
-                        }
+                        "value": 100
                       }
                     }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 18,
-                      "column": 28,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 20,
-                      "column": 2,
-                      "program": "import1.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 18,
-                    "column": 17,
-                    "program": "import1.ets"
-                  },
-                  "end": {
-                    "line": 20,
-                    "column": 2,
-                    "program": "import1.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 17,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 2,
-                  "program": "import1.ets"
+                  ]
                 }
               }
             },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 18,
-                "column": 8,
-                "program": "import1.ets"
-              },
-              "end": {
-                "line": 20,
-                "column": 2,
-                "program": "import1.ets"
-              }
-            }
+            "overloads": []
           },
           {
             "type": "MethodDefinition",
             "key": {
               "type": "Identifier",
-              "name": "bar",
-              "loc": {
-                "start": {
-                  "line": 22,
-                  "column": 17,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 22,
-                  "column": 20,
-                  "program": "import1.ets"
-                }
-              }
+              "name": "bar"
             },
             "kind": "method",
             "accessibility": "public",
@@ -326,38 +70,14 @@
                 "type": "ScriptFunction",
                 "id": {
                   "type": "Identifier",
-                  "name": "bar",
-                  "loc": {
-                    "start": {
-                      "line": 22,
-                      "column": 17,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 22,
-                      "column": 20,
-                      "program": "import1.ets"
-                    }
-                  }
+                  "name": "bar"
                 },
                 "generator": false,
                 "async": false,
                 "expression": false,
                 "params": [],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
-                  "loc": {
-                    "start": {
-                      "line": 22,
-                      "column": 24,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 22,
-                      "column": 27,
-                      "program": "import1.ets"
-                    }
-                  }
+                  "type": "ETSPrimitiveType"
                 },
                 "body": {
                   "type": "BlockStatement",
@@ -366,125 +86,17 @@
                       "type": "ReturnStatement",
                       "argument": {
                         "type": "NumberLiteral",
-                        "value": 200,
-                        "loc": {
-                          "start": {
-                            "line": 23,
-                            "column": 12,
-                            "program": "import1.ets"
-                          },
-                          "end": {
-                            "line": 23,
-                            "column": 15,
-                            "program": "import1.ets"
-                          }
-                        }
-                      },
-                      "loc": {
-                        "start": {
-                          "line": 23,
-                          "column": 5,
-                          "program": "import1.ets"
-                        },
-                        "end": {
-                          "line": 23,
-                          "column": 16,
-                          "program": "import1.ets"
-                        }
+                        "value": 200
                       }
                     }
-                  ],
-                  "loc": {
-                    "start": {
-                      "line": 22,
-                      "column": 28,
-                      "program": "import1.ets"
-                    },
-                    "end": {
-                      "line": 24,
-                      "column": 2,
-                      "program": "import1.ets"
-                    }
-                  }
-                },
-                "loc": {
-                  "start": {
-                    "line": 22,
-                    "column": 17,
-                    "program": "import1.ets"
-                  },
-                  "end": {
-                    "line": 24,
-                    "column": 2,
-                    "program": "import1.ets"
-                  }
-                }
-              },
-              "loc": {
-                "start": {
-                  "line": 22,
-                  "column": 17,
-                  "program": "import1.ets"
-                },
-                "end": {
-                  "line": 24,
-                  "column": 2,
-                  "program": "import1.ets"
+                  ]
                 }
               }
             },
-            "overloads": [],
-            "loc": {
-              "start": {
-                "line": 22,
-                "column": 8,
-                "program": "import1.ets"
-              },
-              "end": {
-                "line": 24,
-                "column": 2,
-                "program": "import1.ets"
-              }
-            }
+            "overloads": []
           }
-        ],
-        "loc": {
-          "start": {
-            "line": 1,
-            "column": 1,
-            "program": "import1.ets"
-          },
-          "end": {
-            "line": 1,
-            "column": 1,
-            "program": "import1.ets"
-          }
-        }
-      },
-      "loc": {
-        "start": {
-          "line": 1,
-          "column": 1,
-          "program": "import1.ets"
-        },
-        "end": {
-          "line": 1,
-          "column": 1,
-          "program": "import1.ets"
-        }
+        ]
       }
     }
-  ],
-  "loc": {
-    "start": {
-      "line": 1,
-      "column": 1,
-      "program": "import1.ets"
-    },
-    "end": {
-      "line": 25,
-      "column": 1,
-      "program": "import1.ets"
-    }
-  }
+  ]
 }

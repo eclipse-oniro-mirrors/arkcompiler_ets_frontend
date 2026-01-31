@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,6 @@
 #ifndef ES2PANDA_UTIL_PATH_H
 #define ES2PANDA_UTIL_PATH_H
 
-#include <cstdio>
-#include <string>
 #include "util/ustring.h"
 
 namespace ark::es2panda::util {
@@ -30,13 +28,21 @@ const char PATH_DELIMITER =
 
 class Path {
 public:
-    Path();
-    Path(const std::string &absolutePath, ArenaAllocator *allocator);
-    Path(const std::string &relativePath, const std::string &basePath, ArenaAllocator *allocator);
-    Path(const util::StringView &absolutePath, ArenaAllocator *allocator);
-    Path(const util::StringView &relativePath, const util::StringView &basePath, ArenaAllocator *allocator);
+    Path() = delete;
+    ~Path() = default;
+
+    explicit Path(ArenaAllocator *allocator);
+    explicit Path(const std::string &absolutePath, ArenaAllocator *allocator);
+    explicit Path(const std::string &relativePath, const std::string &basePath, ArenaAllocator *allocator);
+    explicit Path(const util::StringView &absolutePath, ArenaAllocator *allocator);
+    explicit Path(const util::StringView &relativePath, const util::StringView &basePath, ArenaAllocator *allocator);
+
+    DEFAULT_COPY_SEMANTIC(Path);
+    DEFAULT_MOVE_SEMANTIC(Path);
+
     bool IsRelative();
     bool IsAbsolute();
+
     const util::StringView &GetPath() const;
     const util::StringView &GetAbsolutePath() const;
     const util::StringView &GetExtension() const;
@@ -61,7 +67,7 @@ private:
     util::StringView parentFolder_ {};
     util::StringView absoluteParentFolder_ {};
 
-    void Initializer(const std::string &absolutePath, ArenaAllocator *allocator);
+    void Initializer(const std::string &absolutePath);
     void InitializeBasePath(std::string basePath);
     void InitializeAbsolutePath();
     void InitializeParentFolder();

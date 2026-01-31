@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ namespace ark::es2panda::compiler {
  *   if (a.CompareTo(b) >= 0)
  */
 
-bool CheckOperatorType(ir::BinaryExpression *expr)
+static bool CheckOperatorType(ir::BinaryExpression *expr)
 {
     switch (expr->OperatorType()) {
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
@@ -49,7 +49,7 @@ bool CheckOperatorType(ir::BinaryExpression *expr)
     }
 }
 
-bool StringComparisonLowering::IsStringComparison(ir::AstNode *node)
+static bool IsStringComparison(ir::AstNode *node)
 {
     if (node->IsBinaryExpression()) {
         auto *expr = node->AsBinaryExpression();
@@ -69,7 +69,7 @@ bool StringComparisonLowering::IsStringComparison(ir::AstNode *node)
     return false;
 }
 
-void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *expr, public_lib::Context *ctx)
+static void ProcessBinaryExpression(ir::BinaryExpression *expr, public_lib::Context *ctx)
 {
     ES2PANDA_ASSERT(expr->IsBinaryExpression());
     ES2PANDA_ASSERT(expr->Left()->TsType()->IsETSStringType() && expr->Right()->TsType()->IsETSStringType());
@@ -107,11 +107,11 @@ void StringComparisonLowering::ProcessBinaryExpression(ir::BinaryExpression *exp
     }
 }
 
-bool StringComparisonLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool StringComparisonLowering::PerformForProgram(parser::Program *program)
 {
     [[maybe_unused]] std::vector<ir::BinaryExpression *> foundNodes {};
     // CC-OFFNXT(G.FMT.14-CPP) project code style
-    program->Ast()->IterateRecursively([&foundNodes, this](ir::AstNode *ast) -> ir::AstNode * {
+    program->Ast()->IterateRecursively([&foundNodes](ir::AstNode *ast) -> ir::AstNode * {
         if (IsStringComparison(ast)) {
             foundNodes.push_back(ast->AsBinaryExpression());
         }
@@ -119,7 +119,7 @@ bool StringComparisonLowering::PerformForModule(public_lib::Context *ctx, parser
     });
 
     for ([[maybe_unused]] auto &it : foundNodes) {
-        ProcessBinaryExpression(it, ctx);
+        ProcessBinaryExpression(it, Context());
     }
 
     return true;

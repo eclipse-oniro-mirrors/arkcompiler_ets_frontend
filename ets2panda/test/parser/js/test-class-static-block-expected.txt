@@ -440,40 +440,40 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 22,
+                      "column": 9,
+                      "program": "test-class-static-block.js"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 23,
+                      "column": 21,
+                      "program": "test-class-static-block.js"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 22,
+                    "column": 9,
+                    "program": "test-class-static-block.js"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 23,
+                    "column": 21,
+                    "program": "test-class-static-block.js"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 22,
+                  "column": 9,
+                  "program": "test-class-static-block.js"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 23,
+                  "column": 21,
+                  "program": "test-class-static-block.js"
                 }
               }
             },
@@ -955,40 +955,40 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 31,
+                      "column": 9,
+                      "program": "test-class-static-block.js"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 31,
+                      "column": 21,
+                      "program": "test-class-static-block.js"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 31,
+                    "column": 9,
+                    "program": "test-class-static-block.js"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 31,
+                    "column": 21,
+                    "program": "test-class-static-block.js"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 31,
+                  "column": 9,
+                  "program": "test-class-static-block.js"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 31,
+                  "column": 21,
+                  "program": "test-class-static-block.js"
                 }
               }
             },

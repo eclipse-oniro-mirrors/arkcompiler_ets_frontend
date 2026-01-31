@@ -89,12 +89,12 @@
                     "start": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_init.ets"
                     },
                     "end": {
                       "line": 1,
                       "column": 1,
-                      "program": null
+                      "program": "class_init.ets"
                     }
                   }
                 },
@@ -204,40 +204,40 @@
                   ],
                   "loc": {
                     "start": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 20,
+                      "column": 5,
+                      "program": "class_init.ets"
                     },
                     "end": {
-                      "line": 1,
-                      "column": 1,
-                      "program": null
+                      "line": 20,
+                      "column": 18,
+                      "program": "class_init.ets"
                     }
                   }
                 },
                 "loc": {
                   "start": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 20,
+                    "column": 5,
+                    "program": "class_init.ets"
                   },
                   "end": {
-                    "line": 1,
-                    "column": 1,
-                    "program": null
+                    "line": 20,
+                    "column": 18,
+                    "program": "class_init.ets"
                   }
                 }
               },
               "loc": {
                 "start": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 20,
+                  "column": 5,
+                  "program": "class_init.ets"
                 },
                 "end": {
-                  "line": 1,
-                  "column": 1,
-                  "program": null
+                  "line": 20,
+                  "column": 18,
+                  "program": "class_init.ets"
                 }
               }
             },

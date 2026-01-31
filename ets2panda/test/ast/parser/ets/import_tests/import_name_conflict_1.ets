@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  */
 
 import {dbl as floatingPointNumber} from "import_tests/packages";
-import {flt as floatingPointNumber} from /* @@ label */"import_tests/packages";
+import {flt as /* @@ label */floatingPointNumber} from "import_tests/packages";
 
 // Throw error because floatingPointNumber is for multiple value.
 

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -102,7 +102,7 @@ interface I1 {
 /* @@? 47:21 Error Semantic error ESE0096: The return type of '$_iterator' must be a type that implements Iterator interface. */
 /* @@? 47:21 Error Semantic error ESE0001: Return type of async function must be 'Promise'. */
 /* @@? 54:21 Error Semantic error ESE0153: Initializers are not allowed in ambient contexts: x */
-/* @@? 54:23 Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */
+/* @@? 54:23 Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
 /* @@? 58:1 Error Semantic error ESE0143: Unresolved reference declare */
 /* @@? 58:9 Error Syntax error ESY0227: Unexpected token 'native'. */
 /* @@? 58:16 Error Syntax error ESY0203: 'native' flags must be used for functions only at top-level. */

@@ -664,10 +664,6 @@ semantic:
   id: 101
   message: "Initializer must be able to complete normally."
 
-- name: INIT_IN_AMBIENT
-  id: 153
-  message: "Initializers are not allowed in ambient contexts: {}"
-
 - name: INNER_CLASS_MUTABLE_STATIC_PROP
   id: 196
   message: "Inner class cannot have non-readonly static properties"

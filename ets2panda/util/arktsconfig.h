@@ -56,7 +56,10 @@ class DiagnosticEngine;
 namespace ark::es2panda {
 
 struct CompareByLength {
-    bool operator()(const std::string &x, const std::string &y) const
+    using is_transparent = void;
+
+    template <typename T1, typename T2>
+    bool operator()(const T1 &x, const T2 &y) const
     {
         return x.size() == y.size() ? x > y : x.size() > y.size();
     }
@@ -107,7 +110,7 @@ public:
             return lang_;
         }
 
-        std::string_view Path() const
+        const std::string &Path() const
         {
             return path_;
         }
@@ -147,6 +150,8 @@ public:
     bool Parse();
 
     std::optional<std::string> ResolvePath(std::string_view path, bool isDynamic = false) const;
+
+    void FixupWithStdlibOption(const std::string &stdlib);
 
     void ResolveAllDependenciesInArkTsConfig();
 
@@ -199,8 +204,15 @@ public:
     {
         return sourcePathMap_;
     }
-    std::optional<std::pair<const std::string &, const ArkTsConfig::ExternalModuleData &>> FindInDependencies(
-        const std::string &importString);
+
+    using DependenciesLookupResult = std::optional<std::pair<const std::string &, const ExternalModuleData &>>;
+    DependenciesLookupResult FindInDependencies(std::string_view resolvedSource) const;
+
+    DependenciesLookupResult FindInDependencies(const std::string &resolvedSource) const
+    {
+        return FindInDependencies(std::string_view {resolvedSource});
+    }
+
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     const std::vector<Pattern> &Include() const
     {
@@ -210,9 +222,9 @@ public:
     {
         return exclude_;
     }
-    fs::path ComputeDestination(const fs::path &src, const fs::path &rootDir, const fs::path &outDir);
+    fs::path ComputeDestination(const fs::path &src, const fs::path &rootDir, const fs::path &outDir) const;
 #endif  // ARKTSCONFIG_USE_FILESYSTEM
-    bool Check(bool cond, const diagnostic::DiagnosticKind &diag, const util::DiagnosticMessageParams &params);
+    bool Check(bool cond, const diagnostic::DiagnosticKind &diag, const util::DiagnosticMessageParams &params) const;
     void GenerateSourcePathMap();
 
 private:
@@ -272,7 +284,7 @@ private:
 
 // Find source files and compute destination locations
 // Return: vector of path pairs <source file, destination abc file>
-std::vector<std::pair<std::string, std::string>> FindProjectSources(const std::shared_ptr<ArkTsConfig> &arktsConfig);
+std::vector<std::pair<std::string, std::string>> FindProjectSources(const ArkTsConfig &arktsConfig);
 
 std::string JoinPaths(const std::string &a, const std::string &b);
 std::string ParentPath(const std::string &path);

@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -122,14 +122,13 @@ static ir::OpaqueTypeNode *FindIterValueType(checker::ETSObjectType *type, Arena
     return allocator->New<ir::OpaqueTypeNode>(valueType, allocator);
 }
 
-ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context *ctx,
-                                                             ir::ForOfStatement *forOfStatement) const
+ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(ir::ForOfStatement *forOfStatement) const
 {
     //  Note! We assume that parser, varbinder and checker phases have been already passed correctly, thus the
     //  class has required accessible iterator method and all the types and scopes are properly resolved.
-    auto *const allocator = ctx->Allocator();
+    auto *const allocator = Context()->Allocator();
 
-    auto *const varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
+    auto *const varbinder = Context()->GetChecker()->VarBinder()->AsETSBinder();
     ES2PANDA_ASSERT(varbinder != nullptr);
     auto statementScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, NearestScope(forOfStatement));
 
@@ -167,7 +166,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     whileStatement += "@@I6 = (@@I7.value as @@T8);}; ";
 
     // Parse ArkTS code string and create corresponding AST nodes
-    auto *const parser = ctx->parser->AsETSParser();
+    auto *const parser = Context()->parser->AsETSParser();
     ES2PANDA_ASSERT(parser != nullptr && nextIdent != nullptr && iterIdent != nullptr);
 
     auto *const loweringResult = parser->CreateFormattedStatement(
@@ -181,7 +180,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     auto whileBody = loweredWhile->Body()->AsBlockStatement();
     TransferForOfLoopBody(forOfStatement->Body(), whileBody);
 
-    auto *const checker = ctx->GetChecker()->AsETSChecker();
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     CheckLoweredNode(varbinder, checker, loweringResult);
 
@@ -191,7 +190,7 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(public_lib::Context
     return loweringResult;
 }
 
-bool ObjectIteratorLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ObjectIteratorLowering::PerformForProgram(parser::Program *program)
 {
     auto hasIterator = [](checker::Type const *const exprType) -> bool {
         return exprType != nullptr && (exprType->IsETSObjectType() || exprType->IsETSTypeParameter());
@@ -199,13 +198,13 @@ bool ObjectIteratorLowering::PerformForModule(public_lib::Context *ctx, parser::
 
     program->Ast()->TransformChildrenRecursively(
         // clang-format off
-        [this, ctx, &hasIterator](ir::AstNode *ast) -> ir::AstNode* {
+        [this, &hasIterator](ir::AstNode *ast) -> ir::AstNode* {
             // clang-format on
             if (ast->IsForOfStatement()) {
                 if (auto const *const exprType = ast->AsForOfStatement()->Right()->TsType();
                     hasIterator(exprType) || (exprType != nullptr && exprType->IsETSUnionType() &&
                                               exprType->AsETSUnionType()->AllOfConstituentTypes(hasIterator))) {
-                    return ProcessObjectIterator(ctx, ast->AsForOfStatement());
+                    return ProcessObjectIterator(ast->AsForOfStatement());
                 }
             }
             return ast;

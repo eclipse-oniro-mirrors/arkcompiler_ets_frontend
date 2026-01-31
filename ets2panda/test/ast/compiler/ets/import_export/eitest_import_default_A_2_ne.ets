@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import {B} from "./eitest_export_default_A_2"
+import { /* @@ label */B} from "./eitest_export_default_A_2"
 
 function main(){
     let a :B = new B()
 }
 
-/* @@? 16:9 Error Semantic error ESE0356: Cannot find imported element 'B' */
+/* @@@ label Error Semantic error ESE0356: Cannot find imported element 'B' */
 /* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'B'. */
 /* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'B'. */

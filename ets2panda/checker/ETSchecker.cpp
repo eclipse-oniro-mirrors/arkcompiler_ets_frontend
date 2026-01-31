@@ -87,15 +87,12 @@ void ETSChecker::ReputCheckerDataProgram(ETSChecker *eChecker)
 void ETSChecker::ReputCheckerData()
 {
     readdedChecker_.insert(this);
-    for (auto &[_, extPrograms] : Program()->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
-                continue;
-            }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    Program()->GetExternalSources()->Visit([this](auto *extProg) {
+        if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
             ReputCheckerDataProgram(extProg->Checker()->AsETSChecker());
         }
-    }
+    });
 }
 
 static util::StringView InitBuiltin(ETSChecker *checker, std::string_view signature)
@@ -346,7 +343,7 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
         debugInfoPlugin_->PreCheck();
     }
-
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     CheckProgram(Program(), true);
 
     if (UNLIKELY(isEvalMode)) {
@@ -388,25 +385,24 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
 {
     auto *savedProgram = Program();
     SetProgram(program);
-
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered() && extProg->IsProgramModified()) {
-                extProg->PushChecker(this);
-                auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
-                varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);
-                VarBinder()->AsETSBinder()->SetProgram(extProg);
-                VarBinder()->AsETSBinder()->ResetTopScope(extProg->GlobalScope());
-                checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
-                AddStatus(checker::CheckerStatus::IN_EXTERNAL);
-                CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
-                VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
-                VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
-                extProg->SetProgramModified(false);
-            }
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    program->GetExternalSources()->Visit([this](auto *extProg) {
+        if (extProg->IsASTLowered() || !extProg->IsProgramModified()) {
+            return;
         }
-    }
+        extProg->PushChecker(this);
+        auto *savedProgram2 = VarBinder()->AsETSBinder()->Program();
+        varbinder::RecordTableContext recordTableCtx(VarBinder()->AsETSBinder(), extProg);
+        VarBinder()->AsETSBinder()->SetProgram(extProg);
+        VarBinder()->AsETSBinder()->ResetTopScope(extProg->GlobalScope());
+        checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
+        AddStatus(checker::CheckerStatus::IN_EXTERNAL);
+        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
+        VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
+        VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
+        extProg->SetProgramModified(false);
+    });
 
     ES2PANDA_ASSERT(Program()->Ast()->IsProgram());
 
@@ -419,8 +415,8 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
     } else if (!VarBinder()->GetContext()->lazyCheck) {
         Program()->Ast()->Check(this);
     }
-
-    ES2PANDA_ASSERT(VarBinder()->AsETSBinder()->GetExternalRecordTable().find(program)->second);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+    ES2PANDA_ASSERT(VarBinder()->AsETSBinder()->CheckRecordTablesConsistency(program));
 
     SetProgram(savedProgram);
 }

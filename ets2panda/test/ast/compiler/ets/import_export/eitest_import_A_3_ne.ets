@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,6 @@ function main(){
     let a :A = new A()
 }
 
-/* @@? 16:15 Error Semantic error ESE0358: Cannot find default imported element in the target */
+/* @@? 16:1 Error Semantic error ESE0358: Cannot find default imported element in the target */
 /* @@? 19:12 Error Semantic error ESE0371: Cannot find type 'A'. */
 /* @@? 19:20 Error Semantic error ESE0371: Cannot find type 'A'. */

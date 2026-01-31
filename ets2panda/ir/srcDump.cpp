@@ -202,7 +202,7 @@ struct PostDumper {
 
     void operator()(const ir::AstNode *node)
     {
-        auto g1 = dumper_->GetDeclgen()->BuildAmbientContextGuard();
+        auto g1 = dumper_->BuildAmbientContextGuard();
         auto g2 = dumper_->GetDeclgen()->BuildPostDumpIndirectDepsPhaseLockGuard();
         dumper_->GetDeclgen()->SetPostDumpIndirectDepsPhase();
         auto namespacesCount = ReconstructNamespaces(node);
@@ -232,7 +232,7 @@ struct PostDumper {
             if (ns->IsExported()) {
                 dumper_->Add("export ");
             }
-            dumper_->GetDeclgen()->TryDeclareAmbientContext(dumper_);
+            dumper_->TryDeclareAmbientContext();
             dumper_->Add("namespace " + ns->Ident()->Name().Mutf8() + " {");
         }
         dumper_->Add('\n');
@@ -342,11 +342,11 @@ void Declgen::Dump(ir::SrcDumper *dumper, const checker::Type *type)
     AstFromType(this, type)->Dump(dumper);
 }
 
-void Declgen::TryDeclareAmbientContext(SrcDumper *srcDumper)
+void SrcDumper::TryDeclareAmbientContext()
 {
     if (!ambientDeclarationLock_.IsAcquired()) {
         ambientDeclarationLock_.Acquire();
-        srcDumper->Add("declare ");
+        Add("declare ");
     }
 }
 

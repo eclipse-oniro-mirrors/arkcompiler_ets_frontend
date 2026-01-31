@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,11 @@
 namespace ark::es2panda::lexer {
 LexerPosition::LexerPosition(const util::StringView &source) : iterator_(source) {}
 
-Lexer::Lexer(const parser::ParserContext *parserContext, util::DiagnosticEngine &diagnosticEngine, bool startLexer)
+Lexer::Lexer(const parser::ParserContext *parserContext, std::string_view sourceCode,
+             util::DiagnosticEngine &diagnosticEngine, bool startLexer)
     : allocator_(parserContext->GetProgram()->Allocator()),
       parserContext_(parserContext),
-      source_(parserContext->GetProgram()->SourceCode()),
+      source_(sourceCode),
       pos_(source_),
       diagnosticEngine_(diagnosticEngine)
 {

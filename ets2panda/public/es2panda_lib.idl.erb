@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -183,6 +183,8 @@ interface es2panda_Impl {
     String ContextErrorMessage(es2panda_Context context);
 
     parser.Program ContextProgram(es2panda_Context context);
+    sequence<es2panda_ExternalSource> ProgramExternalSources(es2panda_Context context, parser.Program program);
+    sequence<es2panda_ExternalSource> ProgramDirectExternalSources(es2panda_Context context, parser.Program program);
     String ExternalSourceName(es2panda_ExternalSource e_source);
     sequence<parser.Program> ExternalSourcePrograms(es2panda_ExternalSource e_source);
 
@@ -298,7 +300,8 @@ namespace <%= namespaceName %> {
 [Entity=Class<%=
     classData.ast_node_type_value ? ", Es2pandaAstNodeType=#{classData.ast_node_type_value}" : ''
 %><%= classData.class_c_type %>] interface <%= className %><%=
-    ": #{classData.extends_classname}" if classData && classData.extends_classname
+    ": #{classData.extends_classname}" if classData && classData.extends_classname &&
+    !Es2pandaLibApi::idl_remove_extends.include?(classData.extends_classname)
 %> {
 %     classData.class_constructors&.each_with_index do |constructor, index|
 %     api_class_type = Es2pandaLibApi::Arg.type_to_idl(classData.constructor_type.idl_type)

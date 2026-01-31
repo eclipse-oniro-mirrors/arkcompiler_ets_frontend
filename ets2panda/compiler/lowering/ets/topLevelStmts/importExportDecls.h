@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,34 +26,31 @@ namespace ark::es2panda::compiler {
 
 class SavedImportExportDeclsContext;
 class ImportExportDecls : ir::visitor::EmptyAstVisitor {
-    static constexpr std::string_view DEFAULT_IMPORT_SOURCE_FILE = "<default_import>.ets";
-
 public:
     ImportExportDecls() = default;
-    ImportExportDecls(varbinder::ETSBinder *varbinder, parser::ETSParser *parser, public_lib::Context *ctx)
-        : varbinder_(varbinder), parser_(parser), ctx_(ctx)
+    ImportExportDecls(public_lib::Context *ctx)
+        : varbinder_(ctx->parserProgram->VarBinder()->AsETSBinder()), parser_(ctx->parser->AsETSParser()), ctx_(ctx)
     {
     }
 
     /**
      * Add stdlib names to default imports
      */
-    void ParseDefaultSources();
+    void IntroduceStdlibImportProgram();
 
     /**
      * Verifies import errors, and add Exported flag to top level variables and methods
      * @param global_stmts program global statements
      */
-    GlobalClassHandler::ModuleDependencies HandleGlobalStmts(ArenaVector<parser::Program *> &programs);
-    void AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec);
-    void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements,
-                                  GlobalClassHandler::ModuleDependencies &moduleDependencies);
-    void VerifyTypeExports(const ArenaVector<parser::Program *> &programs);
+    void HandleGlobalStmts(parser::Program *programs);
+    void AddSelectiveExportAlias(parser::Program *program, const ir::Statement *stmt, const ir::AstNode *spec);
+    void ProcessProgramStatements(parser::Program *program, const ArenaVector<ir::Statement *> &statements);
+    void VerifyTypeExports(parser::Program *programs);
     void VerifyType(ir::Statement *stmt, std::set<util::StringView> &exportedStatements,
                     std::map<util::StringView, ir::AstNode *> &typesMap);
     void HandleSimpleType(std::set<util::StringView> &exportedStatements, ir::Statement *stmt, util::StringView name);
 
-    void VerifySingleExportDefault(const ArenaVector<parser::Program *> &programs);
+    void VerifySingleExportDefault(parser::Program *programs);
     void AddExportFlags(ir::AstNode *node, util::StringView originalFieldName, bool exportedWithAlias);
     void HandleSelectiveExportWithAlias(util::StringView originalFieldName, util::StringView exportName,
                                         lexer::SourcePosition startLoc);
@@ -74,8 +71,6 @@ private:
     void VisitETSImportDeclaration(ir::ETSImportDeclaration *importDecl) override;
     void VisitAnnotationDeclaration(ir::AnnotationDeclaration *annotationDecl) override;
     void VisitETSModule(ir::ETSModule *etsModule) override;
-    void HandleInitModuleCallExpression(ir::CallExpression *expr, parser::Program *program,
-                                        GlobalClassHandler::ModuleDependencies &moduleDependencies);
 
 private:
     varbinder::ETSBinder *varbinder_ {nullptr};
@@ -106,12 +101,10 @@ public:
         UpdateExportMap();
     }
 
-    void RecoverExportAliasMultimap()
+    void RecoverExportAliasMultimap() &&
     {
         auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
-
-        exportMap.erase(program_->SourceFilePath());
-        exportMap.insert({program_->SourceFilePath(), exportAliasMultimapPrev_});
+        exportMap[program_->SourceFilePath()] = std::move(exportAliasMultimapPrev_);
     }
 
     NO_COPY_SEMANTIC(SavedImportExportDeclsContext);
@@ -139,8 +132,7 @@ private:
             exportMap.erase(it);
         }
 
-        std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> newMap;
-        exportMap.insert({program_->SourceFilePath(), newMap});
+        exportMap.insert({program_->SourceFilePath(), {}});
     }
 
     void RestoreImportExportDecls() noexcept
@@ -151,12 +143,12 @@ private:
         imExDecl_->exportDefaultName_ = exportDefaultNamePrev_;
     }
 
-    std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> SaveExportAliasMultimap()
+    varbinder::AliasesByExportedNames SaveExportAliasMultimap()
     {
         auto &exportMap = imExDecl_->varbinder_->GetSelectiveExportAliasMultimap();
         const auto found = exportMap.find(program_->SourceFilePath());
         if (found == exportMap.end()) {
-            return std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>>();
+            return varbinder::AliasesByExportedNames {};
         }
         return found->second;
     }
@@ -168,7 +160,7 @@ private:
     std::map<util::StringView, lexer::SourcePosition> exportNameMapPrev_;
     std::set<util::StringView> exportedTypesPrev_;
     util::StringView exportDefaultNamePrev_;
-    std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>> exportAliasMultimapPrev_;
+    varbinder::AliasesByExportedNames exportAliasMultimapPrev_;
 };
 }  // namespace ark::es2panda::compiler
 

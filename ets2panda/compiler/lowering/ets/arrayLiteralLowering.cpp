@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -256,11 +256,15 @@ ir::AstNode *ArrayLiteralLowering::TryTransformNewMultiDimArrayToRefArray(
     return loweringResult;
 }
 
-bool ArrayLiteralLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+void ArrayLiteralLowering::Setup()
 {
-    parser_ = ctx->parser->AsETSParser();
-    varbinder_ = ctx->parserProgram->VarBinder()->AsETSBinder();
-    checker_ = ctx->GetChecker()->AsETSChecker();
+    parser_ = Context()->parser->AsETSParser();
+    varbinder_ = Context()->parserProgram->VarBinder()->AsETSBinder();
+    checker_ = Context()->GetChecker()->AsETSChecker();
+}
+
+bool ArrayLiteralLowering::PerformForProgram(parser::Program *program)
+{
     program->Ast()->TransformChildrenRecursively(
         [this](ir::AstNode *ast) -> AstNodePtr {
             if (ast->IsArrayExpression()) {

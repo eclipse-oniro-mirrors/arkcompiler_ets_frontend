@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,15 +20,13 @@
 
 namespace ark::es2panda::compiler {
 
-void ResolveIdentifiers::InsertReExported(parser::Program *program, varbinder::ETSBinder *pVarBinder,
-                                          parser::Program *extProgram)
+static void InsertReExported(parser::Program *program, varbinder::ETSBinder *pVarBinder, parser::Program *extProgram)
 {
     auto etsBinder = extProgram->VarBinder()->AsETSBinder();
     auto &reExportedImports = pVarBinder->ReExportImports();
-    for (auto &it : etsBinder->ReExportImports()) {
-        if (it->GetTopStatement()->AsETSModule()->Program()->SourceFile().GetPath() !=
-            program->SourceFile().GetPath()) {
-            reExportedImports.insert(it);
+    for (auto &[progWithReexports, reexports] : etsBinder->ReExportImports()) {
+        if (progWithReexports != program) {
+            reExportedImports[progWithReexports] = reexports;
         }
     }
 
@@ -37,19 +35,18 @@ void ResolveIdentifiers::InsertReExported(parser::Program *program, varbinder::E
                     etsBinder->GetSelectiveExportAliasMultimap().end());
 }
 
-void ResolveIdentifiers::FetchCache([[maybe_unused]] public_lib::Context *ctx,
-                                    [[maybe_unused]] parser::Program *program)
+void ResolveIdentifiers::Setup()
 {
-    auto pVarBinder = program->VarBinder()->AsETSBinder();
-    for (auto &[package, extPrograms] : program->ExternalSources()) {
-        auto *extProgram = extPrograms.front();
+    // NOTE(dkofanov): If present, the whole cache should be restored at once, at program-restoration. To be moved.
+    auto *program = Context()->parserProgram;
+    program->GetExternalSources()->Visit([program](auto *extProgram) {
         if (extProgram->IsASTLowered() || !extProgram->IsProgramModified()) {
-            InsertReExported(program, pVarBinder, extProgram);
+            InsertReExported(program, program->VarBinder()->AsETSBinder(), extProgram);
         }
-    }
+    });
 }
 
-void ResolveIdentifiers::DumpAstOutput(parser::Program *program, [[maybe_unused]] const std::string &dumpAstFile)
+static void DumpAstOutput(parser::Program *program, [[maybe_unused]] const std::string &dumpAstFile)
 {
 #ifdef ARKTSCONFIG_USE_FILESYSTEM
     auto dumpAstFilePath = fs::path(dumpAstFile);
@@ -64,31 +61,31 @@ void ResolveIdentifiers::DumpAstOutput(parser::Program *program, [[maybe_unused]
 #endif
 }
 
-bool ResolveIdentifiers::Perform(public_lib::Context *ctx, [[maybe_unused]] parser::Program *program)
+bool ResolveIdentifiers::Perform()
 {
-    FetchCache(ctx, program);
-    auto const *options = ctx->config->options;
-    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
+    varbinder->SetProgram(Context()->parserProgram);
 
     static bool firstDump = true;
-    if (options->IsDumpAst() && firstDump) {
+    if (Options()->IsDumpAst() && firstDump) {
         firstDump = false;
-        if (!options->GetDumpAstOutput().empty()) {
-            DumpAstOutput(program, options->GetDumpAstOutput());
+        if (!Options()->GetDumpAstOutput().empty()) {
+            DumpAstOutput(varbinder->Program(), Options()->GetDumpAstOutput());
         } else {
             std::cout << varbinder->Program()->Dump() << std::endl;
         }
     }
 
-    if (options->IsDumpAstOnlySilent()) {
+    if (Options()->IsDumpAstOnlySilent()) {
         varbinder->Program()->DumpSilent();
     }
 
-    if (options->IsParseOnly()) {
+    if (Options()->IsParseOnly()) {
         return false;
     }
 
-    varbinder->SetGenStdLib(options->GetCompilationMode() == CompilationMode::GEN_STD_LIB);
+    varbinder->SetGenStdLib(Options()->GetCompilationMode() == CompilationMode::GEN_STD_LIB);
     varbinder->IdentifierAnalysis();
 
     return true;

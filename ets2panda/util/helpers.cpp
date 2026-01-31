@@ -848,11 +848,11 @@ bool Helpers::IsStdLib(const parser::Program *program)
     }
 
     // NOTE(rsipka): early check: if program is not in a package then it is not part of the stdlib either
-    if (!program->IsPackage()) {
+    if (!program->Is<util::ModuleKind::PACKAGE>()) {
         return false;
     }
 
-    auto fileFolder = program->ModuleName().Mutf8();
+    auto fileFolder = std::string(program->ModuleName());
     std::replace(fileFolder.begin(), fileFolder.end(), *compiler::Signatures::METHOD_SEPARATOR.begin(),
                  *compiler::Signatures::NAMESPACE_SEPARATOR.begin());
     return std::count(stdlib.begin(), stdlib.end(), fileFolder) != 0;
@@ -865,7 +865,7 @@ checker::Type *Helpers::CheckReturnTypeOfCheck([[maybe_unused]] const ir::AstNod
     return type;
 }
 
-util::UString Helpers::EscapeHTMLString(ArenaAllocator *allocator, const std::string &str)
+util::UString Helpers::EscapeHTMLString(ArenaAllocator *allocator, std::string_view const str)
 {
     util::UString replaced(allocator);
     for (const auto c : str) {
@@ -930,15 +930,6 @@ bool Helpers::IsGlobalVar(const ark::es2panda::varbinder::Variable *var)
 {
     return var->Declaration()->Node()->IsClassDeclaration() &&
            var->Declaration()->Node()->AsClassDeclaration()->Definition()->IsGlobal();
-}
-
-void Helpers::CheckValidFileName(const util::StringView &fileName, util::DiagnosticEngine &diagnosticEngine)
-{
-    auto fileNameStr = fileName.Mutf8();
-    if (fileNameStr.find(':') != std::string_view::npos) {
-        util::DiagnosticMessageParams diagParams = {std::move(fileNameStr)};
-        diagnosticEngine.LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
-    }
 }
 
 //  Helper: checks that node or any of its parents was declared exported

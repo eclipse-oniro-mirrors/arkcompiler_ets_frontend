@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-import { A } from "./reexport_case"
+import { /* @@ label1 */A } from "./reexport_case"
 
-let a = new A()
+let a = new /* @@ label2 */A()
 let x = a.name
 
-/* @@? 16:10 Error Semantic error ESE0356: Cannot find imported element 'A' */
-/* @@? 18:13 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@@ label1 Error Semantic error ESE0356: Cannot find imported element 'A' */
+/* @@@ label2 Error Semantic error ESE0371: Cannot find type 'A'. */
+/* @@? reexport_case.ets:16:15 Error Syntax error ESY0230: Expected 'identifier', got 'default'. */

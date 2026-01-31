@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +47,6 @@
 #include "ir/astNode.h"
 #include "ir/statements/blockStatement.h"
 #include "lexer/token/sourceLocation.h"
-#include "parser/program/program.h"
 #include "util/ustring.h"
 #include "util/options.h"
 #include "varbinder/variable.h"
@@ -64,7 +63,7 @@
 
 namespace ark::es2panda::compiler::ast_verifier {
 
-// NOTE(dkofanov) Fix and enable ImportExportAccessValid:
+// NOTE(dkofanov): Fix and enable ImportExportAccessValid:
 using InvariantsRegistry =
     InvariantsRegistryImpl<NodeHasParent, NodeHasSourceRange, EveryChildHasValidParent, EveryChildInParentRange,
                            CheckStructDeclaration, VariableHasScope, NodeHasType, NoPrimitiveTypes, EnumHasCorrectType,
@@ -81,8 +80,7 @@ public:
     NO_COPY_SEMANTIC(ASTVerifier);
     NO_MOVE_SEMANTIC(ASTVerifier);
 
-    ASTVerifier(const public_lib::Context &context, const parser::Program &program)
-        : program_ {program}, context_ {context}
+    explicit ASTVerifier(const public_lib::Context &context) : context_ {context}
     {
         for (size_t i = VerifierInvariants::BASE_FIRST; i <= VerifierInvariants::BASE_LAST; i++) {
             allowed_[i] = true;
@@ -192,7 +190,6 @@ public:
     using GroupedMessages = std::vector<std::pair<PhaseName, SourceMessages>>;
 
 private:
-    const parser::Program &program_;
     const public_lib::Context &context_;
     InvArray<bool> enabled_ {};
     InvArray<bool> allowed_ {};

@@ -90,12 +90,10 @@ static ir::ClassDeclaration *BuildClass(checker::ETSChecker *checker, util::Stri
     program->Ast()->AddStatement(classDecl);
     classDecl->SetParent(program->Ast());
 
-    bool isExternal = program != varBinder->GetGlobalRecordTable()->Program();
-    auto recordTable = isExternal ? varBinder->GetExternalRecordTable().at(program) : varBinder->GetGlobalRecordTable();
-    varbinder::BoundContext boundCtx(recordTable, classDef);
+    ES2PANDA_ASSERT(varBinder->CheckRecordTablesConsistency(program));
+    varbinder::BoundContext boundCtx(program->GetRecordTable(), classDef);
 
     ArenaVector<ir::AstNode *> classBody(allocator->Adapter());
-
     builder(classBody);
 
     classDef->AddProperties(std::move(classBody));
@@ -931,7 +929,7 @@ static bool CheckAbstractClassShouldGenerateAnonClass(ir::ClassDefinition *class
 }
 
 static void TransfromInterfaceDecl(public_lib::Context *ctx, parser::Program *program,
-                                   std::unordered_set<ir::AstNode *> &requiredTypes)
+                                   const std::unordered_set<ir::AstNode *> &requiredTypes)
 {
     auto const cmode = ctx->config->options->GetCompilationMode();
     bool isLocal = program == ctx->parserProgram || cmode == CompilationMode::GEN_STD_LIB ||
@@ -977,39 +975,38 @@ static void TraverseObjectLiteralExpressions(parser::Program *program, F const &
     });
 }
 
-bool InterfaceObjectLiteralLowering::Perform(public_lib::Context *ctx, parser::Program *program)
+bool InterfaceObjectLiteralLowering::Perform()
 {
     std::unordered_set<ir::AstNode *> requiredTypes {};
+    auto ctx = Context();
 
-    ForEachCompiledProgram(ctx, [&requiredTypes](parser::Program *prog) {
+    ProgramsToBeEmittedSelector::Apply(ctx, [&requiredTypes](parser::Program *prog) {
         TraverseObjectLiteralExpressions(prog, [&requiredTypes](ir::ObjectExpression *expr) {
             requiredTypes.insert(expr->TsType()->AsETSObjectType()->GetDeclNode());
         });
     });
 
-    auto *varbinder = program->VarBinder()->AsETSBinder();
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (extProg->IsASTLowered()) {
-                continue;
-            }
-            auto *savedProgram = varbinder->Program();
-            auto *savedRecordTable = varbinder->GetRecordTable();
-            auto *savedTopScope = varbinder->TopScope();
-            varbinder->ResetTopScope(extProg->GlobalScope());
-            varbinder->SetRecordTable(varbinder->GetExternalRecordTable().at(extProg));
-            varbinder->SetProgram(extProg);
-            TransfromInterfaceDecl(ctx, extProg, requiredTypes);
-            varbinder->SetProgram(savedProgram);
-            varbinder->SetRecordTable(savedRecordTable);
-            varbinder->ResetTopScope(savedTopScope);
+    auto *varbinder = ctx->parserProgram->VarBinder()->AsETSBinder();
+    auto *savedProgram = varbinder->Program();
+    ES2PANDA_ASSERT(savedProgram == ctx->parserProgram);
+    auto *savedRecordTable = varbinder->GetRecordTable();
+    auto *savedTopScope = varbinder->TopScope();
+    ctx->parserProgram->GetExternalSources()->Visit([ctx, varbinder, &requiredTypes](auto *extProg) {
+        if (extProg->IsASTLowered()) {
+            return;
         }
-    }
+        varbinder->ResetTopScope(extProg->GlobalScope());
+        ES2PANDA_ASSERT(varbinder->CheckRecordTablesConsistency(extProg));
+        varbinder->SetRecordTable(extProg->GetRecordTable());
+        varbinder->SetProgram(extProg);
+        TransfromInterfaceDecl(ctx, extProg, requiredTypes);
+    });
+    varbinder->SetProgram(savedProgram);
+    varbinder->SetRecordTable(savedRecordTable);
+    varbinder->ResetTopScope(savedTopScope);
+    TransfromInterfaceDecl(ctx, savedProgram, requiredTypes);
 
-    TransfromInterfaceDecl(ctx, program, requiredTypes);
-
-    ForEachCompiledProgram(ctx, [ctx, &requiredTypes](parser::Program *prog) {
+    ProgramsToBeEmittedSelector::Apply(ctx, [ctx, &requiredTypes](parser::Program *prog) {
         TraverseObjectLiteralExpressions(prog, [ctx, &requiredTypes](ir::ObjectExpression *expr) {
             (void)requiredTypes;
             ES2PANDA_ASSERT(requiredTypes.find(expr->TsType()->AsETSObjectType()->GetDeclNode()) !=

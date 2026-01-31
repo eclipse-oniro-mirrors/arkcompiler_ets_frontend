@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,14 @@
 namespace ark::es2panda::lexer {
 class ETSLexer final : public Lexer {
 public:
-    explicit ETSLexer(const parser::ParserContext *parserContext, util::DiagnosticEngine &diagnosticEngine)
-        : Lexer(parserContext, diagnosticEngine, false)
+    ETSLexer(const parser::ParserContext *parserContext, util::DiagnosticEngine &diagnosticEngine)
+        : ETSLexer(parserContext, parserContext->GetProgram()->SourceCode(), diagnosticEngine)
+    {
+    }
+
+    ETSLexer(const parser::ParserContext *parserContext, std::string_view sourceCode,
+             util::DiagnosticEngine &diagnosticEngine)
+        : Lexer(parserContext, sourceCode, diagnosticEngine, false)
     {
         SkipWhiteSpaces();
     }

@@ -24,11 +24,6 @@
 
 namespace ark::es2panda::compiler {
 
-std::string_view StringConstructorLowering::Name() const
-{
-    return "StringConstructorLowering";
-}
-
 // NOLINTBEGIN(modernize-avoid-c-arrays)
 static constexpr char const FORMAT_CHECK_NULL_EXPRESSION[] =
     "let @@I1 = (@@E2);"
@@ -47,8 +42,8 @@ static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).t
 static constexpr char const FORMAT_TO_STRING_PRIMITIVE_EXPRESSION[] = "@@E1.toString(@@E2)";
 // NOLINTEND(modernize-avoid-c-arrays)
 
-ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
-                                         ir::ETSNewClassInstanceExpression *newClassInstExpr)
+static ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
+                                                ir::ETSNewClassInstanceExpression *newClassInstExpr)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *parser = ctx->parser->AsETSParser();
@@ -121,11 +116,11 @@ ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
     return newClassInstExpr;
 }
 
-bool StringConstructorLowering::PerformForModule(public_lib::Context *const ctx, parser::Program *const program)
+bool StringConstructorLowering::PerformForProgram(parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *ast) -> ir::AstNode * {
             if (ast->IsETSNewClassInstanceExpression()) {
                 return ReplaceStringConstructor(ctx, ast->AsETSNewClassInstanceExpression());
             }

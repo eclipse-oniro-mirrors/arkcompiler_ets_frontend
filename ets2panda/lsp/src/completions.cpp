@@ -245,14 +245,13 @@ std::vector<CompletionEntry> GetSystemInterfaceCompletions(const std::string &in
 {
     std::vector<CompletionEntry> allExternalSourceExports;
     std::vector<CompletionEntry> completions;
-    for (auto [_, programList] : program->ExternalSources()) {
-        for (auto prog : programList) {
-            auto exports = GetExportsFromProgram(prog);
-            if (!exports.empty()) {
-                allExternalSourceExports.insert(allExternalSourceExports.end(), exports.begin(), exports.end());
-            }
+
+    program->GetExternalSources()->Visit([&allExternalSourceExports](auto *extProg) {
+        auto exports = GetExportsFromProgram(extProg);
+        if (!exports.empty()) {
+            allExternalSourceExports.insert(allExternalSourceExports.end(), exports.begin(), exports.end());
         }
-    }
+    });
 
     for (const auto &entry : allExternalSourceExports) {
         if (ToLowerCase(entry.GetName()).find(ToLowerCase(input)) == 0) {
@@ -1190,13 +1189,12 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
     if (importDecl == nullptr || !importDecl->IsValid()) {
         return completions;
     }
-    auto importText = importDecl->Source()->Str().Utf8();
-    size_t lastSlashPos = importText.find_last_of("/\\");
-    auto fileName = util::StringView(importText.substr(lastSlashPos + 1));
     auto ctx = reinterpret_cast<public_lib::Context *>(context);
-    if (!ctx->parserProgram->DirectExternalSources().count(fileName)) {
+    auto *program = ctx->parser->GetImportPathManager()->SearchResolved(importDecl->ImportMetadata());
+    if (program == nullptr) {
         return completions;
     }
+
     auto specifiers = importDecl->Specifiers();
     std::unordered_set<std::string> hasImported;
     for (auto &specifier : specifiers) {
@@ -1205,17 +1203,15 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
             hasImported.emplace(name.Utf8());
         }
     }
-    auto &programs = ctx->parserProgram->DirectExternalSources().at(fileName);
+
     std::string specStr = "";
     if (node != nullptr && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
         specStr = node->AsIdentifier()->Name().Utf8();
     }
-    for (auto &program : programs) {
-        auto ans = GetExportsFromProgram(program, specStr);
-        for (auto &entry : ans) {
-            if (!hasImported.count(entry.GetName())) {
-                completions.emplace_back(std::move(entry));
-            }
+    auto ans = GetExportsFromProgram(program, specStr);
+    for (auto &entry : ans) {
+        if (!hasImported.count(entry.GetName())) {
+            completions.emplace_back(std::move(entry));
         }
     }
     return completions;
@@ -1458,6 +1454,28 @@ ArenaVector<varbinder::Scope *> BuildScopePath(varbinder::Scope *startScope, Are
     return scopePath;
 }
 
+class ScopedContext {
+public:
+    explicit ScopedContext(const char *fileName)
+    {
+        ctx_ = initializer_.CreateContext(fileName, ES2PANDA_STATE_CHECKED);
+    }
+
+    const ArkTsConfig &GetArkTsConfig()
+    {
+        return reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx_)->config->options->ArkTSConfig();
+    }
+
+    ~ScopedContext()
+    {
+        initializer_.DestroyContext(ctx_);
+    }
+
+private:
+    Initializer initializer_ {};
+    es2panda_Context *ctx_ {};
+};
+
 CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry)
 {
     auto dataOpt = entry.GetCompletionEntryData();
@@ -1465,12 +1483,10 @@ CompletionEntry ProcessAutoImportForEntry(CompletionEntry &entry)
         return entry;
     }
 
-    auto config = GetArkTsConfigFromFile(dataOpt->GetFileName());
-    if (config == nullptr) {
-        return entry;
-    }
+    ScopedContext ctx {dataOpt->GetFileName()};
+    const auto &config = ctx.GetArkTsConfig();
 
-    auto autoImportData = GetAutoImportCompletionEntry(&dataOpt.value(), config, entry.GetName());
+    auto autoImportData = GetAutoImportCompletionEntry(&dataOpt.value(), &config, entry.GetName());
     if (!autoImportData.has_value()) {
         return entry;
     }
@@ -1593,8 +1609,7 @@ std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *cont
 }
 
 std::optional<CompletionEntryData> GetAutoImportCompletionEntry(ark::es2panda::lsp::CompletionEntryData *data,
-                                                                const std::shared_ptr<ArkTsConfig> &config,
-                                                                const std::string &name)
+                                                                const ArkTsConfig *config, const std::string &name)
 {
     const char *fileName = data->GetFileName();
     if (fileName == nullptr || std::strlen(fileName) == 0) {
@@ -1607,8 +1622,7 @@ std::optional<CompletionEntryData> GetAutoImportCompletionEntry(ark::es2panda::l
 }
 
 std::optional<CompletionEntryData> CompletionEntryDataToOriginInfo(ark::es2panda::lsp::CompletionEntryData *data,
-                                                                   const std::shared_ptr<ArkTsConfig> &config,
-                                                                   const std::string &name)
+                                                                   const ArkTsConfig *config, const std::string &name)
 {
     if (IsCompletionEntryDataResolved(data, config) == true) {
         return CompletionEntryData(data->GetFileName(), data->GetNamedExport(), data->GetImportDeclaration(), name,
@@ -1627,7 +1641,7 @@ bool StartsWith(const std::string &str, const std::string &prefix)
 }
 
 std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::CompletionEntryData *data,
-                                                  const std::shared_ptr<ArkTsConfig> &config)
+                                                  const ArkTsConfig *config)
 {
     auto importDecl = data->GetImportDeclaration();
     if (importDecl.length() == 0) {
@@ -1648,14 +1662,4 @@ std::optional<bool> IsCompletionEntryDataResolved(ark::es2panda::lsp::Completion
     return std::nullopt;
 }
 
-std::shared_ptr<ArkTsConfig> GetArkTsConfigFromFile(const char *fileName)
-{
-    Initializer initializer = Initializer();
-
-    auto ctx = initializer.CreateContext(fileName, ES2PANDA_STATE_CHECKED);
-    auto config = reinterpret_cast<ark::es2panda::public_lib::Context *>(ctx)->config->options->ArkTSConfig();
-    initializer.DestroyContext(ctx);
-
-    return config;
-}
 }  // namespace ark::es2panda::lsp

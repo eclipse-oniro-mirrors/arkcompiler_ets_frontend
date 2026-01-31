@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-class Integral {}
-class Numeric {}
+class Integral /* @@ label1 */{}
+class Numeric /* @@ label2 */{}
 
 
-/* @@? 1:3 Error Semantic error ESE0349: Class 'Numeric' is already defined. */
-/* @@? 1:3 Error Semantic error ESE0349: Class 'Integral' is already defined. */
+/* @@@ label1 Error Semantic error ESE0349: Class 'Integral' is already defined. */
+/* @@@ label2 Error Semantic error ESE0349: Class 'Numeric' is already defined. */

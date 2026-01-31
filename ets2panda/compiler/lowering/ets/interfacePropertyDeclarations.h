@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -105,14 +105,15 @@ private:
     VisitedInterfacesOfClass visitedInterfaces_ {};
 };
 
-class InterfacePropertyDeclarationsPhase : public PhaseForDeclarations {
+// NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
+class InterfacePropertyDeclarationsPhase : public PhaseForAllPrograms {
 public:
     std::string_view Name() const override
     {
         return "InterfacePropertyDeclarationsPhase";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 
 private:
     OptionalInterfacePropertyCollector &GetPropCollector()
@@ -120,24 +121,26 @@ private:
         return propCollector_;
     }
 
-    void TransformOptionalFieldTypeAnnotation(public_lib::Context *ctx, ir::ClassProperty *const field,
-                                              bool isInterface = false);
+    void TransformOptionalFieldTypeAnnotation(ir::ClassProperty *const field, bool isInterface = false);
 
-    ir::FunctionSignature GenerateGetterOrSetterSignature(public_lib::Context *ctx, ir::ClassProperty *const field,
-                                                          bool isSetter, varbinder::FunctionParamScope *paramScope);
-    // CC-OFFNXT(G.FUN.01-CPP) solid logic
-    ir::MethodDefinition *GenerateGetterOrSetter(public_lib::Context *ctx, ir::ClassProperty *const field,
-                                                 bool isSetter, bool isOptional, bool isDeclare);
+    ir::FunctionSignature GenerateGetterOrSetterSignature(ir::ClassProperty *const field, bool isSetter,
+                                                          varbinder::FunctionParamScope *paramScope);
+
+    ir::MethodDefinition *GetMethodDefinition(bool isSetter, ir::ModifierFlags flags, ir::Identifier *methodIdent,
+                                              ir::FunctionExpression *funcExpr, ir::ClassProperty *const field);
+
+    ir::MethodDefinition *GenerateGetterOrSetter(ir::ClassProperty *const field, bool isSetter, bool isOptional,
+                                                 bool isDeclare);
 
     void CollectPropertiesAndSuperInterfaces(ir::TSInterfaceBody *const interface);
 
     void HandleInternalGetterOrSetterMethod(ir::AstNode *const ast);
 
-    ir::Expression *UpdateInterfaceProperties(public_lib::Context *ctx, ir::TSInterfaceBody *const interface);
+    ir::Expression *UpdateInterfaceProperties(ir::TSInterfaceBody *const interface);
 
     void CollectSuperInterfaceProperties(InterfacePropertyType &implInterfaceProperties, const std::string &interId);
 
-    void UpdateClassProperties(public_lib::Context *ctx, ir::ClassDefinition *const klass);
+    void UpdateClassProperties(ir::ClassDefinition *const klass);
 
 private:
     OptionalInterfacePropertyCollector propCollector_ {};

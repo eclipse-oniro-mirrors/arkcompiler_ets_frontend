@@ -586,6 +586,5 @@
     }
   }
 }
-[dynamic-equality.ets:20:19] Semantic error ESE0360: Cannot find import: dynamic_import_tests
 [dynamic-equality.ets:23:13] Semantic error ESE0143: Unresolved reference A
 [dynamic-equality.ets:24:13] Semantic error ESE0143: Unresolved reference A

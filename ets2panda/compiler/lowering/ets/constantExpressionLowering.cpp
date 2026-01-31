@@ -152,6 +152,7 @@ static bool TestLiteral(const ir::Literal *lit)
     ES2PANDA_UNREACHABLE();
 }
 // NOTE(recep) To avoid bad accumulator verifier
+// NOTE(dkofanov): DAG-collection stage shouldn't modify AST!
 static void HandleUndefinedInLogicalExpression(public_lib::Context *context, ir::Expression *node, ir::Expression *init)
 {
     if (init == nullptr || !init->IsUndefinedLiteral()) {
@@ -216,7 +217,7 @@ private:
         return resNode;
     }
 
-    // NOTE(dkofanov) Template literals will be simplified only if each subexpression is constant.
+    // NOTE(dkofanov): Template literals will be simplified only if each subexpression is constant.
     // It may worth to handle partial-simplification, e.g. after the algorithm stops.
     ir::Literal *Calculate(ir::TemplateLiteral *expr)
     {
@@ -1363,7 +1364,7 @@ static void PostCheckGlobalIfPackage(public_lib::Context *context, ir::ClassDefi
     }
 }
 
-bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, std::string_view name)
+bool ConstantExpressionLoweringImpl::PerformForProgram(parser::Program *program, std::string_view name)
 {
     program->Ast()->IterateRecursively([this](ir::AstNode *node) {
         if (node->IsExpression()) {
@@ -1396,7 +1397,7 @@ bool ConstantExpressionLoweringImpl::PerformForModule(parser::Program *program, 
         },
         name);
 
-    if (program->IsPackage()) {
+    if (program->Is<util::ModuleKind::PACKAGE>()) {
         PostCheckGlobalIfPackage(context_, program->GlobalClass());
     }
     return true;

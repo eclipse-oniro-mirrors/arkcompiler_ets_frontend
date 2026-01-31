@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,14 +75,14 @@ static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberEx
     return loweringResult;
 }
 
-bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool ObjectIndexLowering::PerformForProgram(parser::Program *program)
 {
     const auto isGetSetExpression = [](const ir::MemberExpression *const memberExpr) {
         return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
     };
 
     program->Ast()->TransformChildrenRecursively(
-        [ctx, &isGetSetExpression](ir::AstNode *const ast) {
+        [ctx = Context(), &isGetSetExpression](ir::AstNode *const ast) {
             if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
                 const auto *const memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
                 if (isGetSetExpression(memberExpr)) {
@@ -94,7 +94,7 @@ bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Pro
         Name());
 
     program->Ast()->TransformChildrenRecursively(
-        [ctx, &isGetSetExpression](ir::AstNode *const ast) {
+        [ctx = Context(), &isGetSetExpression](ir::AstNode *const ast) {
             if (ast->IsMemberExpression()) {
                 auto *const memberExpr = ast->AsMemberExpression();
                 if (isGetSetExpression(memberExpr)) {
@@ -108,8 +108,7 @@ bool ObjectIndexLowering::PerformForModule(public_lib::Context *ctx, parser::Pro
     return true;
 }
 
-bool ObjectIndexLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                 const parser::Program *program)
+bool ObjectIndexLowering::PostconditionForProgram(const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) {
         if (ast->IsMemberExpression() &&

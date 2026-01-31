@@ -51,7 +51,7 @@ std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *
 
         // Add base parameter type
         typeNodes.emplace_back(
-            context_->AllocNode<ir::OpaqueTypeNode>(baseParameters[i]->TsType(), context_->Allocator()));
+            Context()->AllocNode<ir::OpaqueTypeNode>(baseParameters[i]->TsType(), Context()->Allocator()));
         signature << ": @@T" << typeNodes.size();
     }
 
@@ -59,8 +59,8 @@ std::string GenericBridgesPhase::BuildMethodSignature(ir::ScriptFunction const *
 
     // Add return type (not for setters)
     if (!derivedFunction->IsSetter()) {
-        typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
-            const_cast<checker::Type *>(baseSignature->ReturnType()), context_->Allocator()));
+        typeNodes.emplace_back(Context()->AllocNode<ir::OpaqueTypeNode>(
+            const_cast<checker::Type *>(baseSignature->ReturnType()), Context()->Allocator()));
         signature << ": @@T" << typeNodes.size();
     }
 
@@ -76,8 +76,8 @@ std::string GenericBridgesPhase::BuildMethodBody(ir::ClassDefinition const *clas
     auto const &functionName = derivedFunction->Id()->Name().Mutf8();
 
     // Add class type for casting
-    typeNodes.emplace_back(context_->AllocNode<ir::OpaqueTypeNode>(
-        const_cast<checker::Type *>(classDefinition->TsType()), context_->Allocator()));
+    typeNodes.emplace_back(Context()->AllocNode<ir::OpaqueTypeNode>(
+        const_cast<checker::Type *>(classDefinition->TsType()), Context()->Allocator()));
     auto const classTypeIndex = typeNodes.size();
 
     if (derivedFunction->IsGetter()) {
@@ -121,7 +121,7 @@ std::string GenericBridgesPhase::BuildSetterAssignment(ir::ScriptFunction const 
 
         // Add derived parameter type for casting
         typeNodes.emplace_back(
-            context_->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), context_->Allocator()));
+            Context()->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), Context()->Allocator()));
         assignment << " as @@T" << typeNodes.size();
     }
 
@@ -146,7 +146,7 @@ std::string GenericBridgesPhase::BuildMethodCall(ir::ScriptFunction const *deriv
 
         // Add derived parameter type for casting
         typeNodes.emplace_back(
-            context_->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), context_->Allocator()));
+            Context()->AllocNode<ir::OpaqueTypeNode>(derivedParameters[i]->TsType(), Context()->Allocator()));
         call << " as @@T" << typeNodes.size();
     }
 
@@ -178,7 +178,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
                                            checker::Signature const *baseSignature,
                                            ir::ScriptFunction *const derivedFunction) const
 {
-    auto *parser = context_->parser->AsETSParser();
+    auto *parser = Context()->parser->AsETSParser();
     std::vector<ir::AstNode *> typeNodes {};
     ES2PANDA_ASSERT(baseSignature);
     typeNodes.reserve(2U * baseSignature->Params().size() + 2U);
@@ -200,7 +200,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
     bridgeMethod->SetParent(const_cast<ir::ClassDefinition *>(classDefinition));
     configureModifiersAndFlags(bridgeMethod->Function(), methodDefinition->Function());
 
-    auto *varBinder = context_->GetChecker()->VarBinder()->AsETSBinder();
+    auto *varBinder = Context()->GetChecker()->VarBinder()->AsETSBinder();
     auto *scope = NearestScope(methodDefinition);
     auto scopeGuard = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, scope);
     InitScopesPhaseETS::RunExternalNode(bridgeMethod, varBinder);
@@ -209,7 +209,7 @@ void GenericBridgesPhase::AddGenericBridge(ir::ClassDefinition const *const clas
                                       true};
     varBinder->AsETSBinder()->ResolveReferencesForScopeWithContext(bridgeMethod, scope);
 
-    auto *checker = context_->GetChecker()->AsETSChecker();
+    auto *checker = Context()->GetChecker()->AsETSChecker();
     auto const checkerCtx =
         checker::SavedCheckerContext(checker,
                                      checker::CheckerStatus::IN_CLASS | checker::CheckerStatus::IGNORE_VISIBILITY |
@@ -241,7 +241,7 @@ void GenericBridgesPhase::ProcessScriptFunction(ir::ClassDefinition const *const
                                                 ir::MethodDefinition *const derivedMethod,
                                                 Substitutions const &substitutions) const
 {
-    auto *const checker = context_->GetChecker()->AsETSChecker();
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
     auto *const relation = checker->Relation();
 
     auto const overrides = [checker, relation, classDefinition](checker::Signature const *source,
@@ -349,7 +349,7 @@ void GenericBridgesPhase::CreateGenericBridges(ir::ClassDefinition const *const 
                                                ArenaVector<ir::AstNode *> const &items) const
 {
     //  Collect type parameters defaults/constraints in the derived class
-    auto *checker = context_->GetChecker()->AsETSChecker();
+    auto *checker = Context()->GetChecker()->AsETSChecker();
     substitutions.derivedConstraints = checker::Substitution {};
 
     auto const *const classType = classDefinition->TsType()->AsETSObjectType();
@@ -379,7 +379,7 @@ GenericBridgesPhase::Substitutions GenericBridgesPhase::GetSubstitutions(
     auto const parameterNumber = typeParameters.size();
     ES2PANDA_ASSERT(parameterNumber == typeArguments.size());
 
-    auto *checker = context_->GetChecker()->AsETSChecker();
+    auto *checker = Context()->GetChecker()->AsETSChecker();
     Substitutions substitutions {};
 
     //  We need to check if the class derived from base generic class (or implementing generic interface)
@@ -487,10 +487,8 @@ ir::ClassDefinition *GenericBridgesPhase::ProcessClassDefinition(ir::ClassDefini
     return classDefinition;
 }
 
-bool GenericBridgesPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool GenericBridgesPhase::PerformForProgram(parser::Program *program)
 {
-    context_ = ctx;
-
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
         [this](ir::AstNode *ast) -> ir::AstNode * {

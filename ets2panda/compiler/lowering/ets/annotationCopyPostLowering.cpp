@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,7 @@ std::string_view AnnotationCopyPostLowering::Name() const
     return "AnnotationCopyPostLowering";
 }
 
-void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *st)
+static void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *st)
 {
     if (st->Properties().size() == 1 &&
         st->Properties().front()->AsClassProperty()->Id()->Name() == compiler::Signatures::ANNOTATION_KEY_VALUE) {
@@ -49,14 +49,13 @@ void DoCopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *s
     }
 }
 
-bool AnnotationCopyPostLowering::PerformForModule([[maybe_unused]] public_lib::Context *const ctx,
-                                                  parser::Program *const program)
+bool AnnotationCopyPostLowering::PerformForProgram(parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) {
+        [this](ir::AstNode *ast) {
             if (ast->IsAnnotationUsage()) {
-                DoCopyAnnotationProperties(ctx, ast->AsAnnotationUsage());
+                DoCopyAnnotationProperties(Context(), ast->AsAnnotationUsage());
             }
 
             return ast;

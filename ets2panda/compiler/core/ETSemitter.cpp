@@ -324,7 +324,7 @@ void ETSFunctionEmitter::GenVariableSignature(pandasm::debuginfo::LocalVariable 
 
 void ETSFunctionEmitter::GenSourceFileDebugInfo(pandasm::Function *func)
 {
-    func->sourceFile = std::string {Cg()->VarBinder()->Program()->RelativeFilePath()};
+    func->sourceFile = std::string {Cg()->VarBinder()->Program()->RelativeFilePath(Cg()->Context())};
 
     if (!Cg()->IsDebug()) {
         return;
@@ -359,6 +359,7 @@ static void FilterForSimultaneous(varbinder::ETSBinder *varbinder)
     // obsolete if record itself will not be emitted
     std::vector<std::string_view> filterFunctions = {
         Signatures::UNUSED_ETSGLOBAL_CTOR, Signatures::UNUSED_ETSGLOBAL_INIT, Signatures::UNUSED_ETSGLOBAL_MAIN};
+
     auto &functions = varbinder->Functions();
     functions.erase(std::remove_if(functions.begin(), functions.end(),
                                    [&filterFunctions](varbinder::FunctionScope *scope) -> bool {
@@ -395,13 +396,13 @@ void ETSEmitter::GenFunction(ir::ScriptFunction const *scriptFunc, bool external
 void ETSEmitter::GenAnnotation()
 {
     Program()->lang = EXTENSION;
-    auto *varbinder = static_cast<varbinder::ETSBinder *>(Context()->parserProgram->VarBinder());
+    auto *varbinder = Context()->parserProgram->VarBinder()->AsETSBinder();
 
     if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
         FilterForSimultaneous(varbinder);
     }
-    ES2PANDA_ASSERT(varbinder->GetRecordTable() == varbinder->GetGlobalRecordTable());
 
+    ES2PANDA_ASSERT(varbinder->CheckRecordTablesConsistency());
     auto const traverseRecords = [this, varbinder](bool traverseExternals) {
         EmitRecordTable(varbinder->GetGlobalRecordTable(), false, traverseExternals);
         auto *saveProgram = varbinder->Program();
@@ -656,7 +657,8 @@ void ETSEmitter::GenInterfaceRecord(const ir::TSInterfaceDeclaration *interfaceD
     auto interfaceRecord = pandasm::Record(ToAssemblerType(interfaceDecl), Program()->lang);
 
     interfaceRecord.metadata->SetAccessFlags(ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE);
-    interfaceRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
+    interfaceRecord.sourceFile =
+        std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
 
     for (const auto *prop : interfaceDecl->Body()->Body()) {
         if (prop->IsMethodDefinition()) {
@@ -741,7 +743,8 @@ void ETSEmitter::GenClassRecord(const ir::ClassDefinition *classDef, bool extern
     auto classRecord = pandasm::Record(ToAssemblerType(classDef), Program()->lang);
     uint32_t accessFlags = GetAccessFlags(classDef);
     classRecord.metadata->SetAccessFlags(accessFlags);
-    classRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
+    classRecord.sourceFile =
+        std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
     for (const auto *prop : classDef->Body()) {
         if (prop->IsClassProperty()) {
             GenClassField(prop->AsClassProperty(), classRecord, external);
@@ -972,7 +975,7 @@ void ETSEmitter::GenCustomAnnotationRecord(const ir::AnnotationDeclaration *anno
 
     uint32_t accessFlags = ACC_PUBLIC | ACC_ABSTRACT | ACC_ANNOTATION;
     annoRecord.metadata->SetAccessFlags(accessFlags);
-    annoRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath()};
+    annoRecord.sourceFile = std::string {Context()->parserProgram->VarBinder()->Program()->RelativeFilePath(Context())};
     for (auto *it : annoDecl->Properties()) {
         GenCustomAnnotationProp(it->AsClassProperty(), baseName, annoRecord, external);
     }

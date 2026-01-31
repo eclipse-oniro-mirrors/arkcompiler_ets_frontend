@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,14 +34,21 @@ enum class EnumCastType {
     CAST_TO_STRING_ENUM,
 };
 
-class EnumPostCheckLoweringPhase : public PhaseForBodies {
+class EnumPostCheckLoweringPhase : public PhaseForProgramsWithBodies_LEGACY {
 public:
     EnumPostCheckLoweringPhase() noexcept = default;
     std::string_view Name() const override
     {
         return "EnumPostCheckLoweringPhase";
     }
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
+
+    void Setup() override
+    {
+        parser_ = Context()->parser->AsETSParser();
+        varbinder_ = Context()->parserProgram->VarBinder()->AsETSBinder();
+        checker_ = Context()->GetChecker()->AsETSChecker();
+    }
 
 private:
     ir::Statement *CreateStatement(const std::string &src, ir::Expression *ident, ir::Expression *init);
@@ -56,7 +63,6 @@ private:
     ir::Expression *HandleUnionTypeForCalls(checker::ETSUnionType *unionType, ir::Expression *expr,
                                             ir::TSAsExpression *tsAsExpr, EnumCastType castType);
 
-    public_lib::Context *context_ {nullptr};
     parser::ETSParser *parser_ {nullptr};
     checker::ETSChecker *checker_ {nullptr};
     varbinder::ETSBinder *varbinder_ {nullptr};

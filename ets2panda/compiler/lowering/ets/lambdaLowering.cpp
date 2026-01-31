@@ -1963,26 +1963,26 @@ static ir::AstNode *LowerTypeNodeIfNeeded(public_lib::Context *ctx, ir::AstNode 
     return newTypeNode;
 }
 
-bool LambdaConversionPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool LambdaConversionPhase::PerformForProgram(parser::Program *program)
 {
-    auto *varBinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
-    varbinder::RecordTableContext bctx {varBinder, program == ctx->parserProgram ? nullptr : program};
-    parser::SavedFormattingFileName savedFormattingName(ctx->parser->AsETSParser(), "lambda-conversion");
+    auto *varBinder = Context()->GetChecker()->VarBinder()->AsETSBinder();
+    varbinder::RecordTableContext bctx {varBinder, program == Context()->parserProgram ? nullptr : program};
+    parser::SavedFormattingFileName savedFormattingName(Context()->parser->AsETSParser(), "lambda-conversion");
 
     // For reproducibility of results when several compilation sessions are executed during
     // the same process's lifetime.
-    if (program == ctx->parserProgram &&
-        ctx->config->options->GetCompilationMode() != CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
+    if (program == Context()->parserProgram &&
+        Context()->config->options->GetCompilationMode() != CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
         ResetCalleeCount();
     }
 
     program->Ast()->TransformChildrenRecursivelyPostorder(
-        [ctx](ir::AstNode *node) { return BuildLambdaClassWhenNeeded(ctx, node); }, Name());
+        [ctx = Context()](ir::AstNode *node) { return BuildLambdaClassWhenNeeded(ctx, node); }, Name());
 
     program->Ast()->TransformChildrenRecursivelyPreorder(
-        [ctx](ir::AstNode *node) { return LowerTypeNodeIfNeeded(ctx, node); }, Name());
+        [ctx = Context()](ir::AstNode *node) { return LowerTypeNodeIfNeeded(ctx, node); }, Name());
 
-    auto insertInvokeIfNeeded = [ctx](ir::AstNode *node) {
+    auto insertInvokeIfNeeded = [ctx = Context()](ir::AstNode *node) {
         if (node->IsCallExpression() &&
             !IsFunctionOrMethodCall(ctx->GetChecker()->AsETSChecker(), node->AsCallExpression()) &&
             !IsRedirectingConstructorCall(node->AsCallExpression()) && !IsTypeErrorCall(node->AsCallExpression())) {
@@ -1997,8 +1997,7 @@ bool LambdaConversionPhase::PerformForModule(public_lib::Context *ctx, parser::P
     return true;
 }
 
-bool LambdaConversionPhase::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                   parser::Program const *program)
+bool LambdaConversionPhase::PostconditionForProgram(parser::Program const *program)
 {
     return !program->Ast()->IsAnyChild([](ir::AstNode const *node) {
         return node->IsArrowFunctionExpression() && !IsMethodInLiteral(node->AsArrowFunctionExpression());

@@ -35,7 +35,6 @@
 #include "compiler/lowering/ets/destructuringPhase.h"
 #include "compiler/lowering/ets/enumLowering.h"
 #include "compiler/lowering/ets/enumPostCheckLowering.h"
-#include "compiler/lowering/ets/enumPropertiesInAnnotationsLowering.h"
 #include "compiler/lowering/ets/restTupleLowering.h"
 #include "compiler/lowering/ets/expandBrackets.h"
 #include "compiler/lowering/ets/exportAnonymousConst.h"
@@ -109,7 +108,7 @@ std::vector<Phase *> GetETSPhaseList()
         new ExportAnonymousConstPhase,
         new InitModuleLowering,
         new TopLevelStatements,
-        new ResizableArrayConvert,
+        new ResizableArrayConvert,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ExpressionLambdaConstructionPhase,
         new InsertOptionalParametersAnnotation,
         new DefaultParametersInConstructorLowering,
@@ -119,10 +118,10 @@ std::vector<Phase *> GetETSPhaseList()
         new InitScopesPhaseETS,
         new OptionalLowering,
         new PromiseVoidInferencePhase,
-        new InterfacePropertyDeclarationsPhase,
+        new InterfacePropertyDeclarationsPhase,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ConstantExpressionLowering,
         new StringConstantsLowering,
-        new EnumLoweringPhase,
+        new EnumLoweringPhase,  // NOTE(dkofanov): #32419 should be a PhaseForSourcePrograms.
         new ResolveIdentifiers,
         new PluginPhase {g_pluginsAfterBind, ES2PANDA_STATE_BOUND, &util::Plugin::AfterBind},
         new CapturedVariables,
@@ -233,203 +232,32 @@ void PhaseManager::Reset()
     SetPhaseManager(this);
 }
 
-bool Phase::Apply(public_lib::Context *ctx, parser::Program *program)
+bool Phase::Apply(public_lib::Context *ctx)
 {
-    SetPhaseManager(ctx->phaseManager);
+    ctx_ = ctx;
+    Setup();
+    SetPhaseManager(ctx_->phaseManager);
     GetPhaseManager()->SetCurrentPhaseId(id_);
 
 #ifndef NDEBUG
-    if (!Precondition(ctx, program)) {
+    if (!Precondition()) {
         ctx->GetChecker()->LogError(diagnostic::PRECOND_FAILED, {Name()}, lexer::SourcePosition {});
         return false;
     }
 #endif
 
-    if (!Perform(ctx, program)) {
+    if (!Perform()) {
         return false;  // NOLINT(readability-simplify-boolean-expr)
     }
 
 #ifndef NDEBUG
-    if (!Postcondition(ctx, program)) {
+    if (!Postcondition()) {
         ctx->GetChecker()->LogError(diagnostic::POSTCOND_FAILED, {Name()}, lexer::SourcePosition {});
         return false;
     }
 #endif
 
     return true;
-}
-
-bool PhaseForDeclarations::Precondition(public_lib::Context *ctx, const parser::Program *program)
-{
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (extProg->IsASTLowered()) {
-                continue;
-            }
-            if (!Precondition(ctx, extProg)) {
-                return false;
-            }
-        }
-    }
-
-    return PreconditionForModule(ctx, program);
-}
-
-bool PhaseForDeclarations::Perform(public_lib::Context *ctx, parser::Program *program)
-{
-    FetchCache(ctx, program);
-    bool result = true;
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered()) {
-                result &= Perform(ctx, extProg);
-            }
-        }
-    }
-
-    result &= PerformForModule(ctx, program);
-    return result;
-}
-
-bool PhaseForDeclarations::Postcondition(public_lib::Context *ctx, const parser::Program *program)
-{
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (extProg->IsASTLowered()) {
-                continue;
-            }
-            if (!Postcondition(ctx, extProg)) {
-                return false;
-            }
-        }
-    }
-
-    return PostconditionForModule(ctx, program);
-}
-
-// CC-OFFNXT(huge_method, huge_depth) solid logic
-bool PhaseForBodies::Precondition(public_lib::Context *ctx, const parser::Program *program)
-{
-    auto cMode = ctx->config->options->GetCompilationMode();
-
-    auto iterateExternal = [&cMode, this](public_lib::Context *context, const parser::Program *localProgram) {
-        for (auto &[_, extPrograms] : localProgram->ExternalSources()) {
-            (void)_;
-            for (auto *prog : extPrograms) {
-                if (!prog->IsGenAbcForExternal() && cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-                    continue;
-                }
-
-                if (!Precondition(context, prog)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    };
-    if (cMode == CompilationMode::GEN_STD_LIB || cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-        if (!iterateExternal(ctx, program)) {
-            return false;
-        }
-    }
-
-    return PreconditionForModule(ctx, program);
-}
-
-bool PhaseForBodies::ProcessExternalPrograms(public_lib::Context *ctx, parser::Program *program)
-{
-    bool result = true;
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (!extProg->IsASTLowered()) {
-                result &= Perform(ctx, extProg);
-            }
-        }
-    }
-    return result;
-}
-
-// CC-OFFNXT(huge_method, huge_depth) solid logic
-bool PhaseForBodies::Perform(public_lib::Context *ctx, parser::Program *program)
-{
-    FetchCache(ctx, program);
-    bool result = true;
-    auto cMode = ctx->config->options->GetCompilationMode();
-    auto iterateExternal = [&result, &cMode, this](public_lib::Context *context, parser::Program *localProgram) {
-        for (auto &[_, extPrograms] : localProgram->ExternalSources()) {
-            (void)_;
-            for (auto *extProg : extPrograms) {
-                if (!extProg->IsGenAbcForExternal() && cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-                    continue;
-                }
-
-                if (!extProg->IsASTLowered()) {
-                    result &= Perform(context, extProg);
-                }
-            }
-        }
-    };
-    if (cMode == CompilationMode::GEN_STD_LIB || cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-        iterateExternal(ctx, program);
-    }
-
-    result &= PerformForModule(ctx, program);
-    return result;
-}
-
-// CC-OFFNXT(huge_method, huge_depth) solid logic
-bool PhaseForBodies::Postcondition(public_lib::Context *ctx, const parser::Program *program)
-{
-    auto cMode = ctx->config->options->GetCompilationMode();
-    auto iterateExternal = [&cMode, this](public_lib::Context *context, const parser::Program *localProgram) {
-        for (auto &[_, extPrograms] : localProgram->ExternalSources()) {
-            (void)_;
-            for (auto *prog : extPrograms) {
-                if (!prog->IsGenAbcForExternal() && cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-                    continue;
-                }
-
-                if (!Postcondition(context, prog)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    };
-    if (cMode == CompilationMode::GEN_STD_LIB || cMode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-        if (!iterateExternal(ctx, program)) {
-            return false;
-        }
-    }
-
-    return PostconditionForModule(ctx, program);
-}
-
-// NOLINTNEXTLINE(performance-unnecessary-value-param)
-void ForEachCompiledProgram(public_lib::Context *context, std::function<void(parser::Program *)> cb)
-{
-    auto mode = context->config->options->GetCompilationMode();
-
-    parser::Program *program = context->parserProgram;
-
-    for (auto &[_, extPrograms] : program->ExternalSources()) {
-        (void)_;
-        for (auto *extProg : extPrograms) {
-            if (extProg->IsASTLowered()) {
-                continue;
-            }
-            if (mode == CompilationMode::GEN_STD_LIB ||
-                (mode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE && extProg->IsGenAbcForExternal())) {
-                cb(extProg);
-            }
-        }
-    }
-
-    cb(program);
 }
 
 PhaseManager::~PhaseManager()

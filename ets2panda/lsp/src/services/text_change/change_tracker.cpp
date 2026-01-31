@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -145,7 +145,7 @@ void ChangeTracker::RfindNearestKeyWordTextRange(const es2panda_Context *context
                                                  const std::string_view &keywordStr, TextRange &range)
 {
     auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(const_cast<es2panda_Context *>(context));
-    const std::string_view &sourceCode = ctx->parserProgram->SourceCode().Utf8();
+    const std::string_view sourceCode = ctx->parserProgram->SourceCode();
     auto start = sourceCode.rfind(keywordStr, pos);
     if (start == std::string_view::npos) {
         return;

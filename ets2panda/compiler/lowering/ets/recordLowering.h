@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,28 +19,14 @@
 #include "compiler/lowering/phase.h"
 
 namespace ark::es2panda::compiler {
-class RecordLowering : public PhaseForBodies {
+class RecordLowering : public PhaseForProgramsToBeEmitted {
 public:
-    std::string_view Name() const override;
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    std::string_view Name() const override
+    {
+        return "RecordLowering";
+    }
 
-private:
-    using KeyType = std::variant<int32_t, int64_t, float, double, util::StringView>;
-    using KeySetType = std::unordered_set<KeyType>;
-
-    ir::Expression *UpdateObjectExpression(ir::ObjectExpression *expr, public_lib::Context *ctx);
-
-    // Helpers
-    ir::Expression *CreateBlockExpression(ir::ObjectExpression *expr, checker::Type *keyType, checker::Type *valueType,
-                                          public_lib::Context *ctx);
-    std::string TypeToString(checker::Type *type) const;
-    KeyType TypeToKey(checker::Type *type) const;
-    void CheckDuplicateKey(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx);
-    void CheckLiteralsCompleteness(KeySetType &keySet, ir::ObjectExpression *expr, public_lib::Context *ctx);
-    ir::Statement *CreateStatement(const std::string &src, ir::Expression *ident, ir::Expression *key,
-                                   ir::Expression *value, public_lib::Context *ctx);
-    void CheckKeyType(checker::ETSChecker *checker, checker::Type const *keyType, ir::ObjectExpression const *expr,
-                      public_lib::Context *ctx) const noexcept;
+    bool PerformForProgram(parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

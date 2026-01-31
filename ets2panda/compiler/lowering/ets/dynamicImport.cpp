@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -149,10 +149,9 @@ static void ImportNamespaceObjectTypeAddReExportType(public_lib::Context *ctx, v
                                                      ir::ETSImportDeclaration *importDecl,
                                                      checker::ETSObjectType *lastObjectType)
 {
-    for (auto item : varbinder->AsETSBinder()->ReExportImports()) {
-        if (importDecl->DeclPath() != item->GetProgramPath().Mutf8()) {
-            continue;
-        }
+    auto *importedProg = varbinder->AsETSBinder()->GetExternalProgram(importDecl);
+    const auto &reexportImports = varbinder->AsETSBinder()->ReExportImports()[importedProg];
+    for (auto *item : reexportImports) {
         auto *reExportType = CreateModuleObjectType(ctx, item->GetETSImportDeclarations());
         if (reExportType->IsTypeError()) {
             continue;
@@ -172,9 +171,8 @@ static void SetPropertiesForModuleObject(public_lib::Context *ctx, checker::ETSO
                                          const util::StringView &importPath, ir::ETSImportDeclaration *importDecl)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
-    auto varbinder = static_cast<varbinder::ETSBinder *>(checker->VarBinder()->AsETSBinder());
-    parser::Program *program =
-        checker->SelectEntryOrExternalProgram(static_cast<varbinder::ETSBinder *>(varbinder), importPath);
+    parser::Program *program = checker->VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
+
     // Check imported properties before assigning them to module object
     ES2PANDA_ASSERT(program != nullptr);
     if (!program->IsASTChecked()) {
@@ -202,20 +200,18 @@ static void SetPropertiesForModuleObject(public_lib::Context *ctx, checker::ETSO
 static checker::Type *CreateModuleObjectType(public_lib::Context *ctx, ir::ETSImportDeclaration *importDecl)
 {
     auto checker = ctx->GetChecker()->AsETSChecker();
-    auto varbinder = static_cast<varbinder::ETSBinder *>(checker->VarBinder()->AsETSBinder());
     auto allocator = checker->ProgramAllocator();
 
-    const auto importPath = importDecl->DeclPath() == util::ImportPathManager::DUMMY_PATH ? importDecl->ResolvedSource()
-                                                                                          : importDecl->DeclPath();
-    auto program = checker->SelectEntryOrExternalProgram(varbinder, importPath);
+    const auto importPath = importDecl->DeclPath() == util::ImportMetadata::DUMMY_PATH ? importDecl->ResolvedSource()
+                                                                                       : importDecl->DeclPath();
+    auto program = checker->VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
     if (program == nullptr) {
         return checker->GlobalTypeError();
     }
 
     const auto moduleName = program->ModuleName();
-    const auto internalNameStr = std::string(moduleName.Mutf8())
-                                     .append(compiler::Signatures::METHOD_SEPARATOR)
-                                     .append(compiler::Signatures::ETS_GLOBAL);
+    const auto internalNameStr =
+        std::string(moduleName).append(compiler::Signatures::METHOD_SEPARATOR).append(compiler::Signatures::ETS_GLOBAL);
     const util::UString internalName(internalNameStr, allocator);
 
     auto *moduleObjectType = allocator->New<checker::ETSObjectType>(
@@ -226,7 +222,7 @@ static checker::Type *CreateModuleObjectType(public_lib::Context *ctx, ir::ETSIm
     auto *rootVar = allocator->New<varbinder::LocalVariable>(rootDecl, varbinder::VariableFlags::NONE);
     rootVar->SetTsType(moduleObjectType);
     ImportNamespaceObjectTypeAddReExportType(ctx, program->VarBinder()->AsETSBinder(), importDecl, moduleObjectType);
-    SetPropertiesForModuleObject(ctx, moduleObjectType, importPath, nullptr);
+    SetPropertiesForModuleObject(ctx, moduleObjectType, importPath, importDecl);
     moduleObjectType->AddObjectFlag(checker::ETSObjectFlags::LAZY_IMPORT_OBJECT);
     moduleObjectType->AddObjectFlag(checker::ETSObjectFlags::GRADUAL);
 
@@ -261,7 +257,7 @@ static void BuildLazyImportObject(public_lib::Context *ctx, ir::ETSImportDeclara
     auto varBinder = checker->VarBinder()->AsETSBinder();
     auto allocator = checker->ProgramAllocator();
 
-    auto declProgram = checker->SelectEntryOrExternalProgram(varBinder, importDecl->DeclPath());
+    auto declProgram = varBinder->GetExternalProgram(importDecl);
     if (!declProgram->IsDeclForDynamicStaticInterop()) {
         return;
     }
@@ -272,7 +268,7 @@ static void BuildLazyImportObject(public_lib::Context *ctx, ir::ETSImportDeclara
     const auto className = classDecl->Definition()->Ident()->Name();
     auto found = moduleMap.find(className);
     if (declProgram->IsASTChecked() && found != moduleMap.end()) {
-        checker->SetPropertiesForModuleObject(found->second, importDecl->DeclPath(), nullptr);
+        checker->SetPropertiesForModuleObject(found->second, importDecl->DeclPath(), importDecl);
         return;
     }
 
@@ -480,8 +476,9 @@ static ir::AstNode *LowerDynamicObjectLiteralExpression(public_lib::Context *ctx
     return blockExpr;
 }
 
-bool DynamicImport::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DynamicImport::PerformForProgram(parser::Program *program)
 {
+    auto ctx = Context();
     if (program == ctx->parserProgram &&
         ctx->config->options->GetCompilationMode() != CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
         LazyImportsCount() = 0;

@@ -24,6 +24,7 @@
 #include <queue>
 #include <deque>
 #include <stack>
+#include <string>
 #include <list>
 #include <forward_list>
 #include <set>
@@ -91,6 +92,10 @@ public:
         NO_MOVE_SEMANTIC(Scope);
     };
 
+#ifndef NDEBUG
+    template <typename T>
+    using EPtr = T *;
+#else
     template <typename T>
     class EPtr {
     public:
@@ -146,6 +151,7 @@ public:
 
         uint32_t raw_;
     };
+#endif  // NDEBUG
 
 private:
     EHeap() = delete;
@@ -482,5 +488,18 @@ using SArenaString = std::basic_string<char, std::char_traits<char>, ark::ArenaA
 
 using namespace ark::es2panda::eallocator_replacer;  // NOLINT
 }  // namespace ark::es2panda
+
+// NOTE(dkofanov): 'libstdc++' doesn't have allocator-agnostic 'hash<basic_string>' specialization prior to version 13.
+// NOLINTNEXTLINE(cert-dcl58-cpp)
+namespace std {
+template <>
+// NOLINTNEXTLINE(altera-struct-pack-align)
+struct hash<ark::es2panda::eallocator_replacer::ArenaString> {
+    std::size_t operator()(const ark::es2panda::eallocator_replacer::ArenaString &str) const
+    {
+        return std::hash<std::string_view> {}(str);
+    }
+};
+}  // namespace std
 
 #endif  // ES2PANDA_UTIL_EHEAP_H

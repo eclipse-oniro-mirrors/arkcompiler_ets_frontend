@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +51,8 @@ B(1, 2);)"};
     auto ctx = initializer.CreateContext(searchFileName, ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
-    auto isPackageModule = reinterpret_cast<Context *>(ctx)->parserProgram->IsPackage();
+    auto isPackageModule =
+        reinterpret_cast<Context *>(ctx)->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
     ASSERT_FALSE(isPackageModule);
     initializer.DestroyContext(ctx);
 
@@ -100,7 +101,8 @@ B(1, 2);)"};
     auto ctx = initializer.CreateContext(searchFileName, ES2PANDA_STATE_CHECKED);
     ASSERT_EQ(ContextState(ctx), ES2PANDA_STATE_CHECKED);
 
-    auto isPackageModule = reinterpret_cast<Context *>(ctx)->parserProgram->IsPackage();
+    auto isPackageModule =
+        reinterpret_cast<Context *>(ctx)->parserProgram->Is<ark::es2panda::util::ModuleKind::PACKAGE>();
     ASSERT_FALSE(isPackageModule);
     initializer.DestroyContext(ctx);
 

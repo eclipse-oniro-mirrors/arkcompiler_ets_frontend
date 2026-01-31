@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,13 +25,7 @@ class ETSAnalyzer;
 namespace ark::es2panda::ir {
 class BlockStatement : public Statement {
 public:
-    explicit BlockStatement(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList)
-        : Statement(AstNodeType::BLOCK_STATEMENT),
-          statements_(std::move(statementList)),
-          trailingBlocks_(allocator->Adapter())
-    {
-        InitHistory();
-    }
+    explicit BlockStatement(ArenaAllocator *allocator, ArenaVector<Statement *> &&statementList);
 
     [[nodiscard]] bool IsScopeBearer() const noexcept override
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-package import_tests.packages.subpackage_b;
+package import_tests.packages.subpackage_1;
 
-// Throw error: "a" is defined twice in this package.
-export let a: String = "SubpackageB";
+export let foo = 3;

@@ -27,14 +27,13 @@ enum class TSTupleKind;
 namespace ark::es2panda::parser {
 class TSParser : public ThrowingTypedParser {
 public:
-    TSParser(Program *program, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
-             ParserStatus status = ParserStatus::NO_OPTS)
-        : ThrowingTypedParser(program, &options, diagnosticEngine, status)
+    explicit TSParser(public_lib::Context *context, ParserStatus status = ParserStatus::NO_OPTS)
+        : ThrowingTypedParser(context, status)
     {
     }
 
 private:
-    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer(const SourceFile &sourceFile) override;
+    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer() override;
     bool IsStartOfMappedType() const;
     bool IsStartOfTypePredicate() const;
     bool IsStartOfAbstractConstructorType() const;

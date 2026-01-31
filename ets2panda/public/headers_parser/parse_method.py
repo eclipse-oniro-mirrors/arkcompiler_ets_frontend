@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding=utf-8
 #
-# Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2024-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -88,6 +88,7 @@ def parse_method_or_constructor(data: str, start: int = 0) -> Tuple[int, Dict]:
         first_body_token_pos = find_first_not_restricted_character(' \n\t', data, start_of_body + 1)
         if data[first_body_token_pos: first_body_token_pos + len('return')] == 'return':
             res["additional_attributes"] = "get"
+            return end_of_function + 1, res
 
     setters_begin_names = ["Set", "Add", "Update"]
     setters_banned_names = ["SetOriginalNode", "SetParent", "SetRange", "SetStart", "SetEnd", "SetAnnotations"]

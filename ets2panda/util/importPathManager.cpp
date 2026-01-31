@@ -21,9 +21,7 @@
 #include "util/diagnosticEngine.h"
 #include "generated/diagnostic.h"
 
-#include "parser/context/parserContext.h"
 #include "parser/ETSparser.h"
-#include "parser/program/DeclarationCache.h"
 #include "parser/program/program.h"
 #include "ir/expressions/literals/stringLiteral.h"
 
@@ -32,11 +30,17 @@
 #include "libarkfile/class_data_accessor-inl.h"
 #include "libarkfile/file-inl.h"
 #include "libarkbase/utils/logger.h"
-#include "util/helpers.h"
+
+#include "varbinder/ETSBinder.h"
+#include "varbinder/TSBinder.h"
+#include "varbinder/ASBinder.h"
+#include "varbinder/JSBinder.h"
+
 #include <algorithm>
-#include <chrono>
+#include <cstdio>
+#include <memory>
+#include <string_view>
 #include <utility>
-#include <fcntl.h>
 
 #ifdef PANDA_TARGET_WINDOWS
 #include <io.h>
@@ -58,28 +62,31 @@ namespace fs = std::experimental::filesystem;
 
 #ifdef _WIN32
 #include <windows.h>
-#include <synchapi.h>
 #else
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/file.h>
 #include <semaphore.h>
 #endif
+
+namespace ark::es2panda::parser {
+
+template <util::ModuleKind KIND, typename VarBinderT>
+ProgramAdapter<KIND> *Program::New(const util::ImportMetadata &importMetadata, public_lib::Context *context)
+{
+    varbinder::VarBinder *actualVB = nullptr;
+    if constexpr (!std::is_same_v<VarBinderT, void>) {
+        ES2PANDA_ASSERT(context->parserProgram == nullptr);
+        actualVB = context->Allocator()->New<VarBinderT>(context);
+    } else {
+        actualVB = context->parserProgram->VarBinder();
+    }
+    ES2PANDA_ASSERT(actualVB != nullptr);
+    return context->Allocator()->New<ProgramAdapter<KIND>>(importMetadata, context->Allocator(), actualVB);
+}
+}  // namespace ark::es2panda::parser
+
 namespace ark::es2panda::util {
-
-constexpr size_t SUPPORTED_INDEX_FILES_SIZE = 8;
-
-static bool IsCompatibleExtension(const std::string &extension)
-{
-    return extension == ImportPathManager::ETS_SUFFIX || extension == ".ts" || extension == ".sts";
-}
-
-static bool IsAbsolute(const std::string &path)
-{
-#ifndef ARKTSCONFIG_USE_FILESYSTEM
-    return !path.empty() && path[0] == '/';
-#else
-    return fs::path(path).is_absolute();
-#endif  // ARKTSCONFIG_USE_FILESYSTEM
-}
 
 size_t HandleSpecialSymbols(const std::string &input, std::string &output, const size_t &i)
 {
@@ -105,7 +112,7 @@ size_t HandleSpecialSymbols(const std::string &input, std::string &output, const
     }
 }
 
-std::string DeleteEscapeSymbols(const std::string &input)
+static std::string DeleteEscapeSymbols(const std::string &input)
 {
     std::string output;
     output.reserve(input.size());
@@ -125,31 +132,7 @@ std::string DeleteEscapeSymbols(const std::string &input)
     return output;
 }
 
-void RemoveEscapedNewlines(std::string &s)
-{
-    std::string pattern = "\\n";
-    size_t pos = 0;
-    while ((pos = s.find(pattern, pos)) != std::string::npos) {
-        s.erase(pos, pattern.size());
-    }
-}
-
-ImportPathManager::ImportPathManager(const parser::ETSParser *parser)
-    : parser_(parser),
-      allocator_(parser->Allocator()),
-      arktsConfig_(parser->GetOptions().ArkTSConfig()),
-      absoluteEtsPath_(parser->GetOptions().GetEtsPath().empty()
-                           ? ""
-                           : util::Path(parser->GetOptions().GetEtsPath(), allocator_).GetAbsolutePath()),
-      stdLib_(parser->GetOptions().GetStdlib()),
-      parseList_(parser->Allocator()->Adapter()),
-      globalProgram_(parser->GetProgram()),
-      diagnosticEngine_ {parser->DiagnosticEngine()}
-{
-    arktsConfig_->GenerateSourcePathMap();
-}
-
-std::string ExtractModuleName(const panda_file::File &pf, const panda_file::File::EntityId &classId)
+static std::string ExtractMnameFromPandafile(const panda_file::File &pf, const panda_file::File::EntityId &classId)
 {
     // processing name to get ohmUrl
     std::string name = utf::Mutf8AsCString(pf.GetStringData(classId).data);
@@ -160,567 +143,342 @@ std::string ExtractModuleName(const panda_file::File &pf, const panda_file::File
     // rely on the following mangling: <moduleName>.ETSGLOBAL
     auto etsGlobalSuffix = std::string(".") + std::string(compiler::Signatures::ETS_GLOBAL);
     ES2PANDA_ASSERT(Helpers::EndsWith(recordName, etsGlobalSuffix));
-    return recordName.substr(0, recordName.size() - etsGlobalSuffix.size());  // moduleName
+    auto mname = recordName.substr(0, recordName.size() - etsGlobalSuffix.size());
+    return mname;
 }
 
-std::chrono::system_clock::time_point GetFileCreationTime([[maybe_unused]] const std::string &filePath)
+const ArkTsConfig &ImportPathManager::ArkTSConfig() const
 {
-    // hack for builds when no filesystem is included
-#ifdef USE_UNIX_SYSCALL
-    return std::chrono::system_clock::now();
-#else
-    auto ftime = fs::last_write_time(filePath);
-    auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
-        ftime - fs::file_time_type::clock::now() + std::chrono::system_clock::now());
-    return sctp;
-#endif
+    return ctx_.config->options->ArkTSConfig();
 }
 
-bool ImportPathManager::DeclarationIsInCache([[maybe_unused]] ImportMetadata &importData,
-                                             [[maybe_unused]] bool isStdlib)
+DiagnosticEngine *ImportPathManager::DE() const
 {
-#ifdef USE_UNIX_SYSCALL
-    // hack for builds when no filesystem is included
-    return false;
-#else
-    auto resSource = std::string(importData.resolvedSource);
-    auto it = arktsConfig_->Dependencies().find(std::string(importData.resolvedSource));
-    ES2PANDA_ASSERT(it != arktsConfig_->Dependencies().cend());
-    const auto &externalModuleImportData = it->second;
-    std::replace(resSource.begin(), resSource.end(), '/', '.');
-    auto fileNameToCheck = arktsConfig_->CacheDir() + std::string(pathDelimiter_) + resSource + CACHE_SUFFIX.data();
-    // memory cache checking
-    if (parser::DeclarationCache::GetFromCache(fileNameToCheck) != parser::DeclarationCache::ABSENT) {
-        importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
-        importData.importFlags &= ~ImportFlags::EXTERNAL_BINARY_IMPORT;
-        importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
-        return true;
-    }
-    if (!isStdlib) {
-        return false;
-    }
-
-    // since was not found in memory cache, take from disk cache
-    if (!GetCacheCanBeUpdated()) {
-        return false;
-    }
-    if (fs::exists(fileNameToCheck) && fs::is_regular_file(fileNameToCheck)) {
-        if (fs::file_size(fileNameToCheck) == 0) {
-            return false;
-        }
-        // means that etsstdlib.abc file was NOT updated, so we DO NOT need to update declarations, and can cache
-        // existed files
-        if (GetFileCreationTime(fileNameToCheck) > GetFileCreationTime(std::string(externalModuleImportData.Path()))) {
-            importData.declPath = util::UString(fileNameToCheck, allocator_).View().Utf8();
-            importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
-            importData.ohmUrl = util::UString(resSource, allocator_).View().Utf8();
-            std::ifstream declFile(fileNameToCheck);
-            std::stringstream ss {};
-            ss << declFile.rdbuf();
-            parser::DeclarationCache::CacheIfPossible(std::move(fileNameToCheck),
-                                                      std::make_shared<std::string>(ss.str()));
-            return true;
-        }
-        // means that etsstdlib.abc file was updated, so we need to update declarations
-        // and block futher disk cache checking
-        SetCacheCannotBeUpdated();
-        for (const auto &entry : fs::directory_iterator(arktsConfig_->CacheDir())) {
-            fs::remove_all(entry.path());
-        }
-    }
-    return false;
-#endif
+    return ctx_.diagnosticEngine;
 }
 
-static bool NeedToExtractDeclarations([[maybe_unused]] const std::string &cachePath,
-                                      [[maybe_unused]] const std::string &abcPath)
+parser::Program *ImportPathManager::GetGlobalProgram() const
 {
-#ifdef USE_UNIX_SYSCALL
-    // hack for builds when no filesystem is included
-    return true;
-#else
-    if (!fs::exists(cachePath) || !fs::is_regular_file(cachePath)) {
-        return true;
-    }
-    if (fs::file_size(cachePath) == 0) {
-        return true;
-    }
-    // abc file was updated -> need to update etscache files
-    if (GetFileCreationTime(cachePath) < GetFileCreationTime(abcPath)) {
-        return true;
-    }
-    return false;
-#endif
+    return ctx_.parserProgram;
 }
 
-#ifdef PANDA_TARGET_WINDOWS
-std::wstring s2ws(const std::string &str)
-{
-    int sizeNeeded = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
-    std::wstring wstrTo(sizeNeeded, 0);
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), &wstrTo[0], sizeNeeded);
-    return wstrTo;
-}
-
-static void CreateDeclarationFileWindows(const std::string &processed, const std::string &absDecl)
-{
-    std::string semName = "/decl_sem_" + fs::path(absDecl).filename().string();
-    std::wstring semNameWide = s2ws(semName);
-    LPCWSTR lpwcstr = semNameWide.c_str();
-    HANDLE sem = CreateSemaphoreExW(nullptr, 1, 1, lpwcstr, 0, SEMAPHORE_MODIFY_STATE | SYNCHRONIZE);
-    if (!sem) {
-        LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
-        return;
-    }
-    DWORD waitRes = WaitForSingleObject(sem, INFINITE);
-    if (waitRes != WAIT_OBJECT_0) {
-        LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
-        CloseHandle(sem);
-        return;
-    }
-    HANDLE fd =
-        CreateFile(absDecl.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-    if (fd == INVALID_HANDLE_VALUE) {
-        ReleaseSemaphore(sem, 1, nullptr);
-        CloseHandle(sem);
-        return;
-    }
-    DWORD written;
-    if (!WriteFile(fd, processed.data(), processed.size(), &written, NULL)) {
-        LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
-    }
-    CloseHandle(fd);
-
-    ReleaseSemaphore(sem, 1, nullptr);
-    CloseHandle(sem);
-}
-#else
-#ifndef USE_UNIX_SYSCALL
-#include <sys/file.h>
-
-// NOLINTNEXTLINE(cppcoreguidelines-special-member-functions)
-class DeclResourceGuard {
-public:
-    DeclResourceGuard(sem_t *sem, std::string semName) : sem_(sem), semName_(std::move(semName)) {}
-    DeclResourceGuard(const DeclResourceGuard &) = delete;
-    DeclResourceGuard &operator=(const DeclResourceGuard &) = delete;
-    ~DeclResourceGuard()
-    {
-        Cleanup();
-    }
-
-    void MarkSemAcquired()
-    {
-        semAcquired_ = true;
-    }
-
-    void SetFile(FILE *fp, int fd)
-    {
-        fp_ = fp;
-        fd_ = fd;
-    }
-
-    void MarkLockAcquired()
-    {
-        unlockFd_ = true;
-    }
-
-private:
-    void Cleanup()
-    {
-        if (fd_ != -1 && unlockFd_) {
-            flock(fd_, LOCK_UN);
-        }
-        if (fp_ != nullptr) {
-            fclose(fp_);
-            fp_ = nullptr;
-        }
-        if (sem_ != nullptr) {
-            if (semAcquired_) {
-                sem_post(sem_);
-            }
-            sem_close(sem_);
-            sem_ = nullptr;
-            sem_unlink(semName_.c_str());
-        }
-    }
-
-    sem_t *sem_ {nullptr};
-    std::string semName_;
-    FILE *fp_ {nullptr};
-    int fd_ {-1};
-    bool unlockFd_ {false};
-    bool semAcquired_ {false};
-};
-
-static void CreateDeclarationFileLinux(const std::string &processed, const std::string &absDecl)
-{
-    // NOTE: On Mac platform semName 'decl_sem_std.core.etscache' is invalid
-    // That's why semName consists of 'decl_sem_' prefix and a number
-    // Should be refactored
-    static std::map<std::string, int> semMap;
-    static int semCnt = 0;
-
-    if (semMap.find(absDecl) == semMap.end()) {
-        semMap.emplace(absDecl, semCnt++);
-    }
-    std::string semName = "/decl_sem_" + std::to_string(semMap.at(absDecl));
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
-    sem_t *sem = sem_open(semName.c_str(), O_CREAT, 0644, 1);
-    if (sem == SEM_FAILED) {
-        LOG(FATAL, ES2PANDA) << "Unexpected error while creating declaration file: " << absDecl;
-        return;
-    }
-    DeclResourceGuard guard(sem, semName);
-    if (sem_wait(sem) == -1) {
-        return;
-    }
-    guard.MarkSemAcquired();
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,readability-magic-numbers)
-    FILE *fp = fopen(absDecl.c_str(), "wxe");
-    if (fp == nullptr) {
-        return;
-    }
-
-    int fd = fileno(fp);
-    if (fd == -1) {
-        return;
-    }
-    guard.SetFile(fp, fd);
-    flock(fd, LOCK_EX);
-    guard.MarkLockAcquired();
-
-    size_t written = fwrite(processed.data(), 1, processed.size(), fp);
-    if (written != processed.size() || (ferror(fp) != 0)) {
-        LOG(FATAL, ES2PANDA) << "Failed to write a file for declaration: " << absDecl;
-    }
-    if (fflush(fp) != 0 || (ferror(fp) != 0)) {
-        LOG(FATAL, ES2PANDA) << "Failed to flush a file for declaration: " << absDecl;
-    }
-
-    if (fsync(fd) == -1) {
-        LOG(FATAL, ES2PANDA) << "Failed to sync a file for declaration: " << absDecl;
-    }
-}
-#endif
-#endif
-
-void CreateDeclarationFile([[maybe_unused]] const std::string &declFileName,
-                           [[maybe_unused]] const std::string &processed)
-{
-#ifdef USE_UNIX_SYSCALL
-    return;
-#else
-    const std::string absDecl = fs::absolute(declFileName).string();
-    fs::create_directories(fs::path(absDecl).parent_path());
-#ifdef PANDA_TARGET_WINDOWS
-    CreateDeclarationFileWindows(processed, absDecl);
-#else
-    CreateDeclarationFileLinux(processed, absDecl);
-#endif
-#endif
-}
-
-void ImportPathManager::ProcessAbcFile(std::string abcFilePath)
-{
-    if (processedAbcFiles_.count(abcFilePath) != 0) {
-        return;
-    }
-    auto pf = panda_file::OpenPandaFile(abcFilePath);
-    if (!pf) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {abcFilePath});
-    }
-    for (auto id : pf->GetExported()) {
-        // extract module name from abc file entity
-        panda_file::File::EntityId classId(id);
-        auto moduleName = ExtractModuleName(*pf, classId);
-        auto moduleNameFile = moduleName;
-        std::replace(moduleNameFile.begin(), moduleNameFile.end(), '.', util::Path::GetPathDelimiter());
-        std::string declFileName =
-            arktsConfig_->CacheDir() + std::string(pathDelimiter_) + moduleNameFile + std::string(CACHE_SUFFIX);
-        fileToModuleName_[declFileName] = moduleName;
-
-        if (!NeedToExtractDeclarations(declFileName, abcFilePath)) {
-            continue;
-        }
-        // processing annotation to extract string with declaration text
-        panda_file::ClassDataAccessor cda(*pf, classId);
-        std::stringstream declarationString;
-        cda.EnumerateAnnotation(ANNOTATION_MODULE_DECLARATION.data(),
-                                [&pf, &declarationString](panda_file::AnnotationDataAccessor &annotationAccessor) {
-                                    auto elemDeclaration = annotationAccessor.GetElement(0);
-                                    auto valueDeclaration = elemDeclaration.GetScalarValue();
-                                    const auto idAnnoDeclaration = valueDeclaration.Get<panda_file::File::EntityId>();
-                                    declarationString
-                                        << panda_file::StringDataToString(pf->GetStringData(idAnnoDeclaration));
-                                    return true;
-                                });
-        std::string declText = declarationString.str();
-        if (declText.empty()) {
-            continue;
-        }
-        const std::string processedDeclText = DeleteEscapeSymbols(declText);
-        CreateDeclarationFile(declFileName, processedDeclText);
-    }
-    processedAbcFiles_.insert(abcFilePath);
-}
-
-void ImportPathManager::ProcessExternalLibraryImportFromAbc(ImportMetadata &importData, const std::string &importPath)
-{
-    auto externalModuleImportData = arktsConfig_->FindInDependencies(std::string(importData.resolvedSource));
-    ES2PANDA_ASSERT(externalModuleImportData != std::nullopt);
-
-    std::string abcFilePath {externalModuleImportData->second.Path()};
-    std::string packageName = externalModuleImportData->first;
-    std::string relPath {};
-
-    ProcessAbcFile(abcFilePath);
-
-    if (util::Helpers::EndsWith(abcFilePath, ImportPathManager::ETSSTDLIB_ABC_SUFFIX)) {
-        // import * from "<stdlib package>" -> <cache dir>/<stdlib package>.etscache
-        relPath = packageName;
-    } else if (importPath == packageName) {
-        // import XXX from "@lib" -> <cache dir>/@lib/<default file>
-        if (externalModuleImportData->second.MainFile().empty()) {
-            diagnosticEngine_.LogDiagnostic(diagnostic::NO_MAIN_FILE, util::DiagnosticMessageParams {packageName});
-        }
-        relPath = packageName + std::string(pathDelimiter_) + std::string(externalModuleImportData->second.MainFile());
-    } else {
-        // import XXX from "@lib/<dir>/<file>" ->  <cache dir>/@lib/<dir>/<file>
-        relPath = importPath;
-    }
-    std::replace(relPath.begin(), relPath.end(), '/', util::Path::GetPathDelimiter());
-    std::string resultedImportPath =
-        arktsConfig_->CacheDir() + std::string(pathDelimiter_) + relPath + std::string(CACHE_SUFFIX);
-
-    importData.declPath = UString(resultedImportPath, allocator_).View().Utf8();
-    importData.ohmUrl = UString(fileToModuleName_[resultedImportPath], allocator_).View().Utf8();
-    importData.importFlags |= ImportFlags::EXTERNAL_BINARY_IMPORT;
-}
-
-void ImportPathManager::ProcessExternalLibraryImport(ImportMetadata &importData, std::string importPath)
-{
-    auto resSource = std::string(importData.resolvedSource);
-    ES2PANDA_ASSERT(!IsAbsolute(resSource));
-    auto dependency = arktsConfig_->FindInDependencies(resSource);
-    ES2PANDA_ASSERT(dependency != std::nullopt);
-    const auto &externalModuleImportData = dependency->second;
-    importData.lang = externalModuleImportData.GetLanguage().GetId();
-
-    // process .d.ets "path" in "dependencies"
-    // process empty "path" in dependencies, since in interop we allow imports without typecheck
-    if (!Helpers::EndsWith(std::string(externalModuleImportData.Path()), ABC_SUFFIX)) {
-        importData.importFlags |= ImportFlags::EXTERNAL_SOURCE_IMPORT;
-        importData.ohmUrl = util::UString(externalModuleImportData.OhmUrl(), allocator_).View().Utf8();
-        importData.declPath = externalModuleImportData.Path();
-        return;
-    }
-
-    // process .abc "path" in "dependencies"
-    ES2PANDA_ASSERT(Helpers::EndsWith(std::string(externalModuleImportData.Path()), ABC_SUFFIX));
-    if (arktsConfig_->CacheDir().empty()) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::NO_CACHE_DIRECTORY,
-                                        util::DiagnosticMessageParams {util::StringView(arktsConfig_->ConfigPath())});
-        return;
-    }
-    std::scoped_lock<std::shared_mutex> processExternalAbcFile(m_);
-    ProcessExternalLibraryImportFromAbc(importData, importPath);
-}
-
-// If needed, the result of this function can be cached
-std::string_view ImportPathManager::TryImportFromDeclarationCache(std::string_view resolvedImportPath) const
-{
-    // if package or unresolved file, just skip
-    if (ark::os::file::File::IsDirectory(std::string(resolvedImportPath)) ||
-        !ark::os::file::File::IsRegularFile(std::string(resolvedImportPath))) {
-        return resolvedImportPath;
-    }
-    const auto &rootDir = ArkTSConfig()->RootDir();
-    const auto &cacheDir = ArkTSConfig()->CacheDir();
-    // if already in cache, return
-    if (Helpers::StartsWith(resolvedImportPath, cacheDir)) {
-        return resolvedImportPath;
-    }
-    if (cacheDir.empty() || rootDir.empty()) {
-        return resolvedImportPath;
-    }
-    // declaration cache is used only for .ets files, located in the same application as compiling file
-    if (!Helpers::EndsWith(resolvedImportPath, ETS_SUFFIX) || !Helpers::StartsWith(resolvedImportPath, rootDir)) {
-        return resolvedImportPath;
-    }
-    const auto &relativeFilePath =
-        resolvedImportPath.substr(rootDir.size(), resolvedImportPath.size() - rootDir.size());
-    const auto &declarationCacheFile =
-        cacheDir + std::string(relativeFilePath.substr(0, relativeFilePath.size() - ETS_SUFFIX.size())) +
-        CACHE_SUFFIX.data();
-
-    if (!ark::os::file::File::IsRegularFile(declarationCacheFile)) {
-        return resolvedImportPath;
-    }
-    return UString(declarationCacheFile, allocator_).View().Utf8();
-}
-
-ImportPathManager::ImportMetadata ImportPathManager::GatherImportMetadata(parser::Program *program,
-                                                                          ImportFlags importFlags,
-                                                                          ir::StringLiteral *importPath)
+parser::Program *ImportPathManager::GatherImportMetadata(parser::Program *importer, ir::StringLiteral *importPath)
 {
     srcPos_ = importPath->Start();
-    // NOTE(dkofanov): The code below expresses the idea of 'dynamicPaths' defining separated, virtual file system.
-    // Probably, paths of common imports should be isolated from the host fs as well, being resolved by 'ModuleInfo'
-    // instead of 'AbsoluteName'.
-    isDynamic_ = program->IsDeclForDynamicStaticInterop();
-    auto curModulePath = isDynamic_ ? program->ModuleInfo().moduleName : program->AbsoluteName();
-    auto [resolvedImportPath, resolvedIsExternalModule] = ResolvePath(curModulePath.Utf8(), importPath);
-    if (resolvedImportPath.empty()) {
-        ES2PANDA_ASSERT(diagnosticEngine_.IsAnyError());
-        return ImportMetadata {util::ImportFlags::NONE, Language::Id::COUNT, ERROR_LITERAL};
+    isDynamic_ = importer->IsDeclForDynamicStaticInterop();
+
+    auto importData = ResolvePath(importer, *importPath);
+    if (importData.ResolvedSource().empty() || !importData.IsValid()) {
+        ES2PANDA_ASSERT(DE()->IsAnyError());
+        return nullptr;
     }
 
-    globalProgram_->AddFileDependencies(curModulePath, util::StringView(resolvedImportPath));
+    GetGlobalProgram()->AddFileDependencies(importer->AbsoluteName().Utf8(), importData.ResolvedSource());
+    LOG(DEBUG, ES2PANDA) << "[" << importer->ModuleInfo().moduleName << "] "
+                         << "Import " << importPath->ToString() << " resolved to " << importData.ResolvedSource();
 
-    ImportMetadata importData {importFlags};
-    importData.resolvedSource = resolvedImportPath;
-    if (resolvedIsExternalModule) {
-        ProcessExternalLibraryImport(importData, std::string(importPath->Str()));
-    } else {
-        importData.lang = ToLanguage(program->Extension()).GetId();
-        importData.declPath = util::ImportPathManager::DUMMY_PATH;
-        importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
-    }
-
-    if (!parser_->GetContext().IsDependencyAnalyzerMode()) {
-        importData.resolvedSource = TryImportFromDeclarationCache(importData.resolvedSource);
-    }
-
-    if (globalProgram_->AbsoluteName() != resolvedImportPath) {
-        AddToParseList(importData);
-    }
-
-    LOG(DEBUG, ES2PANDA) << "[" << curModulePath << "] "
-                         << "Import " << importPath->ToString() << " resolved to " << importData.resolvedSource;
-    return importData;
+    return LookupCachesAndIntroduceProgram(&importData);
 }
 
 static bool IsRelativePath(std::string_view path)
 {
-    std::string currentDirReferenceLinux = "./";
-    std::string parentDirReferenceLinux = "../";
-    std::string currentDirReferenceWindows = ".\\";
-    std::string parentDirReferenceWindows = "..\\";
-
-    return ((path.find(currentDirReferenceLinux) == 0) || (path.find(parentDirReferenceLinux) == 0) ||
-            (path.find(currentDirReferenceWindows) == 0) || (path.find(parentDirReferenceWindows) == 0));
+    for (std::string_view start : {"./", "../", ".\\", "..\\"}) {
+        if (Helpers::StartsWith(path, start)) {
+            return true;
+        }
+    }
+    return false;
 }
 
-util::StringView ImportPathManager::ResolvePathAPI(StringView curModulePath, ir::StringLiteral *importPath) const
+util::StringView ImportPathManager::ResolvePathAPI(parser::Program *importer, ir::StringLiteral *importPath) const
 {
     srcPos_ = importPath->Start();
     // NOTE(dkofanov): #23698 related. In case of 'dynamicPaths', resolved path is "virtual" module-path, may be not
     // what the plugin expecting.
     // NOTE(itrubachev) import path manager should be refactored
-    auto resolvedPath = ResolvePath(curModulePath.Utf8(), importPath).resolvedPath;
-    auto cachedResolvedPath = TryImportFromDeclarationCache(resolvedPath);
-    return cachedResolvedPath;
+    auto importMetadata = ResolvePath(importer, *importPath);
+    auto resolvedPath = UString(importMetadata.ResolvedSource(), Context()->Allocator());
+    return resolvedPath.View();
 }
 
-void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPathRes &result) const
+void ImportPathManager::TryMatchStaticResolvedPath(ImportPathManager::ResolvedPathRes *result) const
 {
-    auto paths = arktsConfig_->Paths().find(result.resolvedPath.data());
-    if (paths != arktsConfig_->Paths().cend()) {
-        result.resolvedPath = *paths->second.begin();
-        result.resolvedIsExternalModule = false;
+    auto paths = ArkTSConfig().Paths().find(result->resolvedPath);
+    if (paths != ArkTSConfig().Paths().cend()) {
+        result->resolvedPath = *paths->second.begin();
+        result->resolvedIsExternalModule = false;
     }
 }
 
-void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes &result) const
+void ImportPathManager::TryMatchDynamicResolvedPath(ImportPathManager::ResolvedPathRes *result) const
 {
-    auto packagePathPair = arktsConfig_->SourcePathMap().find(result.resolvedPath);
-    if (packagePathPair != arktsConfig_->SourcePathMap().cend()) {
-        result.resolvedPath = packagePathPair->second;
-        result.resolvedIsExternalModule = true;
-        return;
-    }
-    auto paths = arktsConfig_->Paths().find(result.resolvedPath.data());
-    if (paths != arktsConfig_->Paths().cend()) {
-        result.resolvedPath = *paths->second.begin();
+    auto packagePathPair = ArkTSConfig().SourcePathMap().find(result->resolvedPath);
+    if (packagePathPair != ArkTSConfig().SourcePathMap().cend()) {
+        result->resolvedPath = packagePathPair->second;
+        result->resolvedIsExternalModule = true;
     }
 }
 
-ImportPathManager::ResolvedPathRes ImportPathManager::ResolvePath(std::string_view curModulePath,
-                                                                  ir::StringLiteral *importPath) const
+ImportMetadata ImportPathManager::ResolvePath(parser::Program *importer, std::string_view importPath) const
 {
-    if (importPath->Str().Empty()) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::EMPTY_IMPORT_PATH, util::DiagnosticMessageParams {});
-        return {*importPath};
+    if (importPath.empty()) {
+        DE()->LogDiagnostic(diagnostic::EMPTY_IMPORT_PATH, util::DiagnosticMessageParams {});
+        return {};
     }
     ResolvedPathRes result {};
-    if (IsRelativePath(*importPath)) {
+    if (IsRelativePath(importPath)) {
+        auto curModulePath =
+            isDynamic_ ? importer->GetImportMetadata().ResolvedSource() : importer->AbsoluteName().Utf8();
         size_t pos = curModulePath.find_last_of("/\\");
         auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : ".";
+        std::string resolvedPathPrototype {currentDir};
+        resolvedPathPrototype += pathDelimiter_;
+        resolvedPathPrototype += importPath;
 
-        auto resolvedPath = UString(currentDir, allocator_);
-        resolvedPath.Append(pathDelimiter_);
-        resolvedPath.Append(*importPath);
-
-        result = AppendExtensionOrIndexFileIfOmitted(resolvedPath.View());
+        result = AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
         if (result.resolvedIsExternalModule) {
-            TryMatchStaticResolvedPath(result);
+            TryMatchStaticResolvedPath(&result);
         } else {
-            TryMatchDynamicResolvedPath(result);
+            TryMatchDynamicResolvedPath(&result);
         }
     } else {
-        result = ResolveAbsolutePath(*importPath);
+        result = ResolveAbsolutePath(importPath);
     }
 
-    return result;
+    return {*this, std::string(result.resolvedPath), ToLanguage(importer->Extension()).GetId(),
+            result.resolvedIsExternalModule};
 }
 
-ImportPathManager::ResolvedPathRes ImportPathManager::ResolveAbsolutePath(const ir::StringLiteral &importPathNode) const
+ImportPathManager::ResolvedPathRes ImportPathManager::ResolveAbsolutePath(std::string_view importPath) const
 {
-    std::string_view importPath {importPathNode};
     ES2PANDA_ASSERT(!IsRelativePath(importPath));
 
     if (importPath.at(0) == pathDelimiter_.at(0)) {
-        std::string baseUrl = arktsConfig_->BaseUrl();
-        baseUrl.append(importPath, 0, importPath.length());
-
-        return AppendExtensionOrIndexFileIfOmitted(UString(baseUrl, allocator_).View());
+        std::string resolvedPathPrototype = ArkTSConfig().BaseUrl();
+        resolvedPathPrototype += importPath;
+        return AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
     }
 
-    const size_t pos = importPath.find_first_of("/\\");
-    bool containsDelim = (pos != std::string::npos);
-    auto rootPart = containsDelim ? importPath.substr(0, pos) : importPath;
-    if (!stdLib_.empty() &&
-        ((rootPart == "std") || (rootPart == "escompat"))) {  // Get std or escompat path from CLI if provided
-        auto baseUrl = std::string(GetRealPath(StringView(stdLib_))) + pathDelimiter_.at(0) + std::string(rootPart);
-
-        if (containsDelim) {
-            baseUrl.append(1, pathDelimiter_.at(0));
-            baseUrl.append(importPath, rootPart.length() + 1, importPath.length());
-        }
-        return {UString(baseUrl, allocator_).View().Utf8()};
-    }
-
-    ES2PANDA_ASSERT(arktsConfig_ != nullptr);
-    auto resolvedPath = arktsConfig_->ResolvePath(importPath, isDynamic_);
+    auto resolvedPath = ArkTSConfig().ResolvePath(importPath, isDynamic_);
     if (!resolvedPath) {
-        diagnosticEngine_.LogDiagnostic(
+        DE()->LogDiagnostic(
             diagnostic::IMPORT_CANT_FIND_PREFIX,
-            util::DiagnosticMessageParams {util::StringView(importPath), util::StringView(arktsConfig_->ConfigPath())},
+            util::DiagnosticMessageParams {util::StringView(importPath), util::StringView(ArkTSConfig().ConfigPath())},
             srcPos_);
         return {""};
     }
-    return AppendExtensionOrIndexFileIfOmitted(UString(resolvedPath.value(), allocator_).View());
+    return AppendExtensionOrIndexFileIfOmitted(resolvedPath.value());
+}
+
+parser::PackageProgram *ImportPathManager::NewEmptyPackage(const ImportMetadata &importMetadata)
+{
+    auto allocator = Context()->allocator;
+    auto package = parser::Program::New<ModuleKind::PACKAGE>(importMetadata, Context());
+    package->SetPackageInfo(importMetadata.ModuleName(), util::ModuleKind::PACKAGE);
+
+    auto ident = allocator->New<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, allocator);
+    ArenaVector<ir::Statement *> stmts(allocator->Adapter());
+    auto etsModule = allocator->New<ir::ETSModule>(allocator, std::move(stmts), ident, ir::ModuleFlag::ETSSCRIPT,
+                                                   Language::Id::ETS, package);
+    package->SetAst(etsModule);
+    return package;
+}
+
+std::string GetRealPath(std::string path)
+{
+    const std::string realPath = ark::os::GetAbsolutePath(path);
+    return realPath;
+}
+
+template <typename VarBinderT, Language::Id LANG_ID>
+void ImportPathManager::SetupGlobalProgram(public_lib::Context *ctx)
+{
+    ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() != CompilationMode::GEN_STD_LIB);
+    // NOTE(dkofanov): this code tries to handle pseudo-files provided by unrelated 'ctx->sourceFile->filePath' and
+    // 'ctx->input'.
+
+    auto normalizedPathForGlobalProg = GetRealPath(std::string(ctx->sourceFile->filePath));
+    if (normalizedPathForGlobalProg.empty()) {
+        normalizedPathForGlobalProg = ark::os::NormalizePath(std::string(ctx->sourceFile->filePath));
+    }
+
+    if constexpr (LANG_ID == Language::Id::ETS) {
+        util::ImportMetadata importData {*this, normalizedPathForGlobalProg};
+        importData.SetText<ModuleKind::MODULE>(normalizedPathForGlobalProg, std::string(ctx->input));
+        ctx->parserProgram = IntroduceProgram<ModuleKind::MODULE, VarBinderT>(importData);
+    } else {
+        util::ImportMetadata importData {};
+        importData.moduleName_ = normalizedPathForGlobalProg;
+        importData.lang_ = LANG_ID;
+        importData.SetText<ModuleKind::MODULE>(normalizedPathForGlobalProg, std::string(ctx->input));
+        ctx->parserProgram = IntroduceProgram<ModuleKind::MODULE, VarBinderT>(importData);
+    }
+    // NOTE(vpukhov): the *unnamed* modules are to be removed entirely
+    if (Context()->config->options->IsEtsUnnamed()) {
+        ctx->parserProgram->SetPackageInfo("", util::ModuleKind::MODULE);
+    }
+}
+
+static constexpr auto STDLIB_MAIN_PROG_NAME = "etsstdlib.ets";
+static constexpr auto STDLIB_IMPORTS_MAIN_PROG_NAME = "<default_import>.ets";
+static constexpr auto SIMULT_MAIN_PROG_NAME = "<simult>";
+
+void ImportPathManager::SetupGlobalProgram()
+{
+    if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_STD_LIB) {
+        ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
+        util::ImportMetadata importData {*this, STDLIB_MAIN_PROG_NAME};
+        importData.SetText<ModuleKind::MODULE, false>(STDLIB_MAIN_PROG_NAME, "");
+        Context()->parserProgram = IntroduceProgram<ModuleKind::MODULE, varbinder::ETSBinder>(importData);
+        return;
+    }
+    switch (Context()->config->options->GetExtension()) {
+        case ScriptExtension::TS:
+            return SetupGlobalProgram<varbinder::TSBinder, Language::Id::TS>(Context());
+        case ScriptExtension::AS:
+            return SetupGlobalProgram<varbinder::ASBinder, Language::Id::AS>(Context());
+        case ScriptExtension::ETS:
+            return SetupGlobalProgram<varbinder::ETSBinder, Language::Id::ETS>(Context());
+        case ScriptExtension::JS:
+            return SetupGlobalProgram<varbinder::JSBinder, Language::Id::JS>(Context());
+        default:
+            ES2PANDA_UNREACHABLE();
+    }
+}
+
+static ArenaString OhmurlToMname(ArenaString &&ohmurl)
+{
+    ES2PANDA_ASSERT(std::find(ohmurl.begin(), ohmurl.end(), '\\') == ohmurl.end());
+    if (ohmurl.at(0) == '/') {
+        ohmurl.erase(0, 1);
+    }
+    ArenaString mnamePrototype {std::move(ohmurl)};
+    std::replace(mnamePrototype.begin(), mnamePrototype.end(), '/', '.');
+    return mnamePrototype;
+}
+
+static ArenaString OhmurlToMname(std::string_view ohmurl)
+{
+    return OhmurlToMname(ArenaString {ohmurl});
+}
+
+parser::Program *ImportPathManager::SetupProgramForDebugInfoPlugin(std::string_view sourceFilePath,
+                                                                   [[maybe_unused]] std::string_view moduleName)
+{
+    util::ImportMetadata importData {
+        *this,
+        std::string(sourceFilePath),
+    };
+    importData.SetText<ModuleKind::MODULE, false>(std::string(sourceFilePath), "");
+    // NOTE(dkofanov): The new program is added to 'ImportPathManager::resolvedSources_' during this call, so it can be
+    // later resolved via 'SearchResolved'. This may be incorrect.
+    auto *program = IntroduceProgram<ModuleKind::MODULE>(importData);
+
+    program->SetSource({sourceFilePath, "", "", true, false});
+    ES2PANDA_ASSERT(importData.ModuleName() == moduleName);
+
+    auto allocator = Context()->Allocator();
+    auto *emptyIdent = allocator->New<ir::Identifier>("", allocator);
+    auto *etsModule = allocator->New<ir::ETSModule>(allocator, ArenaVector<ir::Statement *>(allocator->Adapter()),
+                                                    emptyIdent, ir::ModuleFlag::ETSSCRIPT, importData.Lang(), program);
+    program->SetAst(etsModule);
+    Context()->parserProgram->GetExternalSources()->Add(program);
+    return program;
+}
+
+parser::Program *ImportPathManager::IntroduceStdlibImportProgram(std::string &&contents)
+{
+    util::ImportMetadata importData {*this, STDLIB_IMPORTS_MAIN_PROG_NAME};
+    importData.SetText<ModuleKind::MODULE>(STDLIB_IMPORTS_MAIN_PROG_NAME, std::move(contents));
+    return IntroduceProgram<ModuleKind::MODULE>(importData);
+}
+
+void ImportPathManager::IntroduceMainProgramForSimult()
+{
+    ES2PANDA_ASSERT(Context()->parserProgram == nullptr);
+
+    // NOTE(dkofanov): special empty programs for simult and stdlib should be removed.
+    util::ImportMetadata importData {*this, SIMULT_MAIN_PROG_NAME};
+    importData.SetText<ModuleKind::SIMULT_MAIN, false>(SIMULT_MAIN_PROG_NAME, "");
+    auto program = IntroduceProgram<ModuleKind::SIMULT_MAIN, varbinder::ETSBinder>(importData);
+
+    auto allocator = Context()->allocator;
+    auto ident = allocator->New<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, allocator);
+    ArenaVector<ir::Statement *> stmts(allocator->Adapter());
+    auto etsModule = allocator->New<ir::ETSModule>(allocator, std::move(stmts), ident, ir::ModuleFlag::ETSSCRIPT,
+                                                   Language::Id::ETS, program);
+    program->SetAst(etsModule);
+    Context()->parserProgram = program;
+}
+
+void ImportPathManager::InitParseQueueForSimult()
+{
+    ES2PANDA_ASSERT(GetParseQueue().empty());
+
+    IntroduceMainProgramForSimult();
+    srcPos_.SetProgram(Context()->parserProgram);
+
+    // NOTE(dkofanov): Looks like this function is called not only for the simult, but for LSP or whatever.
+    bool isSimult = Context()->config->options->IsSimultaneous();
+    if (isSimult) {
+        ES2PANDA_ASSERT(Context()->config->options->GetCompilationMode() ==
+                        CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE);
+        ES2PANDA_ASSERT(Context()->config->options->GetExtension() == ScriptExtension::ETS);
+    }
+
+    std::vector<util::StringView> directImportsFromMainSource {};
+    for (auto &sourceName : Context()->sourceFileNames) {
+        directImportsFromMainSource.emplace_back(sourceName);
+
+        // Build of `importMetadata` should be refined.
+        util::ImportMetadata importData {*this, sourceName};
+        auto program = LookupCachesAndIntroduceProgram(&importData);
+        if (isSimult) {
+            program->SetGenAbcForExternalSources();
+        }
+    }
+
+    ES2PANDA_ASSERT(directImportsFromMainSource_.empty());
+    directImportsFromMainSource_ = directImportsFromMainSource;
+}
+
+static bool IsExtensionForPackageFraction(const std::string &extension)
+{
+    return extension == ImportPathManager::ETS_SUFFIX;
+}
+
+parser::PackageProgram *ImportPathManager::RegisterSourcesForPackageFromGlobbedDirectory(
+    const ImportMetadata &importMetadata)
+{
+    ES2PANDA_ASSERT(importMetadata.PointsToPackage());
+    ES2PANDA_ASSERT(LookupProgramCaches(importMetadata) == nullptr);
+
+    auto *package = NewEmptyPackage(importMetadata);
+
+#ifdef USE_UNIX_SYSCALL
+    UnixRegisterSourcesForPackageFromGlobbedDirectory(package, importMetadata);
+#else
+    for (auto const &entry : fs::directory_iterator(std::string(importMetadata.ResolvedSource()))) {
+        if (!fs::is_regular_file(entry) || !IsExtensionForPackageFraction(entry.path().extension().string())) {
+            continue;
+        }
+
+        ImportMetadata globElemImportMetadata {*this, entry.path().string(), Language::Id::ETS};
+        RegisterPackageFraction(package, &globElemImportMetadata);
+    }
+#endif
+
+    return package;
 }
 
 #ifdef USE_UNIX_SYSCALL
-void ImportPathManager::UnixWalkThroughDirectoryAndAddToParseList(const ImportMetadata importMetadata)
+void ImportPathManager::UnixRegisterSourcesForPackageFromGlobbedDirectory(parser::PackageProgram *package,
+                                                                          const ImportMetadata &importMetadata)
 {
-    const auto directoryPath = std::string(importMetadata.resolvedSource);
+    const auto directoryPath = std::string(importMetadata.ResolvedSource());
     DIR *dir = opendir(directoryPath.c_str());
     if (dir == nullptr) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::OPEN_FOLDER_FAILED, util::DiagnosticMessageParams {directoryPath},
-                                        srcPos_);
+        DE()->LogDiagnostic(diagnostic::OPEN_FOLDER_FAILED, util::DiagnosticMessageParams {directoryPath}, srcPos_);
         return;
     }
 
@@ -732,14 +490,13 @@ void ImportPathManager::UnixWalkThroughDirectoryAndAddToParseList(const ImportMe
 
         std::string fileName = entry->d_name;
         std::string::size_type pos = fileName.find_last_of('.');
-        if (pos == std::string::npos || !IsCompatibleExtension(fileName.substr(pos))) {
+        if (pos == std::string::npos || !IsExtensionForPackageFraction(fileName.substr(pos))) {
             continue;
         }
 
         std::string filePath = directoryPath + "/" + entry->d_name;
-        auto globElemImportMetadata = importMetadata;
-        globElemImportMetadata.resolvedSource = UString(filePath, allocator_).View().Utf8();
-        AddToParseList(globElemImportMetadata);
+        ImportMetadata globElemImportMetadata {*this, filePath, Language::Id::ETS};
+        RegisterPackageFraction(package, &globElemImportMetadata);
     }
 
     closedir(dir);
@@ -747,357 +504,947 @@ void ImportPathManager::UnixWalkThroughDirectoryAndAddToParseList(const ImportMe
 }
 #endif
 
-void ImportPathManager::AddImplicitPackageImportToParseList(StringView packageDir, const lexer::SourcePosition &srcPos)
+void ImportMetadata::LinkFractionMetadataToPackage(const parser::PackageProgram &package)
 {
-    srcPos_ = srcPos;
-    ES2PANDA_ASSERT(
-        IsAbsolute(packageDir.Mutf8()));  // This should be an absolute path for 'AddToParseList' be able to resolve it.
-    auto importMetadata = ImportMetadata {util::ImportFlags::IMPLICIT_PACKAGE_IMPORT, Language::Id::ETS,
-                                          packageDir.Utf8(), util::ImportPathManager::DUMMY_PATH};
-    AddToParseList(importMetadata);
+    moduleName_ = package.ModuleName();
 }
 
-void ImportPathManager::AddToParseList(const ImportMetadata &importMetadata)
+void ImportPathManager::RegisterPackageFraction(parser::PackageProgram *package, ImportMetadata *importMetadata)
 {
-    auto resolvedPath = importMetadata.resolvedSource;
-    bool isDeclForDynamic = !IsAbsolute(std::string(resolvedPath));  // Avoiding interpreting dynamic-path as directory.
-    if (!isDeclForDynamic && ark::os::file::File::IsDirectory(std::string(resolvedPath))) {
-#ifdef USE_UNIX_SYSCALL
-        UnixWalkThroughDirectoryAndAddToParseList(importMetadata);
-#else
-        for (auto const &entry : fs::directory_iterator(std::string(resolvedPath))) {
-            if (!fs::is_regular_file(entry) || !IsCompatibleExtension(entry.path().extension().string())) {
-                continue;
+    auto *fraction = SearchResolved(*importMetadata);
+    // The fraction may be previously added via direct import of it (by real path). Since the program is parsed later
+    // that step, it's impossible to decide, whether it's part of a package or just module until now. So here the
+    // already registered fraction is being aligned to the others fractions.
+    if (fraction == nullptr) {
+        ES2PANDA_ASSERT(!importMetadata->ResolvedPathIsVirtual());
+        // This function shouldn't lookup program-cache or lowdecl-cache since package fractions are merged before any
+        // cache is stored.
+        importMetadata->SetFile<ModuleKind::MODULE, false>(std::string(importMetadata->ResolvedSource()), DE());
+        fraction = IntroduceProgram<ModuleKind::MODULE>(*importMetadata);
+    } else {
+        // remove a package-fraction that was mistakenly added as a module without enclosing package:
+        auto &modules = GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::MODULE>();
+        auto newEndIt = std::remove(modules.begin(), modules.end(), fraction);
+        modules.erase(newEndIt, modules.end());
+    }
+
+    const_cast<ImportMetadata *>(&fraction->GetImportMetadata())->LinkFractionMetadataToPackage(*package);
+
+    fraction->SetPackageInfo(package->ModuleName(), ModuleKind::PACKAGE);
+    ES2PANDA_ASSERT(fraction->ModuleName().find(package->ModuleName()) == 0);
+    package->AppendFraction(fraction->As<ModuleKind::MODULE>());
+}
+
+parser::Program *ImportPathManager::LookupProgramCaches(const ImportMetadata &importData)
+{
+    if (Context()->globalContext == nullptr) {
+        return nullptr;
+    }
+    parser::Program *cachedProg = nullptr;
+    auto key = std::string(importData.Key());
+    const auto &cachedExtProgs = Context()->globalContext->cachedExternalPrograms;
+    if (cachedExtProgs.find(key) != cachedExtProgs.end()) {
+        cachedProg = cachedExtProgs.at(key);
+        ES2PANDA_ASSERT(key == cachedProg->GetImportMetadata().Key());
+    } else if (auto *cachedStdlib = Context()->globalContext->stdLibAstCache; cachedStdlib != nullptr) {
+        cachedStdlib->Visit<false>([&cachedProg, &key](auto *prog) {
+            if (prog->GetImportMetadata().Key() == key) {
+                cachedProg = prog;
             }
-            auto globElemImportMetadata = importMetadata;
-            globElemImportMetadata.resolvedSource = UString(entry.path().string(), allocator_).View().Utf8();
-            AddToParseList(globElemImportMetadata);
+        });
+    }
+    if (cachedProg != nullptr) {
+        RegisterProgram(cachedProg);
+    }
+    return cachedProg;
+}
+
+// NOTE(dkofanov): #32416 revise for packages caching, etc.
+std::string ImportPathManager::FormEtscacheFilePath(const ImportMetadata &imd) const
+{
+    const auto &cacheDir = ArkTSConfig().CacheDir();
+    ES2PANDA_ASSERT(!cacheDir.empty());
+    ES2PANDA_ASSERT(!imd.ModuleName().empty());
+
+    std::string declarationCacheFile = cacheDir;
+    declarationCacheFile += util::PATH_DELIMITER;
+    declarationCacheFile += imd.ModuleName();
+    declarationCacheFile += CACHE_SUFFIX;
+
+    return declarationCacheFile;
+}
+
+class EtscacheFileLock {
+public:
+    NO_MOVE_SEMANTIC(EtscacheFileLock);
+    NO_COPY_SEMANTIC(EtscacheFileLock);
+    EtscacheFileLock(const std::string &dstDeclPath, const std::string &srcAbcPath)
+        : dstPath_(dstDeclPath), abcPath_(srcAbcPath)
+    {
+        if ((!os::IsFileExists(dstPath_) || ShouldRewrite(abcPath_, dstPath_))) {
+            writer_ = ExlusiveFileWriter::Open(dstPath_);
+        } else {
+            ExlusiveFileWriter::WaitUnlockForRead(dstPath_);
         }
-        return;
+    }
+
+    void WriteEtscacheFile(std::string_view text) const
+    {
+        ES2PANDA_ASSERT(bool(writer_));
+        writer_->Write(std::move(text));
+    }
+
+    bool ShouldWriteDeclfile() const
+    {
+        return bool(writer_);
+    }
+
+private:
+    static bool ShouldRewrite([[maybe_unused]] const std::string &src, [[maybe_unused]] const std::string &dst)
+    {
+#ifdef USE_UNIX_SYSCALL
+        return true;
+#else
+        return fs::last_write_time(src) > fs::last_write_time(dst);
 #endif
     }
 
-    // Check if file has been already added to parse list
-    if (const auto &found = std::find_if(
-            // CC-OFFNXT(G.FMT.06) project code style
-            parseList_.begin(), parseList_.end(),
-            [&resolvedPath](const ParseInfo &info) { return (info.importData.resolvedSource == resolvedPath); });
-        found != parseList_.end()) {
-        // The 'parseList_' can contain at most 1 record with the same source file path (else it'll break things).
-        //
-        // If a file is added as implicit package imported before, then we may add it again without the implicit import
-        // directive (and remove the other one), to handle when an implicitly package imported file explicitly imports
-        // it. Re-parsing it is necessary, because if the implicitly package imported file contains a syntax error, then
-        // it'll be ignored, but we must not ignore it if an explicitly imported file contains a parse error. Also this
-        // addition can happen during parsing the files in the parse list, so re-addition is necessary in order to
-        // surely re-parse it.
-        //
-        // If a file was already not implicitly package imported, then it's just a duplicate, return
-        if (!found->importData.IsImplicitPackageImported() || importMetadata.IsImplicitPackageImported()) {
+    class ExlusiveFileWriter {
+    protected:
+#ifdef PANDA_TARGET_WINDOWS
+        using FD = HANDLE;
+#else
+        using FD = int;
+#endif
+    public:
+        using Pointer = std::unique_ptr<ExlusiveFileWriter>;
+
+        NO_COPY_SEMANTIC(ExlusiveFileWriter);
+        DEFAULT_MOVE_SEMANTIC(ExlusiveFileWriter);
+
+        static void WaitUnlockForRead(const std::string &filename)
+        {
+            FlockTrace(filename, "Waiting RO unlock");
+#ifdef PANDA_TARGET_WINDOWS
+            auto const fd =
+                ::CreateFileW(Utf8ToWString(filename).c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL,
+                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (fd == INVALID_HANDLE_VALUE) {
+                std::cerr << "File opening error '" << filename << "': " << GetErrorMessage(::GetLastError())
+                          << std::endl;
+                return;
+            }
+            OVERLAPPED ov = {};
+            if (::LockFileEx(fd, 0, 0, MAXDWORD, MAXDWORD, &ov)) {
+                // Waiting for another process to finish writing the file.
+                ::UnlockFileEx(fd, 0, MAXDWORD, MAXDWORD, &ov);
+                FlockTrace(filename, "Unlock");
+            } else {
+                FlockTrace(filename, std::string {"- Waiting error '"} + GetErrorMessage(::GetLastError()) + "'");
+            }
+            ::CloseHandle(fd);
+#else
+            auto const fd = ::open(filename.c_str(), O_RDONLY);
+            if (fd == -1) {
+                std::cerr << "File opening error '" << filename << "': " << ::strerror(errno) << std::endl;
+                return;
+            }
+            if (::flock(fd, LOCK_EX) != 0) {
+                FlockTrace(filename, std::string {"- Waiting error '"} + ::strerror(errno) + "'");
+            } else {
+                ::flock(fd, LOCK_UN);
+                FlockTrace(filename, "Unlock");
+            }
+            ::close(fd);
+#endif
+        }
+
+        static Pointer Open(const std::string &filename)
+        {
+            FlockTrace(filename, "Open for write");
+#ifdef PANDA_TARGET_WINDOWS
+            FD fd = ::CreateFileW(Utf8ToWString(filename).c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                                  NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (fd == INVALID_HANDLE_VALUE) {
+                std::cerr << "File opening error '" << filename << "': " << GetErrorMessage(::GetLastError())
+                          << std::endl;
+                return {};
+            }
+            OVERLAPPED ov = {};
+            if (!::LockFileEx(fd, LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY, 0, MAXDWORD, MAXDWORD, &ov)) {
+                // Waiting for another process to finish writing the file.
+                FlockTrace(filename, "- Waiting");
+                if (!::LockFileEx(fd, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &ov)) {
+                    FlockTrace(filename, std::string {"-- Waiting error '"} + GetErrorMessage(::GetLastError()) + "'");
+                }
+                FlockTrace(filename, "Close (skip)");
+                ::UnlockFileEx(fd, 0, MAXDWORD, MAXDWORD, &ov);
+                ::CloseHandle(fd);
+                return {};
+            }
+#else
+            auto constexpr CHMOD = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+            auto const fd = ::open(filename.c_str(), O_WRONLY | O_CREAT, CHMOD);
+            if (fd == -1) {
+                std::cerr << "File opening error '" << filename << "': " << ::strerror(errno) << std::endl;
+                return {};
+            }
+            if (::flock(fd, LOCK_EX | LOCK_NB) != 0) {
+                // Waiting for another process to finish writing the file.
+                FlockTrace(filename, "- Waiting");
+                if (::flock(fd, LOCK_EX) != 0) {
+                    FlockTrace(filename, std::string {"-- Waiting error '"} + ::strerror(errno) + "'");
+                }
+                FlockTrace(filename, "Close (skip)");
+                ::flock(fd, LOCK_UN);
+                ::close(fd);
+                return {};
+            }
+#endif
+            FlockTrace(filename, "- Locked");
+            return Pointer {new ExlusiveFileWriter(fd, filename)};
+        }
+
+        void Write(std::string_view text) const
+        {
+            FlockTrace("- Write");
+#ifdef PANDA_TARGET_WINDOWS
+            DWORD bytesWritten = 0;
+            if (!::WriteFile(fd_, text.data(), text.size(), &bytesWritten, NULL)) {
+                std::cerr << "Error writing to the file '" << filename_ << "': " << GetErrorMessage(::GetLastError())
+                          << std::endl;
+            }
+#else
+            if (::write(fd_, text.data(), text.size()) == -1) {
+                std::cerr << "Error writing to the file '" << filename_ << "': " << ::strerror(errno) << std::endl;
+            }
+#endif
+        }
+
+        ~ExlusiveFileWriter()
+        {
+            FlockTrace("Close");
+#ifdef PANDA_TARGET_WINDOWS
+            ::SetEndOfFile(fd_);
+            OVERLAPPED ov = {};
+            if (!::UnlockFileEx(fd_, 0, MAXDWORD, MAXDWORD, &ov)) {
+                std::cerr << "File truncate error '" << filename_ << "': " << GetErrorMessage(::GetLastError())
+                          << std::endl;
+            }
+            ::CloseHandle(fd_);
+#else
+            auto const curPos = ::lseek(fd_, 0, SEEK_CUR);
+            if (::ftruncate(fd_, curPos) != 0) {
+                std::cerr << "File truncate error '" << filename_ << "': " << ::strerror(errno) << std::endl;
+            }
+            ::flock(fd_, LOCK_UN);
+            ::close(fd_);
+#endif
+        }
+
+    private:
+        explicit ExlusiveFileWriter(FD fd, std::string filename) : fd_(fd), filename_(std::move(filename)) {}
+
+#ifdef PANDA_TARGET_WINDOWS
+        static std::string GetErrorMessage(DWORD errorMessageID)
+        {
+            if (errorMessageID == 0) {
+                return {};
+            }
+            LPSTR messageBuffer = nullptr;
+            size_t const size = ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                                                     FORMAT_MESSAGE_IGNORE_INSERTS,
+                                                 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                                 reinterpret_cast<LPSTR>(&messageBuffer), 0, NULL);
+            std::string message(messageBuffer, size);
+            ::LocalFree(messageBuffer);
+            return message;
+        }
+
+        static std::wstring Utf8ToWString(const std::string_view &str)
+        {
+            if (str.empty()) {
+                return {};
+            }
+            auto const size_needed = ::MultiByteToWideChar(CP_UTF8, 0, str.data(), int(str.size()), NULL, 0);
+            auto result = std::wstring(size_t(size_needed), L'\0');
+            ::MultiByteToWideChar(CP_UTF8, 0, str.data(), int(str.size()), result.data(), size_needed);
+            return result;
+        }
+#endif
+        inline static void FlockTrace(const std::string &filename, const std::string &msg)
+        {
+            (void)filename;
+            (void)msg;
+#ifdef IPM_FLOCK_DEBUG_TRACE
+            auto const now = std::chrono::steady_clock::now();
+            auto const ticks = now.time_since_epoch().count();
+            std::cerr << "#FLOCK:" << '\t' << ticks << '\t' << ::getpid() << '\t' << msg << '\t' << filename
+                      << std::endl;
+#endif  // IPM_FLOCK_DEBUG_TRACE
+        }
+
+        inline void FlockTrace(const std::string &msg) const
+        {
+            FlockTrace(filename_, msg);
+        }
+
+    private:
+        FD fd_;
+        std::string filename_;
+    };
+
+private:
+    std::string dstPath_;
+    std::string abcPath_;
+    ExlusiveFileWriter::Pointer writer_ = {};
+};
+
+template <typename EtscachePathByMNameGetter>
+static void UnpackAbc(DiagnosticEngine *de, const std::string &abcPath, const EtscachePathByMNameGetter &dstGetter)
+{
+    auto abc = panda_file::OpenPandaFile(abcPath);
+    if (abc == nullptr) {
+        de->LogDiagnostic(diagnostic::OPEN_FAILED, util::DiagnosticMessageParams {abcPath});
+        return;
+    }
+    for (auto id : abc->GetExported()) {
+        panda_file::File::EntityId classId(id);
+        auto mname = ExtractMnameFromPandafile(*abc, classId);
+        if (EtscacheFileLock lock {dstGetter(mname), abcPath}; lock.ShouldWriteDeclfile()) {
+            std::stringstream ss;
+            panda_file::ClassDataAccessor {*abc, classId}.EnumerateAnnotation(
+                ImportPathManager::ANNOTATION_MODULE_DECLARATION.data(),
+                [&abc, &ss](panda_file::AnnotationDataAccessor &annotationAccessor) {
+                    auto elemDeclaration = annotationAccessor.GetElement(0);
+                    auto valueDeclaration = elemDeclaration.GetScalarValue();
+                    const auto idAnnoDeclaration = valueDeclaration.Get<panda_file::File::EntityId>();
+                    ss << panda_file::StringDataToString(abc->GetStringData(idAnnoDeclaration));
+                    return true;
+                });
+            std::string declText = ss.str();
+            if (!declText.empty()) {
+                auto processed = DeleteEscapeSymbols(declText);
+                lock.WriteEtscacheFile(processed);
+            }
+        }
+    }
+}
+
+void ImportPathManager::MaybeUnpackAbcAndEmplaceInCacheDir(const ImportMetadata &importMetadata)
+{
+    ES2PANDA_ASSERT(importMetadata.ResolvedPathIsVirtual());
+    ES2PANDA_ASSERT(importMetadata.ReferencesABC());
+
+    if (processedAbcFiles_.count(importMetadata.AbcPath()) == 0) {
+        processedAbcFiles_.insert(importMetadata.AbcPath());
+        UnpackAbc(DE(), importMetadata.AbcPath(), [this](std::string_view mname) {
+            ImportMetadata imdMock {};
+            imdMock.moduleName_ = std::string {mname};
+            return FormEtscacheFilePath(imdMock);
+        });
+    }
+
+    // Just unpack, will be loaded by LookupEtscacheFile.
+    ES2PANDA_ASSERT(importMetadata.Text().Kind() == ModuleKind::UNKNOWN);
+}
+
+parser::Program *ImportPathManager::IntroduceProgram(const ImportMetadata &importMetadata)
+{
+    switch (importMetadata.Text().Kind()) {
+        case ModuleKind::MODULE:
+            return IntroduceProgram<ModuleKind::MODULE>(importMetadata);
+        case ModuleKind::SOURCE_DECL:
+            return IntroduceProgram<ModuleKind::SOURCE_DECL>(importMetadata);
+        case ModuleKind::ETSCACHE_DECL:
+            return IntroduceProgram<ModuleKind::ETSCACHE_DECL>(importMetadata);
+        case ModuleKind::DECLLESS_DYNAMIC:
+            return IntroduceProgram<ModuleKind::DECLLESS_DYNAMIC>(importMetadata);
+        case ModuleKind::PACKAGE:
+            return IntroduceProgram<ModuleKind::PACKAGE>(importMetadata);
+        default: {
+            ES2PANDA_ASSERT(DE()->IsAnyError());
+            return nullptr;
+        }
+    }
+}
+
+template <ModuleKind KIND, typename VarBinderT>
+parser::ProgramAdapter<KIND> *ImportPathManager::IntroduceProgram(const ImportMetadata &importMetadata)
+{
+    ES2PANDA_ASSERT(importMetadata.Text().Kind() == KIND);
+    parser::ProgramAdapter<KIND> *newProg = nullptr;
+    if constexpr (KIND == ModuleKind::PACKAGE) {
+        newProg = RegisterSourcesForPackageFromGlobbedDirectory(importMetadata);
+    } else {
+        newProg = parser::Program::New<KIND, VarBinderT>(importMetadata, Context());
+        ES2PANDA_ASSERT(!importMetadata.ModuleName().empty());
+        newProg->SetPackageInfo(importMetadata.ModuleName(), KIND);
+    }
+    RegisterProgram(newProg);
+    return newProg;
+}
+
+class ImportPathManager::ResolvedSources {
+public:
+    explicit ResolvedSources(ImportPathManager *ipm) : ipm_ {ipm} {}
+
+    void Register(parser::Program *program, DiagnosticEngine *de)
+    {
+        ArenaString key {program->GetImportMetadata().Key()};
+        ES2PANDA_ASSERT(progsByResolvedPath_.find(key) == progsByResolvedPath_.end());
+        progsByResolvedPath_[key] = program;
+        if (program->Is<ModuleKind::PACKAGE>()) {
+            progsByResolvedPath_[ArenaString {program->ModuleName()}] = program;
+        }
+
+        // Handle clashing. Impl-progs are disallowed to clash, while decl-prog are allowed. The restriction is that
+        // entities in clashing declarations shouldn't intersect.
+        ArenaString mname {program->GetImportMetadata().ModuleName()};
+        auto &modulePrograms = modules_[mname];
+        if (program->IsDeclarationModule()) {
+            auto &declProgs = modulePrograms.declProgs;
+            ES2PANDA_ASSERT(std::find(declProgs.begin(), declProgs.end(), program) == declProgs.end());
+            declProgs.push_back(program);
+            if (modulePrograms.implProg != nullptr) {
+                progsByResolvedPath_.at(key) = modulePrograms.implProg;
+            }
             return;
         }
 
-        parseList_.erase(found);
+        if (modulePrograms.implProg != nullptr) {
+            ES2PANDA_ASSERT(modulePrograms.implProg != program);
+            // NOTE(dkofanov): Fix properly after a decision on index-files. The hack relies on the fact that
+            // index-files doesn't contain runtime-entities.
+            auto arkuiIndexFileClashException = util::Helpers::EndsWith(mname, ".index");
+            if (arkuiIndexFileClashException) {
+                return;
+            }
+            auto absPath1 = program->GetImportMetadata().TextSource();
+            auto absPath2 = modulePrograms.implProg->GetImportMetadata().TextSource();
+            de->LogDiagnostic(diagnostic::FILE_RUNTIME_NAME_CLASH,
+                              util::DiagnosticMessageParams {absPath1, absPath2, mname});
+        }
+        modulePrograms.implProg = program;
+        if (ipm_->GetGlobalProgram() != nullptr) {
+            // replace registered at this point decl-progs with the impl-prog:
+            auto &extProgramsDecls = ipm_->GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::SOURCE_DECL>();
+            auto extProgramsDeclsNewEnd = extProgramsDecls.end();
+            for (auto *declProg : modulePrograms.declProgs) {
+                progsByResolvedPath_.at(ArenaString {declProg->GetImportMetadata().Key()}) = program;
+                extProgramsDeclsNewEnd = std::remove(extProgramsDecls.begin(), extProgramsDeclsNewEnd, declProg);
+            }
+            extProgramsDecls.erase(extProgramsDeclsNewEnd, extProgramsDecls.end());
+        }
     }
 
-    if (!isDeclForDynamic && !ark::os::file::File::IsRegularFile(std::string(resolvedPath))) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::UNAVAILABLE_SRC_PATH, util::DiagnosticMessageParams {resolvedPath},
-                                        srcPos_);
+    parser::Program *SearchResolved(const ImportMetadata &importMetadata) const
+    {
+        if (auto it = progsByResolvedPath_.find(importMetadata.Key()); it != progsByResolvedPath_.end()) {
+            ES2PANDA_ASSERT(it->second != nullptr);
+            return it->second;
+        }
+        return nullptr;
+    }
+
+    void MaybeAddToExternalSources(parser::Program *newProg, parser::Program::ExternalSources *extSources)
+    {
+        [[maybe_unused]] bool isPackageFraction =
+            (newProg->ModuleInfo().kind == ModuleKind::PACKAGE) && newProg->Is<ModuleKind::MODULE>();
+        ES2PANDA_ASSERT(!isPackageFraction);
+        if (auto pointedProgram = SearchResolved(newProg->GetImportMetadata()); pointedProgram == newProg) {
+            extSources->Add(newProg);
+        } else {
+            [[maybe_unused]] const auto &imd = newProg->GetImportMetadata();
+            ES2PANDA_ASSERT((imd.Kind() == ModuleKind::SOURCE_DECL) || (imd.Kind() == ModuleKind::ETSCACHE_DECL));
+            ES2PANDA_ASSERT(!pointedProgram->IsDeclarationModule());
+        }
+    }
+
+    parser::PackageProgram *FixupPackageByFraction(parser::Program *fractionBeingParsed, ArenaString packageName)
+    {
+        if (progsByResolvedPath_.count(packageName) != 0) {
+            // Already fixed.
+            auto *pkg = progsByResolvedPath_.at(packageName)->As<ModuleKind::PACKAGE>();
+            auto *pointeeProg = ipm_->SearchResolved(fractionBeingParsed->GetImportMetadata());
+            if (pointeeProg == fractionBeingParsed) {
+                ArenaString key {fractionBeingParsed->GetImportMetadata().Key()};
+                progsByResolvedPath_[key] = pkg;
+            }
+            ES2PANDA_ASSERT(ipm_->SearchResolved(fractionBeingParsed->GetImportMetadata()) == pkg);
+            return pkg;
+        }
+
+        const_cast<ImportMetadata *>(&fractionBeingParsed->GetImportMetadata())->moduleName_ = packageName;
+        fractionBeingParsed->SetPackageInfo(packageName, util::ModuleKind::PACKAGE);
+        ImportMetadata pkgMetadata {};
+        pkgMetadata.resolvedSource_ = packageName;
+        pkgMetadata.moduleName_ = packageName;
+        pkgMetadata.SetText<ModuleKind::PACKAGE, false>(std::string(packageName), "");
+        auto newPkg = ipm_->NewEmptyPackage(pkgMetadata);
+        newPkg->AppendFraction(fractionBeingParsed->As<ModuleKind::MODULE>());
+
+        // fixup externalSources:
+        auto &modulePrograms = ipm_->GetGlobalProgram()->GetExternalSources()->Get<ModuleKind::MODULE>();
+        auto newEndIt = std::remove(modulePrograms.begin(), modulePrograms.end(), fractionBeingParsed);
+        if (newEndIt != modulePrograms.end()) {
+            modulePrograms.erase(newEndIt, modulePrograms.end());
+            ipm_->GetGlobalProgram()->GetExternalSources()->Add(newPkg);
+        } else {
+            ES2PANDA_ASSERT(ipm_->GetGlobalProgram() == fractionBeingParsed);
+        }
+
+        ES2PANDA_ASSERT(progsByResolvedPath_.find(packageName) == progsByResolvedPath_.end());
+        progsByResolvedPath_.find(fractionBeingParsed->GetImportMetadata().Key())->second = newPkg;
+        progsByResolvedPath_[packageName] = newPkg;
+        ES2PANDA_ASSERT(ipm_->SearchResolved(fractionBeingParsed->GetImportMetadata()) == newPkg);
+        return newPkg;
+    }
+
+private:
+    ImportPathManager *ipm_ {};
+    ArenaMap<ArenaString, parser::Program *, CompareByLength> progsByResolvedPath_;
+    struct Module {
+        parser::Program *implProg {};
+        ArenaVector<parser::Program *> declProgs {};
+    };
+    ArenaMap<ArenaString, Module, CompareByLength> modules_;
+};
+
+void ImportPathManager::RegisterProgram(parser::Program *program)
+{
+    if (program == nullptr) {
+        ES2PANDA_ASSERT(DE()->IsAnyError());
         return;
     }
 
-    // 'Object.ets' must be the first in the parse list
-    // NOTE (mmartin): still must be the first?
-    const std::size_t position = resolvedPath.find_last_of("/\\");
-    const bool isDefaultImport = (importMetadata.importFlags & ImportFlags::DEFAULT_IMPORT) != 0;
-    const auto parseInfo = ParseInfo {false, importMetadata};
-    if (isDefaultImport && (resolvedPath.substr(position + 1, resolvedPath.length()) == "Object.ets")) {
-        parseList_.emplace(parseList_.begin(), parseInfo);
-    } else {
-        parseList_.emplace_back(parseInfo);
-    }
-}
+    resolvedSources_.Register(program, DE());
 
-void ImportPathManager::MarkAsParsed(std::string_view const path) noexcept
-{
-    for (auto &parseInfo : parseList_) {
-        if (parseInfo.importData.resolvedSource == path) {
-            parseInfo.isParsed = true;
+    // Packages are "synthetic" programs (w/o text), so they can't be parsed.
+    // Mind the difference with package-fraction programs, constituting packages.
+    switch (program->GetModuleKind()) {
+        case ModuleKind::PACKAGE:
+        case ModuleKind::SIMULT_MAIN:
+        case ModuleKind::DECLLESS_DYNAMIC:
             return;
+        default: {
+            bool isParsed = program->Ast() != nullptr;
+            parseQueue_.emplace_back(ParseInfo {isParsed, program});
         }
     }
 }
 
-StringView ImportPathManager::GetRealPath(StringView path) const
+parser::Program *ImportPathManager::SearchResolved(const ImportMetadata &importMetadata) const
 {
-    const std::string realPath = ark::os::GetAbsolutePath(path.Mutf8());
-    if (realPath.empty() || realPath == path.Mutf8()) {
-        return path;
-    }
-
-    return UString(realPath, allocator_).View();
+    return resolvedSources_.SearchResolved(importMetadata);
 }
 
-std::string ImportPathManager::TryMatchDependencies(std::string_view fixedPath) const
+// NOTE(dkofanov): Packages are to be removed. Now 'ETSPackageDeclaration' is used to override modulename.
+parser::Program *ImportPathManager::EnsurePackageIsRegisteredByPackageFraction(parser::Program *fractionBeingParsed,
+                                                                               ir::ETSPackageDeclaration *packageDecl)
 {
-    // Probably, 'NormalizePath' should be moved to 'AppendExtensionOrIndexFileIfOmitted'.
-    auto normalizedPath = ark::os::NormalizePath(std::string(fixedPath));
-    std::replace_if(
-        normalizedPath.begin(), normalizedPath.end(), [&](auto &c) { return c == pathDelimiter_[0]; }, '/');
-    // NOTE(dkofanov): #23877. See also 'arktsconfig.cpp'.
-    if (arktsConfig_->Dependencies().find(normalizedPath) != arktsConfig_->Dependencies().cend()) {
-        return normalizedPath;
-    }
-    return {};
+    ES2PANDA_ASSERT(packageDecl->Program() == fractionBeingParsed);
+    auto packageNameNode = packageDecl->Name();
+    ArenaString packageName {packageNameNode->IsIdentifier() ? packageNameNode->AsIdentifier()->Name().Utf8()
+                                                             : packageNameNode->AsTSQualifiedName()->Name().Utf8()};
+
+    return resolvedSources_.FixupPackageByFraction(fractionBeingParsed, packageName);
 }
 
-ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string_view fixedPath) const
+parser::Program *ImportPathManager::LookupCachesAndIntroduceProgram(ImportMetadata *importMetadata)
 {
-    auto normalizedPath = ark::os::NormalizePath(std::string(fixedPath));
-    std::replace_if(
-        normalizedPath.begin(), normalizedPath.end(), [&](auto &c) { return c == pathDelimiter_[0]; }, '/');
-    if (arktsConfig_->FindInDependencies(std::string(normalizedPath)) != std::nullopt) {
-        return {UString(normalizedPath, allocator_).View().Utf8(), true};
+    ES2PANDA_ASSERT(SearchResolved(GetGlobalProgram()->GetImportMetadata()) != nullptr);
+    // NOTE(dkofanov): This step (caching the result) is essential. It is so because:
+    // 1. `es2panda` may call `GatherImportMetadata` at any lowering/plugin.
+    // 2. Cache-update may occur after some lowering or even by another thread.
+    // In order for a source-representation (i.e. "parser::Program") to be consistent during compilation routine, it
+    // should always be resolved to the same program.
+    if (auto resolved = SearchResolved(*importMetadata); resolved != nullptr) {
+        return resolved;
     }
-    if (arktsConfig_->Paths().find(normalizedPath) != arktsConfig_->Paths().cend()) {
-        return {UString(normalizedPath, allocator_).View().Utf8(), false};
+
+    auto *program = LookupProgramCaches(*importMetadata);
+    if (program != nullptr) {
+        ES2PANDA_ASSERT(program->Ast() != nullptr);
+    } else {
+        LookupMemCache(importMetadata);
+        if (importMetadata->Text().Kind() == ModuleKind::UNKNOWN) {
+            LookupDiskCache(importMetadata);
+        }
+
+        if (importMetadata->Text().Kind() == ModuleKind::UNKNOWN) {
+            if (importMetadata->PointsToPackage()) {
+                importMetadata->SetText<ModuleKind::PACKAGE, false>(std::string(importMetadata->Key()), "");
+            } else {
+                LookupSourceFile(importMetadata);
+            }
+        }
+
+        program = IntroduceProgram(*importMetadata);
+    }
+    if (program != nullptr) {
+        resolvedSources_.MaybeAddToExternalSources(program, GetGlobalProgram()->GetExternalSources());
+    }
+    return program;
+}
+
+void ImportPathManager::LookupMemCache(ImportMetadata *importMetadata)
+{
+    parser::DeclarationCache::GetFromCache(importMetadata);
+}
+
+void ImportPathManager::LookupDiskCache(ImportMetadata *importMetadata)
+{
+    ES2PANDA_ASSERT(importMetadata->Text().Kind() == ModuleKind::UNKNOWN);
+    if (importMetadata->ReferencesABC()) {
+        MaybeUnpackAbcAndEmplaceInCacheDir(*importMetadata);
+    }
+    LookupEtscacheFile(importMetadata);
+}
+
+void ImportPathManager::LookupEtscacheFile(ImportMetadata *importData)
+{
+    if (ArkTSConfig().CacheDir().empty()) {
+        return;
+    }
+    auto cachefile = FormEtscacheFilePath(*importData);
+    ES2PANDA_ASSERT(cachefile.find(ArkTSConfig().CacheDir()) == 0);
+    if (!ark::os::file::File::IsRegularFile(cachefile)) {
+        return;
+    }
+
+    importData->SetFile<ModuleKind::ETSCACHE_DECL>(cachefile, DE());
+}
+
+void ImportPathManager::LookupSourceFile(ImportMetadata *importMetadata)
+{
+    if (importMetadata->HasSpecifiedDeclPath() && !importMetadata->ReferencesABC()) {
+        importMetadata->SetFile<ModuleKind::SOURCE_DECL>(std::string(importMetadata->DeclPath()), DE());
+    } else if (Helpers::EndsWith(importMetadata->ResolvedSource(), D_ETS_SUFFIX)) {
+        importMetadata->SetFile<ModuleKind::SOURCE_DECL>(std::string(importMetadata->ResolvedSource()), DE());
+    } else if (importMetadata->Lang() != Language::Id::ETS) {
+        importMetadata->SetText<ModuleKind::DECLLESS_DYNAMIC, false>(std::string(importMetadata->ResolvedSource()), "");
+    } else {
+        importMetadata->SetFile<ModuleKind::MODULE>(std::string(importMetadata->ResolvedSource()), DE());
+    }
+}
+
+ImportPathManager::ResolvedPathRes ImportPathManager::TryResolvePath(std::string resolvedPathPrototype) const
+{
+    auto delim = pathDelimiter_[0];
+    std::replace_if(
+        resolvedPathPrototype.begin(), resolvedPathPrototype.end(), [delim](auto c) { return c == delim; }, '/');
+    if (ArkTSConfig().FindInDependencies(resolvedPathPrototype) != std::nullopt) {
+        return {resolvedPathPrototype, true};
+    }
+    if (ArkTSConfig().Paths().find(resolvedPathPrototype) != ArkTSConfig().Paths().cend()) {
+        return {resolvedPathPrototype, false};
     }
     return {{}, false};
 }
 
-std::string_view ImportPathManager::DirOrDirWithIndexFile(StringView dir) const
+// NOTE(dkofanov): Shouldn't directory resolved by 'index'-file be globbed and added to parse list?
+std::string ImportPathManager::DirOrDirWithIndexFile(std::string resolvedPathPrototype) const
 {
+    const auto indexFiles = {"index.ets", "index.sts", "index.ts", "index.d.ets",
+                             "Index.ets", "Index.sts", "Index.ts", "Index.d.ets"};
     // Supported index files: keep this checking order
-    std::array<std::string, SUPPORTED_INDEX_FILES_SIZE> supportedIndexFiles = {
-        "index.ets", "index.sts", "index.ts", "index.d.ets", "Index.ets", "Index.sts", "Index.ts", "Index.d.ets"};
-    for (const auto &indexFile : supportedIndexFiles) {
-        std::string indexFilePath = dir.Mutf8() + ark::os::file::File::GetPathDelim().at(0) + indexFile;
+    for (auto indexFile : indexFiles) {
+        std::string indexFilePath = resolvedPathPrototype + pathDelimiter_.at(0) + indexFile;
 #if defined(PANDA_TARGET_WINDOWS)
-        if (ark::os::file::File::IsRegularFileCaseSensitive(indexFilePath)) {
+        bool fileExists = ark::os::file::File::IsRegularFileCaseSensitive(indexFilePath);
 #else
-        if (ark::os::file::File::IsRegularFile(indexFilePath)) {
+        bool fileExists = ark::os::file::File::IsRegularFile(indexFilePath);
 #endif
-            return GetRealPath(UString(indexFilePath, allocator_).View()).Utf8();
+        if (fileExists) {
+            return indexFilePath;
         }
     }
 
-    return dir.Utf8();
+    return resolvedPathPrototype;
 }
-// NOTE(dkofanov): Be cautious: potentially no-op and may retrun the input string view. Make sure 'basePath' won't go
-// out of scope.
-ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFileIfOmitted(StringView basePath) const
+
+ImportPathManager::ResolvedPathRes ImportPathManager::AppendExtensionOrIndexFileIfOmitted(
+    std::string resolvedPathPrototype) const
 {
-    auto fixedPath = basePath.Mutf8();
     char delim = pathDelimiter_.at(0);
     std::replace_if(
-        fixedPath.begin(), fixedPath.end(), [&](auto &c) { return ((delim != c) && ((c == '\\') || (c == '/'))); },
-        delim);
-    if (auto metaData = TryResolvePath(fixedPath); !metaData.resolvedPath.empty()) {
+        resolvedPathPrototype.begin(), resolvedPathPrototype.end(),
+        [delim](char c) { return ((delim != c) && ((c == '\\') || (c == '/'))); }, delim);
+
+    resolvedPathPrototype = ark::os::NormalizePath(resolvedPathPrototype);
+    if (auto metaData = TryResolvePath(resolvedPathPrototype); !metaData.resolvedPath.empty()) {
         return metaData;
     }
 
-    auto path = UString(fixedPath, allocator_).View();
-    StringView realPath = GetRealPath(path);
-    if (ark::os::file::File::IsRegularFile(realPath.Mutf8())) {
-        return {realPath.Utf8()};
+    if (ark::os::file::File::IsRegularFile(resolvedPathPrototype)) {
+        return {GetRealPath(resolvedPathPrototype)};
     }
 
-    if (ark::os::file::File::IsDirectory(realPath.Mutf8())) {
-        return {DirOrDirWithIndexFile(realPath)};
+    if (ark::os::file::File::IsDirectory(resolvedPathPrototype)) {
+        return {GetRealPath(DirOrDirWithIndexFile(resolvedPathPrototype))};
     }
 
     for (const auto &extension : supportedExtensions) {
-        if (ark::os::file::File::IsRegularFile(path.Mutf8() + std::string(extension))) {
-            return {GetRealPath(UString(path.Mutf8().append(extension), allocator_).View()).Utf8()};
+        auto pathWithExtension = resolvedPathPrototype + std::string(extension);
+        if (ark::os::file::File::IsRegularFile(pathWithExtension)) {
+            return {GetRealPath(pathWithExtension)};
         }
     }
 
-    diagnosticEngine_.LogDiagnostic(diagnostic::UNSUPPORTED_PATH,
-                                    util::DiagnosticMessageParams {util::StringView(path.Mutf8())}, srcPos_);
+    DE()->LogDiagnostic(diagnostic::UNSUPPORTED_PATH, util::DiagnosticMessageParams {resolvedPathPrototype}, srcPos_);
     return {""};
 }
 
-// Transform /a/b/c.ets to a.b.c
-static std::string FormRelativeModuleName(std::string relPath)
+// Transform a/b/c.d.ets to a/b/c
+static std::string_view RemoveExtensionIfKnown(std::string_view relPath)
 {
-    bool isMatched = false;
     for (const auto &ext : ImportPathManager::supportedExtensionsInversed) {
-        if (relPath.size() >= ext.size() && relPath.compare(relPath.size() - ext.size(), ext.size(), ext) == 0) {
-            relPath = relPath.substr(0, relPath.size() - ext.size());
-            isMatched = true;
-            break;
+        if (relPath.size() >= ext.size() && (relPath.substr(relPath.size() - ext.size(), ext.size()) == ext)) {
+            return relPath.substr(0, relPath.size() - ext.size());
         }
     }
-    if (relPath.empty()) {
-        return "";
-    }
-
-    if (!isMatched) {
-        ASSERT_PRINT(false, "Invalid relative filename: " + relPath);
-    }
-    while (relPath[0] == util::PATH_DELIMITER) {
-        relPath = relPath.substr(1);
-    }
-    std::replace(relPath.begin(), relPath.end(), util::PATH_DELIMITER, '.');
     return relPath;
 }
 
-util::StringView ImportPathManager::FormModuleNameSolelyByAbsolutePath(const util::Path &path)
+static ArenaString ConcatOhmurl(std::string_view p1, std::string_view p2)
 {
-    std::string filePath(path.GetAbsolutePath());
-    if (filePath.rfind(absoluteEtsPath_.Utf8(), 0) != 0) {
-        diagnosticEngine_.LogDiagnostic(diagnostic::SOURCE_OUTSIDE_ETS_PATH,
-                                        util::DiagnosticMessageParams {util::StringView(filePath)}, srcPos_);
-        return "";
+    if (!p1.empty() && ((p1.back() == '/') || (p1.back() == '.'))) {
+        p1 = p1.substr(0, p1.size() - 1);
     }
-    auto name = FormRelativeModuleName(filePath.substr(absoluteEtsPath_.Length()));
-    return util::UString(name, allocator_).View();
+    if (!p2.empty() && ((p2.front() == '/') || (p2.front() == '.'))) {
+        p2 = p2.substr(1, p2.size() - 1);
+    }
+
+    if (p1.empty() || p2.empty()) {
+        return ArenaString {p1} + ArenaString {p2};
+    }
+    return ArenaString {p1} + '/' + ArenaString {p2};
 }
 
-// should be implemented with a stable name -> path mapping list
-static std::optional<std::string> TryFormModuleName(const std::string &filePath, std::string_view unitName,
-                                                    std::string_view unitPath, std::string_view cachePath)
+static ArenaString RebasePathOhmurl(std::string_view pathToRebase, std::string_view oldBase,
+                                    std::string_view ohmurlStart)
 {
-    // First check the cache path, since there might be a situation when
-    // unitPath is a part of cachePath
-    // cachePath === <unitPath>/build/cache/<some-dirs>/
+    ES2PANDA_ASSERT(Helpers::StartsWith(pathToRebase, oldBase));
+    auto relativePath = pathToRebase.substr(oldBase.size());
+    relativePath = RemoveExtensionIfKnown(relativePath);
+    auto res = ConcatOhmurl(ohmurlStart, relativePath);
+    return res;
+}
 
-    // Resides in cache
-    if (!cachePath.empty() && filePath.find(cachePath) == 0U) {
-        return FormRelativeModuleName(filePath.substr(cachePath.size()));
+static ArenaString CheckAndRebaseOhmurl(const ImportPathManager &ipm, std::string_view path, std::string_view oldBase,
+                                        std::string_view newBase)
+{
+    if (!Helpers::StartsWith(path, oldBase)) {
+        ipm.Context()->diagnosticEngine->LogDiagnostic(diagnostic::SOURCE_OUTSIDE_ETS_PATH,
+                                                       util::DiagnosticMessageParams {path}, ipm.SrcPos());
+        ES2PANDA_UNREACHABLE();
+    }
+    return RebasePathOhmurl(path, oldBase, newBase);
+}
+
+static ArenaString CreatePackageModuleName(const ImportPathManager &ipm, std::string_view resolvedSource,
+                                           std::string_view unitPath, std::string_view unitName)
+{
+    if (!ipm.ArkTSConfig().Package().empty() && Helpers::StartsWith(resolvedSource, ipm.ArkTSConfig().BaseUrl())) {
+        ArenaString mnamePrototype {};
+
+        mnamePrototype =
+            CheckAndRebaseOhmurl(ipm, resolvedSource, ipm.ArkTSConfig().BaseUrl(), ipm.ArkTSConfig().Package());
+        mnamePrototype = OhmurlToMname(mnamePrototype);
+        ES2PANDA_ASSERT(mnamePrototype.at(0) != '.');
+
+        return mnamePrototype;
     }
 
-    // Resides in unitPath
-    if (filePath.find(unitPath) == 0U) {
-        auto relativePath = FormRelativeModuleName(filePath.substr(unitPath.size()));
-        if (relativePath.empty() || unitName.empty()) {
-            return std::string(unitName) + relativePath;
+    return OhmurlToMname(RebasePathOhmurl(resolvedSource, unitPath, unitName));
+}
+
+static std::optional<ArenaString> DeduceModuleNameByMatchingWithArktsconfig(const ImportPathManager &importPathManager,
+                                                                            const ImportMetadata &imd)
+{
+    // ES2PANDA_ASSERT(( == '/') || (imd.ResolvedSource().find('\\') == std::string::npos));
+    using MatcherT = std::optional<ArenaString> (*)(const ArkTsConfig &, std::string_view, const ImportPathManager &);
+    std::vector<MatcherT> matchers {};
+
+    // 1. Try 'dynamicPaths' (aka 'dependencies') field:
+    auto dynamicPathMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
+                                 [[maybe_unused]] const ImportPathManager &ipm) {
+        std::optional<ArenaString> res {};
+        if (cfg.FindInDependencies(resolvedSource) != std::nullopt) {
+            res = OhmurlToMname(resolvedSource);
         }
-        return std::string(unitName) + "." + relativePath;
-    }
+        return res;
+    };
+    matchers.emplace_back(dynamicPathMatcher);
 
-    // Failed to resolved
+    // 2. Try 'paths' field:
+    auto pathsMatcher = [](const ArkTsConfig &cfg, std::string_view resolvedSource,
+                           const ImportPathManager &ipm) -> std::optional<ArenaString> {
+        for (auto const &[unitName, unitPaths] : cfg.Paths()) {
+            auto it = std::find_if(unitPaths.begin(), unitPaths.end(), [resolvedSource](const auto &unitPath) {
+                ES2PANDA_ASSERT(!unitPath.empty());
+                return Helpers::StartsWith(resolvedSource, unitPath);
+            });
+            if (it != unitPaths.end()) {
+                return CreatePackageModuleName(ipm, resolvedSource, *it, unitName);
+            }
+        }
+        return std::nullopt;
+    };
+    matchers.emplace_back(pathsMatcher);
+
+    for (auto matcher : matchers) {
+        if (auto res = (*matcher)(importPathManager.ArkTSConfig(), imd.ResolvedSource(), importPathManager); res) {
+            return res;
+        }
+    }
     return std::nullopt;
 }
 
-using DynamicPathsMap = const std::map<std::string, ArkTsConfig::ExternalModuleData, CompareByLength>;
-static std::string TryFormDynamicModuleName(const DynamicPathsMap &dynPaths, std::string const filePath)
+// NOTE(dkofanov): special empty programs for simult and stdlib should be removed.
+// These names shouldn't be emitted to a binary.
+static std::optional<ArenaString> CheckSpecialModuleName(const ImportMetadata &imd)
 {
-    for (auto const &[unitName, did] : dynPaths) {
-        if (did.Path().empty()) {
-            // NOTE(dkofanov): related to #23698. Current assumption: if 'declPath' is absent, it is a pure-dynamic
-            // source, and, as soon it won't be parsed, no module should be created.
-            continue;
+    if (imd.ResolvedSource() == STDLIB_MAIN_PROG_NAME) {
+        return compiler::Signatures::STDLIB_MODULE_NAME.data();
+    }
+    if (imd.ResolvedSource() == STDLIB_IMPORTS_MAIN_PROG_NAME) {
+        return compiler::Signatures::STDLIB_IMPORTS_MODULE_NAME.data();
+    }
+    if (imd.ResolvedSource() == SIMULT_MAIN_PROG_NAME) {
+        return compiler::Signatures::SIMULT_MODULE_NAME.data();
+    }
+
+    return std::nullopt;
+}
+
+static ArenaString FormModuleNameSolelyByAbsolutePath(const ImportPathManager &ipm, const ImportMetadata &imd)
+{
+    auto etsPath = ipm.Context()->config->options->GetEtsPath();
+    auto absoluteEtsPath = util::Path(etsPath, ipm.Context()->allocator).GetAbsolutePath().Utf8();
+    return OhmurlToMname(CheckAndRebaseOhmurl(ipm, imd.ResolvedSource(), absoluteEtsPath, ""));
+}
+
+static ArenaString FormModuleName(const ImportPathManager &ipm, const ImportMetadata &imd)
+{
+    ES2PANDA_ASSERT(imd.ModuleName().empty());
+
+    if (auto res = CheckSpecialModuleName(imd); res) {
+        return *res;
+    }
+
+    if (ipm.Context()->config->options->WasSetEtsPath()) {
+        return FormModuleNameSolelyByAbsolutePath(ipm, imd);
+    }
+
+    if (auto res = DeduceModuleNameByMatchingWithArktsconfig(ipm, imd); res) {
+        return *res;
+    }
+
+    if (Helpers::StartsWith(imd.ResolvedSource(), ipm.ArkTSConfig().BaseUrl())) {
+        ArenaString mnamePrototype {};
+        if (!ipm.ArkTSConfig().Package().empty()) {
+            mnamePrototype += ipm.ArkTSConfig().Package();
         }
-        if (auto res = TryFormModuleName(filePath, unitName, did.Path(), ""); res) {
-            return res.value();
+        if (ipm.ArkTSConfig().UseUrl() || !ipm.ArkTSConfig().Package().empty()) {
+            auto rebased = RebasePathOhmurl(imd.ResolvedSource(), ipm.ArkTSConfig().BaseUrl(), "");
+            if (!mnamePrototype.empty() && !rebased.empty() && (rebased[0] != '/')) {
+                mnamePrototype += '.';
+            }
+            mnamePrototype += OhmurlToMname(rebased);
+            ES2PANDA_ASSERT(mnamePrototype.at(0) != '.');
+            return mnamePrototype;
         }
     }
+
+    return ArenaString(util::Path(imd.ResolvedSource(), ipm.Context()->allocator).GetFileName().Utf8());
+}
+
+static void CheckNoColonInName(std::string_view name, util::DiagnosticEngine *diagnosticEngine)
+{
+    if (name.find(':') != std::string_view::npos) {
+        util::DiagnosticMessageParams diagParams = {name};
+        diagnosticEngine->LogDiagnostic(diagnostic::UNSUPPORTED_FILE_NAME, diagParams);
+    }
+}
+
+static void CheckModuleName(const ImportPathManager &ipm, const ImportMetadata &imd)
+{
+    CheckNoColonInName(imd.ModuleName(), ipm.Context()->diagnosticEngine);
+    if (imd.ModuleName().empty()) {
+        ipm.Context()->diagnosticEngine->LogDiagnostic(diagnostic::UNRESOLVED_MODULE,
+                                                       DiagnosticMessageParams {imd.ResolvedSource()});
+    }
+}
+
+ImportMetadata::ImportMetadata(const ImportPathManager &ipm, std::string_view resolvedSource, Language::Id lang,
+                               bool isExternalModule)
+    : resolvedSource_ {resolvedSource}
+{
+    SetKey(resolvedSource_);
+    if (isExternalModule) {
+        ES2PANDA_ASSERT(ResolvedPathIsVirtual());
+        auto dependenciesLookupResult = ipm.ArkTSConfig().FindInDependencies(ResolvedSource());
+        ES2PANDA_ASSERT(dependenciesLookupResult != std::nullopt);
+        extModuleData_ = &dependenciesLookupResult->second;
+        lang_ = extModuleData_->GetLanguage().GetId();
+    } else {
+        lang_ = lang;
+    }
+    moduleName_ = FormModuleName(ipm, *this);
+    CheckModuleName(ipm, *this);
+}
+
+ImportMetadata::ImportMetadata(const ImportMetadata &other)
+{
+    *this = other;
+}
+
+const ImportMetadata &ImportMetadata::operator=(const ImportMetadata &other)
+{
+    parser::DeclarationCache::CacheReference::operator=(other);
+    resolvedSource_ = other.resolvedSource_;
+    moduleName_ = other.moduleName_;
+    extModuleData_ = other.extModuleData_;
+    lang_ = other.lang_;
+
+    SetKey(resolvedSource_);
+    return *this;
+}
+
+std::string_view ImportMetadata::DeclPath() const
+{
+    return (extModuleData_ != nullptr) ? extModuleData_->Path() : std::string_view {};
+}
+
+std::string_view ImportMetadata::OhmUrl() const
+{
+    if ((extModuleData_ != nullptr) && !extModuleData_->OhmUrl().empty()) {
+        return extModuleData_->OhmUrl();
+    }
+    if (ReferencesABC()) {
+        return AbcPath();
+    }
+
     return "";
 }
 
-util::StringView ImportPathManager::FormModuleName(const util::Path &path, const lexer::SourcePosition &srcPos)
+bool ImportMetadata::HasSpecifiedDeclPath() const
 {
-    srcPos_ = srcPos;
-    return FormModuleName(path);
+    return !DeclPath().empty() && (DeclPath() != DUMMY_PATH);
 }
 
-util::StringView ImportPathManager::FormModuleName(const util::Path &path)
+bool ImportMetadata::IsValid() const
 {
-    if (!absoluteEtsPath_.Empty()) {
-        return FormModuleNameSolelyByAbsolutePath(path);
-    }
-
-    std::string const filePath(path.GetAbsolutePath());
-    if (fileToModuleName_.count(filePath) > 0) {
-        return util::UString(fileToModuleName_[filePath], allocator_).View();
-    }
-
-    if (arktsConfig_->Package().empty() && !arktsConfig_->UseUrl()) {
-        return path.GetFileName();
-    }
-
-    if (auto dmn = TryFormDynamicModuleName(arktsConfig_->Dependencies(), filePath); !dmn.empty()) {
-        return util::UString(dmn, allocator_).View();
-    }
-    if (auto res = TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl() + pathDelimiter_.data(),
-                                     arktsConfig_->CacheDir());
-        res) {
-        return util::UString(res.value(), allocator_).View();
-    }
-    if (!stdLib_.empty()) {
-        if (auto res =
-                TryFormModuleName(filePath, "std", stdLib_ + pathDelimiter_.at(0) + "std", arktsConfig_->CacheDir());
-            res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-        if (auto res = TryFormModuleName(filePath, "escompat", stdLib_ + pathDelimiter_.at(0) + "escompat",
-                                         arktsConfig_->CacheDir());
-            res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-    }
-    for (auto const &[unitName, unitPath] : arktsConfig_->Paths()) {
-        if (auto res = TryFormModuleName(filePath, unitName, unitPath[0], arktsConfig_->CacheDir()); res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-    }
-    // NOTE (hurton): as a last step, try resolving using the BaseUrl again without a path delimiter at the end
-    if (auto res =
-            TryFormModuleName(filePath, arktsConfig_->Package(), arktsConfig_->BaseUrl(), arktsConfig_->CacheDir());
-        res) {
-        return util::UString(res.value(), allocator_).View();
-    }
-
-    diagnosticEngine_.LogDiagnostic(diagnostic::UNRESOLVED_MODULE,
-                                    util::DiagnosticMessageParams {util::StringView(filePath)}, srcPos_);
-    return "";
+    return !resolvedSource_.empty() && (resolvedSource_ != ERROR_LITERAL);
 }
 
-bool ImportPathManager::ImportMetadata::IsValid() const
+ImportPathManager::ImportPathManager(public_lib::Context *context)
+    : ctx_(*context),
+      parseQueue_(context->Allocator()->Adapter()),
+      resolvedSources_(*ArenaAllocator::New<ResolvedSources>(this))
 {
-    return resolvedSource != ERROR_LITERAL;
-}
-
-util::StringView ImportPathManager::FormRelativePath(const util::Path &path)
-{
-    std::string filePath(path.GetAbsolutePath());
-    util::Helpers::CheckValidFileName(path.GetFileNameWithExtension(), diagnosticEngine_);
-    auto const tryFormRelativePath = [&filePath](std::string const &basePath,
-                                                 std::string const &prefix) -> std::optional<std::string> {
-        if (filePath.rfind(basePath, 0) != 0) {
-            return std::nullopt;
-        }
-        return filePath.replace(0, basePath.size(), prefix);
-    };
-
-    if (!absoluteEtsPath_.Empty()) {
-        if (auto res = tryFormRelativePath(absoluteEtsPath_.Mutf8() + pathDelimiter_.data(), ""); res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-    }
-
-    if (arktsConfig_->Package().empty() && !arktsConfig_->UseUrl()) {
-        return path.GetFileNameWithExtension();
-    }
-
-    if (auto res = tryFormRelativePath(arktsConfig_->BaseUrl(), arktsConfig_->Package()); res) {
-        return util::UString(res.value(), allocator_).View();
-    }
-
-    for (auto const &[unitName, unitPath] : arktsConfig_->Paths()) {
-        if (auto res = tryFormRelativePath(unitPath[0], unitName); res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-    }
-
-    for (auto const &[unitName, unitPath] : arktsConfig_->Dependencies()) {
-        if (auto res = tryFormRelativePath(unitName, unitName); res) {
-            return util::UString(res.value(), allocator_).View();
-        }
-    }
-
-    return path.GetFileNameWithExtension();
 }
 
 }  // namespace ark::es2panda::util

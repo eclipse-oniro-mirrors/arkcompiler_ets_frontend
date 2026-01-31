@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -114,7 +114,7 @@ module module2
 /* @@? 20:1 Error Syntax error ESY0169: Missing catch or finally clause. */
 /* @@? 21:9 Error Syntax error ESY0230: Expected '{', got '('. */
 /* @@? 24:8 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? 27:13 Error Syntax error ESY0125: Initializers are not allowed in ambient contexts. */
+/* @@? 27:13 Error Semantic error ESE0125: Initializers are not allowed in ambient contexts. */
 /* @@? 31:14 Error Syntax error ESY0184: Abstract methods can only appear within an abstract class. */
 /* @@? 35:12 Error Syntax error ESY0181: Only ambient modules can use quoted names. */
 /* @@? 35:22 Error Syntax error ESY0228: Unexpected token, expected ';'. */

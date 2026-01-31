@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-import {dbl as c} from /* @@ label1 */"./imported_module_1.ets";
+import {dbl as /* @@ label1 */c} from "./imported_module_1.ets";
 import * as c from "./imported_module_2.ets";
 
 
 function main() {
-    /* @@ label2 */console.log(/* @@ label3 */c);
+  /* @@ label2 */console.log(/* @@ label3 */c);
 }
 
-/* @@? 16:39 Error Semantic error ESE0350: Variable 'c' is already defined with different type. */
-/* @@? 21:20 Error Semantic error ESE0127: No matching call signature for log(c) */
-/* @@? 21:47 Error Semantic error ESE43831: Namespace 'c' cannot be used as object */
+/* @@@ label1 Error Semantic error ESE0350: Variable 'c' is already defined with different type. */
+/* @@@ label2 Error Semantic error ESE0127: No matching call signature for log(c) */
+/* @@@ label3 Error Semantic error ESE43831: Namespace 'c' cannot be used as object */

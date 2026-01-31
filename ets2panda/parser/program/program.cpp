@@ -25,22 +25,47 @@
 #include "ir/base/classDefinition.h"
 #include "ir/statements/blockStatement.h"
 
-#include <compiler/lowering/phase.h>
+#include "compiler/lowering/phase.h"
+
+#include "util/importPathManager.h"
 
 namespace ark::es2panda::parser {
 
-Program::Program(ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
-    : allocator_(allocator),
-      externalSources_(allocator_->Adapter()),
-      directExternalSources_(allocator_->Adapter()),
+Program::Program(const util::ImportMetadata &importMetadata, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
+    : importMetadata_(importMetadata),
+      allocator_(allocator),
+      sourceFile_(util::Path {allocator}),
       extension_(varbinder != nullptr ? varbinder->Extension() : ScriptExtension::INVALID),
-      etsnolintCollection_(allocator_->Adapter()),
-      cfg_(allocator_->New<compiler::CFG>(allocator_)),
-      fileDependencies_(allocator_->Adapter()),
-      varbinders_(allocator_->Adapter()),
-      checkers_(allocator_->Adapter())
+      cfg_(allocator_->New<compiler::CFG>(allocator_))
 {
     PushVarBinder(varbinder);
+
+    // NOTE(dkofanov): #32416 remove 'SourceFile' in favor of 'ImportMetadata`.
+    std::string_view textView {};
+    switch (importMetadata_.Text().Kind()) {
+        case util::ModuleKind::PACKAGE:
+        case util::ModuleKind::UNKNOWN:
+            textView = "";
+            break;
+        default:
+            textView = importMetadata_.Text().Text();
+    }
+    bool isDynamic = importMetadata_.Lang() != Language::Id::ETS;
+    es2panda::SourceFile sf {importMetadata_.TextSource(), textView, importMetadata_.ResolvedSource(), false,
+                             isDynamic};
+    SetSource(sf);
+}
+
+std::string Program::RelativeFilePath(const public_lib::Context *context) const
+{
+    if (importMetadata_.Lang() != Language::Id::ETS) {
+        return std::string {importMetadata_.TextSource()};
+    }
+    if (!Is<util::ModuleKind::MODULE>()) {
+        return std::string {ModuleName()};
+    }
+    // NOTE(dkofanov): there should be rebasing abspath to baseurl.
+    return util::Path(importMetadata_.TextSource(), context->Allocator()).GetFileNameWithExtension().Mutf8();
 }
 
 void Program::PushVarBinder(varbinder::VarBinder *varbinder)
@@ -79,9 +104,13 @@ const checker::Checker *Program::Checker() const
 
 bool Program::IsGenAbcForExternal() const
 {
-    return compiler::GetPhaseManager()->Context()->config->options->GetCompilationMode() ==
-               CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
-           genAbcForExternalSource_;
+    if (genAbcForExternalSource_) {
+        [[maybe_unused]] auto ctx = compiler::GetPhaseManager()->Context();
+        ES2PANDA_ASSERT(ctx->config->options->IsSimultaneous());
+        ES2PANDA_ASSERT(ctx->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE);
+        return true;
+    }
+    return false;
 }
 
 std::string Program::Dump() const
@@ -122,43 +151,41 @@ const varbinder::GlobalScope *Program::GlobalScope() const
     return static_cast<const varbinder::GlobalScope *>(ast_->Scope());
 }
 
-void Program::SetPackageInfo(const util::StringView &name, util::ModuleKind kind)
+// Obsolete interface
+// NOTE(dkofanov): #32416 enforce '=='-consistency between 'moduleInfo_' and 'importMetadata_', then remove
+// 'moduleInfo_'.
+void Program::SetPackageInfo(std::string_view mname, util::ModuleKind kind)
 {
-    moduleInfo_.moduleName = name;
-    std::string modifiedName(name);
-    std::replace(modifiedName.begin(), modifiedName.end(), '/', '.');
-    moduleInfo_.modulePrefix =
-        name.Empty()
-            ? ""
-            : util::UString(std::string(modifiedName).append(compiler::Signatures::METHOD_SEPARATOR), allocator_)
-                  .View();
-
+    // NOTE(vpukhov): the *unnamed* modules are to be removed entirely
+    ES2PANDA_ASSERT((importMetadata_.ModuleName() == mname) || mname.empty());
+    moduleInfo_.moduleName = std::string(mname);
+    moduleInfo_.modulePrefix = mname.empty() ? "" : std::string(mname).append(compiler::Signatures::METHOD_SEPARATOR);
     moduleInfo_.kind = kind;
 }
 
 // NOTE(vpukhov): #31581: the flags should be set by the build system
-void Program::MaybeTransformToDeclarationModule()
+// NOTE(dkofanov): Ensures declaration module contain only declarations.
+// However, this condition may be broken by '->Ast()->AddStatement' for example.
+void Program::VerifyDeclarationModule()
 {
     ES2PANDA_ASSERT(ast_ != nullptr);
-    if (IsPackage() || ast_->Statements().empty()) {
+    if (!IsDeclarationModule()) {
         return;
     }
-    bool hasLocalDefs = false;
-    for (auto stmt : ast_->Statements()) {
-        if (stmt->IsETSImportDeclaration()) {
+    ES2PANDA_ASSERT(!Is<util::ModuleKind::PACKAGE>());
+    for (auto stmt : Ast()->Statements()) {
+        // NOTE(dkofanov): asserts should be replaced with diagnostics.
+        if (stmt->IsExpressionStatement()) {
+            ES2PANDA_ASSERT(stmt->AsExpressionStatement()->GetExpression()->AsStringLiteral()->Str() ==
+                            compiler::Signatures::STATIC_PROGRAM_FLAG);
             continue;
         }
-        // The existing logic is as follows:
-        // * if module is empty, it is not a declaration module
-        // * if there is any local non-declare definition in the module, it is not a declaration module
-        // * otherwise, it is a declaration module
-        hasLocalDefs = true;
-        if (!(stmt->IsDeclare() || stmt->IsTSTypeAliasDeclaration())) {
-            return;
+
+        if (stmt->IsDeclare() || stmt->IsTSTypeAliasDeclaration() || stmt->IsETSImportDeclaration() ||
+            stmt->IsExportNamedDeclaration() || stmt->IsETSReExportDeclaration() || stmt->IsTSInterfaceDeclaration()) {
+            continue;
         }
-    }
-    if (hasLocalDefs) {
-        moduleInfo_.isDeclarationModule = true;
+        stmt->AddModifier(ir::ModifierFlags::DECLARE);
     }
 }
 
@@ -194,6 +221,28 @@ bool Program::IsASTChecked()
     return isAstChecked_;
 }
 
+void Program::PromoteToMainProgram(public_lib::Context *ctx)
+{
+    auto *oldMain = ctx->parserProgram;
+    // NOTE(dkofanov): externals sources should be bound to context, not programs.
+    ES2PANDA_ASSERT(Is<util::ModuleKind::PACKAGE>());
+    ES2PANDA_ASSERT(GetExternalSources()->Empty());
+
+    auto *packages = &oldMain->externalSources_.Get<util::ModuleKind::PACKAGE>();
+    auto toRemove = std::find(packages->begin(), packages->end(), this);
+    // NOTE(dkofanov): the later 'if' should be an assert. The case handled by 'if' relates to the broken functionality
+    // of 'ETSPackageDeclaration' expressed in `EnsurePackageIsRegisteredByPackageFraction`.
+    if (toRemove != packages->end()) {
+        packages->erase(toRemove);
+    }
+
+    externalSources_.transitiveExternals_ = std::move(oldMain->externalSources_.transitiveExternals_);
+    externalSources_.direct_ = std::move(oldMain->externalSources_.direct_);
+
+    oldMain->externalSources_ = ExternalSources();
+    ctx->parserProgram = this;
+}
+
 Program::~Program()  // NOLINT(modernize-use-equals-default)
 {
 #ifndef NDEBUG
@@ -204,11 +253,6 @@ Program::~Program()  // NOLINT(modernize-use-equals-default)
 compiler::CFG *Program::GetCFG()
 {
     return cfg_;
-}
-
-void Program::AddFileDependencies(const util::StringView &file, const util::StringView &depFile)
-{
-    fileDependencies_[file].insert(depFile);
 }
 
 ir::ClassDefinition *Program::GlobalClass()
@@ -229,22 +273,6 @@ void Program::SetGlobalClass(ir::ClassDefinition *globalClass)
 const compiler::CFG *Program::GetCFG() const
 {
     return cfg_;
-}
-
-bool Program::MergeExternalSource(const ExternalSource *externalSource)
-{
-    // prevent using cache for cycle import
-    for (const auto &[moduleName, _] : *externalSource) {
-        if (ModuleName() == moduleName) {
-            return false;
-        }
-    }
-
-    for (const auto &[moduleName, extProgs] : *externalSource) {
-        externalSources_.emplace(moduleName, extProgs);
-    }
-
-    return true;
 }
 
 }  // namespace ark::es2panda::parser

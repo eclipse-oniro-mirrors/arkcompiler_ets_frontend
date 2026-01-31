@@ -234,10 +234,10 @@ static ir::AstNode *LowerOperationIfNeeded(public_lib::Context *ctx, ir::AstNode
     return node;
 }
 
-bool RelaxedAnyLoweringPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool RelaxedAnyLoweringPhase::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPreorder(
-        [ctx](ir::AstNode *node) { return LowerOperationIfNeeded(ctx, node); }, Name());
+        [ctx = Context()](ir::AstNode *node) { return LowerOperationIfNeeded(ctx, node); }, Name());
 
     return true;
 }

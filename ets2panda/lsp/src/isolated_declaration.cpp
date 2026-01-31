@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,6 +22,7 @@
 #include "ir/base/methodDefinition.h"
 #include "ir/base/scriptFunction.h"
 #include "ir/ets/etsNewClassInstanceExpression.h"
+#include "parser/program/program.h"
 
 namespace ark::es2panda::lsp {
 namespace {
@@ -296,7 +297,7 @@ std::optional<TextChange> GetTextChange(ir::ScriptFunction *func, std::string &t
     }
     // try to find the position of ')' before the function body
     auto bodyStart = func->Body()->Start().index;
-    auto sourceCode = program->SourceCode().Utf8();
+    auto sourceCode = program->SourceCode();
     auto i = bodyStart;
     for (; i >= func->Start().index; --i) {
         if (i >= 1 && sourceCode[i - 1] == ')') {

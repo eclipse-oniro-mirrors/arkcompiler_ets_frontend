@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,20 +20,16 @@
 
 namespace ark::es2panda::compiler {
 
-class SetJumpTargetPhase : public PhaseForBodies {
+class SetJumpTargetPhase : public PhaseForProgramsWithBodies_LEGACY {
 public:
     std::string_view Name() const override
     {
         return "SetJumpTargetPhase";
     }
 
-    void FindJumpTarget(const public_lib::Context *ctx, ir::AstNode *const node);
+    bool PerformForProgram(parser::Program *program) override;
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
-
-private:
-    void LogError(const public_lib::Context *ctx, const diagnostic::DiagnosticKind &diagnostic,
-                  const util::DiagnosticMessageParams &diagnosticParams, const lexer::SourcePosition &pos);
+    void FindJumpTarget(ir::AstNode *const node) const;
 };
 
 }  // namespace ark::es2panda::compiler

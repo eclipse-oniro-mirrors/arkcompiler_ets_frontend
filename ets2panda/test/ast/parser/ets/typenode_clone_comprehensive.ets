@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@
 // and caused assertion failures in ValidateGenericTypeAliasForClonedNode
 
 // Test 1: TSTypeLiteral Clone
-type ObjectType = { n: number, s: string, b: boolean };
+/* @@ label1 */type ObjectType = { n: number, s: string, b: boolean };
 
 // Test 2: TSNumberKeyword, TSStringKeyword, TSBooleanKeyword Clone
 type NumType = number;
@@ -35,7 +35,7 @@ type KeyofType<T extends keyof ObjectType> = T;
 type IndexedType<K extends keyof ObjectType> = ObjectType[K];
 
 // Test 6: TSTupleType Clone
-type TupleType = [a: number, b: string];
+/* @@ label2 */type TupleType = [a: number, b: string];
 
 // Test 7: TSMappedType Clone
 type MappedType = { [K in keyof ObjectType]: string };
@@ -47,7 +47,7 @@ type FuncType<K extends keyof ObjectType> = (v: ObjectType[K]) => void;
 type LiteralType<K extends 'n' | 's' | 'b'> = K;
 
 // Test 10: TSUnionType Clone
-type UnionType = string | number | boolean;
+/* @@ label3 */type UnionType = string | number | boolean;
 
 // Test 11: BrokenTypeNode Clone (created for invalid syntax)
 // This will create BrokenTypeNode instances that need proper cloning
@@ -67,26 +67,26 @@ declare const test1: ComplexType<'n'>;
 declare const test2: ComplexType<'s'>;
 declare const test3: ComplexType<'b'>;
 
-/* @@? 1:3 Error Semantic error ESE0350: Class 'TupleType' is already defined with different type. */
-/* @@? 1:3 Error Semantic error ESE0350: Class 'UnionType' is already defined with different type. */
-/* @@? 21:19 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
-/* @@? 21:30 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 21:41 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@@ label1 Error Semantic error ESE0350: Variable 'ObjectType' is already defined with different type. */
+/* @@? 21:34 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
+/* @@? 21:45 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 21:56 Error Syntax error ESY0227: Unexpected token ','. */
 /* @@? 32:42 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 35:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 35:59 Error Syntax error ESY0228: Unexpected token, expected ']'. */
 /* @@? 35:59 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 35:60 Error Syntax error ESY0227: Unexpected token ']'. */
-/* @@? 38:19 Error Semantic error ESE0371: Cannot find type 'a'. */
-/* @@? 38:20 Error Syntax error ESY0227: Unexpected token ':'. */
-/* @@? 38:20 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
-/* @@? 38:22 Error Syntax error ESY0227: Unexpected token 'number'. */
-/* @@? 38:22 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
-/* @@? 38:28 Error Syntax error ESY0227: Unexpected token ','. */
-/* @@? 38:30 Error Syntax error ESY0227: Unexpected token 'b'. */
-/* @@? 38:33 Error Syntax error ESY0038: Label must be followed by a loop statement. */
-/* @@? 38:33 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
-/* @@? 38:39 Error Syntax error ESY0227: Unexpected token ']'. */
+/* @@@ label2 Error Semantic error ESE0350: Class 'TupleType' is already defined with different type. */
+/* @@? 38:34 Error Semantic error ESE0371: Cannot find type 'a'. */
+/* @@? 38:35 Error Syntax error ESY0227: Unexpected token ':'. */
+/* @@? 38:35 Error Syntax error ESY0229: Unexpected token, expected ',' or ']'. */
+/* @@? 38:37 Error Syntax error ESY0227: Unexpected token 'number'. */
+/* @@? 38:37 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
+/* @@? 38:43 Error Syntax error ESY0227: Unexpected token ','. */
+/* @@? 38:45 Error Syntax error ESY0227: Unexpected token 'b'. */
+/* @@? 38:48 Error Syntax error ESY0038: Label must be followed by a loop statement. */
+/* @@? 38:48 Error Semantic error ESE0144: Type name 'string' used in the wrong context */
+/* @@? 38:54 Error Syntax error ESY0227: Unexpected token ']'. */
 /* @@? 41:19 Error Syntax error ESY177354: Using object literals to declare types in place is not supported. Please declare types and interfaces explicitly! */
 /* @@? 41:22 Error Semantic error ESE0343: Indexed signatures are not allowed. Use arrays instead! */
 /* @@? 41:24 Error Syntax error ESY0227: Unexpected token 'in'. */
@@ -97,6 +97,7 @@ declare const test3: ComplexType<'b'>;
 /* @@? 41:46 Error Syntax error ESY0295: string is a predefined type, cannot be used as an identifier */
 /* @@? 44:41 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 44:60 Error Syntax error ESY0228: Unexpected token, expected ']'. */
+/* @@@ label3 Error Semantic error ESE0350: Class 'UnionType' is already defined with different type. */
 /* @@? 54:34 Error Semantic error ESE0371: Cannot find type 'InvalidMap'. */
 /* @@? 54:44 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */
 /* @@? 57:45 Error Semantic error ESE0276: The `keyof` keyword can only be used for class or interface type. */

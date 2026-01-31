@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,6 @@
  * limitations under the License.
  */
 
-import {NS} from "./package"
+import {NS} from "./P2"
 
-/* @@? P2_01.ets:22:5 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */
+/* @@? P2_02.ets:21:5 Error Syntax error ESY0034: Only one static block is allowed in one namespace or class. */

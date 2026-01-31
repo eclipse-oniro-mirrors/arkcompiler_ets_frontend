@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,8 +43,8 @@ static void CreateFuncDecl(checker::ETSChecker *checker, ir::MethodDefinition *f
     func->Function()->Id()->SetVariable(var);
 }
 
-ir::ETSTypeReference *CreateAsyncImplMethodReturnTypeAnnotation(checker::ETSChecker *checker,
-                                                                ir::ScriptFunction *asyncFunc)
+static ir::ETSTypeReference *CreateAsyncImplMethodReturnTypeAnnotation(checker::ETSChecker *checker,
+                                                                       ir::ScriptFunction *asyncFunc)
 {
     // Set impl method return type "Object" because it may return Promise as well as Promise parameter's type
     auto *objectId =
@@ -70,8 +70,8 @@ ir::ETSTypeReference *CreateAsyncImplMethodReturnTypeAnnotation(checker::ETSChec
     return returnTypeAnn;
 }
 
-ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
-                                            ir::ClassDefinition *classDef)
+static ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
+                                                   ir::ClassDefinition *classDef)
 {
     util::UString implName(checker->GetAsyncImplName(asyncMethod), checker->Allocator());
     ir::ModifierFlags modifiers = asyncMethod->Modifiers();
@@ -124,8 +124,8 @@ ir::MethodDefinition *CreateAsyncImplMethod(checker::ETSChecker *checker, ir::Me
     return implMethod;
 }
 
-ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
-                                       ir::ClassDefinition *classDef)
+static ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodDefinition *asyncMethod,
+                                              ir::ClassDefinition *classDef)
 {
     ir::ScriptFunction *asyncFunc = asyncMethod->Function();
     ES2PANDA_ASSERT(asyncFunc != nullptr);
@@ -159,7 +159,7 @@ ir::MethodDefinition *CreateAsyncProxy(checker::ETSChecker *checker, ir::MethodD
     return implMethod;
 }
 
-void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
+static void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
 {
     ES2PANDA_ASSERT(checker->FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION));
     auto *classDef = checker->FindAncestorGivenByType(node, ir::AstNodeType::CLASS_DEFINITION)->AsClassDefinition();
@@ -186,7 +186,7 @@ void ComposeAsyncImplMethod(checker::ETSChecker *checker, ir::MethodDefinition *
     }
 }
 
-void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
+static void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
 {
     ES2PANDA_ASSERT(!node->TsType()->IsTypeError());
     if (util::Helpers::IsAsyncMethod(node) && node->Function() != nullptr && !node->Function()->IsExternal()) {
@@ -198,7 +198,7 @@ void HandleMethod(checker::ETSChecker *checker, ir::MethodDefinition *node)
     }
 }
 
-void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefinition *classDef)
+static void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefinition *classDef)
 {
     checker::SavedCheckerContext savedContext(checker, checker->Context().Status(),
                                               classDef->TsType()->AsETSObjectType());
@@ -209,9 +209,9 @@ void UpdateClassDefintion(checker::ETSChecker *checker, ir::ClassDefinition *cla
     }
 }
 
-bool AsyncMethodLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool AsyncMethodLowering::PerformForProgram(parser::Program *program)
 {
-    checker::ETSChecker *const checker = ctx->GetChecker()->AsETSChecker();
+    checker::ETSChecker *const checker = Context()->GetChecker()->AsETSChecker();
 
     ir::NodeTransformer handleClassAsyncMethod = [checker](ir::AstNode *const ast) {
         if (ast->IsClassDefinition()) {

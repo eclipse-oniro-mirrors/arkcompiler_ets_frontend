@@ -68,6 +68,9 @@ std::string FindClosestWordJaccard(const ir::AstNode *astNode, const std::string
     if (astNode == nullptr) {
         return "";
     }
+    if (astNode->IsIdentifier()) {
+        return astNode->AsIdentifier()->Name().Mutf8();
+    }
     double maxSimilarity = -1.0;
     std::string closestWord;
     astNode->FindChild([&search, &maxSimilarity, &closestWord](const ir::AstNode *node) {
@@ -151,21 +154,19 @@ Info GetInfoSpelling(es2panda_Context *context, size_t position)
     if (token == nullptr) {
         return {"", nullptr};
     }
-    auto parent = token->Parent();
-    const auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
-    const auto astNode = ctx->parserProgram->Ast();
-
-    if (!parent->IsETSImportDeclaration() &&
-        !(parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier())) {
+    const auto *enclosingImport =
+        util::Helpers::FindAncestorGivenByType(token, ir::AstNodeType::ETS_IMPORT_DECLARATION);
+    if (enclosingImport == nullptr) {
+        const auto ctx = reinterpret_cast<ark::es2panda::public_lib::Context *>(context);
+        const auto astNode = ctx->parserProgram->Ast();
         auto findClosestWord = FindClosestWordJaccard(astNode, std::string(token->AsIdentifier()->Name().Utf8()));
         if (!findClosestWord.empty()) {
             return {findClosestWord, token};
         }
+        return {"", nullptr};
     }
-    if (parent->IsImportSpecifier() || parent->IsImportDefaultSpecifier() || parent->IsImportNamespaceSpecifier()) {
-        parent = parent->Parent();
-    }
-    auto importDecl = parent->AsETSImportDeclaration();
+
+    auto importDecl = enclosingImport->AsETSImportDeclaration();
     if (!importDecl->Specifiers().empty()) {
         Initializer initializer = Initializer();
         const auto path = importDecl->ResolvedSource();

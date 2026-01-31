@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,6 @@
 
 #include "util/es2pandaMacros.h"
 #include "util/eheap.h"
-
-#include <cstddef>
-#include <limits>
-#include <memory>
-#include <string>
-#include <string_view>
 
 namespace ark::es2panda::util {
 class StringView {
@@ -273,8 +267,13 @@ private:
 
 class UString {
 public:
-    UString() = default;
-    explicit UString(ArenaAllocator *allocator) : allocator_(allocator) {}
+    UString() = delete;
+
+    explicit UString(ArenaAllocator *allocator) : allocator_(allocator)
+    {
+        ES2PANDA_ASSERT(allocator_ != nullptr);
+    }
+
     explicit UString(const std::string &str, ArenaAllocator *allocator) : UString(allocator)
     {
         Alloc();

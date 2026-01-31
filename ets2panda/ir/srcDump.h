@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd. All rights reserved.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd. All rights reserved.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -104,14 +104,6 @@ public:
         size_t releasers_ {};
     };
 
-    // Ambient
-    auto BuildAmbientContextGuard()
-    {
-        return ambientDeclarationLock_.BuildReleaser();
-    }
-
-    void TryDeclareAmbientContext(SrcDumper *srcDumper);
-
     void DumpImports(std::string &res);
 
     // Postdump
@@ -151,9 +143,6 @@ public:
 
 private:
     public_lib::Context *ctx_;
-
-    // track 'declare' keyword:
-    Lock ambientDeclarationLock_;
 
     /* "pre-dump": */
     std::vector<const ir::ImportDeclaration *> imports_;
@@ -204,11 +193,10 @@ public:
 
     auto BuildAmbientContextGuard()
     {
-        if (IsDeclgen()) {
-            return GetDeclgen()->BuildAmbientContextGuard();
-        }
-        return Declgen::Lock::BuildEmptyReleaser();
+        return ambientDeclarationLock_.BuildReleaser();
     }
+
+    void TryDeclareAmbientContext();
 
     void DumpJsdocBeforeTargetNode(const ir::AstNode *inputNode);
 
@@ -223,6 +211,9 @@ private:
 
     /* declgen-specific: */
     Declgen *dg_;
+    // track 'declare' keyword:
+    Declgen::Lock ambientDeclarationLock_;
+
     std::unique_ptr<parser::JsdocHelper> jsdocGetter_ {};
     // Flag to avoid duplicate default export declarations
     bool hasDefaultExport_ = false;

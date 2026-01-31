@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -192,7 +192,7 @@ static NextTokenKind NextTokenIsCurlyBraceOnSameLineAsCursor(ir::AstNode *preced
     size_t nextTokenLine = nextToken->Start().line;
     if (nextType == ir::AstNodeType::BLOCK_STATEMENT) {
         if (nextTokenLine == lineAtPosition) {
-            const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
+            std::string_view sourceCode = ctx->parserProgram->SourceCode();
             size_t pos = nextToken->Start().index;
             if (pos < sourceCode.length() &&
                 static_cast<char32_t>(static_cast<unsigned char>(sourceCode[pos])) == lexer::LEX_CHAR_RIGHT_BRACE) {
@@ -527,7 +527,7 @@ static bool ChildStartsOnTheSameLineWithElseInIfStatement(ir::AstNode *parent, i
         return false;
     }
 
-    const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
+    const auto sourceCode = ctx->parserProgram->SourceCode();
     size_t consequentEnd = ifStmt->Consequent()->End().index;
 
     lexer::LineIndex lineIndex(ctx->parserProgram->SourceCode());
@@ -843,7 +843,7 @@ static public_lib::Context *ValidateContextAndPosition(es2panda_Context *context
         return nullptr;
     }
 
-    const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
+    const auto sourceCode = ctx->parserProgram->SourceCode();
     if (position >= sourceCode.length()) {
         result.indentation = GetBaseIndentation(settings);
         result.isValid = true;
@@ -907,7 +907,7 @@ IndentationResult GetIndentation(es2panda_Context *context, size_t position, con
         return result;
     }
 
-    const auto &sourceCode = ctx->parserProgram->SourceCode().Mutf8();
+    const auto sourceCode = std::string(ctx->parserProgram->SourceCode());
     lexer::LineIndex index(ctx->parserProgram->SourceCode());
     IndentContext indentCtx {&index, &sourceCode, ctx->parserProgram, &settings, ctx};
 

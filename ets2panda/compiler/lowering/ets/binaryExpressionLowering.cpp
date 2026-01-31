@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,11 +43,11 @@ static ir::AstNode *ConvertExponentiation(ir::BinaryExpression *binaryExpr, publ
     return loweringResult;
 }
 
-bool BinaryExpressionLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool BinaryExpressionLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPostorder(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) -> AstNodePtr {
+        [ctx = Context()](ir::AstNode *ast) -> AstNodePtr {
             if (ast->IsBinaryExpression()) {
                 ir::BinaryExpression *binaryExpr = ast->AsBinaryExpression();
                 auto *left = binaryExpr->Left();

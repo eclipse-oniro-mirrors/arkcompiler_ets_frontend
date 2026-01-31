@@ -1975,5 +1975,4 @@
     }
   }
 }
-[instanceof_x_dyndecl.ets:20:24] Semantic error ESE0360: Cannot find import: dynamic_import_tests
 [instanceof_x_dyndecl.ets:37:26] Semantic error ESE0371: Cannot find type 'AValue'.

@@ -60,11 +60,11 @@ static void TransformArguments(public_lib::Context *ctx, ir::Expression *callLik
     }
 }
 
-bool OptionalArgumentsLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool OptionalArgumentsLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursivelyPreorder(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *const node) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *const node) -> ir::AstNode * {
             if (node->IsCallExpression()) {
                 auto callExpr = node->AsCallExpression();
                 if (callExpr->Signature() == nullptr) {
@@ -91,8 +91,7 @@ bool OptionalArgumentsLowering::PerformForModule(public_lib::Context *ctx, parse
     return true;
 }
 
-bool OptionalArgumentsLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                       parser::Program const *program)
+bool OptionalArgumentsLowering::PostconditionForProgram(parser::Program const *program)
 {
     return !program->Ast()->IsAnyChild([](ir::AstNode const *node) {
         if (!node->IsScriptFunction()) {

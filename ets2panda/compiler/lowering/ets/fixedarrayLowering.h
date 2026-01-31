@@ -24,15 +24,14 @@
 
 namespace ark::es2panda::compiler {
 
-class FixedArrayLowering : public PhaseForBodies {  // #22952: could be a PhaseForDeclarations
+class FixedArrayLowering : public PhaseForProgramsWithBodies_LEGACY {  // #22952: could be a PhaseForDeclarations
 public:
     std::string_view Name() const override
     {
         return "FixedArrayLowering";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
-    bool PostconditionForModule(public_lib::Context *ctx, const parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 };
 
 }  // namespace ark::es2panda::compiler

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,6 +14,7 @@
  */
 
 #include "ETSparser.h"
+#include "parser/parserStatusContext.h"
 #include "lexer/lexer.h"
 #include "ir/astNode.h"
 #include "ir/ets/etsModule.h"
@@ -26,6 +27,8 @@ using namespace std::literals::string_literals;
 
 ir::ETSModule *ETSParser::ParseNamespaceStatement(ir::ModifierFlags memberModifiers)
 {
+    auto savedCtx = SavedStatusContext<ParserStatus::IN_NAMESPACE>(&GetContext());
+
     auto modifiers = ir::ModifierFlags::NONE;
     if (((memberModifiers & ir::ModifierFlags::EXPORT) != 0)) {
         modifiers |= ir::ModifierFlags::EXPORT;
@@ -37,19 +40,8 @@ ir::ETSModule *ETSParser::ParseNamespaceStatement(ir::ModifierFlags memberModifi
         modifiers |= ir::ModifierFlags::DECLARE;
         GetContext().Status() |= ParserStatus::IN_AMBIENT_CONTEXT;
     }
-    GetContext().Status() |= ParserStatus::IN_NAMESPACE;
-    IncrementNamespaceNestedRank();
 
-    auto *result = ParseNamespace(modifiers);
-
-    DecrementNamespaceNestedRank();
-    if (GetNamespaceNestedRank() == 0) {
-        GetContext().Status() &= ~ParserStatus::IN_NAMESPACE;
-    }
-    if ((memberModifiers & ir::ModifierFlags::DECLARE) != 0) {
-        GetContext().Status() &= ~ParserStatus::IN_AMBIENT_CONTEXT;
-    }
-    return result->AsETSModule();
+    return ParseNamespace(modifiers)->AsETSModule();
 }
 
 ir::Statement *ETSParser::ParseNamespace(ir::ModifierFlags flags)
@@ -66,9 +58,9 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
 {
     auto nsStart = Lexer()->GetToken().Start();
     Lexer()->NextToken();
-    auto *result =
-        AllocNode<ir::ETSModule>(Allocator(), ArenaVector<ir::Statement *>(Allocator()->Adapter()), ExpectIdentifier(),
-                                 ir::ModuleFlag::NAMESPACE, GetContext().GetLanguage(), globalProgram_);
+    auto *result = AllocNode<ir::ETSModule>(Allocator(), ArenaVector<ir::Statement *>(Allocator()->Adapter()),
+                                            ExpectIdentifier(), ir::ModuleFlag::NAMESPACE, GetContext().GetLanguage(),
+                                            GetGlobalProgram());  // todo: why global?
     ir::ETSModule *parent = result;
     ir::ETSModule *child = nullptr;
     while (Lexer()->GetToken().Type() == lexer::TokenType::PUNCTUATOR_PERIOD) {
@@ -76,7 +68,7 @@ ir::ETSModule *ETSParser::ParseNamespaceImp(ir::ModifierFlags flags)
         auto start = Lexer()->GetToken().Start();
         child = AllocNode<ir::ETSModule>(Allocator(), ArenaVector<ir::Statement *>(Allocator()->Adapter()),
                                          ExpectIdentifier(), ir::ModuleFlag::NAMESPACE, GetContext().GetLanguage(),
-                                         globalProgram_);
+                                         GetGlobalProgram());  // todo: why global?
         child->SetParent(parent);
         child->SetRange({start, Lexer()->GetToken().Start()});
         child->AddModifier(ir::ModifierFlags::EXPORT);

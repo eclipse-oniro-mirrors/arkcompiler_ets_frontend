@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -104,11 +104,11 @@ static ir::AstNode *LowerChain(public_lib::Context *ctx, ir::ChainExpression *co
     ES2PANDA_UNREACHABLE();
 }
 
-bool OptionalLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool OptionalLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *const node) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *const node) -> ir::AstNode * {
             if (node->IsChainExpression()) {
                 return RefineSourceRanges(LowerChain(ctx, node->AsChainExpression()));
             }
@@ -119,7 +119,7 @@ bool OptionalLowering::PerformForModule(public_lib::Context *ctx, parser::Progra
     return true;
 }
 
-bool OptionalLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx, const parser::Program *program)
+bool OptionalLowering::PostconditionForProgram(const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *node) {
         return node->IsChainExpression() || (node->IsMemberExpression() && node->AsMemberExpression()->IsOptional()) ||

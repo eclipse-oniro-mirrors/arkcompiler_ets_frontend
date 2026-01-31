@@ -358,7 +358,7 @@ static ir::Expression *ConstructOpAssignmentResult(public_lib::Context *ctx, ir:
     return retVal;
 }
 
-ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentExpression *assignment)
+static ir::AstNode *HandleOpAssignment(public_lib::Context *ctx, ir::AssignmentExpression *assignment)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
 
@@ -519,10 +519,10 @@ static ir::AstNode *HandleUpdate(public_lib::Context *ctx, ir::UpdateExpression 
     return loweringResult;
 }
 
-bool OpAssignmentLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool OpAssignmentLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
-        [ctx](ir::AstNode *ast) {
+        [ctx = Context()](ir::AstNode *ast) {
             if (ast->IsAssignmentExpression() &&
                 ast->AsAssignmentExpression()->OperatorType() != lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
                 return HandleOpAssignment(ctx, ast->AsAssignmentExpression());
@@ -539,8 +539,7 @@ bool OpAssignmentLowering::PerformForModule(public_lib::Context *ctx, parser::Pr
     return true;
 }
 
-bool OpAssignmentLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                  const parser::Program *program)
+bool OpAssignmentLowering::PostconditionForProgram(const parser::Program *program)
 {
     return !program->Ast()->IsAnyChild([](const ir::AstNode *ast) {
         return (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->TsType() != nullptr &&

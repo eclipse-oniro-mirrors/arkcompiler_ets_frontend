@@ -79,23 +79,11 @@ class FunctionContext;
 
 using namespace std::literals::string_literals;
 
-ETSParser::ETSParser(Program *program, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
-                     ParserStatus status)
-    : TypedParser(program, &options, diagnosticEngine, status), globalProgram_(GetProgram())
-{
-    namespaceNestedRank_ = 0;
-    importPathManager_ = std::make_unique<util::ImportPathManager>(this);
-}
+ETSParser::ETSParser(public_lib::Context *context, ParserStatus status) : TypedParser(context, status) {}
 
-ETSParser::ETSParser(Program *program, std::nullptr_t, util::DiagnosticEngine &diagnosticEngine)
-    : TypedParser(program, nullptr, diagnosticEngine, ParserStatus::NO_OPTS), globalProgram_(GetProgram())
+Program *ETSParser::GetGlobalProgram() const
 {
-    namespaceNestedRank_ = 0;
-}
-
-bool ETSParser::IsETSParser() const noexcept
-{
-    return true;
+    return Context()->parserProgram;
 }
 
 bool ETSParser::IsValidIdentifierName(const lexer::Token &token) const noexcept
@@ -103,69 +91,75 @@ bool ETSParser::IsValidIdentifierName(const lexer::Token &token) const noexcept
     return !token.IsPredefinedType() || util::Helpers::IsStdLib(GetProgram());
 }
 
-std::unique_ptr<lexer::Lexer> ETSParser::InitLexer(const SourceFile &sourceFile)
+std::unique_ptr<lexer::Lexer> ETSParser::InitLexer()
 {
-    GetProgram()->SetSource(sourceFile);
+    ES2PANDA_ASSERT(GetProgram() == GetContext().GetProgram());
     auto lexer = std::make_unique<lexer::ETSLexer>(&GetContext(), DiagnosticEngine());
-    if (sourceFile.isExternalSourceImport) {
+    if (GetProgram()->Is<util::ModuleKind::ETSCACHE_DECL>()) {
         lexer->SetDefaultNextTokenFlags(lexer::NextTokenFlags::CHAR_PERCENT_ALLOWED);
     }
     SetLexer(lexer.get());
     return lexer;
 }
 
-void ETSParser::ParseProgram(ScriptKind kind)
+static void DoSomethingSpecificToMainProgram(ETSParser *parser)
 {
-    lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
-    Lexer()->NextToken();
-    GetProgram()->SetKind(kind);
-    GetProgram()->SetRelativeFilePath(importPathManager_->FormRelativePath(GetProgram()->SourceFile()));
-
-    if (GetProgram()->SourceFilePath().Utf8()[0] == '@') {
-        // NOTE(user): handle multiple sourceFiles
-    }
-
-    ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
-    ParseFileHeaderFlag(startLoc, &statements);
-    auto decl = ParsePackageDeclaration();
-    if (decl != nullptr) {
-        statements.emplace_back(decl);
-        // If we found a package declaration, then add all files with the same package to the package parse list
-        AddPackageSourcesToParseList();
-        GetContext().Status() |= ParserStatus::IN_PACKAGE;
-    }
-
-    ir::ETSModule *script;
-    if (!GetContext().IsDependencyAnalyzerMode()) {
-        script = ParseETSGlobalScript(startLoc, statements);
-    } else {
-        script = ParseImportsAndReExportOnly(startLoc, statements);
-    }
-
-    if ((GetContext().Status() & ParserStatus::IN_PACKAGE) != 0) {
-        GetContext().Status() &= ~ParserStatus::IN_PACKAGE;
-    }
 #ifndef ENABLE_ISOLATED_DECLGEN
-    AddExternalSource(ParseSources(true));
+    std::vector<parser::Program *> directImportsFromMainSource {};
+    for (auto directImport : parser->GetImportPathManager()->GetParseQueue()) {
+        if (directImport.program == parser->Context()->parserProgram) {
+            continue;
+        }
+
+        directImportsFromMainSource.emplace_back(directImport.program);
+    }
+    parser->AddDirectImportsToDirectExternalSources(directImportsFromMainSource);
 #endif
-    GetProgram()->SetAst(script);
+
+    auto mainProg = parser->Context()->parserProgram;
+    if (mainProg->ModuleInfo().kind == util::ModuleKind::PACKAGE) {
+        // NOTE(dkofanov): import metadata of a fraction should "point" to the related package:
+        auto *package = parser->GetImportPathManager()->SearchResolved(mainProg->GetImportMetadata());
+
+        if (package->Is<util::ModuleKind::PACKAGE>()) {
+            ES2PANDA_ASSERT(package != mainProg);
+            [[maybe_unused]] auto &fractions = package->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms();
+            ES2PANDA_ASSERT(std::find(fractions.begin(), fractions.end(), mainProg) != fractions.end());
+
+            package->PromoteToMainProgram(parser->Context());
+        }
+    }
 }
 
-void ETSParser::ParseFileHeaderFlag(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> *statements)
+void ETSParser::ParseGlobalImpl()
+{
+    ES2PANDA_ASSERT(GetProgram() != nullptr);
+    ES2PANDA_ASSERT(GetProgram() == Context()->parserProgram);
+
+    ParseSource(GetProgram());
+    GetImportPathManager()->GetParseQueue().front().isParsed = true;
+
+    ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().front().program == GetProgram());
+
+    DoSomethingSpecificToMainProgram(this);
+
+    ParseSources();
+}
+
+ir::ExpressionStatement *ETSParser::ParseFileHeaderFlag()
 {
     if (Lexer()->GetToken().KeywordType() != lexer::TokenType::LITERAL_STRING ||
         Lexer()->GetToken().String() != compiler::Signatures::STATIC_PROGRAM_FLAG) {
-        return;
+        return nullptr;
     }
 
+    auto startLoc = Lexer()->GetToken().Start();
     ir::Expression *fileHeaderFlag = ParseStringLiteral();
     auto *exprStatementNode = AllocNode<ir::ExpressionStatement>(fileHeaderFlag);
     ES2PANDA_ASSERT(exprStatementNode != nullptr);
     exprStatementNode->SetRange({startLoc, fileHeaderFlag->End()});
     ConsumeSemicolon(exprStatementNode);
-    if (statements != nullptr) {
-        statements->push_back(exprStatementNode);
-    }
+    return exprStatementNode;
 }
 
 ir::ETSModule *ETSParser::ParseETSGlobalScript(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements)
@@ -212,303 +206,116 @@ ir::ETSModule *ETSParser::ParseImportsAndReExportOnly(lexer::SourcePosition star
     return etsModule;
 }
 
-bool ETSParser::CheckDupAndReplace(Program *&oldProg, Program *newProg) const
+parser::Program *ETSParser::IntroduceStdlibImportProgram(std::string &&importSrc)
 {
-    if (oldProg->FileName() == newProg->FileName() &&
-        oldProg->FileNameWithExtension() != newProg->FileNameWithExtension()) {
-        bool oldIsDeclare = oldProg->FileNameWithExtension().Length() > newProg->FileNameWithExtension().Length();
-        if (oldIsDeclare) {
-            Context()->dupPrograms.emplace(oldProg->AbsoluteName(), newProg);
-            oldProg = newProg;
-        } else {
-            Context()->dupPrograms.emplace(newProg->AbsoluteName(), oldProg);
-        }
-        return true;
-    }
-    return false;
-}
-
-void ETSParser::AddExternalSource(const std::vector<Program *> &programs)
-{
-    auto &extSources = globalProgram_->ExternalSources();
-
-    for (auto *newProg : programs) {
-        const util::StringView name = newProg->ModuleName();
-        if (extSources.count(name) == 0) {
-            extSources.try_emplace(name, Allocator()->Adapter());
-        }
-        bool found = false;
-        auto &extProgs = extSources.at(name);
-        for (auto &prog : extProgs) {
-            if (prog->SourceFilePath() == newProg->SourceFilePath()) {
-                found = true;
-                break;
-            }
-            if (CheckDupAndReplace(prog, newProg)) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            extSources.at(name).emplace_back(newProg);
-        }
-    }
-}
-
-ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseDefaultSources(std::string_view srcFile,
-                                                                       std::string_view importSrc)
-{
-    auto isp = InnerSourceParser(this);
-    SourceFile source(srcFile, importSrc);
-    auto lexer = InitLexer(source);
-
-    Lexer()->NextToken();
+    auto *stdlibImportProgram = GetImportPathManager()->IntroduceStdlibImportProgram(std::move(importSrc));
+    ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().back().program == stdlibImportProgram);
+    ES2PANDA_ASSERT(!GetImportPathManager()->GetParseQueue().back().isParsed);
+    ES2PANDA_ASSERT(stdlibImportProgram->Ast() == nullptr);
 
     GetContext().Status() |= ParserStatus::IN_DEFAULT_IMPORTS;
-    auto statements = ParseImportDeclarations();
+    ParseSources();
     GetContext().Status() &= ~ParserStatus::IN_DEFAULT_IMPORTS;
 
-    std::vector<Program *> programs;
-
-    if (!Context()->compiledByCapi) {
-        AddExternalSource(ParseSources());
-    } else {
-        if (Context()->globalContext != nullptr && Context()->globalContext->stdLibAstCache != nullptr) {
-            globalProgram_->MergeExternalSource(Context()->globalContext->stdLibAstCache);
-            importPathManager_->ClearParseList();
-        } else {
-            AddExternalSource(ParseSources());
-        }
-    }
-    return statements;
+    return stdlibImportProgram;
 }
 
 void ETSParser::AddDirectImportsToDirectExternalSources(
-    const std::vector<util::StringView> &directImportsFromMainSource, parser::Program *const newProg) const
+    const std::vector<parser::Program *> &directImportsFromMainSource) const
 {
-    if (std::find_if(directImportsFromMainSource.begin(), directImportsFromMainSource.end(),
-                     [newProg](const util::StringView &sv) { return sv == newProg->AbsoluteName(); }) ==
-        directImportsFromMainSource.end()) {
-        return;
+    // NOTE(dkofanov): For some reason, "directExternalPrograms" are populated only for main program.
+    ES2PANDA_ASSERT(GetProgram() == GetGlobalProgram());
+    auto &directExtSourcesHolder = GetGlobalProgram()->GetExternalSources()->Direct();
+    for (auto *prog : directImportsFromMainSource) {
+        auto key = prog->GetImportMetadata().ResolvedSource();
+        directExtSourcesHolder.insert({ArenaString {key}, prog});
     }
+}
 
-    auto name = newProg->ModuleName();
-    GetProgram()->DirectExternalSources().try_emplace(name, Allocator()->Adapter());
-    auto &dirExternal = GetProgram()->DirectExternalSources().at(name);
-    for (auto &prog : dirExternal) {
-        if (CheckDupAndReplace(prog, newProg)) {
+void ETSParser::ParseInSimultMode()
+{
+    ES2PANDA_ASSERT(Context()->parserProgram == nullptr);
+    ES2PANDA_ASSERT(GetImportPathManager()->GetParseQueue().empty());
+
+    GetImportPathManager()->InitParseQueueForSimult();
+
+    ES2PANDA_ASSERT(Context()->parserProgram != nullptr);
+
+    SetProgram(Context()->parserProgram);
+    GetContext().SetProgram(Context()->parserProgram);
+    GetContext().SetLanguage(ToLanguage(Context()->parserProgram->Extension()));
+
+    // NOTE(dkofanov): direct-sources to be removed.
+    std::vector<parser::Program *> directImportsFromMainSource {};
+    for (auto directImport : GetImportPathManager()->GetParseQueue()) {
+        ES2PANDA_ASSERT(!directImport.isParsed);
+        directImportsFromMainSource.emplace_back(directImport.program);
+    }
+    ParseSources();
+    AddDirectImportsToDirectExternalSources(directImportsFromMainSource);
+}
+
+void ETSParser::ParseSources()
+{
+    auto &parseQueue = GetImportPathManager()->GetParseQueue();
+    for (size_t i = 0; i < parseQueue.size(); i++) {
+        if (!parseQueue[i].isParsed) {
+            ParseNotParsed(&parseQueue[i]);
+        }
+    }
+}
+
+void ETSParser::ParseNotParsed(util::ImportPathManager::ParseInfo *notParsedElement)
+{
+    ES2PANDA_ASSERT(!notParsedElement->isParsed);
+    notParsedElement->isParsed = true;
+
+    const auto &data = notParsedElement->program->GetImportMetadata();
+    ES2PANDA_ASSERT(notParsedElement->program != GetGlobalProgram());
+    ES2PANDA_ASSERT(data.Lang() != Language::Id::COUNT);
+    auto preservedLang = GetContext().SetLanguage(data.Lang());
+
+    // Check if already visited in dep_analyzer
+    if (GetContext().IsDependencyAnalyzerMode()) {
+        const auto *depAnalyzer = Context()->depAnalyzer;
+        ES2PANDA_ASSERT(depAnalyzer != nullptr);
+        if (depAnalyzer->GetAlreadyProcessedFiles().count(std::string {data.ResolvedSource()}) > 0) {
             return;
         }
     }
-    dirExternal.emplace_back(newProg);
+    ParseSource(notParsedElement->program);
+
+    GetContext().SetLanguage(preservedLang);
 }
 
-void ETSParser::ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem,
-                                      std::string_view const extSrc,
-                                      const std::vector<util::StringView> &directImportsFromMainSource,
-                                      std::vector<Program *> *programs)
+void ETSParser::ParseSource(parser::Program *program)
 {
-    const auto &importData = parseListElem.importData;
-
-    auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
-    if (extSrc.empty()) {
-        util::DiagnosticMessageParams param = {std::string {src}};
-        DiagnosticEngine().LogDiagnostic(diagnostic::EMPTY_SOURCE_FILE, param);
-    }
-
-    bool isDynamic = importData.lang != Language::Id::ETS;
-    SourceFile sf {src, extSrc, importData.resolvedSource, false, isDynamic};
-    sf.isExternalSourceImport = importData.IsExternalSourceImport();
-    parser::Program *newProg = ParseSource(sf);
-    ES2PANDA_ASSERT(newProg != nullptr);
-    if (!importData.IsImplicitPackageImported() || newProg->IsPackage()) {
-        AddDirectImportsToDirectExternalSources(directImportsFromMainSource, newProg);
-        // don't insert the separate modules into the programs, when we collect implicit package imports
-        programs->emplace_back(newProg);
-    }
-}
-
-void ETSParser::AddGenExtenralSourceToParseList(public_lib::Context *ctx)
-{
-    auto allocator = ctx->allocator;
-    auto ident = allocator->New<ir::Identifier>(compiler::Signatures::ETS_GLOBAL, allocator);
-    ArenaVector<ir::Statement *> stmts(allocator->Adapter());
-
-    auto etsModule =
-        allocator->New<ir::ETSModule>(allocator, std::move(stmts), ident, ir::ModuleFlag::ETSSCRIPT,
-                                      ctx->parser->AsETSParser()->GetContext().GetLanguage(), ctx->parserProgram);
-    ctx->parserProgram->SetAst(etsModule);
-    for (auto &sourceName : ctx->sourceFileNames) {
-        util::ImportPathManager::ImportMetadata importData {util::ImportFlags::NONE};
-        importData.resolvedSource = sourceName;
-        importData.lang = Language::Id::ETS;
-        importData.declPath = util::ImportPathManager::DUMMY_PATH;
-        importData.ohmUrl = util::ImportPathManager::DUMMY_PATH;
-        ctx->parser->AsETSParser()->GetImportPathManager()->AddToParseList(importData);
-    }
-    ctx->parser->AsETSParser()->AddExternalSource(ctx->parser->AsETSParser()->ParseSources(true));
-}
-
-bool ETSParser::TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData)
-{
-    if (Context()->globalContext == nullptr) {
-        return false;
-    }
-
-    auto src = importData.HasSpecifiedDeclPath() ? importData.declPath : importData.resolvedSource;
-    const auto &absPath = std::string {util::Path {src, Allocator()}.GetAbsolutePath()};
-    auto cacheExtProgs = Context()->globalContext->cachedExternalPrograms;
-    if (cacheExtProgs.find(absPath) != cacheExtProgs.end() && cacheExtProgs[absPath] != nullptr) {
-        if (globalProgram_->MergeExternalSource(cacheExtProgs[absPath])) {
-            importPathManager_->MarkAsParsed(importData.resolvedSource);
-            return true;
-        }
-    }
-    return false;
-}
-
-//  Extracted from `ETSParser::SearchForNotParsed` to reduce its size and complexity
-std::optional<std::string_view> ETSParser::GetDeclarationSource(std::string &&fileToParse) const
-{
-    auto const readFromFile = [this, &fileToParse]() -> std::optional<std::string> {
-        if (std::ifstream inputStream {fileToParse}; !inputStream) {
-            util::DiagnosticMessageParams diagParams = {std::move(fileToParse)};
-            DiagnosticEngine().LogDiagnostic(diagnostic::OPEN_FAILED, diagParams);
-            return std::nullopt;
-        } else {
-            std::stringstream ss {};
-            ss << inputStream.rdbuf();
-            return std::make_optional(ss.str());
-        }
-    };
-
-    if (!DeclarationCache::IsCacheActivated()) {
-        auto externalSource = readFromFile();
-        if (!externalSource.has_value()) {
-            return std::nullopt;
-        }
-        return std::make_optional(Allocator()->New<util::UString>(*externalSource, Allocator())->View().Utf8());
-    }
-
-    auto declaration = DeclarationCache::GetFromCache(fileToParse);
-    if (declaration == DeclarationCache::ABSENT) {
-        auto externalSource = readFromFile();
-        if (!externalSource.has_value()) {
-            return std::nullopt;
-        }
-        declaration = DeclarationCache::CacheIfPossible(std::move(fileToParse),
-                                                        std::make_shared<std::string>(std::move(*externalSource)));
-    }
-
-    return std::make_optional(std::string_view {*declaration});
-}
-
-std::vector<Program *> ETSParser::SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
-                                                     std::vector<util::StringView> &directImportsFromMainSource)
-{
-    std::vector<Program *> programs {};
-
-    auto findNotParsed = [&parseList]() -> auto
-    // CC-OFFNXT(G.FMT.03-CPP) project code style
-    {
-        return std::find_if(parseList.begin(), parseList.end(),
-                            [](const auto &parseInfo) { return !parseInfo.isParsed; });
-    };
-
-    auto notParsedElement = findNotParsed();
-    while (notParsedElement != parseList.end()) {
-        notParsedElement->isParsed = true;
-        const auto &data = notParsedElement->importData;
-
-        // Check if already visited in dep_analyzer
-        if (GetContext().IsDependencyAnalyzerMode()) {
-            const auto *depAnalyzer = Context()->depAnalyzer;
-            ES2PANDA_ASSERT(depAnalyzer != nullptr);
-            if (depAnalyzer->GetAlreadyProcessedFiles().count(std::string {data.resolvedSource}) > 0) {
-                notParsedElement = findNotParsed();
-                continue;
-            }
-        }
-
-        if (data.declPath.empty() || TryMergeFromCache(data)) {
-            notParsedElement = findNotParsed();
-            continue;
-        }
-
-        ES2PANDA_ASSERT(data.lang != Language::Id::COUNT);
-        auto parseCandidate = data.HasSpecifiedDeclPath() ? data.declPath : data.resolvedSource;
-        if (GetProgram()->SourceFilePath().Is(parseCandidate)) {
-            return programs;
-        }
-
-        auto preservedLang = GetContext().SetLanguage(data.lang);
-
-        auto declaration = GetDeclarationSource(std::string {parseCandidate});
-        if (!declaration.has_value()) {
-            GetContext().SetLanguage(preservedLang);
-            notParsedElement = findNotParsed();
-            continue;
-        }
-
-        ParseParseListElement(*notParsedElement, *declaration, directImportsFromMainSource, &programs);
-
-        GetContext().SetLanguage(preservedLang);
-
-        notParsedElement = findNotParsed();
-    }
-
-    return programs;
-}
-
-std::vector<Program *> ETSParser::ParseSources(bool firstSource)
-{
-    auto &parseList = importPathManager_->ParseList();
-    std::vector<util::StringView> directImportsFromMainSource {};
-    if (firstSource) {
-        // NOLINTNEXTLINE(modernize-loop-convert)
-        for (size_t idx = 0; idx < parseList.size(); idx++) {
-            if (parseList[idx].isParsed) {
-                // Handle excluded files, which are already set to be parsed before parsing them
-                continue;
-            }
-            directImportsFromMainSource.emplace_back(parseList[idx].importData.resolvedSource);
-        }
-    }
-    return SearchForNotParsed(parseList, directImportsFromMainSource);
-}
-
-parser::Program *ETSParser::ParseSource(const SourceFile &sourceFile)
-{
-    importPathManager_->MarkAsParsed(sourceFile.filePath);
-    auto *program = Allocator()->New<parser::Program>(Allocator(), GetProgram()->VarBinder());
-    ES2PANDA_ASSERT(program != nullptr);
     auto esp = ExternalSourceParser(this, program);
-    auto lexer = InitLexer(sourceFile);
-    program->SetRelativeFilePath(importPathManager_->FormRelativePath(program->SourceFile()));
+    ES2PANDA_ASSERT(GetProgram() == program);
+    ES2PANDA_ASSERT(GetProgram()->Ast() == nullptr);
+    auto lexer = InitLexer();
 
     lexer::SourcePosition startLoc = Lexer()->GetToken().Start();
     Lexer()->NextToken();
-
     ArenaVector<ir::Statement *> statements(Allocator()->Adapter());
-    ParseFileHeaderFlag(startLoc, nullptr);
-    auto decl = ParsePackageDeclaration();
-    ir::ETSModule *script = nullptr;
-    if (decl != nullptr) {
-        statements.emplace_back(decl);
-        if (Context()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
-            importPathManager_->AddImplicitPackageImportToParseList(program->SourceFile().GetAbsoluteParentFolder(),
-                                                                    Lexer()->GetToken().Start());
-            importPathManager_->MarkAsParsed(program->AbsoluteName().Utf8());
+    ir::Statement *header = ParseFileHeaderFlag();
+    ir::Statement *packageDecl = ParsePackageDeclaration();
+    for (auto st : {header, packageDecl}) {
+        if (st != nullptr) {
+            statements.push_back(st);
         }
-        SavedParserContext contextAfterParseDecl(this, GetContext().Status() |= ParserStatus::IN_PACKAGE);
     }
-    if (!GetContext().IsDependencyAnalyzerMode()) {
-        script = ParseETSGlobalScript(startLoc, statements);
-    } else {
+    ir::ETSModule *script = nullptr;
+    if (GetContext().IsDependencyAnalyzerMode()) {
         script = ParseImportsAndReExportOnly(startLoc, statements);
+    } else {
+        script = ParseETSGlobalScript(startLoc, statements);
+    }
+    if ((GetContext().Status() & ParserStatus::IN_PACKAGE) != 0) {
+        GetContext().Status() &= ~ParserStatus::IN_PACKAGE;
     }
     program->SetAst(script);
-    return program;
+    return;
 }
 
 ir::Statement *ETSParser::ParseIdentKeyword()
@@ -1221,9 +1028,6 @@ ir::ExportNamedDeclaration *ETSParser::CreateExportNamedDeclaration(const Specif
 
 ir::Statement *ETSParser::ParseExport(lexer::SourcePosition startLoc, ir::ModifierFlags modifiers)
 {
-    if (!InAmbientContext() && (GetContext().Status() & ParserStatus::IN_NAMESPACE) != 0) {
-        LogError(diagnostic::EXPORT_IN_NAMESPACE);
-    }
     // export a constant variable anonymously, as export default new A()
     if ((modifiers & ir::ModifierFlags::DEFAULT_EXPORT) != 0U &&
         Lexer()->GetToken().Type() != lexer::TokenType::PUNCTUATOR_MULTIPLY &&
@@ -1269,27 +1073,20 @@ ir::ETSPackageDeclaration *ETSParser::ParsePackageDeclaration()
 {
     auto startLoc = Lexer()->GetToken().Start();
 
-    if (!Lexer()->TryEatTokenType(lexer::TokenType::KEYW_PACKAGE)) {
-        // NOTE(vpukhov): the *unnamed* modules are to be removed entirely
-        bool isUnnamed = GetOptions().IsEtsUnnamed() && GetProgram() == globalProgram_;
-        util::StringView moduleName =
-            isUnnamed ? "" : importPathManager_->FormModuleName(GetProgram()->SourceFile(), startLoc);
-        GetProgram()->SetPackageInfo(moduleName, util::ModuleKind::MODULE);
-        return nullptr;
+    if (Lexer()->TryEatTokenType(lexer::TokenType::KEYW_PACKAGE)) {
+        ir::Expression *packageNameNode = ParseQualifiedName();
+        ir::ETSPackageDeclaration *packageDeclaration = AllocNode<ir::ETSPackageDeclaration>(packageNameNode);
+        ES2PANDA_ASSERT(packageDeclaration != nullptr);
+        packageDeclaration->SetRange({startLoc, Lexer()->GetToken().End()});
+        ConsumeSemicolon(packageDeclaration);
+
+        // If we found a package declaration, then add all files with the same package to the package parse list
+        EnsureContainingPackageIsRegistered(packageDeclaration);
+        GetContext().Status() |= ParserStatus::IN_PACKAGE;
+        return packageDeclaration;
     }
 
-    ir::Expression *name = ParseQualifiedName();
-    auto *packageDeclaration = AllocNode<ir::ETSPackageDeclaration>(name);
-    ES2PANDA_ASSERT(packageDeclaration != nullptr);
-    packageDeclaration->SetRange({startLoc, Lexer()->GetToken().End()});
-
-    ConsumeSemicolon(packageDeclaration);
-
-    auto packageName = name->IsIdentifier() ? name->AsIdentifier()->Name() : name->AsTSQualifiedName()->Name();
-
-    GetProgram()->SetPackageInfo(packageName, util::ModuleKind::PACKAGE);
-
-    return packageDeclaration;
+    return nullptr;
 }
 
 ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::AstNode *> &&specifiers,
@@ -1313,9 +1110,8 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
         auto errorLiteral = AllocNode<ir::StringLiteral>(str);
         ES2PANDA_ASSERT(errorLiteral != nullptr);
         errorLiteral->SetRange(Lexer()->GetToken().Loc());
-        auto *const importDeclaration = AllocNode<ir::ETSImportDeclaration>(
-            errorLiteral, util::ImportPathManager::ImportMetadata {}, std::move(specifiers), importKind);
-        importDeclaration->SetResolvedSource(ERROR_LITERAL);
+        auto *const importDeclaration = AllocNode<ir::ETSImportDeclaration>(errorLiteral, util::ImportMetadata {},
+                                                                            std::move(specifiers), importKind);
         ES2PANDA_ASSERT(importDeclaration != nullptr);
         importDeclaration->SetRange({startLoc, errorLiteral->End()});
         return importDeclaration;
@@ -1327,12 +1123,8 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
     ES2PANDA_ASSERT(importPathStringLiteral != nullptr);
     importPathStringLiteral->SetRange(Lexer()->GetToken().Loc());
     Lexer()->NextToken();
-    auto importFlags = (GetContext().Status() & parser::ParserStatus::IN_DEFAULT_IMPORTS) != 0U
-                           ? util::ImportFlags::DEFAULT_IMPORT
-                           : util::ImportFlags::NONE;
-    auto *const importDeclaration =
-        BuildImportDeclaration(importKind, std::move(specifiers), importPathStringLiteral,
-                               const_cast<parser::Program *>(GetContext().GetProgram()), importFlags);
+    auto *const importDeclaration = BuildImportDeclaration(importKind, std::move(specifiers), importPathStringLiteral,
+                                                           const_cast<parser::Program *>(GetContext().GetProgram()));
     ES2PANDA_ASSERT(importDeclaration != nullptr);
     importDeclaration->SetRange({startLoc, importPathStringLiteral->End()});
     if (Lexer()->GetToken().Ident().Is("assert")) {
@@ -1345,12 +1137,14 @@ ir::ETSImportDeclaration *ETSParser::ParseImportPathBuildImport(ArenaVector<ir::
 
 ir::ETSImportDeclaration *ETSParser::BuildImportDeclaration(ir::ImportKinds importKind,
                                                             ArenaVector<ir::AstNode *> &&specifiers,
-                                                            ir::StringLiteral *pathToResolve, parser::Program *program,
-                                                            util::ImportFlags importFlag)
+                                                            ir::StringLiteral *pathToResolve, parser::Program *program)
 {
-    return AllocNode<ir::ETSImportDeclaration>(
-        pathToResolve, importPathManager_->GatherImportMetadata(program, importFlag, pathToResolve),
-        std::move(specifiers), importKind);
+    auto importedProg = GetImportPathManager()->GatherImportMetadata(program, pathToResolve);
+    if (importedProg != nullptr) {
+        return AllocNode<ir::ETSImportDeclaration>(pathToResolve, importedProg->GetImportMetadata(),
+                                                   std::move(specifiers), importKind);
+    }
+    return AllocNode<ir::ETSImportDeclaration>(pathToResolve, std::move(specifiers), importKind);
 }
 
 ArenaVector<ir::ETSImportDeclaration *> ETSParser::ParseImportDeclarations()
@@ -2613,13 +2407,14 @@ ir::FunctionDeclaration *ETSParser::ParseTopLevelAccessor(ir::ModifierFlags modi
     return funcDecl;
 }
 
-void ETSParser::AddPackageSourcesToParseList()
+void ETSParser::EnsureContainingPackageIsRegistered(ir::ETSPackageDeclaration *packageDecl)
 {
-    importPathManager_->AddImplicitPackageImportToParseList(GetProgram()->SourceFile().GetAbsoluteParentFolder(),
-                                                            Lexer()->GetToken().Start());
-
-    // Global program file is always in the same folder that we scanned, but we don't need to parse it twice
-    importPathManager_->MarkAsParsed(globalProgram_->AbsoluteName().Utf8());
+    ES2PANDA_ASSERT(packageDecl->Range().start.Program() == GetProgram());
+    auto *packageFraction = GetProgram();
+    [[maybe_unused]] auto packageProg =
+        GetImportPathManager()->EnsurePackageIsRegisteredByPackageFraction(packageFraction, packageDecl);
+    ES2PANDA_ASSERT(packageFraction->GetModuleKind() == util::ModuleKind::MODULE);
+    ES2PANDA_ASSERT(packageProg->ModuleName() == packageFraction->ModuleName());
 }
 
 //================================================================================================//
@@ -2648,20 +2443,11 @@ ExternalSourceParser::~ExternalSourceParser()
 //  InnerSourceParser class
 //================================================================================================//
 
-InnerSourceParser::InnerSourceParser(ETSParser *parser)
-    : parser_(parser),
-      savedLexer_(parser_->Lexer()),
-      savedSourceCode_(parser_->GetProgram()->SourceCode()),
-      savedSourceFile_(parser_->GetProgram()->SourceFile()),
-      savedSourceFilePath_(parser_->GetProgram()->SourceFileFolder()),
-      savedRelativeFilePath_(parser_->GetProgram()->RelativeFilePath())
-{
-}
+InnerSourceParser::InnerSourceParser(ETSParser *parser) : parser_(parser), savedLexer_(parser_->Lexer()) {}
 
 InnerSourceParser::~InnerSourceParser()
 {
     parser_->SetLexer(savedLexer_);
-    parser_->GetProgram()->SetSource(savedSourceCode_, savedSourceFile_, savedSourceFilePath_);
-    parser_->GetProgram()->SetRelativeFilePath(savedRelativeFilePath_);
 }
+
 }  // namespace ark::es2panda::parser

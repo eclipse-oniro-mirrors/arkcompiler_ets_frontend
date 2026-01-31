@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,11 +16,9 @@
 import type * /* @@ label1 */from './export_type.ets'
 
 let a = new A();
-class C implements B {};
+class C implements B /* @@ label2 */{};
 let c = new C()
 
 
-/* @@? export_type.ets:1:1 Error Semantic error ESE0130: Function main is already declared. */
-
 /* @@@ label1 Error Syntax error ESY0228: Unexpected token, expected 'as'. */
-/* @@? import_type_with_invalid_syntax.ets:16:35 Error Semantic error ESE0349: Class 'C' is already defined. */
+/* @@@ label2 Error Semantic error ESE0349: Class 'C' is already defined. */

@@ -44,8 +44,8 @@ class ETSNewClassInstanceExpression;
 }  // namespace ark::es2panda::ir
 
 namespace ark::es2panda::varbinder {
-using AliasesByExportedNames = std::map<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
-using ModulesToExportedNamesWithAliases = std::map<util::StringView, AliasesByExportedNames>;
+using AliasesByExportedNames = ArenaMap<util::StringView, std::pair<util::StringView, ir::AstNode const *>>;
+using ModulesToExportedNamesWithAliases = ArenaMap<util::StringView, AliasesByExportedNames>;
 
 struct DynamicImportData {
     const ir::ETSImportDeclaration *import;
@@ -57,15 +57,16 @@ using DynamicImportVariables = ArenaUnorderedMap<const Variable *, DynamicImport
 
 class ETSBinder : public TypedBinder {
 public:
-    explicit ETSBinder(ArenaAllocator *allocator)
-        : TypedBinder(allocator),
-          globalRecordTable_(allocator, Program(), RecordTableFlags::NONE),
+    explicit ETSBinder(public_lib::Context *context)
+        : TypedBinder(context),
+          globalRecordTable_(Allocator(), nullptr, RecordTableFlags::NONE),
           recordTable_(&globalRecordTable_),
           externalRecordTable_(Allocator()->Adapter()),
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
           reExportImports_(Allocator()->Adapter()),
-          reexportedNames_(Allocator()->Adapter())
+          reexportedNames_(Allocator()->Adapter()),
+          selectiveExportAliasMultimap_(Allocator()->New<ModulesToExportedNamesWithAliases>())
     {
         InitImplicitThisParam();
     }
@@ -99,6 +100,8 @@ public:
     {
         recordTable_ = table;
     }
+
+    bool CheckRecordTablesConsistency(parser::Program *program = nullptr) const;
 
     [[nodiscard]] RecordTable *GetGlobalRecordTable() noexcept
     {
@@ -144,47 +147,35 @@ public:
     void BuildImportDeclaration(ir::ETSImportDeclaration *decl);
     void ValidateReexportDeclaration(ir::ETSReExportDeclaration *decl);
     void ValidateReexports();
-    [[nodiscard]] bool ReexportPathMatchesImportPath(const ir::ETSReExportDeclaration *const reexport,
-                                                     const ir::ETSImportDeclaration *const import) const;
     Variable *ValidateImportSpecifier(const ir::ImportSpecifier *const specifier,
                                       const ir::ETSImportDeclaration *const import);
     void BuildETSNewClassInstanceExpression(ir::ETSNewClassInstanceExpression *classInstance);
     [[nodiscard]] bool DetectNameConflict(const util::StringView localName, Variable *const var,
-                                          Variable *const otherVar, const ir::StringLiteral *const importPath);
-    [[nodiscard]] ArenaVector<parser::Program *> GetExternalProgram(util::StringView sourceName,
-                                                                    const ir::StringLiteral *importPath);
+                                          Variable *const otherVar, ir::Identifier const *local);
+    parser::Program *GetExternalProgram(const ir::ETSImportDeclaration *import);
 
     std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInReExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported,
-        const ir::StringLiteral *const importPath);
+        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
     std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInNamedExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported,
-        const ir::StringLiteral *const importPath);
+        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
     std::pair<ir::ETSImportDeclaration *, ir::AstNode *> FindImportDeclInExports(
-        const ir::ETSImportDeclaration *const import, const util::StringView &imported,
-        const ir::StringLiteral *const importPath);
-    ir::ETSImportDeclaration *FindImportDeclIn(const ir::ETSImportDeclaration *const import,
-                                               const util::StringView &imported,
-                                               const ir::StringLiteral *const importPath);
-    void AddImportNamespaceSpecifiersToTopBindings(Span<parser::Program *const> records,
+        const ir::ETSImportDeclaration *const import, const util::StringView &imported);
+    void AddImportNamespaceSpecifiersToTopBindings(parser::Program *const importProgram,
                                                    ir::ImportNamespaceSpecifier *namespaceSpecifier,
                                                    const ir::ETSImportDeclaration *import);
     util::StringView GetAdjustedImportedName(ir::ImportSpecifier *const importSpecifier,
                                              const ir::ETSImportDeclaration *const import);
-    bool AddImportSpecifiersToTopBindings(Span<parser::Program *const> records, ir::ImportSpecifier *importSpecifier,
+    bool AddImportSpecifiersToTopBindings(parser::Program *importedProgram, ir::ImportSpecifier *importSpecifier,
                                           const ir::ETSImportDeclaration *import);
-    void AddImportDefaultSpecifiersToTopBindings(Span<parser::Program *const> records,
+    void AddImportDefaultSpecifiersToTopBindings(parser::Program *const importedProgram,
                                                  ir::ImportDefaultSpecifier *importDefaultSpecifier,
                                                  const ir::ETSImportDeclaration *import);
     void ValidateImportVariable(const ir::AstNode *node, const ir::AstNode *declNode, const util::StringView &imported,
-                                const ir::StringLiteral *const importPath);
-    Variable *FindImportSpecifiersVariable(const util::StringView &imported,
-                                           const varbinder::Scope::VariableMap &globalBindings,
-                                           Span<parser::Program *const> record);
-    Variable *FindStaticBinding(Span<parser::Program *const> records, const ir::StringLiteral *importPath);
+                                const ir::ETSImportDeclaration *import);
+    Variable *FindImportSpecifiersVariable(const util::StringView &imported, parser::Program *importedProgram);
+    Variable *FindStaticBinding(parser::Program *const importedProgram, const ir::ETSImportDeclaration *import);
     Variable *AddImportSpecifierFromReExport(ir::AstNode *importSpecifier, const ir::ETSImportDeclaration *const import,
-                                             const util::StringView &imported,
-                                             const ir::StringLiteral *const importPath);
+                                             const util::StringView &imported);
     void AddSpecifiersToTopBindings(ir::AstNode *const specifier, const ir::ETSImportDeclaration *const import);
 
     void ResolveInterfaceDeclaration(ir::TSInterfaceDeclaration *decl);
@@ -222,15 +213,15 @@ public:
 
     void AddReExportImport(ir::ETSReExportDeclaration *reExport) noexcept
     {
-        reExportImports_.insert(reExport);
+        reExportImports_[reExport->Program()].push_back(reExport);
     }
 
-    [[nodiscard]] const ArenaSet<ir::ETSReExportDeclaration *> &ReExportImports() const noexcept
+    const auto &ReExportImports() const
     {
         return reExportImports_;
     }
 
-    [[nodiscard]] ArenaSet<ir::ETSReExportDeclaration *> &ReExportImports() noexcept
+    auto &ReExportImports()
     {
         return reExportImports_;
     }
@@ -245,9 +236,6 @@ public:
         defaultExport_ = defaultExport;
     }
 
-    /* Returns the list of programs belonging to the same compilation unit based on a program path */
-    [[nodiscard]] ArenaVector<parser::Program *> GetProgramList(const util::StringView &path) const noexcept;
-
     void ResolveReferenceForScope(ir::AstNode *node, Scope *scope);
     void ResolveReferencesForScope(ir::AstNode const *parent, Scope *scope);
 
@@ -259,12 +247,12 @@ public:
 
     [[nodiscard]] const ModulesToExportedNamesWithAliases &GetSelectiveExportAliasMultimap() const noexcept
     {
-        return selectiveExportAliasMultimap_;
+        return *selectiveExportAliasMultimap_;
     }
 
     [[nodiscard]] ModulesToExportedNamesWithAliases &GetSelectiveExportAliasMultimap() noexcept
     {
-        return selectiveExportAliasMultimap_;
+        return *selectiveExportAliasMultimap_;
     }
 
     util::StringView FindNameInAliasMap(const util::StringView &pathAsKey, const util::StringView &aliasName);
@@ -290,7 +278,6 @@ public:
         targetImpl->defaultImports_ = defaultImports_;
         InitImplicitThisParam();
         targetImpl->selectiveExportAliasMultimap_ = selectiveExportAliasMultimap_;
-        ;
 
         VarBinder::CopyTo(target);
     }
@@ -299,27 +286,23 @@ private:
     void BuildClassDefinitionImpl(ir::ClassDefinition *classDef);
     void InitImplicitThisParam();
     void HandleStarImport(ir::TSQualifiedName *importName, util::StringView fullPath);
-    void ImportGlobalProperties(const ir::ClassDefinition *classDef);
-    bool ImportGlobalPropertiesForNotDefaultedExports(varbinder::Variable *var, const util::StringView &name,
-                                                      const ir::ClassElement *classElement);
     void InsertForeignBinding(const util::StringView &name, Variable *var);
     void InsertOrAssignForeignBinding(const util::StringView &name, Variable *var);
-    void ImportAllForeignBindings(const varbinder::Scope::VariableMap &globalBindings,
-                                  const parser::Program *importProgram, const varbinder::GlobalScope *importGlobalScope,
-                                  const ir::ETSImportDeclaration *import);
+    void ImportAllForeignBindings(const parser::Program *importProgram);
     void ThrowRedeclarationError(const lexer::SourcePosition &pos, const Variable *const var,
                                  const Variable *const variable, util::StringView localName);
 
+    // NOTE(dkofanov): #32418.
     RecordTable globalRecordTable_;
     RecordTable *recordTable_;
     ArenaMap<parser::Program *, RecordTable *> externalRecordTable_;
     ArenaVector<ir::ETSImportDeclaration *> defaultImports_;  // 1
     ArenaVector<ir::ETSImportDeclaration *> dynamicImports_;
-    ArenaSet<ir::ETSReExportDeclaration *> reExportImports_;
+    ArenaMap<const parser::Program *, ArenaVector<ir::ETSReExportDeclaration *>> reExportImports_;
     ArenaSet<util::StringView> reexportedNames_;
     ir::Identifier *thisParam_ {};  // 2
     ir::AstNode *defaultExport_ {};
-    ModulesToExportedNamesWithAliases selectiveExportAliasMultimap_;  // 3
+    ModulesToExportedNamesWithAliases *selectiveExportAliasMultimap_;  // 3
 
     friend class RecordTableContext;
 };

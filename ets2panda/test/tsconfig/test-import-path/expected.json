@@ -1,5 +1,5 @@
 {
     "returncode": 1,
-    "stdout": "[main.ets:16:10] Syntax error ESY0102: The '*' token is not allowed as a selective binding (between braces).\n[main.ets:16:10] Syntax error ESY0227: Unexpected token '*'.\n[main.ets:16:14] Syntax error ESY10292: The import clause contains an empty list.\n[main.ets:16:19] Fatal error F0019: Not supported path: [ABS_PATH]/module\n",
+    "stdout": "Fatal error F0014: Unresolved module name for path: ''\n[main.ets:16:10] Syntax error ESY0102: The '*' token is not allowed as a selective binding (between braces).\n[main.ets:16:10] Syntax error ESY0227: Unexpected token '*'.\n[main.ets:16:14] Syntax error ESY10292: The import clause contains an empty list.\n[main.ets:16:19] Fatal error F0019: Not supported path: [ABS_PATH]/module\n",
     "stderr": ""
 }

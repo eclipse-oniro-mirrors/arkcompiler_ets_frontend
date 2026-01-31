@@ -530,19 +530,21 @@ Type *ETSChecker::HandleBooleanLogicalOperators(Type *leftType, Type *rightType,
     return nullptr;
 }
 
-void ETSChecker::ResolveReturnStatement(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
-                                        ir::ScriptFunction *containingFunc, ir::ReturnStatement *st)
+void ETSChecker::ResolveReturnStatement(ir::ScriptFunction *containingFunc, checker::Type *argumentType,
+                                        ir::ReturnStatement *st)
 {
+    auto *const signature = containingFunc->Signature();
+    signature->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
+
+    auto *funcReturnType = signature->ReturnType();
     if (funcReturnType->IsETSPrimitiveOrEnumType() && argumentType->IsETSPrimitiveOrEnumType()) {
         // function return type is of primitive type (including enums):
         Relation()->SetFlags(checker::TypeRelationFlag::DIRECT_RETURN |
                              checker::TypeRelationFlag::IN_ASSIGNMENT_CONTEXT |
                              checker::TypeRelationFlag::ASSIGNMENT_CONTEXT);
         if (Relation()->IsAssignableTo(funcReturnType, argumentType)) {
-            funcReturnType = argumentType;
-            containingFunc->Signature()->SetReturnType(funcReturnType);
-            containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
-            st->Argument()->SetTsType(funcReturnType);
+            signature->SetReturnType(argumentType);
+            st->Argument()->SetTsType(argumentType);
         } else if (!Relation()->IsAssignableTo(argumentType, funcReturnType)) {
             LogError(diagnostic::RETURN_DIFFERENT_PRIM, {funcReturnType, argumentType}, st->Argument()->Start());
         }
@@ -563,20 +565,27 @@ void ETSChecker::ResolveReturnStatement(ETSChecker *checker, checker::Type *func
                 LogError(diagnostic::INVALID_RETURN_FUNC_EXPR, {}, st->Start());
             }
         }
-        if (argumentType != nullptr && funcReturnType != nullptr) {
-            funcReturnType = CreateETSUnionType({funcReturnType, argumentType});
-            if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal()) {
-                auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType);
-                containingFunc->Signature()->SetReturnType(returnType->PromiseType());
-            } else {
-                containingFunc->Signature()->SetReturnType(funcReturnType);
-            }
-            containingFunc->Signature()->AddSignatureFlag(checker::SignatureFlags::INFERRED_RETURN_TYPE);
+
+        if (argumentType == nullptr || funcReturnType == nullptr) {
+            return;
         }
+
+        if (IsPromiseType(funcReturnType)) {
+            ES2PANDA_ASSERT(containingFunc->IsAsyncFunc());
+            if (!IsPromiseType(argumentType)) {
+                argumentType = CreateETSAsyncFuncReturnTypeFromBaseType(argumentType)->PromiseType();
+            }
+        }
+
+        funcReturnType = CreateETSUnionType({funcReturnType, argumentType});
+        if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal() && !IsPromiseType(funcReturnType)) {
+            funcReturnType = CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType)->PromiseType();
+        }
+
+        signature->SetReturnType(funcReturnType);
     } else {
         // Should never in this branch.
         ES2PANDA_UNREACHABLE();
-        return;
     }
 }
 
@@ -943,10 +952,11 @@ static void CheckAssignForDeclare(ir::Identifier *ident, ir::TypeNode *typeAnnot
     }
     const bool isConst = (flags & ir::ModifierFlags::CONST) != 0;
     ES2PANDA_ASSERT(init != nullptr);
-    bool numberLiteralButNotBigInt = init->IsNumberLiteral() && !init->IsBigIntLiteral();
+    // NOTE(dkofanov): the bigint-contraint is loosen.
+    bool numberLiteralOrBigInt = init->IsNumberLiteral() || init->IsBigIntLiteral();
     bool multilineLiteralWithNoEmbedding =
         init->IsTemplateLiteral() && init->AsTemplateLiteral()->Expressions().empty();
-    if (isConst && !numberLiteralButNotBigInt && !init->IsStringLiteral() && !multilineLiteralWithNoEmbedding) {
+    if (isConst && !numberLiteralOrBigInt && !init->IsStringLiteral() && !multilineLiteralWithNoEmbedding) {
         check->LogError(diagnostic::AMBIENT_CONST_INVALID_LIT, {ident->Name()}, init->Start());
     }
 }
@@ -1844,19 +1854,25 @@ std::vector<util::StringView> ETSChecker::GetNameForSynteticObjectType(const uti
     return syntheticName;
 }
 
-std::pair<bool, util::StringView> FindSpecifierForModuleObject(ir::ETSImportDeclaration *importDecl,
-                                                               util::StringView const &name)
+static std::pair<bool, util::StringView> FindSpecifierForModuleObject(ir::ETSImportDeclaration *importDecl,
+                                                                      varbinder::Variable *binding)
 {
-    if (importDecl == nullptr) {
+    ES2PANDA_ASSERT(importDecl != nullptr);
+    if (importDecl->Specifiers().size() != 0 && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier()) {
         return std::make_pair(true, util::StringView());
     }
 
     for (auto item : importDecl->Specifiers()) {
-        if (item->IsImportSpecifier() && item->AsImportSpecifier()->Imported()->Name().Is(name.Mutf8())) {
-            if (!item->AsImportSpecifier()->Imported()->Name().Is(item->AsImportSpecifier()->Local()->Name().Mutf8())) {
-                return std::make_pair(true, item->AsImportSpecifier()->Local()->Name());
+        if (item->IsImportSpecifier() && (item->AsImportSpecifier()->Imported()->Variable() == binding)) {
+            util::StringView alias {};
+            auto specifier = item->AsImportSpecifier();
+            if (specifier->Imported()->Name() != specifier->Local()->Name()) {
+                alias = item->AsImportSpecifier()->Local()->Name();
             }
-            return std::make_pair(true, util::StringView());
+            return std::make_pair(true, alias);
+        }
+        if (item->IsImportDefaultSpecifier() && (item->AsImportDefaultSpecifier()->Local()->Variable() == binding)) {
+            return std::make_pair(true, item->AsImportDefaultSpecifier()->Local()->Name());
         }
     }
     return std::make_pair(false, util::StringView());
@@ -1885,20 +1901,20 @@ void ETSChecker::BindingsModuleObjectAddProperty(checker::ETSObjectType *moduleO
                                                  const varbinder::Scope::VariableMap &bindings,
                                                  const util::StringView &importPath)
 {
+    ES2PANDA_ASSERT(importDecl != nullptr);
     for (auto [_, var] : bindings) {
         (void)_;
-        auto [found, aliasedName] = FindSpecifierForModuleObject(importDecl, var->AsLocalVariable()->Name());
+        auto [foundInSpecifiers, aliasedName] = FindSpecifierForModuleObject(importDecl, var);
         auto node = var->AsLocalVariable()->Declaration()->Node();
         if (!node->IsValidInCurrentPhase()) {
             continue;
         }
         auto isFromDynamicDefaultImport =
             (node->IsDefaultExported() && var->HasFlag(varbinder::VariableFlags::DYNAMIC));
-        auto isReExportDefault = node->IsDefaultExported() && importDecl != nullptr &&
-                                 !importDecl->Specifiers().empty() &&
+        auto isReExportDefault = node->IsDefaultExported() && !importDecl->Specifiers().empty() &&
                                  !importDecl->Specifiers()[0]->IsImportNamespaceSpecifier();
         if ((node->IsExported() || isFromDynamicDefaultImport || node->HasExportAlias() || isReExportDefault) &&
-            found) {
+            foundInSpecifiers) {
             if (node->IsMethodDefinition()) {
                 BuildExportedFunctionSignature(this, var);
             }
@@ -1923,7 +1939,7 @@ std::vector<util::StringView> ETSChecker::FindPropNameForNamespaceImport(const u
                                                                          const util::StringView &importPath)
 {
     std::vector<util::StringView> results;
-    auto exportAliases = VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
+    const auto &exportAliases = VarBinder()->AsETSBinder()->GetSelectiveExportAliasMultimap();
     auto relatedMapItem = exportAliases.find(importPath);
     if (relatedMapItem != exportAliases.end()) {
         for (auto &item : relatedMapItem->second) {
@@ -1939,23 +1955,10 @@ std::vector<util::StringView> ETSChecker::FindPropNameForNamespaceImport(const u
     return results;
 }
 
-// Helps to prevent searching for the imported file among external sources if it is the entry program
-parser::Program *ETSChecker::SelectEntryOrExternalProgram(varbinder::ETSBinder *etsBinder,
-                                                          const util::StringView &importPath)
-{
-    if (importPath.Is(etsBinder->GetGlobalRecordTable()->Program()->AbsoluteName().Mutf8())) {
-        return etsBinder->GetGlobalRecordTable()->Program();
-    }
-
-    auto programList = etsBinder->GetProgramList(importPath);
-    return !programList.empty() ? programList.front() : nullptr;
-}
-
 void ETSChecker::SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjType, const util::StringView &importPath,
                                               ir::ETSImportDeclaration *importDecl)
 {
-    parser::Program *program =
-        SelectEntryOrExternalProgram(static_cast<varbinder::ETSBinder *>(VarBinder()), importPath);
+    parser::Program *program = VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
     // Check imported properties before assigning them to module object
     ES2PANDA_ASSERT(program != nullptr);
     if (!program->IsASTChecked()) {
@@ -1964,6 +1967,7 @@ void ETSChecker::SetPropertiesForModuleObject(checker::ETSObjectType *moduleObjT
         // If external program import current program, the checker status should not contain external
         checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
         if (!VarBinder()->AsETSBinder()->GetGlobalRecordTable()->IsExternal()) {
+            // NOTE(dkofanov): Looks like dead code.
             RemoveStatus(CheckerStatus::IN_EXTERNAL);
         }
         auto savedProgram = Program();
@@ -2762,11 +2766,11 @@ bool ETSChecker::IsInLocalClass(const ir::AstNode *node) const
 
 ir::Expression *ETSChecker::GenerateImplicitInstantiateArg(const std::string &className)
 {
+    auto context = VarBinder()->GetContext();
+    auto parser = context->parser->AsETSParser();
     std::string implicitInstantiateArgument = "()=>{return new " + className + "()}";
-    parser::Program program(ProgramAllocator(), VarBinder());
-    auto parser = parser::ETSParser(&program, nullptr, DiagnosticEngine());
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    auto *argExpr = parser.CreateExpression(implicitInstantiateArgument);
+    auto *argExpr = parser->CreateExpression(implicitInstantiateArgument);
     // NOTE(kaskov): #23399 We temporary delete SourceRange of all artificially created nodes (not from original
     // Lexer()), because all errors, which created by this code, will got a segfault. That caused because Program exist
     // till the end this function, and not avaible in diagnosticEngine. Now errors printed, but whitout position
@@ -2774,7 +2778,7 @@ ir::Expression *ETSChecker::GenerateImplicitInstantiateArg(const std::string &cl
     // isn't changed.
     compiler::SetSourceRangesRecursively(argExpr, lexer::SourceRange());
     argExpr->IterateRecursively([](ir::AstNode *node) -> void { node->SetRange(lexer::SourceRange()); });
-    compiler::InitScopesPhaseETS::RunExternalNode(argExpr, &program);
+    compiler::InitScopesPhaseETS::RunExternalNode(argExpr, Program());
 
     return argExpr;
 }
@@ -3242,10 +3246,9 @@ void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclarati
                                                           checker::ETSObjectType *lastObjectType, ir::Identifier *ident,
                                                           std::unordered_set<parser::Program *> *moduleStackCache)
 {
-    for (auto item : VarBinder()->AsETSBinder()->ReExportImports()) {
-        if (importDecl->ResolvedSource() != item->GetProgramPath().Mutf8()) {
-            continue;
-        }
+    auto *importedProg = VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
+    const auto &reexportImports = VarBinder()->AsETSBinder()->ReExportImports()[importedProg];
+    for (auto item : reexportImports) {
         auto *reExportType = GetImportSpecifierObjectType(item->GetETSImportDeclarations(), ident, moduleStackCache);
         if (reExportType->IsTypeError()) {
             continue;
@@ -3265,10 +3268,7 @@ void ETSChecker::ImportNamespaceObjectTypeAddReExportType(ir::ETSImportDeclarati
 Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importDecl, ir::Identifier *ident,
                                                std::unordered_set<parser::Program *> *moduleStackCache)
 {
-    auto importPath =
-        importDecl->ImportMetadata().HasSpecifiedDeclPath() ? importDecl->DeclPath() : importDecl->ResolvedSource();
-    parser::Program *program =
-        SelectEntryOrExternalProgram(static_cast<varbinder::ETSBinder *>(VarBinder()), importPath);
+    parser::Program *program = VarBinder()->AsETSBinder()->GetExternalProgram(importDecl);
     if (program == nullptr) {
         return GlobalTypeError();
     }
@@ -3284,11 +3284,11 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     }
 
     auto const moduleName = program->ModuleName();
-    auto const internalName =
-        util::UString(
-            moduleName.Mutf8().append(compiler::Signatures::METHOD_SEPARATOR).append(compiler::Signatures::ETS_GLOBAL),
-            ProgramAllocator())
-            .View();
+    auto const internalName = util::UString(std::string(moduleName)
+                                                .append(compiler::Signatures::METHOD_SEPARATOR)
+                                                .append(compiler::Signatures::ETS_GLOBAL),
+                                            ProgramAllocator())
+                                  .View();
 
     auto *moduleObjectType =
         ProgramAllocator()->New<ETSObjectType>(ProgramAllocator(), moduleName, internalName,
@@ -3301,10 +3301,9 @@ Type *ETSChecker::GetImportSpecifierObjectType(ir::ETSImportDeclaration *importD
     rootVar->SetTsType(moduleObjectType);
 
     ImportNamespaceObjectTypeAddReExportType(importDecl, moduleObjectType, ident, moduleStackCache);
-    SetPropertiesForModuleObject(
-        moduleObjectType, importPath,
-        !importDecl->Specifiers().empty() && importDecl->Specifiers()[0]->IsImportNamespaceSpecifier() ? nullptr
-                                                                                                       : importDecl);
+    auto importPath =
+        importDecl->ImportMetadata().HasSpecifiedDeclPath() ? importDecl->DeclPath() : importDecl->ResolvedSource();
+    SetPropertiesForModuleObject(moduleObjectType, importPath, importDecl);
     SetrModuleObjectTsType(ident, moduleObjectType);
 
     return moduleObjectType;

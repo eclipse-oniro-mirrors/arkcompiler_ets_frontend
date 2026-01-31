@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,11 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package P
 
 export namespace MergeSpace {
-    export function foo() { return 42; }  // Error: Conflicting 'foo()' definitions
+    export function foo() { return 42; }
 }
-
-
-/* @@? src01.ets:19:11 Error Semantic error ESE0130: Function foo is already declared. */

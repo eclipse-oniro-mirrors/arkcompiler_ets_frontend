@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +26,9 @@ public:
     {
         return NAME;
     }
-    void FetchCache(public_lib::Context *ctx, parser::Program *program) override;
+    void Setup() override;
 
-    bool Perform(public_lib::Context *ctx, parser::Program *program) override;
-
-    void MarkStatementsNoCleanup(parser::Program *program);
+    bool Perform() override;
 };
 }  // namespace ark::es2panda::compiler
 

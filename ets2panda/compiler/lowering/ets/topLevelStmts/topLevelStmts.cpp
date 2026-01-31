@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023 - 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,31 +19,39 @@
 
 namespace ark::es2panda::compiler {
 
-static bool CheckSourceConsistency(util::StringView name, ArenaVector<parser::Program *> const &programs)
+static bool CheckSourceConsistency(parser::Program *program)
 {
-    if (programs.size() == 1) {
+    if (!program->Is<util::ModuleKind::PACKAGE>()) {
         return true;
     }
-    if (std::all_of(programs.begin(), programs.end(), [](auto p) { return p->IsPackage(); })) {
+    auto packageFractions = program->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms();
+    if (std::all_of(packageFractions.begin(), packageFractions.end(),
+                    [](auto p) { return p->GetModuleKind() != util::ModuleKind::PACKAGE; })) {
         return true;
     }
     std::stringstream ss;
-    ss << "Module name \"" << name << "\" is assigned to multiple compilation units:";
-    std::for_each(programs.begin(), programs.end(), [&ss](parser::Program *p) {
-        ss << std::endl << "  at " << p->SourceFilePath().Mutf8();
+    ss << "Package \"" << program->ModuleName() << "\" has incosistent fractions:";
+    std::for_each(packageFractions.begin(), packageFractions.end(), [&ss](parser::Program *p) {
+        ss << std::endl << "  at " << p->GetImportMetadata().ResolvedSource();
+        if (p->GetModuleKind() == util::ModuleKind::PACKAGE) {
+            ss << " (ok)";
+        } else {
+            ss << " (fail)";
+        }
     });
     std::cerr << ss.str() << std::endl;
     return false;
 }
 
-static bool CheckProgramSourcesConsistency(parser::Program *program)
+static bool CheckProgramSourcesConsistency(parser::Program *globalProgram)
 {
     bool success = true;
-    for (auto const &[name, programs] : program->ExternalSources()) {
-        success &= CheckSourceConsistency(name, programs);
-    }
-    for (auto const &[name, programs] : program->DirectExternalSources()) {
-        success &= CheckSourceConsistency(name, programs);
+    globalProgram->GetExternalSources()->Visit(
+        [&success](auto *extProg) { success &= CheckSourceConsistency(extProg); });
+    // NOTE(dkofanov): direct to be removed.
+    for (auto const &[_, program] : globalProgram->GetExternalSources()->Direct()) {
+        (void)_;
+        success &= CheckSourceConsistency(program);
     }
     return success;
 }
@@ -88,33 +96,32 @@ static void CheckFileHeaderFlag(parser::Program *program)
     }
 }
 
-bool TopLevelStatements::Perform(public_lib::Context *ctx, parser::Program *program)
+bool TopLevelStatements::Perform()
 {
-    CheckFileHeaderFlag(program);
-    auto imports = ImportExportDecls(program->VarBinder()->AsETSBinder(), ctx->parser->AsETSParser(), ctx);
-    imports.ParseDefaultSources();
-    if (!CheckProgramSourcesConsistency(program)) {
-        // NOTE(vpukhov): enforce compilation failure
+    auto ctx = Context();
+    parser::Program *globalProgram = ctx->parserProgram;
+    CheckFileHeaderFlag(globalProgram);
+    auto importsHandler = ImportExportDecls(ctx);
+    importsHandler.IntroduceStdlibImportProgram();
+    if (!CheckProgramSourcesConsistency(globalProgram)) {
+        // NOTE(dkofanov): Should be already handled during 'ImportPathManager' routine, kept just in case.
+        ES2PANDA_UNREACHABLE();
     }
 
-    GlobalClassHandler globalClass(ctx->parser->AsETSParser(), program->Allocator(), program);
-    for (auto &[package, extPrograms] : program->ExternalSources()) {
-        if (!extPrograms.front()->IsASTLowered()) {
-            auto moduleDependencies = imports.HandleGlobalStmts(extPrograms);
-            globalClass.SetGlobalProgram(extPrograms.front());
-            globalClass.SetupGlobalClass(extPrograms, &moduleDependencies);
-            for (auto extProg : extPrograms) {
-                DeclareNamespaceExportAdjust(extProg);
-            }
+    GlobalClassHandler globalClassIntroducer(ctx);
+    // NOTE(dkofanov): Change 'Visit<false>' to 'Visit' when packages are merged:
+    globalProgram->GetExternalSources()->Visit<false>([&importsHandler, &globalClassIntroducer](auto *extProgram) {
+        if (extProgram->IsASTLowered()) {
+            return;
         }
-    }
+        importsHandler.HandleGlobalStmts(extProgram);
+        globalClassIntroducer.SetupGlobalClass(extProgram);
+        extProgram->MaybeIteratePackage([](parser::Program *prog) { DeclareNamespaceExportAdjust(prog); });
+    });
 
-    ArenaVector<parser::Program *> mainModule(ctx->Allocator()->Adapter());
-    mainModule.emplace_back(program);
-    auto moduleDependencies = imports.HandleGlobalStmts(mainModule);
-    globalClass.SetGlobalProgram(program);
-    globalClass.SetupGlobalClass(mainModule, &moduleDependencies);
-    DeclareNamespaceExportAdjust(program);
+    importsHandler.HandleGlobalStmts(globalProgram);
+    globalClassIntroducer.SetupGlobalClass(globalProgram);
+    DeclareNamespaceExportAdjust(globalProgram);
 
     return true;
 }

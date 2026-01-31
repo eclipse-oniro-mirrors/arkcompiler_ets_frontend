@@ -380,7 +380,6 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/typeFromLowering.cpp
   compiler/lowering/ets/enumLowering.cpp
   compiler/lowering/ets/enumPostCheckLowering.cpp
-  compiler/lowering/ets/enumPropertiesInAnnotationsLowering.cpp
   compiler/lowering/ets/setJumpTarget.cpp
   compiler/lowering/ets/setterLowering.cpp
   compiler/lowering/ets/annotationCopyLowering.cpp

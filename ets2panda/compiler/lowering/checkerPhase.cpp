@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,48 +16,61 @@
 #include "checkerPhase.h"
 #include "checker/checker.h"
 #include "checker/ETSchecker.h"
+#include "evaluate/scopedDebugInfoPlugin.h"
 
 namespace ark::es2panda::compiler {
-void CheckerPhase::FetchCache(public_lib::Context *ctx, parser::Program *program)
+
+static void CreateDebuggerEvaluationPlugin(public_lib::Context *ctx)
 {
+    // Sometimes evaluation mode might work without project context.
+    // In this case, users might omit context files.
+    const auto &options = *ctx->config->options;
+    if (options.IsDebuggerEval() && !options.GetDebuggerEvalPandaFiles().empty()) {
+        auto *plugin = ctx->Allocator()->New<evaluate::ScopedDebugInfoPlugin>(ctx);
+        ctx->GetChecker()->AsETSChecker()->SetDebugInfoPlugin(plugin);
+    }
+}
+
+void CheckerPhase::Setup()
+{
+    Context()->GetChecker()->Initialize(Context()->parserProgram->VarBinder());
+    if (Context()->GetChecker()->IsETSChecker()) {
+        CreateDebuggerEvaluationPlugin(Context());
+    }
+
     // for ast-cache using
-    if (program->VarBinder()->Extension() != ScriptExtension::ETS) {
+    // NOTE(dkofanov): If present, the whole cache should be restored at once, at program-restoration. To be moved.
+    if (Context()->parserProgram->VarBinder()->Extension() != ScriptExtension::ETS) {
         return;
     }
-    ctx->GetChecker()->AsETSChecker()->ReputCheckerData();
+    Context()->GetChecker()->AsETSChecker()->ReputCheckerData();
 }
 
-void CheckerPhase::MarkStatementsNoCleanup(parser::Program *program)
+static void MarkStatementsNoCleanup(parser::Program *program)
 {
     for (auto stmt : program->Ast()->Statements()) {
         stmt->AddAstNodeFlags(ir::AstNodeFlags::NOCLEANUP);
     }
 }
 
-bool CheckerPhase::Perform(public_lib::Context *ctx, [[maybe_unused]] parser::Program *program)
+bool CheckerPhase::Perform()
 {
-    ctx->GetChecker()->Initialize(program->VarBinder());
-    FetchCache(ctx, program);
-    for (auto [_, programList] : program->ExternalSources()) {
-        for (auto prog : programList) {
-            if (!prog->IsASTLowered()) {
-                MarkStatementsNoCleanup(prog);
-            }
+    Context()->parserProgram->GetExternalSources()->Visit([](auto *extProg) {
+        if (!extProg->IsASTLowered()) {
+            MarkStatementsNoCleanup(extProg);
         }
-    }
-    for (auto stmt : program->Ast()->Statements()) {
-        stmt->AddAstNodeFlags(ir::AstNodeFlags::NOCLEANUP);
-    }
+    });
+    MarkStatementsNoCleanup(Context()->parserProgram);
 
-    if (program->Extension() == ScriptExtension::ETS) {
+    if (Context()->parserProgram->Extension() == ScriptExtension::ETS) {
         try {
-            ctx->GetChecker()->StartChecker(ctx->parserProgram->VarBinder(), *ctx->config->options);
+            Context()->GetChecker()->StartChecker(Context()->parserProgram->VarBinder(), *Context()->config->options);
         } catch (std::exception &e) {
             // nothing to do - just to avoid program crash
         }
         return true;
     }
 
-    return ctx->GetChecker()->StartChecker(ctx->parserProgram->VarBinder(), *ctx->config->options);
+    return Context()->GetChecker()->StartChecker(Context()->parserProgram->VarBinder(), *Context()->config->options);
 }
 }  // namespace ark::es2panda::compiler

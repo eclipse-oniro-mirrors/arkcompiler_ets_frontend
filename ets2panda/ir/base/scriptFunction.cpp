@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -148,7 +148,26 @@ ScriptFunction::ScriptFunction(ArenaAllocator *allocator, ScriptFunctionData &&d
     if (auto *typeParams = irSignature_.TypeParams(); typeParams != nullptr) {
         typeParams->SetParent(this);
     }
+
     InitHistory();
+
+    // NOTE(dkofanov): Some approximation to new node range.
+    // There should be a generalized way to initialize node range from childs.
+    lexer::SourcePosition start {};
+    lexer::SourcePosition end {};
+
+    if (!irSignature_.Params().empty()) {
+        start = irSignature_.Params().front()->Start();
+        end = irSignature_.Params().back()->End();
+    }
+    if (body_ != nullptr) {
+        if (irSignature_.Params().empty()) {
+            start = body_->Start();
+        }
+        end = body_->End();
+    }
+    SetStart(start);
+    SetEnd(end);
 }
 
 ScriptFunction::ScriptFunction(ArenaAllocator *allocator, ScriptFunctionData &&data, AstNodeHistory *history)

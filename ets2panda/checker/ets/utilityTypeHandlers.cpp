@@ -293,14 +293,13 @@ static std::pair<util::StringView, util::StringView> GetPartialClassName(ETSChec
     return {addSuffix(declIdent->Name()), addSuffix(internalName)};
 }
 
-static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassProgram(ETSChecker *checker,
-                                                                                     ir::AstNode *typeNode)
+static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassProgram(
+    // CC-OFF(G.FMT.06-CPP) project code style
+    [[maybe_unused]] ETSChecker *checker, ir::AstNode *typeNode)
 {
     auto classDefProgram = typeNode->GetTopStatement()->AsETSModule()->Program();
-    if (classDefProgram == checker->VarBinder()->AsETSBinder()->GetGlobalRecordTable()->Program()) {
-        return {classDefProgram, checker->VarBinder()->AsETSBinder()->GetGlobalRecordTable()};
-    }
-    return {classDefProgram, checker->VarBinder()->AsETSBinder()->GetExternalRecordTable().at(classDefProgram)};
+    ES2PANDA_ASSERT(checker->VarBinder()->AsETSBinder()->CheckRecordTablesConsistency(classDefProgram));
+    return {classDefProgram, classDefProgram->GetRecordTable()};
 }
 
 template <typename T>
@@ -339,6 +338,7 @@ Type *ETSChecker::CreatePartialTypeParameter(ETSTypeParameter *typeToBePartial)
 Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::AstNode *typeDeclNode)
 {
     auto const [partialName, partialQualifiedName] = GetPartialClassName(this, typeDeclNode);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto const [partialProgram, recordTable] = GetPartialClassProgram(this, typeDeclNode);
 
     // Check if we've already generated the partial class, then don't do it again
@@ -389,6 +389,7 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
 Type *ETSChecker::HandlePartialInterface(ir::TSInterfaceDeclaration *interfaceDecl, ETSObjectType *typeToBePartial)
 {
     auto const [partialName, partialQualifiedName] = GetPartialClassName(this, interfaceDecl);
+    // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto const [partialProgram, recordTable] = GetPartialClassProgram(this, interfaceDecl);
 
     auto *const partialInterDecl =
@@ -1066,7 +1067,6 @@ ir::ClassDefinition *ETSChecker::CreateClassPrototype(util::StringView name, par
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     auto *const classDecl = ProgramAllocNode<ir::ClassDeclaration>(classDef, ProgramAllocator());
     ES2PANDA_ASSERT(classDecl != nullptr);
-    classDecl->SetParent(classDeclProgram->Ast());
 
     // Class definition is scope bearer, not class declaration
     classDef->Scope()->BindNode(classDecl->Definition());
@@ -1075,6 +1075,7 @@ ir::ClassDefinition *ETSChecker::CreateClassPrototype(util::StringView name, par
     // Put class declaration in global scope, and in program AST
     classDeclProgram->Ast()->AddStatement(classDecl);
     classDeclProgram->GlobalScope()->InsertBinding(name, var);
+    classDef->SetRange(classDecl->Range());
 
     return classDef;
 }

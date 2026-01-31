@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +21,14 @@
 
 namespace ark::es2panda::util {
 
-Path::Path() = default;
-
-Path::Path(const util::StringView &absolutePath, ArenaAllocator *allocator)
+Path::Path(ArenaAllocator *allocator) : allocator_(allocator)
 {
-    Initializer(absolutePath.Mutf8(), allocator);
+    ES2PANDA_ASSERT(allocator_ != nullptr);
+}
+
+Path::Path(const util::StringView &absolutePath, ArenaAllocator *allocator) : Path(allocator)
+{
+    Initializer(absolutePath.Mutf8());
 }
 
 static bool EndsWith(std::string_view str, std::string_view suffix)
@@ -36,11 +39,11 @@ static bool EndsWith(std::string_view str, std::string_view suffix)
     return str.compare(str.length() - suffix.length(), suffix.length(), suffix) == 0;
 }
 
-void Path::Initializer(const std::string &path, ArenaAllocator *allocator)
+void Path::Initializer(const std::string &path)
 {
     isRelative_ = false;
-    allocator_ = allocator;
-    path_ = util::UString(path, allocator).View();
+
+    path_ = util::UString(path, allocator_).View();
     if (*(path_.Bytes()) == '.') {
         isRelative_ = true;
     }
@@ -140,19 +143,20 @@ void Path::InitializeBasePath(std::string basePath)
 }
 
 Path::Path(const util::StringView &relativePath, const util::StringView &basePath, ArenaAllocator *allocator)
+    : Path(allocator)
 {
-    Initializer(relativePath.Mutf8(), allocator);
+    Initializer(relativePath.Mutf8());
     InitializeBasePath(basePath.Mutf8());
 }
 
-Path::Path(const std::string &absolutePath, ArenaAllocator *allocator)
+Path::Path(const std::string &absolutePath, ArenaAllocator *allocator) : Path(allocator)
 {
-    Initializer(absolutePath, allocator);
+    Initializer(absolutePath);
 }
 
-Path::Path(const std::string &relativePath, const std::string &basePath, ArenaAllocator *allocator)
+Path::Path(const std::string &relativePath, const std::string &basePath, ArenaAllocator *allocator) : Path(allocator)
 {
-    Initializer(relativePath, allocator);
+    Initializer(relativePath);
     InitializeBasePath(basePath);
 }
 

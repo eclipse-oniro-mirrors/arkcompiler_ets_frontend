@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,13 @@
  * limitations under the License.
  */
 
-package import_tests.packages.subpackage_b;
+package P2;
 
-// Throw error: "a" is defined twice in this package.
-export let a: String = "SubpackageB";
+export namespace NS {
+    static {
+        /* @@ label */a = 3
+    }
+}
+
+
+/* @@@ label Error Semantic error ESE0143: Unresolved reference a */

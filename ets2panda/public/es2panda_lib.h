@@ -61,6 +61,7 @@ enum es2panda_variantIndex {
 };
 
 typedef struct es2panda_Program es2panda_Program;
+typedef struct es2panda_RecordTableHolder es2panda_RecordTableHolder;
 typedef struct es2panda_ExternalSource es2panda_ExternalSource;
 typedef struct es2panda_ArkTsConfig es2panda_ArkTsConfig;
 typedef struct es2panda_AstNode es2panda_AstNode;
@@ -206,6 +207,10 @@ struct CAPI_EXPORT es2panda_Impl {
     char const *(*ContextErrorMessage)(es2panda_Context *context);
 
     es2panda_Program *(*ContextProgram)(es2panda_Context *context);
+    es2panda_ExternalSource **(*ProgramExternalSources)(es2panda_Context *context, es2panda_Program *program,
+                                                        size_t *lenP);
+    es2panda_ExternalSource **(*ProgramDirectExternalSources)(es2panda_Context *context, es2panda_Program *program,
+                                                              size_t *lenP);
     char const *(*ExternalSourceName)(es2panda_ExternalSource *e_source);
     es2panda_Program **(*ExternalSourcePrograms)(es2panda_ExternalSource *e_source, size_t *len_p);
     void (*AstNodeForEach)(es2panda_AstNode *ast, void (*func)(es2panda_AstNode *, void *), void *arg);

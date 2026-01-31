@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +20,6 @@
 #include "util/ustring.h"
 #include "util/enumbitops.h"
 
-#include <ir/base/scriptFunction.h>
-
 namespace ark::es2panda::parser {
 class Program;
 }  // namespace ark::es2panda::parser
@@ -32,6 +30,7 @@ class Signature;
 
 namespace ark::es2panda::ir {
 class ClassDefinition;
+class ScriptFunction;
 class TSInterfaceDeclaration;
 class AnnotationDeclaration;
 class Identifier;

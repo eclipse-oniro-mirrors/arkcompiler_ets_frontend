@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -2090,6 +2090,34 @@ change_types:
     cast:
       expression: auto |es2panda_arg.type.ptr_depth||arg_name|E2p = reinterpret_cast<Context *>(context)->program;
       var_name: '|arg_name|E2p'
+
+  - es2panda_arg:
+      name: '|arg_name|'
+      type:
+        name: RecordTableHolder
+        namespace: 'parser'
+      min_ptr_depth: 1
+    new_args:
+    - type:
+        name: "es2panda_RecordTableHolder"
+        ptr_depth: '|es2panda_arg.type.ptr_depth_int|'
+      name: '|arg_name|'
+      namespace: "parser::"
+    cast:
+      expression: >-
+        auto |es2panda_arg.type.ptr_depth||arg_name|E2p =
+        reinterpret_cast<parser::RecordTableHolder *>(|arg_name|);
+      var_name: '|arg_name|E2p'
+      reverse_cast:
+          start: reinterpret_cast<?const? es2panda_RecordTableHolder *>
+      call_cast:
+          call_var:
+            name: classInstance
+            type:
+              name: es2panda_RecordTableHolder
+              ptr_depth: 1
+          start: >-
+            (reinterpret_cast<?const? parser::RecordTableHolder *>(classInstance))->
 
   - es2panda_arg:
       name: '|arg_name|'

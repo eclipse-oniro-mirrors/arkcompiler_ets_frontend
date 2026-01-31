@@ -120,7 +120,7 @@ DefinitionInfo GetImplementationAtPosition(es2panda_Context *context, size_t pos
 
 bool IsPackageModule(es2panda_Context *context)
 {
-    return reinterpret_cast<public_lib::Context *>(context)->parserProgram->IsPackage();
+    return reinterpret_cast<public_lib::Context *>(context)->parserProgram->Is<util::ModuleKind::PACKAGE>();
 }
 
 CompletionEntryKind GetAliasScriptElementKind(es2panda_Context *context, size_t position)

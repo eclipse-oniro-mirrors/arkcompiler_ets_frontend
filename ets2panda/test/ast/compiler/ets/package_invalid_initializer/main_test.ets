@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,5 @@ import {nn, nn1, nn2} from "./P3"
 
 
 /* @@? P3.ets:29:18 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
-/* @@? P3.ets:30:30 Error Syntax error ESY0288: Non-constant initializer of Package should be apply in Initializer Block. */
 /* @@? P3.ets:33:1 Error Syntax error ESY0291: Invalid package toplevel statement */
 /* @@? P3.ets:34:1 Error Syntax error ESY0291: Invalid package toplevel statement */

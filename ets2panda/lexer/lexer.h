@@ -21,6 +21,7 @@
 #include "lexer/regexp/regexp.h"
 #include "lexer/token/letters.h"
 #include "lexer/token/token.h"
+#include "parser/program/program.h"
 #include "util/enumbitops.h"
 
 namespace ark::es2panda::parser {
@@ -118,8 +119,13 @@ class TemplateLiteralParserContext;
 
 class Lexer {
 public:
-    explicit Lexer(const parser::ParserContext *parserContext, util::DiagnosticEngine &diagnosticEngine,
-                   bool startLexer = true);
+    Lexer(const parser::ParserContext *parserContext, util::DiagnosticEngine &diagnosticEngine, bool startLexer = true)
+        : Lexer(parserContext, parserContext->GetProgram()->SourceCode(), diagnosticEngine, startLexer)
+    {
+    }
+
+    Lexer(const parser::ParserContext *parserContext, std::string_view sourceCode,
+          util::DiagnosticEngine &diagnosticEngine, bool startLexer);
     NO_COPY_SEMANTIC(Lexer);
     NO_MOVE_SEMANTIC(Lexer);
     virtual ~Lexer() = default;

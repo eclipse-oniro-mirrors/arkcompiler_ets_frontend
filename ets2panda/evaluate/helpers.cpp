@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -301,18 +301,6 @@ SafeStateScope::~SafeStateScope()
     ES2PANDA_ASSERT(binderScope_ == varBinder_->GetScope());
     ES2PANDA_ASSERT(binderProgram_ == varBinder_->Program());
     ES2PANDA_ASSERT(recordTable_ == varBinder_->GetRecordTable());
-}
-
-void AddExternalProgram(parser::Program *program, parser::Program *extProgram, std::string_view moduleName)
-{
-    ES2PANDA_ASSERT(program);
-    ES2PANDA_ASSERT(extProgram);
-
-    auto &extSources = program->ExternalSources();
-    if (extSources.count(moduleName) == 0) {
-        extSources.emplace(moduleName, program->Allocator()->Adapter());
-    }
-    extSources.at(moduleName).emplace_back(extProgram);
 }
 
 ir::ETSTypeReference *CreateETSTypeReference(checker::ETSChecker *checker, util::StringView name)

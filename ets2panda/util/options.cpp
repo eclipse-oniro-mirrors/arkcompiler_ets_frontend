@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -247,6 +247,12 @@ bool Options::Parse(Span<const char *const> args)
     return ProcessEtsSpecificOptions();
 }
 
+void Options::InitForEval()
+{
+    compilationMode_ = CompilationMode::SINGLE_FILE;
+    extension_ = ScriptExtension::JS;
+}
+
 auto VecToSet(const std::vector<std::string> &v)
 {
     return std::set<std::string>(v.begin(), v.end());
@@ -381,23 +387,27 @@ bool Options::ProcessEtsSpecificOptions()
     }
 
     if (auto config = ParseArktsConfig(); config != std::nullopt) {
-        arktsConfig_ = std::make_shared<ArkTsConfig>(*config);
+        arktsConfig_ = std::move(*config);
         return true;
     }
 
     return false;
 }
 
-std::optional<ArkTsConfig> Options::ParseArktsConfig()
+std::optional<std::unique_ptr<ArkTsConfig>> Options::ParseArktsConfig()
 {
-    auto config = ArkTsConfig {GetArktsconfig(), diagnosticEngine_};
-    if (!config.Parse()) {
+    auto config = std::make_unique<ArkTsConfig>(GetArktsconfig(), diagnosticEngine_);
+    if (!config->Parse()) {
         diagnosticEngine_.LogDiagnostic(diagnostic::INVALID_ARKTSCONFIG,
                                         util::DiagnosticMessageParams {util::StringView(GetArktsconfig())});
         return std::nullopt;
     }
-    config.ResolveAllDependenciesInArkTsConfig();
-    return std::make_optional(config);
+    if (WasSetStdlib()) {
+        config->FixupWithStdlibOption(GetStdlib());
+    }
+    config->ResolveAllDependenciesInArkTsConfig();
+    config->GenerateSourcePathMap();
+    return config;
 }
 
 }  // namespace ark::es2panda::util

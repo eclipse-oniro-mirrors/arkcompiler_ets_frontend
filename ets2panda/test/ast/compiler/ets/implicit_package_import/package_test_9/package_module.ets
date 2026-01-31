@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,3 @@
 package mypack;
 
 // That is the main file, from which we will compile full package
-
-
-/* @@? package_module_with_semantic_error.ets:18:14 Error Semantic error ESE0318: Type '"I am a number, I promise..."' cannot be assigned to type 'Int' */
-
-/* @@? package_module_with_syntax_error.ets:18:1 Error Syntax error ESY0227: Unexpected token '='. */
-/* @@? package_module_with_syntax_error.ets:18:1 Error Syntax error ESY0291: Invalid package toplevel statement */
-/* @@? package_module_with_syntax_error.ets:18:2 Error Syntax error ESY0227: Unexpected token ')'. */
-/* @@? package_module_with_syntax_error.ets:18:2 Error Syntax error ESY0291: Invalid package toplevel statement */
-
-/* @@? package_with_both_errors.ets:21:16 Error Semantic error ESE0371: Cannot find type 'good'. */
-/* @@? package_with_both_errors.ets:21:21 Error Syntax error ESY0227: Unexpected token 'Day'. */
-/* @@? package_with_both_errors.ets:21:21 Error Semantic error ESE0172: No static $_invoke method and static $_instantiate method in Day. Day() is not allowed. */
-/* @@? package_with_both_errors.ets:21:21 Error Semantic error ESE0002: Type 'Day' has no call signatures. */

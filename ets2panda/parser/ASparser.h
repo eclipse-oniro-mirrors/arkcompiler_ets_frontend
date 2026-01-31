@@ -22,14 +22,13 @@
 namespace ark::es2panda::parser {
 class ASParser : public ThrowingTypedParser {
 public:
-    ASParser(Program *program, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
-             ParserStatus status = ParserStatus::NO_OPTS)
-        : ThrowingTypedParser(program, &options, diagnosticEngine, status)
+    explicit ASParser(public_lib::Context *context, ParserStatus status = ParserStatus::NO_OPTS)
+        : ThrowingTypedParser(context, status)
     {
     }
 
 private:
-    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer(const SourceFile &sourceFile) override;
+    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer() override;
     ir::TypeNode *ParseParenthesizedOrFunctionType(bool throwError);
     ir::TypeNode *ParseFunctionType(lexer::SourcePosition startLoc);
     void ParseOptionalFunctionParameter(ir::AnnotatedExpression *returnNode, bool inRest = false);

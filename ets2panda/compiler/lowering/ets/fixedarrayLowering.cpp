@@ -63,11 +63,11 @@ ir::AstNode *ModifyArguments([[maybe_unused]] public_lib::Context *ctx, ir::AstN
 
     return loweringResult;
 }
-bool FixedArrayLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool FixedArrayLowering::PerformForProgram(parser::Program *program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *node) -> ir::AstNode * {
+        [ctx = Context()](ir::AstNode *node) -> ir::AstNode * {
             if (!node->IsETSNewClassInstanceExpression() ||
                 node->AsETSNewClassInstanceExpression()->TsType() == nullptr ||
                 !node->AsETSNewClassInstanceExpression()->TsType()->IsETSArrayType()) {
@@ -77,12 +77,6 @@ bool FixedArrayLowering::PerformForModule(public_lib::Context *ctx, parser::Prog
         },
         Name());
 
-    return true;
-}
-
-bool FixedArrayLowering::PostconditionForModule([[maybe_unused]] public_lib::Context *ctx,
-                                                [[maybe_unused]] const parser::Program *program)
-{
     return true;
 }
 

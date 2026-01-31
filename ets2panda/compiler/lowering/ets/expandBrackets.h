@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,25 +20,23 @@
 
 namespace ark::es2panda::compiler {
 
-class ExpandBracketsPhase : public PhaseForBodies {
+class ExpandBracketsPhase : public PhaseForProgramsWithBodies_LEGACY {
 public:
     std::string_view Name() const override
     {
         return "ExpandBracketsPhase";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    bool PerformForProgram(parser::Program *program) override;
 
 private:
-    ir::Expression *ProcessNewArrayInstanceExpression(public_lib::Context *ctx,
-                                                      ir::ETSNewArrayInstanceExpression *newInstanceExpression) const;
+    ir::Expression *ProcessNewArrayInstanceExpression(ir::ETSNewArrayInstanceExpression *newInstanceExpression) const;
 
     ir::Expression *ProcessNewMultiDimArrayInstanceExpression(
-        public_lib::Context *ctx, ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression) const;
+        ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression) const;
 
     ir::Expression *CreateNewMultiDimArrayInstanceExpression(
-        public_lib::Context *ctx, ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression,
-        ir::BlockExpression *blockExpression) const;
+        ir::ETSNewMultiDimArrayInstanceExpression *newInstanceExpression, ir::BlockExpression *blockExpression) const;
 };
 }  // namespace ark::es2panda::compiler
 

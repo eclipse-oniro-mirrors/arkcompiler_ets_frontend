@@ -20,11 +20,6 @@ namespace ark::es2panda::compiler {
 
 enum class ChildLocation { LEFT_CHILD, RIGHT_CHILD };
 
-std::string_view StringConstantsLowering::Name() const
-{
-    return "StringConstantsLowering";
-}
-
 static ChildLocation IsLeftOrRight(ir::Expression *const child)
 {
     ES2PANDA_ASSERT(child->Parent()->IsBinaryExpression());
@@ -104,11 +99,11 @@ static ir::AstNode *ReorderConcat(public_lib::Context *ctx, ir::StringLiteral *l
     return rightStrLit;
 }
 
-bool StringConstantsLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool StringConstantsLowering::PerformForProgram(parser::Program *program)
 {
     ir::StringLiteral *firstFoundSL = nullptr;
     program->Ast()->TransformChildrenRecursivelyPostorder(
-        [&](checker::AstNodePtr const node) -> checker::AstNodePtr {
+        [&firstFoundSL, ctx = Context()](checker::AstNodePtr const node) -> checker::AstNodePtr {
             if (node->IsStringLiteral() && IsBinaryExpressionPlus(node->AsStringLiteral()->Parent())) {
                 auto currNodeSL = node->AsStringLiteral();
                 if (firstFoundSL != nullptr && firstFoundSL->Parent() != currNodeSL->Parent()) {

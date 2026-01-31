@@ -31,25 +31,6 @@ namespace ark::es2panda::compiler {
 
 namespace {
 
-struct UnboxContext {
-    // NOLINTNEXTLINE(misc-non-private-member-variables-in-classes,readability-identifier-naming)
-    explicit UnboxContext(public_lib::Context *ctx)
-        : parser(ctx->parser->AsETSParser()),
-          varbinder(ctx->GetChecker()->VarBinder()->AsETSBinder()),
-          checker(ctx->GetChecker()->AsETSChecker()),
-          allocator(ctx->Allocator())
-    {
-    }
-
-    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
-    parser::ETSParser *parser;
-    varbinder::ETSBinder *varbinder;
-    checker::ETSChecker *checker;
-    ArenaAllocator *allocator;
-    std::unordered_set<ir::AstNode *> handled;
-    // NOLINTEND(misc-non-private-member-variables-in-classes)
-};
-
 bool AnyOfElementTypes(checker::Type *type, const std::function<bool(checker::Type *)> &isFunc)
 {
     auto const anyOf = [&isFunc](ArenaVector<checker::Type *> const &list) {
@@ -211,8 +192,8 @@ static void NormalizeAllTypes(UnboxContext *uctx, ir::AstNode *ast)
         [uctx](ir::AstNode *child) -> ir::AstNode* {
             if (child->IsExpression() && child->AsExpression()->IsTypeNode()) {
                 // Avoid dealing with annotation usages.
-                // ETSTypeReferenceParts only appear within ETSTypeReference, so the only way to get one is
-                // again through AnnotationUsage.
+                // ETSTypeReferenceParts only appear within ETSTypeReference, the only way to get one is
+                // again through AnnotationUsage (since it wasn't replaced by OpaqueTypeNode).
                 if (child->Parent()->IsAnnotationUsage() || child->IsETSTypeReferencePart()) {
                     return child;
                 }
@@ -293,14 +274,15 @@ static void HandleScriptFunctionHeader(UnboxContext *uctx, ir::ScriptFunction *f
     uctx->varbinder->BuildFunctionName(func);
 }
 
-static void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop, bool forceUnbox = false)
+template <bool IN_ANNOTATION = false>
+void HandleClassProperty(UnboxContext *uctx, ir::ClassProperty *prop)
 {
     //  Primitive Types from JS should be Boxed, but in case of annotation, it should be unboxed.
     ir::AstNode *node = prop;
     while (node != nullptr && !node->IsETSModule()) {
         node = node->Parent();
     }
-    if (node != nullptr && node->AsETSModule()->Program()->IsDeclForDynamicStaticInterop() && !forceUnbox) {
+    if (node != nullptr && node->AsETSModule()->Program()->IsDeclForDynamicStaticInterop() && !IN_ANNOTATION) {
         return;
     }
 
@@ -1462,10 +1444,10 @@ static void HandleStaticMethodDeclaration(checker::Type *tp, UnboxContext *uctx)
 
 // We need to convert function declarations that can be referenced even without explicit mention
 // in the source code.
-void SetUpBuiltinConstructorsAndMethods(UnboxContext *uctx)
+static void SetUpBuiltinConstructorsAndMethods(UnboxContext *uctx)
 {
     auto *checker = uctx->checker;
-    auto setUpType = [&uctx](checker::Type *tp) {
+    auto setUpType = [uctx](checker::Type *tp) {
         if (tp == nullptr || !tp->IsETSObjectType()) {
             return;
         }
@@ -1482,29 +1464,31 @@ void SetUpBuiltinConstructorsAndMethods(UnboxContext *uctx)
     }
 }
 
-bool UnboxPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+void UnboxPhase::Setup()
 {
-    auto uctx = UnboxContext(ctx);
+    uctx_.Setup(Context());
+    SetUpBuiltinConstructorsAndMethods(&uctx_);
+}
 
-    SetUpBuiltinConstructorsAndMethods(&uctx);
+bool UnboxPhase::PerformForProgram(parser::Program *program)
+{
+    NormalizeAllTypes(&uctx_, program->Ast());
 
-    NormalizeAllTypes(&uctx, program->Ast());
-
-    program->Ast()->IterateRecursivelyPostorder([&uctx](ir::AstNode *ast) {
+    program->Ast()->IterateRecursivelyPostorder([uctx = &uctx_](ir::AstNode *ast) {
         if (ast->IsClassProperty() || ast->IsScriptFunction() || ast->IsVariableDeclarator()) {
-            HandleDeclarationNode(&uctx, ast);
+            HandleDeclarationNode(uctx, ast);
         } else if (ast->IsForOfStatement()) {
-            HandleForOfStatement(&uctx, ast->AsForOfStatement());
+            HandleForOfStatement(uctx, ast->AsForOfStatement());
         }
     });
 
-    UnboxVisitor visitor(&uctx);
+    UnboxVisitor visitor(&uctx_);
     program->Ast()->IterateRecursivelyPostorder([&visitor](ir::AstNode *ast) { ast->Accept(&visitor); });
 
     for (auto *stmt : program->Ast()->Statements()) {
         RefineSourceRanges(stmt);
     }
-    uctx.checker->ClearApparentTypes();
+    uctx_.checker->ClearApparentTypes();
 
     return true;
 }

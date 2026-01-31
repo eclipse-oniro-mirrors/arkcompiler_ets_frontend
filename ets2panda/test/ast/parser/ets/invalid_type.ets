@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-class Function extends Intl.DateTimeFormat{
-let RegExp = Intl.PluralRules
+class Function extends Intl.DateTimeFormat /* @@ label */{
+  let RegExp = Intl.PluralRules
 }
 
 
-/* @@? 1:3 Error Semantic error ESE0350: Variable 'Function' is already defined with different type. */
-/* @@? 17:1 Error Syntax error ESY0227: Unexpected token 'let'. */
-/* @@? 17:19 Error Semantic error ESE0087: Property 'PluralRules' does not exist on type 'Intl' */
+/* @@@ label Error Semantic error ESE0350: Variable 'Function' is already defined with different type. */
+/* @@? 17:3 Error Syntax error ESY0227: Unexpected token 'let'. */
+/* @@? 17:21 Error Semantic error ESE0087: Property 'PluralRules' does not exist on type 'Intl' */

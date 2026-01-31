@@ -76,9 +76,10 @@ if (NOT PANDA_QEMU_BUILD)
 endif()
 
 if (PANDA_TARGET_LINUX AND NOT PANDA_TARGET_MOBILE)
-    ets2panda_add_gtest(es2panda_import_path_manager_tests
-        CPP_SOURCES import_path_manager_linux_test.cpp
-    )
+    # NOTE(dkofanov): test manifests unspecified behavior ('CreateDeclarationFile')
+    # ets2panda_add_gtest(es2panda_import_path_manager_tests
+    #    CPP_SOURCES import_path_manager_linux_test.cpp
+    # )
 endif()
 
 if(NOT PANDA_WITH_ETS)

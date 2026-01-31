@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,14 +20,37 @@
 
 namespace ark::es2panda::compiler {
 
-class UnboxPhase : public PhaseForBodies {
+struct UnboxContext {
+    void Setup(public_lib::Context *ctx)
+    {
+        parser = ctx->parser->AsETSParser();
+        varbinder = ctx->GetChecker()->VarBinder()->AsETSBinder();
+        checker = ctx->GetChecker()->AsETSChecker();
+        allocator = ctx->Allocator();
+    }
+
+    // NOLINTBEGIN(misc-non-private-member-variables-in-classes)
+    parser::ETSParser *parser;
+    varbinder::ETSBinder *varbinder;
+    checker::ETSChecker *checker;
+    ArenaAllocator *allocator;
+    std::set<ir::AstNode *> handled;
+    // NOLINTEND(misc-non-private-member-variables-in-classes)
+};
+
+class UnboxPhase : public PhaseForProgramsToBeEmitted {
 public:
     std::string_view Name() const override
     {
         return "Unbox";
     }
 
-    bool PerformForModule(public_lib::Context *ctx, parser::Program *program) override;
+    void Setup() override;
+
+    bool PerformForProgram(parser::Program *program) override;
+
+private:
+    UnboxContext uctx_;
 };
 
 }  // namespace ark::es2panda::compiler

@@ -41,9 +41,7 @@ struct SpecifiersInfo {
 
 class ETSParser final : public TypedParser {
 public:
-    ETSParser(Program *program, const util::Options &options, util::DiagnosticEngine &diagnosticEngine,
-              ParserStatus status);
-    ETSParser(Program *program, std::nullptr_t options, util::DiagnosticEngine &diagnosticEngine);
+    ETSParser(public_lib::Context *context, ParserStatus status);
 
     ETSParser() = delete;
     NO_COPY_SEMANTIC(ETSParser);
@@ -51,28 +49,21 @@ public:
 
     ~ETSParser() final = default;
 
+    Program *GetGlobalProgram() const;
+
     util::ImportPathManager *GetImportPathManager()
     {
-        return importPathManager_.get();
+        return TypedParser::GetImportPathManager();
     }
 
-    util::StringView GetGlobalProgramAbsName()
+    bool IsETSParser() const noexcept override
     {
-        return globalProgram_->AbsoluteName();
+        return true;
     }
-
-    Program *GetGlobalProgram()
-    {
-        return globalProgram_;
-    }
-
-    [[nodiscard]] bool IsETSParser() const noexcept override;
 
     [[nodiscard]] bool IsValidIdentifierName(const lexer::Token &token) const noexcept override;
-    void AddDirectImportsToDirectExternalSources(const std::vector<util::StringView> &directImportsFromMainSource,
-                                                 parser::Program *newProg) const;
-    bool CheckDupAndReplace(Program *&oldProg, Program *newProg) const;
-    ArenaVector<ir::ETSImportDeclaration *> ParseDefaultSources(std::string_view srcFile, std::string_view importSrc);
+    void AddDirectImportsToDirectExternalSources(const std::vector<Program *> &directImportsFromMainSource) const;
+    Program *IntroduceStdlibImportProgram(std::string &&importSrc);
 
 public:
     //============================================================================================//
@@ -122,31 +113,16 @@ public:
                                 TypeAnnotationParsingOptions options = TypeAnnotationParsingOptions::NO_OPTS);
     [[nodiscard]] bool IsInitializerBlockStart() const;
 
-    uint32_t GetNamespaceNestedRank()
-    {
-        return namespaceNestedRank_;
-    }
-
-    void IncrementNamespaceNestedRank()
-    {
-        namespaceNestedRank_++;
-    }
-
-    void DecrementNamespaceNestedRank()
-    {
-        namespaceNestedRank_--;
-    }
-
     ir::ETSImportDeclaration *BuildImportDeclaration(ir::ImportKinds importKind,
                                                      ArenaVector<ir::AstNode *> &&specifiers,
-                                                     ir::StringLiteral *pathToResolve, parser::Program *program,
-                                                     util::ImportFlags importFlag);
+                                                     ir::StringLiteral *pathToResolve, parser::Program *program);
 
-    void AddExternalSource(const std::vector<Program *> &programs);
-    std::vector<Program *> ParseSources(bool firstSource = false);
-    static void AddGenExtenralSourceToParseList(public_lib::Context *ctx);
+    void ParseSources();
+    void ParseInSimultMode();
 
 private:
+    void ParseNotParsed(util::ImportPathManager::ParseInfo *notParsedElement);
+
     NodeFormatType GetFormatPlaceholderType();
     ir::Statement *ParseStatementFormatPlaceholder() override;
     ir::Expression *ParseExpressionFormatPlaceholder();
@@ -178,10 +154,10 @@ private:
     //============================================================================================//
 
 private:
-    void ParseProgram(ScriptKind kind) override;
-    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer(const SourceFile &sourceFile) override;
+    void ParseGlobalImpl() override;
+    [[nodiscard]] std::unique_ptr<lexer::Lexer> InitLexer() override;
     ir::ETSPackageDeclaration *ParsePackageDeclaration();
-    void AddPackageSourcesToParseList();
+    void EnsureContainingPackageIsRegistered(ir::ETSPackageDeclaration *packageDecl);
     ArenaVector<ir::Statement *> ParseTopLevelStatements();
     ir::AstNode *HandleAmbientDeclaration(ir::ModifierFlags &memberModifiers,
                                           const std::function<ir::AstNode *(ir::Identifier *)> &parseClassMethod);
@@ -198,9 +174,6 @@ private:
     void ParseNamedExportSpecifiers(ArenaVector<ir::AstNode *> *specifiers, bool defaultExport);
     void ParseUserSources(std::vector<std::string> userParths);
     ArenaVector<ir::Statement *> ParseTopLevelDeclaration();
-    void ParseParseListElement(const util::ImportPathManager::ParseInfo &parseListElem, std::string_view extSrc,
-                               const std::vector<util::StringView> &directImportsFromMainSource,
-                               std::vector<Program *> *programs);
     bool IsDefaultImport();
     bool IsDefaultExport();
     void ParseNamedSpecifiesDefaultImport(ArenaVector<ir::ImportDefaultSpecifier *> *resultDefault,
@@ -217,14 +190,10 @@ private:
     ArenaVector<ir::ETSImportDeclaration *> ParseImportDeclarations();
     ir::Statement *ParseImportDeclarationHelper(lexer::SourcePosition startLoc, ArenaVector<ir::AstNode *> &specifiers,
                                                 ir::ImportKinds importKind);
-    bool TryMergeFromCache(util::ImportPathManager::ImportMetadata const &importData);
 
-    std::optional<std::string_view> GetDeclarationSource(std::string &&fileToParse) const;
-    std::vector<Program *> SearchForNotParsed(ArenaVector<util::ImportPathManager::ParseInfo> &parseList,
-                                              std::vector<util::StringView> &directImportsFromMainSource);
-    parser::Program *ParseSource(const SourceFile &sourceFile);
+    void ParseSource(parser::Program *program);
     ir::ETSModule *ParseETSGlobalScript(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> &statements);
-    void ParseFileHeaderFlag(lexer::SourcePosition startLoc, ArenaVector<ir::Statement *> *statements);
+    ir::ExpressionStatement *ParseFileHeaderFlag();
     ir::ETSModule *ParseImportsAndReExportOnly(lexer::SourcePosition startLoc,
                                                ArenaVector<ir::Statement *> &statements);
     ir::AstNode *ParseImportDefaultSpecifier(ArenaVector<ir::AstNode *> *specifiers) override;
@@ -481,13 +450,10 @@ private:
     friend class InnerSourceParser;
 
 private:
-    uint32_t namespaceNestedRank_;
     std::optional<ir::Expression *> GetPostPrimaryExpression(ir::Expression *returnExpression,
                                                              lexer::SourcePosition startLoc, bool ignoreCallExpression,
                                                              [[maybe_unused]] bool *isChainExpression);
-    parser::Program *globalProgram_;
     std::vector<ir::AstNode *> insertingNodes_ {};
-    std::unique_ptr<util::ImportPathManager> importPathManager_ {nullptr};
 };
 
 class ExternalSourceParser {

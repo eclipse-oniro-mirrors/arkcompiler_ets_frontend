@@ -1,5 +1,5 @@
 /**
-  Copyright (c) 2025 Huawei Device Co., Ltd.
+  Copyright (c) 2025-2026 Huawei Device Co., Ltd.
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -25,11 +25,6 @@
 namespace ark::es2panda::lsp {
 using codefixes::ADD_NAME_TO_NAMELESS_PARAMETER;
 namespace {
-inline std::string ToString(const util::StringView &sv)
-{
-    auto u = sv.Utf8();
-    return std::string(u.data(), u.size());
-}
 
 inline std::string ToString(std::string_view sv)
 {

@@ -19,9 +19,6 @@
 #include "util/helpers.h"
 #include "parser/program/program.h"
 
-#include <cmath>
-#include <iostream>
-
 namespace ark::es2panda::ir {
 AstDumper::AstDumper(const ir::AstNode *node, util::StringView sourceCode) : index_(sourceCode)
 {
@@ -261,7 +258,7 @@ void AstDumper::SerializeSourcePosition(const lexer::SourcePosition &pos)
         ss_ << ',';
         SerializePropKey("program");
         if (loc.Program() != nullptr) {
-            SerializeString(loc.Program()->FileNameWithExtension().Utf8());
+            SerializeString(loc.Program()->FileNameWithExtension());
         } else {
             SerializeConstant(Property::Constant::PROP_NULL);
         }

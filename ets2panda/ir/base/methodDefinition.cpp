@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -253,12 +253,9 @@ static void DumpPrefix(const ir::MethodDefinition *m, ir::SrcDumper *dumper)
             dumper->Add("export default ");
             dumper->SetDefaultExport();
         }
-        if (dumper->IsDeclgen()) {
-            if (global) {
-                dumper->Add("declare ");
-            } else {
-                dumper->GetDeclgen()->TryDeclareAmbientContext(dumper);
-            }
+        if (dumper->IsDeclgen() || m->IsDeclare()) {
+            auto g = dumper->BuildAmbientContextGuard();
+            dumper->TryDeclareAmbientContext();
         }
         if (m->IsGetter()) {
             dumper->Add("get ");

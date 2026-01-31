@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -214,6 +214,7 @@ varbinder::Variable *DebugInfoDeserializer::CreateLocalVarDecl(ir::Identifier *i
                                                                const std::string &typeSignature)
 {
     ES2PANDA_ASSERT(ident);
+    ES2PANDA_ASSERT(ident->Program() != nullptr);
 
     auto *checkHelper = debugInfoPlugin_.GetIrCheckHelper();
     auto *varBinder = debugInfoPlugin_.GetETSBinder();
@@ -229,11 +230,10 @@ varbinder::Variable *DebugInfoDeserializer::CreateLocalVarDecl(ir::Identifier *i
     checker::ScopeContext ctx(checker, topStatement->Scope());
     auto statementScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varBinder, topStatement->Scope());
 
-    parser::Program p(checker->Allocator(), varBinder);
-    auto parser = parser::ETSParser(&p, *varBinder->GetContext()->config->options,
-                                    *varBinder->GetContext()->diagnosticEngine, parser::ParserStatus::NO_OPTS);
+    auto *parser = debugInfoPlugin_.E2PContext()->parser->AsETSParser();
+    auto esp = parser::ExternalSourceParser(parser, const_cast<parser::Program *>(ident->Program()));
 
-    auto *varDecl = parser.CreateFormattedStatement(varDeclSource, parser::ParserContext::DEFAULT_SOURCE_FILE);
+    auto *varDecl = parser->CreateFormattedStatement(varDeclSource, parser::ParserContext::DEFAULT_SOURCE_FILE);
 
     // NOTE(kaskov): #23399 It is temporary solution, we clear SourcePosition in generated code
     compiler::SetSourceRangesRecursively(varDecl, lexer::SourceRange());
@@ -248,7 +248,7 @@ varbinder::Variable *DebugInfoDeserializer::CreateLocalVarDecl(ir::Identifier *i
     // Yet don't track whether the value was modified, so store result unconditionally in the end of the scope.
     auto varUpdateSource = GetVarUpdateSourceCode(identName, regNumber, typeId);
 
-    auto *varUpdate = parser.CreateFormattedStatement(varUpdateSource, parser::ParserContext::DEFAULT_SOURCE_FILE);
+    auto *varUpdate = parser->CreateFormattedStatement(varUpdateSource, parser::ParserContext::DEFAULT_SOURCE_FILE);
 
     // NOTE(kaskov): #23399 It is temporary solution, we clear SourcePosition in generated code
     compiler::SetSourceRangesRecursively(varUpdate, lexer::SourceRange());

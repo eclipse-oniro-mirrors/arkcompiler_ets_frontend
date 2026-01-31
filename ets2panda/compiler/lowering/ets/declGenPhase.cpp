@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,8 @@ namespace ark::es2panda::compiler {
 
 constexpr std::string_view MODULE_DECLARATION_NAME {"ModuleDeclaration"};
 constexpr std::string_view DECLARATION_STRING {"declaration"};
-static bool GenerateAnnotation(public_lib::Context *ctx, parser::Program *program, const std::string &decls)
+
+static void GenerateAnnotation(public_lib::Context *ctx, ir::ClassDefinition *globalClass, const std::string &decls)
 {
     auto *checker = ctx->GetChecker()->AsETSChecker();
     auto *phaseManager = ctx->phaseManager;
@@ -51,58 +52,55 @@ static bool GenerateAnnotation(public_lib::Context *ctx, parser::Program *progra
 
     auto *annotationUsage = checker->AllocNode<ir::AnnotationUsage>(annoUsageIdent, std::move(properties));
     annotationUsage->AddModifier(flags);
-    annotationUsage->SetParent(program->GlobalClass());
+    annotationUsage->SetParent(globalClass);
 
-    program->GlobalClass()->EmplaceAnnotation(annotationUsage);
+    globalClass->EmplaceAnnotation(annotationUsage);
     Recheck(phaseManager, checker->VarBinder()->AsETSBinder(), checker, annotationUsage);
-    return true;
 }
 
-static bool CallDeclgen(public_lib::Context *ctx, const ArenaVector<parser::Program *> &programs)
+static void CallDeclgen(public_lib::Context *ctx, parser::Program *prog)
 {
     ir::Declgen dg {ctx};
     ir::SrcDumper dumper {&dg};
-    for (const auto *program : programs) {
-        program->Ast()->Dump(&dumper);
+    if (prog->Is<util::ModuleKind::PACKAGE>()) {
+        for (const auto *fraction : prog->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms()) {
+            fraction->Ast()->Dump(&dumper);
+        }
+    } else {
+        prog->Ast()->Dump(&dumper);
     }
     dumper.GetDeclgen()->Run();
+
     std::string res = "'use static'\n";
     dg.DumpImports(res);
     res += dumper.Str();
-    return GenerateAnnotation(ctx, programs[0], res);
+    GenerateAnnotation(ctx, prog->GlobalClass(), res);
 }
 
-static bool HandleGenStdlib(public_lib::Context *ctx, parser::Program *program)
+static void HandleGenStdlib(public_lib::Context *ctx)
 {
-    if (!program->FileName().Is("etsstdlib")) {
-        // Generation is handled only for main program for all modules at once:
-        return true;
+    // Should be handled the same way as other packages.
+    for (auto *pkg : ctx->parserProgram->GetExternalSources()->Get<util::ModuleKind::PACKAGE>()) {
+        CallDeclgen(ctx, pkg);
     }
-
-    for (const auto &[moduleName, extPrograms] : program->ExternalSources()) {
-        CallDeclgen(ctx, extPrograms);
-    }
-    return true;
 }
 
-bool DeclGenPhase::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool DeclGenPhase::Perform()
 {
-    if (ctx->config->options->IsGenStdlib()) {
-        return HandleGenStdlib(ctx, program);
-    }
-
-    if (!ctx->config->options->IsEmitDeclaration()) {
+    if (Context()->config->options->IsGenStdlib()) {
+        HandleGenStdlib(Context());
         return true;
     }
 
-    const auto &sourceFilePath = program->AbsoluteName().Utf8();
-    if (sourceFilePath.empty()) {
+    if (!Context()->config->options->IsEmitDeclaration()) {
         return true;
     }
 
-    auto programs = ArenaVector<parser::Program *> {program->Allocator()->Adapter()};
-    programs.push_back(program);
-    CallDeclgen(ctx, programs);
+    auto program = Context()->parserProgram;
+    CallDeclgen(Context(), program);
+
+    program->GetExternalSources()->Visit<true, util::ModuleKind::MODULE>(
+        [ctx = Context()](auto *extProg) { CallDeclgen(ctx, extProg); });
 
     return true;
 }

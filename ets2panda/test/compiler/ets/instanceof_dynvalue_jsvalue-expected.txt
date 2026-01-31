@@ -537,5 +537,4 @@
     }
   }
 }
-[instanceof_dynvalue_jsvalue.ets:20:19] Semantic error ESE0360: Cannot find import: dynamic_import_tests
 [instanceof_dynvalue_jsvalue.ets:22:16] Semantic error ESE0371: Cannot find type 'A'.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,14 @@
 #include <mutex>
 #include <shared_mutex>
 #include <thread>
+#include "util/importPathManager.h"
 #include "util/es2pandaMacros.h"
 
 namespace ark::es2panda::parser {
+
+std::shared_mutex DeclarationCache::globalGuard_;
+
+DeclarationCache *DeclarationCache::globalDeclarationCache_;
 
 UniqueSpinMutex::~UniqueSpinMutex()
 {
@@ -87,7 +92,7 @@ DeclarationCache::~DeclarationCache()
 
 constexpr std::size_t INITIAL_CACHE_SIZE = 256U;
 
-DeclarationCache::DeclarationCache([[maybe_unused]] Tag &&tag)
+DeclarationCache::DeclarationCache()
 {
     declarations_.reserve(INITIAL_CACHE_SIZE);
 }
@@ -98,8 +103,8 @@ DeclarationCache::DeclarationCache([[maybe_unused]] Tag &&tag)
 void DeclarationCache::ActivateCache()
 {
     std::scoped_lock<std::shared_mutex> lock(globalGuard_);
-    if (!static_cast<bool>(DeclarationCache::globalDeclarationCache_)) {
-        DeclarationCache::globalDeclarationCache_ = std::make_shared<DeclarationCache>(DeclarationCache::Tag {});
+    if (DeclarationCache::globalDeclarationCache_ == nullptr) {
+        globalDeclarationCache_ = new DeclarationCache();
     }
 }
 
@@ -109,7 +114,7 @@ bool DeclarationCache::IsCacheActivated() noexcept
     return static_cast<bool>(DeclarationCache::globalDeclarationCache_);
 }
 
-std::shared_ptr<DeclarationCache> DeclarationCache::Instance() noexcept
+DeclarationCache *DeclarationCache::Instance() noexcept
 {
     std::shared_lock<std::shared_mutex> lock(globalGuard_);
     return DeclarationCache::globalDeclarationCache_;
@@ -122,52 +127,45 @@ void DeclarationCache::ClearAll() noexcept
     }
 }
 
-void DeclarationCache::RemoveFromCache(std::string const &fileName) noexcept
+void DeclarationCache::GetFromCache(DeclarationCache::CacheReference *importData) noexcept
 {
-    if (auto cache = DeclarationCache::Instance(); static_cast<bool>(cache)) {
-        cache->Remove(fileName);
+    ES2PANDA_ASSERT(importData->Kind() == util::ModuleKind::UNKNOWN);
+    if (auto cache = DeclarationCache::Instance(); cache != nullptr) {
+        cache->Get(importData);
     }
 }
 
-DeclarationType DeclarationCache::GetFromCache(std::string const &fileName) noexcept
+std::string_view DeclarationCache::PromoteExistingEntryToLowdeclaration(
+    const DeclarationCache::CacheReference &importData, std::string &&text)
 {
     auto cache = DeclarationCache::Instance();
-    return static_cast<bool>(cache) ? cache->Get(fileName) : ABSENT;
-}
-
-DeclarationType DeclarationCache::CacheIfPossible(std::string fileName, DeclarationType decl)
-{
-    auto cache = DeclarationCache::Instance();
-    return static_cast<bool>(cache) ? cache->Add(std::move(fileName), std::move(decl)) : decl;
+    ES2PANDA_ASSERT(cache != nullptr);
+    return cache->Add<util::ModuleKind::ETSCACHE_DECL, true>(importData, "", std::move(text)).Text();
 }
 
 void DeclarationCache::Clear() noexcept
 {
-    std::scoped_lock<ReadWriteSpinMutex> lock(dataGuard_);
+    std::scoped_lock lock(dataGuard_);
     declarations_.clear();
 }
 
-void DeclarationCache::Remove(std::string const &fileName) noexcept
+void DeclarationCache::Get(DeclarationCache::CacheReference *importData) const noexcept
 {
-    std::scoped_lock<ReadWriteSpinMutex> lock(dataGuard_);
-    declarations_.erase(fileName);
+    std::shared_lock lock(dataGuard_);
+    const auto it = declarations_.find(std::string(importData->Key()));
+    if (it != declarations_.end()) {
+        importData->Set(it->second);
+    }
 }
 
-DeclarationType DeclarationCache::Get(std::string const &fileName) const noexcept
+bool DeclarationCache::CacheReference::CanBePromoted() const
 {
-    std::shared_lock<ReadWriteSpinMutex> lock(dataGuard_);
-    auto const it = declarations_.find(fileName);
-    return (it != declarations_.end()) ? it->second : ABSENT;
+    return kind_ != util::ModuleKind::ETSCACHE_DECL;
 }
 
-//--------------------------------------------------------------------------------------------------------//
-//  Adds specified declaration file to the cache (or replaces the existing one).
-//--------------------------------------------------------------------------------------------------------//
-DeclarationType DeclarationCache::Add(std::string fileName, DeclarationType decl)
+bool DeclarationCache::CacheReference::Absent() const
 {
-    std::scoped_lock<ReadWriteSpinMutex> lock(dataGuard_);
-    auto [it, _] = declarations_.insert_or_assign(std::move(fileName), std::move(decl));
-    return it->second;
+    return kind_ == util::ModuleKind::UNKNOWN;
 }
 
 }  // namespace ark::es2panda::parser

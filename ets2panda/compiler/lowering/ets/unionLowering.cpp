@@ -31,7 +31,7 @@ static void ReplaceAll(std::string &str, std::string_view substr, std::string_vi
     }
 }
 
-std::string GetAccessClassName(const checker::ETSUnionType *unionType)
+static std::string GetAccessClassName(const checker::ETSUnionType *unionType)
 {
     std::stringstream ss;
     unionType->ToString(ss, false);
@@ -254,13 +254,12 @@ static void HandleUnionPropertyAccess(public_lib::Context *ctx, varbinder::VarBi
     ES2PANDA_ASSERT(expr->PropVar() != nullptr);
 }
 
-bool UnionLowering::PerformForModule(public_lib::Context *ctx, parser::Program *program)
+bool UnionLowering::PerformForProgram(parser::Program *program)
 {
-    checker::ETSChecker *checker = ctx->GetChecker()->AsETSChecker();
-
     program->Ast()->TransformChildrenRecursively(
-        [ctx, checker](checker::AstNodePtr ast) -> checker::AstNodePtr {
+        [ctx = Context()](checker::AstNodePtr ast) -> checker::AstNodePtr {
             if (ast->IsMemberExpression() && ast->AsMemberExpression()->Object()->TsType() != nullptr) {
+                auto *checker = ctx->GetChecker()->AsETSChecker();
                 auto *objType =
                     checker->GetApparentType(checker->GetNonNullishType(ast->AsMemberExpression()->Object()->TsType()));
                 if (objType->IsETSUnionType()) {
@@ -276,9 +275,9 @@ bool UnionLowering::PerformForModule(public_lib::Context *ctx, parser::Program *
     return true;
 }
 
-bool UnionLowering::PostconditionForModule(public_lib::Context *ctx, const parser::Program *program)
+bool UnionLowering::PostconditionForProgram(const parser::Program *program)
 {
-    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *checker = Context()->GetChecker()->AsETSChecker();
     bool current = !program->Ast()->IsAnyChild([checker](ir::AstNode *ast) {
         if (!ast->IsMemberExpression() || ast->AsMemberExpression()->Object()->TsType() == nullptr) {
             return false;
@@ -292,7 +291,7 @@ bool UnionLowering::PostconditionForModule(public_lib::Context *ctx, const parse
         }
         return objType->IsETSUnionType() && ast->AsMemberExpression()->PropVar() == nullptr;
     });
-    if (!current || ctx->config->options->GetCompilationMode() != CompilationMode::GEN_STD_LIB) {
+    if (!current || Options()->GetCompilationMode() != CompilationMode::GEN_STD_LIB) {
         return current;
     }
 

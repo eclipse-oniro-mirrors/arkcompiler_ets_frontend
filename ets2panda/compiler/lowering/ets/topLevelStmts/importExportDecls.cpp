@@ -18,12 +18,7 @@
 
 namespace ark::es2panda::compiler {
 
-static bool ProgramFileNameLessThan(const parser::Program *a, const parser::Program *b)
-{
-    return a->FileName().Mutf8() < b->FileName().Mutf8();
-}
-
-void ImportExportDecls::ParseDefaultSources()
+void ImportExportDecls::IntroduceStdlibImportProgram()
 {
     std::string importStdlibFile;
     for (const auto &path : util::Helpers::StdLib()) {
@@ -36,11 +31,19 @@ void ImportExportDecls::ParseDefaultSources()
         }
         importStdlibFile += "import * from \"" + path + "\";";
     }
-    auto imports = parser_->ParseDefaultSources(
-        DEFAULT_IMPORT_SOURCE_FILE, util::UString(importStdlibFile, varbinder_->Program()->Allocator()).View().Utf8());
+    auto stdlibImportProgram = parser_->IntroduceStdlibImportProgram(std::move(importStdlibFile));
+    ArenaVector<ir::ETSImportDeclaration *> imports(varbinder_->Allocator()->Adapter());
+    const auto *importManager = parser_->GetImportPathManager();
+    for (auto *statement : stdlibImportProgram->Ast()->Statements()) {
+        if (statement->IsETSImportDeclaration()) {
+            imports.push_back(statement->AsETSImportDeclaration());
+        }
+    }
+
     if (UNLIKELY(ctx_->config->options->IsGenStdlib())) {
         for (const auto *import : imports) {
-            if (import->ImportMetadata().HasSpecifiedDeclPath()) {
+            auto prog = importManager->SearchResolved(import->ImportMetadata());
+            if (prog->GetModuleKind() == util::ModuleKind::ETSCACHE_DECL) {
                 auto resolved = import->ResolvedSource();
                 ctx_->diagnosticEngine->LogDiagnostic(diagnostic::GEN_STDLIB_DECLS,
                                                       util::DiagnosticMessageParams {resolved}, import->Start());
@@ -50,7 +53,8 @@ void ImportExportDecls::ParseDefaultSources()
     varbinder_->SetDefaultImports(std::move(imports));
 }
 
-void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, ir::Statement *stmt, ir::AstNode *spec)
+void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, const ir::Statement *stmt,
+                                                const ir::AstNode *spec)
 {
     if (spec->IsImportSpecifier() &&
         !varbinder_->AddSelectiveExportAlias(
@@ -69,20 +73,19 @@ void ImportExportDecls::AddSelectiveExportAlias(parser::Program *program, ir::St
 }
 
 void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
-                                                 const ArenaVector<ir::Statement *> &statements,
-                                                 GlobalClassHandler::ModuleDependencies &moduleDependencies)
+                                                 const ArenaVector<ir::Statement *> &statements)
 {
-    auto processReExportDefaultSpecifier = [&](const auto &stmt) -> void {
-        for (auto spec : stmt->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers()) {
+    auto processReExportDefaultSpecifier = [this, program](const auto *stmt) -> void {
+        for (const auto *spec : stmt->AsETSReExportDeclaration()->GetETSImportDeclarations()->Specifiers()) {
             AddSelectiveExportAlias(program, stmt, spec);
         }
     };
     for (auto stmt : statements) {
         if (stmt->IsETSModule()) {
             SavedImportExportDeclsContext savedContext(this, program);
-            ProcessProgramStatements(program, stmt->AsETSModule()->Statements(), moduleDependencies);
+            ProcessProgramStatements(program, stmt->AsETSModule()->Statements());
             VerifyCollectedExportName(program);
-            savedContext.RecoverExportAliasMultimap();
+            std::move(savedContext).RecoverExportAliasMultimap();
         }
         stmt->Accept(this);
         if (stmt->IsExportNamedDeclaration()) {
@@ -97,23 +100,29 @@ void ImportExportDecls::ProcessProgramStatements(parser::Program *program,
     }
 }
 
-GlobalClassHandler::ModuleDependencies ImportExportDecls::HandleGlobalStmts(ArenaVector<parser::Program *> &programs)
+static bool ProgramFileNameLessThan(const parser::Program *a, const parser::Program *b)
 {
-    VerifySingleExportDefault(programs);
-    VerifyTypeExports(programs);
-    GlobalClassHandler::ModuleDependencies moduleDependencies {programs.front()->Allocator()->Adapter()};
-    if (!programs.empty()) {
-        std::sort(programs.begin(), programs.end(), ProgramFileNameLessThan);
+    return a->FileName().Mutf8() < b->FileName().Mutf8();
+}
+
+void ImportExportDecls::HandleGlobalStmts(parser::Program *program)
+{
+    VerifySingleExportDefault(program);
+    VerifyTypeExports(program);
+
+    if (program->Is<util::ModuleKind::PACKAGE>()) {
+        auto fractions = program->As<util::ModuleKind::PACKAGE>()->GetUnmergedPackagePrograms();
+        std::sort(fractions.begin(), fractions.end(), ProgramFileNameLessThan);
     }
-    for (auto const &program : programs) {
-        if (!program->IsASTLowered()) {
-            PreMergeNamespaces(program);
+
+    program->MaybeIteratePackage([this](parser::Program *prog) {
+        if (!prog->IsASTLowered()) {
+            PreMergeNamespaces(prog);
         }
-        SavedImportExportDeclsContext savedContext(this, program);
-        ProcessProgramStatements(program, program->Ast()->Statements(), moduleDependencies);
-        VerifyCollectedExportName(program);
-    }
-    return moduleDependencies;
+        SavedImportExportDeclsContext savedContext(this, prog);
+        ProcessProgramStatements(prog, prog->Ast()->Statements());
+        VerifyCollectedExportName(prog);
+    });
 }
 
 void ImportExportDecls::PopulateAliasMap(const ir::ExportNamedDeclaration *decl, const util::StringView &path)
@@ -299,16 +308,16 @@ void ImportExportDecls::HandleSimpleType(std::set<util::StringView> &exportedSta
     }
 }
 
-void ImportExportDecls::VerifyTypeExports(const ArenaVector<parser::Program *> &programs)
+void ImportExportDecls::VerifyTypeExports(parser::Program *program)
 {
     std::set<util::StringView> exportedStatements;
     std::map<util::StringView, ir::AstNode *> typesMap;
 
-    for (const auto &program : programs) {
-        for (auto stmt : program->Ast()->Statements()) {
+    program->MaybeIteratePackage([this, &exportedStatements, &typesMap](parser::Program *prog) {
+        for (auto stmt : prog->Ast()->Statements()) {
             VerifyType(stmt, exportedStatements, typesMap);
         }
-    }
+    });
 }
 
 void ImportExportDecls::VerifyType(ir::Statement *stmt, std::set<util::StringView> &exportedStatements,
@@ -336,7 +345,7 @@ void ImportExportDecls::VerifyType(ir::Statement *stmt, std::set<util::StringVie
     }
 }
 
-void ImportExportDecls::VerifySingleExportDefault(const ArenaVector<parser::Program *> &programs)
+void ImportExportDecls::VerifySingleExportDefault(parser::Program *program)
 {
     bool metDefaultExport = false;
     auto &logger = parser_->DiagnosticEngine();
@@ -349,12 +358,13 @@ void ImportExportDecls::VerifySingleExportDefault(const ArenaVector<parser::Prog
         }
         metDefaultExport = true;
     };
-    for (const auto &program : programs) {
-        for (auto stmt : program->Ast()->Statements()) {
+
+    program->MaybeIteratePackage([&verifyDefault, &metDefaultExport](parser::Program *prog) {
+        for (auto stmt : prog->Ast()->Statements()) {
             verifyDefault(stmt);
         }
         metDefaultExport = false;
-    }
+    });
 }
 
 void ImportExportDecls::VerifyCollectedExportName(const parser::Program *program)
@@ -382,7 +392,7 @@ void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
 {
     bool hasChange = true;
 
-    std::function<void(ir::AstNode *)> merge = [&program, &hasChange, &merge](ir::AstNode *ast) {
+    std::function<void(ir::AstNode *)> merge = [ctx = ctx_, &program, &hasChange, &merge](ir::AstNode *ast) {
         if (ast->IsClassDeclaration() && ast->AsClassDeclaration()->Definition()->IsNamespaceTransformed()) {
             ast->Iterate(merge);
             return;
@@ -394,16 +404,9 @@ void ImportExportDecls::PreMergeNamespaces(parser::Program *program)
         ArenaVector<ir::ETSModule *> namespaces(program->Allocator()->Adapter());
         auto &body = ast->AsETSModule()->StatementsForUpdates();
         auto originalSize = body.size();
-        auto end = std::remove_if(body.begin(), body.end(), [&namespaces](ir::AstNode *node) {
-            if (node->IsETSModule() && node->AsETSModule()->IsNamespace()) {
-                namespaces.emplace_back(node->AsETSModule());
-                return true;
-            }
-            return false;
-        });
-        body.erase(end, body.end());
 
-        GlobalClassHandler::MergeNamespace(namespaces, program);
+        EjectNamespacesFromStatementsVector(&body, &namespaces);
+        GlobalClassHandler::MergeNamespace(namespaces, ctx);
 
         for (auto ns : namespaces) {
             body.emplace_back(ns);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -77,12 +77,11 @@ void CopyAnnotationProperties(public_lib::Context *ctx, ir::AnnotationUsage *st)
     }
 }
 
-bool AnnotationCopyLowering::PerformForModule([[maybe_unused]] public_lib::Context *const ctx,
-                                              parser::Program *const program)
+bool AnnotationCopyLowering::PerformForProgram(parser::Program *const program)
 {
     program->Ast()->TransformChildrenRecursively(
         // CC-OFFNXT(G.FMT.14-CPP) project code style
-        [ctx](ir::AstNode *ast) {
+        [ctx = Context()](ir::AstNode *ast) {
             if (ast->IsAnnotationUsage()) {
                 CopyAnnotationProperties(ctx, ast->AsAnnotationUsage());
             }
