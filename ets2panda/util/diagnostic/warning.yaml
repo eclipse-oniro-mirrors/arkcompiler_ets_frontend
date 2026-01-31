@@ -61,7 +61,7 @@ warning:
 - name: EMPTY_SOURCE_FILE
   id: 20000
   message: "The source file '{}' is empty."
- 
+
 - name: ENUM_DEPRECATED_CAST
   id: 30
   message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed. Please use 'valueOf' or 'fromValue'."
@@ -118,11 +118,6 @@ warning:
   id: 153
   message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
-
-- name: LAMBDA_MISSING_RETURN_STMT
-  id: 57199
-  message: "Lambda with a non void return type must return a value."
-  code_fix_ids: [FixAddFunctionReturnStatement]
 
 - name: MAYBE_FALLTHROUGH
   id: 20
