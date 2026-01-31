@@ -136,6 +136,8 @@ ast/compiler/ets/interfaceObjectLiteral_04.ets
 ast/compiler/ets/interfaceObjectLiteral_05.ets
 
 runtime/ets/declareExport.ets
+ast/parser/ets/import_tests/enum/import.ets
+ast/parser/ets/import_tests/enum/xml/export.ets
 parser/ets/import_tests/enum/import.ets
 parser/ets/import_tests/enum/xml/export.ets
 parser/ets/import_tests/import_relative_path.ets
