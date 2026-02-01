@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -99,7 +99,9 @@ export class FileManager {
             return LANGUAGE_VERSION.ARKTS_1_2;
         }
         for (const [pkgName, moduleInfo] of FileManager.arkTSModuleMap) {
-            if (!path.startsWith(moduleInfo.modulePath)) {
+            const modulePath = moduleInfo.modulePath;
+            // Ensure proper path boundary matching to avoid prefix mismatch (e.g., library1 vs library)
+            if (!path.startsWith(modulePath + '/')) {
                 continue;
             }
             if (moduleInfo.language !== LANGUAGE_VERSION.ARKTS_HYBRID) {

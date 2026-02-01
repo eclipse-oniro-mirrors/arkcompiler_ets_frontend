@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -141,7 +141,7 @@ describe('class FileManager', () => {
     test('empty dependencyModuleList', () => {
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        FileManager['initLanguageVersionFromDependentModuleMap']([]);
+        FileManager['initLanguageVersionFromDependencyModuleMap']([]);
         expect(FileManager.arkTSModuleMap.size).toBe(0);
     });
 
@@ -176,11 +176,11 @@ describe('class FileManager', () => {
         expect(FileManager['isFirstLineUseStatic']('anyfile.ets')).toBe(false);
     });
 
-    test('getLanguageVersionByFilePath handles undefined compileFiles', () => {
+    test('getLanguageVersionByFilePath handles empty compileFiles', () => {
         FileManager.cleanFileManagerObject();
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
-        FileManager.buildConfig = {};
+        FileManager.buildConfig = { compileFiles: [] };
         const fm = FileManager.getInstance();
         expect(fm.getLanguageVersionByFilePath('/any/path/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
     });
@@ -189,5 +189,31 @@ describe('class FileManager', () => {
         // Make tsc ignore the access of private member or type error
         // @ts-ignore
         expect(() => FileManager.initSDK(undefined, '/sdk/path')).not.toThrow();
+    });
+
+    test('path prefix mismatch - library vs library1', () => {
+        FileManager.cleanFileManagerObject();
+        FileManager.init({
+            dependencyModuleList: [
+                {
+                    packageName: 'library',
+                    modulePath: '/mock/library',
+                    language: LANGUAGE_VERSION.ARKTS_1_2
+                },
+                {
+                    packageName: 'library1',
+                    modulePath: '/mock/library1',
+                    language: LANGUAGE_VERSION.ARKTS_1_1
+                }
+            ],
+            externalApiPaths: [],
+            buildSdkPath: '/mock/sdk',
+            compileFiles: []
+        } as any);
+        const fm = FileManager.getInstance();
+        
+        expect(fm.getLanguageVersionByFilePath('/mock/library1/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
+        expect(fm.getLanguageVersionByFilePath('/mock/library/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_2);
+        expect(fm.getLanguageVersionByFilePath('/mock/library123/file.ets')).toBe(LANGUAGE_VERSION.ARKTS_1_1);
     });
 });
