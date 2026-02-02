@@ -230,7 +230,7 @@ ImportMetadata ImportPathManager::ResolvePath(parser::Program *importer, std::st
         auto curModulePath =
             isDynamic_ ? importer->GetImportMetadata().ResolvedSource() : importer->AbsoluteName().Utf8();
         size_t pos = curModulePath.find_last_of("/\\");
-        auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : ".";
+        auto currentDir = (pos != std::string::npos) ? curModulePath.substr(0, pos) : curModulePath;
         std::string resolvedPathPrototype {currentDir};
         resolvedPathPrototype += pathDelimiter_;
         resolvedPathPrototype += importPath;
