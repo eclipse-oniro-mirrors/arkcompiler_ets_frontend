@@ -137,7 +137,11 @@ if [ -z "${KOALA_REPO}" ] ; then
     npm config set "//$NEXUS_REPO/repository/koala-npm/:_auth=$KOALA_TOKEN"
 fi
 
-npm install -d
+for try in $(seq 1 5); do
+    npm install -d && break
+    echo "npm install failed, attempt $try of 5"
+    sleep $((try * 2))
+done
 
 pushd incremental/tools/panda/ || exit 1
 if [ -z "${PANDA_SDK_HOST_TARBALL}" ] ; then
