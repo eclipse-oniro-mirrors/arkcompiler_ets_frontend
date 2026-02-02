@@ -4581,10 +4581,15 @@ checker::Type *ETSAnalyzer::Check(ir::TryStatement *st) const
     auto smartCasts = checker->Context().CheckTryBlock(*st->Block());
     checker->Context().EnterPath();
     st->Block()->Check(checker);
-    // Just used for clear MEET_THROW flags in try blocks.
+
+    bool const tryWillThrow = checker->HasStatus(CheckerStatus::MEET_THROW);
     [[maybe_unused]] bool const tryTerminated = checker->Context().ExitPath();
 
     bool defaultCatchFound = false;
+    // Default to true: if no catch clauses, all catches "throw" (nothing handles the exception)
+    bool allCatchClausesThrow = true;
+
+    // Note(daizihan): #33030 Refactor me after multiple catch clauses is changed to CTE.
     for (auto *catchClause : st->CatchClauses()) {
         if (defaultCatchFound) {
             checker->LogError(diagnostic::CATCH_DEFAULT_NOT_LAST, {}, catchClause->Start());
@@ -4593,11 +4598,17 @@ checker::Type *ETSAnalyzer::Check(ir::TryStatement *st) const
 
         checker->Context().RestoreSmartCasts(smartCasts);
 
+        checker->Context().EnterPath();
         if (auto const exceptionType = catchClause->Check(checker); !exceptionType->IsTypeError()) {
             auto *clauseType = exceptionType->AsETSObjectType();
             checker->CheckExceptionClauseType(exceptions, catchClause, clauseType);
             exceptions.emplace_back(clauseType);
         }
+
+        bool const catchMeetThrow = checker->HasStatus(CheckerStatus::MEET_THROW);
+        [[maybe_unused]] bool const catchTerminated = checker->Context().ExitPath();
+
+        allCatchClausesThrow = allCatchClausesThrow && catchMeetThrow;
 
         defaultCatchFound = catchClause->IsDefaultCatchClause();
 
@@ -4609,6 +4620,10 @@ checker::Type *ETSAnalyzer::Check(ir::TryStatement *st) const
         for (auto const &cast : casts) {
             checker->Context().CombineSmartCasts(cast);
         }
+    }
+
+    if (tryWillThrow && allCatchClausesThrow) {
+        checker->AddStatus(CheckerStatus::MEET_THROW);
     }
 
     if (st->HasFinalizer()) {
