@@ -217,44 +217,22 @@ void DoBodyTypeChecking(ETSChecker *checker, ir::MethodDefinition *node, ir::Scr
     scriptFunc->SetWasChecked();
 
     if (scriptFunc->ReturnTypeAnnotation() == nullptr) {
-        if (scriptFunc->IsAsyncFunc()) {
-            auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(scriptFunc->Signature()->ReturnType());
-            ES2PANDA_ASSERT(returnType != nullptr);
-            scriptFunc->Signature()->SetReturnType(returnType->PromiseType());
-            for (auto &returnStatement : scriptFunc->ReturnStatements()) {
-                returnStatement->SetReturnType(checker, returnType);
-            }
-        } else {
-            if (scriptFunc->IsAsyncImplFunc()) {
-                ComposeAsyncImplFuncReturnType(checker, scriptFunc);
-            }
+        /*
+         * NOTE(knazarov): To not break compatibility with existing behaviour,
+         * we keep return type of the AsyncImpl methods as Object.
+         */
+        if (scriptFunc->IsAsyncImplFunc()) {
+            const auto oldReturnType = scriptFunc->Signature()->ReturnType();
+            const auto newReturnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(oldReturnType);
+            scriptFunc->Signature()->SetReturnType(newReturnType);
+        }
 
-            for (auto &returnStatement : scriptFunc->ReturnStatements()) {
-                returnStatement->SetReturnType(checker, scriptFunc->Signature()->ReturnType());
-            }
+        for (auto &returnStatement : scriptFunc->ReturnStatements()) {
+            returnStatement->SetReturnType(checker, scriptFunc->Signature()->ReturnType());
         }
     }
 
     checker->Context().SetContainingSignature(nullptr);
-}
-
-void ComposeAsyncImplFuncReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc)
-{
-    auto const promiseType = checker->CreatePromiseOf(checker->MaybeBoxType(scriptFunc->Signature()->ReturnType()));
-
-    auto *objectId = checker->ProgramAllocNode<ir::Identifier>(compiler::Signatures::BUILTIN_OBJECT_CLASS,
-                                                               checker->ProgramAllocator());
-    checker->VarBinder()->AsETSBinder()->LookupTypeReference(objectId);
-    auto *returnType = checker->ProgramAllocNode<ir::ETSTypeReference>(
-        checker->ProgramAllocNode<ir::ETSTypeReferencePart>(objectId, nullptr, nullptr, checker->ProgramAllocator()),
-        checker->ProgramAllocator());
-    ES2PANDA_ASSERT(returnType != nullptr);
-    objectId->SetParent(returnType->Part());
-    returnType->Part()->SetParent(returnType);
-    returnType->SetTsType(checker->ProgramAllocator()->New<ETSAsyncFuncReturnType>(checker->ProgramAllocator(),
-                                                                                   checker->Relation(), promiseType));
-    returnType->Check(checker);
-    scriptFunc->Signature()->SetReturnType(returnType->TsType());
 }
 
 void CheckPredefinedMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc)
@@ -601,17 +579,11 @@ bool CheckArgumentVoidType(checker::Type *funcReturnType, ETSChecker *checker, c
     return true;
 }
 
-static bool IsPromiseOrPromiseLikeType(ETSChecker *checker, const ETSObjectType *type)
-{
-    const auto baseType = type->GetOriginalBaseType();
-    return baseType == checker->GlobalBuiltinPromiseLikeType() || baseType == checker->GlobalBuiltinPromiseType();
-}
-
 static bool CheckAsyncReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                                  ir::Expression *stArgument)
 {
     auto const checkPromiseType = [checker, argumentType, stArgument](checker::Type *type) -> bool {
-        if (type->IsETSObjectType() && IsPromiseOrPromiseLikeType(checker, type->AsETSObjectType())) {
+        if (type->IsETSObjectType() && checker->IsPromiseType(type->AsETSObjectType())) {
             auto promiseArg = type->AsETSObjectType()->TypeArguments()[0];
             checker::AssignmentContext(checker->Relation(), stArgument, argumentType, promiseArg, stArgument->Start(),
                                        std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN);
@@ -639,7 +611,7 @@ static bool CheckAsyncReturnType(ETSChecker *checker, checker::Type *funcReturnT
 bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker::Type *argumentType,
                      ir::Expression *stArgument, ir::ScriptFunction *containingFunc)
 {
-    if (containingFunc->IsAsyncFunc() && CheckAsyncReturnType(checker, funcReturnType, argumentType, stArgument)) {
+    if (containingFunc->IsDeclaredAsync() && CheckAsyncReturnType(checker, funcReturnType, argumentType, stArgument)) {
         return true;
     }
 
@@ -667,13 +639,26 @@ bool HasSingleReturnStatement(const ir::AstNode *node)
 
 checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::Expression *stArgument)
 {
+    ES2PANDA_ASSERT(containingFunc->Signature()->HasSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE));
+    ES2PANDA_ASSERT(containingFunc->ReturnTypeAnnotation() == nullptr);
+
     //  First (or single) return statement in the function:
-    auto *funcReturnType = stArgument == nullptr
-                               ? checker->GlobalVoidType()
-                               : checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)));
+    const auto baseFuncReturnType =
+        stArgument ? checker->GetNormalizedType(checker->GetNonConstantType(stArgument->Check(checker)))
+                   : checker->GlobalVoidType();
+    /**
+     * Spec 15.7.2 If a function, a method, or a lambda is async (see Asynchronous execution), a return
+     * type is inferred by applying the above rules, and the return type T is not Promise, then the
+     * return type is assumed to be Promise<T>.
+     */
+    const auto funcReturnType = containingFunc->IsAsyncFunc() && !checker->IsPromiseType(baseFuncReturnType)
+                                    ? checker->CreatePromiseOf(baseFuncReturnType)
+                                    : baseFuncReturnType;
+
+    containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
+
     ES2PANDA_ASSERT(funcReturnType != nullptr);
     if (funcReturnType->IsTypeError()) {
-        containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
         return funcReturnType;
     }
 
@@ -685,14 +670,7 @@ checker::Type *InferReturnType(ETSChecker *checker, ir::ScriptFunction *containi
     ```
     */
 
-    if (containingFunc->IsAsyncFunc() && containingFunc->IsExternal() &&
-        HasSingleReturnStatement(containingFunc->Body())) {
-        auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(funcReturnType);
-        containingFunc->Signature()->SetReturnType(returnType->PromiseType());
-    } else {
-        containingFunc->Signature()->SetReturnType(funcReturnType);
-    }
-    containingFunc->Signature()->RemoveSignatureFlag(checker::SignatureFlags::NEED_RETURN_TYPE);
+    containingFunc->Signature()->SetReturnType(funcReturnType);
     if (stArgument != nullptr && stArgument->IsIdentifier() && stArgument->OriginalNode() != nullptr &&
         stArgument->OriginalNode()->IsThisExpression() && containingFunc->IsMethod()) {
         containingFunc->Signature()->AddSignatureFlag(SignatureFlags::THIS_RETURN_TYPE);
@@ -721,11 +699,15 @@ bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *c
 checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,
                                        ir::Expression *stArgument)
 {
-    auto *funcReturnType = containingFunc->Signature()->ReturnType();
+    auto *const relation = checker->Relation();
+    const auto funcReturnType = containingFunc->Signature()->ReturnType();
+    const auto voidType = containingFunc->IsDeclaredAsync() ? checker->CreatePromiseOf(checker->GlobalVoidType())
+                                                            : checker->GlobalVoidType();
+    const auto isReturnVoid = relation->IsIdenticalTo(funcReturnType, voidType);
 
     if (stArgument == nullptr) {
         // previous return statement(s) have value
-        if (!funcReturnType->IsETSVoidType() && funcReturnType != checker->GlobalVoidType()) {
+        if (!isReturnVoid) {
             checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, st->Start());
             return funcReturnType;
         }
@@ -740,9 +722,13 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
 
         checker::Type *argumentType = checker->GetNonConstantType(stArgument->Check(checker));
 
-        //  previous return statement(s) don't have any value
+        // previous return statement(s) don't have any value
         ES2PANDA_ASSERT(argumentType != nullptr);
-        if (funcReturnType->IsETSVoidType() && !argumentType->IsETSVoidType()) {
+        /*
+         * NOTE(knazarov): Workaround for Promise<void> being initialized with
+         * undefined. Should become IsIdenticalTo after #32490 is done.
+         */
+        if (isReturnVoid && !relation->IsSupertypeOf(voidType, argumentType)) {
             checker->LogError(diagnostic::MIXED_VOID_NONVOID, {}, stArgument->Start());
             return funcReturnType;
         }
@@ -752,7 +738,6 @@ checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *
             return funcReturnType;
         }
 
-        auto *const relation = checker->Relation();
         relation->SetNode(stArgument);
 
         if (!relation->IsIdenticalTo(funcReturnType, argumentType)) {

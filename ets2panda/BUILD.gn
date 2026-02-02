@@ -220,6 +220,7 @@ libes2panda_sources = [
   "compiler/lowering/ets/annotationCopyPostLowering.cpp",
   "compiler/lowering/ets/arrayLiteralLowering.cpp",
   "compiler/lowering/ets/asyncMethodLowering.cpp",
+  "compiler/lowering/ets/asyncMethodLoweringStackless.cpp",
   "compiler/lowering/ets/bigintLowering.cpp",
   "compiler/lowering/ets/binaryExpressionLowering.cpp",
   "compiler/lowering/ets/boxingForLocals.cpp",

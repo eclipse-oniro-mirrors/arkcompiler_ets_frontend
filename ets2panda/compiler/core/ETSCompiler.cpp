@@ -24,6 +24,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "ETSGen-inl.h"
+#include "public/public.h"
 
 namespace ark::es2panda::compiler {
 
@@ -371,7 +372,7 @@ void ETSCompiler::Compile(const ir::AssignmentExpression *expr) const
     lref.SetValue();
 }
 
-void ETSCompiler::Compile(const ir::AwaitExpression *expr) const
+void ETSCompiler::Compile([[maybe_unused]] const ir::AwaitExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
     static constexpr bool IS_UNCHECKED_CAST = false;
@@ -380,6 +381,14 @@ void ETSCompiler::Compile(const ir::AwaitExpression *expr) const
     expr->Argument()->Compile(etsg);
     etsg->StoreAccumulator(expr, argumentReg);
     etsg->CallVirtual(expr->Argument(), compiler::Signatures::BUILTIN_PROMISE_AWAIT_RESOLUTION, argumentReg);
+
+    if (etsg->Context()->config->options->IsStacklessCoros()) {
+        const auto resultReg = etsg->AllocReg();
+        etsg->EmitCheckCast(expr, compiler::Signatures::BUILTIN_ASYNCCONTEXT, false);
+        etsg->StoreAccumulator(expr, resultReg);
+        etsg->EmitEtsAsyncSuspend(expr, resultReg);
+    }
+
     etsg->CastToReftype(expr->Argument(), expr->TsType(), IS_UNCHECKED_CAST);
     etsg->SetAccumulatorType(expr->TsType());
 }
@@ -1280,7 +1289,6 @@ static void CheckVoidReturnType(const ir::ReturnStatement *st, const ir::Express
 void ETSCompiler::Compile(const ir::ReturnStatement *st) const
 {
     ETSGen *etsg = GetETSGen();
-    bool isAsyncImpl = st->IsAsyncImplReturn();
     auto *const argument = st->Argument();
     if (argument == nullptr) {
         if (etsg->ExtendWithFinalizer(st->Parent(), st)) {
@@ -1289,7 +1297,7 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
         if (etsg->CheckControlFlowChange()) {
             etsg->ControlFlowChangeBreak();
         }
-        if (isAsyncImpl) {
+        if (!GetETSGen()->Context()->config->options->IsStacklessCoros() && etsg->IsAsync()) {
             etsg->LoadAccumulatorUndefined(st);
             etsg->ReturnAcc(st);
             return;
@@ -1301,7 +1309,7 @@ void ETSCompiler::Compile(const ir::ReturnStatement *st) const
     if (argument->IsCallExpression() && argument->AsCallExpression()->Signature()->ReturnType()->IsETSVoidType()) {
         argument->Compile(etsg);
         if (etsg->ReturnType()->IsETSVoidType()) {
-            if (isAsyncImpl) {
+            if (!GetETSGen()->Context()->config->options->IsStacklessCoros() && etsg->IsAsync()) {
                 etsg->LoadAccumulatorUndefined(st);
                 etsg->ReturnAcc(st);
             } else {

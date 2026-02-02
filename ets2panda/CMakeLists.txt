@@ -361,6 +361,7 @@ set(ES2PANDA_LIB_SRC
   compiler/lowering/ets/opAssignment.cpp
   compiler/lowering/ets/ambientLowering.cpp
   compiler/lowering/ets/asyncMethodLowering.cpp
+  compiler/lowering/ets/asyncMethodLoweringStackless.cpp
   compiler/lowering/ets/bigintLowering.cpp
   compiler/lowering/ets/binaryExpressionLowering.cpp
   compiler/lowering/ets/recordLowering.cpp

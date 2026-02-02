@@ -620,6 +620,37 @@ public:
 // NOLINTNEXTLINE (cert-err58-cpp)
 const EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::INFOS = EtsIntrinsicInfo::InitIntrinsicInfos();
 
+class ETSIntrinsicAsyncDispatch final : public EtsIntrinsicInfo {
+public:
+    util::StringView Name() const override
+    {
+        return "asyncdispatch";
+    }
+
+    checker::Type *Check(checker::ETSChecker *checker, ETSIntrinsicNode *intrin) const override
+    {
+        CheckParams(checker, intrin);
+
+        if (intrin->Arguments().size() != 1U) {
+            return InvalidateIntrinsic(checker, intrin);
+        }
+
+        return intrin->SetTsType(checker->GlobalVoidType());
+    }
+
+    void CompileImpl(compiler::ETSGen *etsg, ETSIntrinsicNode const *intrin) const override
+    {
+        compiler::RegScope rs(etsg);
+
+        const auto [asyncCtx] = Args<1U>(intrin);
+        asyncCtx->Compile(etsg);
+
+        const auto resultReg = etsg->AllocReg();
+        etsg->StoreAccumulator(intrin, resultReg);
+        etsg->EmitEtsAsyncDispatch(intrin, resultReg);
+    }
+};
+
 EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
 {
     EtsIntrinsicInfo::InfosMap infos;
@@ -641,6 +672,7 @@ EtsIntrinsicInfo::InfosMap EtsIntrinsicInfo::InitIntrinsicInfos()
     registerIntrin(std::make_unique<ETSIntrinsicAnyCallThis>());
     registerIntrin(std::make_unique<ETSIntrinsicAnyIsinstance>());
     registerIntrin(std::make_unique<ETSIntrinsicCreateRawFixedArray>());
+    registerIntrin(std::make_unique<ETSIntrinsicAsyncDispatch>());
     return infos;
 }
 

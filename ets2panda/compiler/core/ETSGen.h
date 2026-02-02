@@ -40,6 +40,7 @@ public:
     [[nodiscard]] const checker::ETSChecker *Checker() const noexcept;
     [[nodiscard]] const varbinder::ETSBinder *VarBinder() const noexcept;
     [[nodiscard]] const checker::Type *ReturnType() const noexcept;
+    [[nodiscard]] bool IsAsync() const noexcept;
     [[nodiscard]] const checker::ETSObjectType *ContainingObjectType() const noexcept;
     ETSEmitter *Emitter() const;
 
@@ -496,6 +497,18 @@ public:
         Sa().Emit<LdaType>(node, AssemblerReference(sv));
     }
 
+    void EmitCheckCast(const ir::AstNode *node, util::StringView target, bool isNonnull)
+    {
+        if (isNonnull) {
+            Sa().Emit<CheckcastNonnull>(node, AssemblerReference(target));
+        } else if (target != Signatures::BUILTIN_OBJECT) {
+            Sa().Emit<Checkcast>(node, AssemblerReference(target));
+        }
+    }
+
+    void EmitEtsAsyncSuspend(const ir::AstNode *node, const VReg asyncContext);
+    void EmitEtsAsyncDispatch(const ir::AstNode *node, const VReg asyncContext);
+
     ~ETSGen() override = default;
     NO_COPY_SEMANTIC(ETSGen);
     NO_MOVE_SEMANTIC(ETSGen);
@@ -535,15 +548,6 @@ private:
 #else
         ES2PANDA_UNREACHABLE();
 #endif  // PANDA_WITH_ETS
-    }
-
-    void EmitCheckCast(const ir::AstNode *node, util::StringView target, bool isNonnull)
-    {
-        if (isNonnull) {
-            Sa().Emit<CheckcastNonnull>(node, AssemblerReference(target));
-        } else if (target != Signatures::BUILTIN_OBJECT) {
-            Sa().Emit<Checkcast>(node, AssemblerReference(target));
-        }
     }
 
     void EmitIsInstance(const ir::AstNode *node, util::StringView target)

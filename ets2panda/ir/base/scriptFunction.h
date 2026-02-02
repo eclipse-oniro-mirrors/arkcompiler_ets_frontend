@@ -154,6 +154,21 @@ public:
         return (Flags() & ir::ScriptFunctionFlags::ASYNC_IMPL) != 0;
     }
 
+    /*
+     * NOTE(knazarov): Since we lower async functions differently in
+     * stackless and stackfull modes, this function is provided for
+     * general use, where we need to know whether given function was
+     * declared as async in the source code regardless of how it was
+     * later lowered. This allows to limit spread of the lowering-specific
+     * `IsAsyncImplFunc` in the code base. Please only
+     * use `IsAsyncImplFunc` where the specific lowering
+     * is important.
+     */
+    [[nodiscard]] bool IsDeclaredAsync() const noexcept
+    {
+        return IsAsyncFunc() || IsAsyncImplFunc();
+    }
+
     [[nodiscard]] bool IsArrow() const noexcept
     {
         return (Flags() & ir::ScriptFunctionFlags::ARROW) != 0;

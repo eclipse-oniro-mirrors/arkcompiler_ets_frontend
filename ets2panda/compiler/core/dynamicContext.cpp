@@ -274,7 +274,7 @@ void ETSTryContext::EmitFinalizerInsertion(ETSGen *etsg, compiler::LabelPair lab
     if (labelPair.End() != nullptr) {
         etsg->Branch(tryStmt_, labelPair.End());
     } else if (isReturn && isReturnVoid) {
-        if (statement->AsReturnStatement()->IsAsyncImplReturn()) {
+        if (etsg->IsAsync()) {
             etsg->LoadAccumulatorUndefined(tryStmt_);
             etsg->ReturnAcc(tryStmt_);
         } else {

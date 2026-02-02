@@ -746,6 +746,9 @@ builtins:
   - name: TupleN
     package: PKG_STD_CORE
     ref: BUILTIN_TUPLEN
+  - name: AsyncContext
+    package: PKG_ARKRUNTIME
+    ref: BUILTIN_ASYNCCONTEXT
 
 signatures:
   - callee: BUILTIN_OBJECT
@@ -1817,6 +1820,36 @@ signatures:
     params: []
     return_type: BUILTIN_JSVALUE
     ref: BUILTIN_JSRUNTIME_CREATE_OBJECT
+
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: current
+    params: []
+    return_type: BUILTIN_ASYNCCONTEXT
+    ref: BUILTIN_ASYNCCONTEXT_CURRENT
+
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: init
+    params: []
+    return_type: BUILTIN_ASYNCCONTEXT
+    ref: BUILTIN_ASYNCCONTEXT_INIT
+
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: resolve
+    params: [BUILTIN_OBJECT]
+    return_type: BUILTIN_PROMISE
+    ref: BUILTIN_ASYNCCONTEXT_RESOLVE
+
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: reject
+    params: [BUILTIN_ERROR]
+    return_type: BUILTIN_PROMISE
+    ref: BUILTIN_ASYNCCONTEXT_REJECT
+
+  - callee: BUILTIN_ASYNCCONTEXT
+    method_name: result
+    params: []
+    return_type: BUILTIN_OBJECT
+    ref: BUILTIN_ASYNCCONTEXT_RESULT
 
 dynamiclangs:
   - name: js

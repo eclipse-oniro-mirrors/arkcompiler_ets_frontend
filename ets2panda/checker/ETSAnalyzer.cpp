@@ -337,26 +337,23 @@ checker::Type *ETSAnalyzer::Check(ir::ClassStaticBlock *st) const
     return st->TsType();
 }
 
-// Satisfy the Chinese code checker
-
-static bool IsPromiseOrPromiseLikeType(ETSChecker *checker, const ETSObjectType *type)
-{
-    const auto baseType = type->GetOriginalBaseType();
-    return baseType == checker->GlobalBuiltinPromiseLikeType() || baseType == checker->GlobalBuiltinPromiseType();
-}
-
 static void HandleNativeAndAsyncMethods(ETSChecker *checker, ir::MethodDefinition *node)
 {
     auto *scriptFunc = node->Function();
     ES2PANDA_ASSERT(scriptFunc != nullptr);
 
-    if (util::Helpers::IsAsyncMethod(node)) {
+    /*
+     * NOTE(knazarov): To not break compatibility with existing behaviour,
+     * we keep return type of the AsyncImpl methods as Object, so here we only check
+     * AsyncFunc itself.
+     */
+    if (scriptFunc->IsAsyncFunc() && !scriptFunc->IsProxy()) {
         if (scriptFunc->ReturnTypeAnnotation() != nullptr && !scriptFunc->ReturnTypeAnnotation()->IsOpaqueTypeNode() &&
             scriptFunc->Signature() != nullptr) {
             auto *asyncFuncReturnType = scriptFunc->Signature()->ReturnType();
 
             if (!asyncFuncReturnType->IsETSObjectType() ||
-                !IsPromiseOrPromiseLikeType(checker, asyncFuncReturnType->AsETSObjectType())) {
+                !checker->IsPromiseType(asyncFuncReturnType->AsETSObjectType())) {
                 checker->LogError(diagnostic::ASYNC_FUNCTION_RETURN_TYPE, {}, scriptFunc->Start());
                 scriptFunc->Signature()->SetReturnType(checker->GlobalTypeError());
                 return;
@@ -1366,7 +1363,7 @@ static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checke
         return false;
     }
     for (auto subtype : type->AsETSUnionType()->ConstituentTypes()) {
-        if (subtype->IsETSObjectType() && IsPromiseOrPromiseLikeType(checker, subtype->AsETSObjectType())) {
+        if (subtype->IsETSObjectType() && checker->IsPromiseType(subtype->AsETSObjectType())) {
             return true;
         }
     }
@@ -1400,7 +1397,7 @@ static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, 
 
     auto *retType = signature->ReturnType();
     if (!IsUnionTypeContainingPromise(retType, checker) &&
-        (!retType->IsETSObjectType() || !IsPromiseOrPromiseLikeType(checker, retType->AsETSObjectType()))) {
+        (!retType->IsETSObjectType() || !checker->IsPromiseType(retType->AsETSObjectType()))) {
         auto returnType = checker->CreateETSAsyncFuncReturnTypeFromBaseType(signature->ReturnType());
         ES2PANDA_ASSERT(returnType != nullptr);
         expr->Function()->Signature()->SetReturnType(returnType->PromiseType());
@@ -2070,14 +2067,13 @@ checker::Type *ETSAnalyzer::Check(ir::AwaitExpression *expr) const
         return expr->TsType();
     }
 
-    /**
+    /*
      * NOTE(knazarov): Spec 16.3.4.
      * A compile-time error occurs if await is used outside of an asynchronous function, method or lambda body.
      * Check only the nearest ScriptFunction.
      */
     const auto ancestor = util::Helpers::FindAncestorGivenByType(expr, ir::AstNodeType::SCRIPT_FUNCTION);
-    const auto isAncestorAsync = (ancestor != nullptr) && (ancestor->AsScriptFunction()->IsAsyncFunc() ||
-                                                           ancestor->AsScriptFunction()->IsAsyncImplFunc());
+    const auto isAncestorAsync = (ancestor != nullptr) && (ancestor->AsScriptFunction()->IsDeclaredAsync());
     if (!isAncestorAsync) {
         checker->LogError(diagnostic::AWAIT_IN_NON_ASYNC_DEPRECATED, {}, expr->Argument()->Start());
     }
@@ -4116,6 +4112,7 @@ checker::Type *ETSAnalyzer::Check(ir::BlockStatement *st) const
     //---- Don't modify this to iterator, as it may break things during checking
     for (std::size_t idx = 0; idx < st->Statements().size(); ++idx) {
         auto *stmt = st->Statements()[idx];
+
         stmt->Check(checker);
 
         //  NOTE! Processing of trailing blocks was moved here so that smart casts could be applied correctly
@@ -4575,9 +4572,14 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
     }
 
     if (containingFunc->ReturnTypeAnnotation() != nullptr) {
+        /*
+         * NOTE(knazarov): To not break compatibility with existing behaviour,
+         * we keep return type of the AsyncImpl methods as Object, so here we only check
+         * AsyncFunc itself.
+         */
         if (containingFunc->IsAsyncFunc()) {
             auto *type = containingFunc->ReturnTypeAnnotation()->GetType(checker);
-            if (!type->IsETSObjectType() || !IsPromiseOrPromiseLikeType(checker, type->AsETSObjectType())) {
+            if (!type->IsETSObjectType() || !checker->IsPromiseType(type->AsETSObjectType())) {
                 checker->LogError(diagnostic::ASYNC_FUNCTION_RETURN_TYPE, {},
                                   containingFunc->ReturnTypeAnnotation()->Start());
                 return false;
@@ -4593,13 +4595,17 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
     // Case when function's return type is defined explicitly:
     if (st->argument_ == nullptr) {
         ES2PANDA_ASSERT(funcReturnType != nullptr);
-        if (!funcReturnType->IsETSVoidType() && funcReturnType != checker->GlobalVoidType() &&
-            !funcReturnType->IsETSAsyncFuncReturnType() &&
-            (containingFunc->Flags() & ir::ScriptFunctionFlags::RETURN_PROMISEVOID) == 0) {
+        const auto voidType = containingFunc->IsAsyncFunc() ? checker->CreatePromiseOf(checker->GlobalVoidType())
+                                                            : checker->GlobalVoidType();
+        const auto relation = checker->Relation();
+        const auto isReturnVoid = relation->IsIdenticalTo(funcReturnType, voidType);
+        const auto isAsyncImplReturningPromiseVoid =
+            containingFunc->Flags() & ir::ScriptFunctionFlags::ASYNC_IMPL_RETURN_PROMISEVOID;
+        if (!isReturnVoid && !funcReturnType->IsETSAsyncFuncReturnType() && !isAsyncImplReturningPromiseVoid) {
             checker->LogError(diagnostic::RETURN_WITHOUT_VALUE, {}, st->Start());
             return false;
         }
-        funcReturnType = checker->GlobalVoidType();
+        funcReturnType = voidType;
     } else {
         const auto name = containingFunc->Scope()->InternalName().Mutf8();
         if (!CheckArgumentVoidType(funcReturnType, checker, name, st)) {
@@ -4671,9 +4677,9 @@ checker::Type *ETSAnalyzer::Check(ir::ReturnStatement *st) const
     }
 
     ir::AstNode *ancestor = util::Helpers::FindAncestorGivenByType(st, ir::AstNodeType::SCRIPT_FUNCTION);
-    ES2PANDA_ASSERT(ancestor && ancestor->IsScriptFunction());
-
     ES2PANDA_ASSERT(ancestor != nullptr);
+    ES2PANDA_ASSERT(ancestor->IsScriptFunction());
+
     auto *containingFunc = ancestor->AsScriptFunction();
     containingFunc->AddFlag(ir::ScriptFunctionFlags::HAS_RETURN);
 

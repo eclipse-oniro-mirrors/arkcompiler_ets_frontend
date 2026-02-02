@@ -261,6 +261,11 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
             auto annotations = emitter->GenCustomAnnotations(scriptFunc->Annotations(), func.name);
             func.metadata->SetAnnotations(std::move(annotations));
         }
+        /*
+         * NOTE(knazarov): Here we annotate the Async functions themselves.
+         * Since this annotation is directly related with stackfull implementation,
+         * use of IsAsyncFunc here is justified.
+         */
         if (scriptFunc->IsAsyncFunc()) {
             // callee does not tolerate constness
             func.metadata->AddAnnotations({
@@ -1150,9 +1155,10 @@ ir::MethodDefinition *ETSEmitter::FindAsyncImpl(ir::ScriptFunction *asyncFunc)
 {
     std::string implName = checker::ETSChecker::GetAsyncImplName(asyncFunc->Id()->Name());
     ir::AstNode *ownerNode = asyncFunc->Signature()->Owner()->GetDeclNode();
-    ES2PANDA_ASSERT(ownerNode != nullptr && ownerNode->IsClassDefinition());
+    ES2PANDA_ASSERT(ownerNode);
+    ES2PANDA_ASSERT(ownerNode->IsClassDefinition());
     const ir::ClassDefinition *classDef = ownerNode->AsClassDefinition();
-    ES2PANDA_ASSERT(classDef != nullptr);
+    ES2PANDA_ASSERT(classDef);
 
     ir::MethodDefinition *method = nullptr;
     for (auto node : classDef->Body()) {
@@ -1187,14 +1193,20 @@ ir::MethodDefinition *ETSEmitter::FindAsyncImpl(ir::ScriptFunction *asyncFunc)
 pandasm::AnnotationData ETSEmitter::GenAnnotationAsync(ir::ScriptFunction *scriptFunc)
 {
     AddDependence(std::string(Signatures::ARKRUNTIME_ANNOTATION_ASYNC));
-    const ir::MethodDefinition *impl = FindAsyncImpl(scriptFunc);
-    ES2PANDA_ASSERT(impl != nullptr);
-    ES2PANDA_ASSERT(impl->Function() != nullptr);
+    const ir::ScriptFunction *asyncFunc = nullptr;
+    if (Context()->config->options->IsStacklessCoros()) {
+        asyncFunc = scriptFunc;
+    } else {
+        const ir::MethodDefinition *impl = FindAsyncImpl(scriptFunc);
+        ES2PANDA_ASSERT(impl);
+        asyncFunc = impl->Function();
+    }
+    ES2PANDA_ASSERT(asyncFunc);
     pandasm::AnnotationData ann(Signatures::ARKRUNTIME_ANNOTATION_ASYNC);
     pandasm::AnnotationElement value(
         Signatures::ANNOTATION_KEY_VALUE,
         std::make_unique<pandasm::ScalarValue>(
-            pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(ToAssemblerSignature(impl->Function()))));
+            pandasm::ScalarValue::Create<pandasm::Value::Type::METHOD>(ToAssemblerSignature(asyncFunc))));
     ann.AddElement(std::move(value));
     return ann;
 }

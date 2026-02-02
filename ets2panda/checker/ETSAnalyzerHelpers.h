@@ -34,7 +34,6 @@ void CheckExtensionIsShadowedByMethod(checker::ETSChecker *checker, checker::ETS
                                       ir::ScriptFunction *extensionFunc, checker::Signature *signature);
 void CheckExtensionMethod(checker::ETSChecker *checker, ir::ScriptFunction *extensionFunc, ir::AstNode *node);
 void DoBodyTypeChecking(ETSChecker *checker, ir::MethodDefinition *node, ir::ScriptFunction *scriptFunc);
-void ComposeAsyncImplFuncReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc);
 void CheckPredefinedMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc);
 void CheckIteratorMethodReturnType(ETSChecker *checker, ir::ScriptFunction *scriptFunc,
                                    const lexer::SourcePosition &position, const std::string &methodName);

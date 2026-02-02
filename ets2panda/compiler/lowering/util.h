@@ -22,6 +22,8 @@ namespace ark::es2panda::compiler {
 
 class PhaseManager;
 
+inline constexpr std::string_view const ARKRUNTIME_IMPORT_ALIAS_PREFIX =
+    "__es2panda_internal__arkruntime_import_alias_";
 inline constexpr std::string_view const GENSYM_CORE = "gensym%%_";
 inline constexpr std::string_view const DUMMY_ID = "_";
 ir::AstNode *RefineSourceRanges(ir::AstNode *node);

@@ -18,6 +18,7 @@
 #include "checker/checker.h"
 #include "compiler/lowering/checkerPhase.h"
 #include "compiler/lowering/ets/asyncMethodLowering.h"
+#include "compiler/lowering/ets/asyncMethodLoweringStackless.h"
 #include "compiler/lowering/ets/annotationCopyLowering.h"
 #include "compiler/lowering/ets/annotationCopyPostLowering.h"
 #include "compiler/lowering/ets/ambientLowering.h"
@@ -146,6 +147,7 @@ std::vector<Phase *> GetETSPhaseList()
         new RelaxedAnyLoweringPhase,
         new AnnotationCopyPostLowering,
         new AsyncMethodLowering,
+        new AsyncMethodLoweringStackless,
         new DeclareOverloadLowering,
         new EnumPostCheckLoweringPhase,
         new SpreadConstructionPhase,

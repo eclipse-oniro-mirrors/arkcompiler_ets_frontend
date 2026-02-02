@@ -549,12 +549,16 @@ Signature *ETSChecker::CreateBuiltinArraySignature(const ETSArrayType *arrayType
 
 ETSObjectType *ETSChecker::CreatePromiseOf(Type *type)
 {
+    ES2PANDA_ASSERT(type);
+    const auto typeArg = MaybeBoxType(type);
+
     ETSObjectType *const promiseType = GlobalBuiltinPromiseType();
+    ES2PANDA_ASSERT(promiseType != nullptr);
     ES2PANDA_ASSERT(promiseType->TypeArguments().size() == 1U);
+    const auto globalBuiltinPromiseTypeParam = promiseType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal();
 
     auto substitution = Substitution {};
-    ES2PANDA_ASSERT(promiseType != nullptr);
-    EmplaceSubstituted(&substitution, promiseType->TypeArguments()[0]->AsETSTypeParameter()->GetOriginal(), type);
+    EmplaceSubstituted(&substitution, globalBuiltinPromiseTypeParam, typeArg);
 
     return promiseType->Substitute(Relation(), &substitution);
 }

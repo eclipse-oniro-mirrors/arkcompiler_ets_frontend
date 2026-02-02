@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -101,19 +101,6 @@ void ReturnStatement::SetArgument(Expression *arg)
     if (argument_ != nullptr) {
         argument_->SetParent(this);
     }
-}
-
-bool ReturnStatement::IsAsyncImplReturn() const
-{
-    const auto *parent = Parent();
-
-    while (parent != nullptr) {
-        if (parent->IsScriptFunction()) {
-            return parent->AsScriptFunction()->IsAsyncImplFunc();
-        }
-        parent = parent->Parent();
-    }
-    return false;
 }
 
 ReturnStatement *ReturnStatement::Clone(ArenaAllocator *const allocator, AstNode *const parent)
