@@ -1332,7 +1332,9 @@ checker::Type *ETSAnalyzer::Check(ir::ArrayExpression *expr) const
     }
 
     if (!expr->Elements().empty()) {
-        if (preferredType == nullptr || preferredType == checker->GlobalETSObjectType()) {
+        if (preferredType == nullptr ||
+            checker->Relation()->IsSupertypeOf(preferredType, checker->GlobalETSObjectType()) ||
+            util::Helpers::TypeContainsParameterUnderInference(preferredType)) {
             preferredType = InferPreferredTypeFromElements(checker, expr);
         }
 
@@ -1371,6 +1373,51 @@ static bool IsUnionTypeContainingPromise(checker::Type *type, ETSChecker *checke
     return false;
 }
 
+static Type *ComputeArrowFunctionReturnTypeFromReturnStatements(checker::ETSChecker *checker, ir::ScriptFunction *func)
+{
+    ES2PANDA_ASSERT(func->ReturnTypeAnnotation() == nullptr && func->HasBody());
+    if (!func->HasReturnStatement() && func->HasThrowStatement() && checker->HasStatus(CheckerStatus::MEET_THROW)) {
+        return checker->GlobalETSNeverType();
+    }
+
+    std::vector<Type *> returnTypes {};
+    std::function<void(ir::AstNode *)> retCheck = [&](ir::AstNode *ast) {
+        if (ast->IsScriptFunction()) {
+            return;
+        }
+
+        ast->Iterate(retCheck);
+
+        if (!ast->IsReturnStatement()) {
+            return;
+        }
+        auto *ret = ast->AsReturnStatement();
+        if (ret->Argument() == nullptr) {
+            return;
+        }
+        // account for possible implicit conversions
+        auto *expectedPrimitive = GetAppropriatePreferredType(ret->ReturnType(), [](Type *tp) {
+            return tp->IsETSObjectType() && tp->AsETSObjectType()->IsBoxedPrimitive();
+        });
+
+        // NOTE(gogabr): `IsLegalBoxedPrimitiveConversion` does not work whan these flags are not set. Subject to
+        // further refactoring.
+        SavedTypeRelationFlagsContext trCtx(checker->Relation(), TypeRelationFlag::IN_ASSIGNMENT_CONTEXT);
+        checker->Relation()->SetNode(ret->Argument());
+
+        auto *rtype = checker->GetNonConstantType(ret->Argument()->TsType());
+        if (expectedPrimitive != nullptr &&
+            checker->Relation()->IsLegalBoxedPrimitiveConversion(expectedPrimitive, ret->Argument()->TsType())) {
+            rtype = ret->ReturnType();
+        }
+        returnTypes.push_back(rtype);
+    };
+    func->Iterate(retCheck);
+    auto *fullRtype = returnTypes.empty() ? checker->GetGlobalTypesHolder()->GlobalETSVoidType()
+                                          : checker->CreateETSUnionType(std::move(returnTypes));
+    return fullRtype;
+}
+
 static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, ir::ArrowFunctionExpression *expr)
 {
     if (expr->Function()->HasReceiver()) {
@@ -1385,10 +1432,15 @@ static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, 
         expr->Function()->Body()->Check(checker);
     }
 
-    // If all the path is unreachable, the return type should be never.
-    if (expr->Function()->ReturnTypeAnnotation() == nullptr && !expr->Function()->HasReturnStatement() &&
-        expr->Function()->HasThrowStatement() && checker->HasStatus(CheckerStatus::MEET_THROW)) {
-        expr->Function()->Signature()->SetReturnType(checker->GlobalETSNeverType());
+    // The return type has to be refined in two cases:
+    // - if it serves to determine the value of a type parameter under inference
+    // - if a `void` return should be replaced by `never` because all control paths end in `throw`.
+    if (expr->Function()->ReturnTypeAnnotation() == nullptr &&
+        (util::Helpers::TypeContainsParameterUnderInference(expr->Function()->Signature()->ReturnType()) ||
+         expr->Function()->Signature()->ReturnType()->IsETSVoidType()) &&
+        expr->Function()->HasBody()) {
+        expr->Function()->Signature()->SetReturnType(
+            ComputeArrowFunctionReturnTypeFromReturnStatements(checker, expr->Function()));
     }
 
     if (expr->Function()->ReturnTypeAnnotation() != nullptr || !expr->Function()->IsAsyncFunc()) {
@@ -2558,9 +2610,13 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
         expr->SetTsType(BiggerNumericType(GetETSChecker(), consequentType, alternateType));
     } else {
         Type *consequentTypeUnderly =
-            consequentType->IsETSNumericEnumType() ? consequentType->AsETSEnumType()->Underlying() : consequentType;
+            consequentType->IsETSNumericEnumType()
+                ? checker->MaybeBoxType(consequentType->AsETSEnumType()->GetBaseEnumElementType(checker))
+                : consequentType;
         Type *alternateTypeUnderly =
-            alternateType->IsETSNumericEnumType() ? alternateType->AsETSEnumType()->Underlying() : alternateType;
+            alternateType->IsETSNumericEnumType()
+                ? checker->MaybeBoxType(alternateType->AsETSEnumType()->GetBaseEnumElementType(checker))
+                : alternateType;
         if (IsNumericType(GetETSChecker(), consequentTypeUnderly) &&
             IsNumericType(GetETSChecker(), alternateTypeUnderly)) {
             if (consequentType->IsETSNumericEnumType()) {
@@ -5269,9 +5325,6 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
     checker->CheckAnnotations(st);
 
     if (st->TypeParams() == nullptr) {
-        const checker::SavedTypeRelationFlagsContext savedFlagsCtx(
-            checker->Relation(), checker::TypeRelationFlag::NO_THROW_GENERIC_TYPEALIAS);
-
         if (st->TypeAnnotation()->TsType() == nullptr) {
             st->TypeAnnotation()->Check(checker);
         }
@@ -5281,14 +5334,14 @@ checker::Type *ETSAnalyzer::Check(ir::TSTypeAliasDeclaration *st) const
 
     if (st->TypeParameterTypes().empty()) {
         auto [typeParamTypes, ok] = checker->CreateUnconstrainedTypeParameters(st->TypeParams());
+        for (auto *tpt : typeParamTypes) {
+            tpt->AsETSTypeParameter()->SetUnderInference();
+        }
         st->SetTypeParameterTypes(std::move(typeParamTypes));
         if (ok) {
             checker->AssignTypeParameterConstraints(st->TypeParams());
         }
     }
-
-    const checker::SavedTypeRelationFlagsContext savedFlagsCtx(checker->Relation(),
-                                                               checker::TypeRelationFlag::NO_THROW_GENERIC_TYPEALIAS);
 
     if (st->TypeAnnotation()->TsType() == nullptr) {
         st->TypeAnnotation()->Check(checker);

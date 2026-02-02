@@ -268,6 +268,11 @@ static std::optional<Type *> LightMerge(TypeRelation *relation, Type *const t1, 
     auto *const checker = relation->GetChecker()->AsETSChecker();
     auto *const never = checker->GetGlobalTypesHolder()->GlobalETSNeverType();
 
+    if (util::Helpers::TypeContainsParameterUnderInference(t1) ||
+        util::Helpers::TypeContainsParameterUnderInference(t2)) {
+        return std::nullopt;
+    }
+
     // Merge the same type to one in the union.
     if (relation->IsIdenticalTo(t1, t2)) {
         return t1;
@@ -296,6 +301,11 @@ static std::optional<Type *> LightMerge(TypeRelation *relation, Type *const t1, 
 
 static std::optional<Type *> MergeSubTypes(TypeRelation *relation, Type *const t1, Type *const t2)
 {
+    if (util::Helpers::TypeContainsParameterUnderInference(t1) ||
+        util::Helpers::TypeContainsParameterUnderInference(t2)) {
+        return std::nullopt;
+    }
+
     // Do Super-Sub type merge.
     if (relation->IsSupertypeOf(t1, t2)) {
         return t1;

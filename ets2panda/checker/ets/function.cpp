@@ -143,6 +143,42 @@ static std::pair<Type *, bool> GetArgumentTypeForInfer(ETSChecker *checker, ir::
     return {GetArgumentType(checker, arg), false};
 }
 
+static Substitution RenameParameters(ETSChecker *checker, Signature *signature)
+{
+    auto res = Substitution {};
+    for (auto *tp : signature->TypeParams()) {
+        auto *tpar = tp->AsETSTypeParameter();
+        auto *newTpar = tpar->Clone(checker)->AsETSTypeParameter();
+        newTpar->SetUnderInference();
+        res.emplace(tpar, newTpar);
+    }
+
+    // Be careful about interdependenicies, thus the two-phase initialization.
+    for (auto *tp : signature->TypeParams()) {
+        auto *tpar = tp->AsETSTypeParameter();
+        auto *newTpar = res[tpar]->AsETSTypeParameter();
+        if (tpar->GetConstraintType() != nullptr) {
+            newTpar->SetConstraintType(tpar->GetConstraintType()->Substitute(checker->Relation(), &res));
+        }
+        if (tpar->GetDefaultType() != nullptr) {
+            newTpar->SetDefaultType(tpar->GetDefaultType()->Substitute(checker->Relation(), &res));
+        }
+    }
+    return res;
+}
+
+static Substitution ComposeTemporarySubstitution(ETSChecker *checker, Substitution *one, Substitution *two)
+{
+    Substitution res {};
+    for (auto [tpar, val] : *one) {
+        auto nval = val->Substitute(checker->Relation(), two);
+        if (nval != val) {
+            res.emplace(tpar, nval);
+        }
+    }
+    return res;
+}
+
 static void InferUntilFail(Signature const *const signature, const ArenaVector<ir::Expression *> &arguments,
                            ETSChecker *checker, Substitution *substitution)
 {
@@ -177,12 +213,9 @@ static void InferUntilFail(Signature const *const signature, const ArenaVector<i
                 paramType = paramType->Substitute(checker->Relation(), substitution);
             }
 
-            // note: case in #31893 should be fixed later
-            if (!checker->ContainsTypeParameter(paramType)) {
-                arg->SetPreferredType(paramType);
-            }
-
+            arg->SetPreferredType(paramType);
             auto [argType, needContinue] = GetArgumentTypeForInfer(checker, arg);
+
             if (needContinue) {
                 continue;
             }
@@ -203,10 +236,12 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
                                                                          const ArenaVector<ir::Expression *> &arguments)
 {
     auto substitution = Substitution {};
-    auto *sigInfo = signature->GetSignatureInfo();
-    auto &sigParams = signature->GetSignatureInfo()->typeParams;
+    auto paramRenamer = RenameParameters(checker, signature);
+    auto sigRenamed = signature->Substitute(checker->Relation(), &paramRenamer);
+    auto *sigInfo = sigRenamed->GetSignatureInfo();
+    auto &sigParams = sigInfo->typeParams;
 
-    InferUntilFail(signature, arguments, checker, &substitution);
+    InferUntilFail(sigRenamed, arguments, checker, &substitution);
 
     if (substitution.size() != sigParams.size()) {
         for (const auto typeParam : sigParams) {
@@ -227,12 +262,12 @@ static std::optional<Substitution> BuildImplicitSubstitutionForArguments(ETSChec
     if (substitution.size() != sigParams.size() &&
         (signature->Function()->ReturnTypeAnnotation() == nullptr ||
          !checker->EnhanceSubstitutionForType(sigInfo->typeParams,
-                                              signature->Function()->ReturnTypeAnnotation()->TsType(),
-                                              signature->ReturnType(), &substitution))) {
+                                              sigRenamed->Function()->ReturnTypeAnnotation()->TsType(),
+                                              sigRenamed->ReturnType(), &substitution))) {
         return std::nullopt;
     }
 
-    return substitution;
+    return ComposeTemporarySubstitution(checker, &paramRenamer, &substitution);
 }
 
 static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *typeParam, Type *typeArgument,
@@ -531,6 +566,9 @@ static bool EnhanceSubstitutionTypeParameter(ETSChecker *checker, ETSTypeParamet
                                              Substitution *substitution)
 {
     auto *const originalTparam = paramType->GetOriginal();
+    if (argumentType->IsETSTypeParameter() && argumentType->AsETSTypeParameter()->GetOriginal() == originalTparam) {
+        return false;
+    }
     if (!ETSChecker::IsReferenceType(argumentType)) {
         checker->LogError(diagnostic::INFERENCE_TYPE_INCOMPAT, {paramType, argumentType},
                           paramType->GetDeclNode()->Start());
@@ -719,9 +757,6 @@ static bool EnhanceSubstitutionForType(ETSChecker *checker, const ArenaVector<Ty
                                        Type *argumentType, Substitution *substitution)
 {
     ES2PANDA_ASSERT(argumentType != nullptr);
-    if (argumentType->IsETSPrimitiveType()) {
-        argumentType = checker->MaybeBoxInRelation(argumentType);
-    }
     if (paramType->IsETSTypeParameter()) {
         auto *const originalTparam = paramType->AsETSTypeParameter()->GetOriginal();
         if (std::find(typeParams.begin(), typeParams.end(), originalTparam) != typeParams.end() &&

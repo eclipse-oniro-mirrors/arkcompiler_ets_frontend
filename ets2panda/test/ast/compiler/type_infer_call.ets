@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 
-const p = Promise.resolve('hello');
+let arr = [1.1, 2.2, 3.3]
+let res = arr.reduce((a, b) => a + b, 0) // CTE now, type inference is not smart enough
 
-p.then(obj => {
-    const result = typeof obj.prop;
-});
+let arr2 = [1, 2, 3]
+let res2 = arr2.reduce((a, b) => a + b, 0.)
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: "hello") => T|PromiseLike<T>)) */
-/* @@? 19:31 Error Semantic error ESE0087: Property 'prop' does not exist on type 'String' */
+/* @@? 17:11 Error Semantic error ESE0127: No matching call signature for reduce(((p1: Int, p2: Double) => Int), Int) */
+/* @@? 17:32 Error Semantic error ESE0091: Type 'Double' is not compatible with the enclosing method's return type 'Int' */
