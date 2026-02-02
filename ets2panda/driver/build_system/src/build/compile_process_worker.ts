@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2025 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,9 +14,9 @@
  */
 
 import {
-    BUILD_MODE,
     WorkerMessageType,
     ProcessCompileTask,
+    JobContentType,
 } from '../types';
 import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
@@ -49,12 +49,11 @@ function compile(id: string, task: ProcessCompileTask): void {
 
     try {
         ets2panda.initalize();
-        if (task.fileList.length > 1) {
+        if (task.contentType === JobContentType.CLUSTER) {
             ets2panda.compileSimultaneous(
                 id,
                 task,
-                task.buildConfig.dumpPerf,
-                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
+                true,
                 declGeneratedCb,
                 abcCompiledCb
             )
@@ -62,7 +61,6 @@ function compile(id: string, task: ProcessCompileTask): void {
             ets2panda.compile(
                 id,
                 task,
-                task.buildConfig.buildMode === BUILD_MODE.DEBUG,
                 declGeneratedCb,
                 abcCompiledCb
             )
@@ -79,6 +77,9 @@ function compile(id: string, task: ProcessCompileTask): void {
         }
     } finally {
         ets2panda.finalize();
+        process.send!({
+            type: WorkerMessageType.TASK_FINISHED
+        });
     }
 
     Ets2panda.destroyInstance();
@@ -92,8 +93,7 @@ process.on('message', (message: {
     }
 }) => {
     const { type, data } = message;
-    logger.printDebug(`Got message from parent. Type: ${type}`)
-    logger.printDebug(`Got message from parent. payload: ${JSON.stringify(data, null, 1)}`)
+    logger.printDebug(`Got message from parent. Type: ${type}. TaskId ${data.taskId}`)
     try {
         switch (type) {
             case WorkerMessageType.ASSIGN_TASK:

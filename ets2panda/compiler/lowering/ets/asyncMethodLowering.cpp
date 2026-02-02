@@ -131,7 +131,7 @@ static void BuildProxyMethod(varbinder::ETSBinder *binder, const ir::ScriptFunct
     func->Scope()->BindName(containingClassName);
 
     if (!func->IsAsyncFunc() && !isExternal) {
-        binder->Functions().push_back(func->Scope());
+        binder->FunctionScopes().push_back(func->Scope());
     }
 }
 

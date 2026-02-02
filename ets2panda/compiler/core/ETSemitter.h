@@ -85,15 +85,26 @@ public:
     NO_COPY_SEMANTIC(ETSEmitter);
     NO_MOVE_SEMANTIC(ETSEmitter);
 
-    void GenAnnotation() override;
+    void EmitRecords() override;
+    std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> EmitRecordsSimultIncMode();
+    void AddProgramElement(ProgramElement *programElement) override;
+
+    bool IsETSEmitter() override
+    {
+        return true;
+    }
 
     // Handle a broken dependence between annotation handling and shared emitter code
     std::vector<pandasm::AnnotationData> GenCustomAnnotations(
         const ArenaVector<ir::AnnotationUsage *> &annotationUsages, const std::string &baseName);
     pandasm::AnnotationData GenAnnotationAsync(ir::ScriptFunction *scriptFunc);
     std::string const &AddDependence(std::string const &str);
+    void SetupDependenciesForTheProgram(const parser::Program *prg);
 
 private:
+    pandasm::Program *GetOrCreatePandasmProgram(const parser::Program *prg);
+    detail::EmitterDependencies *GetOrCreateDependenciesForTheProgram(const parser::Program *prg);
+    void EmitRecordsImpl(bool isIncrementalBuild = false);
     void EmitRecordTable(varbinder::RecordTable *table, bool programIsExternal, bool traverseExternals);
     void GenGlobalArrayRecord(const checker::ETSArrayType *arrayType);
     void GenGlobalUnionRecord(util::StringView assemblerType);
@@ -124,7 +135,19 @@ private:
     void ProcessArrayExpression(std::string &baseName, LiteralArrayVector &result,
                                 std::vector<pandasm::LiteralArray::Literal> &literals, const ir::Expression *elem);
 
-    std::unique_ptr<detail::EmitterDependencies> dependencies_;
+    // NOTE(mshimenkov): Since functions are emitted concurrently and those functions can be from different programs
+    // (in simultaneous build mode), corresponding dependencies_ for those programs can be set at the same time
+    // leading to dependencies confusion
+    thread_local static detail::EmitterDependencies *dependencies_;
+
+    // NOTE(mshimenkov): Is used in simultaneous mode after code gen stage to add functions functions from different
+    // modules to the corresponding pandasm::Programs
+    // The created pandasm::Programs are then passed outside and the caller is responsible for the memory free
+    std::unordered_map<std::string_view, pandasm::Program *> prgMaps_;
+
+    // NOTE(mshimenkov): Is used in simultaneous mode during code gen stage to collect info which records should be
+    // emitted for the current pandasm::Program (external and non-external records)
+    std::unordered_map<std::string_view, detail::EmitterDependencies *> depMaps_;
 };
 }  // namespace ark::es2panda::compiler
 

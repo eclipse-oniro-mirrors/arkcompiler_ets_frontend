@@ -59,8 +59,8 @@ class ETSBinder : public TypedBinder {
 public:
     explicit ETSBinder(public_lib::Context *context)
         : TypedBinder(context),
-          globalRecordTable_(Allocator(), nullptr, RecordTableFlags::NONE),
-          recordTable_(&globalRecordTable_),
+          globalRecordTable_(Allocator()->New<RecordTable>(Allocator(), nullptr, RecordTableFlags::NONE)),
+          recordTable_(globalRecordTable_),
           externalRecordTable_(Allocator()->Adapter()),
           defaultImports_(Allocator()->Adapter()),
           dynamicImports_(Allocator()->Adapter()),
@@ -103,14 +103,19 @@ public:
 
     bool CheckRecordTablesConsistency(parser::Program *program = nullptr) const;
 
+    void SetGlobalRecordTable(RecordTable *tbl) noexcept
+    {
+        globalRecordTable_ = tbl;
+    }
+
     [[nodiscard]] RecordTable *GetGlobalRecordTable() noexcept
     {
-        return &globalRecordTable_;
+        return globalRecordTable_;
     }
 
     [[nodiscard]] const RecordTable *GetGlobalRecordTable() const noexcept
     {
-        return &globalRecordTable_;
+        return globalRecordTable_;
     }
 
     [[nodiscard]] ArenaMap<parser::Program *, RecordTable *> &GetExternalRecordTable() noexcept
@@ -267,7 +272,7 @@ public:
         reexportedNames_.clear();
         reExportImports_.clear();
         defaultExport_ = nullptr;
-        globalRecordTable_.CleanUp();
+        globalRecordTable_->CleanUp();
     }
 
     void CopyTo(VarBinder *target) override
@@ -292,7 +297,7 @@ private:
                                  const Variable *const variable, util::StringView localName);
 
     // NOTE(dkofanov): #32418.
-    RecordTable globalRecordTable_;
+    RecordTable *globalRecordTable_;
     RecordTable *recordTable_;
     ArenaMap<parser::Program *, RecordTable *> externalRecordTable_;
     ArenaVector<ir::ETSImportDeclaration *> defaultImports_;  // 1

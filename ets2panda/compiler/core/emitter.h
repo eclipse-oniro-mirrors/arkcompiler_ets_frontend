@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +48,7 @@ class Label;
 class IRNode;
 class ProgramElement;
 class RegSpiller;
+class ETSEmitter;
 
 class FunctionEmitter {
 public:
@@ -103,16 +104,27 @@ public:
     NO_MOVE_SEMANTIC(Emitter);
 
     void AddLiteralBuffer(const LiteralBuffer &literals, uint32_t index);
-    void AddProgramElement(ProgramElement *programElement);
+    virtual void AddProgramElement(ProgramElement *programElement);
     static void DumpAsm(const pandasm::Program *prog);
-    pandasm::Program *Finalize(bool dumpDebugInfo, std::string_view globalClass = "");
+    pandasm::Program *DumpDebugInfo();
 
     uint32_t &LiteralBufferIndex()
     {
         return literalBufferIndex_;
     }
 
-    virtual void GenAnnotation() = 0;
+    virtual void EmitRecords() = 0;
+
+    virtual bool IsETSEmitter()
+    {
+        return false;
+    }
+
+    ETSEmitter *AsETSEmitter()
+    {
+        ES2PANDA_ASSERT(IsETSEmitter());
+        return reinterpret_cast<ETSEmitter *>(this);
+    }
 
 protected:
     explicit Emitter(const public_lib::Context *context);
@@ -122,14 +134,19 @@ protected:
         return prog_;
     }
 
+    pandasm::Program *SetProgram(pandasm::Program *prog)
+    {
+        return prog_ = prog;
+    }
+
     const public_lib::Context *Context() const
     {
         return context_;
     }
 
 private:
-    pandasm::Program *prog_;
-    const public_lib::Context *context_;
+    pandasm::Program *prog_ = nullptr;
+    const public_lib::Context *context_ = nullptr;
     uint32_t literalBufferIndex_ {};
 };
 }  // namespace ark::es2panda::compiler

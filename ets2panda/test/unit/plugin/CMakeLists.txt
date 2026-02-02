@@ -228,6 +228,7 @@ foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})
     endif()
 endforeach()
 
+# NOTE: Use only with -j1 option!
 add_custom_target(update-es2panda-plugin-test-expected)
 
 foreach(TEST_DATA IN ITEMS ${PLUGIN_TESTS})

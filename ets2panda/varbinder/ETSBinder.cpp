@@ -31,11 +31,11 @@ void ETSBinder::IdentifierAnalysis()
     ES2PANDA_ASSERT(VarScope() == TopScope());
 
     recordTable_->SetProgram(Program());
-    globalRecordTable_.SetClassDefinition(Program()->GlobalClass());
+    globalRecordTable_->SetClassDefinition(Program()->GlobalClass());
 
     BuildProgram();
 
-    ES2PANDA_ASSERT(globalRecordTable_.ClassDefinition() == Program()->GlobalClass());
+    ES2PANDA_ASSERT(globalRecordTable_->ClassDefinition() == Program()->GlobalClass());
 }
 
 void ETSBinder::LookupTypeArgumentReferences(ir::ETSTypeReference *typeRef)
@@ -1326,7 +1326,7 @@ void ETSBinder::AddCompilableFunction(ir::ScriptFunction *func)
         return;
     }
 
-    if (GetContext()->config->options->GetCompilationMode() == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE &&
+    if (GetContext()->config->options->GetCompilationMode() >= CompilationMode::SIMULTANEOUS &&
         func->Scope()->Name().Is(compiler::Signatures::ETS_GLOBAL)) {
         return;
     }
@@ -1406,8 +1406,8 @@ static void TraverseAST(ETSBinder *binder, ArenaVector<ir::ETSImportDeclaration 
 
 void ETSBinder::BuildProgram()
 {
-    // NOTE(dkofanov): #32418 remove from varbinder state:
-    Program()->SetRecordTable(&globalRecordTable_);
+    // NOTE(dkofanov): remove from varbinder state:
+    Program()->SetRecordTable(globalRecordTable_);
     // A tmp solution caused by #23877, needs to check stdlib first to avoid a bug in std/math/math.ets
     // After the bug fixed, we can merge these 2 loop.
     Program()->GetExternalSources()->Visit([this](auto *extProg) {
@@ -1433,7 +1433,7 @@ void ETSBinder::BuildExternalProgram(parser::Program *extProgram)
     auto *savedRecordTable = recordTable_;
     auto *savedTopScope = TopScope();
 
-    auto flags = Program()->VarBinder()->IsGenStdLib() || (extProgram->IsGenAbcForExternal())
+    auto flags = Program()->VarBinder()->IsGenStdLib() || (extProgram->IsBuiltSimultaneously())
                      ? RecordTableFlags::NONE
                      : RecordTableFlags::EXTERNAL;
     auto *extRecordTable = Allocator()->New<RecordTable>(Allocator(), extProgram, flags);

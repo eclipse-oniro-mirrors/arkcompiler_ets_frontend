@@ -235,6 +235,9 @@ public:
         // NOLINTEND(misc-non-private-member-variables-in-classes)
     };
 
+    using FileDependenciesMap = ArenaUnorderedMap<ArenaString, ArenaUnorderedSet<ArenaString>>;
+    using FileOutputMatching = ArenaUnorderedMap<ArenaString, ArenaString>;
+
     explicit ImportPathManager(public_lib::Context *context);
 
     NO_COPY_SEMANTIC(ImportPathManager);
@@ -277,6 +280,7 @@ public:
     parser::Program *SearchResolved(const ImportMetadata &importMetadata) const;
 
     static std::string FormEtscacheFilePath(std::string moduleName, const std::string &cacheDir);
+    std::string FormAbcFilePath(const ImportMetadata &imd) const;
 
     auto *Context() const
     {
@@ -289,6 +293,26 @@ public:
     }
 
     static int UnpackAbc(const std::string &abcPath, const std::string &cacheDir);
+
+    const auto &GetFileDependencies() const
+    {
+        return fileDependencies_;
+    }
+
+    void AddFileDependencies(std::string_view file, std::string_view depFile)
+    {
+        fileDependencies_[ArenaString {file}].emplace(depFile);
+    }
+
+    const auto &GetOutputMatching() const
+    {
+        return outputMatching_;
+    }
+
+    void AddOutputMatching(std::string_view file, std::string_view outPath)
+    {
+        outputMatching_[ArenaString {file}] = outPath;
+    }
 
 private:
     template <typename VarBinderT, Language::Id LANG_ID>
@@ -311,7 +335,6 @@ private:
     ResolvedPathRes TryResolvePath(std::string resolvedPathPrototype) const;
     void TryMatchStaticResolvedPath(ResolvedPathRes *result) const;
     void TryMatchDynamicResolvedPath(ResolvedPathRes *result) const;
-    bool DeclarationIsInCache(ImportMetadata &importData);
 
     template <ModuleKind KIND, typename VarBinderT = void>
     parser::ProgramAdapter<KIND> *IntroduceProgram(const ImportMetadata &importMetadata);
@@ -350,11 +373,13 @@ private:
     class ResolvedSources;
     ResolvedSources &resolvedSources_;
 
-    std::vector<util::StringView> directImportsFromMainSource_ {};
     std::string_view pathDelimiter_ {ark::os::file::File::GetPathDelim()};
     mutable lexer::SourcePosition srcPos_ {};
     bool isDynamic_ = false;
     std::unordered_set<std::string> processedAbcFiles_;
+
+    FileDependenciesMap fileDependencies_;
+    FileOutputMatching outputMatching_;
 };
 
 }  // namespace ark::es2panda::util

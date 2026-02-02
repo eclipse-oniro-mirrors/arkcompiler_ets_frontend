@@ -2035,7 +2035,7 @@ bool LambdaConversionPhase::PerformForProgram(parser::Program *program)
     // For reproducibility of results when several compilation sessions are executed during
     // the same process's lifetime.
     if (program == Context()->parserProgram &&
-        Context()->config->options->GetCompilationMode() != CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
+        (Context()->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS)) {
         ResetCalleeCount();
     }
 

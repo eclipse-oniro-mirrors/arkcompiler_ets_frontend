@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,8 +23,11 @@ namespace ark::es2panda::util {
 class Options;
 using ReporterFun = std::function<void(const diagnostic::DiagnosticKind &kind, const DiagnosticMessageParams &params)>;
 
-int GenerateProgram(ark::pandasm::Program *prog, const util::Options &options, const ReporterFun &reporter);
-
+int GenerateBinaryFile(ark::pandasm::Program *prog, const std::string &output, const util::Options &options,
+                       const ReporterFun &reporter);
+// CC-OFFNXT(G.NAM.03-CPP) project code style
+int GenerateBinaryFiles(std::unordered_map<std::string, std::unique_ptr<ark::pandasm::Program>> &progs,
+                        const util::Options &options, const ReporterFun &reporter);
 }  // namespace ark::es2panda::util
 
 #endif  // ES2PANDA_UTIL_GENERATEBIN_H

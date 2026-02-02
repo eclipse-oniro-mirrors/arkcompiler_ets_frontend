@@ -52,7 +52,7 @@ class Scope;
 
 namespace ark::es2panda::ir {
 
-inline thread_local bool g_enableContextHistory;
+inline thread_local bool g_enableContextHistory = false;
 // CC-OFFNXT(G.INC.10)
 [[maybe_unused]] static void DisableContextHistory()
 {

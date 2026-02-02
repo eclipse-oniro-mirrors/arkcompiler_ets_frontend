@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -111,7 +111,7 @@ public:
         ark::es2panda::Compiler compiler(options->GetExtension(), options->GetThread());
         ark::es2panda::SourceFile input(fileName, src, options->IsModule());
 
-        return std::unique_ptr<ark::pandasm::Program>(compiler.Compile(input, *options, de));
+        return std::move(compiler.Compile(input, *options, de).begin()->second);
     }
 
     ark::pandasm::Function *GetFunction(std::string_view functionName,

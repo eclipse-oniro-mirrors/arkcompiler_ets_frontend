@@ -29,6 +29,7 @@ class DepAnalyzer {
 public:
     using ProcessedFilesMap = std::unordered_set<std::string>;
     using FileDependenciesMap = std::unordered_map<std::string, std::unordered_set<std::string>>;
+    using FileOutputMatching = std::unordered_map<std::string, std::string>;
 
     int AnalyzeDeps(const DepAnalyzerArgs &args);
     int AnalyzeDeps(const std::string &exec, const std::string &arktsconfig, const std::vector<std::string> &fileList);
@@ -50,17 +51,23 @@ public:
         return directDependants_;
     }
 
+    const FileOutputMatching &GetOutputMathing() const
+    {
+        return outputMatching_;
+    }
+
 private:
     ProcessedFilesMap &GetAlreadyProcessedFiles()
     {
         return alreadyProcessedFiles_;
     }
 
-    void CollectDependencies(const ark::es2panda::parser::Program::FileDependenciesMap &dependencies);
+    void CollectData(const ark::es2panda::util::ImportPathManager *ipm);
 
     ProcessedFilesMap alreadyProcessedFiles_ {};
     FileDependenciesMap directDependencies_ {};
     FileDependenciesMap directDependants_ {};
+    FileOutputMatching outputMatching_ {};
 };
 
 #endif  // ES2PANDA_DEPENDENCY_ANALYZER_H

@@ -13,7 +13,7 @@
     "loaderOutPath": "./build/mock_har_abc",
     "cachePath": "./build/cache/mock_har_abc",
     "declgenV2OutPath": "${absolute_path_to_build_system}/build/cache",
-    "buildSdkPath": ".",
+    "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
     "pandaStdlibPath": "${absolute_path_to_stdlib}",
     "enableDeclgenEts2Ts": false,
     "dependentModuleList": [

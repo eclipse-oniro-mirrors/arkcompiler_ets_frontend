@@ -26,7 +26,9 @@ import {
     CompileJobType,
     AliasConfig,
     ArkTS,
-    KoalaModule
+    KoalaModule,
+    JobContentType,
+    BUILD_MODE
 } from '../types';
 import {
     Logger,
@@ -37,7 +39,6 @@ import {
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
-    formEts2pandaCmd
 } from './utils';
 import {
     DECL_ETS_SUFFIX,
@@ -46,8 +47,8 @@ import {
     STATIC_RECORD_FILE_CONTENT,
     TS_SUFFIX,
     ENABLE_DECLARATION_BARRIER,
-    ENABLE_DECL_CACHE,
-    ETSCACHE_SUFFIX
+    ETSCACHE_SUFFIX,
+    MERGED_INTERMEDIATE_FILE
 } from '../pre_define';
 import {
     PluginDriver,
@@ -84,10 +85,11 @@ export class Ets2panda {
     private readonly buildSdkPath: string;
     private readonly aliasConfig: Record<string, Record<string, AliasConfig>>;
     private readonly cacheDir: string;
-    private readonly declgenV2OutDir: string;
     private readonly pluginDriver: PluginDriver = PluginDriver.getInstance();
     private readonly recordType?: 'ON' | 'OFF';
     private readonly projectRootPath: string;
+    private readonly debugBuild: boolean = false;
+    private readonly dumpPerf: boolean = false;
 
     // NOTE: should be Ets2panda Wrapper Module
     // NOTE: to be refactored
@@ -100,9 +102,10 @@ export class Ets2panda {
         this.aliasConfig = buildConfig.aliasConfig;
         this.cacheDir = buildConfig.cachePath;
         this.recordType = buildConfig.recordType;
-        this.declgenV2OutDir = buildConfig.declgenV2OutPath;
-        this.pluginDriver.initPlugins(buildConfig)
+        this.pluginDriver.initPlugins(buildConfig);
         this.projectRootPath = buildConfig.projectRootPath;
+        this.debugBuild = (buildConfig.buildMode === BUILD_MODE.DEBUG);
+        this.dumpPerf = buildConfig.dumpPerf ?? false;
     }
 
     public static getInstance(buildConfig?: BuildConfig): Ets2panda {
@@ -156,10 +159,85 @@ export class Ets2panda {
         }
     }
 
+    private formCompileCliCmd(
+        job: CompileJobInfo,
+        incremental: boolean = false
+    ): string[] {
+
+        const ets2pandaCmd: string[] = [
+            '_',
+            '--extension',
+            'ets',
+            '--arktsconfig',
+            job.arktsConfig
+        ]
+
+        if (job.contentType === JobContentType.CLUSTER) {
+            ets2pandaCmd.push('--simultaneous')
+            if (incremental) {
+                ets2pandaCmd.push('--incremental')
+            }
+        }
+
+        if ((job.jobType & CompileJobType.DECL) !== 0) {
+            ets2pandaCmd.push('--emit-declaration');
+        }
+
+        if (job.contentType === JobContentType.FILE) {
+            ets2pandaCmd.push('--output')
+            ets2pandaCmd.push((job.content as FileInfo).output)
+        } else if (job.contentType === JobContentType.CLUSTER && !incremental) {
+            // In case of simultaneous compilation and not incremental the output abc path is pre defined
+            ets2pandaCmd.push('--output')
+            ets2pandaCmd.push(path.resolve(this.cacheDir, MERGED_INTERMEDIATE_FILE))
+        }
+
+        if (this.debugBuild) {
+            ets2pandaCmd.push('--debug-info');
+            ets2pandaCmd.push('--opt-level=0');
+        }
+
+        ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');
+
+        if (job.contentType === JobContentType.FILE) {
+            ets2pandaCmd.push((job.content as FileInfo).input)
+        }
+
+        if (this.dumpPerf) {
+            ets2pandaCmd.push('--dump-perf-metrics');
+        }
+
+        return ets2pandaCmd
+    }
+
+    private formDeclgenCliCmd(
+        job: DeclgenV1JobInfo,
+    ): string[] {
+
+        const ets2pandaCmd: string[] = [
+            '_',
+            '--extension',
+            'ets',
+            '--arktsconfig',
+            job.arktsConfig
+        ]
+
+        if (job.contentType === JobContentType.CLUSTER) {
+            ets2pandaCmd.push('--simultaneous')
+        }
+
+        ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
+
+        if (job.contentType === JobContentType.FILE) {
+            ets2pandaCmd.push((job.content as FileInfo).input)
+        }
+
+        return ets2pandaCmd
+    }
+
     public compile(
         jobId: string,
         job: CompileJobInfo,
-        isDebug: boolean = false,
         declGenCb?: () => void,
         compAbcCb?: () => void
     ): void {
@@ -168,14 +246,11 @@ export class Ets2panda {
             this.recordType,
             `Compile. Job id: ${jobId.slice(0, 5)}`
         );
+        this.logger.printDebug(`Ets2panda.compile Job: ${jobId}`)
 
-        this.logger.printDebug(`Ets2panda.compile Job = ${JSON.stringify(job, null, 1)}`)
-
-        const { input: inputFilePath, output: outputFilePath }: FileInfo = job.fileInfo;
-        const source = fs.readFileSync(inputFilePath, 'utf-8');
-        const isDecl = (job.type & CompileJobType.DECL) !== 0;
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, false, isDecl);
-        ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');
+        const fi = job.content as FileInfo;
+        const { input, output }: FileInfo = fi;
+        const ets2pandaCmd: string[] = this.formCompileCliCmd(job);
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         const { arkts, arktsGlobal } = this.koalaModule;
@@ -187,7 +262,8 @@ export class Ets2panda {
         try {
             statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.filePath = inputFilePath;
+            arktsGlobal.filePath = input;
+            const source = fs.readFileSync(input, 'utf-8');
             arktsGlobal.compilerContext = arkts.Context.createFromString(source);
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
             this.logger.printInfo('[Ets2panda] Created instance');
@@ -195,6 +271,9 @@ export class Ets2panda {
             statsRecorder.record(formEvent(Ets2pandaEvent.PARSE));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Parsed');
+
+            // Update output file info
+            fi.output = arkts.formOutputPathForFile(fi.input);
 
             statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
             this.transformImportStatementsWithAliasConfig()
@@ -205,13 +284,12 @@ export class Ets2panda {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Checked');
 
-            statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
-            // logic for setting CompileJobType.DECL should be rechecked
-            if (job.type & CompileJobType.DECL && ENABLE_DECL_CACHE) {
+            if (job.jobType & CompileJobType.DECL) {
+                statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
                 // emit declarations based on relative location of the file in a project,
                 // since es2panda doesn't know about ohos modules right now
                 const relativeDeclPath = changeFileExtension(
-                    path.relative(job.fileInfo.moduleRoot, job.fileInfo.input),
+                    path.relative(job.moduleRoot, input),
                     ETSCACHE_SUFFIX
                 )
                 const outputDeclFilePath = path.resolve(this.cacheDir, relativeDeclPath);
@@ -219,14 +297,14 @@ export class Ets2panda {
 
                 // .etscache files are generated separately from .abc file right now
                 arkts.generateStaticDeclarationsFromContext(outputDeclFilePath);
-                this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${inputFilePath}`)
+                this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${input}`)
                 if (ENABLE_DECLARATION_BARRIER) {
                     declGenCb?.();
                 }
             }
 
-            if (job.type & CompileJobType.ABC) {
-                ensurePathExists(outputFilePath);
+            if (job.jobType & CompileJobType.ABC) {
+                ensurePathExists(output);
                 statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
@@ -239,7 +317,7 @@ export class Ets2panda {
                     arktsGlobal.compilerContext.peer
                 );
                 compAbcCb?.();
-                this.logger.printInfo(`[Ets2panda] Compiled abc file for ${inputFilePath}`)
+                this.logger.printInfo(`[Ets2panda] Compiled abc file for ${input}`)
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -248,7 +326,7 @@ export class Ets2panda {
                         ErrorCode.BUILDSYSTEM_COMPILE_ABC_FAIL,
                         'Compile abc files failed.',
                         error.message,
-                        inputFilePath
+                        input
                     )
                 );
             }
@@ -265,8 +343,7 @@ export class Ets2panda {
     public compileSimultaneous(
         jobId: string,
         job: CompileJobInfo,
-        isDebug: boolean = false,
-        dumpPerf: boolean = false,
+        incremental: boolean = false,
         declGenCb?: () => void,
         compAbcCb?: () => void
     ): void {
@@ -276,16 +353,9 @@ export class Ets2panda {
             `Compile simultaneous. Job id: ${jobId.slice(0, 5)}`
         );
 
-        this.logger.printDebug(`Ets2panda.compileSimultaneous Job = ${JSON.stringify(job, null, 1)}`)
+        this.logger.printDebug(`Ets2panda.compileSimultaneous Job: ${jobId}`)
 
-        const { output: outputFilePath } = job.fileInfo;
-
-        const isDecl = (job.type & CompileJobType.DECL) !== 0;
-        const ets2pandaCmd: string[] = formEts2pandaCmd(job.fileInfo, isDebug, true, isDecl);
-        ets2pandaCmd.push('--ets-warnings:diagnostic-format=build-system');
-        if (dumpPerf) {
-            ets2pandaCmd.push('--dump-perf-metrics');
-        }
+        const ets2pandaCmd: string[] = this.formCompileCliCmd(job, incremental);
         this.logger.printDebug('ets2pandaCmd: ' + ets2pandaCmd.join(' '));
 
         let { arkts, arktsGlobal } = this.koalaModule;
@@ -297,13 +367,21 @@ export class Ets2panda {
         try {
             statsRecorder.record(formEvent(Ets2pandaEvent.CREATE_INSTANCE));
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createContextGenerateAbcForExternalSourceFiles(job.fileList);
+            arktsGlobal.compilerContext =
+                arkts.Context.createContextSimultaneousMode(
+                    (job.content as FileInfo[]).map((fi: FileInfo) => fi.input)
+                );
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
             this.logger.printInfo('[Ets2panda] Created instance');
 
             statsRecorder.record(formEvent(Ets2pandaEvent.PARSE));
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Parsed');
+
+            // Update output file info
+            (job.content as FileInfo[]).forEach((fi: FileInfo) => {
+                fi.output = arkts.formOutputPathForFile(fi.input);
+            })
 
             statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_PARSE));
             this.transformImportStatementsWithAliasConfig()
@@ -314,13 +392,13 @@ export class Ets2panda {
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_CHECKED, arktsGlobal.compilerContext.peer);
             this.logger.printInfo('[Ets2panda] Checked');
 
-            statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
-            if (job.type & CompileJobType.DECL && ENABLE_DECL_CACHE) {
-                for (const file of job.fileList) {
+            if (job.jobType & CompileJobType.DECL) {
+                statsRecorder.record(formEvent(Ets2pandaEvent.DECLGEN));
+                for (const fi of (job.content as FileInfo[])) {
                     // emit declarations based on relative location of the file in a project,
                     // since es2panda doesn't know about ohos modules right now
                     const relative: string = changeFileExtension(
-                        path.relative(job.fileInfo.moduleRoot, file),
+                        path.relative(job.moduleRoot, fi.input),
                         ETSCACHE_SUFFIX
                     )
                     const declEtsOutputPath: string = path.resolve(
@@ -330,16 +408,15 @@ export class Ets2panda {
                     ensurePathExists(declEtsOutputPath);
                     // .etscache files are generated separately from .abc file right now
                     arkts.generateStaticDeclarationsFromContext(declEtsOutputPath);
-                    this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${file}`)
+                    this.logger.printInfo(`[Ets2panda] Generated 1.2 decl file for ${fi.input}`)
                 }
                 if (ENABLE_DECLARATION_BARRIER) {
                     declGenCb?.();
                 }
             }
 
-            if (job.type & CompileJobType.ABC) {
+            if (job.jobType & CompileJobType.ABC) {
                 statsRecorder.record(formEvent(Ets2pandaEvent.PLUGIN_CHECK));
-                ensurePathExists(outputFilePath);
                 let ast = arkts.EtsScript.fromContext();
                 this.pluginDriver.getPluginContext().setArkTSAst(ast);
                 this.pluginDriver.runPluginHook(PluginHook.CHECKED);
@@ -384,15 +461,16 @@ export class Ets2panda {
         genDeclAnnotations: boolean
     ): void {
         // this logic does not suppport declgen in simultaneous mode
-        const inputFilePath = jobInfo.fileInfo.input;
+        const fi = jobInfo.content as FileInfo;
+        const inputFilePath = fi.input;
         const source = fs.readFileSync(inputFilePath, 'utf8');
-        const filePathFromModuleRoot: string = path.relative(jobInfo.fileInfo.moduleRoot, inputFilePath);
+        const filePathFromModuleRoot: string = path.relative(jobInfo.moduleRoot, inputFilePath);
         const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(jobInfo.declgenConfig.output, jobInfo.fileInfo.moduleName, filePathFromModuleRoot),
+            path.resolve(jobInfo.declgenConfig.output, jobInfo.moduleName, filePathFromModuleRoot),
             DECL_ETS_SUFFIX
         );
         const etsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(jobInfo.declgenConfig.bridgeCode, jobInfo.fileInfo.moduleName, filePathFromModuleRoot),
+            path.resolve(jobInfo.declgenConfig.bridgeCode, jobInfo.moduleName, filePathFromModuleRoot),
             TS_SUFFIX
         );
         ensurePathExists(declEtsOutputPath);
@@ -408,7 +486,7 @@ export class Ets2panda {
             DECL_TS_SUFFIX
         );
         createFileIfNotExists(staticRecordPath, STATIC_RECORD_FILE_CONTENT);
-        let ets2pandaCmd = formEts2pandaCmd(jobInfo.fileInfo)
+        let ets2pandaCmd = this.formDeclgenCliCmd(jobInfo)
         this.logger.printDebug(`ets2panda cmd: ${ets2pandaCmd.join(' ')}`)
 
         let { arkts, arktsGlobal } = this.koalaModule;
@@ -457,7 +535,7 @@ export class Ets2panda {
     }
 
     public extractDeclarationsFromAbcFile(abcFile: string, cacheDir: string) {
-        let { arkts, arktsGlobal } = this.koalaModule;
+        let { arkts } = this.koalaModule;
         arkts.ExtractDeclarationsFromAbcFile(abcFile, cacheDir);
     }
 }

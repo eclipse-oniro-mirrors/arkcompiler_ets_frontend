@@ -12,13 +12,12 @@
     "sourceRoots": [
         "./"
     ],
-    "loaderOutPath": "./dist/out/entry",
-    "cachePath": "./dist/cache",
-    "es2pandaMode": 0,
+    "loaderOutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/dist/out/entry",
+    "cachePath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/dist/cache",
     "enableDeclgenEts2Ts": false,
-    "declgenV1OutPath": "./dist/declgen/decl_ets1",
-    "declgenV2OutPath": "./dist/declgen/decl_ets2",
-    "declgenBridgeCodePath": "./dist/declgen/ets",
+    "declgenV1OutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/dist/declgen/decl_ets1",
+    "declgenV2OutPath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/dist/declgen/decl_ets2",
+    "declgenBridgeCodePath": "${absolute_path_to_build_system}/test/e2e/IncrementDemo/dist/declgen/ets",
     "buildSdkPath": "${absolute_path_to_build_system}/test/mock_sdk/",
 
     "dependencyModuleList": [

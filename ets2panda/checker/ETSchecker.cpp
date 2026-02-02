@@ -352,7 +352,7 @@ bool ETSChecker::StartChecker(varbinder::VarBinder *varbinder, const util::Optio
     }
 
 #ifndef NDEBUG
-    for (auto *func : varbinder->Functions()) {
+    for (auto *func : varbinder->FunctionScopes()) {
         ES2PANDA_ASSERT(!func->Node()->AsScriptFunction()->Scope()->Name().Empty());
     }
 #endif
@@ -398,7 +398,7 @@ void ETSChecker::CheckProgram(parser::Program *program, bool runAnalysis)
         checker::SavedCheckerContext savedContext(this, Context().Status(), Context().ContainingClass());
         AddStatus(checker::CheckerStatus::IN_EXTERNAL);
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsGenAbcForExternal());
+        CheckProgram(extProg, VarBinder()->IsGenStdLib() || extProg->IsBuiltSimultaneously());
         VarBinder()->AsETSBinder()->SetProgram(savedProgram2);
         VarBinder()->AsETSBinder()->ResetTopScope(savedProgram2->GlobalScope());
         extProg->SetProgramModified(false);

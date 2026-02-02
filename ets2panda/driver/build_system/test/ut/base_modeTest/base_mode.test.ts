@@ -15,11 +15,15 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import type { BuildConfig, ModuleInfo } from '../../../src/types';
-const { BaseMode } = require('../../../src/build/base_mode');
-const { CompileJobType } = require('../../../src/types');
-const { ErrorCode, DriverError } = require('../../../src/util/error');
-const { LogDataFactory } = require('../../../src/logger');
+import type { BuildConfig, ModuleInfo, CompileJobInfo } from '../../../src/types';
+import type { Graph, GraphNode } from '../../../src/util/graph';
+import { OHOS_MODULE_TYPE, JobContentType, CompileJobType } from '../../../src/types';
+import { BaseMode } from '../../../src/build/base_mode';
+import { ErrorCode, DriverError } from '../../../src/util/error';
+import { LogDataFactory } from '../../../src/logger';
+
+type mockGraphNodeType = GraphNode<Partial<CompileJobInfo>>
+type mockGraphType = Graph<Partial<CompileJobInfo>>
 
 // Basic mocks that must be in place before requiring BaseMode
 jest.mock('fs');
@@ -134,11 +138,13 @@ describe('BaseMode', () => {
     });
 
     test('compile succeeds and calls ets2panda methods', () => {
-        const job = {
-            fileList: ['a.ets'],
-            fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/a.abc', arktsConfig: '', moduleName: 'testPackage', moduleRoot: '/mock/module' },
+        const job: Partial<CompileJobInfo> = {
+            contentType: JobContentType.FILE,
+            content: { input: '/mock/module/a.ets', output: '/mock/output/a.abc' },
+            moduleName: 'testPackage',
+            moduleRoot: '/mock/module',
             declgenConfig: { output: '' },
-            type: CompileJobType.ABC
+            jobType: CompileJobType.ABC
         };
 
         mockEts.compile.mockImplementation(() => {});
@@ -146,18 +152,20 @@ describe('BaseMode', () => {
         const res = testMode.runCompile('job1', job);
         expect(res).toBe(true);
         expect(mockEts.initalize).toHaveBeenCalled();
-        expect(mockEts.compile).toHaveBeenCalledWith('job1', job, testMode.isDebug);
+        expect(mockEts.compile).toHaveBeenCalledWith('job1', job);
         expect(mockEts.finalize).toHaveBeenCalled();
     });
 
     test('compile handles DriverError and returns false', () => {
-        const configHar = createMockBuildConfig({ moduleType: 'har' as any });
+        const configHar = createMockBuildConfig({ moduleType: OHOS_MODULE_TYPE.HAR });
         const modeHar = new TestBaseMode(configHar);
 
         const job = {
-            fileList: ['a.ets'],
-            fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/a.abc', arktsConfig: '',
-                moduleName: 'testPackage', moduleRoot: '/mock/module' },
+            contentType: JobContentType.FILE,
+            content: { input: '/mock/module/a.ets', output: '/mock/output/a.abc' },
+            arktsConfig: '',
+            moduleName: 'testPackage',
+            moduleRoot: '/mock/module',
             declgenConfig: { output: '' },
             type: CompileJobType.ABC
         };
@@ -172,16 +180,19 @@ describe('BaseMode', () => {
         expect(res).toBe(false);
         expect(spy).toHaveBeenCalled();
         expect(mockEts.finalize).toHaveBeenCalled();
-        // HAR should force DECL_ABC
-        expect(job.type).toBe(CompileJobType.DECL_ABC);
     });
 
     test('compileSimultaneous succeeds and calls ets2panda methods', () => {
-        const job = {
-            fileList: ['/mock/module/a.ets', '/mock/module/b.ets'],
-            fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/intermediate.abc', arktsConfig: '', moduleName: 'testPackage', moduleRoot: '/mock/module' },
+        const job: Partial<CompileJobInfo> = {
+            contentType: JobContentType.CLUSTER,
+            content: [
+                { input: '/mock/module/a.ets', output: '' },
+                { input: '/mock/module/b.ets', output: '' }
+            ],
+            moduleName: 'testPackage',
+            moduleRoot: '/mock/module',
             declgenConfig: { output: '' },
-            type: CompileJobType.ABC
+            jobType: CompileJobType.ABC
         };
 
         mockEts.compileSimultaneous.mockImplementation(() => {});
@@ -197,11 +208,13 @@ describe('BaseMode', () => {
         const moduleInfo = createMockModuleInfo({ packageName: 'testPackage', moduleRootPath: '/mock/module' });
         (testMode as any).fileToModule.set('/mock/module/a.ets', moduleInfo);
 
-        const job = {
-            fileList: ['/mock/module/a.ets'],
-            fileInfo: { input: '/mock/module/a.ets', output: '', arktsConfig: '', moduleName: 'testPackage', moduleRoot: '/mock/module' },
+        const job: Partial<CompileJobInfo> = {
+            contentType: JobContentType.FILE,
+            content: { input: '/mock/module/a.ets', output: '' },
+            moduleName: 'testPackage',
+            moduleRoot: '/mock/module',
             declgenConfig: { output: '' },
-            type: CompileJobType.DECL
+            jobType: CompileJobType.DECL
         };
 
         mockEts.declgenV1.mockImplementation(() => {});
@@ -216,11 +229,13 @@ describe('BaseMode', () => {
         const moduleInfo = createMockModuleInfo({ packageName: 'testPackage', moduleRootPath: '/mock/module' });
         (testMode as any).fileToModule.set('/mock/module/a.ets', moduleInfo);
 
-        const job = {
-            fileList: ['/mock/module/a.ets'],
-            fileInfo: { input: '/mock/module/a.ets', output: '', arktsConfig: '', moduleName: 'testPackage', moduleRoot: '/mock/module' },
+        const job: Partial<CompileJobInfo> = {
+            contentType: JobContentType.FILE,
+            content: { input: '/mock/module/a.ets', output: '' },
+            moduleName: 'testPackage',
+            moduleRoot: '/mock/module',
             declgenConfig: { output: '' },
-            type: CompileJobType.DECL
+            jobType: CompileJobType.DECL
         };
 
         const driverErr = new DriverError(LogDataFactory.newInstance(ErrorCode.BUILDSYSTEM_DECLGEN_FAIL, 'declgen fail'));
@@ -323,7 +338,6 @@ describe('BaseMode', () => {
 
     test('mergeAbcFiles logs error when execSync throws', () => {
         const child_process = require('child_process');
-        const pre = require('../../../src/pre_define');
 
         (testMode as any).abcFiles = new Set<string>();
         const outputs = ['/mock/output1.abc'];
@@ -353,8 +367,6 @@ describe('BaseMode', () => {
         }));
 
         const child_process = require('child_process');
-        const path = require('path');
-        const pre = require('../../../src/pre_define');
 
         // prepare instance — re-require BaseMode after mocking utils so the mock is applied
         const cfg = createMockBuildConfig();
@@ -530,7 +542,7 @@ describe('BaseMode', () => {
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((entryFiles: any, fileToModule: any, moduleInfos: any, allOutputs: any[]) => {
+                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]) => {
                         allOutputs.push('/mock/out.abc');
                         return { hasNodes: () => true, nodes: [] };
                     })
@@ -573,78 +585,6 @@ describe('BaseMode', () => {
         await runParallelFn.call(ctx);
 
         expect(ctx.mergeAbcFiles).toHaveBeenCalledWith(['/mock/out.abc']);
-    });
-
-    test('runParallel uses simultaneous path when cluster enabled and under threshold', async () => {
-        jest.resetModules();
-
-        const depAnalyzerCtor = jest.fn();
-        jest.doMock('../../../src/dependency_analyzer', () => {
-            return {
-                DependencyAnalyzer: jest.fn().mockImplementation(() => {
-                    depAnalyzerCtor();
-                    return { getGraph: jest.fn() };
-                })
-            };
-        });
-
-        jest.doMock('../../../src/pre_define', () => ({
-            ARKTSCONFIG_JSON_FILE: 'arktsconfig.json',
-            LANGUAGE_VERSION: { ARKTS_1_2: '1.2', ARKTS_1_1: '1.1', ARKTS_HYBRID: 'hybrid' },
-            LINKER_INPUT_FILE: 'linker.txt',
-            MERGED_ABC_FILE: 'merged.abc',
-            CLUSTER_FILES_TRESHOLD: 5,
-            DECL_ETS_SUFFIX: '.d.ets',
-            MERGED_INTERMEDIATE_FILE: 'mid.abc',
-            ENABLE_CLUSTERS: true,
-            DEFAULT_WORKER_NUMS: 2,
-        }));
-
-        jest.doMock('../../../src/build/generate_arktsconfig', () => ({
-            ArkTSConfigGenerator: {
-                getInstance: jest.fn(() => ({
-                    generateArkTSConfigFile: jest.fn(),
-                    getArktsConfigByPackageName: jest.fn(() => ({ mergeArktsConfig: jest.fn(), mergeArktsConfigByDependencies: jest.fn(), object: {} }))
-                }))
-            }
-        }));
-
-        jest.doMock('../../../src/logger', () => {
-            const actual = jest.requireActual('../../../src/logger');
-            const loggerInstance = {
-                printDebug: jest.fn(),
-                printInfo: jest.fn(),
-                printWarn: jest.fn(),
-                printError: jest.fn(),
-                printErrorAndExit: jest.fn()
-            };
-            return {
-                Logger: { getInstance: jest.fn(() => loggerInstance) },
-                LogDataFactory: actual.LogDataFactory
-            };
-        });
-
-        const BaseModeModule = require('../../../src/build/base_mode');
-        const BaseModeClass = BaseModeModule.BaseMode;
-        const runParallelFn = (BaseModeClass as any).prototype.runParallel;
-
-        const ctx: any = {
-            buildConfig: { moduleType: 'hap' },
-            entryFiles: new Set(['a.ets']),
-            fileToModule: new Map(),
-            moduleInfos: new Map(),
-            abcFiles: new Set(),
-            mergedAbcFile: '/tmp/merged.abc',
-            logger: require('../../../src/logger').Logger.getInstance(),
-            statsRecorder: { record: jest.fn() },
-            moduleType: 'hap',
-            runSimultaneous: jest.fn().mockResolvedValue(undefined),
-        };
-
-        await runParallelFn.call(ctx);
-
-        expect(ctx.runSimultaneous).toHaveBeenCalled();
-        expect(depAnalyzerCtor).not.toHaveBeenCalled();
     });
 
     test('runParallel throws when TaskManager.finish returns false', async () => {
@@ -906,12 +846,26 @@ describe('BaseMode', () => {
             };
         });
 
+        const mockModuleInfo = createMockModuleInfo();
         // mock dependency analyzer to provide a graph with one node
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((entryFiles: any, fileToModule: any, moduleInfos: any, allOutputs: any[]) => {
-                        return { hasNodes: () => true, nodes: [ { id: 'n1', data: { fileList: ['/mock/module/a.ets'], fileInfo: {}, type: 0 }, predecessors: [], descendants: [] } ] };
+                    getGraph: jest.fn((_1: any, _2: any, _3: any, _4: any[]): Partial<mockGraphType> => {
+                        return {
+                            hasNodes: () => true,
+                            nodes: new Set<mockGraphNodeType>([{
+                                id: 'n1',
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: { input: '/mock/module/a.ets', output: '' },
+                                    moduleName: mockModuleInfo.packageName,
+                                    jobType: CompileJobType.ABC,
+                                },
+                                predecessors: new Set<string>,
+                                descendants: new Set<string>
+                            }])
+                        };
                     })
                 }))
             };
@@ -938,11 +892,11 @@ describe('BaseMode', () => {
         const ctx: any = {
             buildConfig: cfg,
             entryFiles: new Set(['a.ets']),
-            fileToModule: new Map<string, any>([[
+            fileToModule: new Map<string, Partial<ModuleInfo>>([[
                 '/mock/module/a.ets',
-                {declgenV1OutPath: '/mock/declgen/out', declgenBridgeCodePath: '/mock/declgen/bridge'}
+                mockModuleInfo
             ]]),
-            moduleInfos: new Map(),
+            moduleInfos: new Map<string, ModuleInfo>([[mockModuleInfo.packageName, mockModuleInfo]]),
             abcFiles: new Set(),
             abcDeclarationMap: new Map(),
             mergedAbcFile: '/tmp/merged.abc',
@@ -1058,7 +1012,17 @@ describe('BaseMode', () => {
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({ hasNodes: () => true, getNodeById: (id: string) => ({ data: { id, fileList: [], fileInfo: {}, declgenConfig: {}, type: 0 } }) }))
+                    getGraph: jest.fn(() => ({
+                            hasNodes: () => true,
+                            getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                                id,
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: [],
+                                    jobType: CompileJobType.NONE,
+                                }
+                            })
+                    }))
                 }))
             };
         });
@@ -1123,7 +1087,17 @@ describe('BaseMode', () => {
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn(() => ({ hasNodes: () => true, getNodeById: (id: string) => ({ data: { id, fileList: [], fileInfo: {}, declgenConfig: {}, type: 0 } }) }))
+                    getGraph: jest.fn(() => ({
+                            hasNodes: () => true,
+                            getNodeById: (id: string): Partial<GraphNode<Partial<CompileJobInfo>>> => ({
+                                id,
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: [],
+                                    jobType: CompileJobType.NONE,
+                                }
+                            })
+                    }))
                 }))
             };
         });
@@ -1229,9 +1203,22 @@ describe('BaseMode', () => {
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((entryFiles: any, fileToModule: any, moduleInfos: any, allOutputs: any[]) => {
+                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
                         allOutputs.push('/mock/out.abc');
-                        return { hasNodes: () => true, getNodeById: (id: string) => ({ id: 'n1', data: { fileList: ['a.ets'], fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/a.abc', arktsConfig: '', moduleName: 'test', moduleRoot: '/mock/module' }, declgenConfig: {}, type: 0 } }), nodes: [] };
+                        return {
+                            hasNodes: () => true,
+                            getNodeById: (_: string): mockGraphNodeType => ({
+                                id: 'n1',
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: { input: '/mock/module/a.ets', output: '/mock/output/a.abc' },
+                                    moduleName: 'test',
+                                    moduleRoot: '/mock/module',
+                                },
+                                predecessors: new Set<string>,
+                                descendants: new Set<string>
+                            }),
+                            nodes: new Set<mockGraphNodeType> };
                     })
                 }))
             };
@@ -1297,9 +1284,23 @@ describe('BaseMode', () => {
         jest.doMock('../../../src/dependency_analyzer', () => {
             return {
                 DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                    getGraph: jest.fn((entryFiles: any, fileToModule: any, moduleInfos: any, allOutputs: any[]) => {
+                    getGraph: jest.fn((_1: any, _2: any, _3: any, allOutputs: any[]): Partial<mockGraphType> => {
                         allOutputs.push('/mock/out.abc');
-                        return { hasNodes: () => true, getNodeById: (id: string) => ({ id: 'n1', data: { fileList: ['a.ets'], fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/a.abc', arktsConfig: '', moduleName: 'test', moduleRoot: '/mock/module' }, declgenConfig: {}, type: 0 } }), nodes: [] };
+                        return {
+                            hasNodes: () => true,
+                            getNodeById: (_: string) => ({
+                                id: 'n1',
+                                data: {
+                                    contentType: JobContentType.FILE,
+                                    content: { input: '/mock/module/a.ets', output: '/mock/output/a.abc' },
+                                    moduleName: 'test',
+                                    moduleRoot: '/mock/module'
+                                },
+                                predecessors: new Set<string>,
+                                descendants: new Set<string>
+                            }),
+                            nodes: new Set<mockGraphNodeType>
+                        };
                     })
                 }))
             };
@@ -1411,14 +1412,30 @@ describe('BaseMode', () => {
             };
         });
 
-        // dependency analyzer returns a graph with one node whose fileList length > 1
+        // dependency analyzer returns a graph with one node whose content length > 1
         jest.doMock('../../../src/dependency_analyzer', () => ({
             DependencyAnalyzer: jest.fn().mockImplementation(() => ({
-                getGraph: jest.fn((entryFiles: any, fileToModule: any, moduleInfos: any, allOutputs: any[]) => {
+                getGraph: jest.fn((_entryFiles: any, _fileToModule: any, _moduleInfos: any, allOutputs: any[]) => {
                     allOutputs.push('/mock/out.abc');
                     return {
                         hasNodes: () => true,
-                        getNodeById: (id: string) => ({ id: 'n1', data: { fileList: ['a.ets', 'b.ets'], fileInfo: { input: '/mock/module/a.ets', output: '/mock/output/a.abc', arktsConfig: '', moduleName: 'test', moduleRoot: '/mock/module' }, declgenConfig: {}, type: 0 } }),
+                        getNodeById: ((_: string) => {
+                            return {
+                                id: 'n1',
+                                data: {
+                                    contentType: JobContentType.CLUSTER,
+                                    content: [
+                                        { input: '/mock/module/a.ets', output: '/mock/output/a.abc'},
+                                        { input: '/mock/module/b.ets', output: '/mock/output/b.abc'}
+                                    ],
+                                    arktsConfig: '',
+                                    moduleName: 'test',
+                                    moduleRoot: '/mock/module',
+                                    declgenConfig: {},
+                                    jobType: CompileJobType.DECL_ABC
+                                }
+                            }
+                        }),
                         nodes: []
                     };
                 })
@@ -1511,7 +1528,7 @@ describe('BaseMode', () => {
             buildConfig: cfg,
             entryFiles: new Set(['index.ets']),
             fileToModule: new Map<string, any>([['/mock/module/index.ets', mainModule]]),
-            moduleInfos: new Map<string, any>([['testPackage', mainModule]]),
+            moduleInfos: new Map<string, any>([[mainModule.packageName, mainModule]]),
             abcFiles: new Set(),
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,

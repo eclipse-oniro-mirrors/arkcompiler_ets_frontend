@@ -18,6 +18,7 @@
 
 #include "libarkbase/macros.h"
 #include "parser/program/program.h"
+#include "varbinder/ETSBinder.h"
 #include "public/public.h"
 #include "phase_id.h"
 
@@ -139,12 +140,32 @@ struct ProgramsToBeEmittedSelector {
                 }
                 cb(extProg);
             });
-        } else if (mode == CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
+        } else if (mode == CompilationMode::SIMULTANEOUS) {
             program->GetExternalSources()->Visit([&cb](auto *extProg) {
-                if (extProg->IsASTLowered() || !extProg->IsGenAbcForExternal()) {
+                if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
                     return;
                 }
                 cb(extProg);
+            });
+        } else if (mode == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+            program->GetExternalSources()->Visit([&cb, context](auto *extProg) {
+                if (extProg->IsASTLowered() || !extProg->IsBuiltSimultaneously()) {
+                    return;
+                }
+                // NOTE(mshimenkov): Since some lowerings may create new class/interface decls and add them to the
+                // program, the right program and corresponding data structures should be set
+                auto *checker = context->GetChecker();
+                auto *binder = context->parserProgram->VarBinder()->AsETSBinder();
+                varbinder::RecordTableContext recordTableCtx(binder, extProg);
+                if (binder->TopScope() == nullptr) {
+                    // Phases before InitScopesPhase, there are no scopes yet
+                    cb(extProg);
+                } else {
+                    checker::ScopeContext checkerScopeCtx(checker, extProg->GlobalScope());
+                    varbinder::GlobalScopeContext binderScopeCtx(binder, extProg, extProg->GlobalScope());
+                    varbinder::TopScopeContext binderTopScopeCtx(binder, extProg->GlobalScope());
+                    cb(extProg);
+                }
             });
         }
 

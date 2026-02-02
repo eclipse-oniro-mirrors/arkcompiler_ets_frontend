@@ -60,10 +60,10 @@ export class ArkTSConfig {
             compilerOptions: {
                 package: moduleInfo.packageName,
                 baseUrl: path.resolve(moduleInfo.moduleRootPath),
+                rootDir: projectRootPath,
                 paths: {},
                 dependencies: {},
                 cacheDir: path.resolve(cacheDir),
-                projectRootPath: projectRootPath,
                 declgenV2OutPath: declgenV2OutPath,
             }
         };
@@ -131,7 +131,7 @@ export class ArkTSConfig {
 
     }
 
-    // if a dependenciesSets is like 
+    // if a dependenciesSets is like
     // 'entry' : dependencies: ['hsp1' , 'har1']
     // 'hsp1': dependencies: ['hsp2','har2']
     // 'har1': dependencies: []
@@ -324,7 +324,7 @@ export class ArkTSConfigGenerator {
         [...moduleInfo.sourceRoots].reverse().forEach((source: string) => {
             paths.push(path.resolve(moduleInfo.moduleRootPath, source));
         });
-        
+
         // hvigor now use 'src/main' as sourceRoot
         // push './' as the lowest priority for compat, should be removed in future
         paths.push(path.resolve(moduleInfo.moduleRootPath, './'));

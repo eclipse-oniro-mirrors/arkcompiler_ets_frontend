@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 - 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,10 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs';
 import path from 'path';
+
+import { DependencyModuleConfig, BuildConfig } from '../../src/types';
+import { substituteEnvVarsInJSON, changeFileExtension } from '../../src/util/utils';
+import { ABC_SUFFIX, MERGED_ABC_FILE } from '../../src/pre_define'
 
 const execFileAsync = promisify(execFile);
 
@@ -61,41 +65,30 @@ function getConfigAndPaths(testScriptName: string) {
   if (!fs.existsSync(configPath)) {
     throw new Error(`Config file not found: ${configPath}`);
   }
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-  const cachePath = path.resolve(__dirname, '../../', config.cachePath);
-  return { config, configPath, cachePath };
+  const config: BuildConfig = substituteEnvVarsInJSON(JSON.parse(fs.readFileSync(configPath, 'utf-8')));
+  return { config, configPath };
 }
 
-function getExpectedOutputs(config: any, cachePath: string) {
+function getExpectedOutputs(config: BuildConfig): string[] {
   const allModules = [
     { packageName: config.packageName, modulePath: config.moduleRootPath },
-    ...(config.dependencyModuleList || []).map((m: any) => ({
+    ...(config.dependencyModuleList || []).map((m: DependencyModuleConfig) => ({
       packageName: m.packageName,
       modulePath: m.modulePath
     }))
   ];
-  return (config.compileFiles || []).map((src: string) => {
+  return config.compileFiles?.map((src: string) => {
     let matchedModule = allModules.find(m => {
-      const moduleAbs = path.resolve(__dirname, '../../', m.modulePath);
-      const absSrc = path.isAbsolute(src) ? src : path.resolve(moduleAbs, src);
-      const rel = path.relative(moduleAbs, absSrc);
+      const rel = path.relative(m.modulePath, src);
       return !rel.startsWith('..') && !path.isAbsolute(rel);
-    });
-    if (!matchedModule) {
-      matchedModule = { packageName: config.packageName, modulePath: config.moduleRootPath };
-    }
-    const moduleAbs = path.resolve(__dirname, '../../', matchedModule.modulePath);
-    const absSrc = path.isAbsolute(src) ? src : path.resolve(moduleAbs, src);
-    let relSrc = path.relative(moduleAbs, absSrc);
-    if (!relSrc || relSrc === '') {
-      relSrc = path.basename(absSrc);
-    }
+    })!;
+    const mp = matchedModule.modulePath;
+    const outAbc = changeFileExtension(path.relative(mp, src).replace(/\//, '.'), ABC_SUFFIX);
     return path.join(
-      cachePath,
-      matchedModule.packageName,
-      relSrc.replace(/\.[^/.]+$/, '.abc')
+      config.cachePath,
+      `${matchedModule.packageName}.${outAbc}`
     );
-  });
+  }) ?? [];
 }
 
 async function runCompile(testScriptName: string): Promise<void> {
@@ -106,9 +99,10 @@ async function runCompile(testScriptName: string): Promise<void> {
   }
 }
 
-function checkArktsConfig(config: any, cachePath: string) {
+function checkArktsConfig(config: BuildConfig) {
   it('should generate arktsconfig.json in cachePath', () => {
-    const arktsConfigPath = path.join(cachePath, config.packageName, 'arktsconfig.json');
+    const arktsConfigPath = path.join(config.cachePath, config.packageName, 'arktsconfig.json');
+    console.warn(arktsConfigPath);
     if (!fs.existsSync(arktsConfigPath)) {
       throw new Error(`Missing ${arktsConfigPath}`);
     }
@@ -163,8 +157,8 @@ function checkAbcFiles(expectedOutputs: string[]) {
   });
 }
 
-function checkArtifacts(config: any, cachePath: string, expectedOutputs: string[]) {
-  checkArktsConfig(config, cachePath);
+function checkArtifacts(config: BuildConfig, expectedOutputs: string[]) {
+  checkArktsConfig(config);
 
   if (config.enableDeclgenEts2Ts) {
     checkDeclgenOutputs(config);
@@ -177,16 +171,17 @@ function checkArtifacts(config: any, cachePath: string, expectedOutputs: string[
     } else {
       checkModuleRootDeclFiles(config);
     }
+    checkAbcFiles([path.resolve(config.loaderOutPath, MERGED_ABC_FILE)]);
   }
 }
 
 function testHelper(testScriptName: string) {
-  const { config, configPath, cachePath } = getConfigAndPaths(testScriptName);
-  const expectedOutputs = getExpectedOutputs(config, cachePath);
+  const { config, configPath } = getConfigAndPaths(testScriptName);
+  const expectedOutputs = getExpectedOutputs(config);
 
   describe(`Output Artifact Check [${configPath}]`, () => {
     beforeAll(() => runCompile(testScriptName));
-    checkArtifacts(config, cachePath, expectedOutputs);
+    checkArtifacts(config, expectedOutputs);
   });
 }
 

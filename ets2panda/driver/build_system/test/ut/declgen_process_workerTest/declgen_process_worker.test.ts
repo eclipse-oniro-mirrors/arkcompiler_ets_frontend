@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { WorkerMessageType, ProcessDeclgenV1Task } from '../../../src/types';
+import { WorkerMessageType, ProcessDeclgenV1Task, JobContentType } from '../../../src/types';
 import { ErrorCode } from '../../../src/util/error';
 import { LogData } from '../../../src/logger';
 
@@ -56,19 +56,13 @@ describe('declgen_process_worker', () => {
         genDeclAnnotations: true,
     } as any;
 
-    const mockFileInfo = {
+    const baseTask: Partial<ProcessDeclgenV1Task> = {
+        contentType: JobContentType.FILE,
+        content: { input: '/src/test.ets', output: '/cache/test.abc' },
         moduleName: 'test-module',
         moduleRoot: '/src',
-        input: '/src/test.ets',
-        output: '/cache/test.abc',
-        arktsConfig: {},
-    } as any;
-
-    const baseTask: ProcessDeclgenV1Task = {
-        fileInfo: mockFileInfo,
-        fileList: ['/src/test.ets'],
         buildConfig: mockBuildConfig,
-    } as any;
+    };
 
     const getMockEts2panda = (): MockEts2panda => {
         const { Ets2panda } = require('../../../src/util/ets2panda');
@@ -115,10 +109,12 @@ describe('declgen_process_worker', () => {
         });
     });
 
-    test('should process multiple files when fileList has more than one file', () => {
+    test('should process multiple files when content has more than one file', () => {
         const multiFileTask = {
             ...baseTask,
-            fileList: ['/src/file1.ets', '/src/file2.ets'],
+            contentType: JobContentType.CLUSTER,
+            content: [{ input: '/src/file1.ets', output: '/file.abc' },
+                       { input: '/src/file2.ets', output: '/file.abc' }],
         };
 
         const message = {

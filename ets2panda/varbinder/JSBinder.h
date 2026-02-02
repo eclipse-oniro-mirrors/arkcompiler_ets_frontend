@@ -23,6 +23,11 @@ class JSBinder : public VarBinder {
 public:
     using VarBinder::VarBinder;
 
+    [[nodiscard]] ScriptExtension Extension() const noexcept override
+    {
+        return ScriptExtension::JS;
+    }
+
     JSBinder() = delete;
     NO_COPY_SEMANTIC(JSBinder);
     NO_MOVE_SEMANTIC(JSBinder);

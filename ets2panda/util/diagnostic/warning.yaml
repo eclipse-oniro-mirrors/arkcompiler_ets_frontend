@@ -33,6 +33,10 @@ warning:
   id: 98268
   message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
 
+- name: DEPRECATED_PUBLIC_API
+  id: 32597
+  message: "Call to public API '{}' is deprecated."
+
 - name: DUPLICATE_ALIAS
   id: 32596
   message: "'{}' is explicitly used with alias several times"
@@ -160,6 +164,10 @@ warning:
   id: 24
   message: "Assigning new value to the property inside its setter may lead to an endless loop."
 
+- name: SIMULTANEOUS_INCREMENTAL_OUTPUT
+  id: 19
+  message: "This output option has no effect in simultaneous incremental build."
+
 - name: SUGGEST_FINAL_MODIFIER_FOR_CLASS
   id: 1
   message: "Suggest 'final' modifier for class."
@@ -184,7 +192,6 @@ warning:
   exclusionlist: ["explicit_export"]
 
 graveyard:
-- 19
 - 27
 - 28
 - 11567

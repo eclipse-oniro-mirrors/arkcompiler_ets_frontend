@@ -281,7 +281,7 @@ static std::pair<util::StringView, util::StringView> GetPartialClassName(ETSChec
 }
 
 static std::pair<parser::Program *, varbinder::RecordTable *> GetPartialClassProgram(
-    // CC-OFF(G.FMT.06-CPP) project code style
+    // CC-OFFNXT(G.FMT.06-CPP) project code style
     [[maybe_unused]] ETSChecker *checker, ir::AstNode *typeNode)
 {
     auto classDefProgram = typeNode->GetTopStatement()->AsETSModule()->Program();
@@ -329,10 +329,9 @@ Type *ETSChecker::CreatePartialTypeClass(ETSObjectType *typeToBePartial, ir::Ast
     auto const [partialProgram, recordTable] = GetPartialClassProgram(this, typeDeclNode);
 
     // Check if we've already generated the partial class, then don't do it again
-    const auto classNameToFind =
-        partialProgram == VarBinder()->Program() || VarBinder()->IsGenStdLib() || partialProgram->IsGenAbcForExternal()
-            ? partialName
-            : partialQualifiedName;
+    bool nonQualifiedName = partialProgram == VarBinder()->Program() || VarBinder()->IsGenStdLib() ||
+                            partialProgram->IsBuiltSimultaneously();
+    const auto &classNameToFind = nonQualifiedName ? partialName : partialQualifiedName;
     if (auto *var =
             SearchNamesInMultiplePrograms({partialProgram, VarBinder()->Program()}, {classNameToFind, partialName});
         var != nullptr) {
@@ -1214,7 +1213,7 @@ ir::MethodDefinition *ETSChecker::CreateNonStaticClassInitializer(varbinder::Cla
     VarBinder()->AsETSBinder()->BuildInternalNameWithCustomRecordTable(func, recordTable);
     VarBinder()->AsETSBinder()->BuildFunctionName(func);
     if (!recordTable->IsExternal()) {
-        VarBinder()->Functions().push_back(functionScope);
+        VarBinder()->FunctionScopes().push_back(functionScope);
     }
 
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)

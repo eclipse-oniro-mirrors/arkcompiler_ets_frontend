@@ -197,7 +197,7 @@ static varbinder::LocalVariable *CreateNamedAccessProperty(public_lib::Context *
 
     // Create the synthetic class property node
     auto *field =
-        ctx->AllocNode<ir::ClassProperty>(fieldIdent, nullptr, nullptr, ir::ModifierFlags::NONE, allocator, false);
+        ctx->AllocNode<ir::ClassProperty>(fieldIdent, nullptr, nullptr, ir::ModifierFlags::PUBLIC, allocator, false);
     ES2PANDA_ASSERT(field != nullptr);
     // Add the declaration to the scope
     auto [decl, var] = varbinder->NewVarDecl<varbinder::LetDecl>(fieldIdent->Start(), fieldIdent->Name());
@@ -250,7 +250,6 @@ static void HandleUnionPropertyAccess(public_lib::Context *ctx, varbinder::VarBi
         return;
     }
 
-    [[maybe_unused]] auto const *const parent = expr->Parent();
     expr->SetPropVar(CreateNamedAccess(ctx, vbind, expr));
     ES2PANDA_ASSERT(expr->PropVar() != nullptr);
 }

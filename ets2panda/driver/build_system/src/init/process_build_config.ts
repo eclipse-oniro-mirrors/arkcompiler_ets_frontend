@@ -37,7 +37,6 @@ import {
 import { ErrorCode } from '../util/error';
 import {
     BuildConfig,
-    BUILD_MODE,
     AliasConfig
 } from '../types';
 
@@ -128,7 +127,7 @@ function initPlatformSpecificConfig(buildConfig: BuildConfig): void {
 export function initBuildEnv(buildConfig: BuildConfig): void {
     const pandaSdkPath: string = path.resolve(buildConfig.pandaSdkPath as string);
 
-    // In windows, the env variables are inherited from cmd and setted by hvigor. 
+    // In windows, the env variables are inherited from cmd and setted by hvigor.
     // The default key of PATH in cmd is `Path`, not `PATH`. Sometimes process.env.PATH may be undefined.
     const currentPath: string | undefined = process.env.PATH || process.env.Path || process.env.path;
 

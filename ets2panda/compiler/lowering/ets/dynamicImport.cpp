@@ -46,6 +46,7 @@ static std::pair<ir::ScriptFunction *, ir::Identifier *> CreateStaticScriptFunct
     auto signature = ir::FunctionSignature(nullptr, std::move(params), nullptr);
     func = ctx->AllocNode<ir::ScriptFunction>(
         ctx->Allocator(), ir::ScriptFunction::ScriptFunctionData {
+                              // CC-OFFNXT(G.FMT.02) project code style
                               body,
                               std::move(signature),
                               ir::ScriptFunctionFlags::STATIC_BLOCK | ir::ScriptFunctionFlags::EXPRESSION,
@@ -505,8 +506,7 @@ static ir::AstNode *LowerDynamicObjectLiteralExpression(public_lib::Context *ctx
 bool DynamicImport::PerformForProgram(parser::Program *program)
 {
     auto ctx = Context();
-    if (program == ctx->parserProgram &&
-        ctx->config->options->GetCompilationMode() != CompilationMode::GEN_ABC_FOR_EXTERNAL_SOURCE) {
+    if (program == ctx->parserProgram && (ctx->config->options->GetCompilationMode() < CompilationMode::SIMULTANEOUS)) {
         LazyImportsCount() = 0;
     }
 

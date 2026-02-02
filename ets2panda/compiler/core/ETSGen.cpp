@@ -67,6 +67,13 @@ ETSGen::ETSGen(SArenaAllocator *allocator, RegSpiller *spiller, public_lib::Cont
     : CodeGen(allocator, spiller, context, toCompile),
       containingObjectType_(util::Helpers::GetContainingObjectType(RootNode()))
 {
+    if (context->config->options->GetCompilationMode() == CompilationMode::SIMULTANEOUS_INCREMENTAL) {
+        // NOTE(mshimenkov): Setup separate EmitterDependencies for every program built simultaneously in order to
+        // emit records properly
+        auto *m = util::Helpers::FindAncestorGivenByType(RootNode(), ir::AstNodeType::ETS_MODULE);
+        ES2PANDA_ASSERT(m != nullptr);
+        Emitter()->SetupDependenciesForTheProgram(m->AsETSModule()->Program());
+    }
     ETSFunction::Compile(this);
 }
 
@@ -146,7 +153,7 @@ const checker::ETSObjectType *ETSGen::ContainingObjectType() const noexcept
 
 ETSEmitter *ETSGen::Emitter() const
 {
-    return static_cast<ETSEmitter *>(Context()->emitter);
+    return Context()->emitter->AsETSEmitter();
 }
 
 VReg &ETSGen::Acc() noexcept

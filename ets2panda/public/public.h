@@ -121,11 +121,15 @@ struct Context {
     // NOTE(dkofanov)): The "main" program.
     // Keeps so called external sources.
     // Should be renamed or revised completely (taking into account "simultaneous" mode):
-    parser::Program *parserProgram = nullptr;
+    ark::es2panda::parser::Program *parserProgram = nullptr;
 
     parser::ParserImpl *parser = nullptr;
     compiler::Emitter *emitter = nullptr;
-    pandasm::Program *program = nullptr;
+
+    // NOTE(mshimenkov): In case of using ETSEmitter and building in simultaneous incremental mode
+    // This map will contain more than one entry
+    std::unordered_map<std::string, std::unique_ptr<pandasm::Program>> output = {};
+
     DepAnalyzer *depAnalyzer = nullptr;
     util::DiagnosticEngine *diagnosticEngine = nullptr;
 
@@ -135,7 +139,6 @@ struct Context {
 
     bool isExternal = false;
     bool isLspUsage = false;
-    bool compiledByCapi = false;
     bool lazyCheck = true;
     std::vector<std::string> sourceFileNames;
     std::vector<uint8_t> metadata;

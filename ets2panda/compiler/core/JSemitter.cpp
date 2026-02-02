@@ -85,7 +85,7 @@ void JSFunctionEmitter::GenFunctionAnnotations(pandasm::Function *func)
     func->metadata->AddAnnotations({funcAnnotationData});
 }
 
-void JSEmitter::GenAnnotation()
+void JSEmitter::EmitRecords()
 {
 #ifdef PANDA_WITH_ECMASCRIPT
     Program()->lang = panda_file::SourceLang::ECMASCRIPT;
