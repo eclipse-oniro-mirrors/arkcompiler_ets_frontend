@@ -437,7 +437,9 @@ static void CreateDirectoriesWithParents(const std::string &path)
     if (!parent.empty() && !ark::os::IsDirExists(parent)) {
         CreateDirectoriesWithParents(parent);
     }
-    ark::os::CreateDirectories(path);
+    if (!path.empty()) {
+        ark::os::CreateDirectories(path);
+    }
 }
 
 bool ArkTsConfig::ParseCompilerOptions(std::string &arktsConfigDir, const JsonObject *arktsConfig)
