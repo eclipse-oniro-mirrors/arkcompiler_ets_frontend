@@ -2930,7 +2930,7 @@ export class NumericSemanticCheck implements BaseChecker {
         }
         visited.add(arkClass);
 
-        if (arkClass.getSignature().getDeclaringFileSignature().getProjectName() === 'built-in') {
+        if (arkClass.getSignature().getDeclaringFileSignature().getProjectName() === 'internalSdk') {
             return true;
         }
 
