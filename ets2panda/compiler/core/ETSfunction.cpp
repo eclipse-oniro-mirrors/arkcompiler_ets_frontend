@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,8 +28,11 @@
 #include "ir/base/classDefinition.h"
 #include "ir/base/classProperty.h"
 #include "ir/ets/etsParameterExpression.h"
+#include "ir/expressions/callExpression.h"
 #include "ir/expressions/identifier.h"
+#include "ir/expressions/superExpression.h"
 #include "ir/statements/blockStatement.h"
+#include "ir/statements/expressionStatement.h"
 #include "ir/ts/tsEnumDeclaration.h"
 #include "ir/ts/tsEnumMember.h"
 #include "checker/types/ets/types.h"
@@ -60,6 +63,21 @@ void ETSFunction::CallImplicitCtor(ETSGen *etsg)
     }
 }
 
+void ETSFunction::CompileConstructorWithExplicitSuper(ETSGen *etsg, const ArenaVector<ir::Statement *> &statements)
+{
+    bool fieldsInitialized = false;
+    for (const auto *stmt : statements) {
+        stmt->Compile(etsg);
+        if (!fieldsInitialized && stmt->IsExpressionStatement() &&
+            stmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
+            stmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsSuperExpression()) {
+            CompileInstanceFieldInitializers(etsg);
+            fieldsInitialized = true;
+        }
+    }
+    ES2PANDA_ASSERT(fieldsInitialized);
+}
+
 void ETSFunction::CompileSourceBlock(ETSGen *etsg, const ir::BlockStatement *block)
 {
     auto *scriptFunc = etsg->RootNode()->AsScriptFunction();
@@ -82,7 +100,11 @@ void ETSFunction::CompileSourceBlock(ETSGen *etsg, const ir::BlockStatement *blo
 
     etsg->SetFirstStmt(statements.front());
 
-    etsg->CompileStatements(statements);
+    if (scriptFunc->IsConstructor() && scriptFunc->IsExplicitSuperCall()) {
+        CompileConstructorWithExplicitSuper(etsg, statements);
+    } else {
+        etsg->CompileStatements(statements);
+    }
 
     if (!statements.back()->IsReturnStatement()) {
         ExtendWithDefaultReturn(etsg, statements.back(), scriptFunc);
@@ -127,13 +149,9 @@ void ETSFunction::CompileAsStaticBlock(ETSGen *etsg)
     }
 }
 
-void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc)
+void ETSFunction::CompileInstanceFieldInitializers(ETSGen *etsg)
 {
-    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded() || !scriptFunc->IsExplicitThisCall() ||
-                    !scriptFunc->IsExplicitSuperCall());
-    if (scriptFunc->IsImplicitSuperCallNeeded()) {
-        CallImplicitCtor(etsg);
-    } else if (scriptFunc->IsExplicitThisCall()) {
+    if (etsg->RootNode()->AsScriptFunction()->IsExplicitThisCall()) {
         return;
     }
 
@@ -144,6 +162,21 @@ void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *s
             prop->AsClassProperty()->Compile(etsg);
         }
     }
+}
+
+void ETSFunction::CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc)
+{
+    ES2PANDA_ASSERT(!scriptFunc->IsImplicitSuperCallNeeded() || !scriptFunc->IsExplicitThisCall() ||
+                    !scriptFunc->IsExplicitSuperCall());
+    if (scriptFunc->IsImplicitSuperCallNeeded()) {
+        CallImplicitCtor(etsg);
+    }
+
+    if (scriptFunc->IsExplicitSuperCall()) {
+        return;
+    }
+
+    CompileInstanceFieldInitializers(etsg);
 }
 
 void ETSFunction::CompileFunction(ETSGen *etsg)
