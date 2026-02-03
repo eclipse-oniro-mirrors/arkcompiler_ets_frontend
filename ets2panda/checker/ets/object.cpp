@@ -1670,6 +1670,21 @@ void ETSChecker::CheckConstructors(ir::ClassDefinition *classDef, ETSObjectType 
     }
 }
 
+static bool IsConstructorCall(const ir::Statement *stmt)
+{
+    if (!stmt->IsExpressionStatement()) {
+        return false;
+    }
+
+    auto *expr = stmt->AsExpressionStatement()->GetExpression();
+    if (!expr->IsCallExpression()) {
+        return false;
+    }
+
+    auto *callee = expr->AsCallExpression()->Callee();
+    return callee->IsThisExpression() || callee->IsSuperExpression();
+}
+
 void ETSChecker::CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig)
 {
     if (classType == GlobalETSObjectType()) {
@@ -1681,34 +1696,33 @@ void ETSChecker::CheckImplicitSuper(ETSObjectType *classType, Signature *ctorSig
     }
 
     auto &stmts = ctorSig->Function()->Body()->AsBlockStatement()->Statements();
-    const auto thisCall = std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
-        return stmt->IsExpressionStatement() && stmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-               stmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsThisExpression();
-    });
-    // There is an alternate constructor invocation, no need for super constructor invocation
-    if (thisCall != stmts.end()) {
-        ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_THIS_CALL);
+    auto firstCallIt =
+        std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) { return IsConstructorCall(stmt); });
+    if (firstCallIt != stmts.end()) {
+        auto nextCallIt = std::find_if(std::next(firstCallIt), stmts.end(),
+                                       [](const ir::Statement *stmt) { return IsConstructorCall(stmt); });
+        if (nextCallIt != stmts.end()) {
+            LogError(diagnostic::DUPLICATE_SUPER_OR_THIS_CALL, {}, (*nextCallIt)->Start());
+        }
+        auto *callExpr = (*firstCallIt)->AsExpressionStatement()->GetExpression()->AsCallExpression();
+        if (callExpr->Callee()->IsThisExpression()) {
+            ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_THIS_CALL);
+        } else {
+            ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_SUPER_CALL);
+        }
         return;
     }
 
-    const auto superExpr = std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) {
-        return stmt->IsExpressionStatement() && stmt->AsExpressionStatement()->GetExpression()->IsCallExpression() &&
-               stmt->AsExpressionStatement()->GetExpression()->AsCallExpression()->Callee()->IsSuperExpression();
-    });
-    if (superExpr != stmts.end()) {
-        ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::EXPLICIT_SUPER_CALL);
-    } else if (superExpr == stmts.end()) {
-        // There is no super expression
-        const auto superTypeCtorSigs = classType->SuperType()->ConstructSignatures();
-        const auto superTypeCtorSig = std::find_if(superTypeCtorSigs.begin(), superTypeCtorSigs.end(),
-                                                   [](const Signature *sig) { return sig->MinArgCount() == 0; });
-        // Super type has no parameterless ctor
-        if (superTypeCtorSig == superTypeCtorSigs.end()) {
-            LogError(diagnostic::CTOR_MISSING_SUPER_CALL, {}, ctorSig->Function()->Start());
-        }
-
-        ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED);
+    // There is no super expression
+    const auto superTypeCtorSigs = classType->SuperType()->ConstructSignatures();
+    const auto superTypeCtorSig = std::find_if(superTypeCtorSigs.begin(), superTypeCtorSigs.end(),
+                                               [](const Signature *sig) { return sig->MinArgCount() == 0; });
+    // Super type has no parameterless ctor
+    if (superTypeCtorSig == superTypeCtorSigs.end()) {
+        LogError(diagnostic::CTOR_MISSING_SUPER_CALL, {}, ctorSig->Function()->Start());
     }
+
+    ctorSig->Function()->AddFlag(ir::ScriptFunctionFlags::IMPLICIT_SUPER_CALL_NEEDED);
 }
 
 void ETSChecker::CheckThisOrSuperCallInConstructor(ETSObjectType *classType, Signature *ctorSig)
@@ -2113,30 +2127,93 @@ static Type *TryResolveTypeFromAncestors(ir::Expression *node, std::string_view 
     return checker->GlobalTypeError();
 }
 
+static bool IsRootLevelConstructorCall(const ir::CallExpression *callExpr, const ir::BlockStatement *blockStmt)
+{
+    if (callExpr->Parent() == nullptr || !callExpr->Parent()->IsExpressionStatement()) {
+        return false;
+    }
+
+    auto *exprStmt = callExpr->Parent()->AsExpressionStatement();
+    if (exprStmt->Parent() == nullptr || !exprStmt->Parent()->IsBlockStatement()) {
+        return false;
+    }
+
+    return exprStmt->Parent()->AsBlockStatement() == blockStmt;
+}
+
+static ir::Statement *FindContainingStatement(ir::Expression *node, const ir::BlockStatement *blockStmt)
+{
+    ir::AstNode *current = node;
+    while (current != nullptr && current->Parent() != blockStmt) {
+        current = current->Parent();
+    }
+    return current != nullptr ? current->AsStatement() : nullptr;
+}
+
+static bool CheckConstructorCallPosition(ir::Expression *node, std::string_view msg, ETSChecker *checker)
+{
+    if (node->Parent()->IsCallExpression() && node->Parent()->AsCallExpression()->Callee() == node) {
+        if (checker->Context().ContainingSignature() == nullptr) {
+            checker->LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
+            return false;
+        }
+
+        auto *sig = checker->Context().ContainingSignature();
+        ES2PANDA_ASSERT(sig->Function()->Body() && sig->Function()->Body()->IsBlockStatement());
+
+        if (!sig->HasSignatureFlag(SignatureFlags::CONSTRUCT)) {
+            checker->LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
+            return false;
+        }
+
+        if (!IsRootLevelConstructorCall(node->Parent()->AsCallExpression(),
+                                        sig->Function()->Body()->AsBlockStatement())) {
+            checker->LogError(diagnostic::CTOR_CALL_NOT_ROOT_LEVEL, {msg}, node->Start());
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static bool CheckThisBeforeCtorCall(ir::Expression *node, ETSChecker *checker)
+{
+    if (!node->IsThisExpression()) {
+        return true;
+    }
+
+    auto *sig = checker->Context().ContainingSignature();
+    if (sig == nullptr || !sig->HasSignatureFlag(SignatureFlags::CONSTRUCT) || sig->Function()->Body() == nullptr ||
+        !sig->Function()->Body()->IsBlockStatement()) {
+        return true;
+    }
+
+    auto *blockStmt = sig->Function()->Body()->AsBlockStatement();
+    auto &stmts = blockStmt->Statements();
+
+    auto firstCtorCallIt =
+        std::find_if(stmts.begin(), stmts.end(), [](const ir::Statement *stmt) { return IsConstructorCall(stmt); });
+    auto *currentStmt = FindContainingStatement(node, blockStmt);
+    if (firstCtorCallIt == stmts.end() || currentStmt == nullptr) {
+        return true;
+    }
+
+    auto currentStmtIt = std::find(stmts.begin(), stmts.end(), currentStmt);
+    if (currentStmtIt >= firstCtorCallIt) {
+        return true;
+    }
+    checker->LogError(diagnostic::THIS_BEFORE_THIS_OR_SUPER, {}, node->Start());
+    return false;
+}
+
 Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *classType, std::string_view msg)
 {
     if ((Context().Status() & CheckerStatus::IGNORE_VISIBILITY) != 0U) {
         return classType;
     }
 
-    if (node->Parent()->IsCallExpression() && (node->Parent()->AsCallExpression()->Callee() == node)) {
-        if (Context().ContainingSignature() == nullptr) {
-            LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return GlobalTypeError();
-        }
-
-        auto *sig = Context().ContainingSignature();
-        ES2PANDA_ASSERT(sig->Function()->Body() && sig->Function()->Body()->IsBlockStatement());
-
-        if (!sig->HasSignatureFlag(SignatureFlags::CONSTRUCT)) {
-            LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return GlobalTypeError();
-        }
-
-        if (sig->Function()->Body()->AsBlockStatement()->Statements().front() != node->Parent()->Parent()) {
-            LogError(diagnostic::CTOR_CLASS_NOT_FIRST, {msg}, node->Start());
-            return GlobalTypeError();
-        }
+    if (!CheckConstructorCallPosition(node, msg, this)) {
+        return GlobalTypeError();
     }
 
     if (HasStatus(CheckerStatus::IN_STATIC_CONTEXT)) {
@@ -2157,6 +2234,10 @@ Type *ETSChecker::CheckThisOrSuperAccess(ir::Expression *node, ETSObjectType *cl
 
     if (node->IsSuperExpression() && IsExpressionInClassProperty(node)) {
         LogDiagnostic(diagnostic::THIS_OR_SUPER_IN_FIELD_INITIALIZER, {"super"}, node->Start());
+    }
+
+    if (!CheckThisBeforeCtorCall(node, this)) {
+        return GlobalTypeError();
     }
 
     if (classType == nullptr || util::Helpers::IsGlobalClass(classType->GetDeclNode())) {
