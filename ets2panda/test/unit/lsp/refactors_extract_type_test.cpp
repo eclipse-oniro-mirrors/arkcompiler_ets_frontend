@@ -663,7 +663,7 @@ TEST_F(LspExtrTypeGetEditsTests, ExtractInterfaceForMethodReturnType)
         {128, 140, "partial_first_prop"},  // { width: num
         {149, 161, "partial_last_prop"},   // ht: number }
     };
-    // NOLINTENDk(readability-magic-numbers)
+    // NOLINTEND(readability-magic-numbers)
     for (const auto &sel : selections) {
         auto *initializer = new Initializer();
         auto *refactorContext = CreateExtractContext(initializer, code, sel.start, sel.end);

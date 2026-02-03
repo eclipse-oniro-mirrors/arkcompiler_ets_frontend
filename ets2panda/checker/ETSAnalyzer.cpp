@@ -2584,6 +2584,7 @@ checker::Type *ETSAnalyzer::Check(ir::Identifier *expr) const
     ES2PANDA_ASSERT(identType != nullptr);
     expr->SetTsType(identType);
     ES2PANDA_ASSERT(identType != nullptr);
+    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
     if (!identType->IsTypeError()) {
         checker->Context().CheckIdentifierSmartCastCondition(expr);
     }

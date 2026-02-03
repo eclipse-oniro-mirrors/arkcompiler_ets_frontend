@@ -119,7 +119,7 @@ warning:
   message: "Initializers are not allowed in ambient contexts: {}"
   strict: true
 
-- name: Lambda_MISSING_RETURN_STMT
+- name: LAMBDA_MISSING_RETURN_STMT
   id: 57199
   message: "Lambda with a non void return type must return a value."
   code_fix_ids: [FixAddFunctionReturnStatement]

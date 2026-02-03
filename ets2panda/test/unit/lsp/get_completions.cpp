@@ -381,10 +381,12 @@ function test(o: A | B) {
     int fooCount = 0;
     int barCount = 0;
     for (const auto &e : entries) {
-        if (e.GetName() == "foo")
+        if (e.GetName() == "foo") {
             fooCount++;
-        if (e.GetName() == "bar")
+        }
+        if (e.GetName() == "bar") {
             barCount++;
+        }
     }
 
     ASSERT_EQ(fooCount, 1) << "Expected exactly 1 'foo' entry";
@@ -1400,7 +1402,7 @@ let a = MyClass.
     auto ctx = initializer.CreateContext(filePaths[0].c_str(), ES2PANDA_STATE_CHECKED);
     LSPAPI const *lspApi = GetImpl();
 
-    size_t offset = 157;
+    const size_t offset = 157;
     auto res = lspApi->getCompletionsAtPosition(ctx, offset);
     auto entries = res.GetEntries();
 

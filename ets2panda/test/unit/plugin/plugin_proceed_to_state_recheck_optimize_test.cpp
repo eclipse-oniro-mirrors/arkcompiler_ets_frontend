@@ -24,9 +24,19 @@
 static es2panda_Impl *g_impl = nullptr;
 static constexpr size_t NUM_OF_RECHECKS = 50;
 static constexpr size_t RECHECK_SPEED_IMPROVEMENT = 10;
-std::string g_currFindIdent;
 static es2panda_AstNode *g_findIdent = nullptr;
-std::set<std::string> g_modifiedFiles;
+
+std::string &GetCurrFindIdent()
+{
+    static std::string currFindIdent;
+    return currFindIdent;
+}
+
+std::set<std::string> &GetModifiedFiles()
+{
+    static std::set<std::string> modifiedFiles;
+    return modifiedFiles;
+}
 
 static void FindIdentifier(es2panda_AstNode *ast, void *context)
 {
@@ -36,7 +46,7 @@ static void FindIdentifier(es2panda_AstNode *ast, void *context)
         return;
     }
 
-    if (std::string(g_impl->IdentifierName(ctx, ast)) == g_currFindIdent) {
+    if (std::string(g_impl->IdentifierName(ctx, ast)) == GetCurrFindIdent()) {
         g_findIdent = ast;
     }
 }
@@ -44,7 +54,7 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
 {
     auto *program = g_impl->ContextProgram(context);
 
-    g_currFindIdent = "bAssert";
+    GetCurrFindIdent() = "bAssert";
     g_impl->AstNodeForEach(g_impl->ProgramAst(context, program), FindIdentifier, context);
     if (g_findIdent == nullptr) {
         std::cout << "bAssert not found" << std::endl;
@@ -54,7 +64,7 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
     g_impl->VariableDeclaratorSetInit(context, g_impl->AstNodeParent(context, bAssert), newStr);
     const char *path = g_impl->ProgramSourceFilePathConst(context, program);
     if (path != nullptr) {
-        g_modifiedFiles.insert(std::string(path));
+        GetModifiedFiles().insert(std::string(path));
     }
 
     g_findIdent = nullptr;
@@ -64,9 +74,11 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
     auto **externalSourceList = g_impl->ProgramExternalSources(context, program, &externalSourceCnt);
     es2panda_Program *foundProgram = nullptr;
     for (size_t i = 0; i < externalSourceCnt; i++) {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto *externalSource = externalSourceList[i];
         auto *programList = g_impl->ExternalSourcePrograms(externalSource, &programCnt);
         for (size_t j = 0; j < programCnt; j++) {
+            // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
             auto *externalProgram = programList[j];
             if (std::string(g_impl->ProgramSourceFilePathConst(context, externalProgram)).find("import_A") !=
                 std::string::npos) {
@@ -77,7 +89,7 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
     }
     if (foundProgram != nullptr) {
         auto ast = g_impl->ProgramAst(context, foundProgram);
-        g_currFindIdent = "b";
+        GetCurrFindIdent() = "b";
         g_impl->AstNodeForEach(ast, FindIdentifier, context);
         if (g_findIdent == nullptr) {
             std::cout << "b not found" << std::endl;
@@ -86,8 +98,8 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
             g_impl->VariableDeclaratorSetInit(context, g_impl->AstNodeParent(context, b), newStr);
 
             path = g_impl->ProgramSourceFilePathConst(context, foundProgram);
-            if (path) {
-                g_modifiedFiles.insert(std::string(path));
+            if (path != nullptr) {
+                GetModifiedFiles().insert(std::string(path));
             }
         }
         g_findIdent = nullptr;
@@ -96,7 +108,7 @@ void InsertChanges([[maybe_unused]] es2panda_Context *context)
 
 bool SeveralRechecks(es2panda_Context *context)
 {
-    g_modifiedFiles.clear();
+    GetModifiedFiles().clear();
     auto start = std::chrono::steady_clock::now();
     for (size_t i = 0; i < NUM_OF_RECHECKS; i++) {
         InsertChanges(context);
@@ -105,12 +117,12 @@ bool SeveralRechecks(es2panda_Context *context)
     auto end = std::chrono::steady_clock::now();
     auto localRecheckTime = std::chrono::duration<double>(end - start).count();
     std::cout << std::to_string(NUM_OF_RECHECKS) << " local rechecks time: " << localRecheckTime << " sec" << std::endl;
-    std::cout << "--- Modified programs (" << g_modifiedFiles.size() << ") ---" << std::endl;
-    for (const auto &file : g_modifiedFiles) {
+    std::cout << "--- Modified programs (" << GetModifiedFiles().size() << ") ---" << std::endl;
+    for (const auto &file : GetModifiedFiles()) {
         std::cout << "Modified: " << file << std::endl;
     }
     bool checkImportModified = false;
-    for (const auto &f : g_modifiedFiles) {
+    for (const auto &f : GetModifiedFiles()) {
         if (f.find("import_A") != std::string::npos) {
             checkImportModified = true;
         }

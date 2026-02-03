@@ -468,7 +468,7 @@ bool ProgramHasFunction(public_lib::Context *ctx, const std::string &name)
     return SourceContainsFunctionDefinition(ctx, name);
 }
 
-static bool ClassHasProperty(ir::ClassDefinition *classDef, const std::string &name)
+bool ClassHasProperty(ir::ClassDefinition *classDef, const std::string &name)
 {
     if (classDef == nullptr) {
         return false;
@@ -485,7 +485,7 @@ static bool ClassHasProperty(ir::ClassDefinition *classDef, const std::string &n
     return false;
 }
 
-static bool ClassHasMethod(ir::ClassDefinition *classDef, const std::string &name)
+bool ClassHasMethod(ir::ClassDefinition *classDef, const std::string &name)
 {
     if (classDef == nullptr) {
         return false;
@@ -495,14 +495,14 @@ static bool ClassHasMethod(ir::ClassDefinition *classDef, const std::string &nam
             continue;
         }
         auto *func = method->AsMethodDefinition()->Function();
-        if (func && func->Id() && func->Id()->Name().Mutf8() == name) {
+        if (func != nullptr && (func->Id() != nullptr) && func->Id()->Name().Mutf8() == name) {
             return true;
         }
     }
     return false;
 }
 
-static bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
+bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
 {
     if (scopeNode == nullptr) {
         return false;
@@ -522,7 +522,7 @@ static bool ScopeHasVar(ir::AstNode *scopeNode, const std::string &name)
     return found;
 }
 
-static bool ProgramHasGlobalVar(public_lib::Context *ctx, const std::string &name)
+bool ProgramHasGlobalVar(public_lib::Context *ctx, const std::string &name)
 {
     if (ctx == nullptr || ctx->parserProgram == nullptr) {
         return false;
@@ -585,7 +585,7 @@ std::string GenerateUniqueFuncName(const RefactorContext &context, const std::st
     return baseName;
 }
 
-static std::string GenerateUniqueClassPropertyName(const RefactorContext &context)
+std::string GenerateUniqueClassPropertyName(const RefactorContext &context)
 {
     std::string baseName = "newProperty";
     int counter = 0;
@@ -602,7 +602,7 @@ static std::string GenerateUniqueClassPropertyName(const RefactorContext &contex
     return "this." + tryName;
 }
 
-static std::string GenerateUniqueGlobalVarName(const RefactorContext &context)
+std::string GenerateUniqueGlobalVarName(const RefactorContext &context)
 {
     std::string baseName = "newLocal";
     int counter = 0;
@@ -615,7 +615,7 @@ static std::string GenerateUniqueGlobalVarName(const RefactorContext &context)
     return tryName;
 }
 
-static std::string GenerateUniqueEncloseVarName(const RefactorContext &context)
+std::string GenerateUniqueEncloseVarName(const RefactorContext &context)
 {
     std::string baseName = "newLocal";
     int counter = 0;
@@ -981,10 +981,7 @@ bool TryBuildHelperExtraction(const RefactorContext &context, ir::AstNode *extra
 bool IsClassContext(ir::AstNode *node)
 {
     auto *cls = FindEnclosingClassDefinition(node);
-    if (cls == nullptr || cls->AsClassDefinition()->Ident() == nullptr || cls->AsClassDefinition()->IsGlobal()) {
-        return false;
-    }
-    return true;
+    return !(cls == nullptr || cls->AsClassDefinition()->Ident() == nullptr || cls->AsClassDefinition()->IsGlobal());
 }
 
 }  // namespace
@@ -1093,12 +1090,8 @@ static bool IsMultiDecl(ir::AstNode *node, public_lib::Context *context)
         break;
     }
 
-    if (prevClassProperty != nullptr && (AreNodesCommaSeparated(context, prevClassProperty, targetClassProperty) ||
-                                         AreNodesCommaSeparated(context, targetClassProperty, nextClassProperty))) {
-        return true;
-    }
-
-    return false;
+    return (prevClassProperty != nullptr && (AreNodesCommaSeparated(context, prevClassProperty, targetClassProperty) ||
+                                             AreNodesCommaSeparated(context, targetClassProperty, nextClassProperty)));
 }
 
 static void AdjustStatementForGlobalIfClass(ir::AstNode *&statement, ir::AstNode *node, size_t startLine)
@@ -1446,10 +1439,7 @@ static bool IsInsideExtractionRange(const ir::AstNode *node, TextRange positions
 static bool HasBlockEnclosing(ir::AstNode *node)
 {
     auto *block = node->AsArrowFunctionExpression()->Function()->Body()->AsBlockStatement();
-    if (block == nullptr || (block->Start().index == block->End().index)) {
-        return false;
-    }
-    return true;
+    return !(block == nullptr || (block->Start().index == block->End().index));
 }
 
 static bool HasEncloseScope(ir::AstNode *node)
@@ -1457,7 +1447,8 @@ static bool HasEncloseScope(ir::AstNode *node)
     for (; node != nullptr; node = node->Parent()) {
         if (node->IsFunctionDeclaration() || node->IsFunctionExpression()) {
             return true;
-        } else if (node->IsArrowFunctionExpression()) {
+        }
+        if (node->IsArrowFunctionExpression()) {
             return HasBlockEnclosing(node);
         }
     }
@@ -1601,7 +1592,7 @@ std::string BuildExtractionDeclaration(const RefactorContext &context, public_li
     }
 
     auto startedNode = GetTouchingTokenByRange(context.context, context.span, false);
-    std::string declaration = "";
+    std::string declaration;
     bool isMutiDecl = IsMultiDecl(startedNode, ctx);
     if (IsConstantExtractionInClassAction(actionName)) {
         declaration.append("private readonly ").append(varName.substr(std::string("this.").size())).append(" = ");
@@ -1733,7 +1724,7 @@ RefactorEditInfo GetRefactorEditsToExtractVals(const RefactorContext &context, i
     const auto src = reinterpret_cast<public_lib::Context *>(context.context)->sourceFile;
     const auto fileName = src->filePath;
     std::vector<FileTextChanges> edits;
-    std::string extractedName = "";
+    std::string extractedName;
 
     extractedName.append(uniqueVarName);
     edits = ChangeTracker::With(textChangesContext, [&](ChangeTracker &tracker) {

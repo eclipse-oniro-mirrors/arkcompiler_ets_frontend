@@ -126,9 +126,9 @@ std::string GetTypeSig(ir::AstNode *node)
             }
             first = false;
             std::string typeStr;
-            if (param->IsETSParameterExpression() && param->AsETSParameterExpression()->TypeAnnotation()) {
+            if (param->IsETSParameterExpression() && (param->AsETSParameterExpression()->TypeAnnotation() != nullptr)) {
                 typeStr = param->AsETSParameterExpression()->TypeAnnotation()->DumpEtsSrc();
-            } else if (param->IsIdentifier() && param->AsIdentifier()->TypeAnnotation()) {
+            } else if (param->IsIdentifier() && (param->AsIdentifier()->TypeAnnotation() != nullptr)) {
                 typeStr = param->AsIdentifier()->TypeAnnotation()->DumpEtsSrc();
             } else {
                 typeStr = "any";
@@ -139,7 +139,7 @@ std::string GetTypeSig(ir::AstNode *node)
             sig.append(typeStr);
         }
         sig.append(")");
-        if (func->ReturnTypeAnnotation()) {
+        if (func->ReturnTypeAnnotation() != nullptr) {
             std::string retStr = func->ReturnTypeAnnotation()->DumpEtsSrc();
             retStr.erase(std::remove_if(retStr.begin(), retStr.end(), [](unsigned char c) { return std::isspace(c); }),
                          retStr.end());
@@ -150,7 +150,7 @@ std::string GetTypeSig(ir::AstNode *node)
     }
     if (node->IsClassProperty()) {
         auto type = node->AsClassProperty()->TypeAnnotation();
-        if (type) {
+        if (type != nullptr) {
             std::string typeStr = type->DumpEtsSrc();
             typeStr.erase(
                 std::remove_if(typeStr.begin(), typeStr.end(), [](unsigned char c) { return std::isspace(c); }),
@@ -513,7 +513,7 @@ std::vector<ir::AstNode *> GetDefinitionFromDeclType(ir::AstNode *node)
 
 static ir::AstNode *GetNodeFromType(checker::Type *type)
 {
-    if (type && type->Variable() && type->Variable()->Declaration()) {
+    if (type != nullptr && (type->Variable() != nullptr) && (type->Variable()->Declaration() != nullptr)) {
         return type->Variable()->Declaration()->Node();
     }
     return nullptr;
@@ -1204,13 +1204,13 @@ std::vector<CompletionEntry> GetCompletionFromPath(es2panda_Context *context, st
         }
     }
 
-    std::string specStr = "";
+    std::string specStr;
     if (node != nullptr && !node->AsIdentifier()->Name().Is(ERROR_LITERAL)) {
         specStr = node->AsIdentifier()->Name().Utf8();
     }
     auto ans = GetExportsFromProgram(program, specStr);
     for (auto &entry : ans) {
-        if (!hasImported.count(entry.GetName())) {
+        if (hasImported.count(entry.GetName()) == 0U) {
             completions.emplace_back(std::move(entry));
         }
     }
@@ -1563,10 +1563,7 @@ bool IsInETSImportStatement(size_t pos, ir::AstNode *node)
         return false;
     }
     size_t end = importDecl->Range().end.index;
-    if (pos > end) {
-        return false;
-    }
-    return true;
+    return (pos <= end);
 }
 
 std::vector<CompletionEntry> GetCompletionsAtPositionImpl(es2panda_Context *context, size_t pos)

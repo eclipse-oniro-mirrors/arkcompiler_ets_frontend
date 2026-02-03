@@ -2332,6 +2332,7 @@ ir::FunctionDeclaration *ETSParser::ParseFunctionDeclaration(bool canBeAnonymous
     return funcDecl;
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 void ETSParser::ValidateGetterSetter(ir::MethodDefinitionKind methodDefinition, const ir::ScriptFunction *func,
                                      bool hasReceiver)
 {
