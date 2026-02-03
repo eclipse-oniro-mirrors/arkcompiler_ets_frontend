@@ -18877,43 +18877,44 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       }
       const firstParam = params[0];
       const firstParamType = this.tsTypeChecker.getTypeOfSymbolAtLocation(firstParam, firstArg);
-      if (firstParamType.isUnion()) {
-        const filteredUnionTypes = firstParamType.types.filter((t) => {
-          return this.tsTypeChecker.typeToStringForLinter(t) !== 'undefined';
-        });
-        const unionTypes = filteredUnionTypes;
-        if (unionTypes.length < 2) {
+      if (!firstParamType.isUnion()) {
+        continue;
+      }
+      const filteredUnionTypes = firstParamType.types.filter((t) => {
+        return this.tsTypeChecker.typeToStringForLinter(t) !== 'undefined';
+      });
+      const unionTypes = filteredUnionTypes;
+      if (unionTypes.length < 2) {
+        continue;
+      }
+      const firstType = unionTypes[0];
+      const secondType = unionTypes[1];
+      const firstProps = TypeScriptLinter.getPropertiesOfType(firstType);
+      const secondProps = TypeScriptLinter.getPropertiesOfType(secondType);
+      const objLiteralProps = firstArg.properties;
+      let allCommon = true;
+
+      for (const prop of objLiteralProps) {
+        if (!ts.isPropertyAssignment(prop)) {
           continue;
         }
-        const firstType = unionTypes[0];
-        const secondType = unionTypes[1];
-        const firstProps = TypeScriptLinter.getPropertiesOfType(firstType);
-        const secondProps = TypeScriptLinter.getPropertiesOfType(secondType);
-        const objLiteralProps = firstArg.properties;
-        let allCommon = true;
-
-        for (const prop of objLiteralProps) {
-          if (!ts.isPropertyAssignment(prop)) {
-            continue;
-          }
-          const propName = prop.name?.getText();
-          if (!propName) {
-            continue;
-          }
-          const inFirstType = firstProps.includes(propName);
-          const inSecondType = secondProps.includes(propName);
-          if (!inFirstType || !inSecondType) {
-            allCommon = false;
-            break;
-          }
+        const propName = prop.name?.getText();
+        if (!propName) {
+          continue;
         }
-
-        if (allCommon && objLiteralProps.length > 0) {
-          const firstTypeName = this.tsTypeChecker.typeToStringForLinter(firstType);
-          const autofix = this.autofixer?.fixSdkUnionTypeAmbiguity(firstArg, firstTypeName);
-          this.incrementCounters(firstArg, FaultID.SdkUnionTypeAmbiguity, autofix);
-          return;
+        const inFirstType = firstProps.includes(propName);
+        const inSecondType = secondProps.includes(propName);
+        if (!inFirstType || !inSecondType) {
+          allCommon = false;
+          break;
         }
+      }
+
+      if (allCommon && objLiteralProps.length > 0) {
+        const firstTypeName = this.tsTypeChecker.typeToStringForLinter(firstType);
+        const autofix = this.autofixer?.fixSdkUnionTypeAmbiguity(firstArg, firstTypeName);
+        this.incrementCounters(firstArg, FaultID.SdkUnionTypeAmbiguity, autofix);
+        return;
       }
     }
   }
