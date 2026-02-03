@@ -114,27 +114,27 @@ TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction)
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
-        let c = a + b;
-        let d = c * c;
-        return d;
-    }
+  MyMethod(a: number, b: number) {
+    let c = a + b;
+    let d = c * c;
+    return d;
+  }
 }
 )";
     const std::string expected = R"('use static'
 
 function newFunction(a: number, b: number) {
-    return a + b;
+  return a + b;
 }
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
+  MyMethod(a: number, b: number) {
 
-        let c = newFunction(a, b);
-        let d = c * c;
-        return d;
-    }
+    let c = newFunction(a, b);
+    let d = c * c;
+    return d;
+  }
 }
 )";
 
@@ -165,28 +165,28 @@ TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction1)
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
-        let c = a + b;
-        let d = c * c;
-        return d;
-    }
+  MyMethod(a: number, b: number) {
+    let c = a + b;
+    let d = c * c;
+    return d;
+  }
 }
 )";
     const std::string expected = R"('use static'
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
+  MyMethod(a: number, b: number) {
 
-        let c = this.newMethod(a, b);
-        let d = c * c;
-        return d;
-    }
+    let c = this.newMethod(a, b);
+    let d = c * c;
+    return d;
+  }
 
-    private newMethod(a: number, b: number) {
-        let c = a + b;
-        return c;
-    }
+  private newMethod(a: number, b: number) {
+    let c = a + b;
+    return c;
+  }
 }
 )";
 
@@ -217,38 +217,38 @@ TEST_F(LspExtrSymblGetEditsTestsFunction, ExtractFunction2)
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
-        let c = a + b;
-        let d = c * c;
-        return d;
-    }
+  MyMethod(a: number, b: number) {
+    let c = a + b;
+    let d = c * c;
+    return d;
+  }
 
-    private newMethod(a: number, b: number) {
-        let d = a + b;
-        return d;
-    }
+  private newMethod(a: number, b: number) {
+    let d = a + b;
+    return d;
+  }
 }
 )";
     const std::string expected = R"('use static'
 
 class MyClass {
 
-    MyMethod(a: number, b: number) {
+  MyMethod(a: number, b: number) {
 
-        let c = this.newMethod_1(a, b);
-        let d = c * c;
-        return d;
-    }
+    let c = this.newMethod_1(a, b);
+    let d = c * c;
+    return d;
+  }
 
-    private newMethod(a: number, b: number) {
-        let d = a + b;
-        return d;
-    }
+  private newMethod(a: number, b: number) {
+    let d = a + b;
+    return d;
+  }
 
-    private newMethod_1(a: number, b: number) {
-        let c = a + b;
-        return c;
-    }
+  private newMethod_1(a: number, b: number) {
+    let c = a + b;
+    return c;
+  }
 }
 )";
 

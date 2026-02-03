@@ -27,6 +27,8 @@ constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_GLOBAL {
     "extract_function_scope_2", "Extract to function in global scope", "refactor.extract.function"};
 constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_CLASS {
     "extract_function_scope_1", "Extract to function in class scope", "refactor.extract.function"};
+constexpr RefactorActionView EXTRACT_FUNCTION_ACTION_ENCLOSE {
+    "extract_function_scope_0", "Extract to function in enclosing scope", "refactor.extract.function"};
 constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_CLASS {
     "extract_constant_scope_1", "Extract to constant in class scope", "refactor.extract.constant"};
 constexpr RefactorActionView EXTRACT_CONSTANT_ACTION_ENCLOSE {
