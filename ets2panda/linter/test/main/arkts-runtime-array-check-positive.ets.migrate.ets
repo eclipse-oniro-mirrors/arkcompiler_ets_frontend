@@ -348,3 +348,29 @@ for (let i = 0; i < a.length; i++) {
     b.push("abc");
     b[i]; // safe:
 }
+
+
+//Supplement Scenarios 
+//1.Exist both correct judgment of Lower Bound and Upper Bound
+let arr14_1: number[] = [1, 2, 3, 4, 5];
+let idx14_1: int = 10;
+if (idx14_1 > 0 && idx14_1 < arr14_1.length) {
+  arr14_1[idx14_1];
+}
+//corresponding negative case: if (idx14_1 > 0) 
+
+//2. correct judgment: index less than or equal with length - 1
+let arr14_2: number[] = [1, 2, 3];
+let idx14_2: int = 2;
+if (idx14_2 <= arr14_2.length - 1) {
+  arr14_2[idx14_2]; 
+}
+//corresponding negative case: if (idx14_2 <= arr14_2.length)
+
+//3. correct judgment: index equal with length - 1
+let arr14_4: number[] = [1, 2, 3, 4, 5];
+let idx14_4: int = 5;
+if (arr14_4.length - 1 === idx14_4) { 
+  arr14_4[idx14_4]; 
+}
+//corresponding negative case: if (arr14_4.length === idx14_4)
