@@ -793,15 +793,16 @@ bool ETSChecker::IsAllowedTypeAliasRecursion(const ir::TSTypeAliasDeclaration *t
     }
 
     auto typeAliasDeclarationCheck = [this, &typeAliases](ir::ETSTypeReferencePart *part) {
-        if (!part->Name()->IsIdentifier()) {
+        if (!part->Name()->IsIdentifier() && !part->Name()->IsTSQualifiedName()) {
             return false;
         }
-
+        auto *var = part->Name()->IsIdentifier() ? part->Name()->Variable()
+                                                 : part->Name()->AsTSQualifiedName()->Right()->Variable();
         if (part->Name()->Variable() == nullptr) {
             return true;
         }
 
-        auto const *const decl = part->Name()->Variable()->Declaration();
+        auto const *const decl = var->Declaration();
         if (auto const *const node = decl->Node(); node != nullptr && node->IsTSTypeAliasDeclaration()) {
             return IsAllowedTypeAliasRecursion(node->AsTSTypeAliasDeclaration(), typeAliases);
         }
