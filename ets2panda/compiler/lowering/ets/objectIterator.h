@@ -31,6 +31,8 @@ public:
 
 private:
     [[nodiscard]] ir::Statement *ProcessObjectIterator(ir::ForOfStatement *forOfStatement) const;
+    [[nodiscard]] ir::Statement *GenerateLoweredStatement(parser::ETSParser *parser, ir::ForOfStatement *forOfStatement,
+                                                          ir::AstNode *typeNode) const;
 
     void TransferForOfLoopBody(ir::Statement *forBody, ir::BlockStatement *whileBody) const noexcept;
 };

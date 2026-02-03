@@ -27,7 +27,7 @@ checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *che
 
     for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
         if (it->IsETSStringType()) {
-            types.emplace_back(checker->GlobalCharBuiltinType());
+            types.emplace_back(checker->GlobalBuiltinETSStringType());
         } else if (it->IsETSObjectType()) {
             types.emplace_back(this->CheckIteratorMethodForObject(checker, it->AsETSObjectType()));
         } else if (it->IsETSArrayType()) {

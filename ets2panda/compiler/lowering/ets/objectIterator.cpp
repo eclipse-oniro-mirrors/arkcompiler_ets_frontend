@@ -102,12 +102,12 @@ checker::Type *FindInstantiatedTypeParamFromIterator(checker::ETSObjectType *ito
     return nullptr;
 }
 
-static ir::OpaqueTypeNode *FindIterValueType(checker::ETSObjectType *type, ArenaAllocator *allocator)
+static checker::ETSObjectType *GetIteratorMethodReturnType(const checker::ETSObjectType *type)
 {
-    auto *itor = type->GetProperty(compiler::Signatures::ITERATOR_METHOD,
-                                   checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
-                                       checker::PropertySearchFlags::SEARCH_IN_INTERFACES |
-                                       checker::PropertySearchFlags::SEARCH_IN_BASE);
+    auto *const itor = type->GetProperty(compiler::Signatures::ITERATOR_METHOD,
+                                         checker::PropertySearchFlags::SEARCH_INSTANCE_METHOD |
+                                             checker::PropertySearchFlags::SEARCH_IN_INTERFACES |
+                                             checker::PropertySearchFlags::SEARCH_IN_BASE);
     ES2PANDA_ASSERT(itor != nullptr);
     auto const &sigs = itor->TsType()->AsETSFunctionType()->CallSignatures();
     checker::ETSObjectType *itorReturnType = nullptr;
@@ -118,8 +118,109 @@ static ir::OpaqueTypeNode *FindIterValueType(checker::ETSObjectType *type, Arena
         }
     }
     ES2PANDA_ASSERT(itorReturnType);
-    auto *valueType = FindInstantiatedTypeParamFromIterator(itorReturnType);
-    return allocator->New<ir::OpaqueTypeNode>(valueType, allocator);
+    return itorReturnType;
+}
+
+static std::vector<checker::Type *> CollectUnionIteratorTypes(checker::ETSChecker *checker,
+                                                              const checker::ETSUnionType *unionType)
+{
+    std::vector<checker::Type *> iteratorTypes;
+    for (auto &constituentType : unionType->ConstituentTypes()) {
+        if (constituentType->IsETSUnionType()) {
+            auto nestedTypes = CollectUnionIteratorTypes(checker, constituentType->AsETSUnionType());
+            iteratorTypes.insert(iteratorTypes.end(), nestedTypes.begin(), nestedTypes.end());
+            continue;
+        }
+
+        if (constituentType->IsETSObjectType()) {
+            auto *const methodReturnType = GetIteratorMethodReturnType(constituentType->AsETSObjectType());
+            auto *const iterValueType = FindInstantiatedTypeParamFromIterator(methodReturnType);
+            iteratorTypes.emplace_back(iterValueType);
+        }
+    }
+    return iteratorTypes;
+}
+
+static checker::Type *ResolveIteratorValueType(checker::ETSChecker *checker, checker::Type const *const exprType)
+{
+    if (exprType == nullptr) {
+        return nullptr;
+    }
+    if (exprType->IsETSObjectType()) {
+        auto *const methodReturnType = GetIteratorMethodReturnType(exprType->AsETSObjectType());
+        return FindInstantiatedTypeParamFromIterator(methodReturnType);
+    }
+    if (exprType->IsETSUnionType()) {
+        auto iteratorTypes = CollectUnionIteratorTypes(checker, exprType->AsETSUnionType());
+        ArenaVector<checker::Type *> types(iteratorTypes.begin(), iteratorTypes.end(), checker->Allocator()->Adapter());
+        return checker->CreateETSUnionType(Span<checker::Type *const>(types));
+    }
+    return nullptr;
+}
+
+static ir::Identifier *GetLoopVariable(ArenaAllocator *allocator, ir::ForOfStatement *forOfStatement)
+{
+    if (auto *const left = forOfStatement->Left(); left->IsVariableDeclaration()) {
+        auto *const declaration = left->AsVariableDeclaration();
+        return declaration->Declarators().at(0U)->Id()->AsIdentifier()->Clone(allocator, nullptr);
+    }
+
+    if (auto *const left = forOfStatement->Left(); left->IsIdentifier()) {
+        auto *loopVariableIdent = Gensym(allocator);
+        ES2PANDA_ASSERT(loopVariableIdent != nullptr);
+        loopVariableIdent->SetName(left->AsIdentifier()->Name());
+        return loopVariableIdent;
+    }
+
+    ES2PANDA_UNREACHABLE();
+}
+
+static std::string GetDeclarationPrefix(ir::ForOfStatement *forOfStatement)
+{
+    if (auto *const left = forOfStatement->Left(); left->IsVariableDeclaration()) {
+        return left->AsVariableDeclaration()->Kind() != ir::VariableDeclaration::VariableDeclarationKind::CONST
+                   ? "let "
+                   : "const ";
+    }
+    return "";
+}
+
+ir::Statement *ObjectIteratorLowering::GenerateLoweredStatement(parser::ETSParser *parser,
+                                                                ir::ForOfStatement *forOfStatement,
+                                                                ir::AstNode *typeNode) const
+{
+    auto *const allocator = Context()->Allocator();
+    auto *iterIdent = Gensym(allocator);
+    auto *nextIdent = Gensym(allocator);
+    auto *loopVariableIdent = GetLoopVariable(allocator, forOfStatement);
+    auto exprType = forOfStatement->Right()->TsType();
+    std::string declPrefix = GetDeclarationPrefix(forOfStatement);
+
+    if (exprType->IsETSUnionType()) {
+        std::string const unionWhile = "let @@I1 = (@@E2 as Iterable<@@T3>)." +
+                                       std::string {compiler::Signatures::ITERATOR_METHOD} +
+                                       "(); "
+                                       "while (true) { "
+                                       "let @@I4 = @@I5.next(); "
+                                       "if (@@I6.done) break; " +
+                                       declPrefix + "@@I7 = (@@I8.value as @@T9); }";
+
+        return parser->CreateFormattedStatement(
+            unionWhile, iterIdent, forOfStatement->Right(), typeNode, nextIdent, iterIdent->Clone(allocator, nullptr),
+            nextIdent->Clone(allocator, nullptr), loopVariableIdent, nextIdent->Clone(allocator, nullptr),
+            typeNode->Clone(allocator, nullptr));
+    }
+
+    std::string const stdWhile = "let @@I1 = (@@E2)." + std::string {compiler::Signatures::ITERATOR_METHOD} +
+                                 "(); "
+                                 "while (true) { "
+                                 "let @@I3 = @@I4.next(); "
+                                 "if (@@I5.done) break; " +
+                                 declPrefix + "@@I6 = (@@I7.value as @@T8); }";
+
+    return parser->CreateFormattedStatement(stdWhile, iterIdent, forOfStatement->Right(), nextIdent,
+                                            iterIdent->Clone(allocator, nullptr), nextIdent->Clone(allocator, nullptr),
+                                            loopVariableIdent, nextIdent->Clone(allocator, nullptr), typeNode);
 }
 
 ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(ir::ForOfStatement *forOfStatement) const
@@ -127,51 +228,26 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(ir::ForOfStatement 
     //  Note! We assume that parser, varbinder and checker phases have been already passed correctly, thus the
     //  class has required accessible iterator method and all the types and scopes are properly resolved.
     auto *const allocator = Context()->Allocator();
+    auto *const checker = Context()->GetChecker()->AsETSChecker();
 
     auto *const varbinder = Context()->GetChecker()->VarBinder()->AsETSBinder();
     ES2PANDA_ASSERT(varbinder != nullptr);
     auto statementScope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, NearestScope(forOfStatement));
 
-    ir::Identifier *const iterIdent = Gensym(allocator);
-    ir::Identifier *const nextIdent = Gensym(allocator);
-    ir::Identifier *loopVariableIdent = nullptr;
-
     // find $_iterator->ReturnType->Iterator<number>->number
     // we cannot simply use next().value! , because value itself maybe undefined or null
-    ir::AstNode *typeNode;
     auto exprType = forOfStatement->Right()->TsType();
-    if (!exprType->IsETSObjectType()) {
+    auto returnType = ResolveIteratorValueType(checker, exprType);
+    if (returnType == nullptr) {
         return forOfStatement;
     }
-    typeNode = FindIterValueType(exprType->AsETSObjectType(), allocator);
+    auto *typeNode = allocator->New<ir::OpaqueTypeNode>(returnType, allocator);
 
-    //  Replace the for-of loop with the while loop using the provided iterator interface
-    std::string whileStatement = "let @@I1 = (@@E2)." + std::string {compiler::Signatures::ITERATOR_METHOD} + "(); ";
-    whileStatement += "while (true) { ";
-    whileStatement += "let @@I3 = @@I4.next(); ";
-    whileStatement += "if (@@I5.done) break;";
-
-    if (auto *const left = forOfStatement->Left(); left->IsVariableDeclaration()) {
-        auto *const declaration = left->AsVariableDeclaration();
-        whileStatement +=
-            declaration->Kind() != ir::VariableDeclaration::VariableDeclarationKind::CONST ? "let " : "const ";
-        loopVariableIdent = declaration->Declarators().at(0U)->Id()->AsIdentifier()->Clone(allocator, nullptr);
-    } else if (left->IsIdentifier()) {
-        loopVariableIdent = Gensym(allocator);
-        ES2PANDA_ASSERT(loopVariableIdent != nullptr);
-        loopVariableIdent->SetName(left->AsIdentifier()->Name());
-    } else {
-        ES2PANDA_UNREACHABLE();
-    }
-    whileStatement += "@@I6 = (@@I7.value as @@T8);}; ";
-
-    // Parse ArkTS code string and create corresponding AST nodes
     auto *const parser = Context()->parser->AsETSParser();
-    ES2PANDA_ASSERT(parser != nullptr && nextIdent != nullptr && iterIdent != nullptr);
+    ES2PANDA_ASSERT(parser != nullptr);
 
-    auto *const loweringResult = parser->CreateFormattedStatement(
-        whileStatement, iterIdent, forOfStatement->Right(), nextIdent, iterIdent->Clone(allocator, nullptr),
-        nextIdent->Clone(allocator, nullptr), loopVariableIdent, nextIdent->Clone(allocator, nullptr), typeNode);
+    ir::Statement *loweringResult = GenerateLoweredStatement(parser, forOfStatement, typeNode);
+
     ES2PANDA_ASSERT(loweringResult != nullptr);
     loweringResult->SetParent(forOfStatement->Parent());
     loweringResult->SetRange(forOfStatement->Range());
@@ -180,7 +256,6 @@ ir::Statement *ObjectIteratorLowering::ProcessObjectIterator(ir::ForOfStatement 
     auto whileBody = loweredWhile->Body()->AsBlockStatement();
     TransferForOfLoopBody(forOfStatement->Body(), whileBody);
 
-    auto *const checker = Context()->GetChecker()->AsETSChecker();
     ES2PANDA_ASSERT(checker != nullptr);
     CheckLoweredNode(varbinder, checker, loweringResult);
 
