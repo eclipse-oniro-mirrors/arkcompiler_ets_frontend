@@ -8,21 +8,41 @@
         "http://www.apache.org/licenses/LICENSE-2.0",
         "",
         "Unless required by applicable law or agreed to in writing, software",
-        "distributed under the License is distributed on an 'AS IS' BASIS,",
+        "distributed under the License is distributed on an \"AS IS\" BASIS,",
         "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
         "See the License for the specific language governing permissions and",
         "limitations under the License."
     ],
     "result": [
         {
-            "line": 36,
-            "column": 1,
-            "endLine": 36,
-            "endColumn": 9,
-            "problem": "RuntimeArrayCheck",
+            "line": 342,
+            "column": 20,
+            "endLine": 342,
+            "endColumn": 25,
+            "problem": "BuiltinNewCtor",
             "suggest": "",
-            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
             "severity": "ERROR"
+        },
+        {
+            "line": 342,
+            "column": 16,
+            "endLine": 342,
+            "endColumn": 35,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 342,
+            "column": 16,
+            "endLine": 342,
+            "endColumn": 35,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         }
     ]
 }

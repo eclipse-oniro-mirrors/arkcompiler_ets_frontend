@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2025 Huawei Device Co., Ltd.",
+        "Copyright (c) 2025-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -15,6 +15,56 @@
     ],
     "result": [
         {
+            "line": 23,
+            "column": 16,
+            "endLine": 23,
+            "endColumn": 46,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 28,
+            "column": 16,
+            "endLine": 28,
+            "endColumn": 46,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 33,
+            "column": 16,
+            "endLine": 33,
+            "endColumn": 46,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 38,
+            "column": 16,
+            "endLine": 38,
+            "endColumn": 46,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 50,
+            "column": 16,
+            "endLine": 50,
+            "endColumn": 43,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
             "line": 50,
             "column": 44,
             "endLine": 50,
@@ -22,6 +72,16 @@
             "problem": "ArrayIndexExprType",
             "suggest": "",
             "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 56,
+            "column": 16,
+            "endLine": 56,
+            "endColumn": 43,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
@@ -36,6 +96,16 @@
         },
         {
             "line": 61,
+            "column": 16,
+            "endLine": 61,
+            "endColumn": 43,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 61,
             "column": 44,
             "endLine": 61,
             "endColumn": 50,
@@ -46,6 +116,16 @@
         },
         {
             "line": 73,
+            "column": 16,
+            "endLine": 73,
+            "endColumn": 39,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 73,
             "column": 40,
             "endLine": 73,
             "endColumn": 52,
@@ -62,6 +142,16 @@
             "problem": "ArrayIndexExprType",
             "suggest": "",
             "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 79,
+            "column": 16,
+            "endLine": 79,
+            "endColumn": 39,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {

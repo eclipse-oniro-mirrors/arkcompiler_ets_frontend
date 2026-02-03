@@ -1,6 +1,6 @@
 {
     "copyright": [
-        "Copyright (c) 2023-2024 Huawei Device Co., Ltd.",
+        "Copyright (c) 2023-2026 Huawei Device Co., Ltd.",
         "Licensed under the Apache License, Version 2.0 (the 'License');",
         "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at",
@@ -125,6 +125,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 49,
+            "column": 33,
+            "endLine": 49,
+            "endColumn": 37,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
             "line": 53,
             "column": 10,
             "endLine": 53,
@@ -132,6 +142,46 @@
             "problem": "LimitedReturnTypeInference",
             "suggest": "",
             "rule": "Function return type inference is limited (arkts-no-implicit-return-types)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 12,
+            "endLine": 59,
+            "endColumn": 16,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 19,
+            "endLine": 59,
+            "endColumn": 23,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 26,
+            "endLine": 59,
+            "endColumn": 30,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 59,
+            "column": 33,
+            "endLine": 59,
+            "endColumn": 37,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
@@ -156,12 +206,32 @@
         },
         {
             "line": 69,
+            "column": 12,
+            "endLine": 69,
+            "endColumn": 16,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
             "column": 19,
             "endLine": 69,
             "endColumn": 23,
             "problem": "PropertyAccessByIndex",
             "suggest": "",
             "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 19,
+            "endLine": 69,
+            "endColumn": 23,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         },
         {
@@ -176,12 +246,32 @@
         },
         {
             "line": 69,
+            "column": 26,
+            "endLine": 69,
+            "endColumn": 30,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
             "column": 33,
             "endLine": 69,
             "endColumn": 37,
             "problem": "PropertyAccessByIndex",
             "suggest": "",
             "rule": "Indexed access is not supported for fields (arkts-no-props-by-index)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 69,
+            "column": 33,
+            "endLine": 69,
+            "endColumn": 37,
+            "problem": "RuntimeArrayCheck",
+            "suggest": "",
+            "rule": "Array bound not checked. (arkts-runtime-array-check)",
             "severity": "ERROR"
         }
     ]

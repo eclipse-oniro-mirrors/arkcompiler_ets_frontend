@@ -15,14 +15,181 @@
     ],
     "result": [
         {
-            "line": 36,
-            "column": 1,
-            "endLine": 36,
-            "endColumn": 9,
-            "problem": "RuntimeArrayCheck",
+            "line": 145,
+            "column": 12,
+            "endLine": 145,
+            "endColumn": 13,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 4567,
+                    "end": 4568,
+                    "replacementText": "i as int",
+                    "line": 145,
+                    "column": 12,
+                    "endLine": 145,
+                    "endColumn": 13
+                }
+            ],
             "suggest": "",
-            "rule": "Array bound not checked. (arkts-runtime-array-check)",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
             "severity": "ERROR"
+        },
+        {
+            "line": 223,
+            "column": 12,
+            "endLine": 223,
+            "endColumn": 20,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 6962,
+                    "end": 6970,
+                    "replacementText": "idx6_3-- as int",
+                    "line": 223,
+                    "column": 12,
+                    "endLine": 223,
+                    "endColumn": 20
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 230,
+            "column": 12,
+            "endLine": 230,
+            "endColumn": 20,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 7168,
+                    "end": 7176,
+                    "replacementText": "--idx6_4 as int",
+                    "line": 230,
+                    "column": 12,
+                    "endLine": 230,
+                    "endColumn": 20
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 287,
+            "column": 12,
+            "endLine": 287,
+            "endColumn": 22,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 8918,
+                    "end": 8928,
+                    "replacementText": "enumIdx9_2 as int",
+                    "line": 287,
+                    "column": 12,
+                    "endLine": 287,
+                    "endColumn": 22
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 294,
+            "column": 26,
+            "endLine": 294,
+            "endColumn": 34,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 9133,
+                    "end": 9141,
+                    "replacementText": "idx9_3++ as int",
+                    "line": 294,
+                    "column": 26,
+                    "endLine": 294,
+                    "endColumn": 34
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 301,
+            "column": 26,
+            "endLine": 301,
+            "endColumn": 34,
+            "problem": "ArrayIndexExprType",
+            "autofix": [
+                {
+                    "start": 9384,
+                    "end": 9392,
+                    "replacementText": "idx9_4-- as int",
+                    "line": 301,
+                    "column": 26,
+                    "endLine": 301,
+                    "endColumn": 34
+                }
+            ],
+            "suggest": "",
+            "rule": "The index expression must be of a numeric type (arkts-array-index-expr-type)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 334,
+            "column": 34,
+            "endLine": 334,
+            "endColumn": 43,
+            "problem": "GenericCallNoTypeArgs",
+            "autofix": [
+                {
+                    "start": 10530,
+                    "end": 10530,
+                    "replacementText": "<string, string>",
+                    "line": 334,
+                    "column": 34,
+                    "endLine": 334,
+                    "endColumn": 43
+                }
+            ],
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 342,
+            "column": 20,
+            "endLine": 342,
+            "endColumn": 25,
+            "problem": "BuiltinNewCtor",
+            "suggest": "",
+            "rule": "API is not support initial ctor signature (arkts-builtin-new-cotr)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 342,
+            "column": 16,
+            "endLine": 342,
+            "endColumn": 35,
+            "problem": "GenericCallNoTypeArgs",
+            "suggest": "",
+            "rule": "Type inference in case of generic function calls is limited (arkts-no-inferred-generic-params)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 342,
+            "column": 16,
+            "endLine": 342,
+            "endColumn": 35,
+            "problem": "UninitializedArrayElements",
+            "suggest": "",
+            "rule": "Please init elements of array before read elements. If not, there will be a runtime error. We recommend you to use Array.create<T>(len, T) (arkts-builtin-uninitialized-element)",
+            "severity": "WARNING"
         }
     ]
 }
