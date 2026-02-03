@@ -321,38 +321,38 @@ public:
 
     void EmitAnyLdbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
     {
-        Ra().Emit<AnyLdbyname>(node, objReg, prop);
+        Ra().Emit<AnyLdbyname>(node, objReg, prop, 0);
     }
 
     void EmitAnyStbyname(const ir::AstNode *const node, const VReg objReg, const util::StringView &prop)
     {
-        Ra().Emit<AnyStbyname>(node, objReg, prop);
+        Ra().Emit<AnyStbyname>(node, objReg, prop, 0);
     }
 
     void EmitAnyLdbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
         LoadAccumulator(node, propReg);  // a simplification for the instruction format handling
-        Ra().Emit<AnyLdbyidx>(node, objectReg);
+        Ra().Emit<AnyLdbyidx>(node, objectReg, 0);
     }
 
     void EmitAnyStbyidx(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyStbyidx>(node, objectReg, propReg);
+        Ra().Emit<AnyStbyidx>(node, objectReg, propReg, 0);
     }
 
     void EmitAnyLdbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyLdbyval>(node, objectReg, propReg);
+        Ra().Emit<AnyLdbyval>(node, objectReg, propReg, 0);
     }
 
     void EmitAnyStbyval(const ir::AstNode *node, VReg objectReg, VReg propReg)
     {
-        Ra().Emit<AnyStbyval>(node, objectReg, propReg);
+        Ra().Emit<AnyStbyval>(node, objectReg, propReg, 0);
     }
 
     void EmitAnyIsinstance(const ir::AstNode *node, VReg typeReg)
     {
-        Ra().Emit<AnyIsinstance>(node, typeReg);
+        Ra().Emit<AnyIsinstance>(node, typeReg, 0);
     }
 
     void CallExact(const ir::AstNode *node, checker::Signature *signature,
@@ -867,12 +867,12 @@ private:
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, prop, athis);
+                Ra().Emit<Zero>(node, prop, athis, 0);
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, prop, athis, arg0);
+                Ra().Emit<Short>(node, prop, athis, arg0, 0);
                 break;
             }
             default: {
@@ -881,7 +881,7 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size());
+                Rra().Emit<Range>(node, argStart, arguments.size(), prop, athis, argStart, arguments.size(), 0);
             }
         }
     }
@@ -893,12 +893,12 @@ private:
 
         switch (arguments.size()) {
             case 0U: {
-                Ra().Emit<Zero>(node, athis);
+                Ra().Emit<Zero>(node, athis, 0);
                 break;
             }
             case 1U: {
                 COMPILE_ANY_ARG(0);
-                Ra().Emit<Short>(node, athis, arg0);
+                Ra().Emit<Short>(node, athis, arg0, 0);
                 break;
             }
             default: {
@@ -907,7 +907,7 @@ private:
                     COMPILE_ANY_ARG(idx);
                 }
 
-                Rra().Emit<Range>(node, argStart, arguments.size(), athis, argStart, arguments.size());
+                Rra().Emit<Range>(node, argStart, arguments.size(), athis, argStart, arguments.size(), 0);
             }
         }
     }
