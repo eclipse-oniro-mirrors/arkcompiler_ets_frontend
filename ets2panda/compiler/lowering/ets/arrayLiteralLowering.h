@@ -16,13 +16,7 @@
 #ifndef ES2PANDA_COMPILER_LOWERING_ARRAY_LITERAL_LOWERING_H
 #define ES2PANDA_COMPILER_LOWERING_ARRAY_LITERAL_LOWERING_H
 
-#include "checker/types/ets/etsResizableArrayType.h"
 #include "compiler/lowering/phase.h"
-#include "ir/astNode.h"
-#include "ir/ets/etsNewArrayInstanceExpression.h"
-#include "ir/ts/tsArrayType.h"
-#include "parser/ETSparser.h"
-#include "varbinder/ETSBinder.h"
 
 namespace ark::es2panda::compiler {
 
@@ -43,6 +37,7 @@ private:
     ArenaVector<ir::Identifier *> TransformDimVectorToIdentVector(ArenaVector<ir::Expression *> &dimVector,
                                                                   ArenaVector<ir::Statement *> &stmts);
     ir::AstNode *TryTransformNewMultiDimArrayToRefArray(ir::ETSNewMultiDimArrayInstanceExpression *newExpr);
+    ir::AstNode *TryTransformTupleConstructor(ir::ArrayExpression *literalArray, checker::ETSTupleType *tupleType);
 
     ArenaAllocator *Allocator();
 

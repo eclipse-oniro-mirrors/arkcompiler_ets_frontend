@@ -23,9 +23,8 @@
 
 #include "objectIndexAccess.h"
 
-#include "checker/ETSchecker.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/util.h"
-#include "parser/ETSparser.h"
 
 namespace ark::es2panda::compiler {
 static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::AssignmentExpression *assignmentExpression)
@@ -49,7 +48,6 @@ static ir::AstNode *ProcessIndexSetAccess(public_lib::Context *ctx, ir::Assignme
     auto scope = varbinder::LexicalScope<varbinder::Scope>::Enter(checker->VarBinder(),
                                                                   NearestScope(assignmentExpression->Parent()));
     CheckLoweredNode(checker->VarBinder()->AsETSBinder(), checker, loweringResult);
-    loweringResult->SetParent(assignmentExpression->Parent());
     loweringResult->AddModifier(ir::ModifierFlags::SETTER);
     return loweringResult;
 }
@@ -75,18 +73,111 @@ static ir::AstNode *ProcessIndexGetAccess(public_lib::Context *ctx, ir::MemberEx
     return loweringResult;
 }
 
+static ir::AstNode *ProcessTupleSetAccess(public_lib::Context *ctx, ir::AssignmentExpression *assignmentExpression)
+{
+    auto *const memberExpression = assignmentExpression->Left()->AsMemberExpression();
+
+    ES2PANDA_ASSERT_POS(memberExpression->Property()->IsNumberLiteral(), memberExpression->Property()->Start());
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
+    static std::size_t const TUPLE_THRESHOLD = checker->GetGlobalTypesHolder()->VariadicTupleTypeThreshold();
+
+    std::size_t value = memberExpression->Property()->AsNumberLiteral()->Number().GetInt();
+    if (value < TUPLE_THRESHOLD) {
+        // This case will be processes in 'ProcessTupleGetAccess' method!
+        return assignmentExpression;
+    }
+
+    value -= TUPLE_THRESHOLD;
+
+    auto const code = "@@E1." + std::string {compiler::Signatures::TUPLE_ARRAY} + '.' +
+                      std::string {compiler::Signatures::SET_INDEX_METHOD} + '(' + std::to_string(value) + ", @@E2)";
+
+    auto *loweringResult = ctx->parser->AsETSParser()->CreateFormattedExpression(code, memberExpression->Object(),
+                                                                                 assignmentExpression->Right());
+    loweringResult->SetParent(assignmentExpression->Parent());
+    SetSourceRangesRecursively(loweringResult, assignmentExpression->Range());
+
+    auto *const varbinder = checker->VarBinder()->AsETSBinder();
+    auto *scope = NearestScope(assignmentExpression->Parent());
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
+    CheckLoweredNode(varbinder, checker, loweringResult);
+
+    return loweringResult;
+}
+
+static ir::AstNode *ProcessTupleGetAccess(public_lib::Context *ctx, ir::MemberExpression *memberExpression,
+                                          checker::ETSTupleType const *tupleType)
+{
+    ES2PANDA_ASSERT_POS(memberExpression->Property()->IsNumberLiteral(), memberExpression->Property()->Start());
+    auto *const checker = ctx->GetChecker()->AsETSChecker();
+    static std::size_t const TUPLE_THRESHOLD = checker->GetGlobalTypesHolder()->VariadicTupleTypeThreshold();
+
+    std::string code {};
+    code.reserve(64U);
+
+    std::vector<ir::AstNode *> nodes {};
+    nodes.emplace_back(memberExpression->Object());
+
+    ir::Expression *loweringResult = nullptr;
+
+    if (std::size_t value = memberExpression->Property()->AsNumberLiteral()->Number().GetInt();
+        value < TUPLE_THRESHOLD) {
+        code = "@@E1.$" + std::to_string(value);
+    } else {
+        auto *memberType =
+            checker->AllocNode<ir::OpaqueTypeNode>(tupleType->GetTupleTypesList()[value], checker->Allocator());
+
+        value -= TUPLE_THRESHOLD;
+
+        code = "@@E1." + std::string {compiler::Signatures::TUPLE_ARRAY} + '.' +
+               std::string {compiler::Signatures::GET_INDEX_METHOD} + '(' + std::to_string(value) + ") as @@T2";
+
+        nodes.emplace_back(memberType);
+    }
+
+    loweringResult = ctx->parser->AsETSParser()->CreateFormattedExpression(code, nodes);
+    ;
+    loweringResult->SetParent(memberExpression->Parent());
+    loweringResult->SetRange(memberExpression->Property()->Range());
+
+    auto *const varbinder = checker->VarBinder()->AsETSBinder();
+    auto *scope = NearestScope(memberExpression->Parent());
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder, scope);
+    CheckLoweredNode(varbinder, checker, loweringResult);
+
+    return loweringResult;
+}
+
 bool ObjectIndexLowering::PerformForProgram(parser::Program *program)
 {
     const auto isGetSetExpression = [](const ir::MemberExpression *const memberExpr) {
         return memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS && memberExpr->ObjType() != nullptr;
     };
 
+    const auto isTupleAccess =
+        [](const ir::MemberExpression *const memberExpr) -> std::optional<checker::ETSTupleType const *> {
+        if (memberExpr->Kind() == ir::MemberExpressionKind::ELEMENT_ACCESS) {
+            auto *type = memberExpr->Object()->TsType();
+            while (type->IsETSTypeAliasType()) {
+                type = type->AsETSTypeAliasType()->GetTargetType();
+            }
+            if (type->IsETSTupleType()) {
+                return std::make_optional(type->AsETSTupleType());
+            }
+        }
+        return std::nullopt;
+    };
+
     program->Ast()->TransformChildrenRecursively(
-        [ctx = Context(), &isGetSetExpression](ir::AstNode *const ast) {
+        [ctx = Context(), &isGetSetExpression, &isTupleAccess](ir::AstNode *const ast) {
             if (ast->IsAssignmentExpression() && ast->AsAssignmentExpression()->Left()->IsMemberExpression()) {
                 const auto *const memberExpr = ast->AsAssignmentExpression()->Left()->AsMemberExpression();
                 if (isGetSetExpression(memberExpr)) {
                     return ProcessIndexSetAccess(ctx, ast->AsAssignmentExpression());
+                }
+
+                if (isTupleAccess(memberExpr)) {
+                    return ProcessTupleSetAccess(ctx, ast->AsAssignmentExpression());
                 }
             }
             return ast;
@@ -94,11 +185,15 @@ bool ObjectIndexLowering::PerformForProgram(parser::Program *program)
         Name());
 
     program->Ast()->TransformChildrenRecursively(
-        [ctx = Context(), &isGetSetExpression](ir::AstNode *const ast) {
+        [ctx = Context(), &isGetSetExpression, &isTupleAccess](ir::AstNode *const ast) {
             if (ast->IsMemberExpression()) {
                 auto *const memberExpr = ast->AsMemberExpression();
                 if (isGetSetExpression(memberExpr)) {
                     return ProcessIndexGetAccess(ctx, memberExpr);
+                }
+
+                if (auto type = isTupleAccess(memberExpr); type.has_value()) {
+                    return ProcessTupleGetAccess(ctx, memberExpr, *type);
                 }
             }
             return ast;

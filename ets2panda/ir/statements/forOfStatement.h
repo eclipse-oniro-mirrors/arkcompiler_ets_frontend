@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 #ifndef ES2PANDA_IR_STATEMENT_FOR_OF_STATEMENT_H
 #define ES2PANDA_IR_STATEMENT_FOR_OF_STATEMENT_H
 
-#include <checker/types/signature.h>
+#include "checker/types/signature.h"
 #include "ir/statements/loopStatement.h"
 
 namespace ark::es2panda::varbinder {
@@ -26,6 +26,7 @@ class LoopScope;
 namespace ark::es2panda::checker {
 class ETSAnalyzer;
 class ETSObjectType;
+class ETSUnionType;
 }  // namespace ark::es2panda::checker
 
 namespace ark::es2panda::ir {
@@ -140,7 +141,7 @@ protected:
     static bool CheckIteratorInterfaceForObject(checker::ETSChecker *checker, checker::ETSObjectType *obj);
 
 private:
-    checker::Type *CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::Type *exprType);
+    checker::Type *CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::ETSUnionType *exprType);
 
     AstNode *left_;
     Expression *right_;

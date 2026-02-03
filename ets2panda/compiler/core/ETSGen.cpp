@@ -100,6 +100,11 @@ void ETSGen::CompileAndCheck(const ir::Expression *expr)
         return;
     }
 
+    if (exprType->IsETSTupleType() &&
+        Checker()->Relation()->IsIdenticalTo(accType, exprType->AsETSTupleType()->GetWrapperType())) {
+        return;
+    }
+
     ES2PANDA_ASSERT(accType != nullptr);
     if (accType->IsETSPrimitiveType() &&
         ((accType->TypeFlags() ^ exprType->TypeFlags()) & ~checker::TypeFlag::CONSTANT) == 0) {
@@ -2725,36 +2730,6 @@ void ETSGen::StoreArrayElement(const ir::AstNode *node, VReg objectReg, VReg ind
     }
 
     SetAccumulatorType(elementType);
-}
-
-util::StringView ETSGen::GetTupleMemberNameForIndex(const std::size_t index) const
-{
-    return MakeView(this, "$" + std::to_string(index));
-}
-
-void ETSGen::LoadTupleElement(const ir::AstNode *node, VReg objectReg, const checker::Type *elementType,
-                              std::size_t index)
-{
-    ES2PANDA_ASSERT(GetVRegType(objectReg) != nullptr && GetVRegType(objectReg)->IsETSTupleType());
-    const auto propName = FormClassOwnPropReference(GetVRegType(objectReg)->AsETSTupleType()->GetWrapperType(),
-                                                    GetTupleMemberNameForIndex(index));
-
-    // NOTE (smartin): remove after generics without type erasure is possible
-    const auto *const boxedElementType = Checker()->MaybeBoxType(elementType);
-    LoadProperty(node, boxedElementType, objectReg, propName);
-}
-
-void ETSGen::StoreTupleElement(const ir::AstNode *node, VReg objectReg, const checker::Type *elementType,
-                               std::size_t index)
-{
-    ES2PANDA_ASSERT(GetVRegType(objectReg) != nullptr && GetVRegType(objectReg)->IsETSTupleType());
-    const auto *const tupleType = GetVRegType(objectReg)->AsETSTupleType();
-    SetVRegType(objectReg, tupleType->GetWrapperType());
-    const auto fullName = FormClassOwnPropReference(tupleType->GetWrapperType(), GetTupleMemberNameForIndex(index));
-
-    // NOTE (smartin): remove after generics without type erasure is possible
-    const auto *const boxedElementType = Checker()->MaybeBoxType(elementType);
-    StoreProperty(node, boxedElementType, objectReg, fullName);
 }
 
 template <typename T>

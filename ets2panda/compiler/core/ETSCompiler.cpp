@@ -24,9 +24,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/types/ets/etsTupleType.h"
 #include "ETSGen-inl.h"
-#include "generated/signatures.h"
-#include "util/es2pandaMacros.h"
-#include "varbinder/ETSBinder.h"
+#include "compiler/lowering/util.h"
 
 namespace ark::es2panda::compiler {
 
@@ -161,32 +159,36 @@ void ETSCompiler::Compile(const ir::ETSNewArrayInstanceExpression *expr) const
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
-static void ConvertRestArguments(checker::ETSChecker *const checker, const ir::ETSNewClassInstanceExpression *expr)
+static void ConvertRestArguments(checker::ETSChecker *const checker, ir::Expression *expr,
+                                 checker::Signature const *signature, ArenaVector<ir::Expression *> &arguments)
 {
-    if (expr->Signature()->RestVar() == nullptr) {
+    if (signature->RestVar() == nullptr) {
         return;
     }
-    auto restType = expr->Signature()->RestVar()->TsType();
+
+    auto *restType = signature->RestVar()->TsType();
     if (restType->IsETSArrayType() || restType->IsETSTupleType() || restType->IsETSResizableArrayType() ||
         restType->IsETSReadonlyArrayType()) {
-        std::size_t const argumentCount = expr->GetArguments().size();
-        std::size_t const parameterCount = expr->Signature()->Params().size();
+        std::size_t const argumentCount = arguments.size();
+        std::size_t const parameterCount = signature->Params().size();
         ES2PANDA_ASSERT(argumentCount >= parameterCount);
-        auto &arguments = const_cast<ArenaVector<ir::Expression *> &>(expr->GetArguments());
+
         std::size_t i = parameterCount;
-        if (i < argumentCount && expr->GetArguments()[i]->IsSpreadElement()) {
-            arguments[i] = expr->GetArguments()[i]->AsSpreadElement()->Argument();
+        if (i < argumentCount && arguments[i]->IsSpreadElement()) {
+            arguments[i] = arguments[i]->AsSpreadElement()->Argument();
+        } else if (i < argumentCount && arguments[i]->IsTSAsExpression() &&
+                   arguments[i]->AsTSAsExpression()->Expr()->Type() == ir::AstNodeType::SPREAD_ELEMENT) {
+            arguments[i] = arguments[i]->AsTSAsExpression()->Expr()->AsSpreadElement()->Argument();
         } else if (!restType->IsETSTupleType() && !restType->IsETSResizableArrayType()) {
             ArenaVector<ir::Expression *> elements(checker->Allocator()->Adapter());
             for (; i < argumentCount; ++i) {
-                elements.emplace_back(expr->GetArguments()[i]);
+                elements.emplace_back(arguments[i]);
             }
             auto *arrayExpression = checker->AllocNode<ir::ArrayExpression>(std::move(elements), checker->Allocator());
-            ES2PANDA_ASSERT(arrayExpression != nullptr);
-            arrayExpression->SetParent(const_cast<ir::ETSNewClassInstanceExpression *>(expr));
+            arrayExpression->SetParent(expr);
             arrayExpression->SetTsType(restType);
             arrayExpression->SetPreferredType(checker->GetElementTypeOfArray(restType));
-            arguments.erase(expr->GetArguments().begin() + parameterCount, expr->GetArguments().end());
+            arguments.erase(arguments.begin() + parameterCount, arguments.end());
             arguments.emplace_back(arrayExpression);
         }
     }
@@ -276,8 +278,10 @@ void ETSCompiler::Compile(const ir::ETSNewClassInstanceExpression *expr) const
         etsg->StoreAccumulator(expr->GetTypeRef(), objReg);
         etsg->CallAnyNew(expr, Span<ir::Expression const *const>(expr->GetArguments()), objReg);
     } else {
-        ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), expr);
-        etsg->InitObject(expr, expr->signature_, expr->GetArguments());
+        auto *nonConstExpr = const_cast<ir::ETSNewClassInstanceExpression *>(expr);
+        ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), nonConstExpr,
+                             expr->Signature(), nonConstExpr->GetArguments());
+        etsg->InitObject(expr, expr->Signature(), expr->GetArguments());
     }
     etsg->SetAccumulatorType(expr->TsType());
 }
@@ -334,10 +338,9 @@ void ETSCompiler::CompileTupleCreation(const ir::ArrayExpression *tupleInitializ
 {
     ETSGen *etsg = GetETSGen();
 
-    etsg->InitObject(tupleInitializer,
-                     tupleInitializer->TsType()->AsETSTupleType()->GetWrapperType()->ConstructSignatures().front(),
-                     tupleInitializer->Elements());
-    etsg->SetAccumulatorType(tupleInitializer->TsType());
+    auto const *tupleType = tupleInitializer->TsType()->AsETSTupleType()->GetWrapperType();
+    etsg->InitObject(tupleInitializer, tupleType->ConstructSignatures().front(), tupleInitializer->Elements());
+    etsg->SetAccumulatorType(tupleType);
 }
 
 void ETSCompiler::CompileArrayCreation(const ir::ArrayExpression *expr) const
@@ -369,7 +372,7 @@ void ETSCompiler::CompileArrayCreation(const ir::ArrayExpression *expr) const
         if (expression->TsType()->IsETSArrayType()) {
             etsg->StoreArrayElement(expr, arr, indexReg, expression->TsType());
         } else {
-            etsg->StoreArrayElement(expr, arr, indexReg, arrayExprType->AsETSArrayType()->ElementType());
+            etsg->StoreArrayElement(expr, arr, indexReg, elementType);
         }
     }
 
@@ -638,43 +641,6 @@ void ETSCompiler::Compile(const ir::BinaryExpression *expr) const
     ES2PANDA_ASSERT(etsg->Checker()->Relation()->IsIdenticalTo(etsg->GetAccumulatorType(), expr->TsType()));
 }
 
-static void ConvertRestArguments(checker::ETSChecker *const checker, const ir::CallExpression *expr,
-                                 checker::Signature *signature)
-{
-    if (signature->RestVar() == nullptr) {
-        return;
-    }
-    auto *restType = signature->RestVar()->TsType();
-    if (restType->IsETSArrayType() || restType->IsETSTupleType() || restType->IsETSResizableArrayType() ||
-        restType->IsETSReadonlyArrayType()) {
-        std::size_t const argumentCount = expr->Arguments().size();
-        std::size_t const parameterCount = signature->Params().size();
-        ES2PANDA_ASSERT(argumentCount >= parameterCount);
-
-        auto &arguments = const_cast<ArenaVector<ir::Expression *> &>(expr->Arguments());
-        std::size_t i = parameterCount;
-
-        if (i < argumentCount && expr->Arguments()[i]->IsSpreadElement()) {
-            arguments[i] = expr->Arguments()[i]->AsSpreadElement()->Argument();
-        } else if (i < argumentCount && expr->Arguments()[i]->IsTSAsExpression() &&
-                   expr->Arguments()[i]->AsTSAsExpression()->Expr()->Type() == ir::AstNodeType::SPREAD_ELEMENT) {
-            arguments[i] = expr->Arguments()[i]->AsTSAsExpression()->Expr()->AsSpreadElement()->Argument();
-        } else if (!restType->IsETSTupleType() && !restType->IsETSResizableArrayType()) {
-            ArenaVector<ir::Expression *> elements(checker->Allocator()->Adapter());
-            for (; i < argumentCount; ++i) {
-                elements.emplace_back(expr->Arguments()[i]);
-            }
-            auto *arrayExpression = checker->AllocNode<ir::ArrayExpression>(std::move(elements), checker->Allocator());
-            ES2PANDA_ASSERT(arrayExpression != nullptr);
-            arrayExpression->SetParent(const_cast<ir::CallExpression *>(expr));
-            arrayExpression->SetTsType(restType);
-            arrayExpression->SetPreferredType(checker->GetElementTypeOfArray(restType));
-            arguments.erase(expr->Arguments().begin() + parameterCount, expr->Arguments().end());
-            arguments.emplace_back(arrayExpression);
-        }
-    }
-}
-
 void ETSCompiler::Compile(const ir::BlockExpression *expr) const
 {
     ETSGen *etsg = GetETSGen();
@@ -760,7 +726,9 @@ void ETSCompiler::Compile(const ir::CallExpression *expr) const
 
     bool const isStatic = signature->HasSignatureFlag(checker::SignatureFlags::STATIC);
 
-    ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), expr, signature);
+    auto *nonConstExpr = const_cast<ir::CallExpression *>(expr);
+    ConvertRestArguments(const_cast<checker::ETSChecker *>(etsg->Checker()->AsETSChecker()), nonConstExpr, signature,
+                         nonConstExpr->Arguments());
 
     if (callee->IsIdentifier()) {
         if (!isStatic) {
@@ -882,15 +850,8 @@ bool ETSCompiler::CompileComputed(compiler::ETSGen *etsg, const ir::MemberExpres
 
     auto ttctx = compiler::TargetTypeContext(etsg, expr->TsType());
 
-    if (objectType->IsETSTupleType()) {
-        ES2PANDA_ASSERT(expr->GetTupleIndexValue(etsg->Checker()).has_value());
-        auto indexValue = *expr->GetTupleIndexValue(etsg->Checker());
-        auto *tupleElementType = objectType->AsETSTupleType()->GetTypeAtIndex(indexValue);
-        etsg->LoadTupleElement(expr, objReg, tupleElementType, indexValue);
-    } else {
-        ES2PANDA_ASSERT(objectType->IsETSArrayType());
-        etsg->LoadArrayElement(expr, objReg);
-    }
+    ES2PANDA_ASSERT(objectType->IsETSArrayType());
+    etsg->LoadArrayElement(expr, objReg);
 
     etsg->GuardUncheckedType(expr, expr->UncheckedType(), expr->TsType());
     etsg->ApplyConversion(expr);

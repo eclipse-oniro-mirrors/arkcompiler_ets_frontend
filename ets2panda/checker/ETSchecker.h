@@ -166,7 +166,7 @@ public:
     ETSObjectType *GlobalBuiltinLambdaType(size_t nargs, bool hasRest) const;
     size_t GlobalBuiltinFunctionTypeVariadicThreshold() const;
 
-    ETSObjectType *GlobalBuiltinTupleType(size_t nargs) const;
+    [[nodiscard]] ETSObjectType *GlobalBuiltinTupleType(size_t nargs) const noexcept;
 
     GlobalArraySignatureMap &GlobalArrayTypes();
     const GlobalArraySignatureMap &GlobalArrayTypes() const;
@@ -933,6 +933,9 @@ private:
 
     template <typename... Args>
     ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...), Args... args) const;
+
+    template <typename... Args>
+    ETSObjectType *AsETSObjectType(Type *(GlobalTypesHolder::*typeFunctor)(Args...) const, Args... args) const noexcept;
 
     // Static invoke
     bool SetStaticInvokeValues(ir::Identifier *const ident, ir::Identifier *classId, ir::Identifier *methodId,

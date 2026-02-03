@@ -14,17 +14,9 @@
  */
 
 #include "arrayLiteralLowering.h"
-#include <sstream>
-#include <utility>
-#include <vector>
 
-#include "checker/types/signature.h"
+#include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/util.h"
-#include "ir/astNode.h"
-#include "ir/expressions/literals/numberLiteral.h"
-#include "lexer/token/number.h"
-#include "util/es2pandaMacros.h"
-#include "checker/ETSchecker.h"
 
 namespace ark::es2panda::compiler {
 
@@ -87,33 +79,99 @@ static bool IsInAnnotationContext(ir::AstNode *node)
     return false;
 }
 
-ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayExpression *literalArray)
+ir::AstNode *ArrayLiteralLowering::TryTransformTupleConstructor(ir::ArrayExpression *literalArray,
+                                                                checker::ETSTupleType *tupleType)
 {
-    auto literalArrayType = literalArray->TsType() != nullptr ? literalArray->TsType() : literalArray->PreferredType();
-    if (literalArrayType->IsETSArrayType() || literalArrayType->IsETSTupleType() ||
-        !literalArrayType->IsETSResizableArrayType() || IsInAnnotationContext(literalArray)) {
+    std::size_t maxTupleTypes = checker_->GetGlobalTypesHolder()->VariadicTupleTypeThreshold();
+    if (tupleType->GetTupleSize() <= maxTupleTypes) {
+        tupleType->GetWrapperType()->ConstructSignatures();  // Required to instantiate properties of underlying type
         return literalArray;
     }
+
+    // We need to generate special object creation for 'TupleN<...>' class.
+    ES2PANDA_ASSERT_POS(literalArray->Elements().size() > maxTupleTypes, literalArray->Start());
+    auto const &typeList = tupleType->GetTupleTypesList();
+    std::size_t extraParamsNumber = literalArray->Elements().size() - maxTupleTypes;
+
+    std::vector<ir::AstNode *> nodes {};
+    auto *extraParams = Gensym(Allocator());
+    auto *helperArray = Gensym(Allocator());
+    auto *parent = literalArray->Parent();
+    auto const range = literalArray->Range();
+
+    std::string code = "let @@I1 : FixedArray<Any> = @@E2; ";
+    nodes.emplace_back(helperArray);
+    nodes.emplace_back(literalArray);
+    literalArray->SetTsType(nullptr);
+
+    code += "let @@I3 = new Array<Any>(" + std::to_string(extraParamsNumber) + "); ";
+    nodes.emplace_back(extraParams);
+
+    code += "for (let i = 0; i < " + std::to_string(extraParamsNumber) + "; ++i) { @@I4[i] = @@I5[i+" +
+            std::to_string(maxTupleTypes) + "]} ";
+    nodes.emplace_back(extraParams->Clone(Allocator(), nullptr));
+    nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
+
+    --maxTupleTypes;
+    code += "new TupleN<";
+    for (std::size_t i = 0U; i < maxTupleTypes; ++i) {
+        code += typeList[i]->ToString() + ", ";
+    }
+    code += typeList[maxTupleTypes]->ToString() + ">(";
+    std::size_t j = 6U;
+    for (std::size_t i = 0U; i < maxTupleTypes; ++i, j += 2U) {
+        code += "@@I" + std::to_string(j) + '[' + std::to_string(i) + "] as @@T" + std::to_string(j + 1U) + ", ";
+        nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
+        nodes.emplace_back(checker_->AllocNode<ir::OpaqueTypeNode>(typeList[i], Allocator()));
+    }
+    code += "@@I" + std::to_string(j) + '[' + std::to_string(maxTupleTypes) + "] as @@T" + std::to_string(j + 1U) +
+            ", @@I" + std::to_string(j + 2U) + ");";
+    nodes.emplace_back(helperArray->Clone(Allocator(), nullptr));
+    nodes.emplace_back(checker_->AllocNode<ir::OpaqueTypeNode>(typeList[maxTupleTypes], Allocator()));
+    nodes.emplace_back(extraParams->Clone(Allocator(), nullptr));
+
+    auto *loweringResult = parser_->CreateFormattedExpression(code, nodes);
+    loweringResult->SetParent(parent);
+    SetSourceRangesRecursively(loweringResult, range);
+
+    auto *scope = NearestScope(parent);
+    auto bscope = varbinder::LexicalScope<varbinder::Scope>::Enter(varbinder_, scope);
+    CheckLoweredNode(varbinder_, checker_, loweringResult);
+    return loweringResult;
+}
+
+ir::AstNode *ArrayLiteralLowering::TryTransformLiteralArrayToRefArray(ir::ArrayExpression *literalArray)
+{
+    if (IsInAnnotationContext(literalArray)) {
+        return literalArray;
+    }
+
+    auto literalArrayType = literalArray->TsType() != nullptr ? literalArray->TsType() : literalArray->PreferredType();
+    if (literalArrayType->IsETSTupleType()) {
+        return TryTransformTupleConstructor(literalArray, literalArrayType->AsETSTupleType());
+    }
+
+    if (!literalArrayType->IsETSResizableArrayType()) {
+        return literalArray;
+    }
+
     auto *arrayType = literalArrayType->AsETSResizableArrayType()->ElementType();
     std::vector<ir::AstNode *> newStmts;
     std::stringstream ss;
     ir::Identifier *genSymIdent = Gensym(Allocator());
-    ir::Identifier *genSymIdent2 = nullptr;
     auto *type = checker_->AllocNode<ir::OpaqueTypeNode>(arrayType, Allocator());
     // NOTE(frontend):follow-up #30648
     if (literalArray->Elements().empty()) {
-        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(0);";
-        ss << "@@I4;";
+        ss << "let @@I1: Array<@@T2> = new Array<@@T3>(0); @@I4;";
         newStmts.emplace_back(genSymIdent);
         newStmts.emplace_back(type);
         newStmts.emplace_back(type->Clone(Allocator(), nullptr));
         newStmts.emplace_back(genSymIdent->Clone(Allocator(), nullptr));
     } else {
-        genSymIdent2 = Gensym(Allocator());
-        ss << "let @@I1 : FixedArray<@@T2> = @@E3;";
-        ss << "let @@I4 : Array<@@T5> = new Array<@@T6>(@@I7.length);";
-        ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]}";
-        ss << "@@I11;";
+        ir::Identifier *genSymIdent2 = Gensym(Allocator());
+        ss << "let @@I1: FixedArray<@@T2> = @@E3;";
+        ss << "let @@I4: Array<@@T5> = new Array<@@T6>(@@I7.length);";
+        ss << "for (let i = 0; i < @@I8.length; ++i) { @@I9[i] = @@I10[i]} @@I11";
         newStmts.emplace_back(genSymIdent);
         newStmts.emplace_back(type);
         newStmts.emplace_back(literalArray);

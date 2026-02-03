@@ -16,16 +16,18 @@
 #include "forOfStatement.h"
 
 #include "checker/TSchecker.h"
+#include "checker/types/ets/etsTupleType.h"
+#include "checker/types/ets/etsUnionType.h"
 #include "compiler/core/pandagen.h"
 #include "compiler/core/ETSGen.h"
 
 namespace ark::es2panda::ir {
 
-checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::Type *exprType)
+checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *checker, checker::ETSUnionType *exprType)
 {
-    std::vector<checker::Type *> types;
+    std::vector<checker::Type *> types {};
 
-    for (auto it : exprType->AsETSUnionType()->ConstituentTypes()) {
+    for (checker::Type *&it : const_cast<ArenaVector<checker::Type *> &>(exprType->ConstituentTypes())) {
         if (it->IsETSStringType()) {
             types.emplace_back(checker->GlobalBuiltinETSStringType());
         } else if (it->IsETSObjectType()) {
@@ -33,6 +35,9 @@ checker::Type *ForOfStatement::CreateUnionIteratorTypes(checker::ETSChecker *che
         } else if (it->IsETSArrayType()) {
             types.emplace_back(it->AsETSArrayType()->ElementType()->Clone(checker));
             types.back()->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
+        } else if (it->IsETSTupleType()) {
+            types.emplace_back(checker->GlobalETSAnyType());
+            it = it->AsETSTupleType()->GetWrapperType();
         } else {
             return checker->GlobalTypeError();
         }
@@ -249,13 +254,13 @@ bool ForOfStatement::CheckIteratorInterfaceForObject(checker::ETSChecker *checke
 
 checker::Type *ForOfStatement::CheckIteratorMethod(checker::ETSChecker *const checker)
 {
-    if (auto *exprType = right_->TsType(); exprType != nullptr) {
+    if (checker::Type *exprType = right_->Check(checker); exprType != nullptr) {
         if (exprType->IsETSObjectType()) {
             return CheckIteratorMethodForObject(checker, exprType->AsETSObjectType());
         }
 
         if (exprType->IsETSUnionType()) {
-            return this->CreateUnionIteratorTypes(checker, exprType);
+            return this->CreateUnionIteratorTypes(checker, exprType->AsETSUnionType());
         }
     }
 

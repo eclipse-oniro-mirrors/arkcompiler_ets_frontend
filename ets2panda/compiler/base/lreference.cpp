@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -284,7 +284,7 @@ void ETSLReference::GetValue() const
 
 void ETSLReference::SetValueComputed(const ir::MemberExpression *memberExpr) const
 {
-    const auto *const objectType = memberExpr->Object()->TsType();
+    const auto *const objectType = etsg_->Checker()->GetApparentType(memberExpr->Object()->TsType());
 
     if (objectType->IsETSAnyType()) {
         if (memberExpr->Property()->TsType()->HasTypeFlag(checker::TypeFlag::ETS_NUMERIC)) {
@@ -292,15 +292,6 @@ void ETSLReference::SetValueComputed(const ir::MemberExpression *memberExpr) con
         } else {
             etsg_->StoreByValueAny(memberExpr, baseReg_, propReg_);
         }
-        return;
-    }
-
-    if (objectType->IsETSTupleType()) {
-        ES2PANDA_ASSERT(memberExpr->GetTupleIndexValue(etsg_->Checker()).has_value());
-
-        std::size_t indexValue = *memberExpr->GetTupleIndexValue(etsg_->Checker());
-        etsg_->StoreTupleElement(Node(), baseReg_, objectType->AsETSTupleType()->GetTypeAtIndex(indexValue),
-                                 indexValue);
         return;
     }
 

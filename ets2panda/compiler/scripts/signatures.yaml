@@ -36,6 +36,8 @@ defines:
     ref: GET_INDEX_METHOD
   - name: $_set
     ref: SET_INDEX_METHOD
+  - name: $tupleValues
+    ref: TUPLE_ARRAY
   - name: '%%get-'
     ref: GETTER_METHOD_BEGIN
   - name: '%%set-'

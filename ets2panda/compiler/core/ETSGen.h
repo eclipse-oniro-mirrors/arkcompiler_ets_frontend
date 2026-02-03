@@ -244,11 +244,6 @@ public:
     void LoadArrayElement(const ir::AstNode *node, VReg objectReg);
     void StoreArrayElement(const ir::AstNode *node, VReg objectReg, VReg index, const checker::Type *elementType);
 
-    util::StringView GetTupleMemberNameForIndex(std::size_t index) const;
-    void LoadTupleElement(const ir::AstNode *node, VReg objectReg, const checker::Type *elementType, std::size_t index);
-    void StoreTupleElement(const ir::AstNode *node, VReg objectReg, const checker::Type *elementType,
-                           std::size_t index);
-
     template <typename T>
     void MoveImmediateToRegister(const ir::AstNode *node, VReg reg, const checker::TypeFlag valueType, T const value);
 

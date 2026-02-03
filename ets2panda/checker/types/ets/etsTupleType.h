@@ -21,32 +21,29 @@
 
 namespace ark::es2panda::checker {
 
-class ETSTupleType : public Type {
+class ETSTupleType final : public Type {
     using TupleSizeType = std::size_t;
 
 public:
-    explicit ETSTupleType(ETSChecker *checker, ArenaVector<Type *> &&typeList)
-        : Type(checker::TypeFlag::ETS_TUPLE),
-          typeList_(std::move(typeList)),
-          // NOLINTNEXTLINE(readability-implicit-bool-conversion)
-          wrapperType_(checker->GlobalBuiltinTupleType(typeList_.size()) != nullptr
-                           ? checker->GlobalBuiltinTupleType(typeList_.size())->AsETSObjectType()
-                           : nullptr)
-    {
-        typeFlags_ |= TypeFlag::ETS_TUPLE;
-    }
+    ETSTupleType() = delete;
+    virtual ~ETSTupleType() = default;
 
-    [[nodiscard]] TupleSizeType GetTupleSize() const
+    NO_COPY_SEMANTIC(ETSTupleType);
+    NO_MOVE_SEMANTIC(ETSTupleType);
+
+    explicit ETSTupleType(ETSChecker *checker, ArenaVector<Type *> &&typeList);
+
+    [[nodiscard]] TupleSizeType GetTupleSize() const noexcept
     {
         return typeList_.size();
     }
 
-    [[nodiscard]] ArenaVector<Type *> const &GetTupleTypesList() const
+    [[nodiscard]] ArenaVector<Type *> const &GetTupleTypesList() const noexcept
     {
         return typeList_;
     }
 
-    [[nodiscard]] ETSObjectType *GetWrapperType() const
+    [[nodiscard]] ETSObjectType *GetWrapperType() const noexcept
     {
         return wrapperType_;
     }
@@ -60,6 +57,8 @@ public:
     void AssignmentTarget(TypeRelation *relation, Type *source) override;
     bool AssignmentSource(TypeRelation *relation, Type *target) override;
     Type *Substitute(TypeRelation *relation, const Substitution *substitution) override;
+
+    void IsSupertypeOf(TypeRelation *relation, Type *source) override;
     void IsSubtypeOf(TypeRelation *relation, Type *target) override;
     void Cast(TypeRelation *relation, Type *target) override;
     Type *Instantiate(ArenaAllocator *allocator, TypeRelation *relation, GlobalTypesHolder *globalTypes) override;
