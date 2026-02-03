@@ -326,6 +326,12 @@ export class ArkTSConfigGenerator {
         });
         this.logger.printDebug(`Collected package: ${moduleInfo.packageName} source root: ${JSON.stringify(paths)}`);
         arktsConfig.addPathMappings({ [moduleInfo.packageName]: paths });
+
+        // NOTE: since we have mutiple sourceRoots, so we should specify entry file path from config
+        if (moduleInfo.entryFile) {
+            const entryFilePath = path.resolve(moduleInfo.moduleRootPath, moduleInfo.entryFile);
+            arktsConfig.addPathMappings({ [`${moduleInfo.packageName}/Index`]: [entryFilePath] });
+        }
         return;
     }
 

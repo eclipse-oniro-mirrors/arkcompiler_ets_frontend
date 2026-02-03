@@ -644,6 +644,19 @@ describe('ArkTSConfigGenerator - Path Mappings Management', () => {
             const result = generator.generateArkTSConfigFile(moduleInfo, false);
             expect(result.pathSection['arkts11Pkg']).toBeUndefined();
         });
+
+        test('should add entryFile path mapping with /Index suffix', () => {
+            const config = createMockBuildConfig();
+            const generator = ArkTSConfigGenerator.getInstance(config);
+            const moduleInfo = createMockModuleInfo({
+                packageName: 'myModule',
+                moduleRootPath: '/my/module',
+                entryFile: 'src/index.ets'  // relative path after getNormalizedEntryFile
+            });
+
+            const result = generator.generateArkTSConfigFile(moduleInfo, false);
+            expect(result.pathSection['myModule/Index']).toEqual(['/my/module/src/index.ets']);
+        });
     });
 
     describe('Custom Path Mapping', () => {
