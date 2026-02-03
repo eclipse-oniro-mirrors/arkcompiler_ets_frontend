@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@
 #include "checker/checkerContext.h"
 #include "checker/types/ets/etsObjectType.h"
 #include "ir/expression.h"
+#include "checker/resolveResult.h"
 
 namespace ark::es2panda::compiler {
 class JSCompiler;
@@ -244,6 +245,8 @@ protected:
 
 private:
     std::pair<checker::Type *, varbinder::LocalVariable *> ResolveObjectMember(checker::ETSChecker *checker) const;
+    bool CheckRequiredCallError(checker::ETSChecker *checker,
+                                const std::vector<checker::ResolveResult *> &resolveRes) const;
     checker::Type *AdjustType(checker::ETSChecker *checker, checker::Type *type);
     checker::Type *SetAndAdjustType(checker::ETSChecker *checker, checker::ETSObjectType *objectType);
     checker::Type *CheckComputed(checker::ETSChecker *checker, checker::Type *baseType);

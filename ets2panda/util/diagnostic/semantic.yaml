@@ -1277,6 +1277,10 @@ semantic:
   id: 329
   message: "Invalid reference '{}'."
 
+- name: REQUIRED_CALL
+  id: 123454
+  message: "Cannot call methods of type 'Required'."
+
 - name: REQUIRED_PROP_MISSING_INIT
   id: 226
   message: "Class property '{}' needs to be initialized for Required<{}>."

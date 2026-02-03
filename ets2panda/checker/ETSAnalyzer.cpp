@@ -2190,6 +2190,11 @@ static void CheckCallee(ETSChecker *checker, ir::CallExpression *expr)
         checker->LogError(diagnostic::READONLY_CALL, {}, expr->Start());
         expr->SetTsType(checker->GlobalTypeError());
     }
+    // NOTE(fantianqi): #33001 Need remove method (even any getter or setter) of Required<T>
+    if (baseTypeObj != nullptr && (baseTypeObj->HasObjectFlag(ETSObjectFlags::REQUIRED))) {
+        checker->LogError(diagnostic::REQUIRED_CALL, {}, expr->Start());
+        expr->SetTsType(checker->GlobalTypeError());
+    }
 }
 
 // Restore CheckerContext of the owner class if we want to perform checking
