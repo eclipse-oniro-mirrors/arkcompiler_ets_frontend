@@ -22,4 +22,4 @@ function main():void{
 }
 
 
-/* @@? 21:6 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Double' to 'test' will be removed. */
+/* @@? 21:6 Error Semantic error ESE0030: Enum cast is deprecated. Cast support from 'Double' to 'test' will be removed. Please use 'valueOf' or 'fromValue'. */
