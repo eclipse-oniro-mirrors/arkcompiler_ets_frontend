@@ -125,6 +125,16 @@
             "severity": "ERROR"
         },
         {
+            "line": 67,
+            "column": 6,
+            "endLine": 67,
+            "endColumn": 63,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
             "line": 74,
             "column": 3,
             "endLine": 74,
@@ -178,7 +188,7 @@
             "line": 120,
             "column": 5,
             "endLine": 120,
-            "endColumn": 54,
+            "endColumn": 49,
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
@@ -219,16 +229,6 @@
             "column": 35,
             "endLine": 129,
             "endColumn": 62,
-            "problem": "ArrayTypeImmutable",
-            "suggest": "",
-            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
-            "severity": "ERROR"
-        },
-        {
-            "line": 131,
-            "column": 42,
-            "endLine": 131,
-            "endColumn": 83,
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
@@ -429,6 +429,56 @@
             "column": 5,
             "endLine": 206,
             "endColumn": 16,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 209,
+            "column": 12,
+            "endLine": 209,
+            "endColumn": 20,
+            "problem": "NoESObjectSupport",
+            "suggest": "",
+            "rule": "ESObject type cannot be used (arkts-no-esobject-support)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 217,
+            "column": 2,
+            "endLine": 217,
+            "endColumn": 12,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 221,
+            "column": 2,
+            "endLine": 221,
+            "endColumn": 12,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 226,
+            "column": 2,
+            "endLine": 226,
+            "endColumn": 12,
+            "problem": "ArrayTypeImmutable",
+            "suggest": "",
+            "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",
+            "severity": "ERROR"
+        },
+        {
+            "line": 230,
+            "column": 2,
+            "endLine": 230,
+            "endColumn": 12,
             "problem": "ArrayTypeImmutable",
             "suggest": "",
             "rule": "Array type is immutable in ArkTS1.2 (arkts-array-type-immutable)",

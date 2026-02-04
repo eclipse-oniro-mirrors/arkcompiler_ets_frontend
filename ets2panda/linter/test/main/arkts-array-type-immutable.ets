@@ -117,7 +117,7 @@ const newArr2: (string|number|boolean)[] = ['s', 3.14, false]
 const array1: (number | string | boolean)[] = newArr2
 const array2: (string | number | boolean)[] = newArr1
 
-let tt: (boolean | number | boolean)[] = this.test2() //error
+let tt: (boolean | number | boolean)[] = test2() //error
 let gg: (boolean | number | boolean)[] = new A().ee()
 let ff = new A().ff()
 let hh: (boolean | number | string)[] =ff
@@ -128,7 +128,7 @@ let array13: (number|boolean|string)[] = newArr as (number|string)[] //error
 let array14: (number|boolean|number)[] = [3.14, true] as (number|boolean)[]
 let array15: (boolean|number)[] = array as (number|boolean)[] //error
 let array16: (boolean | number | boolean)[] = objA.gg() as (boolean | number)[]
-let tuple15: (number|boolean|string)[] = this.test2() as (string|number|boolean)[]
+let tuple15: (number|boolean|string)[] = test2() as (string|number|boolean)[]
 let tuple16: (number|boolean)[]  = array as [number, number, boolean]
 let array17: (number|string|boolean)[] = ['s', 3.14, true] as (number|string|boolean)[]
 const array18 = Array.from({ length: 5 }, (_, index) => index % 2 === 0 ? index : index % 3 === 0);
@@ -204,4 +204,46 @@ function AliasTest5(): AliasedTupleType1 {
 function AliasTest6(): AliasedType {
     const arr: number[] = [1, 1];
     return arr; 
+}
+
+let esObj: ESObject = 1; // ok
+let nn = esObj as number[]; // ok
+
+let ii = [1] as number[]; // ok
+let jj = ii as number[]; // ok
+
+type newType = Array<number | string>;
+function test7(aa: Array<number>): newType {
+	return aa; // error
+}
+
+function test8(bb: number[]): newType {
+	return bb; // error
+}
+
+type newType2 = (number | string)[];
+function test9(aa: Array<number>): newType2 {
+	return aa; // error
+}
+
+function test10(bb: number[]): newType2 {
+	return bb; // error
+}
+
+type newType3 = Array<number>;
+function test11(aa: Array<number>): newType3 {
+	return aa; // ok
+}
+
+function test12(bb: number[]): newType3 {
+	return bb; // ok
+}
+
+type newType4 = number[];
+function test13(aa: Array<number>): newType4 {
+	return aa; // ok
+}
+
+function test14(bb: number[]): newType4 {
+	return bb; // ok
 }

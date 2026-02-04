@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,7 +67,7 @@ const tuple2: [string, number, boolean] = ['s', 3.14, true]
 const array1: (number | string | boolean)[] = tuple1
 const array2: (string | number | boolean)[] = tuple2
 
-let tt: (string | number | boolean)[] = this.test2()
+let tt: (string | number | boolean)[] = test2()
 let gg: (boolean | number | boolean)[] = new A().ee()
 let ff = new A().ff()
 let hh: (boolean | number | boolean)[] =ff
@@ -79,7 +79,7 @@ let array13: (number|boolean)[] = tuple as (number|boolean)[]  //error
 let array14: (number|boolean)[] = tuple14 as (number|boolean)[]  //error
 let array15: (number|boolean)[] = array as (number|boolean)[]
 let array16: (boolean | number | boolean)[] = a.gg() as (boolean | number | boolean)[]   //error
-let tuple15: [string, number, boolean] = this.test2() as [string, number, boolean]
+let tuple15: [string, number, boolean] = test2() as [string, number, boolean]
 let tuple16: [number, number, boolean] = array as [number, number, boolean]
 let tuple17: [number, string, boolean] = ['s', 3.14, true] as [number, string, boolean]
 const array17 = Array.from({ length: 5 }, (_, index) => index % 2 === 0 ? index : index % 3 === 0);
