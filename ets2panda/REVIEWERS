@@ -54,7 +54,7 @@
 /ets2panda/test/utils @mbolshov ^igelhaus ^Prof
 /ets2panda/util/ @shimenkovmikhail @dkofanov ^igelhaus ^Prof
 /ets2panda/util/arktsconfig* ^Nojpg ^v-cherkashin @trubachevilya @shimenkovmikhail ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
-/ets2panda/util/diagnostic* @alexey-kanatov @shimenkovmikhail ^igelhaus ^Prof
+/ets2panda/util/diagnostic* @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/diagnostic*yaml @alexey-kanatov @shimenkovmikhail @^igelhaus ^Prof
 /ets2panda/util/diagnosticEngine* @chernykhsergey @shimenkovmikhail ^igelhaus ^Prof
 /ets2panda/util/importPathManager* ^Nojpg ^v-cherkashin @shimenkovmikhail @trubachevilya ^igelhaus ^Prof @luobohua @luchenxu ^Wangyuzhong11
