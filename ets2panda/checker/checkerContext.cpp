@@ -153,7 +153,14 @@ std::pair<SmartCastArray, bool> CheckerContext::EnterLoop(const ir::LoopStatemen
     }
 
     auto smartCasts = CloneSmartCasts();
+    InvalidateSmartCastsForLoopHeader(loop, loopConditionSmartCasts);
 
+    return {std::move(smartCasts), clearFlag};
+}
+
+void CheckerContext::InvalidateSmartCastsForLoopHeader(const ir::LoopStatement &loop,
+                                                       const SmartCastTypes loopConditionSmartCasts) noexcept
+{
     ReassignedVariableMap changedVariables {};
     if (loop.IsWhileStatement()) {
         // In 'while' loops, we only invalidate smart casts for reassigned variables in the body. If a variable is
@@ -189,8 +196,6 @@ std::pair<SmartCastArray, bool> CheckerContext::EnterLoop(const ir::LoopStatemen
             }
         }
     }
-
-    return {std::move(smartCasts), clearFlag};
 }
 
 void CheckerContext::ExitLoop(SmartCastArray &prevSmartCasts, bool const clearFlag,
