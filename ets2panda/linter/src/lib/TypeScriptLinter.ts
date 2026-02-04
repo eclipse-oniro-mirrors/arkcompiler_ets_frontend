@@ -14892,6 +14892,13 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       );
     }
 
+    if (expr.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
+      return (
+        this.checkBoundCondition(expr.left, varName, arraySym) ||
+        this.checkBoundCondition(expr.right, varName, arraySym)
+      );
+    }
+
     if (this.checkDirectBoundChecks(expr, varName, arraySym)) {
       return true;
     }
@@ -14912,7 +14919,15 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       return true;
     }
 
+    if (this.checkVarLessThanOrEqualsArrayLengthMinusOne(left, right, operatorToken, varName, arraySym)) {
+      return true;
+    }
+
     if (this.checkVarEqualsArrayLength(left, right, operatorToken, varName, arraySym)) {
+      return true;
+    }
+
+    if (this.checkArrayLengthMinusOneEqualsVar(left, right, operatorToken, varName, arraySym)) {
       return true;
     }
 
@@ -15020,6 +15035,84 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
       operatorToken.kind === ts.SyntaxKind.LessThanToken &&
       this.tsUtils.trueSymbolAtLocation(right.expression) === arraySym
     );
+  }
+
+  private checkArrayLengthMinusOneExpression(expr: ts.Expression, arraySym: ts.Symbol): boolean {
+    if (!ts.isBinaryExpression(expr) || expr.operatorToken.kind !== ts.SyntaxKind.MinusToken) {
+      return false;
+    }
+
+    const left = expr.left;
+    const right = expr.right;
+
+    if (
+      !ts.isPropertyAccessExpression(left) ||
+      left.name.text !== LENGTH_IDENTIFIER ||
+      !ts.isNumericLiteral(right) ||
+      parseFloat(right.text) !== ONE_LITERAL
+    ) {
+      return false;
+    }
+
+    return this.tsUtils.trueSymbolAtLocation(left.expression) === arraySym;
+  }
+
+  private checkVarLessThanOrEqualsArrayLengthMinusOne(
+    left: ts.Expression,
+    right: ts.Expression,
+    operatorToken: ts.Token<ts.BinaryOperator>,
+    varName: string,
+    arraySym: ts.Symbol
+  ): boolean {
+    if (
+      ts.isIdentifier(left) &&
+      left.text === varName &&
+      operatorToken.kind === ts.SyntaxKind.LessThanEqualsToken &&
+      this.checkArrayLengthMinusOneExpression(right, arraySym)
+    ) {
+      return true;
+    }
+
+    if (
+      ts.isIdentifier(right) &&
+      right.text === varName &&
+      operatorToken.kind === ts.SyntaxKind.GreaterThanEqualsToken &&
+      this.checkArrayLengthMinusOneExpression(left, arraySym)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private checkArrayLengthMinusOneEqualsVar(
+    left: ts.Expression,
+    right: ts.Expression,
+    operatorToken: ts.Token<ts.BinaryOperator>,
+    varName: string,
+    arraySym: ts.Symbol
+  ): boolean {
+    const isEqualOperator =
+      operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken ||
+      operatorToken.kind === ts.SyntaxKind.EqualsEqualsToken;
+
+    if (!isEqualOperator) {
+      return false;
+    }
+
+    if (ts.isIdentifier(right) && right.text === varName) {
+      if (this.checkArrayLengthMinusOneExpression(left, arraySym)) {
+        return true;
+      }
+    }
+
+    if (ts.isIdentifier(left) && left.text === varName) {
+      if (this.checkArrayLengthMinusOneExpression(right, arraySym)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private static traverseNodesUntilTarget(
@@ -15638,23 +15731,85 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     return TypeScriptLinter.hasDecrementBeforeAccess(thenBlock, accessExpr, indexIdent);
   }
 
+  private static isArrayLengthAccessByName(
+    expr: ts.Expression,
+    arrayName: string
+  ): expr is ts.PropertyAccessExpression & { expression: ts.Identifier } {
+    return (
+      ts.isPropertyAccessExpression(expr) &&
+      ts.isIdentifier(expr.name) &&
+      expr.name.text === LENGTH_IDENTIFIER &&
+      ts.isIdentifier(expr.expression) &&
+      expr.expression.text === arrayName
+    );
+  }
+
+  private static isArrayLengthMinusOneByName(expr: ts.Expression, arrayName: string): boolean {
+    if (!ts.isBinaryExpression(expr) || expr.operatorToken.kind !== ts.SyntaxKind.MinusToken) {
+      return false;
+    }
+
+    return (
+      TypeScriptLinter.isArrayLengthAccessByName(expr.left, arrayName) &&
+      ts.isNumericLiteral(expr.right) &&
+      parseFloat(expr.right.text) === ONE_LITERAL
+    );
+  }
+
+  private static checkIndexLessThanLength(
+    condition: ts.BinaryExpression,
+    indexName: string,
+    arrayName: string
+  ): boolean {
+    if (condition.operatorToken.kind !== ts.SyntaxKind.LessThanToken) {
+      return false;
+    }
+
+    const leftIsIndex = ts.isIdentifier(condition.left) && condition.left.text === indexName;
+    const rightIsArrayLength = TypeScriptLinter.isArrayLengthAccessByName(condition.right, arrayName);
+
+    return leftIsIndex && rightIsArrayLength;
+  }
+
+  private static checkIndexLessThanOrEqualLengthMinusOne(
+    condition: ts.BinaryExpression,
+    indexName: string,
+    arrayName: string
+  ): boolean {
+    if (condition.operatorToken.kind !== ts.SyntaxKind.LessThanEqualsToken) {
+      return false;
+    }
+
+    if (
+      ts.isIdentifier(condition.left) &&
+      condition.left.text === indexName &&
+      TypeScriptLinter.isArrayLengthMinusOneByName(condition.right, arrayName)
+    ) {
+      return true;
+    }
+
+    if (
+      ts.isIdentifier(condition.right) &&
+      condition.right.text === indexName &&
+      TypeScriptLinter.isArrayLengthMinusOneByName(condition.left, arrayName)
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   private static isIndexLessThanArrayLengthCondition(
     condition: ts.BinaryExpression,
     indexName: string,
     arrayName: string
   ): boolean {
-    if (condition.operatorToken.kind === ts.SyntaxKind.LessThanToken) {
-      const leftIsIndex = ts.isIdentifier(condition.left) && condition.left.text === indexName;
-      const rightIsArrayLength =
-        ts.isPropertyAccessExpression(condition.right) &&
-        ts.isIdentifier(condition.right.name) &&
-        condition.right.name.text === LENGTH_IDENTIFIER &&
-        ts.isIdentifier(condition.right.expression) &&
-        condition.right.expression.text === arrayName;
+    if (TypeScriptLinter.checkIndexLessThanLength(condition, indexName, arrayName)) {
+      return true;
+    }
 
-      if (leftIsIndex && rightIsArrayLength) {
-        return true;
-      }
+    if (TypeScriptLinter.checkIndexLessThanOrEqualLengthMinusOne(condition, indexName, arrayName)) {
+      return true;
     }
 
     if (condition.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken) {
@@ -16268,7 +16423,9 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
 
     return (
       this.checkVarLessThanArrayLengthEitherOrder(left, right, operatorToken, indexName, arraySym) ||
-      this.checkArrayLengthGreaterThanVarEitherOrder(left, right, operatorToken, indexName, arraySym)
+      this.checkArrayLengthGreaterThanVarEitherOrder(left, right, operatorToken, indexName, arraySym) ||
+      this.checkVarLessThanOrEqualsArrayLengthMinusOne(left, right, operatorToken, indexName, arraySym) ||
+      this.checkArrayLengthMinusOneEqualsVar(left, right, operatorToken, indexName, arraySym)
     );
   }
 
