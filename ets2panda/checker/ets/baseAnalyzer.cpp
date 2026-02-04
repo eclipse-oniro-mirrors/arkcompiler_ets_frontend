@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,25 +29,25 @@ void BaseAnalyzer<T>::ClearPendingExits()
 }
 
 template <typename T>
-typename BaseAnalyzer<T>::PendingExitsVector &BaseAnalyzer<T>::PendingExits()
+typename BaseAnalyzer<T>::PendingExitsSet &BaseAnalyzer<T>::PendingExits()
 {
     return pendingExits_;
 }
 
 template <typename T>
-void BaseAnalyzer<T>::SetPendingExits(const PendingExitsVector &pendingExits)
+void BaseAnalyzer<T>::SetPendingExits(const PendingExitsSet &pendingExits)
 {
     pendingExits_ = pendingExits;
 }
 
 template <typename T>
-typename BaseAnalyzer<T>::PendingExitsVector &BaseAnalyzer<T>::OldPendingExits()
+typename BaseAnalyzer<T>::PendingExitsSet &BaseAnalyzer<T>::OldPendingExits()
 {
     return oldPendingExits_;
 }
 
 template <typename T>
-void BaseAnalyzer<T>::SetOldPendingExits(const PendingExitsVector &oldPendingExits)
+void BaseAnalyzer<T>::SetOldPendingExits(const PendingExitsSet &oldPendingExits)
 {
     oldPendingExits_ = oldPendingExits;
 }
@@ -67,7 +67,7 @@ template <typename T>
 LivenessStatus BaseAnalyzer<T>::ResolveJump(const ir::AstNode *node, ir::AstNodeType jumpKind)
 {
     bool resolved = false;
-    PendingExitsVector exits = pendingExits_;
+    PendingExitsSet exits = pendingExits_;
     pendingExits_ = oldPendingExits_;
 
     for (auto &it : exits) {
@@ -75,7 +75,7 @@ LivenessStatus BaseAnalyzer<T>::ResolveJump(const ir::AstNode *node, ir::AstNode
             it.ResolveJump();
             resolved = true;
         } else {
-            pendingExits_.push_back(it);
+            pendingExits_.insert(it);
         }
     }
 

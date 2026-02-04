@@ -801,7 +801,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
 {
     Set uninitsTryPrev = uninitsTry_;
 
-    PendingExitsVector prevPendingExits = PendingExits();
+    PendingExitsSet prevPendingExits = PendingExits();
     SetOldPendingExits(prevPendingExits);
 
     Set initsTry = inits_;
@@ -833,7 +833,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
         inits_ = std::move(initsTry);
         uninits_ = uninitsTry_;
 
-        PendingExitsVector exits = PendingExits();
+        PendingExitsSet exits = PendingExits();
         SetPendingExits(prevPendingExits);
 
         AnalyzeNode(tryStmt->FinallyBlock());
@@ -843,7 +843,7 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
             for (auto exit : exits) {
                 exit.exitInits_.OrSet(inits_);
                 exit.exitUninits_.AndSet(uninits_);
-                PendingExits().push_back(exit);
+                PendingExits().insert(exit);
             }
             inits_.OrSet(initsEnd);
         }
@@ -851,11 +851,11 @@ void AssignAnalyzer::AnalyzeTry(const ir::TryStatement *tryStmt)
         inits_ = std::move(initsEnd);
         uninits_ = std::move(uninitsEnd);
 
-        PendingExitsVector exits = PendingExits();
+        PendingExitsSet exits = PendingExits();
         SetPendingExits(prevPendingExits);
 
         for (const auto &exit : exits) {
-            PendingExits().push_back(exit);
+            PendingExits().insert(exit);
         }
     }
 
@@ -1122,8 +1122,26 @@ void AssignAnalyzer::AnalyzeUpdateExpr(const ir::UpdateExpression *updateExpr)
 
 void AssignAnalyzer::AnalyzeArrowFunctionExpr(const ir::ArrowFunctionExpression *arrowFuncExpr)
 {
-    // NOTE (pantos) handle lamdas correctly
-    (void)arrowFuncExpr;
+    auto *func = arrowFuncExpr->Function();
+    ES2PANDA_ASSERT(func != nullptr);
+    if (func->Body() == nullptr || func->IsProxy()) {
+        return;
+    }
+
+    Set initsPrev = inits_;
+    Set uninitsPrev = uninits_;
+    ScopeGuard save(firstAdr_, nextAdr_, returnAdr_, isInitialConstructor_);
+    hasTryFinallyBlock_ = func->IsAnyChild([](ir::AstNode *ast) {
+        return (ast->Type() == ir::AstNodeType::TRY_STATEMENT && ast->AsTryStatement()->FinallyBlock() != nullptr);
+    });
+    isInitialConstructor_ = false;
+    firstAdr_ = nextAdr_;
+
+    AnalyzeStat(func->Body());
+    CheckPendingExits();
+
+    inits_ = std::move(initsPrev);
+    uninits_ = std::move(uninitsPrev);
 }
 
 util::StringView AssignAnalyzer::GetVariableType(const ir::AstNode *node) const
