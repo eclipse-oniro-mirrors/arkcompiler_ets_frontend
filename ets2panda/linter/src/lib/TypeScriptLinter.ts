@@ -14527,21 +14527,27 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     arraySym: ts.Symbol,
     accessExpr: ts.ElementAccessExpression
   ): boolean {
-    if (context && context.node && ts.isForStatement(context.node)) {
-      const node = context.node;
-      const condition = node.condition;
-      if (condition && ts.isBinaryExpression(condition)) {
-        const conditionArraySym = this.extractArraySymbolFromCondition(condition);
-        if (conditionArraySym && conditionArraySym !== arraySym) {
-          if (this.checkArrayLengthSameSource(conditionArraySym, arraySym)) {
-            return false;
-          }
-          this.incrementCounters(accessExpr, FaultID.RuntimeArrayCheck);
-          return true;
-        }
-      }
+    if (!context?.node || !ts.isForStatement(context.node)) {
+      return false;
     }
-    return false;
+
+    const node = context.node;
+    const condition = node.condition;
+    if (!condition || !ts.isBinaryExpression(condition)) {
+      return false;
+    }
+
+    const conditionArraySym = this.extractArraySymbolFromCondition(condition);
+    if (!conditionArraySym || conditionArraySym === arraySym) {
+      return false;
+    }
+
+    if (this.checkArrayLengthSameSource(conditionArraySym, arraySym)) {
+      return false;
+    }
+
+    this.incrementCounters(accessExpr, FaultID.RuntimeArrayCheck);
+    return true;
   }
 
   private static checkIfBlockArrayModifications(
@@ -16957,22 +16963,28 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
         current = current.expression;
         continue;
       }
+
       if (ts.isPropertyAccessExpression(current)) {
-        const propAccess = current;
-        const propSymbol = this.tsUtils.trueSymbolAtLocation(propAccess.name);
-        if (propSymbol) {
-          const propType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propSymbol, propAccess);
-          const typeStr = this.tsTypeChecker.typeToString(propType);
-          if (typeStr.includes(ARRAY_TYPE_SUFFIX) || typeStr.includes(ARRAY_TYPE_PREFIX)) {
-            return false;
-          }
-        }
-        return true;
+        return this.handlePropertyAccessCase(current);
       }
+
       break;
     }
 
     return false;
+  }
+
+  private handlePropertyAccessCase(propAccess: ts.PropertyAccessExpression): boolean {
+    const propSymbol = this.tsUtils.trueSymbolAtLocation(propAccess.name);
+    if (!propSymbol) {
+      return true;
+    }
+
+    const propType = this.tsTypeChecker.getTypeOfSymbolAtLocation(propSymbol, propAccess);
+    const typeStr = this.tsTypeChecker.typeToString(propType);
+    const isArrayType = typeStr.includes(ARRAY_TYPE_SUFFIX) || typeStr.includes(ARRAY_TYPE_PREFIX);
+
+    return !isArrayType;
   }
 
   private isObjectAccess(accessExpr: ts.ElementAccessExpression): boolean {
