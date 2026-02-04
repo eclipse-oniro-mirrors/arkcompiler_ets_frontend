@@ -696,6 +696,7 @@ group("es2abc_tests") {
       "unittest:parser_test_action(${toolchain_linux})",
       "unittest:program_test_action(${toolchain_linux})",
       "unittest:sourceTextModuleRecord_test_action(${toolchain_linux})",
+      "unittest:parserContext_test_action(${toolchain_linux})",
       "../merge_abc:merge_abc_tests(${toolchain_linux})"
     ]
   }
