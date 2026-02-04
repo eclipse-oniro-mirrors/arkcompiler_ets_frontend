@@ -50,8 +50,8 @@ describe('ArkTSConfig - Constructor and Initialization', () => {
         expect(arktsConfig.compilerOptions.package).toBe('testModule');
     });
 
-    test('should construct baseUrl from moduleRoot and sourceRoots', () => {
-        const expectedBaseUrl = '/test/module/src';
+    test('should construct baseUrl from moduleRoot', () => {
+        const expectedBaseUrl = '/test/module';
         expect(arktsConfig.compilerOptions.baseUrl).toBe(expectedBaseUrl);
     });
 
@@ -79,10 +79,10 @@ describe('ArkTSConfig - Constructor and Initialization', () => {
         expect(customConfig.packageName).toBe('customPackage');
     });
 
-    test('should support multiple source roots (uses first one)', () => {
+    test('should support multiple source roots', () => {
         const multiSourceInfo = createMockModuleInfo({ sourceRoots: ['src', 'lib', 'util'] });
         const multiConfig = new ArkTSConfig(multiSourceInfo, '/cache', '/project', '/test/loader_out/default/etsFortgz');
-        expect(multiConfig.compilerOptions.baseUrl).toBe('/test/module/src');
+        expect(multiConfig.compilerOptions.baseUrl).toBe('/test/module');
     });
 });
 
