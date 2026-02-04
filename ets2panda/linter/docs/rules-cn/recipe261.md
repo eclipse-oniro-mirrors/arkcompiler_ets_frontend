@@ -16,7 +16,7 @@ ArkTS-Sta的UIAbility不支持使用[AbilityLifecycleCallback](../reference/apis
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 
 ```
 import { UIAbility, AbilityStage, AbilityLifecycleCallback} from '@kit.AbilityKit';
@@ -66,7 +66,7 @@ class MyAbilityStage extends AbilityStage {
 
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 
 ```
 import { UIAbility, AbilityStage, StaticAbilityLifecycleCallback} from '@kit.AbilityKit';

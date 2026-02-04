@@ -17,7 +17,7 @@ ArkTS-Sta不支持构造函数类型，需要将使用构造函数类型的地�
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 ```typescript
 // a.ts ArkTS-Dyn API定义
 export declare class User {}
@@ -30,7 +30,7 @@ import { User, DatabaseQuery } from './a';
 const userQuery = new DatabaseQuery(User);
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // a.ets ArkTS-Sta API定义
 export declare class User {}

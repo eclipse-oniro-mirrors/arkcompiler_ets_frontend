@@ -50,7 +50,7 @@ import {
 } from '@kit.ArkUI';
 
 // 使用`@Extend`装饰的函数需要参照下列代码进行修改
-function fancy(this: TextAttribute, fontSize: number): this {
+function fancy(this: TextAttribute, fontSize: number): TextAttribute {
     this.fontColor(Color.Red);
     this.fontSize(fontSize);
     return this;
