@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +44,6 @@ interface I{
 /* @@? 29:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
 /* @@? 32:5 Error Syntax error ESY0040: Illegal start of ENUM expression. */
 /* @@? 37:4 Error Syntax error ESY0224: Identifier expected, got 'enum'. */
+/* @@? 37:9 Error Semantic error ESE0371: Cannot find type 'E1'. */
 /* @@? 37:11 Error Syntax error ESY0119: Interface fields must have type annotation. */
-/* @@? 37:12 Error Semantic error ESE0371: Cannot find type 'E1'. */
 /* @@? 38:1 Error Syntax error ESY0227: Unexpected token '}'. */

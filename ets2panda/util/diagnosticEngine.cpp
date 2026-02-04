@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -93,6 +93,15 @@ void DiagnosticEngine::UndoRange(const DiagnosticCheckpoint &from, const Diagnos
     throw diag;
 }
 
+void DiagnosticEngine::EnsureLocations()
+{
+    for (auto &kindVec : diagnostics_) {
+        for (auto &diag : kindVec) {
+            diag->EnsureLocation();
+        }
+    }
+}
+
 DiagnosticStorage DiagnosticEngine::GetAllDiagnostic()
 {
     size_t totalSize = 0;
@@ -131,6 +140,7 @@ DiagnosticStorage DiagnosticEngine::GetErrorDiagnostic()
 
 std::string DiagnosticEngine::PrintAndFlushErrorDiagnostic()
 {
+    EnsureLocations();
     auto log = GetErrorDiagnostic();
     std::sort(log.begin(), log.end(), [](const auto &lhs, const auto &rhs) { return *lhs < *rhs; });
     auto last = std::unique(log.begin(), log.end(), [](const auto &lhs, const auto &rhs) { return *lhs == *rhs; });
@@ -143,6 +153,7 @@ std::string DiagnosticEngine::PrintAndFlushErrorDiagnostic()
 
 void DiagnosticEngine::FlushDiagnostic()
 {
+    EnsureLocations();
     auto log = GetAllDiagnostic();
     std::sort(log.begin(), log.end(), [](const auto &lhs, const auto &rhs) { return *lhs < *rhs; });
     auto last =

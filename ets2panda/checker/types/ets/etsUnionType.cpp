@@ -194,9 +194,7 @@ void ETSUnionType::Identical(TypeRelation *relation, Type *other)
 static void AmbiguousUnionOperation(TypeRelation *relation)
 {
     auto checker = relation->GetChecker()->AsETSChecker();
-    if (!relation->NoThrow()) {
-        checker->LogError(diagnostic::AMBIGUOUS_UNION_TYPE_OP, {}, relation->GetNode()->Start());
-    }
+    checker->LogError(diagnostic::AMBIGUOUS_UNION_TYPE_OP, {}, relation->GetNode()->Start());
     conversion::Forbidden(relation);
 }
 

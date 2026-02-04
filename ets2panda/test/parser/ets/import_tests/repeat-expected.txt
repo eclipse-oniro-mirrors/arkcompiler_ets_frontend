@@ -223,7 +223,7 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 12,
+                          "column": 5,
                           "program": "repeat.ets"
                         },
                         "end": {
@@ -236,7 +236,7 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 12,
+                        "column": 5,
                         "program": "repeat.ets"
                       },
                       "end": {
@@ -249,7 +249,7 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 12,
+                      "column": 5,
                       "program": "repeat.ets"
                     },
                     "end": {
@@ -348,7 +348,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 12,
+                                    "column": 5,
                                     "program": "repeat.ets"
                                   },
                                   "end": {
@@ -361,7 +361,7 @@
                               "loc": {
                                 "start": {
                                   "line": 20,
-                                  "column": 12,
+                                  "column": 5,
                                   "program": "repeat.ets"
                                 },
                                 "end": {
@@ -374,7 +374,7 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 12,
+                                "column": 5,
                                 "program": "repeat.ets"
                               },
                               "end": {
@@ -392,7 +392,7 @@
                             },
                             "end": {
                               "line": 20,
-                              "column": 9,
+                              "column": 18,
                               "program": "repeat.ets"
                             }
                           }
@@ -405,7 +405,7 @@
                           },
                           "end": {
                             "line": 20,
-                            "column": 9,
+                            "column": 18,
                             "program": "repeat.ets"
                           }
                         }

@@ -61,7 +61,7 @@ public:
             }
         }
 
-        if (!relation->IsTrue() && (flags_ & TypeRelationFlag::NO_THROW) == 0) {
+        if (!relation->IsTrue() && diag.has_value()) {
             relation->RaiseError(diag->kind, diag->params, pos);
         }
 
@@ -109,7 +109,7 @@ public:
 
         if (!relation->IsTrue()) {
             invocable_ = false;
-            if ((initialFlags & TypeRelationFlag::NO_THROW) == 0) {
+            if (diag.has_value()) {
                 relation->RaiseError(diag->kind, diag->params, pos);
             }
             hasError_ = true;

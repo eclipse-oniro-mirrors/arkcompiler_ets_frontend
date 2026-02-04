@@ -213,30 +213,22 @@ void InferMatchContext::CheckErrorInRange()
 
 bool InferMatchContext::IsErrorInRange(const util::DiagnosticBase &errorLog) const
 {
-    if (range_.start.Program()->SourceFilePath().Mutf8() != errorLog.File()) {
+    auto *pos = errorLog.Position();
+
+    /* Workaround for plugins that don't set node ranges properly */
+    if (pos->Program() == nullptr || range_.start.Program() == nullptr || pos->index == 0 ||
+        (range_.start.index == 0 && range_.end.index == 0)) {
+        return true;
+    }
+
+    if (range_.start.Program() != pos->Program()) {
         return false;
     }
 
-    auto const ctxStartLine = range_.start.ToLocation().line;
-    auto const ctxStartCol = range_.start.ToLocation().col;
-    auto const ctxEndLine = range_.end.ToLocation().line;
-    auto const ctxEndCol = range_.end.ToLocation().col;
-    auto const errorLogLine = errorLog.Line();
-    auto const errorLogOffset = errorLog.Offset();
+    auto const ctxStart = range_.start.index;
+    auto const ctxEnd = range_.end.index;
+    auto const errorIndex = pos->index;
 
-    if (errorLogLine < ctxStartLine || errorLogLine > ctxEndLine) {
-        return false;
-    }
-    if (errorLogLine == ctxStartLine && errorLogLine == ctxEndLine) {
-        return errorLogOffset >= ctxStartCol && errorLogOffset <= ctxEndCol;
-    }
-    if (errorLogLine == ctxStartLine) {
-        return errorLogOffset >= ctxStartCol;
-    }
-    if (errorLogLine == ctxEndLine) {
-        return errorLogOffset <= ctxEndCol;
-    }
-
-    return true;
+    return ctxStart <= errorIndex && errorIndex <= ctxEnd;
 }
 }  // namespace ark::es2panda::checker

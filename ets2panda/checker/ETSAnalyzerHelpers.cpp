@@ -376,8 +376,7 @@ checker::Signature *ResolveCallExtensionFunction(checker::Type *functionType, ch
 }
 
 checker::Signature *ResolveCallForClassMethod(checker::ETSExtensionFuncHelperType *type, checker::ETSChecker *checker,
-                                              ir::CallExpression *expr,
-                                              [[maybe_unused]] const TypeRelationFlag reportFlag)
+                                              ir::CallExpression *expr)
 {
     ES2PANDA_ASSERT(expr->Callee()->IsMemberExpression());
     auto signature = checker->FirstMatchSignatures(type->ClassMethodType()->CallSignatures(), expr);
@@ -466,7 +465,7 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
     Signature *signature = nullptr;
     if (checker->IsTypeIdenticalTo(checker->Context().ContainingClass(), calleeObj->TsType()) || isCalleeObjETSGlobal) {
         // When called `a.foo` in `a.anotherFunc`, we should find signature through private or protected method firstly.
-        signature = ResolveCallForClassMethod(type, checker, expr, checker::TypeRelationFlag::NO_THROW);
+        signature = ResolveCallForClassMethod(type, checker, expr);
         if (signature != nullptr) {
             UpdateDeclarationFromSignature(checker, expr, signature);
             return signature;
@@ -475,8 +474,8 @@ checker::Signature *ResolveCallForETSExtensionFuncHelperType(checker::ETSExtensi
 
     signature = GetMostSpecificSigFromExtensionFuncAndClassMethod(type, checker, expr);
     if (signature == nullptr) {
-        checker->ThrowSignatureMismatch(type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow(), expr->Arguments(),
-                                        expr->Start(), "call");
+        checker->LogSignatureMismatch(type->ExtensionMethodType()->CallSignaturesOfMethodOrArrow(), expr->Arguments(),
+                                      expr->Start(), "call");
     }
 
     UpdateDeclarationFromSignature(checker, expr, signature);
@@ -615,8 +614,7 @@ static bool CheckAsyncReturnType(ETSChecker *checker, checker::Type *funcReturnT
         if (type->IsETSObjectType() && IsPromiseOrPromiseLikeType(checker, type->AsETSObjectType())) {
             auto promiseArg = type->AsETSObjectType()->TypeArguments()[0];
             checker::AssignmentContext(checker->Relation(), stArgument, argumentType, promiseArg, stArgument->Start(),
-                                       std::nullopt,
-                                       checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW);
+                                       std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN);
             if (checker->Relation()->IsTrue()) {
                 return true;
             }
@@ -646,8 +644,7 @@ bool CheckReturnType(ETSChecker *checker, checker::Type *funcReturnType, checker
     }
 
     if (!checker::AssignmentContext(checker->Relation(), stArgument, argumentType, funcReturnType, stArgument->Start(),
-                                    std::nullopt,
-                                    checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW)
+                                    std::nullopt, checker::TypeRelationFlag::DIRECT_RETURN)
              // CC-OFFNXT(G.FMT.02) project code style
              .IsAssignable()) {
         checker->LogError(diagnostic::ARROW_TYPE_MISMATCH, {argumentType, funcReturnType}, stArgument->Start());
@@ -719,20 +716,6 @@ bool IsArrayExpressionValidInitializerForType(ETSChecker *checker, const Type *c
                                                                       checker->GlobalETSObjectType());
 
     return validForTarget;
-}
-
-void CastPossibleTupleOnRHS(ETSChecker *checker, ir::AssignmentExpression *expr)
-{
-    if (expr->Left()->IsMemberExpression() &&
-        expr->Left()->AsMemberExpression()->Object()->TsType()->IsETSTupleType() &&
-        expr->OperatorType() == lexer::TokenType::PUNCTUATOR_SUBSTITUTION) {
-        auto *storedTupleType = expr->Left()->AsMemberExpression()->Object()->TsType();
-
-        const checker::CastingContext tupleCast(
-            checker->Relation(), diagnostic::CAST_FAIL_UNREACHABLE, {},
-            checker::CastingContext::ConstructorData {expr->Right(), expr->Right()->TsType(), storedTupleType,
-                                                      expr->Right()->Start(), TypeRelationFlag::NO_THROW});
-    }
 }
 
 checker::Type *ProcessReturnStatements(ETSChecker *checker, ir::ScriptFunction *containingFunc, ir::ReturnStatement *st,

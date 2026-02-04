@@ -393,12 +393,20 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     auto emitter = Emitter(context);
     context->emitter = &emitter;
 
-    if (!ParseAndRunPhases(unit, context)) {
-        return ClearContextAndReturnProgam(context, nullptr);
-    }
+    try {
+        if (!ParseAndRunPhases(unit, context)) {
+            context->diagnosticEngine->EnsureLocations();
+            return ClearContextAndReturnProgam(context, nullptr);
+        }
 
-    MarkAsLowered(context);
-    return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context));
+        MarkAsLowered(context);
+        context->diagnosticEngine->EnsureLocations();
+        return ClearContextAndReturnProgam(context, EmitProgram(compilerImpl, context));
+    } catch (util::ThrowableDiagnostic &e) {
+        context->diagnosticEngine->EnsureLocations();
+        e.EnsureLocation();
+        throw e;
+    }
 }
 
 pandasm::Program *CompilerImpl::Compile(const CompilationUnit &unit, public_lib::Context *context)

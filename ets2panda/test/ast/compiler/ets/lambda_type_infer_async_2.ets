@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,5 +22,6 @@ async function foo() {
     });
 }
 
-
+/* @@? 19:20 Error Semantic error ESE0303: Type '*ERROR_TYPE*' can not be awaited, it is not a Promise. */
+/* @@? 19:26 Error Semantic error ESE0127: No matching call signature for then(((p1: null) => void)) */
 /* @@? 20:23 Error Semantic error ESE0087: Property 'prop' does not exist on type 'never' */

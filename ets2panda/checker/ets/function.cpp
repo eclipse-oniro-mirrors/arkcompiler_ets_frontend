@@ -240,8 +240,7 @@ static bool IsCompatibleTypeArgument(ETSChecker *checker, ETSTypeParameter *type
 
 static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChecker *checker, Signature *signature,
                                                                          const ArenaVector<ir::TypeNode *> &params,
-                                                                         const lexer::SourcePosition &pos,
-                                                                         TypeRelationFlag flags)
+                                                                         const lexer::SourcePosition &pos)
 {
     auto &sigParams = signature->GetSignatureInfo()->typeParams;
     auto substitution = Substitution {};
@@ -266,20 +265,16 @@ static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChec
         checker->EmplaceSubstituted(&constraintsSubstitution, typeParam, instArgs[ix]);
     }
     if (sigParams.size() != instArgs.size()) {
-        if ((flags & TypeRelationFlag::NO_THROW) == 0U) {
-            checker->LogError(diagnostic::RTYPE_PARAM_COUNT_MISMATCH, {sigParams.size(), instArgs.size()}, pos);
-        }
+        checker->LogError(diagnostic::RTYPE_PARAM_COUNT_MISMATCH, {sigParams.size(), instArgs.size()}, pos);
         return std::nullopt;
     }
 
     for (size_t ix = 0; ix < sigParams.size(); ix++) {
         if (!IsCompatibleTypeArgument(checker, sigParams[ix]->AsETSTypeParameter(), instArgs[ix],
                                       &constraintsSubstitution)) {
-            if ((flags & TypeRelationFlag::NO_THROW) == 0U) {
-                auto *constraintType = sigParams[ix]->AsETSTypeParameter()->GetConstraintType()->Substitute(
-                    checker->Relation(), &constraintsSubstitution);
-                checker->LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING, {instArgs[ix], constraintType}, pos);
-            }
+            auto *constraintType = sigParams[ix]->AsETSTypeParameter()->GetConstraintType()->Substitute(
+                checker->Relation(), &constraintsSubstitution);
+            checker->LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING, {instArgs[ix], constraintType}, pos);
 
             return std::nullopt;
         }
@@ -289,17 +284,17 @@ static std::optional<Substitution> BuildExplicitSubstitutionForArguments(ETSChec
 }
 
 static Signature *MaybeSubstituteTypeParameters(
-    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
+    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag, bool> info,
     const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos)
 {
-    auto [signature, typeArguments, flags] = info;
+    auto [signature, typeArguments, flags, _] = info;
     if (typeArguments == nullptr && signature->GetSignatureInfo()->typeParams.empty()) {
         return signature;
     }
 
     const std::optional<Substitution> substitution =
         (typeArguments != nullptr)
-            ? BuildExplicitSubstitutionForArguments(checker, signature, typeArguments->Params(), pos, flags)
+            ? BuildExplicitSubstitutionForArguments(checker, signature, typeArguments->Params(), pos)
             : BuildImplicitSubstitutionForArguments(checker, signature, arguments);
 
     return (!substitution.has_value()) ? nullptr : signature->Substitute(checker->Relation(), &substitution.value());
@@ -889,22 +884,17 @@ bool ValidateRestParameter(ETSChecker *checker, Signature *signature, const Aren
     size_t const argCount = arguments.size();
     size_t compareCount = argCount;
     auto const hasRestParameter = signature->HasRestParameter();
-    auto const reportError = (flags & TypeRelationFlag::NO_THROW) == 0;
     if ((flags & TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA) != 0 && !signature->Params().empty() &&
         signature->Params().back()->Declaration()->Node()->AsETSParameterExpression()->IsOptional()) {
         compareCount = compareCount - 1;
     }
 
     if (!hasRestParameter && argCount > 0 && arguments[argCount - 1]->IsSpreadElement()) {
-        if (reportError) {
-            checker->LogError(diagnostic::ERROR_ARKTS_SPREAD_ONLY_WITH_REST, {}, pos);
-        }
+        checker->LogError(diagnostic::ERROR_ARKTS_SPREAD_ONLY_WITH_REST, {}, pos);
         return false;
     }
     if (compareCount < signature->MinArgCount() || (argCount > signature->ArgCount() && !hasRestParameter)) {
-        if (reportError) {
-            checker->LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
-        }
+        checker->LogError(diagnostic::PARAM_COUNT_MISMATCH, {signature->MinArgCount(), argCount}, pos);
         return false;
     }
     if (hasRestParameter &&
@@ -1022,11 +1012,12 @@ static bool ValidateSpreadRestArgument(ETSChecker *checker, ir::Expression *argu
 {
     auto *const restArgument = argument->AsSpreadElement()->Argument();
     Type *targetType = substitutedSig->RestVar()->TsType();
+
     // backing out of check that results in a signature mismatch would be difficult
     // so only attempt it if there is only one candidate signature
-    restArgument->SetPreferredType(targetType);
-    argument->Check(checker);
-    Type *argumentType = restArgument->TsType();
+    argument->SetPreferredType(targetType);
+    Type *argumentType = argument->Check(checker);
+
     if (argument->HasAstNodeFlags(ir::AstNodeFlags::REST_ARGUMENT)) {
         return true;
     }
@@ -1148,7 +1139,6 @@ static bool CheckLambdaTypeAnnotation(ETSChecker *checker, ir::ETSParameterExpre
     auto checkInvocable = [&arrowFuncExpr, &parameterType, checker](TypeRelationFlag functionFlags) {
         arrowFuncExpr->SetPreferredType(parameterType);
         Type *const argumentType = arrowFuncExpr->Check(checker);
-        functionFlags |= TypeRelationFlag::NO_THROW;
 
         checker::InvocationContext invocationCtx(checker->Relation(), arrowFuncExpr, argumentType, parameterType,
                                                  arrowFuncExpr->Start(), std::nullopt, functionFlags);
@@ -1233,11 +1223,9 @@ static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature,
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     bool rc = CheckLambdaTypeAnnotation(checker, param, arrowFuncExpr, parameterType, resolutionFlags);
     if (!rc) {
-        if ((resolutionFlags & TypeRelationFlag::NO_THROW) == 0) {
-            Type *const argumentType = arrowFuncExpr->Check(checker);
-            checker->LogError(diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, parameterType, argumentPosition + 1},
-                              arrowFuncExpr->Start());
-        }
+        Type *const argumentType = arrowFuncExpr->Check(checker);
+        checker->LogError(diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, parameterType, argumentPosition + 1},
+                          arrowFuncExpr->Start());
         rc = false;
     } else if ((lambda->Signature() != nullptr) && !lambda->HasReturnStatement() && !lambda->HasThrowStatement()) {
         //  Need to check void return type here if there are no return statement(s) in the body.
@@ -1246,7 +1234,7 @@ static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature,
                  // CC-OFFNXT(G.FMT.06-CPP) project code style
                  checker->Relation(), checker->ProgramAllocNode<ir::Identifier>(checker->ProgramAllocator()),
                  checker->GlobalVoidType(), lambda->Signature()->ReturnType(), lambda->Start(), std::nullopt,
-                 checker::TypeRelationFlag::DIRECT_RETURN | checker::TypeRelationFlag::NO_THROW)
+                 checker::TypeRelationFlag::DIRECT_RETURN)
                  .IsAssignable()) {  // CC-OFF(G.FMT.02-CPP) project code style
             checker->LogError(diagnostic::ARROW_TYPE_MISMATCH,
                               {checker->GlobalVoidType(), lambda->Signature()->ReturnType()}, lambda->Body()->Start());
@@ -1280,9 +1268,9 @@ static bool TypeInference(ETSChecker *checker, Signature *signature, const Arena
     return typeConsistent;
 }
 
-void ETSChecker::ThrowSignatureMismatch(ArenaVector<Signature *> const &signatures,
-                                        const ArenaVector<ir::Expression *> &arguments,
-                                        const lexer::SourcePosition &pos, std::string_view signatureKind)
+void ETSChecker::LogSignatureMismatch(ArenaVector<Signature *> const &signatures,
+                                      const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+                                      std::string_view signatureKind)
 {
     if (!arguments.empty() && !signatures.empty()) {
         std::string msg {};
@@ -2461,12 +2449,12 @@ static void CleanArgumentsInformation(const ArenaVector<ir::Expression *> &argum
     }
 }
 
-static void ThrowOverloadMismatch(ETSChecker *checker, util::StringView callName,
-                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                  std::string_view signatureKind);
+static void LogOverloadMismatch(ETSChecker *checker, util::StringView callName,
+                                const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+                                std::string_view signatureKind);
 
 static Signature *ValidateOrderSignature(
-    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
+    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag, bool> info,
     const ArenaVector<ir::Expression *> &arguments, const lexer::SourceRange &range,
     const std::vector<bool> &argTypeInferenceRequired);
 
@@ -2485,25 +2473,25 @@ static util::StringView GetInvocationTargetName(const ir::Expression *expr)
 
 Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures,
                                             const ArenaVector<ir::Expression *> &arguments, const ir::Expression *expr,
-                                            TypeRelationFlag resolveFlags, std::string_view signatureKind)
+                                            TypeRelationFlag validateFlags, std::string_view signatureKind)
 {
     Signature *notVisibleSignature = nullptr;
     std::vector<bool> argTypeInferenceRequired = FindTypeInferenceArguments(arguments);
-
-    auto const validateFlags = signatures.size() == 1 ? resolveFlags : TypeRelationFlag::NO_THROW | resolveFlags;
 
     const ir::TSTypeParameterInstantiation *typeArguments =
         expr->IsCallExpression() ? expr->AsCallExpression()->TypeParams() : nullptr;
 
     const lexer::SourcePosition &pos = expr->Start();
 
+    bool reportErrorsWhileChecking = signatures.size() == 1;
     for (auto *sig : signatures) {
         if (notVisibleSignature != nullptr && !IsSignatureAccessible(sig, Context().ContainingClass(), Relation())) {
             continue;
         }
-        // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        auto *concreteSig = ValidateOrderSignature(this, std::make_tuple(sig, typeArguments, validateFlags), arguments,
-                                                   expr->Range(), argTypeInferenceRequired);
+        auto *concreteSig =
+            // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
+            ValidateOrderSignature(this, std::make_tuple(sig, typeArguments, validateFlags, reportErrorsWhileChecking),
+                                   arguments, expr->Range(), argTypeInferenceRequired);
         if (concreteSig == nullptr) {
             CleanArgumentsInformation(arguments);
             continue;
@@ -2516,38 +2504,20 @@ Signature *ETSChecker::MatchOrderSignatures(ArenaVector<Signature *> &signatures
         }
     };
 
-    if (notVisibleSignature != nullptr && ((resolveFlags & TypeRelationFlag::NO_THROW) == 0)) {
+    if (notVisibleSignature != nullptr) {
         LogError(diagnostic::SIG_INVISIBLE, {notVisibleSignature->Function()->Id()->Name(), notVisibleSignature}, pos);
     }
 
-    if ((resolveFlags & TypeRelationFlag::NO_THROW) == 0 && !signatureKind.empty()) {
+    if (!signatureKind.empty()) {
         util::StringView name = GetInvocationTargetName(expr);
         if (!name.Empty()) {
-            ThrowOverloadMismatch(this, name, arguments, pos, signatureKind);
+            LogOverloadMismatch(this, name, arguments, pos, signatureKind);
         } else {
-            ThrowSignatureMismatch(signatures, arguments, pos, signatureKind);
+            LogSignatureMismatch(signatures, arguments, pos, signatureKind);
         }
     }
 
     return nullptr;
-}
-
-static lexer::SourceRange BuildArgumentsRange(const ArenaVector<ir::Expression *> &arguments,
-                                              const lexer::SourceRange &range)
-{
-    lexer::SourceRange argumentsRange = lexer::SourceRange();
-    argumentsRange.SetProgram(range.start.Program());
-
-    if (!arguments.empty()) {
-        argumentsRange.start.line = arguments[0]->Range().start.line;
-        argumentsRange.start.index = arguments[0]->Range().start.index;
-        argumentsRange.end.line = arguments.back()->Range().end.line;
-        argumentsRange.end.index = arguments.back()->Range().end.index;
-    } else {
-        argumentsRange = range;
-    }
-
-    return argumentsRange;
 }
 
 static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature *substitutedSig,
@@ -2555,24 +2525,19 @@ static bool ValidateOrderSignatureRequiredParams(ETSChecker *checker, Signature 
                                                  const std::vector<bool> &argTypeInferenceRequired);
 
 static Signature *ValidateOrderSignature(
-    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag> info,
+    ETSChecker *checker, std::tuple<Signature *, const ir::TSTypeParameterInstantiation *, TypeRelationFlag, bool> info,
     const ArenaVector<ir::Expression *> &arguments, const lexer::SourceRange &range,
     const std::vector<bool> &argTypeInferenceRequired)
 {
-    auto [baseSignature, typeArguments, flags] = info;
-    // In case of overloads, it is necessary to iterate through the compatible signatures again,
-    // setting the boxing/unboxing flag for the arguments if needed.
-    // So handle substitution arguments only in the case of unique function or collecting signature phase.
+    auto [baseSignature, typeArguments, flags, reportErrors] = info;
+
+    // When considering overload variants, if the current signature is not matched, do not log TypeError
+    InferMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC, range, reportErrors);
+
     Signature *const signature = MaybeSubstituteTypeParameters(checker, info, arguments, range.start);
     if (signature == nullptr) {
         return nullptr;
     }
-
-    lexer::SourceRange argumentsRange = BuildArgumentsRange(arguments, range);
-
-    // When process first match, if current signature is not matched, do not log TypeError
-    InferMatchContext signatureMatchContext(checker, util::DiagnosticType::SEMANTIC, argumentsRange,
-                                            (flags & TypeRelationFlag::NO_THROW) == 0);
 
     size_t const argCount = arguments.size();
     auto const hasRestParameter = signature->RestVar() != nullptr;
@@ -2690,14 +2655,18 @@ static bool ValidateOrderSignatureInvocationContext(ETSChecker *checker, Signatu
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
     Type *argumentType = argument->Check(checker);
 
+    if ((flags & TypeRelationFlag::OVERLOADING_CONTEXT) == 0) {
+        InferMatchContext sctx {checker, util::DiagnosticType::SEMANTIC, argument->Range(), false};
+        if (!CheckOptionalLambdaFunction(checker, argument, substitutedSig, index)) {
+            return false;
+        }
+    }
+
     auto const invocationCtx =
         checker::InvocationContext(checker->Relation(), argument, argumentType, targetType, argument->Start(),
                                    {{diagnostic::TYPE_MISMATCH_AT_IDX, {argumentType, targetType, index + 1}}}, flags);
 
-    if ((flags & TypeRelationFlag::OVERLOADING_CONTEXT) != 0) {
-        return invocationCtx.IsInvocable();
-    }
-    return invocationCtx.IsInvocable() && CheckOptionalLambdaFunction(checker, argument, substitutedSig, index);
+    return invocationCtx.IsInvocable();
 }
 
 static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallExpression *callExpr,
@@ -2752,30 +2721,40 @@ static Signature *ResolvePotentialTrailingLambda(ETSChecker *checker, ir::CallEx
         auto *currentReceiver = candidateFunctionType->Params()[0];
         trailingLambda->Function()->EmplaceParams(currentReceiver);
         sigContainLambdaWithReceiverAsParam.emplace_back(sig);
+
+        InferMatchContext sctx {checker, util::DiagnosticType::SEMANTIC, callExpr->Range(), false};
+
         auto signature =
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
             checker->MatchOrderSignatures(sigContainLambdaWithReceiverAsParam, arguments, callExpr,
-                                          TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
-        if (signature != nullptr) {
+                                          TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
+        if (signature != nullptr && sctx.ValidMatchStatus()) {
             return signature;
         }
         sigContainLambdaWithReceiverAsParam.clear();
         trailingLambda->Function()->ClearParams();
     }
+
+    InferMatchContext sctx {checker, util::DiagnosticType::SEMANTIC, callExpr->Range(), false};
+
     // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-    return checker->MatchOrderSignatures(normalSig, arguments, callExpr,
-                                         TypeRelationFlag::NO_THROW | TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
+    auto signature =
+        checker->MatchOrderSignatures(normalSig, arguments, callExpr, TypeRelationFlag::NO_CHECK_TRAILING_LAMBDA);
+    if (!sctx.ValidMatchStatus()) {
+        return nullptr;
+    }
+    return signature;
 }
 
 std::optional<Substitution> ETSChecker::CheckTypeParamsAndBuildSubstitutionIfValid(
     Signature *signature, const ArenaVector<ir::TypeNode *> &params, const lexer::SourcePosition &pos)
 {
-    return BuildExplicitSubstitutionForArguments(this, signature, params, pos, TypeRelationFlag::NONE);
+    return BuildExplicitSubstitutionForArguments(this, signature, params, pos);
 }
 
-static void ThrowOverloadMismatch(ETSChecker *checker, util::StringView callName,
-                                  const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
-                                  std::string_view signatureKind)
+static void LogOverloadMismatch(ETSChecker *checker, util::StringView callName,
+                                const ArenaVector<ir::Expression *> &arguments, const lexer::SourcePosition &pos,
+                                std::string_view signatureKind)
 {
     std::string msg {};
     msg.append(callName.Mutf8());

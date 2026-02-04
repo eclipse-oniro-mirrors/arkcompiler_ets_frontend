@@ -630,8 +630,10 @@ checker::Type *ETSChecker::CheckArrayElements(ir::ArrayExpression *init)
             continue;
         }
 
-        if (elementNode->IsSpreadElement() && elementType->IsETSArrayType()) {
-            elementType = elementType->AsETSArrayType()->ElementType();
+        if (elementNode->IsSpreadElement() &&
+            (elementType->IsETSArrayType() || elementType->IsETSResizableArrayType() ||
+             elementType->IsETSReadonlyArrayType())) {
+            elementType = GetElementTypeOfArray(elementType);
         }
 
         elementTypes.emplace_back(elementType);
@@ -1174,12 +1176,16 @@ Signature *ETSChecker::FindRelativeExtensionGetter(ir::MemberExpression *const e
     ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
     arguments.insert(arguments.begin(), expr->Object());
     auto accessorSigs = funcType->CollectExtensionAccessorSigs(Allocator());
+
+    InferMatchContext sctx {this, util::DiagnosticType::SEMANTIC, expr->Range(), false};
     Signature *signature =
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-        MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
-    if (signature != nullptr) {
-        InsertExtensionGetterToMap(funcType->Name(), expr->ObjType(), signature);
+        MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NONE);
+    if (!sctx.ValidMatchStatus() || signature == nullptr) {
+        return nullptr;
     }
+
+    InsertExtensionGetterToMap(funcType->Name(), expr->ObjType(), signature);
     return signature;
 }
 
@@ -1197,11 +1203,14 @@ Signature *ETSChecker::FindRelativeExtensionSetter(ir::MemberExpression *expr, E
     ArenaVector<ir::Expression *> arguments(ProgramAllocator()->Adapter());
     arguments.insert(arguments.begin(), expr->Object());
     auto accessorSigs = funcType->CollectExtensionAccessorSigs(Allocator());
+
+    InferMatchContext sctx {this, util::DiagnosticType::SEMANTIC, expr->Range(), false};
+
     if (expr->Parent()->IsAssignmentExpression()) {
         arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
         signature =
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
+            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NONE);
     } else {
         // When handle ++a.m, a.m++, is mean to check whether a.m(xx, 1) existed.
         // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
@@ -1210,12 +1219,13 @@ Signature *ETSChecker::FindRelativeExtensionSetter(ir::MemberExpression *expr, E
         arguments.emplace_back(expr);
         signature =
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NO_THROW);
+            MatchOrderSignatures(accessorSigs, arguments, expr, TypeRelationFlag::NONE);
     }
 
-    if (signature == nullptr) {
+    if (!sctx.ValidMatchStatus() || signature == nullptr) {
         return nullptr;
     }
+
     InsertExtensionSetterToMap(funcType->Name(), expr->ObjType(), signature);
     return signature;
 }
@@ -1247,7 +1257,7 @@ checker::Type *ETSChecker::GetExtensionAccessorReturnType(ir::MemberExpression *
             arguments.emplace_back(expr->Object());
             arguments.emplace_back(expr->Parent()->AsAssignmentExpression()->Right());
             // SUPPRESS_CSA_NEXTLINE(alpha.core.AllocatorETSCheckerHint)
-            signature = MatchOrderSignatures(candidateSig, arguments, expr, TypeRelationFlag::NO_THROW);
+            signature = MatchOrderSignatures(candidateSig, arguments, expr, TypeRelationFlag::NONE);
         }
 
         if (signature == nullptr) {
@@ -2595,10 +2605,12 @@ bool ETSChecker::ValidateArrayTypeInitializerByElement(ir::ArrayExpression *node
         if (currentArrayElem->IsSpreadElement() && currentArrayElementType->IsETSTupleType()) {
             currentArrayElementType =
                 util::Helpers::CreateUnionOfTupleConstituentTypes(this, currentArrayElementType->AsETSTupleType());
+        } else if (currentArrayElem->IsSpreadElement()) {
+            currentArrayElementType = GetElementTypeOfArray(currentArrayElementType);
         }
         auto assignCtx =
             AssignmentContext(Relation(), currentArrayElem, currentArrayElementType, GetElementTypeOfArray(target),
-                              currentArrayElem->Start(), std::nullopt, TypeRelationFlag::NO_THROW);
+                              currentArrayElem->Start(), std::nullopt, TypeRelationFlag::NONE);
         if (!assignCtx.IsAssignable()) {
             LogError(diagnostic::ARRAY_ELEMENT_INIT_TYPE_INCOMPAT,
                      {index, currentArrayElementType, GetElementTypeOfArray(target)}, currentArrayElem->Start());

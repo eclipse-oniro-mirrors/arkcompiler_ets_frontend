@@ -88,10 +88,14 @@ public:
     }
 
     template <typename... T>
-    void LogDiagnostic(T &&...args)
+    Diagnostic *LogDiagnostic(T &&...args)
     {
-        LogDiagnostic<Diagnostic>(std::forward<T>(args)...);
+        return LogDiagnostic<Diagnostic>(std::forward<T>(args)...);
     }
+
+    // Make sure locations are accessible before all Programs mentioned in Positions
+    // get invalidated.
+    void EnsureLocations();
 
     void ClearDiagnostics()
     {
@@ -101,9 +105,11 @@ public:
     }
 
     // NOTE(schernykh): should be removed
-    void Log([[maybe_unused]] const ThrowableDiagnostic &error)
+    void Log(ThrowableDiagnostic const &error)
     {
-        printer_->Print(error, basePath_);
+        auto errCopy = error;
+        errCopy.EnsureLocation();
+        printer_->Print(errCopy, basePath_);
     };
 
     template <typename... T>
@@ -168,15 +174,15 @@ private:
     }
 
     template <typename DIAGNOSTIC, typename... T>
-    void LogDiagnostic(T &&...args)
+    DIAGNOSTIC *LogDiagnostic(T &&...args)
     {
-        CreateDiagnostic<DIAGNOSTIC>(std::forward<T>(args)...);
+        return CreateDiagnostic<DIAGNOSTIC>(std::forward<T>(args)...);
     }
 
     template <typename... T>
-    void LogThrowableDiagnostic(T &&...args)
+    ThrowableDiagnostic *LogThrowableDiagnostic(T &&...args)
     {
-        LogDiagnostic<ThrowableDiagnostic>(std::forward<T>(args)...);
+        return LogDiagnostic<ThrowableDiagnostic>(std::forward<T>(args)...);
     }
 
     template <typename... T>

@@ -1535,6 +1535,14 @@ bool ParserImpl::TryEatTypeKeyword()
     return res;
 }
 
+// Satisfy the  code checker
+static void UpdateSourceEndIfNeeded(lexer::Lexer *lexer, lexer::SourcePosition *sourceEnd)
+{
+    if (sourceEnd != nullptr) {
+        *sourceEnd = lexer->GetToken().End();
+    }
+}
+
 bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::NextTokenFlags flags,
                            const std::function<bool(bool &typeKeywordOnSpecifier)> &parseElement,
                            lexer::SourcePosition *sourceEnd, ParseListOptions parseListOptions)
@@ -1579,13 +1587,13 @@ bool ParserImpl::ParseList(std::optional<lexer::TokenType> termToken, lexer::Nex
         } else {
             LogExpectedToken(sep);
         }
+        UpdateSourceEndIfNeeded(Lexer(), sourceEnd);
+
         // comma or terminator not found
         return false;
     }
     if (termToken) {
-        if (sourceEnd != nullptr) {
-            *sourceEnd = Lexer()->GetToken().End();
-        }
+        UpdateSourceEndIfNeeded(Lexer(), sourceEnd);
         ExpectToken(termToken.value());
     }
     return success;

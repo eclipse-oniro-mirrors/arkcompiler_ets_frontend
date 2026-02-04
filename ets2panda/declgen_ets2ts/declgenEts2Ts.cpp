@@ -2737,7 +2737,7 @@ bool ValidateDeclgenOptions(const DeclgenOptions &options, checker::ETSChecker *
         return false;
     }
     if (options.outputDeclEts.empty() && options.outputEts.empty()) {
-        checker->DiagnosticEngine().LogDiagnostic(diagnostic::MISSING_OUTPUT_FILE, util::DiagnosticMessageParams {""});
+        checker->DiagnosticEngine().LogDiagnostic(diagnostic::MISSING_OUTPUT_FILE, util::DiagnosticMessageParams {});
         return false;
     }
     return true;

@@ -22,6 +22,7 @@ function main(): void {
 
 /* @@? 20:5 Error Semantic error ESE0127: No matching call signature for foo(...) */
 /* @@? 20:10 Error Semantic error ESE0143: Unresolved reference x */
-/* @@? 28:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
-/* @@? 28:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
-/* @@? 28:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+/* @@? 29:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 29:1 Error Syntax error ESY0228: Unexpected token, expected ')'. */
+/* @@? 29:1 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */
+

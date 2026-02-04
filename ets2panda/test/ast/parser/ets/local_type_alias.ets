@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,8 +46,8 @@ interface I{
 /* @@? 31:7 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 31:12 Error Syntax error ESY0318: Class cannot be used as object. */
 /* @@? 34:5 Error Syntax error ESY0040: Illegal start of Type Alias expression. */
-/* @@? 39:9 Error Semantic error ESE0371: Cannot find type 'a'. */
+/* @@? 39:4 Error Semantic error ESE0371: Cannot find type 'a'. */
 /* @@? 39:11 Error Syntax error ESY0180: Interface member initialization is prohibited. */
-/* @@? 39:13 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 39:13 Error Syntax error ESY0224: Identifier expected, got 'identification literal'. */
+/* @@? 39:13 Error Syntax error ESY0228: Unexpected token, expected ','. */
 /* @@? 39:14 Error Syntax error ESY0122: Identifier expected. */

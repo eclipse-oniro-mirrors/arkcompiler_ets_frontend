@@ -214,7 +214,7 @@
                       "loc": {
                         "start": {
                           "line": 19,
-                          "column": 9,
+                          "column": 3,
                           "program": "export_class_with_getters_setters.ets"
                         },
                         "end": {
@@ -227,7 +227,7 @@
                     "loc": {
                       "start": {
                         "line": 19,
-                        "column": 9,
+                        "column": 3,
                         "program": "export_class_with_getters_setters.ets"
                       },
                       "end": {
@@ -240,7 +240,7 @@
                   "loc": {
                     "start": {
                       "line": 19,
-                      "column": 9,
+                      "column": 3,
                       "program": "export_class_with_getters_setters.ets"
                     },
                     "end": {
@@ -339,7 +339,7 @@
                                 "loc": {
                                   "start": {
                                     "line": 19,
-                                    "column": 9,
+                                    "column": 3,
                                     "program": "export_class_with_getters_setters.ets"
                                   },
                                   "end": {
@@ -352,7 +352,7 @@
                               "loc": {
                                 "start": {
                                   "line": 19,
-                                  "column": 9,
+                                  "column": 3,
                                   "program": "export_class_with_getters_setters.ets"
                                 },
                                 "end": {
@@ -365,7 +365,7 @@
                             "loc": {
                               "start": {
                                 "line": 19,
-                                "column": 9,
+                                "column": 3,
                                 "program": "export_class_with_getters_setters.ets"
                               },
                               "end": {
@@ -383,7 +383,7 @@
                             },
                             "end": {
                               "line": 19,
-                              "column": 7,
+                              "column": 18,
                               "program": "export_class_with_getters_setters.ets"
                             }
                           }
@@ -396,7 +396,7 @@
                           },
                           "end": {
                             "line": 19,
-                            "column": 7,
+                            "column": 18,
                             "program": "export_class_with_getters_setters.ets"
                           }
                         }
