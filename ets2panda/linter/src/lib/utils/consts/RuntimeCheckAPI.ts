@@ -29,6 +29,7 @@ export const LENGTH_PROPERTY = 'length';
 export const KEYS_METHOD = 'keys';
 export const VALUES_METHOD = 'values';
 export const ENTRIES_METHOD = 'entries';
+export const FROM_METHOD = 'from';
 export const OBJECT_GLOBAL = 'Object';
 export const RECORD_TYPE = 'Record';
 
@@ -46,7 +47,7 @@ export const ARRAY_LENGTH_SOURCE_WHITE_LIST = new Set<string>([
   `${OBJECT_GLOBAL}.${KEYS_METHOD}`,
   `${OBJECT_GLOBAL}.${VALUES_METHOD}`,
   `${OBJECT_GLOBAL}.${ENTRIES_METHOD}`,
-  'Array.from'
+  `${ARRAY_TYPE_NAME}.${FROM_METHOD}`
 ]);
 
 export enum LoopConditionChecked {

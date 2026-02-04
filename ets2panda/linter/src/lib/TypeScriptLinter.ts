@@ -14379,7 +14379,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
   ): boolean {
     for (const stmt of thenBlock.statements) {
       if (ts.isExpressionStatement(stmt)) {
-        if (stmt.expression.getStart() === accessExpr.getStart() && stmt.expression.getEnd() === accessExpr.getEnd()) {
+        if (stmt.expression === accessExpr) {
           break;
         }
       }
@@ -14425,7 +14425,7 @@ export class TypeScriptLinter extends BaseTypeScriptLinter {
     let foundAccess = false;
     for (const stmt of thenBlock.statements) {
       if (ts.isExpressionStatement(stmt)) {
-        if (stmt.expression.getStart() === accessExpr.getStart() && stmt.expression.getEnd() === accessExpr.getEnd()) {
+        if (stmt.expression === accessExpr) {
           foundAccess = true;
           break;
         }
