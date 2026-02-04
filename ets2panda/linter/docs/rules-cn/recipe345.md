@@ -1,62 +1,70 @@
-### Map-forEach方法签名变更
+# `thisArg` 参数的移除
 
-**规则：** `arkts-builtin-thisArgs`
+## 规则概述
 
-**ArkTS-Dyn版本签名：**  
-  `forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: any): void`
+`arkts-builtin-thisArgs` 规则用于规范 ArkTS 从动态版本（ArkTS-Dyn）迁移到静态版本（ArkTS-Sta）时，内置对象回调方法中 `thisArg` 参数的移除。
 
-**参数：**
-  | 参数名 | 类型 | 必填 | 说明 |
-  | -------- | -------- | -------- | -------- |
-  | callbackfn | function | 是 | 遍历函数。 |
-  | thisArg | any | 否 | 执行callback时使用的this值，默认值为undefined。 |
+## 核心变更
 
-callbackfn函数参数说明：
-  | 参数名 | 类型 | 必填 | 说明 |
-  | -------- | -------- | -------- | -------- |
-  | value | V | 是 | 当前遍历的键值对中的值。 |
-  | key | K | 是 | 当前遍历的键值对中的键。 |
-  | map | Map\<K, V\> | 是 | 调用的原始数组。 |
+在 ArkTS-Dyn 中，内置对象（Array、TypedArray、Map、Set）的回调方法支持可选的 `thisArg` 参数，用于在执行回调函数时指定 `this` 值。在 ArkTS-Sta 中，该参数被移除。
 
+## 变更范围
 
-**示例：**  
-  ```typescript
-  const m: Map<string, string> = new Map<string, string>();
-  class Ctx {
-    log(key: string, value: string) {
-      console.info(key, value);
-    }
+### 受影响的类型
+
+| 类型 | 受影响的方法 |
+|------|-------------|
+| Array / ReadonlyArray | every, filter, find, findIndex, forEach, map, some, from (静态) |
+| TypedArray (所有类型) | every, filter, find, findIndex, forEach, map, some |
+| Map / ReadonlyMap | forEach |
+| Set / ReadonlySet | forEach |
+
+### 方法签名对比
+
+| 方法 | ArkTS-Dyn 签名 | ArkTS-Sta 签名 |
+|------|---------------|----------------|
+| every | `every(predicate: ..., thisArg?: any): boolean` | `every(predicate: ...): boolean` |
+| filter | `filter(predicate: ..., thisArg?: any): T[]` | `filter(predicate: ...): T[]` |
+| find | `find(predicate: ..., thisArg?: any): T \| undefined` | `find(predicate: ...): T \| undefined` |
+| forEach | `forEach(callback: ..., thisArg?: any): void` | `forEach(callback: ...): void` |
+| map | `map(callback: ..., thisArg?: any): U[]` | `map(callback: ...): U[]` |
+| some | `some(predicate: ..., thisArg?: any): boolean` | `some(predicate: ...): boolean` |
+
+## 代码示例
+
+### ArkTS-Dyn 写法（不支持）
+
+```typescript
+class Counter {
+  base: number;
+  constructor(base: number) {
+    this.base = base;
   }
-  m.forEach((value: string, key: string, map: Map<string, string>) => {
-    this.log(key, value); // this无法在独立函数中使用
-  }, new Ctx());
-  ```
+  check(arr: Int32Array): boolean {
+    return arr.every(function(value) {
+      return value < this.base;
+    }, this); // 使用 thisArg
+  }
+}
+```
 
-**ArkTS-Sta版本签名：**  
-  `forEach(callbackfn: (value: V, key: K, map: Map<K, V>) => void): void`
+### ArkTS-Sta 写法（推荐）
 
-**参数：**
-  | 参数名 | 类型 | 必填 | 说明 |
-  | -------- | -------- | -------- | -------- |
-  | callbackfn | function | 是 | 遍历函数。 |
+```typescript
+class Counter {
+  base: number;
+  constructor(base: number) {
+    this.base = base;
+  }
+  check(arr: Int32Array): boolean {
+    // 使用箭头函数捕获 this
+    return arr.every((value) => value < this.base);
+  }
+}
+```
 
-callbackfn函数参数说明：
-  | 参数名 | 类型 | 必填 | 说明 |
-  | -------- | -------- | -------- | -------- |
-  | value | V | 是 | 当前遍历的键值对中的值。 |
-  | key | K | 是 | 当前遍历的键值对中的键。 |
-  | map | Map\<K, V\> | 是 | 调用的原始Map。 |
+## 适配建议
 
-
-**示例：**  
-  ```typescript
-  const m: Map<string, string> = new Map<string, string>();
-  m.forEach((value: string, key: string, map: Map<string, string>) => {
-    console.info("value=", value, "key=", key);
-  });
-  ```
-
-**适配建议：** 
-  使用闭包替代thisArg参数。
-
-## WeakMap
+1. **删除 thisArg 参数**：移除方法调用时的最后一个参数
+2. **使用箭头函数**：箭头函数自动捕获外层 `this` 上下文
+3. **使用闭包变量**：将需要的上下文保存到局部变量中

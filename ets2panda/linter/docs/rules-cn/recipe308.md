@@ -17,8 +17,8 @@ ArkTS-Sta对`void`类型的语义进行了收紧，限制其使用场景以增�
 请使用undefined代替void。
 
 **示例：**
- 
-**ArkTS-Dyn**
+
+ArkTS-Dyn
 ```typescript
 // ArkTS-Dyn API定义
 type AsyncOrVoidMethod = () => Promise<void> | void;
@@ -40,7 +40,7 @@ async function test() {
 }
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // ArkTS-Sta API定义
 type SyncOrVoidMethod = () => undefined; 
