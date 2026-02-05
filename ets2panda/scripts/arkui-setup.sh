@@ -84,7 +84,7 @@ retry() {
       if (( attempt_num == max_attempts ))
       then
         echo "Attempt $attempt_num failed and there are no more attempts left!"
-         return 1
+        return 1
       else
         echo "Attempt $((attempt_num++)) failed! Trying again in $((delay *= attempt_num)) seconds..."
         sleep ${delay}
@@ -137,11 +137,7 @@ if [ -z "${KOALA_REPO}" ] ; then
     npm config set "//$NEXUS_REPO/repository/koala-npm/:_auth=$KOALA_TOKEN"
 fi
 
-for try in $(seq 1 5); do
-    npm install -d && break
-    echo "npm install failed, attempt $try of 5"
-    sleep $((try * 2))
-done
+retry 5 npm install
 
 pushd incremental/tools/panda/ || exit 1
 if [ -z "${PANDA_SDK_HOST_TARBALL}" ] ; then
@@ -175,10 +171,10 @@ export ENABLE_BUILD_CACHE=0
 
 ES2PANDA_LIB_IDL="incremental/tools/panda/node_modules/@panda/sdk/ohos_arm64/include/tools/es2panda/generated/es2panda_lib/es2panda_lib.idl"
 
-npm i @idlizer/idlinter
+retry 5 npm i @idlizer/idlinter
 npx @idlizer/idlinter check "${ES2PANDA_LIB_IDL}" || exit 1
 
-run_script "sdk:all"
+retry 5 run_script "sdk:all"
 
 # Compile libarkts
 pushd libarkts || exit 1
