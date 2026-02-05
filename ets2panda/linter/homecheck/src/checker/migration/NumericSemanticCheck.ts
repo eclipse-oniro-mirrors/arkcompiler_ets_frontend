@@ -773,9 +773,13 @@ export class NumericSemanticCheck implements BaseChecker {
                 return false;
             }
             const fieldSig = castOpRight.getFieldSignature();
-            if (fieldSig.getFieldName() === 'value') {
-                const declaringSig = fieldSig.getDeclaringSignature();
-                if (declaringSig instanceof ClassSignature && declaringSig.getClassName() === 'IteratorYieldResult') {
+            if (fieldSig.getFieldName() !== 'value') {
+                return false;
+            }
+            const declaringSig = fieldSig.getDeclaringSignature();
+            if (declaringSig instanceof ClassSignature) {
+                const className = declaringSig.getClassName();
+                if (className === 'IteratorResult' || className === 'IteratorYieldResult' || className === 'IteratorReturnResult') {
                     return true;
                 }
             }
