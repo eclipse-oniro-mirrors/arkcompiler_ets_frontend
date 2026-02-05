@@ -18,6 +18,7 @@
 #include "generated/keywords.h"
 
 namespace ark::es2panda::lexer {
+constexpr int32_t QUOTE_PAIR_MODULO = 2;
 LexerPosition::LexerPosition(const util::StringView &source) : iterator_(source) {}
 
 Lexer::Lexer(const parser::ParserContext *parserContext, std::string_view sourceCode,
@@ -1634,6 +1635,185 @@ void Lexer::NextToken(Keywords *kws)
 
     SetTokenEnd();
     SkipWhiteSpaces();
+}
+
+void Lexer::HasMatchingGreaterThanCheckBracket(int32_t &depth, int32_t &parenSize, int32_t &braceSize,
+                                               int32_t &squareSize)
+{
+    auto cp = Iterator().Peek();
+    switch (cp) {
+        case LEX_CHAR_LESS_THAN:
+            depth++;
+            break;
+        case LEX_CHAR_GREATER_THAN:
+            depth--;
+            break;
+        case LEX_CHAR_LEFT_PAREN:
+            parenSize++;
+            break;
+        case LEX_CHAR_LEFT_BRACE:
+            braceSize++;
+            break;
+        case LEX_CHAR_LEFT_SQUARE:
+            squareSize++;
+            break;
+        case LEX_CHAR_RIGHT_PAREN:
+            parenSize--;
+            break;
+        case LEX_CHAR_RIGHT_BRACE:
+            braceSize--;
+            break;
+        case LEX_CHAR_RIGHT_SQUARE:
+            squareSize--;
+            break;
+        default:
+            break;
+    }
+    return;
+}
+
+bool Lexer::HasMatchingGreaterThanInner(std::string_view::const_iterator &savedIter, int32_t &depth, int32_t &parenSize,
+                                        int32_t &braceSize, int32_t &squareSize)
+{
+    auto cp = Iterator().Peek();
+    switch (cp) {
+        case util::StringView::Iterator::INVALID_CP:
+            Iterator().Rewind(savedIter);
+            return false;
+        case LEX_CHAR_SEMICOLON:
+            Iterator().Rewind(savedIter);
+            return false;
+        case LEX_CHAR_EQUALS: {
+            if (!HandleEqualsInTypeParam(savedIter, parenSize, braceSize, squareSize)) {
+                return false;
+            }
+            break;
+        }
+        case LEX_CHAR_AMPERSAND:
+        case LEX_CHAR_CIRCUMFLEX: {
+            if (!HandleAmpersandOrCircumflexInTypeParam(savedIter, parenSize, braceSize, squareSize)) {
+                return false;
+            }
+            break;
+        }
+        case LEX_CHAR_VLINE: {
+            if (!HandleVLineInTypeParam(savedIter, parenSize, braceSize, squareSize)) {
+                return false;
+            }
+            break;
+        }
+        case LEX_CHAR_QUESTION: {
+            if (!HandleQuestionInTypeParam(savedIter, parenSize, braceSize, squareSize)) {
+                return false;
+            }
+            break;
+        }
+        default:
+            HasMatchingGreaterThanCheckBracket(depth, parenSize, braceSize, squareSize);
+            break;
+    }
+    return true;
+}
+
+bool Lexer::HasMatchingGreaterThan()
+{
+    // Save the current position of the character iterator
+    auto savedIter = Iterator().Save();
+    int32_t depth = 1;
+    int32_t parenSize = 0;
+    int32_t braceSize = 0;
+    int32_t squareSize = 0;
+    int32_t sigleQuoteSize = 0;
+    int32_t DoubleQuoteSize = 0;
+    while (depth > 0) {
+        auto cp = Iterator().Peek();
+        if (cp == LEX_CHAR_SINGLE_QUOTE) {
+            sigleQuoteSize++;
+        } else if (cp == LEX_CHAR_DOUBLE_QUOTE) {
+            DoubleQuoteSize++;
+        }
+        if ((sigleQuoteSize % QUOTE_PAIR_MODULO != 0) || (DoubleQuoteSize % QUOTE_PAIR_MODULO != 0)) {
+            Iterator().Forward(1);
+            continue;
+        }
+
+        if (!HasMatchingGreaterThanInner(savedIter, depth, parenSize, braceSize, squareSize)) {
+            return false;
+        }
+
+        if (parenSize < 0 || braceSize < 0 || squareSize < 0) {
+            Iterator().Rewind(savedIter);
+            return false;
+        }
+        Iterator().Forward(1);
+    }
+    // Found a matching '>'
+    Iterator().Rewind(savedIter);
+    return true;
+}
+
+bool Lexer::HandleEqualsInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                    int32_t squareSize)
+{
+    Iterator().Forward(1);
+    auto nextVlineCp = Iterator().Peek();
+    Iterator().Backward(1);
+    if (nextVlineCp != LEX_CHAR_GREATER_THAN) {
+        // It's not =>, it's ==, !=, >=, <=,
+        if (parenSize <= 0 && braceSize <= 0 && squareSize <= 0) {
+            Iterator().Rewind(savedIter);
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Lexer::HandleAmpersandOrCircumflexInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize,
+                                                   int32_t braceSize, int32_t squareSize)
+{
+    // &, &&, ^, not in any bracket return false
+    if (parenSize <= 0 && braceSize <= 0 && squareSize <= 0) {
+        Iterator().Rewind(savedIter);
+        return false;
+    }
+    return true;
+}
+
+bool Lexer::HandleVLineInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                   int32_t squareSize)
+{
+    // | can be union type in type parameters (Array<string | number>)
+    // But || (logical OR) in expression context should return false
+    // Check if next char is also | (||)
+    Iterator().Forward(1);
+    auto nextVlineCp = Iterator().Peek();
+    Iterator().Backward(1);
+    if (nextVlineCp == LEX_CHAR_VLINE) {
+        // It's || (logical OR), not union type
+        if (parenSize <= 0 && braceSize <= 0 && squareSize <= 0) {
+            Iterator().Rewind(savedIter);
+            return false;
+        }
+    }
+    // Single | might be union type, allow it
+    return true;
+}
+
+bool Lexer::HandleQuestionInTypeParam(std::string_view::const_iterator &savedIter, int32_t parenSize, int32_t braceSize,
+                                      int32_t squareSize)
+{
+    // Check if it's optional chaining operator (?.)
+    Iterator().Forward(1);
+    auto nextCp = Iterator().Peek();
+    Iterator().Backward(1);
+    if (nextCp != LEX_CHAR_DOT) {
+        // Not ?., so it's ?? or ?:; return false
+        if (parenSize <= 0 && braceSize <= 0 && squareSize <= 0) {
+            Iterator().Rewind(savedIter);
+            return false;
+        }
+    }
+    return true;
 }
 
 void Lexer::ScanNumberLeadingZeroImplNonAllowedCases()

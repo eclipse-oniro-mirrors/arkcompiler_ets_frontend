@@ -108,4 +108,4 @@ function f7(a: (b: int = 0) => int): void {
 /* @@? 55:29 Error Syntax error ESY0295: void is a predefined type, cannot be used as an identifier */
 /* @@? 57:1 Error Syntax error ESY0227: Unexpected token 'function'. */
 /* @@? 57:26 Error Syntax error ESY0133: Default value is allowed only for optional parameters. */
-/* @@? 112:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 111:80 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

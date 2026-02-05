@@ -20,8 +20,9 @@ final class TypeCreateCtx {
 
 /* @@? 17:13 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:66 Error Semantic error ESE0277: FixedArray<T> must have only one type parameter. */
-/* @@? 17:88 Error Syntax error ESY0228: Unexpected token, expected '>'. */
-/* @@? 17:88 Error Syntax error ESY0227: Unexpected token '>'. */
+/* @@? 17:76 Error Syntax error ESY0227: Unexpected token '<'. */
+/* @@? 17:87 Error Syntax error ESY0121: Field type annotation expected. */
+/* @@? 17:93 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:97 Error Syntax error ESY0121: Field type annotation expected. */
 /* @@? 17:120 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 17:138 Error Semantic error ESE0371: Cannot find type 'RuntimeTypeDescriptor'. */

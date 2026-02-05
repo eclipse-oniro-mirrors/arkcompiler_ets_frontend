@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -609,6 +609,19 @@ ir::Expression *ETSParser::ParseCoverParenthesizedExpressionAndArrowParameterLis
     return expr;
 }
 
+std::optional<ir::Expression *> ETSParser::ParsePunctuatorLessThan(ir::Expression *returnExpression,
+                                                                   lexer::SourcePosition startLoc,
+                                                                   bool ignoreCallExpression)
+{
+    if (!Lexer()->HasMatchingGreaterThan()) {
+        return std::nullopt;
+    }
+    if (ParsePotentialGenericFunctionCall(returnExpression, &returnExpression, startLoc, ignoreCallExpression)) {
+        return std::nullopt;
+    }
+    return returnExpression;
+}
+
 std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expression *returnExpression,
                                                                     lexer::SourcePosition startLoc,
                                                                     bool ignoreCallExpression,
@@ -642,12 +655,7 @@ std::optional<ir::Expression *> ETSParser::GetPostPrimaryExpression(ir::Expressi
             return ParseElementAccess(returnExpression);
         case lexer::TokenType::PUNCTUATOR_LEFT_SHIFT:
         case lexer::TokenType::PUNCTUATOR_LESS_THAN:
-            if (ParsePotentialGenericFunctionCall(returnExpression, &returnExpression, startLoc,
-                                                  ignoreCallExpression)) {
-                return std::nullopt;
-            }
-
-            return returnExpression;
+            return ParsePunctuatorLessThan(returnExpression, startLoc, ignoreCallExpression);
         case lexer::TokenType::PUNCTUATOR_LEFT_PARENTHESIS:
             if (ignoreCallExpression) {
                 return std::nullopt;
