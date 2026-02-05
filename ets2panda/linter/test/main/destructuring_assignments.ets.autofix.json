@@ -43,13 +43,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_1 = { a: 100, b: 200, s: 'bar' }",
-                    "start": 692,
-                    "end": 736
+                    "start": 697,
+                    "end": 741,
+                    "line": 19,
+                    "column": 2,
+                    "endLine": 19,
+                    "endColumn": 44
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_1.a;\nb = GeneratedDestructObj_1.b;\ns = GeneratedDestructObj_1.s;\n",
-                    "start": 737,
-                    "end": 737
+                    "start": 742,
+                    "end": 742,
+                    "line": 19,
+                    "column": 2,
+                    "endLine": 19,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -115,13 +123,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_2 = { a: 1, b: { c: 3, d: 'baz' } }",
-                    "start": 836,
-                    "end": 892
+                    "start": 841,
+                    "end": 897,
+                    "line": 22,
+                    "column": 2,
+                    "endLine": 22,
+                    "endColumn": 56
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_2.a;\n({ c, d: s } = GeneratedDestructObj_2.b);\n",
-                    "start": 893,
-                    "end": 893
+                    "start": 898,
+                    "end": 898,
+                    "line": 22,
+                    "column": 2,
+                    "endLine": 22,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -186,14 +202,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 973,
-                    "end": 973,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n"
+                    "start": 978,
+                    "end": 978,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a: number;\n    b: number;\n}\n",
+                    "line": 26,
+                    "column": 10,
+                    "endLine": 26,
+                    "endColumn": 11
                 },
                 {
-                    "start": 1005,
-                    "end": 1019,
-                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)"
+                    "start": 1010,
+                    "end": 1024,
+                    "replacementText": "({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1)",
+                    "line": 26,
+                    "column": 10,
+                    "endLine": 26,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -209,13 +233,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_3 = getObject()",
-                    "start": 1023,
-                    "end": 1047
+                    "start": 1028,
+                    "end": 1052,
+                    "line": 28,
+                    "column": 2,
+                    "endLine": 28,
+                    "endColumn": 24
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_3.a;\nb = GeneratedDestructObj_3.b;\n",
-                    "start": 1048,
-                    "end": 1048
+                    "start": 1053,
+                    "end": 1053,
+                    "line": 28,
+                    "column": 2,
+                    "endLine": 28,
+                    "endColumn": 24
                 }
             ],
             "suggest": "",
@@ -231,13 +263,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructArray_1",
-                    "start": 1083,
-                    "end": 1092
+                    "start": 1088,
+                    "end": 1097,
+                    "line": 31,
+                    "column": 1,
+                    "endLine": 31,
+                    "endColumn": 25
                 },
                 {
                     "replacementText": "\na = GeneratedDestructArray_1[0];\nb = GeneratedDestructArray_1[1];\nc = GeneratedDestructArray_1[2];\n",
-                    "start": 1108,
-                    "end": 1108
+                    "start": 1113,
+                    "end": 1113,
+                    "line": 31,
+                    "column": 1,
+                    "endLine": 31,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",
@@ -263,13 +303,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructArray_2",
-                    "start": 1125,
-                    "end": 1155
+                    "start": 1130,
+                    "end": 1160,
+                    "line": 33,
+                    "column": 1,
+                    "endLine": 33,
+                    "endColumn": 58
                 },
                 {
                     "replacementText": "\n[a1, a2] = GeneratedDestructArray_2[0];\n[b1, b2] = GeneratedDestructArray_2[1];\n[c1, c2] = GeneratedDestructArray_2[2];\n",
-                    "start": 1183,
-                    "end": 1183
+                    "start": 1188,
+                    "end": 1188,
+                    "line": 33,
+                    "column": 1,
+                    "endLine": 33,
+                    "endColumn": 58
                 }
             ],
             "suggest": "",
@@ -285,13 +333,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructArray_3",
-                    "start": 1186,
-                    "end": 1192
+                    "start": 1191,
+                    "end": 1197,
+                    "line": 34,
+                    "column": 1,
+                    "endLine": 34,
+                    "endColumn": 16
                 },
                 {
                     "replacementText": "\na = GeneratedDestructArray_3[0];\nb = GeneratedDestructArray_3[1];\n",
-                    "start": 1202,
-                    "end": 1202
+                    "start": 1207,
+                    "end": 1207,
+                    "line": 34,
+                    "column": 1,
+                    "endLine": 34,
+                    "endColumn": 16
                 }
             ],
             "suggest": "",
@@ -387,13 +443,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructArray_4",
-                    "start": 1500,
-                    "end": 1506
+                    "start": 1505,
+                    "end": 1511,
+                    "line": 44,
+                    "column": 1,
+                    "endLine": 44,
+                    "endColumn": 20
                 },
                 {
                     "replacementText": "\na = GeneratedDestructArray_4[0];\nb = GeneratedDestructArray_4[1];\n",
-                    "start": 1520,
-                    "end": 1520
+                    "start": 1525,
+                    "end": 1525,
+                    "line": 44,
+                    "column": 1,
+                    "endLine": 44,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -428,14 +492,22 @@
             "problem": "ObjectTypeLiteral",
             "autofix": [
                 {
-                    "start": 1700,
-                    "end": 1700,
-                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    e: number;\n}\n"
+                    "start": 1705,
+                    "end": 1705,
+                    "replacementText": "interface GeneratedTypeLiteralInterface_1 {\n    e: number;\n}\n",
+                    "line": 53,
+                    "column": 30,
+                    "endLine": 53,
+                    "endColumn": 31
                 },
                 {
-                    "start": 1729,
-                    "end": 1742,
-                    "replacementText": "GeneratedTypeLiteralInterface_1"
+                    "start": 1734,
+                    "end": 1747,
+                    "replacementText": "GeneratedTypeLiteralInterface_1",
+                    "line": 53,
+                    "column": 30,
+                    "endLine": 53,
+                    "endColumn": 31
                 }
             ],
             "suggest": "",
@@ -561,13 +633,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_4 = { a: 1, b: [2, 3] }",
-                    "start": 1912,
-                    "end": 1953
+                    "start": 1917,
+                    "end": 1958,
+                    "line": 58,
+                    "column": 2,
+                    "endLine": 58,
+                    "endColumn": 41
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_4.a;\n[c, d] = GeneratedDestructObj_4.b;\n",
-                    "start": 1954,
-                    "end": 1954
+                    "start": 1959,
+                    "end": 1959,
+                    "line": 58,
+                    "column": 2,
+                    "endLine": 58,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
@@ -593,13 +673,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_5 = { a: 10, b: { s: 'foo', c: [30, 40] } }",
-                    "start": 1965,
-                    "end": 2051
+                    "start": 1970,
+                    "end": 2056,
+                    "line": 59,
+                    "column": 2,
+                    "endLine": 65,
+                    "endColumn": 44
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_5.a;\n({\n    s,\n    c: [d, f],\n  } = GeneratedDestructObj_5.b);\n",
-                    "start": 2052,
-                    "end": 2052
+                    "start": 2057,
+                    "end": 2057,
+                    "line": 59,
+                    "column": 2,
+                    "endLine": 65,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -735,13 +823,21 @@
             "autofix": [
                 {
                     "replacementText": "let GeneratedDestructObj_6 = new C()",
-                    "start": 2502,
-                    "end": 2525
+                    "start": 2507,
+                    "end": 2530,
+                    "line": 87,
+                    "column": 2,
+                    "endLine": 87,
+                    "endColumn": 23
                 },
                 {
                     "replacementText": "\na = GeneratedDestructObj_6.a;\nb = GeneratedDestructObj_6.b;\ns = GeneratedDestructObj_6.s;\n",
-                    "start": 2526,
-                    "end": 2526
+                    "start": 2531,
+                    "end": 2531,
+                    "line": 87,
+                    "column": 2,
+                    "endLine": 87,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",

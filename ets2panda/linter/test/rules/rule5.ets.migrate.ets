@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +55,7 @@ var foo14 = () => foo14();
 // fixable
 let bar15 = foo15; var foo15 = () => { foo15(); };
 
-let bar16 = () => { foo16(); }; var foo16 = () => { };
+let bar16 = function () { foo16(); }; var foo16 = () => { };
 
 // not fixable
 for (var i17 = 0, i17 = 0; false;);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,11 +14,7 @@
  */
 
 // destructuring declaration + untyped object literal
-interface GeneratedObjectLiteralInterface_2 {
-    a: number;
-    b: number;
-}
-let GeneratedDestructObj_1: GeneratedObjectLiteralInterface_2 = { a: 1, b: 2 };
+let GeneratedDestructObj_1 = { a: 1, b: 2 };
 let a = GeneratedDestructObj_1.a;
 let b = GeneratedDestructObj_1.b;
 
@@ -28,11 +24,7 @@ interface GeneratedTypeLiteralInterface_1 {
     c2: number;
     d2: string;
 }
-interface GeneratedObjectLiteralInterface_3 {
-    a2: number;
-    b2: GeneratedTypeLiteralInterface_1;
-}
-let GeneratedDestructObj_2: GeneratedObjectLiteralInterface_3 = {
+let GeneratedDestructObj_2 = {
     a2: 1,
     b2: {
         c2: 1,
@@ -51,21 +43,19 @@ interface GeneratedObjectLiteralInterface_1 {
 console.log('a' in ({ a: 1, b: 2 } as GeneratedObjectLiteralInterface_1));
 
 // untyped object literal + var declaration + literal as property name + function expression
-interface GeneratedObjectLiteralInterface_4 {
-    x1: number;
-    x2: number;
-}
-let fun = () => {
-    let o = {
-    'a': 1,
-    'b': 2
-};
-    let o2 = {
-    'c': 3,
-    'd': 4,
-    5: ({ x1: 10,
-    x2: 20 } as GeneratedObjectLiteralInterface_4)
-};
+let fun = function () {
+    var o = {
+        'a': 1,
+        'b': 2
+    };
+    var o2 = {
+        'c': 3,
+        'd': 4,
+        5: {
+            x1: 10,
+            x2: 20
+        }
+    };
 };
 
 // private identifier + definite assignment

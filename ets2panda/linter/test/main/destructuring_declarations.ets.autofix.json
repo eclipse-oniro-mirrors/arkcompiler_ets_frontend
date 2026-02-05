@@ -23,13 +23,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_1",
-                    "start": 633,
-                    "end": 644
+                    "start": 638,
+                    "end": 649,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 47
                 },
                 {
                     "replacementText": "\nlet a = GeneratedDestructObj_1.a;\nlet b = GeneratedDestructObj_1.b;\nlet c = GeneratedDestructObj_1.c;\n",
-                    "start": 676,
-                    "end": 676
+                    "start": 681,
+                    "end": 681,
+                    "line": 17,
+                    "column": 5,
+                    "endLine": 17,
+                    "endColumn": 47
                 }
             ],
             "suggest": "",
@@ -75,13 +83,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_2",
-                    "start": 742,
-                    "end": 768
+                    "start": 747,
+                    "end": 773,
+                    "line": 19,
+                    "column": 5,
+                    "endLine": 19,
+                    "endColumn": 68
                 },
                 {
                     "replacementText": "\nlet a3 = GeneratedDestructObj_2.a3;\nlet { c3, d3: e3 } = GeneratedDestructObj_2.b3;\n",
-                    "start": 806,
-                    "end": 806
+                    "start": 811,
+                    "end": 811,
+                    "line": 19,
+                    "column": 5,
+                    "endLine": 19,
+                    "endColumn": 68
                 }
             ],
             "suggest": "",
@@ -166,14 +182,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 941,
-                    "end": 941,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a5: number;\n    b5: number;\n}\n"
+                    "start": 946,
+                    "end": 946,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    a5: number;\n    b5: number;\n}\n",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
                 },
                 {
-                    "start": 973,
-                    "end": 989,
-                    "replacementText": "({ a5: 1, b5: 2 } as GeneratedObjectLiteralInterface_1)"
+                    "start": 978,
+                    "end": 994,
+                    "replacementText": "({ a5: 1, b5: 2 } as GeneratedObjectLiteralInterface_1)",
+                    "line": 25,
+                    "column": 10,
+                    "endLine": 25,
+                    "endColumn": 11
                 }
             ],
             "suggest": "",
@@ -189,13 +213,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_3",
-                    "start": 997,
-                    "end": 1007
+                    "start": 1002,
+                    "end": 1012,
+                    "line": 27,
+                    "column": 5,
+                    "endLine": 27,
+                    "endColumn": 29
                 },
                 {
                     "replacementText": "\nlet a5 = GeneratedDestructObj_3.a5;\nlet b5 = GeneratedDestructObj_3.b5;\n",
-                    "start": 1022,
-                    "end": 1022
+                    "start": 1027,
+                    "end": 1027,
+                    "line": 27,
+                    "column": 5,
+                    "endLine": 27,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -211,13 +243,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructArray_1",
-                    "start": 1063,
-                    "end": 1075
+                    "start": 1068,
+                    "end": 1080,
+                    "line": 30,
+                    "column": 7,
+                    "endLine": 30,
+                    "endColumn": 34
                 },
                 {
                     "replacementText": "\nconst a6 = GeneratedDestructArray_1[0];\nconst b6 = GeneratedDestructArray_1[1];\nconst c6 = GeneratedDestructArray_1[2];\n",
-                    "start": 1091,
-                    "end": 1091
+                    "start": 1096,
+                    "end": 1096,
+                    "line": 30,
+                    "column": 7,
+                    "endLine": 30,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -263,13 +303,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructArray_2",
-                    "start": 1278,
-                    "end": 1308
+                    "start": 1283,
+                    "end": 1313,
+                    "line": 35,
+                    "column": 7,
+                    "endLine": 35,
+                    "endColumn": 64
                 },
                 {
                     "replacementText": "\nconst [a1, a2] = GeneratedDestructArray_2[0];\nconst [b1, b2] = GeneratedDestructArray_2[1];\nconst [c1, c2] = GeneratedDestructArray_2[2];\n",
-                    "start": 1336,
-                    "end": 1336
+                    "start": 1341,
+                    "end": 1341,
+                    "line": 35,
+                    "column": 7,
+                    "endLine": 35,
+                    "endColumn": 64
                 }
             ],
             "suggest": "",
@@ -285,13 +333,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructArray_3",
-                    "start": 1345,
-                    "end": 1387
+                    "start": 1350,
+                    "end": 1392,
+                    "line": 36,
+                    "column": 7,
+                    "endLine": 36,
+                    "endColumn": 85
                 },
                 {
                     "replacementText": "\nconst [a1, a2, a3] = GeneratedDestructArray_3[0];\nconst [b1, b2, b3] = GeneratedDestructArray_3[1];\nconst [c1, c2, c3] = GeneratedDestructArray_3[2];\n",
-                    "start": 1424,
-                    "end": 1424
+                    "start": 1429,
+                    "end": 1429,
+                    "line": 36,
+                    "column": 7,
+                    "endLine": 36,
+                    "endColumn": 85
                 }
             ],
             "suggest": "",
@@ -327,13 +383,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructArray_4",
-                    "start": 1593,
-                    "end": 1603
+                    "start": 1598,
+                    "end": 1608,
+                    "line": 43,
+                    "column": 5,
+                    "endLine": 43,
+                    "endColumn": 28
                 },
                 {
                     "replacementText": "\nlet a12 = GeneratedDestructArray_4[0];\nlet b12 = GeneratedDestructArray_4[1];\n",
-                    "start": 1617,
-                    "end": 1617
+                    "start": 1622,
+                    "end": 1622,
+                    "line": 43,
+                    "column": 5,
+                    "endLine": 43,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -439,13 +503,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_4",
-                    "start": 2031,
-                    "end": 2055
+                    "start": 2036,
+                    "end": 2060,
+                    "line": 56,
+                    "column": 5,
+                    "endLine": 56,
+                    "endColumn": 55
                 },
                 {
                     "replacementText": "\nlet a18 = GeneratedDestructObj_4.a18;\nlet [c18, d18] = GeneratedDestructObj_4.b18;\n",
-                    "start": 2082,
-                    "end": 2082
+                    "start": 2087,
+                    "end": 2087,
+                    "line": 56,
+                    "column": 5,
+                    "endLine": 56,
+                    "endColumn": 55
                 }
             ],
             "suggest": "",
@@ -471,13 +543,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_5",
-                    "start": 2097,
-                    "end": 2151
+                    "start": 2102,
+                    "end": 2156,
+                    "line": 57,
+                    "column": 5,
+                    "endLine": 63,
+                    "endColumn": 52
                 },
                 {
                     "replacementText": "\nlet a19 = GeneratedDestructObj_5.a19;\nlet {\n    c19,\n    d19: [e19, f19],\n  } = GeneratedDestructObj_5.b19;\n",
-                    "start": 2202,
-                    "end": 2202
+                    "start": 2207,
+                    "end": 2207,
+                    "line": 57,
+                    "column": 5,
+                    "endLine": 63,
+                    "endColumn": 52
                 }
             ],
             "suggest": "",
@@ -623,13 +703,21 @@
             "autofix": [
                 {
                     "replacementText": "GeneratedDestructObj_6",
-                    "start": 2749,
-                    "end": 2760
+                    "start": 2754,
+                    "end": 2765,
+                    "line": 85,
+                    "column": 5,
+                    "endLine": 85,
+                    "endColumn": 26
                 },
                 {
                     "replacementText": "\nlet a = GeneratedDestructObj_6.a;\nlet b = GeneratedDestructObj_6.b;\nlet s = GeneratedDestructObj_6.s;\n",
-                    "start": 2771,
-                    "end": 2771
+                    "start": 2776,
+                    "end": 2776,
+                    "line": 85,
+                    "column": 5,
+                    "endLine": 85,
+                    "endColumn": 26
                 }
             ],
             "suggest": "",

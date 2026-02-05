@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -303,7 +303,7 @@ export function preProcessCmdProgressBar(cmdProgressInfo: CmdProgressInfo): void
 
   const isMigrationStep = options.migratorMode && cmdProgressInfo.migrationInfo;
   const migrationPhase = isMigrationStep ?
-    ` ${cmdProgressInfo.migrationInfo!.currentPass + 1} / ${cmdProgressInfo.migrationInfo!.maxPasses}` :
+    ` ${(cmdProgressInfo.migrationInfo!.currentPass ?? 0) + 1} / ${cmdProgressInfo.migrationInfo!.maxPasses ?? 1}` :
     '';
   const phasePrefix = isMigrationStep ? 'Migration Phase' : 'Scan Phase';
   const displayContent = `${phasePrefix}${migrationPhase}`;

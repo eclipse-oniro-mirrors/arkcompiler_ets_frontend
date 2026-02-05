@@ -542,9 +542,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3439,
-                    "end": 3439,
-                    "replacementText": ": boolean"
+                    "start": 3444,
+                    "end": 3444,
+                    "replacementText": ": boolean",
+                    "line": 90,
+                    "column": 5,
+                    "endLine": 90,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",
@@ -559,9 +563,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3463,
-                    "end": 3463,
-                    "replacementText": ": number"
+                    "start": 3468,
+                    "end": 3468,
+                    "replacementText": ": number",
+                    "line": 91,
+                    "column": 5,
+                    "endLine": 91,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -576,9 +584,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3485,
-                    "end": 3485,
-                    "replacementText": ": string"
+                    "start": 3490,
+                    "end": 3490,
+                    "replacementText": ": string",
+                    "line": 92,
+                    "column": 5,
+                    "endLine": 92,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -593,9 +605,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3511,
-                    "end": 3511,
-                    "replacementText": ": number[]"
+                    "start": 3516,
+                    "end": 3516,
+                    "replacementText": ": number[]",
+                    "line": 93,
+                    "column": 5,
+                    "endLine": 93,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -610,9 +626,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3539,
-                    "end": 3539,
-                    "replacementText": ": (string | number)[]"
+                    "start": 3544,
+                    "end": 3544,
+                    "replacementText": ": (string | number)[]",
+                    "line": 94,
+                    "column": 5,
+                    "endLine": 94,
+                    "endColumn": 36
                 }
             ],
             "suggest": "",
@@ -627,9 +647,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3574,
-                    "end": 3574,
-                    "replacementText": ": Color"
+                    "start": 3579,
+                    "end": 3579,
+                    "replacementText": ": Color",
+                    "line": 95,
+                    "column": 5,
+                    "endLine": 95,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -654,14 +678,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    key: string;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_1 {\n    key: string;\n}\n",
+                    "line": 96,
+                    "column": 16,
+                    "endLine": 96,
+                    "endColumn": 17
                 },
                 {
-                    "start": 3602,
-                    "end": 3602,
-                    "replacementText": ": GeneratedObjectLiteralInterface_1"
+                    "start": 3607,
+                    "end": 3607,
+                    "replacementText": ": GeneratedObjectLiteralInterface_1",
+                    "line": 96,
+                    "column": 16,
+                    "endLine": 96,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -676,9 +708,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3636,
-                    "end": 3636,
-                    "replacementText": ": undefined"
+                    "start": 3641,
+                    "end": 3641,
+                    "replacementText": ": undefined",
+                    "line": 97,
+                    "column": 5,
+                    "endLine": 97,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -693,9 +729,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3663,
-                    "end": 3663,
-                    "replacementText": ": null"
+                    "start": 3668,
+                    "end": 3668,
+                    "replacementText": ": null",
+                    "line": 98,
+                    "column": 5,
+                    "endLine": 98,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -710,9 +750,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3690,
-                    "end": 3690,
-                    "replacementText": ": undefined"
+                    "start": 3695,
+                    "end": 3695,
+                    "replacementText": ": undefined",
+                    "line": 99,
+                    "column": 5,
+                    "endLine": 99,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -737,14 +781,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_2 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 100,
+                    "column": 19,
+                    "endLine": 100,
+                    "endColumn": 20
                 },
                 {
-                    "start": 3719,
-                    "end": 3719,
-                    "replacementText": ": GeneratedObjectLiteralInterface_2"
+                    "start": 3724,
+                    "end": 3724,
+                    "replacementText": ": GeneratedObjectLiteralInterface_2",
+                    "line": 100,
+                    "column": 19,
+                    "endLine": 100,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -759,9 +811,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3767,
-                    "end": 3767,
-                    "replacementText": ": SendableClass"
+                    "start": 3772,
+                    "end": 3772,
+                    "replacementText": ": SendableClass",
+                    "line": 101,
+                    "column": 5,
+                    "endLine": 101,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -776,9 +832,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3811,
-                    "end": 3811,
-                    "replacementText": ": NoSendableClass"
+                    "start": 3816,
+                    "end": 3816,
+                    "replacementText": ": NoSendableClass",
+                    "line": 102,
+                    "column": 5,
+                    "endLine": 102,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -793,9 +853,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3956,
-                    "end": 3956,
-                    "replacementText": ": boolean | undefined"
+                    "start": 3961,
+                    "end": 3961,
+                    "replacementText": ": boolean | undefined",
+                    "line": 105,
+                    "column": 5,
+                    "endLine": 105,
+                    "endColumn": 26
                 }
             ],
             "suggest": "",
@@ -810,9 +874,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 3981,
-                    "end": 3981,
-                    "replacementText": ": number | undefined"
+                    "start": 3986,
+                    "end": 3986,
+                    "replacementText": ": number | undefined",
+                    "line": 106,
+                    "column": 5,
+                    "endLine": 106,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -827,9 +895,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4004,
-                    "end": 4004,
-                    "replacementText": ": string | undefined"
+                    "start": 4009,
+                    "end": 4009,
+                    "replacementText": ": string | undefined",
+                    "line": 107,
+                    "column": 5,
+                    "endLine": 107,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -844,9 +916,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4031,
-                    "end": 4031,
-                    "replacementText": ": number[] | undefined"
+                    "start": 4036,
+                    "end": 4036,
+                    "replacementText": ": number[] | undefined",
+                    "line": 108,
+                    "column": 5,
+                    "endLine": 108,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -861,9 +937,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4060,
-                    "end": 4060,
-                    "replacementText": ": (string | number)[] | undefined"
+                    "start": 4065,
+                    "end": 4065,
+                    "replacementText": ": (string | number)[] | undefined",
+                    "line": 109,
+                    "column": 5,
+                    "endLine": 109,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -878,9 +958,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4096,
-                    "end": 4096,
-                    "replacementText": ": Color | undefined"
+                    "start": 4101,
+                    "end": 4101,
+                    "replacementText": ": Color | undefined",
+                    "line": 110,
+                    "column": 5,
+                    "endLine": 110,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -905,14 +989,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    key: string;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_3 {\n    key: string;\n}\n",
+                    "line": 111,
+                    "column": 17,
+                    "endLine": 111,
+                    "endColumn": 18
                 },
                 {
-                    "start": 4125,
-                    "end": 4125,
-                    "replacementText": ": GeneratedObjectLiteralInterface_3"
+                    "start": 4130,
+                    "end": 4130,
+                    "replacementText": ": GeneratedObjectLiteralInterface_3",
+                    "line": 111,
+                    "column": 17,
+                    "endLine": 111,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -927,9 +1019,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4160,
-                    "end": 4160,
-                    "replacementText": ": undefined"
+                    "start": 4165,
+                    "end": 4165,
+                    "replacementText": ": undefined",
+                    "line": 112,
+                    "column": 5,
+                    "endLine": 112,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -944,9 +1040,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4188,
-                    "end": 4188,
-                    "replacementText": ": null | undefined"
+                    "start": 4193,
+                    "end": 4193,
+                    "replacementText": ": null | undefined",
+                    "line": 113,
+                    "column": 5,
+                    "endLine": 113,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -961,9 +1061,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4216,
-                    "end": 4216,
-                    "replacementText": ": undefined"
+                    "start": 4221,
+                    "end": 4221,
+                    "replacementText": ": undefined",
+                    "line": 114,
+                    "column": 5,
+                    "endLine": 114,
+                    "endColumn": 33
                 }
             ],
             "suggest": "",
@@ -988,14 +1092,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_4 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_4 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 115,
+                    "column": 20,
+                    "endLine": 115,
+                    "endColumn": 21
                 },
                 {
-                    "start": 4246,
-                    "end": 4246,
-                    "replacementText": ": GeneratedObjectLiteralInterface_4"
+                    "start": 4251,
+                    "end": 4251,
+                    "replacementText": ": GeneratedObjectLiteralInterface_4",
+                    "line": 115,
+                    "column": 20,
+                    "endLine": 115,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -1010,9 +1122,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4295,
-                    "end": 4295,
-                    "replacementText": ": SendableClass | undefined"
+                    "start": 4300,
+                    "end": 4300,
+                    "replacementText": ": SendableClass | undefined",
+                    "line": 116,
+                    "column": 5,
+                    "endLine": 116,
+                    "endColumn": 43
                 }
             ],
             "suggest": "",
@@ -1027,9 +1143,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4340,
-                    "end": 4340,
-                    "replacementText": ": NoSendableClass | undefined"
+                    "start": 4345,
+                    "end": 4345,
+                    "replacementText": ": NoSendableClass | undefined",
+                    "line": 117,
+                    "column": 5,
+                    "endLine": 117,
+                    "endColumn": 47
                 }
             ],
             "suggest": "",
@@ -1044,9 +1164,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4494,
-                    "end": 4494,
-                    "replacementText": ": boolean"
+                    "start": 4499,
+                    "end": 4499,
+                    "replacementText": ": boolean",
+                    "line": 120,
+                    "column": 5,
+                    "endLine": 120,
+                    "endColumn": 35
                 }
             ],
             "suggest": "",
@@ -1061,9 +1185,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4528,
-                    "end": 4528,
-                    "replacementText": ": number"
+                    "start": 4533,
+                    "end": 4533,
+                    "replacementText": ": number",
+                    "line": 121,
+                    "column": 5,
+                    "endLine": 121,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -1078,9 +1206,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4560,
-                    "end": 4560,
-                    "replacementText": ": string"
+                    "start": 4565,
+                    "end": 4565,
+                    "replacementText": ": string",
+                    "line": 122,
+                    "column": 5,
+                    "endLine": 122,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -1095,9 +1227,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4596,
-                    "end": 4596,
-                    "replacementText": ": number[]"
+                    "start": 4601,
+                    "end": 4601,
+                    "replacementText": ": number[]",
+                    "line": 123,
+                    "column": 5,
+                    "endLine": 123,
+                    "endColumn": 38
                 }
             ],
             "suggest": "",
@@ -1112,9 +1248,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4634,
-                    "end": 4634,
-                    "replacementText": ": (string | number)[]"
+                    "start": 4639,
+                    "end": 4639,
+                    "replacementText": ": (string | number)[]",
+                    "line": 124,
+                    "column": 5,
+                    "endLine": 124,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -1129,9 +1269,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4679,
-                    "end": 4679,
-                    "replacementText": ": Color"
+                    "start": 4684,
+                    "end": 4684,
+                    "replacementText": ": Color",
+                    "line": 125,
+                    "column": 5,
+                    "endLine": 125,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -1156,14 +1300,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    key: string;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_5 {\n    key: string;\n}\n",
+                    "line": 126,
+                    "column": 26,
+                    "endLine": 126,
+                    "endColumn": 27
                 },
                 {
-                    "start": 4717,
-                    "end": 4717,
-                    "replacementText": ": GeneratedObjectLiteralInterface_5"
+                    "start": 4722,
+                    "end": 4722,
+                    "replacementText": ": GeneratedObjectLiteralInterface_5",
+                    "line": 126,
+                    "column": 26,
+                    "endLine": 126,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -1178,9 +1330,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4761,
-                    "end": 4761,
-                    "replacementText": ": undefined"
+                    "start": 4766,
+                    "end": 4766,
+                    "replacementText": ": undefined",
+                    "line": 127,
+                    "column": 5,
+                    "endLine": 127,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -1195,9 +1351,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4798,
-                    "end": 4798,
-                    "replacementText": ": null"
+                    "start": 4803,
+                    "end": 4803,
+                    "replacementText": ": null",
+                    "line": 128,
+                    "column": 5,
+                    "endLine": 128,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -1212,9 +1372,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4835,
-                    "end": 4835,
-                    "replacementText": ": undefined"
+                    "start": 4840,
+                    "end": 4840,
+                    "replacementText": ": undefined",
+                    "line": 129,
+                    "column": 5,
+                    "endLine": 129,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -1239,14 +1403,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_6 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 130,
+                    "column": 29,
+                    "endLine": 130,
+                    "endColumn": 30
                 },
                 {
-                    "start": 4874,
-                    "end": 4874,
-                    "replacementText": ": GeneratedObjectLiteralInterface_6"
+                    "start": 4879,
+                    "end": 4879,
+                    "replacementText": ": GeneratedObjectLiteralInterface_6",
+                    "line": 130,
+                    "column": 29,
+                    "endLine": 130,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -1261,9 +1433,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4932,
-                    "end": 4932,
-                    "replacementText": ": SendableClass"
+                    "start": 4937,
+                    "end": 4937,
+                    "replacementText": ": SendableClass",
+                    "line": 131,
+                    "column": 5,
+                    "endLine": 131,
+                    "endColumn": 52
                 }
             ],
             "suggest": "",
@@ -1278,9 +1454,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 4986,
-                    "end": 4986,
-                    "replacementText": ": NoSendableClass"
+                    "start": 4991,
+                    "end": 4991,
+                    "replacementText": ": NoSendableClass",
+                    "line": 132,
+                    "column": 5,
+                    "endLine": 132,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -1295,9 +1475,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5142,
-                    "end": 5142,
-                    "replacementText": ": true"
+                    "start": 5147,
+                    "end": 5147,
+                    "replacementText": ": true",
+                    "line": 135,
+                    "column": 5,
+                    "endLine": 135,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -1312,9 +1496,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5178,
-                    "end": 5178,
-                    "replacementText": ": 42"
+                    "start": 5183,
+                    "end": 5183,
+                    "replacementText": ": 42",
+                    "line": 136,
+                    "column": 5,
+                    "endLine": 136,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -1329,9 +1517,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5212,
-                    "end": 5212,
-                    "replacementText": ": \"Hello\""
+                    "start": 5217,
+                    "end": 5217,
+                    "replacementText": ": \"Hello\"",
+                    "line": 137,
+                    "column": 5,
+                    "endLine": 137,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -1346,9 +1538,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5250,
-                    "end": 5250,
-                    "replacementText": ": number[]"
+                    "start": 5255,
+                    "end": 5255,
+                    "replacementText": ": number[]",
+                    "line": 138,
+                    "column": 5,
+                    "endLine": 138,
+                    "endColumn": 40
                 }
             ],
             "suggest": "",
@@ -1363,9 +1559,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5290,
-                    "end": 5290,
-                    "replacementText": ": (string | number)[]"
+                    "start": 5295,
+                    "end": 5295,
+                    "replacementText": ": (string | number)[]",
+                    "line": 139,
+                    "column": 5,
+                    "endLine": 139,
+                    "endColumn": 48
                 }
             ],
             "suggest": "",
@@ -1380,9 +1580,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5337,
-                    "end": 5337,
-                    "replacementText": ": Color.Green"
+                    "start": 5342,
+                    "end": 5342,
+                    "replacementText": ": Color.Green",
+                    "line": 140,
+                    "column": 5,
+                    "endLine": 140,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
@@ -1407,14 +1611,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_7 {\n    key: string;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_7 {\n    key: string;\n}\n",
+                    "line": 141,
+                    "column": 28,
+                    "endLine": 141,
+                    "endColumn": 29
                 },
                 {
-                    "start": 5377,
-                    "end": 5377,
-                    "replacementText": ": GeneratedObjectLiteralInterface_7"
+                    "start": 5382,
+                    "end": 5382,
+                    "replacementText": ": GeneratedObjectLiteralInterface_7",
+                    "line": 141,
+                    "column": 28,
+                    "endLine": 141,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -1429,9 +1641,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5423,
-                    "end": 5423,
-                    "replacementText": ": undefined"
+                    "start": 5428,
+                    "end": 5428,
+                    "replacementText": ": undefined",
+                    "line": 142,
+                    "column": 5,
+                    "endLine": 142,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -1446,9 +1662,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5462,
-                    "end": 5462,
-                    "replacementText": ": null"
+                    "start": 5467,
+                    "end": 5467,
+                    "replacementText": ": null",
+                    "line": 143,
+                    "column": 5,
+                    "endLine": 143,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -1463,9 +1683,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5501,
-                    "end": 5501,
-                    "replacementText": ": undefined"
+                    "start": 5506,
+                    "end": 5506,
+                    "replacementText": ": undefined",
+                    "line": 144,
+                    "column": 5,
+                    "endLine": 144,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -1490,14 +1714,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 805,
-                    "end": 805,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_8 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 810,
+                    "end": 810,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_8 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 145,
+                    "column": 31,
+                    "endLine": 145,
+                    "endColumn": 32
                 },
                 {
-                    "start": 5542,
-                    "end": 5542,
-                    "replacementText": ": GeneratedObjectLiteralInterface_8"
+                    "start": 5547,
+                    "end": 5547,
+                    "replacementText": ": GeneratedObjectLiteralInterface_8",
+                    "line": 145,
+                    "column": 31,
+                    "endLine": 145,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -1512,9 +1744,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5602,
-                    "end": 5602,
-                    "replacementText": ": SendableClass"
+                    "start": 5607,
+                    "end": 5607,
+                    "replacementText": ": SendableClass",
+                    "line": 146,
+                    "column": 5,
+                    "endLine": 146,
+                    "endColumn": 54
                 }
             ],
             "suggest": "",
@@ -1529,9 +1765,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 5658,
-                    "end": 5658,
-                    "replacementText": ": NoSendableClass"
+                    "start": 5663,
+                    "end": 5663,
+                    "replacementText": ": NoSendableClass",
+                    "line": 147,
+                    "column": 5,
+                    "endLine": 147,
+                    "endColumn": 58
                 }
             ],
             "suggest": "",
@@ -2066,9 +2306,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8375,
-                    "end": 8375,
-                    "replacementText": ": boolean"
+                    "start": 8380,
+                    "end": 8380,
+                    "replacementText": ": boolean",
+                    "line": 212,
+                    "column": 5,
+                    "endLine": 212,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",
@@ -2083,9 +2327,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8399,
-                    "end": 8399,
-                    "replacementText": ": number"
+                    "start": 8404,
+                    "end": 8404,
+                    "replacementText": ": number",
+                    "line": 213,
+                    "column": 5,
+                    "endLine": 213,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -2100,9 +2348,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8421,
-                    "end": 8421,
-                    "replacementText": ": string"
+                    "start": 8426,
+                    "end": 8426,
+                    "replacementText": ": string",
+                    "line": 214,
+                    "column": 5,
+                    "endLine": 214,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -2117,9 +2369,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8447,
-                    "end": 8447,
-                    "replacementText": ": number[]"
+                    "start": 8452,
+                    "end": 8452,
+                    "replacementText": ": number[]",
+                    "line": 215,
+                    "column": 5,
+                    "endLine": 215,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -2134,9 +2390,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8475,
-                    "end": 8475,
-                    "replacementText": ": (string | number)[]"
+                    "start": 8480,
+                    "end": 8480,
+                    "replacementText": ": (string | number)[]",
+                    "line": 216,
+                    "column": 5,
+                    "endLine": 216,
+                    "endColumn": 36
                 }
             ],
             "suggest": "",
@@ -2151,9 +2411,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8510,
-                    "end": 8510,
-                    "replacementText": ": Color"
+                    "start": 8515,
+                    "end": 8515,
+                    "replacementText": ": Color",
+                    "line": 217,
+                    "column": 5,
+                    "endLine": 217,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -2178,14 +2442,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_9 {\n    key: string;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_9 {\n    key: string;\n}\n",
+                    "line": 218,
+                    "column": 16,
+                    "endLine": 218,
+                    "endColumn": 17
                 },
                 {
-                    "start": 8538,
-                    "end": 8538,
-                    "replacementText": ": GeneratedObjectLiteralInterface_9"
+                    "start": 8543,
+                    "end": 8543,
+                    "replacementText": ": GeneratedObjectLiteralInterface_9",
+                    "line": 218,
+                    "column": 16,
+                    "endLine": 218,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -2200,9 +2472,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8572,
-                    "end": 8572,
-                    "replacementText": ": undefined"
+                    "start": 8577,
+                    "end": 8577,
+                    "replacementText": ": undefined",
+                    "line": 219,
+                    "column": 5,
+                    "endLine": 219,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -2217,9 +2493,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8599,
-                    "end": 8599,
-                    "replacementText": ": null"
+                    "start": 8604,
+                    "end": 8604,
+                    "replacementText": ": null",
+                    "line": 220,
+                    "column": 5,
+                    "endLine": 220,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -2234,9 +2514,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8626,
-                    "end": 8626,
-                    "replacementText": ": undefined"
+                    "start": 8631,
+                    "end": 8631,
+                    "replacementText": ": undefined",
+                    "line": 221,
+                    "column": 5,
+                    "endLine": 221,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -2261,14 +2545,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_10 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_10 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 222,
+                    "column": 19,
+                    "endLine": 222,
+                    "endColumn": 20
                 },
                 {
-                    "start": 8655,
-                    "end": 8655,
-                    "replacementText": ": GeneratedObjectLiteralInterface_10"
+                    "start": 8660,
+                    "end": 8660,
+                    "replacementText": ": GeneratedObjectLiteralInterface_10",
+                    "line": 222,
+                    "column": 19,
+                    "endLine": 222,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -2283,9 +2575,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8703,
-                    "end": 8703,
-                    "replacementText": ": SendableClass"
+                    "start": 8708,
+                    "end": 8708,
+                    "replacementText": ": SendableClass",
+                    "line": 223,
+                    "column": 5,
+                    "endLine": 223,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -2300,9 +2596,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8747,
-                    "end": 8747,
-                    "replacementText": ": NoSendableClass"
+                    "start": 8752,
+                    "end": 8752,
+                    "replacementText": ": NoSendableClass",
+                    "line": 224,
+                    "column": 5,
+                    "endLine": 224,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -2317,9 +2617,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8892,
-                    "end": 8892,
-                    "replacementText": ": boolean | undefined"
+                    "start": 8897,
+                    "end": 8897,
+                    "replacementText": ": boolean | undefined",
+                    "line": 227,
+                    "column": 5,
+                    "endLine": 227,
+                    "endColumn": 26
                 }
             ],
             "suggest": "",
@@ -2334,9 +2638,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8917,
-                    "end": 8917,
-                    "replacementText": ": number | undefined"
+                    "start": 8922,
+                    "end": 8922,
+                    "replacementText": ": number | undefined",
+                    "line": 228,
+                    "column": 5,
+                    "endLine": 228,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -2351,9 +2659,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8940,
-                    "end": 8940,
-                    "replacementText": ": string | undefined"
+                    "start": 8945,
+                    "end": 8945,
+                    "replacementText": ": string | undefined",
+                    "line": 229,
+                    "column": 5,
+                    "endLine": 229,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -2368,9 +2680,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8967,
-                    "end": 8967,
-                    "replacementText": ": number[] | undefined"
+                    "start": 8972,
+                    "end": 8972,
+                    "replacementText": ": number[] | undefined",
+                    "line": 230,
+                    "column": 5,
+                    "endLine": 230,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -2385,9 +2701,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 8996,
-                    "end": 8996,
-                    "replacementText": ": (string | number)[] | undefined"
+                    "start": 9001,
+                    "end": 9001,
+                    "replacementText": ": (string | number)[] | undefined",
+                    "line": 231,
+                    "column": 5,
+                    "endLine": 231,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -2402,9 +2722,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9032,
-                    "end": 9032,
-                    "replacementText": ": Color | undefined"
+                    "start": 9037,
+                    "end": 9037,
+                    "replacementText": ": Color | undefined",
+                    "line": 232,
+                    "column": 5,
+                    "endLine": 232,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -2429,14 +2753,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_11 {\n    key: string;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_11 {\n    key: string;\n}\n",
+                    "line": 233,
+                    "column": 17,
+                    "endLine": 233,
+                    "endColumn": 18
                 },
                 {
-                    "start": 9061,
-                    "end": 9061,
-                    "replacementText": ": GeneratedObjectLiteralInterface_11"
+                    "start": 9066,
+                    "end": 9066,
+                    "replacementText": ": GeneratedObjectLiteralInterface_11",
+                    "line": 233,
+                    "column": 17,
+                    "endLine": 233,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -2451,9 +2783,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9096,
-                    "end": 9096,
-                    "replacementText": ": undefined"
+                    "start": 9101,
+                    "end": 9101,
+                    "replacementText": ": undefined",
+                    "line": 234,
+                    "column": 5,
+                    "endLine": 234,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -2468,9 +2804,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9124,
-                    "end": 9124,
-                    "replacementText": ": null | undefined"
+                    "start": 9129,
+                    "end": 9129,
+                    "replacementText": ": null | undefined",
+                    "line": 235,
+                    "column": 5,
+                    "endLine": 235,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -2485,9 +2825,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9152,
-                    "end": 9152,
-                    "replacementText": ": undefined"
+                    "start": 9157,
+                    "end": 9157,
+                    "replacementText": ": undefined",
+                    "line": 236,
+                    "column": 5,
+                    "endLine": 236,
+                    "endColumn": 33
                 }
             ],
             "suggest": "",
@@ -2512,14 +2856,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_12 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_12 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 237,
+                    "column": 20,
+                    "endLine": 237,
+                    "endColumn": 21
                 },
                 {
-                    "start": 9182,
-                    "end": 9182,
-                    "replacementText": ": GeneratedObjectLiteralInterface_12"
+                    "start": 9187,
+                    "end": 9187,
+                    "replacementText": ": GeneratedObjectLiteralInterface_12",
+                    "line": 237,
+                    "column": 20,
+                    "endLine": 237,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -2534,9 +2886,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9231,
-                    "end": 9231,
-                    "replacementText": ": SendableClass | undefined"
+                    "start": 9236,
+                    "end": 9236,
+                    "replacementText": ": SendableClass | undefined",
+                    "line": 238,
+                    "column": 5,
+                    "endLine": 238,
+                    "endColumn": 43
                 }
             ],
             "suggest": "",
@@ -2551,9 +2907,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9276,
-                    "end": 9276,
-                    "replacementText": ": NoSendableClass | undefined"
+                    "start": 9281,
+                    "end": 9281,
+                    "replacementText": ": NoSendableClass | undefined",
+                    "line": 239,
+                    "column": 5,
+                    "endLine": 239,
+                    "endColumn": 47
                 }
             ],
             "suggest": "",
@@ -2568,9 +2928,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9430,
-                    "end": 9430,
-                    "replacementText": ": boolean"
+                    "start": 9435,
+                    "end": 9435,
+                    "replacementText": ": boolean",
+                    "line": 242,
+                    "column": 5,
+                    "endLine": 242,
+                    "endColumn": 35
                 }
             ],
             "suggest": "",
@@ -2585,9 +2949,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9464,
-                    "end": 9464,
-                    "replacementText": ": number"
+                    "start": 9469,
+                    "end": 9469,
+                    "replacementText": ": number",
+                    "line": 243,
+                    "column": 5,
+                    "endLine": 243,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -2602,9 +2970,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9496,
-                    "end": 9496,
-                    "replacementText": ": string"
+                    "start": 9501,
+                    "end": 9501,
+                    "replacementText": ": string",
+                    "line": 244,
+                    "column": 5,
+                    "endLine": 244,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -2619,9 +2991,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9532,
-                    "end": 9532,
-                    "replacementText": ": number[]"
+                    "start": 9537,
+                    "end": 9537,
+                    "replacementText": ": number[]",
+                    "line": 245,
+                    "column": 5,
+                    "endLine": 245,
+                    "endColumn": 38
                 }
             ],
             "suggest": "",
@@ -2636,9 +3012,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9570,
-                    "end": 9570,
-                    "replacementText": ": (string | number)[]"
+                    "start": 9575,
+                    "end": 9575,
+                    "replacementText": ": (string | number)[]",
+                    "line": 246,
+                    "column": 5,
+                    "endLine": 246,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -2653,9 +3033,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9615,
-                    "end": 9615,
-                    "replacementText": ": Color"
+                    "start": 9620,
+                    "end": 9620,
+                    "replacementText": ": Color",
+                    "line": 247,
+                    "column": 5,
+                    "endLine": 247,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -2680,14 +3064,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_13 {\n    key: string;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_13 {\n    key: string;\n}\n",
+                    "line": 248,
+                    "column": 26,
+                    "endLine": 248,
+                    "endColumn": 27
                 },
                 {
-                    "start": 9653,
-                    "end": 9653,
-                    "replacementText": ": GeneratedObjectLiteralInterface_13"
+                    "start": 9658,
+                    "end": 9658,
+                    "replacementText": ": GeneratedObjectLiteralInterface_13",
+                    "line": 248,
+                    "column": 26,
+                    "endLine": 248,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -2702,9 +3094,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9697,
-                    "end": 9697,
-                    "replacementText": ": undefined"
+                    "start": 9702,
+                    "end": 9702,
+                    "replacementText": ": undefined",
+                    "line": 249,
+                    "column": 5,
+                    "endLine": 249,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -2719,9 +3115,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9734,
-                    "end": 9734,
-                    "replacementText": ": null"
+                    "start": 9739,
+                    "end": 9739,
+                    "replacementText": ": null",
+                    "line": 250,
+                    "column": 5,
+                    "endLine": 250,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -2736,9 +3136,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9771,
-                    "end": 9771,
-                    "replacementText": ": undefined"
+                    "start": 9776,
+                    "end": 9776,
+                    "replacementText": ": undefined",
+                    "line": 251,
+                    "column": 5,
+                    "endLine": 251,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -2763,14 +3167,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_14 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_14 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 252,
+                    "column": 29,
+                    "endLine": 252,
+                    "endColumn": 30
                 },
                 {
-                    "start": 9810,
-                    "end": 9810,
-                    "replacementText": ": GeneratedObjectLiteralInterface_14"
+                    "start": 9815,
+                    "end": 9815,
+                    "replacementText": ": GeneratedObjectLiteralInterface_14",
+                    "line": 252,
+                    "column": 29,
+                    "endLine": 252,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -2785,9 +3197,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9868,
-                    "end": 9868,
-                    "replacementText": ": SendableClass"
+                    "start": 9873,
+                    "end": 9873,
+                    "replacementText": ": SendableClass",
+                    "line": 253,
+                    "column": 5,
+                    "endLine": 253,
+                    "endColumn": 52
                 }
             ],
             "suggest": "",
@@ -2802,9 +3218,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 9922,
-                    "end": 9922,
-                    "replacementText": ": NoSendableClass"
+                    "start": 9927,
+                    "end": 9927,
+                    "replacementText": ": NoSendableClass",
+                    "line": 254,
+                    "column": 5,
+                    "endLine": 254,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -2819,9 +3239,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10078,
-                    "end": 10078,
-                    "replacementText": ": true"
+                    "start": 10083,
+                    "end": 10083,
+                    "replacementText": ": true",
+                    "line": 257,
+                    "column": 5,
+                    "endLine": 257,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -2836,9 +3260,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10114,
-                    "end": 10114,
-                    "replacementText": ": 42"
+                    "start": 10119,
+                    "end": 10119,
+                    "replacementText": ": 42",
+                    "line": 258,
+                    "column": 5,
+                    "endLine": 258,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -2853,9 +3281,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10148,
-                    "end": 10148,
-                    "replacementText": ": \"Hello\""
+                    "start": 10153,
+                    "end": 10153,
+                    "replacementText": ": \"Hello\"",
+                    "line": 259,
+                    "column": 5,
+                    "endLine": 259,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -2870,9 +3302,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10186,
-                    "end": 10186,
-                    "replacementText": ": number[]"
+                    "start": 10191,
+                    "end": 10191,
+                    "replacementText": ": number[]",
+                    "line": 260,
+                    "column": 5,
+                    "endLine": 260,
+                    "endColumn": 40
                 }
             ],
             "suggest": "",
@@ -2887,9 +3323,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10226,
-                    "end": 10226,
-                    "replacementText": ": (string | number)[]"
+                    "start": 10231,
+                    "end": 10231,
+                    "replacementText": ": (string | number)[]",
+                    "line": 261,
+                    "column": 5,
+                    "endLine": 261,
+                    "endColumn": 48
                 }
             ],
             "suggest": "",
@@ -2904,9 +3344,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10273,
-                    "end": 10273,
-                    "replacementText": ": Color.Green"
+                    "start": 10278,
+                    "end": 10278,
+                    "replacementText": ": Color.Green",
+                    "line": 262,
+                    "column": 5,
+                    "endLine": 262,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
@@ -2931,14 +3375,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_15 {\n    key: string;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_15 {\n    key: string;\n}\n",
+                    "line": 263,
+                    "column": 28,
+                    "endLine": 263,
+                    "endColumn": 29
                 },
                 {
-                    "start": 10313,
-                    "end": 10313,
-                    "replacementText": ": GeneratedObjectLiteralInterface_15"
+                    "start": 10318,
+                    "end": 10318,
+                    "replacementText": ": GeneratedObjectLiteralInterface_15",
+                    "line": 263,
+                    "column": 28,
+                    "endLine": 263,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -2953,9 +3405,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10359,
-                    "end": 10359,
-                    "replacementText": ": undefined"
+                    "start": 10364,
+                    "end": 10364,
+                    "replacementText": ": undefined",
+                    "line": 264,
+                    "column": 5,
+                    "endLine": 264,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -2970,9 +3426,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10398,
-                    "end": 10398,
-                    "replacementText": ": null"
+                    "start": 10403,
+                    "end": 10403,
+                    "replacementText": ": null",
+                    "line": 265,
+                    "column": 5,
+                    "endLine": 265,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -2987,9 +3447,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10437,
-                    "end": 10437,
-                    "replacementText": ": undefined"
+                    "start": 10442,
+                    "end": 10442,
+                    "replacementText": ": undefined",
+                    "line": 266,
+                    "column": 5,
+                    "endLine": 266,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -3014,14 +3478,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 5687,
-                    "end": 5687,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_16 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 5692,
+                    "end": 5692,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_16 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 267,
+                    "column": 31,
+                    "endLine": 267,
+                    "endColumn": 32
                 },
                 {
-                    "start": 10478,
-                    "end": 10478,
-                    "replacementText": ": GeneratedObjectLiteralInterface_16"
+                    "start": 10483,
+                    "end": 10483,
+                    "replacementText": ": GeneratedObjectLiteralInterface_16",
+                    "line": 267,
+                    "column": 31,
+                    "endLine": 267,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -3036,9 +3508,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10538,
-                    "end": 10538,
-                    "replacementText": ": SendableClass"
+                    "start": 10543,
+                    "end": 10543,
+                    "replacementText": ": SendableClass",
+                    "line": 268,
+                    "column": 5,
+                    "endLine": 268,
+                    "endColumn": 54
                 }
             ],
             "suggest": "",
@@ -3053,9 +3529,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 10594,
-                    "end": 10594,
-                    "replacementText": ": NoSendableClass"
+                    "start": 10599,
+                    "end": 10599,
+                    "replacementText": ": NoSendableClass",
+                    "line": 269,
+                    "column": 5,
+                    "endLine": 269,
+                    "endColumn": 58
                 }
             ],
             "suggest": "",
@@ -3590,9 +4070,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13284,
-                    "end": 13284,
-                    "replacementText": ": boolean"
+                    "start": 13289,
+                    "end": 13289,
+                    "replacementText": ": boolean",
+                    "line": 331,
+                    "column": 5,
+                    "endLine": 331,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",
@@ -3607,9 +4091,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13308,
-                    "end": 13308,
-                    "replacementText": ": number"
+                    "start": 13313,
+                    "end": 13313,
+                    "replacementText": ": number",
+                    "line": 332,
+                    "column": 5,
+                    "endLine": 332,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -3624,9 +4112,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13330,
-                    "end": 13330,
-                    "replacementText": ": string"
+                    "start": 13335,
+                    "end": 13335,
+                    "replacementText": ": string",
+                    "line": 333,
+                    "column": 5,
+                    "endLine": 333,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -3641,9 +4133,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13356,
-                    "end": 13356,
-                    "replacementText": ": number[]"
+                    "start": 13361,
+                    "end": 13361,
+                    "replacementText": ": number[]",
+                    "line": 334,
+                    "column": 5,
+                    "endLine": 334,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -3658,9 +4154,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13384,
-                    "end": 13384,
-                    "replacementText": ": (string | number)[]"
+                    "start": 13389,
+                    "end": 13389,
+                    "replacementText": ": (string | number)[]",
+                    "line": 335,
+                    "column": 5,
+                    "endLine": 335,
+                    "endColumn": 36
                 }
             ],
             "suggest": "",
@@ -3675,9 +4175,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13419,
-                    "end": 13419,
-                    "replacementText": ": Color"
+                    "start": 13424,
+                    "end": 13424,
+                    "replacementText": ": Color",
+                    "line": 336,
+                    "column": 5,
+                    "endLine": 336,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -3702,14 +4206,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_17 {\n    key: string;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_17 {\n    key: string;\n}\n",
+                    "line": 337,
+                    "column": 16,
+                    "endLine": 337,
+                    "endColumn": 17
                 },
                 {
-                    "start": 13447,
-                    "end": 13447,
-                    "replacementText": ": GeneratedObjectLiteralInterface_17"
+                    "start": 13452,
+                    "end": 13452,
+                    "replacementText": ": GeneratedObjectLiteralInterface_17",
+                    "line": 337,
+                    "column": 16,
+                    "endLine": 337,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -3724,9 +4236,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13481,
-                    "end": 13481,
-                    "replacementText": ": undefined"
+                    "start": 13486,
+                    "end": 13486,
+                    "replacementText": ": undefined",
+                    "line": 338,
+                    "column": 5,
+                    "endLine": 338,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -3741,9 +4257,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13508,
-                    "end": 13508,
-                    "replacementText": ": null"
+                    "start": 13513,
+                    "end": 13513,
+                    "replacementText": ": null",
+                    "line": 339,
+                    "column": 5,
+                    "endLine": 339,
+                    "endColumn": 22
                 }
             ],
             "suggest": "",
@@ -3758,9 +4278,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13535,
-                    "end": 13535,
-                    "replacementText": ": undefined"
+                    "start": 13540,
+                    "end": 13540,
+                    "replacementText": ": undefined",
+                    "line": 340,
+                    "column": 5,
+                    "endLine": 340,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -3785,14 +4309,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_18 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_18 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 341,
+                    "column": 19,
+                    "endLine": 341,
+                    "endColumn": 20
                 },
                 {
-                    "start": 13564,
-                    "end": 13564,
-                    "replacementText": ": GeneratedObjectLiteralInterface_18"
+                    "start": 13569,
+                    "end": 13569,
+                    "replacementText": ": GeneratedObjectLiteralInterface_18",
+                    "line": 341,
+                    "column": 19,
+                    "endLine": 341,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -3807,9 +4339,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13612,
-                    "end": 13612,
-                    "replacementText": ": SendableClass"
+                    "start": 13617,
+                    "end": 13617,
+                    "replacementText": ": SendableClass",
+                    "line": 342,
+                    "column": 5,
+                    "endLine": 342,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -3824,9 +4360,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13656,
-                    "end": 13656,
-                    "replacementText": ": NoSendableClass"
+                    "start": 13661,
+                    "end": 13661,
+                    "replacementText": ": NoSendableClass",
+                    "line": 343,
+                    "column": 5,
+                    "endLine": 343,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -3841,9 +4381,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13801,
-                    "end": 13801,
-                    "replacementText": ": boolean | undefined"
+                    "start": 13806,
+                    "end": 13806,
+                    "replacementText": ": boolean | undefined",
+                    "line": 346,
+                    "column": 5,
+                    "endLine": 346,
+                    "endColumn": 26
                 }
             ],
             "suggest": "",
@@ -3858,9 +4402,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13826,
-                    "end": 13826,
-                    "replacementText": ": number | undefined"
+                    "start": 13831,
+                    "end": 13831,
+                    "replacementText": ": number | undefined",
+                    "line": 347,
+                    "column": 5,
+                    "endLine": 347,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -3875,9 +4423,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13849,
-                    "end": 13849,
-                    "replacementText": ": string | undefined"
+                    "start": 13854,
+                    "end": 13854,
+                    "replacementText": ": string | undefined",
+                    "line": 348,
+                    "column": 5,
+                    "endLine": 348,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -3892,9 +4444,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13876,
-                    "end": 13876,
-                    "replacementText": ": number[] | undefined"
+                    "start": 13881,
+                    "end": 13881,
+                    "replacementText": ": number[] | undefined",
+                    "line": 349,
+                    "column": 5,
+                    "endLine": 349,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -3909,9 +4465,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13905,
-                    "end": 13905,
-                    "replacementText": ": (string | number)[] | undefined"
+                    "start": 13910,
+                    "end": 13910,
+                    "replacementText": ": (string | number)[] | undefined",
+                    "line": 350,
+                    "column": 5,
+                    "endLine": 350,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -3926,9 +4486,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 13941,
-                    "end": 13941,
-                    "replacementText": ": Color | undefined"
+                    "start": 13946,
+                    "end": 13946,
+                    "replacementText": ": Color | undefined",
+                    "line": 351,
+                    "column": 5,
+                    "endLine": 351,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -3953,14 +4517,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_19 {\n    key: string;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_19 {\n    key: string;\n}\n",
+                    "line": 352,
+                    "column": 17,
+                    "endLine": 352,
+                    "endColumn": 18
                 },
                 {
-                    "start": 13970,
-                    "end": 13970,
-                    "replacementText": ": GeneratedObjectLiteralInterface_19"
+                    "start": 13975,
+                    "end": 13975,
+                    "replacementText": ": GeneratedObjectLiteralInterface_19",
+                    "line": 352,
+                    "column": 17,
+                    "endLine": 352,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -3975,9 +4547,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14005,
-                    "end": 14005,
-                    "replacementText": ": undefined"
+                    "start": 14010,
+                    "end": 14010,
+                    "replacementText": ": undefined",
+                    "line": 353,
+                    "column": 5,
+                    "endLine": 353,
+                    "endColumn": 28
                 }
             ],
             "suggest": "",
@@ -3992,9 +4568,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14033,
-                    "end": 14033,
-                    "replacementText": ": null | undefined"
+                    "start": 14038,
+                    "end": 14038,
+                    "replacementText": ": null | undefined",
+                    "line": 354,
+                    "column": 5,
+                    "endLine": 354,
+                    "endColumn": 23
                 }
             ],
             "suggest": "",
@@ -4009,9 +4589,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14061,
-                    "end": 14061,
-                    "replacementText": ": undefined"
+                    "start": 14066,
+                    "end": 14066,
+                    "replacementText": ": undefined",
+                    "line": 355,
+                    "column": 5,
+                    "endLine": 355,
+                    "endColumn": 33
                 }
             ],
             "suggest": "",
@@ -4036,14 +4620,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_20 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_20 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 356,
+                    "column": 20,
+                    "endLine": 356,
+                    "endColumn": 21
                 },
                 {
-                    "start": 14091,
-                    "end": 14091,
-                    "replacementText": ": GeneratedObjectLiteralInterface_20"
+                    "start": 14096,
+                    "end": 14096,
+                    "replacementText": ": GeneratedObjectLiteralInterface_20",
+                    "line": 356,
+                    "column": 20,
+                    "endLine": 356,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -4058,9 +4650,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14140,
-                    "end": 14140,
-                    "replacementText": ": SendableClass | undefined"
+                    "start": 14145,
+                    "end": 14145,
+                    "replacementText": ": SendableClass | undefined",
+                    "line": 357,
+                    "column": 5,
+                    "endLine": 357,
+                    "endColumn": 43
                 }
             ],
             "suggest": "",
@@ -4075,9 +4671,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14185,
-                    "end": 14185,
-                    "replacementText": ": NoSendableClass | undefined"
+                    "start": 14190,
+                    "end": 14190,
+                    "replacementText": ": NoSendableClass | undefined",
+                    "line": 358,
+                    "column": 5,
+                    "endLine": 358,
+                    "endColumn": 47
                 }
             ],
             "suggest": "",
@@ -4092,9 +4692,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14339,
-                    "end": 14339,
-                    "replacementText": ": boolean"
+                    "start": 14344,
+                    "end": 14344,
+                    "replacementText": ": boolean",
+                    "line": 361,
+                    "column": 5,
+                    "endLine": 361,
+                    "endColumn": 35
                 }
             ],
             "suggest": "",
@@ -4109,9 +4713,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14373,
-                    "end": 14373,
-                    "replacementText": ": number"
+                    "start": 14378,
+                    "end": 14378,
+                    "replacementText": ": number",
+                    "line": 362,
+                    "column": 5,
+                    "endLine": 362,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -4126,9 +4734,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14405,
-                    "end": 14405,
-                    "replacementText": ": string"
+                    "start": 14410,
+                    "end": 14410,
+                    "replacementText": ": string",
+                    "line": 363,
+                    "column": 5,
+                    "endLine": 363,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -4143,9 +4755,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14441,
-                    "end": 14441,
-                    "replacementText": ": number[]"
+                    "start": 14446,
+                    "end": 14446,
+                    "replacementText": ": number[]",
+                    "line": 364,
+                    "column": 5,
+                    "endLine": 364,
+                    "endColumn": 38
                 }
             ],
             "suggest": "",
@@ -4160,9 +4776,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14479,
-                    "end": 14479,
-                    "replacementText": ": (string | number)[]"
+                    "start": 14484,
+                    "end": 14484,
+                    "replacementText": ": (string | number)[]",
+                    "line": 365,
+                    "column": 5,
+                    "endLine": 365,
+                    "endColumn": 46
                 }
             ],
             "suggest": "",
@@ -4177,9 +4797,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14524,
-                    "end": 14524,
-                    "replacementText": ": Color"
+                    "start": 14529,
+                    "end": 14529,
+                    "replacementText": ": Color",
+                    "line": 366,
+                    "column": 5,
+                    "endLine": 366,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -4204,14 +4828,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_21 {\n    key: string;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_21 {\n    key: string;\n}\n",
+                    "line": 367,
+                    "column": 26,
+                    "endLine": 367,
+                    "endColumn": 27
                 },
                 {
-                    "start": 14562,
-                    "end": 14562,
-                    "replacementText": ": GeneratedObjectLiteralInterface_21"
+                    "start": 14567,
+                    "end": 14567,
+                    "replacementText": ": GeneratedObjectLiteralInterface_21",
+                    "line": 367,
+                    "column": 26,
+                    "endLine": 367,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -4226,9 +4858,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14606,
-                    "end": 14606,
-                    "replacementText": ": undefined"
+                    "start": 14611,
+                    "end": 14611,
+                    "replacementText": ": undefined",
+                    "line": 368,
+                    "column": 5,
+                    "endLine": 368,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -4243,9 +4879,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14643,
-                    "end": 14643,
-                    "replacementText": ": null"
+                    "start": 14648,
+                    "end": 14648,
+                    "replacementText": ": null",
+                    "line": 369,
+                    "column": 5,
+                    "endLine": 369,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -4260,9 +4900,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14680,
-                    "end": 14680,
-                    "replacementText": ": undefined"
+                    "start": 14685,
+                    "end": 14685,
+                    "replacementText": ": undefined",
+                    "line": 370,
+                    "column": 5,
+                    "endLine": 370,
+                    "endColumn": 42
                 }
             ],
             "suggest": "",
@@ -4287,14 +4931,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_22 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_22 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 371,
+                    "column": 29,
+                    "endLine": 371,
+                    "endColumn": 30
                 },
                 {
-                    "start": 14719,
-                    "end": 14719,
-                    "replacementText": ": GeneratedObjectLiteralInterface_22"
+                    "start": 14724,
+                    "end": 14724,
+                    "replacementText": ": GeneratedObjectLiteralInterface_22",
+                    "line": 371,
+                    "column": 29,
+                    "endLine": 371,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -4309,9 +4961,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14777,
-                    "end": 14777,
-                    "replacementText": ": SendableClass"
+                    "start": 14782,
+                    "end": 14782,
+                    "replacementText": ": SendableClass",
+                    "line": 372,
+                    "column": 5,
+                    "endLine": 372,
+                    "endColumn": 52
                 }
             ],
             "suggest": "",
@@ -4326,9 +4982,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14831,
-                    "end": 14831,
-                    "replacementText": ": NoSendableClass"
+                    "start": 14836,
+                    "end": 14836,
+                    "replacementText": ": NoSendableClass",
+                    "line": 373,
+                    "column": 5,
+                    "endLine": 373,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -4343,9 +5003,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 14987,
-                    "end": 14987,
-                    "replacementText": ": true"
+                    "start": 14992,
+                    "end": 14992,
+                    "replacementText": ": true",
+                    "line": 376,
+                    "column": 5,
+                    "endLine": 376,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -4360,9 +5024,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15023,
-                    "end": 15023,
-                    "replacementText": ": 42"
+                    "start": 15028,
+                    "end": 15028,
+                    "replacementText": ": 42",
+                    "line": 377,
+                    "column": 5,
+                    "endLine": 377,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -4377,9 +5045,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15057,
-                    "end": 15057,
-                    "replacementText": ": \"Hello\""
+                    "start": 15062,
+                    "end": 15062,
+                    "replacementText": ": \"Hello\"",
+                    "line": 378,
+                    "column": 5,
+                    "endLine": 378,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -4394,9 +5066,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15095,
-                    "end": 15095,
-                    "replacementText": ": number[]"
+                    "start": 15100,
+                    "end": 15100,
+                    "replacementText": ": number[]",
+                    "line": 379,
+                    "column": 5,
+                    "endLine": 379,
+                    "endColumn": 40
                 }
             ],
             "suggest": "",
@@ -4411,9 +5087,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15135,
-                    "end": 15135,
-                    "replacementText": ": (string | number)[]"
+                    "start": 15140,
+                    "end": 15140,
+                    "replacementText": ": (string | number)[]",
+                    "line": 380,
+                    "column": 5,
+                    "endLine": 380,
+                    "endColumn": 48
                 }
             ],
             "suggest": "",
@@ -4428,9 +5108,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15182,
-                    "end": 15182,
-                    "replacementText": ": Color.Green"
+                    "start": 15187,
+                    "end": 15187,
+                    "replacementText": ": Color.Green",
+                    "line": 381,
+                    "column": 5,
+                    "endLine": 381,
+                    "endColumn": 41
                 }
             ],
             "suggest": "",
@@ -4455,14 +5139,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_23 {\n    key: string;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_23 {\n    key: string;\n}\n",
+                    "line": 382,
+                    "column": 28,
+                    "endLine": 382,
+                    "endColumn": 29
                 },
                 {
-                    "start": 15222,
-                    "end": 15222,
-                    "replacementText": ": GeneratedObjectLiteralInterface_23"
+                    "start": 15227,
+                    "end": 15227,
+                    "replacementText": ": GeneratedObjectLiteralInterface_23",
+                    "line": 382,
+                    "column": 28,
+                    "endLine": 382,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -4477,9 +5169,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15268,
-                    "end": 15268,
-                    "replacementText": ": undefined"
+                    "start": 15273,
+                    "end": 15273,
+                    "replacementText": ": undefined",
+                    "line": 383,
+                    "column": 5,
+                    "endLine": 383,
+                    "endColumn": 39
                 }
             ],
             "suggest": "",
@@ -4494,9 +5190,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15307,
-                    "end": 15307,
-                    "replacementText": ": null"
+                    "start": 15312,
+                    "end": 15312,
+                    "replacementText": ": null",
+                    "line": 384,
+                    "column": 5,
+                    "endLine": 384,
+                    "endColumn": 34
                 }
             ],
             "suggest": "",
@@ -4511,9 +5211,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15346,
-                    "end": 15346,
-                    "replacementText": ": undefined"
+                    "start": 15351,
+                    "end": 15351,
+                    "replacementText": ": undefined",
+                    "line": 385,
+                    "column": 5,
+                    "endLine": 385,
+                    "endColumn": 44
                 }
             ],
             "suggest": "",
@@ -4538,14 +5242,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 10623,
-                    "end": 10623,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_24 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 10628,
+                    "end": 10628,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_24 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 386,
+                    "column": 31,
+                    "endLine": 386,
+                    "endColumn": 32
                 },
                 {
-                    "start": 15387,
-                    "end": 15387,
-                    "replacementText": ": GeneratedObjectLiteralInterface_24"
+                    "start": 15392,
+                    "end": 15392,
+                    "replacementText": ": GeneratedObjectLiteralInterface_24",
+                    "line": 386,
+                    "column": 31,
+                    "endLine": 386,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",
@@ -4560,9 +5272,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15447,
-                    "end": 15447,
-                    "replacementText": ": SendableClass"
+                    "start": 15452,
+                    "end": 15452,
+                    "replacementText": ": SendableClass",
+                    "line": 387,
+                    "column": 5,
+                    "endLine": 387,
+                    "endColumn": 54
                 }
             ],
             "suggest": "",
@@ -4577,9 +5293,13 @@
             "problem": "SendableExplicitFieldType",
             "autofix": [
                 {
-                    "start": 15503,
-                    "end": 15503,
-                    "replacementText": ": NoSendableClass"
+                    "start": 15508,
+                    "end": 15508,
+                    "replacementText": ": NoSendableClass",
+                    "line": 388,
+                    "column": 5,
+                    "endLine": 388,
+                    "endColumn": 58
                 }
             ],
             "suggest": "",
@@ -4674,14 +5394,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_25 {\n    key: string;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_25 {\n    key: string;\n}\n",
+                    "line": 454,
+                    "column": 16,
+                    "endLine": 454,
+                    "endColumn": 17
                 },
                 {
-                    "start": 18219,
-                    "end": 18219,
-                    "replacementText": ": GeneratedObjectLiteralInterface_25"
+                    "start": 18224,
+                    "end": 18224,
+                    "replacementText": ": GeneratedObjectLiteralInterface_25",
+                    "line": 454,
+                    "column": 16,
+                    "endLine": 454,
+                    "endColumn": 17
                 }
             ],
             "suggest": "",
@@ -4696,14 +5424,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_26 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_26 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 458,
+                    "column": 19,
+                    "endLine": 458,
+                    "endColumn": 20
                 },
                 {
-                    "start": 18336,
-                    "end": 18336,
-                    "replacementText": ": GeneratedObjectLiteralInterface_26"
+                    "start": 18341,
+                    "end": 18341,
+                    "replacementText": ": GeneratedObjectLiteralInterface_26",
+                    "line": 458,
+                    "column": 19,
+                    "endLine": 458,
+                    "endColumn": 20
                 }
             ],
             "suggest": "",
@@ -4718,14 +5454,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_27 {\n    key: string;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_27 {\n    key: string;\n}\n",
+                    "line": 468,
+                    "column": 17,
+                    "endLine": 468,
+                    "endColumn": 18
                 },
                 {
-                    "start": 18641,
-                    "end": 18641,
-                    "replacementText": ": GeneratedObjectLiteralInterface_27"
+                    "start": 18646,
+                    "end": 18646,
+                    "replacementText": ": GeneratedObjectLiteralInterface_27",
+                    "line": 468,
+                    "column": 17,
+                    "endLine": 468,
+                    "endColumn": 18
                 }
             ],
             "suggest": "",
@@ -4740,14 +5484,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_28 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_28 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 472,
+                    "column": 20,
+                    "endLine": 472,
+                    "endColumn": 21
                 },
                 {
-                    "start": 18762,
-                    "end": 18762,
-                    "replacementText": ": GeneratedObjectLiteralInterface_28"
+                    "start": 18767,
+                    "end": 18767,
+                    "replacementText": ": GeneratedObjectLiteralInterface_28",
+                    "line": 472,
+                    "column": 20,
+                    "endLine": 472,
+                    "endColumn": 21
                 }
             ],
             "suggest": "",
@@ -4762,14 +5514,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_29 {\n    key: string;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_29 {\n    key: string;\n}\n",
+                    "line": 482,
+                    "column": 26,
+                    "endLine": 482,
+                    "endColumn": 27
                 },
                 {
-                    "start": 19132,
-                    "end": 19132,
-                    "replacementText": ": GeneratedObjectLiteralInterface_29"
+                    "start": 19137,
+                    "end": 19137,
+                    "replacementText": ": GeneratedObjectLiteralInterface_29",
+                    "line": 482,
+                    "column": 26,
+                    "endLine": 482,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -4784,14 +5544,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_30 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_30 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 486,
+                    "column": 29,
+                    "endLine": 486,
+                    "endColumn": 30
                 },
                 {
-                    "start": 19289,
-                    "end": 19289,
-                    "replacementText": ": GeneratedObjectLiteralInterface_30"
+                    "start": 19294,
+                    "end": 19294,
+                    "replacementText": ": GeneratedObjectLiteralInterface_30",
+                    "line": 486,
+                    "column": 29,
+                    "endLine": 486,
+                    "endColumn": 30
                 }
             ],
             "suggest": "",
@@ -4806,14 +5574,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_31 {\n    key: string;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_31 {\n    key: string;\n}\n",
+                    "line": 496,
+                    "column": 28,
+                    "endLine": 496,
+                    "endColumn": 29
                 },
                 {
-                    "start": 19691,
-                    "end": 19691,
-                    "replacementText": ": GeneratedObjectLiteralInterface_31"
+                    "start": 19696,
+                    "end": 19696,
+                    "replacementText": ": GeneratedObjectLiteralInterface_31",
+                    "line": 496,
+                    "column": 28,
+                    "endLine": 496,
+                    "endColumn": 29
                 }
             ],
             "suggest": "",
@@ -4828,14 +5604,22 @@
             "problem": "ObjectLiteralNoContextType",
             "autofix": [
                 {
-                    "start": 15532,
-                    "end": 15532,
-                    "replacementText": "interface GeneratedObjectLiteralInterface_32 {\n    name: string;\n    age: number;\n}\n"
+                    "start": 15537,
+                    "end": 15537,
+                    "replacementText": "interface GeneratedObjectLiteralInterface_32 {\n    name: string;\n    age: number;\n}\n",
+                    "line": 500,
+                    "column": 31,
+                    "endLine": 500,
+                    "endColumn": 32
                 },
                 {
-                    "start": 19856,
-                    "end": 19856,
-                    "replacementText": ": GeneratedObjectLiteralInterface_32"
+                    "start": 19861,
+                    "end": 19861,
+                    "replacementText": ": GeneratedObjectLiteralInterface_32",
+                    "line": 500,
+                    "column": 31,
+                    "endLine": 500,
+                    "endColumn": 32
                 }
             ],
             "suggest": "",

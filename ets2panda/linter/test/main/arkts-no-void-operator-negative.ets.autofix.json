@@ -22,8 +22,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 605,
-                    "end": 611,
+                    "start": 610,
+                    "end": 616,
                     "replacementText": "(() => {\n    0;\n    return undefined;\n})()",
                     "line": 16,
                     "column": 1,
@@ -43,8 +43,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 640,
-                    "end": 652,
+                    "start": 645,
+                    "end": 657,
                     "replacementText": "(() => {\n    'hello';\n    return undefined;\n})()",
                     "line": 18,
                     "column": 1,
@@ -64,8 +64,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 681,
-                    "end": 693,
+                    "start": 686,
+                    "end": 698,
                     "replacementText": "(() => {\n    (1 + 2);\n    return undefined;\n})()",
                     "line": 20,
                     "column": 1,
@@ -85,8 +85,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 722,
-                    "end": 736,
+                    "start": 727,
+                    "end": 741,
                     "replacementText": "(() => {\n    [1, 2, 3];\n    return undefined;\n})()",
                     "line": 22,
                     "column": 1,
@@ -106,8 +106,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 765,
-                    "end": 805,
+                    "start": 770,
+                    "end": 810,
                     "replacementText": "(() => {\n    console.log('expression evaluated');\n    return undefined;\n})()",
                     "line": 24,
                     "column": 1,
@@ -127,8 +127,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 858,
-                    "end": 864,
+                    "start": 863,
+                    "end": 869,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n})()",
                     "line": 26,
                     "column": 25,
@@ -148,8 +148,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 929,
-                    "end": 935,
+                    "start": 934,
+                    "end": 940,
                     "replacementText": "(() => {\n    2;\n    return undefined;\n})()",
                     "line": 28,
                     "column": 37,
@@ -169,8 +169,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1009,
-                    "end": 1015,
+                    "start": 1014,
+                    "end": 1020,
                     "replacementText": "(() => {\n    3;\n    return undefined;\n})()",
                     "line": 30,
                     "column": 46,
@@ -190,8 +190,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1044,
-                    "end": 1055,
+                    "start": 1049,
+                    "end": 1060,
                     "replacementText": "(() => {\n    void 1;\n    return undefined;\n})()",
                     "line": 32,
                     "column": 1,
@@ -211,8 +211,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1049,
-                    "end": 1055,
+                    "start": 1054,
+                    "end": 1060,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n})()",
                     "line": 32,
                     "column": 6,
@@ -232,8 +232,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1084,
-                    "end": 1099,
+                    "start": 1089,
+                    "end": 1104,
                     "replacementText": "(() => {\n    (() => { });\n    return undefined;\n})()",
                     "line": 34,
                     "column": 1,
@@ -253,8 +253,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1160,
-                    "end": 1168,
+                    "start": 1165,
+                    "end": 1173,
                     "replacementText": "(() => {\n    a++;\n    return undefined;\n  })()",
                     "line": 38,
                     "column": 3,
@@ -274,8 +274,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1220,
-                    "end": 1275,
+                    "start": 1225,
+                    "end": 1280,
                     "replacementText": "(() => {\n    console.log(b.filter(x => x % 2 !== 0).toString());\n    return undefined;\n  })()",
                     "line": 41,
                     "column": 3,
@@ -315,8 +315,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1451,
-                    "end": 1463,
+                    "start": 1456,
+                    "end": 1468,
                     "replacementText": "(() => {\n    'hello';\n    return undefined;\n  })()",
                     "line": 54,
                     "column": 9,
@@ -336,8 +336,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1506,
-                    "end": 1512,
+                    "start": 1511,
+                    "end": 1517,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
                     "line": 55,
                     "column": 16,
@@ -357,8 +357,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1556,
-                    "end": 1562,
+                    "start": 1561,
+                    "end": 1567,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
                     "line": 56,
                     "column": 17,
@@ -378,8 +378,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1608,
-                    "end": 1614,
+                    "start": 1613,
+                    "end": 1619,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
                     "line": 57,
                     "column": 19,
@@ -399,8 +399,8 @@
             "problem": "VoidOperator",
             "autofix": [
                 {
-                    "start": 1657,
-                    "end": 1663,
+                    "start": 1662,
+                    "end": 1668,
                     "replacementText": "(() => {\n    1;\n    return undefined;\n  })()",
                     "line": 58,
                     "column": 16,

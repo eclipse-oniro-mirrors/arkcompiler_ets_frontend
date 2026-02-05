@@ -22,9 +22,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 630,
-                    "end": 645,
-                    "replacementText": "let foo1 = bar1"
+                    "start": 635,
+                    "end": 650,
+                    "replacementText": "let foo1 = bar1",
+                    "line": 18,
+                    "column": 1,
+                    "endLine": 18,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -39,9 +43,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 677,
-                    "end": 708,
-                    "replacementText": "let foo2 = bar2, toast2 = most2"
+                    "start": 682,
+                    "end": 713,
+                    "replacementText": "let foo2 = bar2, toast2 = most2",
+                    "line": 22,
+                    "column": 1,
+                    "endLine": 22,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -56,9 +64,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 740,
-                    "end": 755,
-                    "replacementText": "let foo3 = bar3"
+                    "start": 745,
+                    "end": 760,
+                    "replacementText": "let foo3 = bar3",
+                    "line": 26,
+                    "column": 1,
+                    "endLine": 26,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -73,9 +85,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 796,
-                    "end": 802,
-                    "replacementText": "let a4"
+                    "start": 801,
+                    "end": 807,
+                    "replacementText": "let a4",
+                    "line": 29,
+                    "column": 6,
+                    "endLine": 29,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -100,9 +116,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 850,
-                    "end": 856,
-                    "replacementText": "let a5"
+                    "start": 855,
+                    "end": 861,
+                    "replacementText": "let a5",
+                    "line": 32,
+                    "column": 6,
+                    "endLine": 32,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -117,9 +137,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 920,
-                    "end": 930,
-                    "replacementText": "let c6 = 1"
+                    "start": 925,
+                    "end": 935,
+                    "replacementText": "let c6 = 1",
+                    "line": 35,
+                    "column": 22,
+                    "endLine": 35,
+                    "endColumn": 25
                 }
             ],
             "suggest": "",
@@ -134,9 +158,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 973,
-                    "end": 983,
-                    "replacementText": "let i7 = 0"
+                    "start": 978,
+                    "end": 988,
+                    "replacementText": "let i7 = 0",
+                    "line": 38,
+                    "column": 6,
+                    "endLine": 38,
+                    "endColumn": 9
                 }
             ],
             "suggest": "",
@@ -181,9 +209,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1062,
-                    "end": 1073,
-                    "replacementText": "let a9 = b9"
+                    "start": 1067,
+                    "end": 1078,
+                    "replacementText": "let a9 = b9",
+                    "line": 42,
+                    "column": 1,
+                    "endLine": 42,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -208,9 +240,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1087,
-                    "end": 1100,
-                    "replacementText": "let foo10 = 1"
+                    "start": 1092,
+                    "end": 1105,
+                    "replacementText": "let foo10 = 1",
+                    "line": 44,
+                    "column": 1,
+                    "endLine": 44,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -225,9 +261,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1110,
-                    "end": 1123,
-                    "replacementText": "let foo11 = 2"
+                    "start": 1115,
+                    "end": 1128,
+                    "replacementText": "let foo11 = 2",
+                    "line": 46,
+                    "column": 9,
+                    "endLine": 46,
+                    "endColumn": 12
                 }
             ],
             "suggest": "",
@@ -282,9 +322,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1254,
-                    "end": 1277,
-                    "replacementText": "() => { foo13(); }"
+                    "start": 1259,
+                    "end": 1282,
+                    "replacementText": "() => { foo13(); }",
+                    "line": 51,
+                    "column": 13,
+                    "endLine": 51,
+                    "endColumn": 36
                 }
             ],
             "suggest": "",
@@ -319,9 +363,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1319,
-                    "end": 1336,
-                    "replacementText": "let bar15 = foo15"
+                    "start": 1324,
+                    "end": 1341,
+                    "replacementText": "let bar15 = foo15",
+                    "line": 56,
+                    "column": 1,
+                    "endLine": 56,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -346,9 +394,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1350,
-                    "end": 1374,
-                    "replacementText": "() => { foo15(); }"
+                    "start": 1355,
+                    "end": 1379,
+                    "replacementText": "() => { foo15(); }",
+                    "line": 56,
+                    "column": 32,
+                    "endLine": 56,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
@@ -363,9 +415,13 @@
             "problem": "VarDeclaration",
             "autofix": [
                 {
-                    "start": 1377,
-                    "end": 1413,
-                    "replacementText": "let bar16 = function () { foo16(); }"
+                    "start": 1382,
+                    "end": 1418,
+                    "replacementText": "let bar16 = function () { foo16(); }",
+                    "line": 58,
+                    "column": 1,
+                    "endLine": 58,
+                    "endColumn": 4
                 }
             ],
             "suggest": "",
@@ -380,9 +436,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1389,
-                    "end": 1413,
-                    "replacementText": "() => { foo16(); }"
+                    "start": 1394,
+                    "end": 1418,
+                    "replacementText": "() => { foo16(); }",
+                    "line": 58,
+                    "column": 13,
+                    "endLine": 58,
+                    "endColumn": 37
                 }
             ],
             "suggest": "",
@@ -407,9 +467,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 1427,
-                    "end": 1440,
-                    "replacementText": "() => { }"
+                    "start": 1432,
+                    "end": 1445,
+                    "replacementText": "() => { }",
+                    "line": 58,
+                    "column": 51,
+                    "endLine": 58,
+                    "endColumn": 64
                 }
             ],
             "suggest": "",
@@ -824,9 +888,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2425,
-                    "end": 2449,
-                    "replacementText": "() => { foo39(); }"
+                    "start": 2430,
+                    "end": 2454,
+                    "replacementText": "() => { foo39(); }",
+                    "line": 115,
+                    "column": 14,
+                    "endLine": 115,
+                    "endColumn": 38
                 }
             ],
             "suggest": "",
@@ -841,9 +909,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2467,
-                    "end": 2481,
-                    "replacementText": "(a) => { }"
+                    "start": 2472,
+                    "end": 2486,
+                    "replacementText": "(a) => { }",
+                    "line": 117,
+                    "column": 13,
+                    "endLine": 117,
+                    "endColumn": 27
                 }
             ],
             "suggest": "",
@@ -878,9 +950,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2501,
-                    "end": 2525,
-                    "replacementText": "() => { foo40(); }"
+                    "start": 2506,
+                    "end": 2530,
+                    "replacementText": "() => { foo40(); }",
+                    "line": 118,
+                    "column": 19,
+                    "endLine": 118,
+                    "endColumn": 43
                 }
             ],
             "suggest": "",
@@ -905,9 +981,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2556,
-                    "end": 2580,
-                    "replacementText": "() => { foo41(); }"
+                    "start": 2561,
+                    "end": 2585,
+                    "replacementText": "() => { foo41(); }",
+                    "line": 120,
+                    "column": 28,
+                    "endLine": 120,
+                    "endColumn": 52
                 }
             ],
             "suggest": "",
@@ -942,9 +1022,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2607,
-                    "end": 2631,
-                    "replacementText": "() => { foo42(); }"
+                    "start": 2612,
+                    "end": 2636,
+                    "replacementText": "() => { foo42(); }",
+                    "line": 122,
+                    "column": 25,
+                    "endLine": 122,
+                    "endColumn": 49
                 }
             ],
             "suggest": "",
@@ -979,9 +1063,13 @@
             "problem": "FunctionExpression",
             "autofix": [
                 {
-                    "start": 2665,
-                    "end": 2689,
-                    "replacementText": "() => { foo43(); }"
+                    "start": 2670,
+                    "end": 2694,
+                    "replacementText": "() => { foo43(); }",
+                    "line": 124,
+                    "column": 32,
+                    "endLine": 124,
+                    "endColumn": 56
                 }
             ],
             "suggest": "",
