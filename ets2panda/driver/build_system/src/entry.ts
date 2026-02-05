@@ -21,7 +21,6 @@ import { BuildMode } from './build/build_mode';
 import { Logger, LoggerGetter, getConsoleLogger } from './logger';
 import { DriverError } from './util/error';
 import { substituteEnvVarsInJSON } from './util/utils';
-import { ArkTSConfigGenerator } from './build/generate_arktsconfig';
 import { PluginDriver } from './plugins/plugins_driver';
 import { BuildConfig, BUILD_TYPE } from './types';
 import { BuildFrameworkMode } from './build/build_framework_mode';
@@ -74,7 +73,6 @@ export async function build(projectConfig: BuildConfig, loggerGetter?: LoggerGet
 
 function clean(): void {
     Logger.destroyInstance();
-    ArkTSConfigGenerator.destroyInstance();
     PluginDriver.destroyInstance();
     cleanKoalaModule();
 }

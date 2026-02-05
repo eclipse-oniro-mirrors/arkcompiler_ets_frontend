@@ -139,7 +139,8 @@ export class ArkTSConfig {
     // 'har2': dependencies: []
     // and mainPackageName is 'entry'
     // The following comments explain the situation when the function is called for the first time
-    mergeArktsConfigByDependencies(dependencies: Set<string>, dependenciesSets: Map<string, Set<string>>): void {
+    mergeArktsConfigByDependencies(dependencies: Set<string>, dependenciesSets: Map<string, Set<string>>,
+        generator: ArkTSConfigGenerator): void {
         if (dependencies.size === 0) {
             return;
         }
@@ -150,14 +151,15 @@ export class ArkTSConfig {
         dependencies.forEach((dependency) => {
             // dependency: 'hsp1'
             // dependencydependencies: ['hsp2','har2']
-            this.mergeDependencyRecursive(dependency, dependenciesSets, processed);
+            this.mergeDependencyRecursive(dependency, dependenciesSets, processed, generator);
         });
     }
 
     private mergeDependencyRecursive(
         dependency: string,
         dependenciesSets: Map<string, Set<string>>,
-        processed: Set<string>
+        processed: Set<string>,
+        generator: ArkTSConfigGenerator
     ): void {
         // Skip if this dependency has already been merged globally
         if (processed.has(dependency)) {
@@ -166,12 +168,12 @@ export class ArkTSConfig {
         processed.add(dependency);
 
         let dependencydependencies: Set<string> = dependenciesSets.get(dependency)!;
-        let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(dependency)!;
+        let arktsConfig = generator.getArktsConfigByPackageName(dependency)!;
 
         if (dependencydependencies.size !== 0) {
             // Recursively process dependencies first
             dependencydependencies.forEach((dep) => {
-                this.mergeDependencyRecursive(dep, dependenciesSets, processed);
+                this.mergeDependencyRecursive(dep, dependenciesSets, processed, generator);
             });
         }
 
@@ -182,7 +184,6 @@ export class ArkTSConfig {
 }
 
 export class ArkTSConfigGenerator {
-    private static instance: ArkTSConfigGenerator | undefined;
     private systemSdkPath: string;
     private stdlibAbcPath: string;
 
@@ -193,7 +194,7 @@ export class ArkTSConfigGenerator {
     private systemDependenciesSection: Record<string, DependencyItem>;
     private arktsconfigs: Map<string, ArkTSConfig>;
 
-    private constructor(buildConfig: BuildConfig) {
+    public constructor(buildConfig: BuildConfig) {
         this.logger = Logger.getInstance();
         const realPandaSdkPath = safeRealpath(buildConfig.pandaSdkPath!!);
         const realBuildSdkPath = safeRealpath(buildConfig.buildSdkPath);
@@ -218,21 +219,6 @@ export class ArkTSConfigGenerator {
 
     public get externalApiPaths(): string[] {
         return this.buildConfig.externalApiPaths;
-    }
-
-    public static getInstance(buildConfig?: BuildConfig): ArkTSConfigGenerator {
-        if (!ArkTSConfigGenerator.instance) {
-            if (!buildConfig) {
-                throw new Error(
-                    'buildConfig and moduleInfos is required for the first instantiation of ArkTSConfigGenerator.');
-            }
-            ArkTSConfigGenerator.instance = new ArkTSConfigGenerator(buildConfig);
-        }
-        return ArkTSConfigGenerator.instance;
-    }
-
-    public static destroyInstance(): void {
-        ArkTSConfigGenerator.instance = undefined;
     }
 
     private generateSystemSdkPathSection(pathSection: Record<string, string[]>): void {

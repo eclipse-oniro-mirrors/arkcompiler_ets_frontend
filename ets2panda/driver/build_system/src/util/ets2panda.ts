@@ -35,7 +35,7 @@ import {
     LogDataFactory
 } from '../logger';
 import {
-    changeDeclgenFileExtension,
+    buildDeclgenOutputPath,
     changeFileExtension,
     createFileIfNotExists,
     ensurePathExists,
@@ -46,7 +46,6 @@ import {
     DECL_TS_SUFFIX,
     STATIC_RECORD_FILE,
     STATIC_RECORD_FILE_CONTENT,
-    TS_SUFFIX,
     ENABLE_DECLARATION_BARRIER,
     MERGED_INTERMEDIATE_FILE
 } from '../pre_define';
@@ -222,10 +221,7 @@ export class Ets2panda {
             job.arktsConfig
         ]
 
-        if (job.contentType === JobContentType.CLUSTER) {
-            ets2pandaCmd.push('--simultaneous')
-        }
-
+        ets2pandaCmd.push('--simultaneous')
         ets2pandaCmd.push('--ets-warnings:base-path=' + this.projectRootPath);
 
         if (job.contentType === JobContentType.FILE) {
@@ -370,29 +366,29 @@ export class Ets2panda {
         skipDeclCheck: boolean,
         genDeclAnnotations: boolean
     ): void {
-        // this logic does not suppport declgen in simultaneous mode
-        const fi = jobInfo.content as FileInfo;
-        const inputFilePath = fi.input;
-        const source = fs.readFileSync(inputFilePath, 'utf8');
-        const filePathFromModuleRoot: string = path.relative(jobInfo.moduleRoot, inputFilePath);
-        const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(jobInfo.declgenConfig.output, jobInfo.moduleName, filePathFromModuleRoot),
-            DECL_ETS_SUFFIX
-        );
-        const etsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(jobInfo.declgenConfig.bridgeCode, jobInfo.moduleName, filePathFromModuleRoot),
-            TS_SUFFIX
-        );
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(etsOutputPath);
-        validatePathLength(declEtsOutputPath, 'Declaration file path');
-        validatePathLength(etsOutputPath, 'Bridge code file path');
+        const contentFiles: FileInfo[] = jobInfo.contentType === JobContentType.FILE
+            ? [jobInfo.content as FileInfo]
+            : jobInfo.content as FileInfo[];
+        const inputFiles: string[] = contentFiles.map(fi => fi.input);
+        const outputDeclEtsPaths: string[] = [];
+        const outputEtsPaths: string[] = [];
+        for (const file of inputFiles) {
+            const { declEtsOutputPath, glueCodeOutputPath } = buildDeclgenOutputPath(
+                file, jobInfo.fileToModuleMap[file], this.cacheDir
+            );
+            outputDeclEtsPaths.push(declEtsOutputPath);
+            outputEtsPaths.push(glueCodeOutputPath);
+            validatePathLength(declEtsOutputPath, 'Declaration file path');
+            validatePathLength(glueCodeOutputPath, 'Bridge code file path');
+        }
+
+        const firstFileModule = jobInfo.fileToModuleMap[inputFiles[0]];
         const staticRecordPath = path.join(
-            jobInfo.declgenConfig.output,
+            firstFileModule.declgenV1OutPath!,
             STATIC_RECORD_FILE
         )
         validatePathLength(staticRecordPath, 'Static record file path');
-        const declEtsOutputDir = path.dirname(declEtsOutputPath);
+        const declEtsOutputDir = path.dirname(outputDeclEtsPaths[0]);
         const staticRecordRelativePath = changeFileExtension(
             path.relative(declEtsOutputDir, staticRecordPath).replace(/\\/g, '\/'),
             '',
@@ -404,9 +400,10 @@ export class Ets2panda {
 
         let { arkts, arktsGlobal } = this.koalaModule;
         try {
-            arktsGlobal.filePath = inputFilePath;
             arktsGlobal.config = arkts.Config.create(ets2pandaCmd).peer;
-            arktsGlobal.compilerContext = arkts.Context.createFromStringWithHistory(source);
+            arktsGlobal.compilerContext = arkts.Context.createContextSimultaneousMode(
+                inputFiles
+            );
             this.pluginDriver.getPluginContext().setArkTSProgram(arktsGlobal.compilerContext.program);
 
             arkts.proceedToState(arkts.Es2pandaContextState.ES2PANDA_STATE_PARSED, arktsGlobal.compilerContext.peer, skipDeclCheck);
@@ -419,16 +416,16 @@ export class Ets2panda {
             this.pluginDriver.getPluginContext().setArkTSAst(ast);
             this.pluginDriver.runPluginHook(PluginHook.CHECKED);
 
-            // Generate 1.0 declaration files & 1.0 glue code
             arkts.generateTsDeclarationsFromContext(
-                declEtsOutputPath,
-                etsOutputPath,
+                inputFiles,
+                outputDeclEtsPaths,
+                outputEtsPaths,
                 false,
                 false,
                 staticRecordRelativePath,
                 genDeclAnnotations
             );
-            this.logger.printInfo(`[Ets2panda] Generated 1.0 declaration file for ${inputFilePath}`)
+            this.logger.printInfo(`[Ets2panda] Generated 1.0 declaration file for ${inputFiles[0]}`)
         } catch (error) {
             if (error instanceof Error) {
                 throw new DriverError(
@@ -436,7 +433,7 @@ export class Ets2panda {
                         ErrorCode.BUILDSYSTEM_DECLGEN_FAIL,
                         'Failed to generate 1.0 declaration file.',
                         error.message,
-                        inputFilePath
+                        inputFiles[0]
                     )
                 );
             }

@@ -83,23 +83,16 @@ export class DriverHelper {
     }
 
     public processErrorState(globalContextPtr: KNativePointer, state: Es2pandaContextState, forceDtsEmit = false): void {
-        try {
-            if (global.es2panda._ContextState(globalContextPtr) === Es2pandaContextState.ES2PANDA_STATE_ERROR && !forceDtsEmit) {
-                const errorMessage = withStringResult(global.es2panda._ContextErrorMessage(globalContextPtr));
-                if (errorMessage === undefined) {
-                    throwError(`Could not get ContextErrorMessage`);
-                }
-                const allErrorMessages = withStringResult(global.es2panda._GetAllErrorMessages(globalContextPtr));
-                if (allErrorMessages === undefined) {
-                    throwError(`Could not get AllErrorMessages`);
-                }
-
-
-                throwError('Failed proceed to: ' + Es2pandaContextState[state] + '\n' + errorMessage);
+        if (global.es2panda._ContextState(globalContextPtr) === Es2pandaContextState.ES2PANDA_STATE_ERROR && !forceDtsEmit) {
+            const errorMessage = withStringResult(global.es2panda._ContextErrorMessage(globalContextPtr));
+            if (errorMessage === undefined) {
+                throwError(`Could not get ContextErrorMessage`);
             }
-        } catch (e) {
-            global.es2panda._DestroyContext(globalContextPtr);
-            throw e;
+            const allErrorMessages = withStringResult(global.es2panda._GetAllErrorMessages(globalContextPtr));
+            if (allErrorMessages === undefined) {
+                throwError(`Could not get AllErrorMessages`);
+            }
+            throwError('Failed proceed to: ' + Es2pandaContextState[state] + '\n' + errorMessage);
         }
     }
 
@@ -124,8 +117,9 @@ export class DriverHelper {
     }
 
     public generateTsDeclarationsFromContext(
-        outputDeclEts: string,
-        outputEts: string,
+        inputFiles: string[],
+        outputDeclEts: string[],
+        outputEts: string[],
         exportAll: boolean,
         isolated: boolean,
         recordFile: string,
@@ -133,8 +127,10 @@ export class DriverHelper {
     ): KInt {
         return global.es2panda._GenerateTsDeclarationsFromContext(
             global.context,
-            passString(outputDeclEts),
-            passString(outputEts),
+            outputDeclEts.length,
+            passStringArray(inputFiles),
+            passStringArray(outputDeclEts),
+            passStringArray(outputEts),
             exportAll ? 1 : 0,
             isolated ? 1 : 0,
             passString(recordFile),

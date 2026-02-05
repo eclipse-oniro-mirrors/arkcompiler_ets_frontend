@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ export function initKoalaModules(buildConfig: BuildConfig): KoalaModule {
     if (koalaModule === undefined) {
         if (buildConfig.plugins === undefined) {
             koalaModule = require('../util/koala_wrapper');
+            koalaModule!.arktsGlobal.es2panda._SetUpSoPath(path.join(buildConfig.pandaSdkPath || '.', 'lib'));
             return koalaModule!;
         }
         const koalaWrapperPath =

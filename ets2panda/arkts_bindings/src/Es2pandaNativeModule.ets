@@ -43,8 +43,17 @@ export class Es2pandaNativeModule {
   native _ContextErrorMessage(context: EtsPtr): string;
   native _GetAllErrorMessages(context: EtsPtr): string;
   native _ProgramAst(context: EtsPtr, program: EtsPtr): EtsPtr;
-  native _GenerateTsDeclarationsFromContext(config: EtsPtr, outputDeclEts: string, outputEts: string, exportAll: boolean,
-    isolated: boolean, recordFile: string, genAnnotations: boolean): int;
+  native _GenerateTsDeclarationsFromContext(
+    config: EtsPtr,
+    fileNamesCount: int,
+    inputFiles: string[],
+    outputDeclEts: string[],
+    outputEts: string[],
+    exportAll: boolean,
+    isolated: boolean,
+    recordFile: string,
+    genAnnotations: boolean
+  ): int;
   native _GenerateStaticDeclarationsFromContext(context: EtsPtr, filename: string): EtsPtr;
   native _FreeCompilerPartMemory(context: EtsPtr): EtsPtr;
 }

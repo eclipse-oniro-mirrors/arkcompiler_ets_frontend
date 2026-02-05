@@ -21,10 +21,12 @@ import * as path from 'path';
 import {
     ARKTS_MODULE_NAME,
     DECL_ETS_SUFFIX,
+    ETSCACHE_SUFFIX,
     LANGUAGE_VERSION,
     NATIVE_MODULE,
     sdkConfigPrefix,
-    MAX_PATH_LENGTH
+    MAX_PATH_LENGTH,
+    TS_SUFFIX
 } from '../pre_define';
 import {
     Logger,
@@ -65,6 +67,40 @@ export function changeDeclgenFileExtension(file: string, targetExt: string): str
         return changeFileExtension(file, targetExt, DECL_ETS_SUFFIX);
     }
     return changeFileExtension(file, targetExt);
+}
+
+export function buildDeclgenOutputPath(
+    inputFile: string,
+    moduleInfo: ModuleInfo,
+    cacheDir?: string
+): { declEtsOutputPath: string; glueCodeOutputPath: string } {
+    let filePathFromModuleRoot: string;
+    if (cacheDir && inputFile.endsWith(ETSCACHE_SUFFIX)) {
+        filePathFromModuleRoot = path.relative(cacheDir, inputFile);
+        const declEtsOutputPath: string = changeDeclgenFileExtension(
+            path.resolve(moduleInfo.declgenV1OutPath!, filePathFromModuleRoot),
+            DECL_ETS_SUFFIX
+        );
+        const glueCodeOutputPath: string = changeDeclgenFileExtension(
+            path.resolve(moduleInfo.declgenBridgeCodePath!, filePathFromModuleRoot),
+            TS_SUFFIX
+        );
+        ensurePathExists(declEtsOutputPath);
+        ensurePathExists(glueCodeOutputPath);
+        return { declEtsOutputPath, glueCodeOutputPath };
+    }
+    filePathFromModuleRoot = path.relative(moduleInfo.moduleRootPath, inputFile);
+    const declEtsOutputPath: string = changeDeclgenFileExtension(
+        path.resolve(moduleInfo.declgenV1OutPath!, moduleInfo.packageName, filePathFromModuleRoot),
+        DECL_ETS_SUFFIX
+    );
+    const glueCodeOutputPath: string = changeDeclgenFileExtension(
+        path.resolve(moduleInfo.declgenBridgeCodePath!, moduleInfo.packageName, filePathFromModuleRoot),
+        TS_SUFFIX
+    );
+    ensurePathExists(declEtsOutputPath);
+    ensurePathExists(glueCodeOutputPath);
+    return { declEtsOutputPath, glueCodeOutputPath };
 }
 
 export function ensurePathExists(filePath: string): void {

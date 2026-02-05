@@ -22,7 +22,7 @@ import { DependencyItem, ModuleInfo } from '../../../src/types';
  */
 const mockConfigs = new Map<string, any>();
 
-// Create a mock generator instance that can be returned by getInstance
+// Create a mock generator instance
 const mockGeneratorInstance = {
     configs: mockConfigs,
     getArktsConfigByPackageName: function(packageName: string): any {
@@ -35,9 +35,6 @@ const mockGeneratorInstance = {
         mockConfigs.clear();
     }
 } as any;
-
-// Mock the getInstance static method
-jest.spyOn(ArkTSConfigGenerator, 'getInstance').mockReturnValue(mockGeneratorInstance);
 
 /**
  * Helper function to create mock ModuleInfo
@@ -105,7 +102,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['entry', new Set(['dep1'])]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
         });
@@ -133,7 +130,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['entry', new Set(['dep1', 'dep2', 'dep3'])]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
             expect(mainConfig.pathSection['@test/dep2']).toEqual(['/path/to/dep2']);
@@ -154,7 +151,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['entry', new Set(['dep1'])]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.dependencies['@ohos.system']).toBeDefined();
         });
@@ -184,7 +181,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['dep3', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
             expect(mainConfig.pathSection['@test/dep2']).toEqual(['/path/to/dep2']);
@@ -211,7 +208,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['depD', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@test/depA']).toEqual(['/path/A']);
             expect(mainConfig.pathSection['@test/depB']).toEqual(['/path/B']);
@@ -237,7 +234,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             // Should handle circular dependency without infinite recursion
             // TODO: Implement circular dependency detection in mergeArktsConfigByDependencies
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             // Should merge both dependencies correctly
             expect(mainConfig.pathSection['@test/depA']).toEqual(['/path/A']);
@@ -266,7 +263,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             // Should handle circular dependency without infinite recursion
             // TODO: Implement circular dependency detection in mergeArktsConfigByDependencies
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             // Should merge all dependencies correctly
             expect(mainConfig.pathSection['@test/depA']).toEqual(['/path/A']);
@@ -288,7 +285,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             // Should handle self-referencing dependency without infinite recursion
             // TODO: Implement circular dependency detection in mergeArktsConfigByDependencies
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             // Should merge the dependency correctly
             expect(mainConfig.pathSection['@test/depA']).toEqual(['/path/A']);
@@ -316,7 +313,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             // Should handle multiple circular dependencies without infinite recursion
             // TODO: Implement circular dependency detection in mergeArktsConfigByDependencies
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             // Should merge all dependencies correctly
             expect(mainConfig.pathSection['@test/depA']).toEqual(['/path/A']);
@@ -332,7 +329,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
             const dependenciesSets: Map<string, Set<string>> = new Map([]);
 
             expect(() => {
-                mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+                mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
             }).not.toThrow();
 
             expect(Object.keys(mainConfig.pathSection).length).toBe(0);
@@ -347,7 +344,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
 
             // This will throw when trying to get the config
             expect(() => {
-                mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+                mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
             }).toThrow();
         });
 
@@ -362,7 +359,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['dep1', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
         });
@@ -380,7 +377,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['dep1', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@entry/own']).toEqual(['/entry/path']);
             expect(mainConfig.pathSection['@test/dep1']).toEqual(['/path/to/dep1']);
@@ -402,7 +399,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['dep2', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.pathSection['@common']).toEqual(['/path1', '/path2']);
         });
@@ -428,7 +425,7 @@ describe('ArkTSConfig - mergeArktsConfigByDependencies', () => {
                 ['dep2', new Set()]
             ]);
 
-            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets);
+            mainConfig.mergeArktsConfigByDependencies(dependencies, dependenciesSets, mockGeneratorInstance as any);
 
             expect(mainConfig.dependencies['@common']).toBeDefined();
         });

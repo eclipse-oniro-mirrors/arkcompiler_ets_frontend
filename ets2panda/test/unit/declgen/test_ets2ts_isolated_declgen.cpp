@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,11 +45,14 @@ int main(int argc, char **argv)
         std::cerr << "FAILED TO CREATE CONTEXT" << std::endl;
         return NULLPTR_CONTEXT_ERROR_CODE;
     }
-
     impl->ProceedToState(context, ES2PANDA_STATE_CHECKED);
     CheckForErrors("CHECKED", context);
     std::string declName = GetDeclPrefix(argv[argc - 1]) + ".d.ets";
-    int result = impl->GenerateTsDeclarationsFromContext(context, declName.c_str(), "dump.ets", false, true, "", false);
+    const char *inputFiles[] = {argv[argc - 1]};
+    const char *outputDeclEts[] = {declName.c_str()};
+    const char *outputEts[] = {"dump.ets"};
+    int result = impl->GenerateTsDeclarationsFromContext(context, 1, inputFiles, outputDeclEts, outputEts, false, true,
+                                                         "", false);
     if (result != 0) {
         std::cerr << "FAILED TO GENERATE DECLARATIONS" << std::endl;
         return result;

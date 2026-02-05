@@ -370,16 +370,14 @@ describe('BaseMode', () => {
         const cfg = createMockBuildConfig();
         // mock ArkTSConfigGenerator so constructor won't try to resolve real SDK paths
         jest.doMock('../../../src/build/generate_arktsconfig', () => ({
-            ArkTSConfigGenerator: {
-                getInstance: jest.fn(() => ({
-                    generateArkTSConfigFile: jest.fn(),
-                    getArktsConfigByPackageName: jest.fn(() => ({
-                        mergeArktsConfig: jest.fn(),
-                        mergeArktsConfigByDependencies: jest.fn(),
-                        object: {}
-                    }))
+            ArkTSConfigGenerator: jest.fn(() => ({
+                generateArkTSConfigFile: jest.fn(),
+                getArktsConfigByPackageName: jest.fn(() => ({
+                    mergeArktsConfig: jest.fn(),
+                    mergeArktsConfigByDependencies: jest.fn(),
+                    object: {}
                 }))
-            }
+            }))
         }));
         const BaseModeModule = require('../../../src/build/base_mode');
         const BaseModeClass = BaseModeModule.BaseMode;
@@ -804,24 +802,14 @@ describe('BaseMode', () => {
             loadDeclFileMap: jest.fn(),
             saveDeclFileMap: jest.fn(),
             needsRegeneration: jest.fn(),
-            needsBackup: jest.fn(),
-            backupFiles: jest.fn(),
-            updateDeclFileMapAsync: jest.fn(),
-            getOutputFilePaths: jest.fn(),
+            backupDeclgenFiles: jest.fn(),
+            updateDeclFileMapForJobs: jest.fn(),
             declFileMap: new Map()
         };
         ctx.needsRegeneration.mockReturnValue(true);
-        ctx.needsBackup.mockResolvedValue({
-            needsDeclBackup: false,
-            needsGlueCodeBackup: false
-        });
-        ctx.backupFiles.mockResolvedValue(undefined);
-        ctx.updateDeclFileMapAsync.mockResolvedValue(undefined);
+        ctx.backupDeclgenFiles.mockResolvedValue(undefined);
+        ctx.updateDeclFileMapForJobs.mockResolvedValue(undefined);
         ctx.saveDeclFileMap.mockResolvedValue(undefined);
-        ctx.getOutputFilePaths.mockReturnValue({
-            declEtsOutputPath: '/tmp/test.d.ts',
-            glueCodeOutputPath: '/tmp/test.ts'
-        });
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
         expect(loggerInstance.printWarn).toHaveBeenCalledWith('Nothing to compile. Exiting...');
@@ -898,7 +886,6 @@ describe('BaseMode', () => {
             ]]),
             moduleInfos: new Map<string, ModuleInfo>([[mockModuleInfo.packageName, mockModuleInfo]]),
             abcFiles: new Set(),
-            abcDeclarationMap: new Map(),
             mergedAbcFile: '/tmp/merged.abc',
             logger: loggerInstance,
             statsRecorder: { record: jest.fn() },
@@ -906,21 +893,18 @@ describe('BaseMode', () => {
             loadDeclFileMap: jest.fn(),
             saveDeclFileMap: jest.fn(),
             needsRegeneration: jest.fn(),
-            needsBackup: jest.fn(),
-            backupFiles: jest.fn(),
-            updateDeclFileMapAsync: jest.fn(),
-            getOutputFilePaths: jest.fn(),
+            backupDeclgenFiles: jest.fn(),
+            updateDeclFileMapForJobs: jest.fn(),
             declFileMap: new Map(),
-            nodeNeedsRegeneration: jest.fn()
+            nodeNeedsRegeneration: jest.fn(),
+            buildJobFileToModuleMap: jest.fn()
         };
         ctx.needsRegeneration.mockReturnValue(true);
-        ctx.needsBackup.mockResolvedValue({ needsDeclBackup: false, needsGlueCodeBackup: false });
-        ctx.backupFiles.mockResolvedValue(undefined);
-        ctx.updateDeclFileMapAsync.mockResolvedValue(undefined);
+        ctx.backupDeclgenFiles.mockResolvedValue(undefined);
+        ctx.updateDeclFileMapForJobs.mockResolvedValue(undefined);
         ctx.saveDeclFileMap.mockResolvedValue(undefined);
-        ctx.getOutputFilePaths.mockReturnValue(
-            { declEtsOutputPath: '/tmp/test.d.ts', glueCodeOutputPath: '/tmp/test.ts' });
         ctx.nodeNeedsRegeneration.mockReturnValue(true);
+        ctx.buildJobFileToModuleMap.mockReturnValue({ '/mock/module/a.ets': mockModuleInfo });
 
         await expect(fn.call(ctx)).resolves.toBeUndefined();
         expect(startWorkersSpy).toHaveBeenCalled();
@@ -1146,9 +1130,7 @@ describe('BaseMode', () => {
         };
 
         jest.doMock('../../../src/build/generate_arktsconfig', () => ({
-            ArkTSConfigGenerator: {
-                getInstance: jest.fn(() => genInstance)
-            }
+            ArkTSConfigGenerator: jest.fn(() => genInstance)
         }));
 
         const BaseModeModule = require('../../../src/build/base_mode');
@@ -1164,6 +1146,7 @@ describe('BaseMode', () => {
             moduleInfos: new Map<string, any>([['A', moduleA], ['B', moduleB]]),
             enableDeclgenEts2Ts: false,
             logger: require('../../../src/logger').Logger.getInstance(),
+            arktsConfigGenerator: genInstance,
         };
 
         fn.call(ctx);

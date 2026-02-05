@@ -28,14 +28,13 @@ import {
     MERGED_INTERMEDIATE_FILE,
     DEFAULT_WORKER_NUMS,
     DECL_FILE_MAP_NAME,
-    TS_SUFFIX,
     ETSCACHE_SUFFIX
 } from '../pre_define';
 import {
     ensurePathExists,
     isMac,
     checkDependencyModuleInfoCorrectness,
-    changeDeclgenFileExtension,
+    buildDeclgenOutputPath,
     traverseDirAndFindFilesWithRegExp
 } from '../util/utils';
 import {
@@ -100,12 +99,10 @@ export abstract class BaseMode {
     private fileToModule: Map<string, ModuleInfo>;
     private moduleInfos: Map<string, ModuleInfo>;
     private abcFiles: Set<string>;
-    // hack for extraction declarations from .abc files
-    // since fileToModule in this scenario is filled incorrectly
-    private abcDeclarationMap: Map<string, DependencyModuleConfig>;
     protected mergedAbcFile: string;
     protected logger: Logger;
     protected readonly statsRecorder: StatisticsRecorder;
+    protected readonly arktsConfigGenerator: ArkTSConfigGenerator;
     public declFileMap: Map<string, DeclFileInfo> = new Map<string, DeclFileInfo>();
 
     constructor(buildConfig: BuildConfig) {
@@ -114,9 +111,9 @@ export abstract class BaseMode {
         this.fileToModule = new Map<string, ModuleInfo>();
         this.moduleInfos = new Map<string, ModuleInfo>();
         this.mergedAbcFile = path.resolve(this.outputDir, MERGED_ABC_FILE);
-        this.abcDeclarationMap = new Map<string, DependencyModuleConfig>();
         this.logger = Logger.getInstance();
         this.abcFiles = new Set<string>();
+        this.arktsConfigGenerator = new ArkTSConfigGenerator(buildConfig);
 
         this.statsRecorder = new StatisticsRecorder(path.resolve(this.cacheDir, BS_PERF_FILE_NAME), this.recordType,
                                                     `Build system with mode: ` +
@@ -178,30 +175,19 @@ export abstract class BaseMode {
         }
     }
 
-    // logic for forming delcaration paths here and in ets2panda.ts must be unified
-    public getOutputFilePaths(declgenJob: DeclgenV1JobInfo): {declEtsOutputPath: string, glueCodeOutputPath: string} {
-        const filePathFromModuleRoot: string = path.relative(declgenJob.moduleRoot,
-                                                             (declgenJob.content as FileInfo).input);
-        const declEtsOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(declgenJob.declgenConfig.output, declgenJob.moduleName, filePathFromModuleRoot), DECL_ETS_SUFFIX);
-        const glueCodeOutputPath: string = changeDeclgenFileExtension(
-            path.resolve(declgenJob.declgenConfig.bridgeCode, declgenJob.moduleName, filePathFromModuleRoot), TS_SUFFIX);
-        ensurePathExists(declEtsOutputPath);
-        ensurePathExists(glueCodeOutputPath);
-        return {declEtsOutputPath, glueCodeOutputPath};
-    }
-
-    public async needsBackup(declgenJob: DeclgenV1JobInfo): Promise<{needsDeclBackup: boolean; needsGlueCodeBackup: boolean}> {
-        const file = (declgenJob.content as FileInfo).input;
-        if (!this.fileToModule.has(file)) {
-            return {needsDeclBackup: false, needsGlueCodeBackup: false};
+    public async needsBackup(
+        file: string
+    ): Promise<{ needsDeclBackup: boolean; needsGlueCodeBackup: boolean }> {
+        const moduleInfo = this.fileToModule.get(file);
+        if (!moduleInfo) {
+            return { needsDeclBackup: false, needsGlueCodeBackup: false };
         }
-        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(declgenJob);
+        const { declEtsOutputPath, glueCodeOutputPath } = buildDeclgenOutputPath(file, moduleInfo, this.cacheDir);
         let needsDeclBackup = false;
         let needsGlueCodeBackup = false;
         const declInfo = this.declFileMap.get(file);
 
-        const isFileExists = async(path: string): Promise<boolean> => {
+        const isFileExists = async (path: string): Promise<boolean> => {
             try {
                 const stat = await fs.promises.stat(path);
                 return stat.isFile();
@@ -210,38 +196,33 @@ export abstract class BaseMode {
             }
         };
         const [declFileExists, glueCodeExists] =
-             await Promise.all([isFileExists(declEtsOutputPath), isFileExists(glueCodeOutputPath)]);
+            await Promise.all([isFileExists(declEtsOutputPath), isFileExists(glueCodeOutputPath)]);
 
-        if (declFileExists) {
-            if (declInfo?.declLastModified != null) {
-                const declStat = await fs.promises.stat(declEtsOutputPath);
-                const declModified = declStat.mtimeMs;
-                if (declModified > declInfo.declLastModified) {
-                    needsDeclBackup = true;
-                }
-            }
+        if (declFileExists && declInfo?.declLastModified != null) {
+            const declStat = await fs.promises.stat(declEtsOutputPath);
+            needsDeclBackup = declStat.mtimeMs > declInfo.declLastModified;
         }
 
-        if (glueCodeExists) {
-            if (declInfo?.glueCodeLastModified != null) {
-                const glueStat = await fs.promises.stat(glueCodeOutputPath);
-                const glueCodeModified = glueStat.mtimeMs;
-                if (glueCodeModified > declInfo.glueCodeLastModified) {
-                    needsGlueCodeBackup = true;
-                }
-            }
+        if (glueCodeExists && declInfo?.glueCodeLastModified != null) {
+            const glueStat = await fs.promises.stat(glueCodeOutputPath);
+            needsGlueCodeBackup = glueStat.mtimeMs > declInfo.glueCodeLastModified;
         }
 
-        return {needsDeclBackup, needsGlueCodeBackup};
+        return { needsDeclBackup, needsGlueCodeBackup };
     }
 
-    public async backupFiles(declgenJob: DeclgenV1JobInfo, needsDecl: boolean, needsGlue: boolean): Promise<void> {
-        if (!this.fileToModule.has((declgenJob.content as FileInfo).input)) {
+    public async backupFiles(
+        file: string,
+        needsDecl: boolean,
+        needsGlue: boolean
+    ): Promise<void> {
+        const moduleInfo = this.fileToModule.get(file);
+        if (!moduleInfo) {
             return;
         }
-        const {declEtsOutputPath, glueCodeOutputPath} = this.getOutputFilePaths(declgenJob);
+        const { declEtsOutputPath, glueCodeOutputPath } = buildDeclgenOutputPath(file, moduleInfo, this.cacheDir);
 
-        const doCopy = async(filePath: string, type: string): Promise<void> => {
+        const doCopy = async (filePath: string, type: string): Promise<void> => {
             if (!fs.existsSync(filePath)) {
                 return;
             }
@@ -270,13 +251,15 @@ export abstract class BaseMode {
         await Promise.all(backups);
     }
 
-    public async updateDeclFileMapAsync(declgenJob: DeclgenV1JobInfo): Promise<void> {
-        const file = (declgenJob.content as FileInfo).input;
-        if (!this.fileToModule.has(file)) {
+    public async updateDeclFileMapAsync(
+        file: string
+    ): Promise<void> {
+        const moduleInfo = this.fileToModule.get(file);
+        if (!moduleInfo) {
             return;
         }
-        const {declEtsOutputPath, glueCodeOutputPath} =
-            this.getOutputFilePaths(declgenJob);
+        const { declEtsOutputPath, glueCodeOutputPath } =
+            buildDeclgenOutputPath(file, moduleInfo, this.cacheDir);
 
         const [sourceFileStat, declStat, glueCodeStat] = await Promise.all([
             fs.promises.stat(file), fs.promises.stat(declEtsOutputPath).catch(() => null),
@@ -303,6 +286,50 @@ export abstract class BaseMode {
             this.logger.printError(logData);
             throw new Error(detail);
         }
+    }
+
+    private async backupFileIfNeeded(file: string): Promise<void> {
+        const { needsDeclBackup, needsGlueCodeBackup } = await this.needsBackup(file);
+        if (needsDeclBackup || needsGlueCodeBackup) {
+            await this.backupFiles(file, needsDeclBackup, needsGlueCodeBackup);
+        }
+    }
+
+    private async backupDeclgenFiles(declgenJobs: DeclgenV1JobInfo[]): Promise<void> {
+        const tasks: Array<Promise<void>> = [];
+        for (const declgenJob of declgenJobs) {
+            const contentFiles: FileInfo[] = declgenJob.contentType === JobContentType.FILE
+                ? [declgenJob.content as FileInfo]
+                : declgenJob.content as FileInfo[];
+            for (const fileInfo of contentFiles) {
+                tasks.push(this.backupFileIfNeeded(fileInfo.input));
+            }
+        }
+        await Promise.all(tasks);
+    }
+
+    private async updateDeclFileMapForJobs(declgenJobs: DeclgenV1JobInfo[]): Promise<void> {
+        const tasks: Array<Promise<void>> = [];
+        for (const declgenJob of declgenJobs) {
+            const contentFiles: FileInfo[] = declgenJob.contentType === JobContentType.FILE
+                ? [declgenJob.content as FileInfo]
+                : declgenJob.content as FileInfo[];
+            for (const fileInfo of contentFiles) {
+                tasks.push(this.updateDeclFileMapAsync(fileInfo.input));
+            }
+        }
+        await Promise.all(tasks);
+    }
+
+    private buildJobFileToModuleMap(contentFiles: FileInfo[]): Record<string, ModuleInfo> {
+        const jobFileToModuleMap: Record<string, ModuleInfo> = {};
+        for (const fileInfo of contentFiles) {
+            const fileModule = this.fileToModule.get(fileInfo.input);
+            if (fileModule) {
+                jobFileToModuleMap[fileInfo.input] = fileModule;
+            }
+        }
+        return jobFileToModuleMap;
     }
 
     private nodeNeedsRegeneration(node: GraphNode<CompileJobInfo>): boolean {
@@ -450,7 +477,7 @@ export abstract class BaseMode {
 
     public async run(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
@@ -620,9 +647,6 @@ export abstract class BaseMode {
     }
 
     protected generateArkTSConfigForModules(): void {
-        // Just to init the generator
-        ArkTSConfigGenerator.getInstance(this.buildConfig)
-
         const dependenciesSets = new Map<string, Set<string>>;
 
         // Fill dependenciesSets and generate ArktsConfigs
@@ -631,17 +655,17 @@ export abstract class BaseMode {
             moduleInfo.dependencies?.forEach((dependency: string) => {
                 dependenciesSets.get(moduleInfo.packageName)!.add(dependency)
             });
-            ArkTSConfigGenerator.getInstance().generateArkTSConfigFile(moduleInfo, this.enableDeclgenEts2Ts);
+            this.arktsConfigGenerator.generateArkTSConfigFile(moduleInfo, this.enableDeclgenEts2Ts);
         });
 
         // Merge ArktsConfigs
         // Start the recursive merge from the main module
-        let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(this.mainPackageName)!;
-        arktsConfig.mergeArktsConfigByDependencies(dependenciesSets.get(this.mainPackageName)!, dependenciesSets!);
+        let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(this.mainPackageName)!;
+        arktsConfig.mergeArktsConfigByDependencies(dependenciesSets.get(this.mainPackageName)!, dependenciesSets!, this.arktsConfigGenerator);
 
         dependenciesSets.forEach((_: Set<string>, module: string) => {
             let moduleInfo = this.moduleInfos.get(module)!;
-            let arktsConfig = ArkTSConfigGenerator.getInstance().getArktsConfigByPackageName(module)!;
+            let arktsConfig = this.arktsConfigGenerator.getArktsConfigByPackageName(module)!;
             fs.writeFileSync(moduleInfo.arktsConfigFile, JSON.stringify(arktsConfig.object, null, 2))
         });
     }
@@ -777,6 +801,9 @@ export abstract class BaseMode {
 
     protected processEntryFiles(): void {
         this.entryFiles.forEach((file: string) => {
+            if (this.fileToModule.has(path.resolve(file))) {
+                return;
+            }
             for (const [_, moduleInfo] of this.moduleInfos) {
                 const relativePath = path.relative(moduleInfo.moduleRootPath, file);
                 if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
@@ -872,7 +899,7 @@ export abstract class BaseMode {
             return;
         }
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
         const allOutputs: string[] = [];
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, allOutputs);
         if (!buildGraph.hasNodes()) {
@@ -941,10 +968,10 @@ export abstract class BaseMode {
     }
 
     private declgenV1(job: CompileJobInfo): boolean {
-        let module = this.fileToModule.get((job.content as FileInfo).input)!;
-        let declgenV1OutPath: string = module.declgenV1OutPath!;
-        let declgenBridgeCodePath: string = module.declgenBridgeCodePath!;
-        let declgenJob: DeclgenV1JobInfo = { ...job, declgenConfig: { output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath } }
+        let declgenJob: DeclgenV1JobInfo = {
+            ...job,
+            fileToModuleMap: Object.fromEntries(this.fileToModule.entries())
+        };
 
         let result = true;
         const ets2panda = Ets2panda.getInstance();
@@ -965,7 +992,7 @@ export abstract class BaseMode {
 
     public async generateDeclarationV1(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
@@ -1025,9 +1052,12 @@ export abstract class BaseMode {
                 // since several packages may depend on the same package
                 ets2panda.extractDeclarationsFromAbcFile(dep.abcPath, this.cacheDir);
                 const packageCache = path.resolve(this.cacheDir, dep.packageName);
-                let currentDecls = traverseDirAndFindFilesWithRegExp(packageCache, /\.etscache$/);
+                const moduleInfo = this.moduleInfos.get(dep.packageName);
+                const currentDecls = traverseDirAndFindFilesWithRegExp(packageCache, /\.etscache$/);
                 for (const decl of currentDecls) {
-                    this.abcDeclarationMap.set(decl, dep);
+                    if (moduleInfo) {
+                        this.fileToModule.set(decl, moduleInfo);
+                    }
                 }
                 extractedDeclarations = extractedDeclarations.concat(currentDecls);
             }
@@ -1042,7 +1072,7 @@ export abstract class BaseMode {
     public async generateDeclarationV1Parallel(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.DEPENDENCY_ANALYZER));
         this.loadDeclFileMap();
-        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, false);
+        const depAnalyzer = new DependencyAnalyzer(this.buildConfig, this.arktsConfigGenerator);
         const buildGraph = depAnalyzer.getGraph(this.entryFiles, this.fileToModule, this.moduleInfos, []);
         if (!buildGraph.hasNodes()) {
             this.logger.printWarn('Nothing to compile. Exiting...')
@@ -1066,51 +1096,30 @@ export abstract class BaseMode {
         const needRegenNodeIds = new Set<string>();
         for (const node of buildGraph.nodes) {
             const needsRegen = this.nodeNeedsRegeneration(node);
-            let declgenV1OutPath: string;
-            let declgenBridgeCodePath: string;
-            const currentFile: string = (node.data.content as FileInfo).input;
-            // usage of abcDeclarationMap should be removed
-            if (this.abcDeclarationMap.has(currentFile)) {
-                const module = this.abcDeclarationMap.get(currentFile)!
-                declgenV1OutPath = module.declgenV1OutPath!;
-                declgenBridgeCodePath = this.abcDeclarationMap.get(currentFile)?.declgenBridgeCodePath!;
-            } else {
-                const module = this.moduleInfos.get(node.data.moduleName)!
-                declgenV1OutPath = module.declgenV1OutPath!
-                declgenBridgeCodePath = module.declgenBridgeCodePath!
-            }
+            const contentFiles: FileInfo[] = node.data.contentType === JobContentType.FILE
+                ? [node.data.content as FileInfo]
+                : node.data.content as FileInfo[];
+
+            // Only include mappings for files in this job's fileList to reduce memory usage
+            const jobFileToModuleMap = this.buildJobFileToModuleMap(contentFiles);
             const declgenJob: DeclgenV1JobInfo = {
-                        ...node.data,
-                        declgenConfig: {output: declgenV1OutPath, bridgeCode: declgenBridgeCodePath}
-                    };
-            // usage of abcDeclarationMap should be removed
-            if (this.abcDeclarationMap.has(currentFile)) {
-                let filePackage = this.abcDeclarationMap.get(currentFile)!;
-                declgenJob.moduleRoot = path.resolve(this.cacheDir, filePackage.packageName);
-                declgenJob.moduleName = filePackage.packageName;
-            }
+                ...node.data,
+                fileToModuleMap: jobFileToModuleMap
+            };
             if (needsRegen) {
                 declgenJobs.push(declgenJob);
                 needRegenNodeIds.add(node.id);
             }
+
             newNodes.push({
                 id: node.id,
-                data: {...declgenJob, buildConfig: this.buildConfig},
+                data: { ...declgenJob, buildConfig: this.buildConfig },
                 predecessors: node.predecessors,
                 descendants: node.descendants,
             });
         }
 
-        const backupTasks: Array<Promise<void>> = [];
-        for (const declgenJob of declgenJobs) {
-            backupTasks.push((async (): Promise<void> => {
-                const {needsDeclBackup, needsGlueCodeBackup} = await this.needsBackup(declgenJob);
-                if (needsDeclBackup || needsGlueCodeBackup) {
-                    await this.backupFiles(declgenJob, needsDeclBackup, needsGlueCodeBackup);
-                }
-            })());
-        }
-        await Promise.all(backupTasks);
+        await this.backupDeclgenFiles(declgenJobs);
 
         const newGraph: Graph<ProcessDeclgenV1Task> = Graph.createGraphFromNodes(newNodes);
         const filteredGraph = newGraph.filter((node: GraphNode<ProcessDeclgenV1Task>) => needRegenNodeIds.has(node.id));
@@ -1121,11 +1130,7 @@ export abstract class BaseMode {
         // Ignore the result
         await taskManager.finish();
 
-        const updateTasks: Array<Promise<void>> = [];
-        for (const declgenJob of declgenJobs) {
-            updateTasks.push(this.updateDeclFileMapAsync(declgenJob));
-        }
-        await Promise.all(updateTasks);
+        await this.updateDeclFileMapForJobs(declgenJobs);
         await this.saveDeclFileMap();
     }
 }

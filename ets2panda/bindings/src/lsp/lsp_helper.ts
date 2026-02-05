@@ -374,7 +374,11 @@ export class Lsp {
         this.declFileMap[declEtsOutputPath] = filePath;
         ensurePathExists(declEtsOutputPath);
         ensurePathExists(etsOutputPath);
-        global.es2pandaPublic._GenerateTsDeclarationsFromContext(ctx, declEtsOutputPath, etsOutputPath, 1, 0, '', 1);
+        global.es2pandaPublic._GenerateTsDeclarationsFromContext(ctx, 1,
+          passStringArray([filePath]),
+          passStringArray([declEtsOutputPath]),
+          passStringArray([etsOutputPath]), 1, 0, '', 1
+        );
       } finally {
         this.destroyContext(cfg, ctx);
       }

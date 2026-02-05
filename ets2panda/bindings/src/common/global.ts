@@ -109,4 +109,8 @@ export class global {
     }
     return this._interopPublic;
   }
+
+  public static _SetUpSoPath(pandaSdkPath: string): void {
+    this.es2panda._SetUpSoPath(pandaSdkPath);
+  }
 }

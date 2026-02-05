@@ -181,16 +181,22 @@ ETS_INTEROP_2(ProceedToState, EtsNativePointer, EtsNativePointer, EtsInt)
 
 // CC-OFFNXT(G.FUN.01-CPP) solid logic
 // CC-OFFNXT(G.NAM.03-CPP) project code style
-EtsInt impl_GenerateTsDeclarationsFromContext(EtsNativePointer contextPtr, EtsStringPtr &outputDeclEts,
-                                              EtsStringPtr &outputEts, EtsBoolean exportAll, EtsBoolean isolated,
+EtsInt impl_GenerateTsDeclarationsFromContext(EtsNativePointer contextPtr, EtsInt fileNamesCount,
+                                              EtsStringArray inputFiles, EtsStringArray outputDeclEts,
+                                              EtsStringArray outputEts, EtsBoolean exportAll, EtsBoolean isolated,
                                               EtsStringPtr &recordFile, EtsBoolean genAnnotations)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    if (fileNamesCount <= 0) {
+        return 0;
+    }
+
     return static_cast<EtsInt>(GetPublicImpl()->GenerateTsDeclarationsFromContext(
-        context, outputDeclEts.Data(), outputEts.Data(), exportAll, isolated, recordFile.Data(), genAnnotations));
+        context, fileNamesCount, const_cast<const char **>(inputFiles), const_cast<const char **>(outputDeclEts),
+        const_cast<const char **>(outputEts), exportAll, isolated, recordFile.Data(), genAnnotations));
 }
-ETS_INTEROP_7(GenerateTsDeclarationsFromContext, EtsInt, EtsNativePointer, EtsStringPtr, EtsStringPtr, EtsBoolean,
-              EtsBoolean, EtsStringPtr, EtsBoolean)
+ETS_INTEROP_9(GenerateTsDeclarationsFromContext, EtsInt, EtsNativePointer, EtsInt, EtsStringArray, EtsStringArray,
+              EtsStringArray, EtsBoolean, EtsBoolean, EtsStringPtr, EtsBoolean)
 
 // CC-OFFNXT(G.NAM.03-CPP) project code style
 EtsInt impl_GenerateStaticDeclarationsFromContext(EtsNativePointer contextPtr, EtsStringPtr &outputPath)

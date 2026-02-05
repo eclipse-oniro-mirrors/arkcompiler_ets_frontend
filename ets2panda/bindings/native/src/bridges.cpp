@@ -76,17 +76,60 @@ KNativePointer impl_CreateContextFromStringWithHistory(KNativePointer configPtr,
 }
 TS_INTEROP_3(CreateContextFromStringWithHistory, KNativePointer, KNativePointer, KStringPtr, KStringPtr)
 
-KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KStringPtr &outputDeclEts, KStringPtr &outputEts,
-                                            KBoolean exportAll, KBoolean isolated, KStringPtr &recordFile,
-                                            KBoolean genAnnotations)
+KInt impl_GenerateTsDeclarationsFromContext(KNativePointer contextPtr, KUInt fileNamesCount, KStringArray inputFiles,
+                                            KStringArray outputDeclEts, KStringArray outputEts, KBoolean exportAll,
+                                            KBoolean isolated, KStringPtr &recordFile, KBoolean genAnnotations)
 {
     auto context = reinterpret_cast<es2panda_Context *>(contextPtr);
+    const std::size_t headerLen = 4;
+
+    const auto count = static_cast<std::size_t>(fileNamesCount);
+    std::vector<std::string> inputFilesStr;
+    std::vector<std::string> outputDeclEtsStr;
+    std::vector<std::string> outputEtsStr;
+    inputFilesStr.reserve(count);
+    outputDeclEtsStr.reserve(count);
+    outputEtsStr.reserve(count);
+
+    std::size_t inputPosition = headerLen;
+    std::size_t declPosition = headerLen;
+    std::size_t etsPosition = headerLen;
+
+    for (std::size_t i = 0; i < count; ++i) {
+        std::size_t strLen = UnpackUInt(inputFiles + inputPosition);
+        inputPosition += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        inputFilesStr.emplace_back(reinterpret_cast<const char *>(inputFiles + inputPosition), strLen);
+        inputPosition += strLen;
+
+        strLen = UnpackUInt(outputDeclEts + declPosition);
+        declPosition += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        outputDeclEtsStr.emplace_back(reinterpret_cast<const char *>(outputDeclEts + declPosition), strLen);
+        declPosition += strLen;
+
+        strLen = UnpackUInt(outputEts + etsPosition);
+        etsPosition += headerLen;
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        outputEtsStr.emplace_back(reinterpret_cast<const char *>(outputEts + etsPosition), strLen);
+        etsPosition += strLen;
+    }
+
+    std::vector<const char *> inputFilesList(count);
+    std::vector<const char *> outputDeclEtsList(count);
+    std::vector<const char *> outputEtsList(count);
+    for (std::size_t i = 0; i < count; ++i) {
+        inputFilesList[i] = inputFilesStr[i].c_str();
+        outputDeclEtsList[i] = outputDeclEtsStr[i].c_str();
+        outputEtsList[i] = outputEtsStr[i].c_str();
+    }
+
     return static_cast<KInt>(GetPublicImpl()->GenerateTsDeclarationsFromContext(
-        context, outputDeclEts.Data(), outputEts.Data(), exportAll != 0, isolated != 0, recordFile.Data(),
-        genAnnotations != 0));
+        context, fileNamesCount, inputFilesList.data(), outputDeclEtsList.data(), outputEtsList.data(), exportAll != 0,
+        isolated != 0, recordFile.Data(), genAnnotations != 0));
 }
-TS_INTEROP_7(GenerateTsDeclarationsFromContext, KInt, KNativePointer, KStringPtr, KStringPtr, KBoolean, KBoolean,
-             KStringPtr, KBoolean)
+TS_INTEROP_9(GenerateTsDeclarationsFromContext, KInt, KNativePointer, KUInt, KStringArray, KStringArray, KStringArray,
+             KBoolean, KBoolean, KStringPtr, KBoolean)
 
 KNativePointer impl_FormOutputPathForFile(KNativePointer contextPtr, KStringPtr &inputPath)
 {

@@ -17,15 +17,10 @@
 import {
     WorkerMessageType,
     ProcessDeclgenV1Task,
-    JobContentType,
-    FileInfo,
 } from '../types';
 import { LogDataFactory, LogData, Logger, getConsoleLogger } from '../logger';
 import { ErrorCode, DriverError } from '../util/error';
 import { Ets2panda } from '../util/ets2panda';
-import { changeFileExtension } from '../util/utils';
-import * as path from 'path';
-import { ABC_SUFFIX } from '../pre_define';
 
 const logger = Logger.getInstance(getConsoleLogger)
 
@@ -34,24 +29,7 @@ function declgen(id: string, task: ProcessDeclgenV1Task): void {
 
     try {
         ets2panda.initalize();
-        if (task.contentType === JobContentType.CLUSTER) {
-            for (const fi of (task.content as FileInfo[])) {
-                const outPut: string = path.resolve(
-                    task.buildConfig.cachePath, task.moduleName,
-                    changeFileExtension(
-                        path.relative(task.moduleRoot, fi.input),
-                        ABC_SUFFIX
-                    )
-                );
-                const subTask: ProcessDeclgenV1Task = {
-                    ...task,
-                    content: {input: fi.input, output: outPut}
-                };
-                ets2panda.declgenV1(subTask, subTask.buildConfig.skipDeclCheck ?? true, subTask.buildConfig.genDeclAnnotations ?? true);
-            }
-        } else {
-            ets2panda.declgenV1(task, task.buildConfig.skipDeclCheck ?? true, task.buildConfig.genDeclAnnotations ?? true);
-        }
+        ets2panda.declgenV1(task, task.buildConfig.skipDeclCheck ?? true, task.buildConfig.genDeclAnnotations ?? true);
 
         process.send!({
             type: WorkerMessageType.DECL_GENERATED,

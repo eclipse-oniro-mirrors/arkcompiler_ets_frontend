@@ -17,6 +17,7 @@ import("//build/ohos.gni")
 npm_path = "//prebuilts/build-tools/common/nodejs/current/bin/npm"
 
 action("build_build_system") {
+  deps = [ "../../bindings:build_bindings(${host_toolchain})" ]
   script = "build_build_system.py"
 
   args = [
