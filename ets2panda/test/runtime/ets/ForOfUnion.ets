@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ function check1() {
 function check2() {
     let a9 : string|Int[] = [1,2] as Int[]
     let sum = 0;
-    for (let val : Char|Int of a9) {
+    for (let val : string|Int of a9) {
         let b9 = val
         if (b9 instanceof Int) {
             sum += b9;
@@ -45,12 +45,12 @@ function fooStr() : string|Int[] {
 
 function check3() {
     let a8 : string|Int[] = fooStr();
-    let target : Char|Int = 0;
-    for (let character : Char|Int of a8) {
+    let target : string|Int = 0;
+    for (let character : String|Int of a8) {
         target = character;
     }
 
-    arktest.assertTrue(target instanceof Char)
+    arktest.assertTrue(target instanceof string)
 }
 
 function fooInt() : string|Int[] {
@@ -60,8 +60,8 @@ function fooInt() : string|Int[] {
 
 function check4() {
     let a8 : string|Int[] = fooInt();
-    let target : Char|Int = 0;
-    for (let val : Char|Int of a8) {
+    let target : string|Int = 0;
+    for (let val : String|Int of a8) {
         target = val;
     }
 
