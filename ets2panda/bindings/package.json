@@ -27,7 +27,8 @@
     "format": "npx prettier --write .",
     "ut_test": "npm run test:build && jest test/ut",
     "test": "npm run test:build && jest test/e2e",
-    "test_skip_ui": "export SKIP_UI_PLUGINS=true && npm run test"
+    "test_skip_ui": "export SKIP_UI_PLUGINS=true && npm run test",
+    "build": "npm run clean && tsc"
   },
   "author": "",
   "license": "ISC",
