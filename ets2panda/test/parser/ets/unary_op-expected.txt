@@ -716,8 +716,25 @@
               }
             },
             "value": {
-              "type": "BooleanLiteral",
-              "value": false,
+              "type": "UnaryExpression",
+              "operator": "!",
+              "prefix": true,
+              "argument": {
+                "type": "Identifier",
+                "name": "i",
+                "loc": {
+                  "start": {
+                    "line": 25,
+                    "column": 10,
+                    "program": "unary_op.ets"
+                  },
+                  "end": {
+                    "line": 25,
+                    "column": 11,
+                    "program": "unary_op.ets"
+                  }
+                }
+              },
               "loc": {
                 "start": {
                   "line": 25,

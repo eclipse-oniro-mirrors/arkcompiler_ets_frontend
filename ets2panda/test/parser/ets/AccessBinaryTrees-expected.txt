@@ -2902,8 +2902,41 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 4,
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "AccessBinaryTrees",
+                                "loc": {
+                                  "start": {
+                                    "line": 54,
+                                    "column": 23,
+                                    "program": "AccessBinaryTrees.ets"
+                                  },
+                                  "end": {
+                                    "line": 54,
+                                    "column": 40,
+                                    "program": "AccessBinaryTrees.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "startDepth",
+                                "loc": {
+                                  "start": {
+                                    "line": 54,
+                                    "column": 41,
+                                    "program": "AccessBinaryTrees.ets"
+                                  },
+                                  "end": {
+                                    "line": 54,
+                                    "column": 51,
+                                    "program": "AccessBinaryTrees.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 54,
@@ -2965,8 +2998,41 @@
                           }
                         },
                         "right": {
-                          "type": "NumberLiteral",
-                          "value": 7,
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "AccessBinaryTrees",
+                            "loc": {
+                              "start": {
+                                "line": 54,
+                                "column": 58,
+                                "program": "AccessBinaryTrees.ets"
+                              },
+                              "end": {
+                                "line": 54,
+                                "column": 75,
+                                "program": "AccessBinaryTrees.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "endDepth",
+                            "loc": {
+                              "start": {
+                                "line": 54,
+                                "column": 76,
+                                "program": "AccessBinaryTrees.ets"
+                              },
+                              "end": {
+                                "line": 54,
+                                "column": 84,
+                                "program": "AccessBinaryTrees.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 54,
@@ -3066,8 +3132,41 @@
                                   }
                                 },
                                 "init": {
-                                  "type": "NumberLiteral",
-                                  "value": 4,
+                                  "type": "MemberExpression",
+                                  "object": {
+                                    "type": "Identifier",
+                                    "name": "AccessBinaryTrees",
+                                    "loc": {
+                                      "start": {
+                                        "line": 55,
+                                        "column": 27,
+                                        "program": "AccessBinaryTrees.ets"
+                                      },
+                                      "end": {
+                                        "line": 55,
+                                        "column": 44,
+                                        "program": "AccessBinaryTrees.ets"
+                                      }
+                                    }
+                                  },
+                                  "property": {
+                                    "type": "Identifier",
+                                    "name": "startDepth",
+                                    "loc": {
+                                      "start": {
+                                        "line": 55,
+                                        "column": 45,
+                                        "program": "AccessBinaryTrees.ets"
+                                      },
+                                      "end": {
+                                        "line": 55,
+                                        "column": 55,
+                                        "program": "AccessBinaryTrees.ets"
+                                      }
+                                    }
+                                  },
+                                  "computed": false,
+                                  "optional": false,
                                   "loc": {
                                     "start": {
                                       "line": 55,
@@ -4989,8 +5088,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": -4,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "AccessBinaryTrees",
+                              "loc": {
+                                "start": {
+                                  "line": 75,
+                                  "column": 27,
+                                  "program": "AccessBinaryTrees.ets"
+                                },
+                                "end": {
+                                  "line": 75,
+                                  "column": 44,
+                                  "program": "AccessBinaryTrees.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 75,
+                                  "column": 45,
+                                  "program": "AccessBinaryTrees.ets"
+                                },
+                                "end": {
+                                  "line": 75,
+                                  "column": 53,
+                                  "program": "AccessBinaryTrees.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 75,

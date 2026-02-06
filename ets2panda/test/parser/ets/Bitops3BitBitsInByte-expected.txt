@@ -1941,8 +1941,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 512000,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Bitops3BitBitsInByte",
+                              "loc": {
+                                "start": {
+                                  "line": 37,
+                                  "column": 27,
+                                  "program": "Bitops3BitBitsInByte.ets"
+                                },
+                                "end": {
+                                  "line": 37,
+                                  "column": 47,
+                                  "program": "Bitops3BitBitsInByte.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 37,
+                                  "column": 48,
+                                  "program": "Bitops3BitBitsInByte.ets"
+                                },
+                                "end": {
+                                  "line": 37,
+                                  "column": 56,
+                                  "program": "Bitops3BitBitsInByte.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 37,

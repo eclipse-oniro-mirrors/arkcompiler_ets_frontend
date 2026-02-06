@@ -697,8 +697,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 0,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "BitopsBitwiseAnd",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 39,
+                                  "program": "BitopsBitwiseAnd.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 55,
+                                  "program": "BitopsBitwiseAnd.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 26,
+                                  "column": 56,
+                                  "program": "BitopsBitwiseAnd.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 64,
+                                  "program": "BitopsBitwiseAnd.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 26,

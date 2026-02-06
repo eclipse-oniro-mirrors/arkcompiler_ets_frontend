@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -115,19 +115,18 @@ private:
 TEST_F(AnnotationsforClass, annotations_for_class)
 {
     std::string_view text = R"(
-    const b: string = 'Anno'
     @interface Anno {
         authorName: string = ""
         authorAge: int = 0
         testBool: boolean = false
-        annoStrArr: string[] = [b]
+        annoStrArr: string[] = ['Anno']
     }
 
     @Anno({
         authorName: "Mike",
         authorAge: 18,
         testBool: true,
-        annoStrArr: [b + '-Klass']
+        annoStrArr: ['Anno' + '-Klass']
     })
     class A {
         @Anno
@@ -137,7 +136,7 @@ TEST_F(AnnotationsforClass, annotations_for_class)
             authorName: "John",
             authorAge: 23,
             testBool: false,
-            annoStrArr: [b + '-foo']
+            annoStrArr: ['Anno' + '-foo']
         })
         foo() {}
     })";

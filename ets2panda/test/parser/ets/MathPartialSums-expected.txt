@@ -4372,8 +4372,41 @@
                               }
                             },
                             "init": {
-                              "type": "NumberLiteral",
-                              "value": 1024,
+                              "type": "MemberExpression",
+                              "object": {
+                                "type": "Identifier",
+                                "name": "MathPartialSums",
+                                "loc": {
+                                  "start": {
+                                    "line": 74,
+                                    "column": 23,
+                                    "program": "MathPartialSums.ets"
+                                  },
+                                  "end": {
+                                    "line": 74,
+                                    "column": 38,
+                                    "program": "MathPartialSums.ets"
+                                  }
+                                }
+                              },
+                              "property": {
+                                "type": "Identifier",
+                                "name": "n1",
+                                "loc": {
+                                  "start": {
+                                    "line": 74,
+                                    "column": 39,
+                                    "program": "MathPartialSums.ets"
+                                  },
+                                  "end": {
+                                    "line": 74,
+                                    "column": 41,
+                                    "program": "MathPartialSums.ets"
+                                  }
+                                }
+                              },
+                              "computed": false,
+                              "optional": false,
                               "loc": {
                                 "start": {
                                   "line": 74,
@@ -4435,8 +4468,41 @@
                           }
                         },
                         "right": {
-                          "type": "NumberLiteral",
-                          "value": 16384,
+                          "type": "MemberExpression",
+                          "object": {
+                            "type": "Identifier",
+                            "name": "MathPartialSums",
+                            "loc": {
+                              "start": {
+                                "line": 74,
+                                "column": 48,
+                                "program": "MathPartialSums.ets"
+                              },
+                              "end": {
+                                "line": 74,
+                                "column": 63,
+                                "program": "MathPartialSums.ets"
+                              }
+                            }
+                          },
+                          "property": {
+                            "type": "Identifier",
+                            "name": "n2",
+                            "loc": {
+                              "start": {
+                                "line": 74,
+                                "column": 64,
+                                "program": "MathPartialSums.ets"
+                              },
+                              "end": {
+                                "line": 74,
+                                "column": 66,
+                                "program": "MathPartialSums.ets"
+                              }
+                            }
+                          },
+                          "computed": false,
+                          "optional": false,
                           "loc": {
                             "start": {
                               "line": 74,
@@ -4742,8 +4808,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 60.0899,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "MathPartialSums",
+                              "loc": {
+                                "start": {
+                                  "line": 78,
+                                  "column": 27,
+                                  "program": "MathPartialSums.ets"
+                                },
+                                "end": {
+                                  "line": 78,
+                                  "column": 42,
+                                  "program": "MathPartialSums.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 78,
+                                  "column": 43,
+                                  "program": "MathPartialSums.ets"
+                                },
+                                "end": {
+                                  "line": 78,
+                                  "column": 51,
+                                  "program": "MathPartialSums.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 78,

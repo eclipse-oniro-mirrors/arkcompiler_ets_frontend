@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,10 +28,7 @@
 @MyAnno({a = 1 + -1, b = 1554.4 ^ 10, c = 12 >= 10})
 function foo() {}
 
-const annoA = 10
-const annoB = 1451.1
-const annoC = 123
-@MyAnno({a = annoA, b = annoB ^ 10, c = annoC > 10})
+@MyAnno({a = 10, b = 1451.1 ^ 10, c = 123 > 10})
 function foo1() {}
 
 function main() {

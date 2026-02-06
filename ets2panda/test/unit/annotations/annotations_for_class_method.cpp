@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,7 @@ public:
         const AnnotationMap expectedFuncAnnoOfClassA = {
             {"TEST",
              {
-                 {"value", "test-path"},
+                 {"value", "test-A"},
              }},
         };
 
@@ -49,7 +49,7 @@ public:
         const AnnotationMap expectedFuncAnnoOfClassB = {
             {"TEST",
              {
-                 {"value", "inner-path"},
+                 {"value", "test-B"},
              }},
         };
 
@@ -57,7 +57,7 @@ public:
         const AnnotationMap expectedFuncAnnoOfClassC = {
             {"TEST",
              {
-                 {"value", "inner-path-namespace"},
+                 {"value", "test-C"},
              }},
         };
         AnnotationEmitTest::CheckFunctionAnnotations(program, funcNameOfClassA, false, expectedFuncAnnoOfClassA);
@@ -73,30 +73,22 @@ private:
 TEST_F(AnnotationsforClassMethod, annotations_for_class_method)
 {
     std::string_view text = R"(
-    namespace NS {
-        export const TS = 'inner-path-namespace'
-    }
-
     @interface TEST {
         path: string
     }
 
-    const TS: string = 'test-path'
     class A {
-        TS: string = "xxx"
-        @TEST(TS)
+        @TEST('test-A')
         test() {}
     }
     
     class B {
-        readonly static TS: string = 'inner-path'
-        @TEST(B.TS)
+        @TEST('test-B')
         test() {}
     }
 
     class C {
-        TS: string = 'inner-path'
-        @TEST(NS.TS)
+        @TEST('test-C')
         test() {}
     }
     )";

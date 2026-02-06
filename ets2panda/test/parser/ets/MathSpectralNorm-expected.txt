@@ -6960,8 +6960,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 5.08669,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "MathSpectralNorm",
+                              "loc": {
+                                "start": {
+                                  "line": 87,
+                                  "column": 29,
+                                  "program": "MathSpectralNorm.ets"
+                                },
+                                "end": {
+                                  "line": 87,
+                                  "column": 45,
+                                  "program": "MathSpectralNorm.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 87,
+                                  "column": 46,
+                                  "program": "MathSpectralNorm.ets"
+                                },
+                                "end": {
+                                  "line": 87,
+                                  "column": 54,
+                                  "program": "MathSpectralNorm.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 87,

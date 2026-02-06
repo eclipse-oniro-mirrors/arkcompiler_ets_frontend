@@ -2657,8 +2657,41 @@
                               "type": "BinaryExpression",
                               "operator": "*",
                               "left": {
-                                "type": "NumberLiteral",
-                                "value": 0.607253,
+                                "type": "MemberExpression",
+                                "object": {
+                                  "type": "Identifier",
+                                  "name": "MathCordic",
+                                  "loc": {
+                                    "start": {
+                                      "line": 40,
+                                      "column": 32,
+                                      "program": "MathCordic.ets"
+                                    },
+                                    "end": {
+                                      "line": 40,
+                                      "column": 42,
+                                      "program": "MathCordic.ets"
+                                    }
+                                  }
+                                },
+                                "property": {
+                                  "type": "Identifier",
+                                  "name": "AG_CONST",
+                                  "loc": {
+                                    "start": {
+                                      "line": 40,
+                                      "column": 43,
+                                      "program": "MathCordic.ets"
+                                    },
+                                    "end": {
+                                      "line": 40,
+                                      "column": 51,
+                                      "program": "MathCordic.ets"
+                                    }
+                                  }
+                                },
+                                "computed": false,
+                                "optional": false,
                                 "loc": {
                                   "start": {
                                     "line": 40,
@@ -4988,8 +5021,41 @@
                                 },
                                 "arguments": [
                                   {
-                                    "type": "NumberLiteral",
-                                    "value": 28.027,
+                                    "type": "MemberExpression",
+                                    "object": {
+                                      "type": "Identifier",
+                                      "name": "MathCordic",
+                                      "loc": {
+                                        "start": {
+                                          "line": 63,
+                                          "column": 46,
+                                          "program": "MathCordic.ets"
+                                        },
+                                        "end": {
+                                          "line": 63,
+                                          "column": 56,
+                                          "program": "MathCordic.ets"
+                                        }
+                                      }
+                                    },
+                                    "property": {
+                                      "type": "Identifier",
+                                      "name": "TARGET_ANGLE",
+                                      "loc": {
+                                        "start": {
+                                          "line": 63,
+                                          "column": 57,
+                                          "program": "MathCordic.ets"
+                                        },
+                                        "end": {
+                                          "line": 63,
+                                          "column": 69,
+                                          "program": "MathCordic.ets"
+                                        }
+                                      }
+                                    },
+                                    "computed": false,
+                                    "optional": false,
                                     "loc": {
                                       "start": {
                                         "line": 63,
@@ -5619,8 +5685,41 @@
                             }
                           },
                           {
-                            "type": "NumberLiteral",
-                            "value": 10362.6,
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "MathCordic",
+                              "loc": {
+                                "start": {
+                                  "line": 74,
+                                  "column": 33,
+                                  "program": "MathCordic.ets"
+                                },
+                                "end": {
+                                  "line": 74,
+                                  "column": 43,
+                                  "program": "MathCordic.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "expected",
+                              "loc": {
+                                "start": {
+                                  "line": 74,
+                                  "column": 44,
+                                  "program": "MathCordic.ets"
+                                },
+                                "end": {
+                                  "line": 74,
+                                  "column": 52,
+                                  "program": "MathCordic.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 74,

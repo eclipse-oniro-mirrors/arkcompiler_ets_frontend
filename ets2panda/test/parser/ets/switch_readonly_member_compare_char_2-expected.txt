@@ -619,8 +619,41 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "CharLiteral",
-                            "value": "{",
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Fgr",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 14,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 17,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "BR",
+                              "loc": {
+                                "start": {
+                                  "line": 29,
+                                  "column": 18,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                },
+                                "end": {
+                                  "line": 29,
+                                  "column": 20,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 29,
@@ -668,8 +701,41 @@
                         {
                           "type": "SwitchCase",
                           "test": {
-                            "type": "CharLiteral",
-                            "value": "[",
+                            "type": "MemberExpression",
+                            "object": {
+                              "type": "Identifier",
+                              "name": "Sqr",
+                              "loc": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 14,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                },
+                                "end": {
+                                  "line": 31,
+                                  "column": 17,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                }
+                              }
+                            },
+                            "property": {
+                              "type": "Identifier",
+                              "name": "BR",
+                              "loc": {
+                                "start": {
+                                  "line": 31,
+                                  "column": 18,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                },
+                                "end": {
+                                  "line": 31,
+                                  "column": 20,
+                                  "program": "switch_readonly_member_compare_char_2.ets"
+                                }
+                              }
+                            },
+                            "computed": false,
+                            "optional": false,
                             "loc": {
                               "start": {
                                 "line": 31,

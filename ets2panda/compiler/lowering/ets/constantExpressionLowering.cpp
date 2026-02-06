@@ -1244,6 +1244,30 @@ static varbinder::Variable *Resolve(const ir::Expression *identOrMexp)
     return ResolveMemberExpressionProperty(identOrMexp->AsMemberExpression());
 }
 
+static bool AllowConstSubstitution(const varbinder::Variable *var)
+{
+    if (var == nullptr) {
+        return false;
+    }
+
+    auto *scope = var->GetScope();
+    if (scope == nullptr) {
+        return false;
+    }
+
+    auto *scopeNode = scope->Node();
+    if (scopeNode == nullptr) {
+        return false;
+    }
+
+    const bool isLocalScope = scopeNode->IsScriptFunction() || scopeNode->IsBlockStatement();
+    if (!isLocalScope) {
+        return false;
+    }
+
+    return true;
+}
+
 // Access flags should be checked as use-site may be folded.
 static bool CheckPrivateAccess(ir::ClassProperty *propDecl, ir::Expression *rval)
 {
@@ -1271,25 +1295,33 @@ void ConstantExpressionLoweringImpl::PopulateDAGs(ir::Expression *node)
         ES2PANDA_ASSERT(numLiteral->Number().ConversionError());
         AddDNodeToPretransform(numLiteral);
     } else if (auto identOrMExp = AsRValue(Cast<ir::Identifier>(node)); identOrMExp != nullptr) {
-        auto var = Resolve(identOrMExp);
-        auto decl = (var != nullptr) ? var->Declaration() : nullptr;
-        if ((decl != nullptr) && (decl->IsConstDecl() || decl->IsReadonlyDecl())) {
-            auto declnode = decl->Node();
-            // NOTE(dkofanov): Constants initialized via static block/constructor are not supported.
-            ir::Expression *init = nullptr;
-            if (auto prop = Cast<ir::ClassProperty>(declnode);
-                (prop != nullptr) && (!prop->IsPrivateElement() || CheckPrivateAccess(prop, identOrMExp))) {
-                init = prop->Value();
-                // NOTE(dkofanov): 'declnode' points to identifier instead of 'ir::VariableDeclarator'.
-            } else if (auto enumdecl = Cast<ir::TSEnumMember>(declnode); enumdecl != nullptr) {
-                init = enumdecl->Init();
-            } else if (auto vardecl = Cast<ir::VariableDeclarator>(declnode->Parent()); vardecl != nullptr) {
+        auto *var = Resolve(identOrMExp);
+        auto *decl = (var != nullptr) ? var->Declaration() : nullptr;
+        if (decl == nullptr || decl->Node() == nullptr) {
+            return;
+        }
+
+        auto *declNode = decl->Node();
+        ir::Expression *init = nullptr;
+
+        if (auto *enumMember = Cast<ir::TSEnumMember>(declNode); enumMember != nullptr) {
+            init = enumMember->Init();
+        } else {
+            if ((!decl->IsConstDecl() && !decl->IsReadonlyDecl()) || !AllowConstSubstitution(var)) {
+                return;
+            }
+
+            if (auto *vardecl = Cast<ir::VariableDeclarator>(declNode->Parent()); vardecl != nullptr) {
                 init = vardecl->Init();
+            } else if (auto *prop = Cast<ir::ClassProperty>(declNode);
+                       prop != nullptr && !prop->IsPrivateElement() && CheckPrivateAccess(prop, identOrMExp)) {
+                init = prop->Value();
             }
-            if (init != nullptr) {
-                HandleUndefinedInLogicalExpression(context_, node, init);
-                AddDNode(identOrMExp, init);
-            }
+        }
+
+        if (init != nullptr) {
+            HandleUndefinedInLogicalExpression(context_, node, init);
+            AddDNode(identOrMExp, init);
         }
     } else if (auto tmpl = Cast<ir::TemplateLiteral>(node); tmpl) {
         if (tmpl->Expressions().empty()) {
