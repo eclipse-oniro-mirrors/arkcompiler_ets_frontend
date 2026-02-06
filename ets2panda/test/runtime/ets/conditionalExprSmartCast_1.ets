@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,11 +13,23 @@
  * limitations under the License.
  */
 
- enum E {
-    FIRST = 1,
-    SECOND = 12345678910
- }
+enum Num {One = 12345, Two = 2}
 
- let a: int = E.FIRST
+function foo() {
+    return 100
+}
 
-/* @@? 21:15 Error Semantic error ESE0318: Type 'E' cannot be assigned to type 'Int' */
+function foo(p: byte|string) {
+    return 200
+}
+
+function foo(p: int|string) {
+    return 300
+}
+
+function main(): void {
+    let t = foo() == 100
+    let x = Num.One
+    let y = "aaa"
+    arktest.assertEQ(foo(t ? x : y), 300)
+}

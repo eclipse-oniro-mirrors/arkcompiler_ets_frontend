@@ -18,6 +18,7 @@
 #include "checker/ETSchecker.h"
 #include "checker/ets/conversion.h"
 #include "checker/types/ets/etsUnionType.h"
+#include "checker/types/type.h"
 
 namespace ark::es2panda::checker {
 
@@ -115,43 +116,6 @@ void ETSStringEnumType::CastTarget(TypeRelation *relation, Type *source)
     return checker->GlobalBuiltinETSStringType() != nullptr;
 }
 
-bool ETSNumericEnumType::CheckAssignableNumericTypes(Type *let)
-{
-    auto letObj = let->AsETSObjectType();
-    auto enumObj = EnumAnnotedType()->AsETSObjectType();
-    ES2PANDA_ASSERT(enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_NUMERIC));
-    if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
-        return true;
-    }
-    if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
-        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE)) {
-            return true;
-        }
-    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
-        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE) &&
-            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT)) {
-            return true;
-        }
-    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_INT)) {
-        if (!enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_DOUBLE) &&
-            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_FLOAT) &&
-            !enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_LONG)) {
-            return true;
-        }
-    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
-        if (enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE) ||
-            enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_SHORT)) {
-            return true;
-        }
-    } else if (letObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
-        if (enumObj->HasObjectFlag(ETSObjectFlags::BUILTIN_BYTE)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
 {
     bool result = false;
@@ -159,14 +123,23 @@ bool ETSNumericEnumType::AssignmentSource(TypeRelation *relation, Type *target)
         if (target->AsETSObjectType()->IsGlobalETSObjectType() ||
             target->AsETSObjectType()->Name() == compiler::Signatures::NUMERIC) {
             result = true;
-        } else if (EnumAnnotedType() != nullptr) {
-            if (CheckAssignableNumericTypes(target)) {
+        } else if (EnumAnnotedType() != nullptr || target->IsBuiltinNumeric()) {
+            auto *checker = GetETSChecker();
+            Type *elementType = nullptr;
+            if (EnumAnnotedType() != nullptr) {
+                elementType = EnumAnnotedType()->AsETSObjectType();
+            } else {
+                elementType = checker->MaybeBoxType(GetBaseEnumElementType(checker));
+            }
+            elementType->AssignmentSource(relation, target);
+            if (!relation->IsTrue()) {
+                auto unboxedElementType = checker->MaybeUnboxType(elementType);
+                checker->CheckUnboxedTypeWidenable(relation, target, unboxedElementType);
+            }
+            if (relation->IsTrue()) {
                 result = true;
                 SetGenerateValueOfFlag(relation);
             }
-        } else if (target->IsBuiltinNumeric()) {
-            result = true;
-            SetGenerateValueOfFlag(relation);
         }
     } else if (target->HasTypeFlag(TypeFlag::ETS_NUMERIC)) {
         result = true;
