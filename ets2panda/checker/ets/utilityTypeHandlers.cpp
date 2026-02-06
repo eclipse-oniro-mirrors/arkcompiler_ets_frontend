@@ -203,10 +203,6 @@ Type *ETSChecker::HandleAwaitedUtilityType(Type *typeToBeAwaited)
         return cacheType(unwrappedType->IsETSTypeParameter() ? HandleAwaitedUtilityType(unwrappedType) : unwrappedType);
     }
 
-    // NOTE(mbolshov): #19701 update this when void = undefined
-    if (typeToBeAwaited->IsETSVoidType()) {
-        return GlobalETSUndefinedType();
-    }
     return typeToBeAwaited;
 }
 
@@ -268,10 +264,6 @@ void ETSChecker::ValidateReturnTypeUtilityType(const Type *typeToValidate,
 {
     if (typeToValidate->IsTypeError()) {
         LogError(diagnostic::RETURN_TYPE_UTILITY_INCORRECT_PARAM, {typeParams->DumpEtsSrc()}, typeParams->Start());
-    }
-
-    if (typeToValidate->IsETSVoidType()) {
-        LogError(diagnostic::ANNOT_IS_VOID, {}, typeParams->Start());
     }
 }
 
@@ -1214,7 +1206,7 @@ ir::MethodDefinition *ETSChecker::CreateNonStaticClassInitializer(varbinder::Cla
     functionScope->BindNode(func);
 
     auto *const signatureInfo = CreateSignatureInfo();
-    auto *const signature = CreateSignature(signatureInfo, GlobalVoidType(), func);
+    auto *const signature = CreateSignature(signatureInfo, GlobalETSUndefinedType(), func);
     func->SetSignature(signature);
 
     VarBinder()->AsETSBinder()->BuildInternalNameWithCustomRecordTable(func, recordTable);

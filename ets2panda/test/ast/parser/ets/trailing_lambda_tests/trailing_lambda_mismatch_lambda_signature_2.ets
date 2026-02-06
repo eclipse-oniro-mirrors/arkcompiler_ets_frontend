@@ -23,4 +23,4 @@ function main() {
     }
 }
 
-/* @@@ label Error Semantic error ESE0046: Type '(() => Int)' is not compatible with type '((() => void))|undefined' at index 1 */
+/* @@@ label Error Semantic error ESE0046: Type '(() => Int)' is not compatible with type '((() => undefined))|undefined' at index 1 */

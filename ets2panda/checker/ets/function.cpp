@@ -1260,11 +1260,12 @@ static bool ResolveLambdaArgumentType(ETSChecker *checker, Signature *signature,
         if (!AssignmentContext(
                  // CC-OFFNXT(G.FMT.06-CPP) project code style
                  checker->Relation(), checker->ProgramAllocNode<ir::Identifier>(checker->ProgramAllocator()),
-                 checker->GlobalVoidType(), lambda->Signature()->ReturnType(), lambda->Start(), std::nullopt,
+                 checker->GlobalETSUndefinedType(), lambda->Signature()->ReturnType(), lambda->Start(), std::nullopt,
                  checker::TypeRelationFlag::DIRECT_RETURN)
                  .IsAssignable()) {  // CC-OFF(G.FMT.02-CPP) project code style
             checker->LogError(diagnostic::ARROW_TYPE_MISMATCH,
-                              {checker->GlobalVoidType(), lambda->Signature()->ReturnType()}, lambda->Body()->Start());
+                              {checker->GlobalETSUndefinedType(), lambda->Signature()->ReturnType()},
+                              lambda->Body()->Start());
             rc = false;
         }
     }
@@ -1418,7 +1419,6 @@ static bool CollectOverload(checker::ETSChecker *checker, ir::MethodDefinition *
         ldInfo.minArg = std::min(ldInfo.minArg, currentFunc->Function()->Signature()->MinArgCount());
         ldInfo.maxArg = std::max(ldInfo.maxArg, currentFunc->Function()->Signature()->ArgCount());
         ldInfo.hasRestVar |= (currentFunc->Function()->Signature()->RestVar() != nullptr);
-        ldInfo.returnVoid |= currentFunc->Function()->Signature()->ReturnType()->IsETSVoidType();
     }
 
     for (size_t baseFuncCounter = 0; baseFuncCounter < overloads.size(); ++baseFuncCounter) {
@@ -1570,7 +1570,7 @@ Type *ETSChecker::ComposeReturnType(ir::TypeNode *typeAnnotation, bool isAsync)
     if (typeAnnotation != nullptr) {
         return typeAnnotation->GetType(this);
     }
-    return isAsync ? CreatePromiseOf(GlobalVoidType()) : GlobalVoidType();
+    return isAsync ? CreatePromiseOf(GlobalETSUndefinedType()) : GlobalETSUndefinedType();
 }
 
 static varbinder::LocalVariable *SetupSignatureParameter(ir::ETSParameterExpression *param, Type *type)
@@ -2253,16 +2253,8 @@ bool ETSChecker::IsReturnTypeSubstitutable(Signature *const s1, Signature *const
     // A method declaration d1 with return type R1 is return-type-substitutable for another method d2 with return
     // type R2 if any of the following is true:
 
-    // NOTE(vpukhov): void type leaks into type arguments, so we have to check the original signature if the return
-    // type is parametrized or not to use a proper subtyping check. To be replaced with IsETSPrimitiveType after
-    // #19701.
-    auto const hasPrimitiveReturnType = [](Signature *s) {
-        bool origIsRef = s->Function()->Signature()->ReturnType()->IsETSReferenceType();
-        ES2PANDA_ASSERT_POS(origIsRef == s->ReturnType()->IsETSReferenceType(), s->Function()->Start());
-        return !origIsRef;
-    };
     // - If R1 is a primitive type then R2 is identical to R1.
-    if (hasPrimitiveReturnType(s1) || hasPrimitiveReturnType(s2)) {
+    if (r1->IsETSPrimitiveType() || r2->IsETSPrimitiveType()) {
         return Relation()->IsIdenticalTo(r2, r1);
     }
 

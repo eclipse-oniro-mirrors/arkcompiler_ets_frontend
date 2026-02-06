@@ -178,7 +178,6 @@ function main(): void {
 /* @@? 39:27 Error Syntax error ESY0227: Unexpected token ')'. */
 /* @@? 39:29 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 39:31 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 39:38 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 41:1 Error Semantic error ESE0143: Unresolved reference type */
 /* @@? 41:6 Error Syntax error ESY0227: Unexpected token '123'. */
 /* @@? 41:6 Error Semantic error ESE0025: Invalid left-hand side of assignment expression */
@@ -206,10 +205,10 @@ function main(): void {
 /* @@? 51:61 Error Syntax error ESY0227: Unexpected token 'int'. */
 /* @@? 51:65 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 52:5 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 52:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 52:12 Error Semantic error ESE0143: Unresolved reference q */
 /* @@? 52:23 Error Semantic error ESE0143: Unresolved reference p */
 /* @@? 55:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 59:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
 /* @@? 59:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 63:22 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 63:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
@@ -228,7 +227,9 @@ function main(): void {
 /* @@? 92:7 Error Semantic error ESE0370: Merging declarations is not supported, please keep all definitions of classes, interfaces and enums compact in the codebase! */
 /* @@? 92:7 Error Semantic error ESE0351: Variable 'A' has already been declared. */
 /* @@? 93:3 Error Syntax error ESY0233: Unexpected token. A constructor, method, accessor, or property was expected. */
+/* @@? 103:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
 /* @@? 103:14 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
+/* @@? 104:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
 /* @@? 104:21 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 115:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 115:26 Error Syntax error ESY0227: Unexpected token 'case'. */
@@ -243,7 +244,6 @@ function main(): void {
 /* @@? 115:36 Error Semantic error ESE0143: Unresolved reference T */
 /* @@? 115:38 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 116:5 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 116:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 119:1 Error Semantic error ESE0131: Function foo with this assembly signature already declared. */
 /* @@? 119:26 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 119:26 Error Syntax error ESY0227: Unexpected token 'case'. */
@@ -258,7 +258,6 @@ function main(): void {
 /* @@? 119:36 Error Semantic error ESE0143: Unresolved reference T */
 /* @@? 119:38 Error Syntax error ESY0227: Unexpected token '{'. */
 /* @@? 120:5 Error Syntax error ESY0163: return keyword should be used in function body. */
-/* @@? 120:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */
 /* @@? 123:5 Error Syntax error ESY0224: Identifier expected, got ','. */
 /* @@? 123:6 Error Syntax error ESY0227: Unexpected token 'abc'. */
 /* @@? 123:6 Error Syntax error ESY0105: Variable must be initialized or it's type must be declared. */
@@ -295,4 +294,4 @@ function main(): void {
 /* @@? 165:5 Error Semantic error ESE0289: This expression is not callable. */
 /* @@? 166:5 Error Semantic error ESE0124: Expected 1 arguments, got 0. */
 /* @@? 166:5 Error Semantic error ESE0127: No matching call signature for f() */
-/* @@? 299:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */
+/* @@? 298:1 Error Syntax error ESY0230: Expected '}', got 'end of stream'. */

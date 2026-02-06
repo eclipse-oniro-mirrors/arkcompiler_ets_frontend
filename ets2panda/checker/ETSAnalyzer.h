@@ -70,27 +70,6 @@ private:
     checker::Type *ResolveMemberExpressionByBaseType(ETSChecker *checker, checker::Type *baseType,
                                                      ir::MemberExpression *expr) const;
 
-    void CheckVoidTypeExpression(ETSChecker *checker, ir::Expression *expr) const
-    {
-        // Existing void expression inconsistency,refer to #17762
-        if (expr->TsType() == nullptr || !expr->TsType()->IsETSVoidType() || expr->Parent() == nullptr) {
-            return;
-        }
-        auto parent = expr->Parent();
-        while (parent->IsConditionalExpression()) {
-            parent = parent->Parent();
-            if (parent == nullptr) {
-                return;
-            }
-        }
-        bool acceptVoid =
-            parent->IsExpressionStatement() || parent->IsReturnStatement() ||
-            (parent->IsSequenceExpression() && parent->Parent() != nullptr && parent->Parent()->IsForUpdateStatement());
-        if (!acceptVoid) {
-            expr->SetTsType(checker->GlobalTypeError());
-            checker->LogError(diagnostic::VOID_VALUE, {}, expr->Start());
-        }
-    }
     mutable std::vector<const varbinder::Variable *> catchParamStack_ {};
 };
 

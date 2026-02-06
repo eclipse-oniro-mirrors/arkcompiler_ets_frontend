@@ -75,7 +75,7 @@ Type *ETSNullType::Instantiate([[maybe_unused]] ArenaAllocator *allocator, [[may
 
 void ETSUndefinedType::Identical(TypeRelation *relation, Type *other)
 {
-    relation->Result(other->IsETSUndefinedType());
+    relation->Result(other->IsETSUndefinedType() || other->IsETSVoidType());
 }
 
 void ETSUndefinedType::AssignmentTarget(TypeRelation *relation, Type *source)

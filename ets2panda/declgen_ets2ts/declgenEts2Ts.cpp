@@ -38,6 +38,67 @@
 
 namespace ark::es2panda::declgen_ets2ts {
 
+namespace {
+
+constexpr std::string_view TS_DECL_SUFFIX = ".d.ts";
+
+[[nodiscard]] bool IsExplicitVoidTypeNode(const ir::TypeNode *typeAnnotation)
+{
+    if (typeAnnotation == nullptr) {
+        return false;
+    }
+
+    if (typeAnnotation->IsTSVoidKeyword()) {
+        return true;
+    }
+
+    if (typeAnnotation->IsETSPrimitiveType() &&
+        typeAnnotation->AsETSPrimitiveType()->GetPrimitiveType() == ir::PrimitiveType::VOID) {
+        return true;
+    }
+
+    if (typeAnnotation->IsTSParenthesizedType()) {
+        const auto *innerType = typeAnnotation->AsTSParenthesizedType()->Type();
+        return innerType != nullptr && innerType->IsTypeNode() && IsExplicitVoidTypeNode(innerType->AsTypeNode());
+    }
+
+    return false;
+}
+
+[[nodiscard]] bool HasExplicitVoidAnnotation(const ir::TypeNode *typeAnnotation)
+{
+    std::unordered_set<const ir::TypeNode *> visited;
+    auto *current = typeAnnotation;
+    while (current != nullptr) {
+        if (!visited.insert(current).second) {
+            return false;
+        }
+
+        if (IsExplicitVoidTypeNode(current)) {
+            return true;
+        }
+
+        auto *originalNode = current->OriginalNode();
+        if (originalNode == nullptr || !originalNode->IsExpression() || !originalNode->AsExpression()->IsTypeNode()) {
+            return false;
+        }
+
+        auto *next = originalNode->AsExpression()->AsTypeNode();
+        current = next;
+    }
+
+    return false;
+}
+
+[[nodiscard]] bool IsTypeScriptDeclarationOutput(const DeclgenOptions &options)
+{
+    const auto &outputPath = options.outputDeclEts;
+    return outputPath.size() >= TS_DECL_SUFFIX.size() &&
+           outputPath.compare(outputPath.size() - TS_DECL_SUFFIX.size(), TS_DECL_SUFFIX.size(), TS_DECL_SUFFIX) == 0;
+}
+
+}  // namespace
+
 static void DebugPrint([[maybe_unused]] const std::string &msg)
 {
 #if DEBUG_PRINT
@@ -815,7 +876,12 @@ void TSDeclGen::GenFunctionType(const checker::ETSFunctionType *etsFunctionType,
     if (!isSetter && !isConstructor) {
         OutDts(methodDef != nullptr ? ": " : " => ");
         if (!sig->HasFunction()) {
-            GenType(sig->ReturnType());
+            if (sig->ReturnType()->HasTypeFlag(checker::TypeFlag::ETS_UNDEFINED) &&
+                IsTypeScriptDeclarationOutput(declgenOptions_)) {
+                OutDts("void");
+            } else {
+                GenType(sig->ReturnType());
+            }
             return;
         }
         ProcessFunctionReturnType(sig);
@@ -875,6 +941,12 @@ void TSDeclGen::ProcessFunctionReturnType(const checker::Signature *sig)
             GenType(sig->Params()[0]->TsType());
             return;
         }
+    }
+
+    if (sig->ReturnType()->HasTypeFlag(checker::TypeFlag::ETS_UNDEFINED) &&
+        IsTypeScriptDeclarationOutput(declgenOptions_)) {
+        OutDts("void");
+        return;
     }
 
     std::string typeStr = sig->ReturnType()->ToString();
@@ -1026,13 +1098,12 @@ void TSDeclGen::GenTypeParameters(const ir::TSTypeParameterDeclaration *typePara
             auto *constraint = param->Constraint();
             if (constraint != nullptr) {
                 OutDts(" extends ");
-                GenType(constraint->GetType(checker_));
+                ProcessTypeAnnotationType(constraint, constraint->GetType(checker_));
             }
             auto *defaultType = param->DefaultType();
             if (defaultType != nullptr) {
                 OutDts(" = ");
-                defaultType->IsETSTypeReference() ? ProcessETSTypeReferenceType(defaultType->AsETSTypeReference())
-                                                  : GenType(defaultType->TsType());
+                ProcessTypeAnnotationType(defaultType, defaultType->GetType(checker_));
             }
         });
         OutDts(">");
@@ -1621,6 +1692,8 @@ std::string TSDeclGen::ConvertInteropTypeName(const std::string &typeName)
         return "st.Map";
     } else if (typeName == "Set") {
         return "st.Set";
+    } else if (typeName == "Class") {
+        return "ESObject";
     } else if (typeName == "es.Array") {
         return "Array";
     } else if (typeName == "es.Map") {
@@ -1725,6 +1798,10 @@ void TSDeclGen::ProcessTypeAnnotationType(const ir::TypeNode *typeAnnotation, co
 {
     auto *aliasedType = const_cast<ir::TypeNode *>(typeAnnotation)->GetType(checker_);
 
+    if (HasExplicitVoidAnnotation(typeAnnotation)) {
+        OutDts("void");
+        return;
+    }
     if (typeAnnotation->IsTSThisType()) {
         OutDts("this");
         return;
@@ -2109,6 +2186,8 @@ void TSDeclGen::GenPartName(std::string &partName)
         partName = "ESObject";
     } else if (partName == "Floating" || partName == "Integral") {
         partName = "number";
+    } else if (partName == "Class") {
+        partName = "ESObject";
     }
 }
 
@@ -2413,11 +2492,22 @@ void TSDeclGen::GenMethodSignature(const ir::MethodDefinition *methodDef, const 
 {
     if (methodDef->IsSetter()) {
         OutDts(methodName, "(value: ");
-        const auto *sig = methodDef->TsType()->AsETSFunctionType()->CallSignatures()[0];
-        if (sig->HasFunction()) {
+        const checker::Signature *sig = nullptr;
+        if (methodDef->TsType() != nullptr && methodDef->TsType()->IsETSFunctionType()) {
+            sig = GetFuncSignature(methodDef->TsType()->AsETSFunctionType(), methodDef);
+        } else if (methodDef->Function() != nullptr) {
+            sig = methodDef->Function()->Signature();
+        }
+
+        if (sig == nullptr) {
+            LogWarning(diagnostic::UNTYPED_METHOD, {methodName}, methodIdent->Start());
+            OutDts("ESObject");
+        } else if (sig->HasFunction()) {
             ProcessFunctionReturnType(sig);
-        } else {
+        } else if (!sig->Params().empty()) {
             GenType(sig->Params()[0]->TsType());
+        } else {
+            OutDts("ESObject");
         }
         OutDts(")");
     } else {

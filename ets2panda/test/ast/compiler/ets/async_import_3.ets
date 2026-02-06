@@ -15,6 +15,5 @@
 import {foo} from './async_import_4'
 let prop: int = foo<number>()
 
-/* @@? async_import_3.ets:16:17 Error Semantic error ESE0078: Cannot use type 'void' as value. */
-
+/* @@? async_import_3.ets:16:17 Error Semantic error ESE0318: Type 'undefined' cannot be assigned to type 'Int' */
 /* @@? async_import_4.ets:15:1 Warning Warning W71336: Exported function 'foo' requires type annotation. */

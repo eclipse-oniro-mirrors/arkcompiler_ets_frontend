@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,9 +23,8 @@ let func3: (f: (a: number, b: string) => FixedArray<number>): FixedArray<number>
 // let func3: (f: (a: number, b: string) => FixedArray<number>): FixedArray<number>) => (a: number, b: boolean) => true;
 
 
-/* @@? 19:8 Error Semantic error ESE0232: 'void' used as type annotation. */
-/* @@? 22:61 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
 /* @@? 22:61 Error Syntax error ESY0227: Unexpected token '=>'. */
+/* @@? 22:61 Error Syntax error ESY0228: Unexpected token, expected '=>'. */
 /* @@? 22:63 Error Syntax error ESY0227: Unexpected token 'FixedArray'. */
 /* @@? 22:82 Error Syntax error ESY0227: Unexpected token '=>'. */
 /* @@? 22:82 Error Syntax error ESY0016: Unexpected token. */

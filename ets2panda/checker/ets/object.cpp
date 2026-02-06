@@ -335,12 +335,6 @@ bool ETSChecker::ReportInterfaceAccessorTypeMismatchIfNeeded(ETSFunctionType *pr
         return false;
     }
 
-    // Keep `void` and `undefined` equivalent in this strict accessor consistency check.
-    if ((getterType->IsETSVoidType() && setterType->IsETSUndefinedType()) ||
-        (getterType->IsETSUndefinedType() && setterType->IsETSVoidType())) {
-        return false;
-    }
-
     LogError(diagnostic::PROP_INCOMPAT, {getterType, setterType, propName}, errorPos);
     return true;
 }

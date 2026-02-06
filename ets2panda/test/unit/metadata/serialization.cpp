@@ -326,7 +326,7 @@ TEST_F(MetadataTestSerialization, metadata_method_return_type_builtin)
     const auto program = RunCheckerWithCustomFunc("dummy.ets", text, []([[maybe_unused]] ir::AstNode *ast) {});
     ASSERT_NE(program, nullptr);
 
-    AssertReturnTypeForMethod(program.get(), "MyClass", "hehehe", Metadata::BuiltinTypeKind_void_);
+    AssertReturnTypeForMethod(program.get(), "MyClass", "hehehe", Metadata::BuiltinTypeKind_undefined);
     AssertReturnTypeForMethod(program.get(), "MyClass", "hohoho", Metadata::BuiltinTypeKind_null);
     AssertReturnTypeForMethod(program.get(), "MyClass", "hahaha", Metadata::BuiltinTypeKind_undefined);
     AssertReturnTypeForMethod(program.get(), "MyClass", "foo", Metadata::BuiltinTypeKind_any);

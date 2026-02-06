@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,9 +13,22 @@
  * limitations under the License.
  */
 
-function foo(){}
+class TextAreaAttribute {
+    showCounter(value: boolean | undefined, options?: number): boolean | undefined {
+        return value;
+    }
+}
 
-function main(){
-    let x = 1;
-    let y = x<2?foo():1;
+function asBoolean(val: boolean | undefined) {
+    if (val == undefined) {
+        return undefined;
+    }
+
+    return val;
+}
+
+function main(): void {
+    let attr = new TextAreaAttribute();
+    arktest.assertEQ(attr.showCounter(asBoolean(undefined)), undefined);
+    arktest.assertEQ(attr.showCounter(asBoolean(true), 1), true);
 }

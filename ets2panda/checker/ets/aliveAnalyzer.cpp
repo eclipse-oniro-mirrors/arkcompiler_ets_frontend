@@ -266,14 +266,6 @@ void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnT
     status_ = LivenessStatus::ALIVE;
     AnalyzeStat(func->Body());
 
-    if (status_ == LivenessStatus::ALIVE && returnType->IsETSUndefinedType()) {
-        if (func->HasReturnStatement()) {
-            checker_->LogError(diagnostic::NONRETURNING_PATHS, {}, func->Start());
-            ClearPendingExits();
-            return;
-        }
-    }
-
     const auto isSupertypeOfUndefined =
         checker_->Relation()->IsSupertypeOf(returnType, checker_->GlobalETSUndefinedType());
 

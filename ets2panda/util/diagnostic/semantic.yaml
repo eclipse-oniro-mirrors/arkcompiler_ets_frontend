@@ -166,10 +166,6 @@ semantic:
   id: 44
   message: "The required field '{}' must be specified. Fields without default values cannot be omitted."
 
-- name: ANNOT_IS_VOID
-  id: 232
-  message: "'void' used as type annotation."
-
 - name: ANNOT_MULTIPLE_FIELD
   id: 43
   message: "Annotation '{}' requires multiple fields to be specified."
@@ -649,10 +645,6 @@ semantic:
   message: "{} is not abstract and does not implement getter for {} property in {}"
   code_fix_ids: [FixClassIncorrectlyImplementsInterfaceForSetter]
 
-- name: GETTER_VOID
-  id: 86
-  message: "Getter must return a value"
-
 - name: ID_IN_WRONG_CTX
   id: 144
   message: "{} name '{}' used in the wrong context"
@@ -806,10 +798,6 @@ semantic:
 - name: INVALID_CONST_ASSIGNMENT
   id: 97
   message: "Cannot assign a value to a constant variable {}"
-
-- name: INVALID_DOT_CLASS
-  id: 21
-  message: "Invalid .class reference"
 
 - name: INVALID_EXPORT
   id: 367
@@ -996,16 +984,12 @@ semantic:
 
 - name: MISSING_RETURN_STMT
   id: 103
-  message: "Function with a non void return type must return a value."
+  message: "Function with non-void/undefined return type must return a value."
   code_fix_ids: [FixAddFunctionReturnStatement]
 
 - name: MISSING_RETURN_TYPE
   id: 18
   message: "Native and Declare methods should have explicit return type."
-
-- name: MIXED_VOID_NONVOID
-  id: 92
-  message: "All return statements in the function should be empty or have a value."
 
 - name: MODULE_INDEX_MISSING
   id: 359
@@ -1664,14 +1648,6 @@ semantic:
   id: 331
   message: "Type Parameter '{}' is declared as{} but occurs in 'invariant' position."
 
-- name: VOID_IN_LOGIC
-  id: 9
-  message: "An expression of type 'void' cannot be tested for truthiness"
-
-- name: VOID_VALUE
-  id: 78
-  message: "Cannot use type 'void' as value."
-
 - name: WRONG_OPERAND_TYPE_FOR_BINARY_EXPRESSION
   id: 346
   message: "Wrong type of operands for binary expression"
@@ -1682,8 +1658,10 @@ semantic:
 
 graveyard:
 - 8
+- 9
 - 15
 - 16
+- 21
 - 22
 - 23
 - 29
@@ -1692,9 +1670,12 @@ graveyard:
 - 54
 - 60
 - 75
+- 78
 - 85
+- 86
 - 89
 - 90
+- 92
 - 95
 - 102
 - 110
@@ -1716,6 +1697,7 @@ graveyard:
 - 214
 - 222
 - 229
+- 232
 - 233
 - 234
 - 237

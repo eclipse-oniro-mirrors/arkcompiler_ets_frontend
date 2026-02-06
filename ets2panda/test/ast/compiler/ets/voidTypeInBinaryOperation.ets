@@ -21,5 +21,5 @@ function main(): void {
 }
 
 
-/* @@? 20:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean) */
-/* @@? 20:31 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+/* @@? 20:3 Error Semantic error ESE0127: No matching call signature for assertTrue(Boolean|undefined) */
+/* @@? 20:22 Error Semantic error ESE0046: Type 'Boolean|undefined' is not compatible with type 'Boolean' at index 1 */

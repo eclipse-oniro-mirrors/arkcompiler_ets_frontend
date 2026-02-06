@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,4 +19,4 @@ function foo(x: int): string {
 }
 
 
-/* @@? 16:10 Error Semantic error ESE0103: Function with a non void return type must return a value. */
+/* @@? 16:10 Error Semantic error ESE0103: Function with non-void/undefined return type must return a value. */

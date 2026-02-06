@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,5 +32,5 @@ function main(): void {
 }
 
 
-/* @@? 25:5 Error Semantic error ESE0139: Signature constructor(alma: Int): void is not visible here. */
+/* @@? 25:5 Error Semantic error ESE0139: Signature constructor(alma: Int): undefined is not visible here. */
 /* @@? 25:5 Error Semantic error ESE0127: No matching call signature for privateSuperConstructorCall.Alma(Int) */

@@ -43,6 +43,50 @@ static constexpr char const FORMAT_TO_STRING_EXPRESSION[] = "((@@E1 as Object).t
 static constexpr char const FORMAT_TO_STRING_PRIMITIVE_EXPRESSION[] = "@@E1.toString(@@E2)";
 // NOLINTEND(modernize-avoid-c-arrays)
 
+static bool IsBuiltinStringConstruction(public_lib::Context *const ctx,
+                                        const ir::ETSNewClassInstanceExpression *newClassInstExpr)
+{
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    auto *constructedType = newClassInstExpr->GetTypeRef()->TsType();
+    return constructedType != nullptr &&
+           checker->Relation()->IsIdenticalTo(constructedType, checker->GlobalBuiltinETSStringType());
+}
+
+static bool IsBuiltinStringCopyConstructor(public_lib::Context *const ctx, const checker::Signature *signature)
+{
+    ES2PANDA_ASSERT(signature != nullptr);
+    auto *checker = ctx->GetChecker()->AsETSChecker();
+    return signature->Params().size() == 1 &&
+           checker->Relation()->IsIdenticalTo(signature->Params()[0]->TsType(), checker->GlobalBuiltinETSStringType());
+}
+
+static bool IsBuiltinStringCharArrayConstructor(const checker::Signature *signature, bool valueArray)
+{
+    ES2PANDA_ASSERT(signature != nullptr);
+    if (signature->Params().size() != 1) {
+        return false;
+    }
+
+    auto *paramType = signature->Params()[0]->TsType();
+    if (!paramType->IsETSArrayType()) {
+        return false;
+    }
+    if (!paramType->AsETSArrayType()->ElementType()->IsETSCharType()) {
+        return false;
+    }
+    return paramType->AsETSArrayType()->IsValueArray() == valueArray;
+}
+
+static bool IsBuiltinStringCharValueArrayConstructor(const checker::Signature *signature)
+{
+    return IsBuiltinStringCharArrayConstructor(signature, true);
+}
+
+static bool IsBuiltinStringCharFixedArrayConstructor(const checker::Signature *signature)
+{
+    return IsBuiltinStringCharArrayConstructor(signature, false);
+}
+
 static ir::Expression *ReplaceConstructorNullish(public_lib::Context *const ctx,
                                                  ir::ETSNewClassInstanceExpression *newClassInstExpr)
 {
@@ -123,23 +167,28 @@ static ir::Expression *ReplaceConstructorFixedArray(public_lib::Context *const c
 static ir::Expression *ReplaceStringConstructor(public_lib::Context *const ctx,
                                                 ir::ETSNewClassInstanceExpression *newClassInstExpr)
 {
-    // Skip missing signatures
-    if (newClassInstExpr->Signature() == nullptr || newClassInstExpr->Signature()->InternalName() == nullptr) {
+    // Skip non-string constructors and invalid signatures.
+    const auto *signature = newClassInstExpr->Signature();
+    if (!IsBuiltinStringConstruction(ctx, newClassInstExpr) || signature == nullptr) {
         return newClassInstExpr;
     }
 
-    if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_STRING_CTOR) {
+    if (IsBuiltinStringCopyConstructor(ctx, signature)) {
         auto *arg = newClassInstExpr->GetArguments()[0];
         arg->SetParent(newClassInstExpr->Parent());
         return arg;
     }
 
-    if (newClassInstExpr->Signature()->InternalName() == Signatures::BUILTIN_STRING_FROM_NULLISH_CTOR) {
-        return ReplaceConstructorNullish(ctx, newClassInstExpr);
+    if (IsBuiltinStringCharFixedArrayConstructor(signature)) {
+        return ReplaceConstructorFixedArray(ctx, newClassInstExpr);
     }
 
-    if (newClassInstExpr->Signature()->InternalName() == "std.core.String.<ctor>:std.core.Char[];void;") {
-        return ReplaceConstructorFixedArray(ctx, newClassInstExpr);
+    if (IsBuiltinStringCharValueArrayConstructor(signature)) {
+        return newClassInstExpr;
+    }
+
+    if (signature->Params().size() == 1) {
+        return ReplaceConstructorNullish(ctx, newClassInstExpr);
     }
 
     return newClassInstExpr;

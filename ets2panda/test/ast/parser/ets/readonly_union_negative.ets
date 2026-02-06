@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,6 @@ function main(): void {
 /* @@? 19:49 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@? 24:51 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@? 28:50 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */
-/* @@? 32:33 Error Semantic error ESE0232: 'void' used as type annotation. */
 /* @@? 32:47 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@? 36:55 Error Syntax error ESY0141: 'readonly' type modifier is only permitted on resizable array and tuple types. */
 /* @@? 41:5 Error Semantic error ESE0124: Expected 1 arguments, got 2. */
@@ -61,4 +60,4 @@ function main(): void {
 /* @@? 44:5 Error Semantic error ESE0124: Expected 1 arguments, got 2. */
 /* @@? 44:5 Error Semantic error ESE0127: No matching call signature for test_negative_6(undefined, Int) */
 /* @@? 45:5 Error Semantic error ESE0124: Expected 1 arguments, got 2. */
-/* @@? 45:5 Error Semantic error ESE0127: No matching call signature for test_negative_7((() => void), "test") */
+/* @@? 45:5 Error Semantic error ESE0127: No matching call signature for test_negative_7((() => undefined), "test") */

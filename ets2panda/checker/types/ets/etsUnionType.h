@@ -49,8 +49,6 @@ public:
     static void LinearizeAndEraseIdentical(TypeRelation *relation, ArenaVector<Type *> &types,
                                            bool needSubtypeReduction);
 
-    [[nodiscard]] Type *FindUnboxableType() const noexcept;
-
     [[nodiscard]] bool IsOverlapWith(TypeRelation *relation, Type const *type) const noexcept;
 
     static void NormalizeTypes(TypeRelation *relation, ArenaVector<Type *> &types);

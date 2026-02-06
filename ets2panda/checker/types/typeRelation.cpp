@@ -234,12 +234,10 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
         if (sourceUnboxedType == nullptr || !sourceUnboxedType->IsETSPrimitiveType()) {
             return false;
         }
-        Type *boxedUnionTarget = target->AsETSUnionType()->FindUnboxableType();
-        if (boxedUnionTarget == nullptr) {
-            return false;
-        }
-        Type *targetUnboxedType = checker->MaybeUnboxType(boxedUnionTarget);
-        if (targetUnboxedType == nullptr || !targetUnboxedType->IsETSPrimitiveType()) {
+        if (!target->AsETSUnionType()->AnyOfConstituentTypes([checker](Type *const constituent) {
+                auto *targetUnboxedType = checker->MaybeUnboxType(constituent);
+                return targetUnboxedType != nullptr && targetUnboxedType->IsETSPrimitiveType();
+            })) {
             return false;
         }
         bool res = this->Result(this->IsAssignableTo(sourceUnboxedType, target));
@@ -272,6 +270,18 @@ bool TypeRelation::IsLegalBoxedPrimitiveConversion(Type *target, Type *source)
     return res;
 }
 
+static bool CanCrossPrimitiveReferenceBoundary(Type *super, Type *sub)
+{
+    if (super->IsETSPrimitiveType() == sub->IsETSPrimitiveType()) {
+        return true;
+    }
+
+    auto *const primitive = super->IsETSPrimitiveType() ? super : sub;
+    auto *const reference = super->IsETSPrimitiveType() ? sub : super;
+
+    return primitive->IsETSVoidType() && reference->PossiblyETSUndefined();
+}
+
 bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
 {
     if (LIKELY(super == sub)) {
@@ -280,8 +290,9 @@ bool TypeRelation::IsSupertypeOf(Type *super, Type *sub)
     if (sub == nullptr) {
         return false;
     }
-    if (super->IsETSPrimitiveType() != sub->IsETSPrimitiveType()) {
-        return false;
+    /* Fast false check which is faster than even cache-hit case */
+    if (!CanCrossPrimitiveReferenceBoundary(super, sub)) {
+        return Result(false);
     }
 
     result_ = CacheLookup(super, sub, checker_->SupertypeResults(), RelationType::SUPERTYPE);

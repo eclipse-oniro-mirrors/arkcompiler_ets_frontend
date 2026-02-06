@@ -57,11 +57,6 @@ void ETSChecker::CheckTruthinessOfType(ir::Expression *expr)
 {
     auto const testType = expr->Check(this);
     ES2PANDA_ASSERT(testType != nullptr);
-    if (testType->IsETSVoidType()) {
-        LogError(diagnostic::VOID_IN_LOGIC, {}, expr->Start());
-        return;
-    }
-
     // For T_S compatibility
     if (testType->IsETSEnumType()) {
         expr->AddAstNodeFlags(ir::AstNodeFlags::GENERATE_VALUE_OF);
@@ -361,9 +356,6 @@ bool Type::IsETSRelaxedAnyType() const
         TypeFlag::ETS_AWAITED | TypeFlag::ETS_RETURN_TYPE_UTILITY | TypeFlag::ETS_WILDCARD;
 
     // Issues
-    if (type->IsETSVoidType()) {  // NOTE(vpukhov): #19701 void refactoring
-        return true;
-    }
     if (type->IsETSTypeAliasType()) {  // NOTE(vpukhov): #20561
         return true;
     }
@@ -372,7 +364,8 @@ bool Type::IsETSRelaxedAnyType() const
 
 bool Type::IsETSPrimitiveType() const
 {
-    static constexpr TypeFlag ETS_PRIMITIVE = TypeFlag::ETS_NUMERIC | TypeFlag::CHAR | TypeFlag::ETS_BOOLEAN;
+    static constexpr TypeFlag ETS_PRIMITIVE =
+        TypeFlag::ETS_NUMERIC | TypeFlag::CHAR | TypeFlag::ETS_BOOLEAN | TypeFlag::ETS_VOID;
 
     // Do not modify
     ES2PANDA_ASSERT(!HasTypeFlag(ETS_PRIMITIVE) == IsSaneETSReferenceType(this));
@@ -387,7 +380,8 @@ bool Type::IsETSReferenceType() const
 
 bool Type::IsETSUnboxableObject() const
 {
-    return IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE);
+    return (IsETSObjectType() && AsETSObjectType()->HasObjectFlag(ETSObjectFlags::UNBOXABLE_TYPE)) ||
+           IsETSUndefinedType();
 }
 
 Type *ETSChecker::GetNonConstantType(Type *type)
@@ -1594,7 +1588,7 @@ Type *ETSChecker::MaybeBoxType(Type *type) const
 Type *ETSChecker::MaybeUnboxType(Type *type) const
 {
     ES2PANDA_ASSERT(type != nullptr);
-    return type->IsETSUnboxableObject() ? UnboxingConverter::Convert(this, type->AsETSObjectType()) : type;
+    return type->IsETSUnboxableObject() ? UnboxingConverter::Convert(this, type) : type;
 }
 
 Type const *ETSChecker::MaybeBoxType(Type const *type) const

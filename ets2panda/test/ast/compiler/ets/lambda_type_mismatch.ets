@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,6 @@ let fob:(...args:number[])=>number = (...args:number[]) =>{}
 
 let foc:(c:string, ...args:number[])=>string = (c:number, ...args:string[]):string=>{}
 
-/* @@? 16:46 Error Semantic error ESE0318: Type '((p1: Double, ...p2: Array<Double>) => void)' cannot be assigned to type '((p1: String, ...p2: Array<Double>) => void)' */
-/* @@? 18:38 Error Semantic error ESE0318: Type '((...p1: Array<Double>) => void)' cannot be assigned to type '((...p1: Array<Double>) => Double)' */
+/* @@? 16:46 Error Semantic error ESE0318: Type '((p1: Double, ...p2: Array<Double>) => undefined)' cannot be assigned to type '((p1: String, ...p2: Array<Double>) => undefined)' */
+/* @@? 18:38 Error Semantic error ESE0318: Type '((...p1: Array<Double>) => undefined)' cannot be assigned to type '((...p1: Array<Double>) => Double)' */
 /* @@? 20:48 Error Semantic error ESE0318: Type '((p1: Double, ...p2: Array<String>) => String)' cannot be assigned to type '((p1: String, ...p2: Array<Double>) => String)' */

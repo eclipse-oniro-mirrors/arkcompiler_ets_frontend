@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,19 @@
  * limitations under the License.
  */
 
-class A{
-    field_: int;
+let counter: int = 0;
+
+function returnsUndefined(): undefined {
+    counter += 1;
+    return undefined;
 }
-get /* @@ label */field(this: A){}
 
+function returnsVoidThroughUndefined(): void {
+    return returnsUndefined();
+}
 
-/* @@@ label Error Semantic error ESE0086: Getter must return a value */
+function main(): void {
+    counter = 0;
+    returnsVoidThroughUndefined();
+    arktest.assertEQ(counter, 1);
+}

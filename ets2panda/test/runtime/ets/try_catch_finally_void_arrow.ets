@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,20 @@
  * limitations under the License.
  */
 
-function foo(arg: Object|undefined): void {
-}
+function blob(): void {}
 
-function void_function(): void {
-}
+let arrowBlob = (): void => {}
 
+let doSmthArrow = () => {
+    try {
+        blob()
+    } catch (err) {
+        blob()
+        return;
+    } finally {}
+}
 
 function main(): void {
-    foo(void_function());
+    let res: undefined = doSmthArrow();
+    arktest.assertTrue(res === undefined);
 }
-
-
-
-/* @@? 24:9 Error Semantic error ESE0078: Cannot use type 'void' as value. */

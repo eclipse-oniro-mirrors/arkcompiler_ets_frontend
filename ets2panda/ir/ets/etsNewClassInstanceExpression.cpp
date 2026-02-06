@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -118,7 +118,7 @@ ETSNewClassInstanceExpression *ETSNewClassInstanceExpression::Clone(ArenaAllocat
 
 bool ETSNewClassInstanceExpression::TypeIsAllowedForInstantiation(checker::Type *type)
 {
-    return !(type->IsETSNullType() || type->IsETSUndefinedType() || type->IsETSNeverType() || type->IsETSVoidType());
+    return !(type->IsETSNullType() || type->IsETSUndefinedType() || type->IsETSNeverType());
 }
 
 }  // namespace ark::es2panda::ir

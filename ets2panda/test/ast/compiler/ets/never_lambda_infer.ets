@@ -64,10 +64,10 @@ foo(neverTest3)
 foo(neverTest4)
 
 /* @@? 61:1 Error Semantic error ESE0127: No matching call signature for foo(((p1: String) => never)) */
-/* @@? 61:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => void)' at index 1 */
+/* @@? 61:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => undefined)' at index 1 */
 /* @@? 62:1 Error Semantic error ESE0127: No matching call signature for foo(((p1: String) => never)) */
-/* @@? 62:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => void)' at index 1 */
+/* @@? 62:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => undefined)' at index 1 */
 /* @@? 63:1 Error Semantic error ESE0127: No matching call signature for foo(((p1: String) => never)) */
-/* @@? 63:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => void)' at index 1 */
+/* @@? 63:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => undefined)' at index 1 */
 /* @@? 64:1 Error Semantic error ESE0127: No matching call signature for foo(((p1: String) => never)) */
-/* @@? 64:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => void)' at index 1 */
+/* @@? 64:5 Error Semantic error ESE0046: Type '((p1: String) => never)' is not compatible with type '(() => undefined)' at index 1 */

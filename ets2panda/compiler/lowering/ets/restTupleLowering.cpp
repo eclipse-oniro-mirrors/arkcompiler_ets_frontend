@@ -22,9 +22,9 @@
 #include "varbinder/variable.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 
-namespace ark::es2panda::compiler {
+#include <vector>
 
-using AstNodePtr = ir::AstNode *;
+namespace ark::es2panda::compiler {
 
 static bool MethodDefinitionHasRestTuple(const ir::AstNode *def)
 {
@@ -359,14 +359,29 @@ static void CreateNewMethod(public_lib::Context *ctx, ir::AstNode *node)
 
 bool RestTupleConstructionPhase::PerformForProgram(parser::Program *program)
 {
-    program->Ast()->TransformChildrenRecursively(
-        [ctx = Context()](ir::AstNode *const node) -> AstNodePtr {
-            if (IsClassDefinitionWithTupleRest(node)) {
-                CreateNewMethod(ctx, node);
+    auto *const root = program->Ast();
+    if (root == nullptr) {
+        return true;
+    }
+
+    std::vector<ir::AstNode *> stack {};
+    stack.emplace_back(root);
+
+    while (!stack.empty()) {
+        auto *const node = stack.back();
+        stack.pop_back();
+
+        if (IsClassDefinitionWithTupleRest(node)) {
+            CreateNewMethod(Context(), node);
+        }
+
+        node->Iterate([&stack](ir::AstNode *child) {
+            if (child != nullptr) {
+                stack.emplace_back(child);
             }
-            return node;
-        },
-        Name());
+        });
+    }
+
     return true;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,5 +25,5 @@ function main() {
     arktest.assertTrue((v as NumFunc)() == 3.14); // Is used 'arktest.assertTrue' due to #22840
 }
 
-/* @@? 24:17 Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type '((() => void))|Double' */
-/* @@? 25:24 Error Semantic error ESE0078: Cannot use type 'void' as value. */
+/* @@? 24:17 Error Semantic error ESE0318: Type '(() => Double)' cannot be assigned to type '((() => undefined))|Double' */
+/* @@? 25:24 Warning Warning W65001: The equality expression is always false. */

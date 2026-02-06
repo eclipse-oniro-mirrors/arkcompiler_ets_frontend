@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2025 Huawei Device Co., Ltd.
+  * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -72,7 +72,7 @@ function main(){
 
   let void1  = Type.from<void>();
   let void2 = Type.from<void>();
-  let void3  = Type.from<Void>();
+  let void3 = Type.from<undefined>();
   arktest.assertTrue(void1 == void2)
   arktest.assertTrue(void1 == void3)
 

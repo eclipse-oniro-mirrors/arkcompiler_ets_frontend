@@ -78,7 +78,7 @@ interface I1 {
     x: number =
 }
 
-/* @@? 16:9 Error Semantic error ESE0190: A is not abstract and does not override abstract method f5(): Promise<void> in A */
+/* @@? 16:9 Error Semantic error ESE0190: A is not abstract and does not override abstract method f5(): Promise<undefined> in A */
 /* @@? 17:12 Error Syntax error ESY0115: Duplicated modifier is not allowed. */
 /* @@? 17:20 Error Semantic error ESE0017: Only abstract or native methods can't have body. */
 /* @@? 18:12 Error Syntax error ESY0115: Duplicated modifier is not allowed. */

@@ -147,9 +147,7 @@ static ir::Expression *CreateAsyncContextResolveValue(public_lib::Context *ctx, 
     auto argClone = arg->Clone(alloc, nullptr)->AsExpression();
     ES2PANDA_ASSERT(argClone);
 
-    const auto isArgVoid = checker->Relation()->IsIdenticalTo(argType, checker->GlobalVoidType());
-    const auto isArgUndef = checker->Relation()->IsIdenticalTo(argType, checker->GlobalETSUndefinedType());
-    if (isArgVoid || isArgUndef) {
+    if (argType->IsETSUndefinedType()) {
         const auto argStmt = util::NodeAllocator::ForceSetParent<ir::ExpressionStatement>(alloc, argClone);
         ES2PANDA_ASSERT(argStmt);
 
@@ -257,11 +255,9 @@ static void AddMissingReturnStatement(public_lib::Context *ctx, ir::ScriptFuncti
     const auto alloc = ctx->Allocator();
 
     const auto funcReturnType = func->Signature()->ReturnType();
-    const auto promiseVoidType = checker->CreatePromiseOf(checker->GlobalVoidType());
     const auto promiseUndefinedType = checker->CreatePromiseOf(checker->GlobalETSUndefinedType());
     const auto relation = checker->Relation();
-    if (!relation->IsSupertypeOf(funcReturnType, promiseVoidType) &&
-        !relation->IsSupertypeOf(funcReturnType, promiseUndefinedType)) {
+    if (!relation->IsSupertypeOf(funcReturnType, promiseUndefinedType)) {
         return;
     }
 

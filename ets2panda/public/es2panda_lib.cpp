@@ -192,7 +192,6 @@ __attribute__((unused)) es2panda_OverloadInfo *OverloadInfoToE2pPtr(ArenaAllocat
     es2pandaOverloadInfo->needHelperOverload = overloadInfo->needHelperOverload;
     es2pandaOverloadInfo->isDeclare = overloadInfo->isDeclare;
     es2pandaOverloadInfo->hasRestVar = overloadInfo->hasRestVar;
-    es2pandaOverloadInfo->returnVoid = overloadInfo->returnVoid;
     return es2pandaOverloadInfo;
 }
 
@@ -204,7 +203,6 @@ __attribute__((unused)) es2panda_OverloadInfo OverloadInfoToE2p(const ir::Overlo
     es2pandaOverloadInfo.needHelperOverload = overloadInfo.needHelperOverload;
     es2pandaOverloadInfo.isDeclare = overloadInfo.isDeclare;
     es2pandaOverloadInfo.hasRestVar = overloadInfo.hasRestVar;
-    es2pandaOverloadInfo.returnVoid = overloadInfo.returnVoid;
     return es2pandaOverloadInfo;
 }
 

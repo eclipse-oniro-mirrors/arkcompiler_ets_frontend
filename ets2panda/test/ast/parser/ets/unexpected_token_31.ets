@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,4 +30,3 @@ function foo(...^number: int[]): int {
 /* @@? 17:5 Error Syntax error ESY0163: return keyword should be used in function body. */
 /* @@? 17:12 Error Semantic error ESE0144: Type name 'number' used in the wrong context */
 /* @@? 17:12 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
-/* @@? 17:12 Error Semantic error ESE0092: All return statements in the function should be empty or have a value. */

@@ -18,7 +18,7 @@ let f:(c:string, ...abe])=>void = (c:be ...abe])=>{}
 /* @@? 16:18 Error Syntax error ESY0193: Rest parameter should be either array or tuple type. */
 /* @@? 16:24 Error Syntax error ESY0194: Parameter declaration should have an explicit type annotation. */
 /* @@? 16:24 Error Syntax error ESY0067: Rest parameter must be the last formal parameter. */
-/* @@? 16:35 Error Semantic error ESE0318: Type '((p1: *ERROR_TYPE*) => *ERROR_TYPE*)' cannot be assigned to type '((p1: String, ...p2: *ERROR_TYPE*) => void)' */
+/* @@? 16:35 Error Semantic error ESE0318: Type '((p1: *ERROR_TYPE*) => *ERROR_TYPE*)' cannot be assigned to type '((p1: String, ...p2: *ERROR_TYPE*) => undefined)' */
 /* @@? 16:38 Error Semantic error ESE0371: Cannot find type 'be'. */
 /* @@? 16:41 Error Syntax error ESY0230: Expected '=>', got '...'. */
 /* @@? 16:41 Error Syntax error ESY0227: Unexpected token '...'. */

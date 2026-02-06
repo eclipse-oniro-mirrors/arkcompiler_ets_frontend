@@ -3926,8 +3926,7 @@ change_types:
         |arg_name|E2p->maxArg = |arg_name|->maxArg;\n
         |arg_name|E2p->needHelperOverload = |arg_name|->needHelperOverload;\n
         |arg_name|E2p->isDeclare = |arg_name|->isDeclare;\n
-        |arg_name|E2p->hasRestVar = |arg_name|->hasRestVar;\n
-        |arg_name|E2p->returnVoid = |arg_name|->returnVoid;\n"
+        |arg_name|E2p->hasRestVar = |arg_name|->hasRestVar;\n"
       reverse_cast:
         start: OverloadInfoToE2pPtr(reinterpret_cast<Context *>(context)->allocator,
         end: )
@@ -3952,8 +3951,7 @@ change_types:
         |arg_name|E2p.maxArg = |arg_name|.maxArg;\n
         |arg_name|E2p.needHelperOverload = |arg_name|.needHelperOverload;\n
         |arg_name|E2p.isDeclare = |arg_name|.isDeclare;\n
-        |arg_name|E2p.hasRestVar = |arg_name|.hasRestVar;\n
-        |arg_name|E2p.returnVoid = |arg_name|.returnVoid;\n"
+        |arg_name|E2p.hasRestVar = |arg_name|.hasRestVar;\n"
       reverse_cast:
         start: OverloadInfoToE2p(
         end: )

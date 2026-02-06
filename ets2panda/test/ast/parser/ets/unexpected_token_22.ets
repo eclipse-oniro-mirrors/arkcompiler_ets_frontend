@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,6 @@ function main(): void {
 }
 
 /* @@? 25:43 Error Syntax error ESY0228: Unexpected token, expected '('. */
-/* @@? 25:43 Error Semantic error ESE0318: Type '((p1: Promise<void>) => Promise<void>)' cannot be assigned to type '(() => Promise<void>)' */
+/* @@? 25:43 Error Semantic error ESE0318: Type '((p1: Promise<undefined>) => Promise<undefined>)' cannot be assigned to type '(() => Promise<undefined>)' */
 /* @@? 25:44 Error Syntax error ESY0112: Unexpected token, expected an identifier. */
 /* @@? 25:60 Error Syntax error ESY0229: Unexpected token, expected ',' or ')'. */

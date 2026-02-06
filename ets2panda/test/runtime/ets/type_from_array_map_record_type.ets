@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2025 Huawei Device Co., Ltd.
+  * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -14,18 +14,17 @@
   */
   
 function main(){
-     let arrayA  = Type.from<Array<string>>();
-     let arrayB  = Type.from<Array<string>>();
-     let arrayC  = Type.from<string[]>();
-     arktest.assertTrue(arrayA.toString() == arrayB.toString())
-     arktest.assertTrue(arrayA.toString() == arrayC.toString())
+     let arrayA  = Class.from<Array<string>>();
+     let arrayB  = Class.from<Array<string>>();
+     let arrayC  = Class.from<string[]>();
+     arktest.assertTrue(arrayA == arrayB)
+     arktest.assertTrue(arrayA == arrayC)
 
-     let mapA  = Type.from<Map<string,string>>();
-     let mapB  = Type.from<Map<string,string>>();
-     arktest.assertTrue(mapA.toString() == mapB.toString())
+     let mapA  = Class.from<Map<string,string>>();
+     let mapB  = Class.from<Map<string,string>>();
+     arktest.assertTrue(mapA == mapB)
 
-     let recordA  = Type.from<Record<string,string>>();
-     let recordB  = Type.from<Record<string,string>>();
-     arktest.assertTrue(recordA.toString() == recordB.toString())
-
+     let recordA  = Class.from<Record<string,string>>();
+     let recordB  = Class.from<Record<string,string>>();
+     arktest.assertTrue(recordA == recordB)
 }

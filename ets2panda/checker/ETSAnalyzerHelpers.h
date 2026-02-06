@@ -66,7 +66,7 @@ bool CheckReturnTypeNecessity(ir::MethodDefinition *node);
 void CheckAllConstPropertyInitialized(checker::ETSChecker *checker, ir::ETSModule *pkg);
 bool IsBigIntZeroLiteral(const ir::Expression *expr);
 std::tuple<bool, bool> IsConstantTestValue(ir::Expression const *expr);
-std::optional<bool> TryResolveConditionalTestValue(ETSChecker *checker, const ir::Expression *test);
+std::optional<bool> TryResolveConditionalTestValue(const ir::Expression *test);
 void UpdateDeclarationFromSignature(ETSChecker *checker, ir::CallExpression *expr, checker::Signature *signature);
 }  // namespace ark::es2panda::checker
 

@@ -24,5 +24,5 @@ abstract class A implements I {
 }
 
 
-/* @@? 23:21 Error Semantic error ESE985118: Class member fn with type Int in A cannot implement fn with type void property from interface J because the implementing return type is not compatible with the interface return type. */
+/* @@? 23:21 Error Semantic error ESE985118: Class member fn with type Int in A cannot implement fn with type undefined property from interface J because the implementing return type is not compatible with the interface return type. */
 /* @@? 23:21 Error Semantic error ESE0136: Method fn(): Int in A not overriding any method */

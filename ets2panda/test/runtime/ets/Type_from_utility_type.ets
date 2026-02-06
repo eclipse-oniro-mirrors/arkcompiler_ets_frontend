@@ -1,5 +1,5 @@
  /*
-  * Copyright (c) 2025 Huawei Device Co., Ltd.
+  * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
   * You may obtain a copy of the License at
@@ -20,30 +20,30 @@
  }
 
  function main(){
-   let partialA  = Type.from<Partial<A>>();
-   let partialB  = Type.from<Partial<B>>();
-   let partialC  = Type.from<Partial<A>>();
-   arktest.assertTrue(partialA.toString() != partialB.toString());
-   arktest.assertTrue(partialA.toString() == partialC.toString());
+   let partialA  = Class.from<Partial<A>>();
+   let partialB  = Class.from<Partial<B>>();
+   let partialC  = Class.from<Partial<A>>();
+   arktest.assertTrue(partialA != partialB);
+   arktest.assertTrue(partialA == partialC);
 
-   let requiredA  = Type.from<Required<A>>();
-   let requiredB  = Type.from<Required<B>>();
-   let requiredC  = Type.from<Required<A>>();
-   arktest.assertTrue(requiredA.toString() != requiredB.toString());
-   arktest.assertTrue(requiredA.toString() == requiredC.toString());
+   let requiredA  = Class.from<Required<A>>();
+   let requiredB  = Class.from<Required<B>>();
+   let requiredC  = Class.from<Required<A>>();
+   arktest.assertTrue(requiredA != requiredB);
+   arktest.assertTrue(requiredA == requiredC);
 
-  let readonlyA  = Type.from<Readonly<A>>();
-  let readonlyB  = Type.from<Readonly<B>>();
-  let readonlyC  = Type.from<Readonly<A>>();
-  arktest.assertTrue(readonlyA.toString() != readonlyB.toString());
-  arktest.assertTrue(readonlyA.toString() == readonlyC.toString());
+  let readonlyA  = Class.from<Readonly<A>>();
+  let readonlyB  = Class.from<Readonly<B>>();
+  let readonlyC  = Class.from<Readonly<A>>();
+  arktest.assertTrue(readonlyA != readonlyB);
+  arktest.assertTrue(readonlyA == readonlyC);
 
-  let recordA  = Type.from<Record<string,string>>();
-  let recordB  = Type.from<Record<string,string>>();
-  arktest.assertTrue(recordA.toString() == recordB.toString());
+  let recordA  = Class.from<Record<string,string>>();
+  let recordB  = Class.from<Record<string,string>>();
+  arktest.assertTrue(recordA == recordB);
 
-  let partialarrayA  = Type.from<Partial<Array<string>>>();
-  let partialarrayB  = Type.from<Partial<Array<int>>>();
-  arktest.assertTrue(partialarrayA.toString() == partialarrayB.toString());
+  let partialarrayA  = Class.from<Partial<Array<string>>>();
+  let partialarrayB  = Class.from<Partial<Array<int>>>();
+  arktest.assertTrue(partialarrayA == partialarrayB);
 
  }

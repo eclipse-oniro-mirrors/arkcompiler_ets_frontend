@@ -22,5 +22,5 @@ class B extends A<Object> {
 }
 
 
-/* @@? 21:14 Error Semantic error ESE0141: Class member fn with type void in B cannot override fn with type Int field from class A<T> because the overriding return type is not compatible with the other return type. */
-/* @@? 21:14 Error Semantic error ESE0136: Method fn(t: Int): void in B not overriding any method */
+/* @@? 21:14 Error Semantic error ESE0141: Class member fn with type undefined in B cannot override fn with type Int field from class A<T> because the overriding return type is not compatible with the other return type. */
+/* @@? 21:14 Error Semantic error ESE0136: Method fn(t: Int): undefined in B not overriding any method */

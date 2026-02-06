@@ -19,4 +19,4 @@ p.then(obj => {
     const result = typeof obj?.prop;
 });
 
-/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => void|PromiseLike<void>)) */
+/* @@? 18:1 Error Semantic error ESE0127: No matching call signature for then(((p1: undefined) => undefined|PromiseLike<undefined>)) */

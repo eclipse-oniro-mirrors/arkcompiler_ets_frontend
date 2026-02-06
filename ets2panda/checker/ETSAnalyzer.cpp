@@ -726,11 +726,6 @@ checker::Type *ETSAnalyzer::Check(ir::ETSClassLiteral *expr) const
     return expr->TsType();
 
     auto exprType = literal->Check(checker);
-    if (exprType->IsETSVoidType()) {
-        checker->LogError(diagnostic::INVALID_DOT_CLASS, {}, literal->Start());
-        expr->SetTsType(checker->GlobalTypeError());
-        return expr->TsType();
-    }
 
     ArenaVector<checker::Type *> typeArgTypes(checker->ProgramAllocator()->Adapter());
     typeArgTypes.push_back(exprType);  // NOTE: Box it if it's a primitive type
@@ -1519,8 +1514,8 @@ static Type *ComputeArrowFunctionReturnTypeFromReturnStatements(checker::ETSChec
         returnTypes.push_back(rtype);
     };
     func->Iterate(retCheck);
-    auto *fullRtype = returnTypes.empty() ? checker->GetGlobalTypesHolder()->GlobalETSVoidType()
-                                          : checker->CreateETSUnionType(std::move(returnTypes));
+    auto *fullRtype =
+        returnTypes.empty() ? checker->GlobalETSUndefinedType() : checker->CreateETSUnionType(std::move(returnTypes));
     return fullRtype;
 }
 
@@ -1543,7 +1538,7 @@ static void CheckArrowFunctionAfterSignatureBuild(checker::ETSChecker *checker, 
     // - if a `void` return should be replaced by `never` because all control paths end in `throw`.
     if (expr->Function()->ReturnTypeAnnotation() == nullptr &&
         (util::Helpers::TypeContainsParameterUnderInference(expr->Function()->Signature()->ReturnType()) ||
-         expr->Function()->Signature()->ReturnType()->IsETSVoidType()) &&
+         expr->Function()->Signature()->ReturnType()->IsETSUndefinedType()) &&
         expr->Function()->HasBody()) {
         expr->Function()->Signature()->SetReturnType(
             ComputeArrowFunctionReturnTypeFromReturnStatements(checker, expr->Function()));
@@ -2645,7 +2640,6 @@ checker::Type *ETSAnalyzer::Check(ir::CallExpression *expr) const
     }
 
     CheckOverloadCall(checker, expr);
-    CheckVoidTypeExpression(checker, expr);
     CheckAbstractCall(checker, expr);
     return expr->TsType();
 }
@@ -2714,7 +2708,7 @@ checker::Type *ETSAnalyzer::Check(ir::ConditionalExpression *expr) const
     SmartCastArray smartCasts = checker->Context().EnterTestExpression();
     checker->CheckTruthinessOfType(expr->Test());
     SmartCastTypes testedTypes = checker->Context().ExitTestExpression();
-    auto const testValue = TryResolveConditionalTestValue(checker, expr->Test());
+    auto const testValue = TryResolveConditionalTestValue(expr->Test());
     if (testValue.has_value()) {
         auto const checkBranch = [checker, &testedTypes](ir::Expression *branch, bool takeConsequentSmartCast,
                                                          bool suppressDiagnostics) {
@@ -4026,6 +4020,8 @@ static checker::Type *checkUnboxedTypeKind(TypeFlag unboxedFlag, ETSChecker *che
             return checker->CreateETSStringLiteralType("float");
         case TypeFlag::DOUBLE:
             return checker->CreateETSStringLiteralType("number");
+        case TypeFlag::ETS_VOID:
+            return checker->CreateETSStringLiteralType("undefined");
         default:
             ES2PANDA_UNREACHABLE();
     }
@@ -4108,11 +4104,9 @@ checker::Type *ETSAnalyzer::Check(ir::UnaryExpression *expr) const
     if (argType != nullptr && argType->IsETSBigIntType() && argType->HasTypeFlag(checker::TypeFlag::BIGINT_LITERAL)) {
         switch (expr->OperatorType()) {
             case lexer::TokenType::PUNCTUATOR_MINUS: {
-                checker::Type *type = checker->CreateETSBigIntLiteralType(argType->AsETSBigIntType()->GetValue());
+                auto *type = checker->GlobalETSBigIntType();
                 ES2PANDA_ASSERT(type != nullptr);
-                // We do not need this const anymore as we are negating the bigint object in runtime
-                ES2PANDA_ASSERT(type != nullptr);
-                type->RemoveTypeFlag(checker::TypeFlag::CONSTANT);
+                // Unary minus is evaluated at runtime, so the result is the regular BigInt builtin type.
                 expr->argument_->SetTsType(type);
                 expr->SetTsType(type);
                 return expr->TsType();
@@ -4895,17 +4889,15 @@ bool ETSAnalyzer::CheckInferredFunctionReturnType(ir::ReturnStatement *st, ir::S
     // Case when function's return type is defined explicitly:
     if (st->argument_ == nullptr) {
         ES2PANDA_ASSERT(funcReturnType != nullptr);
-        const auto voidType = containingFunc->IsAsyncFunc() ? checker->CreatePromiseOf(checker->GlobalVoidType())
-                                                            : checker->GlobalVoidType();
+        const auto undef = containingFunc->IsDeclaredAsync()
+                               ? checker->CreatePromiseOf(checker->GlobalETSUndefinedType())
+                               : checker->GlobalETSUndefinedType();
         const auto relation = checker->Relation();
-        const auto isReturnVoid = relation->IsIdenticalTo(funcReturnType, voidType);
-        const auto isAsyncImplReturningPromiseVoid =
-            containingFunc->Flags() & ir::ScriptFunctionFlags::ASYNC_IMPL_RETURN_PROMISEVOID;
-        if (!isReturnVoid && !funcReturnType->IsETSAsyncFuncReturnType() && !isAsyncImplReturningPromiseVoid) {
+        const auto isReturnUndef = relation->IsSupertypeOf(funcReturnType, undef);
+        if (!isReturnUndef) {
             checker->LogError(diagnostic::RETURN_WITHOUT_VALUE, {}, st->Start());
             return false;
         }
-        funcReturnType = voidType;
     } else {
         return CheckReturnStatementArgumentType(st, containingFunc, funcReturnType, checker);
     }

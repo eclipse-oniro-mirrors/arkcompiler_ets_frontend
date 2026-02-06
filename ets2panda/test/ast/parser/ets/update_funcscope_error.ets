@@ -37,7 +37,7 @@ export const updateIfChanged = (t: Record<string, Object>) => {
 /* @@? 19:14 Warning Warning W71336: Exported variable 'updateIfChanged' requires type annotation. */
 /* @@? 21:19 Error Semantic error ESE0252: Indexed access is not supported for such expression type. */
 /* @@? 21:19 Error Semantic error ESE0143: Unresolved reference u */
-/* @@? 22:26 Error Semantic error ESE0127: No matching call signature for reduce(..., ((p1: Record<String,Object>) => void)) */
+/* @@? 22:26 Error Semantic error ESE0127: No matching call signature for reduce(..., ((p1: Record<String,Object>) => undefined)) */
 /* @@? 25:23 Error Semantic error ESE0143: Unresolved reference u */
 /* @@? 27:11 Error Semantic error ESE0393: Invalid record property */
 /* @@? 28:11 Error Syntax error ESY0016: Unexpected token. */

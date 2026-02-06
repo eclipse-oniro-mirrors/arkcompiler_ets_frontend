@@ -490,12 +490,6 @@ Type *ETSChecker::ApplyUnaryOperatorPromotion(ir::Expression *expr, Type *type, 
     return type;
 }
 
-bool ETSChecker::IsNullLikeOrVoidExpression(const ir::Expression *expr) const
-{
-    // NOTE(vpukhov): #19701 void refactoring
-    return expr->TsType()->DefinitelyETSNullish() || expr->TsType()->IsETSVoidType();
-}
-
 Type *ETSChecker::HandleBooleanLogicalOperators(Type *leftType, Type *rightType, lexer::TokenType tokenType)
 {
     using UType = typename ETSBooleanType::UType;
@@ -1612,26 +1606,7 @@ std::optional<SmartCastTuple> CheckerContext::ResolveSmartCastTypes()
                ? std::make_optional(std::make_tuple(testCondition_.variable, consequentType, alternateType))
                : std::make_optional(std::make_tuple(testCondition_.variable, alternateType, consequentType));
 }
-bool ETSChecker::CheckVoidAnnotation(const ir::ETSPrimitiveType *typeAnnotation)
-{
-    // Void annotation is valid only when used as 'return type' , 'type parameter instantiation', 'default type'.
-    if (typeAnnotation->GetPrimitiveType() != ir::PrimitiveType::VOID) {
-        return true;
-    }
 
-    auto parent = typeAnnotation->Parent();
-    if (parent->IsScriptFunction() && parent->AsScriptFunction()->ReturnTypeAnnotation() == typeAnnotation) {
-        return true;
-    }
-    if (parent->IsETSFunctionType() && parent->AsETSFunctionType()->ReturnType() == typeAnnotation) {
-        return true;
-    }
-    if (parent->IsTSTypeParameterInstantiation() || parent->IsTSTypeParameter()) {
-        return true;
-    }
-    LogError(diagnostic::ANNOT_IS_VOID, {}, typeAnnotation->Start());
-    return false;
-}
 void ETSChecker::ApplySmartCast(varbinder::Variable const *const variable, checker::Type *const smartType) noexcept
 {
     ES2PANDA_ASSERT(variable != nullptr);
@@ -1786,14 +1761,13 @@ Type *ETSChecker::HandleTypeAlias(ir::Expression *const name, const ir::TSTypePa
 
             EmplaceSubstituted(&substitution, typeAliasType->AsETSTypeParameter(), paramType);
 
-            auto *const maybeIrrelevantTypeArg = paramType->IsETSVoidType() ? GlobalETSUndefinedType() : paramType;
             auto *constraintType = typeAliasType->AsETSTypeParameter()->GetConstraintType();
-            if (maybeIrrelevantTypeArg->IsTypeError() || constraintType->IsTypeError()) {
+            if (paramType->IsTypeError() || constraintType->IsTypeError()) {
                 continue;  // Don't issue extra error notification!
             }
 
             constraintType = constraintType->Substitute(relation, &substitution);
-            if (!relation->IsSupertypeOf(constraintType, maybeIrrelevantTypeArg)) {
+            if (!relation->IsSupertypeOf(constraintType, paramType)) {
                 LogError(diagnostic::TYPEARG_TYPEPARAM_SUBTYPING, {paramType, constraintType}, typeNode->Start());
             }
         }
