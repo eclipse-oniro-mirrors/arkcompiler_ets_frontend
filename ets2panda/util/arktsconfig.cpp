@@ -597,24 +597,26 @@ std::optional<std::string> ArkTsConfig::ResolveImportPath(std::string_view path,
 std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool isDynamic) const
 {
     auto tryResolveWithPaths = [this, &path]() -> std::optional<std::string> {
+        if (auto indexIt = paths_.find(std::string(path) + "/Index"); indexIt != paths_.end()) {
+            auto result = ResolveImportPath(path, TrimPath(indexIt->first), indexIt->second);
+            if (result.has_value()) {
+                return result;
+            }
+        }
         for (const auto &[alias, paths] : paths_) {
             auto trimmedAlias = TrimPath(alias);
-            size_t pos = path.rfind(trimmedAlias, 0);
-            if (pos == 0) {
+            if (path.rfind(trimmedAlias, 0) == 0) {
                 return ResolveImportPath(path, trimmedAlias, paths);
             }
         }
         return std::nullopt;
     };
-
     auto tryResolveWithDependencies = [this, &path]() -> std::optional<std::string> {
         for (const auto &[dynPath, dependence] : dependencies_) {
             if (path == dynPath) {
                 return dynPath;
             }
-
-            // Such imports are allowed in ohos:
-            // <package name>/<relative path>
+            // Such imports are allowed in ohos: <package name>/<relative path>
             if (path.rfind(dynPath, 0) == 0 &&
                 util::Helpers::EndsWith(dependence.Path(), util::ImportPathManager::ABC_SUFFIX)) {
                 return dynPath;
@@ -622,7 +624,6 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
         }
         return std::nullopt;
     };
-
     auto tryResolveWithDependencyAliases = [this, &path]() -> std::optional<std::string> {
         for (const auto &[dynPath, dependence] : dependencies_) {
             const auto &aliases = dependence.Alias();
@@ -632,14 +633,12 @@ std::optional<std::string> ArkTsConfig::ResolvePath(std::string_view path, bool 
         }
         return std::nullopt;
     };
-
     std::vector<std::function<std::optional<std::string>()>> resolvers;
     if (isDynamic) {
         resolvers = {tryResolveWithDependencies, tryResolveWithDependencyAliases, tryResolveWithPaths};
     } else {
         resolvers = {tryResolveWithDependencies, tryResolveWithPaths, tryResolveWithDependencyAliases};
     }
-
     for (auto &resolver : resolvers) {
         if (auto result = resolver()) {
             return result;
