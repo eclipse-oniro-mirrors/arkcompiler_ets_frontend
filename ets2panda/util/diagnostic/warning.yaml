@@ -58,6 +58,10 @@ warning:
   message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed. Please use 'valueOf' or 'fromValue'."
   strict: true
 
+- name: EXPORTED_ENTITIES_DOESNOT_HAS_TYPEANNO
+  id: 71336
+  message: "Exported {} '{}' requires type annotation."
+
 - name: EXTENSION_MISMATCH
   id: 25
   message: "Not matching extensions! Sourcefile: {}, Manual(used): {}"

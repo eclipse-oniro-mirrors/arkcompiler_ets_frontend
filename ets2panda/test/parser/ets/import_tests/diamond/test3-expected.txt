@@ -224,28 +224,27 @@
                 }
               }
             },
-            "value": {
-              "type": "Identifier",
-              "name": "bar",
-              "loc": {
-                "start": {
-                  "line": 18,
-                  "column": 18,
-                  "program": "test3.ets"
-                },
-                "end": {
-                  "line": 18,
-                  "column": 21,
-                  "program": "test3.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 18,
+                  "column": 17,
+                  "program": "test3.ets"
+                },
+                "end": {
+                  "line": 18,
+                  "column": 20,
+                  "program": "test3.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -255,7 +254,7 @@
               },
               "end": {
                 "line": 18,
-                "column": 21,
+                "column": 23,
                 "program": "test3.ets"
               }
             }

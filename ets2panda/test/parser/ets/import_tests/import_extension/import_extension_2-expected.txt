@@ -144,28 +144,27 @@
                 }
               }
             },
-            "value": {
-              "type": "NumberLiteral",
-              "value": 321,
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 18,
-                  "program": "import_extension_2.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 21,
-                  "program": "import_extension_2.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 17,
+                  "program": "import_extension_2.ets"
+                },
+                "end": {
+                  "line": 16,
+                  "column": 20,
+                  "program": "import_extension_2.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -175,7 +174,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 21,
+                "column": 23,
                 "program": "import_extension_2.ets"
               }
             }
@@ -216,7 +215,7 @@
     },
     "end": {
       "line": 16,
-      "column": 22,
+      "column": 27,
       "program": "import_extension_2.ets"
     }
   }

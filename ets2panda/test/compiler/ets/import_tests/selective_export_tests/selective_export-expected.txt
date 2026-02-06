@@ -1148,28 +1148,58 @@
                 }
               }
             },
-            "value": {
-              "type": "StringLiteral",
-              "value": "hello",
-              "loc": {
-                "start": {
-                  "line": 19,
-                  "column": 11,
-                  "program": "selective_export.ets"
-                },
-                "end": {
-                  "line": 19,
-                  "column": 18,
-                  "program": "selective_export.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSTypeReference",
+              "part": {
+                "type": "ETSTypeReferencePart",
+                "name": {
+                  "type": "Identifier",
+                  "name": "String",
+                  "loc": {
+                    "start": {
+                      "line": 19,
+                      "column": 10,
+                      "program": "selective_export.ets"
+                    },
+                    "end": {
+                      "line": 19,
+                      "column": 16,
+                      "program": "selective_export.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 19,
+                    "column": 10,
+                    "program": "selective_export.ets"
+                  },
+                  "end": {
+                    "line": 19,
+                    "column": 16,
+                    "program": "selective_export.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 19,
+                  "column": 10,
+                  "program": "selective_export.ets"
+                },
+                "end": {
+                  "line": 19,
+                  "column": 16,
+                  "program": "selective_export.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -1179,7 +1209,7 @@
               },
               "end": {
                 "line": 19,
-                "column": 18,
+                "column": 19,
                 "program": "selective_export.ets"
               }
             }
@@ -1202,28 +1232,58 @@
                 }
               }
             },
-            "value": {
-              "type": "StringLiteral",
-              "value": "goodbye",
-              "loc": {
-                "start": {
-                  "line": 20,
-                  "column": 18,
-                  "program": "selective_export.ets"
-                },
-                "end": {
-                  "line": 20,
-                  "column": 27,
-                  "program": "selective_export.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSTypeReference",
+              "part": {
+                "type": "ETSTypeReferencePart",
+                "name": {
+                  "type": "Identifier",
+                  "name": "String",
+                  "loc": {
+                    "start": {
+                      "line": 20,
+                      "column": 17,
+                      "program": "selective_export.ets"
+                    },
+                    "end": {
+                      "line": 20,
+                      "column": 23,
+                      "program": "selective_export.ets"
+                    }
+                  }
+                },
+                "loc": {
+                  "start": {
+                    "line": 20,
+                    "column": 17,
+                    "program": "selective_export.ets"
+                  },
+                  "end": {
+                    "line": 20,
+                    "column": 23,
+                    "program": "selective_export.ets"
+                  }
+                }
+              },
+              "loc": {
+                "start": {
+                  "line": 20,
+                  "column": 17,
+                  "program": "selective_export.ets"
+                },
+                "end": {
+                  "line": 20,
+                  "column": 23,
+                  "program": "selective_export.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -1233,7 +1293,7 @@
               },
               "end": {
                 "line": 20,
-                "column": 27,
+                "column": 26,
                 "program": "selective_export.ets"
               }
             }

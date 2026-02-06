@@ -144,28 +144,27 @@
                 }
               }
             },
-            "value": {
-              "type": "NumberLiteral",
-              "value": 5,
-              "loc": {
-                "start": {
-                  "line": 16,
-                  "column": 18,
-                  "program": "test4.ets"
-                },
-                "end": {
-                  "line": 16,
-                  "column": 19,
-                  "program": "test4.ets"
-                }
-              }
-            },
             "accessibility": "public",
             "static": true,
             "readonly": false,
             "declare": false,
             "optional": false,
             "computed": false,
+            "typeAnnotation": {
+              "type": "ETSPrimitiveType",
+              "loc": {
+                "start": {
+                  "line": 16,
+                  "column": 17,
+                  "program": "test4.ets"
+                },
+                "end": {
+                  "line": 16,
+                  "column": 20,
+                  "program": "test4.ets"
+                }
+              }
+            },
             "definite": false,
             "loc": {
               "start": {
@@ -175,7 +174,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 19,
+                "column": 23,
                 "program": "test4.ets"
               }
             }

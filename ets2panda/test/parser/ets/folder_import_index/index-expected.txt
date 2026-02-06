@@ -173,18 +173,33 @@
                 "async": false,
                 "expression": false,
                 "params": [],
+                "returnType": {
+                  "type": "ETSPrimitiveType",
+                  "loc": {
+                    "start": {
+                      "line": 16,
+                      "column": 23,
+                      "program": "index.ets"
+                    },
+                    "end": {
+                      "line": 16,
+                      "column": 27,
+                      "program": "index.ets"
+                    }
+                  }
+                },
                 "body": {
                   "type": "BlockStatement",
                   "statements": [],
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 22,
+                      "column": 28,
                       "program": "index.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 24,
+                      "column": 30,
                       "program": "index.ets"
                     }
                   }
@@ -197,7 +212,7 @@
                   },
                   "end": {
                     "line": 16,
-                    "column": 24,
+                    "column": 30,
                     "program": "index.ets"
                   }
                 }
@@ -210,7 +225,7 @@
                 },
                 "end": {
                   "line": 16,
-                  "column": 24,
+                  "column": 30,
                   "program": "index.ets"
                 }
               }
@@ -224,7 +239,7 @@
               },
               "end": {
                 "line": 16,
-                "column": 24,
+                "column": 30,
                 "program": "index.ets"
               }
             }
