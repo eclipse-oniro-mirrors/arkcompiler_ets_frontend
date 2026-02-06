@@ -18,6 +18,7 @@
 #include "checker/types/ets/etsTupleType.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
 #include "compiler/lowering/util.h"
+#include "generated/signatures.h"
 #include "util/es2pandaMacros.h"
 #include "util/nameMangler.h"
 
@@ -44,6 +45,7 @@ struct LambdaInfo {
     bool isFunctionReference = false;
     checker::ETSObjectType *objType = nullptr;
     ir::TSTypeParameterInstantiation *funcRefTypeParams = nullptr;
+    bool isFunctionAsync = false;
 };
 
 struct CalleeMethodInfo {
@@ -1317,6 +1319,11 @@ static ir::ClassDeclaration *CreateEmptyLambdaClassDeclaration(public_lib::Conte
     if (!info->originalFuncName.Empty()) {
         ss << "@" << Signatures::NAMED_FUNCTION_OBJECT << "({name: \"" << info->originalFuncName << "\"})";
     }
+
+    if (info->isFunctionAsync) {
+        ss << "@" << Signatures::ASYNC_FUNCTION_OBJECT << "()";
+    }
+
     std::vector<ir::AstNode *> statementParams;
 
     if (fnInterface == nullptr) {
@@ -1549,6 +1556,7 @@ static ir::AstNode *ConvertLambda(public_lib::Context *ctx, ir::ArrowFunctionExp
         info.callReceiver = allocator->New<ir::ThisExpression>();
     }
     info.isFunctionReference = false;
+    info.isFunctionAsync = lambda->Function()->IsAsyncFunc();
 
     auto *callee = CreateCallee(ctx, lambda, &info);
     auto *lambdaType = lambda->TsType()->AsETSFunctionType();
@@ -1653,6 +1661,7 @@ static LambdaInfo GenerateLambdaInfoForFunctionReference(public_lib::Context *ct
     info.enclosingFunction = nullptr;
     info.name = CreateCalleeName(allocator);
     info.originalFuncName = method->Id()->Name();
+    info.isFunctionAsync = method->IsAsync();
     info.capturedVars = allocator->New<ArenaSet<varbinder::Variable *>>(allocator->Adapter());
     info.isFunctionReference = true;
 

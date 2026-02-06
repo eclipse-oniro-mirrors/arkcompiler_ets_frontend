@@ -262,6 +262,8 @@ defines:
     ref: CHAR_CAST
   - name: 'NamedFunctionObject'
     ref: NAMED_FUNCTION_OBJECT
+  - name: 'AsyncFunctionObject'
+    ref: ASYNC_FUNCTION_OBJECT
   - name: 'InterfaceObjectLiteral'
     ref: INTERFACE_OBJ_LITERAL
     comment: ETS annotation type
