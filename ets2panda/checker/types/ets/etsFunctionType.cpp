@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -225,7 +225,8 @@ static bool SignatureIsSupertypeOf(TypeRelation *relation, Signature *super, Sig
             return false;
         }
     }
-    for (size_t idx = 0; idx != sub->MinArgCount(); idx++) {
+    auto count = std::min(sub->ArgCount(), super->ArgCount());
+    for (size_t idx = 0; idx < count; idx++) {
         if (!relation->IsSupertypeOf(sub->Params()[idx]->TsType(), super->Params()[idx]->TsType())) {
             return false;
         }
