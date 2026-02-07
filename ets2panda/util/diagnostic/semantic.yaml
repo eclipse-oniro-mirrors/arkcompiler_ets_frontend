@@ -836,11 +836,6 @@ semantic:
   id: 278
   message: "Local class '{}' shouldn't have native methods/constructors"
 
-- name: Lambda_MISSING_RETURN_STMT
-  id: 57199
-  message: "Lambda with a non-void return type must return a value."
-  code_fix_ids: [FixAddFunctionReturnStatement]
-
 - name: MAIN_BAD_RETURN
   id: 88
   message: "Bad return type, main enable only void or int type."

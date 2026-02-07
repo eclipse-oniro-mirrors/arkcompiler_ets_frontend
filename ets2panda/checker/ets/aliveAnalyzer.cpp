@@ -278,7 +278,7 @@ void AliveAnalyzer::AnalyzeFuncDef(const ir::ScriptFunction *func, Type *returnT
     if (status_ == LivenessStatus::ALIVE && checkReturn) {
         if (!func->HasReturnStatement()) {
             if (isArrow) {
-                checker_->LogError(diagnostic::Lambda_MISSING_RETURN_STMT, {}, errorPos);
+                checker_->LogDiagnostic(diagnostic::LAMBDA_MISSING_RETURN_STMT, errorPos);
             } else {
                 checker_->LogError(diagnostic::MISSING_RETURN_STMT, {}, errorPos);
             }

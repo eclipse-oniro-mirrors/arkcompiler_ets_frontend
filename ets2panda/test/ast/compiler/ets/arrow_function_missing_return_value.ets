@@ -32,10 +32,10 @@ function main(): number|undefined {
     const k = /* @@ label7 */():number => {}
 }
 
-/* @@@ label1 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label2 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label3 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label4 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label5 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label6 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
-/* @@@ label7 Error Semantic error ESE57199: Lambda with a non-void return type must return a value. */
+/* @@@ label1 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label2 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label3 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label4 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label5 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label6 Warning Warning W57199: Lambda with a non void return type must return a value. */
+/* @@@ label7 Warning Warning W57199: Lambda with a non void return type must return a value. */
