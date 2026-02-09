@@ -29,11 +29,6 @@ warning:
   id: 4
   message: "Boost Equality Statement. Change sides of binary expression."
 
-- name: CANNOT_ANNOTATE
-  id: 122948
-  message: "Cannot annotate this overriden field {} in {}"
-  strict: true
-
 - name: CLASS_COMPOSITE_KEY_USE_STRING
   id: 98268
   message: "Key in class composite should be identifier, the use of strings as keys will be deprecated soon"
@@ -61,7 +56,7 @@ warning:
 - name: EMPTY_SOURCE_FILE
   id: 20000
   message: "The source file '{}' is empty."
- 
+
 - name: ENUM_DEPRECATED_CAST
   id: 30
   message: "Enum cast is deprecated. Cast support from '{}' to '{}' will be removed. Please use 'valueOf' or 'fromValue'."
@@ -191,4 +186,5 @@ graveyard:
 - 27
 - 28
 - 49710
+- 122948
 # See ets_frontend/ets2panda/util/diagnostic/README.md before contributing.
