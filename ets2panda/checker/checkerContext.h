@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -238,6 +238,8 @@ public:
 
     [[nodiscard]] std::pair<SmartCastArray, bool> EnterLoop(const ir::LoopStatement &loop,
                                                             SmartCastTypes loopConditionSmartCasts) noexcept;
+    void InvalidateSmartCastsForLoopHeader(const ir::LoopStatement &loop,
+                                           SmartCastTypes loopConditionSmartCasts) noexcept;
 
     [[nodiscard]] bool IsInLoop() const noexcept
     {

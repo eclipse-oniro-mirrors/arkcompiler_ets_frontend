@@ -4283,6 +4283,10 @@ checker::Type *ETSAnalyzer::Check(ir::ForUpdateStatement *st) const
         }
     }
 
+    // Invalidate smart casts once more after init: for-init can introduce fresh smart casts that should not be kept
+    // in the loop header if they are invalidated by loop reassignment rules.
+    checker->Context().InvalidateSmartCastsForLoopHeader(*st, std::nullopt);
+
     if (st->Test() != nullptr) {
         checker->CheckTruthinessOfType(st->Test());
     }
