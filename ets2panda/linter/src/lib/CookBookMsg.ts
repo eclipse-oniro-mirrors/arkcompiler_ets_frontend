@@ -450,6 +450,12 @@ cookBookTag[415] =
   '"enableV2Compatibility" function and "makeV1Observed" function is not supported (arkui-no-enableV2Compatibility-and-makeV1Observed-function)';
 cookBookTag[416] =
   'Ambiguous union type for Column/Row parameter. Use explicit type assertion, e.g., { … } as ColumnOptions (sdk-union-type-ambiguity)';
+cookBookTag[417] = 'Convert the number type to a specific int/long/double type (sdk-api-num2int)';
+cookBookTag[418] = 'Instance method shall bind the \'this\' instance by default (arkts-instance-method-bind-this)';
+cookBookTag[419] =
+  'Object literal shall generate instance of a specific class (arkts-obj-literal-generate-class-instance)';
+cookBookTag[420] =
+  'In ArkTS-Sta, \'as\' performs type checking and possible type conversion at runtime (arkts-no-ts-like-as)';
 for (let i = 0; i <= cookBookTag.length; i++) {
   cookBookMsg[i] = '';
 }

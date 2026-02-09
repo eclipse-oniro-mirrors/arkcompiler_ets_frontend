@@ -16,7 +16,7 @@ import同名对象时用别名来避免冲突。
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 ```typescript
 // ArkTS-Dyn
 // a.ts
@@ -29,7 +29,7 @@ const lg: LinearGradient = {};
 const lg2: LinearGradient = new LinearGradient();
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // ArkTS-Sta，分别放在两个模块中
 // @ohos.arkui.a.d.ets

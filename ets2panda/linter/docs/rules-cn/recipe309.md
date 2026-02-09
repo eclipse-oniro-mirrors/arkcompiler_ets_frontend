@@ -16,7 +16,7 @@ ArkTS-Sta不支持类中的可选方法。
 
 **示例：**
 
-**ArkTS-Dyn**
+ArkTS-Dyn
 ```typescript
 // ArkTS-Dyn API定义
 interface NativeMediaPlayerBridge {
@@ -30,7 +30,7 @@ class MediaPlayer implements NativeMediaPlayerBridge {
 const player1 = new MediaPlayer();
 ```
 
-**ArkTS-Sta**
+ArkTS-Sta
 ```typescript
 // ArkTS-Sta API定义
 type ResumePlayerFn = () => void;
