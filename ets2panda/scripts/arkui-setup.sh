@@ -137,7 +137,10 @@ if [ -z "${KOALA_REPO}" ] ; then
     npm config set "//$NEXUS_REPO/repository/koala-npm/:_auth=$KOALA_TOKEN"
 fi
 
-retry 5 npm install
+retry 5 npm install || {
+    echo "(Some error occurred while installing npm packages)"
+    exit 1
+}
 
 pushd incremental/tools/panda/ || exit 1
 if [ -z "${PANDA_SDK_HOST_TARBALL}" ] ; then
@@ -171,10 +174,16 @@ export ENABLE_BUILD_CACHE=0
 
 ES2PANDA_LIB_IDL="incremental/tools/panda/node_modules/@panda/sdk/ohos_arm64/include/tools/es2panda/generated/es2panda_lib/es2panda_lib.idl"
 
-retry 5 npm i @idlizer/idlinter
+retry 5 npm i @idlizer/idlinter || {
+    echo "(Some error occurred while installing @idlizer/idlinter)"
+    exit 1
+}
 npx @idlizer/idlinter check "${ES2PANDA_LIB_IDL}" || exit 1
 
-retry 5 run_script "sdk:all"
+retry 5 run_script "sdk:all" || {
+    echo "(Some error occurred while installing prepared sdk)"
+    exit 1
+}
 
 # Compile libarkts
 pushd libarkts || exit 1
