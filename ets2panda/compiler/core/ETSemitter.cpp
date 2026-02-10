@@ -98,14 +98,23 @@ namespace detail {
 
 // #29438
 // NOLINTNEXTLINE (fuchsia-statically-constructed-objects, cert-err58-cpp)
-static const std::set<std::string> AOT_WORKAROUND_BLACKLIST {
-    "std.core.String",   "std.core.String[]",      "std.core.Object",
-    "std.core.Object[]", "std.core.StringBuilder", "std.core.StringBuilder.%%get-stringLength:i32;",
+static const std::unordered_set<std::string> ALWAYS_EMIT_RECORDS_LIST {
+    // Necessary for SimplifyStringBuilder optimization in BCO mode only.
+    // In JIT/AOT we use stringLength field instead of get-stringLength method
+    // We need to emit std.core.StringBuilder too because
+    // without it we can't emit methods of this object
+    "std.core.StringBuilder",
+    "std.core.StringBuilder.%%get-stringLength:i32;",
 };
 
 class EmitterDependencies final {
 public:
-    explicit EmitterDependencies() = default;
+    explicit EmitterDependencies(int optLevel)
+    {
+        if (optLevel != 0) {
+            reachable_ = ALWAYS_EMIT_RECORDS_LIST;
+        }
+    }
     NO_COPY_SEMANTIC(EmitterDependencies);
     NO_MOVE_SEMANTIC(EmitterDependencies);
 
@@ -148,10 +157,7 @@ public:
     ~EmitterDependencies() = default;
 
 private:
-    std::unordered_set<std::string> reachable_ {
-        AOT_WORKAROUND_BLACKLIST.begin(),
-        AOT_WORKAROUND_BLACKLIST.end(),
-    };
+    std::unordered_set<std::string> reachable_ {};
     std::unordered_set<std::string> toEmit_ {};
 };
 
@@ -266,7 +272,8 @@ static pandasm::Function GenScriptFunction(const ir::ScriptFunction *scriptFunc,
 }
 
 ETSEmitter::ETSEmitter(const public_lib::Context *context)
-    : Emitter(context), dependencies_(std::make_unique<detail::EmitterDependencies>())
+    : Emitter(context),
+      dependencies_(std::make_unique<detail::EmitterDependencies>(context->config->options->GetOptLevel()))
 {
 }
 
