@@ -1419,8 +1419,8 @@ static bool HandleMultiFileModeTemplate(
         }
 
         // 'ImportPathManager::FormEtscacheFilePath' should be used instead:
-        std::string inputRelativeDir = ark::os::RemoveExtension(prog->RelativeFilePath(ctxImpl));
-        if (compare(pair.second, inputRelativeDir)) {
+        std::string inputRelativeDir = ark::os::RemoveExtension(prog->AbsoluteName().Mutf8());
+        if (compare(inputRelativeDir, pair.second)) {
             compiler::HandleGenerateDecl(ctxImpl, prog, outputPath);
             return !ctxImpl->diagnosticEngine->IsAnyError();
         }
@@ -1466,7 +1466,9 @@ __attribute__((unused)) static bool HandleMultiFileMode(Context *ctxImpl, const 
             return std::pair<bool, const std::string>(true, relativePath);
         };
 
-        auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool { return path1 == path2; };
+        auto compareFunc = [](const std::string &path1, const std::string &path2) -> bool {
+            return util::StringView(path1).EndsWith(path2);
+        };
         return HandleMultiFileModeTemplate(ctxImpl, outputPath, findPathFunc, compareFunc);
     }
 
