@@ -68,6 +68,7 @@ def replace_symlink_with_absolute(symlink_path):
 def build(options):
     # Copy the source directory to the temporary directory to avoid pollution
     options.build_system_tmp_dir = os.path.join(options.work_dir, 'temp')
+    shutil.rmtree(options.build_system_tmp_dir, ignore_errors=True)
     os.makedirs(options.build_system_tmp_dir, exist_ok=True)
     copy_files(options.source_path, options.build_system_tmp_dir)
 
