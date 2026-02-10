@@ -513,6 +513,10 @@ export abstract class BaseMode {
         this.collectAbcFileFromByteCodeHar();
         let linkerInputFile: string = path.join(this.cacheDir, LINKER_INPUT_FILE);
         let allFiles: string[] = outPuts.concat(Array.from(this.abcFiles));
+        if (allFiles.length === 0) {
+            // if a 1.1 har rely on a 1.2 bytecode har, there will be no output files to link
+            return;
+        }
         let linkerInputContent: string = allFiles.join(os.EOL);
         fs.writeFileSync(linkerInputFile, linkerInputContent);
         let abcLinkerCmd = ['"' + this.abcLinkerPath + '"']
@@ -747,7 +751,7 @@ export abstract class BaseMode {
                 )
             );
         });
-        if (!this.buildConfig.enableDeclgenEts2Ts) {
+        if (!this.buildConfig.enableDeclgenEts2Ts && !this.buildConfig.frameworkMode) {
             this.entryFiles = new Set([...this.entryFiles].filter(file => !file.endsWith(DECL_ETS_SUFFIX)));
         }
         this.logger.printDebug(`collected fileToModule ${JSON.stringify([...this.fileToModule.entries()], null, 1)}`)
@@ -781,6 +785,13 @@ export abstract class BaseMode {
     public async runSimultaneous(): Promise<void> {
         this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_SIMULTANEOUS));
 
+        if (this.entryFiles.size === 0) {
+            this.statsRecorder.record(formEvent(BuildSystemEvent.RUN_LINKER));
+            // if there is no entry files, just need to merge the abc files of har packages 
+            // that may be relied on, e.g., a 1.1 hap relying on a 1.2 bytecode har
+            this.mergeAbcFiles([]);
+            return;
+        }
         const mainModule: ModuleInfo = this.moduleInfos.get(this.mainPackageName)!;
         let entryFile: string = mainModule.entryFile || [...this.entryFiles][0];
         let arktsConfigFile: string = mainModule.arktsConfigFile;
@@ -816,6 +827,11 @@ export abstract class BaseMode {
     }
 
     public async runParallel(): Promise<void> {
+        if (this.entryFiles.size === 0) {
+            // in case of ENABLE_CLUSTERS is set to false and there is no entry files
+            await this.runSimultaneous();
+            return;
+        }
         if (ENABLE_CLUSTERS && this.entryFiles.size <= CLUSTER_FILES_TRESHOLD) {
             await this.runSimultaneous();
             return;
