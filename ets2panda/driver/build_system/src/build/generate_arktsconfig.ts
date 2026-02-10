@@ -652,7 +652,8 @@ export class ArkTSConfigGenerator {
         moduleInfo: ModuleInfo,
         arktsConfig: ArkTSConfig
     ): void {
-        const moduleRoot = toUnixPath(moduleInfo.moduleRootPath) + '/';
+        let moduleRoot = toUnixPath(moduleInfo.moduleRootPath);
+        moduleRoot += moduleRoot.endsWith('/') ? '' : '/';
 
         for (const file of this.buildConfig.compileFiles) {
             const unixFilePath: string = toUnixPath(file);
