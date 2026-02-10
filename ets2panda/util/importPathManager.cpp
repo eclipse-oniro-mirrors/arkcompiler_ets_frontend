@@ -234,12 +234,14 @@ ImportMetadata ImportPathManager::ResolvePath(parser::Program *importer, std::st
         std::string resolvedPathPrototype {currentDir};
         resolvedPathPrototype += pathDelimiter_;
         resolvedPathPrototype += importPath;
-
         result = AppendExtensionOrIndexFileIfOmitted(resolvedPathPrototype);
         if (result.resolvedIsExternalModule) {
             TryMatchStaticResolvedPath(&result);
         } else {
             TryMatchDynamicResolvedPath(&result);
+        }
+        if (result.resolvedPath == curModulePath) {
+            DE()->LogDiagnostic(diagnostic::IMPORT_ITSELF, util::DiagnosticMessageParams {curModulePath});
         }
     } else {
         result = ResolveAbsolutePath(importPath);
