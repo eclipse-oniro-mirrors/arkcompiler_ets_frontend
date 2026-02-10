@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "callExpression.h"
 
+#include <compiler/core/compilerContext.h>
 #include <compiler/core/pandagen.h>
 #include <typescript/checker.h>
 #include <ir/base/classDefinition.h>
@@ -162,6 +163,8 @@ void CallExpression::Compile(compiler::PandaGen *pg) const
     compiler::VReg callee = pg->AllocReg();
     bool hasThis = false;
     compiler::VReg thisReg {};
+    bool isLdName = false;
+    bool isSupportCallWithName = pg->Context()->EnableCallableName();
 
     if (realCallee->IsMemberExpression()) {
         hasThis = true;
@@ -169,6 +172,8 @@ void CallExpression::Compile(compiler::PandaGen *pg) const
 
         compiler::RegScope mrs(pg);
         realCallee->AsMemberExpression()->Compile(pg, thisReg);
+        isLdName = !realCallee->AsMemberExpression()->IsComputed() &&
+                   realCallee->AsMemberExpression()->Property()->IsIdentifier();
     } else if (realCallee->IsChainExpression()) {
         hasThis = realCallee->AsChainExpression()->GetExpression()->IsMemberExpression();
         if (hasThis) {
@@ -212,8 +217,19 @@ void CallExpression::Compile(compiler::PandaGen *pg) const
          * especially for cases involving async stack tracing.
          */
         if (realCallee->IsMemberExpression()) {
+            if (isLdName && isSupportCallWithName) {
+                pg->CallThisWithName(realCallee->AsMemberExpression()->Property()->AsIdentifier(), callee,
+                                     static_cast<int64_t>(arguments_.size() + 1),
+                                     realCallee->AsMemberExpression()->Property()->AsIdentifier()->Name());
+                return;
+            }
             pg->CallThis(realCallee->AsMemberExpression()->Property(), callee,
                          static_cast<int64_t>(arguments_.size() + 1));
+            return;
+        }
+        if (isLdName && isSupportCallWithName) {
+            pg->CallThisWithName(this, callee, static_cast<int64_t>(arguments_.size() + 1),
+                                 realCallee->AsMemberExpression()->Property()->AsIdentifier()->Name());
             return;
         }
         pg->CallThis(this, callee, static_cast<int64_t>(arguments_.size() + 1));

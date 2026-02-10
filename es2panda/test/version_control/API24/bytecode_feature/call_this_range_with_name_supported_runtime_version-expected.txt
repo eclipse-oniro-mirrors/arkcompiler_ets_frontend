@@ -1,0 +1,54 @@
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:31:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:38:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:44:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:52:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:59:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:65:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:73:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:80:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:86:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:94:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:101:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:107:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:115:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:122:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:128:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:136:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:155:1)
+
+b is not callable
+    at func_main_0 (test/version_control/API24/bytecode_feature/call_this_range_with_name.js:173:1)
+

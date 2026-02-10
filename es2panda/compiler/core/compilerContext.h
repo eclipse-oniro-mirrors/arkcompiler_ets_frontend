@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,8 @@ public:
     CompilerContext(binder::Binder *binder, bool isDebug, bool isDebuggerEvaluateExpressionMode,
                     bool isMergeAbc, bool isJsonInputFile, bool isRecordDebugSource,
                     const std::string &sourceFile, const std::string &pkgName, util::StringView recordName,
-                    util::PatchFix *patchFixHelper, bool enableColumn = false);
+                    util::PatchFix *patchFixHelper, bool enableColumn = false,
+                    bool enableCallableName = false);
 
     NO_COPY_SEMANTIC(CompilerContext);
     NO_MOVE_SEMANTIC(CompilerContext);
@@ -98,6 +99,11 @@ public:
         return isMergeAbc_;
     }
 
+    bool EnableCallableName() const
+    {
+        return enableCallableName_;
+    }
+
     std::string SourceFile() const
     {
         return sourceFile_;
@@ -144,6 +150,7 @@ private:
     util::PatchFix *patchFixHelper_ {nullptr};
     std::unique_ptr<Emitter> emitter_;
     bool enableColumn_ {false};
+    bool enableCallableName_ {false};
 };
 
 }  // namespace panda::es2panda::compiler
