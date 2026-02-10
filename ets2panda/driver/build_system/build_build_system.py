@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -66,35 +66,41 @@ def replace_symlink_with_absolute(symlink_path):
 
 
 def build(options):
-    options.temp_dir = os.path.join(options.source_path, f"temp{time.time_ns()}")
-    options.build_out = os.path.join(options.temp_dir, "dist")
-    os.makedirs(options.temp_dir, exist_ok=True)
-    run_bindings_cmd = [options.npm, 'run', 'run']
-    run_cmd(run_bindings_cmd, os.path.join(options.source_path, "../../bindings/"))
-    replace_symlink_with_absolute(os.path.join(options.source_path, "node_modules/@es2panda/bindings"))
-    build_cmd = [options.npm, 'run', 'build', '--', '--outDir', options.build_out]
-    run_cmd(build_cmd, options.source_path)
+    # Copy the source directory to the temporary directory to avoid pollution
+    options.build_system_tmp_dir = os.path.join(options.work_dir, 'temp')
+    os.makedirs(options.build_system_tmp_dir, exist_ok=True)
+    copy_files(options.source_path, options.build_system_tmp_dir)
+
+    # Build and install the bindings
+    bindings_dir = os.path.join(options.source_path, '../../bindings/')
+    bindings_out = os.path.join(options.build_system_tmp_dir, 'node_modules/@es2panda/bindings')
+    run_cmd(['rm', '-rf', bindings_out])
+    run_cmd([options.npm, 'run', 'build', '--', '--outDir', os.path.join(bindings_out, 'dist')], bindings_dir)
+    copy_files(os.path.join(bindings_dir, 'package.json'), bindings_out, True)
+
+    # Build build system
+    build_cmd = [options.npm, 'run', 'build']
+    run_cmd(build_cmd, options.build_system_tmp_dir)
 
 
 def copy_output(options):
     run_cmd(['rm', '-rf', options.output_path])
 
-    copy_files(options.build_out,
+    copy_files(os.path.join(options.build_system_tmp_dir, 'dist'),
                os.path.join(options.output_path, 'dist'))
 
-    copy_files(os.path.join(options.source_path, 'node_modules'),
+    copy_files(os.path.join(options.build_system_tmp_dir, 'node_modules'),
                os.path.join(options.output_path, 'node_modules'))
 
-    copy_files(os.path.join(options.source_path, 'package.json'),
+    copy_files(os.path.join(options.build_system_tmp_dir, 'package.json'),
                os.path.join(options.output_path, 'package.json'), True)
-
-    shutil.rmtree(options.temp_dir, ignore_errors=True)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--npm', required=True, help='path to a npm executable')
     parser.add_argument('--source_path', required=True, help='path to build system source')
+    parser.add_argument('--work_dir', required=True, help='path to work directory')
     parser.add_argument('--output_path', required=True, help='path to output')
     return parser.parse_args()
 
