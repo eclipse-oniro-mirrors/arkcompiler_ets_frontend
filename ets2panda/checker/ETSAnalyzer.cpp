@@ -3251,10 +3251,9 @@ checker::Type *ETSAnalyzer::Check(ir::ObjectExpression *expr) const
     return tsType;
 }
 
-void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,
-                                             std::unordered_map<util::StringView, ETSObjectType *> &props) const
+static void CollectNonOptionalPropertyInterface(checker::ETSChecker *checker, const ETSObjectType *objType,
+                                                std::unordered_map<util::StringView, ETSObjectType *> &props)
 {
-    ETSChecker *checker = GetETSChecker();
     // Note: all the properties of an interface will be lowered as accessor before checker.
     auto const &methodMap = objType->InstanceMethods();
     for (const auto &[propName, var] : methodMap) {
@@ -3269,14 +3268,41 @@ void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,
         }
 
         if (var->Declaration()->Node()->IsOptionalDeclaration()) {
-            // non-optional properties
+            // optional properties
             continue;
         }
         props.insert({propName, const_cast<ETSObjectType *>(objType)});
     }
+}
 
-    for (auto const *superInterface : objType->Interfaces()) {
-        CollectNonOptionalProperty(superInterface, props);
+static void CollectLateInitPropertyClass(const ETSObjectType *objType,
+                                         std::unordered_map<util::StringView, ETSObjectType *> &props)
+{
+    auto const &fields = objType->InstanceFields();
+    for (const auto &[propName, var] : fields) {
+        if (!var->Declaration()->Node()->IsDefinite()) {
+            continue;
+        }
+        props.insert({propName, const_cast<ETSObjectType *>(objType)});
+    }
+}
+
+void ETSAnalyzer::CollectNonOptionalProperty(const ETSObjectType *objType,
+                                             std::unordered_map<util::StringView, ETSObjectType *> &props) const
+{
+    ETSChecker *checker = GetETSChecker();
+    if (objType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
+        CollectNonOptionalPropertyInterface(checker, objType, props);
+        for (auto const *superInterface : objType->Interfaces()) {
+            CollectNonOptionalProperty(superInterface, props);
+        }
+    }
+
+    if (objType->HasObjectFlag(ETSObjectFlags::CLASS)) {
+        CollectLateInitPropertyClass(objType, props);
+        if (objType->SuperType() != nullptr) {
+            CollectNonOptionalProperty(objType->SuperType(), props);
+        }
     }
 }
 
@@ -3434,9 +3460,8 @@ void ETSAnalyzer::CheckObjectExprProps(const ir::ObjectExpression *expr,
     }
 
     std::unordered_map<util::StringView, ETSObjectType *> propertyWithNonOptionalType;
-    if (objType->HasObjectFlag(ETSObjectFlags::INTERFACE)) {
-        CollectNonOptionalProperty(objType, propertyWithNonOptionalType);
-    }
+
+    CollectNonOptionalProperty(objType, propertyWithNonOptionalType);
 
     CheckObjectExprPropsHelper(checker, expr, objType, searchFlags, propertyWithNonOptionalType);
 

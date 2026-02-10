@@ -13,17 +13,11 @@
  * limitations under the License.
  */
 
-class A {
-  f!: string
+
+class CC  {
+    calendar !: number;
 }
 
-function main(): void {
-  try {
-    let a: A = {f: "aa"}
-    arktest.assertEQ(a.f, "aa");
-  } catch (e) {
-    arktest.assertTrue(e instanceof NullPointerError)
-  }
-}
+let a : CC = {}
 
-
+/* @@? 21:14 Error Semantic error ESE0400: Non-optional property 'calendar' in type 'CC' is missing in object literal. */

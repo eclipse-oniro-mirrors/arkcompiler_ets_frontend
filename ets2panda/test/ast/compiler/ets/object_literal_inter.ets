@@ -13,17 +13,14 @@
  * limitations under the License.
  */
 
-class A {
-  f!: string
+
+interface A {
+    a!: number
 }
 
-function main(): void {
-  try {
-    let a: A = {f: "aa"}
-    arktest.assertEQ(a.f, "aa");
-  } catch (e) {
-    arktest.assertTrue(e instanceof NullPointerError)
-  }
+function main() {
+    let bba : A = { }
 }
 
-
+/* @@? 18:6 Error Syntax error ESY162966: Definite assignment assertions '!' are not allowed in interface properties. */
+/* @@? 22:19 Error Semantic error ESE0400: Non-optional property 'a' in type 'A' is missing in object literal. */

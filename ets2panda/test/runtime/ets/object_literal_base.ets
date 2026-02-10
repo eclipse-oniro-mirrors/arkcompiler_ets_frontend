@@ -1,4 +1,5 @@
 /*
+
  * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +14,15 @@
  * limitations under the License.
  */
 
+
 class A {
-  f!: string
+    a!: number
 }
 
-function main(): void {
-  try {
-    let a: A = {f: "aa"}
-    arktest.assertEQ(a.f, "aa");
-  } catch (e) {
-    arktest.assertTrue(e instanceof NullPointerError)
-  }
+class B extends A {
 }
 
-
+function main() {
+    let bba : B = { a: 10}
+    arktest.assertEQ(bba.a, 10)
+}

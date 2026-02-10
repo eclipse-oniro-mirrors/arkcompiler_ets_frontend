@@ -13,17 +13,14 @@
  * limitations under the License.
  */
 
+
 class A {
-  f!: string
+    a!: number
 }
 
-function main(): void {
-  try {
-    let a: A = {f: "aa"}
-    arktest.assertEQ(a.f, "aa");
-  } catch (e) {
-    arktest.assertTrue(e instanceof NullPointerError)
-  }
+class B extends A {
 }
 
+let a : B = {}
 
+/* @@? 24:13 Error Semantic error ESE0401: Non-optional property 'a' in super type 'A' of type 'B' is missing in object literal. */
