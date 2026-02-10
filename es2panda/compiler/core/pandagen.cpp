@@ -1368,6 +1368,47 @@ void PandaGen::CallThis(const ir::AstNode *node, VReg startReg, size_t argCount)
     }
 }
 
+void PandaGen::CallThisWithName(const ir::AstNode *node, VReg startReg, size_t argCount, const util::StringView &name)
+{
+    LoadAccumulator(node, startReg); // callee is load to acc
+    VReg thisReg = startReg + 1; // This dependency is used in other places, do not modify.
+
+    switch (argCount) {
+        case 1: { // 1: no args
+            ra_.Emit<Callthis0withname>(node, 0, name, thisReg);
+            break;
+        }
+        case 2: { // 2: 1 arg
+            VReg arg0 = thisReg + 1;
+            ra_.Emit<Callthis1withname>(node, 0, name, thisReg, arg0);
+            break;
+        }
+        case 3: { // 3: 2 args
+            VReg arg0 = thisReg + 1;
+            VReg arg1 = arg0 + 1;
+            ra_.Emit<Callthis2withname>(node, 0, name, thisReg, arg0, arg1);
+            break;
+        }
+        case 4: { // 4: 3 args
+            VReg arg0 = thisReg + 1;
+            VReg arg1 = arg0 + 1;
+            VReg arg2 = arg1 + 1;
+            ra_.Emit<Callthis3withname>(node, 0, name, thisReg, arg0, arg1, arg2);
+            break;
+        }
+        default: {
+            int64_t actualArgs = static_cast<int64_t>(argCount) - 1;
+            if (actualArgs <= util::Helpers::MAX_INT8) {
+                ra_.EmitRange<Callthisrangewithname>(node, argCount, 0, actualArgs, name, thisReg);
+                break;
+            }
+
+            ra_.EmitRange<WideCallthisrangewithname>(node, argCount, actualArgs, name, thisReg);
+            break;
+        }
+    }
+}
+
 void PandaGen::Call(const ir::AstNode *node, VReg startReg, size_t argCount)
 {
     LoadAccumulator(node, startReg); // callee is load to acc

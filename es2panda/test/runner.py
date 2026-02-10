@@ -1479,7 +1479,7 @@ class BcVersionTest(Test):
         # To avoid problems when api version is upgraded abruptly,
         # the corresponding bytecode version of the api version not written in isa.yaml is alaways the newest version.
         self.bc_version_expect = {
-            8: "13.0.1.0",
+            8: "24.0.0.0",
             9: "9.0.0.0",
             10: "9.0.0.0",
             11: "11.0.2.0",
@@ -1495,6 +1495,10 @@ class BcVersionTest(Test):
             18: "13.0.1.0",
             19: "13.0.1.0",
             20: "13.0.1.0",
+            21: "13.0.1.0",
+            22: "13.0.1.0",
+            23: "13.0.1.0",
+            24: "24.0.0.0",
         }
         self.es2abc_script_expect = {
             8: "0.0.0.2",
@@ -1513,6 +1517,10 @@ class BcVersionTest(Test):
             18: "13.0.1.0",
             19: "13.0.1.0",
             20: "13.0.1.0",
+            21: "13.0.1.0",
+            22: "13.0.1.0",
+            23: "13.0.1.0",
+            24: "24.0.0.0",
         }
 
     def run(self):
@@ -2457,14 +2465,32 @@ class TestEs2abcVersionControl(TestAbcVersionControl):
                 return self
         return self
 
-class TestVersionControl(Test):
+class VersionControlPathHelper:
+    def get_es2panda_cwd(self, runner):
+        return path.dirname(runner.test_root)
+
+    def to_es2panda_relpath(self, runner, input_path: str) -> str:
+        base_dir = self.get_es2panda_cwd(runner)
+        try:
+            return os.path.relpath(input_path, start=base_dir)
+        except Exception:
+            return input_path
+
+    def run_process_in_es2panda_dir(self, runner, cmd):
+        cwd = self.get_es2panda_cwd(runner)
+        self.process = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = self.process.communicate()
+        self.output = stdout.decode("utf-8", errors="ignore") + stderr.decode("utf-8", errors="ignore")
+        return stdout, stderr
+
+class TestVersionControl(VersionControlPathHelper, Test):
     def __init__(self, test_path, flags, test_version, feature_type, module_path_list):
         Test.__init__(self, test_path, flags)
         self.beta_version_default = 3
         self.version_with_sub_version_list = ["12"]
-        self.target_api_version_list = ["9", "10", "11", "12", "18", "20"]
+        self.target_api_version_list = ["9", "10", "11", "12", "18", "20", "24"]
         self.target_api_sub_version_list = ["beta1", "beta2", "beta3"]
-        self.specific_api_version_list = ["API18", "API12beta3", "API11"]
+        self.specific_api_version_list = ["API24", "API18", "API12beta3", "API11"]
         self.output = None
         self.process = None
         self.test_version = test_version
@@ -2510,7 +2536,7 @@ class TestVersionControl(Test):
     def generate_single_module_abc(self, runner, module_path, target_version):
         cmd = []
         cmd.append(runner.es2panda)
-        cmd.append(module_path)
+        cmd.append(self.to_es2panda_relpath(runner, module_path))
         cmd.append("--module")
         main_version, sub_version = self.split_version(target_version)
         cmd.append("--target-api-version=%s" % (main_version))
@@ -2527,8 +2553,9 @@ class TestVersionControl(Test):
         self.module_abc_path_set.add(module_abc_path)
         cmd.extend(["--output=%s" % (module_abc_path)])
 
-        self.process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cwd = self.get_es2panda_cwd(runner)
+        self.process = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _, stderr = proc.communicate()
         proc.wait()
         if stderr:
@@ -2572,7 +2599,18 @@ class TestVersionControl(Test):
             path.splitext(self.path)[0])
         return expected_path
 
-    def get_path_to_runtime_output_expected(self, is_support, target_api_version, is_below_abc_api_version):
+    def get_path_to_runtime_output_expected_for_vm(self, is_support, cur_runtime_api_version):
+        support_name = "supported" if is_support else "unsupported"
+        expected_path = "%s_%s_runtime_for_vm_%s_version-expected.txt" % (
+            path.splitext(self.path)[0],
+            support_name,
+            cur_runtime_api_version,
+        )
+        return expected_path
+
+    def get_path_to_runtime_output_expected(
+        self, is_support, target_api_version, is_below_abc_api_version, cur_runtime_api_version=None
+    ):
         path_expected = None
         if is_below_abc_api_version:
             path_expected = self.get_path_to_runtime_output_below_version_expected()
@@ -2580,7 +2618,22 @@ class TestVersionControl(Test):
         for specific_api_version in self.specific_api_version_list:
             if self.compare_two_versions(target_api_version, specific_api_version) > 0:
                 continue
-            path_expected = self.get_path_to_expected(is_support, "runtime", target_api_version, specific_api_version)
+            path_expected = self.get_path_to_expected(
+                is_support, "runtime", target_api_version, specific_api_version
+            )
+            if cur_runtime_api_version is not None:
+                path_combined = path_expected.replace(
+                    "_version-expected.txt",
+                    "_for_vm_%s_version-expected.txt" % cur_runtime_api_version,
+                )
+                if path.exists(path_combined):
+                    return path_combined
+            if path.exists(path_expected):
+                return path_expected
+        if cur_runtime_api_version is not None:
+            path_expected = self.get_path_to_runtime_output_expected_for_vm(
+                is_support, cur_runtime_api_version
+            )
             if path.exists(path_expected):
                 return path_expected
         return self.get_path_to_expected(is_support, "runtime", target_api_version)
@@ -2607,7 +2660,7 @@ class TestVersionControl(Test):
     def run_process_compile(self, runner, target_api_version, target_api_sub_version="bata3", dump_type=""):
         cmd = []
         cmd.append(runner.es2panda)
-        cmd.append(self.path)
+        cmd.append(self.to_es2panda_relpath(runner, self.path))
         cmd.extend(self.flags)
         cmd.append("--target-api-version=%s" % (target_api_version))
         test_abc_name = ("%s.abc" % (path.splitext(self.path)[0])).replace("/", "_")
@@ -2620,7 +2673,7 @@ class TestVersionControl(Test):
         elif dump_type == "assembly":
             cmd.append("--dump-assembly")
         self.log_cmd(cmd)
-        stdout, stderr = self.run_process(cmd)
+        stdout, stderr = self.run_process_in_es2panda_dir(runner, cmd)
         return stdout, stderr
 
     def generate_ast_of_target_version(self, runner, target_api_version, target_api_sub_version="bata3"):
@@ -2698,7 +2751,7 @@ class TestVersionControl(Test):
                 self.generate_module_abc(runner, cur_runtime_api_version)
                 _, stderr = self.runtime_for_target_version(runner, api_version, api_sub_version)
                 runtime_expected_path = self.get_path_to_runtime_output_expected(
-                    is_support, cur_api_version, is_below_abc_version
+                    is_support, cur_api_version, is_below_abc_version, cur_runtime_api_version
                 )
                 self.remove_module_abc()
                 try:
@@ -2893,6 +2946,13 @@ def add_directory_for_version_control(runners, args):
         "API20",
         "bytecode_feature",
     )
+    runner.add_directory(
+        "version_control/API24/bytecode_feature",
+        "js",
+        ["--enable-callable-name"],
+        "API24",
+        "bytecode_feature",
+    )
     runners.append(runner)
 
     abc_tests_prepare = AbcTestCasesPrepare(args)
@@ -3055,7 +3115,7 @@ def add_directory_for_compiler(runners, args):
     compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/enableColumn/ts", "ts", ["--enable-release-column"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/js", "js", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/crashStack/offColumn/ts", "ts", []))
-    compiler_test_infos.append(CompilerTestInfo("compiler/js", "js", ["--module"]))
+    compiler_test_infos.append(CompilerTestInfo("compiler/js", "js", ["--module", "--enable-callable-name"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/cases", "ts", []))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/projects", "ts", ["--module"]))
     compiler_test_infos.append(CompilerTestInfo("compiler/ts/projects", "ts", ["--module", "--merge-abc"]))

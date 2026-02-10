@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -79,7 +79,8 @@ bool CompileFileJob::RetrieveProgramFromCacheFiles(const std::string &buffer, bo
     // are updated
     if (cacheFileIter != options_->cacheFiles.end()) {
         // cache is invalid when any one of source file infos being changed
-        auto bufToHash = buffer + src_->fileName + src_->recordName + src_->sourcefile + src_->pkgName;
+        auto bufToHash = buffer + src_->fileName + src_->recordName + src_->sourcefile + src_->pkgName +
+            panda::panda_file::GetVersion(panda::panda_file::version);
         ArenaAllocator allocator(SpaceType::SPACE_TYPE_COMPILER, nullptr, true);
         if (!isAbcFile) {
             src_->hash = GetHash32String(reinterpret_cast<const uint8_t *>(bufToHash.c_str()));
