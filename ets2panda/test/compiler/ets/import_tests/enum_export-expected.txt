@@ -172,7 +172,7 @@
               }
             },
             "kind": "constructor",
-            "accessibility": "public",
+            "accessibility": "private",
             "static": false,
             "optional": false,
             "computed": false,
@@ -2592,7 +2592,7 @@
               }
             },
             "kind": "constructor",
-            "accessibility": "public",
+            "accessibility": "private",
             "static": false,
             "optional": false,
             "computed": false,
@@ -7702,7 +7702,7 @@
               }
             },
             "kind": "constructor",
-            "accessibility": "public",
+            "accessibility": "private",
             "static": false,
             "optional": false,
             "computed": false,

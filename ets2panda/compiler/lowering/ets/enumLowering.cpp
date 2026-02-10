@@ -447,8 +447,8 @@ ir::ScriptFunction *EnumLoweringPhase::CreateFunctionForCtorOfEnumClass(ir::Clas
         ir::ScriptFunction::ScriptFunctionData {body, ir::FunctionSignature(nullptr, std::move(params), nullptr),
                                                 scriptFlags,  // CC-OFF(G.FMT.02) project code style
                                                 ir::ModifierFlags::CONSTRUCTOR |
-                                                    ir::ModifierFlags::PUBLIC,  // CC-OFF(G.FMT.02) project code style
-                                                Language(Language::Id::ETS)});  // CC-OFF(G.FMT.02) project code style
+                                                    ir::ModifierFlags::PRIVATE,  // CC-OFF(G.FMT.02) project code style
+                                                Language(Language::Id::ETS)});   // CC-OFF(G.FMT.02) project code style
 
     func->SetIdent(id);
 
@@ -491,9 +491,8 @@ void EnumLoweringPhase::CreateCtorForEnumClass(ir::ClassDefinition *const enumCl
     auto *funcExpr = AllocNode<ir::FunctionExpression>(func);
 
     auto *const identClone = func->Id()->Clone(Allocator(), nullptr);
-    // NOTE(gogabr): constructor should be private, but interop_js complains, see test_js_use_ets_enum.ts
     auto *const methodDef = AllocNode<ir::MethodDefinition>(ir::MethodDefinitionKind::CONSTRUCTOR, identClone, funcExpr,
-                                                            ir::ModifierFlags::PUBLIC, Allocator(), false);
+                                                            ir::ModifierFlags::PRIVATE, Allocator(), false);
     methodDef->SetParent(enumClass);
     enumClass->EmplaceBody(methodDef);
 }
