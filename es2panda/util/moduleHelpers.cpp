@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+/**
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,9 +32,9 @@ void ModuleHelpers::CompileNpmModuleEntryList(const std::string &entriesInfo,
     if (cacheFileIter != options.cacheFiles.end()) {
         hash = GetHash32String(reinterpret_cast<const uint8_t *>(ss.str().c_str()));
 
-        auto cacheProgramInfo = panda::proto::ProtobufSnapshotGenerator::GetCacheContext(cacheFileIter->second,
+        auto cacheProgramInfo = panda::proto::ProtobufSnapshotGenerator::GetCacheContext(cacheFileIter->second, hash,
             allocator);
-        if (cacheProgramInfo != nullptr && cacheProgramInfo->hashCode == hash) {
+        if (cacheProgramInfo != nullptr) {
             auto *cache = allocator->New<util::ProgramCache>(hash, std::move(cacheProgramInfo->program));
             progsInfo.insert({entriesInfo, cache});
             return;

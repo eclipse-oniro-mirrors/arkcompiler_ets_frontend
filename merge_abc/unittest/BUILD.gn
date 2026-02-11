@@ -1,4 +1,4 @@
-# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
+# Copyright (c) 2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -13,18 +13,6 @@
 
 import("//arkcompiler/ets_frontend/test_helper.gni")
 
-es2panda_frontend_unittest("lexer_test") {
-  sources = [ "lexer/lexer_test.cpp" ]
-}
-
-es2panda_frontend_unittest("keywordsUtil_test") {
-  sources = [ "lexer/keywordsUtil_test.cpp" ]
-}
-
-es2panda_frontend_unittest("token_test") {
-  sources = [ "lexer/token_test.cpp" ]
-}
-
-es2panda_frontend_unittest("parser_test") {
-  sources = [ "parser/parser_test.cpp" ]
+es2panda_frontend_unittest("program_cache_test") {
+  sources = [ "program_cache_test.cpp" ]
 }

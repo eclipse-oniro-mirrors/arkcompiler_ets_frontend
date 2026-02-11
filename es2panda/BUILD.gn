@@ -736,10 +736,11 @@ group("es2abc_tests") {
   testonly = true
   if (!ark_standalone_build && host_os == "linux") {
     deps = [
-      "unittest:lexer_test(${toolchain_linux})",
-      "unittest:token_test(${toolchain_linux})",
-      "unittest:keywordsUtil_test(${toolchain_linux})",
-      "unittest:parser_test(${toolchain_linux})",
+      "unittest:lexer_test_action(${toolchain_linux})",
+      "unittest:token_test_action(${toolchain_linux})",
+      "unittest:keywordsUtil_test_action(${toolchain_linux})",
+      "unittest:parser_test_action(${toolchain_linux})",
+      "../merge_abc:merge_abc_tests(${toolchain_linux})"
     ]
   }
 }
