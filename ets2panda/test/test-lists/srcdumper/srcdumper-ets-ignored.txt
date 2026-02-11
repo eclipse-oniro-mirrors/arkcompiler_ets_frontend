@@ -122,6 +122,8 @@ runtime/ets/interfaceObjectLiteral_05.ets
 runtime/ets/interfaceObjectLiteral_06.ets
 runtime/ets/interfaceObjectLiteral_07.ets
 runtime/ets/interfaceObjectLiteral_08.ets
+runtime/ets/interfaceObjectLiteral_09.ets
+runtime/ets/interfaceObjectLiteral_10.ets
 
 #31069
 type_error_test.ets

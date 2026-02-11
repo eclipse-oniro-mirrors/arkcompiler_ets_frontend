@@ -1036,6 +1036,21 @@ void ETSParser::ParseIndexedSignature()
     ParseInterfaceTypeAnnotation(name);
 }
 
+static bool HasUndefinedAnnotation(ir::TypeNode const *const typeAnnotation) noexcept
+{
+    if (typeAnnotation == nullptr || !typeAnnotation->IsETSUnionType()) {
+        return false;
+    }
+
+    for (auto const *const type : typeAnnotation->AsETSUnionType()->Types()) {
+        if (type->IsETSUndefinedType()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 ir::AstNode *ETSParser::ParseInterfaceField()
 {
     ES2PANDA_ASSERT(Lexer()->GetToken().Type() == lexer::TokenType::LITERAL_IDENT ||
@@ -1074,16 +1089,17 @@ ir::AstNode *ETSParser::ParseInterfaceField()
     ES2PANDA_ASSERT(name != nullptr);
     name->SetRange(Lexer()->GetToken().Loc());
     Lexer()->NextToken();
-    bool optionalField = false;
 
+    bool optionalField = false;
     ParseInterfaceModifiers(fieldModifiers, optionalField);
+
     auto *typeAnnotation = ParseInterfaceTypeAnnotation(name);
     auto *field = AllocNode<ir::ClassProperty>(name, nullptr, typeAnnotation, fieldModifiers, Allocator(), false);
-    ES2PANDA_ASSERT(field != nullptr);
-    if (optionalField) {
+    field->SetEnd(typeAnnotation->End());
+
+    if (optionalField || HasUndefinedAnnotation(typeAnnotation)) {
         field->AddModifier(ir::ModifierFlags::OPTIONAL);
     }
-    field->SetEnd(typeAnnotation->End());
 
     return field;
 }
