@@ -282,6 +282,9 @@ ohos_executable("merge_abc") {
     "icu:static_icuuc",
     sdk_libc_secshared_dep,
   ]
+  if (enable_hilog) {
+    external_deps += [ "hilog:libhilog" ]
+  }
   if (!is_arkui_x) {
     external_deps += [ "runtime_core:libarkziparchive_frontend_static" ]
   } else {
