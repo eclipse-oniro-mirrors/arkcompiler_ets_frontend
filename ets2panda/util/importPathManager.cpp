@@ -41,6 +41,7 @@
 #include <memory>
 #include <string_view>
 #include <utility>
+#include <regex>
 
 #ifdef PANDA_TARGET_WINDOWS
 #include <io.h>
@@ -348,12 +349,14 @@ void ImportPathManager::SetupGlobalProgram()
 
 static ArenaString OhmurlToMname(ArenaString &&ohmurl)
 {
+    std::replace(ohmurl.begin(), ohmurl.end(), '\\', '/');
     ES2PANDA_ASSERT(std::find(ohmurl.begin(), ohmurl.end(), '\\') == ohmurl.end());
     if (ohmurl.at(0) == '/') {
         ohmurl.erase(0, 1);
     }
     ArenaString mnamePrototype {std::move(ohmurl)};
     std::replace(mnamePrototype.begin(), mnamePrototype.end(), '/', '.');
+    mnamePrototype = std::regex_replace(mnamePrototype, std::regex(R"(\.\.)"), ".");
     return mnamePrototype;
 }
 
