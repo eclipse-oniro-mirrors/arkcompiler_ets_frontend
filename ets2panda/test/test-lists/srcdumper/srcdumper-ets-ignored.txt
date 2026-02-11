@@ -7,69 +7,25 @@ parser/ets/string_template_3.ets
 parser/ets/string_template_4.ets
 
 # FailKind.SRC_DUMPER_FAIL (Issue #20458)
-ast/compiler/ets/namespace_tests/declare_namespace.ets
-ast/parser/ets/re_export/import_11.ets
-ast/parser/ets/re_export/import_12.ets
-ast/parser/ets/re_export/export_5.ets
-ast/parser/ets/re_export/export_6.ets
 ast/parser/ets/re_export/re_export_16.ets
-ast/parser/ets/re_export/re_export_11.ets
-ast/parser/ets/re_export/re_export_12.ets
-ast/parser/ets/re_export/re_export_5.ets
-ast/parser/ets/re_export/re_export_7.ets
-ast/parser/ets/record_lower_phase_external_main.ets
-ast/parser/ets/unresolved_reference_argname_main.ets
 compiler/ets/abstractNewClassInstanceExpression.ets
 runtime/ets/implicit_package_import_1.ets
 runtime/ets/implicit_package_import_2.ets
-compiler/ets/implicit_package_import/package_test_1/package_module_1.ets
-compiler/ets/implicit_package_import/package_test_1/package_module_2.ets
-compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_1.ets
-compiler/ets/implicit_package_import/package_test_2/subpackage_1/package_module_2.ets
-compiler/ets/import_tests/asyncfunc_lambda_main.ets
-compiler/ets/import_tests/enum_import.ets
-compiler/ets/import_tests/generic_typealias_func_type.ets
-compiler/ets/import_tests/import_class_with_getters_setters.ets
-compiler/ets/import_tests/infer_imported_function_return_type.ets
-compiler/ets/import_tests/re-export_with_alias/import_aliased_re-export.ets
-compiler/ets/import_tests/re-export_with_alias/re-export_with_alias.ets
-compiler/ets/import_tests/selective_export_tests/import_interface.ets
-compiler/ets/import_tests/selective_export_tests/import_selective_exported.ets
-compiler/ets/import_tests/selective_export_tests/selective_import_with_alias_1.ets
-compiler/ets/import_tests/selective_export_tests/selective_import_with_alias_2.ets
-compiler/ets/import_type.ets
-runtime/ets/CastPrimitive.ets
 runtime/ets/ClassNewInstance.ets
 runtime/ets/conditionalExpressionGenericLUB.ets
 runtime/ets/dynmicImportUnimplemented.ets
 runtime/ets/funcRefWithRestArguments.ets
 runtime/ets/generics_1.ets
 runtime/ets/type_param_in_union.ets
-ast/parser/ets/re_export/import_18.ets
-ast/parser/ets/re_export/import_19.ets
-ast/parser/ets/re_export/import_20.ets
-ast/parser/ets/re_export/re_export_13.ets
-ast/parser/ets/re_export/re_export_14.ets
-ast/parser/ets/re_export/re_export_15.ets
-ast/parser/ets/re_export/re_export_16.ets
 parser/ets/ambient_indexer_1.ets
 parser/ets/ambient_indexer_6.ets
 ast/parser/ets/ambient_indexer_11.ets
 runtime/ets/ClassNewInstance.ets
 runtime/ets/Multiline_string.ets
 runtime/ets/Multiline_string_escape_char.ets
-runtime/ets/re_export/export/reexport_elements1.ets
-runtime/ets/re_export/export/reexport_elements2.ets
-runtime/ets/re_export/import.ets
 ast/compiler/ets/package_initializer_warning/P3/P3.ets
 ast/compiler/ets/package_initializer_warning/main_test.ets
-runtime/ets/import_declare_type_alias.ets
-ast/compiler/ets/import_type_without_export.ets
-ast/compiler/ets/type_binding_01.ets
-ast/compiler/ets/type_binding_02.ets
-ast/compiler/ets/external_local_interface.ets
 runtime/ets/generics_1.ets
-parser/ets/dynamic_import_tests/modules/module.ets
 parser/ets/import_tests/import_several_2.ets
 parser/ets/import_tests/import_several_7.ets
 
@@ -103,10 +59,6 @@ runtime/ets/fuzz/create_partial.ets
 ast/compiler/ets/DeclareIndexerTest.ets
 
 #New failures at #FailKind.SRC_DUMPER_FAI
-ast/compiler/ets/namespace_tests/namespace.ets
-ast/compiler/ets/namespace_tests/namespace_ambient_export02.ets
-ast/compiler/ets/namespace_tests/namespace_ambient_export03.ets
-runtime/ets/import_self_head_tests/B/test.d.ets
 runtime/ets/implicit_stringliteral_init.ets
 
 #Issue 30577
@@ -118,8 +70,6 @@ runtime/ets/interfaceObjectLiteral_01.ets
 runtime/ets/interfaceObjectLiteral_02.ets
 runtime/ets/interfaceObjectLiteral_03.ets
 runtime/ets/interfaceObjectLiteral_04.ets
-runtime/ets/interfaceObjectLiteral_05.ets
-runtime/ets/interfaceObjectLiteral_06.ets
 runtime/ets/interfaceObjectLiteral_07.ets
 runtime/ets/interfaceObjectLiteral_08.ets
 runtime/ets/interfaceObjectLiteral_09.ets
@@ -139,11 +89,9 @@ ast/compiler/ets/interfaceObjectLiteral_05.ets
 
 runtime/ets/declareExport.ets
 ast/parser/ets/import_tests/enum/import.ets
-ast/parser/ets/import_tests/enum/xml/export.ets
 parser/ets/import_tests/enum/import.ets
 parser/ets/import_tests/enum/xml/export.ets
 parser/ets/import_tests/import_relative_path.ets
-parser/ets/import_tests/packages/import_package_with_alias/import_package_with_alias.ets
 
 #AST comparison Failed
 runtime/ets/context-sensitive-expr/RecordRecursiveTest-Lambda.ets

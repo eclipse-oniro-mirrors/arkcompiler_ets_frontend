@@ -58,8 +58,6 @@ ast/compiler/ets/readonly_array02.ets
 ast/parser/ts/test_decorator5.ts
 ast/parser/ts/InvalidStatements.ts
 
-ast/parser/ets/dynamic_import_tests/readonly_dynamic_class_interface.ets
-
 #30971
 ast/compiler/ets/nagative_trailingLambda_abort.ets
 
@@ -70,10 +68,6 @@ ast/parser/ets/super_field.ets
 #32155
 ast/compiler/ets/annotation_new.ets
 
-# Tests with absolute path in logs:
-ast/compiler/ets/package_invalid_initializer/main_test.ets
-ast/compiler/ets/default_test/export_default1.ets
-
 # NOTE: package tests - should be removed or modified
 ast/compiler/ets/namespace_tests/src01.ets
 ast/compiler/ets/implicit_package_import/package_test_3/package_module_1_neg.ets
@@ -83,8 +77,3 @@ ast/compiler/ets/package_static_block_multi_files/main_test.ets
 ast/parser/ets/typenode_clone_comprehensive.ets
 ast/parser/ets/import_tests/import_name_conflict_2.ets
 
-# NOTE: tests failed after refactoring of Import Path Manager due to some bugs in its internal logic
-# should be fixed
-ast/compiler/ets/import_export/eitest_dup_import/eitest_test.ets
-ast/compiler/ets/default_test/export_default1.ets
-ast/compiler/ets/package_invalid_initializer/main_test.ets
