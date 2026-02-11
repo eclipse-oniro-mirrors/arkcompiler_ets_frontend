@@ -568,73 +568,252 @@
                     {
                       "type": "ExpressionStatement",
                       "expression": {
-                        "type": "AwaitExpression",
-                        "argument": {
-                          "type": "CallExpression",
-                          "callee": {
-                            "type": "MemberExpression",
-                            "object": {
-                              "type": "Identifier",
-                              "name": "aClass",
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 11,
-                                  "program": "asyncfunc_lambda_main.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 17,
-                                  "program": "asyncfunc_lambda_main.ets"
-                                }
-                              }
-                            },
-                            "property": {
-                              "type": "Identifier",
-                              "name": "foo",
-                              "loc": {
-                                "start": {
-                                  "line": 24,
-                                  "column": 18,
-                                  "program": "asyncfunc_lambda_main.ets"
-                                },
-                                "end": {
-                                  "line": 24,
-                                  "column": 21,
-                                  "program": "asyncfunc_lambda_main.ets"
-                                }
-                              }
-                            },
-                            "computed": false,
-                            "optional": false,
-                            "loc": {
-                              "start": {
-                                "line": 24,
-                                "column": 11,
-                                "program": "asyncfunc_lambda_main.ets"
-                              },
-                              "end": {
-                                "line": 24,
-                                "column": 21,
-                                "program": "asyncfunc_lambda_main.ets"
-                              }
-                            }
-                          },
-                          "arguments": [],
-                          "optional": false,
+                        "type": "CallExpression",
+                        "callee": {
+                          "type": "Identifier",
+                          "name": "waitForCompletion",
                           "loc": {
                             "start": {
                               "line": 24,
-                              "column": 11,
+                              "column": 5,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
                               "line": 24,
-                              "column": 23,
+                              "column": 22,
                               "program": "asyncfunc_lambda_main.ets"
                             }
                           }
                         },
+                        "arguments": [
+                          {
+                            "type": "ArrowFunctionExpression",
+                            "function": {
+                              "type": "ScriptFunction",
+                              "id": null,
+                              "generator": false,
+                              "async": true,
+                              "expression": false,
+                              "params": [],
+                              "returnType": {
+                                "type": "ETSTypeReference",
+                                "part": {
+                                  "type": "ETSTypeReferencePart",
+                                  "name": {
+                                    "type": "Identifier",
+                                    "name": "Promise",
+                                    "loc": {
+                                      "start": {
+                                        "line": 24,
+                                        "column": 35,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      },
+                                      "end": {
+                                        "line": 24,
+                                        "column": 35,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      }
+                                    }
+                                  },
+                                  "typeParams": {
+                                    "type": "TSTypeParameterInstantiation",
+                                    "params": [
+                                      {
+                                        "type": "ETSPrimitiveType",
+                                        "loc": {
+                                          "start": {
+                                            "line": 24,
+                                            "column": 35,
+                                            "program": "asyncfunc_lambda_main.ets"
+                                          },
+                                          "end": {
+                                            "line": 24,
+                                            "column": 35,
+                                            "program": "asyncfunc_lambda_main.ets"
+                                          }
+                                        }
+                                      }
+                                    ],
+                                    "loc": {
+                                      "start": {
+                                        "line": 24,
+                                        "column": 35,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      },
+                                      "end": {
+                                        "line": 24,
+                                        "column": 35,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      }
+                                    }
+                                  },
+                                  "loc": {
+                                    "start": {
+                                      "line": 24,
+                                      "column": 35,
+                                      "program": "asyncfunc_lambda_main.ets"
+                                    },
+                                    "end": {
+                                      "line": 24,
+                                      "column": 35,
+                                      "program": "asyncfunc_lambda_main.ets"
+                                    }
+                                  }
+                                },
+                                "loc": {
+                                  "start": {
+                                    "line": 24,
+                                    "column": 35,
+                                    "program": "asyncfunc_lambda_main.ets"
+                                  },
+                                  "end": {
+                                    "line": 24,
+                                    "column": 35,
+                                    "program": "asyncfunc_lambda_main.ets"
+                                  }
+                                }
+                              },
+                              "body": {
+                                "type": "BlockStatement",
+                                "statements": [
+                                  {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                      "type": "AwaitExpression",
+                                      "argument": {
+                                        "type": "CallExpression",
+                                        "callee": {
+                                          "type": "MemberExpression",
+                                          "object": {
+                                            "type": "Identifier",
+                                            "name": "aClass",
+                                            "loc": {
+                                              "start": {
+                                                "line": 25,
+                                                "column": 15,
+                                                "program": "asyncfunc_lambda_main.ets"
+                                              },
+                                              "end": {
+                                                "line": 25,
+                                                "column": 21,
+                                                "program": "asyncfunc_lambda_main.ets"
+                                              }
+                                            }
+                                          },
+                                          "property": {
+                                            "type": "Identifier",
+                                            "name": "foo",
+                                            "loc": {
+                                              "start": {
+                                                "line": 25,
+                                                "column": 22,
+                                                "program": "asyncfunc_lambda_main.ets"
+                                              },
+                                              "end": {
+                                                "line": 25,
+                                                "column": 25,
+                                                "program": "asyncfunc_lambda_main.ets"
+                                              }
+                                            }
+                                          },
+                                          "computed": false,
+                                          "optional": false,
+                                          "loc": {
+                                            "start": {
+                                              "line": 25,
+                                              "column": 15,
+                                              "program": "asyncfunc_lambda_main.ets"
+                                            },
+                                            "end": {
+                                              "line": 25,
+                                              "column": 25,
+                                              "program": "asyncfunc_lambda_main.ets"
+                                            }
+                                          }
+                                        },
+                                        "arguments": [],
+                                        "optional": false,
+                                        "loc": {
+                                          "start": {
+                                            "line": 25,
+                                            "column": 15,
+                                            "program": "asyncfunc_lambda_main.ets"
+                                          },
+                                          "end": {
+                                            "line": 25,
+                                            "column": 27,
+                                            "program": "asyncfunc_lambda_main.ets"
+                                          }
+                                        }
+                                      },
+                                      "loc": {
+                                        "start": {
+                                          "line": 25,
+                                          "column": 9,
+                                          "program": "asyncfunc_lambda_main.ets"
+                                        },
+                                        "end": {
+                                          "line": 25,
+                                          "column": 27,
+                                          "program": "asyncfunc_lambda_main.ets"
+                                        }
+                                      }
+                                    },
+                                    "loc": {
+                                      "start": {
+                                        "line": 25,
+                                        "column": 9,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      },
+                                      "end": {
+                                        "line": 25,
+                                        "column": 28,
+                                        "program": "asyncfunc_lambda_main.ets"
+                                      }
+                                    }
+                                  }
+                                ],
+                                "loc": {
+                                  "start": {
+                                    "line": 24,
+                                    "column": 35,
+                                    "program": "asyncfunc_lambda_main.ets"
+                                  },
+                                  "end": {
+                                    "line": 26,
+                                    "column": 6,
+                                    "program": "asyncfunc_lambda_main.ets"
+                                  }
+                                }
+                              },
+                              "loc": {
+                                "start": {
+                                  "line": 24,
+                                  "column": 29,
+                                  "program": "asyncfunc_lambda_main.ets"
+                                },
+                                "end": {
+                                  "line": 26,
+                                  "column": 6,
+                                  "program": "asyncfunc_lambda_main.ets"
+                                }
+                              }
+                            },
+                            "loc": {
+                              "start": {
+                                "line": 24,
+                                "column": 29,
+                                "program": "asyncfunc_lambda_main.ets"
+                              },
+                              "end": {
+                                "line": 26,
+                                "column": 6,
+                                "program": "asyncfunc_lambda_main.ets"
+                              }
+                            }
+                          }
+                        ],
+                        "optional": false,
                         "loc": {
                           "start": {
                             "line": 24,
@@ -642,8 +821,8 @@
                             "program": "asyncfunc_lambda_main.ets"
                           },
                           "end": {
-                            "line": 24,
-                            "column": 23,
+                            "line": 26,
+                            "column": 7,
                             "program": "asyncfunc_lambda_main.ets"
                           }
                         }
@@ -655,8 +834,8 @@
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 24,
-                          "column": 24,
+                          "line": 26,
+                          "column": 7,
                           "program": "asyncfunc_lambda_main.ets"
                         }
                       }
@@ -678,12 +857,12 @@
                                   "name": "BC",
                                   "loc": {
                                     "start": {
-                                      "line": 26,
+                                      "line": 28,
                                       "column": 17,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 26,
+                                      "line": 28,
                                       "column": 19,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -691,12 +870,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 26,
+                                    "line": 28,
                                     "column": 17,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 26,
+                                    "line": 28,
                                     "column": 19,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -704,12 +883,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 26,
+                                  "line": 28,
                                   "column": 17,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 26,
+                                  "line": 28,
                                   "column": 19,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -717,12 +896,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 28,
                                 "column": 9,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 26,
+                                "line": 28,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -739,12 +918,12 @@
                                   "name": "BC",
                                   "loc": {
                                     "start": {
-                                      "line": 26,
+                                      "line": 28,
                                       "column": 26,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 26,
+                                      "line": 28,
                                       "column": 28,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -752,12 +931,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 26,
+                                    "line": 28,
                                     "column": 26,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 26,
+                                    "line": 28,
                                     "column": 28,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -765,12 +944,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 26,
+                                  "line": 28,
                                   "column": 26,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 26,
+                                  "line": 28,
                                   "column": 28,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -779,12 +958,12 @@
                             "arguments": [],
                             "loc": {
                               "start": {
-                                "line": 26,
+                                "line": 28,
                                 "column": 22,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 26,
+                                "line": 28,
                                 "column": 31,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -792,12 +971,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 26,
+                              "line": 28,
                               "column": 9,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 26,
+                              "line": 28,
                               "column": 31,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -807,12 +986,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 26,
+                          "line": 28,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 26,
+                          "line": 28,
                           "column": 31,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -829,12 +1008,12 @@
                             "name": "bClass",
                             "loc": {
                               "start": {
-                                "line": 27,
+                                "line": 29,
                                 "column": 5,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 27,
+                                "line": 29,
                                 "column": 11,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -845,12 +1024,12 @@
                             "name": "bar",
                             "loc": {
                               "start": {
-                                "line": 27,
+                                "line": 29,
                                 "column": 12,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 27,
+                                "line": 29,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -860,12 +1039,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 27,
+                              "line": 29,
                               "column": 5,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 27,
+                              "line": 29,
                               "column": 15,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -875,12 +1054,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 27,
+                            "line": 29,
                             "column": 5,
                             "program": "asyncfunc_lambda_main.ets"
                           },
                           "end": {
-                            "line": 27,
+                            "line": 29,
                             "column": 17,
                             "program": "asyncfunc_lambda_main.ets"
                           }
@@ -888,12 +1067,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 27,
+                          "line": 29,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 27,
+                          "line": 29,
                           "column": 18,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -916,12 +1095,12 @@
                                   "name": "CC",
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 17,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 19,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -929,12 +1108,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 17,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 19,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -942,12 +1121,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 17,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 19,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -955,12 +1134,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 29,
+                                "line": 31,
                                 "column": 9,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 29,
+                                "line": 31,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -977,12 +1156,12 @@
                                   "name": "CC",
                                   "loc": {
                                     "start": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 26,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 29,
+                                      "line": 31,
                                       "column": 28,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -990,12 +1169,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 26,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 29,
+                                    "line": 31,
                                     "column": 28,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -1003,12 +1182,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 26,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 29,
+                                  "line": 31,
                                   "column": 28,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -1017,12 +1196,12 @@
                             "arguments": [],
                             "loc": {
                               "start": {
-                                "line": 29,
+                                "line": 31,
                                 "column": 22,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 29,
+                                "line": 31,
                                 "column": 31,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1030,12 +1209,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 29,
+                              "line": 31,
                               "column": 9,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 29,
+                              "line": 31,
                               "column": 31,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -1045,12 +1224,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 29,
+                          "line": 31,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 29,
+                          "line": 31,
                           "column": 31,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -1067,12 +1246,12 @@
                             "name": "cClass",
                             "loc": {
                               "start": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 5,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 11,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1083,12 +1262,12 @@
                             "name": "baz",
                             "loc": {
                               "start": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 12,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1098,12 +1277,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 30,
+                              "line": 32,
                               "column": 5,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 30,
+                              "line": 32,
                               "column": 15,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -1123,12 +1302,12 @@
                                 "type": "ETSPrimitiveType",
                                 "loc": {
                                   "start": {
-                                    "line": 30,
+                                    "line": 32,
                                     "column": 20,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 30,
+                                    "line": 32,
                                     "column": 24,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -1139,12 +1318,12 @@
                                 "statements": [],
                                 "loc": {
                                   "start": {
-                                    "line": 30,
+                                    "line": 32,
                                     "column": 28,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 30,
+                                    "line": 32,
                                     "column": 30,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -1152,12 +1331,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 30,
+                                  "line": 32,
                                   "column": 16,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 30,
+                                  "line": 32,
                                   "column": 30,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -1165,12 +1344,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 16,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 30,
+                                "line": 32,
                                 "column": 30,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1180,12 +1359,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 30,
+                            "line": 32,
                             "column": 5,
                             "program": "asyncfunc_lambda_main.ets"
                           },
                           "end": {
-                            "line": 30,
+                            "line": 32,
                             "column": 31,
                             "program": "asyncfunc_lambda_main.ets"
                           }
@@ -1193,12 +1372,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 30,
+                          "line": 32,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 30,
+                          "line": 32,
                           "column": 32,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -1221,12 +1400,12 @@
                                   "name": "DC",
                                   "loc": {
                                     "start": {
-                                      "line": 32,
+                                      "line": 34,
                                       "column": 17,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 32,
+                                      "line": 34,
                                       "column": 19,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -1234,12 +1413,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 32,
+                                    "line": 34,
                                     "column": 17,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 32,
+                                    "line": 34,
                                     "column": 19,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -1247,12 +1426,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 32,
+                                  "line": 34,
                                   "column": 17,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 32,
+                                  "line": 34,
                                   "column": 19,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -1260,12 +1439,12 @@
                             },
                             "loc": {
                               "start": {
-                                "line": 32,
+                                "line": 34,
                                 "column": 9,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 32,
+                                "line": 34,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1282,12 +1461,12 @@
                                   "name": "DC",
                                   "loc": {
                                     "start": {
-                                      "line": 32,
+                                      "line": 34,
                                       "column": 26,
                                       "program": "asyncfunc_lambda_main.ets"
                                     },
                                     "end": {
-                                      "line": 32,
+                                      "line": 34,
                                       "column": 28,
                                       "program": "asyncfunc_lambda_main.ets"
                                     }
@@ -1295,12 +1474,12 @@
                                 },
                                 "loc": {
                                   "start": {
-                                    "line": 32,
+                                    "line": 34,
                                     "column": 26,
                                     "program": "asyncfunc_lambda_main.ets"
                                   },
                                   "end": {
-                                    "line": 32,
+                                    "line": 34,
                                     "column": 28,
                                     "program": "asyncfunc_lambda_main.ets"
                                   }
@@ -1308,12 +1487,12 @@
                               },
                               "loc": {
                                 "start": {
-                                  "line": 32,
+                                  "line": 34,
                                   "column": 26,
                                   "program": "asyncfunc_lambda_main.ets"
                                 },
                                 "end": {
-                                  "line": 32,
+                                  "line": 34,
                                   "column": 28,
                                   "program": "asyncfunc_lambda_main.ets"
                                 }
@@ -1322,12 +1501,12 @@
                             "arguments": [],
                             "loc": {
                               "start": {
-                                "line": 32,
+                                "line": 34,
                                 "column": 22,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 32,
+                                "line": 34,
                                 "column": 31,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1335,12 +1514,12 @@
                           },
                           "loc": {
                             "start": {
-                              "line": 32,
+                              "line": 34,
                               "column": 9,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 32,
+                              "line": 34,
                               "column": 31,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -1350,12 +1529,12 @@
                       "kind": "let",
                       "loc": {
                         "start": {
-                          "line": 32,
+                          "line": 34,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 32,
+                          "line": 34,
                           "column": 31,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -1372,12 +1551,12 @@
                             "name": "dClass",
                             "loc": {
                               "start": {
-                                "line": 33,
+                                "line": 35,
                                 "column": 5,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 33,
+                                "line": 35,
                                 "column": 11,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1388,12 +1567,12 @@
                             "name": "foz",
                             "loc": {
                               "start": {
-                                "line": 33,
+                                "line": 35,
                                 "column": 12,
                                 "program": "asyncfunc_lambda_main.ets"
                               },
                               "end": {
-                                "line": 33,
+                                "line": 35,
                                 "column": 15,
                                 "program": "asyncfunc_lambda_main.ets"
                               }
@@ -1403,12 +1582,12 @@
                           "optional": false,
                           "loc": {
                             "start": {
-                              "line": 33,
+                              "line": 35,
                               "column": 5,
                               "program": "asyncfunc_lambda_main.ets"
                             },
                             "end": {
-                              "line": 33,
+                              "line": 35,
                               "column": 15,
                               "program": "asyncfunc_lambda_main.ets"
                             }
@@ -1418,12 +1597,12 @@
                         "optional": false,
                         "loc": {
                           "start": {
-                            "line": 33,
+                            "line": 35,
                             "column": 5,
                             "program": "asyncfunc_lambda_main.ets"
                           },
                           "end": {
-                            "line": 33,
+                            "line": 35,
                             "column": 17,
                             "program": "asyncfunc_lambda_main.ets"
                           }
@@ -1431,12 +1610,12 @@
                       },
                       "loc": {
                         "start": {
-                          "line": 33,
+                          "line": 35,
                           "column": 5,
                           "program": "asyncfunc_lambda_main.ets"
                         },
                         "end": {
-                          "line": 33,
+                          "line": 35,
                           "column": 18,
                           "program": "asyncfunc_lambda_main.ets"
                         }
@@ -1450,7 +1629,7 @@
                       "program": "asyncfunc_lambda_main.ets"
                     },
                     "end": {
-                      "line": 34,
+                      "line": 36,
                       "column": 2,
                       "program": "asyncfunc_lambda_main.ets"
                     }
@@ -1463,7 +1642,7 @@
                     "program": "asyncfunc_lambda_main.ets"
                   },
                   "end": {
-                    "line": 34,
+                    "line": 36,
                     "column": 2,
                     "program": "asyncfunc_lambda_main.ets"
                   }
@@ -1476,7 +1655,7 @@
                   "program": "asyncfunc_lambda_main.ets"
                 },
                 "end": {
-                  "line": 34,
+                  "line": 36,
                   "column": 2,
                   "program": "asyncfunc_lambda_main.ets"
                 }
@@ -1490,7 +1669,7 @@
                 "program": "asyncfunc_lambda_main.ets"
               },
               "end": {
-                "line": 34,
+                "line": 36,
                 "column": 2,
                 "program": "asyncfunc_lambda_main.ets"
               }
@@ -1531,10 +1710,9 @@
       "program": "asyncfunc_lambda_main.ets"
     },
     "end": {
-      "line": 35,
+      "line": 37,
       "column": 1,
       "program": "asyncfunc_lambda_main.ets"
     }
   }
 }
-[asyncfunc_lambda_main.ets:24:11] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.

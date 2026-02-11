@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,9 +18,11 @@ async function foo<T>(awaited: Awaited<T>, expected: T) {
 }
 
 function main() {
-    await foo<string>(await new Promise<string>((resolve) => {
-    setTimeout(() => {
-      resolve("hello")
-    }, 1000)
-}), "hello")
+    waitForCompletion(async () => {
+      await foo<string>(await new Promise<string>((resolve) => {
+          setTimeout(() => {
+            resolve("hello")
+          }, 1000)
+      }), "hello")
+    })
 }

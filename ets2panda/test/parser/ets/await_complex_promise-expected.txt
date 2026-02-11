@@ -337,12 +337,12 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
                   "line": 16,
-                  "column": 14,
+                  "column": 20,
                   "program": "await_complex_promise.ets"
                 }
               }
@@ -362,18 +362,18 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 14,
+                      "column": 20,
                       "program": "await_complex_promise.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [
                   {
@@ -391,12 +391,12 @@
                             "loc": {
                               "start": {
                                 "line": 16,
-                                "column": 18,
+                                "column": 24,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 16,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -414,12 +414,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 16,
-                                        "column": 26,
+                                        "column": 32,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 16,
-                                        "column": 33,
+                                        "column": 39,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -437,12 +437,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 16,
-                                                "column": 34,
+                                                "column": 40,
                                                 "program": "await_complex_promise.ets"
                                               },
                                               "end": {
                                                 "line": 16,
-                                                "column": 40,
+                                                "column": 46,
                                                 "program": "await_complex_promise.ets"
                                               }
                                             }
@@ -450,12 +450,12 @@
                                           "loc": {
                                             "start": {
                                               "line": 16,
-                                              "column": 34,
+                                              "column": 40,
                                               "program": "await_complex_promise.ets"
                                             },
                                             "end": {
                                               "line": 16,
-                                              "column": 40,
+                                              "column": 46,
                                               "program": "await_complex_promise.ets"
                                             }
                                           }
@@ -463,12 +463,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 16,
-                                            "column": 34,
+                                            "column": 40,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 16,
-                                            "column": 40,
+                                            "column": 46,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -477,12 +477,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 16,
-                                        "column": 33,
+                                        "column": 39,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 16,
-                                        "column": 42,
+                                        "column": 48,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -490,12 +490,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 16,
-                                      "column": 26,
+                                      "column": 32,
                                       "program": "await_complex_promise.ets"
                                     },
                                     "end": {
                                       "line": 16,
-                                      "column": 42,
+                                      "column": 48,
                                       "program": "await_complex_promise.ets"
                                     }
                                   }
@@ -503,12 +503,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 16,
-                                    "column": 26,
+                                    "column": 32,
                                     "program": "await_complex_promise.ets"
                                   },
                                   "end": {
                                     "line": 16,
-                                    "column": 42,
+                                    "column": 48,
                                     "program": "await_complex_promise.ets"
                                   }
                                 }
@@ -517,12 +517,12 @@
                             "loc": {
                               "start": {
                                 "line": 16,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 16,
-                                "column": 42,
+                                "column": 48,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -530,12 +530,12 @@
                           "loc": {
                             "start": {
                               "line": 16,
-                              "column": 18,
+                              "column": 24,
                               "program": "await_complex_promise.ets"
                             },
                             "end": {
                               "line": 16,
-                              "column": 42,
+                              "column": 48,
                               "program": "await_complex_promise.ets"
                             }
                           }
@@ -543,12 +543,12 @@
                         "loc": {
                           "start": {
                             "line": 16,
-                            "column": 18,
+                            "column": 24,
                             "program": "await_complex_promise.ets"
                           },
                           "end": {
                             "line": 16,
-                            "column": 42,
+                            "column": 48,
                             "program": "await_complex_promise.ets"
                           }
                         }
@@ -556,12 +556,12 @@
                       "loc": {
                         "start": {
                           "line": 16,
-                          "column": 15,
+                          "column": 21,
                           "program": "await_complex_promise.ets"
                         },
                         "end": {
                           "line": 16,
-                          "column": 42,
+                          "column": 48,
                           "program": "await_complex_promise.ets"
                         }
                       }
@@ -569,28 +569,91 @@
                     "loc": {
                       "start": {
                         "line": 16,
-                        "column": 15,
+                        "column": 21,
                         "program": "await_complex_promise.ets"
                       },
                       "end": {
                         "line": 16,
-                        "column": 42,
+                        "column": 48,
                         "program": "await_complex_promise.ets"
                       }
                     }
                   }
                 ],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 51,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 58,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 16,
+                              "column": 59,
+                              "program": "await_complex_promise.ets"
+                            },
+                            "end": {
+                              "line": 16,
+                              "column": 63,
+                              "program": "await_complex_promise.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 16,
+                          "column": 58,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 16,
+                          "column": 64,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 16,
+                        "column": 51,
+                        "program": "await_complex_promise.ets"
+                      },
+                      "end": {
+                        "line": 16,
+                        "column": 64,
+                        "program": "await_complex_promise.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 45,
+                      "column": 51,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 16,
-                      "column": 49,
+                      "column": 64,
                       "program": "await_complex_promise.ets"
                     }
                   }
@@ -728,7 +791,7 @@
                   "loc": {
                     "start": {
                       "line": 16,
-                      "column": 50,
+                      "column": 65,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
@@ -741,7 +804,7 @@
                 "loc": {
                   "start": {
                     "line": 16,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_complex_promise.ets"
                   },
                   "end": {
@@ -754,7 +817,7 @@
               "loc": {
                 "start": {
                   "line": 16,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
@@ -786,12 +849,12 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
                   "line": 20,
-                  "column": 14,
+                  "column": 20,
                   "program": "await_complex_promise.ets"
                 }
               }
@@ -811,18 +874,18 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 14,
+                      "column": 20,
                       "program": "await_complex_promise.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [
                   {
@@ -840,12 +903,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 18,
+                                "column": 24,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -866,12 +929,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 20,
-                                            "column": 26,
+                                            "column": 32,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 33,
+                                            "column": 39,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -889,12 +952,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 20,
-                                                    "column": 34,
+                                                    "column": 40,
                                                     "program": "await_complex_promise.ets"
                                                   },
                                                   "end": {
                                                     "line": 20,
-                                                    "column": 40,
+                                                    "column": 46,
                                                     "program": "await_complex_promise.ets"
                                                   }
                                                 }
@@ -902,12 +965,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 20,
-                                                  "column": 34,
+                                                  "column": 40,
                                                   "program": "await_complex_promise.ets"
                                                 },
                                                 "end": {
                                                   "line": 20,
-                                                  "column": 40,
+                                                  "column": 46,
                                                   "program": "await_complex_promise.ets"
                                                 }
                                               }
@@ -915,12 +978,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 20,
-                                                "column": 34,
+                                                "column": 40,
                                                 "program": "await_complex_promise.ets"
                                               },
                                               "end": {
                                                 "line": 20,
-                                                "column": 40,
+                                                "column": 46,
                                                 "program": "await_complex_promise.ets"
                                               }
                                             }
@@ -929,12 +992,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 20,
-                                            "column": 33,
+                                            "column": 39,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 41,
+                                            "column": 47,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -942,12 +1005,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 20,
-                                          "column": 26,
+                                          "column": 32,
                                           "program": "await_complex_promise.ets"
                                         },
                                         "end": {
                                           "line": 20,
-                                          "column": 41,
+                                          "column": 47,
                                           "program": "await_complex_promise.ets"
                                         }
                                       }
@@ -955,12 +1018,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 20,
-                                        "column": 26,
+                                        "column": 32,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 41,
+                                        "column": 47,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -975,12 +1038,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 20,
-                                            "column": 42,
+                                            "column": 48,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 20,
-                                            "column": 48,
+                                            "column": 54,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -988,12 +1051,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 20,
-                                          "column": 42,
+                                          "column": 48,
                                           "program": "await_complex_promise.ets"
                                         },
                                         "end": {
                                           "line": 20,
-                                          "column": 48,
+                                          "column": 54,
                                           "program": "await_complex_promise.ets"
                                         }
                                       }
@@ -1001,12 +1064,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 20,
-                                        "column": 42,
+                                        "column": 48,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 20,
-                                        "column": 48,
+                                        "column": 54,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -1015,12 +1078,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 20,
-                                    "column": 26,
+                                    "column": 32,
                                     "program": "await_complex_promise.ets"
                                   },
                                   "end": {
                                     "line": 20,
-                                    "column": 48,
+                                    "column": 54,
                                     "program": "await_complex_promise.ets"
                                   }
                                 }
@@ -1029,12 +1092,12 @@
                             "loc": {
                               "start": {
                                 "line": 20,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 20,
-                                "column": 49,
+                                "column": 55,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -1042,12 +1105,12 @@
                           "loc": {
                             "start": {
                               "line": 20,
-                              "column": 18,
+                              "column": 24,
                               "program": "await_complex_promise.ets"
                             },
                             "end": {
                               "line": 20,
-                              "column": 49,
+                              "column": 55,
                               "program": "await_complex_promise.ets"
                             }
                           }
@@ -1055,12 +1118,12 @@
                         "loc": {
                           "start": {
                             "line": 20,
-                            "column": 18,
+                            "column": 24,
                             "program": "await_complex_promise.ets"
                           },
                           "end": {
                             "line": 20,
-                            "column": 49,
+                            "column": 55,
                             "program": "await_complex_promise.ets"
                           }
                         }
@@ -1068,12 +1131,12 @@
                       "loc": {
                         "start": {
                           "line": 20,
-                          "column": 15,
+                          "column": 21,
                           "program": "await_complex_promise.ets"
                         },
                         "end": {
                           "line": 20,
-                          "column": 49,
+                          "column": 55,
                           "program": "await_complex_promise.ets"
                         }
                       }
@@ -1081,28 +1144,91 @@
                     "loc": {
                       "start": {
                         "line": 20,
-                        "column": 15,
+                        "column": 21,
                         "program": "await_complex_promise.ets"
                       },
                       "end": {
                         "line": 20,
-                        "column": 49,
+                        "column": 55,
                         "program": "await_complex_promise.ets"
                       }
                     }
                   }
                 ],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 58,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 65,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 20,
+                              "column": 66,
+                              "program": "await_complex_promise.ets"
+                            },
+                            "end": {
+                              "line": 20,
+                              "column": 70,
+                              "program": "await_complex_promise.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 20,
+                          "column": 65,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 20,
+                          "column": 71,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 20,
+                        "column": 58,
+                        "program": "await_complex_promise.ets"
+                      },
+                      "end": {
+                        "line": 20,
+                        "column": 71,
+                        "program": "await_complex_promise.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 52,
+                      "column": 58,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 20,
-                      "column": 56,
+                      "column": 71,
                       "program": "await_complex_promise.ets"
                     }
                   }
@@ -1303,7 +1429,7 @@
                   "loc": {
                     "start": {
                       "line": 20,
-                      "column": 57,
+                      "column": 72,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
@@ -1316,7 +1442,7 @@
                 "loc": {
                   "start": {
                     "line": 20,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_complex_promise.ets"
                   },
                   "end": {
@@ -1329,7 +1455,7 @@
               "loc": {
                 "start": {
                   "line": 20,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
@@ -1361,12 +1487,12 @@
               "loc": {
                 "start": {
                   "line": 24,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
                   "line": 24,
-                  "column": 14,
+                  "column": 20,
                   "program": "await_complex_promise.ets"
                 }
               }
@@ -1386,18 +1512,18 @@
                   "loc": {
                     "start": {
                       "line": 24,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 24,
-                      "column": 14,
+                      "column": 20,
                       "program": "await_complex_promise.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [
                   {
@@ -1415,12 +1541,12 @@
                             "loc": {
                               "start": {
                                 "line": 24,
-                                "column": 18,
+                                "column": 24,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 24,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -1441,12 +1567,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 24,
-                                            "column": 26,
+                                            "column": 32,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 33,
+                                            "column": 39,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -1464,12 +1590,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 24,
-                                                    "column": 34,
+                                                    "column": 40,
                                                     "program": "await_complex_promise.ets"
                                                   },
                                                   "end": {
                                                     "line": 24,
-                                                    "column": 40,
+                                                    "column": 46,
                                                     "program": "await_complex_promise.ets"
                                                   }
                                                 }
@@ -1477,12 +1603,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 24,
-                                                  "column": 34,
+                                                  "column": 40,
                                                   "program": "await_complex_promise.ets"
                                                 },
                                                 "end": {
                                                   "line": 24,
-                                                  "column": 40,
+                                                  "column": 46,
                                                   "program": "await_complex_promise.ets"
                                                 }
                                               }
@@ -1490,12 +1616,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 24,
-                                                "column": 34,
+                                                "column": 40,
                                                 "program": "await_complex_promise.ets"
                                               },
                                               "end": {
                                                 "line": 24,
-                                                "column": 40,
+                                                "column": 46,
                                                 "program": "await_complex_promise.ets"
                                               }
                                             }
@@ -1504,12 +1630,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 24,
-                                            "column": 33,
+                                            "column": 39,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 41,
+                                            "column": 47,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -1517,12 +1643,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 24,
-                                          "column": 26,
+                                          "column": 32,
                                           "program": "await_complex_promise.ets"
                                         },
                                         "end": {
                                           "line": 24,
-                                          "column": 41,
+                                          "column": 47,
                                           "program": "await_complex_promise.ets"
                                         }
                                       }
@@ -1530,12 +1656,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 24,
-                                        "column": 26,
+                                        "column": 32,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 24,
-                                        "column": 41,
+                                        "column": 47,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -1550,12 +1676,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 24,
-                                            "column": 42,
+                                            "column": 48,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 49,
+                                            "column": 55,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -1573,12 +1699,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 24,
-                                                    "column": 50,
+                                                    "column": 56,
                                                     "program": "await_complex_promise.ets"
                                                   },
                                                   "end": {
                                                     "line": 24,
-                                                    "column": 56,
+                                                    "column": 62,
                                                     "program": "await_complex_promise.ets"
                                                   }
                                                 }
@@ -1586,12 +1712,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 24,
-                                                  "column": 50,
+                                                  "column": 56,
                                                   "program": "await_complex_promise.ets"
                                                 },
                                                 "end": {
                                                   "line": 24,
-                                                  "column": 56,
+                                                  "column": 62,
                                                   "program": "await_complex_promise.ets"
                                                 }
                                               }
@@ -1599,12 +1725,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 24,
-                                                "column": 50,
+                                                "column": 56,
                                                 "program": "await_complex_promise.ets"
                                               },
                                               "end": {
                                                 "line": 24,
-                                                "column": 56,
+                                                "column": 62,
                                                 "program": "await_complex_promise.ets"
                                               }
                                             }
@@ -1613,12 +1739,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 24,
-                                            "column": 49,
+                                            "column": 55,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 24,
-                                            "column": 58,
+                                            "column": 64,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -1626,12 +1752,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 24,
-                                          "column": 42,
+                                          "column": 48,
                                           "program": "await_complex_promise.ets"
                                         },
                                         "end": {
                                           "line": 24,
-                                          "column": 58,
+                                          "column": 64,
                                           "program": "await_complex_promise.ets"
                                         }
                                       }
@@ -1639,12 +1765,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 24,
-                                        "column": 42,
+                                        "column": 48,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 24,
-                                        "column": 58,
+                                        "column": 64,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -1653,12 +1779,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 24,
-                                    "column": 26,
+                                    "column": 32,
                                     "program": "await_complex_promise.ets"
                                   },
                                   "end": {
                                     "line": 24,
-                                    "column": 58,
+                                    "column": 64,
                                     "program": "await_complex_promise.ets"
                                   }
                                 }
@@ -1667,12 +1793,12 @@
                             "loc": {
                               "start": {
                                 "line": 24,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 24,
-                                "column": 58,
+                                "column": 64,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -1680,12 +1806,12 @@
                           "loc": {
                             "start": {
                               "line": 24,
-                              "column": 18,
+                              "column": 24,
                               "program": "await_complex_promise.ets"
                             },
                             "end": {
                               "line": 24,
-                              "column": 58,
+                              "column": 64,
                               "program": "await_complex_promise.ets"
                             }
                           }
@@ -1693,12 +1819,12 @@
                         "loc": {
                           "start": {
                             "line": 24,
-                            "column": 18,
+                            "column": 24,
                             "program": "await_complex_promise.ets"
                           },
                           "end": {
                             "line": 24,
-                            "column": 58,
+                            "column": 64,
                             "program": "await_complex_promise.ets"
                           }
                         }
@@ -1706,12 +1832,12 @@
                       "loc": {
                         "start": {
                           "line": 24,
-                          "column": 15,
+                          "column": 21,
                           "program": "await_complex_promise.ets"
                         },
                         "end": {
                           "line": 24,
-                          "column": 58,
+                          "column": 64,
                           "program": "await_complex_promise.ets"
                         }
                       }
@@ -1719,28 +1845,91 @@
                     "loc": {
                       "start": {
                         "line": 24,
-                        "column": 15,
+                        "column": 21,
                         "program": "await_complex_promise.ets"
                       },
                       "end": {
                         "line": 24,
-                        "column": 58,
+                        "column": 64,
                         "program": "await_complex_promise.ets"
                       }
                     }
                   }
                 ],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 24,
+                          "column": 67,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 74,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 24,
+                              "column": 75,
+                              "program": "await_complex_promise.ets"
+                            },
+                            "end": {
+                              "line": 24,
+                              "column": 79,
+                              "program": "await_complex_promise.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 24,
+                          "column": 74,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 24,
+                          "column": 80,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 24,
+                        "column": 67,
+                        "program": "await_complex_promise.ets"
+                      },
+                      "end": {
+                        "line": 24,
+                        "column": 80,
+                        "program": "await_complex_promise.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 24,
-                      "column": 61,
+                      "column": 67,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 24,
-                      "column": 65,
+                      "column": 80,
                       "program": "await_complex_promise.ets"
                     }
                   }
@@ -1941,7 +2130,7 @@
                   "loc": {
                     "start": {
                       "line": 24,
-                      "column": 66,
+                      "column": 81,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
@@ -1954,7 +2143,7 @@
                 "loc": {
                   "start": {
                     "line": 24,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_complex_promise.ets"
                   },
                   "end": {
@@ -1967,7 +2156,7 @@
               "loc": {
                 "start": {
                   "line": 24,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
@@ -1999,12 +2188,12 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
                   "line": 28,
-                  "column": 14,
+                  "column": 20,
                   "program": "await_complex_promise.ets"
                 }
               }
@@ -2024,18 +2213,18 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 14,
+                      "column": 20,
                       "program": "await_complex_promise.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [
                   {
@@ -2053,12 +2242,12 @@
                             "loc": {
                               "start": {
                                 "line": 28,
-                                "column": 18,
+                                "column": 24,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 28,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -2074,12 +2263,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 28,
-                                        "column": 26,
+                                        "column": 32,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 28,
-                                        "column": 30,
+                                        "column": 36,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -2094,12 +2283,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 28,
-                                            "column": 31,
+                                            "column": 37,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 38,
+                                            "column": 44,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -2117,12 +2306,12 @@
                                                 "loc": {
                                                   "start": {
                                                     "line": 28,
-                                                    "column": 39,
+                                                    "column": 45,
                                                     "program": "await_complex_promise.ets"
                                                   },
                                                   "end": {
                                                     "line": 28,
-                                                    "column": 45,
+                                                    "column": 51,
                                                     "program": "await_complex_promise.ets"
                                                   }
                                                 }
@@ -2130,12 +2319,12 @@
                                               "loc": {
                                                 "start": {
                                                   "line": 28,
-                                                  "column": 39,
+                                                  "column": 45,
                                                   "program": "await_complex_promise.ets"
                                                 },
                                                 "end": {
                                                   "line": 28,
-                                                  "column": 45,
+                                                  "column": 51,
                                                   "program": "await_complex_promise.ets"
                                                 }
                                               }
@@ -2143,12 +2332,12 @@
                                             "loc": {
                                               "start": {
                                                 "line": 28,
-                                                "column": 39,
+                                                "column": 45,
                                                 "program": "await_complex_promise.ets"
                                               },
                                               "end": {
                                                 "line": 28,
-                                                "column": 45,
+                                                "column": 51,
                                                 "program": "await_complex_promise.ets"
                                               }
                                             }
@@ -2157,12 +2346,12 @@
                                         "loc": {
                                           "start": {
                                             "line": 28,
-                                            "column": 38,
+                                            "column": 44,
                                             "program": "await_complex_promise.ets"
                                           },
                                           "end": {
                                             "line": 28,
-                                            "column": 47,
+                                            "column": 53,
                                             "program": "await_complex_promise.ets"
                                           }
                                         }
@@ -2170,12 +2359,12 @@
                                       "loc": {
                                         "start": {
                                           "line": 28,
-                                          "column": 31,
+                                          "column": 37,
                                           "program": "await_complex_promise.ets"
                                         },
                                         "end": {
                                           "line": 28,
-                                          "column": 47,
+                                          "column": 53,
                                           "program": "await_complex_promise.ets"
                                         }
                                       }
@@ -2183,12 +2372,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 28,
-                                        "column": 31,
+                                        "column": 37,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 28,
-                                        "column": 47,
+                                        "column": 53,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -2197,12 +2386,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 28,
-                                    "column": 26,
+                                    "column": 32,
                                     "program": "await_complex_promise.ets"
                                   },
                                   "end": {
                                     "line": 28,
-                                    "column": 47,
+                                    "column": 53,
                                     "program": "await_complex_promise.ets"
                                   }
                                 }
@@ -2211,12 +2400,12 @@
                             "loc": {
                               "start": {
                                 "line": 28,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 28,
-                                "column": 47,
+                                "column": 53,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -2224,12 +2413,12 @@
                           "loc": {
                             "start": {
                               "line": 28,
-                              "column": 18,
+                              "column": 24,
                               "program": "await_complex_promise.ets"
                             },
                             "end": {
                               "line": 28,
-                              "column": 47,
+                              "column": 53,
                               "program": "await_complex_promise.ets"
                             }
                           }
@@ -2237,12 +2426,12 @@
                         "loc": {
                           "start": {
                             "line": 28,
-                            "column": 18,
+                            "column": 24,
                             "program": "await_complex_promise.ets"
                           },
                           "end": {
                             "line": 28,
-                            "column": 47,
+                            "column": 53,
                             "program": "await_complex_promise.ets"
                           }
                         }
@@ -2250,12 +2439,12 @@
                       "loc": {
                         "start": {
                           "line": 28,
-                          "column": 15,
+                          "column": 21,
                           "program": "await_complex_promise.ets"
                         },
                         "end": {
                           "line": 28,
-                          "column": 47,
+                          "column": 53,
                           "program": "await_complex_promise.ets"
                         }
                       }
@@ -2263,28 +2452,91 @@
                     "loc": {
                       "start": {
                         "line": 28,
-                        "column": 15,
+                        "column": 21,
                         "program": "await_complex_promise.ets"
                       },
                       "end": {
                         "line": 28,
-                        "column": 47,
+                        "column": 53,
                         "program": "await_complex_promise.ets"
                       }
                     }
                   }
                 ],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 28,
+                          "column": 56,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 63,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 28,
+                              "column": 64,
+                              "program": "await_complex_promise.ets"
+                            },
+                            "end": {
+                              "line": 28,
+                              "column": 68,
+                              "program": "await_complex_promise.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 28,
+                          "column": 63,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 28,
+                          "column": 69,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 28,
+                        "column": 56,
+                        "program": "await_complex_promise.ets"
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 69,
+                        "program": "await_complex_promise.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 50,
+                      "column": 56,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 28,
-                      "column": 54,
+                      "column": 69,
                       "program": "await_complex_promise.ets"
                     }
                   }
@@ -2454,7 +2706,7 @@
                   "loc": {
                     "start": {
                       "line": 28,
-                      "column": 55,
+                      "column": 70,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
@@ -2467,7 +2719,7 @@
                 "loc": {
                   "start": {
                     "line": 28,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_complex_promise.ets"
                   },
                   "end": {
@@ -2480,7 +2732,7 @@
               "loc": {
                 "start": {
                   "line": 28,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
@@ -2512,12 +2764,12 @@
               "loc": {
                 "start": {
                   "line": 33,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
                   "line": 33,
-                  "column": 14,
+                  "column": 20,
                   "program": "await_complex_promise.ets"
                 }
               }
@@ -2537,18 +2789,18 @@
                   "loc": {
                     "start": {
                       "line": 33,
-                      "column": 10,
+                      "column": 16,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 33,
-                      "column": 14,
+                      "column": 20,
                       "program": "await_complex_promise.ets"
                     }
                   }
                 },
                 "generator": false,
-                "async": false,
+                "async": true,
                 "expression": false,
                 "params": [
                   {
@@ -2566,12 +2818,12 @@
                             "loc": {
                               "start": {
                                 "line": 33,
-                                "column": 18,
+                                "column": 24,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 33,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -2589,12 +2841,12 @@
                                     "loc": {
                                       "start": {
                                         "line": 33,
-                                        "column": 26,
+                                        "column": 32,
                                         "program": "await_complex_promise.ets"
                                       },
                                       "end": {
                                         "line": 33,
-                                        "column": 31,
+                                        "column": 37,
                                         "program": "await_complex_promise.ets"
                                       }
                                     }
@@ -2602,12 +2854,12 @@
                                   "loc": {
                                     "start": {
                                       "line": 33,
-                                      "column": 26,
+                                      "column": 32,
                                       "program": "await_complex_promise.ets"
                                     },
                                     "end": {
                                       "line": 33,
-                                      "column": 31,
+                                      "column": 37,
                                       "program": "await_complex_promise.ets"
                                     }
                                   }
@@ -2615,12 +2867,12 @@
                                 "loc": {
                                   "start": {
                                     "line": 33,
-                                    "column": 26,
+                                    "column": 32,
                                     "program": "await_complex_promise.ets"
                                   },
                                   "end": {
                                     "line": 33,
-                                    "column": 31,
+                                    "column": 37,
                                     "program": "await_complex_promise.ets"
                                   }
                                 }
@@ -2629,12 +2881,12 @@
                             "loc": {
                               "start": {
                                 "line": 33,
-                                "column": 25,
+                                "column": 31,
                                 "program": "await_complex_promise.ets"
                               },
                               "end": {
                                 "line": 33,
-                                "column": 32,
+                                "column": 38,
                                 "program": "await_complex_promise.ets"
                               }
                             }
@@ -2642,12 +2894,12 @@
                           "loc": {
                             "start": {
                               "line": 33,
-                              "column": 18,
+                              "column": 24,
                               "program": "await_complex_promise.ets"
                             },
                             "end": {
                               "line": 33,
-                              "column": 32,
+                              "column": 38,
                               "program": "await_complex_promise.ets"
                             }
                           }
@@ -2655,12 +2907,12 @@
                         "loc": {
                           "start": {
                             "line": 33,
-                            "column": 18,
+                            "column": 24,
                             "program": "await_complex_promise.ets"
                           },
                           "end": {
                             "line": 33,
-                            "column": 32,
+                            "column": 38,
                             "program": "await_complex_promise.ets"
                           }
                         }
@@ -2668,12 +2920,12 @@
                       "loc": {
                         "start": {
                           "line": 33,
-                          "column": 15,
+                          "column": 21,
                           "program": "await_complex_promise.ets"
                         },
                         "end": {
                           "line": 33,
-                          "column": 32,
+                          "column": 38,
                           "program": "await_complex_promise.ets"
                         }
                       }
@@ -2681,28 +2933,91 @@
                     "loc": {
                       "start": {
                         "line": 33,
-                        "column": 15,
+                        "column": 21,
                         "program": "await_complex_promise.ets"
                       },
                       "end": {
                         "line": 33,
-                        "column": 32,
+                        "column": 38,
                         "program": "await_complex_promise.ets"
                       }
                     }
                   }
                 ],
                 "returnType": {
-                  "type": "ETSPrimitiveType",
+                  "type": "ETSTypeReference",
+                  "part": {
+                    "type": "ETSTypeReferencePart",
+                    "name": {
+                      "type": "Identifier",
+                      "name": "Promise",
+                      "loc": {
+                        "start": {
+                          "line": 33,
+                          "column": 41,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 33,
+                          "column": 48,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "typeParams": {
+                      "type": "TSTypeParameterInstantiation",
+                      "params": [
+                        {
+                          "type": "ETSPrimitiveType",
+                          "loc": {
+                            "start": {
+                              "line": 33,
+                              "column": 49,
+                              "program": "await_complex_promise.ets"
+                            },
+                            "end": {
+                              "line": 33,
+                              "column": 53,
+                              "program": "await_complex_promise.ets"
+                            }
+                          }
+                        }
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 33,
+                          "column": 48,
+                          "program": "await_complex_promise.ets"
+                        },
+                        "end": {
+                          "line": 33,
+                          "column": 54,
+                          "program": "await_complex_promise.ets"
+                        }
+                      }
+                    },
+                    "loc": {
+                      "start": {
+                        "line": 33,
+                        "column": 41,
+                        "program": "await_complex_promise.ets"
+                      },
+                      "end": {
+                        "line": 33,
+                        "column": 54,
+                        "program": "await_complex_promise.ets"
+                      }
+                    }
+                  },
                   "loc": {
                     "start": {
                       "line": 33,
-                      "column": 35,
+                      "column": 41,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
                       "line": 33,
-                      "column": 39,
+                      "column": 54,
                       "program": "await_complex_promise.ets"
                     }
                   }
@@ -2903,7 +3218,7 @@
                   "loc": {
                     "start": {
                       "line": 33,
-                      "column": 40,
+                      "column": 55,
                       "program": "await_complex_promise.ets"
                     },
                     "end": {
@@ -2916,7 +3231,7 @@
                 "loc": {
                   "start": {
                     "line": 33,
-                    "column": 10,
+                    "column": 16,
                     "program": "await_complex_promise.ets"
                   },
                   "end": {
@@ -2929,7 +3244,7 @@
               "loc": {
                 "start": {
                   "line": 33,
-                  "column": 10,
+                  "column": 16,
                   "program": "await_complex_promise.ets"
                 },
                 "end": {
@@ -2994,8 +3309,3 @@
     }
   }
 }
-[await_complex_promise.ets:17:32] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_complex_promise.ets:21:39] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_complex_promise.ets:25:39] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_complex_promise.ets:29:37] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.
-[await_complex_promise.ets:34:39] Warning W173979: Await in non-aysnc function is deprecated, please move it to async function.

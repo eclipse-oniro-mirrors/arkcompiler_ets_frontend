@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,23 +13,23 @@
  * limitations under the License.
  */
 
-function foo1(p: Promise<Promise<string>>): void {
+async function foo1(p: Promise<Promise<string>>): Promise<void> {
     let result: string = await p;
 }
 
-function foo2(p: Promise<Promise<string>|number>): void {
+async function foo2(p: Promise<Promise<string>|number>): Promise<void> {
     let result: string|number = await p;
 }
 
-function foo3(p: Promise<Promise<string>|Promise<number>>): void {
+async function foo3(p: Promise<Promise<string>|Promise<number>>): Promise<void> {
     let result: string|number = await p;
 }
 
-function foo4(p: Promise<null|Promise<string>>): void {
+async function foo4(p: Promise<null|Promise<string>>): Promise<void> {
     let result: null|string = await p;
 }
 
 type Alias = Promise<string>|number;
-function foo5(p: Promise<Alias>): void {
+async function foo5(p: Promise<Alias>): Promise<void> {
     let result: string|number = await p;
 }

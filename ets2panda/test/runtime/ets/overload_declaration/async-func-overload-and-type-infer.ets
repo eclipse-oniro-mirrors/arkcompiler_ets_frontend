@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,9 +33,10 @@ async function multipleReturns1(flag: boolean): Promise<string | int> {
 async overload multipleReturns{ multipleReturns1, multipleReturns2 }
 
 function main() {
-    let a: int | string = await multipleReturns(true, 42);
-    let b: int | string = await multipleReturns(false);
-
-    arktest.assertEQ(a, 42)
-    arktest.assertEQ(b, "string2")
+    waitForCompletion(async () => {
+        let a: int | string = await multipleReturns(true, 42);
+        let b: int | string = await multipleReturns(false);
+        arktest.assertEQ(a, 42)
+        arktest.assertEQ(b, "string2")
+    })
 }
