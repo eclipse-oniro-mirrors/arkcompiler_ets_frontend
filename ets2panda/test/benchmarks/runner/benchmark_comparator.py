@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2025-2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -52,7 +52,7 @@ def _write_report(report_path: Path, base_name: str, new_name: str, results: Lis
     lines = [header]
     for r in results:
         phase_str = f":@{r['phase']}"
-        lines.append(f"{phase_str:<{max_phase_len + 3}}:  time={r['time_str']:<25} mem={r['mem_str']:<25}")
+        lines.append(f"{phase_str:<{max_phase_len + 3}}:  time={r['time_str']:<25} maxrss={r['mem_str']:<25}")
 
     report_path.write_text("\n".join(lines), encoding="utf-8")
     print(f"\n✅ Comparison finished! Results saved to: {report_path}")
@@ -117,9 +117,10 @@ def _check_regression(
 
     if success:
         print(f"\n✅ {metric_name} regression check for {perf_name} finished!")
+        sign = '+' if new_sum > base_sum else ''
         msg = (
-            f"[UPDATE REQUIRED] Perf statistics for {perf_name}: {metric_name} exceeded lower threshold.\n"
-            f"\tLimit: {regression:.1%}, Actual: +{((new_sum / base_sum) - 1) * 100:.2f}%\n"
+            f"Perf statistics for {perf_name}: {metric_name}:\n"
+            f"\tLimit: +{regression:.1%}, Actual: {sign}{((new_sum / base_sum) - 1) * 100:.2f}%\n"
             f"\tBase: {format_func(base_sum)}, New: {format_func(new_sum)}\n"
         )
         _print_and_log("Info", msg, log_dir)
