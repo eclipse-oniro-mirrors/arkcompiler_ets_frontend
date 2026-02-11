@@ -336,6 +336,10 @@ semantic:
   id: 49316
   message: "Continue or break target can't be outside the function"
 
+- name: CTOR_CALL_NOT_ROOT_LEVEL
+  id: 2077
+  message: "'{}' call must be a root-level statement in constructor"
+
 - name: CTOR_CLASS_NOT_FIRST
   id: 201
   message: "Call to '{}' must be first statement in constructor"
@@ -416,6 +420,10 @@ semantic:
 - name: DUPLICATE_OVERLOADED_NAME
   id: 385
   message: "Duplicate overloaded method."
+
+- name: DUPLICATE_SUPER_OR_THIS_CALL
+  id: 611
+  message: "Duplicate super()/this() call in constructor"
 
 - name: DUPLICATE_TYPE_PARAM
   id: 182
@@ -1402,6 +1410,10 @@ semantic:
 - name: TEMPORAL_DEADZONE
   id: 365
   message: "Variable '{}' is accessed before it's initialization."
+
+- name: THIS_BEFORE_THIS_OR_SUPER
+  id: 679
+  message: "'this' cannot be referenced before super() call or this() call."
 
 - name: THIS_INCORRECTLY_USED_AS_TYPE_ANNOTAITON
   id: 392
