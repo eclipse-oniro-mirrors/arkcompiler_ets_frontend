@@ -157,17 +157,11 @@ popd >/dev/null 2>&1 || exit 1
 
 function run_script() {
     npm run $1 | tee out.txt
+    local exit_code=${PIPESTATUS[0]}
     if [ -n "$(grep 'Error:' out.txt)" ] ; then
-        exit 1
+        return 1
     fi
-}
-
-function skip_linker_verification_error() {
-    npm run $1 | tee out.txt
-    ERROR_MESSAGE="$(grep 'Error:' out.txt)"
-    if [[ -n "${ERROR_MESSAGE}" && "${ERROR_MESSAGE}" != *"LinkerVerificationError:"* ]] ; then
-        exit 1
-    fi
+    return $exit_code
 }
 
 export ENABLE_BUILD_CACHE=0
@@ -187,18 +181,18 @@ retry 5 run_script "sdk:all" || {
 
 # Compile libarkts
 pushd libarkts || exit 1
-run_script "regenerate"
-run_script "compile --prefix ../fast-arktsc"
-run_script "run"
+run_script "regenerate" || exit 1
+run_script "compile --prefix ../fast-arktsc" || exit 1
+run_script "run" || exit 1
 popd >/dev/null 2>&1 || exit 1
 
 # Compile memo-plugin, ui-plugins
 
 # need to fix ui2abc tests
 # run_script "all --prefix ui2abc"
-run_script "build:all --prefix ui2abc"
+run_script "build:all --prefix ui2abc" || exit 1
 
-run_script "build:deps --prefix ui2abc/ets-tests"
+run_script "build:deps --prefix ui2abc/ets-tests" || exit 1
 
 if [ -z "${DEMO}" ] ; then
     echo "Just compiled ArkUI, but no demo specified."
@@ -207,10 +201,10 @@ fi
 
 case "${DEMO}" in
     "shopping")
-        run_script "run:node --prefix arkoala-arkts/shopping/user"
+        run_script "run:node --prefix arkoala-arkts/shopping/user" || exit 1
         ;;
     "trivial")
-        run_script "run --prefix arkoala-arkts/trivial/user"
+        run_script "run --prefix arkoala-arkts/trivial/user" || exit 1
         ;;
     "empty")
         ;;
