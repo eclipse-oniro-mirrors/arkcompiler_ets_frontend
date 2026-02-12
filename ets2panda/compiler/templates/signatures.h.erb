@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -136,6 +136,17 @@ public:
 % Signatures::DYNAMIC.each do |lang, data|
             if (lang.GetId() == Language::Id::<%= lang.upcase %>) {
                 return <%= data.module_class.load_builtin %>;
+            }
+% end
+            ES2PANDA_UNREACHABLE();
+        }
+
+        static std::string_view LoadModuleBuiltinWithAbc(Language lang)
+        {
+            ES2PANDA_ASSERT(IsSupported(lang));
+% Signatures::DYNAMIC.each do |lang, data|
+            if (lang.GetId() == Language::Id::<%= lang.upcase %>) {
+                return <%= data.module_class.load_builtin_with_abc %>;
             }
 % end
             ES2PANDA_UNREACHABLE();

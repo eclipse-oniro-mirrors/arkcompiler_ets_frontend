@@ -21,6 +21,7 @@
 
 #include "compiler/lowering/util.h"
 #include "compiler/lowering/scopesInit/scopesInitPhase.h"
+#include "ir/expression.h"
 
 namespace ark::es2panda::compiler {
 
@@ -106,11 +107,35 @@ static ir::ClassDeclaration *GetOrCreateLazyImportObjectClass(ArenaAllocator *al
     return util::NodeAllocator::ForceSetParent<ir::ClassDeclaration>(allocator, classDef, allocator);
 }
 
+static ir::Expression *GetModulePathFromCallerABCPath(public_lib::Context *ctx, ArenaAllocator *allocator)
+{
+    // GetCallerABCPath() returns static abc path, but dynamic path is needed, so we should remove suffix "_static"
+    auto *parser = ctx->parser->AsETSParser();
+    ArenaVector<ir::Statement *> blockStatements(allocator->Adapter());
+    ir::Expression *callerABCPath = Gensym(allocator);
+    ir::Expression *lastIndex = Gensym(allocator);
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = DebuggerAPI.getCallerABCPath();",
+                                                               callerABCPath->Clone(allocator, nullptr)));
+    blockStatements.push_back(parser->CreateFormattedStatement("let @@I1 = @@I2.lastIndexOf(\"_static\");",
+                                                               lastIndex->Clone(allocator, nullptr),
+                                                               callerABCPath->Clone(allocator, nullptr)));
+    blockStatements.push_back(
+        parser->CreateFormattedStatement("@@I1 == -1 ? @@I2 : @@I3.substring(0, @@I4) + "
+                                         "@@I5.substring(@@I6 + 7, @@I7.length);",
+                                         lastIndex->Clone(allocator, nullptr), callerABCPath->Clone(allocator, nullptr),
+                                         callerABCPath->Clone(allocator, nullptr), lastIndex->Clone(allocator, nullptr),
+                                         callerABCPath->Clone(allocator, nullptr), lastIndex->Clone(allocator, nullptr),
+                                         callerABCPath->Clone(allocator, nullptr)));
+    auto *modulePathExpr =
+        util::NodeAllocator::ForceSetParent<ir::BlockExpression>(allocator, std::move(blockStatements));
+    return modulePathExpr;
+}
+
 static void AddImportInitializationStatement(public_lib::Context *ctx, ir::ETSImportDeclaration *import,
                                              ArenaVector<ir::Statement *> *statements, util::StringView className)
 {
     auto allocator = ctx->GetChecker()->AsETSChecker()->ProgramAllocator();
-    const auto builtin = compiler::Signatures::Dynamic::LoadModuleBuiltin(import->Language());
+    const auto builtin = compiler::Signatures::Dynamic::LoadModuleBuiltinWithAbc(import->Language());
     auto [builtinClassName, builtinMethodName] = util::Helpers::SplitSignature(builtin);
 
     auto *classId = allocator->New<ir::Identifier>(builtinClassName, allocator);
@@ -125,9 +150,10 @@ static void AddImportInitializationStatement(public_lib::Context *ctx, ir::ETSIm
             ohmUrl = util::UString(ark::os::RemoveExtension(ohmUrl.Mutf8()), allocator).View();
         }
     }
-
+    ir::Expression *modulePathExpr = GetModulePathFromCallerABCPath(ctx, allocator);
     ArenaVector<ir::Expression *> callParams(allocator->Adapter());
     callParams.push_back(allocator->New<ir::StringLiteral>(ohmUrl));
+    callParams.push_back(modulePathExpr);
 
     auto *loadCall = util::NodeAllocator::ForceSetParent<ir::CallExpression>(allocator, callee, std::move(callParams),
                                                                              nullptr, false);

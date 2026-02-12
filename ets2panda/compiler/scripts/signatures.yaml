@@ -1609,6 +1609,12 @@ signatures:
     ref: BUILTIN_JSRUNTIME_LOAD_MODULE
 
   - callee: BUILTIN_JSRUNTIME
+    method_name: loadModuleWithAbc
+    params: [BUILTIN_STRING]
+    return_type: PRIMITIVE_VOID
+    ref: BUILTIN_JSRUNTIME_LOAD_MODULE_WITH_ABC
+
+  - callee: BUILTIN_JSRUNTIME
     method_name: getUndefined
     params: []
     return_type: BUILTIN_JSVALUE
@@ -1823,6 +1829,7 @@ dynamiclangs:
       init_builtin: BUILTIN_JSRUNTIME_INIT_DYNAMIC_NEW_CLASS
     module_class:
       load_builtin: BUILTIN_JSRUNTIME_LOAD_MODULE
+      load_builtin_with_abc: BUILTIN_JSRUNTIME_LOAD_MODULE_WITH_ABC
     builtins:
       new:
         - type: boolean
