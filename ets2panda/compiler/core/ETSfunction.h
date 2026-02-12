@@ -38,11 +38,9 @@ private:
     static void CompileSourceBlock(ETSGen *etsg, const ir::BlockStatement *block);
     static void CompileAsStaticBlock(ETSGen *etsg);
     static void CompileAsConstructor(ETSGen *etsg, const ir::ScriptFunction *scriptFunc);
-    static void CompileInstanceFieldInitializers(ETSGen *etsg);
     static void CompileFunction(ETSGen *etsg);
     static void CallImplicitCtor(ETSGen *etsg);
     static void ExtendWithDefaultReturn(ETSGen *etsg, const ir::AstNode *node, const ir::ScriptFunction *scriptFunc);
-    static void CompileConstructorWithExplicitSuper(ETSGen *etsg, const ArenaVector<ir::Statement *> &statements);
 };
 }  // namespace ark::es2panda::compiler
 
