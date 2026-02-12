@@ -347,8 +347,20 @@ static bool ParseAndRunPhases(const CompilationUnit &unit, public_lib::Context *
     return !context->diagnosticEngine->IsAnyError();
 }
 
+static void ResetLineIndexCaches(public_lib::Context *context)
+{
+    if (context->parserProgram == nullptr) {
+        return;
+    }
+
+    context->parserProgram->ResetLineIndexCache();
+    context->parserProgram->GetExternalSources()->Visit([](auto *extProgram) { extProgram->ResetLineIndexCache(); });
+}
+
 static pandasm::Program *ClearContextAndReturnProgam(public_lib::Context *context, pandasm::Program *program)
 {
+    ResetLineIndexCaches(context);
+
     context->config = nullptr;
     context->parser = nullptr;
     context->ClearCheckers();
@@ -405,6 +417,7 @@ static pandasm::Program *Compile(const CompilationUnit &unit, CompilerImpl *comp
     } catch (util::ThrowableDiagnostic &e) {
         context->diagnosticEngine->EnsureLocations();
         e.EnsureLocation();
+        ResetLineIndexCaches(context);
         throw e;
     }
 }

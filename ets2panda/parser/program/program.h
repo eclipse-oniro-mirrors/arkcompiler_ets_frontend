@@ -30,6 +30,7 @@
 #include "libarkbase/mem/pool_manager.h"
 #include "libarkbase/os/filesystem.h"
 
+#include <memory>
 #include <set>
 
 namespace ark::es2panda::ir {
@@ -249,6 +250,13 @@ public:
         return sourceCode_;
     }
 
+    const lexer::LineIndex &GetLineIndex() const;
+
+    void ResetLineIndexCache() const
+    {
+        lineIndex_.reset();
+    }
+
     util::StringView SourceFilePath() const
     {
         return sourceFile_.GetPath();
@@ -327,6 +335,7 @@ public:
         sourceCode_ = sourceFile.source;
         sourceFile_ = util::Path(sourceFile.filePath, Allocator());
         moduleInfo_.isDeclForDynamicStaticInterop = sourceFile.isDeclForDynamicStaticInterop;
+        lineIndex_.reset();
     }
 
     void SetPackageInfo(std::string_view mname, util::ModuleKind kind);
@@ -470,6 +479,7 @@ private:
     ir::BlockStatement *ast_ {};
     util::Path sourceFile_;
     std::string_view sourceCode_ {};
+    mutable std::unique_ptr<lexer::LineIndex> lineIndex_ {};
 
     bool isASTlowered_ {};
     bool isModified_ {true};

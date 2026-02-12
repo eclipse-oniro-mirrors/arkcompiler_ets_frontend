@@ -23,7 +23,7 @@
 
 namespace ark::es2panda::util {
 
-void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const
+void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out, const std::string &basePath) const
 {
     // Message collected and printed once to avoid spliting printed message in case multithreading execution
     std::ostringstream stream;
@@ -45,19 +45,19 @@ void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream 
     out << stream.str();
 }
 
-void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::string basePath) const
+void CLIDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, const std::string &basePath) const
 {
     // NOTE(pronai) test harness is not prepared for cerr
     Print(diagnostic, std::cout, basePath);
 }
 
-void CustomDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::string basePath) const
+void CustomDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, const std::string &basePath) const
 {
     Print(diagnostic, std::cout, basePath);
 }
 
 void CustomDiagnosticPrinter::Print(const DiagnosticBase &diagnostic, std::ostream &out,
-                                    [[maybe_unused]] std::string basePath) const
+                                    [[maybe_unused]] const std::string &basePath) const
 {
     std::ostringstream stream;
     stream << counter_++ << " ERROR: " << DiagnosticTypeToString(diagnostic.Type()) << " "

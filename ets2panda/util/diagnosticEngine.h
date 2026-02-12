@@ -39,8 +39,8 @@ public:
     NO_MOVE_SEMANTIC(DiagnosticPrinter);
     virtual ~DiagnosticPrinter() = default;
 
-    virtual void Print(const DiagnosticBase &diagnostic, std::string basePath) const = 0;
-    virtual void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const = 0;
+    virtual void Print(const DiagnosticBase &diagnostic, const std::string &basePath) const = 0;
+    virtual void Print(const DiagnosticBase &diagnostic, std::ostream &out, const std::string &basePath) const = 0;
 };
 
 class CLIDiagnosticPrinter : public DiagnosticPrinter {
@@ -50,8 +50,8 @@ public:
     NO_MOVE_SEMANTIC(CLIDiagnosticPrinter);
     ~CLIDiagnosticPrinter() override = default;
 
-    void Print(const DiagnosticBase &diagnostic, std::string basePath) const override;
-    void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, const std::string &basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, std::ostream &out, const std::string &basePath) const override;
 };
 
 class CustomDiagnosticPrinter : public DiagnosticPrinter {
@@ -61,8 +61,8 @@ public:
     NO_MOVE_SEMANTIC(CustomDiagnosticPrinter);
     ~CustomDiagnosticPrinter() override = default;
 
-    void Print(const DiagnosticBase &diagnostic, std::string basePath) const override;
-    void Print(const DiagnosticBase &diagnostic, std::ostream &out, std::string basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, const std::string &basePath) const override;
+    void Print(const DiagnosticBase &diagnostic, std::ostream &out, const std::string &basePath) const override;
 
 private:
     mutable int counter_;
@@ -168,9 +168,9 @@ public:
         wError_ = wError;
     }
 
-    void SetBasePath(std::string basePath)
+    void SetBasePath(const std::string &basePath)
     {
-        basePath_ = basePath;  // NOLINT(performance-unnecessary-value-param)
+        basePath_ = basePath;
     }
 
     void SetPrinter(std::unique_ptr<DiagnosticPrinter> printer)

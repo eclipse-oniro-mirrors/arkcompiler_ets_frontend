@@ -29,6 +29,8 @@
 
 #include "util/importPathManager.h"
 
+#include <memory>
+
 namespace ark::es2panda::parser {
 
 Program::Program(const util::ImportMetadata &importMetadata, ArenaAllocator *allocator, varbinder::VarBinder *varbinder)
@@ -66,6 +68,15 @@ std::string Program::RelativeFilePath(const public_lib::Context *context) const
     }
     // NOTE(dkofanov): there should be rebasing abspath to baseurl.
     return util::Path(importMetadata_.TextSource(), context->Allocator()).GetFileNameWithExtension().Mutf8();
+}
+
+const lexer::LineIndex &Program::GetLineIndex() const
+{
+    if (lineIndex_ == nullptr) {
+        lineIndex_ = std::make_unique<lexer::LineIndex>(sourceCode_);
+    }
+
+    return *lineIndex_;
 }
 
 void Program::PushVarBinder(varbinder::VarBinder *varbinder)

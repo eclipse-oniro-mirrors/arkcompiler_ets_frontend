@@ -1,6 +1,5 @@
-
 /**
- * Copyright (c) 2024-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2024-2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +45,7 @@ void ETSWarningAnalyzer::AnalyzeClassDefForFinalModifier(const ir::ClassDefiniti
         return;
     }
 
-    const auto statements = program_->Ast()->Statements();
+    const auto &statements = program_->Ast()->Statements();
     for (const auto *it : statements) {
         if (!it->IsClassDeclaration() ||
             classDef->Ident()->Name() == it->AsClassDeclaration()->Definition()->Ident()->Name()) {
@@ -84,7 +83,7 @@ void ETSWarningAnalyzer::AnalyzeClassMethodForFinalModifier(const ir::MethodDefi
 
     bool suggestFinal = true;
 
-    const auto statements = program_->Ast()->Statements();
+    const auto &statements = program_->Ast()->Statements();
     for (const auto *it : statements) {
         if (!it->IsClassDeclaration() || it->AsClassDeclaration()->Definition()->IsGlobal() ||
             classDef->Ident()->Name() == it->AsClassDeclaration()->Definition()->Ident()->Name()) {
@@ -126,7 +125,7 @@ void ETSWarningAnalyzer::ETSWarningSuggestFinal(const ir::AstNode *node)
             AnalyzeClassDefForFinalModifier(node->AsClassDeclaration()->Definition());
         }
 
-        const auto classBody = node->AsClassDeclaration()->Definition()->Body();
+        const auto &classBody = node->AsClassDeclaration()->Definition()->Body();
         for (const auto *it : classBody) {
             if (it->IsMethodDefinition()) {
                 AnalyzeClassMethodForFinalModifier(it->AsMethodDefinition(), node->AsClassDeclaration()->Definition());
